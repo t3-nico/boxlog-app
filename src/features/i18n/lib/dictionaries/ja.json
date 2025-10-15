@@ -975,18 +975,6 @@
     }
   },
   "errors": {
-    "common": {
-      "contactUs": "お問い合わせ",
-      "goHome": "ホームに戻る",
-      "reload": "再読み込み"
-    },
-    "404": {
-      "title": "404",
-      "heading": "ページが見つかりません",
-      "description": "お探しのページは存在しないか、移動した可能性があります。",
-      "action": "ホームに戻る",
-      "sidebarHint": "サイドメニューから移動"
-    },
     "401": {
       "title": "401",
       "heading": "認証が必要です",
@@ -1001,6 +989,13 @@
       "action": "ホームに戻る",
       "contactSupport": "権限が必要な場合は、管理者にお問い合わせください。"
     },
+    "404": {
+      "title": "404",
+      "heading": "ページが見つかりません",
+      "description": "お探しのページは存在しないか、移動した可能性があります。",
+      "action": "ホームに戻る",
+      "sidebarHint": "サイドメニューから移動"
+    },
     "500": {
       "title": "500",
       "heading": "サーバーエラー",
@@ -1008,6 +1003,11 @@
       "action": "再読み込み",
       "secondaryAction": "ホームに戻る",
       "contactSupport": "問題が解決しない場合は、サポートにお問い合わせください。"
+    },
+    "common": {
+      "contactUs": "お問い合わせ",
+      "goHome": "ホームに戻る",
+      "reload": "再読み込み"
     },
     "maintenance": {
       "title": "メンテナンス中",
@@ -1219,7 +1219,8 @@
             "session": "セッションCookie（認証状態の維持）",
             "csrf": "CSRFトークン（セキュリティ保護）",
             "consent": "Cookie同意状態"
-          }
+          },
+          "ariaLabel": "必須Cookie（無効化不可）"
         },
         "analytics": {
           "title": "分析Cookie",
@@ -1227,11 +1228,16 @@
           "cookies": {
             "vercel": "Vercel Analytics（ページビュー、パフォーマンス）",
             "sentry": "Sentry Performance（エラー監視、パフォーマンス）"
-          }
+          },
+          "ariaLabel": "分析Cookie"
         },
         "marketing": {
           "title": "マーケティングCookie",
-          "description": "広告配信やマーケティング活動に使用されるCookieです。現在は使用していません。"
+          "description": "広告配信やマーケティング活動に使用されるCookieです。現在は使用していません。",
+          "ariaLabel": "マーケティングCookie",
+          "cookies": {
+            "none": "現在使用していません"
+          }
         }
       },
       "settings": {
@@ -1241,15 +1247,34 @@
         "disabled": "無効",
         "alwaysActive": "常に有効",
         "save": "設定を保存",
-        "saved": "Cookie設定を保存しました"
+        "saved": "Cookie設定を保存しました",
+        "acceptAll": "すべて受け入れ",
+        "rejectAll": "必須のみ",
+        "acceptedAll": "すべてのCookieを受け入れました",
+        "acceptedNecessaryOnly": "必須Cookieのみ受け入れました"
       },
       "page": {
-        "intro": "当サイトでは、以下のCookieを使用しています。各カテゴリの詳細とCookieの管理方法をご確認ください。",
-        "whatAreCookies": "Cookieとは？",
-        "whatAreCookiesDesc": "Cookieは、Webサイトがブラウザに保存する小さなテキストファイルです。Cookieを使用することで、ログイン状態の維持、設定の記憶、サイト利用状況の分析が可能になります。",
-        "manageCookies": "Cookieの管理",
-        "manageCookiesDesc": "ブラウザの設定でCookieを無効化することもできますが、一部機能が制限される場合があります。",
-        "lastUpdated": "最終更新"
+        "title": "Cookie設定",
+        "description": "Cookieの使用と管理について",
+        "whatAreCookies": {
+          "title": "Cookieとは？",
+          "content": "Cookieは、Webサイトがブラウザに保存する小さなテキストファイルです。Cookieを使用することで、ログイン状態の維持、設定の記憶、サイト利用状況の分析が可能になります。"
+        },
+        "howWeUse": {
+          "title": "Cookieの使用目的",
+          "content": "当サイトでは、以下の目的でCookieを使用しています：",
+          "purposes": {
+            "authentication": "認証とセキュリティ",
+            "preferences": "ユーザー設定の保存",
+            "analytics": "サイト利用状況の分析",
+            "security": "不正利用の防止"
+          }
+        },
+        "manageCookies": {
+          "title": "Cookie管理方法",
+          "content": "ブラウザ設定でCookieを管理できます。詳細は各ブラウザのヘルプをご確認ください。"
+        },
+        "browserWarning": "ブラウザ設定でCookieを無効にした場合、一部機能が正常に動作しない可能性があります。"
       }
     },
     "security": {

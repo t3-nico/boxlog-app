@@ -980,18 +980,6 @@
     }
   },
   "errors": {
-    "common": {
-      "contactUs": "Contact Us",
-      "goHome": "Go Home",
-      "reload": "Reload"
-    },
-    "404": {
-      "title": "404",
-      "heading": "Page Not Found",
-      "description": "The page you're looking for doesn't exist or has been moved.",
-      "action": "Go Home",
-      "sidebarHint": "Navigate from sidebar"
-    },
     "401": {
       "title": "401",
       "heading": "Authentication Required",
@@ -1006,6 +994,13 @@
       "action": "Go Home",
       "contactSupport": "If you need access, please contact your administrator."
     },
+    "404": {
+      "title": "404",
+      "heading": "Page Not Found",
+      "description": "The page you're looking for doesn't exist or has been moved.",
+      "action": "Go Home",
+      "sidebarHint": "Navigate from sidebar"
+    },
     "500": {
       "title": "500",
       "heading": "Server Error",
@@ -1013,6 +1008,11 @@
       "action": "Reload",
       "secondaryAction": "Go Home",
       "contactSupport": "If the problem persists, please contact support."
+    },
+    "common": {
+      "contactUs": "Contact Us",
+      "goHome": "Go Home",
+      "reload": "Reload"
     },
     "maintenance": {
       "title": "Under Maintenance",
@@ -1207,7 +1207,8 @@
             "session": "Session Cookie (maintain authentication state)",
             "csrf": "CSRF Token (security protection)",
             "consent": "Cookie consent state"
-          }
+          },
+          "ariaLabel": "Necessary cookies (cannot be disabled)"
         },
         "analytics": {
           "title": "Analytics Cookies",
@@ -1215,14 +1216,16 @@
           "cookies": {
             "vercel": "Vercel Analytics (page views, performance)",
             "sentry": "Sentry Performance (error monitoring, performance)"
-          }
+          },
+          "ariaLabel": "Analytics cookies"
         },
         "marketing": {
           "title": "Marketing Cookies",
           "description": "Used for personalized content and advertising. Currently not in use.",
           "cookies": {
-            "none": "Not currently using marketing cookies"
-          }
+            "none": "Not currently in use"
+          },
+          "ariaLabel": "Marketing cookies"
         }
       },
       "settings": {
@@ -1230,29 +1233,32 @@
         "description": "You can enable or disable each cookie category. Please note that essential cookies cannot be disabled.",
         "save": "Save Settings",
         "acceptAll": "Accept All",
-        "rejectAll": "Essential Only"
+        "rejectAll": "Necessary Only",
+        "acceptedAll": "All cookies accepted",
+        "acceptedNecessaryOnly": "Necessary cookies only accepted"
       },
       "page": {
-        "title": "Cookie Policy",
-        "description": "This page explains how BoxLog uses cookies",
+        "title": "Cookie Settings",
+        "description": "Cookie Usage and Management",
         "whatAreCookies": {
           "title": "What are Cookies?",
-          "content": "Cookies are small text files stored on your device when you visit a website. They help improve user experience and enable various website features."
+          "content": "Cookies are small text files that websites store in your browser. Using cookies enables maintaining login status, remembering settings, and analyzing site usage patterns."
         },
         "howWeUse": {
           "title": "How We Use Cookies",
           "content": "We use cookies for the following purposes:",
           "purposes": {
-            "authentication": "Maintaining login state",
-            "preferences": "Saving user settings and preferences",
-            "analytics": "Analyzing site usage and improving services",
-            "security": "Preventing unauthorized access and protecting user data"
+            "authentication": "Authentication and security",
+            "preferences": "Saving user preferences",
+            "analytics": "Analyzing site usage",
+            "security": "Preventing unauthorized use"
           }
         },
         "manageCookies": {
-          "title": "Managing Cookies",
-          "content": "You can manage cookie settings through your browser or our cookie settings page. Please note that disabling certain cookies may limit some features."
-        }
+          "title": "Cookie Management",
+          "content": "You can manage cookies in your browser settings. Please check your browser help for details."
+        },
+        "browserWarning": "If you disable cookies in your browser settings, some features may not function properly."
       }
     },
     "contact": {

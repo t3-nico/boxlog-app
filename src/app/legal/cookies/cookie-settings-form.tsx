@@ -49,7 +49,7 @@ export function CookieSettingsForm() {
       analytics: settings.analytics,
       marketing: settings.marketing,
     })
-    toast.success('Cookie設定を保存しました')
+    toast.success(t('legal.cookies.settings.saved'))
   }
 
   const handleAcceptAll = () => {
@@ -60,7 +60,7 @@ export function CookieSettingsForm() {
       marketing: true,
       timestamp: Date.now(),
     })
-    toast.success('すべてのCookieを受け入れました')
+    toast.success(t('legal.cookies.settings.acceptedAll'))
   }
 
   const handleAcceptNecessaryOnly = () => {
@@ -71,7 +71,7 @@ export function CookieSettingsForm() {
       marketing: false,
       timestamp: Date.now(),
     })
-    toast.success('必須Cookieのみ受け入れました')
+    toast.success(t('legal.cookies.settings.acceptedNecessaryOnly'))
   }
 
   // SSR時は何も表示しない
@@ -86,7 +86,7 @@ export function CookieSettingsForm() {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             {t('legal.cookies.categories.necessary.title')}
-            <Switch checked={true} disabled aria-label="必須Cookie（無効化不可）" />
+            <Switch checked={true} disabled aria-label={t('legal.cookies.categories.necessary.ariaLabel')} />
           </CardTitle>
           <CardDescription>{t('legal.cookies.categories.necessary.description')}</CardDescription>
         </CardHeader>
@@ -112,7 +112,7 @@ export function CookieSettingsForm() {
                   analytics: checked,
                 }))
               }
-              aria-label="分析Cookie"
+              aria-label={t('legal.cookies.categories.analytics.ariaLabel')}
             />
           </CardTitle>
           <CardDescription>{t('legal.cookies.categories.analytics.description')}</CardDescription>
@@ -138,7 +138,7 @@ export function CookieSettingsForm() {
                   marketing: checked,
                 }))
               }
-              aria-label="マーケティングCookie"
+              aria-label={t('legal.cookies.categories.marketing.ariaLabel')}
             />
           </CardTitle>
           <CardDescription>{t('legal.cookies.categories.marketing.description')}</CardDescription>

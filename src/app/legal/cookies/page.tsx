@@ -56,9 +56,10 @@ export default async function CookieSettingsPage() {
 
       {/* 注意事項 */}
       <div className="bg-muted/50 mt-8 rounded-lg p-6">
-        <p className="text-muted-foreground text-sm">
-          ⚠️ <strong>重要:</strong> ブラウザ設定でCookieを無効にした場合、一部機能が正常に動作しない可能性があります。
-        </p>
+        <p
+          className="text-muted-foreground text-sm"
+          dangerouslySetInnerHTML={{ __html: t('legal.cookies.page.browserWarning') }}
+        />
       </div>
     </div>
   )
