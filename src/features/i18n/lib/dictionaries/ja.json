@@ -1186,6 +1186,18 @@
       "email": "support@boxlog.app",
       "website": "https://boxlog.app"
     },
+    "navigation": {
+      "backToApp": "← BoxLogに戻る",
+      "privacy": "プライバシーポリシー",
+      "terms": "利用規約",
+      "security": "セキュリティ",
+      "cookies": "Cookie設定",
+      "ossCredits": "OSSライセンス"
+    },
+    "footer": {
+      "copyright": "© 2025 BoxLog. All rights reserved.",
+      "contact": "お問い合わせ: {{email}}"
+    },
     "cookies": {
       "title": "Cookie設定",
       "description": "Cookieの使用と管理について",
