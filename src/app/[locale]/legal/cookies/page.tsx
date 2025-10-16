@@ -10,8 +10,12 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function CookieSettingsPage() {
-  const locale: Locale = 'ja'
+interface PageProps {
+  params: Promise<{ locale?: Locale }>
+}
+
+export default async function CookieSettingsPage({ params }: PageProps) {
+  const { locale = 'ja' } = await params
   const dictionary = await getDictionary(locale)
   const t = createTranslation(dictionary, locale)
 

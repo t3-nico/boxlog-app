@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field'
 import { Switch } from '@/components/ui/switch'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { getCookieConsent, type CookieConsent } from '@/lib/cookie-consent'
+import { getCookieConsent, setCookieConsent as saveCookieConsent, type CookieConsent } from '@/lib/cookie-consent'
 import { ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 
@@ -46,16 +46,16 @@ export default function AboutLegalSettings() {
     }
   }, [])
 
-  // Cookie設定変更ハンドラー
+  // Cookie設定変更ハンドラー（localStorageに保存 + CustomEvent発火）
   const handleAnalyticsChange = (checked: boolean) => {
-    setCookieConsent({
+    saveCookieConsent({
       analytics: checked,
       marketing: cookieConsent?.marketing ?? false,
     })
   }
 
   const handleMarketingChange = (checked: boolean) => {
-    setCookieConsent({
+    saveCookieConsent({
       analytics: cookieConsent?.analytics ?? false,
       marketing: checked,
     })

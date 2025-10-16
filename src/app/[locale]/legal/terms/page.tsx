@@ -12,12 +12,16 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+interface PageProps {
+  params: Promise<{ locale?: Locale }>
+}
+
 /**
  * 利用規約ページ（Server Component）
  */
-export default async function TermsOfServicePage() {
-  // i18n翻訳取得（デフォルトロケールja）
-  const locale: Locale = 'ja'
+export default async function TermsOfServicePage({ params }: PageProps) {
+  // i18n翻訳取得（URLからロケール取得、デフォルトはja）
+  const { locale = 'ja' } = await params
   const dictionary = await getDictionary(locale)
   const t = createTranslation(dictionary, locale)
 
