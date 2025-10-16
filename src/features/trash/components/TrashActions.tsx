@@ -26,9 +26,7 @@ export function TrashActions({ className }: TrashActionsProps) {
 
   return (
     <>
-      <div
-        className={`rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-800 ${className}`}
-      >
+      <div className={`border-border bg-card rounded-lg border p-4 ${className}`}>
         {/* 統計情報 */}
         <TrashStatsDisplay
           stats={stats}

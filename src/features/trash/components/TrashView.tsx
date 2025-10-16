@@ -31,17 +31,17 @@ export function TrashView({ className }: TrashViewProps) {
   }, [error, clearError])
 
   return (
-    <div className={`min-h-screen bg-neutral-100 dark:bg-neutral-900 ${className}`}>
+    <div className={`bg-background min-h-screen ${className}`}>
       <div className="mx-auto max-w-7xl space-y-6 p-6">
         {/* ヘッダー */}
-        <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-800">
+        <div className="border-border bg-card rounded-lg border p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="flex items-center text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+              <h1 className="text-foreground flex items-center text-3xl font-bold tracking-tight">
                 <span className="mr-3 text-3xl">🗑️</span>
                 ゴミ箱
               </h1>
-              <p className="mt-2 text-neutral-600 dark:text-neutral-400">
+              <p className="text-muted-foreground mt-2">
                 削除されたアイテムを管理します。アイテムは30日後に自動削除されます。
               </p>
             </div>
@@ -51,15 +51,11 @@ export function TrashView({ className }: TrashViewProps) {
               type="button"
               onClick={() => fetchItems()}
               disabled={loading}
-              className="flex items-center gap-2 rounded-md border border-neutral-300 px-4 py-2 text-sm text-neutral-700 transition-colors hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-neutral-700"
+              className="border-input text-foreground hover:bg-muted flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors disabled:opacity-50"
             >
               {loading ? (
                 <>
-                  <svg
-                    className="h-4 w-4 animate-spin text-neutral-600 dark:text-neutral-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="text-muted-foreground h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle
                       className="opacity-25"
                       cx="12"
@@ -94,9 +90,9 @@ export function TrashView({ className }: TrashViewProps) {
 
           {/* 統計情報 */}
           <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-            <div className="rounded-md bg-neutral-50 p-4 dark:bg-neutral-700">
-              <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{stats.totalItems}</div>
-              <div className="text-sm text-neutral-600 dark:text-neutral-400">総アイテム数</div>
+            <div className="bg-muted rounded-md p-4">
+              <div className="text-foreground text-2xl font-bold">{stats.totalItems}</div>
+              <div className="text-muted-foreground text-sm">総アイテム数</div>
             </div>
 
             <div className="rounded-md bg-blue-50 p-4 dark:bg-blue-900/20">
@@ -155,15 +151,10 @@ export function TrashView({ className }: TrashViewProps) {
         )}
 
         {/* 検索バー（シンプル版） */}
-        <div className="rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-800">
+        <div className="border-border bg-card rounded-lg border p-4">
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <svg
-                className="h-4 w-4 text-neutral-600 dark:text-neutral-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+              <svg className="text-muted-foreground h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -177,7 +168,7 @@ export function TrashView({ className }: TrashViewProps) {
               placeholder="アイテムを検索..."
               value={filters.searchQuery}
               onChange={(e) => setFilters({ searchQuery: e.target.value })}
-              className="block w-full rounded-md border border-neutral-300 bg-white py-2 pr-3 pl-10 text-sm text-neutral-900 focus:ring-2 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
+              className="border-input bg-card text-foreground block w-full rounded-md border py-2 pr-3 pl-10 text-sm focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -190,18 +181,18 @@ export function TrashView({ className }: TrashViewProps) {
 
         {/* 空の状態での説明 */}
         {stats.totalItems === 0 && !loading && (
-          <div className="rounded-lg border border-neutral-200 bg-white p-8 text-center dark:border-neutral-800 dark:bg-neutral-800">
+          <div className="border-border bg-card rounded-lg border p-8 text-center">
             <div className="mb-4 text-6xl">🌟</div>
-            <h3 className="mb-2 text-xl font-bold text-neutral-900 dark:text-neutral-100">ゴミ箱は空です</h3>
-            <p className="mb-6 text-neutral-600 dark:text-neutral-400">
+            <h3 className="text-foreground mb-2 text-xl font-bold">ゴミ箱は空です</h3>
+            <p className="text-muted-foreground mb-6">
               削除されたアイテムはここに表示されます。
               <br />
               現在、削除されたアイテムはありません。
             </p>
 
-            <div className="rounded-md bg-neutral-50 p-4 text-left dark:bg-neutral-700">
-              <h4 className="mb-2 font-medium text-neutral-900 dark:text-neutral-100">ℹ️ ゴミ箱について</h4>
-              <ul className="space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
+            <div className="bg-muted rounded-md p-4 text-left">
+              <h4 className="text-foreground mb-2 font-medium">ℹ️ ゴミ箱について</h4>
+              <ul className="text-muted-foreground space-y-1 text-sm">
                 <li>• カレンダーのイベント、タスク、ドキュメントなどを削除すると、ここに移動します</li>
                 <li>• アイテムは30日間保持され、その後自動的に完全削除されます</li>
                 <li>• 誤って削除したアイテムは復元することができます</li>
@@ -212,8 +203,8 @@ export function TrashView({ className }: TrashViewProps) {
         )}
 
         {/* フッター情報 */}
-        <div className="rounded-lg bg-neutral-50 p-4 dark:bg-neutral-700">
-          <div className="text-center text-sm text-neutral-600 dark:text-neutral-400">
+        <div className="bg-muted rounded-lg p-4">
+          <div className="text-muted-foreground text-center text-sm">
             <p>アイテムは削除から30日後に自動的に完全削除されます。 必要なアイテムは期限内に復元してください。</p>
           </div>
         </div>

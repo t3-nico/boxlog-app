@@ -30,7 +30,7 @@ export function TrashActionButtons({
         type="button"
         onClick={onRestore}
         disabled={selectedCount === 0 || loading}
-        className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700 disabled:bg-neutral-300 disabled:text-neutral-500 dark:disabled:bg-neutral-600 dark:disabled:text-neutral-400"
+        className="disabled:bg-muted disabled:text-muted-foreground rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700"
       >
         <span className="mr-2">↩️</span>
         復元 ({selectedCount})
@@ -41,7 +41,7 @@ export function TrashActionButtons({
         type="button"
         onClick={onPermanentDelete}
         disabled={selectedCount === 0 || loading}
-        className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-red-700 disabled:bg-neutral-300 disabled:text-neutral-500 dark:disabled:bg-neutral-600 dark:disabled:text-neutral-400"
+        className="disabled:bg-muted disabled:text-muted-foreground rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-red-700"
       >
         <span className="mr-2">🗑️</span>
         完全削除 ({selectedCount})
@@ -52,7 +52,7 @@ export function TrashActionButtons({
         type="button"
         onClick={onEmptyTrash}
         disabled={stats.totalItems === 0 || loading}
-        className="rounded-md bg-yellow-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-yellow-700 disabled:bg-neutral-300 disabled:text-neutral-500 dark:disabled:bg-neutral-600 dark:disabled:text-neutral-400"
+        className="disabled:bg-muted disabled:text-muted-foreground rounded-md bg-yellow-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-yellow-700"
       >
         <span className="mr-2">🧹</span>
         ゴミ箱を空にする
@@ -64,7 +64,7 @@ export function TrashActionButtons({
           type="button"
           onClick={onClearExpired}
           disabled={loading}
-          className="rounded-md bg-blue-100 px-4 py-2 text-sm font-medium text-blue-800 transition-colors duration-200 hover:bg-blue-200 disabled:bg-neutral-300 disabled:text-neutral-500 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 dark:disabled:bg-neutral-600 dark:disabled:text-neutral-400"
+          className="disabled:bg-muted disabled:text-muted-foreground rounded-md bg-blue-100 px-4 py-2 text-sm font-medium text-blue-800 transition-colors duration-200 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
         >
           <span className="mr-2">⏰</span>
           期限切れ削除 ({expiredItems.length})
