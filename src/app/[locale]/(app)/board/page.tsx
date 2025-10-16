@@ -1,4 +1,4 @@
-import { KanbanBoard } from '@/features/kanban/components/KanbanBoard'
+import { KanbanBoard } from '@/features/board/components/KanbanBoard'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

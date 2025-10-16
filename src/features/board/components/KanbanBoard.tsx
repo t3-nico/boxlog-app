@@ -98,7 +98,7 @@ export function KanbanBoard() {
             onDragEnd={handleDragEnd}
             onDragCancel={handleDragCancel}
           >
-            <div className="flex gap-6 pb-4">
+            <div className="flex w-max gap-6 pb-4">
               {activeBoard.columns
                 .sort((a, b) => a.order - b.order)
                 .map((column) => (
