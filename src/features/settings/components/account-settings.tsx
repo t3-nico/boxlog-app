@@ -464,45 +464,68 @@ const AccountSettings = () => {
             label={t('settings.account.profilePicture')}
             description={t('settings.account.profilePictureDesc')}
           >
-            {/* Current Avatar Display */}
-            <div className="mb-4 flex items-center gap-4">
-              {uploadedAvatar ? (
-                <Image
-                  src={uploadedAvatar}
-                  alt={t('settings.account.profilePictureAlt')}
-                  width={64}
-                  height={64}
-                  className="rounded-full border-2 object-cover"
-                  style={{ borderColor: 'var(--border)' }}
-                  sizes="64px"
-                />
-              ) : (
-                <div className="bg-muted border-border flex h-16 w-16 items-center justify-center rounded-full border-2">
-                  <span className="text-muted-foreground text-sm">画像なし</span>
-                </div>
-              )}
-            </div>
+            <div className="flex items-start gap-6">
+              {/* Avatar Preview */}
+              <div className="group relative">
+                {uploadedAvatar ? (
+                  <div className="relative">
+                    <Image
+                      src={uploadedAvatar}
+                      alt={t('settings.account.profilePictureAlt')}
+                      width={80}
+                      height={80}
+                      className="ring-border rounded-full object-cover ring-2"
+                      sizes="80px"
+                    />
+                    {/* Hover overlay */}
+                    <label
+                      htmlFor="avatar-upload"
+                      className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/60 opacity-0 transition-opacity group-hover:opacity-100"
+                    >
+                      <span className="text-xs font-medium text-white">変更</span>
+                    </label>
+                  </div>
+                ) : (
+                  <label
+                    htmlFor="avatar-upload"
+                    className="border-border bg-muted hover:bg-muted/80 flex h-20 w-20 cursor-pointer items-center justify-center rounded-full border-2 border-dashed transition-colors"
+                  >
+                    <span className="text-muted-foreground text-xs">+</span>
+                  </label>
+                )}
+              </div>
 
-            {/* Upload Button */}
-            <div className="flex gap-2">
-              <label htmlFor="avatar-upload">
-                <Button type="button" variant="outline" disabled={isUploading} asChild>
-                  <span>{isUploading ? t('settings.account.uploading') : t('settings.account.uploadImage')}</span>
-                </Button>
-              </label>
-              <input
-                id="avatar-upload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleAvatarUpload}
-                disabled={isUploading}
-              />
-              {uploadedAvatar != null && (
-                <Button type="button" variant="ghost" onClick={handleAvatarRemove} className="text-destructive">
-                  {t('settings.account.remove')}
-                </Button>
-              )}
+              {/* Upload Controls */}
+              <div className="flex flex-1 flex-col gap-3">
+                <input
+                  id="avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                  disabled={isUploading}
+                />
+                <div className="flex items-center gap-2">
+                  <label htmlFor="avatar-upload">
+                    <Button type="button" variant="outline" size="sm" disabled={isUploading} asChild>
+                      <span>{isUploading ? 'アップロード中...' : '画像を選択'}</span>
+                    </Button>
+                  </label>
+                  {uploadedAvatar && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleAvatarRemove}
+                      disabled={isUploading}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      削除
+                    </Button>
+                  )}
+                </div>
+                <p className="text-muted-foreground text-xs">JPG, PNG、5MB以下</p>
+              </div>
             </div>
           </SettingField>
         </div>
