@@ -101,7 +101,7 @@ export function AppSidebar() {
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col gap-2 overflow-y-auto px-2">
+      <div className="flex flex-1 flex-col gap-2 overflow-y-auto bg-transparent px-2">
         <NavMain items={data.navMain} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </div>

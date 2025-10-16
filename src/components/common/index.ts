@@ -5,10 +5,6 @@ export { CookieConsentBanner } from './cookie-consent-banner'
 export { GlobalErrorBoundary } from './ErrorBoundary'
 export type { GlobalErrorBoundaryProps, GlobalErrorBoundaryState } from './ErrorBoundary'
 
-// Preload
-export { PreloadResources, initializeCacheStrategy } from './Preload'
-export type { PreloadConfig } from './Preload'
-
 // Providers
 export { Providers } from './Providers'
 export type { ProvidersProps } from './Providers'
