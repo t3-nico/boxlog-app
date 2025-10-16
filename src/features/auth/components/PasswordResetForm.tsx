@@ -2,16 +2,20 @@
 
 import { useState } from 'react'
 
+import { useParams } from 'next/navigation'
+
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useAuthContext } from '@/features/auth'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
-import { useAuthContext } from '../contexts/AuthContext'
-
-export const PasswordResetForm = ({ className, ...props }: React.ComponentProps<'form'>) => {
-  const { t } = useI18n()
+export function PasswordResetForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const params = useParams()
+  const locale = (params?.locale as string) || 'ja'
+  const { t } = useI18n(locale as 'en' | 'ja')
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -40,51 +44,79 @@ export const PasswordResetForm = ({ className, ...props }: React.ComponentProps<
 
   if (success) {
     return (
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-3xl font-bold text-green-600 dark:text-green-400">Email Sent</h1>
-          <p className="text-muted-foreground text-sm text-balance">A password reset link was sent to {email}.</p>
-        </div>
-        <div className="text-center text-sm">
-          <a href="/auth/login" className="underline underline-offset-4">
-            Back to Log in
-          </a>
-        </div>
+      <div className={cn('flex flex-col gap-6', className)} {...props}>
+        <Card className="overflow-hidden p-0">
+          <CardContent className="grid p-0 md:grid-cols-2">
+            <div className="p-6 md:p-8">
+              <FieldGroup>
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <h1 className="text-2xl font-bold">{t('auth.passwordResetForm.checkEmail')}</h1>
+                  <p className="text-muted-foreground text-balance">
+                    {t('auth.passwordResetForm.sentResetLink')} <span className="font-medium">{email}</span>
+                  </p>
+                </div>
+                <Field>
+                  <Button asChild>
+                    <a href="/auth/login">{t('auth.passwordResetForm.backToLogin')}</a>
+                  </Button>
+                </Field>
+              </FieldGroup>
+            </div>
+            <div className="bg-muted relative hidden md:block">
+              <img
+                src="/placeholder.svg"
+                alt="Image"
+                className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
     )
   }
 
   return (
-    <form className={cn('flex flex-col gap-6', className)} onSubmit={handleSubmit} {...props}>
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Reset your password</h1>
-        <p className="text-muted-foreground text-sm text-balance">
-          Enter your email address and we&apos;ll send you a reset link
-        </p>
-      </div>
-      <div className="grid gap-6">
-        <div className="grid gap-3">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="m@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        {error ? <div className="text-center text-sm text-red-600 dark:text-red-400">{error}</div> : null}
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Sending reset email...' : t('auth.passwordResetForm.sendResetEmail')}
-        </Button>
-      </div>
-      <div className="text-center text-sm">
-        Remember your password?{' '}
-        <a href="/auth/login" className="underline underline-offset-4">
-          Back to Log in
-        </a>
-      </div>
-    </form>
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
+      <Card className="overflow-hidden p-0">
+        <CardContent className="grid p-0 md:grid-cols-2">
+          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
+            <FieldGroup>
+              <div className="flex flex-col items-center gap-2 text-center">
+                <h1 className="text-2xl font-bold">{t('auth.passwordResetForm.resetPassword')}</h1>
+                <p className="text-muted-foreground text-balance">{t('auth.passwordResetForm.enterEmail')}</p>
+              </div>
+              <Field>
+                <FieldLabel htmlFor="email">{t('auth.passwordResetForm.email')}</FieldLabel>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder={t('auth.passwordResetForm.emailPlaceholder')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </Field>
+              {error ? <FieldDescription className="text-destructive">{error}</FieldDescription> : null}
+              <Field>
+                <Button type="submit" disabled={loading}>
+                  {loading ? t('auth.passwordResetForm.sending') : t('auth.passwordResetForm.sendResetLink')}
+                </Button>
+              </Field>
+              <FieldDescription className="text-center">
+                {t('auth.passwordResetForm.rememberPassword')}{' '}
+                <a href="/auth/login">{t('auth.passwordResetForm.login')}</a>
+              </FieldDescription>
+            </FieldGroup>
+          </form>
+          <div className="bg-muted relative hidden md:block">
+            <img
+              src="/placeholder.svg"
+              alt="Image"
+              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
