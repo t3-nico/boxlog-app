@@ -78,9 +78,9 @@ export function AppSidebar() {
   )
 
   const userData = {
-    name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User',
+    name: user?.user_metadata?.username || user?.email?.split('@')[0] || 'ユーザー',
     email: user?.email || '',
-    avatar: user?.user_metadata?.avatar_url || '/avatar.jpg',
+    avatar: user?.user_metadata?.avatar_url || null,
   }
 
   return (

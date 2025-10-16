@@ -11,7 +11,8 @@ import { Input } from '@/components/ui/input'
 import { useAuthContext } from '@/features/auth/contexts/AuthContext'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { createClient } from '@/lib/supabase/client'
-import { cn } from '@/lib/utils'
+import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage'
+import { trpc } from '@/lib/trpc/client'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
@@ -21,9 +22,8 @@ import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
 
 interface ProfileSettings {
-  displayName: string
+  username: string
   email: string
-  selectedIcon: string
   uploadedAvatar: string | null
 }
 
@@ -36,6 +36,7 @@ const AccountSettings = () => {
   const { t } = useI18n()
   const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -54,53 +55,25 @@ const AccountSettings = () => {
   const [isMFALoading, setIsMFALoading] = useState(false)
 
   const supabase = createClient()
-
-  // アイコンの選択肢
-  const availableIcons = [
-    '👤',
-    '😀',
-    '😎',
-    '🤓',
-    '🧑‍💻',
-    '👨‍💼',
-    '👩‍💼',
-    '🎨',
-    '🎯',
-    '🚀',
-    '💡',
-    '🔥',
-    '⭐',
-    '🎉',
-    '💪',
-    '🎸',
-    '🎮',
-    '📚',
-    '☕',
-    '🌟',
-    '🦄',
-    '🐱',
-    '🐶',
-    '🦊',
-    '🐼',
-    '🦁',
-    '🐯',
-    '🐸',
-    '🦋',
-    '🌈',
-  ]
+  const updateProfileMutation = trpc.profile.update.useMutation()
 
   // プロフィール設定の自動保存
   const profile = useAutoSaveSettings<ProfileSettings>({
     initialValues: {
-      displayName: user?.user_metadata?.full_name || '',
+      username: user?.user_metadata?.username || user?.email?.split('@')[0] || '',
       email: user?.email || '',
-      selectedIcon: user?.user_metadata?.profile_icon || '👤',
       uploadedAvatar: user?.user_metadata?.avatar_url || null,
     },
     onSave: async (values) => {
-      // プロフィール更新API呼び出しシミュレーション
-      await new Promise((resolve) => setTimeout(resolve, 800))
-      console.log('Saving profile:', values)
+      if (!user?.id) {
+        throw new Error('ユーザーIDが見つかりません')
+      }
+
+      // tRPC APIでプロフィール更新
+      await updateProfileMutation.mutateAsync({
+        username: values.username,
+        avatarUrl: values.uploadedAvatar,
+      })
     },
     successMessage: t('settings.account.profileUpdated'),
     debounceMs: 1000,
@@ -124,9 +97,8 @@ const AccountSettings = () => {
   useEffect(() => {
     if (user) {
       profile.updateValues({
-        displayName: user.user_metadata?.full_name || '',
+        username: user.user_metadata?.username || user.email?.split('@')[0] || '',
         email: user.email || '',
-        selectedIcon: user.user_metadata?.profile_icon || '👤',
         uploadedAvatar: user.user_metadata?.avatar_url || null,
       })
       setUploadedAvatar(user.user_metadata?.avatar_url || null)
@@ -264,6 +236,14 @@ const AccountSettings = () => {
 
       console.log('MFA enrollment verified successfully:', verifyData)
 
+      // ✅ 重要: verify成功後、セッションを更新（AAL2に昇格）
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+      if (sessionData?.session) {
+        console.log('セッション更新成功。AALレベル確認...')
+        const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+        console.log('現在のAALレベル:', aalData)
+      }
+
       setMfaSuccess('2段階認証が有効になりました！')
       setHasMFA(true)
       setShowMFASetup(false)
@@ -348,16 +328,61 @@ const AccountSettings = () => {
     checkMFAStatus()
   }, [checkMFAStatus])
 
+  // jsx-no-bind optimization: Avatar upload handler
+  const handleAvatarUpload = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file || !user?.id) return
+
+      setIsUploading(true)
+      try {
+        // Supabase Storageにアップロード
+        const publicUrl = await uploadAvatar(file, user.id)
+
+        // プロフィールを更新
+        setUploadedAvatar(publicUrl)
+        profile.updateValue('uploadedAvatar', publicUrl)
+        setAvatarFile(file)
+      } catch (error) {
+        console.error('Avatar upload error:', error)
+        const errorMessage = error instanceof Error ? error.message : 'アバター画像のアップロードに失敗しました'
+        alert(errorMessage)
+      } finally {
+        setIsUploading(false)
+      }
+    },
+    [profile, user?.id]
+  )
+
   // jsx-no-bind optimization: Avatar remove handler
-  const handleAvatarRemove = useCallback(() => {
-    setUploadedAvatar(null)
-    profile.updateValue('uploadedAvatar', null)
-  }, [profile])
+  const handleAvatarRemove = useCallback(async () => {
+    if (!user?.id) return
+
+    const confirmed = window.confirm('アバター画像を削除しますか？')
+    if (!confirmed) return
+
+    setIsUploading(true)
+    try {
+      // Supabase Storageから削除
+      await deleteAvatar(user.id)
+
+      // プロフィールを更新
+      setUploadedAvatar(null)
+      setAvatarFile(null)
+      profile.updateValue('uploadedAvatar', null)
+    } catch (error) {
+      console.error('Avatar delete error:', error)
+      const errorMessage = error instanceof Error ? error.message : 'アバター画像の削除に失敗しました'
+      alert(errorMessage)
+    } finally {
+      setIsUploading(false)
+    }
+  }, [profile, user?.id])
 
   // Profile form handlers
-  const handleDisplayNameChange = useCallback(
+  const handleUsernameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      profile.updateValue('displayName', e.target.value)
+      profile.updateValue('username', e.target.value)
     },
     [profile]
   )
@@ -365,14 +390,6 @@ const AccountSettings = () => {
   const handleEmailChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       profile.updateValue('email', e.target.value)
-    },
-    [profile]
-  )
-
-  // Dynamic icon select handler
-  const createIconSelectHandler = useCallback(
-    (icon: string) => {
-      return () => profile.updateValue('selectedIcon', icon)
     },
     [profile]
   )
@@ -407,17 +424,8 @@ const AccountSettings = () => {
         isSaving={profile.isSaving}
       >
         <div className="space-y-4">
-          <SettingField
-            label={t('settings.account.displayName')}
-            description={t('settings.account.displayNameDesc')}
-            required
-          >
-            <Input
-              value={profile.values.displayName}
-              onChange={handleDisplayNameChange}
-              placeholder={t('settings.account.displayNamePlaceholder')}
-              required
-            />
+          <SettingField label="ユーザー名" description="アプリ内で表示される名前です" required>
+            <Input value={profile.values.username} onChange={handleUsernameChange} placeholder="username" required />
           </SettingField>
 
           <SettingField label={t('settings.account.email')} description={t('settings.account.emailDesc')} required>
@@ -448,22 +456,27 @@ const AccountSettings = () => {
                   sizes="64px"
                 />
               ) : (
-                <div className="bg-muted border-border flex h-16 w-16 items-center justify-center rounded-full border-2 text-4xl">
-                  {profile.values.selectedIcon}
+                <div className="bg-muted border-border flex h-16 w-16 items-center justify-center rounded-full border-2">
+                  <span className="text-muted-foreground text-sm">画像なし</span>
                 </div>
               )}
-              <div className="flex-1">
-                <div className="text-muted-foreground text-sm">
-                  {uploadedAvatar ? t('settings.account.usingCustomImage') : t('settings.account.usingEmojiIcon')}
-                </div>
-              </div>
             </div>
 
             {/* Upload Button */}
             <div className="flex gap-2">
-              <Button type="button" variant="outline" disabled={isUploading}>
-                {isUploading ? t('settings.account.uploading') : t('settings.account.uploadImage')}
-              </Button>
+              <label htmlFor="avatar-upload">
+                <Button type="button" variant="outline" disabled={isUploading} asChild>
+                  <span>{isUploading ? t('settings.account.uploading') : t('settings.account.uploadImage')}</span>
+                </Button>
+              </label>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarUpload}
+                disabled={isUploading}
+              />
               {uploadedAvatar != null && (
                 <Button type="button" variant="ghost" onClick={handleAvatarRemove} className="text-destructive">
                   {t('settings.account.remove')}
@@ -471,34 +484,6 @@ const AccountSettings = () => {
               )}
             </div>
           </SettingField>
-
-          {/* アイコン選択セクション */}
-          {!uploadedAvatar && (
-            <SettingField label={t('settings.account.profileIcon')} description={t('settings.account.profileIconDesc')}>
-              <div className="mb-4 flex items-center gap-4">
-                <div className="text-4xl">{profile.values.selectedIcon}</div>
-                <div className="text-muted-foreground text-sm">{t('settings.account.currentIcon')}</div>
-              </div>
-              <div className="border-border bg-muted grid grid-cols-10 gap-2 rounded-lg border p-4">
-                {availableIcons.map((icon) => (
-                  <button
-                    key={icon}
-                    type="button"
-                    onClick={createIconSelectHandler(icon)}
-                    className={cn(
-                      'flex h-10 w-10 items-center justify-center rounded-lg border text-2xl transition-all duration-200 hover:scale-110',
-                      profile.values.selectedIcon === icon
-                        ? 'bg-blue-500 text-white ring-2 ring-blue-300 dark:ring-blue-700'
-                        : 'bg-white hover:bg-neutral-100 dark:bg-neutral-900 dark:hover:bg-neutral-800'
-                    )}
-                    style={{ borderColor: 'var(--border)' }}
-                  >
-                    {icon}
-                  </button>
-                ))}
-              </div>
-            </SettingField>
-          )}
         </div>
       </SettingsCard>
 

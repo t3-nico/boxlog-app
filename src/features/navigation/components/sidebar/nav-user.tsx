@@ -22,7 +22,7 @@ export function NavUser({
   user: {
     name: string
     email: string
-    avatar?: string
+    avatar?: string | null
   }
 }) {
   const router = useRouter()
@@ -49,7 +49,7 @@ export function NavUser({
           className="hover:bg-accent data-[state=open]:bg-accent flex flex-1 items-center gap-2 rounded-md px-2 py-1 text-left text-sm outline-hidden"
         >
           <Avatar className="h-6 w-6 rounded-lg">
-            <AvatarImage src={user.avatar} alt={user.name} />
+            {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
             <AvatarFallback className="rounded-lg">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
           <span className="truncate font-medium">{user.name}</span>
@@ -65,7 +65,7 @@ export function NavUser({
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-2 py-2 text-left text-sm">
             <Avatar className="h-6 w-6 rounded-lg">
-              <AvatarImage src={user.avatar} alt={user.name} />
+              {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
               <AvatarFallback className="rounded-lg">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
