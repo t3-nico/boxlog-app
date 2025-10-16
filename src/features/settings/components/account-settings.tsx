@@ -122,7 +122,8 @@ const AccountSettings = () => {
       })
       setUploadedAvatar(user.user_metadata?.avatar_url || null)
     }
-  }, [user, profile])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, user?.email])
 
   // jsx-no-bind optimization: Password save handler
   const handlePasswordSave = useCallback(
