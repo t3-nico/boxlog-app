@@ -215,6 +215,18 @@ html.dark {
     line-height: var(--line-height-normal);
   }
 
+  .text-heading-h5 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-normal);
+  }
+
+  .text-heading-h6 {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-normal);
+  }
+
   /* タイポグラフィ - 本文 */
   .text-body-base {
     font-size: var(--font-size-base);
