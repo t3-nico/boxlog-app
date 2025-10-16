@@ -119,9 +119,11 @@ export function CookieSettingsForm() {
         </CardHeader>
         <CardContent className="text-muted-foreground text-sm">
           <ul className="list-inside list-disc space-y-1">
-            <li>{t('legal.cookies.categories.analytics.cookies.vercel')}</li>
             <li>{t('legal.cookies.categories.analytics.cookies.sentry')}</li>
           </ul>
+          <p className="text-muted-foreground mt-3 text-xs">
+            ℹ️ {t('legal.cookies.categories.analytics.cookies.vercelNote')}
+          </p>
         </CardContent>
       </Card>
 

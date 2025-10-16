@@ -3,10 +3,17 @@ import type { Locale } from '@/types/i18n'
 import type { Metadata } from 'next'
 import { CookieSettingsForm } from './cookie-settings-form'
 
-export async function generateMetadata(): Promise<Metadata> {
+/**
+ * メタデータ生成（SEO対策・i18n対応）
+ */
+export async function generateMetadata({ params }: { params: Promise<{ locale?: Locale }> }): Promise<Metadata> {
+  const { locale = 'ja' } = await params
+  const dictionary = await getDictionary(locale)
+  const t = createTranslation(dictionary, locale)
+
   return {
-    title: 'Cookie Settings - BoxLog',
-    description: 'Manage your cookie preferences for BoxLog',
+    title: `${t('legal.cookies.page.title')} - BoxLog`,
+    description: t('legal.cookies.page.description'),
   }
 }
 

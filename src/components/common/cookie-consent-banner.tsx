@@ -28,7 +28,7 @@ import Link from 'next/link'
  * @see /src/app/legal/cookies - Cookie設定ページ
  */
 export function CookieConsentBanner() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const [showBanner, setShowBanner] = useState(false)
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export function CookieConsentBanner() {
             </h2>
             <p id="cookie-consent-description" className="text-muted-foreground text-sm">
               {t('legal.cookies.banner.description')}{' '}
-              <Link href="/legal/cookies" className="text-primary hover:text-primary/80 underline">
+              <Link href={`/${locale}/legal/cookies`} className="text-primary hover:text-primary/80 underline">
                 {t('legal.cookies.banner.learnMore')}
               </Link>
             </p>
@@ -84,7 +84,7 @@ export function CookieConsentBanner() {
               {t('legal.cookies.banner.rejectAll')}
             </Button>
             <Button asChild variant="ghost" size="sm" className="w-full sm:w-auto">
-              <Link href="/legal/cookies">{t('legal.cookies.banner.customize')}</Link>
+              <Link href={`/${locale}/legal/cookies`}>{t('legal.cookies.banner.customize')}</Link>
             </Button>
           </div>
         </div>

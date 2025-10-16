@@ -1259,8 +1259,8 @@
           "title": "分析Cookie",
           "description": "サイトの利用状況を分析し、サービス改善に役立てるためのCookieです。",
           "cookies": {
-            "vercel": "Vercel Analytics（ページビュー、パフォーマンス）",
-            "sentry": "Sentry Performance（エラー監視、パフォーマンス）"
+            "sentry": "Sentry（エラー追跡・パフォーマンス監視・IPアドレス送信）",
+            "vercelNote": "注: Vercel AnalyticsはCookieを使用せず、同意不要です"
           },
           "ariaLabel": "分析Cookie"
         },

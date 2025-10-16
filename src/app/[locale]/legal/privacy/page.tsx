@@ -3,12 +3,16 @@ import type { Locale } from '@/types/i18n'
 import type { Metadata } from 'next'
 
 /**
- * メタデータ生成（SEO対策）
+ * メタデータ生成（SEO対策・i18n対応）
  */
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale?: Locale }> }): Promise<Metadata> {
+  const { locale = 'ja' } = await params
+  const dictionary = await getDictionary(locale)
+  const t = createTranslation(dictionary, locale)
+
   return {
-    title: 'Privacy Policy - BoxLog',
-    description: 'BoxLog Privacy Policy - How we collect, use, and protect your personal information.',
+    title: `${t('legal.privacy.title')} - BoxLog`,
+    description: t('legal.privacy.description'),
   }
 }
 
