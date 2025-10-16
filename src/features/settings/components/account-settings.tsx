@@ -17,6 +17,7 @@ import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettin
 
 import { AccountDeletionDialog } from './account-deletion-dialog'
 import { DataExport } from './data-export'
+import { EmailChangeDialog } from './email-change-dialog'
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
 
@@ -41,6 +42,9 @@ const AccountSettings = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordError, setPasswordError] = useState<string | null>(null)
   const [isPasswordLoading, setIsPasswordLoading] = useState(false)
+
+  // Email change dialog state
+  const [showEmailDialog, setShowEmailDialog] = useState(false)
 
   // MFA関連のstate
   const [hasMFA, setHasMFA] = useState(false)
@@ -445,20 +449,6 @@ const AccountSettings = () => {
         isSaving={profile.isSaving}
       >
         <div className="space-y-4">
-          <SettingField label="ユーザー名" description="アプリ内で表示される名前です" required>
-            <Input value={profile.values.username} onChange={handleUsernameChange} placeholder="username" required />
-          </SettingField>
-
-          <SettingField label={t('settings.account.email')} description={t('settings.account.emailDesc')} required>
-            <Input
-              type="email"
-              value={profile.values.email}
-              onChange={handleEmailChange}
-              placeholder={t('settings.account.emailPlaceholder')}
-              required
-            />
-          </SettingField>
-
           {/* Profile Picture Section */}
           <SettingField
             label={t('settings.account.profilePicture')}
@@ -528,8 +518,28 @@ const AccountSettings = () => {
               </div>
             </div>
           </SettingField>
+
+          <SettingField label="ユーザー名" description="アプリ内で表示される名前です" required>
+            <Input value={profile.values.username} onChange={handleUsernameChange} placeholder="username" required />
+          </SettingField>
         </div>
       </SettingsCard>
+
+      {/* Email Section */}
+      <SettingsCard title={t('settings.account.email')} description="ログインとアカウント回復に使用されます">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <p className="text-sm font-medium">{profile.values.email}</p>
+            <p className="text-muted-foreground text-xs">確認済み</p>
+          </div>
+          <Button type="button" variant="outline" size="sm" onClick={() => setShowEmailDialog(true)}>
+            変更
+          </Button>
+        </div>
+      </SettingsCard>
+
+      {/* Email Change Dialog */}
+      <EmailChangeDialog open={showEmailDialog} onOpenChange={setShowEmailDialog} currentEmail={profile.values.email} />
 
       {/* Password Section */}
       <SettingsCard title={t('settings.account.password')} description={t('settings.account.passwordDesc')}>
