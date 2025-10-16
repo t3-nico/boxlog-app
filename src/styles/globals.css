@@ -186,6 +186,19 @@ html.dark {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) var(--color-background);
 }
+
+/* ============================================
+ * サイドバー専用スクロールバースタイル
+ * ============================================ */
+/* Webkit系（Chrome, Safari, Edge） */
+aside ::-webkit-scrollbar-track {
+  background: var(--color-sidebar);
+}
+
+/* Firefox */
+aside * {
+  scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) var(--color-sidebar);
+}
 /* ============================================
  * カスタムユーティリティクラス
  * ============================================ */
