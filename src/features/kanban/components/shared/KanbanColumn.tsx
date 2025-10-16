@@ -4,8 +4,20 @@ import { cn } from '@/lib/utils'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Plus } from 'lucide-react'
-import type { KanbanCard as KanbanCardType, KanbanColumn as KanbanColumnType } from '../../types'
+import type { KanbanCard as KanbanCardType, KanbanColumnColor, KanbanColumn as KanbanColumnType } from '../../types'
 import { KanbanCard } from './KanbanCard'
+
+// ClickUp風カラー定義
+const columnColorClasses: Record<KanbanColumnColor, string> = {
+  blue: 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800',
+  purple: 'bg-purple-50/50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800',
+  pink: 'bg-pink-50/50 dark:bg-pink-950/20 border-pink-200 dark:border-pink-800',
+  green: 'bg-green-50/50 dark:bg-green-950/20 border-green-200 dark:border-green-800',
+  yellow: 'bg-yellow-50/50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800',
+  orange: 'bg-orange-50/50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800',
+  red: 'bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-800',
+  gray: 'bg-muted/30 border-border',
+}
 
 interface KanbanColumnProps {
   column: KanbanColumnType
@@ -34,11 +46,15 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
   const isOverWipLimit = column.wipLimit !== undefined && column.cards.length >= column.wipLimit
   const wipWarning = column.wipLimit !== undefined && column.cards.length === column.wipLimit - 1
 
+  // カラム背景色（デフォルトはgray）
+  const colorClass = columnColorClasses[column.color || 'gray']
+
   return (
     <div
       ref={setNodeRef}
       className={cn(
-        'bg-muted/30 flex h-full w-80 shrink-0 flex-col gap-3 rounded-lg p-3 transition-colors',
+        'flex w-80 shrink-0 flex-col gap-3 rounded-lg border p-3 transition-colors',
+        colorClass,
         isOver && 'bg-accent/20 ring-primary/30 ring-2',
         isOverWipLimit && 'ring-destructive/50 ring-2' // WIP制限超過時
       )}

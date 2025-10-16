@@ -7,9 +7,5 @@ export const metadata: Metadata = {
 }
 
 export default function BoardPage() {
-  return (
-    <div className="container mx-auto h-full py-6">
-      <KanbanBoard />
-    </div>
-  )
+  return <KanbanBoard />
 }

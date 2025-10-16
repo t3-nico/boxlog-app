@@ -80,6 +80,7 @@ function createDefaultColumns(): KanbanColumn[] {
       order: 0,
       wipLimit: undefined, // To Doは制限なし
       definitionOfDone: ['タスクの詳細が明確', '担当者が決定', '優先度が設定済み'],
+      color: 'gray',
     },
     {
       id: generateId(),
@@ -89,6 +90,7 @@ function createDefaultColumns(): KanbanColumn[] {
       order: 1,
       wipLimit: 3, // 同時進行は3つまで（ベストプラクティス）
       definitionOfDone: ['作業完了', 'テスト実施', 'レビュー完了'],
+      color: 'blue',
     },
     {
       id: generateId(),
@@ -98,14 +100,29 @@ function createDefaultColumns(): KanbanColumn[] {
       order: 2,
       wipLimit: undefined, // Doneは制限なし
       definitionOfDone: ['全ての要件を満たす', 'ステークホルダーの承認'],
+      color: 'green',
     },
   ]
 }
 
-// 初期状態
+// デフォルトボードを作成
+function createDefaultBoard(): KanbanBoard {
+  const now = new Date()
+  return {
+    id: generateId(),
+    name: 'マイボード',
+    description: 'タスクを視覚的に管理',
+    columns: createDefaultColumns(),
+    createdAt: now,
+    updatedAt: now,
+  }
+}
+
+// 初期状態（デフォルトボード作成済み）
+const defaultBoard = createDefaultBoard()
 const initialState: KanbanStoreState = {
-  boards: [],
-  activeBoard: null,
+  boards: [defaultBoard],
+  activeBoard: defaultBoard,
   selectedCard: null,
   filter: {},
   sort: {

@@ -45,6 +45,12 @@ export type KanbanCardInput = Omit<KanbanCard, 'id' | 'createdAt' | 'updatedAt'>
 export type KanbanCardUpdate = Partial<Omit<KanbanCard, 'id' | 'createdAt' | 'updatedAt'>>
 
 /**
+ * カラムの背景色（ClickUp風）
+ */
+export const kanbanColumnColorSchema = z.enum(['blue', 'purple', 'pink', 'green', 'yellow', 'orange', 'red', 'gray'])
+export type KanbanColumnColor = z.infer<typeof kanbanColumnColorSchema>
+
+/**
  * Kanbanカラム
  */
 export interface KanbanColumn {
@@ -55,6 +61,7 @@ export interface KanbanColumn {
   order: number
   wipLimit?: number // WIP制限（Work In Progress Limit）
   definitionOfDone?: string[] // 完了定義（Definition of Done）
+  color?: KanbanColumnColor // カラム背景色
 }
 
 /**
