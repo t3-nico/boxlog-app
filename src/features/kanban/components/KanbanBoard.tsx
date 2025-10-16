@@ -81,26 +81,24 @@ export function KanbanBoard() {
 
   return (
     <>
-      <ScrollArea className="bg-background h-full w-full">
-        <div className="p-6">
-          {/* ボードヘッダー */}
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold">{activeBoard.name}</h1>
-              {activeBoard.description && (
-                <p className="text-muted-foreground mt-1 text-sm">{activeBoard.description}</p>
-              )}
-            </div>
+      <div className="bg-background flex h-full w-full flex-col p-6">
+        {/* ボードヘッダー（固定） */}
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">{activeBoard.name}</h1>
+            {activeBoard.description && <p className="text-muted-foreground mt-1 text-sm">{activeBoard.description}</p>}
           </div>
+        </div>
 
-          {/* Kanbanボード（横スクロール） */}
+        {/* Kanbanボード（スクロール領域） */}
+        <ScrollArea className="flex-1">
           <DndContext
             sensors={sensors}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             onDragCancel={handleDragCancel}
           >
-            <div className="flex gap-6">
+            <div className="flex gap-6 pb-4">
               {activeBoard.columns
                 .sort((a, b) => a.order - b.order)
                 .map((column) => (
@@ -123,9 +121,9 @@ export function KanbanBoard() {
               )}
             </DragOverlay>
           </DndContext>
-        </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
 
       {/* カード編集ダイアログ */}
       <KanbanCardDialog

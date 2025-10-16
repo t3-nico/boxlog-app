@@ -12,7 +12,6 @@ import { useAuthContext } from '@/features/auth/contexts/AuthContext'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { createClient } from '@/lib/supabase/client'
 import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage'
-import { trpc } from '@/lib/trpc/client'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
@@ -55,7 +54,6 @@ const AccountSettings = () => {
   const [isMFALoading, setIsMFALoading] = useState(false)
 
   const supabase = createClient()
-  const updateProfileMutation = trpc.profile.update.useMutation()
 
   // プロフィール設定の自動保存
   const profile = useAutoSaveSettings<ProfileSettings>({
@@ -69,11 +67,32 @@ const AccountSettings = () => {
         throw new Error('ユーザーIDが見つかりません')
       }
 
-      // tRPC APIでプロフィール更新
-      await updateProfileMutation.mutateAsync({
-        username: values.username,
-        avatarUrl: values.uploadedAvatar,
+      // Supabase直接でプロフィール更新
+      // @ts-expect-error - Supabase型定義の問題
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          username: values.username,
+          avatar_url: values.uploadedAvatar,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id)
+
+      if (profileError) {
+        throw new Error(`プロフィールの更新に失敗しました: ${profileError.message}`)
+      }
+
+      // auth.users の user_metadata も更新
+      const { error: authError } = await supabase.auth.updateUser({
+        data: {
+          username: values.username,
+          avatar_url: values.uploadedAvatar,
+        },
       })
+
+      if (authError) {
+        console.error('Auth metadata update error:', authError)
+      }
     },
     successMessage: t('settings.account.profileUpdated'),
     debounceMs: 1000,

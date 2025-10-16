@@ -11,6 +11,9 @@ import { PreloadResources } from '../Preload'
 
 import { ProvidersProps } from './types'
 
+/**
+ * アプリケーション全体のProviderツリー
+ */
 export const Providers = ({ children }: ProvidersProps) => {
   const [queryClient] = useState(
     () =>

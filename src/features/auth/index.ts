@@ -7,7 +7,7 @@ export { AuthPageLayout } from './components/AuthPageLayout'
 export { LoginForm } from './components/LoginForm'
 export { PasswordResetForm } from './components/PasswordResetForm'
 export { default as ProtectedRoute } from './components/ProtectedRoute'
-// export { SignupForm } from './components/SignupForm' // shadcn/ui公式signup-04を使用
+export { SignupForm } from './components/SignupForm'
 
 // Context and hooks
 export { AuthProvider, useAuthContext } from './contexts/AuthContext'

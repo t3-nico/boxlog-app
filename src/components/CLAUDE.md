@@ -42,15 +42,40 @@ src/components/
 │   ├── LoadingSpinner.tsx   # ローディング
 │   └── ...
 │
+├── layout/                  # レイアウトコンポーネント（新規追加 2025-10-16）
+│   ├── base-layout.tsx              # アプリ全体の基盤レイアウト
+│   ├── base-layout-content.tsx      # レイアウトオーケストレーター
+│   ├── desktop-layout.tsx           # デスクトップレイアウト
+│   ├── mobile-layout.tsx            # モバイルレイアウト
+│   ├── main-content-wrapper.tsx     # メインコンテンツ + Inspector
+│   ├── floating-action-button.tsx   # FAB
+│   └── CLAUDE.md                    # レイアウトドキュメント
+│
 ├── i18n/                    # i18n関連UI（将来的にfeatures/i18nへ移行予定）
 │
-├── base-layout.tsx          # アプリ全体の基盤レイアウト
 └── error-boundary.tsx       # エラーバウンダリ
 ```
 
-## 🚨 重要な変更（2025-10-07）
+## 🚨 重要な変更
 
-### ✅ features/への移行完了
+### 2025-10-16: layout/ディレクトリ新設
+
+レイアウトコンポーネントを`layout/`ディレクトリに整理：
+
+- ✅ `base-layout.tsx` → `layout/base-layout.tsx`
+- ✅ `base-layout-content.tsx` → `layout/base-layout-content.tsx`（162行 → 68行にリファクタリング）
+- ✅ 新規追加：`desktop-layout.tsx`, `mobile-layout.tsx`, `floating-action-button.tsx`
+- ✅ 既存：`main-content-wrapper.tsx`（overflow管理）
+
+**変更の目的**:
+
+- God Componentの解消（base-layout-content.tsxの巨大化）
+- コロケーション原則の遵守（関連ファイルを同じディレクトリに）
+- 単一責任の原則（SRP）の適用
+
+**詳細**: [`layout/CLAUDE.md`](layout/CLAUDE.md)
+
+### 2025-10-07: features/への移行完了
 
 以下のコンポーネントは`features/`に移行済み：
 
@@ -60,21 +85,6 @@ src/components/
 - ❌ ~~`layout/navigation/`~~ → ✅ `features/navigation/components/sidebar/shared.tsx`
 
 理由：これらはビジネスロジック（状態管理）を含むため、`features/`が適切。
-
-### ✅ base-layout.tsx
-
-`DashboardLayout` → `BaseLayout`にリネーム・移動完了
-
-```tsx
-// src/components/base-layout.tsx
-export const BaseLayout = ({ children }: BaseLayoutProps) => {
-  // アプリ全体の基盤レイアウト
-  // - ThemeProvider
-  // - GlobalSearchProvider
-  // - NotificationModalProvider
-  // - AppBar, Sidebar, Inspector統合
-}
-```
 
 ## 🎯 コンポーネント選択優先度（絶対遵守）
 
@@ -366,6 +376,7 @@ describe('TaskCard', () => {
 
 ## 🔗 関連ドキュメント
 
+- **レイアウト**: [`layout/CLAUDE.md`](layout/CLAUDE.md) - レイアウトコンポーネント（新規）
 - **機能モジュール**: [`../features/CLAUDE.md`](../features/CLAUDE.md) - ビジネスロジック含むコンポーネント
 - **ナビゲーション**: [`../features/navigation/CLAUDE.md`](../features/navigation/CLAUDE.md) - AppBar, Sidebar等
 - **Inspector**: [`../features/inspector/CLAUDE.md`](../features/inspector/CLAUDE.md) - Inspector機能
@@ -375,4 +386,4 @@ describe('TaskCard', () => {
 
 ---
 
-**📖 最終更新**: 2025-10-07 | **バージョン**: v3.0 - layout/削除・base-layout.tsx追加・features/移行反映
+**📖 最終更新**: 2025-10-16 | **バージョン**: v4.0 - layout/ディレクトリ新設・base-layout-content.tsxリファクタリング

@@ -1,7 +1,7 @@
 import React from 'react'
 
+import { Providers } from '../providers'
 import { BaseLayoutContent } from './base-layout-content'
-import { Providers } from './providers'
 
 interface BaseLayoutProps {
   children: React.ReactNode
