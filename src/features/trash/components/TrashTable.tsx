@@ -12,7 +12,7 @@ interface TrashTableProps {
   className?: string
 }
 
-export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
+export function TrashTable({ items, className }: TrashTableProps) {
   const { t } = useI18n()
   const {
     selectedIds,
@@ -193,13 +193,7 @@ interface TrashItemRowProps {
   onPermanentDelete: () => void
 }
 
-const TrashItemRow: React.FC<TrashItemRowProps> = ({
-  item,
-  isSelected,
-  onToggleSelect,
-  onRestore,
-  onPermanentDelete,
-}) => {
+function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanentDelete }: TrashItemRowProps) {
   const handleToggleSelect = useCallback(() => onToggleSelect(item.id), [onToggleSelect, item.id])
   const handleRestore = useCallback(() => onRestore(item.id), [onRestore, item.id])
   const handlePermanentDelete = useCallback(() => onPermanentDelete(item.id), [onPermanentDelete, item.id])

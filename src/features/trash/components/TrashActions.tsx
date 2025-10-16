@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { useTrashActions } from '../hooks/useTrashActions'
 
 import { TrashActionButtons } from './TrashActionButtons'
@@ -10,7 +8,7 @@ interface TrashActionsProps {
   className?: string
 }
 
-export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
+export function TrashActions({ className }: TrashActionsProps) {
   // カスタムフックで状態管理とロジックを抽出
   const {
     showConfirmDialog,

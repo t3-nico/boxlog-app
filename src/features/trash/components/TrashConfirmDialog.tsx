@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import { useI18n } from '@/features/i18n/lib/hooks'
 
 import type { ConfirmDialog } from '../hooks/useTrashActions'
@@ -11,7 +9,7 @@ interface TrashConfirmDialogProps {
   onClose: () => void
 }
 
-export const TrashConfirmDialog: React.FC<TrashConfirmDialogProps> = ({ dialog, onClose }) => {
+export function TrashConfirmDialog({ dialog, onClose }: TrashConfirmDialogProps) {
   const { t } = useI18n()
   if (!dialog) return null
 

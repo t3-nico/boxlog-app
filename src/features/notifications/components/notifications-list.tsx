@@ -49,7 +49,7 @@ interface NotificationsListProps {
   notifications?: SystemNotification[]
 }
 
-export const NotificationsList: React.FC<NotificationsListProps> = ({ notifications }) => {
+export function NotificationsList({ notifications }: NotificationsListProps) {
   const { t } = useI18n()
   const getTypeLabel = useNotificationTypeLabel()
   const defaultNotifications = getDefaultNotifications(t)

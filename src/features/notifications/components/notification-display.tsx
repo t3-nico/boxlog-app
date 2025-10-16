@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Bell, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -18,7 +16,7 @@ interface NotificationDisplayProps {
   onClearAll: () => void
 }
 
-export const NotificationDisplay: React.FC<NotificationDisplayProps> = ({ notifications, onDismiss, onClearAll }) => {
+export function NotificationDisplay({ notifications, onDismiss, onClearAll }: NotificationDisplayProps) {
   if (notifications.length === 0) return null
 
   return (

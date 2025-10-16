@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
 import { useTrashStore } from '../stores/useTrashStore'
 
@@ -9,7 +9,7 @@ interface TrashViewProps {
   className?: string
 }
 
-export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
+export function TrashView({ className }: TrashViewProps) {
   const { loading, error, filters, setFilters, fetchItems, getFilteredItems, getStats, clearError } = useTrashStore()
 
   const filteredItems = getFilteredItems()

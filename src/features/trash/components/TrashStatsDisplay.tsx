@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import type { TrashItem } from '../types/trash'
 
 interface TrashStatsDisplayProps {
@@ -11,12 +9,7 @@ interface TrashStatsDisplayProps {
   onDeselectAll: () => void
 }
 
-export const TrashStatsDisplay: React.FC<TrashStatsDisplayProps> = ({
-  stats,
-  selectedCount,
-  expiredItems,
-  onDeselectAll,
-}) => {
+export function TrashStatsDisplay({ stats, selectedCount, expiredItems, onDeselectAll }: TrashStatsDisplayProps) {
   return (
     <div className="mb-4 flex items-center justify-between">
       <div className="flex items-center space-x-4 text-sm text-neutral-600 dark:text-neutral-400">

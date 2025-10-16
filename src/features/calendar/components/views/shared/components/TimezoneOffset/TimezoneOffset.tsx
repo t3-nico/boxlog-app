@@ -1,12 +1,10 @@
 'use client'
 
-import React from 'react'
-
 interface TimezoneOffsetProps {
   timezone: string
 }
 
-export const TimezoneOffset: React.FC<TimezoneOffsetProps> = ({ timezone }) => {
+export function TimezoneOffset({ timezone }: TimezoneOffsetProps) {
   const getUTCOffset = (tz: string): string => {
     try {
       const now = new Date()

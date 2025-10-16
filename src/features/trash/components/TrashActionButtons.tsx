@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import type { TrashItem } from '../types/trash'
 
 interface TrashActionButtonsProps {
@@ -15,7 +13,7 @@ interface TrashActionButtonsProps {
   onClearExpired: () => void
 }
 
-export const TrashActionButtons: React.FC<TrashActionButtonsProps> = ({
+export function TrashActionButtons({
   selectedCount,
   stats,
   expiredItems,
@@ -24,7 +22,7 @@ export const TrashActionButtons: React.FC<TrashActionButtonsProps> = ({
   onPermanentDelete,
   onEmptyTrash,
   onClearExpired,
-}) => {
+}: TrashActionButtonsProps) {
   return (
     <div className="flex flex-wrap gap-2">
       {/* 復元ボタン */}
