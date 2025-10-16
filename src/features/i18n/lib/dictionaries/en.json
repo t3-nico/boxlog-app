@@ -802,6 +802,21 @@
       "and": "and",
       "privacyPolicy": "Privacy Policy"
     },
+    "mfaVerify": {
+      "title": "Two-Factor Authentication",
+      "description": "Enter the 6-digit code from your authenticator app to continue",
+      "verificationCode": "Verification Code",
+      "verifyButton": "Verify",
+      "verifying": "Verifying...",
+      "lostAccess": "Lost access to your device?",
+      "useRecoveryCode": "Use recovery code",
+      "backToLogin": "Back to Login",
+      "termsAndPrivacy": "By continuing, you agree to our",
+      "termsOfService": "Terms of Service",
+      "and": "and",
+      "privacyPolicy": "Privacy Policy",
+      "agree": "."
+    },
     "localMode": {
       "description": "Local Mode Only",
       "loading": "Starting..."

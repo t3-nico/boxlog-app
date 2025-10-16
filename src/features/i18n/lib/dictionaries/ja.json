@@ -797,6 +797,21 @@
       "and": "と",
       "privacyPolicy": "プライバシーポリシー"
     },
+    "mfaVerify": {
+      "title": "2段階認証",
+      "description": "認証アプリの6桁のコードを入力してください",
+      "verificationCode": "認証コード",
+      "verifyButton": "認証",
+      "verifying": "認証中...",
+      "lostAccess": "デバイスにアクセスできませんか？",
+      "useRecoveryCode": "リカバリーコードを使用",
+      "backToLogin": "ログインに戻る",
+      "termsAndPrivacy": "続けることで、",
+      "termsOfService": "利用規約",
+      "and": "と",
+      "privacyPolicy": "プライバシーポリシー",
+      "agree": "に同意したものとみなされます。"
+    },
     "localMode": {
       "description": "ローカル専用モード",
       "loading": "起動中..."

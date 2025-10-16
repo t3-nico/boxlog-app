@@ -9,13 +9,15 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { createClient } from '@/lib/supabase/client'
 
 export default function MFAVerifyPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const params = useParams()
-  const locale = params.locale as string
+  const locale = (params.locale as string) || 'ja'
+  const { t } = useI18n(locale as 'en' | 'ja')
   const supabase = createClient()
 
   const [verificationCode, setVerificationCode] = useState('')
@@ -143,10 +145,8 @@ export default function MFAVerifyPage() {
                         <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                       </svg>
                     </div>
-                    <h1 className="text-2xl font-bold">Two-Factor Authentication</h1>
-                    <p className="text-muted-foreground text-balance">
-                      Enter the 6-digit code from your authenticator app to continue
-                    </p>
+                    <h1 className="text-2xl font-bold">{t('auth.mfaVerify.title')}</h1>
+                    <p className="text-muted-foreground text-balance">{t('auth.mfaVerify.description')}</p>
                   </div>
 
                   {error && (
@@ -156,7 +156,7 @@ export default function MFAVerifyPage() {
                   )}
 
                   <div className="flex flex-col items-center gap-3">
-                    <FieldLabel className="text-center">Verification Code</FieldLabel>
+                    <FieldLabel className="text-center">{t('auth.mfaVerify.verificationCode')}</FieldLabel>
                     <InputOTP
                       maxLength={6}
                       value={verificationCode}
@@ -180,20 +180,20 @@ export default function MFAVerifyPage() {
                       disabled={isVerifying || verificationCode.length !== 6}
                       className="w-full"
                     >
-                      {isVerifying ? 'Verifying...' : 'Verify'}
+                      {isVerifying ? t('auth.mfaVerify.verifying') : t('auth.mfaVerify.verifyButton')}
                     </Button>
                   </Field>
 
                   <FieldDescription className="text-center">
-                    Lost access to your device?{' '}
+                    {t('auth.mfaVerify.lostAccess')}{' '}
                     <a href="#" className="hover:text-primary hover:underline">
-                      Use recovery code
+                      {t('auth.mfaVerify.useRecoveryCode')}
                     </a>
                   </FieldDescription>
 
                   <FieldDescription className="text-center">
                     <a href={`/${locale}/auth/login`} className="hover:text-primary hover:underline">
-                      Back to Login
+                      {t('auth.mfaVerify.backToLogin')}
                     </a>
                   </FieldDescription>
                 </FieldGroup>
@@ -209,7 +209,9 @@ export default function MFAVerifyPage() {
             </CardContent>
           </Card>
           <FieldDescription className="px-6 text-center">
-            By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+            {t('auth.mfaVerify.termsAndPrivacy')} <a href="#">{t('auth.mfaVerify.termsOfService')}</a>{' '}
+            {t('auth.mfaVerify.and')} <a href="#">{t('auth.mfaVerify.privacyPolicy')}</a>
+            {t('auth.mfaVerify.agree')}
           </FieldDescription>
         </div>
       </div>
