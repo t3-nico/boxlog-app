@@ -812,6 +812,20 @@
       "privacyPolicy": "プライバシーポリシー",
       "agree": "に同意したものとみなされます。"
     },
+    "resetPasswordForm": {
+      "title": "新しいパスワードを設定",
+      "description": "アカウントの新しいパスワードを入力してください",
+      "newPassword": "新しいパスワード",
+      "confirmPassword": "パスワード確認",
+      "updateButton": "パスワードを更新",
+      "updating": "更新中...",
+      "backToLogin": "ログインに戻る",
+      "passwordMismatch": "パスワードが一致しません",
+      "passwordTooShort": "パスワードは8文字以上である必要があります",
+      "updateError": "パスワードの更新中にエラーが発生しました",
+      "successTitle": "パスワードを更新しました",
+      "successMessage": "パスワードが正常に更新されました。まもなくログインページに移動します。"
+    },
     "localMode": {
       "description": "ローカル専用モード",
       "loading": "起動中..."

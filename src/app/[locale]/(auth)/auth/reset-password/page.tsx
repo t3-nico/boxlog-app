@@ -2,20 +2,30 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { Eye, EyeOff } from 'lucide-react'
+import Image from 'next/image'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 
-import { Logo } from '@/app/logo'
-import { Field, Heading, Label } from '@/components/app'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthContext } from '@/features/auth'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
-const ResetPassword = () => {
+export default function ResetPasswordPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const params = useParams()
+  const locale = (params?.locale as string) || 'ja'
+  const { t } = useI18n(locale as 'en' | 'ja')
   const { updatePassword } = useAuthContext()
+
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -27,17 +37,9 @@ const ResetPassword = () => {
   useEffect(() => {
     // Redirect to auth page if tokens are missing
     if (!accessToken || !refreshToken) {
-      router.push('/auth')
+      router.push(`/${locale}/auth`)
     }
-  }, [accessToken, refreshToken, router])
-
-  const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value)
-  }, [])
-
-  const handleConfirmPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(e.target.value)
-  }, [])
+  }, [accessToken, refreshToken, router, locale])
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -47,13 +49,13 @@ const ResetPassword = () => {
 
       // 時間定数比較でタイミング攻撃を防ぐ
       if (password.length !== confirmPassword.length || password !== confirmPassword) {
-        setError('Passwords do not match')
+        setError(t('auth.resetPasswordForm.passwordMismatch'))
         setLoading(false)
         return
       }
 
-      if (password.length < 6) {
-        setError('Password must be at least 6 characters long')
+      if (password.length < 8) {
+        setError(t('auth.resetPasswordForm.passwordTooShort'))
         setLoading(false)
         return
       }
@@ -65,67 +67,178 @@ const ResetPassword = () => {
           setError(error.message)
         } else {
           setSuccess(true)
-          // Redirect to main page after 3 seconds
+          // Redirect to login page after 3 seconds
           setTimeout(() => {
-            router.push('/calendar')
+            router.push(`/${locale}/auth/login`)
           }, 3000)
         }
       } catch (err) {
-        setError('An error occurred while updating the password')
+        setError(t('auth.resetPasswordForm.updateError'))
       } finally {
         setLoading(false)
       }
     },
-    [password, confirmPassword, updatePassword, router]
+    [password, confirmPassword, updatePassword, router, locale, t]
   )
-
-  const handleBackToLogin = useCallback(() => {
-    router.push('/auth')
-  }, [router])
 
   if (success) {
     return (
-      <div className="flex flex-col gap-4 text-center">
-        <Heading level={2} className="text-green-600 dark:text-green-500">
-          Password Updated
-        </Heading>
-        <p className="text-base text-neutral-800 sm:text-sm dark:text-neutral-200">Your password has been updated.</p>
+      <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
+        <div className="w-full md:max-w-5xl">
+          <div className="flex flex-col gap-6">
+            <Card className="overflow-hidden p-0">
+              <CardContent className="grid p-0 md:grid-cols-2">
+                <div className="p-6 md:p-8">
+                  <FieldGroup>
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <div className="bg-primary/10 text-primary mb-2 flex h-12 w-12 items-center justify-center rounded-full">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                      </div>
+                      <h1 className="text-2xl font-bold">{t('auth.resetPasswordForm.successTitle')}</h1>
+                      <p className="text-muted-foreground text-balance">{t('auth.resetPasswordForm.successMessage')}</p>
+                    </div>
+                  </FieldGroup>
+                </div>
+                <div className="bg-muted relative hidden md:block">
+                  <Image
+                    src="/placeholder.svg"
+                    alt="Image"
+                    fill
+                    className="object-cover dark:brightness-[0.2] dark:grayscale"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="grid w-full max-w-sm grid-cols-1 gap-8">
-      <Logo className="h-6 text-neutral-900 dark:text-neutral-100 forced-colors:text-[CanvasText]" />
-      <Heading>Set a new password</Heading>
-      <Field>
-        <Label htmlFor="password">New Password</Label>
-        <Input id="password" type="password" value={password} onChange={handlePasswordChange} required minLength={6} />
-      </Field>
-      <Field>
-        <Label htmlFor="confirmPassword">Confirm Password</Label>
-        <Input
-          id="confirmPassword"
-          type="password"
-          value={confirmPassword}
-          onChange={handleConfirmPasswordChange}
-          required
-          minLength={6}
-        />
-      </Field>
-      {error != null ? <p className="text-base text-red-600 sm:text-sm dark:text-red-500">{error}</p> : null}
-      <Button type="submit" disabled={loading} className="w-full">
-        {loading ? 'Updating...' : 'Update Password'}
-      </Button>
-      <button
-        type="button"
-        onClick={handleBackToLogin}
-        className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-400"
-      >
-        Back to login
-      </button>
-    </form>
+    <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
+      <div className="w-full md:max-w-5xl">
+        <div className="flex flex-col gap-6">
+          <Card className="overflow-hidden p-0">
+            <CardContent className="grid p-0 md:grid-cols-2">
+              <form className="p-6 md:p-8" onSubmit={handleSubmit}>
+                <FieldGroup>
+                  <div className="flex flex-col items-center gap-2 text-center">
+                    <h1 className="text-2xl font-bold">{t('auth.resetPasswordForm.title')}</h1>
+                    <p className="text-muted-foreground text-balance">{t('auth.resetPasswordForm.description')}</p>
+                  </div>
+
+                  {error && (
+                    <div className="text-destructive text-center text-sm" role="alert">
+                      {error}
+                    </div>
+                  )}
+
+                  <Field>
+                    <FieldLabel htmlFor="password">{t('auth.resetPasswordForm.newPassword')}</FieldLabel>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={loading}
+                        required
+                        minLength={8}
+                      />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute top-0 right-0 h-full px-3"
+                            onClick={() => setShowPassword(!showPassword)}
+                            disabled={loading}
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {showPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')}
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </Field>
+
+                  <Field>
+                    <FieldLabel htmlFor="confirmPassword">{t('auth.resetPasswordForm.confirmPassword')}</FieldLabel>
+                    <div className="relative">
+                      <Input
+                        id="confirmPassword"
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        disabled={loading}
+                        required
+                        minLength={8}
+                      />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute top-0 right-0 h-full px-3"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            disabled={loading}
+                          >
+                            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {showConfirmPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')}
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </Field>
+
+                  <Field>
+                    <Button type="submit" disabled={loading} className="w-full">
+                      {loading ? t('auth.resetPasswordForm.updating') : t('auth.resetPasswordForm.updateButton')}
+                    </Button>
+                  </Field>
+
+                  <FieldDescription className="text-center">
+                    <a href={`/${locale}/auth/login`} className="hover:text-primary hover:underline">
+                      {t('auth.resetPasswordForm.backToLogin')}
+                    </a>
+                  </FieldDescription>
+                </FieldGroup>
+              </form>
+              <div className="bg-muted relative hidden md:block">
+                <Image
+                  src="/placeholder.svg"
+                  alt="Image"
+                  fill
+                  className="object-cover dark:brightness-[0.2] dark:grayscale"
+                />
+              </div>
+            </CardContent>
+          </Card>
+          <FieldDescription className="px-6 text-center">
+            {t('auth.loginForm.termsAndPrivacy')} <a href="#">{t('auth.loginForm.termsOfService')}</a>{' '}
+            {t('auth.loginForm.and')} <a href="#">{t('auth.loginForm.privacyPolicy')}</a>.
+          </FieldDescription>
+        </div>
+      </div>
+    </div>
   )
 }
-
-export default ResetPassword
