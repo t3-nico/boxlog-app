@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { createClient } from '@/lib/supabase/client'
 
@@ -116,85 +118,87 @@ export default function MFAVerifyPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <div className="bg-primary/10 text-primary mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
-          </div>
-          <h1 className="text-3xl font-bold">Two-Factor Authentication</h1>
-          <p className="text-muted-foreground mt-2">Enter the 6-digit code from your authenticator app to continue</p>
-        </div>
-
-        <div className="bg-card border-border rounded-lg border p-6 shadow-sm">
-          {error && (
-            <div className="bg-destructive/10 text-destructive mb-4 rounded-md p-3">
-              <p className="text-sm">{error}</p>
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <label htmlFor="code" className="text-foreground block text-center text-sm font-medium">
-                Verification Code
-              </label>
-              <div className="flex justify-center">
-                <InputOTP
-                  maxLength={6}
-                  value={verificationCode}
-                  onChange={(value) => setVerificationCode(value)}
-                  onComplete={handleVerify}
-                >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
+    <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
+      <div className="w-full md:max-w-xl">
+        <Card className="overflow-hidden">
+          <CardContent className="p-6 md:p-8">
+            <FieldGroup>
+              <div className="flex flex-col items-center gap-2 text-center">
+                <div className="bg-primary/10 text-primary mb-2 flex h-12 w-12 items-center justify-center rounded-full">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                </div>
+                <h1 className="text-2xl font-bold">Two-Factor Authentication</h1>
+                <p className="text-muted-foreground text-balance">
+                  Enter the 6-digit code from your authenticator app to continue
+                </p>
               </div>
-            </div>
 
-            <Button onClick={handleVerify} disabled={isVerifying || verificationCode.length !== 6} className="w-full">
-              {isVerifying ? 'Verifying...' : 'Verify'}
-            </Button>
+              {error && (
+                <div className="text-destructive text-center text-sm" role="alert">
+                  {error}
+                </div>
+              )}
 
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => router.push('/auth/login')}
-                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-              >
-                Back to Login
-              </button>
-            </div>
-          </div>
-        </div>
+              <Field>
+                <FieldLabel className="text-center">Verification Code</FieldLabel>
+                <div className="flex justify-center">
+                  <InputOTP
+                    maxLength={6}
+                    value={verificationCode}
+                    onChange={(value) => setVerificationCode(value)}
+                    onComplete={handleVerify}
+                  >
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </div>
+              </Field>
 
-        <div className="bg-muted/50 rounded-lg p-4 text-center text-sm">
-          <p className="text-muted-foreground">
-            Don&apos;t have access to your authenticator app?
-            <br />
-            <a href="/settings/security/mfa" className="text-primary hover:underline">
-              Contact Support
-            </a>
-          </p>
-        </div>
+              <Button onClick={handleVerify} disabled={isVerifying || verificationCode.length !== 6} className="w-full">
+                {isVerifying ? 'Verifying...' : 'Verify'}
+              </Button>
+
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => router.push('/auth/login')}
+                  className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                >
+                  Back to Login
+                </button>
+              </div>
+
+              <div className="bg-muted/50 rounded-lg p-3 text-center text-sm">
+                <p className="text-muted-foreground text-xs">
+                  Don&apos;t have access to your authenticator app?
+                  <br />
+                  <a href="/settings/security/mfa" className="text-primary hover:underline">
+                    Contact Support
+                  </a>
+                </p>
+              </div>
+            </FieldGroup>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

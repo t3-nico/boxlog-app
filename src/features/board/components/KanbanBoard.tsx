@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
 import { useState } from 'react'
 import { useKanbanDnd } from '../hooks/useKanbanDnd'
@@ -81,7 +80,7 @@ export function KanbanBoard() {
 
   return (
     <>
-      <div className="bg-background flex h-full w-full flex-col overflow-hidden p-6">
+      <div className="bg-background flex h-full w-full flex-col p-6">
         {/* ボードヘッダー（固定） */}
         <div className="mb-6 flex items-center justify-between">
           <div>
@@ -92,38 +91,35 @@ export function KanbanBoard() {
 
         {/* Kanbanボード（スクロール領域） */}
         <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full">
-            <DndContext
-              sensors={sensors}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              onDragCancel={handleDragCancel}
-            >
-              <div className="flex w-max gap-6 pb-4">
-                {activeBoard.columns
-                  .sort((a, b) => a.order - b.order)
-                  .map((column) => (
-                    <KanbanColumn
-                      key={column.id}
-                      column={column}
-                      onAddCard={handleAddCard}
-                      onEditCard={handleEditCard}
-                      onDeleteCard={handleDeleteCard}
-                    />
-                  ))}
-              </div>
+          <DndContext
+            sensors={sensors}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onDragCancel={handleDragCancel}
+          >
+            <div className="flex gap-6">
+              {activeBoard.columns
+                .sort((a, b) => a.order - b.order)
+                .map((column) => (
+                  <KanbanColumn
+                    key={column.id}
+                    column={column}
+                    onAddCard={handleAddCard}
+                    onEditCard={handleEditCard}
+                    onDeleteCard={handleDeleteCard}
+                  />
+                ))}
+            </div>
 
-              {/* ドラッグオーバーレイ */}
-              <DragOverlay>
-                {activeCard && (
-                  <div className="rotate-3 opacity-90">
-                    <KanbanCard card={activeCard} columnId="" index={0} isDragging />
-                  </div>
-                )}
-              </DragOverlay>
-            </DndContext>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
+            {/* ドラッグオーバーレイ */}
+            <DragOverlay>
+              {activeCard && (
+                <div className="rotate-3 opacity-90">
+                  <KanbanCard card={activeCard} columnId="" index={0} isDragging />
+                </div>
+              )}
+            </DragOverlay>
+          </DndContext>
         </div>
       </div>
 
