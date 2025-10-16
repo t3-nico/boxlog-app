@@ -3,11 +3,15 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
+import { InfoIcon } from 'lucide-react'
 import Image from 'next/image'
 import QRCode from 'qrcode'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group'
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthContext } from '@/features/auth/contexts/AuthContext'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { createClient } from '@/lib/supabase/client'
@@ -544,27 +548,72 @@ const AccountSettings = () => {
       {/* Password Section */}
       <SettingsCard title={t('settings.account.password')} description={t('settings.account.passwordDesc')}>
         <form onSubmit={handlePasswordSave} className="space-y-2">
-          <Input
-            type="password"
-            value={currentPassword}
-            onChange={handleCurrentPasswordChange}
-            placeholder={t('settings.account.currentPassword')}
-            required
-          />
-          <Input
-            type="password"
-            value={newPassword}
-            onChange={handleNewPasswordChange}
-            placeholder={t('settings.account.newPassword')}
-            required
-          />
-          <Input
-            type="password"
-            value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
-            placeholder={t('settings.account.confirmPassword')}
-            required
-          />
+          <InputGroup>
+            <InputGroupInput
+              type="password"
+              value={currentPassword}
+              onChange={handleCurrentPasswordChange}
+              placeholder={t('settings.account.currentPassword')}
+              required
+            />
+            <InputGroupAddon align="inline-end">
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
+                    <InfoIcon />
+                  </InputGroupButton>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>現在のパスワードを入力してください</p>
+                </TooltipContent>
+              </Tooltip>
+            </InputGroupAddon>
+          </InputGroup>
+
+          <InputGroup>
+            <InputGroupInput
+              type="password"
+              value={newPassword}
+              onChange={handleNewPasswordChange}
+              placeholder={t('settings.account.newPassword')}
+              required
+            />
+            <InputGroupAddon align="inline-end">
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
+                    <InfoIcon />
+                  </InputGroupButton>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>パスワードは8文字以上で入力してください</p>
+                </TooltipContent>
+              </Tooltip>
+            </InputGroupAddon>
+          </InputGroup>
+
+          <InputGroup>
+            <InputGroupInput
+              type="password"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              placeholder={t('settings.account.confirmPassword')}
+              required
+            />
+            <InputGroupAddon align="inline-end">
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
+                    <InfoIcon />
+                  </InputGroupButton>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>新しいパスワードを再入力してください</p>
+                </TooltipContent>
+              </Tooltip>
+            </InputGroupAddon>
+          </InputGroup>
+
           {passwordError ? <p className="text-destructive text-sm">{passwordError}</p> : null}
           <div className="flex justify-end">
             <Button type="submit" disabled={isPasswordLoading}>
@@ -639,15 +688,17 @@ const AccountSettings = () => {
 
                 <div>
                   <p className="mb-2 text-sm font-medium">2. 認証アプリに表示された6桁のコードを入力</p>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="text"
-                      placeholder="000000"
-                      value={verificationCode}
-                      onChange={(e) => setVerificationCode(e.target.value)}
-                      maxLength={6}
-                      className="max-w-[150px] text-center text-lg tracking-widest"
-                    />
+                  <div className="flex items-center gap-4">
+                    <InputOTP maxLength={6} value={verificationCode} onChange={(value) => setVerificationCode(value)}>
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                      </InputOTPGroup>
+                    </InputOTP>
                     <Button onClick={handleVerifyMFA} disabled={isMFALoading || verificationCode.length !== 6}>
                       {isMFALoading ? '検証中...' : '確認'}
                     </Button>

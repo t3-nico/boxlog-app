@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { createClient } from '@/lib/supabase/client'
 
 export default function MFAVerifyPage() {
@@ -115,12 +115,6 @@ export default function MFAVerifyPage() {
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && verificationCode.length === 6) {
-      handleVerify()
-    }
-  }
-
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
@@ -153,21 +147,27 @@ export default function MFAVerifyPage() {
           )}
 
           <div className="space-y-4">
-            <div>
-              <label htmlFor="code" className="text-foreground block text-sm font-medium">
+            <div className="space-y-3">
+              <label htmlFor="code" className="text-foreground block text-center text-sm font-medium">
                 Verification Code
               </label>
-              <Input
-                id="code"
-                type="text"
-                placeholder="000000"
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                onKeyPress={handleKeyPress}
-                className="mt-1 text-center text-2xl tracking-widest"
-                maxLength={6}
-                autoFocus
-              />
+              <div className="flex justify-center">
+                <InputOTP
+                  maxLength={6}
+                  value={verificationCode}
+                  onChange={(value) => setVerificationCode(value)}
+                  onComplete={handleVerify}
+                >
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
             </div>
 
             <Button onClick={handleVerify} disabled={isVerifying || verificationCode.length !== 6} className="w-full">
