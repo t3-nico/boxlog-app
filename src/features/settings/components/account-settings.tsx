@@ -294,8 +294,11 @@ const AccountSettings = () => {
 
   // MFA無効化
   const handleDisableMFA = useCallback(async () => {
-    const confirmed = window.confirm('2段階認証を無効にしますか？セキュリティが低下します。')
-    if (!confirmed) return
+    const code = window.prompt('2段階認証を無効にするには、認証アプリの6桁のコードを入力してください:')
+    if (!code || code.length !== 6) {
+      setMfaError('6桁のコードを入力してください')
+      return
+    }
 
     setIsMFALoading(true)
     setMfaError(null)
@@ -327,6 +330,31 @@ const AccountSettings = () => {
 
       console.log('無効化するファクターID:', verifiedFactor.id)
 
+      // まずMFAチャレンジを実行してAAL2に昇格
+      const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({
+        factorId: verifiedFactor.id,
+      })
+
+      if (challengeError) {
+        console.error('Challenge error:', challengeError)
+        throw new Error(`チャレンジエラー: ${challengeError.message}`)
+      }
+
+      // チャレンジを検証してAAL2に昇格
+      const { error: verifyError } = await supabase.auth.mfa.verify({
+        factorId: verifiedFactor.id,
+        challengeId: challengeData.id,
+        code: code,
+      })
+
+      if (verifyError) {
+        console.error('Verify error:', verifyError)
+        throw new Error('コードが正しくありません。もう一度お試しください。')
+      }
+
+      console.log('AAL2に昇格成功。MFAを無効化します...')
+
+      // AAL2セッションでMFA無効化
       const { error: unenrollError } = await supabase.auth.mfa.unenroll({
         factorId: verifiedFactor.id,
       })

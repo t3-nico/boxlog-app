@@ -130,7 +130,10 @@ async function middleware(request: NextRequest) {
     }
 
     // 認証済みでauth系のパスにアクセスした場合
-    if (user && isAuthPath) {
+    // ただし、MFA検証ページは除外（AAL1 → AAL2への昇格が必要）
+    const isMFAVerifyPath = pathWithoutLocale === '/auth/mfa-verify'
+
+    if (user && isAuthPath && !isMFAVerifyPath) {
       console.log('[Middleware] Redirecting to calendar:', request.nextUrl.pathname)
       return NextResponse.redirect(new URL(`/${currentLocale}/calendar`, request.url))
     }

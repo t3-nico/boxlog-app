@@ -35,13 +35,33 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     setError(null)
 
     try {
-      const { error } = await signIn(email, password)
+      const { error, data } = await signIn(email, password)
       if (error) {
         setError(error.message)
-      } else {
-        router.push(`/${locale}/calendar`)
+      } else if (data) {
+        // MFAが有効かチェック（AALレベルで判断）
+        const { createClient } = await import('@/lib/supabase/client')
+        const supabase = createClient()
+
+        // セッション確立を待つ
+        await new Promise((resolve) => setTimeout(resolve, 100))
+
+        const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+        console.log('Login - AAL check:', aalData)
+
+        // currentLevel が aal1 で nextLevel が aal2 の場合、MFAが必要
+        if (aalData?.currentLevel === 'aal1' && aalData?.nextLevel === 'aal2') {
+          // MFAが有効な場合、MFA検証ページへリダイレクト
+          console.log('MFA required, redirecting to mfa-verify')
+          router.push(`/${locale}/auth/mfa-verify`)
+        } else {
+          // MFAが無効な場合、直接カレンダーへ
+          console.log('No MFA required, redirecting to calendar')
+          router.push(`/${locale}/calendar`)
+        }
       }
     } catch (err) {
+      console.error('Login error:', err)
       setError('An unexpected error occurred')
     } finally {
       setIsLoading(false)
