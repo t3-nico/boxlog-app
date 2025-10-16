@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createClient } from '@/lib/supabase/client'
 
 export function NavUser({
@@ -52,7 +53,14 @@ export function NavUser({
             {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
             <AvatarFallback className="rounded-lg">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
-          <span className="truncate font-medium">{user.name}</span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="max-w-[120px] truncate font-medium">{user.name}</span>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>{user.name}</p>
+            </TooltipContent>
+          </Tooltip>
           <ChevronDown className="text-muted-foreground size-4 shrink-0" />
         </button>
       </DropdownMenuTrigger>
