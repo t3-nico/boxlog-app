@@ -45,7 +45,13 @@ export async function uploadAvatar(file: File, userId: string): Promise<string> 
   })
 
   if (uploadError) {
-    console.error('Upload error:', uploadError)
+    console.error('Upload error details:', {
+      message: uploadError.message,
+      statusCode: uploadError.statusCode,
+      error: uploadError,
+      bucket: AVATARS_BUCKET,
+      fileName: fileName,
+    })
     throw new Error(`アップロードに失敗しました: ${uploadError.message}`)
   }
 
