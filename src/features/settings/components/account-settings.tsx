@@ -401,6 +401,7 @@ const AccountSettings = () => {
   // Profile form handlers
   const handleUsernameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      console.log('Username changing:', e.target.value)
       profile.updateValue('username', e.target.value)
     },
     [profile]
