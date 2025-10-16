@@ -5,10 +5,6 @@ export { CookieConsentBanner } from './cookie-consent-banner'
 export { GlobalErrorBoundary } from './ErrorBoundary'
 export type { GlobalErrorBoundaryProps, GlobalErrorBoundaryState } from './ErrorBoundary'
 
-// Providers
-export { Providers } from './Providers'
-export type { ProvidersProps } from './Providers'
-
 // Auto-retry hooks
 export { useApiRetry, default as useAutoRetry, useDataFetchRetry, useUserActionRetry } from '../../hooks/useAutoRetry'
 
