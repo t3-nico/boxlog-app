@@ -1,6 +1,19 @@
 'use client'
 
-import { Bell, ChevronDown, CreditCard, HelpCircle, LogOut, Settings, UserCircle } from 'lucide-react'
+import {
+  Bell,
+  BookOpen,
+  ChevronDown,
+  CreditCard,
+  FileText,
+  HelpCircle,
+  LogOut,
+  Mail,
+  Megaphone,
+  Settings,
+  Shield,
+  UserCircle,
+} from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -13,6 +26,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useI18n } from '@/features/i18n/lib/hooks'
@@ -115,12 +131,52 @@ export function NavUser({
               {t('navUser.settings')}
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href={`/${locale}/help`}>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
               <HelpCircle />
               {t('navUser.help')}
-            </Link>
-          </DropdownMenuItem>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem asChild>
+                <Link href={`/${locale}/help`}>
+                  <BookOpen />
+                  {t('navUser.helpSubmenu.helpCenter')}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="https://github.com/t3-nico/boxlog-app/releases" target="_blank" rel="noopener noreferrer">
+                  <Megaphone />
+                  {t('navUser.helpSubmenu.releaseNotes')}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href={`/${locale}/legal/terms`}>
+                  <FileText />
+                  {t('navUser.helpSubmenu.termsOfService')}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href={`/${locale}/legal/privacy`}>
+                  <FileText />
+                  {t('navUser.helpSubmenu.privacyPolicy')}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href={`/${locale}/legal/security`}>
+                  <Shield />
+                  {t('navUser.helpSubmenu.security')}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="mailto:support@boxlog.app">
+                  <Mail />
+                  {t('navUser.helpSubmenu.contact')}
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         </DropdownMenuGroup>
 
         <DropdownMenuSeparator />

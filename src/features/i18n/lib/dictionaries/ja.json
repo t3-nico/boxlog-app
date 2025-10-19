@@ -40,6 +40,13 @@
       "search": "検索"
     }
   },
+  "siteHeader": {
+    "search": {
+      "placeholder": "検索...",
+      "shortcut": "⌘K",
+      "aria": "グローバル検索"
+    }
+  },
   "navUser": {
     "myAccount": "マイアカウント",
     "account": "アカウント",
@@ -47,6 +54,14 @@
     "notifications": "通知設定",
     "settings": "設定",
     "help": "ヘルプ",
+    "helpSubmenu": {
+      "helpCenter": "ヘルプセンター",
+      "releaseNotes": "リリースノート",
+      "termsOfService": "利用規約",
+      "privacyPolicy": "プライバシーポリシー",
+      "security": "セキュリティ",
+      "contact": "お問い合わせ"
+    },
     "logout": "ログアウト",
     "loggingOut": "ログアウト中..."
   },

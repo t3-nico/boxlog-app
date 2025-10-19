@@ -40,6 +40,13 @@
       "search": "Search"
     }
   },
+  "siteHeader": {
+    "search": {
+      "placeholder": "Search...",
+      "shortcut": "⌘K",
+      "aria": "Global search"
+    }
+  },
   "navUser": {
     "myAccount": "My Account",
     "account": "Account",
@@ -47,6 +54,14 @@
     "notifications": "Notifications",
     "settings": "Settings",
     "help": "Help",
+    "helpSubmenu": {
+      "helpCenter": "Help Center",
+      "releaseNotes": "Release Notes",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "security": "Security",
+      "contact": "Contact Us"
+    },
     "logout": "Log out",
     "loggingOut": "Logging out..."
   },
