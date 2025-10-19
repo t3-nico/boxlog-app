@@ -50,7 +50,8 @@
   "navUser": {
     "myAccount": "My Account",
     "account": "Account",
-    "billing": "Billing",
+    "upgradePlan": "Upgrade Plan",
+    "personalize": "Personalize",
     "notifications": "Notifications",
     "settings": "Settings",
     "help": "Help",

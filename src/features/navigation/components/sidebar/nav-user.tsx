@@ -3,14 +3,15 @@
 import {
   BookOpen,
   ChevronDown,
-  CreditCard,
   FileText,
   HelpCircle,
   LogOut,
   Mail,
   Megaphone,
+  Palette,
   Settings,
   Shield,
+  Sparkles,
   UserCircle,
 } from 'lucide-react'
 import Link from 'next/link'
@@ -108,8 +109,14 @@ export function NavUser({
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href={`/${locale}/settings/plan-billing`}>
-              <CreditCard />
-              {t('navUser.billing')}
+              <Sparkles />
+              {t('navUser.upgradePlan')}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href={`/${locale}/settings/personalize`}>
+              <Palette />
+              {t('navUser.personalize')}
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
