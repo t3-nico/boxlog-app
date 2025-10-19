@@ -82,7 +82,7 @@ export function NavUser({
       <DropdownMenuContent
         className="border-input w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
         side="right"
-        align="end"
+        align="start"
         sideOffset={4}
       >
         <DropdownMenuLabel className="p-0 font-normal">
@@ -136,7 +136,7 @@ export function NavUser({
               <HelpCircle />
               {t('navUser.help')}
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
+            <DropdownMenuSubContent className="border-input">
               <DropdownMenuItem asChild>
                 <Link href={`/${locale}/help`}>
                   <BookOpen />
