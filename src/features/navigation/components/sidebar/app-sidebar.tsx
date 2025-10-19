@@ -1,15 +1,6 @@
 'use client'
 
-import {
-  BarChart3,
-  Calendar,
-  HelpCircle,
-  PanelLeftClose,
-  Search,
-  Settings,
-  SquareKanban,
-  Table as TableIcon,
-} from 'lucide-react'
+import { BarChart3, Calendar, PanelLeftClose, Search, SquareKanban, Table as TableIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
@@ -30,7 +21,7 @@ export function AppSidebar() {
 
   // URLから locale を抽出 (例: /ja/calendar -> ja)
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t, locale, ready } = useI18n(localeFromPath)
+  const { t, locale } = useI18n(localeFromPath)
 
   const data = useMemo(
     () => ({
@@ -58,23 +49,13 @@ export function AppSidebar() {
       ],
       navSecondary: [
         {
-          title: t('sidebar.navigation.settings'),
-          url: `/${locale}/settings`,
-          icon: Settings,
-        },
-        {
-          title: t('sidebar.getHelp'),
-          url: '#',
-          icon: HelpCircle,
-        },
-        {
           title: t('sidebar.navigation.search'),
           url: '#',
           icon: Search,
         },
       ],
     }),
-    [t, locale, ready]
+    [t, locale]
   )
 
   const userData = {

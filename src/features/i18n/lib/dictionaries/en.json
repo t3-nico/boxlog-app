@@ -40,6 +40,16 @@
       "search": "Search"
     }
   },
+  "navUser": {
+    "myAccount": "My Account",
+    "account": "Account",
+    "billing": "Billing",
+    "notifications": "Notifications",
+    "settings": "Settings",
+    "help": "Help",
+    "logout": "Log out",
+    "loggingOut": "Logging out..."
+  },
   "actions": {
     "save": "Save",
     "cancel": "Cancel",

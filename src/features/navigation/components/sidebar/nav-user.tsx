@@ -1,7 +1,8 @@
 'use client'
 
-import { Bell, ChevronDown, CreditCard, LogOut, UserCircle } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { Bell, ChevronDown, CreditCard, HelpCircle, LogOut, Settings, UserCircle } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -14,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { createClient } from '@/lib/supabase/client'
 
 export function NavUser({
@@ -26,7 +28,12 @@ export function NavUser({
   }
 }) {
   const router = useRouter()
+  const pathname = usePathname()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  // URLから locale を抽出
+  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
+  const { t, locale } = useI18n(localeFromPath)
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
@@ -75,24 +82,53 @@ export function NavUser({
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+
+        {/* アカウント関連 */}
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <UserCircle />
-            Account
+          <DropdownMenuItem asChild>
+            <Link href={`/${locale}/settings/account`}>
+              <UserCircle />
+              {t('navUser.account')}
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <CreditCard />
-            Billing
+          <DropdownMenuItem asChild>
+            <Link href={`/${locale}/settings/plan-billing`}>
+              <CreditCard />
+              {t('navUser.billing')}
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Bell />
-            Notifications
+          <DropdownMenuItem asChild>
+            <Link href={`/${locale}/settings/notifications`}>
+              <Bell />
+              {t('navUser.notifications')}
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
+
         <DropdownMenuSeparator />
+
+        {/* 設定とヘルプ（Sidebarから移動） */}
+        <DropdownMenuGroup>
+          <DropdownMenuItem asChild>
+            <Link href={`/${locale}/settings`}>
+              <Settings />
+              {t('navUser.settings')}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href={`/${locale}/help`}>
+              <HelpCircle />
+              {t('navUser.help')}
+            </Link>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+
+        <DropdownMenuSeparator />
+
+        {/* ログアウト */}
         <DropdownMenuItem onClick={handleLogout} disabled={isLoggingOut}>
           <LogOut />
-          {isLoggingOut ? 'Logging out...' : 'Log out'}
+          {isLoggingOut ? t('navUser.loggingOut') : t('navUser.logout')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
