@@ -1,6 +1,6 @@
 'use client'
 
-import { BarChart3, Calendar, PanelLeftClose, Search, SquareKanban, Table as TableIcon } from 'lucide-react'
+import { BarChart3, Calendar, PanelLeftClose, SquareKanban, Table as TableIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
@@ -47,13 +47,7 @@ export function AppSidebar() {
           icon: BarChart3,
         },
       ],
-      navSecondary: [
-        {
-          title: t('sidebar.navigation.search'),
-          url: '#',
-          icon: Search,
-        },
-      ],
+      navSecondary: [],
     }),
     [t, locale]
   )

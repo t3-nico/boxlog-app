@@ -6,7 +6,6 @@ import * as React from 'react'
 
 import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { useGlobalSearch } from '@/features/search'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { cn } from '@/lib/utils'
 import type { TranslatedString } from '@/types/i18n-branded'
@@ -26,7 +25,6 @@ export function NavSecondary({
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t } = useI18n(localeFromPath)
   const { openSettings } = useSettingsDialogStore()
-  const { open: openGlobalSearch } = useGlobalSearch()
 
   const handleItemClick = React.useCallback(
     (item: { title: TranslatedString; url: string }) => {
@@ -36,14 +34,9 @@ export function NavSecondary({
           e.preventDefault()
           openSettings()
         }
-        // Searchの場合はグローバル検索を開く
-        if (item.title === t('sidebar.navigation.search')) {
-          e.preventDefault()
-          openGlobalSearch()
-        }
       }
     },
-    [openSettings, openGlobalSearch, t]
+    [openSettings, t]
   )
 
   return (
@@ -57,11 +50,7 @@ export function NavSecondary({
         return (
           <a
             key={item.title}
-            href={
-              item.title === t('sidebar.navigation.settings') || item.title === t('sidebar.navigation.search')
-                ? '#'
-                : item.url
-            }
+            href={item.title === t('sidebar.navigation.settings') ? '#' : item.url}
             onClick={handleItemClick(item)}
             className={cn(
               'flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors',
