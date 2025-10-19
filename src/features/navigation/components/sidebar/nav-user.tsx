@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  Bell,
   BookOpen,
   ChevronDown,
   CreditCard,
@@ -111,12 +110,6 @@ export function NavUser({
             <Link href={`/${locale}/settings/plan-billing`}>
               <CreditCard />
               {t('navUser.billing')}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href={`/${locale}/settings/notifications`}>
-              <Bell />
-              {t('navUser.notifications')}
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
