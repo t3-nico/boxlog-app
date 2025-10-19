@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { Spinner } from '@/components/ui/spinner'
 import { useAuthContext } from '@/features/auth'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
@@ -99,6 +100,7 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
               {error ? <FieldDescription className="text-destructive">{error}</FieldDescription> : null}
               <Field>
                 <Button type="submit" disabled={loading}>
+                  {loading && <Spinner className="mr-2" />}
                   {loading ? t('auth.passwordResetForm.sending') : t('auth.passwordResetForm.sendResetLink')}
                 </Button>
               </Field>

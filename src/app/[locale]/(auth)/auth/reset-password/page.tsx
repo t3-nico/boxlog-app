@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthContext } from '@/features/auth'
 import { useI18n } from '@/features/i18n/lib/hooks'
@@ -212,6 +213,7 @@ export default function ResetPasswordPage() {
 
                   <Field>
                     <Button type="submit" disabled={loading} className="w-full">
+                      {loading && <Spinner className="mr-2" />}
                       {loading ? t('auth.resetPasswordForm.updating') : t('auth.resetPasswordForm.updateButton')}
                     </Button>
                   </Field>
