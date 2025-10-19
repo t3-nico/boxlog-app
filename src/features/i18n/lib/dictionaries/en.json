@@ -147,6 +147,27 @@
     }
   },
   "notifications": {
+    "title": "Notifications",
+    "tabs": {
+      "all": "All",
+      "unread": "Unread"
+    },
+    "messages": {
+      "meetingReminder": "Meeting Reminder",
+      "meetingStartsIn": "Starts in 5 minutes",
+      "taskCompleted": "Task Completed",
+      "taskCompletedMessage": "Your task has been completed",
+      "eventNotification": "Event Notification",
+      "eventAddedMessage": "A new event has been added"
+    },
+    "empty": {
+      "all": "No notifications",
+      "unread": "No unread notifications"
+    },
+    "actions": {
+      "markAllAsRead": "Mark all as read",
+      "viewAll": "View all notifications"
+    },
     "errors": {
       "notSupported": "This browser does not support notifications",
       "permissionFailed": "Failed to obtain notification permission",

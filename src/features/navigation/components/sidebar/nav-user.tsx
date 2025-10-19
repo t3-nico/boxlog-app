@@ -32,6 +32,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { createClient } from '@/lib/supabase/client'
 
 export function NavUser({
@@ -46,6 +47,7 @@ export function NavUser({
   const router = useRouter()
   const pathname = usePathname()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const { openSettings } = useSettingsDialogStore()
 
   // URLから locale を抽出
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
@@ -101,11 +103,9 @@ export function NavUser({
 
         {/* アカウント関連 */}
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <Link href={`/${locale}/settings/account`}>
-              <UserCircle />
-              {t('navUser.account')}
-            </Link>
+          <DropdownMenuItem onClick={() => openSettings('account')}>
+            <UserCircle />
+            {t('navUser.account')}
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href={`/${locale}/settings/plan-billing`}>
@@ -125,11 +125,9 @@ export function NavUser({
 
         {/* 設定とヘルプ（Sidebarから移動） */}
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <Link href={`/${locale}/settings`}>
-              <Settings />
-              {t('navUser.settings')}
-            </Link>
+          <DropdownMenuItem onClick={() => openSettings('general')}>
+            <Settings />
+            {t('navUser.settings')}
           </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>

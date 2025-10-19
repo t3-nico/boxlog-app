@@ -147,6 +147,27 @@
     }
   },
   "notifications": {
+    "title": "通知",
+    "tabs": {
+      "all": "すべて",
+      "unread": "未読"
+    },
+    "messages": {
+      "meetingReminder": "ミーティングのリマインダー",
+      "meetingStartsIn": "5分後に開始します",
+      "taskCompleted": "タスク完了",
+      "taskCompletedMessage": "タスクが完了しました",
+      "eventNotification": "イベント通知",
+      "eventAddedMessage": "新しいイベントが追加されました"
+    },
+    "empty": {
+      "all": "通知はありません",
+      "unread": "未読の通知はありません"
+    },
+    "actions": {
+      "markAllAsRead": "すべて既読にする",
+      "viewAll": "すべての通知を表示"
+    },
     "errors": {
       "notSupported": "このブラウザは通知をサポートしていません",
       "permissionFailed": "通知許可の取得に失敗しました",
