@@ -69,7 +69,7 @@ export function NavUser({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="hover:bg-accent data-[state=open]:bg-accent border-input flex w-fit items-center gap-2 rounded-md border px-2 py-1 text-left text-sm outline-hidden"
+          className="hover:bg-accent data-[state=open]:bg-accent flex w-fit items-center gap-2 rounded-md px-2 py-1 text-left text-sm outline-hidden"
         >
           <Avatar className="h-6 w-6 rounded-lg">
             {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
@@ -80,7 +80,7 @@ export function NavUser({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+        className="border-input w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
         side="right"
         align="end"
         sideOffset={4}
