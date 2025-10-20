@@ -110,9 +110,6 @@ export function SiteHeader() {
             {t('siteHeader.search.shortcut')}
           </kbd>
         </Button>
-
-        {/* Right Side Actions */}
-        <div className="ml-auto flex items-center gap-2 md:ml-0">{/* 将来的にアクションボタンを追加 */}</div>
       </div>
     </header>
   )

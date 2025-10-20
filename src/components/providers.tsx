@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { AuthProvider } from '@/features/auth'
-import { NotificationModalProvider } from '@/features/notifications'
 import { GlobalSearchProvider } from '@/features/search'
 
 interface ProvidersProps {
@@ -23,7 +22,6 @@ interface ProvidersProps {
  * 3. ThemeProvider（UI層）
  * 4. TooltipProvider（UI層）
  * 5. GlobalSearchProvider（機能層）
- * 6. NotificationModalProvider（UI層）
  *
  * @see https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#moving-client-components-down-the-tree
  */
@@ -56,9 +54,7 @@ export function Providers({ children }: ProvidersProps) {
       <AuthProvider>
         <ThemeProvider>
           <TooltipProvider delayDuration={300} skipDelayDuration={100}>
-            <GlobalSearchProvider>
-              <NotificationModalProvider>{children}</NotificationModalProvider>
-            </GlobalSearchProvider>
+            <GlobalSearchProvider>{children}</GlobalSearchProvider>
           </TooltipProvider>
         </ThemeProvider>
       </AuthProvider>
