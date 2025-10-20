@@ -8,7 +8,7 @@ const TablePage = () => {
   return (
     <div className="flex h-full flex-col">
       {/* ページヘッダー: 固定高さ */}
-      <div className="flex shrink-0 items-center justify-between px-6 py-4">
+      <div className="flex shrink-0 items-center justify-between px-4 py-4 md:px-6">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">タスク</h2>
           <p className="text-muted-foreground">タスク一覧を表示・管理します</p>
@@ -27,7 +27,7 @@ const TablePage = () => {
       </div>
 
       {/* テーブル: 残りのスペース */}
-      <div className="flex-1 overflow-hidden px-6 pb-6">
+      <div className="flex-1 overflow-hidden px-4 pb-4 md:px-6 md:pb-6">
         <TaskTable />
       </div>
     </div>

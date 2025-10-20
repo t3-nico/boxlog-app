@@ -53,22 +53,5 @@ export function TaskTable() {
   // カラム定義を取得
   const columns = getColumns(handleUpdateStatus, handleUpdatePriority)
 
-  return (
-    <>
-      {/* モバイル表示: カードレイアウト (768px未満) */}
-      <div className="md:hidden">
-        <div className="bg-muted/20 flex h-96 items-center justify-center rounded-lg border">
-          <div className="p-8 text-center">
-            <h3 className="mb-2 text-lg font-semibold">タスク一覧</h3>
-            <p className="text-muted-foreground">テーブルビューは大きな画面でご利用ください</p>
-          </div>
-        </div>
-      </div>
-
-      {/* デスクトップ表示: テーブルレイアウト (768px以上) */}
-      <div className="hidden h-full md:block">
-        <DataTable columns={columns} data={tableTasks} />
-      </div>
-    </>
-  )
+  return <DataTable columns={columns} data={tableTasks} />
 }
