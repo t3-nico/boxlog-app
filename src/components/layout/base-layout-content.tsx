@@ -5,6 +5,7 @@ import { CalendarNavigationProvider } from '@/features/calendar/contexts/Calenda
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
+import { NotificationDialog } from '@/features/notifications'
 import { SettingsDialog } from '@/features/settings/components/dialog'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { usePathname, useSearchParams } from 'next/navigation'
@@ -48,7 +49,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
       </a>
 
       {/* メインレイアウト */}
-      <div className="bg-secondary flex flex-1 overflow-hidden">
+      <div className="bg-background flex flex-1 overflow-hidden">
         {isMobile ? (
           <MobileLayout>{children}</MobileLayout>
         ) : (
@@ -61,6 +62,9 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
       {/* Settings Dialog */}
       <SettingsDialog />
+
+      {/* Notification Dialog */}
+      <NotificationDialog />
 
       {/* Cookie Consent Banner */}
       <CookieConsentBanner />

@@ -28,7 +28,7 @@ export function MobileLayout({ children }: MobileLayoutProps) {
       </Sheet>
 
       {/* Main Content */}
-      <div className="bg-muted flex h-full flex-1 flex-col">
+      <div className="flex h-full flex-1 flex-col">
         {/* Site Header */}
         <SiteHeader />
 

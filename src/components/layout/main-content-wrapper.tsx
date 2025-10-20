@@ -19,7 +19,7 @@ interface MainContentWrapperProps {
  */
 export function MainContentWrapper({ children }: MainContentWrapperProps) {
   return (
-    <div className="flex flex-1">
+    <div className="flex flex-1 overflow-hidden">
       <main id="main-content" className="relative min-w-0 flex-1" role="main">
         {children}
       </main>

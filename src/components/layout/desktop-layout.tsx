@@ -39,7 +39,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
       {/* Main Content + Inspector */}
       <ResizablePanel>
-        <div className="bg-muted relative flex h-full flex-1 flex-col shadow-lg">
+        <div className="relative flex h-full flex-col shadow-lg">
           {/* Site Header */}
           <SiteHeader />
 

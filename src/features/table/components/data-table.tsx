@@ -59,9 +59,9 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex flex-col">
       <DataTableToolbar table={table} onDeleteSelected={onDeleteSelected} />
-      <div className="border-input mt-4 flex-1 overflow-auto rounded-md border">
+      <div className="border-input mt-4 overflow-auto rounded-md border" style={{ maxHeight: 'calc(100vh - 280px)' }}>
         <Table>
           <TableCaption className="sr-only">タスク一覧テーブル</TableCaption>
           <TableHeader className="bg-background sticky top-0 z-10">

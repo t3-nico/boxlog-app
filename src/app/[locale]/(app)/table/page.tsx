@@ -6,7 +6,7 @@ import { clearTestTasks, seedTestTasks } from '@/features/table/__dev/seed-test-
 
 const TablePage = () => {
   return (
-    <div className="bg-background flex h-full flex-col gap-4 p-6">
+    <div className="flex h-full flex-col p-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">タスク</h2>
@@ -24,7 +24,7 @@ const TablePage = () => {
           </div>
         )}
       </div>
-      <div className="flex min-h-0 flex-1 flex-col">
+      <div className="mt-4 flex flex-1 flex-col">
         <TaskTable />
       </div>
     </div>
