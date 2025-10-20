@@ -45,7 +45,8 @@
       "placeholder": "検索...",
       "shortcut": "⌘K",
       "aria": "グローバル検索"
-    }
+    },
+    "notifications": "通知"
   },
   "navUser": {
     "myAccount": "マイアカウント",
@@ -762,7 +763,12 @@
       "unexpectedError": "予期しないエラーが発生しました",
       "accountLocked": "セキュリティのため、このアカウントは一時的にロックされています。{minutes}分後に再試行してください。",
       "accountLockedTitle": "アカウントがロックされています",
-      "failedAttempts": "失敗回数: {count}回"
+      "failedAttempts": "失敗回数: {count}回",
+      "captchaRequired": "CAPTCHA認証が必要です。チャレンジを完了してください。"
+    },
+    "info": {
+      "captchaProtectionActive": "セキュリティ保護が有効です",
+      "captchaV2Required": "セキュリティのため、本人確認が必要です"
     },
     "success": {
       "loginSuccess": "ログインに成功しました",

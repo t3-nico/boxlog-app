@@ -1,8 +1,8 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { Eye, EyeOff, ShieldAlert } from 'lucide-react'
+import { Eye, EyeOff, Shield, ShieldAlert } from 'lucide-react'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 
@@ -15,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useAuthContext } from '@/features/auth'
 import { checkLockoutStatus, recordLoginAttempt, resetLoginAttempts } from '@/features/auth/lib/account-lockout'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { useRecaptchaV2, useRecaptchaV3 } from '@/lib/recaptcha'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 
@@ -33,6 +34,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const [isLocked, setIsLocked] = useState(false)
   const [lockoutMinutes, setLockoutMinutes] = useState(0)
   const [failedAttempts, setFailedAttempts] = useState(0)
+  const [showCaptchaV2, setShowCaptchaV2] = useState(false)
+  const [captchaV2Token, setCaptchaV2Token] = useState<string | null>(null)
+
+  // reCAPTCHA v3フック（3回失敗後から使用）
+  const { generateToken: generateV3Token, isReady: isV3Ready } = useRecaptchaV3('login')
+
+  // reCAPTCHA v2フック（ロックアウト解除後に使用）
+  const { isReady: isV2Ready, renderWidget: renderV2Widget, execute: executeV2 } = useRecaptchaV2()
+  const recaptchaV2ContainerRef = useRef<HTMLDivElement>(null)
 
   // ロックアウトステータスをチェック
   const checkLockout = useCallback(async () => {
@@ -52,6 +62,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         })
       )
     }
+
+    // ロックアウトが解除されていて、過去に失敗履歴があればCAPTCHA v2を表示
+    if (!status.isLocked && status.failedAttempts >= 5) {
+      setShowCaptchaV2(true)
+    }
   }, [email, t])
 
   // メールアドレス変更時にロックアウトステータスをチェック
@@ -60,6 +75,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       checkLockout()
     }
   }, [email, checkLockout])
+
+  // reCAPTCHA v2ウィジェットを初期化（ロックアウト解除後）
+  useEffect(() => {
+    if (showCaptchaV2 && isV2Ready && recaptchaV2ContainerRef.current) {
+      renderV2Widget('recaptcha-v2-container', (token) => {
+        setCaptchaV2Token(token)
+      })
+    }
+  }, [showCaptchaV2, isV2Ready, renderV2Widget])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -84,7 +108,29 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         return
       }
 
-      // ステップ2: ログイン試行
+      // ステップ2: reCAPTCHA検証（段階的）
+      // 2a. ロックアウト解除後 → reCAPTCHA v2必須
+      if (showCaptchaV2) {
+        if (!captchaV2Token) {
+          // v2トークンがない場合、実行を試みる
+          executeV2()
+          setError(t('auth.errors.captchaRequired'))
+          setIsLoading(false)
+          return
+        }
+        // TODO: サーバーサイドでv2トークンを検証（API Route経由）
+      }
+
+      // 2b. 3回以上失敗 → reCAPTCHA v3（バックグラウンド）
+      if (lockoutStatus.failedAttempts >= 3 && isV3Ready) {
+        const v3Token = await generateV3Token()
+        if (v3Token) {
+          // TODO: サーバーサイドでv3スコアを検証（API Route経由）
+          console.log('[reCAPTCHA] v3 token generated for verification')
+        }
+      }
+
+      // ステップ3: ログイン試行
       const { error, data } = await signIn(email, password)
 
       if (error) {
@@ -227,8 +273,28 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 </div>
               </Field>
 
+              {/* reCAPTCHA v3保護インジケーター（3回以上失敗時） */}
+              {failedAttempts >= 3 && !isLocked && !showCaptchaV2 && (
+                <div className="bg-primary/10 border-primary/20 text-primary flex items-center gap-2 rounded-md border px-3 py-2 text-xs">
+                  <Shield className="h-3.5 w-3.5" />
+                  <span>{t('auth.info.captchaProtectionActive')}</span>
+                </div>
+              )}
+
+              {/* reCAPTCHA v2コンテナ（ロックアウト解除後） */}
+              {showCaptchaV2 && (
+                <div className="flex flex-col items-center gap-2">
+                  <div id="recaptcha-v2-container" ref={recaptchaV2ContainerRef} />
+                  <p className="text-muted-foreground text-center text-xs">{t('auth.info.captchaV2Required')}</p>
+                </div>
+              )}
+
               <Field>
-                <Button type="submit" disabled={isLoading || isLocked} className="w-full">
+                <Button
+                  type="submit"
+                  disabled={isLoading || isLocked || (showCaptchaV2 && !captchaV2Token)}
+                  className="w-full"
+                >
                   {isLoading && <Spinner className="mr-2" />}
                   {t('auth.loginForm.loginButton')}
                 </Button>

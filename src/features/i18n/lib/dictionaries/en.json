@@ -45,7 +45,8 @@
       "placeholder": "Search...",
       "shortcut": "⌘K",
       "aria": "Global search"
-    }
+    },
+    "notifications": "Notifications"
   },
   "navUser": {
     "myAccount": "My Account",
@@ -767,7 +768,12 @@
       "unexpectedError": "An unexpected error occurred",
       "accountLocked": "For security reasons, this account has been temporarily locked. Please try again in {minutes} minutes.",
       "accountLockedTitle": "Account Locked",
-      "failedAttempts": "Failed attempts: {count}"
+      "failedAttempts": "Failed attempts: {count}",
+      "captchaRequired": "CAPTCHA verification required. Please complete the challenge."
+    },
+    "info": {
+      "captchaProtectionActive": "Security protection active",
+      "captchaV2Required": "Security verification required"
     },
     "success": {
       "loginSuccess": "Successfully logged in",
