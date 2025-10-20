@@ -1,6 +1,7 @@
 // Components
 export { DesktopKanbanBoard } from './components/desktop/DesktopKanbanBoard'
 export { KanbanBoard } from './components/KanbanBoard'
+export { KanbanToolbar } from './components/KanbanToolbar'
 export { MobileKanbanBoard } from './components/mobile/MobileKanbanBoard'
 export { KanbanBoardSkeleton } from './components/shared/KanbanBoardSkeleton'
 export { KanbanCard } from './components/shared/KanbanCard'

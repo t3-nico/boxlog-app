@@ -1,11 +1,20 @@
-import { KanbanBoard } from '@/features/board/components/KanbanBoard'
-import type { Metadata } from 'next'
+'use client'
 
-export const metadata: Metadata = {
-  title: 'Board | BoxLog',
-  description: 'タスクを視覚的に管理できるKanbanボード',
-}
+import { KanbanBoard } from '@/features/board'
+import { KanbanToolbar } from '@/features/board/components/KanbanToolbar'
 
 export default function BoardPage() {
-  return <KanbanBoard />
+  return (
+    <div className="flex h-full flex-col">
+      {/* ツールバー: フィルター・検索 */}
+      <div className="flex shrink-0 px-4 py-4 md:px-6">
+        <KanbanToolbar />
+      </div>
+
+      {/* Kanbanボード: 残りのスペース */}
+      <div className="flex-1 overflow-hidden">
+        <KanbanBoard />
+      </div>
+    </div>
+  )
 }
