@@ -15,6 +15,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthContext } from '@/features/auth'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { checkPasswordPwned } from '@/lib/auth/pwned-password'
 import { cn } from '@/lib/utils'
 
 export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
@@ -52,6 +53,14 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
     // パスワード長さチェック
     if (password.length < minPasswordLength) {
       setError(t('auth.errors.weakPassword'))
+      setIsLoading(false)
+      return
+    }
+
+    // 漏洩パスワードチェック（Have I Been Pwned API）
+    const isPwned = await checkPasswordPwned(password)
+    if (isPwned) {
+      setError(t('auth.errors.pwnedPassword'))
       setIsLoading(false)
       return
     }

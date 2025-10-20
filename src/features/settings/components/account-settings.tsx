@@ -15,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useAuthContext } from '@/features/auth/contexts/AuthContext'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { addPasswordToHistory, isPasswordReused } from '@/lib/auth/password-history'
+import { checkPasswordPwned } from '@/lib/auth/pwned-password'
 import { createClient } from '@/lib/supabase/client'
 import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage'
 
@@ -178,6 +179,12 @@ const AccountSettings = () => {
         const isReused = await isPasswordReused(user.id, newPassword)
         if (isReused) {
           throw new Error(t('settings.account.passwordReused'))
+        }
+
+        // ステップ2.5: 漏洩パスワードチェック（NIST推奨）
+        const isPwned = await checkPasswordPwned(newPassword)
+        if (isPwned) {
+          throw new Error(t('settings.account.passwordPwned'))
         }
 
         // ステップ3: パスワード更新
