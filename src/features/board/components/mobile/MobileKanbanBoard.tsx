@@ -84,20 +84,10 @@ export function MobileKanbanBoard() {
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <div className="bg-background flex h-full w-full flex-col p-4">
-          {/* ボードヘッダー（固定） */}
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold">{activeBoard.name}</h1>
-              {activeBoard.description && (
-                <p className="text-muted-foreground mt-1 text-sm">{activeBoard.description}</p>
-              )}
-            </div>
-          </div>
-
+        <div className="bg-background flex h-full w-full flex-col">
           {/* Kanbanボード（横スクロール領域） */}
-          <ScrollArea className="flex-1">
-            <div className="flex gap-4 pb-4" style={{ width: 'fit-content', minWidth: '100%' }}>
+          <ScrollArea className="flex-1 px-4">
+            <div className="flex gap-4 py-4" style={{ width: 'fit-content', minWidth: '100%' }}>
               {activeBoard.columns
                 .sort((a, b) => a.order - b.order)
                 .map((column) => (

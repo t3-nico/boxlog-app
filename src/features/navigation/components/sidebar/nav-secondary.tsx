@@ -4,7 +4,6 @@ import { type LucideIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import * as React from 'react'
 
-import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { cn } from '@/lib/utils'
@@ -41,10 +40,6 @@ export function NavSecondary({
 
   return (
     <div className={cn('flex flex-col gap-2', className)} {...props}>
-      <div className="flex items-center justify-between rounded-md px-2 py-2">
-        <span className="text-sm font-medium">{t('sidebar.theme')}</span>
-        <SimpleThemeToggle />
-      </div>
       {items.map((item) => {
         const isActive = pathname === item.url || pathname?.startsWith(item.url + '/')
         return (

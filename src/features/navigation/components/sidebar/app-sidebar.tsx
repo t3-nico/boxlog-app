@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthContext } from '@/features/auth'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
@@ -62,17 +61,18 @@ export function AppSidebar() {
     <aside className="bg-sidebar text-sidebar-foreground flex h-full w-full flex-col">
       {/* Header - User Menu + 閉じるボタン */}
       <div className="mb-2 flex min-h-12 items-center justify-between px-2">
-        <NavUser user={userData} />
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button onClick={close} size="icon-sm" variant="ghost" className="shrink-0">
-              <PanelLeftClose className="h-4 w-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <p>{t('sidebar.closeSidebar')}</p>
-          </TooltipContent>
-        </Tooltip>
+        <div className="flex-1">
+          <NavUser user={userData} />
+        </div>
+        <Button
+          onClick={close}
+          size="icon"
+          variant="ghost"
+          aria-label={t('sidebar.closeSidebar')}
+          className="text-muted-foreground hover:text-foreground size-8 shrink-0"
+        >
+          <PanelLeftClose className="size-4" />
+        </Button>
       </div>
 
       {/* Content */}
