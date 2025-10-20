@@ -178,6 +178,10 @@ const AccountSettings = () => {
           throw new Error(error.message)
         }
 
+        // ステップ3: 他のデバイスのセッションを無効化（セキュリティ強化）
+        // Supabase v2.149+では自動的にセッション無効化されるが、明示的に実行
+        await supabase.auth.signOut({ scope: 'others' })
+
         // 成功時はフォームをリセット
         setCurrentPassword('')
         setNewPassword('')
