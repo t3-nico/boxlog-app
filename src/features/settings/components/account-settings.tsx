@@ -137,12 +137,14 @@ const AccountSettings = () => {
   const handlePasswordSave = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
+
+      // バリデーション
       if (newPassword !== confirmPassword) {
-        setPasswordError('パスワードが一致しません')
+        setPasswordError(t('settings.account.passwordMismatch'))
         return
       }
-      if (newPassword.length < 6) {
-        setPasswordError('パスワードは6文字以上で入力してください')
+      if (newPassword.length < 8) {
+        setPasswordError(t('settings.account.passwordMinLength'))
         return
       }
 
@@ -150,9 +152,14 @@ const AccountSettings = () => {
       setIsPasswordLoading(true)
 
       try {
-        // パスワード更新ロジック（実際の実装は後で）
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        console.log('Updating password')
+        // Supabaseでパスワード更新
+        const { error } = await supabase.auth.updateUser({
+          password: newPassword,
+        })
+
+        if (error) {
+          throw new Error(error.message)
+        }
 
         // 成功時はフォームをリセット
         setCurrentPassword('')
@@ -162,12 +169,13 @@ const AccountSettings = () => {
         alert(t('settings.account.passwordUpdated'))
       } catch (err) {
         console.error('Password update error:', err)
-        setPasswordError('予期しないエラーが発生しました')
+        const errorMessage = err instanceof Error ? err.message : t('settings.account.passwordUpdateFailed')
+        setPasswordError(errorMessage)
       } finally {
         setIsPasswordLoading(false)
       }
     },
-    [newPassword, confirmPassword]
+    [newPassword, confirmPassword, t, supabase]
   )
 
   // MFA状態チェック
@@ -614,7 +622,7 @@ const AccountSettings = () => {
                   </InputGroupButton>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>パスワードは8文字以上で入力してください</p>
+                  <p>{t('settings.account.passwordMinLength')}</p>
                 </TooltipContent>
               </Tooltip>
             </InputGroupAddon>
