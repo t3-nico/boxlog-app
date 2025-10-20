@@ -359,6 +359,7 @@
       "passwordMismatch": "パスワードが一致しません",
       "passwordMinLength": "パスワードは8文字以上で入力してください",
       "passwordUpdateFailed": "パスワードの更新に失敗しました",
+      "passwordIncorrect": "現在のパスワードが正しくありません",
       "twoFactor": "2要素認証",
       "twoFactorDesc": "アカウントに追加のセキュリティ層を追加",
       "enable2FA": "2FAを有効にする",

@@ -152,7 +152,21 @@ const AccountSettings = () => {
       setIsPasswordLoading(true)
 
       try {
-        // Supabaseでパスワード更新
+        // ステップ1: 現在のパスワードで再認証（セキュリティ強化）
+        if (!user?.email) {
+          throw new Error('メールアドレスが見つかりません')
+        }
+
+        const { error: reAuthError } = await supabase.auth.signInWithPassword({
+          email: user.email,
+          password: currentPassword,
+        })
+
+        if (reAuthError) {
+          throw new Error(t('settings.account.passwordIncorrect'))
+        }
+
+        // ステップ2: パスワード更新
         const { error } = await supabase.auth.updateUser({
           password: newPassword,
         })
@@ -175,7 +189,7 @@ const AccountSettings = () => {
         setIsPasswordLoading(false)
       }
     },
-    [newPassword, confirmPassword, t, supabase]
+    [currentPassword, newPassword, confirmPassword, user?.email, t, supabase]
   )
 
   // MFA状態チェック

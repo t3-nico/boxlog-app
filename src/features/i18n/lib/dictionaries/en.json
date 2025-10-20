@@ -359,6 +359,7 @@
       "passwordMismatch": "Passwords do not match",
       "passwordMinLength": "Password must be at least 8 characters",
       "passwordUpdateFailed": "Failed to update password",
+      "passwordIncorrect": "Current password is incorrect",
       "twoFactor": "Two-Factor Authentication",
       "twoFactorDesc": "Add an extra layer of security to your account",
       "enable2FA": "Enable 2FA",
