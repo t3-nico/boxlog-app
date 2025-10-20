@@ -101,7 +101,7 @@ export function SiteHeader() {
           </BreadcrumbList>
         </Breadcrumb>
 
-        {/* Global Search Trigger - デスクトップのみ表示 */}
+        {/* Global Search Trigger - デスクトップ: フル表示、モバイル: アイコンのみ */}
         <Button
           onClick={openGlobalSearch}
           variant="outline"
@@ -117,6 +117,25 @@ export function SiteHeader() {
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-2">
+          {/* Global Search Icon - モバイルのみ表示 */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={openGlobalSearch}
+                  variant="ghost"
+                  size="icon-sm"
+                  className="md:hidden"
+                  aria-label={t('siteHeader.search.aria')}
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>{t('siteHeader.search.aria')}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           {/* Notification Icon */}
           <TooltipProvider>
             <Tooltip>
