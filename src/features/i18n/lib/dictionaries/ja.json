@@ -46,7 +46,8 @@
       "shortcut": "⌘K",
       "aria": "グローバル検索"
     },
-    "notifications": "通知"
+    "notifications": "通知",
+    "theme": "テーマ"
   },
   "navUser": {
     "myAccount": "マイアカウント",
@@ -361,6 +362,7 @@
       "passwordMinLength": "パスワードは8文字以上で入力してください",
       "passwordUpdateFailed": "パスワードの更新に失敗しました",
       "passwordIncorrect": "現在のパスワードが正しくありません",
+      "passwordReused": "過去5回分のパスワードは使用できません。別のパスワードを入力してください。",
       "twoFactor": "2要素認証",
       "twoFactorDesc": "アカウントに追加のセキュリティ層を追加",
       "enable2FA": "2FAを有効にする",

@@ -46,7 +46,8 @@
       "shortcut": "⌘K",
       "aria": "Global search"
     },
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "theme": "Theme"
   },
   "navUser": {
     "myAccount": "My Account",
@@ -361,6 +362,7 @@
       "passwordMinLength": "Password must be at least 8 characters",
       "passwordUpdateFailed": "Failed to update password",
       "passwordIncorrect": "Current password is incorrect",
+      "passwordReused": "Cannot reuse any of your last 5 passwords. Please choose a different password.",
       "twoFactor": "Two-Factor Authentication",
       "twoFactorDesc": "Add an extra layer of security to your account",
       "enable2FA": "Enable 2FA",

@@ -14,6 +14,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthContext } from '@/features/auth/contexts/AuthContext'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { addPasswordToHistory, isPasswordReused } from '@/lib/auth/password-history'
 import { createClient } from '@/lib/supabase/client'
 import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage'
 
@@ -169,7 +170,17 @@ const AccountSettings = () => {
           throw new Error(t('settings.account.passwordIncorrect'))
         }
 
-        // ステップ2: パスワード更新
+        // ステップ2: パスワード履歴チェック（OWASP推奨）
+        if (!user?.id) {
+          throw new Error('ユーザーIDが見つかりません')
+        }
+
+        const isReused = await isPasswordReused(user.id, newPassword)
+        if (isReused) {
+          throw new Error(t('settings.account.passwordReused'))
+        }
+
+        // ステップ3: パスワード更新
         const { error } = await supabase.auth.updateUser({
           password: newPassword,
         })
@@ -178,7 +189,10 @@ const AccountSettings = () => {
           throw new Error(error.message)
         }
 
-        // ステップ3: 他のデバイスのセッションを無効化（セキュリティ強化）
+        // ステップ4: パスワード履歴に追加（OWASP推奨）
+        await addPasswordToHistory(user.id, newPassword)
+
+        // ステップ5: 他のデバイスのセッションを無効化（セキュリティ強化）
         // Supabase v2.149+では自動的にセッション無効化されるが、明示的に実行
         await supabase.auth.signOut({ scope: 'others' })
 
@@ -196,7 +210,7 @@ const AccountSettings = () => {
         setIsPasswordLoading(false)
       }
     },
-    [currentPassword, newPassword, confirmPassword, user?.email, t, supabase]
+    [currentPassword, newPassword, confirmPassword, user?.email, user?.id, t, supabase]
   )
 
   // MFA状態チェック
