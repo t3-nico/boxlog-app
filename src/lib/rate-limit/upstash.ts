@@ -8,58 +8,73 @@
  * @see Issue #487 - OWASP準拠のセキュリティ強化 Phase 3
  */
 
-// NOTE: このファイルはUpstash導入時の参照実装です
-// 実際の使用にはUpstashアカウントと環境変数設定が必要
-
-/*
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 
 /**
- * Redis接続（環境変数から自動設定）
- *
- * 必要な環境変数:
- * - UPSTASH_REDIS_REST_URL
- * - UPSTASH_REDIS_REST_TOKEN
+ * 環境変数チェック
  */
-/*
-const redis = Redis.fromEnv()
+const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL
+const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN
+
+/**
+ * Upstash Redis有効化フラグ
+ */
+export const isUpstashEnabled = Boolean(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN)
+
+/**
+ * Redis接続（環境変数が設定されている場合のみ）
+ */
+let redis: Redis | null = null
+
+if (isUpstashEnabled) {
+  redis = new Redis({
+    url: UPSTASH_REDIS_REST_URL!,
+    token: UPSTASH_REDIS_REST_TOKEN!,
+  })
+}
 
 /**
  * API用レート制限
  * 10リクエスト / 10秒（Sliding Window）
  */
-/*
-export const apiRateLimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(10, '10 s'),
-  analytics: true,
-  prefix: 'ratelimit:api',
-})
+export const apiRateLimit =
+  isUpstashEnabled && redis
+    ? new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(10, '10 s'),
+        analytics: true,
+        prefix: 'ratelimit:api',
+      })
+    : null
 
 /**
  * ログイン用レート制限（より厳格）
  * 5リクエスト / 15分（Sliding Window）
  */
-/*
-export const loginRateLimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(5, '15 m'),
-  analytics: true,
-  prefix: 'ratelimit:login',
-})
+export const loginRateLimit =
+  isUpstashEnabled && redis
+    ? new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(5, '15 m'),
+        analytics: true,
+        prefix: 'ratelimit:login',
+      })
+    : null
 
 /**
  * パスワードリセット用レート制限
  * 3リクエスト / 1時間
  */
-/*
-export const passwordResetRateLimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(3, '1 h'),
-  analytics: true,
-  prefix: 'ratelimit:password-reset',
-})
+export const passwordResetRateLimit =
+  isUpstashEnabled && redis
+    ? new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(3, '1 h'),
+        analytics: true,
+        prefix: 'ratelimit:password-reset',
+      })
+    : null
 
 /**
  * 汎用レート制限ミドルウェア
@@ -87,17 +102,21 @@ export const passwordResetRateLimit = new Ratelimit({
  * }
  * ```
  */
-/*
 export async function withUpstashRateLimit(
   request: Request,
-  rateLimit: Ratelimit
+  rateLimit: Ratelimit | null
 ): Promise<{
   success: boolean
   limit: number
   remaining: number
   reset: number
   pending: Promise<unknown>
-}> {
+} | null> {
+  if (!rateLimit) {
+    // Upstash未設定の場合はスキップ（インメモリ実装にフォールバック）
+    return null
+  }
+
   // クライアント識別子取得
   const identifier = getClientIdentifier(request)
 
@@ -112,7 +131,6 @@ export async function withUpstashRateLimit(
  * - 認証済み: ユーザーID
  * - 未認証: IPアドレス
  */
-/*
 function getClientIdentifier(request: Request): string {
   // 認証トークンからユーザーIDを取得（実装に応じて調整）
   // const userId = await getUserIdFromRequest(request)
@@ -124,7 +142,6 @@ function getClientIdentifier(request: Request): string {
 
   return `ip:${ip}`
 }
-*/
 
 /**
  * セットアップガイド
@@ -142,17 +159,11 @@ function getClientIdentifier(request: Request): string {
  * UPSTASH_REDIS_REST_TOKEN=AXXXxxx
  * ```
  *
- * ## 4. パッケージインストール
- * ```bash
- * npm install @upstash/ratelimit @upstash/redis
- * ```
+ * ## 4. このファイルを使用開始
+ * - 環境変数が設定されると自動的にUpstash版が有効化
+ * - 未設定の場合は既存のインメモリ実装にフォールバック
  *
- * ## 5. このファイルのコメント解除
- * 上記のコメントアウトを解除して使用開始
- *
- * ## 6. 既存のインメモリ実装を置換
- * - `src/app/api/middleware/rate-limit.ts` を Upstash版に置換
- * - または共存させて段階的移行
+ * 詳細: docs/integrations/UPSTASH_SETUP.md
  */
 
 /**
