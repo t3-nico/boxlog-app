@@ -217,6 +217,103 @@ toast.info('パスワード: ABC123') // ❌ すぐ消える
 - 重要な通知はToast + 他の方法を併用
 - ログやhistoryにも残す
 
+## アクセシビリティ（Sonner対応済み）
+
+### WCAG準拠状況
+
+Sonnerライブラリは以下のアクセシビリティ機能に対応済み：
+
+- ✅ `role="status"` によるARIA Live Region
+- ✅ スクリーンリーダーへの自動アナウンス
+- ✅ キーボードナビゲーション（ESCで閉じる）
+- ✅ フォーカスを奪わない設計
+
+### 表示時間のガイドライン
+
+```tsx
+// ✅ 推奨: 5秒（デフォルト）
+toast.success('保存しました')
+
+// 短い: 3秒（シンプルなメッセージ）
+toast.success('コピーしました', { duration: 3000 })
+
+// 長い: 7秒（複雑なメッセージ）
+toast.error('エラーが発生しました。もう一度お試しください', { duration: 7000 })
+
+// 無期限（アクション付き - WCAG 2.2.1準拠）
+toast('削除しました', {
+  action: { label: '元に戻す', onClick: handleUndo },
+  duration: Infinity, // ユーザーが閉じるまで表示
+})
+```
+
+### アクセシビリティ配慮事項
+
+1. **タイミング調整可能性（WCAG 2.2.1）**
+   - アクション付きToastは `duration: Infinity` を推奨
+   - 自動で消える場合は5秒以上確保
+
+2. **視覚的配慮**
+   - 右上に表示（ユーザーの視野内）
+   - 十分なコントラスト比（WCAG AA準拠）
+   - 画面拡大表示にも対応
+
+3. **スクリーンリーダー対応**
+   - 簡潔な文言（1-2文以内）
+   - 重要な情報は別の手段でも提供
+
+## くどくならないためのルール
+
+### ❌ 避けるべきパターン
+
+```tsx
+// ❌ 連続操作で毎回表示
+items.forEach((item) => {
+  deleteItem(item)
+  toast.success(`${item.name}を削除`) // 10回表示される
+})
+
+// ✅ まとめる
+await deleteItems(items)
+toast.success(`${items.length}件を削除しました`)
+```
+
+```tsx
+// ❌ 自動保存で毎回通知
+const handleChange = (value) => {
+  autoSave(value)
+  toast.success('保存しました') // うるさい
+}
+
+// ✅ UIに状態表示
+;<div className="text-muted-foreground text-sm">{isSaving ? '保存中...' : '保存済み'}</div>
+```
+
+```tsx
+// ❌ 明らかな操作に通知
+const handleThemeToggle = () => {
+  toggleTheme()
+  toast.success('テーマを変更しました') // 見れば分かる
+}
+
+// ✅ Toast不要（即座に反映される）
+```
+
+### ✅ 適切な使用例
+
+```tsx
+// ✅ バックグラウンド処理の完了
+toast.success('データのエクスポートが完了しました')
+
+// ✅ ユーザーが見ていない場所での変化
+toast.info('新しいメッセージが届きました')
+
+// ✅ 取り消し可能な削除操作
+toast('タスクを削除しました', {
+  action: { label: '元に戻す', onClick: handleUndo },
+})
+```
+
 ## まとめ
 
 ### Toast通知の本質：
@@ -228,6 +325,7 @@ toast.info('パスワード: ABC123') // ❌ すぐ消える
 1. **これを見逃したらユーザーは困るか？** → Yes なら Toast以外
 2. **ユーザーの返答が必要か？** → Yes なら Modal
 3. **3秒で理解できるか？** → No なら別の方法
+4. **連続して表示される可能性は？** → あるならまとめる
 
 ### 黄金律：
 
