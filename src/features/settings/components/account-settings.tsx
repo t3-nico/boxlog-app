@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
-import { InfoIcon } from 'lucide-react'
+import { Eye, EyeOff, InfoIcon } from 'lucide-react'
 import Image from 'next/image'
 import QRCode from 'qrcode'
 
@@ -44,6 +44,9 @@ const AccountSettings = () => {
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [passwordError, setPasswordError] = useState<string | null>(null)
   const [isPasswordLoading, setIsPasswordLoading] = useState(false)
 
@@ -600,13 +603,26 @@ const AccountSettings = () => {
         <form onSubmit={handlePasswordSave} className="space-y-2">
           <InputGroup>
             <InputGroupInput
-              type="password"
+              type={showCurrentPassword ? 'text' : 'password'}
               value={currentPassword}
               onChange={handleCurrentPasswordChange}
               placeholder={t('settings.account.currentPassword')}
               required
             />
             <InputGroupAddon align="inline-end">
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <InputGroupButton
+                    variant="ghost"
+                    aria-label={showCurrentPassword ? 'Hide password' : 'Show password'}
+                    size="icon-xs"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  >
+                    {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </InputGroupButton>
+                </TooltipTrigger>
+                <TooltipContent>{showCurrentPassword ? 'パスワードを隠す' : 'パスワードを表示'}</TooltipContent>
+              </Tooltip>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
@@ -622,13 +638,26 @@ const AccountSettings = () => {
 
           <InputGroup>
             <InputGroupInput
-              type="password"
+              type={showNewPassword ? 'text' : 'password'}
               value={newPassword}
               onChange={handleNewPasswordChange}
               placeholder={t('settings.account.newPassword')}
               required
             />
             <InputGroupAddon align="inline-end">
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <InputGroupButton
+                    variant="ghost"
+                    aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                    size="icon-xs"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                  >
+                    {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </InputGroupButton>
+                </TooltipTrigger>
+                <TooltipContent>{showNewPassword ? 'パスワードを隠す' : 'パスワードを表示'}</TooltipContent>
+              </Tooltip>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
@@ -644,13 +673,26 @@ const AccountSettings = () => {
 
           <InputGroup>
             <InputGroupInput
-              type="password"
+              type={showConfirmPassword ? 'text' : 'password'}
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
               placeholder={t('settings.account.confirmPassword')}
               required
             />
             <InputGroupAddon align="inline-end">
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <InputGroupButton
+                    variant="ghost"
+                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                    size="icon-xs"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </InputGroupButton>
+                </TooltipTrigger>
+                <TooltipContent>{showConfirmPassword ? 'パスワードを隠す' : 'パスワードを表示'}</TooltipContent>
+              </Tooltip>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
