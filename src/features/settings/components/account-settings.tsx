@@ -612,6 +612,8 @@ const AccountSettings = () => {
               onChange={handleCurrentPasswordChange}
               placeholder={t('settings.account.currentPassword')}
               required
+              minLength={8}
+              maxLength={64}
             />
             <InputGroupAddon align="inline-end">
               <Tooltip delayDuration={0}>
@@ -647,6 +649,8 @@ const AccountSettings = () => {
               onChange={handleNewPasswordChange}
               placeholder={t('settings.account.newPassword')}
               required
+              minLength={8}
+              maxLength={64}
             />
             <InputGroupAddon align="inline-end">
               <Tooltip delayDuration={0}>
@@ -682,6 +686,8 @@ const AccountSettings = () => {
               onChange={handleConfirmPasswordChange}
               placeholder={t('settings.account.confirmPassword')}
               required
+              minLength={8}
+              maxLength={64}
             />
             <InputGroupAddon align="inline-end">
               <Tooltip delayDuration={0}>

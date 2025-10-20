@@ -252,6 +252,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
                     required
+                    minLength={8}
+                    maxLength={64}
                   />
                   <Tooltip>
                     <TooltipTrigger asChild>
