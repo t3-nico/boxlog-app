@@ -59,9 +59,9 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="space-y-4">
+    <div className="flex h-full flex-col">
       <DataTableToolbar table={table} onDeleteSelected={onDeleteSelected} />
-      <div className="border-input max-h-[calc(100vh-280px)] overflow-auto rounded-md border">
+      <div className="border-input mt-4 flex-1 overflow-auto rounded-md border">
         <Table>
           <TableCaption className="sr-only">タスク一覧テーブル</TableCaption>
           <TableHeader className="bg-background sticky top-0 z-10">
@@ -96,7 +96,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      <DataTablePagination table={table} className="mt-4" />
     </div>
   )
 }

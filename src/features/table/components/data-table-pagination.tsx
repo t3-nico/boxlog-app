@@ -5,14 +5,16 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-r
 
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { cn } from '@/lib/utils'
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>
+  className?: string
 }
 
-export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData>({ table, className }: DataTablePaginationProps<TData>) {
   return (
-    <div className="flex h-8 items-center justify-between px-2">
+    <div className={cn('flex h-8 items-center justify-between px-2', className)}>
       <div className="text-muted-foreground flex-1 text-sm">
         {table.getFilteredSelectedRowModel().rows.length} / {table.getFilteredRowModel().rows.length} 行選択中
       </div>
