@@ -764,7 +764,10 @@
       "passwordRequired": "Password is required",
       "passwordMismatch": "Passwords do not match",
       "weakPassword": "Password must be at least 8 characters long",
-      "unexpectedError": "An unexpected error occurred"
+      "unexpectedError": "An unexpected error occurred",
+      "accountLocked": "For security reasons, this account has been temporarily locked. Please try again in {minutes} minutes.",
+      "accountLockedTitle": "Account Locked",
+      "failedAttempts": "Failed attempts: {count}"
     },
     "success": {
       "loginSuccess": "Successfully logged in",

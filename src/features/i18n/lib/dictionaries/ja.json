@@ -759,7 +759,10 @@
       "passwordRequired": "パスワードが必要です",
       "passwordMismatch": "パスワードが一致しません",
       "weakPassword": "パスワードは8文字以上にしてください",
-      "unexpectedError": "予期しないエラーが発生しました"
+      "unexpectedError": "予期しないエラーが発生しました",
+      "accountLocked": "セキュリティのため、このアカウントは一時的にロックされています。{minutes}分後に再試行してください。",
+      "accountLockedTitle": "アカウントがロックされています",
+      "failedAttempts": "失敗回数: {count}回"
     },
     "success": {
       "loginSuccess": "ログインに成功しました",

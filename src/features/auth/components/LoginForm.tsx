@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, ShieldAlert } from 'lucide-react'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 
@@ -13,7 +13,9 @@ import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthContext } from '@/features/auth'
+import { checkLockoutStatus, recordLoginAttempt, resetLoginAttempts } from '@/features/auth/lib/account-lockout'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
@@ -28,21 +30,88 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isLocked, setIsLocked] = useState(false)
+  const [lockoutMinutes, setLockoutMinutes] = useState(0)
+  const [failedAttempts, setFailedAttempts] = useState(0)
+
+  // ロックアウトステータスをチェック
+  const checkLockout = useCallback(async () => {
+    if (!email) return
+
+    const supabase = createClient()
+    const status = await checkLockoutStatus(supabase, email)
+
+    setIsLocked(status.isLocked)
+    setLockoutMinutes(status.remainingMinutes)
+    setFailedAttempts(status.failedAttempts)
+
+    if (status.isLocked) {
+      setError(
+        t('auth.errors.accountLocked', {
+          minutes: status.remainingMinutes.toString(),
+        })
+      )
+    }
+  }, [email, t])
+
+  // メールアドレス変更時にロックアウトステータスをチェック
+  useEffect(() => {
+    if (email && email.includes('@')) {
+      checkLockout()
+    }
+  }, [email, checkLockout])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
 
-    try {
-      const { error, data } = await signIn(email, password)
-      if (error) {
-        setError(error.message)
-      } else if (data) {
-        // MFAが有効かチェック（AALレベルで判断）
-        const { createClient } = await import('@/lib/supabase/client')
-        const supabase = createClient()
+    const supabase = createClient()
 
+    try {
+      // ステップ1: ロックアウトステータスをチェック
+      const lockoutStatus = await checkLockoutStatus(supabase, email)
+
+      if (lockoutStatus.isLocked) {
+        setIsLocked(true)
+        setLockoutMinutes(lockoutStatus.remainingMinutes)
+        setError(
+          t('auth.errors.accountLocked', {
+            minutes: lockoutStatus.remainingMinutes.toString(),
+          })
+        )
+        setIsLoading(false)
+        return
+      }
+
+      // ステップ2: ログイン試行
+      const { error, data } = await signIn(email, password)
+
+      if (error) {
+        // ログイン失敗を記録
+        await recordLoginAttempt(supabase, email, false)
+
+        // 新しいロックアウトステータスを取得
+        const newStatus = await checkLockoutStatus(supabase, email)
+        setFailedAttempts(newStatus.failedAttempts)
+
+        if (newStatus.isLocked) {
+          setIsLocked(true)
+          setLockoutMinutes(newStatus.remainingMinutes)
+          setError(
+            t('auth.errors.accountLocked', {
+              minutes: newStatus.remainingMinutes.toString(),
+            })
+          )
+        } else {
+          setError(error.message)
+        }
+      } else if (data) {
+        // ログイン成功を記録してカウンターリセット
+        await resetLoginAttempts(supabase, email)
+        setFailedAttempts(0)
+
+        // MFAが有効かチェック（AALレベルで判断）
         // セッション確立を待つ
         await new Promise((resolve) => setTimeout(resolve, 100))
 
@@ -63,6 +132,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     } catch (err) {
       console.error('Login error:', err)
       setError('An unexpected error occurred')
+
+      // エラーでも失敗として記録
+      await recordLoginAttempt(supabase, email, false)
     } finally {
       setIsLoading(false)
     }
@@ -79,7 +151,28 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 <p className="text-muted-foreground text-balance">{t('auth.loginForm.loginToAccount')}</p>
               </div>
 
-              {error && (
+              {isLocked && (
+                <div className="bg-destructive/10 border-destructive/50 text-destructive flex items-start gap-3 rounded-md border p-4">
+                  <ShieldAlert className="mt-0.5 h-5 w-5 flex-shrink-0" />
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm font-medium">{t('auth.errors.accountLockedTitle')}</p>
+                    <p className="text-sm">
+                      {t('auth.errors.accountLocked', {
+                        minutes: lockoutMinutes.toString(),
+                      })}
+                    </p>
+                    {failedAttempts > 0 && (
+                      <p className="text-xs opacity-80">
+                        {t('auth.errors.failedAttempts', {
+                          count: failedAttempts.toString(),
+                        })}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {error && !isLocked && (
                 <div className="text-destructive text-center text-sm" role="alert">
                   {error}
                 </div>
@@ -135,7 +228,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               </Field>
 
               <Field>
-                <Button type="submit" disabled={isLoading} className="w-full">
+                <Button type="submit" disabled={isLoading || isLocked} className="w-full">
                   {isLoading && <Spinner className="mr-2" />}
                   {t('auth.loginForm.loginButton')}
                 </Button>
