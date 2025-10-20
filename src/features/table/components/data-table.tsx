@@ -59,9 +59,9 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="grid h-full grid-rows-[auto_1fr_auto] gap-4">
+    <div className="space-y-4">
       <DataTableToolbar table={table} onDeleteSelected={onDeleteSelected} />
-      <div className="border-input overflow-auto rounded-md border">
+      <div className="border-input max-h-[calc(100vh-280px)] overflow-auto rounded-md border">
         <Table>
           <TableCaption className="sr-only">タスク一覧テーブル</TableCaption>
           <TableHeader className="bg-background sticky top-0 z-10">
