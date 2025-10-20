@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
-import { PanelLeft, Search } from 'lucide-react'
+import { Bell, PanelLeft, Search } from 'lucide-react'
 
 import {
   Breadcrumb,
@@ -15,8 +15,11 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
+import { useNotificationDialogStore } from '@/features/notifications'
 import { useGlobalSearch } from '@/features/search'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 
@@ -35,6 +38,7 @@ export function SiteHeader() {
   const { t } = useI18n(localeFromPath)
   const { isOpen, toggle } = useSidebarStore()
   const { open: openGlobalSearch } = useGlobalSearch()
+  const { open: openNotifications } = useNotificationDialogStore()
   const isMobile = useMediaQuery('(max-width: 768px)')
 
   // パスからパンくずリストを生成
@@ -101,7 +105,7 @@ export function SiteHeader() {
         <Button
           onClick={openGlobalSearch}
           variant="outline"
-          className="text-muted-foreground mr-2 ml-auto hidden h-8 items-center justify-start gap-2 px-3 text-sm font-normal md:flex md:w-48 lg:w-56"
+          className="text-muted-foreground ml-auto hidden h-8 items-center justify-start gap-2 px-3 text-sm font-normal md:flex md:w-48 lg:w-56"
           aria-label={t('siteHeader.search.aria')}
         >
           <Search className="h-4 w-4 shrink-0" />
@@ -110,6 +114,42 @@ export function SiteHeader() {
             {t('siteHeader.search.shortcut')}
           </kbd>
         </Button>
+
+        {/* Right Side Actions */}
+        <div className="flex items-center gap-2">
+          {/* Notification Icon */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={openNotifications}
+                  aria-label={t('siteHeader.notifications')}
+                >
+                  <Bell className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>{t('siteHeader.notifications')}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {/* Theme Toggle */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <SimpleThemeToggle />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>{t('siteHeader.theme')}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
     </header>
   )
