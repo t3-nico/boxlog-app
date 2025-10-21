@@ -64,7 +64,7 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
             }
           }}
           onMonthChange={onMonthChange}
-          showWeekNumber={showWeekNumbers}
+          showWeekNumber={false}
           captionLayout="dropdown"
           locale={locale === 'ja' ? ja : undefined}
           weekStartsOn={1}
@@ -81,7 +81,7 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
         selected={selectedDate}
         onSelect={onDateSelect}
         onMonthChange={onMonthChange}
-        showWeekNumber={showWeekNumbers}
+        showWeekNumber={false}
         captionLayout="dropdown"
         locale={locale === 'ja' ? ja : undefined}
         weekStartsOn={1}

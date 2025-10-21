@@ -66,7 +66,7 @@ const Calendar = ({
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn(
-        'bg-muted group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent',
+        'bg-muted group/calendar p-2 [--cell-size:--spacing(6)] [[data-slot=card-content]_&]:bg-transparent',
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className
