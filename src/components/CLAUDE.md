@@ -380,8 +380,8 @@ describe('TaskCard', () => {
 - **機能モジュール**: [`../features/CLAUDE.md`](../features/CLAUDE.md) - ビジネスロジック含むコンポーネント
 - **ナビゲーション**: [`../features/navigation/CLAUDE.md`](../features/navigation/CLAUDE.md) - AppBar, Sidebar等
 - **Inspector**: [`../features/inspector/CLAUDE.md`](../features/inspector/CLAUDE.md) - Inspector機能
-- **テーマシステム**: [`../config/ui/theme.ts`](../config/ui/theme.ts) - デザイントークン
-- **デザインシステム**: [`../../docs/THEME_ENFORCEMENT.md`](../../docs/THEME_ENFORCEMENT.md)
+- **スタイルガイド**: [`../../docs/design-system/STYLE_GUIDE.md`](../../docs/design-system/STYLE_GUIDE.md)
+- **デザインシステム**: [`../../docs/design-system/THEME_MIGRATION.md`](../../docs/design-system/THEME_MIGRATION.md)
 - **テスト戦略**: [`../../docs/testing/CLAUDE.md`](../../docs/testing/CLAUDE.md)
 
 ---

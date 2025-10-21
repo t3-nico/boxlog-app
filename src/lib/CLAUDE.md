@@ -120,7 +120,7 @@ const title = t('title') // 言語に応じた文字列を取得
 // サポート言語: ja, en
 ```
 
-**詳細**: [docs/development/I18N_DEVELOPMENT_GUIDE.md](../../docs/development/I18N_DEVELOPMENT_GUIDE.md)
+**詳細**: コード内のJSDocコメント参照
 
 ### local-storage/ - LocalStorage管理
 
@@ -414,7 +414,7 @@ describe('cn', () => {
 ### 統合・機能
 
 - [docs/integrations/SENTRY.md](../../docs/integrations/SENTRY.md) - Sentry統合
-- [docs/development/I18N_DEVELOPMENT_GUIDE.md](../../docs/development/I18N_DEVELOPMENT_GUIDE.md) - 国際化ガイド
+- `src/lib/i18n/` - 国際化実装（JSDocコメント参照）
 - [src/server/README.md](../server/README.md) - tRPC APIサーバー
 
 ### テスト

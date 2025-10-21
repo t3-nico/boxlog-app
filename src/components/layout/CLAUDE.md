@@ -388,7 +388,7 @@ export function MainContentWrapper({ children }) {
 - **親ディレクトリ**: [../CLAUDE.md](../CLAUDE.md) - UI実装ルール
 - **ナビゲーション**: [../../features/navigation/CLAUDE.md](../../features/navigation/CLAUDE.md) - サイドバー・ヘッダー
 - **Inspector**: [../../features/inspector/CLAUDE.md](../../features/inspector/CLAUDE.md) - Inspector機能
-- **デザインシステム**: [../../../docs/THEME_ENFORCEMENT.md](../../../docs/THEME_ENFORCEMENT.md)
+- **デザインシステム**: [../../../docs/design-system/THEME_MIGRATION.md](../../../docs/design-system/THEME_MIGRATION.md)
 
 ---
 

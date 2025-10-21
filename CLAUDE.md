@@ -71,7 +71,7 @@ AIは以下の順序で判断すること。上位の判断基準が存在する
    - カラーシステム（セマンティックトークン）
    - タイポグラフィ
    - レスポンシブデザイン
-2. `/src/config/ui/theme.ts` のデザイントークン実装
+2. `src/app/globals.css` のセマンティックトークン（カラー、ダークモード）
 3. `/src/CLAUDE.md` のコーディング規約
 4. 既存コードの実装パターン（同一ディレクトリ内を優先）
 
@@ -231,21 +231,20 @@ npm run lint        # ✅ 必須：3.6秒（pre-commitフックで自動実行�
 ### 📖 プロジェクト全体
 
 - **プロジェクト概要**: [`docs/README.md`](docs/README.md)
-- **ESLint公式準拠**: [`docs/ESLINT_HYBRID_APPROACH.md`](docs/ESLINT_HYBRID_APPROACH.md)
+- **ESLint公式準拠**: [`docs/development/ESLINT_HYBRID_APPROACH.md`](docs/development/ESLINT_HYBRID_APPROACH.md)
 - **デザインシステム**: [`docs/design-system/THEME_MIGRATION.md`](docs/design-system/THEME_MIGRATION.md)
 
 ### 開発ワークフロー
 
-- **コミット規約**: [`docs/development/COMMIT_RULES.md`](docs/development/COMMIT_RULES.md)
+- **コマンド一覧**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
 - **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
 - **Issueラベル付けルール**: [`docs/development/ISSUE_LABELING_RULES.md`](docs/development/ISSUE_LABELING_RULES.md)
-- **セッション管理**: [`docs/development/SESSION_MANAGEMENT.md`](docs/development/SESSION_MANAGEMENT.md)
+- **セッション管理**: [`docs/development/CLAUDE_SESSION_MANAGEMENT.md`](docs/development/CLAUDE_SESSION_MANAGEMENT.md)
 
 ### システム管理
 
-- **Breaking Changes**: [`docs/BREAKING_CHANGES.md`](docs/BREAKING_CHANGES.md)
 - **Sentry統合**: [`docs/integrations/SENTRY.md`](docs/integrations/SENTRY.md)
-- **エラーハンドリング**: [`docs/architecture/ERROR_HANDLING.md`](docs/architecture/ERROR_HANDLING.md) 🆕
+- **エラーハンドリング**: [`docs/architecture/ERROR_HANDLING.md`](docs/architecture/ERROR_HANDLING.md)
 
 ## 🚀 基本コマンド（頻出4個）
 
