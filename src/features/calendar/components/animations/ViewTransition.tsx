@@ -411,7 +411,7 @@ export const CalendarViewAnimation = ({ children, viewType, previousViewType }: 
     return 'calendar-slide-in'
   }
 
-  return <div className={`${getAnimationClass()} h-full`}>{children}</div>
+  return <div className={`${getAnimationClass()} flex min-h-0 flex-1 flex-col`}>{children}</div>
 }
 
 // 読み込み時のスケルトンアニメーション

@@ -27,15 +27,55 @@ interface ScrollableCalendarLayoutProps {
   onTimeClick?: (hour: number, minute: number) => void
   displayDates?: Date[]
   viewMode?: 'day' | '3day' | 'week' | '2week'
-  header?: React.ReactNode
 
   // スクロール機能の追加
   enableKeyboardNavigation?: boolean
   onScrollPositionChange?: (scrollTop: number) => void
 }
 
+interface CalendarDateHeaderProps {
+  header: React.ReactNode
+  showTimeColumn?: boolean
+  showTimezone?: boolean
+  timeColumnWidth?: number
+  timezone?: string
+}
+
 const TIME_COLUMN_WIDTH = 64
 
+/**
+ * カレンダー日付ヘッダー（固定）
+ */
+export const CalendarDateHeader = ({
+  header,
+  showTimeColumn = true,
+  showTimezone = true,
+  timeColumnWidth = TIME_COLUMN_WIDTH,
+  timezone,
+}: CalendarDateHeaderProps) => {
+  return (
+    <div className="bg-background border-border flex shrink-0 flex-col border-b">
+      <div className="flex">
+        {/* UTC/タイムゾーン表示エリア（ヘッダー左端） */}
+        {showTimeColumn && showTimezone ? (
+          <div
+            className="bg-muted/5 border-border flex shrink-0 items-end justify-start border-r"
+            style={{ width: timeColumnWidth }}
+          >
+            <TimezoneOffset timezone={timezone} className="text-xs" />
+          </div>
+        ) : null}
+
+        {/* 各ビューが独自のヘッダーを配置するエリア */}
+        <div className="flex-1">{header}</div>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * スクロール可能カレンダーコンテンツ
+ */
 export const ScrollableCalendarLayout = ({
   children,
   className = '',
@@ -48,7 +88,6 @@ export const ScrollableCalendarLayout = ({
   onTimeClick,
   displayDates = [],
   viewMode = 'week',
-  header,
   enableKeyboardNavigation = true,
   onScrollPositionChange,
 }: ScrollableCalendarLayoutProps) => {
@@ -293,91 +332,64 @@ export const ScrollableCalendarLayout = ({
   )
 
   return (
-    <div className={cn('flex flex-col', className)}>
-      {/* ヘッダーエリア（非スクロール） */}
-      <div className="flex shrink-0">
-        {/* UTC/タイムゾーン表示エリア（ヘッダー左端） */}
-        {showTimeColumn && showTimezone ? (
-          <div className="bg-muted/5 flex shrink-0 items-end justify-center pb-1" style={{ width: timeColumnWidth }}>
-            <TimezoneOffset timezone={timezone} className="text-xs" />
+    <div
+      ref={scrollContainerRef}
+      className={cn(
+        'relative flex-1 overflow-x-hidden overflow-y-auto',
+        enableKeyboardNavigation &&
+          'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2',
+        className
+      )}
+      style={{ flex: '1 0 0%' }}
+      onClick={handleGridClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={enableKeyboardNavigation ? 0 : -1}
+      role={enableKeyboardNavigation ? 'grid' : undefined}
+      aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
+    >
+      <div className="relative flex w-full" style={{ height: `${24 * HOUR_HEIGHT}px` }}>
+        {/* 時間軸列 */}
+        {showTimeColumn && (
+          <div
+            className="bg-muted/5 border-border sticky left-0 z-10 shrink-0 border-r"
+            style={{ width: timeColumnWidth }}
+          >
+            <TimeColumn startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} format="24h" className="h-full" />
           </div>
-        ) : null}
-
-        {/* 各ビューが独自のヘッダーを配置するエリア */}
-        <div className="flex-1">{header}</div>
-      </div>
-
-      {/* コンテンツエリア（スクロールはCalendarLayoutで管理） */}
-      <div
-        ref={scrollContainerRef}
-        className={cn(
-          'relative',
-          enableKeyboardNavigation &&
-            'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2'
         )}
-        onClick={handleGridClick}
-        onKeyDown={handleKeyDown}
-        tabIndex={enableKeyboardNavigation ? 0 : -1}
-        role={enableKeyboardNavigation ? 'grid' : undefined}
-        aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
-      >
-        <div className="relative flex w-full" style={{ height: `${24 * HOUR_HEIGHT}px` }}>
-          {/* 時間軸列 */}
-          {showTimeColumn != null && (
-            <div className="bg-muted/5 sticky left-0 z-10 shrink-0" style={{ width: timeColumnWidth }}>
-              <TimeColumn startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} format="24h" className="h-full" />
-            </div>
-          )}
 
-          {/* グリッドコンテンツエリア */}
-          <div className="relative flex-1 overflow-visible">
-            {/* メインコンテンツ */}
-            {children}
+        {/* グリッドコンテンツエリア */}
+        <div className="relative flex flex-1">
+          {/* メインコンテンツ */}
+          {children}
 
-            {/* 現在時刻線 - 今日の列のみに表示 */}
-            {shouldShowCurrentTimeLine && todayColumnPosition ? (
-              <>
-                {/* 横線 - 今日の列のみ */}
-                <div
-                  className={cn('pointer-events-none absolute z-40 h-[2px] bg-blue-600 shadow-sm dark:bg-blue-500')}
-                  style={{
-                    top: `${currentTimePosition}px`,
-                    left: todayColumnPosition.left,
-                    width: todayColumnPosition.width,
-                  }}
-                />
+          {/* 現在時刻線 - 今日の列のみに表示 */}
+          {shouldShowCurrentTimeLine && todayColumnPosition ? (
+            <>
+              {/* 横線 - 今日の列のみ */}
+              <div
+                className={cn('pointer-events-none absolute z-40 h-[2px] bg-blue-600 shadow-sm dark:bg-blue-500')}
+                style={{
+                  top: `${currentTimePosition}px`,
+                  left: todayColumnPosition.left,
+                  width: todayColumnPosition.width,
+                }}
+              />
 
-                {/* 点 - 今日の列の左端 */}
-                <div
-                  className={cn(
-                    'pointer-events-none absolute z-40 h-2 w-2 rounded-full border border-white bg-blue-600 shadow-md dark:border-gray-800 dark:bg-blue-500'
-                  )}
-                  style={{
-                    top: `${currentTimePosition - 4}px`,
-                    left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
-                  }}
-                />
-              </>
-            ) : null}
-          </div>
+              {/* 点 - 今日の列の左端 */}
+              <div
+                className={cn(
+                  'pointer-events-none absolute z-40 h-2 w-2 rounded-full border border-white bg-blue-600 shadow-md dark:border-gray-800 dark:bg-blue-500'
+                )}
+                style={{
+                  top: `${currentTimePosition - 4}px`,
+                  left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
+                }}
+              />
+            </>
+          ) : null}
         </div>
       </div>
     </div>
-  )
-}
-
-/**
- * ヘッダー付きの統一レイアウト
- */
-interface CalendarLayoutWithHeaderProps extends ScrollableCalendarLayoutProps {
-  header: React.ReactNode
-}
-
-export const CalendarLayoutWithHeader = ({ header, children, ...props }: CalendarLayoutWithHeaderProps) => {
-  // CalendarLayoutWithHeader が呼び出されました
-  return (
-    <ScrollableCalendarLayout {...props} header={header}>
-      {children}
-    </ScrollableCalendarLayout>
   )
 }

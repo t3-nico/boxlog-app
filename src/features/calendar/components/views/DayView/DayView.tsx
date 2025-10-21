@@ -8,7 +8,7 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { cn } from '@/lib/utils'
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { CalendarLayoutWithHeader, DateDisplay } from '../shared'
+import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout } from '../shared'
 
 import { DayContent } from './components/DayContent'
 import type { DayViewProps } from './DayView.types'
@@ -121,32 +121,31 @@ export const DayView = ({
 
   return (
     <CalendarViewAnimation viewType="day">
-      <div className={cn('bg-background flex h-full flex-col overflow-x-hidden', className)}>
-        {/* メインコンテンツエリア */}
-        <div className="min-h-0 flex-1">
-          <CalendarLayoutWithHeader
-            header={headerComponent}
-            timezone={timezone}
-            {...(isToday && { scrollToHour: 8 })}
-            displayDates={displayDates}
-            viewMode="day"
-            onTimeClick={handleEmptySlotClick}
-            className="h-full"
-          >
-            {/* 日のコンテンツ */}
-            <DayContent
-              date={date}
-              events={dayEvents}
-              eventStyles={eventStyles}
-              {...(onEventClick && { onEventClick })}
-              {...(onEventContextMenu && { onEventContextMenu })}
-              {...(onEmptyClick && { onEmptyClick })}
-              {...(handleEventTimeUpdate && { onEventUpdate: handleEventTimeUpdate })}
-              {...(onTimeRangeSelect && { onTimeRangeSelect })}
-              className="absolute inset-y-0 right-0 left-0"
-            />
-          </CalendarLayoutWithHeader>
-        </div>
+      <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
+        {/* 固定日付ヘッダー */}
+        <CalendarDateHeader header={headerComponent} timezone={timezone} />
+
+        {/* スクロール可能コンテンツ */}
+        <ScrollableCalendarLayout
+          timezone={timezone}
+          {...(isToday && { scrollToHour: 8 })}
+          displayDates={displayDates}
+          viewMode="day"
+          onTimeClick={handleEmptySlotClick}
+        >
+          {/* 日のコンテンツ */}
+          <DayContent
+            date={date}
+            events={dayEvents}
+            eventStyles={eventStyles}
+            {...(onEventClick && { onEventClick })}
+            {...(onEventContextMenu && { onEventContextMenu })}
+            {...(onEmptyClick && { onEmptyClick })}
+            {...(handleEventTimeUpdate && { onEventUpdate: handleEventTimeUpdate })}
+            {...(onTimeRangeSelect && { onTimeRangeSelect })}
+            className="absolute inset-y-0 right-0 left-0"
+          />
+        </ScrollableCalendarLayout>
       </div>
     </CalendarViewAnimation>
   )

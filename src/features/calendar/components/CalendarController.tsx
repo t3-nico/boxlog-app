@@ -687,7 +687,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         }}
       >
         {/* ビュー固有のコンテンツ */}
-        <div className="flex-1">{renderView()}</div>
+        {renderView()}
       </CalendarLayout>
 
       {/* イベントコンテキストメニュー */}

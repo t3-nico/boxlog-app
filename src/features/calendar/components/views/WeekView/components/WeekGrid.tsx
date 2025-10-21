@@ -7,7 +7,7 @@ import { isToday } from 'date-fns'
 
 import { cn } from '@/lib/utils'
 
-import { CalendarLayoutWithHeader, DateDisplay, HourLines, getDateKey } from '../../shared'
+import { CalendarDateHeader, DateDisplay, HourLines, ScrollableCalendarLayout, getDateKey } from '../../shared'
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight'
 import { useWeekEvents } from '../hooks/useWeekEvents'
 
@@ -87,27 +87,29 @@ export const WeekGrid = ({
   )
 
   return (
-    <CalendarLayoutWithHeader
-      header={headerComponent}
-      timezone={timezone}
-      scrollToHour={todayIndex !== -1 ? undefined : 8}
-      displayDates={currentTimeDisplayDates}
-      viewMode="week"
-      onTimeClick={(hour, minute) => {
-        // WeekViewでは週の最初の日付を使用（日付は後でWeekContentで決定）
-        const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-        onEmptyClick?.(weekDates[0], timeString)
-      }}
-      enableKeyboardNavigation={true}
-      className={cn('bg-background', className)}
-    >
-      {/* 7日分のグリッド */}
-      <div className="relative flex overflow-visible" style={{ height: `${24 * HOUR_HEIGHT}px` }}>
+    <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
+      {/* 固定日付ヘッダー */}
+      <CalendarDateHeader header={headerComponent} timezone={timezone} />
+
+      {/* スクロール可能コンテンツ */}
+      <ScrollableCalendarLayout
+        timezone={timezone}
+        scrollToHour={todayIndex !== -1 ? undefined : 8}
+        displayDates={currentTimeDisplayDates}
+        viewMode="week"
+        onTimeClick={(hour, minute) => {
+          // WeekViewでは週の最初の日付を使用（日付は後でWeekContentで決定）
+          const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+          onEmptyClick?.(weekDates[0], timeString)
+        }}
+        enableKeyboardNavigation={true}
+      >
         {/* 共通のグリッド線（ThreeDayViewと同じパターン） */}
         <div className="pointer-events-none absolute inset-0">
           <HourLines startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
         </div>
 
+        {/* 7日分のグリッド */}
         {weekDates.map((date, dayIndex) => {
           const dateKey = getDateKey(date)
           const dayEvents = eventsByDate[dateKey] || []
@@ -154,7 +156,7 @@ export const WeekGrid = ({
             </div>
           )
         })}
-      </div>
-    </CalendarLayoutWithHeader>
+      </ScrollableCalendarLayout>
+    </div>
   )
 }

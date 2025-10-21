@@ -5,7 +5,6 @@ import { useMemo } from 'react'
 import { isWeekend } from 'date-fns'
 
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { cn } from '@/lib/utils'
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
 
@@ -83,26 +82,21 @@ export const WeekView = ({
 
   return (
     <CalendarViewAnimation viewType="week">
-      <div className={cn('bg-background flex h-full flex-col', className)}>
-        {/* メインコンテンツエリア */}
-        <div className="min-h-0 flex-1">
-          <WeekGrid
-            weekDates={displayDates}
-            events={events}
-            eventsByDate={eventsByDate}
-            todayIndex={todayIndex}
-            timezone={timezone}
-            onEventClick={onEventClick}
-            onEventContextMenu={onEventContextMenu}
-            onEmptyClick={(date, time) => {
-              onEmptyClick?.(date, time)
-            }}
-            onEventUpdate={onUpdateEvent}
-            onTimeRangeSelect={onTimeRangeSelect}
-            className="h-full"
-          />
-        </div>
-      </div>
+      <WeekGrid
+        weekDates={displayDates}
+        events={events}
+        eventsByDate={eventsByDate}
+        todayIndex={todayIndex}
+        timezone={timezone}
+        onEventClick={onEventClick}
+        onEventContextMenu={onEventContextMenu}
+        onEmptyClick={(date, time) => {
+          onEmptyClick?.(date, time)
+        }}
+        onEventUpdate={onUpdateEvent}
+        onTimeRangeSelect={onTimeRangeSelect}
+        className={className}
+      />
     </CalendarViewAnimation>
   )
 }
