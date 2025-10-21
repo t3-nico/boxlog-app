@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { ERROR_CODES, getErrorCategory } from '@/constants/errorCodes'
 
@@ -73,7 +73,7 @@ const DEFAULT_CONFIG: Required<RetryConfig> = {
 // === 自動リトライフック ===
 
 export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryConfig = {}) {
-  const finalConfig = { ...DEFAULT_CONFIG, ...config }
+  const finalConfig = useMemo(() => ({ ...DEFAULT_CONFIG, ...config }), [config])
 
   const [state, setState] = useState<RetryState>({
     isLoading: false,

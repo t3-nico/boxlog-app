@@ -719,7 +719,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, onDelete, onMove, tag, a
 
   const handleCancelDelete = useCallback(() => {
     state.setActiveTab('edit')
-  }, [state.setActiveTab])
+  }, [state])
 
   if (!tag) return null
 

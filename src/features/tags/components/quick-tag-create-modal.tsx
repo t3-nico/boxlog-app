@@ -26,19 +26,25 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
     setTagName(e.target.value)
   }, [])
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleCreateTag()
-    } else if (e.key === 'Escape') {
-      handleClose()
-    }
-  }, [])
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        handleCreateTag()
+      } else if (e.key === 'Escape') {
+        handleClose()
+      }
+    },
+    [handleCreateTag, handleClose]
+  )
 
-  const handleOverlayKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      handleClose()
-    }
-  }, [])
+  const handleOverlayKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleClose()
+      }
+    },
+    [handleClose]
+  )
 
   const createColorHandler = useCallback((color: string) => {
     return () => setSelectedColor(color)
@@ -55,7 +61,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
     '#f97316', // orange
   ]
 
-  const handleCreateTag = () => {
+  const handleCreateTag = useCallback(() => {
     if (tagName.trim()) {
       onCreateTag({
         name: tagName.trim(),
@@ -65,13 +71,13 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
       setSelectedColor('#3b82f6')
       onClose()
     }
-  }
+  }, [tagName, selectedColor, onCreateTag, onClose])
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setTagName('')
     setSelectedColor('#3b82f6')
     onClose()
-  }
+  }, [onClose])
 
   if (!isOpen) return null
 

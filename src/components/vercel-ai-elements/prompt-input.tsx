@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import type { ChatStatus, FileUIPart } from 'ai'
 import { ImageIcon, Loader2Icon, MicIcon, PaperclipIcon, PlusIcon, SendIcon, SquareIcon, XIcon } from 'lucide-react'
 import { nanoid } from 'nanoid'
+import NextImage from 'next/image'
 import {
   type ChangeEvent,
   type ChangeEventHandler,
@@ -215,7 +216,7 @@ export function PromptInputAttachment({ data, className, ...props }: PromptInput
       {...props}
     >
       {mediaType === 'image' ? (
-        <img
+        <NextImage
           alt={data.filename || 'attachment'}
           className="size-full rounded-md object-cover"
           height={56}
@@ -457,32 +458,46 @@ export const PromptInput = ({
     [matchesAccept, maxFiles, maxFileSize, onError]
   )
 
-  const add = usingProvider ? (files: File[] | FileList) => controller.attachments.add(files) : addLocal
+  const add = useMemo(
+    () => (usingProvider ? (files: File[] | FileList) => controller.attachments.add(files) : addLocal),
+    [usingProvider, controller, addLocal]
+  )
 
-  const remove = usingProvider
-    ? (id: string) => controller.attachments.remove(id)
-    : (id: string) =>
-        setItems((prev) => {
-          const found = prev.find((file) => file.id === id)
-          if (found?.url) {
-            URL.revokeObjectURL(found.url)
-          }
-          return prev.filter((file) => file.id !== id)
-        })
+  const remove = useMemo(
+    () =>
+      usingProvider
+        ? (id: string) => controller.attachments.remove(id)
+        : (id: string) =>
+            setItems((prev) => {
+              const found = prev.find((file) => file.id === id)
+              if (found?.url) {
+                URL.revokeObjectURL(found.url)
+              }
+              return prev.filter((file) => file.id !== id)
+            }),
+    [usingProvider, controller, setItems]
+  )
 
-  const clear = usingProvider
-    ? () => controller.attachments.clear()
-    : () =>
-        setItems((prev) => {
-          for (const file of prev) {
-            if (file.url) {
-              URL.revokeObjectURL(file.url)
-            }
-          }
-          return []
-        })
+  const clear = useMemo(
+    () =>
+      usingProvider
+        ? () => controller.attachments.clear()
+        : () =>
+            setItems((prev) => {
+              for (const file of prev) {
+                if (file.url) {
+                  URL.revokeObjectURL(file.url)
+                }
+              }
+              return []
+            }),
+    [usingProvider, controller, setItems]
+  )
 
-  const openFileDialog = usingProvider ? () => controller.attachments.openFileDialog() : openFileDialogLocal
+  const openFileDialog = useMemo(
+    () => (usingProvider ? () => controller.attachments.openFileDialog() : openFileDialogLocal),
+    [usingProvider, controller, openFileDialogLocal]
+  )
 
   // Let provider know about our hidden file input so external menus can call openFileDialog()
   useEffect(() => {

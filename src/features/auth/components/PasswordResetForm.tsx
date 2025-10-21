@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 
+import NextImage from 'next/image'
 import { useParams } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
@@ -64,10 +65,11 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
               </FieldGroup>
             </div>
             <div className="bg-muted relative hidden md:block">
-              <img
+              <NextImage
                 src="/placeholder.svg"
                 alt="Image"
-                className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                fill
+                className="object-cover dark:brightness-[0.2] dark:grayscale"
               />
             </div>
           </CardContent>
@@ -111,10 +113,11 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
             </FieldGroup>
           </form>
           <div className="bg-muted relative hidden md:block">
-            <img
+            <NextImage
               src="/placeholder.svg"
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              fill
+              className="object-cover dark:brightness-[0.2] dark:grayscale"
             />
           </div>
         </CardContent>

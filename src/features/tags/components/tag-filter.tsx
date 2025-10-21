@@ -70,10 +70,10 @@ export const TagFilter = ({
   const { data: allTags = [], isLoading } = useTags(true)
   // Use a simple local state for tag filtering for now
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const toggleTag = (tagId: string) => {
+  const toggleTag = useCallback((tagId: string) => {
     setSelectedTagIds((prev) => (prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]))
-  }
-  const clearTags = () => setSelectedTagIds([])
+  }, [])
+  const clearTags = useCallback(() => setSelectedTagIds([]), [])
   const hasTagFilters = selectedTagIds.length > 0
 
   // jsx-no-bind optimization: Event handlers
