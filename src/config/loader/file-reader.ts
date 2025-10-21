@@ -121,7 +121,7 @@ export function getDefaultConfig(environment: string): Record<string, unknown> {
   const envDefaults = DEFAULT_CONFIGS[environment as keyof typeof DEFAULT_CONFIGS] || DEFAULT_CONFIGS.development
 
   return {
-    app: { environment, ...envDefaults.app },
+    app: { ...envDefaults.app, environment },
     database: envDefaults.database,
     features: envDefaults.features,
     logging: envDefaults.logging,

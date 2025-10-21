@@ -17,7 +17,7 @@ export default function MFAVerifyPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const params = useParams()
-  const locale = (params.locale as string) || 'ja'
+  const locale = (params?.locale as string) || 'ja'
   const { t } = useI18n(locale as 'en' | 'ja')
   const supabase = createClient()
 
@@ -108,7 +108,7 @@ export default function MFAVerifyPage() {
       console.log('MFA検証成功:', verifyData)
 
       // 検証成功、次のページへリダイレクト
-      const next = searchParams.get('next') || `/${locale}/calendar`
+      const next = searchParams?.get('next') || `/${locale}/calendar`
       router.refresh()
       router.push(next)
     } catch (err) {

@@ -6,7 +6,7 @@ import { Banknote, Calendar, ChevronLeft, CreditCard } from 'lucide-react'
 import type { Metadata } from 'next'
 
 import { Heading, Subheading } from '@/components/app'
-import { Avatar } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -107,7 +107,10 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string; locale?: L
           </dt>
           <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 dark:text-neutral-100 sm:dark:border-neutral-800">
             <NextLink href={review.event.url} className="flex items-center gap-2">
-              <Avatar src={review.event.thumbUrl} alt={review.event.name} className="size-6" />
+              <Avatar className="size-6">
+                <AvatarImage src={review.event.thumbUrl} alt={review.event.name} />
+                <AvatarFallback>{review.event.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
               <span>{review.event.name}</span>
             </NextLink>
           </dd>
