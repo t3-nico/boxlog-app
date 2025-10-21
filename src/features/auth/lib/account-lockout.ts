@@ -52,7 +52,7 @@ export async function recordLoginAttempt(
   userAgent?: string
 ): Promise<void> {
   try {
-    // @ts-expect-error - login_attemptsテーブルの型定義が未生成
+    // @ts-expect-error - login_attemptsテーブルの型定義が環境により異なる（CI: 生成済み、ローカル: 未生成）
     const { error } = await supabase.from('login_attempts').insert({
       email: email.toLowerCase(),
       attempt_time: new Date().toISOString(),
@@ -116,7 +116,7 @@ async function getLastFailedAttemptTime(supabase: BrowserSupabaseClient, email: 
       return null
     }
 
-    // @ts-expect-error - login_attemptsテーブルの型定義が未生成
+    // @ts-expect-error - login_attemptsテーブルの型定義が環境により異なる（CI: 生成済み、ローカル: 未生成）
     return new Date(data.attempt_time)
   } catch (err) {
     console.error('Exception fetching last failed attempt:', err)
