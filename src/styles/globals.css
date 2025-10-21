@@ -343,6 +343,46 @@ aside * {
     }
   }
 
+  @keyframes zoomIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes zoomOut {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+
+  @keyframes slideInFromTop {
+    from {
+      transform: translateY(-2px);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInFromLeft {
+    from {
+      transform: translateX(-2px);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
   /* Animation classes */
   .animate-in {
     animation-duration: 150ms;
@@ -398,5 +438,66 @@ aside * {
 
   .duration-500 {
     animation-duration: 500ms;
+  }
+
+  .zoom-in-95 {
+    animation-name: zoomIn;
+  }
+
+  .zoom-out-95 {
+    animation-name: zoomOut;
+  }
+
+  .slide-in-from-top-2 {
+    animation-name: slideInFromTop;
+  }
+
+  .slide-in-from-left-2 {
+    animation-name: slideInFromLeft;
+  }
+
+  .slide-in-from-right-2 {
+    animation-name: slideInFromRight;
+  }
+
+  .slide-in-from-bottom-2 {
+    animation-name: slideInFromBottom;
+  }
+
+  /* data-state対応 */
+  [data-state='closed'].animate-out {
+    animation-name: fadeOut;
+  }
+
+  [data-state='open'].animate-in {
+    animation-name: fadeIn;
+  }
+
+  /* カスタムスクロールバー */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-border/50;
+  }
+
+  .scrollbar-thin:hover::-webkit-scrollbar-thumb {
+    @apply bg-border/80;
+  }
+
+  /* Firefox */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border) / 0.5) transparent;
+  }
+
+  .scrollbar-thin:hover {
+    scrollbar-color: hsl(var(--border) / 0.8) transparent;
   }
 }

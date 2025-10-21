@@ -56,7 +56,7 @@ export const CalendarHeader = ({
   displayRange,
 }: CalendarHeaderProps) => {
   return (
-    <header className="bg-background relative h-12 px-6 pt-2">
+    <header className="bg-background relative h-12 px-4 pt-2">
       <div className="flex h-full items-center justify-between">
         {/* 左側: カスタムスロット + ナビゲーションコントロールと日付 */}
         <div className="flex items-center gap-4">

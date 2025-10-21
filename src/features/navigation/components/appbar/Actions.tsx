@@ -1,8 +1,7 @@
 'use client'
 
 import { NotificationDropdown } from '@/features/notifications'
-import { Moon, Search, Settings, Sun } from 'lucide-react'
-import { usePathname } from 'next/navigation'
+import { Moon, Search, Sun } from 'lucide-react'
 import { useCallback } from 'react'
 import { Item } from './Item'
 
@@ -10,19 +9,16 @@ interface ActionsProps {
   onSearch: () => void
   onToggleTheme: (theme: 'light' | 'dark') => void
   resolvedTheme: 'light' | 'dark' | undefined
-  locale: 'ja' | 'en'
   t: (key: string) => string
 }
 
 /**
  * AppBarアクションセクション
  *
- * Search、Theme、Notifications、Settingsのアクションボタンを表示
+ * Search、Theme、Notificationsのアクションボタンを表示
  * useCallbackを使用してjsx-no-bind警告を回避
  */
-export function Actions({ onSearch, onToggleTheme, resolvedTheme, locale, t }: ActionsProps) {
-  const pathname = usePathname()
-
+export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsProps) {
   // useCallbackでイベントハンドラを定義（jsx-no-bind対策）
   const handleSearchClick = useCallback(
     (e: React.MouseEvent) => {
@@ -60,12 +56,6 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, locale, t }: A
         <NotificationDropdown />
         <span className="text-center text-[11px] leading-tight">{t('siteHeader.notifications')}</span>
       </div>
-      <Item
-        icon={Settings}
-        label={t('sidebar.navigation.settings')}
-        url={`/${locale}/settings`}
-        isActive={pathname?.startsWith(`/${locale}/settings`) ?? false}
-      />
     </div>
   )
 }

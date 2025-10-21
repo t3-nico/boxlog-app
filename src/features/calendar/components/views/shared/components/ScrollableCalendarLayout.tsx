@@ -41,7 +41,7 @@ interface CalendarDateHeaderProps {
   timezone?: string
 }
 
-const TIME_COLUMN_WIDTH = 64
+const TIME_COLUMN_WIDTH = 48
 
 /**
  * カレンダー日付ヘッダー（固定）
@@ -54,14 +54,11 @@ export const CalendarDateHeader = ({
   timezone,
 }: CalendarDateHeaderProps) => {
   return (
-    <div className="bg-background border-border flex shrink-0 flex-col border-b">
+    <div className="bg-background flex shrink-0 flex-col">
       <div className="flex">
         {/* UTC/タイムゾーン表示エリア（ヘッダー左端） */}
         {showTimeColumn && showTimezone ? (
-          <div
-            className="bg-muted/5 border-border flex shrink-0 items-end justify-start border-r"
-            style={{ width: timeColumnWidth }}
-          >
+          <div className="bg-muted/5 flex shrink-0 items-end justify-start" style={{ width: timeColumnWidth }}>
             <TimezoneOffset timezone={timezone} className="text-xs" />
           </div>
         ) : null}
@@ -335,7 +332,8 @@ export const ScrollableCalendarLayout = ({
     <div
       ref={scrollContainerRef}
       className={cn(
-        'relative flex-1 overflow-x-hidden overflow-y-auto',
+        'relative flex-1 overflow-x-hidden overflow-y-auto pr-2',
+        'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border/50 hover:scrollbar-thumb-border/80',
         enableKeyboardNavigation &&
           'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2',
         className
@@ -350,10 +348,7 @@ export const ScrollableCalendarLayout = ({
       <div className="relative flex w-full" style={{ height: `${24 * HOUR_HEIGHT}px` }}>
         {/* 時間軸列 */}
         {showTimeColumn && (
-          <div
-            className="bg-muted/5 border-border sticky left-0 z-10 shrink-0 border-r"
-            style={{ width: timeColumnWidth }}
-          >
+          <div className="bg-muted/5 sticky left-0 z-10 shrink-0" style={{ width: timeColumnWidth }}>
             <TimeColumn startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} format="24h" className="h-full" />
           </div>
         )}

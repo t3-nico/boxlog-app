@@ -1,12 +1,14 @@
 'use client'
 
-import { BarChart3, Calendar, SquareKanban, Table as TableIcon } from 'lucide-react'
+import { BarChart3, Calendar, PanelLeftClose, PanelLeftOpen, SquareKanban, Table as TableIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/theme-context'
 import { useAuthContext } from '@/features/auth'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
 import { useGlobalSearch } from '@/features/search'
 
 import { Account } from './Account'
@@ -37,6 +39,7 @@ export function AppBar() {
   const { user } = useAuthContext()
   const { open: openGlobalSearch } = useGlobalSearch()
   const { resolvedTheme, setTheme } = useTheme()
+  const { isOpen, toggle } = useSidebarStore()
 
   // URLから locale を抽出 (例: /ja/calendar -> ja)
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
@@ -81,19 +84,26 @@ export function AppBar() {
 
   return (
     <aside
-      className="bg-sidebar text-sidebar-foreground flex h-full w-16 flex-col gap-4 py-4"
+      className="bg-sidebar text-sidebar-foreground flex h-full w-16 flex-col gap-4 py-2"
       role="navigation"
       aria-label="Main navigation"
     >
-      <Account userData={userData} locale={locale} />
+      {/* Sidebar Toggle */}
+      <div className="flex items-center justify-center">
+        <Button
+          onClick={toggle}
+          size="icon"
+          variant="ghost"
+          aria-label={isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')}
+          className="text-muted-foreground hover:text-foreground size-8 shrink-0"
+        >
+          {isOpen ? <PanelLeftClose className="size-5" /> : <PanelLeftOpen className="size-5" />}
+        </Button>
+      </div>
+
       <Navigation navItems={navItems} />
-      <Actions
-        onSearch={openGlobalSearch}
-        onToggleTheme={setTheme}
-        resolvedTheme={resolvedTheme}
-        locale={locale}
-        t={t}
-      />
+      <Actions onSearch={openGlobalSearch} onToggleTheme={setTheme} resolvedTheme={resolvedTheme} t={t} />
+      <Account userData={userData} locale={locale} />
     </aside>
   )
 }

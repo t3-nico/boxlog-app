@@ -16,18 +16,8 @@ export interface SidebarTab {
  * SidebarTabLayoutのProps
  */
 export interface SidebarTabLayoutProps {
-  /** Sidebarのタイトル */
-  title: string
   /** タブの配列（2〜4タブ対応） */
   tabs: SidebarTab[]
   /** デフォルトで選択されるタブ */
   defaultTab?: string
-}
-
-/**
- * SidebarHeaderのProps
- */
-export interface SidebarHeaderProps {
-  /** ヘッダーのタイトル */
-  title: string
 }

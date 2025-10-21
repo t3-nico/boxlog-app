@@ -2,7 +2,6 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import { SidebarHeader } from './SidebarHeader'
 import type { SidebarTabLayoutProps } from './types'
 
 /**
@@ -12,14 +11,14 @@ import type { SidebarTabLayoutProps } from './types'
  * 2〜4タブまで柔軟に対応。
  *
  * **デザイン仕様**:
- * - 8pxグリッドシステム準拠（py-4, gap-4, px-2）
+ * - 8pxグリッドシステム準拠（py-2, px-4）
+ * - Slack風アンダーラインタブ（選択時のみ下部ボーダー表示）
  * - セマンティックトークン使用（globals.css）
  * - AppBarとの視覚的一貫性
  *
  * @example
  * ```tsx
  * <SidebarTabLayout
- *   title="Calendar"
  *   tabs={[
  *     { value: 'events', label: 'Events', content: <EventsList /> },
  *     { value: 'tasks', label: 'Tasks', content: <TasksList /> },
@@ -29,23 +28,24 @@ import type { SidebarTabLayoutProps } from './types'
  * />
  * ```
  */
-export function SidebarTabLayout({ title, tabs, defaultTab }: SidebarTabLayoutProps) {
+export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
   return (
-    <aside className="flex h-full w-full flex-col gap-4 py-4">
-      {/* Header */}
-      <SidebarHeader title={title} />
-
+    <aside className="flex h-full w-full flex-col py-2">
       {/* Tabs */}
-      <Tabs defaultValue={defaultTab || tabs[0]?.value} className="flex flex-1 flex-col overflow-hidden px-2">
-        {/* TabsList - タブ数に応じて自動調整 */}
+      <Tabs defaultValue={defaultTab || tabs[0]?.value} className="flex flex-1 flex-col overflow-hidden">
+        {/* TabsList - Slack風アンダーラインデザイン */}
         <TabsList
-          className="grid w-full shrink-0"
+          className="border-border grid h-10 w-full shrink-0 rounded-none border-b bg-transparent p-0 px-4"
           style={{
             gridTemplateColumns: `repeat(${tabs.length}, 1fr)`,
           }}
         >
           {tabs.map((tab) => (
-            <TabsTrigger key={tab.value} value={tab.value}>
+            <TabsTrigger
+              key={tab.value}
+              value={tab.value}
+              className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
               {tab.label}
             </TabsTrigger>
           ))}
@@ -53,7 +53,7 @@ export function SidebarTabLayout({ title, tabs, defaultTab }: SidebarTabLayoutPr
 
         {/* TabsContent - スクロール可能 */}
         {tabs.map((tab) => (
-          <TabsContent key={tab.value} value={tab.value} className="mt-0 flex-1 overflow-y-auto">
+          <TabsContent key={tab.value} value={tab.value} className="mt-0 flex-1 overflow-y-auto px-4">
             {tab.content}
           </TabsContent>
         ))}
