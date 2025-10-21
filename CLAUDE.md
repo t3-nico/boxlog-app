@@ -33,6 +33,11 @@ AIアシスタントは、作業開始前に必ず以下の順序でドキュメ
 
 **コミュニケーション言語**: 日本語
 
+**絵文字の使用方針**:
+
+- ✅ **ドキュメント**: 視認性向上のため使用可（見出し、リスト等）
+- ❌ **コード**: コメント・変数名・ログ等では禁止（ユーザーの明示的要求がある場合のみ例外）
+
 ---
 
 ## 🎯 意思決定の絶対的優先順位
@@ -143,8 +148,9 @@ AIは、コードを書く前に以下を必ず実行すること：
 #### 3. コンポーネント作成
 
 - ❌ 禁止: `React.FC`（非推奨）
-- ❌ 禁止: `export default`
-- ✅ 必須: `export function ComponentName() {}`（名前付きエクスポート）
+- ❌ コンポーネントでは原則禁止: `export default`
+- ✅ 推奨: `export function ComponentName() {}`（名前付きエクスポート）
+- ✅ 例外: App Router の Page/Layout/Error/Loading/Route等は `export default` 必須（Next.js仕様）
 
 #### 4. データフェッチング
 
@@ -222,8 +228,7 @@ npm run lint        # ✅ 必須：3.6秒（pre-commitフックで自動実行�
 
 - **プロジェクト概要**: [`docs/README.md`](docs/README.md)
 - **ESLint公式準拠**: [`docs/ESLINT_HYBRID_APPROACH.md`](docs/ESLINT_HYBRID_APPROACH.md)
-- **AI品質基準**: [`.claude/code-standards.md`](.claude/code-standards.md)
-- **デザインシステム**: [`docs/THEME_ENFORCEMENT.md`](docs/THEME_ENFORCEMENT.md)
+- **デザインシステム**: [`docs/design-system/THEME_MIGRATION.md`](docs/design-system/THEME_MIGRATION.md)
 
 ### 開発ワークフロー
 
@@ -366,4 +371,4 @@ PORT=3001 npm run dev  # 追加サーバーが必要な場合
 
 ---
 
-**📖 最終更新**: 2025-10-21 | **バージョン**: v10.0 - AIによるtest:watch自動起動を必須化
+**📖 最終更新**: 2025-10-22 | **バージョン**: v10.1 - Phase 1緊急修正（リンク切れ・export default・絵文字方針）
