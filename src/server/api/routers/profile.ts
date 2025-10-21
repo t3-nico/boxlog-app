@@ -8,6 +8,7 @@ import { z } from 'zod'
 
 import { createClient } from '@/lib/supabase/server'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
+import type { Database } from '@/types/supabase'
 
 export const profileRouter = createTRPCRouter({
   /**
@@ -33,16 +34,13 @@ export const profileRouter = createTRPCRouter({
       const supabase = createClient()
 
       // profiles テーブルを更新
-      const { data, error } = await supabase
-        .from('profiles')
-        .update({
-          username: input.username,
-          avatar_url: input.avatarUrl ?? null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', userId)
-        .select()
-        .single()
+      const updateData: Database['public']['Tables']['profiles']['Update'] = {
+        name: input.username,
+        avatar_url: input.avatarUrl ?? null,
+        updated_at: new Date().toISOString(),
+      }
+
+      const { data, error } = await supabase.from('profiles').update(updateData).eq('id', userId).select().single()
 
       if (error) {
         console.error('Profile update error:', error)

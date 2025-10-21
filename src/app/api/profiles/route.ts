@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError, isValidUUID } from '@/lib/supabase/utils'
+import type { Database } from '@/types/supabase'
 
 // プロフィールの取得 (GET)
 export async function GET(request: NextRequest) {
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Valid email is required' }, { status: 400 })
     }
 
-    const profileData = {
+    const profileData: Database['public']['Tables']['profiles']['Insert'] = {
       id,
       email: email.trim().toLowerCase(),
       name: name?.trim() || null,
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
     }
 
     // upsert を使用して作成または更新
-    const { data, error } = await supabase.from('profiles').upsert([profileData]).select().single()
+    const { data, error } = await supabase.from('profiles').upsert(profileData).select().single()
 
     if (error) {
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
@@ -90,7 +91,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Valid user ID is required' }, { status: 400 })
     }
 
-    const updateData: Record<string, string | null> = {
+    const updateData: Database['public']['Tables']['profiles']['Update'] = {
       updated_at: new Date().toISOString(),
     }
 

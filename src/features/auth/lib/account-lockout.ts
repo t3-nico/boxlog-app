@@ -13,7 +13,7 @@
 
 'use client'
 
-import type { SupabaseClient } from '@supabase/supabase-js'
+import type { SupabaseClient as BrowserSupabaseClient } from '@/lib/supabase/client'
 
 /**
  * ロックアウトステータス
@@ -45,7 +45,7 @@ const LOCKOUT_CONFIG = {
  * ログイン試行を記録
  */
 export async function recordLoginAttempt(
-  supabase: SupabaseClient,
+  supabase: BrowserSupabaseClient,
   email: string,
   isSuccessful: boolean,
   ipAddress?: string,
@@ -73,7 +73,7 @@ export async function recordLoginAttempt(
 /**
  * 失敗したログイン試行履歴を取得
  */
-async function getFailedAttempts(supabase: SupabaseClient, email: string): Promise<number> {
+async function getFailedAttempts(supabase: BrowserSupabaseClient, email: string): Promise<number> {
   try {
     const windowStart = new Date()
     windowStart.setMinutes(windowStart.getMinutes() - LOCKOUT_CONFIG.ATTEMPT_WINDOW_MINUTES)
@@ -100,7 +100,7 @@ async function getFailedAttempts(supabase: SupabaseClient, email: string): Promi
 /**
  * 最後の失敗ログイン試行時刻を取得
  */
-async function getLastFailedAttemptTime(supabase: SupabaseClient, email: string): Promise<Date | null> {
+async function getLastFailedAttemptTime(supabase: BrowserSupabaseClient, email: string): Promise<Date | null> {
   try {
     const { data, error } = await supabase
       .from('login_attempts')
@@ -138,7 +138,7 @@ function calculateLockoutMinutes(failedAttempts: number): number {
 /**
  * アカウントロックアウトステータスをチェック
  */
-export async function checkLockoutStatus(supabase: SupabaseClient, email: string): Promise<LockoutStatus> {
+export async function checkLockoutStatus(supabase: BrowserSupabaseClient, email: string): Promise<LockoutStatus> {
   const failedAttempts = await getFailedAttempts(supabase, email)
   const lockoutMinutes = calculateLockoutMinutes(failedAttempts)
 
@@ -186,7 +186,7 @@ export async function checkLockoutStatus(supabase: SupabaseClient, email: string
 /**
  * ログイン成功時にカウンターをリセット
  */
-export async function resetLoginAttempts(supabase: SupabaseClient, email: string): Promise<void> {
+export async function resetLoginAttempts(supabase: BrowserSupabaseClient, email: string): Promise<void> {
   try {
     // 成功を記録
     await recordLoginAttempt(supabase, email, true)

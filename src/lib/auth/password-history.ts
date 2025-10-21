@@ -24,6 +24,7 @@ export async function isPasswordReused(userId: string, newPassword: string): Pro
 
   try {
     // Supabase RPC関数で履歴チェック（サーバーサイドでbcrypt比較）
+    // @ts-expect-error - RPC関数の型定義が未生成
     const { data, error } = await supabase.rpc('check_password_reuse', {
       p_user_id: userId,
       p_new_password: newPassword,
@@ -55,6 +56,7 @@ export async function addPasswordToHistory(userId: string, newPassword: string):
   const supabase = createClient()
 
   try {
+    // @ts-expect-error - RPC関数の型定義が未生成
     const { error } = await supabase.rpc('add_password_to_history', {
       p_user_id: userId,
       p_new_password: newPassword,
