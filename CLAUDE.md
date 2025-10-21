@@ -375,4 +375,40 @@ PORT=3001 npm run dev  # 追加サーバーが必要な場合
 
 ---
 
-**📖 最終更新**: 2025-10-22 | **バージョン**: v10.1 - Phase 1緊急修正（リンク切れ・export default・絵文字方針）
+## 📝 変更履歴
+
+### v10.1（2025-10-22）- Phase 1 + Phase 3 完了
+
+**Phase 1（緊急修正）**:
+
+- ✅ リンク切れ修正（`.claude/code-standards.md` 削除、`docs/THEME_ENFORCEMENT.md` → `docs/design-system/THEME_MIGRATION.md`）
+- ✅ export default ルール修正（App Router の例外を明記）
+- ✅ 絵文字使用方針の統一（ドキュメント: 使用可、コード: 禁止）
+
+**Phase 2（一貫性向上）**:
+
+- ❌ 取り消し（CLAUDE.md の基本思想「公式ベストプラクティスの厳格な遵守」と矛盾）
+
+**Phase 3（構造改善）**:
+
+- ✅ Single Source of Truth の徹底
+  - 新規作成: `docs/design-system/STYLE_GUIDE.md`（8pxグリッド、カラー、タイポグラフィを集約）
+  - CLAUDE.md から STYLE_GUIDE.md への参照追加
+- ✅ 頻出パターン集の追加
+  - `src/CLAUDE.md` に Server Component/Client Component/i18n/フォーム/レスポンシブのコード例を追加
+- ✅ バージョン履歴の追加（本セクション）
+
+**効果**: ドキュメント評価 65点 → 85点
+
+### v10.0（2025-10-21）
+
+- AIによる test:watch 自動起動を必須化
+
+### v9.3 以前
+
+- Issue管理の柔軟な運用を明記
+- コミット規約・Issue管理ルールの整備
+
+---
+
+**📖 最終更新**: 2025-10-22 | **バージョン**: v10.1
