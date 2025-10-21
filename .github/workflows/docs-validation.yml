@@ -1,0 +1,120 @@
+name: 📚 Docs Validation
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - '**.md'
+      - 'CLAUDE.md'
+      - 'src/**/CLAUDE.md'
+      - 'docs/**/*.md'
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - '**.md'
+  workflow_dispatch:
+
+# 同じブランチで複数実行された場合、古い実行をキャンセル
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  link-check:
+    name: 🔗 Check Markdown Links
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+
+      - name: 🔗 Check links in all markdown files
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          config-file: '.github/markdown-link-check.json'
+          folder-path: '.'
+          file-path: './CLAUDE.md'
+          max-depth: -1
+
+  reference-check:
+    name: 📂 Check File References
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        with:
+          node-version: '18'
+
+      - name: 📂 Validate CLAUDE.md file references
+        run: node scripts/validate-doc-references.js
+
+  rule-check:
+    name: 🚨 Check CLAUDE.md Rule Violations
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        with:
+          node-version: '18'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🚨 Check CLAUDE.md rule violations
+        run: node scripts/validate-claude-rules.js
+
+      - name: 💬 Comment PR with violations (if any)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
+        with:
+          script: |
+            const fs = require('fs')
+            const violations = fs.readFileSync('.violations.json', 'utf8')
+
+            const comment = `## 🚨 CLAUDE.md ルール違反が検出されました
+
+            ${violations}
+
+            詳細は [ワークフローログ](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) を確認してください。
+            `
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            })
+
+  quality-gate:
+    name: 🚪 Docs Quality Gate
+    runs-on: ubuntu-latest
+    needs: [link-check, reference-check, rule-check]
+    if: always()
+    steps:
+      - name: ✅ Check results
+        run: |
+          if [[ "${{ needs.link-check.result }}" != "success" ]]; then
+            echo "❌ Link check failed"
+            exit 1
+          fi
+          if [[ "${{ needs.reference-check.result }}" != "success" ]]; then
+            echo "❌ Reference check failed"
+            exit 1
+          fi
+          if [[ "${{ needs.rule-check.result }}" != "success" ]]; then
+            echo "⚠️  Rule violations found (non-blocking)"
+          fi
+          echo "✅ All documentation checks passed!"
