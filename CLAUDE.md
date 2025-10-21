@@ -147,48 +147,16 @@ AIは、コードを書く前に以下を必ず実行すること：
 
 #### 3. コンポーネント作成
 
-- ⚠️ 推奨しない: `React.FC`（children の暗黙的型付け問題）
+- ❌ 禁止: `React.FC`（非推奨）
 - ❌ コンポーネントでは原則禁止: `export default`
-- ✅ 推奨: 明示的な型定義 + 名前付きエクスポート
+- ✅ 推奨: `export function ComponentName() {}`（名前付きエクスポート）
 - ✅ 例外: App Router の Page/Layout/Error/Loading/Route等は `export default` 必須（Next.js仕様）
-
-**コンポーネント定義例**:
-
-```typescript
-// ❌ 非推奨（React.FC）
-const MyComponent: React.FC<Props> = ({ title }) => { ... }
-
-// ✅ 推奨（明示的な型定義）
-export function MyComponent({ title }: Props) { ... }
-```
 
 #### 4. データフェッチング
 
-- ⚠️ 非推奨: `useEffect`でのfetch（Server Componentsを優先）
-- ❌ App Routerでは使用不可: `getServerSideProps`, `getStaticProps`
-- ✅ 推奨: Server Components（サーバーサイド）
-- ✅ 推奨: TanStack Query（クライアントサイド、キャッシュ管理が必要な場合）
-- ✅ 許可: Client Component内の`useEffect` + `fetch`（シンプルなケース）
-
-**データフェッチング優先順位**:
-
-```typescript
-// 1. Server Components（最優先）
-async function Page() {
-  const data = await fetch('...')
-  return <div>{data}</div>
-}
-
-// 2. TanStack Query（クライアントサイド、キャッシュ管理）
-function ClientComponent() {
-  const { data } = useQuery({ queryKey: ['...'], queryFn: ... })
-}
-
-// 3. useEffect + fetch（シンプルなケースのみ）
-function SimpleComponent() {
-  useEffect(() => { fetch('...') }, [])
-}
-```
+- ❌ 禁止: `useEffect`でのfetch
+- ❌ 禁止: `getServerSideProps`, `getStaticProps`
+- ✅ 必須: Server ComponentsまたはTanStack Query
 
 #### 5. 状態管理
 
@@ -335,13 +303,12 @@ PORT=3001 npm run dev  # 追加サーバーが必要な場合
 7. **Middleware**: 認証・i18n・レート制限実装済み
 8. **エラーハンドリング**: `GlobalErrorBoundary`統合済み
 
-### 🚫 使用禁止（App Router）
+### 🚫 使用禁止
 
 - ❌ `<img>` タグ → ✅ `<Image>` コンポーネント
 - ❌ 外部CDNフォント → ✅ `next/font`
 - ❌ `pages/` ディレクトリ → ✅ `app/` ディレクトリ（新規作成時）
-- ❌ `getServerSideProps`, `getStaticProps` → ✅ Server Components
-  - 注: Pages Router（`src/pages/api/trpc`）では使用可能
+- ❌ `getServerSideProps` → ✅ Server Components
 - ❌ カスタムsplitChunks → ✅ Next.js自動最適化
 
 ### 📖 公式ドキュメント（常に最新版を参照）
@@ -404,4 +371,4 @@ PORT=3001 npm run dev  # 追加サーバーが必要な場合
 
 ---
 
-**📖 最終更新**: 2025-10-22 | **バージョン**: v10.2 - Phase 1-2完了（リンク切れ・export default・絵文字・React.FC・データフェッチング・getServerSideProps）
+**📖 最終更新**: 2025-10-22 | **バージョン**: v10.1 - Phase 1緊急修正（リンク切れ・export default・絵文字方針）
