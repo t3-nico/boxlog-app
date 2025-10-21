@@ -116,6 +116,7 @@ async function getLastFailedAttemptTime(supabase: BrowserSupabaseClient, email: 
       return null
     }
 
+    // @ts-expect-error - login_attemptsテーブルの型定義が未生成
     return new Date(data.attempt_time)
   } catch (err) {
     console.error('Exception fetching last failed attempt:', err)
