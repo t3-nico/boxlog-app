@@ -49,13 +49,11 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
       </a>
 
       {/* メインレイアウト */}
-      <div className="bg-background flex flex-1 overflow-hidden">
-        {isMobile ? (
-          <MobileLayout>{children}</MobileLayout>
-        ) : (
-          <DesktopLayout locale={localeFromPath}>{children}</DesktopLayout>
-        )}
-      </div>
+      {isMobile ? (
+        <MobileLayout locale={localeFromPath}>{children}</MobileLayout>
+      ) : (
+        <DesktopLayout locale={localeFromPath}>{children}</DesktopLayout>
+      )}
 
       {/* Floating Action Button */}
       <FloatingActionButton locale={localeFromPath} />

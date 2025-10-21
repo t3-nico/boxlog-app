@@ -1,7 +1,10 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
+
 import { SiteHeader } from '@/components/site-header'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
+import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar'
 import { AppBar } from '@/features/navigation/components/appbar'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
@@ -18,11 +21,15 @@ interface DesktopLayoutProps {
  *
  * 3カラムレイアウト:
  * - AppBar（64px、常に表示）
- * - Sidebar（240px、開閉可能）← TODO: PageSidebarに置き換え
+ * - Sidebar（240px、開閉可能）← ページごとに動的切り替え
  * - MainContent + Inspector
  */
-export function DesktopLayout({ children }: DesktopLayoutProps) {
+export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   const { isOpen } = useSidebarStore()
+  const pathname = usePathname()
+
+  // ページごとにSidebarを切り替え
+  const isCalendarPage = pathname?.startsWith(`/${locale}/calendar`) ?? false
 
   return (
     <div className="flex h-full">
@@ -33,11 +40,11 @@ export function DesktopLayout({ children }: DesktopLayoutProps) {
 
       {/* 元のレイアウト（ResizablePanel） */}
       <ResizablePanelGroup direction="horizontal" className="flex-1">
-        {/* Sidebar（240px、開閉可能）← TODO: PageSidebarに置き換え */}
+        {/* Sidebar（240px、開閉可能）← ページごとに動的切り替え */}
         {isOpen && (
           <>
             <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
-              <AppSidebar />
+              {isCalendarPage ? <CalendarSidebar /> : <AppSidebar />}
             </ResizablePanel>
             <ResizableHandle className="border-border hover:border-primary w-0 border-r transition-colors" />
           </>
@@ -45,7 +52,7 @@ export function DesktopLayout({ children }: DesktopLayoutProps) {
 
         {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
         <ResizablePanel>
-          <div className="bg-muted relative flex h-full flex-col shadow-lg">
+          <div className="bg-muted relative flex h-full flex-col">
             {/* Site Header */}
             <SiteHeader />
 
