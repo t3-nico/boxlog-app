@@ -76,6 +76,7 @@ export function useNotifications({ events, onReminderTriggered }: UseNotificatio
       const now = new Date()
       events.forEach((event) => {
         // イベント開始15分前に通知（例）
+        if (!event.start) return
         const eventStart = new Date(event.start)
         const reminderTime = new Date(eventStart.getTime() - 15 * 60 * 1000)
 

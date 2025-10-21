@@ -24,11 +24,13 @@ export function TaskCard({ task, isSelected, onSelect }: TaskCardProps) {
   // ステータスバッジの色を決定
   const getStatusVariant = (status: Task['status']) => {
     switch (status) {
-      case 'done':
+      case 'completed':
         return 'default' as const
       case 'in_progress':
         return 'secondary' as const
-      case 'todo':
+      case 'backlog':
+      case 'scheduled':
+      case 'stopped':
         return 'outline' as const
       default:
         return 'outline' as const
@@ -52,12 +54,16 @@ export function TaskCard({ task, isSelected, onSelect }: TaskCardProps) {
   // ステータスラベル
   const getStatusLabel = (status: Task['status']) => {
     switch (status) {
-      case 'done':
+      case 'completed':
         return '完了'
       case 'in_progress':
         return '進行中'
-      case 'todo':
+      case 'backlog':
         return 'バックログ'
+      case 'scheduled':
+        return 'スケジュール済み'
+      case 'stopped':
+        return '停止'
       default:
         return status
     }
