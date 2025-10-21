@@ -5,6 +5,7 @@ import React, { useCallback } from 'react'
 import { GripVertical, Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 import { cn } from '@/lib/utils'
 
@@ -72,7 +73,7 @@ export const UnscheduledTasksList = () => {
   }
 
   return (
-    <div className="h-full overflow-auto">
+    <ScrollArea className="h-full">
       <div className="space-y-0">
         {/* ヘッダー */}
         <div className={cn('border-b border-neutral-200 p-4 dark:border-neutral-800')}>
@@ -93,8 +94,8 @@ export const UnscheduledTasksList = () => {
               onDragStart={createDragStartHandler(task)}
               className={cn(
                 'cursor-move border-b border-l-4 p-4 transition-colors',
-                'border-neutral-200 dark:border-neutral-800',
-                'bg-neutral-100 dark:bg-neutral-900',
+                'border-border',
+                'bg-card',
                 'hover:bg-accent/50',
                 getPriorityColor(task.priority)
               )}
@@ -132,6 +133,6 @@ export const UnscheduledTasksList = () => {
           </div>
         )}
       </div>
-    </div>
+    </ScrollArea>
   )
 }

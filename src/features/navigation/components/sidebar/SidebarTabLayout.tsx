@@ -1,5 +1,6 @@
 'use client'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import type { SidebarTabLayoutProps } from './types'
@@ -53,8 +54,10 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
 
         {/* TabsContent - スクロール可能 */}
         {tabs.map((tab) => (
-          <TabsContent key={tab.value} value={tab.value} className="mt-0 flex-1 overflow-y-auto px-4">
-            {tab.content}
+          <TabsContent key={tab.value} value={tab.value} className="mt-0 min-h-0 flex-1">
+            <ScrollArea className="h-full">
+              <div className="px-4 pt-4">{tab.content}</div>
+            </ScrollArea>
           </TabsContent>
         ))}
       </Tabs>

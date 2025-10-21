@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation'
 
-import { SiteHeader } from '@/components/site-header'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar'
 import { AppBar } from '@/features/navigation/components/appbar'
@@ -53,9 +52,6 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
         <ResizablePanel>
           <div className="bg-muted relative flex h-full flex-col">
-            {/* Site Header */}
-            <SiteHeader />
-
             <MainContentWrapper>{children}</MainContentWrapper>
           </div>
         </ResizablePanel>

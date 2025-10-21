@@ -114,12 +114,12 @@ export const NOTIFICATION_PRIORITY_CONFIG = {
   urgent: {
     color: 'bg-destructive',
     textColor: 'text-destructive-foreground',
-    badgeColor: 'bg-red-500',
+    badgeColor: 'bg-destructive',
   },
   high: {
-    color: 'bg-orange-500',
-    textColor: 'text-white',
-    badgeColor: 'bg-orange-500',
+    color: 'bg-destructive/80',
+    textColor: 'text-destructive-foreground',
+    badgeColor: 'bg-destructive/80',
   },
   medium: {
     color: 'bg-primary',

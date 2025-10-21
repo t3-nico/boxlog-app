@@ -15,6 +15,7 @@ import {
 } from '@tanstack/react-table'
 import * as React from 'react'
 
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { DataTableEmpty } from './data-table-empty'
 import { DataTablePagination } from './data-table-pagination'
@@ -66,7 +67,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="flex h-full flex-col">
       <DataTableToolbar table={table} onDeleteSelected={onDeleteSelected} />
-      <div className="border-input mt-4 flex-1 overflow-auto rounded-md border">
+      <ScrollArea className="border-input mt-4 flex-1 rounded-md border">
         <Table style={{ minWidth: table.getTotalSize() }}>
           <TableCaption className="sr-only">タスク一覧テーブル</TableCaption>
           <TableHeader className="bg-background sticky top-0 z-10">
@@ -110,7 +111,8 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-      </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
       <DataTablePagination table={table} className="mt-4" />
     </div>
   )

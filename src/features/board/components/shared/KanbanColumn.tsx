@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
@@ -87,7 +88,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
       </div>
 
       {/* カードリスト */}
-      <div className="flex-1 overflow-auto pr-3">
+      <ScrollArea className="flex-1 pr-3">
         <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
           <div className="flex flex-col gap-2">
             {column.cards.map((card, index) => (
@@ -109,7 +110,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
             <p className="text-muted-foreground text-xs">ドロップしてカードを追加</p>
           </div>
         )}
-      </div>
+      </ScrollArea>
 
       {/* カード追加ボタン */}
       <Button

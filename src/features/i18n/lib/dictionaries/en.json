@@ -40,15 +40,6 @@
       "search": "Search"
     }
   },
-  "siteHeader": {
-    "search": {
-      "placeholder": "Search...",
-      "shortcut": "⌘K",
-      "aria": "Global search"
-    },
-    "notifications": "Notifications",
-    "theme": "Theme"
-  },
   "navUser": {
     "myAccount": "My Account",
     "account": "Account",
@@ -78,6 +69,9 @@
     "search": "Search",
     "filter": "Filter",
     "sort": "Sort"
+  },
+  "search": {
+    "shortcut": "⌘K"
   },
   "status": {
     "loading": "Loading...",

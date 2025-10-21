@@ -78,7 +78,7 @@ export const CalendarHeader = ({
         </div>
 
         {/* 右側: ビュー切り替えとアクション */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-0">
           {/* ビュー切り替え */}
           <ViewSwitcher options={viewOptions} currentView={viewType} onChange={onViewChange} />
 

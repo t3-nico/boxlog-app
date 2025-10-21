@@ -7,6 +7,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 
 import { TimeColumn } from '../grid/TimeColumn/TimeColumn'
@@ -54,11 +55,11 @@ export const CalendarDateHeader = ({
   timezone,
 }: CalendarDateHeaderProps) => {
   return (
-    <div className="bg-background flex shrink-0 flex-col">
+    <div className="flex shrink-0 flex-col">
       <div className="flex">
         {/* UTC/タイムゾーン表示エリア（ヘッダー左端） */}
         {showTimeColumn && showTimezone ? (
-          <div className="bg-muted/5 flex shrink-0 items-end justify-start" style={{ width: timeColumnWidth }}>
+          <div className="flex shrink-0 items-end justify-start" style={{ width: timeColumnWidth }}>
             <TimezoneOffset timezone={timezone} className="text-xs" />
           </div>
         ) : null}
@@ -329,26 +330,20 @@ export const ScrollableCalendarLayout = ({
   )
 
   return (
-    <div
-      ref={scrollContainerRef}
-      className={cn(
-        'relative flex-1 overflow-x-hidden overflow-y-auto pr-2',
-        'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border/50 hover:scrollbar-thumb-border/80',
-        enableKeyboardNavigation &&
-          'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2',
-        className
-      )}
-      style={{ flex: '1 0 0%' }}
-      onClick={handleGridClick}
-      onKeyDown={handleKeyDown}
-      tabIndex={enableKeyboardNavigation ? 0 : -1}
-      role={enableKeyboardNavigation ? 'grid' : undefined}
-      aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
-    >
-      <div className="relative flex w-full" style={{ height: `${24 * HOUR_HEIGHT}px` }}>
+    <ScrollArea className={cn('relative min-h-0 flex-1', className)}>
+      <div
+        ref={scrollContainerRef}
+        className="relative flex w-full px-4"
+        style={{ height: `${24 * HOUR_HEIGHT}px` }}
+        onClick={handleGridClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={enableKeyboardNavigation ? 0 : -1}
+        role={enableKeyboardNavigation ? 'grid' : undefined}
+        aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
+      >
         {/* 時間軸列 */}
         {showTimeColumn && (
-          <div className="bg-muted/5 sticky left-0 z-10 shrink-0" style={{ width: timeColumnWidth }}>
+          <div className="sticky left-0 z-10 shrink-0" style={{ width: timeColumnWidth }}>
             <TimeColumn startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} format="24h" className="h-full" />
           </div>
         )}
@@ -385,6 +380,6 @@ export const ScrollableCalendarLayout = ({
           ) : null}
         </div>
       </div>
-    </div>
+    </ScrollArea>
   )
 }

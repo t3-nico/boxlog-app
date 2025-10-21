@@ -2,11 +2,13 @@
 
 import { CheckSquare, Clock, Flag, MessageSquare, Paperclip, User } from 'lucide-react'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
+
 import { cn } from '@/lib/utils'
 
 export const TaskInspectorContent = () => {
   return (
-    <div className="h-full overflow-auto">
+    <ScrollArea className="h-full">
       <div className="space-y-6 p-4">
         {/* タスク詳細セクション */}
         <div className="space-y-3">
@@ -203,6 +205,6 @@ export const TaskInspectorContent = () => {
           </div>
         </div>
       </div>
-    </div>
+    </ScrollArea>
   )
 }

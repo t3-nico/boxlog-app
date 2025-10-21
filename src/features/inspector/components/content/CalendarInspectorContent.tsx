@@ -2,11 +2,13 @@
 
 import { Calendar, Clock, MapPin, Tag, Users } from 'lucide-react'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
+
 import { cn } from '@/lib/utils'
 
 export const CalendarInspectorContent = () => {
   return (
-    <div className="h-full overflow-auto">
+    <ScrollArea className="h-full">
       <div className="space-y-6 p-4">
         {/* イベント詳細セクション */}
         <div className="space-y-3">
@@ -152,6 +154,6 @@ export const CalendarInspectorContent = () => {
           </div>
         </div>
       </div>
-    </div>
+    </ScrollArea>
   )
 }

@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation'
 
-import { SiteHeader } from '@/components/site-header'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
@@ -38,9 +37,6 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
 
       {/* Main Content */}
       <div className="flex h-full flex-1 flex-col">
-        {/* Site Header */}
-        <SiteHeader />
-
         <MainContentWrapper>{children}</MainContentWrapper>
       </div>
     </>

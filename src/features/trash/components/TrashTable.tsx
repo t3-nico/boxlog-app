@@ -1,6 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 import React, { useCallback, useMemo } from 'react'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { useTrashStore } from '../stores/useTrashStore'
@@ -153,7 +154,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
       </div>
 
       {/* アイテムリスト */}
-      <div className="max-h-96 overflow-y-auto">
+      <ScrollArea className="max-h-96">
         {Object.entries(groupedItems).map(([dateString, dayItems]) => (
           <div key={dateString}>
             {/* 日付ヘッダー */}
@@ -176,7 +177,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
             ))}
           </div>
         ))}
-      </div>
+      </ScrollArea>
     </div>
   )
 }

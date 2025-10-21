@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
 /**
@@ -64,7 +65,7 @@ export function NotificationDropdown({ className }: NotificationDropdownProps) {
         <button
           type="button"
           className="hover:bg-accent data-[state=open]:bg-accent relative flex h-10 w-10 items-center justify-center rounded-lg outline-hidden"
-          aria-label={t('siteHeader.notifications')}
+          aria-label={t('notifications.title')}
         >
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
@@ -94,7 +95,7 @@ export function NotificationDropdown({ className }: NotificationDropdownProps) {
         {mockNotifications.length === 0 ? (
           <div className="text-muted-foreground py-8 text-center text-sm">{t('notifications.empty.all')}</div>
         ) : (
-          <div className="max-h-[400px] overflow-y-auto">
+          <ScrollArea className="h-[400px]">
             <DropdownMenuGroup>
               {mockNotifications.map((notification) => (
                 <DropdownMenuItem key={notification.id} className="flex cursor-pointer flex-col items-start gap-1 p-3">
@@ -109,7 +110,7 @@ export function NotificationDropdown({ className }: NotificationDropdownProps) {
                 </DropdownMenuItem>
               ))}
             </DropdownMenuGroup>
-          </div>
+          </ScrollArea>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

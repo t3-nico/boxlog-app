@@ -40,15 +40,6 @@
       "search": "検索"
     }
   },
-  "siteHeader": {
-    "search": {
-      "placeholder": "検索...",
-      "shortcut": "⌘K",
-      "aria": "グローバル検索"
-    },
-    "notifications": "通知",
-    "theme": "テーマ"
-  },
   "navUser": {
     "myAccount": "マイアカウント",
     "account": "アカウント",
@@ -78,6 +69,9 @@
     "search": "検索",
     "filter": "フィルター",
     "sort": "並べ替え"
+  },
+  "search": {
+    "shortcut": "⌘K"
   },
   "status": {
     "loading": "読み込み中...",

@@ -2,6 +2,8 @@
 
 import React from 'react'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
+
 interface SettingsLayoutProps {
   children: React.ReactNode
   title: string
@@ -26,35 +28,9 @@ export const SettingsLayout = ({ children, title, description, actions }: Settin
       </div>
 
       {/* メインコンテンツ */}
-      <div className="flex-1 overflow-auto px-6 pt-0">
-        <style jsx>{`
-          div::-webkit-scrollbar {
-            width: 8px;
-          }
-          div::-webkit-scrollbar-track {
-            background-color: rgb(229 229 229); /* neutral-200 - surface light */
-          }
-          div::-webkit-scrollbar-thumb {
-            background-color: rgb(163 163 163); /* neutral-400 for visibility */
-            border-radius: 4px;
-          }
-          div::-webkit-scrollbar-thumb:hover {
-            background-color: rgb(115 115 115); /* neutral-500 */
-          }
-          @media (prefers-color-scheme: dark) {
-            div::-webkit-scrollbar-track {
-              background-color: rgb(38 38 38); /* neutral-800 - surface dark */
-            }
-            div::-webkit-scrollbar-thumb {
-              background-color: rgb(115 115 115); /* neutral-500 */
-            }
-            div::-webkit-scrollbar-thumb:hover {
-              background-color: rgb(163 163 163); /* neutral-400 */
-            }
-          }
-        `}</style>
+      <ScrollArea className="flex-1 px-6 pt-0">
         <div className="w-full">{children}</div>
-      </div>
+      </ScrollArea>
     </div>
   )
 }

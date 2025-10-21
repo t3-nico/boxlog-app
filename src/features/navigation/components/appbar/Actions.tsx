@@ -38,23 +38,17 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
 
   return (
     <div className="bg-sidebar flex flex-col items-center gap-2 px-2">
-      <Item
-        icon={Search}
-        label={t('siteHeader.search.placeholder')}
-        url="#"
-        isActive={false}
-        onClick={handleSearchClick}
-      />
+      <Item icon={Search} label={t('actions.search')} url="#" isActive={false} onClick={handleSearchClick} />
       <Item
         icon={resolvedTheme === 'light' ? Moon : Sun}
-        label={t('siteHeader.theme')}
+        label={t('sidebar.theme')}
         url="#"
         isActive={false}
         onClick={handleThemeClick}
       />
       <div className="flex flex-col items-center gap-1">
         <NotificationDropdown />
-        <span className="text-center text-[11px] leading-tight">{t('siteHeader.notifications')}</span>
+        <span className="text-center text-[11px] leading-tight">{t('notifications.title')}</span>
       </div>
     </div>
   )

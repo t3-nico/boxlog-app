@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
 import { useState } from 'react'
 import { useKanbanDnd } from '../../hooks/useKanbanDnd'
@@ -85,7 +86,7 @@ export function DesktopKanbanBoard() {
       >
         <div className="bg-background flex h-full w-full flex-col">
           {/* Kanbanボード（横スクロール領域） */}
-          <div className="flex-1 overflow-auto px-4 py-4 md:px-6">
+          <ScrollArea className="flex-1 px-4 py-4 md:px-6" orientation="horizontal">
             <div className="flex gap-6" style={{ width: 'fit-content', minWidth: '100%' }}>
               {activeBoard.columns
                 .sort((a, b) => a.order - b.order)
@@ -99,7 +100,7 @@ export function DesktopKanbanBoard() {
                   />
                 ))}
             </div>
-          </div>
+          </ScrollArea>
         </div>
 
         {/* ドラッグオーバーレイ */}
