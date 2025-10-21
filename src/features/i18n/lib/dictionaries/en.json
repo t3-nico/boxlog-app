@@ -1311,6 +1311,7 @@
     },
     "cookies": {
       "title": "Cookie Settings",
+      "description": "Cookie Usage and Management",
       "banner": {
         "title": "About Cookies",
         "description": "We use cookies to improve our service and analyze usage.",
