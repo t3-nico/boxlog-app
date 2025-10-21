@@ -41,7 +41,7 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, locale, t }: A
   )
 
   return (
-    <div className="bg-sidebar flex flex-col items-center gap-4 py-4">
+    <div className="bg-sidebar flex flex-col items-center gap-2 px-2">
       <Item
         icon={Search}
         label={t('siteHeader.search.placeholder')}

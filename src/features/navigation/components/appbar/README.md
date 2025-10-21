@@ -1,10 +1,10 @@
 # AppBar - コンパクトナビゲーション
 
-56px幅のコンパクトなアプリケーション全体のナビゲーション。
+64px幅のコンパクトなアプリケーション全体のナビゲーション。
 
 ## 概要
 
-- **幅**: 56px（固定）
+- **幅**: 64px（固定）
 - **レイアウト**: アイコン（24px） + 名前（11px）の縦型
 - **機能**: ページ切り替え（Calendar/Board/Table/Stats）+ アクション（Search/Theme/Notifications/Settings）
 
@@ -44,7 +44,7 @@ export default function Layout() {
 
 ```tsx
 const spacing = {
-  width: '56px', // w-14
+  width: '64px', // w-16
   itemGap: '16px', // gap-4
 }
 ```

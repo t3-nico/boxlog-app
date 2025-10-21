@@ -17,7 +17,7 @@ interface DesktopLayoutProps {
  * デスクトップ用レイアウト
  *
  * 3カラムレイアウト:
- * - AppBar（56px、常に表示）
+ * - AppBar（64px、常に表示）
  * - Sidebar（240px、開閉可能）← TODO: PageSidebarに置き換え
  * - MainContent + Inspector
  */
@@ -26,8 +26,8 @@ export function DesktopLayout({ children }: DesktopLayoutProps) {
 
   return (
     <div className="flex h-full">
-      {/* AppBar（56px、固定幅、常に表示） */}
-      <div className="w-14 shrink-0">
+      {/* AppBar（64px、固定幅、常に表示） */}
+      <div className="w-16 shrink-0">
         <AppBar />
       </div>
 

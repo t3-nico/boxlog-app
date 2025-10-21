@@ -15,7 +15,7 @@ import { Navigation } from './Navigation'
 import type { AppBarNavItem } from './types'
 
 /**
- * コンパクトAppBar（56px幅）
+ * コンパクトAppBar（64px幅）
  *
  * 3つのセクションに分離：
  * - アカウント: ユーザーアバター + ドロップダウンメニュー
@@ -23,7 +23,7 @@ import type { AppBarNavItem } from './types'
  * - アクション: Search/Theme/Notifications/Settings
  *
  * **デザイン仕様**:
- * - 幅: 56px（固定）
+ * - 幅: 64px（固定）
  * - 8pxグリッドシステム準拠
  * - セマンティックトークン使用
  *
@@ -81,7 +81,7 @@ export function AppBar() {
 
   return (
     <aside
-      className="bg-sidebar text-sidebar-foreground flex h-full w-14 flex-col"
+      className="bg-sidebar text-sidebar-foreground flex h-full w-16 flex-col gap-4 py-3"
       role="navigation"
       aria-label="Main navigation"
     >

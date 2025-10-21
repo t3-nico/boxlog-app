@@ -17,7 +17,7 @@ export function Navigation({ navItems }: NavigationProps) {
   const pathname = usePathname()
 
   return (
-    <nav className="bg-sidebar flex flex-1 flex-col items-center gap-4 py-4">
+    <nav className="bg-sidebar flex flex-1 flex-col items-center gap-2 overflow-y-auto px-2">
       {navItems.map((item) => (
         <Item
           key={item.id}

@@ -53,7 +53,7 @@ export function Account({ userData, locale }: AccountProps) {
   const { handleLogout, isLoggingOut } = useUserAuth()
 
   return (
-    <div className="bg-sidebar mt-2 flex min-h-12 flex-col items-center justify-center px-2">
+    <div className="bg-sidebar flex h-10 flex-col items-center justify-center px-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
