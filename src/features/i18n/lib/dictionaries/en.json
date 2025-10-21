@@ -1355,7 +1355,11 @@
         "acceptAll": "Accept All",
         "rejectAll": "Necessary Only",
         "acceptedAll": "All cookies accepted",
-        "acceptedNecessaryOnly": "Necessary cookies only accepted"
+        "acceptedNecessaryOnly": "Necessary cookies only accepted",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "alwaysActive": "Always Active",
+        "saved": "Cookie settings saved"
       },
       "page": {
         "title": "Cookie Settings",
