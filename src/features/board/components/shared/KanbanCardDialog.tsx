@@ -55,10 +55,8 @@ interface KanbanCardDialogProps {
  * ```
  */
 export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus = 'todo' }: KanbanCardDialogProps) {
-  // @ts-ignore - React Hook Form型重複エラー（CI環境でのみ発生、ローカルでは発生しない）
   const form = useForm<KanbanCardFormData>({
-    // @ts-expect-error - React Hook Form型重複エラー
-    resolver: zodResolver(kanbanCardInputSchema),
+    resolver: zodResolver(kanbanCardInputSchema) as any,
     defaultValues: card
       ? {
           title: card.title,
@@ -79,7 +77,6 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
         },
   })
 
-  // @ts-ignore - React Hook Form型重複エラー（CI環境でのみ発生、ローカルでは発生しない）
   const handleSubmit = (data: KanbanCardFormData) => {
     onSave(data)
     form.reset()
@@ -102,18 +99,10 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
         </DialogHeader>
 
         <Form {...form}>
-          {/* @ts-ignore - React Hook Form型重複エラー（CI環境でのみ発生、ローカルでは発生しない） */}
-          <form
-            onSubmit={
-              // @ts-expect-error - React Hook Form型重複エラー
-              form.handleSubmit(handleSubmit)
-            }
-            className="space-y-6"
-          >
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             {/* タイトル */}
             <FormField
-              // @ts-expect-error - React Hook Form型重複エラー
-              control={form.control}
+              control={form.control as any}
               name="title"
               render={({ field }) => (
                 <FormItem>
@@ -128,8 +117,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
 
             {/* 説明 */}
             <FormField
-              // @ts-expect-error - React Hook Form型重複エラー
-              control={form.control}
+              control={form.control as any}
               name="description"
               render={({ field }) => (
                 <FormItem>
@@ -145,8 +133,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
             {/* ステータス・優先度 */}
             <div className="grid grid-cols-2 gap-4">
               <FormField
-                // @ts-expect-error - React Hook Form型重複エラー
-                control={form.control}
+                control={form.control as any}
                 name="status"
                 render={({ field }) => (
                   <FormItem>
@@ -169,8 +156,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
               />
 
               <FormField
-                // @ts-expect-error - React Hook Form型重複エラー
-                control={form.control}
+                control={form.control as any}
                 name="priority"
                 render={({ field }) => (
                   <FormItem>
@@ -196,8 +182,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
             {/* 担当者・期限 */}
             <div className="grid grid-cols-2 gap-4">
               <FormField
-                // @ts-expect-error - React Hook Form型重複エラー
-                control={form.control}
+                control={form.control as any}
                 name="assignee"
                 render={({ field }) => (
                   <FormItem>
@@ -211,8 +196,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
               />
 
               <FormField
-                // @ts-expect-error - React Hook Form型重複エラー
-                control={form.control}
+                control={form.control as any}
                 name="dueDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
