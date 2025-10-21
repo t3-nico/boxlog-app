@@ -52,6 +52,7 @@ export async function recordLoginAttempt(
   userAgent?: string
 ): Promise<void> {
   try {
+    // @ts-expect-error - login_attemptsテーブルの型定義が未生成
     const { error } = await supabase.from('login_attempts').insert({
       email: email.toLowerCase(),
       attempt_time: new Date().toISOString(),
@@ -78,6 +79,7 @@ async function getFailedAttempts(supabase: BrowserSupabaseClient, email: string)
     const windowStart = new Date()
     windowStart.setMinutes(windowStart.getMinutes() - LOCKOUT_CONFIG.ATTEMPT_WINDOW_MINUTES)
 
+    // @ts-expect-error - login_attemptsテーブルの型定義が未生成
     const { data, error } = await supabase
       .from('login_attempts')
       .select('id')
@@ -102,6 +104,7 @@ async function getFailedAttempts(supabase: BrowserSupabaseClient, email: string)
  */
 async function getLastFailedAttemptTime(supabase: BrowserSupabaseClient, email: string): Promise<Date | null> {
   try {
+    // @ts-expect-error - login_attemptsテーブルの型定義が未生成
     const { data, error } = await supabase
       .from('login_attempts')
       .select('attempt_time')
@@ -115,6 +118,7 @@ async function getLastFailedAttemptTime(supabase: BrowserSupabaseClient, email: 
       return null
     }
 
+    // @ts-expect-error - login_attemptsテーブルの型定義が未生成
     return new Date(data.attempt_time)
   } catch (err) {
     console.error('Exception fetching last failed attempt:', err)
@@ -192,6 +196,7 @@ export async function resetLoginAttempts(supabase: BrowserSupabaseClient, email:
     await recordLoginAttempt(supabase, email, true)
 
     // 過去の失敗履歴を削除（オプション: 保存しておく場合はコメントアウト）
+    // @ts-expect-error - login_attemptsテーブルの型定義が未生成
     const { error } = await supabase
       .from('login_attempts')
       .delete()
