@@ -23,16 +23,7 @@ export function RecaptchaProviderWrapper({ children }: RecaptchaProviderWrapperP
   }
 
   return (
-    <ReCaptchaProvider
-      reCaptchaKey={RECAPTCHA_CONFIG.SITE_KEY_V3}
-      useEnterprise={false}
-      useRecaptchaNet={false}
-      scriptProps={{
-        async: true,
-        defer: true,
-        appendTo: 'head',
-      }}
-    >
+    <ReCaptchaProvider reCaptchaKey={RECAPTCHA_CONFIG.SITE_KEY_V3} useEnterprise={false} useRecaptchaNet={false}>
       {children}
     </ReCaptchaProvider>
   )

@@ -33,7 +33,6 @@ export const profileRouter = createTRPCRouter({
       const supabase = createClient()
 
       // profiles テーブルを更新
-      // @ts-expect-error - Supabase型定義の問題
       const { data, error } = await supabase
         .from('profiles')
         .update({
