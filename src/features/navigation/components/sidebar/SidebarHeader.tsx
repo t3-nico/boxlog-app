@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
 
-import type { SidebarHeaderProps } from './types'
+interface SidebarHeaderProps {
+  title?: string
+}
 
 /**
  * Sidebarヘッダーコンポーネント
