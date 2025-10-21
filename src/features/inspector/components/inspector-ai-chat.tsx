@@ -109,13 +109,7 @@ const ChatInput = () => {
   }, [inputValue])
 
   return (
-    <div
-      className={cn(
-        'flex-shrink-0 p-4',
-        'border-t border-neutral-200 dark:border-neutral-800',
-        'bg-neutral-100 dark:bg-neutral-900'
-      )}
-    >
+    <div className={cn('flex-shrink-0 p-4', 'border-border border-t', 'bg-muted')}>
       {/* Typing indicator */}
       {isTyping === true && (
         <div className="mb-2 flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
@@ -187,7 +181,7 @@ export const InspectorAIChat = () => {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-neutral-200 bg-neutral-100 p-4 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="border-border bg-muted flex-shrink-0 border-b p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="from-primary to-tertiary flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br">
@@ -210,7 +204,7 @@ export const InspectorAIChat = () => {
                 <button
                   type="button"
                   onClick={handleClearMessages}
-                  className="text-card-foreground transition-fast flex w-full items-center gap-2 p-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                  className="text-card-foreground transition-fast hover:bg-accent flex w-full items-center gap-2 p-2 text-sm"
                 >
                   <Trash2 className="h-4 w-4" />
                   {t('aiChat.menu.clearConversation')}
@@ -218,7 +212,7 @@ export const InspectorAIChat = () => {
                 <button
                   type="button"
                   onClick={handleExportMessages}
-                  className="text-card-foreground transition-fast flex w-full items-center gap-2 p-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                  className="text-card-foreground transition-fast hover:bg-accent flex w-full items-center gap-2 p-2 text-sm"
                 >
                   <Copy className="h-4 w-4" />
                   {t('aiChat.menu.exportConversation')}

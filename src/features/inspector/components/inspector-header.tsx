@@ -17,9 +17,9 @@ export const InspectorHeader = () => {
   }, [toggleInspector])
 
   return (
-    <div className={cn('flex items-center justify-between border-b border-neutral-200 p-6 dark:border-neutral-800')}>
+    <div className={cn('border-border flex items-center justify-between border-b p-6')}>
       {/* Inspector Title */}
-      <div className={cn('flex items-center gap-2 text-sm font-medium text-neutral-900 dark:text-neutral-100')}>
+      <div className={cn('text-foreground flex items-center gap-2 text-sm font-medium')}>
         <span>詳細情報</span>
       </div>
 
@@ -31,7 +31,7 @@ export const InspectorHeader = () => {
             onClick={handleToggleInspector}
             className={cn(
               'transition-fast flex h-8 w-8 items-center justify-center rounded-md',
-              'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+              'hover:bg-accent',
               'flex-shrink-0'
             )}
           >

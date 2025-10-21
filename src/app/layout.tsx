@@ -35,7 +35,7 @@ interface RootLayoutProps {
 const RootLayout = ({ children }: RootLayoutProps) => {
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
-      <body className={cn('bg-neutral-100 dark:bg-neutral-900')} suppressHydrationWarning>
+      <body className={cn('bg-background')} suppressHydrationWarning>
         <Suspense fallback={null}>
           <GlobalErrorBoundary maxRetries={3} retryDelay={1000}>
             <Providers>

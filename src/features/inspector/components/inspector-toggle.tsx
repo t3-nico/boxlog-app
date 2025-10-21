@@ -32,9 +32,9 @@ export const InspectorToggle = () => {
               'flex h-8 w-8 items-center justify-center',
               'rounded-sm',
               'transition-all duration-200',
-              'text-neutral-700 dark:text-neutral-300',
-              'hover:bg-neutral-200 dark:hover:bg-neutral-700',
-              'active:text-neutral-900 dark:active:text-neutral-100',
+              'text-muted-foreground',
+              'hover:bg-accent',
+              'active:text-foreground',
               'flex-shrink-0'
             )}
           >
