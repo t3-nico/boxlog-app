@@ -53,7 +53,7 @@ jobs:
           fail_action: false  # Phase 1では失敗させない
 
       - name: 📊 Upload ZAP Report (HTML)
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         if: always()
         with:
           name: zap-baseline-report-html
@@ -61,7 +61,7 @@ jobs:
           retention-days: 30
 
       - name: 📊 Upload ZAP Report (JSON)
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         if: always()
         with:
           name: zap-baseline-report-json
@@ -151,7 +151,7 @@ jobs:
           fail_action: false
 
       - name: 📊 Upload Full Scan Report (HTML)
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         if: always()
         with:
           name: zap-full-report-html
@@ -159,7 +159,7 @@ jobs:
           retention-days: 90
 
       - name: 📊 Upload Full Scan Report (JSON)
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         if: always()
         with:
           name: zap-full-report-json
