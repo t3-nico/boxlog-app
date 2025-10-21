@@ -12,7 +12,7 @@ import type { SidebarTabLayoutProps } from './types'
  * 2〜4タブまで柔軟に対応。
  *
  * **デザイン仕様**:
- * - 8pxグリッドシステム準拠
+ * - 8pxグリッドシステム準拠（py-4, gap-4, px-2）
  * - セマンティックトークン使用（globals.css）
  * - AppBarとの視覚的一貫性
  *
@@ -31,7 +31,7 @@ import type { SidebarTabLayoutProps } from './types'
  */
 export function SidebarTabLayout({ title, tabs, defaultTab }: SidebarTabLayoutProps) {
   return (
-    <aside className="flex h-full w-full flex-col gap-4 py-3">
+    <aside className="flex h-full w-full flex-col gap-4 py-4">
       {/* Header */}
       <SidebarHeader title={title} />
 

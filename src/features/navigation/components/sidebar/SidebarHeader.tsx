@@ -16,9 +16,9 @@ import type { SidebarHeaderProps } from './types'
  * - 閉じるボタン（AppBarと同じデザイン）
  *
  * **デザイン仕様**:
- * - 高さ: 48px (min-h-12)
- * - スペーシング: px-2, gap-2
- * - AppBarとの整合性: 同じ閉じるボタンスタイル
+ * - 高さ: 48px (h-12)
+ * - スペーシング: px-2 (8px horizontal padding)
+ * - AppBarとの整合性: 同じ閉じるボタンスタイル、8pxグリッド準拠
  */
 export function SidebarHeader({ title }: SidebarHeaderProps) {
   const { close } = useSidebarStore()
