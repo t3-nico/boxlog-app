@@ -102,7 +102,7 @@ export const WeekGrid = ({
       className={cn('bg-background', className)}
     >
       {/* 7日分のグリッド */}
-      <div className="relative flex h-full overflow-visible">
+      <div className="relative flex overflow-visible" style={{ height: `${24 * HOUR_HEIGHT}px` }}>
         {/* 共通のグリッド線（ThreeDayViewと同じパターン） */}
         <div className="pointer-events-none absolute inset-0">
           <HourLines startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />

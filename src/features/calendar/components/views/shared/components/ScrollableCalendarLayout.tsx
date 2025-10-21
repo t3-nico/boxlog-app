@@ -293,7 +293,7 @@ export const ScrollableCalendarLayout = ({
   )
 
   return (
-    <div className={cn('flex min-h-0 flex-1 flex-col', className)}>
+    <div className={cn('flex flex-col', className)}>
       {/* ヘッダーエリア（非スクロール） */}
       <div className="flex shrink-0">
         {/* UTC/タイムゾーン表示エリア（ヘッダー左端） */}
@@ -307,87 +307,58 @@ export const ScrollableCalendarLayout = ({
         <div className="flex-1">{header}</div>
       </div>
 
-      {/* スクロール可能コンテンツエリア */}
-      <div className="flex min-h-0 flex-1 flex-col">
-        {/* メインスクロールエリア */}
-        <div
-          ref={scrollContainerRef}
-          className={cn(
-            'custom-scrollbar scroll-performance relative flex-1 overflow-x-visible overflow-y-auto',
-            enableKeyboardNavigation &&
-              'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2'
-          )}
-          onClick={handleGridClick}
-          onKeyDown={handleKeyDown}
-          tabIndex={enableKeyboardNavigation ? 0 : -1}
-          role={enableKeyboardNavigation ? 'grid' : undefined}
-          aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
-        >
-          <style jsx>{`
-            div::-webkit-scrollbar {
-              width: 8px;
-            }
-            div::-webkit-scrollbar-track {
-              background-color: rgb(229 229 229); /* neutral-200 - surface light */
-            }
-            div::-webkit-scrollbar-thumb {
-              background-color: rgb(163 163 163); /* neutral-400 for visibility */
-              border-radius: 4px;
-            }
-            div::-webkit-scrollbar-thumb:hover {
-              background-color: rgb(115 115 115); /* neutral-500 */
-            }
-            @media (prefers-color-scheme: dark) {
-              div::-webkit-scrollbar-track {
-                background-color: rgb(38 38 38); /* neutral-800 - surface dark */
-              }
-              div::-webkit-scrollbar-thumb {
-                background-color: rgb(115 115 115); /* neutral-500 */
-              }
-              div::-webkit-scrollbar-thumb:hover {
-                background-color: rgb(163 163 163); /* neutral-400 */
-              }
-            }
-          `}</style>
-          <div className="relative flex w-full" style={{ height: `${24 * HOUR_HEIGHT}px` }}>
-            {/* 時間軸列 */}
-            {showTimeColumn != null && (
-              <div className="bg-muted/5 sticky left-0 z-10 shrink-0" style={{ width: timeColumnWidth }}>
-                <TimeColumn startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} format="24h" className="h-full" />
-              </div>
-            )}
-
-            {/* グリッドコンテンツエリア */}
-            <div className="relative flex-1 overflow-visible">
-              {/* メインコンテンツ */}
-              {children}
-
-              {/* 現在時刻線 - 今日の列のみに表示 */}
-              {shouldShowCurrentTimeLine && todayColumnPosition ? (
-                <>
-                  {/* 横線 - 今日の列のみ */}
-                  <div
-                    className={cn('pointer-events-none absolute z-40 h-[2px] bg-blue-600 shadow-sm dark:bg-blue-500')}
-                    style={{
-                      top: `${currentTimePosition}px`,
-                      left: todayColumnPosition.left,
-                      width: todayColumnPosition.width,
-                    }}
-                  />
-
-                  {/* 点 - 今日の列の左端 */}
-                  <div
-                    className={cn(
-                      'pointer-events-none absolute z-40 h-2 w-2 rounded-full border border-white bg-blue-600 shadow-md dark:border-gray-800 dark:bg-blue-500'
-                    )}
-                    style={{
-                      top: `${currentTimePosition - 4}px`,
-                      left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
-                    }}
-                  />
-                </>
-              ) : null}
+      {/* コンテンツエリア（スクロールはCalendarLayoutで管理） */}
+      <div
+        ref={scrollContainerRef}
+        className={cn(
+          'relative',
+          enableKeyboardNavigation &&
+            'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2'
+        )}
+        onClick={handleGridClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={enableKeyboardNavigation ? 0 : -1}
+        role={enableKeyboardNavigation ? 'grid' : undefined}
+        aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
+      >
+        <div className="relative flex w-full" style={{ height: `${24 * HOUR_HEIGHT}px` }}>
+          {/* 時間軸列 */}
+          {showTimeColumn != null && (
+            <div className="bg-muted/5 sticky left-0 z-10 shrink-0" style={{ width: timeColumnWidth }}>
+              <TimeColumn startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} format="24h" className="h-full" />
             </div>
+          )}
+
+          {/* グリッドコンテンツエリア */}
+          <div className="relative flex-1 overflow-visible">
+            {/* メインコンテンツ */}
+            {children}
+
+            {/* 現在時刻線 - 今日の列のみに表示 */}
+            {shouldShowCurrentTimeLine && todayColumnPosition ? (
+              <>
+                {/* 横線 - 今日の列のみ */}
+                <div
+                  className={cn('pointer-events-none absolute z-40 h-[2px] bg-blue-600 shadow-sm dark:bg-blue-500')}
+                  style={{
+                    top: `${currentTimePosition}px`,
+                    left: todayColumnPosition.left,
+                    width: todayColumnPosition.width,
+                  }}
+                />
+
+                {/* 点 - 今日の列の左端 */}
+                <div
+                  className={cn(
+                    'pointer-events-none absolute z-40 h-2 w-2 rounded-full border border-white bg-blue-600 shadow-md dark:border-gray-800 dark:bg-blue-500'
+                  )}
+                  style={{
+                    top: `${currentTimePosition - 4}px`,
+                    left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
+                  }}
+                />
+              </>
+            ) : null}
           </div>
         </div>
       </div>

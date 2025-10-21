@@ -5,7 +5,6 @@ import React, { useCallback } from 'react'
 import { GripVertical, Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 import { cn } from '@/lib/utils'
 
@@ -73,7 +72,7 @@ export const UnscheduledTasksList = () => {
   }
 
   return (
-    <ScrollArea className="h-full">
+    <div className="h-full overflow-auto">
       <div className="space-y-0">
         {/* ヘッダー */}
         <div className={cn('border-b border-neutral-200 p-4 dark:border-neutral-800')}>
@@ -133,6 +132,6 @@ export const UnscheduledTasksList = () => {
           </div>
         )}
       </div>
-    </ScrollArea>
+    </div>
   )
 }
