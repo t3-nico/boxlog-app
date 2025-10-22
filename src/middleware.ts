@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
 import { defaultLocale, LOCALE_COOKIE, locales } from '@/features/i18n/lib'
+import { updateSession } from '@/lib/supabase/middleware'
 import type { Locale } from '@/types/i18n'
 
 // 言語検出とリダイレクト処理
@@ -56,6 +57,14 @@ async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const locale = getLocaleFromRequest(request)
 
+  // メンテナンスモードチェック
+  const isMaintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
+  const isMaintenancePage = pathname.includes('/error/maintenance')
+
+  if (isMaintenanceMode && !isMaintenancePage) {
+    return NextResponse.redirect(new URL('/error/maintenance', request.url))
+  }
+
   // 言語リダイレクトの処理
   if (shouldRedirectToLocale(pathname)) {
     const redirectUrl = new URL(`/${locale}${pathname}`, request.url)
@@ -71,19 +80,14 @@ async function middleware(request: NextRequest) {
     return response
   }
 
-  const response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  })
+  // ⚠️ 重要: Supabaseセッションを最初に更新（トークンリフレッシュ）
+  const { response, supabase } = await updateSession(request)
 
   try {
-    // TODO: Supabase認証統合
-    // 現在は認証チェックを無効化（開発中）
-    // 実装時は以下を使用:
-    // const { data: { session } } = await createServerClient().auth.getSession()
-    // const user = session?.user ?? null
-    const user = null
+    // Supabase認証チェック
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     // 環境変数で認証をスキップ（開発環境用）
     const skipAuth = process.env.SKIP_AUTH_IN_DEV === 'true' && process.env.NODE_ENV === 'development'
@@ -101,7 +105,6 @@ async function middleware(request: NextRequest) {
 
     // 認証が必要なパスの定義（言語プレフィックス除外）
     const protectedPaths = [
-      '/dashboard',
       '/tasks',
       '/settings',
       '/calendar',
@@ -121,14 +124,18 @@ async function middleware(request: NextRequest) {
 
     // 未認証でprotectedPathにアクセスした場合
     if (!user && isProtectedPath) {
-      console.log('[Middleware] Redirecting to login:', request.nextUrl.pathname)
-      return NextResponse.redirect(new URL(`/${currentLocale}/auth/login`, request.url))
+      console.log('[Middleware] Redirecting to 401:', request.nextUrl.pathname)
+      // 401 Unauthorizedページにリダイレクト（言語プレフィックス付き）
+      return NextResponse.redirect(new URL(`/${currentLocale}/error/401`, request.url))
     }
 
     // 認証済みでauth系のパスにアクセスした場合
-    if (user && isAuthPath) {
-      console.log('[Middleware] Redirecting to dashboard:', request.nextUrl.pathname)
-      return NextResponse.redirect(new URL(`/${currentLocale}/dashboard`, request.url))
+    // ただし、MFA検証ページは除外（AAL1 → AAL2への昇格が必要）
+    const isMFAVerifyPath = pathWithoutLocale === '/auth/mfa-verify'
+
+    if (user && isAuthPath && !isMFAVerifyPath) {
+      console.log('[Middleware] Redirecting to calendar:', request.nextUrl.pathname)
+      return NextResponse.redirect(new URL(`/${currentLocale}/calendar`, request.url))
     }
 
     return response

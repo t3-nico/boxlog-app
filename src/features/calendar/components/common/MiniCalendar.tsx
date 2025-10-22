@@ -35,6 +35,16 @@ export interface MiniCalendarProps {
 export const MiniCalendar = React.memo<MiniCalendarProps>(
   ({ selectedDate, onDateSelect, onMonthChange, className, showWeekNumbers = false, displayRange }) => {
     const { locale } = useI18n()
+    const [isMounted, setIsMounted] = React.useState(false)
+
+    React.useEffect(() => {
+      setIsMounted(true)
+    }, [])
+
+    // ハイドレーション対策: マウント後にロケールを適用
+    if (!isMounted) {
+      return null
+    }
 
     // displayRangeがある場合はrangeモード、ない場合はsingleモード
     if (displayRange) {
@@ -54,10 +64,11 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
             }
           }}
           onMonthChange={onMonthChange}
-          showWeekNumber={showWeekNumbers}
+          showWeekNumber={false}
           captionLayout="dropdown"
           locale={locale === 'ja' ? ja : undefined}
           weekStartsOn={1}
+          className={className}
         />
       )
     }
@@ -70,10 +81,11 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
         selected={selectedDate}
         onSelect={onDateSelect}
         onMonthChange={onMonthChange}
-        showWeekNumber={showWeekNumbers}
+        showWeekNumber={false}
         captionLayout="dropdown"
         locale={locale === 'ja' ? ja : undefined}
         weekStartsOn={1}
+        className={className}
       />
     )
   }

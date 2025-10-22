@@ -84,7 +84,7 @@ export const useEventTrash = (options: UseEventTrashOptions = {}) => {
         setIsLoading(false)
       }
     },
-    [trashedEvents, restoreEvent, addPopup, clearSelection]
+    [trashedEvents, restoreEvent, addPopup, clearSelection, t]
   )
 
   // 単一イベント完全削除

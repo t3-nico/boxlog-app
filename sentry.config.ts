@@ -6,6 +6,11 @@
  * - Production: サンプリング10%、Session Replayエラー時のみ
  * - Preview: サンプリング50%、Session Replayなし
  * - Development: サンプリング100%、デバッグモード有効
+ *
+ * GDPR対応:
+ * - Cookie同意確認（分析Cookie）
+ * - IPアドレス送信のため同意必須
+ * - 開発環境では同意チェックをスキップ
  */
 import * as Sentry from '@sentry/nextjs'
 
@@ -13,7 +18,34 @@ const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN
 const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 const VERCEL_ENV = process.env.NEXT_PUBLIC_VERCEL_ENV
 
-if (SENTRY_DSN) {
+/**
+ * Cookie同意確認（クライアントサイドのみ）
+ * Sentryはサーバー・エッジでも実行されるため、ブラウザー環境でのみチェック
+ */
+function isAnalyticsConsented(): boolean {
+  if (typeof window === 'undefined') {
+    // サーバーサイド・エッジ環境では常に許可（サーバーエラー追跡のため）
+    return true
+  }
+
+  // 開発環境では同意チェックをスキップ
+  if (!IS_PRODUCTION) {
+    return true
+  }
+
+  // ブラウザーでCookie同意を確認
+  try {
+    const consent = localStorage.getItem('boxlog_cookie_consent')
+    if (!consent) return false
+
+    const parsed = JSON.parse(consent)
+    return parsed.analytics === true
+  } catch {
+    return false
+  }
+}
+
+if (SENTRY_DSN && isAnalyticsConsented()) {
   Sentry.init({
     dsn: SENTRY_DSN,
     environment: VERCEL_ENV || process.env.NODE_ENV || 'development',

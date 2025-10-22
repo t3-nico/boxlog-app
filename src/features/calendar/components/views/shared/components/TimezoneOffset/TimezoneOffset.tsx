@@ -1,12 +1,10 @@
 'use client'
 
-import React from 'react'
-
 interface TimezoneOffsetProps {
   timezone: string
 }
 
-export const TimezoneOffset: React.FC<TimezoneOffsetProps> = ({ timezone }) => {
+export function TimezoneOffset({ timezone }: TimezoneOffsetProps) {
   const getUTCOffset = (tz: string): string => {
     try {
       const now = new Date()
@@ -41,7 +39,7 @@ export const TimezoneOffset: React.FC<TimezoneOffsetProps> = ({ timezone }) => {
   const offset = getUTCOffset(timezone)
 
   return (
-    <div className="flex h-8 items-center justify-center text-xs text-gray-600 dark:text-gray-400">
+    <div className="flex h-8 items-center justify-start pl-4 text-xs text-gray-600 dark:text-gray-400">
       <span className="font-medium">UTC{offset}</span>
     </div>
   )

@@ -7,11 +7,15 @@ import { useChat } from '@ai-sdk/react'
 
 import { BotMessageSquare, Copy, MoreVertical, RefreshCw, Trash2, X } from 'lucide-react'
 
-import { AIConversation, AIConversationContent, AIConversationScrollButton } from '@/components/kibo/ai/conversation'
-import { AIInput, AIInputSubmit, AIInputTextarea, AIInputToolbar, AIInputTools } from '@/components/kibo/ai/input'
-import { AIMessage, AIMessageContent } from '@/components/kibo/ai/message'
-import { AIResponse } from '@/components/kibo/ai/response'
 import { Avatar } from '@/components/ui/avatar'
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from '@/components/vercel-ai-elements/conversation'
+import { Message, MessageContent } from '@/components/vercel-ai-elements/message'
+import { PromptInput, PromptInputSubmit, PromptInputTextarea } from '@/components/vercel-ai-elements/prompt-input'
+import { Response } from '@/components/vercel-ai-elements/response'
 import { useAuthContext } from '@/features/auth'
 
 // GitHub APIの型定義
@@ -56,17 +60,10 @@ interface CodebaseAIChatProps {
 }
 
 // BoxLog専用のAI Responseコンポーネント
-const CodebaseAIResponse = ({ children, ...props }: { children: string; [key: string]: unknown }) => (
-  <AIResponse
-    className="prose prose-sm dark:prose-invert max-w-none [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:dark:bg-gray-800 [&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mt-3 [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:text-sm [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_p]:my-2 [&_p]:leading-relaxed [&_pre]:rounded [&_pre]:bg-gray-100 [&_pre]:p-3 [&_pre]:dark:bg-gray-800 [&_ul]:my-2 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
-    options={{
-      disallowedElements: ['script', 'iframe'],
-      remarkPlugins: [],
-    }}
-    {...props}
-  >
+const CodebaseAIResponse = ({ children }: { children: string }) => (
+  <Response className="prose prose-sm dark:prose-invert max-w-none [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:dark:bg-gray-800 [&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mt-3 [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:text-sm [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_p]:my-2 [&_p]:leading-relaxed [&_pre]:rounded [&_pre]:bg-gray-100 [&_pre]:p-3 [&_pre]:dark:bg-gray-800 [&_ul]:my-2 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
     {children}
-  </AIResponse>
+  </Response>
 )
 
 // GitHub APIクライアント
@@ -233,20 +230,20 @@ const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
   const messageFrom = message.role === 'system' ? 'assistant' : (message.role as 'user' | 'assistant')
 
   return (
-    <AIMessage from={messageFrom}>
+    <Message from={messageFrom}>
       {isAssistant ? <AssistantIcon /> : null}
 
-      <AIMessageContent>
+      <MessageContent>
         {isAssistant ? <AssistantMessageContent message={message} /> : <UserMessageContent message={message} />}
         {isAssistant ? <MessageTimestamp createdAt={message.createdAt} /> : null}
-      </AIMessageContent>
+      </MessageContent>
 
       {isUser === true && (
         <div className="flex-shrink-0">
           <UserAvatar />
         </div>
       )}
-    </AIMessage>
+    </Message>
   )
 }
 
@@ -258,7 +255,7 @@ const CodebaseChatInput = ({
 }: {
   input: string
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+  handleSubmit: (_message: unknown, e: React.FormEvent<HTMLFormElement>) => void
   isLoading: boolean
 }) => {
   const [_isComposing, _setIsComposing] = useState(false)
@@ -282,28 +279,24 @@ const CodebaseChatInput = ({
         </div>
       )}
 
-      <AIInput onSubmit={handleSubmit}>
-        <AIInputTextarea
+      <PromptInput onSubmit={handleSubmit}>
+        <PromptInputTextarea
           value={input}
           onChange={handleInputChange}
           onCompositionStart={() => _setIsComposing(true)}
           onCompositionEnd={() => _setIsComposing(false)}
           placeholder="Ask about BoxLog features and usage..."
           disabled={isLoading}
-          minHeight={40}
-          maxHeight={120}
         />
-        <AIInputToolbar>
-          <AIInputTools>
-            <div className="text-muted-foreground flex items-center gap-1 px-2 text-xs">
-              <BotMessageSquare className="h-4 w-4" />
-              <span>BoxLog Usage Support</span>
-            </div>
-          </AIInputTools>
+        <div className="flex items-center justify-between gap-2 px-3 pb-2">
+          <div className="text-muted-foreground flex items-center gap-1 text-xs">
+            <BotMessageSquare className="h-4 w-4" />
+            <span>BoxLog Usage Support</span>
+          </div>
 
-          <AIInputSubmit disabled={!input.trim() || isLoading} status={getSubmitStatus()} />
-        </AIInputToolbar>
-      </AIInput>
+          <PromptInputSubmit disabled={!input.trim() || isLoading} />
+        </div>
+      </PromptInput>
     </div>
   )
 }
@@ -458,8 +451,8 @@ What would you like to know about BoxLog?`,
       </div>
 
       {/* Chat Content */}
-      <AIConversation>
-        <AIConversationContent className="px-4 py-4">
+      <Conversation>
+        <ConversationContent className="px-4 py-4">
           {/* Error display */}
           {error != null && (
             <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
@@ -487,11 +480,11 @@ What would you like to know about BoxLog?`,
           )}
 
           {messages.length === 0 ? (
-            <AIMessage from="assistant">
+            <Message from="assistant">
               <div className="bg-muted flex inline-grid size-8 shrink-0 items-center justify-center rounded-full align-middle outline -outline-offset-1 outline-black/10 dark:outline-white/10">
                 <BotMessageSquare className="text-foreground h-4 w-4" />
               </div>
-              <AIMessageContent>
+              <MessageContent>
                 <CodebaseAIResponse>
                   Hello! I&apos;m the **BoxLog** application support assistant. I can help you with: • 📅 **Calendar
                   Features** - How to use calendar views • 📋 **Task Management** - Creating and organizing tasks • 🏷️
@@ -499,14 +492,14 @@ What would you like to know about BoxLog?`,
                   **Smart Folders** - Automated organization • 🛠️ **Troubleshooting** - Solving common issues **Note**:
                   I only provide support for BoxLog application usage. What would you like to know about BoxLog?
                 </CodebaseAIResponse>
-              </AIMessageContent>
-            </AIMessage>
+              </MessageContent>
+            </Message>
           ) : (
             messages.map((message) => <MessageBubble key={message.id} message={message as ExtendedMessage} />)
           )}
-        </AIConversationContent>
-        <AIConversationScrollButton />
-      </AIConversation>
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
 
       {/* Chat Input */}
       <CodebaseChatInput

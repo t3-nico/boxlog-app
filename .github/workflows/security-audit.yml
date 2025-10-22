@@ -18,9 +18,9 @@ concurrency:
 
 # セキュリティ: 最小権限の原則
 permissions:
-  contents: read          # コード読み取り
-  pull-requests: write    # PRコメント投稿
-  actions: read           # Artifact読み取り
+  contents: read # コード読み取り
+  pull-requests: write # PRコメント投稿
+  actions: read # Artifact読み取り
 
 jobs:
   # =====================================
@@ -33,10 +33,10 @@ jobs:
 
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903  # v6.0.0
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -60,7 +60,7 @@ jobs:
           npm audit || echo "⚠️ Vulnerabilities found" >> $GITHUB_STEP_SUMMARY
 
       - name: 💾 Upload audit report
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: npm-audit-report
@@ -78,10 +78,10 @@ jobs:
 
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903  # v6.0.0
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -123,7 +123,7 @@ jobs:
 
       - name: 💬 PR Summary Comment
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           script: |
             const getEmoji = (result) => {

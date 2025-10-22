@@ -1,100 +1,27 @@
-import type React from 'react'
+/**
+ * Fieldset コンポーネント - app コンポーネント用
+ * @see /src/components/ui/field.tsx を基にしたエイリアス
+ */
 
-import * as Headless from '@headlessui/react'
-import clsx from 'clsx'
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSeparator,
+  FieldSet,
+  FieldTitle,
+} from '@/components/ui/field'
 
-import { cn } from '@/lib/utils'
+// Fieldset としてエクスポート（UIコンポーネントの FieldSet と同じ）
+export const Fieldset = FieldSet
+export const Legend = FieldLegend
+export const Description = FieldDescription
+export const Label = FieldLabel
+export const ErrorMessage = FieldError
 
-export const Fieldset = ({
-  className,
-  ...props
-}: { className?: string } & Omit<Headless.FieldsetProps, 'as' | 'className'>) => {
-  return (
-    <Headless.Fieldset
-      {...props}
-      className={clsx(className, '*:data-[slot=text]:mt-1 [&>*+[data-slot=control]]:mt-6')}
-    />
-  )
-}
-
-export const Legend = ({
-  className,
-  ...props
-}: { className?: string } & Omit<Headless.LegendProps, 'as' | 'className'>) => {
-  return (
-    <Headless.Legend
-      data-slot="legend"
-      {...props}
-      className={cn(
-        className,
-        'text-base font-semibold text-neutral-900 data-disabled:opacity-50 sm:text-sm dark:text-neutral-100'
-      )}
-    />
-  )
-}
-
-export const FieldGroup = ({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) => {
-  return <div data-slot="control" {...props} className={cn(className, 'flex flex-col gap-8')} />
-}
-
-export const Field = ({
-  className,
-  ...props
-}: { className?: string } & Omit<Headless.FieldProps, 'as' | 'className'>) => {
-  return (
-    <Headless.Field
-      {...props}
-      className={clsx(
-        className,
-        '[&>[data-slot=label]+[data-slot=control]]:mt-3',
-        '[&>[data-slot=label]+[data-slot=description]]:mt-1',
-        '[&>[data-slot=description]+[data-slot=control]]:mt-3',
-        '[&>[data-slot=control]+[data-slot=description]]:mt-3',
-        '[&>[data-slot=control]+[data-slot=error]]:mt-3',
-        '*:data-[slot=label]:font-medium'
-      )}
-    />
-  )
-}
-
-export const Label = ({
-  className,
-  ...props
-}: { className?: string } & Omit<Headless.LabelProps, 'as' | 'className'>) => {
-  return (
-    <Headless.Label
-      data-slot="label"
-      {...props}
-      className={cn(
-        className,
-        'text-base text-neutral-900 select-none data-disabled:opacity-50 sm:text-sm dark:text-neutral-100'
-      )}
-    />
-  )
-}
-
-export const Description = ({
-  className,
-  ...props
-}: { className?: string } & Omit<Headless.DescriptionProps, 'as' | 'className'>) => {
-  return (
-    <Headless.Description
-      data-slot="description"
-      {...props}
-      className={cn(className, 'text-base text-neutral-800 data-disabled:opacity-50 sm:text-sm dark:text-neutral-200')}
-    />
-  )
-}
-
-export const ErrorMessage = ({
-  className,
-  ...props
-}: { className?: string } & Omit<Headless.DescriptionProps, 'as' | 'className'>) => {
-  return (
-    <Headless.Description
-      data-slot="error"
-      {...props}
-      className={cn(className, 'text-base text-red-600 data-disabled:opacity-50 sm:text-sm dark:text-red-400')}
-    />
-  )
-}
+// 追加エクスポート（互換性のため）
+export { Field, FieldContent, FieldGroup, FieldSeparator, FieldTitle }

@@ -152,8 +152,8 @@ export const CalendarSidebar = () => {
 ## 🔗 関連ドキュメント
 
 - **機能モジュール構造**: [`../CLAUDE.md`](../CLAUDE.md)
-- **レイアウトシステム**: [`/src/components/layout/README.md`](/src/components/layout/README.md)
-- **レスポンシブデザイン**: [`/src/CLAUDE.md`](/src/CLAUDE.md#レスポンシブデザイン実装ガイド)
+- **レイアウトシステム**: [`../../components/layout/CLAUDE.md`](../../components/layout/CLAUDE.md)
+- **レスポンシブデザイン**: [`../../CLAUDE.md`](../../CLAUDE.md)
 
 ## ⚠️ 注意事項
 

@@ -13,7 +13,7 @@ export const EVENT_HORIZONTAL_PADDING = 4 // イベントの左右パディン�
 export const EVENT_VERTICAL_PADDING = 2 // イベントの上下パディング(px)
 
 // 時間列
-export const TIME_COLUMN_WIDTH = 60 // 時間列の幅(px)
+export const TIME_COLUMN_WIDTH = 48 // 時間列の幅(px)
 export const TIME_LABEL_HEIGHT = HOUR_HEIGHT // 時間ラベルの高さ(px)
 
 // グリッド線のスタイル（Tailwind準拠）

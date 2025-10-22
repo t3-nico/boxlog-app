@@ -35,9 +35,9 @@ const nextConfig = {
             key: 'Strict-Transport-Security',
             value: 'max-age=63072000; includeSubDomains; preload',
           },
-          // CSP（Content Security Policy）- Report-Onlyモードで検証
+          // CSP（Content Security Policy）- 強化モード（2025-10-20より有効化）
           {
-            key: 'Content-Security-Policy-Report-Only',
+            key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com",
@@ -81,6 +81,34 @@ const nextConfig = {
           },
         ],
       },
+      // 静的ファイルのキャッシュ設定
+      {
+        source: '/robots.txt',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
+          },
+        ],
+      },
+      {
+        source: '/sitemap.xml',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400',
+          },
+        ],
+      },
+      {
+        source: '/favicon.ico',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
     ]
   },
 
@@ -90,6 +118,13 @@ const nextConfig = {
     minimumCacheTTL: 60,
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'qloztwfbrbqtjijxicnd.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
   },
 
   // 実験的機能

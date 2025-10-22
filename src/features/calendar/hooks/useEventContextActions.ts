@@ -108,43 +108,49 @@ export function useEventContextActions() {
   })
 
   // Toast用のイベントデータを作成
-  const createToastEventData = (newEvent: CalendarEvent) => {
-    const duration =
-      newEvent.startDate && newEvent.endDate
-        ? Math.round((newEvent.endDate.getTime() - newEvent.startDate.getTime()) / (1000 * 60))
-        : 60
+  const createToastEventData = useCallback(
+    (newEvent: CalendarEvent) => {
+      const duration =
+        newEvent.startDate && newEvent.endDate
+          ? Math.round((newEvent.endDate.getTime() - newEvent.startDate.getTime()) / (1000 * 60))
+          : 60
 
-    const isMultiDay =
-      newEvent.startDate && newEvent.endDate
-        ? newEvent.startDate.toDateString() !== newEvent.endDate.toDateString()
-        : false
+      const isMultiDay =
+        newEvent.startDate && newEvent.endDate
+          ? newEvent.startDate.toDateString() !== newEvent.endDate.toDateString()
+          : false
 
-    return {
-      id: newEvent.id,
-      title: newEvent.title || t('calendar.event.title'),
-      displayStartDate: newEvent.startDate || new Date(),
-      displayEndDate: newEvent.endDate || new Date(),
-      duration,
-      isMultiDay,
-      isRecurring: newEvent.isRecurring || false,
-    }
-  }
+      return {
+        id: newEvent.id,
+        title: newEvent.title || t('calendar.event.title'),
+        displayStartDate: newEvent.startDate || new Date(),
+        displayEndDate: newEvent.endDate || new Date(),
+        duration,
+        isMultiDay,
+        isRecurring: newEvent.isRecurring || false,
+      }
+    },
+    [t]
+  )
 
   // 編集モーダル用のデータを作成
-  const createEditModalData = (newEvent: CalendarEvent) => ({
-    title: newEvent.title,
-    description: newEvent.description,
-    startDate: newEvent.startDate,
-    endDate: newEvent.endDate,
-    type: newEvent.type,
-    status: newEvent.status,
-    priority: newEvent.priority,
-    color: newEvent.color,
-    location: newEvent.location,
-    url: newEvent.url,
-    reminders: newEvent.reminders,
-    tagIds: newEvent.tags?.map((tag) => tag.id) || [],
-  })
+  const createEditModalData = useCallback(
+    (newEvent: CalendarEvent) => ({
+      title: newEvent.title,
+      description: newEvent.description,
+      startDate: newEvent.startDate,
+      endDate: newEvent.endDate,
+      type: newEvent.type,
+      status: newEvent.status,
+      priority: newEvent.priority,
+      color: newEvent.color,
+      location: newEvent.location,
+      url: newEvent.url,
+      reminders: newEvent.reminders,
+      tagIds: newEvent.tags?.map((tag) => tag.id) || [],
+    }),
+    []
+  )
 
   const logDuplicationStart = (event: CalendarEvent, startDate: Date, endDate: Date) => {
     console.log('🔍 Duplicating event:', {
@@ -187,7 +193,7 @@ export function useEventContextActions() {
         },
       })
     },
-    [calendarToast, openEditModal, t]
+    [calendarToast, openEditModal, createToastEventData, createEditModalData]
   )
 
   const handleDuplicateEvent = useCallback(
@@ -210,7 +216,7 @@ export function useEventContextActions() {
         calendarToast.error(t('calendar.event.duplicateFailed'))
       }
     },
-    [createEvent, calendarToast, showDuplicationSuccess]
+    [createEvent, calendarToast, showDuplicationSuccess, t]
   )
 
   const handleViewDetails = useCallback(

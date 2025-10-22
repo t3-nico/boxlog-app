@@ -33,15 +33,34 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
   let sessionId: string | undefined
 
   try {
-    const authHeader = req.headers.authorization
-    if (authHeader?.startsWith('Bearer ')) {
-      const _token = authHeader.substring(7)
-      // ここで実際のトークン検証を行う
-      // const decoded = await verifyJWT(token)
-      // userId = decoded.userId
-      // sessionId = decoded.sessionId
+    // Supabaseのセッションクッキーから認証情報を取得
+    const { createServerClient } = await import('@supabase/ssr')
+
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get: (name) => {
+            const cookie = req.cookies[name]
+            return cookie
+          },
+          set: () => {},
+          remove: () => {},
+        },
+      }
+    )
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+
+    if (session?.user) {
+      userId = session.user.id
+      sessionId = session.access_token
     }
   } catch (error) {
+    console.error('Auth context creation error:', error)
     // 認証エラーは無視（ゲストユーザーとして扱う）
   }
 

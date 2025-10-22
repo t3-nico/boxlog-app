@@ -105,7 +105,16 @@ export const MobileBottomNavigation = () => {
               'transition-all duration-200'
             )}
           >
-            <Icon className={cn('h-5 w-5 transition-colors', isActive ? 'text-primary' : 'text-muted-foreground')} />
+            {/* アイコンを丸で囲む */}
+            <div
+              className={cn(
+                'flex items-center justify-center',
+                'rounded-full transition-all duration-200',
+                isActive ? 'bg-primary/15 p-2' : 'p-2'
+              )}
+            >
+              <Icon className={cn('h-5 w-5 transition-colors', isActive ? 'text-primary' : 'text-muted-foreground')} />
+            </div>
             <span
               className={cn(
                 'text-xs leading-tight transition-colors',

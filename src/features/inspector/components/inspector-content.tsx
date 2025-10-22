@@ -23,9 +23,9 @@ const EventDetailInspectorContent = React.lazy(() =>
 // ローディングフォールバック
 const InspectorSkeleton = () => (
   <div className="h-full w-full animate-pulse space-y-4 p-4">
-    <div className="h-8 rounded bg-neutral-200 dark:bg-neutral-800" />
-    <div className="h-32 rounded bg-neutral-200 dark:bg-neutral-800" />
-    <div className="h-24 rounded bg-neutral-200 dark:bg-neutral-800" />
+    <div className="bg-muted h-8 rounded" />
+    <div className="bg-muted h-32 rounded" />
+    <div className="bg-muted h-24 rounded" />
   </div>
 )
 
@@ -114,5 +114,5 @@ export const InspectorContent = () => {
     return <DefaultInspectorContent />
   }
 
-  return <div className={cn('flex-1 overflow-auto', 'bg-white dark:bg-neutral-800')}>{getContentComponent()}</div>
+  return <div className={cn('flex-1 overflow-auto')}>{getContentComponent()}</div>
 }

@@ -66,7 +66,7 @@ const Calendar = ({
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn(
-        'bg-muted group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent',
+        'bg-muted group/calendar p-2 [--cell-size:--spacing(6)] [[data-slot=card-content]_&]:bg-transparent',
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className
@@ -127,7 +127,7 @@ const Calendar = ({
         range_start: cn('bg-accent rounded-l-md', defaultClassNames.range_start),
         range_middle: cn('rounded-none', defaultClassNames.range_middle),
         range_end: cn('bg-accent rounded-r-md', defaultClassNames.range_end),
-        today: cn('rounded-md bg-primary text-primary-foreground', defaultClassNames.today),
+        today: cn('rounded-md bg-primary/90 text-primary-foreground font-semibold', defaultClassNames.today),
         outside: cn('text-muted-foreground aria-selected:text-muted-foreground', defaultClassNames.outside),
         disabled: cn('text-muted-foreground opacity-50', defaultClassNames.disabled),
         hidden: cn('invisible', defaultClassNames.hidden),
@@ -169,7 +169,7 @@ const CalendarDayButton = ({ className, day, modifiers, ...props }: React.Compon
         'data-[selected-single=true]:bg-secondary data-[selected-single=true]:text-secondary-foreground data-[range-middle=true]:bg-accent data-[range-middle=true]:text-accent-foreground data-[range-start=true]:bg-secondary data-[range-start=true]:text-secondary-foreground data-[range-end=true]:bg-secondary data-[range-end=true]:text-secondary-foreground group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50 dark:hover:text-accent-foreground flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] data-[range-end=true]:rounded-md data-[range-end=true]:rounded-r-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md data-[range-start=true]:rounded-l-md [&>span]:text-xs [&>span]:opacity-70',
         // Today customization - keep primary color for hover and selected states
         modifiers.today &&
-          'hover:bg-primary hover:text-primary-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground',
+          'bg-primary/90 text-primary-foreground hover:bg-primary data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground font-semibold',
         // Selected date customization - keep secondary color on hover
         modifiers.selected && !modifiers.today && 'hover:bg-secondary hover:text-secondary-foreground',
         defaultClassNames.day,

@@ -118,26 +118,29 @@ export function useTimeCalculation({ snapToMinutes = 15, maxHour = 23, minHour =
    * @param endDate 終了日時（オプション）
    * @returns フォーマットされた時間範囲文字列
    */
-  const formatTimeRange = useCallback((startDate: Date, endDate?: Date | null): string => {
-    if (!startDate) return t('calendar.event.noTimeSet')
+  const formatTimeRange = useCallback(
+    (startDate: Date, endDate?: Date | null): string => {
+      if (!startDate) return t('calendar.event.noTimeSet')
 
-    const start = startDate instanceof Date ? startDate : new Date(startDate)
-    if (isNaN(start.getTime())) return t('calendar.event.noTimeSet')
+      const start = startDate instanceof Date ? startDate : new Date(startDate)
+      if (isNaN(start.getTime())) return t('calendar.event.noTimeSet')
 
-    const startTime = format(start, 'HH:mm')
+      const startTime = format(start, 'HH:mm')
 
-    if (!endDate) {
-      return startTime
-    }
+      if (!endDate) {
+        return startTime
+      }
 
-    const end = endDate instanceof Date ? endDate : new Date(endDate)
-    if (isNaN(end.getTime())) {
-      return startTime
-    }
+      const end = endDate instanceof Date ? endDate : new Date(endDate)
+      if (isNaN(end.getTime())) {
+        return startTime
+      }
 
-    const endTime = format(end, 'HH:mm')
-    return `${startTime} - ${endTime}`
-  }, [])
+      const endTime = format(end, 'HH:mm')
+      return `${startTime} - ${endTime}`
+    },
+    [t]
+  )
 
   return {
     calculateTimeFromY,

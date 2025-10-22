@@ -312,6 +312,7 @@ export function useAccessibilityKeyboard(events: CalendarEvent[], currentDate: D
       showKeyboardHelp,
       events,
       announce,
+      t,
     ]
   )
 

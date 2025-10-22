@@ -7,7 +7,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Suspense } from 'react'
 
-import { GlobalErrorBoundary, Providers } from '@/components/common'
+import { CookieConsentBanner, GlobalErrorBoundary } from '@/components/common'
+import { Providers } from '@/components/providers'
 import { Toaster } from '@/components/ui/sonner'
 import { WebVitalsReporter } from '@/components/WebVitalsReporter'
 import { cn } from '@/lib/utils'
@@ -34,12 +35,13 @@ interface RootLayoutProps {
 const RootLayout = ({ children }: RootLayoutProps) => {
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
-      <body className={cn('bg-neutral-100 dark:bg-neutral-900')} suppressHydrationWarning>
+      <body className={cn('bg-background')} suppressHydrationWarning>
         <Suspense fallback={null}>
           <GlobalErrorBoundary maxRetries={3} retryDelay={1000}>
             <Providers>
               {children}
               <Toaster />
+              <CookieConsentBanner />
             </Providers>
           </GlobalErrorBoundary>
           <WebVitalsReporter />

@@ -1,0 +1,182 @@
+name: 📄 License Information Auto-Update
+
+on:
+  # 依存関係変更時に自動実行
+  push:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+    branches:
+      - dev
+      - main
+
+  # PRでpackage.json変更時
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+
+  # 手動実行可能
+  workflow_dispatch:
+
+  # 週次自動実行（毎週月曜日 0:00 UTC）
+  schedule:
+    - cron: '0 0 * * 1'
+
+env:
+  NODE_VERSION: '18'
+
+# セキュリティ: 最小権限の原則
+permissions:
+  contents: write        # ライセンスファイル自動コミット用
+  pull-requests: write   # PRコメント投稿用
+
+jobs:
+  update-licenses:
+    name: 📄 Update License Information
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 📄 Generate license information
+        run: npm run generate-licenses
+
+      - name: 🔒 License compliance check
+        id: compliance_check
+        run: |
+          npm run license:check || echo "compliance_failed=true" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: ⚠️ Compliance failure notification
+        if: steps.compliance_check.outputs.compliance_failed == 'true'
+        run: |
+          echo "::error::❌ License compliance check failed"
+          echo "::error::Some packages use restricted licenses (GPL, AGPL, etc.)"
+          echo "::error::Please review license-policy.json and remove restricted packages"
+          exit 1
+
+      - name: 🔍 Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet public/oss-credits.json public/THIRD_PARTY_NOTICES.txt; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "📋 No license changes detected"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "📝 License changes detected"
+            git diff --stat public/oss-credits.json public/THIRD_PARTY_NOTICES.txt
+          fi
+
+      - name: 📊 License Statistics
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          echo "## 📊 License Changes" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Files Updated:" >> $GITHUB_STEP_SUMMARY
+          echo "- public/oss-credits.json" >> $GITHUB_STEP_SUMMARY
+          echo "- public/THIRD_PARTY_NOTICES.txt" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # パッケージ数をカウント
+          PACKAGE_COUNT=$(jq '. | length' public/oss-credits.json)
+          echo "### Statistics:" >> $GITHUB_STEP_SUMMARY
+          echo "- Total Packages: ${PACKAGE_COUNT}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # ライセンス分布を表示
+          echo "### License Distribution:" >> $GITHUB_STEP_SUMMARY
+          jq -r 'group_by(.license) | map({license: .[0].license, count: length}) | sort_by(-.count) | .[] | "- \(.license): \(.count)"' public/oss-credits.json >> $GITHUB_STEP_SUMMARY
+
+      - name: 💾 Commit changes
+        if: steps.check_changes.outputs.changed == 'true' && github.event_name != 'pull_request'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/oss-credits.json public/THIRD_PARTY_NOTICES.txt
+          git commit -m "chore: 依存関係ライセンス情報を自動更新
+
+📄 License Information Generator により自動生成
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+          git push
+
+      - name: 💬 Comment on PR
+        if: steps.check_changes.outputs.changed == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
+        with:
+          script: |
+            const fs = require('fs');
+            const { execSync } = require('child_process');
+
+            const ossCredits = JSON.parse(fs.readFileSync('public/oss-credits.json', 'utf8'));
+            const packageCount = ossCredits.length;
+
+            // ライセンス分布を計算
+            const licenseDistribution = ossCredits.reduce((acc, pkg) => {
+              acc[pkg.license] = (acc[pkg.license] || 0) + 1;
+              return acc;
+            }, {});
+
+            const topLicenses = Object.entries(licenseDistribution)
+              .sort(([, a], [, b]) => b - a)
+              .slice(0, 5)
+              .map(([license, count]) => `- ${license}: ${count} packages`)
+              .join('\n');
+
+            // ライセンスチェック結果を取得
+            let complianceStatus = '✅ **合格** - すべてのパッケージが承認済みライセンスです';
+            try {
+              execSync('npm run license:check', { encoding: 'utf-8' });
+            } catch (error) {
+              complianceStatus = '❌ **失敗** - 制限ライセンスが検出されました。詳細はワークフローログを確認してください';
+            }
+
+            const comment = `## 📄 License Information Updated
+
+### 📊 Statistics
+- **Total Packages**: ${packageCount}
+
+### 🔒 Compliance Check
+${complianceStatus}
+
+### 🏆 Top 5 Licenses
+${topLicenses}
+
+### 📝 Generated Files
+- \`public/oss-credits.json\` - Web display data
+- \`public/THIRD_PARTY_NOTICES.txt\` - Apache-2.0 NOTICE files
+
+### 🔗 View Changes
+You can view the complete OSS credits at \`/legal/oss-credits\` after merging this PR.
+
+---
+<sub>🤖 Generated by License Information Generator</sub>`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
+
+      - name: ✅ No changes
+        if: steps.check_changes.outputs.changed == 'false'
+        run: |
+          echo "✅ License information is up to date" >> $GITHUB_STEP_SUMMARY
+          echo "No changes to public/oss-credits.json or public/THIRD_PARTY_NOTICES.txt" >> $GITHUB_STEP_SUMMARY

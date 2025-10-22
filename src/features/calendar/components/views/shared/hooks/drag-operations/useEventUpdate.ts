@@ -180,7 +180,7 @@ export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdatePr
         calendarToast.error(t('calendar.event.resizeFailed'))
       }
     },
-    [onEventUpdate, events, calendarToast, createEventData]
+    [onEventUpdate, events, calendarToast, createEventData, t]
   )
 
   return {

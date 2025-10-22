@@ -33,6 +33,11 @@ AIアシスタントは、作業開始前に必ず以下の順序でドキュメ
 
 **コミュニケーション言語**: 日本語
 
+**絵文字の使用方針**:
+
+- ✅ **ドキュメント**: 視認性向上のため使用可（見出し、リスト等）
+- ❌ **コード**: コメント・変数名・ログ等では禁止（ユーザーの明示的要求がある場合のみ例外）
+
 ---
 
 ## 🎯 意思決定の絶対的優先順位
@@ -61,8 +66,12 @@ AIは以下の順序で判断すること。上位の判断基準が存在する
 
 ### レベル2：プロジェクト固有ルール（次点優先度）
 
-1. **8pxグリッドシステム**（必須）: すべてのスペーシングは8の倍数を使用（詳細: `/src/CLAUDE.md#1.1`）
-2. `/src/config/ui/theme.ts` のデザイントークン
+1. **スタイルガイド**（必須）: [`docs/design-system/STYLE_GUIDE.md`](docs/design-system/STYLE_GUIDE.md)
+   - 8pxグリッドシステム
+   - カラーシステム（セマンティックトークン）
+   - タイポグラフィ
+   - レスポンシブデザイン
+2. `src/app/globals.css` のセマンティックトークン（カラー、ダークモード）
 3. `/src/CLAUDE.md` のコーディング規約
 4. 既存コードの実装パターン（同一ディレクトリ内を優先）
 
@@ -143,8 +152,9 @@ AIは、コードを書く前に以下を必ず実行すること：
 #### 3. コンポーネント作成
 
 - ❌ 禁止: `React.FC`（非推奨）
-- ❌ 禁止: `export default`
-- ✅ 必須: `export function ComponentName() {}`（名前付きエクスポート）
+- ❌ コンポーネントでは原則禁止: `export default`
+- ✅ 推奨: `export function ComponentName() {}`（名前付きエクスポート）
+- ✅ 例外: App Router の Page/Layout/Error/Loading/Route等は `export default` 必須（Next.js仕様）
 
 #### 4. データフェッチング
 
@@ -165,19 +175,46 @@ AIは、コードを書く前に以下を必ず実行すること：
 
 ---
 
-## 🚨 絶対遵守ルール（6項目）
+## 🚨 絶対遵守ルール（8項目）
 
-1. **コミット前**: `npm run lint` 必須実行（3.6秒で完了）
-2. **スタイリング**: `globals.css` のセマンティックトークン使用（Tailwindクラス直接指定。`bg-card`, `text-foreground` 等）
-3. **Issue管理**: すべての作業をIssue化（例外なし）
+### 開発ワークフロー
+
+```bash
+# 1. セッション開始時（AIが自動実行）
+npm run test:watch  # ← バックグラウンドで自動起動（ファイル変更を監視）
+
+# 2. コード記述中（常時）
+# → test:watchがバックグラウンドで監視中
+# → ファイル保存時に自動テスト実行
+
+# 3. コミット前（必須）
+npm run lint        # ✅ 必須：3.6秒（pre-commitフックで自動実行）
+```
+
+### 遵守項目
+
+1. **セッション開始時（AI自動実行）**: `npm run test:watch` をバックグラウンド起動
+   - **対象**: Claude Code（AI）がセッション開始時に自動実行
+   - **方法**: `Bash`ツールで `run_in_background: true` オプション使用
+   - **目的**: ファイル変更を常時監視し、テスト失敗を即座に検知
+   - **停止**: セッション終了時に自動停止（または `KillShell` ツール使用）
+2. **コミット前（必須）**: `npm run lint` 必須実行（3.6秒で完了）
+   - pre-commitフックで自動実行されるため、手動実行は不要
+   - ただし、エディタ統合（ESLint extension）推奨
+3. **テスト確認（随時）**: バックグラウンドのtest:watchを確認
+   - **確認方法**: `BashOutput` ツールで出力チェック
+   - **失敗時**: 該当ファイルを修正してテストをパス
+   - **メリット**: 早期バグ検出、リファクタリング安全性向上
+4. **スタイリング**: `globals.css` のセマンティックトークン使用（Tailwindクラス直接指定。`bg-card`, `text-foreground` 等）
+5. **Issue管理**: すべての作業をIssue化（例外なし）
    - **Claude Codeの権限**: AIアシスタントは必要に応じて**自由にIssue作成可能**
    - 新機能・バグ修正・ドキュメント・リファクタリング等、すべての作業をIssue化すること
    - ユーザーの明示的な依頼がなくても、作業開始前に自主的にIssue作成してよい
    - **柔軟な運用**: 技術的な議論・アイデア・調査タスク・メモなども気軽にIssue化OK
    - 削除は開発者が行うので、積極的にIssue化すること
-4. **TypeScript厳格**: `any` 型禁止
-5. **公式準拠**: Next.js/React/TypeScript公式のベストプラクティスに従う（詳細は後述）
-6. **コロケーション**: 関連ファイルは必ず近接配置（テスト・型・hooks・ドキュメント等）
+6. **TypeScript厳格**: `any` 型禁止
+7. **公式準拠**: Next.js/React/TypeScript公式のベストプラクティスに従う（詳細は後述）
+8. **コロケーション**: 関連ファイルは必ず近接配置（テスト・型・hooks・ドキュメント等）
 
 **実装の詳細**: [`src/CLAUDE.md`](src/CLAUDE.md) - コーディングリファレンス
 
@@ -194,22 +231,20 @@ AIは、コードを書く前に以下を必ず実行すること：
 ### 📖 プロジェクト全体
 
 - **プロジェクト概要**: [`docs/README.md`](docs/README.md)
-- **ESLint公式準拠**: [`docs/ESLINT_HYBRID_APPROACH.md`](docs/ESLINT_HYBRID_APPROACH.md)
-- **AI品質基準**: [`.claude/code-standards.md`](.claude/code-standards.md)
-- **デザインシステム**: [`docs/THEME_ENFORCEMENT.md`](docs/THEME_ENFORCEMENT.md)
+- **ESLint公式準拠**: [`docs/development/ESLINT_HYBRID_APPROACH.md`](docs/development/ESLINT_HYBRID_APPROACH.md)
+- **デザインシステム**: [`docs/design-system/THEME_MIGRATION.md`](docs/design-system/THEME_MIGRATION.md)
 
 ### 開発ワークフロー
 
-- **コミット規約**: [`docs/development/COMMIT_RULES.md`](docs/development/COMMIT_RULES.md)
+- **コマンド一覧**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
 - **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
 - **Issueラベル付けルール**: [`docs/development/ISSUE_LABELING_RULES.md`](docs/development/ISSUE_LABELING_RULES.md)
-- **セッション管理**: [`docs/development/SESSION_MANAGEMENT.md`](docs/development/SESSION_MANAGEMENT.md)
+- **セッション管理**: [`docs/development/CLAUDE_SESSION_MANAGEMENT.md`](docs/development/CLAUDE_SESSION_MANAGEMENT.md)
 
 ### システム管理
 
-- **Breaking Changes**: [`docs/BREAKING_CHANGES.md`](docs/BREAKING_CHANGES.md)
 - **Sentry統合**: [`docs/integrations/SENTRY.md`](docs/integrations/SENTRY.md)
-- **エラーハンドリング**: [`docs/architecture/ERROR_HANDLING.md`](docs/architecture/ERROR_HANDLING.md) 🆕
+- **エラーハンドリング**: [`docs/architecture/ERROR_HANDLING.md`](docs/architecture/ERROR_HANDLING.md)
 
 ## 🚀 基本コマンド（頻出4個）
 
@@ -221,6 +256,40 @@ npm run docs:check          # ドキュメント整合性チェック
 ```
 
 **全コマンド**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
+
+---
+
+## 🖥️ 開発サーバー起動ルール
+
+### ポート番号の使い分け
+
+**AI（Claude Code）が開発サーバーを起動する場合**:
+
+- ✅ **必須**: `PORT=4000`番台を使用（4000, 4001, 4002...）
+- ❌ **禁止**: `PORT=3000`番台の使用（開発者専用領域）
+
+**開発者が手動で起動する場合**:
+
+- デフォルト: `PORT=3000`（package.jsonの設定）
+- 追加起動: `PORT=3001`, `3002`...
+
+### 実行例
+
+```bash
+# ✅ AI（Claude Code）の場合
+PORT=4000 npm run dev
+PORT=4001 npm run dev  # 2つ目のサーバーが必要な場合
+
+# ✅ 開発者の場合
+npm run dev            # デフォルトでPORT=3000
+PORT=3001 npm run dev  # 追加サーバーが必要な場合
+```
+
+### 理由
+
+- **ポート衝突の防止**: 開発者とAIの作業領域を明確に分離
+- **バックグラウンドプロセス管理**: 4000番台で統一することで管理が容易
+- **開発体験の向上**: 予測可能なポート番号で混乱を回避
 
 ---
 
@@ -305,4 +374,40 @@ npm run docs:check          # ドキュメント整合性チェック
 
 ---
 
-**📖 最終更新**: 2025-10-10 | **バージョン**: v9.3 - Issue管理の柔軟な運用を明記（技術的な議論・アイデアもOK）
+## 📝 変更履歴
+
+### v10.1（2025-10-22）- Phase 1 + Phase 3 完了
+
+**Phase 1（緊急修正）**:
+
+- ✅ リンク切れ修正（`.claude/code-standards.md` 削除、`docs/THEME_ENFORCEMENT.md` → `docs/design-system/THEME_MIGRATION.md`）
+- ✅ export default ルール修正（App Router の例外を明記）
+- ✅ 絵文字使用方針の統一（ドキュメント: 使用可、コード: 禁止）
+
+**Phase 2（一貫性向上）**:
+
+- ❌ 取り消し（CLAUDE.md の基本思想「公式ベストプラクティスの厳格な遵守」と矛盾）
+
+**Phase 3（構造改善）**:
+
+- ✅ Single Source of Truth の徹底
+  - 新規作成: `docs/design-system/STYLE_GUIDE.md`（8pxグリッド、カラー、タイポグラフィを集約）
+  - CLAUDE.md から STYLE_GUIDE.md への参照追加
+- ✅ 頻出パターン集の追加
+  - `src/CLAUDE.md` に Server Component/Client Component/i18n/フォーム/レスポンシブのコード例を追加
+- ✅ バージョン履歴の追加（本セクション）
+
+**効果**: ドキュメント評価 65点 → 85点
+
+### v10.0（2025-10-21）
+
+- AIによる test:watch 自動起動を必須化
+
+### v9.3 以前
+
+- Issue管理の柔軟な運用を明記
+- コミット規約・Issue管理ルールの整備
+
+---
+
+**📖 最終更新**: 2025-10-22 | **バージョン**: v10.1

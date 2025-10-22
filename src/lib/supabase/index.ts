@@ -1,21 +1,23 @@
 /**
  * Supabase ライブラリ エントリーポイント
  * @description Supabase 関連の機能をまとめてエクスポート
+ *
+ * @see Issue #531 - Supabase × Vercel × Next.js 認証チェックリスト
+ *
+ * ⚠️ 重要:
+ * - server.ts は意図的にここからエクスポートしていません
+ * - server.ts を使う場合は直接 '@/lib/supabase/server' からインポートしてください
+ * - これにより Pages Router での誤用を防ぎます
  */
 
-// クライアント
-export {
-  getSession,
-  getUser,
-  signOut,
-  supabase,
-  supabaseAdmin,
-  tables,
-  type SupabaseAdminClient,
-  type SupabaseClient,
-} from './client'
+// クライアント作成関数（Browser Client のみ）
+export { createClient as createBrowserClient, type SupabaseClient } from './client'
 
-// フック
+// Middleware用（App Routerのみ）
+// NOTE: middleware.ts も直接インポートすることを推奨
+export { updateSession } from './middleware'
+
+// Client Components用フック
 export { useAuth, useProfile, useTasks } from './hooks'
 
 // ユーティリティ

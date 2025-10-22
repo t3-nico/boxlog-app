@@ -6,7 +6,7 @@
  * Issue #288: 翻訳品質を担保するためのQAプロセス設計・実装
  */
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import {
   AlertTriangle,
@@ -146,9 +146,9 @@ export default function QualityReviewPanel({
       // 自動品質評価を実行
       performAutomaticAssessment()
     }
-  }, [translationKey, language, originalText, translatedText])
+  }, [translationKey, language, originalText, translatedText, initialWorkflow, performAutomaticAssessment])
 
-  const performAutomaticAssessment = async () => {
+  const performAutomaticAssessment = useCallback(async () => {
     setLoading(true)
     try {
       // 自動品質評価（実際の実装ではAPIコール）
@@ -159,9 +159,9 @@ export default function QualityReviewPanel({
     } finally {
       setLoading(false)
     }
-  }
+  }, [generateMockAssessment])
 
-  const generateMockAssessment = async (): Promise<QualityAssessment> => {
+  const generateMockAssessment = useCallback(async (): Promise<QualityAssessment> => {
     // モック評価（実際の実装では quality-assurance.ts を使用）
     const metrics: QualityMetrics = {
       accuracy: 92,
@@ -226,7 +226,7 @@ export default function QualityReviewPanel({
         '既存の翻訳スタイルとの一貫性を確認してください',
       ],
     }
-  }
+  }, [translationKey, language, originalText, translatedText])
 
   const handleSubmitReview = async () => {
     if (!assessment) return

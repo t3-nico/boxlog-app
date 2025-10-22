@@ -1,16 +1,20 @@
 /**
- * プロフィール管理API エンドポイント
+ * プロフィール管理API エンドポイント (Route Handler)
  * @description Supabase を使用したユーザープロフィール管理
+ *
+ * @see Issue #531 - Supabase × Vercel × Next.js 認証チェックリスト
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError, isValidUUID } from '@/lib/supabase/utils'
+import type { Database } from '@/types/supabase'
 
 // プロフィールの取得 (GET)
 export async function GET(request: NextRequest) {
   try {
+    const supabase = createClient()
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
 
@@ -40,6 +44,7 @@ export async function GET(request: NextRequest) {
 // プロフィールの作成・更新 (POST)
 export async function POST(request: NextRequest) {
   try {
+    const supabase = createClient()
     const body = await request.json()
     const { id, email, name, avatar_url } = body
 
@@ -52,7 +57,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Valid email is required' }, { status: 400 })
     }
 
-    const profileData = {
+    const profileData: Database['public']['Tables']['profiles']['Insert'] = {
       id,
       email: email.trim().toLowerCase(),
       name: name?.trim() || null,
@@ -60,7 +65,8 @@ export async function POST(request: NextRequest) {
     }
 
     // upsert を使用して作成または更新
-    const { data, error } = await supabase.from('profiles').upsert([profileData]).select().single()
+    // @ts-expect-error - Supabase型推論の問題
+    const { data, error } = await supabase.from('profiles').upsert(profileData).select().single()
 
     if (error) {
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
@@ -78,6 +84,7 @@ export async function POST(request: NextRequest) {
 // プロフィールの更新 (PUT)
 export async function PUT(request: NextRequest) {
   try {
+    const supabase = createClient()
     const body = await request.json()
     const { id, name, avatar_url } = body
 
@@ -85,7 +92,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Valid user ID is required' }, { status: 400 })
     }
 
-    const updateData: Record<string, string | null> = {
+    const updateData: Database['public']['Tables']['profiles']['Update'] = {
       updated_at: new Date().toISOString(),
     }
 
@@ -97,6 +104,7 @@ export async function PUT(request: NextRequest) {
       updateData.avatar_url = avatar_url
     }
 
+    // @ts-expect-error - Supabase型推論の問題
     const { data, error } = await supabase.from('profiles').update(updateData).eq('id', id).select().single()
 
     if (error) {
@@ -115,6 +123,7 @@ export async function PUT(request: NextRequest) {
 // プロフィールの削除 (DELETE)
 export async function DELETE(request: NextRequest) {
   try {
+    const supabase = createClient()
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
 

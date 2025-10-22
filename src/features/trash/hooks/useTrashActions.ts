@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 import { useTrashStore } from '../stores/useTrashStore'
 
@@ -41,9 +42,11 @@ export const useTrashActions = () => {
       onConfirm: async () => {
         try {
           await restoreItems(Array.from(selectedIds))
+          toast.success(`${selectedCount}件のアイテムを復元しました`)
           setShowConfirmDialog(null)
         } catch (error) {
           console.error('Restore failed:', error)
+          toast.error('復元に失敗しました')
         }
       },
     })
@@ -59,9 +62,11 @@ export const useTrashActions = () => {
       onConfirm: async () => {
         try {
           await permanentlyDeleteItems(Array.from(selectedIds))
+          toast.success(`${selectedCount}件のアイテムを完全に削除しました`)
           setShowConfirmDialog(null)
         } catch (error) {
           console.error('Delete failed:', error)
+          toast.error('削除に失敗しました')
         }
       },
     })
@@ -77,9 +82,11 @@ export const useTrashActions = () => {
       onConfirm: async () => {
         try {
           await emptyTrash()
+          toast.success(`${stats.totalItems}件のアイテムを削除しました`)
           setShowConfirmDialog(null)
         } catch (error) {
           console.error('Empty trash failed:', error)
+          toast.error('ゴミ箱を空にできませんでした')
         }
       },
     })
@@ -95,9 +102,11 @@ export const useTrashActions = () => {
       onConfirm: async () => {
         try {
           await clearExpiredItems()
+          toast.success(`期限切れの${expiredItems.length}件のアイテムを削除しました`)
           setShowConfirmDialog(null)
         } catch (error) {
           console.error('Clear expired failed:', error)
+          toast.error('期限切れアイテムの削除に失敗しました')
         }
       },
     })

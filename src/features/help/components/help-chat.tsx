@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { ArrowUpCircle, Copy, MoreVertical, Sparkles, Trash2 } from 'lucide-react'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useChatStore, type ChatMessage } from '@/features/aichat/stores/useChatStore'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
@@ -292,7 +293,7 @@ export const HelpChat = () => {
       <ChatHeader />
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto">
+      <ScrollArea className="flex-1">
         {messages.length === 0 ? (
           <WelcomeMessage />
         ) : (
@@ -303,7 +304,7 @@ export const HelpChat = () => {
             <div ref={messagesEndRef} />
           </div>
         )}
-      </div>
+      </ScrollArea>
 
       <ChatInput />
     </div>

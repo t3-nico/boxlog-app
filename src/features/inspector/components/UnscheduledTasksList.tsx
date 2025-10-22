@@ -94,8 +94,8 @@ export const UnscheduledTasksList = () => {
               onDragStart={createDragStartHandler(task)}
               className={cn(
                 'cursor-move border-b border-l-4 p-4 transition-colors',
-                'border-neutral-200 dark:border-neutral-800',
-                'bg-neutral-100 dark:bg-neutral-900',
+                'border-border',
+                'bg-card',
                 'hover:bg-accent/50',
                 getPriorityColor(task.priority)
               )}

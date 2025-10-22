@@ -94,15 +94,15 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
   )
 
   // キーボード操作のヘルパー関数群
-  const handleTabKey = () => {
+  const handleTabKey = useCallback(() => {
     if (showSuggestions && suggestions.length > 0) {
       addTag(suggestions[focusedSuggestionIndex].name)
     } else {
       onTabNext?.()
     }
-  }
+  }, [showSuggestions, suggestions, focusedSuggestionIndex, addTag, onTabNext])
 
-  const handleEnterKey = () => {
+  const handleEnterKey = useCallback(() => {
     if (showSuggestions && suggestions.length > 0) {
       addTag(suggestions[focusedSuggestionIndex].name)
     } else if (inputValue.trim().length > 0) {
@@ -112,28 +112,28 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
         addTag(tagName)
       }
     }
-  }
+  }, [showSuggestions, suggestions, focusedSuggestionIndex, inputValue, addTag])
 
-  const handleArrowDown = () => {
+  const handleArrowDown = useCallback(() => {
     setFocusedSuggestionIndex((focusedSuggestionIndex + 1) % suggestions.length)
-  }
+  }, [focusedSuggestionIndex, suggestions])
 
-  const handleArrowUp = () => {
+  const handleArrowUp = useCallback(() => {
     setFocusedSuggestionIndex(focusedSuggestionIndex === 0 ? suggestions.length - 1 : focusedSuggestionIndex - 1)
-  }
+  }, [focusedSuggestionIndex, suggestions])
 
-  const handleEscapeKey = () => {
+  const handleEscapeKey = useCallback(() => {
     setShowSuggestions(false)
     setInputValue('')
-  }
+  }, [])
 
-  const handleBackspaceKey = () => {
+  const handleBackspaceKey = useCallback(() => {
     if (!inputValue && selectedTags.length > 0) {
       removeTag(selectedTags[selectedTags.length - 1].id)
     }
-  }
+  }, [inputValue, selectedTags, removeTag])
 
-  const handleSpaceKey = () => {
+  const handleSpaceKey = useCallback(() => {
     if (!inputValue.trim()) {
       // Show popular tags when empty
       setShowSuggestions(true)
@@ -144,7 +144,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
         addTag(tagName)
       }
     }
-  }
+  }, [inputValue, addTag])
 
   // jsx-no-bind optimization: キーボード操作（リファクタリング済み）
   const handleKeyDown = useCallback(

@@ -85,10 +85,10 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={cn(buttonVariants({ variant: 'outline' }), 'gap-2', className)}>
+      <DropdownMenuTrigger className={cn(buttonVariants({ variant: 'outline' }), 'justify-start gap-0', className)}>
         {currentOption?.icon}
         <span>{currentOption?.label || 'Day'}</span>
-        <ChevronDown className="h-4 w-4" />
+        <ChevronDown className="ml-2 h-4 w-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" side="bottom" sideOffset={8} className="dark:border-input min-w-[160px] border">
         {/* ビューオプション */}
@@ -98,7 +98,7 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
             onClick={() => handleSelect(option.value)}
             className="flex items-center justify-between gap-2"
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-0">
               {option.icon}
               <span>{option.label}</span>
               {currentView === option.value && <Check className="text-primary h-4 w-4" />}

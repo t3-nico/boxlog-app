@@ -11,7 +11,7 @@ import type { CalendarViewType } from '../types/calendar.types'
 interface CalendarNavigationContextValue {
   currentDate: Date
   viewType: CalendarViewType
-  navigateToDate: (date: Date) => void
+  navigateToDate: (date: Date, updateUrl?: boolean) => void
   changeView: (view: CalendarViewType) => void
   navigateRelative: (direction: 'prev' | 'next' | 'today') => void
 }
@@ -44,21 +44,16 @@ export const CalendarNavigationProvider = ({
   }, [initialDate, initialView, isInitialized])
 
   const navigateToDate = useCallback(
-    (date: Date) => {
-      console.log('🔄 navigateToDate called:', { date, viewType, currentDate })
+    (date: Date, updateUrl = false) => {
+      console.log('🔄 navigateToDate called:', { date, viewType, currentDate, updateUrl })
       setCurrentDate(date)
-      const dateString = format(date, 'yyyy-MM-dd')
-      const newUrl = `/calendar/${viewType}?date=${dateString}`
-      console.log('🚀 Pushing to:', newUrl)
 
-      // router.push の代わりに window.location を試す
-      try {
-        router.push(newUrl)
-        console.log('✅ router.push executed')
-      } catch (error) {
-        console.error('❌ router.push failed:', error)
-        // フォールバック
-        window.location.href = newUrl
+      // URLの更新が明示的に要求された場合のみ実行
+      if (updateUrl) {
+        const dateString = format(date, 'yyyy-MM-dd')
+        const newUrl = `/calendar/${viewType}?date=${dateString}`
+        console.log('🚀 Pushing to:', newUrl)
+        router.push(newUrl, { scroll: false })
       }
     },
     [router, viewType, currentDate]

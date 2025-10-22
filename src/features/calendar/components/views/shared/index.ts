@@ -75,7 +75,7 @@ export type { UseEventsByDateOptions, UseEventsByDateReturn } from './hooks/useE
 export { CalendarGridProvider, useCalendarGridVars } from './components/CalendarGridProvider'
 
 // ===== レイアウト =====
-export { CalendarLayoutWithHeader, ScrollableCalendarLayout } from './components/ScrollableCalendarLayout'
+export { CalendarDateHeader, ScrollableCalendarLayout } from './components/ScrollableCalendarLayout'
 
 // 型定義のエクスポート（互換性のため）
 export type { PositionedEvent } from './hooks/useEventPosition'

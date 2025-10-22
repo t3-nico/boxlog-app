@@ -10,7 +10,7 @@ interface EventTrashViewProps {
   className?: string
 }
 
-export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => {
+export function EventTrashView({ className }: EventTrashViewProps) {
   const { t } = useI18n()
   const [searchQuery, setSearchQuery] = useState('')
   const [filterDays, setFilterDays] = useState<number | null>(null)

@@ -56,8 +56,8 @@ export const CalendarHeader = ({
   displayRange,
 }: CalendarHeaderProps) => {
   return (
-    <header className="bg-background relative px-4 py-2">
-      <div className="flex items-center justify-between">
+    <header className="bg-background relative h-12 px-4 pt-2">
+      <div className="flex h-full items-center justify-between">
         {/* 左側: カスタムスロット + ナビゲーションコントロールと日付 */}
         <div className="flex items-center gap-4">
           {/* カスタムスロット（モバイルメニューボタンなど） */}
@@ -78,7 +78,7 @@ export const CalendarHeader = ({
         </div>
 
         {/* 右側: ビュー切り替えとアクション */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-0">
           {/* ビュー切り替え */}
           <ViewSwitcher options={viewOptions} currentView={viewType} onChange={onViewChange} />
 
