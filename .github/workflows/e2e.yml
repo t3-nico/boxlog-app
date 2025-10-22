@@ -63,7 +63,8 @@ jobs:
           elif [ "${{ matrix.project }}" = "Mobile Safari" ]; then
             npx playwright install --with-deps webkit
           elif [ "${{ matrix.project }}" = "iPad" ]; then
-            npx playwright install --with-deps webkit
+            # iPadはwebkitを使用するが、chromium-headless-shellも必要
+            npx playwright install --with-deps webkit chromium-headless-shell
           else
             # chromiumの場合はchromium-headless-shellも必要
             if [ "${{ matrix.project }}" = "chromium" ]; then
