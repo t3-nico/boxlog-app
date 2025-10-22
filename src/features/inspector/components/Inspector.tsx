@@ -2,13 +2,11 @@
 
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 
-import { DesktopInspector } from './DesktopInspector'
-import { MobileInspector } from './MobileInspector'
+import { DesktopInspectorSheet } from './DesktopInspectorSheet'
+import { MobileInspectorSheet } from './MobileInspectorSheet'
 
-const Inspector = () => {
+export default function Inspector() {
   const isMobile = useMediaQuery('(max-width: 768px)')
 
-  return isMobile ? <MobileInspector /> : <DesktopInspector />
+  return isMobile ? <MobileInspectorSheet /> : <DesktopInspectorSheet />
 }
-
-export default Inspector

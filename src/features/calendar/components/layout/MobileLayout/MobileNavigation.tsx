@@ -59,16 +59,22 @@ export const MobileNavigation = ({
 
   const navItems = items ?? defaultItems
 
-  const handleItemClick = (item: MobileNavItem) => {
-    if (item.disabled) return
-    item.onClick?.()
-    onItemClick?.(item.id)
-  }
+  const handleItemClick = useCallback(
+    (item: MobileNavItem) => {
+      if (item.disabled) return
+      item.onClick?.()
+      onItemClick?.(item.id)
+    },
+    [onItemClick]
+  )
 
   // Dynamic click handler
-  const createItemClickHandler = useCallback((item: MobileNavItem) => {
-    return () => handleItemClick(item)
-  }, [])
+  const createItemClickHandler = useCallback(
+    (item: MobileNavItem) => {
+      return () => handleItemClick(item)
+    },
+    [handleItemClick]
+  )
 
   return (
     <nav

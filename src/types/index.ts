@@ -100,7 +100,6 @@ export type ProfileUpdate = Partial<Omit<Profile, 'id' | 'created_at'>>
 // 共通型
 export * from './chronotype'
 export * from './common'
-export * from './sidebar'
 export * from './smart-folders'
 export * from './tags'
 export * from './trash'

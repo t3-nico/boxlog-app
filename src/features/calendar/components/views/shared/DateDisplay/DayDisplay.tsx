@@ -22,16 +22,12 @@ const generateHeaderClasses = (
   const baseClasses = 'flex items-center justify-center py-2 px-1 text-center transition-colors rounded-lg'
 
   const hoverClasses =
-    onClick && !isToday
-      ? 'cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20'
-      : onClick && isToday
-        ? 'cursor-pointer'
-        : ''
+    onClick && !isToday ? 'cursor-pointer hover:bg-primary/10' : onClick && isToday ? 'cursor-pointer' : ''
 
   const statusClasses = isToday
-    ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-semibold'
+    ? 'bg-primary text-primary-foreground font-semibold'
     : isSelected
-      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+      ? 'bg-primary/10 text-primary'
       : isWeekend
         ? 'text-gray-500 dark:text-gray-400'
         : 'text-gray-900 dark:text-gray-100'
@@ -42,7 +38,7 @@ const generateHeaderClasses = (
 // ヘルパー関数: テキストクラスを生成
 const getTextClasses = (isToday: boolean, isBase: boolean = false): string => {
   if (isToday) {
-    return isBase ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-900 dark:text-neutral-100 opacity-75'
+    return isBase ? 'text-primary-foreground' : 'text-primary-foreground/75'
   }
   return 'text-gray-500 dark:text-gray-400'
 }

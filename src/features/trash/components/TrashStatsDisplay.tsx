@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import type { TrashItem } from '../types/trash'
 
 interface TrashStatsDisplayProps {
@@ -11,17 +9,12 @@ interface TrashStatsDisplayProps {
   onDeselectAll: () => void
 }
 
-export const TrashStatsDisplay: React.FC<TrashStatsDisplayProps> = ({
-  stats,
-  selectedCount,
-  expiredItems,
-  onDeselectAll,
-}) => {
+export function TrashStatsDisplay({ stats, selectedCount, expiredItems, onDeselectAll }: TrashStatsDisplayProps) {
   return (
     <div className="mb-4 flex items-center justify-between">
-      <div className="flex items-center space-x-4 text-sm text-neutral-600 dark:text-neutral-400">
+      <div className="text-muted-foreground flex items-center space-x-4 text-sm">
         <span>
-          総数: <span className="font-medium text-neutral-900 dark:text-neutral-100">{stats.totalItems}件</span>
+          総数: <span className="text-foreground font-medium">{stats.totalItems}件</span>
         </span>
         {selectedCount > 0 && (
           <span>
@@ -37,11 +30,7 @@ export const TrashStatsDisplay: React.FC<TrashStatsDisplayProps> = ({
 
       {/* 選択解除 */}
       {selectedCount > 0 && (
-        <button
-          type="button"
-          onClick={onDeselectAll}
-          className="text-sm text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700"
-        >
+        <button type="button" onClick={onDeselectAll} className="text-muted-foreground hover:bg-muted text-sm">
           選択解除
         </button>
       )}

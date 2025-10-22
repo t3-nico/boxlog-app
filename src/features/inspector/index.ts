@@ -1,9 +1,9 @@
 // Inspector components
-export { DesktopInspector } from './components/DesktopInspector'
+export { DesktopInspectorSheet } from './components/DesktopInspectorSheet'
 export { InspectorAIChat } from './components/inspector-ai-chat'
 export { InspectorContent } from './components/inspector-content'
 export { InspectorHeader } from './components/inspector-header'
-export { MobileInspector } from './components/MobileInspector'
+export { MobileInspectorSheet } from './components/MobileInspectorSheet'
 export { UnscheduledTasksList } from './components/UnscheduledTasksList'
 
 // Content components

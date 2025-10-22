@@ -51,7 +51,6 @@ export const CalendarDropZone = ({
 
       const rect = dropRef.current.getBoundingClientRect()
       const scrollContainer =
-        dropRef.current.closest('[data-slot="scroll-area-viewport"]') ||
         dropRef.current.closest('.overflow-y-auto') ||
         dropRef.current.closest('.overflow-auto') ||
         dropRef.current.parentElement
@@ -91,7 +90,6 @@ export const CalendarDropZone = ({
 
       const rect = dropRef.current.getBoundingClientRect()
       const scrollContainer =
-        dropRef.current.closest('[data-slot="scroll-area-viewport"]') ||
         dropRef.current.closest('.overflow-y-auto') ||
         dropRef.current.closest('.overflow-auto') ||
         dropRef.current.parentElement

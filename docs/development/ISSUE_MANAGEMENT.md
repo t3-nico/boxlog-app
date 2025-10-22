@@ -6,6 +6,17 @@
 
 > 「新しい動きをする場合は基本はissueに入れてそこで進捗管理をするって感じにしたい。これを絶対のルールにする。」
 
+### 🤖 Claude Codeの権限
+
+**AIアシスタント（Claude Code）は、必要に応じて自由にIssueを作成できます。**
+
+- ✅ ユーザーの明示的な依頼がなくても、作業開始前に自主的にIssue作成可能
+- ✅ 新機能・バグ修正・ドキュメント・リファクタリング等、すべての作業をIssue化
+- ✅ **技術的な議論・アイデア・調査タスク・メモなども気軽にIssue化OK**
+- ✅ Issue作成時、適切なラベル（種別・優先度・サイズ等）を自動付与
+- ✅ `claude-code` ラベルを自動付与して、AI作業を明示的に追跡
+- ✅ 削除は開発者が行うので、積極的にIssue化してよい
+
 ## 📝 Issue化が必要な作業
 
 - ✅ **新機能の実装** - すべての機能追加
@@ -41,28 +52,53 @@ npm run issue:complete "完了内容とテスト結果"
 
 ## 📊 Issue分類・ラベル
 
-### 優先度ラベル
+**詳細なラベル付けルールは [`ISSUE_LABELING_RULES.md`](./ISSUE_LABELING_RULES.md) を参照してください。**
 
-- `priority:critical` - 緊急対応必須
-- `priority:high` - 高優先度
-- `priority:medium` - 中優先度（デフォルト）
-- `priority:low` - 低優先度
+### 種別ラベル（必須・1つのみ）
 
-### 作業種別ラベル
+- `feature` - 新機能の開発
+- `bug` - バグ修正
+- `refactor` - リファクタリング・コード改善
+- `docs` - ドキュメント作成・更新
+- `test` - テスト関連
 
-- `type:feature` - 新機能
-- `type:bugfix` - バグ修正
-- `type:refactor` - リファクタリング
-- `type:docs` - ドキュメント
-- `type:chore` - 雑務・設定
+### 優先度ラベル（必須・1つのみ）
 
-### サイズ見積もり
+- `P0-urgent` - 緊急対応 - 即座に対応が必要
+- `P1-high` - 高優先度 - 1-2日以内に対応
+- `P2-medium` - 中優先度 - 1週間以内に対応
+- `P3-low` - 低優先度 - 時間のある時に対応（デフォルト）
 
-- `size:xs` - 1時間未満
-- `size:sm` - 1-4時間
-- `size:md` - 4-8時間
-- `size:lg` - 1-2日
-- `size:xl` - 2日以上
+### サイズ見積もり（必須・1つのみ）
+
+- `size-XS` - ~1時間
+- `size-S` - ~4時間（デフォルト）
+- `size-M` - ~1日
+- `size-L` - ~3日
+
+### ステータスラベル（必須・1つのみ）
+
+- `ready` - 着手可能な状態（デフォルト）
+- `in-progress` - 作業中
+- `review` - レビュー待ち
+- `blocked` - ブロック状態
+
+### 領域ラベル（オプション・複数可）
+
+- `frontend` - フロントエンド関連
+- `backend` - バックエンド関連
+- `database` - データベース関連
+- `api` - API関連
+- `ui` - UI/UX関連
+
+### 関係性ラベル（オプション・複数可）
+
+- `blocks` - このIssueが他のIssueをブロックしている
+- `depends-on` - 他のIssueに依存している
+- `related` - 関連Issue（直接的な依存関係なし）
+- `follows` - 前のIssueの続きの作業
+- `duplicates` - 重複Issue
+- `supersedes` - 既存Issueを置き換える
 
 ## 🌿 ブランチ戦略
 
@@ -108,4 +144,4 @@ npm run issue:complete "完了内容とテスト結果"
 ---
 
 **📖 参照元**: [CLAUDE.md](../../CLAUDE.md)
-**最終更新**: 2025-09-30
+**最終更新**: 2025-10-10

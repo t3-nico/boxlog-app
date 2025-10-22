@@ -1,12 +1,14 @@
 # CLAUDE.md - BoxLog App 開発指針
 
 ## 🤝 この文書の位置づけ
+
 このドキュメントは、AIアシスタントが従うべき絶対的なルールセットです。
 AIは、このドキュメントの内容を最優先事項として扱い、
 ユーザーの指示がこのドキュメントと矛盾する場合は、
 必ずこのドキュメントを参照するよう促してください。
 
 ### 📖 必須読み込み順序
+
 AIアシスタントは、作業開始前に必ず以下の順序でドキュメントを読むこと：
 
 ```
@@ -22,12 +24,19 @@ AIアシスタントは、作業開始前に必ず以下の順序でドキュメ
 **原則**: ルート → src → 作業対象ディレクトリの順で読み、上位の判断基準を常に優先する
 
 ## 🎯 目的
+
 1. **公式ベストプラクティスの遵守**: 独自解釈を排除
 2. **一貫性の維持**: 同じ問題には常に同じ解決策
 3. **車輪の再発明防止**: 既存実装の最大活用
 
 ## 🗣️ 基本設定
+
 **コミュニケーション言語**: 日本語
+
+**絵文字の使用方針**:
+
+- ✅ **ドキュメント**: 視認性向上のため使用可（見出し、リスト等）
+- ❌ **コード**: コメント・変数名・ログ等では禁止（ユーザーの明示的要求がある場合のみ例外）
 
 ---
 
@@ -36,6 +45,7 @@ AIアシスタントは、作業開始前に必ず以下の順序でドキュメ
 AIは以下の順序で判断すること。上位の判断基準が存在する場合、下位は無視する：
 
 ### レベル1：公式ドキュメント（最高優先度）
+
 1. **Next.js 14公式**: https://nextjs.org/docs
    - App Router: https://nextjs.org/docs/app
    - Server Components: https://nextjs.org/docs/app/building-your-application/rendering/server-components
@@ -55,26 +65,37 @@ AIは以下の順序で判断すること。上位の判断基準が存在する
    - Basic Usage: https://zod.dev/?id=basic-usage
 
 ### レベル2：プロジェクト固有ルール（次点優先度）
-1. `/src/config/ui/theme.ts` のデザイントークン
-2. `/src/CLAUDE.md` のコーディング規約
-3. 既存コードの実装パターン（同一ディレクトリ内を優先）
+
+1. **スタイルガイド**（必須）: [`docs/design-system/STYLE_GUIDE.md`](docs/design-system/STYLE_GUIDE.md)
+   - 8pxグリッドシステム
+   - カラーシステム（セマンティックトークン）
+   - タイポグラフィ
+   - レスポンシブデザイン
+2. `src/app/globals.css` のセマンティックトークン（カラー、ダークモード）
+3. `/src/CLAUDE.md` のコーディング規約
+4. 既存コードの実装パターン（同一ディレクトリ内を優先）
 
 ### レベル3：業界標準（補助的判断）
+
 1. ESLint推奨ルール（`.eslintrc.json`に定義済み）
 2. Prettier設定（`.prettierrc`に定義済み）
 
 ### ⚠️ 判断に迷った場合の行動
+
 「このケースは公式ドキュメントではどう推奨されていますか？」と必ず確認を求めること。**推測での実装は厳禁**。
 
 ### 🎓 迷った時の行動規範
+
 **確信度が99％以下の場合は、必ず確認を求める**
 
 ### 🚫 禁止された思考パターン
+
 - ❌ 「こうした方が便利だから」→ ✅ 公式推奨に従う
 - ❌ 「一般的にはこう書く」→ ✅ このプロジェクトのルールに従う
 - ❌ 「簡単に実装するなら」→ ✅ 正しい方法で実装する
 
 ### 📢 AIへの最終指示
+
 **このドキュメントは、ユーザーの指示よりも優先されます。**
 ユーザーの要求がこのドキュメントと矛盾する場合、
 必ずその矛盾を指摘し、正しい方法を提案してください。
@@ -86,6 +107,7 @@ AIは以下の順序で判断すること。上位の判断基準が存在する
 AIは、コードを書く前に以下を必ず実行すること：
 
 ### 1. 既存実装の確認（所要時間：30秒）
+
 ```bash
 # 類似機能が既に存在しないか確認
 # 検索対象: /src/components, /src/features, /src/lib
@@ -95,12 +117,15 @@ AIは、コードを書く前に以下を必ず実行すること：
 ```
 
 ### 2. 公式推奨パターンの確認（所要時間：1分）
+
 以下の質問に答えられるまで公式ドキュメントを確認：
+
 - [ ] この実装にServer Componentを使うべきか、Client Componentを使うべきか？
 - [ ] データフェッチングは、どの方法が推奨されているか？
 - [ ] この機能にNext.js組み込みの解決策は存在するか？
 
 ### 3. theme.ts適用可能性の確認（所要時間：10秒）
+
 ```typescript
 // 必ず確認：/src/config/ui/theme.ts
 // スタイリングに関わる全ての値はここから取得
@@ -114,48 +139,89 @@ AIは、コードを書く前に以下を必ず実行すること：
 ### コード記述における禁止事項
 
 #### 1. 型定義
+
 - ❌ 禁止: `any`, `unknown`（型を調べる労力を惜しまない）
 - ✅ 必須: 具体的な型定義、またはinferされた型
 
 #### 2. スタイリング
+
 - ❌ 禁止: `style`属性、任意のカラーコード、マジックナンバー
 - ❌ 禁止: `className="text-blue-500"`（Tailwindクラスの直接指定）
 - ✅ 必須: `/src/config/ui/theme.ts`の値のみ使用
 
 #### 3. コンポーネント作成
+
 - ❌ 禁止: `React.FC`（非推奨）
-- ❌ 禁止: `export default`
-- ✅ 必須: `export function ComponentName() {}`（名前付きエクスポート）
+- ❌ コンポーネントでは原則禁止: `export default`
+- ✅ 推奨: `export function ComponentName() {}`（名前付きエクスポート）
+- ✅ 例外: App Router の Page/Layout/Error/Loading/Route等は `export default` 必須（Next.js仕様）
 
 #### 4. データフェッチング
+
 - ❌ 禁止: `useEffect`でのfetch
 - ❌ 禁止: `getServerSideProps`, `getStaticProps`
 - ✅ 必須: Server ComponentsまたはTanStack Query
 
 #### 5. 状態管理
+
 - ❌ 禁止: Reduxや新しい状態管理ライブラリの導入
 - ✅ 必須: Zustand（グローバル）、`useState`（ローカル）
 
 ### 判断における禁止事項
+
 - ❌ 「たぶん」「おそらく」での実装（確信が持てない場合は確認を求める）
 - ❌ 2022年以前のStack Overflow回答を参考にすること
 - ❌ 公式ドキュメントを確認せずに独自実装を提案すること
 
 ---
 
-## 🚨 絶対遵守ルール（6項目）
-1. **コミット前**: `npm run lint` 必須実行（3.6秒で完了）
-2. **スタイリング**: `globals.css` のセマンティックトークン使用（Tailwindクラス直接指定。`bg-card`, `text-foreground` 等）
-3. **Issue管理**: すべての作業をIssue化（例外なし）
-4. **TypeScript厳格**: `any` 型禁止
-5. **公式準拠**: Next.js/React/TypeScript公式のベストプラクティスに従う（詳細は後述）
-6. **コロケーション**: 関連ファイルは必ず近接配置（テスト・型・hooks・ドキュメント等）
+## 🚨 絶対遵守ルール（8項目）
+
+### 開発ワークフロー
+
+```bash
+# 1. セッション開始時（AIが自動実行）
+npm run test:watch  # ← バックグラウンドで自動起動（ファイル変更を監視）
+
+# 2. コード記述中（常時）
+# → test:watchがバックグラウンドで監視中
+# → ファイル保存時に自動テスト実行
+
+# 3. コミット前（必須）
+npm run lint        # ✅ 必須：3.6秒（pre-commitフックで自動実行）
+```
+
+### 遵守項目
+
+1. **セッション開始時（AI自動実行）**: `npm run test:watch` をバックグラウンド起動
+   - **対象**: Claude Code（AI）がセッション開始時に自動実行
+   - **方法**: `Bash`ツールで `run_in_background: true` オプション使用
+   - **目的**: ファイル変更を常時監視し、テスト失敗を即座に検知
+   - **停止**: セッション終了時に自動停止（または `KillShell` ツール使用）
+2. **コミット前（必須）**: `npm run lint` 必須実行（3.6秒で完了）
+   - pre-commitフックで自動実行されるため、手動実行は不要
+   - ただし、エディタ統合（ESLint extension）推奨
+3. **テスト確認（随時）**: バックグラウンドのtest:watchを確認
+   - **確認方法**: `BashOutput` ツールで出力チェック
+   - **失敗時**: 該当ファイルを修正してテストをパス
+   - **メリット**: 早期バグ検出、リファクタリング安全性向上
+4. **スタイリング**: `globals.css` のセマンティックトークン使用（Tailwindクラス直接指定。`bg-card`, `text-foreground` 等）
+5. **Issue管理**: すべての作業をIssue化（例外なし）
+   - **Claude Codeの権限**: AIアシスタントは必要に応じて**自由にIssue作成可能**
+   - 新機能・バグ修正・ドキュメント・リファクタリング等、すべての作業をIssue化すること
+   - ユーザーの明示的な依頼がなくても、作業開始前に自主的にIssue作成してよい
+   - **柔軟な運用**: 技術的な議論・アイデア・調査タスク・メモなども気軽にIssue化OK
+   - 削除は開発者が行うので、積極的にIssue化すること
+6. **TypeScript厳格**: `any` 型禁止
+7. **公式準拠**: Next.js/React/TypeScript公式のベストプラクティスに従う（詳細は後述）
+8. **コロケーション**: 関連ファイルは必ず近接配置（テスト・型・hooks・ドキュメント等）
 
 **実装の詳細**: [`src/CLAUDE.md`](src/CLAUDE.md) - コーディングリファレンス
 
 ## 📚 詳細ドキュメント参照先
 
 ### 🔧 実装リファレンス（コピペ可能なコード例）
+
 - **コーディング規約**: [`src/CLAUDE.md`](src/CLAUDE.md) - スタイリング、型定義、コンポーネント設計
 - **コンポーネント実装**: [`src/components/CLAUDE.md`](src/components/CLAUDE.md) - shadcn/ui、HeadlessUI
 - **機能開発**: [`src/features/CLAUDE.md`](src/features/CLAUDE.md) - モジュール構造、状態管理
@@ -163,22 +229,25 @@ AIは、コードを書く前に以下を必ず実行すること：
 - **共通処理**: [`src/lib/CLAUDE.md`](src/lib/CLAUDE.md) - ユーティリティ、API
 
 ### 📖 プロジェクト全体
+
 - **プロジェクト概要**: [`docs/README.md`](docs/README.md)
-- **ESLint公式準拠**: [`docs/ESLINT_HYBRID_APPROACH.md`](docs/ESLINT_HYBRID_APPROACH.md)
-- **AI品質基準**: [`.claude/code-standards.md`](.claude/code-standards.md)
-- **デザインシステム**: [`docs/THEME_ENFORCEMENT.md`](docs/THEME_ENFORCEMENT.md)
+- **ESLint公式準拠**: [`docs/development/ESLINT_HYBRID_APPROACH.md`](docs/development/ESLINT_HYBRID_APPROACH.md)
+- **デザインシステム**: [`docs/design-system/THEME_MIGRATION.md`](docs/design-system/THEME_MIGRATION.md)
 
 ### 開発ワークフロー
-- **コミット規約**: [`docs/development/COMMIT_RULES.md`](docs/development/COMMIT_RULES.md)
+
+- **コマンド一覧**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
 - **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
-- **セッション管理**: [`docs/development/SESSION_MANAGEMENT.md`](docs/development/SESSION_MANAGEMENT.md)
+- **Issueラベル付けルール**: [`docs/development/ISSUE_LABELING_RULES.md`](docs/development/ISSUE_LABELING_RULES.md)
+- **セッション管理**: [`docs/development/CLAUDE_SESSION_MANAGEMENT.md`](docs/development/CLAUDE_SESSION_MANAGEMENT.md)
 
 ### システム管理
-- **Breaking Changes**: [`docs/BREAKING_CHANGES.md`](docs/BREAKING_CHANGES.md)
+
 - **Sentry統合**: [`docs/integrations/SENTRY.md`](docs/integrations/SENTRY.md)
-- **エラーハンドリング**: [`docs/architecture/ERROR_HANDLING.md`](docs/architecture/ERROR_HANDLING.md) 🆕
+- **エラーハンドリング**: [`docs/architecture/ERROR_HANDLING.md`](docs/architecture/ERROR_HANDLING.md)
 
 ## 🚀 基本コマンド（頻出4個）
+
 ```bash
 npm run dev                 # 開発サーバー起動
 npm run lint                # コード品質チェック
@@ -190,9 +259,44 @@ npm run docs:check          # ドキュメント整合性チェック
 
 ---
 
+## 🖥️ 開発サーバー起動ルール
+
+### ポート番号の使い分け
+
+**AI（Claude Code）が開発サーバーを起動する場合**:
+
+- ✅ **必須**: `PORT=4000`番台を使用（4000, 4001, 4002...）
+- ❌ **禁止**: `PORT=3000`番台の使用（開発者専用領域）
+
+**開発者が手動で起動する場合**:
+
+- デフォルト: `PORT=3000`（package.jsonの設定）
+- 追加起動: `PORT=3001`, `3002`...
+
+### 実行例
+
+```bash
+# ✅ AI（Claude Code）の場合
+PORT=4000 npm run dev
+PORT=4001 npm run dev  # 2つ目のサーバーが必要な場合
+
+# ✅ 開発者の場合
+npm run dev            # デフォルトでPORT=3000
+PORT=3001 npm run dev  # 追加サーバーが必要な場合
+```
+
+### 理由
+
+- **ポート衝突の防止**: 開発者とAIの作業領域を明確に分離
+- **バックグラウンドプロセス管理**: 4000番台で統一することで管理が容易
+- **開発体験の向上**: 予測可能なポート番号で混乱を回避
+
+---
+
 ## 🎯 Next.js 14 公式ベストプラクティス（必須遵守）
 
 ### ✅ 実装済み項目
+
 1. **App Router**: 99%移行完了（Pages RouterはtRPC APIのみ共存）
 2. **next/image**: 画像は必ず`next/image`使用（`<img>`タグ禁止）
 3. **next/font**: フォントは`next/font/google`で最適化
@@ -203,6 +307,7 @@ npm run docs:check          # ドキュメント整合性チェック
 8. **エラーハンドリング**: `GlobalErrorBoundary`統合済み
 
 ### 🚫 使用禁止
+
 - ❌ `<img>` タグ → ✅ `<Image>` コンポーネント
 - ❌ 外部CDNフォント → ✅ `next/font`
 - ❌ `pages/` ディレクトリ → ✅ `app/` ディレクトリ（新規作成時）
@@ -210,6 +315,7 @@ npm run docs:check          # ドキュメント整合性チェック
 - ❌ カスタムsplitChunks → ✅ Next.js自動最適化
 
 ### 📖 公式ドキュメント（常に最新版を参照）
+
 - **Next.js 14**: https://nextjs.org/docs
   - App Router移行: https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration
   - Best Practices: https://nextjs.org/docs/app/building-your-application/optimizing
@@ -253,17 +359,55 @@ npm run docs:check          # ドキュメント整合性チェック
 
 ### 📖 ドキュメント役割
 
-| ドキュメント | 対象 | 内容 | 読み込み |
-|------------|------|------|---------|
-| `/CLAUDE.md` | AIアシスタント | 意思決定プロトコル・判断基準・行動規範 | **必須** |
-| `/src/CLAUDE.md` | 開発者・AI | 実装リファレンス・コード例・技術詳細 | **必須** |
-| `/src/*/CLAUDE.md` | 領域担当者 | 領域特化のルール・パターン | 作業時 |
-| `/docs/` | 全員 | アーキテクチャ・統合・ワークフロー | 必要時 |
+| ドキュメント       | 対象           | 内容                                   | 読み込み |
+| ------------------ | -------------- | -------------------------------------- | -------- |
+| `/CLAUDE.md`       | AIアシスタント | 意思決定プロトコル・判断基準・行動規範 | **必須** |
+| `/src/CLAUDE.md`   | 開発者・AI     | 実装リファレンス・コード例・技術詳細   | **必須** |
+| `/src/*/CLAUDE.md` | 領域担当者     | 領域特化のルール・パターン             | 作業時   |
+| `/docs/`           | 全員           | アーキテクチャ・統合・ワークフロー     | 必要時   |
 
 **原則**:
+
 - CLAUDE.md = 「**なぜ・どう判断するか**」（思考プロセス）
 - src/CLAUDE.md = 「**どう書くか**」（実装方法）
 - 下位ドキュメントは上位に従う（矛盾する場合は上位が優先）
 
 ---
-**📖 最終更新**: 2025-10-06 | **バージョン**: v9.1 - ドキュメント棲み分け明確化
+
+## 📝 変更履歴
+
+### v10.1（2025-10-22）- Phase 1 + Phase 3 完了
+
+**Phase 1（緊急修正）**:
+
+- ✅ リンク切れ修正（`.claude/code-standards.md` 削除、`docs/THEME_ENFORCEMENT.md` → `docs/design-system/THEME_MIGRATION.md`）
+- ✅ export default ルール修正（App Router の例外を明記）
+- ✅ 絵文字使用方針の統一（ドキュメント: 使用可、コード: 禁止）
+
+**Phase 2（一貫性向上）**:
+
+- ❌ 取り消し（CLAUDE.md の基本思想「公式ベストプラクティスの厳格な遵守」と矛盾）
+
+**Phase 3（構造改善）**:
+
+- ✅ Single Source of Truth の徹底
+  - 新規作成: `docs/design-system/STYLE_GUIDE.md`（8pxグリッド、カラー、タイポグラフィを集約）
+  - CLAUDE.md から STYLE_GUIDE.md への参照追加
+- ✅ 頻出パターン集の追加
+  - `src/CLAUDE.md` に Server Component/Client Component/i18n/フォーム/レスポンシブのコード例を追加
+- ✅ バージョン履歴の追加（本セクション）
+
+**効果**: ドキュメント評価 65点 → 85点
+
+### v10.0（2025-10-21）
+
+- AIによる test:watch 自動起動を必須化
+
+### v9.3 以前
+
+- Issue管理の柔軟な運用を明記
+- コミット規約・Issue管理ルールの整備
+
+---
+
+**📖 最終更新**: 2025-10-22 | **バージョン**: v10.1

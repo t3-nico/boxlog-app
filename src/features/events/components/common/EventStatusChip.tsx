@@ -80,7 +80,7 @@ export const EventStatusChip = ({
     <Badge
       variant={variant === 'default' ? 'secondary' : variant}
       className={cn(
-        'inline-flex items-center gap-1.5 font-medium capitalize',
+        'inline-flex items-center gap-2 font-medium capitalize',
         sizeClasses[size],
         variant === 'default' && config.textColor,
         variant === 'outline' && `border-current ${config.textColor}`,

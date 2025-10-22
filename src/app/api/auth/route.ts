@@ -1,14 +1,17 @@
 /**
  * 認証API エンドポイント
- * @description Supabase 認証の管理
+ * @description Supabase 認証の管理（Route Handler）
+ *
+ * @see Issue #531 - Supabase × Vercel × Next.js 認証チェックリスト
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
   try {
+    const supabase = createClient()
     const { searchParams } = new URL(request.url)
     const action = searchParams.get('action')
 
@@ -36,6 +39,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = createClient()
     const body = await request.json()
     const { action, email, password } = body
 
@@ -63,7 +67,7 @@ export async function POST(request: NextRequest) {
 
       case 'reset-password':
         const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/reset-password`,
+          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
         })
         if (resetError) throw resetError
         return NextResponse.json({ success: true })

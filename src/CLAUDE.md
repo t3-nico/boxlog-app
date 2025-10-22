@@ -55,6 +55,59 @@ import { typography, spacing, rounded } from '@/config/ui/theme'
 
 **重要：カラー以外（typography, spacing, rounded）は `/src/config/ui/theme.ts` を参照**
 
+#### 1.1 スペーシング：8pxグリッドシステム（必須遵守）
+
+**基本原則：すべてのスペーシング値は8の倍数を使用**
+
+```tsx
+// ✅ 推奨：8pxグリッド準拠
+gap - 1 // 4px  - 例外: 密接な要素間（アイコン+テキスト等）
+gap - 2 // 8px  - 標準: 小要素間
+gap - 4 // 16px - 標準: 中要素間
+gap - 6 // 24px - 標準: 大要素間
+gap - 8 // 32px - 標準: セクション間
+
+p - 2 // 8px  - 小パディング
+p - 4 // 16px - 標準パディング
+p - 6 // 24px - 大パディング
+
+// ❌ 禁止：8の倍数でない値（例外を除く）
+gap - 1.5 // 6px  - 使用禁止
+gap - 2.5 // 10px - 使用禁止
+px - 2.5 // 10px - 使用禁止
+
+// ✅ 例外として許可される4px使用ケース
+gap - 1 // 4px  - アイコンとテキストの間隔
+p - 1 // 4px  - アイコンボタンの最小パディング
+```
+
+**角丸（Border Radius）も8pxグリッド準拠：**
+
+```tsx
+// globals.css で定義済み
+--radius-sm: 4px   - 例外: 小要素用
+--radius-md: 8px   - 標準
+--radius-lg: 12px  - 例外: 視覚的バランス用
+--radius-xl: 16px  - 大
+--radius-2xl: 24px - 特大
+```
+
+**タイポグラフィは視認性優先（12px, 14pxは例外として許可）：**
+
+```tsx
+// globals.css で定義済み
+--font-size-xs: 12px   - 例外: 最小サイズ
+--font-size-sm: 14px   - 例外: 視認性確保
+--font-size-base: 16px - 標準
+--font-size-lg: 24px   - 大見出し
+```
+
+**実装時のチェックポイント：**
+
+- コンポーネント作成時は既存の8pxグリッド準拠コンポーネントを参考にする
+- 新しいスペーシング値が必要な場合、まず8の倍数で表現できないか検討
+- 例外を使う場合は、必ずコメントで理由を明記
+
 ### 2. TypeScript厳格型付け
 
 ```tsx
@@ -468,5 +521,153 @@ const responsiveChecklist = {
 
 ---
 
+## 📚 頻出パターン集（コピペ可能）
+
+AI が毎回公式ドキュメントを参照すると非効率なため、頻出パターンをここに集約します。
+
+### Server Component のデータフェッチング
+
+```typescript
+// ✅ 推奨: async Server Component
+export default async function Page() {
+  const data = await fetch('https://api.example.com/data', {
+    next: { revalidate: 60 }, // ISR: 60秒キャッシュ
+  })
+  const json = await data.json()
+
+  return <div>{json.title}</div>
+}
+
+// ✅ 推奨: Supabase でのデータフェッチ
+import { createClient } from '@/lib/supabase/server'
+
+export default async function Page() {
+  const supabase = await createClient()
+  const { data, error } = await supabase.from('tasks').select('*')
+
+  if (error) throw error
+  return <TaskList tasks={data} />
+}
+```
+
+### Client Component のインタラクション
+
+```typescript
+'use client'
+
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+
+export function InteractiveComponent() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div className="flex flex-col gap-4 p-4">
+      <p className="text-base">Count: {count}</p>
+      <Button onClick={() => setCount(count + 1)}>Increment</Button>
+    </div>
+  )
+}
+```
+
+### i18n 実装パターン
+
+```typescript
+// Server Component
+import { getI18n } from '@/features/i18n/lib/server'
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  const t = await getI18n(locale)
+
+  return <h1>{t('page.title')}</h1>
+}
+
+// Client Component
+'use client'
+
+import { useI18n } from '@/features/i18n/lib/hooks'
+
+export function ClientComponent() {
+  const { t } = useI18n()
+  return <p>{t('common.save')}</p>
+}
+```
+
+### フォーム実装（React Hook Form + Zod）
+
+```typescript
+'use client'
+
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+})
+
+type FormData = z.infer<typeof schema>
+
+export function LoginForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  })
+
+  const onSubmit = (data: FormData) => {
+    console.log(data)
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <input {...register('email')} type="email" className="border-input" />
+      {errors.email && <span className="text-destructive">{errors.email.message}</span>}
+
+      <input {...register('password')} type="password" className="border-input" />
+      {errors.password && <span className="text-destructive">{errors.password.message}</span>}
+
+      <Button type="submit">Login</Button>
+    </form>
+  )
+}
+```
+
+### レスポンシブデザインパターン
+
+```tsx
+// ✅ モバイルファースト
+export function ResponsiveCard() {
+  return (
+    <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 md:gap-6 md:p-6 lg:grid-cols-3 lg:gap-8 lg:p-8">
+      <Card />
+      <Card />
+      <Card />
+    </div>
+  )
+}
+
+// ✅ 条件付きレンダリング（useMediaQuery）
+;('use client')
+
+import { useMediaQuery } from '@/hooks/use-media-query'
+
+export function AdaptiveComponent() {
+  const isMobile = useMediaQuery('(max-width: 768px)')
+
+  return isMobile ? <MobileView /> : <DesktopView />
+}
+```
+
+---
+
 **📖 参照元**: [CLAUDE.md](../CLAUDE.md)
-**最終更新**: 2025-10-06 | **v2.1 - i18n必須対応追加**
+**最終更新**: 2025-10-22 | **v2.2 - 頻出パターン集追加**

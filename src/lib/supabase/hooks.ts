@@ -2,6 +2,8 @@
 /**
  * Supabase 認証フック
  * @description React hooks for Supabase authentication
+ *
+ * @see Issue #531 - Supabase × Vercel × Next.js 認証チェックリスト
  */
 
 'use client'
@@ -10,7 +12,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import type { AuthError, Session, User } from '@supabase/supabase-js'
 
-import { supabase } from './client'
+import { createClient } from './client'
 
 /**
  * 認証状態を管理するフック
@@ -22,6 +24,8 @@ export function useAuth() {
   const [error, setError] = useState<AuthError | null>(null)
 
   useEffect(() => {
+    const supabase = createClient()
+
     // 初期セッション取得
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       setSession(session)
@@ -44,6 +48,7 @@ export function useAuth() {
 
   // メール・パスワードでサインイン
   const signInWithEmail = useCallback(async (email: string, password: string) => {
+    const supabase = createClient()
     setLoading(true)
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -56,6 +61,7 @@ export function useAuth() {
 
   // メール・パスワードでサインアップ
   const signUp = useCallback(async (email: string, password: string) => {
+    const supabase = createClient()
     setLoading(true)
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -68,6 +74,7 @@ export function useAuth() {
 
   // サインアウト
   const signOut = useCallback(async () => {
+    const supabase = createClient()
     setLoading(true)
     const { error } = await supabase.auth.signOut()
     setError(error)
@@ -77,6 +84,7 @@ export function useAuth() {
 
   // パスワードリセット
   const resetPassword = useCallback(async (email: string) => {
+    const supabase = createClient()
     setLoading(true)
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
@@ -88,6 +96,7 @@ export function useAuth() {
 
   // パスワード更新
   const updatePassword = useCallback(async (password: string) => {
+    const supabase = createClient()
     setLoading(true)
     const { data, error } = await supabase.auth.updateUser({
       password,
@@ -131,6 +140,7 @@ export function useProfile() {
   const fetchProfile = useCallback(async () => {
     if (!user) return
 
+    const supabase = createClient()
     try {
       setLoading(true)
       const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single()
@@ -148,6 +158,7 @@ export function useProfile() {
     async (updates: Partial<Profile>) => {
       if (!user) return
 
+      const supabase = createClient()
       try {
         setLoading(true)
         const { error } = await supabase.from('profiles').upsert({ id: user.id, ...updates })
@@ -188,6 +199,7 @@ export function useTasks() {
   const fetchTasks = useCallback(async () => {
     if (!user) return
 
+    const supabase = createClient()
     try {
       setLoading(true)
       const { data, error } = await supabase
@@ -209,6 +221,7 @@ export function useTasks() {
     async (task: any) => {
       if (!user) return
 
+      const supabase = createClient()
       try {
         setLoading(true)
         const { data, error } = await supabase
@@ -232,6 +245,7 @@ export function useTasks() {
   )
 
   const updateTask = useCallback(async (id: string, updates: any) => {
+    const supabase = createClient()
     try {
       setLoading(true)
       const { data, error } = await supabase.from('tasks').update(updates).eq('id', id).select().single()
@@ -249,6 +263,7 @@ export function useTasks() {
   }, [])
 
   const deleteTask = useCallback(async (id: string) => {
+    const supabase = createClient()
     try {
       setLoading(true)
       const { error } = await supabase.from('tasks').delete().eq('id', id)

@@ -1,9 +1,7 @@
 'use client'
 
 import { format, getWeek } from 'date-fns'
-import { ChevronDown } from 'lucide-react'
 
-import { MiniCalendarPopover } from '@/features/calendar/components/common'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
@@ -15,8 +13,13 @@ interface DateRangeDisplayProps {
   formatPattern?: string
   className?: string
   weekBadgeClassName?: string
-  onDateSelect?: (date: Date) => void
+  onDateSelect?: (date: Date | undefined) => void
   clickable?: boolean
+  // 現在表示している期間（MiniCalendarでのハイライト用）
+  displayRange?: {
+    start: Date
+    end: Date
+  }
 }
 
 /**
@@ -41,12 +44,9 @@ const generateRangeText = (date: Date, endDate: Date): string => {
 /**
  * 日付ヘッダーコンテンツを作成
  */
-const createDateContent = (text: string, isClickable: boolean) => (
+const createDateContent = (text: string) => (
   <div className="flex items-center gap-2">
-    <h2 className={cn('text-xl font-semibold', isClickable && 'hover:text-primary cursor-pointer transition-colors')}>
-      {text}
-    </h2>
-    {isClickable ? <ChevronDown className="text-muted-foreground h-4 w-4" /> : null}
+    <h2 className="text-xl font-semibold">{text}</h2>
   </div>
 )
 
@@ -67,21 +67,17 @@ const createStaticContent = (
 )
 
 /**
- * クリック可能な日付表示コンテンツを作成
+ * クリック可能な日付表示コンテンツを作成（ポップアップ削除）
  */
 const createClickableContent = (
   dateContent: React.ReactNode,
-  selectedDate: Date,
-  onDateSelect: (date: Date) => void,
   showWeekNumber: boolean,
   weekNumber: number,
   weekBadgeClassName?: string,
   className?: string
 ) => (
   <div className={cn('flex items-center gap-2', className)}>
-    <MiniCalendarPopover selectedDate={selectedDate} onDateSelect={onDateSelect} align="start" side="bottom">
-      {dateContent}
-    </MiniCalendarPopover>
+    {dateContent}
     {showWeekNumber ? <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} /> : null}
   </div>
 )
@@ -99,6 +95,7 @@ export const DateRangeDisplay = ({
   weekBadgeClassName,
   onDateSelect,
   clickable = false,
+  displayRange,
 }: DateRangeDisplayProps) => {
   const weekNumber = getWeek(date, { weekStartsOn: 1 })
   const isClickable = clickable && onDateSelect
@@ -108,19 +105,11 @@ export const DateRangeDisplay = ({
     endDate && date.getTime() !== endDate.getTime() ? generateRangeText(date, endDate) : format(date, formatPattern)
 
   // 日付コンテンツを作成
-  const dateContent = createDateContent(displayText, !!isClickable)
+  const dateContent = createDateContent(displayText)
 
-  // クリック可能な場合とそうでない場合で分岐
+  // クリック可能な場合とそうでない場合で分岐（ポップアップは削除）
   if (isClickable) {
-    return createClickableContent(
-      dateContent,
-      date,
-      onDateSelect,
-      showWeekNumber,
-      weekNumber,
-      weekBadgeClassName,
-      className
-    )
+    return createClickableContent(dateContent, showWeekNumber, weekNumber, weekBadgeClassName, className)
   }
 
   return createStaticContent(dateContent, showWeekNumber, weekNumber, weekBadgeClassName, className)
@@ -134,14 +123,7 @@ const WeekBadge = ({ weekNumber, className }: { weekNumber: number; className?: 
 
   return (
     <span
-      className={cn(
-        'inline-flex items-center px-2 py-1',
-        'rounded-sm border',
-        'text-base font-medium',
-        'border border-neutral-300 dark:border-neutral-700',
-        'text-neutral-700 dark:text-neutral-300',
-        className
-      )}
+      className={cn('text-muted-foreground inline-flex items-center text-sm font-normal', className)}
       aria-label={t('calendar.dateRange.weekLabel').replace('{weekNumber}', String(weekNumber))}
     >
       week{weekNumber}

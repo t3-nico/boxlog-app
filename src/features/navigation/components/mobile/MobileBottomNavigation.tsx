@@ -30,28 +30,28 @@ const bottomNavItems: BottomNavItem[] = [
     label: 'Calendar',
     href: '/calendar',
     icon: CalendarIcon,
-    isActive: (pathname) => pathname.startsWith('/calendar'),
+    isActive: (pathname) => pathname.includes('/calendar'),
   },
   {
     id: 'board',
     label: 'Board',
     href: '/board',
     icon: BoardIcon,
-    isActive: (pathname) => pathname.startsWith('/board'),
+    isActive: (pathname) => pathname.includes('/board'),
   },
   {
     id: 'table',
     label: 'Table',
     href: '/table',
     icon: TableIcon,
-    isActive: (pathname) => pathname.startsWith('/table'),
+    isActive: (pathname) => pathname.includes('/table'),
   },
   {
     id: 'stats',
     label: 'Stats',
     href: '/stats',
     icon: StatsIcon,
-    isActive: (pathname) => pathname.startsWith('/stats'),
+    isActive: (pathname) => pathname.includes('/stats'),
   },
 ]
 
@@ -100,25 +100,25 @@ export const MobileBottomNavigation = () => {
             type="button"
             onClick={createNavigationHandler(item.href)}
             className={cn(
-              'flex flex-1 flex-col items-center justify-center',
-              'h-full px-1 py-2',
-              'transition-all duration-200',
-              'hover:bg-neutral-100 dark:hover:bg-neutral-700'
+              'flex flex-1 flex-col items-center justify-center gap-1',
+              'h-full px-2 py-2',
+              'transition-all duration-200'
             )}
           >
-            <Icon
+            {/* アイコンを丸で囲む */}
+            <div
               className={cn(
-                'mb-1 h-5 w-5',
-                isActive ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-600 dark:text-neutral-400'
+                'flex items-center justify-center',
+                'rounded-full transition-all duration-200',
+                isActive ? 'bg-primary/15 p-2' : 'p-2'
               )}
-            />
+            >
+              <Icon className={cn('h-5 w-5 transition-colors', isActive ? 'text-primary' : 'text-muted-foreground')} />
+            </div>
             <span
               className={cn(
-                'text-xs',
-                'leading-tight',
-                isActive
-                  ? 'font-medium text-neutral-900 dark:text-neutral-100'
-                  : 'text-neutral-600 dark:text-neutral-400'
+                'text-xs leading-tight transition-colors',
+                isActive ? 'text-primary font-semibold' : 'text-muted-foreground'
               )}
             >
               {item.label}

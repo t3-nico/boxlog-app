@@ -680,9 +680,14 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         showCalendarList={false} // まだカレンダーリストはないので無効
         showTagFilter={false} // まだタグフィルターはないので無効
         showQuickActions={true}
+        // Display range for mini calendar highlight
+        displayRange={{
+          start: viewDateRange.start,
+          end: viewDateRange.end,
+        }}
       >
         {/* ビュー固有のコンテンツ */}
-        <div className="flex-1 overflow-hidden">{renderView()}</div>
+        {renderView()}
       </CalendarLayout>
 
       {/* イベントコンテキストメニュー */}

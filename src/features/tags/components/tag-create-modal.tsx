@@ -299,7 +299,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
         setIsLoading(false)
       }
     },
-    [formData, validateForm, onSave, onClose, allTags]
+    [formData, validateForm, onSave, onClose, allTags, t]
   )
 
   const selectedParentTag = formData.parent_id

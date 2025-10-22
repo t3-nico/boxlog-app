@@ -190,8 +190,8 @@ export const CustomInspectorContent = () => {
 ## 🔗 関連ドキュメント
 
 - **機能モジュール構造**: [`../CLAUDE.md`](../CLAUDE.md)
-- **イベント作成**: [`../events/CLAUDE.md`](../events/CLAUDE.md)
-- **カレンダー統合**: [`../calendar/CLAUDE.md`](../calendar/CLAUDE.md)
+- **イベント作成**: `../events/` - イベント管理機能
+- **カレンダー統合**: `../calendar/` - カレンダー表示機能
 
 ## ⚠️ 注意事項
 

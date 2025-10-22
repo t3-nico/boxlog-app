@@ -73,14 +73,14 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             <div className="space-y-3">
               <button
                 onClick={reset}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 w-full rounded-md px-4 py-2.5 font-medium transition-colors"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 w-full rounded-md px-4 py-3 font-medium transition-colors"
               >
                 再試行
               </button>
 
               <button
                 onClick={() => (window.location.href = '/')}
-                className="bg-muted text-foreground hover:bg-muted/80 w-full rounded-md px-4 py-2.5 transition-colors"
+                className="bg-muted text-foreground hover:bg-muted/80 w-full rounded-md px-4 py-3 transition-colors"
               >
                 ホームに戻る
               </button>

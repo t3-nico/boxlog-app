@@ -10,34 +10,27 @@ export const Heading = ({ className, level = 1, ...props }: HeadingProps) => {
   const getHeadingClass = (level: number) => {
     switch (level) {
       case 1:
-        return 'text-4xl font-bold tracking-tight'
+        return 'text-heading-h1'
       case 2:
-        return 'text-3xl font-bold tracking-tight'
+        return 'text-heading-h2'
       case 3:
-        return 'text-2xl font-semibold'
+        return 'text-heading-h3'
       case 4:
-        return 'text-lg font-semibold'
+        return 'text-heading-h4'
       case 5:
-        return 'text-base font-semibold'
+        return 'text-heading-h5'
       case 6:
-        return 'text-sm font-semibold'
+        return 'text-heading-h6'
       default:
-        return 'text-4xl font-bold tracking-tight'
+        return 'text-heading-h1'
     }
   }
 
-  return (
-    <Element {...props} className={cn(className, getHeadingClass(level), 'text-neutral-900 dark:text-neutral-100')} />
-  )
+  return <Element {...props} className={cn(className, getHeadingClass(level), 'text-foreground')} />
 }
 
 export const Subheading = ({ className, level = 2, ...props }: HeadingProps) => {
   const Element: `h${typeof level}` = `h${level}`
 
-  return (
-    <Element
-      {...props}
-      className={cn(className, 'text-base font-semibold text-neutral-900 sm:text-sm dark:text-neutral-100')}
-    />
-  )
+  return <Element {...props} className={cn(className, 'text-foreground text-base font-semibold sm:text-sm')} />
 }

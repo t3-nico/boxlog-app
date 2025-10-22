@@ -1,86 +1,56 @@
 /**
- * Supabase クライアント設定
- * @description Supabase との接続とクライアント設定を管理
+ * Supabase Browser Client
+ *
+ * Client Components用のSupabaseクライアント
+ *
+ * @see https://supabase.com/docs/guides/auth/server-side/creating-a-client
+ * @see Issue #531 - Supabase × Vercel × Next.js 認証チェックリスト
+ *
+ * 使用箇所:
+ * - Client Components ('use client')
+ * - ブラウザ側での認証処理（サインイン/サインアウト/OAuth）
+ * - onAuthStateChange リスナー
+ *
+ * 使用例:
+ * ```tsx
+ * 'use client'
+ * import { createClient } from '@/lib/supabase/client'
+ *
+ * export function SignInButton() {
+ *   const supabase = createClient()
+ *
+ *   const handleSignIn = async () => {
+ *     const { data, error } = await supabase.auth.signInWithPassword({
+ *       email: 'user@example.com',
+ *       password: 'password'
+ *     })
+ *   }
+ * }
+ * ```
+ *
+ * 重要:
+ * - このクライアントはブラウザでのみ動作します
+ * - Server Components/Actions では server.ts を使用してください
+ * - Middleware では middleware.ts を使用してください
  */
 
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 
-import { SUPABASE_CONFIG } from '@/config/database/supabase'
 import type { Database } from '@/types/supabase'
 
-// 環境変数の検証（開発環境では警告のみ）
-if (!SUPABASE_CONFIG.url) {
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('Missing environment variable: NEXT_PUBLIC_SUPABASE_URL')
-  }
-  console.warn('⚠️ Missing NEXT_PUBLIC_SUPABASE_URL - Supabase features will be disabled')
-}
-
-if (!SUPABASE_CONFIG.anonKey) {
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('Missing environment variable: NEXT_PUBLIC_SUPABASE_ANON_KEY')
-  }
-  console.warn('⚠️ Missing NEXT_PUBLIC_SUPABASE_ANON_KEY - Supabase features will be disabled')
+/**
+ * Browser用Supabaseクライアント作成
+ *
+ * @returns Supabase Browser Client
+ */
+export function createClient() {
+  return createBrowserClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 }
 
 /**
- * Supabase クライアント（ブラウザ用）
- * @description 認証とリアルタイム機能を含む標準クライアント
+ * 型定義
  */
-export const supabase = createClient<Database>(
-  SUPABASE_CONFIG.url || 'https://placeholder.supabase.co',
-  SUPABASE_CONFIG.anonKey || 'placeholder-anon-key',
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-    },
-    realtime: {
-      params: {
-        eventsPerSecond: 10,
-      },
-    },
-  }
-)
-
-/**
- * 管理者用 Supabase クライアント（サーバーサイド専用）
- * @description サーバーサイドでのデータ操作用（RLS バイパス）
- */
-export const supabaseAdmin = SUPABASE_CONFIG.serviceKey
-  ? createClient<Database>(SUPABASE_CONFIG.url, SUPABASE_CONFIG.serviceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    })
-  : null
-
-/**
- * 認証状態の取得
- */
-export const getSession = () => supabase.auth.getSession()
-
-/**
- * 現在のユーザーの取得
- */
-export const getUser = () => supabase.auth.getUser()
-
-/**
- * サインアウト
- */
-export const signOut = () => supabase.auth.signOut()
-
-/**
- * 型安全なテーブルアクセスヘルパー
- */
-export const tables = {
-  profiles: () => supabase.from('profiles'),
-  tasks: () => supabase.from('tasks'),
-  userValues: () => supabase.from('user_values'),
-  smartFilters: () => supabase.from('smart_filters'),
-} as const
-
-export type SupabaseClient = typeof supabase
-export type SupabaseAdminClient = typeof supabaseAdmin
+export type SupabaseClient = ReturnType<typeof createClient>

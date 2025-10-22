@@ -1,198 +1,105 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+'use client'
 
-import { Event, Reminder } from '@/features/events'
+import { useCallback, useEffect, useState } from 'react'
 
-interface NotificationPermissionState {
-  status: NotificationPermission
-  hasRequested: boolean
-}
+import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
 interface UseNotificationsOptions {
-  events: Event[]
-  onReminderTriggered?: (event: Event, reminder: Reminder) => void
+  events: CalendarEvent[]
+  onReminderTriggered?: (event: CalendarEvent) => void
 }
 
-export const useNotifications = ({ events, onReminderTriggered }: UseNotificationsOptions) => {
-  const [permission, setPermission] = useState<NotificationPermissionState>({
-    status: 'default',
-    hasRequested: false,
-  })
-  const [visibleNotifications, setVisibleNotifications] = useState<
-    Array<{
-      id: string
-      eventId: string
-      title: string
-      message: string
-      timestamp: Date
-    }>
-  >([])
+interface UseNotificationsReturn {
+  permission: NotificationPermission
+  hasRequested: boolean
+  requestPermission: () => Promise<void>
+}
 
-  const intervalRef = useRef<NodeJS.Timeout>()
-  const triggeredRemindersRef = useRef<Set<string>>(new Set())
+/**
+ * ブラウザ通知を管理するフック
+ *
+ * @param options - 通知オプション
+ * @param options.events - 監視対象のイベント配列
+ * @param options.onReminderTriggered - リマインダーがトリガーされた時のコールバック
+ * @returns 通知の権限状態と権限リクエスト関数
+ *
+ * @example
+ * ```tsx
+ * const { permission, hasRequested, requestPermission } = useNotifications({
+ *   events: calendarEvents,
+ *   onReminderTriggered: (event) => {
+ *     console.log('Reminder for:', event.title)
+ *   },
+ * })
+ * ```
+ */
+export function useNotifications({ events, onReminderTriggered }: UseNotificationsOptions): UseNotificationsReturn {
+  const [permission, setPermission] = useState<NotificationPermission>('default')
+  const [hasRequested, setHasRequested] = useState(false)
 
-  // 通知許可の取得
-  const requestPermission = async () => {
-    if (!('Notification' in window)) {
-      console.warn('このブラウザは通知をサポートしていません')
-      return 'denied'
+  // 初回マウント時に現在の通知権限を取得
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      setPermission(Notification.permission)
+      // localStorage から権限リクエスト履歴を取得
+      const requested = localStorage.getItem('notification-permission-requested')
+      setHasRequested(requested === 'true')
+    }
+  }, [])
+
+  // 通知権限をリクエストする関数
+  const requestPermission = useCallback(async () => {
+    if (typeof window === 'undefined' || !('Notification' in window)) {
+      return
     }
 
     try {
       const result = await Notification.requestPermission()
-      setPermission({ status: result, hasRequested: true })
-      return result
+      setPermission(result)
+      setHasRequested(true)
+      localStorage.setItem('notification-permission-requested', 'true')
     } catch (error) {
-      console.error('通知許可の取得に失敗しました:', error)
-      setPermission({ status: 'denied', hasRequested: true })
-      return 'denied'
-    }
-  }
-
-  // 通知の表示
-  const showNotification = useCallback(
-    (event: Event, reminder: Reminder) => {
-      const title = `リマインダー: ${event.title}`
-      const message = `${reminder.minutesBefore}分前の通知です`
-
-      // ブラウザ通知
-      if (permission.status === 'granted') {
-        try {
-          const notification = new Notification(title, {
-            body: message,
-            icon: '/favicon.ico',
-            badge: '/favicon.ico',
-            tag: `reminder-${event.id}-${reminder.id}`,
-            requireInteraction: true,
-          })
-
-          notification.onclick = () => {
-            window.focus()
-            notification.close()
-          }
-
-          // 10秒後に自動で閉じる
-          setTimeout(() => {
-            notification.close()
-          }, 10000)
-        } catch (error) {
-          console.error('ブラウザ通知の表示に失敗しました:', error)
-          // フォールバック: 画面内通知
-          showInAppNotification(event, reminder, title, message)
-        }
-      } else {
-        // 通知が拒否されている場合は画面内通知
-        showInAppNotification(event, reminder, title, message)
-      }
-
-      // コールバック実行
-      onReminderTriggered?.(event, reminder)
-    },
-    [permission.status, onReminderTriggered]
-  )
-
-  // 画面内通知の表示
-  const showInAppNotification = (event: Event, reminder: Reminder, title: string, message: string) => {
-    const notification = {
-      id: `${event.id}-${reminder.id}-${Date.now()}`,
-      eventId: event.id,
-      title,
-      message,
-      timestamp: new Date(),
-    }
-
-    setVisibleNotifications((prev) => [...prev, notification])
-
-    // 10秒後に自動で削除
-    setTimeout(() => {
-      setVisibleNotifications((prev) => prev.filter((n) => n.id !== notification.id))
-    }, 10000)
-  }
-
-  // リマインダーのチェック
-  const checkReminders = useCallback(() => {
-    const now = new Date()
-
-    events.forEach((event) => {
-      if (!event.startDate || !event.reminders?.length) return
-
-      event.reminders.forEach((reminder) => {
-        const reminderKey = `${event.id}-${reminder.id}`
-
-        // 既にトリガー済みの場合はスキップ
-        if (triggeredRemindersRef.current.has(reminderKey)) return
-
-        // 通知時刻の計算
-        const notificationTime = new Date(event.startDate!.getTime() - reminder.minutesBefore * 60 * 1000)
-
-        // 通知時刻を過ぎているかチェック
-        if (now >= notificationTime) {
-          triggeredRemindersRef.current.add(reminderKey)
-          showNotification(event, reminder)
-        }
-      })
-    })
-  }, [events, showNotification])
-
-  // 画面内通知の削除
-  const dismissNotification = (notificationId: string) => {
-    setVisibleNotifications((prev) => prev.filter((n) => n.id !== notificationId))
-  }
-
-  // すべての画面内通知をクリア
-  const clearAllNotifications = () => {
-    setVisibleNotifications([])
-  }
-
-  // Page Visibility API でタブ復帰時の再チェック
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        // タブが復帰した時に即座にチェック
-        checkReminders()
-      }
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [checkReminders])
-
-  // 通知権限の初期化（マウント時のみ）
-  useEffect(() => {
-    if ('Notification' in window) {
-      setPermission({
-        status: Notification.permission,
-        hasRequested: Notification.permission !== 'default',
-      })
+      console.error('通知権限のリクエストに失敗しました:', error)
     }
   }, [])
 
-  // 定期チェック（1分ごと）
+  // イベントのリマインダーを監視（将来の実装用）
   useEffect(() => {
-    // 初回チェック
-    checkReminders()
+    if (permission !== 'granted' || events.length === 0) {
+      return
+    }
 
-    // 1分ごとの定期チェック
-    intervalRef.current = setInterval(checkReminders, 60000)
+    // TODO: イベントのリマインダー時刻を監視し、適切なタイミングで通知を表示
+    // 現在はプレースホルダー実装
+
+    const checkReminders = () => {
+      const now = new Date()
+      events.forEach((event) => {
+        // イベント開始15分前に通知（例）
+        if (!event.start) return
+        const eventStart = new Date(event.start)
+        const reminderTime = new Date(eventStart.getTime() - 15 * 60 * 1000)
+
+        if (now >= reminderTime && now < eventStart) {
+          // リマインダーをトリガー
+          if (onReminderTriggered) {
+            onReminderTriggered(event)
+          }
+        }
+      })
+    }
+
+    // 1分ごとにチェック（本番では間隔を調整）
+    const intervalId = setInterval(checkReminders, 60 * 1000)
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
+      clearInterval(intervalId)
     }
-  }, [checkReminders])
-
-  // eventsが変更された時にトリガー済みリストをクリア
-  useEffect(() => {
-    triggeredRemindersRef.current.clear()
-  }, [events])
+  }, [permission, events, onReminderTriggered])
 
   return {
-    permission: permission.status,
-    hasRequested: permission.hasRequested,
-    visibleNotifications,
+    permission,
+    hasRequested,
     requestPermission,
-    dismissNotification,
-    clearAllNotifications,
-    isSupported: typeof window !== 'undefined' && 'Notification' in window,
   }
 }

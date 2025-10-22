@@ -816,7 +816,7 @@ export function useDragAndDrop({
         calendarToast.eventMoved(eventData, newStartTime)
       }
     },
-    [date, calendarToast, onEventUpdate]
+    [date, calendarToast, onEventUpdate, t]
   )
 
   // イベント更新処理を実行する
@@ -860,7 +860,7 @@ export function useDragAndDrop({
         calendarToast.error(t('calendar.event.moveFailed'))
       }
     },
-    [onEventUpdate, calculateEventDuration, handleEventUpdateToast, calendarToast]
+    [onEventUpdate, calculateEventDuration, handleEventUpdateToast, calendarToast, t]
   )
 
   // ドラッグ完了後の状態リセット

@@ -43,44 +43,31 @@ declare global {
 
 import { Copy, Mic, MicOff, MoreVertical, Sparkles, Trash2, X } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
-  AIBranch,
-  AIBranchMessages,
-  AIBranchNext,
-  AIBranchPage,
-  AIBranchPrevious,
-  AIBranchSelector,
-} from '@/components/kibo/ai/branch'
-import { AIConversation, AIConversationContent, AIConversationScrollButton } from '@/components/kibo/ai/conversation'
+  Branch,
+  BranchMessages,
+  BranchNext,
+  BranchPage,
+  BranchPrevious,
+  BranchSelector,
+} from '@/components/vercel-ai-elements/branch'
 import {
-  AIInput,
-  AIInputButton,
-  AIInputModelSelect,
-  AIInputModelSelectContent,
-  AIInputModelSelectItem,
-  AIInputModelSelectTrigger,
-  AIInputModelSelectValue,
-  AIInputSubmit,
-  AIInputTextarea,
-  AIInputToolbar,
-  AIInputTools,
-} from '@/components/kibo/ai/input'
-import { AIMessage, AIMessageAvatar, AIMessageContent } from '@/components/kibo/ai/message'
-import { AIResponse } from '@/components/kibo/ai/response'
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from '@/components/vercel-ai-elements/conversation'
+import { Message, MessageAvatar, MessageContent } from '@/components/vercel-ai-elements/message'
+import { PromptInput, PromptInputSubmit, PromptInputTextarea } from '@/components/vercel-ai-elements/prompt-input'
+import { Response } from '@/components/vercel-ai-elements/response'
 import { useChatStore } from '@/features/aichat/stores/useChatStore'
 
 // BoxLog用のカスタムAI Responseコンポーネント
-const BoxLogAIResponse = ({ children, ...props }: { children: string; [key: string]: unknown }) => (
-  <AIResponse
-    className="prose prose-sm dark:prose-invert [&_pre]:bg-muted [&_code]:bg-muted max-w-none [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:px-1 [&_code]:py-1 [&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mt-3 [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:text-sm [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_p]:my-2 [&_p]:leading-relaxed [&_pre]:rounded [&_ul]:my-2 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
-    options={{
-      disallowedElements: ['script', 'iframe'],
-      remarkPlugins: [],
-    }}
-    {...props}
-  >
+const BoxLogAIResponse = ({ children }: { children: string }) => (
+  <Response className="prose prose-sm dark:prose-invert [&_pre]:bg-muted [&_code]:bg-muted max-w-none [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:px-1 [&_code]:py-1 [&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mt-3 [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:text-sm [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_p]:my-2 [&_p]:leading-relaxed [&_pre]:rounded [&_ul]:my-2 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
     {children}
-  </AIResponse>
+  </Response>
 )
 
 interface AIChatSidebarProps {
@@ -107,28 +94,28 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
   const hasBranches = isAssistant && Array.isArray(message.content) && message.content.length > 1
 
   return (
-    <AIMessage from={message.sender}>
+    <Message from={message.sender}>
       {isAssistant === true && (
         <div className="bg-muted flex inline-grid size-8 shrink-0 items-center justify-center rounded-full align-middle outline -outline-offset-1 outline-black/10 dark:outline-white/10">
           <Sparkles className="text-foreground h-4 w-4" />
         </div>
       )}
 
-      <AIMessageContent>
+      <MessageContent>
         {isAssistant && hasBranches ? (
           // 複数の分岐レスポンスがある場合
-          <AIBranch onBranchChange={() => {}}>
-            <AIBranchMessages>
+          <Branch onBranchChange={() => {}}>
+            <BranchMessages>
               {(message.content as string[]).map((content, _index) => (
                 <BoxLogAIResponse key={`${message.id}-${content.slice(0, 30)}`}>{content}</BoxLogAIResponse>
               ))}
-            </AIBranchMessages>
-            <AIBranchSelector from="assistant">
-              <AIBranchPrevious />
-              <AIBranchPage />
-              <AIBranchNext />
-            </AIBranchSelector>
-          </AIBranch>
+            </BranchMessages>
+            <BranchSelector from="assistant">
+              <BranchPrevious />
+              <BranchPage />
+              <BranchNext />
+            </BranchSelector>
+          </Branch>
         ) : isAssistant ? (
           // 単一のレスポンスの場合
           <BoxLogAIResponse>{Array.isArray(message.content) ? message.content[0] : message.content}</BoxLogAIResponse>
@@ -151,15 +138,15 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
             {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
         )}
-      </AIMessageContent>
+      </MessageContent>
 
       {isUser === true && (
-        <AIMessageAvatar
+        <MessageAvatar
           src="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'/%3e%3c/svg%3e"
           name="You"
         />
       )}
-    </AIMessage>
+    </Message>
   )
 }
 
@@ -185,8 +172,8 @@ const ChatInput = () => {
     _setIsComposing(false)
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (_message: unknown, event: React.FormEvent) => {
+    event.preventDefault()
     if (state.inputValue.trim() && !state.isTyping) {
       await sendMessage(state.inputValue)
     }
@@ -251,45 +238,45 @@ const ChatInput = () => {
         </div>
       )}
 
-      <AIInput onSubmit={handleSubmit}>
-        <AIInputTextarea
+      <PromptInput onSubmit={handleSubmit}>
+        <PromptInputTextarea
           value={state.inputValue}
           onChange={handleInputChange}
           onCompositionStart={handleCompositionStart}
           onCompositionEnd={handleCompositionEnd}
           placeholder={t('aiChat.input.placeholderClaude')}
           disabled={state.isTyping}
-          minHeight={40}
-          maxHeight={120}
         />
-        <AIInputToolbar>
-          <AIInputTools>
+        <div className="flex items-center justify-between gap-2 px-3 pb-2">
+          <div className="flex items-center gap-2">
             {/* AI Model Selector */}
-            <AIInputModelSelect value={selectedModel} onValueChange={setSelectedModel}>
-              <AIInputModelSelectTrigger className="w-auto min-w-[120px]">
-                <AIInputModelSelectValue />
-              </AIInputModelSelectTrigger>
-              <AIInputModelSelectContent>
-                <AIInputModelSelectItem value="claude-3-sonnet">Claude 3 Sonnet</AIInputModelSelectItem>
-                <AIInputModelSelectItem value="claude-3-haiku">Claude 3 Haiku</AIInputModelSelectItem>
-                <AIInputModelSelectItem value="claude-3-opus">Claude 3 Opus</AIInputModelSelectItem>
-              </AIInputModelSelectContent>
-            </AIInputModelSelect>
+            <Select value={selectedModel} onValueChange={setSelectedModel}>
+              <SelectTrigger className="h-8 w-auto min-w-[120px] text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="claude-3-sonnet">Claude 3 Sonnet</SelectItem>
+                <SelectItem value="claude-3-haiku">Claude 3 Haiku</SelectItem>
+                <SelectItem value="claude-3-opus">Claude 3 Opus</SelectItem>
+              </SelectContent>
+            </Select>
 
             {/* Voice Input Button */}
-            <AIInputButton
+            <Button
               onClick={toggleVoiceInput}
               variant={isListening ? 'default' : 'ghost'}
-              className={isListening ? 'bg-red-50 text-red-600 dark:bg-red-950' : ''}
+              size="sm"
+              className={isListening ? 'h-8 bg-red-50 text-red-600 dark:bg-red-950' : 'h-8'}
               title={isListening ? t('aiChat.voiceRecognition.stop') : t('aiChat.voiceRecognition.start')}
+              type="button"
             >
               {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-            </AIInputButton>
-          </AIInputTools>
+            </Button>
+          </div>
 
-          <AIInputSubmit disabled={!state.inputValue.trim() || state.isTyping} status={getSubmitStatus()} />
-        </AIInputToolbar>
-      </AIInput>
+          <PromptInputSubmit disabled={!state.inputValue.trim() || state.isTyping} />
+        </div>
+      </PromptInput>
     </div>
   )
 }
@@ -390,16 +377,16 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
       </div>
 
       {/* Chat Content */}
-      <AIConversation>
-        <AIConversationContent>
+      <Conversation>
+        <ConversationContent>
           {state.messages.length === 0 ? (
-            <AIMessage from="assistant">
+            <Message from="assistant">
               <div className="bg-muted flex inline-grid size-8 shrink-0 items-center justify-center rounded-full align-middle outline -outline-offset-1 outline-black/10 dark:outline-white/10">
                 <Sparkles className="text-foreground h-4 w-4" />
               </div>
-              <AIMessageContent>
-                <AIBranch>
-                  <AIBranchMessages>
+              <MessageContent>
+                <Branch>
+                  <BranchMessages>
                     <BoxLogAIResponse>
                       {t('aiChat.welcome.greeting1')}
                       {'\n\n'}• {t('aiChat.welcome.capabilities1.0')}
@@ -427,21 +414,21 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                       {'\n\n'}
                       {t('aiChat.welcome.question3')}
                     </BoxLogAIResponse>
-                  </AIBranchMessages>
-                  <AIBranchSelector from="assistant">
-                    <AIBranchPrevious />
-                    <AIBranchPage />
-                    <AIBranchNext />
-                  </AIBranchSelector>
-                </AIBranch>
-              </AIMessageContent>
-            </AIMessage>
+                  </BranchMessages>
+                  <BranchSelector from="assistant">
+                    <BranchPrevious />
+                    <BranchPage />
+                    <BranchNext />
+                  </BranchSelector>
+                </Branch>
+              </MessageContent>
+            </Message>
           ) : (
             state.messages.map((message) => <MessageBubble key={message.id} message={message} />)
           )}
-        </AIConversationContent>
-        <AIConversationScrollButton />
-      </AIConversation>
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
 
       {/* Chat Input */}
       <ChatInput />

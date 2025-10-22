@@ -120,7 +120,7 @@ const title = t('title') // 言語に応じた文字列を取得
 // サポート言語: ja, en
 ```
 
-**詳細**: [docs/development/I18N_DEVELOPMENT_GUIDE.md](../../docs/development/I18N_DEVELOPMENT_GUIDE.md)
+**詳細**: コード内のJSDocコメント参照
 
 ### local-storage/ - LocalStorage管理
 
@@ -211,25 +211,39 @@ const { data, error } = await supabase.from('tasks').insert(taskData)
 const { user } = await supabase.auth.getUser()
 ```
 
-### toast/ - トースト通知
+### toast - トースト通知（Sonner）
 
-**ユーザー通知システム**。
+**shadcn/ui公式推奨のSonnerによるトースト通知システム**。
 
 ```tsx
-import { toast } from '@/lib/toast'
+import { toast } from 'sonner'
 
-// 成功通知
+// 基本的な使い方
 toast.success('タスクを作成しました')
-
-// エラー通知
 toast.error('タスクの作成に失敗しました')
+toast.warning('注意してください')
+toast.info('お知らせ')
+toast.loading('処理中...')
 
-// カスタム通知
-toast.custom('処理中...', {
+// オプション付き
+toast.success('保存しました', {
+  description: '変更内容が保存されました',
   duration: 3000,
-  icon: '⏳',
+  action: {
+    label: '元に戻す',
+    onClick: () => console.log('Undo'),
+  },
+})
+
+// Promise対応
+toast.promise(saveTask(), {
+  loading: '保存中...',
+  success: '保存完了',
+  error: '保存失敗',
 })
 ```
+
+**参考**: https://ui.shadcn.com/docs/components/sonner
 
 ### trpc/ - tRPCクライアント
 
@@ -400,7 +414,7 @@ describe('cn', () => {
 ### 統合・機能
 
 - [docs/integrations/SENTRY.md](../../docs/integrations/SENTRY.md) - Sentry統合
-- [docs/development/I18N_DEVELOPMENT_GUIDE.md](../../docs/development/I18N_DEVELOPMENT_GUIDE.md) - 国際化ガイド
+- `src/lib/i18n/` - 国際化実装（JSDocコメント参照）
 - [src/server/README.md](../server/README.md) - tRPC APIサーバー
 
 ### テスト

@@ -47,6 +47,7 @@ npm run dev
 BoxLogでは企業レベルの品質管理システムを採用：
 
 ### ESLint 8分野強化
+
 - **セキュリティ**: XSS防止、秘密情報ハードコーディング検出
 - **アクセシビリティ**: WCAG AA準拠の自動チェック
 - **パフォーマンス**: Bundle最適化、メモリリーク防止
@@ -57,6 +58,7 @@ BoxLogでは企業レベルの品質管理システムを採用：
 - **ブランチ名**: feature/fix/chore等プレフィックス強制
 
 ### 自動品質ゲート
+
 ```bash
 # 開発時
 npm run lint        # 全品質チェック
@@ -72,3 +74,25 @@ npm run typecheck   # TypeScript型チェック
 # プッシュ時（自動実行）
 # ブランチ名検証
 ```
+
+## 🙏 Acknowledgments
+
+BoxLogは以下のオープンソースプロジェクトを利用しています：
+
+### UI Components & Design
+
+- **[shadcn/ui](https://ui.shadcn.com/)** - Beautiful UI components built with Radix UI and Tailwind CSS (MIT License)
+- **[shadcn-dashboard-landing-template](https://github.com/silicondeck/shadcn-dashboard-landing-template)** - Error page designs
+  - Copyright (c) 2025 ShadcnStore
+  - Licensed under MIT License
+  - Used in: Error pages (404, 401, 403, 500, maintenance)
+
+### Core Technologies
+
+- **[Next.js](https://nextjs.org/)** - The React Framework (MIT License)
+- **[React](https://react.dev/)** - A JavaScript library for building user interfaces (MIT License)
+- **[TypeScript](https://www.typescriptlang.org/)** - Typed JavaScript (Apache-2.0 License)
+- **[Tailwind CSS](https://tailwindcss.com/)** - A utility-first CSS framework (MIT License)
+- **[Supabase](https://supabase.com/)** - Open source Firebase alternative (Apache-2.0 License)
+
+詳細なライセンス情報は [`docs/CREDITS.md`](./docs/CREDITS.md) をご覧ください。

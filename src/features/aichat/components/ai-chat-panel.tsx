@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 
 import { MoreVertical, Plus, Send, Sparkles, X } from 'lucide-react'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
 interface AiChatPanelProps {
@@ -111,19 +112,21 @@ export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 space-y-4 overflow-y-auto p-4">
-        {messages.map((message) => (
-          <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div
-              className={`max-w-[80%] rounded-lg p-3 ${
-                message.type === 'user' ? 'bg-blue-600 text-white' : 'bg-muted text-foreground'
-              }`}
-            >
-              <p className="text-sm">{message.content}</p>
+      <ScrollArea className="flex-1">
+        <div className="space-y-4 p-4">
+          {messages.map((message) => (
+            <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`max-w-[80%] rounded-lg p-3 ${
+                  message.type === 'user' ? 'bg-blue-600 text-white' : 'bg-muted text-foreground'
+                }`}
+              >
+                <p className="text-sm">{message.content}</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </ScrollArea>
 
       {/* Input */}
       <div className="p-4">

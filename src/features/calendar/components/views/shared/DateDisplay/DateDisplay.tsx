@@ -39,13 +39,13 @@ const generateDateClassName = (
   // ボタンの場合、デフォルトスタイルをリセット + フォーカス表示
   if (onClick) {
     classes.push(
-      'border-0 bg-transparent font-inherit text-inherit outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded-md'
+      'border-0 bg-transparent font-inherit text-inherit outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 rounded-md'
     )
   }
 
   // ホバー効果（当日以外のみ）
   if (onClick && !today) {
-    classes.push('cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20')
+    classes.push('cursor-pointer hover:bg-primary/10')
   }
 
   // クリック可能だが当日の場合
@@ -55,7 +55,7 @@ const generateDateClassName = (
 
   // 選択状態（当日以外）
   if (isSelected && !today) {
-    classes.push('bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300')
+    classes.push('bg-primary/10 text-primary')
   }
 
   // 週末（当日以外）
@@ -101,12 +101,16 @@ const MonthYearDisplay = ({ monthYear }: { monthYear?: string }) => {
 // 日付メイン表示コンポーネント
 const DateMainDisplay = ({ dayName, dateString, today }: { dayName?: string; dateString: string; today: boolean }) => (
   <div className="flex flex-col items-center">
-    {dayName ? <div className="text-muted-foreground text-xs font-medium">{dayName}</div> : null}
+    {dayName ? (
+      <div className={cn('text-xs font-medium', today ? 'text-primary-foreground/75' : 'text-muted-foreground')}>
+        {dayName}
+      </div>
+    ) : null}
 
     <div
       className={cn(
         'flex h-8 w-8 items-center justify-center rounded-full text-lg font-medium',
-        today && 'bg-neutral-100 font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300'
+        today && 'bg-primary text-primary-foreground font-semibold'
       )}
     >
       {dateString}

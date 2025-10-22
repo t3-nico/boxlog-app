@@ -23,17 +23,17 @@ export const DayDateHeader = ({ date, timezone, className }: DayDateHeaderProps)
       <div className="flex items-center gap-4">
         {/* 日付表示 */}
         <div className="flex items-baseline gap-2">
-          <h1 className={cn('text-2xl font-semibold', today && 'text-blue-600 dark:text-blue-400')}>
+          <h1 className={cn('text-2xl font-semibold', today && 'text-primary')}>
             {format(date, 'yyyy年M月d日', { locale: ja })}
           </h1>
-          <span className={cn('text-muted-foreground text-lg', today && 'text-blue-600/70 dark:text-blue-400/70')}>
+          <span className={cn('text-muted-foreground text-lg', today && 'text-primary/70')}>
             {format(date, 'EEEE', { locale: ja })}
           </span>
         </div>
 
         {/* 今日のインジケーター */}
         {today != null && (
-          <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
+          <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-2 py-1 text-xs font-medium">
             今日
           </span>
         )}

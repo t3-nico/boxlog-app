@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { useTrashActions } from '../hooks/useTrashActions'
 
 import { TrashActionButtons } from './TrashActionButtons'
@@ -10,7 +8,7 @@ interface TrashActionsProps {
   className?: string
 }
 
-export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
+export function TrashActions({ className }: TrashActionsProps) {
   // カスタムフックで状態管理とロジックを抽出
   const {
     showConfirmDialog,
@@ -28,9 +26,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
 
   return (
     <>
-      <div
-        className={`rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-800 ${className}`}
-      >
+      <div className={`border-border bg-card rounded-lg border p-4 ${className}`}>
         {/* 統計情報 */}
         <TrashStatsDisplay
           stats={stats}

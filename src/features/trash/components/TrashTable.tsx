@@ -1,6 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 import React, { useCallback, useMemo } from 'react'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { useTrashStore } from '../stores/useTrashStore'
@@ -12,7 +13,7 @@ interface TrashTableProps {
   className?: string
 }
 
-export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
+export function TrashTable({ items, className }: TrashTableProps) {
   const { t } = useI18n()
   const {
     selectedIds,
@@ -62,7 +63,7 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
 
   const getSortIcon = (column: typeof sort.by) => {
     if (sort.by !== column) {
-      return <span className="text-neutral-600 dark:text-neutral-400">↕</span>
+      return <span className="text-muted-foreground">↕</span>
     }
     return sort.order === 'asc' ? (
       <span className="text-blue-600 dark:text-blue-400">↑</span>
@@ -90,22 +91,18 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
 
   if (items.length === 0) {
     return (
-      <div
-        className={`rounded-lg border border-neutral-200 bg-white p-8 text-center dark:border-neutral-800 dark:bg-neutral-800 ${className}`}
-      >
+      <div className={`border-border bg-card rounded-lg border p-8 text-center ${className}`}>
         <div className="mb-4 text-6xl">🗑️</div>
-        <h3 className="mb-2 text-xl font-bold text-neutral-900 dark:text-neutral-100">ゴミ箱は空です</h3>
-        <p className="text-neutral-600 dark:text-neutral-400">削除されたアイテムはここに表示されます</p>
+        <h3 className="text-foreground mb-2 text-xl font-bold">ゴミ箱は空です</h3>
+        <p className="text-muted-foreground">削除されたアイテムはここに表示されます</p>
       </div>
     )
   }
 
   return (
-    <div
-      className={`overflow-hidden rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-800 ${className}`}
-    >
+    <div className={`border-border bg-card overflow-hidden rounded-lg border ${className}`}>
       {/* テーブルヘッダー */}
-      <div className="border-b border-neutral-200 bg-neutral-50 px-4 py-3 dark:border-neutral-700 dark:bg-neutral-700">
+      <div className="border-border bg-muted border-b px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <label className="flex items-center">
@@ -116,22 +113,22 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
                   if (input) input.indeterminate = isSomeSelected && !isAllSelected
                 }}
                 onChange={handleHeaderCheckboxChange}
-                className="h-4 w-4 rounded-sm border-neutral-300 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700"
+                className="border-input h-4 w-4 rounded-sm text-blue-600 focus:ring-2 focus:ring-blue-500"
               />
-              <span className="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">
+              <span className="text-foreground ml-2 text-sm font-medium">
                 {isAllSelected ? t('trash.actions.deselectAll') : t('trash.actions.selectAll')}
               </span>
             </label>
-            <span className="text-sm text-neutral-600 dark:text-neutral-400">{items.length}件のアイテム</span>
+            <span className="text-muted-foreground text-sm">{items.length}件のアイテム</span>
           </div>
 
           {/* ソートボタン */}
           <div className="flex items-center space-x-2 text-sm">
-            <span className="text-neutral-600 dark:text-neutral-400">並び順:</span>
+            <span className="text-muted-foreground">並び順:</span>
             <button
               type="button"
               onClick={handleSortByDeletedAt}
-              className="flex items-center gap-1 rounded-sm px-2 py-1 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-600"
+              className="text-muted-foreground hover:bg-muted flex items-center gap-1 rounded-sm px-2 py-1"
             >
               <span>削除日</span>
               {getSortIcon('deletedAt')}
@@ -139,7 +136,7 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
             <button
               type="button"
               onClick={handleSortByTitle}
-              className="flex items-center gap-1 rounded-sm px-2 py-1 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-600"
+              className="text-muted-foreground hover:bg-muted flex items-center gap-1 rounded-sm px-2 py-1"
             >
               <span>タイトル</span>
               {getSortIcon('title')}
@@ -147,7 +144,7 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
             <button
               type="button"
               onClick={handleSortByType}
-              className="flex items-center gap-1 rounded-sm px-2 py-1 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-600"
+              className="text-muted-foreground hover:bg-muted flex items-center gap-1 rounded-sm px-2 py-1"
             >
               <span>タイプ</span>
               {getSortIcon('type')}
@@ -157,12 +154,12 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
       </div>
 
       {/* アイテムリスト */}
-      <div className="max-h-96 overflow-y-auto">
+      <ScrollArea className="max-h-96">
         {Object.entries(groupedItems).map(([dateString, dayItems]) => (
           <div key={dateString}>
             {/* 日付ヘッダー */}
-            <div className="sticky top-0 border-b border-neutral-200 bg-neutral-50 px-4 py-2 dark:border-neutral-700 dark:bg-neutral-700">
-              <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+            <div className="border-border bg-muted sticky top-0 border-b px-4 py-2">
+              <h4 className="text-foreground text-sm font-medium">
                 {formatDateHeader(new Date(dateString), t)} ({dayItems.length}件)
               </h4>
             </div>
@@ -180,7 +177,7 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
             ))}
           </div>
         ))}
-      </div>
+      </ScrollArea>
     </div>
   )
 }
@@ -193,13 +190,7 @@ interface TrashItemRowProps {
   onPermanentDelete: () => void
 }
 
-const TrashItemRow: React.FC<TrashItemRowProps> = ({
-  item,
-  isSelected,
-  onToggleSelect,
-  onRestore,
-  onPermanentDelete,
-}) => {
+function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanentDelete }: TrashItemRowProps) {
   const handleToggleSelect = useCallback(() => onToggleSelect(item.id), [onToggleSelect, item.id])
   const handleRestore = useCallback(() => onRestore(item.id), [onRestore, item.id])
   const handlePermanentDelete = useCallback(() => onPermanentDelete(item.id), [onPermanentDelete, item.id])
@@ -210,7 +201,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
 
   return (
     <div
-      className={`flex items-center border-b border-neutral-200 px-4 py-3 transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-700 ${
+      className={`border-border hover:bg-muted flex items-center border-b px-4 py-3 transition-colors ${
         isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''
       }`}
     >
@@ -220,7 +211,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
           type="checkbox"
           checked={isSelected}
           onChange={handleToggleSelect}
-          className="h-4 w-4 rounded-sm border-neutral-300 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700"
+          className="border-input h-4 w-4 rounded-sm text-blue-600 focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
@@ -236,22 +227,22 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
             {/* タイトル・説明 */}
             <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-2">
-                <h4 className="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                <h4 className="text-foreground truncate text-sm font-medium">
                   {trashOperations.truncateTitle(item.title)}
                 </h4>
-                <span className="flex-shrink-0 rounded-sm bg-neutral-50 px-2 py-1 text-sm text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400">
+                <span className="bg-muted text-muted-foreground flex-shrink-0 rounded-sm px-2 py-1 text-sm">
                   {typeConfig.label}
                 </span>
               </div>
 
               {item.description != null && (
-                <p className="mt-1 truncate text-sm text-neutral-600 dark:text-neutral-400">
+                <p className="text-muted-foreground mt-1 truncate text-sm">
                   {trashOperations.truncateDescription(item.description)}
                 </p>
               )}
 
               {/* メタデータ */}
-              <div className="mt-2 flex items-center space-x-4 text-sm text-neutral-600 dark:text-neutral-400">
+              <div className="text-muted-foreground mt-2 flex items-center space-x-4 text-sm">
                 <span>削除: {trashOperations.formatDeletedDate(item.deletedAt)}</span>
 
                 {item.deletedFrom ? <span>元の場所: {trashOperations.formatDeletedFrom(item.deletedFrom)}</span> : null}
@@ -284,7 +275,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
                     </span>
                   ))}
                   {trashOperations.formatTags(item.metadata.tags).hidden > 0 && (
-                    <span className="inline-block rounded-sm bg-neutral-50 px-2 py-1 text-sm text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400">
+                    <span className="bg-muted text-muted-foreground inline-block rounded-sm px-2 py-1 text-sm">
                       +{trashOperations.formatTags(item.metadata.tags).hidden}
                     </span>
                   )}

@@ -92,6 +92,9 @@ license-report.csv
 # API change detection cache
 .api-changes-cache.json
 
+# Validation artifacts
+.violations.json
+
 # Auto-generated code
 /src/types/generated/
 /src/**/generated/
@@ -142,3 +145,8 @@ temp/
 *.disabled
 *_MIGRATION_*.md
 *_CONVERSION_*.md
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.auth/

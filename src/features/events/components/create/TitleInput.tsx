@@ -111,7 +111,7 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
       const timeoutId = setTimeout(smartExtract, 300)
       return () => clearTimeout(timeoutId)
     }
-  }, [value, onSmartExtract])
+  }, [value, onSmartExtract, tomorrowKeyword, nextWeekKeyword, t])
 
   // jsx-no-bind optimization: Keyboard handler
   const handleKeyDown = useCallback(

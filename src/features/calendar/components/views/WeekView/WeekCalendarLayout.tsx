@@ -5,8 +5,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { format, isSameDay, isToday } from 'date-fns'
 import { X } from 'lucide-react'
+import { toast } from 'sonner'
 
-import { DeleteToast } from '@/components/ui/delete-toast'
 import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
 import type { CalendarEvent } from '@/features/events'
 import { useI18n } from '@/features/i18n/lib/hooks'
@@ -67,9 +67,6 @@ export const WeekCalendarLayout = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
 
-  // 削除機能用のstate
-  const [deletedEvent, setDeletedEvent] = useState<CalendarEvent | null>(null)
-
   // ドラッグ機能は一時的に無効化
   const _enableDragToCreate = false
 
@@ -95,34 +92,27 @@ export const WeekCalendarLayout = ({
       // 確認なしで即座に削除（トーストで元に戻せるため）
       onDeleteEvent?.(eventId)
 
-      // 削除されたイベントをトースト用に保存
-      setDeletedEvent(eventToDelete)
+      // Sonner toastで削除通知（Undo機能付き）
+      toast.info(t('calendar.toast.deleted'), {
+        description: eventToDelete.title,
+        duration: 5000,
+        action: onRestoreEvent
+          ? {
+              label: t('calendar.actions.undo'),
+              onClick: async () => {
+                await onRestoreEvent(eventToDelete)
+              },
+            }
+          : undefined,
+      })
 
       // 選択状態をクリア
       if (selectedEventId === eventId) {
         setSelectedEventId(null)
       }
     },
-    [onDeleteEvent, selectedEventId, events]
+    [onDeleteEvent, onRestoreEvent, selectedEventId, events, t]
   )
-
-  // Undoハンドラー（削除を元に戻す）
-  const handleUndoDelete = useCallback(
-    async (restoredEvent: CalendarEvent) => {
-      // 上位コンポーネントに復元を委譲
-      if (onRestoreEvent) {
-        await onRestoreEvent(restoredEvent)
-      }
-
-      setDeletedEvent(null)
-    },
-    [onRestoreEvent]
-  )
-
-  // トースト閉じるハンドラー
-  const handleDismissToast = useCallback(() => {
-    setDeletedEvent(null)
-  }, [])
 
   // キーボードショートカット（Delete/Backspace）
   useEffect(() => {
@@ -349,7 +339,7 @@ export const WeekCalendarLayout = ({
                           <X className="h-3 w-3 text-gray-700 dark:text-gray-300" />
                         </button>
 
-                        <div className="h-full overflow-hidden p-1 text-white sm:p-1.5">
+                        <div className="h-full overflow-hidden p-1 text-white sm:p-2">
                           <div className="flex h-full flex-col">
                             <div className="min-h-0 flex-1">
                               <div className="mb-0.5 line-clamp-2 text-xs leading-tight font-medium">{event.title}</div>
@@ -375,9 +365,6 @@ export const WeekCalendarLayout = ({
           })}
         </div>
       </div>
-
-      {/* 削除完了トースト */}
-      <DeleteToast deletedEvent={deletedEvent} onUndo={handleUndoDelete} onDismiss={handleDismissToast} />
     </div>
   )
 }
