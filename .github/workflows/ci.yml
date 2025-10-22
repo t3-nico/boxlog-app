@@ -1,8 +1,6 @@
 name: 🚀 BoxLog CI/CD Pipeline
 
 on:
-  push:
-    branches: [main, dev]
   pull_request:
     branches: [main, dev]
   workflow_dispatch:
@@ -18,11 +16,11 @@ concurrency:
 
 # セキュリティ: 最小権限の原則（OWASP A01:2021対応）
 permissions:
-  contents: read          # コード読み取り
-  pull-requests: write    # PRコメント投稿（Quality Gate）
-  checks: write           # チェック結果の更新
-  statuses: write         # ステータス更新
-  issues: read            # Issue参照
+  contents: read # コード読み取り
+  pull-requests: write # PRコメント投稿（Quality Gate）
+  checks: write # チェック結果の更新
+  statuses: write # ステータス更新
+  issues: read # Issue参照
 
 jobs:
   # =====================================
@@ -35,10 +33,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -66,10 +64,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -86,10 +84,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -101,7 +99,7 @@ jobs:
         run: npm run test:run -- --coverage
 
       - name: 📊 Upload coverage
-        uses: codecov/codecov-action@79066c46f8dcdf8d7355f820dbac958c5b4cb9d3  # v4.5.0
+        uses: codecov/codecov-action@79066c46f8dcdf8d7355f820dbac958c5b4cb9d3 # v4.5.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -139,15 +137,15 @@ jobs:
   build:
     name: 🏗️ Build
     runs-on: ubuntu-latest
-    environment: development  # Environment Secrets保護
+    environment: development # Environment Secrets保護
     needs: [lint, typecheck, unit-tests]
     timeout-minutes: 10
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -178,10 +176,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -200,10 +198,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -226,15 +224,15 @@ jobs:
   performance:
     name: ⚡ Performance (Lighthouse CI)
     runs-on: ubuntu-latest
-    environment: development  # Environment Secrets保護
+    environment: development # Environment Secrets保護
     needs: [build]
     timeout-minutes: 15
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -256,7 +254,7 @@ jobs:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
       - name: 📊 Upload Lighthouse reports
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
         if: always()
         with:
           name: lighthouse-reports-${{ github.sha }}
@@ -270,10 +268,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -291,10 +289,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -317,7 +315,18 @@ jobs:
   quality-gate:
     name: 🚪 Quality Gate
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, unit-tests, build, performance, accessibility, heavy-checks, docs-consistency, sentry-verification]
+    needs:
+      [
+        lint,
+        typecheck,
+        unit-tests,
+        build,
+        performance,
+        accessibility,
+        heavy-checks,
+        docs-consistency,
+        sentry-verification,
+      ]
     if: always()
     steps:
       - name: ✅ Check results
@@ -347,7 +356,7 @@ jobs:
 
       - name: 💬 PR Summary Comment
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           script: |
             const getEmoji = (result) => {
