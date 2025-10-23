@@ -167,6 +167,36 @@ export type Database = {
           },
         ]
       }
+      login_attempts: {
+        Row: {
+          id: string
+          email: string
+          attempt_time: string
+          is_successful: boolean
+          ip_address: string | null
+          user_agent: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          attempt_time: string
+          is_successful: boolean
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          attempt_time?: string
+          is_successful?: boolean
+          ip_address?: string | null
+          user_agent?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
