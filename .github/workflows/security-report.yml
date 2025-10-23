@@ -7,7 +7,7 @@ on:
   workflow_dispatch: # 手動実行も可能
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
 
 # セキュリティ: 最小権限の原則
 permissions:
