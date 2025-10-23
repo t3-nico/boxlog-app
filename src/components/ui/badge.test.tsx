@@ -21,25 +21,29 @@ describe('Badge', () => {
     it('default variantが適用される', () => {
       render(<Badge variant="default">Default</Badge>)
       const badge = screen.getByText('Default')
-      expect(badge.className).toContain('bg-blue-600')
+      expect(badge.className).toContain('bg-primary')
+      expect(badge.className).toContain('border-transparent')
     })
 
     it('secondary variantが適用される', () => {
       render(<Badge variant="secondary">Secondary</Badge>)
       const badge = screen.getByText('Secondary')
-      expect(badge.className).toContain('bg-neutral-300')
+      expect(badge.className).toContain('bg-secondary')
+      expect(badge.className).toContain('border-transparent')
     })
 
     it('destructive variantが適用される', () => {
       render(<Badge variant="destructive">Destructive</Badge>)
       const badge = screen.getByText('Destructive')
-      expect(badge.className).toContain('bg-red-600')
+      expect(badge.className).toContain('bg-destructive')
+      expect(badge.className).toContain('border-transparent')
     })
 
     it('outline variantが適用される', () => {
       render(<Badge variant="outline">Outline</Badge>)
       const badge = screen.getByText('Outline')
-      expect(badge.className).toContain('border-neutral-200')
+      expect(badge.className).toContain('text-foreground')
+      expect(badge.className).toContain('border')
     })
   })
 

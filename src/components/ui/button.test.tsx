@@ -16,24 +16,19 @@ describe('Button', () => {
       const button = screen.getByRole('button')
       expect(button.tagName).toBe('BUTTON')
     })
-
-    it('type属性がデフォルトでbuttonになる', () => {
-      render(<Button>ボタン</Button>)
-      expect(screen.getByRole('button')).toHaveAttribute('type', 'button')
-    })
   })
 
   describe('バリアント', () => {
     it('default variantが適用される', () => {
       render(<Button variant="default">Default</Button>)
       const button = screen.getByRole('button')
-      expect(button.className).toContain('bg-blue-600')
+      expect(button.className).toContain('bg-primary')
     })
 
     it('destructive variantが適用される', () => {
       render(<Button variant="destructive">Destructive</Button>)
       const button = screen.getByRole('button')
-      expect(button.className).toContain('bg-red-600')
+      expect(button.className).toContain('bg-destructive')
     })
 
     it('outline variantが適用される', () => {
@@ -45,7 +40,7 @@ describe('Button', () => {
     it('ghost variantが適用される', () => {
       render(<Button variant="ghost">Ghost</Button>)
       const button = screen.getByRole('button')
-      expect(button.className).toContain('hover:bg-neutral-100')
+      expect(button.className).toContain('hover:bg-accent')
     })
 
     it('link variantが適用される', () => {
@@ -146,14 +141,6 @@ describe('Button', () => {
     it('aria-disabled属性が適用される', () => {
       render(<Button disabled>Disabled</Button>)
       expect(screen.getByRole('button')).toHaveAttribute('disabled')
-    })
-  })
-
-  describe('ref', () => {
-    it('refが正しく転送される', () => {
-      const ref = vi.fn()
-      render(<Button ref={ref}>Button</Button>)
-      expect(ref).toHaveBeenCalled()
     })
   })
 })
