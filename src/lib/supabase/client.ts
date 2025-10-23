@@ -35,6 +35,7 @@
  */
 
 import { createBrowserClient } from '@supabase/ssr'
+import type { SupabaseClient as SupabaseClientType } from '@supabase/supabase-js'
 
 import type { Database } from '@/types/supabase'
 
@@ -53,4 +54,4 @@ export function createClient() {
 /**
  * 型定義
  */
-export type SupabaseClient = ReturnType<typeof createClient>
+export type SupabaseClient = SupabaseClientType<Database>

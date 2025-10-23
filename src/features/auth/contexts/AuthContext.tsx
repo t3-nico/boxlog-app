@@ -1,9 +1,8 @@
-// @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
 'use client'
 
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
-import { AuthError, AuthResponse, Session, User } from '@supabase/supabase-js'
+import { AuthError, AuthResponse, OAuthResponse, Session, User } from '@supabase/supabase-js'
 
 import { useAuth } from '@/lib/supabase'
 
@@ -18,7 +17,7 @@ interface AuthContextType {
   error: string | null
   signUp: (email: string, password: string, metadata?: UserMetadata) => Promise<AuthResponse>
   signIn: (email: string, password: string) => Promise<AuthResponse>
-  signInWithOAuth: (provider: 'google' | 'apple') => Promise<AuthResponse>
+  signInWithOAuth: (provider: 'google' | 'apple') => Promise<OAuthResponse>
   signOut: () => Promise<{ error: AuthError | null }>
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>
   updatePassword: (password: string) => Promise<AuthResponse>
@@ -43,26 +42,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signUp = async (email: string, password: string, _metadata?: UserMetadata): Promise<AuthResponse> => {
     const result = await auth.signUp(email, password)
-    return {
-      data: { user: result.data?.user || null, session: result.data?.session || null },
-      error: result.error,
-    }
+    return result as AuthResponse
   }
 
   const signIn = async (email: string, password: string): Promise<AuthResponse> => {
     const result = await auth.signInWithEmail(email, password)
-    return {
-      data: { user: result.data?.user || null, session: result.data?.session || null },
-      error: result.error,
-    }
+    return result as AuthResponse
   }
 
-  const signInWithOAuth = async (_provider: 'google' | 'apple'): Promise<AuthResponse> => {
-    // OAuth実装は今後追加予定
-    return {
-      data: { user: null, session: null },
-      error: { message: 'OAuth not implemented yet' } as AuthError,
-    }
+  const signInWithOAuth = async (provider: 'google' | 'apple'): Promise<OAuthResponse> => {
+    const result = await auth.signInWithOAuth(provider)
+    return result as OAuthResponse
   }
 
   const signOut = async () => {
@@ -77,10 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const updatePassword = async (password: string): Promise<AuthResponse> => {
     const result = await auth.updatePassword(password)
-    return {
-      data: { user: result.data?.user || null, session: null },
-      error: result.error,
-    }
+    return result as AuthResponse
   }
 
   const clearError = () => {

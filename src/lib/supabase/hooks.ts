@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * Supabase 認証フック
  * @description React hooks for Supabase authentication
@@ -12,7 +11,15 @@ import { useCallback, useEffect, useState } from 'react'
 
 import type { AuthError, Session, User } from '@supabase/supabase-js'
 
+import type { Database } from '@/types/supabase'
+
 import { createClient } from './client'
+
+type Profile = Database['public']['Tables']['profiles']['Row']
+type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
+type Task = Database['public']['Tables']['tasks']['Row']
+type TaskInsert = Database['public']['Tables']['tasks']['Insert']
+type TaskUpdate = Database['public']['Tables']['tasks']['Update']
 
 /**
  * 認証状態を管理するフック
@@ -27,17 +34,19 @@ export function useAuth() {
     const supabase = createClient()
 
     // 初期セッション取得
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setError(error)
-      setLoading(false)
-    })
+    supabase.auth
+      .getSession()
+      .then(({ data: { session }, error }: { data: { session: Session | null }; error: AuthError | null }) => {
+        setSession(session)
+        setUser(session?.user ?? null)
+        setError(error)
+        setLoading(false)
+      })
 
     // 認証状態変更を監視
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: string, session: Session | null) => {
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
@@ -106,12 +115,28 @@ export function useAuth() {
     return { data, error }
   }, [])
 
+  // OAuthプロバイダーでサインイン
+  const signInWithOAuth = useCallback(async (provider: 'google' | 'apple' | 'github') => {
+    const supabase = createClient()
+    setLoading(true)
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+    setError(error)
+    setLoading(false)
+    return { data, error }
+  }, [])
+
   return {
     user,
     session,
     loading,
     error,
     signInWithEmail,
+    signInWithOAuth,
     signUp,
     signOut,
     resetPassword,
@@ -122,15 +147,6 @@ export function useAuth() {
 /**
  * プロフィール情報を管理するフック
  */
-interface Profile {
-  id: string
-  username?: string | null
-  full_name?: string | null
-  avatar_url?: string | null
-  updated_at?: string | null
-  [key: string]: unknown
-}
-
 export function useProfile() {
   const { user } = useAuth()
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -155,13 +171,19 @@ export function useProfile() {
   }, [user])
 
   const updateProfile = useCallback(
-    async (updates: Partial<Profile>) => {
+    async (updates: ProfileUpdate) => {
       if (!user) return
 
       const supabase = createClient()
       try {
         setLoading(true)
-        const { error } = await supabase.from('profiles').upsert({ id: user.id, ...updates })
+        // Supabase型推論の既知の問題: Database型がfrom()に正しく伝播しない
+        // 回避策: 明示的にDatabase型を使用してupdateDataを定義
+        const updateData: Database['public']['Tables']['profiles']['Update'] = {
+          ...updates,
+        }
+        // @ts-expect-error - Supabase型推論の問題（既知の問題、src/server/api/routers/profile.ts:44参照）
+        const { error } = await supabase.from('profiles').update(updateData).eq('id', user.id)
 
         if (error) throw error
         await fetchProfile()
@@ -192,7 +214,7 @@ export function useProfile() {
  */
 export function useTasks() {
   const { user } = useAuth()
-  const [tasks, setTasks] = useState<any[]>([])
+  const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -218,17 +240,18 @@ export function useTasks() {
   }, [user])
 
   const createTask = useCallback(
-    async (task: any) => {
+    async (task: TaskInsert) => {
       if (!user) return
 
       const supabase = createClient()
       try {
         setLoading(true)
-        const { data, error } = await supabase
-          .from('tasks')
-          .insert([{ ...task, user_id: user.id }])
-          .select()
-          .single()
+        const insertData: Database['public']['Tables']['tasks']['Insert'] = {
+          ...task,
+          user_id: user.id,
+        }
+        // @ts-expect-error - Supabase型推論の問題（既知の問題、src/server/api/routers/profile.ts:44参照）
+        const { data, error } = await supabase.from('tasks').insert(insertData).select().single()
 
         if (error) throw error
         setTasks((prev) => [data, ...prev])
@@ -244,11 +267,15 @@ export function useTasks() {
     [user]
   )
 
-  const updateTask = useCallback(async (id: string, updates: any) => {
+  const updateTask = useCallback(async (id: string, updates: TaskUpdate) => {
     const supabase = createClient()
     try {
       setLoading(true)
-      const { data, error } = await supabase.from('tasks').update(updates).eq('id', id).select().single()
+      const updateData: Database['public']['Tables']['tasks']['Update'] = {
+        ...updates,
+      }
+      // @ts-expect-error - Supabase型推論の問題（既知の問題、src/server/api/routers/profile.ts:44参照）
+      const { data, error } = await supabase.from('tasks').update(updateData).eq('id', id).select().single()
 
       if (error) throw error
       setTasks((prev) => prev.map((task) => (task.id === id ? data : task)))
