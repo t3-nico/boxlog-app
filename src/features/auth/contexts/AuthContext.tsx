@@ -1,3 +1,13 @@
+/**
+ * @deprecated This file is deprecated. Use useAuthStore from '@/features/auth/stores/useAuthStore' instead.
+ *
+ * Migration guide:
+ * - Replace `useAuthContext()` with `useAuthStore((state) => state.user)`
+ * - Replace `<AuthProvider>` with `<AuthStoreInitializer />`
+ *
+ * @see src/features/auth/stores/useAuthStore.ts
+ * @see src/CLAUDE.md - Section 7: 状態管理
+ */
 'use client'
 
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
@@ -26,6 +36,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+/**
+ * @deprecated Use AuthStoreInitializer instead
+ * @see src/features/auth/stores/AuthStoreInitializer.tsx
+ */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const auth = useAuth()
   const [error, setError] = useState<string | null>(null)
@@ -91,6 +105,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   return <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
 }
 
+/**
+ * @deprecated Use useAuthStore instead
+ * @see src/features/auth/stores/useAuthStore.ts
+ * @example
+ * // Before:
+ * const { user } = useAuthContext()
+ *
+ * // After:
+ * const user = useAuthStore((state) => state.user)
+ */
 export function useAuthContext() {
   const context = useContext(AuthContext)
   if (!context) {

@@ -284,7 +284,190 @@ import { useTaskStore } from '@/stores/taskStore'
 import { TaskCard } from './TaskCard'
 ```
 
-### 7. ファイル配置（コロケーション原則）
+### 7. 状態管理：Zustand vs Context API（使い分けベストプラクティス）
+
+**原則**: 頻繁に変更される状態はZustand、設定値はContext APIを使用
+
+#### 7.1 ✅ Zustandを使用すべきケース（優先）
+
+```tsx
+// ❌ 悪い例：Context APIで頻繁に変更される状態
+const AuthContext = createContext()
+function AuthProvider({ children }) {
+  const [user, setUser] = useState(null)
+  const [session, setSession] = useState(null)
+  const [loading, setLoading] = useState(true)
+  // → user/session/loadingのどれか1つが変わっても全コンポーネントが再レンダリング！
+}
+
+// ✅ 良い例：Zustandで選択的サブスクリプション
+import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
+
+export const useAuthStore = create()(
+  devtools(
+    (set) => ({
+      user: null,
+      session: null,
+      loading: true,
+      setUser: (user) => set({ user }),
+      setSession: (session) => set({ session }),
+      // アクション定義
+    }),
+    { name: 'auth-store' } // Redux DevToolsで可視化
+  )
+)
+
+// コンポーネントで使用（userだけ監視）
+function UserProfile() {
+  const user = useAuthStore((state) => state.user) // userが変わった時だけ再レンダリング
+  return <div>{user.name}</div>
+}
+```
+
+**Zustandを使うべき状態**:
+
+- ✅ **認証状態** (`useAuthStore`) - ユーザー、セッション、ロー����ング状態
+- ✅ **UIインタラクション** (`useModalStore`, `useSidebarStore`) - モーダル、サイドバーの開閉
+- ✅ **データフェッチ結果** (`useTaskStore`, `useEventStore`) - タスク、イベント一覧
+- ✅ **フィルタ・検索** (`useSearchStore`) - 検索クエリ、フィルタ条件
+- ✅ **一時的な状態** (`useFormStore`) - 複数ステップフォームの進行状態
+
+**理由**: これらは**頻繁に変更**され、**多くのコンポーネント**で使用されるため
+
+#### 7.2 ✅ Context APIを使用すべきケース
+
+```tsx
+// ✅ 良い例：Context APIで設定値（ほぼ変更されない）
+import { createContext, useContext } from 'react'
+
+const ThemeContext = createContext<'light' | 'dark'>('light')
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+
+  // themeは滅多に変更されないので、Context APIでOK
+  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>
+}
+
+export const useTheme = () => useContext(ThemeContext)
+```
+
+**Context APIを使うべき状態**:
+
+- ✅ **テーマ** (`ThemeContext`) - ライト/ダークモード（変更頻度: 低）
+- ✅ **国際化** (`I18nContext`) - 言語設定（変更頻度: 低）
+- ✅ **ルーター情報** (`Next.js提供`) - 現在のパス（変更頻度: 中）
+- ✅ **アプリ設定** (`AppConfigContext`) - API URL、環境変数（変更頻度: なし）
+
+**理由**: これらは**めったに変更されない**ため、Context APIの再レンダリング問題が顕在化しない
+
+#### 7.3 判断フローチャート
+
+```
+状態管理の選択フローチャート：
+
+1. この状態は5秒に1回以上変更される？
+   YES → Zustand
+   NO  → 次へ
+
+2. この状態を10個以上のコンポーネントで使用する？
+   YES → Zustand
+   NO  → 次へ
+
+3. この状態はアプリ起動時に一度だけ設定される？
+   YES → Context API
+   NO  → Zustand
+
+4. Redux DevToolsでデバッグしたい？
+   YES → Zustand
+   NO  → どちらでもOK（Zustand推奨）
+```
+
+#### 7.4 実装例：このプロジェクトでの使い分け
+
+| 機能            | 状態管理       | 理由                                          |
+| --------------- | -------------- | --------------------------------------------- |
+| 認証状態        | ✅ Zustand     | ログイン/ログアウトで頻繁に変更               |
+| テーマ          | ✅ Context API | ユーザーが手動で変更（低頻度）                |
+| サイドバー開閉  | ✅ Zustand     | クリックごとに変更（高頻度）                  |
+| タスク一覧      | ✅ Zustand     | CRUD操作で頻繁に変更                          |
+| 言語設定 (i18n) | ✅ Context API | アプリ起動時に一度だけ設定                    |
+| モーダル開閉    | ✅ Zustand     | クリックごとに変更（高頻度）                  |
+| イベント一覧    | ✅ Zustand     | ドラッグ&ドロップで頻繁に変更                 |
+| QueryClient     | ✅ Context API | アプリ起動時に一度だけ設定（React Query提供） |
+
+#### 7.5 Zustand実装パターン（推奨テンプレート）
+
+```tsx
+// features/auth/stores/useAuthStore.ts
+import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
+import type { User, Session } from '@supabase/supabase-js'
+
+interface AuthState {
+  // State
+  user: User | null
+  session: Session | null
+  loading: boolean
+
+  // Actions
+  initialize: () => Promise<void>
+  signIn: (email: string, password: string) => Promise<void>
+  signOut: () => Promise<void>
+}
+
+export const useAuthStore = create<AuthState>()(
+  devtools(
+    (set, get) => ({
+      user: null,
+      session: null,
+      loading: true,
+
+      initialize: async () => {
+        // 初期化ロジック
+        set({ loading: false })
+      },
+
+      signIn: async (email, password) => {
+        // ログインロジック
+        set({ user: {...}, session: {...} })
+      },
+
+      signOut: async () => {
+        set({ user: null, session: null })
+      },
+    }),
+    { name: 'auth-store' } // Redux DevToolsでの名前
+  )
+)
+
+// セレクター（再利用可能）
+export const selectUser = (state: AuthState) => state.user
+export const selectIsAuthenticated = (state: AuthState) => !!state.user
+```
+
+**使用例**:
+
+```tsx
+// ❌ 避ける：全体を取得
+const { user, session, loading } = useAuthStore()
+
+// ✅ 推奨：必要な状態だけ監視
+const user = useAuthStore((state) => state.user)
+const signOut = useAuthStore((state) => state.signOut)
+
+// ✅ セレクター使用
+const isAuthenticated = useAuthStore(selectIsAuthenticated)
+```
+
+#### 7.6 参考リンク
+
+- **Zustand公式**: https://zustand-demo.pmnd.rs/
+- **Context API公式**: https://react.dev/reference/react/useContext
+- **比較記事**: https://blog.logrocket.com/zustand-vs-redux/
+
+### 8. ファイル配置（コロケーション原則）
 
 **基本方針**: 関連するファイルは必ず近くに配置し、機能単位で完結させる（Next.js公式推奨）
 
