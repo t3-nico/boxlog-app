@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/input'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { useAuthContext } from '@/features/auth/contexts/AuthContext'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { addPasswordToHistory, isPasswordReused } from '@/lib/auth/password-history'
 import { checkPasswordPwned } from '@/lib/auth/pwned-password'
@@ -38,7 +37,7 @@ interface SecuritySettings {
 }
 
 const AccountSettings = () => {
-  const { user } = useAuthContext()
+  const user = useAuthStore((state) => state.user)
   const { t } = useI18n()
   const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)

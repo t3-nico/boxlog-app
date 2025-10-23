@@ -12,8 +12,8 @@ import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from 
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { useAuthContext } from '@/features/auth'
 import { checkLockoutStatus, recordLoginAttempt, resetLoginAttempts } from '@/features/auth/lib/account-lockout'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useRecaptchaV2, useRecaptchaV3 } from '@/lib/recaptcha'
 import { createClient } from '@/lib/supabase/client'
@@ -24,7 +24,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const router = useRouter()
   const locale = (params?.locale as string) || 'ja'
   const { t } = useI18n(locale as 'en' | 'ja')
-  const { signIn } = useAuthContext()
+  const signIn = useAuthStore((state) => state.signIn)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

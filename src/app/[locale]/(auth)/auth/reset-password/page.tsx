@@ -12,7 +12,7 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { useAuthContext } from '@/features/auth'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
 export default function ResetPasswordPage() {
@@ -21,7 +21,7 @@ export default function ResetPasswordPage() {
   const params = useParams()
   const locale = (params?.locale as string) || 'ja'
   const { t } = useI18n(locale as 'en' | 'ja')
-  const { updatePassword } = useAuthContext()
+  const updatePassword = useAuthStore((state) => state.updatePassword)
 
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')

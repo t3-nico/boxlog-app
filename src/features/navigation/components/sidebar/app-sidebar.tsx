@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { useAuthContext } from '@/features/auth'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
 
@@ -14,7 +14,7 @@ import { NavSecondary } from './nav-secondary'
 import { NavUser } from './nav-user'
 
 export function AppSidebar() {
-  const { user } = useAuthContext()
+  const user = useAuthStore((state) => state.user)
   const pathname = usePathname()
   const { close } = useSidebarStore()
 

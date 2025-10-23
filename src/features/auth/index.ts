@@ -9,9 +9,20 @@ export { PasswordResetForm } from './components/PasswordResetForm'
 export { default as ProtectedRoute } from './components/ProtectedRoute'
 export { SignupForm } from './components/SignupForm'
 
-// Context and hooks
-export { AuthProvider, useAuthContext } from './contexts/AuthContext'
+// State management - Zustand store (Context APIから移行)
+export { AuthStoreInitializer } from './stores/AuthStoreInitializer'
+export {
+  selectError,
+  selectIsAuthenticated,
+  selectLoading,
+  selectSession,
+  selectUser,
+  useAuthStore,
+} from './stores/useAuthStore'
+
+// Hooks
 export { useAuth } from './hooks/useAuth'
 export { AUTH_CONFIG as authConfig } from './lib/auth-config'
 
+// Note: AuthProvider and useAuthContext are deprecated - use useAuthStore instead
 // Note: LoginFormDisabled and useAuthForm are currently unused and excluded from exports

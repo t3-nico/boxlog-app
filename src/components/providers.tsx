@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { ThemeProvider } from '@/contexts/theme-context'
-import { AuthProvider } from '@/features/auth'
+import { AuthStoreInitializer } from '@/features/auth/stores/AuthStoreInitializer'
 import { GlobalSearchProvider } from '@/features/search'
 
 interface ProvidersProps {
@@ -18,7 +18,7 @@ interface ProvidersProps {
  *
  * プロバイダー階層（CLAUDE.md準拠）:
  * 1. QueryClientProvider（データ層）
- * 2. AuthProvider（認証層）
+ * 2. AuthStoreInitializer（認証層 - Zustand）
  * 3. ThemeProvider（UI層）
  * 4. TooltipProvider（UI層）
  * 5. GlobalSearchProvider（機能層）
@@ -51,13 +51,12 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <ThemeProvider>
-          <TooltipProvider delayDuration={300} skipDelayDuration={100}>
-            <GlobalSearchProvider>{children}</GlobalSearchProvider>
-          </TooltipProvider>
-        </ThemeProvider>
-      </AuthProvider>
+      <AuthStoreInitializer />
+      <ThemeProvider>
+        <TooltipProvider delayDuration={300} skipDelayDuration={100}>
+          <GlobalSearchProvider>{children}</GlobalSearchProvider>
+        </TooltipProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }

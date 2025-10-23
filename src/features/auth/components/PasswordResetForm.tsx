@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
-import { useAuthContext } from '@/features/auth'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
@@ -22,7 +22,7 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
-  const { resetPassword } = useAuthContext()
+  const resetPassword = useAuthStore((state) => state.resetPassword)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

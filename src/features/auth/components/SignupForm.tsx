@@ -14,7 +14,7 @@ import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from 
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { useAuthContext } from '@/features/auth'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { checkPasswordPwned } from '@/lib/auth/pwned-password'
 import { cn } from '@/lib/utils'
@@ -24,7 +24,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
   const router = useRouter()
   const locale = (params?.locale as string) || 'ja'
   const { t } = useI18n(locale as 'en' | 'ja')
-  const { signUp } = useAuthContext()
+  const signUp = useAuthStore((state) => state.signUp)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

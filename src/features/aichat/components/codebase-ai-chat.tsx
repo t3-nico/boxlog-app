@@ -16,7 +16,6 @@ import {
 import { Message, MessageContent } from '@/components/vercel-ai-elements/message'
 import { PromptInput, PromptInputSubmit, PromptInputTextarea } from '@/components/vercel-ai-elements/prompt-input'
 import { Response } from '@/components/vercel-ai-elements/response'
-import { useAuthContext } from '@/features/auth'
 
 // GitHub APIの型定義
 interface GitHubFile {
