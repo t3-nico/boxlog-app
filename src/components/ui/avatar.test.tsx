@@ -146,7 +146,7 @@ describe('Avatar Components', () => {
       )
 
       const fallback = screen.getByText('BG')
-      expect(fallback.className).toContain('bg-neutral-100')
+      expect(fallback.className).toContain('bg-muted')
     })
   })
 
