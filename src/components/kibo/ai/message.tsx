@@ -1,6 +1,6 @@
 import type { ComponentProps, HTMLAttributes } from 'react'
 
-import { Avatar } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 
 export type AIMessageProps = HTMLAttributes<HTMLDivElement> & {
@@ -41,5 +41,8 @@ export type AIMessageAvatarProps = ComponentProps<typeof Avatar> & {
 }
 
 export const AIMessageAvatar = ({ src, name, className, ...props }: AIMessageAvatarProps) => (
-  <Avatar src={src} initials={name?.slice(0, 2) || 'ME'} className={cn('size-8', className)} {...props} />
+  <Avatar className={cn('size-8', className)} {...props}>
+    {src && <AvatarImage src={src} alt={name} />}
+    <AvatarFallback>{name?.slice(0, 2) || 'ME'}</AvatarFallback>
+  </Avatar>
 )

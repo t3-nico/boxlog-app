@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react'
 
-import { Description, Field, FieldGroup } from '@/components/app'
+// import { Description, Field, FieldGroup } from '@/components/app' // Removed: fieldset components deleted
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -38,12 +38,12 @@ export const RefundReview = ({
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <FieldGroup>
-              <Field>
+            <div className="space-y-4">
+              <div className="space-y-2">
                 <Label htmlFor="amount">Amount</Label>
                 <Input id="amount" name="amount" defaultValue={amount} placeholder="$0.00" />
-              </Field>
-              <Field>
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="reason">Reason</Label>
                 <Select name="reason" defaultValue="">
                   <SelectTrigger>
@@ -56,17 +56,19 @@ export const RefundReview = ({
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
-              </Field>
-              <Field>
+              </div>
+              <div className="space-y-2">
                 <div className="flex items-start space-x-2">
                   <Checkbox id="notify" name="notify" />
                   <div className="space-y-1">
                     <Label htmlFor="notify">Notify customer</Label>
-                    <Description>An email notification will be sent to this customer.</Description>
+                    <p className="text-muted-foreground text-sm">
+                      An email notification will be sent to this customer.
+                    </p>
                   </div>
                 </div>
-              </Field>
-            </FieldGroup>
+              </div>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={handleClose}>
