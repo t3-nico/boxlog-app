@@ -24,8 +24,8 @@ describe('useAuth', () => {
       expect(result.current.user).toBeDefined()
       expect(result.current.user?.id).toMatch(/^local-user-/)
       expect(result.current.user?.email).toBe('user@localhost')
-      //      expect(result.current.session).toBeDefined()
-      //      expect(result.current.session?.access_token).toBe('local-token')
+      expect(result.current.session).toBeDefined()
+      expect(result.current.session?.access_token).toBe('local-token')
     })
 
     it('既存ユーザーがいる場合、そのユーザーが読み込まれる', async () => {
@@ -79,7 +79,7 @@ describe('useAuth', () => {
 
       const response = await result.current.signUp('test@example.com', 'password123')
 
-      //      expect(response.data).toBeNull()
+      expect(response.data).toBeNull()
       expect(response.error).toBe('auth.errors.unexpectedError')
     })
 
@@ -93,8 +93,8 @@ describe('useAuth', () => {
       const response = await result.current.signIn('test@example.com', 'password123')
 
       expect(response.error).toBeNull()
-      //      expect(response.data?.user).toBe(result.current.user)
-      //      expect(response.data?.session).toBe(result.current.session)
+      expect(response.data?.user).toBe(result.current.user)
+      expect(response.data?.session).toBe(result.current.session)
     })
 
     it('signInWithOAuthはlocalStorageモードでエラーを返す', async () => {
@@ -106,7 +106,7 @@ describe('useAuth', () => {
 
       const response = await result.current.signInWithOAuth('google')
 
-      //      expect(response.data).toBeNull()
+      expect(response.data).toBeNull()
       expect(response.error).toBe('auth.errors.unexpectedError')
     })
 
@@ -131,7 +131,7 @@ describe('useAuth', () => {
 
       const response = await result.current.resetPassword('test@example.com')
 
-      //      expect(response.data).toBeNull()
+      expect(response.data).toBeNull()
       expect(response.error).toBe('auth.errors.unexpectedError')
     })
 
@@ -144,7 +144,7 @@ describe('useAuth', () => {
 
       const response = await result.current.updatePassword('newpassword123')
 
-      //      expect(response.data).toBeNull()
+      expect(response.data).toBeNull()
       expect(response.error).toBe('auth.errors.unexpectedError')
     })
   })
@@ -178,9 +178,9 @@ describe('useAuth', () => {
         expect(result.current.loading).toBe(false)
       })
 
-      //      expect(result.current.session).toBeDefined()
-      //      expect(result.current.session?.user).toBe(result.current.user)
-      //      expect(result.current.session?.access_token).toBe('local-token')
+      expect(result.current.session).toBeDefined()
+      expect(result.current.session?.user).toBe(result.current.user)
+      expect(result.current.session?.access_token).toBe('local-token')
     })
 
     it('ユーザーとセッションが一致している', async () => {
@@ -190,7 +190,7 @@ describe('useAuth', () => {
         expect(result.current.loading).toBe(false)
       })
 
-      //      expect(result.current.user).toBe(result.current.session?.user)
+      expect(result.current.user).toBe(result.current.session?.user)
     })
   })
 

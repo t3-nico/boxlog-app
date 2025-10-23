@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 
-import type { User } from '@supabase/supabase-js'
+import type { Session, User } from '@supabase/supabase-js'
 
 import { createClient } from '@/lib/supabase/client'
 
 interface AuthState {
   user: User | null
+  session: Session | null
   loading: boolean
   error: string | null
 }
@@ -35,6 +36,7 @@ interface AuthState {
 export function useAuth() {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
+    session: null,
     loading: true,
     error: null,
   })
@@ -46,6 +48,7 @@ export function useAuth() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setAuthState({
         user: session?.user ?? null,
+        session: session,
         loading: false,
         error: null,
       })
@@ -57,6 +60,7 @@ export function useAuth() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setAuthState({
         user: session?.user ?? null,
+        session: session,
         loading: false,
         error: null,
       })
@@ -150,6 +154,7 @@ export function useAuth() {
 
   return {
     user: authState.user,
+    session: authState.session,
     loading: authState.loading,
     error: authState.error,
     signUp,
