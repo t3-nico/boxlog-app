@@ -2,12 +2,41 @@
  * 認証API エンドポイント
  * @description Supabase 認証の管理（Route Handler）
  *
+ * レート制限:
+ * - POST（signin/signup/reset）: 10回/分
+ * - GET（session/user）: 制限なし
+ *
  * @see Issue #531 - Supabase × Vercel × Next.js 認証チェックリスト
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 
+import { loginRateLimit, passwordResetRateLimit, withUpstashRateLimit } from '@/lib/rate-limit/upstash'
 import { createClient } from '@/lib/supabase/server'
+
+/**
+ * レート制限チェック用ヘルパー
+ */
+async function checkRateLimit(request: NextRequest, rateLimit: typeof loginRateLimit) {
+  const result = await withUpstashRateLimit(request, rateLimit)
+
+  if (result && !result.success) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      {
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': result.limit.toString(),
+          'X-RateLimit-Remaining': result.remaining.toString(),
+          'X-RateLimit-Reset': result.reset.toString(),
+          'Retry-After': Math.ceil((result.reset - Date.now()) / 1000).toString(),
+        },
+      }
+    )
+  }
+
+  return null
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,9 +68,35 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
     const body = await request.json()
     const { action, email, password } = body
+
+    // アクション別のレート制限適用
+    let rateLimitResponse: NextResponse | null = null
+
+    switch (action) {
+      case 'signin':
+      case 'signup':
+        // ログイン/サインアップ: 5回/15分（厳格）
+        rateLimitResponse = await checkRateLimit(request, loginRateLimit)
+        if (rateLimitResponse) return rateLimitResponse
+        break
+
+      case 'reset-password':
+        // パスワードリセット: 3回/1時間（より厳格）
+        rateLimitResponse = await checkRateLimit(request, passwordResetRateLimit)
+        if (rateLimitResponse) return rateLimitResponse
+        break
+
+      case 'signout':
+        // サインアウトはレート制限なし（DoS対象外）
+        break
+
+      default:
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+    }
+
+    const supabase = await createClient()
 
     switch (action) {
       case 'signin':

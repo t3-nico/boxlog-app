@@ -1,13 +1,20 @@
 /**
  * 認証ミドルウェア
+ *
+ * Supabase JWT検証を使用した認証チェック
+ *
+ * @see https://supabase.com/docs/guides/auth/server-side/creating-a-client
  */
 
 import { createAppError, ERROR_CODES } from '@/config/error-patterns'
+import { createClient } from '@/lib/supabase/server'
 import { withErrorHandling } from './error-handler'
 import type { ApiHandler, MiddlewareConfig } from './types'
 
 /**
  * 認証ミドルウェア
+ *
+ * Bearer トークンを検証し、ユーザー情報をコンテキストに追加します
  */
 export function withAuth<T = unknown>(handler: ApiHandler<T>, config: MiddlewareConfig = {}) {
   return withErrorHandling(async (req, context) => {
@@ -19,30 +26,48 @@ export function withAuth<T = unknown>(handler: ApiHandler<T>, config: Middleware
       })
     }
 
-    // トークン検証（実装は認証システムに依存）
+    // トークン検証（Supabase JWT検証）
     const token = authHeader.substring(7)
-    if (!isValidToken(token)) {
+    const userId = await validateTokenAndGetUserId(token)
+
+    if (!userId) {
       throw createAppError('Invalid or expired token', ERROR_CODES.EXPIRED_TOKEN, { source: 'auth-middleware' })
     }
 
     // ユーザー情報をコンテキストに追加
-    context.userId = extractUserIdFromToken(token)
+    context.userId = userId
 
     return handler(req, context)
   }, config)
 }
 
 /**
- * ヘルパー関数
+ * トークンを検証してユーザーIDを取得
+ *
+ * @param token - JWT トークン
+ * @returns ユーザーID（検証失敗時はnull）
  */
-function isValidToken(_token: string): boolean {
-  // JWT トークンの検証実装
-  // ここでは簡略化
-  return _token.length > 10
-}
+async function validateTokenAndGetUserId(token: string): Promise<string | null> {
+  try {
+    const supabase = await createClient()
 
-function extractUserIdFromToken(_token: string): string {
-  // JWT トークンからユーザー ID を抽出
-  // ここでは簡略化
-  return 'user_123'
+    // Supabase auth.getUser() でトークン検証
+    // getUser()は内部的にJWT署名を検証し、有効期限もチェックする
+    const { data, error } = await supabase.auth.getUser(token)
+
+    if (error) {
+      console.error('Token validation error:', error.message)
+      return null
+    }
+
+    if (!data.user) {
+      console.warn('Token validated but no user found')
+      return null
+    }
+
+    return data.user.id
+  } catch (err) {
+    console.error('Unexpected error during token validation:', err)
+    return null
+  }
 }
