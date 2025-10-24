@@ -26,24 +26,8 @@ COMMENT ON COLUMN public.login_attempts.ip_address IS 'クライアントIPア�
 COMMENT ON COLUMN public.login_attempts.user_agent IS 'User-Agentヘッダー';
 
 -- Enable Row Level Security (RLS)
+-- Note: RLS policies are defined in 20251024114638_rls_policies_complete.sql
 ALTER TABLE public.login_attempts ENABLE ROW LEVEL SECURITY;
-
--- RLS Policies
--- 管理者のみ全レコード閲覧可能
-CREATE POLICY "Admin can view all login attempts"
-    ON public.login_attempts
-    FOR SELECT
-    USING (
-        auth.jwt() ->> 'role' = 'service_role'
-    );
-
--- システムは全操作可能（service_role）
-CREATE POLICY "Service role has full access"
-    ON public.login_attempts
-    FOR ALL
-    USING (
-        auth.jwt() ->> 'role' = 'service_role'
-    );
 
 -- 自動クリーンアップ用関数（オプション：古いレコードを削除）
 -- 90日以上前の記録を削除
