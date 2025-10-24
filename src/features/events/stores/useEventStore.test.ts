@@ -28,7 +28,7 @@ Object.defineProperty(window, 'localStorage', {
 })
 
 // useTagStoreのモック
-vi.mock('@/features/tags/stores/tag-store', () => ({
+vi.mock('@/features/tags/stores/useTagStore', () => ({
   useTagStore: {
     getState: () => ({
       getTagsByIds: (tagIds: string[]) =>
