@@ -1,5 +1,5 @@
 create table tags (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   color text default '#3b82f6',      -- Tailwind blue-500 を初期値に
   parent_id uuid references tags(id) on delete cascade,
@@ -7,6 +7,10 @@ create table tags (
   created_at timestamptz default now()
 );
 create index on tags(parent_id);
+
+-- Enable Row Level Security
+alter table tags enable row level security;
+
 create policy "individual_access" on tags for all to authenticated using (true);
 
 -- Supabase function で depth を計算し、≥ 4 の挿入／更新を拒否する（raise exception）。
