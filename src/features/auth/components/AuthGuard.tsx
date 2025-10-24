@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { useAuthContext } from '../contexts/AuthContext'
+import { useAuthStore } from '../stores/useAuthStore'
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -12,7 +12,8 @@ interface AuthGuardProps {
 }
 
 export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
-  const { user, loading } = useAuthContext()
+  const user = useAuthStore((state) => state.user)
+  const loading = useAuthStore((state) => state.loading)
   const router = useRouter()
 
   // 開発時の認証スキップ

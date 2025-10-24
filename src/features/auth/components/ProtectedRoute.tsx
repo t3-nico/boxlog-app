@@ -4,14 +4,15 @@ import { useEffect } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { useAuthContext } from '../contexts/AuthContext'
+import { useAuthStore } from '../stores/useAuthStore'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user, loading } = useAuthContext()
+  const user = useAuthStore((state) => state.user)
+  const loading = useAuthStore((state) => state.loading)
   const router = useRouter()
 
   useEffect(() => {

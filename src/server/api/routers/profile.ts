@@ -31,7 +31,7 @@ export const profileRouter = createTRPCRouter({
         })
       }
 
-      const supabase = createClient()
+      const supabase = await createClient()
 
       // profiles テーブルを更新
       const updateData: Database['public']['Tables']['profiles']['Update'] = {
@@ -83,7 +83,7 @@ export const profileRouter = createTRPCRouter({
       })
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single()
 

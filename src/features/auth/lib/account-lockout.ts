@@ -13,7 +13,10 @@
 
 'use client'
 
-import type { SupabaseClient as BrowserSupabaseClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
+import type { Database } from '@/types/supabase'
+
+type BrowserSupabaseClient = ReturnType<typeof createClient>
 
 /**
  * ロックアウトステータス
@@ -52,13 +55,15 @@ export async function recordLoginAttempt(
   userAgent?: string
 ): Promise<void> {
   try {
-    const { error } = await supabase.from('login_attempts').insert({
+    const insertData: Database['public']['Tables']['login_attempts']['Insert'] = {
       email: email.toLowerCase(),
       attempt_time: new Date().toISOString(),
       is_successful: isSuccessful,
       ip_address: ipAddress || null,
       user_agent: userAgent || null,
-    } as any)
+    }
+    // @ts-expect-error - Supabase型推論の問題（既知の問題、src/lib/supabase/hooks.ts参照）
+    const { error } = await supabase.from('login_attempts').insert(insertData)
 
     if (error) {
       console.error('Failed to record login attempt:', error)

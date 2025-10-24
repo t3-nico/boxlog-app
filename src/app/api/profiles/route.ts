@@ -14,7 +14,7 @@ import type { Database } from '@/types/supabase'
 // プロフィールの取得 (GET)
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
 
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 // プロフィールの作成・更新 (POST)
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const body = await request.json()
     const { id, email, name, avatar_url } = body
 
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 // プロフィールの更新 (PUT)
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const body = await request.json()
     const { id, name, avatar_url } = body
 
@@ -123,7 +123,7 @@ export async function PUT(request: NextRequest) {
 // プロフィールの削除 (DELETE)
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
 

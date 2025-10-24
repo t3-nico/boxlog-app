@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/theme-context'
-import { useAuthContext } from '@/features/auth'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
 import { useGlobalSearch } from '@/features/search'
@@ -36,7 +36,7 @@ import type { AppBarNavItem } from './types'
  */
 export function AppBar() {
   const pathname = usePathname()
-  const { user } = useAuthContext()
+  const user = useAuthStore((state) => state.user)
   const { open: openGlobalSearch } = useGlobalSearch()
   const { resolvedTheme, setTheme } = useTheme()
   const { isOpen, toggle } = useSidebarStore()

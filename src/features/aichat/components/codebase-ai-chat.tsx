@@ -16,7 +16,8 @@ import {
 import { Message, MessageContent } from '@/components/vercel-ai-elements/message'
 import { PromptInput, PromptInputSubmit, PromptInputTextarea } from '@/components/vercel-ai-elements/prompt-input'
 import { Response } from '@/components/vercel-ai-elements/response'
-import { useAuthContext } from '@/features/auth'
+
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 
 // GitHub APIの型定義
 interface GitHubFile {
@@ -141,7 +142,7 @@ class _GitHubCodebaseClient {
 
 // ユーザー情報を取得するヘルパー
 const useUserInfo = () => {
-  const { user } = useAuthContext()
+  const user = useAuthStore((state) => state.user)
   return {
     userDisplayName: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User',
     profileIcon: user?.user_metadata?.profile_icon,

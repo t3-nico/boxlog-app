@@ -23,7 +23,7 @@ export async function GET(request: Request) {
   const next = requestUrl.searchParams.get('next') ?? '/calendar'
 
   if (code) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // AuthCodeをセッションに交換
     const { error } = await supabase.auth.exchangeCodeForSession(code)

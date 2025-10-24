@@ -1,9 +1,18 @@
-// @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
+/**
+ * @deprecated This file is deprecated. Use useAuthStore from '@/features/auth/stores/useAuthStore' instead.
+ *
+ * Migration guide:
+ * - Replace `useAuthContext()` with `useAuthStore((state) => state.user)`
+ * - Replace `<AuthProvider>` with `<AuthStoreInitializer />`
+ *
+ * @see src/features/auth/stores/useAuthStore.ts
+ * @see src/CLAUDE.md - Section 7: 状態管理
+ */
 'use client'
 
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
-import { AuthError, AuthResponse, Session, User } from '@supabase/supabase-js'
+import { AuthError, AuthResponse, OAuthResponse, Session, User } from '@supabase/supabase-js'
 
 import { useAuth } from '@/lib/supabase'
 
@@ -18,7 +27,7 @@ interface AuthContextType {
   error: string | null
   signUp: (email: string, password: string, metadata?: UserMetadata) => Promise<AuthResponse>
   signIn: (email: string, password: string) => Promise<AuthResponse>
-  signInWithOAuth: (provider: 'google' | 'apple') => Promise<AuthResponse>
+  signInWithOAuth: (provider: 'google' | 'apple') => Promise<OAuthResponse>
   signOut: () => Promise<{ error: AuthError | null }>
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>
   updatePassword: (password: string) => Promise<AuthResponse>
@@ -27,6 +36,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+/**
+ * @deprecated Use AuthStoreInitializer instead
+ * @see src/features/auth/stores/AuthStoreInitializer.tsx
+ */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const auth = useAuth()
   const [error, setError] = useState<string | null>(null)
@@ -43,26 +56,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signUp = async (email: string, password: string, _metadata?: UserMetadata): Promise<AuthResponse> => {
     const result = await auth.signUp(email, password)
-    return {
-      data: { user: result.data?.user || null, session: result.data?.session || null },
-      error: result.error,
-    }
+    return result as AuthResponse
   }
 
   const signIn = async (email: string, password: string): Promise<AuthResponse> => {
     const result = await auth.signInWithEmail(email, password)
-    return {
-      data: { user: result.data?.user || null, session: result.data?.session || null },
-      error: result.error,
-    }
+    return result as AuthResponse
   }
 
-  const signInWithOAuth = async (_provider: 'google' | 'apple'): Promise<AuthResponse> => {
-    // OAuth実装は今後追加予定
-    return {
-      data: { user: null, session: null },
-      error: { message: 'OAuth not implemented yet' } as AuthError,
-    }
+  const signInWithOAuth = async (provider: 'google' | 'apple'): Promise<OAuthResponse> => {
+    const result = await auth.signInWithOAuth(provider)
+    return result as OAuthResponse
   }
 
   const signOut = async () => {
@@ -77,10 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const updatePassword = async (password: string): Promise<AuthResponse> => {
     const result = await auth.updatePassword(password)
-    return {
-      data: { user: result.data?.user || null, session: null },
-      error: result.error,
-    }
+    return result as AuthResponse
   }
 
   const clearError = () => {
@@ -104,6 +105,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   return <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
 }
 
+/**
+ * @deprecated Use useAuthStore instead
+ * @see src/features/auth/stores/useAuthStore.ts
+ * @example
+ * // Before:
+ * const { user } = useAuthContext()
+ *
+ * // After:
+ * const user = useAuthStore((state) => state.user)
+ */
 export function useAuthContext() {
   const context = useContext(AuthContext)
   if (!context) {

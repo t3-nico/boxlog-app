@@ -43,6 +43,8 @@
     "migration:create": "supabase migration new",
     "migration:list": "supabase migration list",
     "migration:status": "supabase db diff",
+    "types:generate": "supabase gen types typescript --project-id qloztwfbrbqtjijxicnd > src/types/supabase.ts",
+    "types:generate:local": "supabase gen types typescript --local > src/types/supabase.ts",
     "naming:migrate": "node scripts/naming-system-migration.js",
     "naming:migrate:apply": "node scripts/naming-system-migration.js --apply",
     "naming:analyze": "node scripts/naming-system-migration.js --verbose",
