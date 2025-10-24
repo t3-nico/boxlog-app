@@ -22,7 +22,11 @@ import { createClient } from '@supabase/supabase-js'
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
+// CI環境でダミーURLの場合はスキップ（本番Supabase接続が必要）
+const isRealSupabase = SUPABASE_URL && !SUPABASE_URL.includes('dummy')
+
 test.describe('RLS: profiles テーブル', () => {
+  test.skip(!isRealSupabase, 'CI環境では本番Supabase接続が必要なためスキップ')
   let userAEmail: string
   let userAPassword: string
   let userBEmail: string
