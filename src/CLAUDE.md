@@ -286,7 +286,9 @@ import { TaskCard } from './TaskCard'
 
 ### 7. 状態管理：Zustand vs Context API（使い分けベストプラクティス）
 
-**原則**: 頻繁に変更される状態はZustand、設定値はContext APIを使用
+**原則**: 新規状態管理は**Zustand**を優先する。Context APIの使用は外部ライブラリまたは正当な理由がある場合のみ
+
+**詳細判断ガイド**: [docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md](../docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md)
 
 #### 7.1 ✅ Zustandを使用すべきケース（優先）
 
@@ -355,12 +357,13 @@ export const useTheme = () => useContext(ThemeContext)
 
 **Context APIを使うべき状態**:
 
-- ✅ **テーマ** (`ThemeContext`) - ライト/ダークモード（変更頻度: 低）
-- ✅ **国際化** (`I18nContext`) - 言語設定（変更頻度: 低）
-- ✅ **ルーター情報** (`Next.js提供`) - 現在のパス（変更頻度: 中）
-- ✅ **アプリ設定** (`AppConfigContext`) - API URL、環境変数（変更頻度: なし）
+- ✅ **外部ライブラリのContext** (`next-themes`, `react-hook-form`, `react-dnd`) - 変更不可
+- ✅ **特定機能内の軽量状態** (`CalendarNavigationContext`) - 更新頻度が低く、特定機能内でのみ使用
+- ✅ **シンプルなモーダル状態** (`GlobalSearchProvider`) - boolean状態のみ、永続化不要
 
-**理由**: これらは**めったに変更されない**ため、Context APIの再レンダリング問題が顕在化しない
+**注意**: 新規でContext APIを作成する場合は、必ず正当な理由をコメントに明記すること
+
+**理由**: これらは**めったに変更されない**、または**外部ライブラリ由来**のため、Context APIが適切
 
 #### 7.3 判断フローチャート
 
@@ -386,16 +389,32 @@ export const useTheme = () => useContext(ThemeContext)
 
 #### 7.4 実装例：このプロジェクトでの使い分け
 
-| 機能            | 状態管理       | 理由                                          |
-| --------------- | -------------- | --------------------------------------------- |
-| 認証状態        | ✅ Zustand     | ログイン/ログアウトで頻繁に変更               |
-| テーマ          | ✅ Context API | ユーザーが手動で変更（低頻度）                |
-| サイドバー開閉  | ✅ Zustand     | クリックごとに変更（高頻度）                  |
-| タスク一覧      | ✅ Zustand     | CRUD操作で頻繁に変更                          |
-| 言語設定 (i18n) | ✅ Context API | アプリ起動時に一度だけ設定                    |
-| モーダル開閉    | ✅ Zustand     | クリックごとに変更（高頻度）                  |
-| イベント一覧    | ✅ Zustand     | ドラッグ&ドロップで頻繁に変更                 |
-| QueryClient     | ✅ Context API | アプリ起動時に一度だけ設定（React Query提供） |
+**Zustand使用例**:
+
+| ストア                     | 説明           | 理由                           |
+| -------------------------- | -------------- | ------------------------------ |
+| `useAuthStore`             | 認証状態       | 頻繁な更新、アプリ全体で使用   |
+| `useSidebarStore`          | サイドバー開閉 | 多数のコンポーネントから参照   |
+| `useCalendarSettingsStore` | カレンダー設定 | 永続化が必要                   |
+| `useEventStore`            | イベント管理   | 複雑な状態、デバッグツール必要 |
+| `useTaskStore`             | タスク管理     | 複雑な状態、デバッグツール必要 |
+
+**Context API使用例（正当な理由あり）**:
+
+| Context                          | 説明                     | 理由                             |
+| -------------------------------- | ------------------------ | -------------------------------- |
+| `ThemeProvider` (next-themes)    | テーマ管理               | 外部ライブラリ                   |
+| `FormProvider` (react-hook-form) | フォーム状態             | 外部ライブラリ                   |
+| `DndProvider` (react-dnd)        | DnD状態                  | 外部ライブラリ                   |
+| `CalendarNavigationContext`      | カレンダーナビゲーション | 特定機能内、低頻度更新           |
+| `GlobalSearchProvider`           | グローバル検索モーダル   | シンプルな状態、モーダル管理含む |
+| `ToastProvider`                  | トースト通知             | UIライブラリパターン             |
+
+**削除済み（Zustandに移行完了）**:
+
+| 旧Context         | 移行先         | 移行日     |
+| ----------------- | -------------- | ---------- |
+| ~~`AuthContext`~~ | `useAuthStore` | 2025-10-24 |
 
 #### 7.5 Zustand実装パターン（推奨テンプレート）
 
@@ -463,9 +482,10 @@ const isAuthenticated = useAuthStore(selectIsAuthenticated)
 
 #### 7.6 参考リンク
 
+- **詳細判断ガイド**: [docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md](../docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md)
 - **Zustand公式**: https://zustand-demo.pmnd.rs/
 - **Context API公式**: https://react.dev/reference/react/useContext
-- **比較記事**: https://blog.logrocket.com/zustand-vs-redux/
+- **Zustand移行ガイド**: https://docs.pmnd.rs/zustand/guides/migrating-to-zustand
 
 ### 8. ファイル配置（コロケーション原則）
 

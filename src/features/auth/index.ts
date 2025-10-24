@@ -24,5 +24,4 @@ export {
 export { useAuth } from './hooks/useAuth'
 export { AUTH_CONFIG as authConfig } from './lib/auth-config'
 
-// Note: AuthProvider and useAuthContext are deprecated - use useAuthStore instead
 // Note: LoginFormDisabled and useAuthForm are currently unused and excluded from exports
