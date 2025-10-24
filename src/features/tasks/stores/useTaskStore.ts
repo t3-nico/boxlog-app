@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
 import type { Task as BaseTask, TaskPriority, TaskStatus } from '@/types'
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { devtools, persist } from 'zustand/middleware'
 
 /**
  * LocalStorage用Taskインターフェース
@@ -116,150 +116,155 @@ const initialTaskState: TaskStoreState = {
 }
 
 export const useTaskStore = create<TaskStore>()(
-  persist(
-    (set, get) => ({
-      ...initialTaskState,
+  devtools(
+    persist(
+      (set, get) => ({
+        ...initialTaskState,
 
-      createTask: (input: CreateTaskInput) => {
-        const now = new Date()
-        const newTask: Task = {
-          id: generateId(),
-          ...input,
-          created_at: now,
-          updated_at: now,
-        }
+        createTask: (input: CreateTaskInput) => {
+          const now = new Date()
+          const newTask: Task = {
+            id: generateId(),
+            ...input,
+            created_at: now,
+            updated_at: now,
+          }
 
-        set((state) => ({
-          tasks: [...state.tasks, newTask],
-        }))
+          set((state) => ({
+            tasks: [...state.tasks, newTask],
+          }))
 
-        return newTask
-      },
+          return newTask
+        },
 
-      updateTask: (id: string, updates: Partial<Task>) => {
-        set((state) => ({
-          tasks: state.tasks.map((task) => (task.id === id ? { ...task, ...updates, updated_at: new Date() } : task)),
-        }))
-      },
+        updateTask: (id: string, updates: Partial<Task>) => {
+          set((state) => ({
+            tasks: state.tasks.map((task) => (task.id === id ? { ...task, ...updates, updated_at: new Date() } : task)),
+          }))
+        },
 
-      deleteTask: (id: string) => {
-        set((state) => ({
-          tasks: state.tasks.filter((task) => task.id !== id),
-        }))
-      },
+        deleteTask: (id: string) => {
+          set((state) => ({
+            tasks: state.tasks.filter((task) => task.id !== id),
+          }))
+        },
 
-      getTask: (id: string) => {
-        return get().tasks.find((task) => task.id === id)
-      },
+        getTask: (id: string) => {
+          return get().tasks.find((task) => task.id === id)
+        },
 
-      getTasksForDate: (date: Date) => {
-        return get()
-          .tasks.filter((task) => isSameDay(task.planned_start, date))
-          .sort((a, b) => a.planned_start.getTime() - b.planned_start.getTime())
-      },
+        getTasksForDate: (date: Date) => {
+          return get()
+            .tasks.filter((task) => isSameDay(task.planned_start, date))
+            .sort((a, b) => a.planned_start.getTime() - b.planned_start.getTime())
+        },
 
-      getTasksForDateRange: (start: Date, end: Date) => {
-        return get()
-          .tasks.filter((task) => isDateInRange(task.planned_start, start, end))
-          .sort((a, b) => a.planned_start.getTime() - b.planned_start.getTime())
-      },
+        getTasksForDateRange: (start: Date, end: Date) => {
+          return get()
+            .tasks.filter((task) => isDateInRange(task.planned_start, start, end))
+            .sort((a, b) => a.planned_start.getTime() - b.planned_start.getTime())
+        },
 
-      getTasksByStatus: (status: Task['status']) => {
-        return get().tasks.filter((task) => task.status === status)
-      },
+        getTasksByStatus: (status: Task['status']) => {
+          return get().tasks.filter((task) => task.status === status)
+        },
 
-      updateTaskStatus: (id: string, status: Task['status']) => {
-        get().updateTask(id, { status })
-      },
+        updateTaskStatus: (id: string, status: Task['status']) => {
+          get().updateTask(id, { status })
+        },
 
-      completeTask: (id: string) => {
-        get().updateTask(id, { status: 'completed' })
-      },
+        completeTask: (id: string) => {
+          get().updateTask(id, { status: 'completed' })
+        },
 
-      clearAllTasks: () => {
-        set({ tasks: [] })
-      },
+        clearAllTasks: () => {
+          set({ tasks: [] })
+        },
 
-      importTasks: (tasks: Task[]) => {
-        set({ tasks })
-      },
+        importTasks: (tasks: Task[]) => {
+          set({ tasks })
+        },
 
-      getCompletionRate: (date: Date) => {
-        const dayTasks = get().getTasksForDate(date)
-        if (dayTasks.length === 0) return 0
+        getCompletionRate: (date: Date) => {
+          const dayTasks = get().getTasksForDate(date)
+          if (dayTasks.length === 0) return 0
 
-        const completedTasks = dayTasks.filter((task) => task.status === 'completed')
-        return Math.round((completedTasks.length / dayTasks.length) * 100)
-      },
+          const completedTasks = dayTasks.filter((task) => task.status === 'completed')
+          return Math.round((completedTasks.length / dayTasks.length) * 100)
+        },
 
-      getTotalPlannedTime: (date: Date) => {
-        const dayTasks = get().getTasksForDate(date)
-        return dayTasks.reduce((total, task) => total + task.planned_duration, 0)
-      },
+        getTotalPlannedTime: (date: Date) => {
+          const dayTasks = get().getTasksForDate(date)
+          return dayTasks.reduce((total, task) => total + task.planned_duration, 0)
+        },
 
-      // Filter operations
-      setSearchFilter: (search: string) =>
-        set((state) => ({
-          filters: { ...state.filters, search },
-        })),
-      setStatusFilter: (status: string[]) =>
-        set((state) => ({
-          filters: { ...state.filters, status },
-        })),
-      setPriorityFilter: (priority: string[]) =>
-        set((state) => ({
-          filters: { ...state.filters, priority },
-        })),
-      setTypeFilter: (type: string[]) =>
-        set((state) => ({
-          filters: { ...state.filters, type },
-        })),
-      setTagFilter: (tags: string[]) =>
-        set((state) => ({
-          filters: { ...state.filters, tags },
-        })),
-      setSmartFolderFilter: (smartFolder: string) =>
-        set((state) => ({
-          filters: { ...state.filters, smartFolder },
-        })),
-    }),
+        // Filter operations
+        setSearchFilter: (search: string) =>
+          set((state) => ({
+            filters: { ...state.filters, search },
+          })),
+        setStatusFilter: (status: string[]) =>
+          set((state) => ({
+            filters: { ...state.filters, status },
+          })),
+        setPriorityFilter: (priority: string[]) =>
+          set((state) => ({
+            filters: { ...state.filters, priority },
+          })),
+        setTypeFilter: (type: string[]) =>
+          set((state) => ({
+            filters: { ...state.filters, type },
+          })),
+        setTagFilter: (tags: string[]) =>
+          set((state) => ({
+            filters: { ...state.filters, tags },
+          })),
+        setSmartFolderFilter: (smartFolder: string) =>
+          set((state) => ({
+            filters: { ...state.filters, smartFolder },
+          })),
+      }),
+      {
+        name: 'task-store',
+        storage: {
+          getItem: (name) => {
+            const str = localStorage.getItem(name)
+            if (!str) return null
+            const { state } = JSON.parse(str)
+            return {
+              state: {
+                ...state,
+                tasks:
+                  state.tasks?.map((task: TaskForStorage) => ({
+                    ...task,
+                    planned_start: new Date(task.planned_start),
+                    created_at: new Date(task.created_at),
+                    updated_at: new Date(task.updated_at),
+                  })) || [],
+              },
+            }
+          },
+          setItem: (name, value) => {
+            const { state } = value as { state: TaskStoreState }
+            const str = JSON.stringify({
+              state: {
+                ...state,
+                tasks: state.tasks.map((task) => ({
+                  ...task,
+                  planned_start: task.planned_start.toISOString(),
+                  created_at: task.created_at.toISOString(),
+                  updated_at: task.updated_at.toISOString(),
+                })),
+              },
+            })
+            localStorage.setItem(name, str)
+          },
+          removeItem: (name) => localStorage.removeItem(name),
+        },
+      }
+    ),
     {
       name: 'task-store',
-      storage: {
-        getItem: (name) => {
-          const str = localStorage.getItem(name)
-          if (!str) return null
-          const { state } = JSON.parse(str)
-          return {
-            state: {
-              ...state,
-              tasks:
-                state.tasks?.map((task: TaskForStorage) => ({
-                  ...task,
-                  planned_start: new Date(task.planned_start),
-                  created_at: new Date(task.created_at),
-                  updated_at: new Date(task.updated_at),
-                })) || [],
-            },
-          }
-        },
-        setItem: (name, value) => {
-          const { state } = value as { state: TaskStoreState }
-          const str = JSON.stringify({
-            state: {
-              ...state,
-              tasks: state.tasks.map((task) => ({
-                ...task,
-                planned_start: task.planned_start.toISOString(),
-                created_at: task.created_at.toISOString(),
-                updated_at: task.updated_at.toISOString(),
-              })),
-            },
-          })
-          localStorage.setItem(name, str)
-        },
-        removeItem: (name) => localStorage.removeItem(name),
-      },
     }
   )
 )

@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー8件を段階的に修正する
 import { create } from 'zustand'
 
-import { useTagStore } from '@/features/tags/stores/tag-store'
+import { useTagStore } from '@/features/tags/stores/useTagStore'
 
 import {
   CalendarEvent,

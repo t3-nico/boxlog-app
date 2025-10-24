@@ -10,7 +10,7 @@ import { format } from 'date-fns'
 
 import { useEventStore } from '@/features/events'
 import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
+import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'

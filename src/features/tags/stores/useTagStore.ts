@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { devtools, persist } from 'zustand/middleware'
 
 import { CreateTagInput, Tag, UpdateTagInput } from '@/types/tags'
 import { Task } from '@/types/unified'
@@ -129,162 +129,167 @@ const initialTags: Tag[] = [
 ]
 
 export const useTagStore = create<TagStore>()(
-  persist(
-    (set, get) => ({
-      tags: initialTags,
+  devtools(
+    persist(
+      (set, get) => ({
+        tags: initialTags,
 
-      addTag: async (tagData) => {
-        try {
+        addTag: async (tagData) => {
+          try {
+            const { tags } = get()
+            const parentTag = tagData.parent_id ? tags.find((t) => t.id === tagData.parent_id) : null
+
+            // Validate hierarchy level
+            if (tagData.level > 2) {
+              throw new Error('Maximum hierarchy level is 2')
+            }
+
+            if (parentTag && parentTag.level >= 2) {
+              throw new Error('Cannot add child to level 2 tag')
+            }
+
+            // Generate path
+            const path = parentTag ? `${parentTag.path}/${tagData.name}` : tagData.name
+
+            const newTag: Tag = {
+              id: generateId(),
+              name: tagData.name,
+              parent_id: tagData.parent_id || null,
+              user_id: 'current-user', // Auth integration tracked in Issue #87
+              color: tagData.color,
+              level: tagData.level,
+              path,
+              description: tagData.description || null,
+              icon: tagData.icon || null,
+              is_active: true,
+              created_at: new Date(),
+              updated_at: new Date(),
+            }
+
+            set({ tags: [...tags, newTag] })
+            return true
+          } catch (error) {
+            console.error('Failed to add tag:', error)
+            return false
+          }
+        },
+
+        updateTag: async (id, updates) => {
+          try {
+            const { tags } = get()
+            const tagExists = tags.some((tag) => tag.id === id)
+
+            if (!tagExists) {
+              throw new Error('Tag not found')
+            }
+
+            set((state) => ({
+              tags: state.tags.map((tag) => (tag.id === id ? { ...tag, ...updates, updatedAt: new Date() } : tag)),
+            }))
+            return true
+          } catch (error) {
+            console.error('Failed to update tag:', error)
+            return false
+          }
+        },
+
+        deleteTag: async (id) => {
+          try {
+            const { tags } = get()
+            const tagExists = tags.some((tag) => tag.id === id)
+
+            if (!tagExists) {
+              throw new Error('Tag not found')
+            }
+
+            set((state) => ({
+              tags: state.tags.filter((tag) => tag.id !== id),
+            }))
+            return true
+          } catch (error) {
+            console.error('Failed to delete tag:', error)
+            return false
+          }
+        },
+
+        getTagById: (id) => {
           const { tags } = get()
-          const parentTag = tagData.parent_id ? tags.find((t) => t.id === tagData.parent_id) : null
+          return tags.find((tag) => tag.id === id)
+        },
 
-          // Validate hierarchy level
-          if (tagData.level > 2) {
-            throw new Error('Maximum hierarchy level is 2')
-          }
-
-          if (parentTag && parentTag.level >= 2) {
-            throw new Error('Cannot add child to level 2 tag')
-          }
-
-          // Generate path
-          const path = parentTag ? `${parentTag.path}/${tagData.name}` : tagData.name
-
-          const newTag: Tag = {
-            id: generateId(),
-            name: tagData.name,
-            parent_id: tagData.parent_id || null,
-            user_id: 'current-user', // Auth integration tracked in Issue #87
-            color: tagData.color,
-            level: tagData.level,
-            path,
-            description: tagData.description || null,
-            icon: tagData.icon || null,
-            is_active: true,
-            created_at: new Date(),
-            updated_at: new Date(),
-          }
-
-          set({ tags: [...tags, newTag] })
-          return true
-        } catch (error) {
-          console.error('Failed to add tag:', error)
-          return false
-        }
-      },
-
-      updateTag: async (id, updates) => {
-        try {
+        getTagsByIds: (ids) => {
           const { tags } = get()
-          const tagExists = tags.some((tag) => tag.id === id)
+          return tags.filter((tag) => ids.includes(tag.id))
+        },
 
-          if (!tagExists) {
-            throw new Error('Tag not found')
-          }
-
-          set((state) => ({
-            tags: state.tags.map((tag) => (tag.id === id ? { ...tag, ...updates, updatedAt: new Date() } : tag)),
-          }))
-          return true
-        } catch (error) {
-          console.error('Failed to update tag:', error)
-          return false
-        }
-      },
-
-      deleteTag: async (id) => {
-        try {
+        getAllTags: () => {
           const { tags } = get()
-          const tagExists = tags.some((tag) => tag.id === id)
+          return tags
+        },
 
-          if (!tagExists) {
-            throw new Error('Tag not found')
-          }
+        getTaskCount: (tasks, tagId) => {
+          return tasks.filter((task) => task.tags && task.tags.includes(tagId)).length
+        },
 
-          set((state) => ({
-            tags: state.tags.filter((tag) => tag.id !== id),
-          }))
-          return true
-        } catch (error) {
-          console.error('Failed to delete tag:', error)
-          return false
-        }
-      },
+        getUsedTags: (tasks) => {
+          const { tags } = get()
+          const usedTagIds = new Set<string>()
 
-      getTagById: (id) => {
-        const { tags } = get()
-        return tags.find((tag) => tag.id === id)
-      },
+          tasks.forEach((task) => {
+            if (task.tags) {
+              task.tags.forEach((tagId) => usedTagIds.add(tagId))
+            }
+          })
 
-      getTagsByIds: (ids) => {
-        const { tags } = get()
-        return tags.filter((tag) => ids.includes(tag.id))
-      },
+          return tags.filter((tag) => usedTagIds.has(tag.id))
+        },
 
-      getAllTags: () => {
-        const { tags } = get()
-        return tags
-      },
+        // Hierarchy helpers
+        getRootTags: () => {
+          const { tags } = get()
+          return tags.filter((tag) => tag.level === 1)
+        },
 
-      getTaskCount: (tasks, tagId) => {
-        return tasks.filter((task) => task.tags && task.tags.includes(tagId)).length
-      },
+        getChildTags: (parentId) => {
+          const { tags } = get()
+          return tags.filter((tag) => tag.parent_id === parentId)
+        },
 
-      getUsedTags: (tasks) => {
-        const { tags } = get()
-        const usedTagIds = new Set<string>()
+        getTagsByLevel: (level) => {
+          const { tags } = get()
+          return tags.filter((tag) => tag.level === level)
+        },
 
-        tasks.forEach((task) => {
-          if (task.tags) {
-            task.tags.forEach((tagId) => usedTagIds.add(tagId))
-          }
-        })
+        getTagHierarchy: () => {
+          const { tags } = get()
+          return tags.sort((a, b) => {
+            // Sort by level first, then by path
+            if (a.level !== b.level) {
+              return a.level - b.level
+            }
+            return a.path.localeCompare(b.path)
+          })
+        },
 
-        return tags.filter((tag) => usedTagIds.has(tag.id))
-      },
+        getTagPath: (tagId) => {
+          const { tags } = get()
+          const tag = tags.find((t) => t.id === tagId)
+          return tag ? tag.path : ''
+        },
 
-      // Hierarchy helpers
-      getRootTags: () => {
-        const { tags } = get()
-        return tags.filter((tag) => tag.level === 1)
-      },
-
-      getChildTags: (parentId) => {
-        const { tags } = get()
-        return tags.filter((tag) => tag.parent_id === parentId)
-      },
-
-      getTagsByLevel: (level) => {
-        const { tags } = get()
-        return tags.filter((tag) => tag.level === level)
-      },
-
-      getTagHierarchy: () => {
-        const { tags } = get()
-        return tags.sort((a, b) => {
-          // Sort by level first, then by path
-          if (a.level !== b.level) {
-            return a.level - b.level
-          }
-          return a.path.localeCompare(b.path)
-        })
-      },
-
-      getTagPath: (tagId) => {
-        const { tags } = get()
-        const tag = tags.find((t) => t.id === tagId)
-        return tag ? tag.path : ''
-      },
-
-      canAddChild: (parentId) => {
-        const { tags } = get()
-        const parent = tags.find((t) => t.id === parentId)
-        return parent ? parent.level < 3 : false
-      },
-    }),
+        canAddChild: (parentId) => {
+          const { tags } = get()
+          const parent = tags.find((t) => t.id === parentId)
+          return parent ? parent.level < 3 : false
+        },
+      }),
+      {
+        name: 'tag-storage',
+        partialize: (state) => ({ tags: state.tags }),
+      }
+    ),
     {
-      name: 'tag-storage',
-      partialize: (state) => ({ tags: state.tags }),
+      name: 'tag-store',
     }
   )
 )

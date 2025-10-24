@@ -16,7 +16,7 @@ export { useCreateEventInspector } from './hooks/useCreateEventInspector'
 export { useCreateEventInspectorShortcuts } from './hooks/useCreateEventInspectorShortcuts'
 
 // Stores
-export { useInspectorStore } from './stores/inspector.store'
+export { useInspectorStore } from './stores/useInspectorStore'
 
 // Default export - レスポンシブ対応Inspector
 export { default as Inspector } from './components/Inspector'

@@ -86,7 +86,7 @@ type InspectorMode = 'calendar' | 'task' | 'event-detail' | 'default'
 **`useInspectorStore`を使用**:
 
 ```tsx
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
+import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 
 const { isInspectorOpen, toggleInspector, openInspector, closeInspector } = useInspectorStore()
 ```
@@ -127,7 +127,7 @@ openCreateInspector({
 ```tsx
 // ✅ 正しい
 import { Inspector } from '@/features/inspector'
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
+import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
 
 // ❌ 禁止（旧パス）
@@ -139,7 +139,7 @@ import { Inspector } from '@/components/layout/inspector'
 ### Inspector開閉制御
 
 ```tsx
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
+import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 
 export const InspectorToggleButton = () => {
   const { isInspectorOpen, toggleInspector } = useInspectorStore()
@@ -173,7 +173,7 @@ export const CalendarGrid = () => {
 ### カスタムInspectorコンテンツ
 
 ```tsx
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
+import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 
 export const CustomInspectorContent = () => {
   const { setInspectorMode, openInspector } = useInspectorStore()

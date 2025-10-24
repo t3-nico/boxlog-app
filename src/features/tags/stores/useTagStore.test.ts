@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import type { Task } from '@/types/unified'
 
-import { useTagStore } from './tag-store'
+import { useTagStore } from './useTagStore'
 
 describe('useTagStore', () => {
   beforeEach(() => {

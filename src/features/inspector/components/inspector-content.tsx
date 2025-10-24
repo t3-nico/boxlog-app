@@ -8,7 +8,7 @@ import type { CalendarEvent as CalendarCalendarEvent } from '@/features/calendar
 import type { CalendarEvent as EventsCalendarEvent } from '@/features/events'
 import { cn } from '@/lib/utils'
 
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
+import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 import { CalendarInspectorContent } from './content/CalendarInspectorContent'
 import { DefaultInspectorContent } from './content/DefaultInspectorContent'
 import { TaskInspectorContent } from './content/TaskInspectorContent'

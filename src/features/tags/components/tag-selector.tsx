@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { useTagStore } from '@/features/tags/stores/tag-store'
+import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { Tag } from '@/types/unified'
 
 import { TagBadge } from './tag-badge'

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { devtools, persist } from 'zustand/middleware'
 
 import type { ChronotypeType, ProductivityZone } from '@/types/chronotype'
 
@@ -69,36 +69,41 @@ const defaultSettings: CalendarSettings = {
 }
 
 export const useCalendarSettingsStore = create<CalendarSettingsStore>()(
-  persist(
-    (set, get) => {
-      // タイムゾーン変更リスナーをセットアップ
-      if (typeof window !== 'undefined') {
-        const _cleanup = listenToTimezoneChange((newTimezone) => {
-          const currentState = get()
-          if (currentState.timezone !== newTimezone) {
-            console.log('📅 Preferencesからのタイムゾーン変更を検出:', newTimezone)
-            set({ ...currentState, timezone: newTimezone })
-          }
-        })
+  devtools(
+    persist(
+      (set, get) => {
+        // タイムゾーン変更リスナーをセットアップ
+        if (typeof window !== 'undefined') {
+          const _cleanup = listenToTimezoneChange((newTimezone) => {
+            const currentState = get()
+            if (currentState.timezone !== newTimezone) {
+              console.log('📅 Preferencesからのタイムゾーン変更を検出:', newTimezone)
+              set({ ...currentState, timezone: newTimezone })
+            }
+          })
 
-        // クリーンアップ関数は保存されない（Zustandの制約）
-        // 必要に応じて手動でクリーンアップ
+          // クリーンアップ関数は保存されない（Zustandの制約）
+          // 必要に応じて手動でクリーンアップ
+        }
+
+        return {
+          ...defaultSettings,
+
+          updateSettings: (newSettings) =>
+            set((state) => ({
+              ...state,
+              ...newSettings,
+            })),
+
+          resetSettings: () => set(defaultSettings),
+        }
+      },
+      {
+        name: 'calendar-settings',
       }
-
-      return {
-        ...defaultSettings,
-
-        updateSettings: (newSettings) =>
-          set((state) => ({
-            ...state,
-            ...newSettings,
-          })),
-
-        resetSettings: () => set(defaultSettings),
-      }
-    },
+    ),
     {
-      name: 'calendar-settings',
+      name: 'calendar-settings-store',
     }
   )
 )
