@@ -14,6 +14,9 @@
 -- Part 1: profiles テーブルのRLSポリシー（#612）
 -- ============================================================================
 
+-- Performance: Create index for RLS policy columns (99.94% improvement per Supabase docs)
+CREATE INDEX IF NOT EXISTS idx_profiles_id ON public.profiles(id);
+
 -- Drop existing policies if they exist (from remote_schema.sql)
 DROP POLICY IF EXISTS "Public profiles are viewable by everyone" ON public.profiles;
 DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
@@ -23,33 +26,37 @@ DROP POLICY IF EXISTS "Users can delete own profile" ON public.profiles;
 -- SELECT Policy: Users can view own profile
 -- Note: 本番環境には "Public profiles are viewable by everyone" があったが、
 --       セキュリティ強化のため自分のプロフィールのみ閲覧可能に変更
+-- Performance: SELECT wrapper for auth.uid() caching (94-99% faster per Supabase docs)
 CREATE POLICY "Users can view own profile"
 ON public.profiles
 FOR SELECT
 TO authenticated
-USING (auth.uid() = id);
+USING ((select auth.uid()) IS NOT NULL AND (select auth.uid()) = id);
 
 -- INSERT Policy: Users can insert own profile on signup
+-- Performance: SELECT wrapper for auth.uid() caching (94-99% faster per Supabase docs)
 CREATE POLICY "Users can insert own profile on signup"
 ON public.profiles
 FOR INSERT
 TO authenticated
-WITH CHECK (auth.uid() = id);
+WITH CHECK ((select auth.uid()) IS NOT NULL AND (select auth.uid()) = id);
 
 -- UPDATE Policy: Users can update own profile
+-- Performance: SELECT wrapper for auth.uid() caching (94-99% faster per Supabase docs)
 CREATE POLICY "Users can update own profile"
 ON public.profiles
 FOR UPDATE
 TO authenticated
-USING (auth.uid() = id)
-WITH CHECK (auth.uid() = id);
+USING ((select auth.uid()) IS NOT NULL AND (select auth.uid()) = id)
+WITH CHECK ((select auth.uid()) IS NOT NULL AND (select auth.uid()) = id);
 
 -- DELETE Policy: Users can delete own profile
+-- Performance: SELECT wrapper for auth.uid() caching (94-99% faster per Supabase docs)
 CREATE POLICY "Users can delete own profile"
 ON public.profiles
 FOR DELETE
 TO authenticated
-USING (auth.uid() = id);
+USING ((select auth.uid()) IS NOT NULL AND (select auth.uid()) = id);
 
 -- Admin Policy: Service role has full access to profiles
 CREATE POLICY "Service role has full access to profiles"
