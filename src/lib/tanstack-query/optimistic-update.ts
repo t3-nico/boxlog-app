@@ -40,7 +40,11 @@ export function createOptimisticUpdateHelper<TData extends unknown[], TItem exte
     update: (id: string, updates: Partial<TItem>) => {
       queryClient.setQueryData<TData>(queryKey, (oldData) => {
         if (!oldData) return oldData
-        return oldData.map((item) => (item.id === id ? { ...item, ...updates } : item)) as TData
+        if (!Array.isArray(oldData)) return oldData
+        return oldData.map((item) => {
+          const typedItem = item as TItem & { id: string }
+          return typedItem.id === id ? ({ ...typedItem, ...updates } as TItem) : item
+        }) as TData
       })
     },
 
@@ -50,7 +54,8 @@ export function createOptimisticUpdateHelper<TData extends unknown[], TItem exte
     remove: (id: string) => {
       queryClient.setQueryData<TData>(queryKey, (oldData) => {
         if (!oldData) return oldData
-        return oldData.filter((item) => item.id !== id) as TData
+        if (!Array.isArray(oldData)) return oldData
+        return oldData.filter((item) => (item as TItem & { id: string }).id !== id) as TData
       })
     },
 
