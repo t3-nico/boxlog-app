@@ -88,6 +88,7 @@ test.describe('RLS: login_attempts テーブル', () => {
       .from('login_attempts')
       .insert({
         email: testEmail,
+        attempt_time: new Date().toISOString(),
         is_successful: false,
         ip_address: '127.0.0.1',
         user_agent: 'Playwright Test',
@@ -124,6 +125,7 @@ test.describe('RLS: login_attempts テーブル', () => {
       .from('login_attempts')
       .insert({
         email: testEmail,
+        attempt_time: new Date().toISOString(),
         is_successful: false,
         ip_address: '127.0.0.1',
         user_agent: 'Playwright Test',
@@ -134,7 +136,7 @@ test.describe('RLS: login_attempts テーブル', () => {
     expect(insertError).toBeNull()
     expect(insertData).not.toBeNull()
 
-    const attemptId = insertData?.id
+    const attemptId = insertData!.id
 
     // 通常ユーザーで更新を試みる
     const { data, error } = await supabaseUser
@@ -155,6 +157,7 @@ test.describe('RLS: login_attempts テーブル', () => {
       .from('login_attempts')
       .insert({
         email: testEmail,
+        attempt_time: new Date().toISOString(),
         is_successful: false,
         ip_address: '127.0.0.1',
         user_agent: 'Playwright Test',
@@ -165,7 +168,7 @@ test.describe('RLS: login_attempts テーブル', () => {
     expect(insertError).toBeNull()
     expect(insertData).not.toBeNull()
 
-    const attemptId = insertData?.id
+    const attemptId = insertData!.id
 
     // 通常ユーザーで削除を試みる
     const { data, error } = await supabaseUser.from('login_attempts').delete().eq('id', attemptId).select()
