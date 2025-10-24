@@ -7,7 +7,7 @@ import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { TagInput } from './TagInput'
 
 // useTagStoreのモック
-vi.mock('@/features/tags/stores/tag-store', () => ({
+vi.mock('@/features/tags/stores/useTagStore', () => ({
   useTagStore: vi.fn(),
 }))
 
