@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { devtools, persist } from 'zustand/middleware'
 
 interface SidebarState {
   /** Sidebarの開閉状態 */
@@ -22,15 +22,20 @@ interface SidebarState {
  * ```
  */
 export const useSidebarStore = create<SidebarState>()(
-  persist(
-    (set) => ({
-      isOpen: true, // デフォルトは開いた状態
-      open: () => set({ isOpen: true }),
-      close: () => set({ isOpen: false }),
-      toggle: () => set((state) => ({ isOpen: !state.isOpen })),
-    }),
+  devtools(
+    persist(
+      (set) => ({
+        isOpen: true, // デフォルトは開いた状態
+        open: () => set({ isOpen: true }),
+        close: () => set({ isOpen: false }),
+        toggle: () => set((state) => ({ isOpen: !state.isOpen })),
+      }),
+      {
+        name: 'sidebar-storage', // localStorage key
+      }
+    ),
     {
-      name: 'sidebar-storage', // localStorage key
+      name: 'sidebar-store',
     }
   )
 )

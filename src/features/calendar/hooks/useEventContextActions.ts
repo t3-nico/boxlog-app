@@ -8,7 +8,7 @@ import { useCreateModalStore } from '@/features/events/stores/useCreateModalStor
 import { useEventStore } from '@/features/events/stores/useEventStore'
 import type { CalendarEvent } from '@/features/events/types/events'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
+import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 
 export function useEventContextActions() {
   const { t } = useI18n()

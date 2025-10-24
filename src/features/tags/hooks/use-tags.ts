@@ -2,6 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
+
 import type { CreateTagInput, Tag, TagWithChildren, TagWithChildrenResponse, UpdateTagInput } from '@/types/tags'
 
 // API関数群
@@ -136,7 +138,7 @@ export function useTags(includeChildren = true) {
   return useQuery({
     queryKey: tagKeys.list({ includeChildren }),
     queryFn: () => tagAPI.fetchTags(includeChildren),
-    staleTime: 5 * 60 * 1000, // 5分
+    ...cacheStrategies.tags, // 標準キャッシュ（5分）
   })
 }
 
@@ -146,7 +148,7 @@ export function useTag(id: string) {
     queryKey: tagKeys.detail(id),
     queryFn: () => tagAPI.getTag(id),
     enabled: !!id,
-    staleTime: 5 * 60 * 1000, // 5分
+    ...cacheStrategies.tags, // 標準キャッシュ（5分）
   })
 }
 

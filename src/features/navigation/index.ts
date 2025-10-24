@@ -8,5 +8,5 @@ export { NavUser } from './components/sidebar/nav-user'
 export { MobileBottomNavigation } from './components/mobile/MobileBottomNavigation'
 
 // Stores
-export { useNavigationStore } from './stores/navigation.store'
+export { useNavigationStore } from './stores/useNavigationStore'
 export { useSidebarStore } from './stores/useSidebarStore'

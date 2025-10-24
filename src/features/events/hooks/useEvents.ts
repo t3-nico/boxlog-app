@@ -3,9 +3,21 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
+
 import { useEventStore } from '../stores/useEventStore'
 
 import type { Event, EventFilters } from '../types/events'
+
+// クエリキー
+export const eventKeys = {
+  all: ['events'] as const,
+  lists: () => [...eventKeys.all, 'list'] as const,
+  list: (filters?: EventFilters) => [...eventKeys.lists(), { filters }] as const,
+  details: () => [...eventKeys.all, 'detail'] as const,
+  detail: (id: string) => [...eventKeys.details(), id] as const,
+  stats: () => [...eventKeys.all, 'stats'] as const,
+}
 
 // 日付範囲フィルターのチェック
 const checkDateRange = (event: Event, filters: EventFilters): boolean => {
@@ -72,7 +84,7 @@ export function useEvents(filters?: EventFilters) {
   const { events, loading: _loading, error: _error, fetchEvents } = useEventStore()
 
   return useQuery({
-    queryKey: ['events', filters],
+    queryKey: eventKeys.list(filters),
     queryFn: () => fetchEvents(filters),
     initialData: events,
     select: (data) => {
@@ -81,6 +93,7 @@ export function useEvents(filters?: EventFilters) {
 
       return data.filter(createEventFilter(filters))
     },
+    ...cacheStrategies.events, // リアルタイム性重視（30秒）
   })
 }
 
@@ -91,9 +104,10 @@ export function useEvent(eventId: string) {
   const { getEvent } = useEventStore()
 
   return useQuery({
-    queryKey: ['event', eventId],
+    queryKey: eventKeys.detail(eventId),
     queryFn: () => getEvent(eventId),
     enabled: !!eventId,
+    ...cacheStrategies.events, // リアルタイム性重視（30秒）
   })
 }
 
@@ -128,7 +142,7 @@ export function useCreateEventSimple() {
   return useMutation({
     mutationFn: createEvent,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['events'] })
+      queryClient.invalidateQueries({ queryKey: eventKeys.all })
     },
   })
 }
@@ -143,8 +157,8 @@ export function useUpdateEvent() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: unknown }) => updateEvent(id, data),
     onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: ['events'] })
-      queryClient.invalidateQueries({ queryKey: ['event', id] })
+      queryClient.invalidateQueries({ queryKey: eventKeys.all })
+      queryClient.invalidateQueries({ queryKey: eventKeys.detail(id) })
     },
   })
 }
@@ -159,8 +173,8 @@ export function useDeleteEvent() {
   return useMutation({
     mutationFn: deleteEvent,
     onSuccess: (_, eventId) => {
-      queryClient.invalidateQueries({ queryKey: ['events'] })
-      queryClient.removeQueries({ queryKey: ['event', eventId] })
+      queryClient.invalidateQueries({ queryKey: eventKeys.all })
+      queryClient.removeQueries({ queryKey: eventKeys.detail(eventId) })
     },
   })
 }
@@ -172,7 +186,7 @@ export function useEventStats() {
   const { events } = useEventStore()
 
   return useQuery({
-    queryKey: ['event-stats'],
+    queryKey: eventKeys.stats(),
     queryFn: () => {
       const stats = {
         total: events.length,

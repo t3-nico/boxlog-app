@@ -85,7 +85,7 @@ lg: hidden // モバイル: MobileBottomNavigation表示
 **`useNavigationStore`を使用**:
 
 ```tsx
-import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
+import { useNavigationStore } from '@/features/navigation/stores/useNavigationStore'
 
 const { isSidebarOpen, toggleSidebar } = useNavigationStore()
 ```
@@ -108,7 +108,7 @@ const { isSidebarOpen, toggleSidebar } = useNavigationStore()
 // ✅ 正しい
 import { AppBar } from '@/features/navigation/components/appbar'
 import { Sidebar } from '@/features/navigation/components/sidebar'
-import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
+import { useNavigationStore } from '@/features/navigation/stores/useNavigationStore'
 
 // ❌ 禁止（旧パス）
 import { AppBar } from '@/components/layout/appbar'
@@ -119,7 +119,7 @@ import { AppBar } from '@/components/layout/appbar'
 ### Sidebar切り替え
 
 ```tsx
-import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
+import { useNavigationStore } from '@/features/navigation/stores/useNavigationStore'
 
 export const SidebarToggle = () => {
   const { toggleSidebar } = useNavigationStore()
@@ -163,7 +163,7 @@ Inspector機能は`@/features/inspector`に配置されており、このモジ�
 
 ```tsx
 // ✅ 正しい
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
+import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 import { InspectorToggle } from '@/features/inspector/components/inspector-toggle'
 ```
 

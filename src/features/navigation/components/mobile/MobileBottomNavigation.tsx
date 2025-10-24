@@ -14,7 +14,7 @@ import {
 
 import { cn } from '@/lib/utils'
 
-import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
+import { useNavigationStore } from '@/features/navigation/stores/useNavigationStore'
 
 interface BottomNavItem {
   id: string

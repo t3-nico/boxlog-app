@@ -2,12 +2,12 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useTagStore } from '@/features/tags/stores/tag-store'
+import { useTagStore } from '@/features/tags/stores/useTagStore'
 
 import { TagInput } from './TagInput'
 
 // useTagStoreのモック
-vi.mock('@/features/tags/stores/tag-store', () => ({
+vi.mock('@/features/tags/stores/useTagStore', () => ({
   useTagStore: vi.fn(),
 }))
 

@@ -16,8 +16,8 @@ import {
   CommandList,
 } from '@/components/ui/command'
 
-import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
-import { useTagStore } from '@/features/tags/stores/tag-store'
+import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
+import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { useDebounce } from '@/hooks/use-debounce'
 import { Task } from '@/types/unified'

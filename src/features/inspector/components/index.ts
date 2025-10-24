@@ -2,7 +2,7 @@
 export { InspectorContent } from './inspector-content'
 
 // Inspector stores
-export { useInspectorStore } from '@/features/inspector/stores/inspector.store'
+export { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 
 // Inspector hooks for CreateEvent integration
 export { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'

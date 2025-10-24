@@ -13,6 +13,19 @@ import type {
   UpdateCalendarInput,
 } from '../types/calendar.types'
 
+// クエリキー
+export const calendarKeys = {
+  all: ['calendars'] as const,
+  lists: () => [...calendarKeys.all, 'list'] as const,
+  list: (userId: string) => [...calendarKeys.lists(), { userId }] as const,
+  details: () => [...calendarKeys.all, 'detail'] as const,
+  detail: (id: string) => [...calendarKeys.details(), id] as const,
+  shares: () => [...calendarKeys.all, 'shares'] as const,
+  share: (calendarId: string) => [...calendarKeys.shares(), calendarId] as const,
+  viewStates: () => [...calendarKeys.all, 'view-state'] as const,
+  viewState: (userId: string) => [...calendarKeys.viewStates(), userId] as const,
+}
+
 // ========================================
 // Calendar Management Hooks (localStorage-based)
 // ========================================
@@ -20,7 +33,7 @@ import type {
 export function useCalendars(userId: string) {
   // Calendar management tracked in Issue #87
   return useQuery({
-    queryKey: ['calendars', userId],
+    queryKey: calendarKeys.list(userId),
     queryFn: () => Promise.resolve([]), // Temporary stub
     enabled: !!userId,
   })
@@ -28,7 +41,7 @@ export function useCalendars(userId: string) {
 
 export function useCalendar(calendarId: string) {
   return useQuery({
-    queryKey: ['calendar', calendarId],
+    queryKey: calendarKeys.detail(calendarId),
     queryFn: () => Promise.resolve(null), // Temporary stub
     enabled: !!calendarId,
   })
@@ -65,7 +78,7 @@ export function useSetDefaultCalendar() {
 
 export function useCalendarShares(calendarId: string) {
   return useQuery({
-    queryKey: ['calendar-shares', calendarId],
+    queryKey: calendarKeys.share(calendarId),
     queryFn: () => Promise.resolve([]), // Temporary stub
     enabled: !!calendarId,
   })
@@ -118,7 +131,7 @@ export function useCreatePublicShareLink() {
 
 export function useCalendarViewState(userId: string) {
   return useQuery({
-    queryKey: ['calendar-view-state', userId],
+    queryKey: calendarKeys.viewState(userId),
     queryFn: () => Promise.resolve(null), // Temporary stub
     enabled: !!userId,
     staleTime: 1000 * 60 * 5, // 5分間はキャッシュを維持

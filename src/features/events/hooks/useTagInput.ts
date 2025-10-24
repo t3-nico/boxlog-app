@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import { useTagStore } from '@/features/tags/stores/tag-store'
+import { useTagStore } from '@/features/tags/stores/useTagStore'
 
 interface Tag {
   id: string
