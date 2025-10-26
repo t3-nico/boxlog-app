@@ -66,41 +66,27 @@ export function useTicketTags() {
 
   /**
    * チケットのタグを一括設定
-   * 注: 現在の既存タグをすべて削除し、新しいタグセットを適用
-   * 将来的にtRPC APIで一括設定エンドポイントを追加予定
+   * 注: Phase 4以降でtRPC APIに一括設定エンドポイントを追加予定
+   * 現在はaddTicketTag/removeTicketTagを使用してください
    */
-  const setTicketTags = useCallback(
-    async (ticketId: string, tagIds: string[]): Promise<boolean> => {
-      try {
-        setIsLoading(true)
-        setError(null)
+  const setTicketTags = useCallback(async (ticketId: string, tagIds: string[]): Promise<boolean> => {
+    try {
+      setIsLoading(true)
+      setError(null)
 
-        // 既存のタグを取得
-        const existingTags = await api.tickets.getTags.query({ ticketId })
+      // TODO: Phase 4でtRPC APIに一括設定エンドポイントを追加
+      // 現在は個別のaddTicketTag/removeTicketTagを使用
+      console.warn('setTicketTags is not yet implemented. Use addTicketTag/removeTicketTag instead.')
 
-        // 既存タグをすべて削除
-        for (const tag of existingTags) {
-          if (tag?.id) {
-            await removeTicketTagMutation.mutateAsync({ ticketId, tagId: tag.id })
-          }
-        }
-
-        // 新しいタグを追加
-        for (const tagId of tagIds) {
-          await addTicketTagMutation.mutateAsync({ ticketId, tagId })
-        }
-
-        setIsLoading(false)
-        return true
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'タグの設定に失敗しました'
-        setError(message)
-        setIsLoading(false)
-        return false
-      }
-    },
-    [addTicketTagMutation, removeTicketTagMutation]
-  )
+      setIsLoading(false)
+      return false
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'タグの設定に失敗しました'
+      setError(message)
+      setIsLoading(false)
+      return false
+    }
+  }, [])
 
   /**
    * セッションにタグを追加
@@ -150,41 +136,27 @@ export function useTicketTags() {
 
   /**
    * セッションのタグを一括設定
-   * 注: 現在の既存タグをすべて削除し、新しいタグセットを適用
-   * 将来的にtRPC APIで一括設定エンドポイントを追加予定
+   * 注: Phase 4以降でtRPC APIに一括設定エンドポイントを追加予定
+   * 現在はaddSessionTag/removeSessionTagを使用してください
    */
-  const setSessionTags = useCallback(
-    async (sessionId: string, tagIds: string[]): Promise<boolean> => {
-      try {
-        setIsLoading(true)
-        setError(null)
+  const setSessionTags = useCallback(async (sessionId: string, tagIds: string[]): Promise<boolean> => {
+    try {
+      setIsLoading(true)
+      setError(null)
 
-        // 既存のタグを取得
-        const existingTags = await api.tickets.getSessionTags.query({ sessionId })
+      // TODO: Phase 4でtRPC APIに一括設定エンドポイントを追加
+      // 現在は個別のaddSessionTag/removeSessionTagを使用
+      console.warn('setSessionTags is not yet implemented. Use addSessionTag/removeSessionTag instead.')
 
-        // 既存タグをすべて削除
-        for (const tag of existingTags) {
-          if (tag?.id) {
-            await removeSessionTagMutation.mutateAsync({ sessionId, tagId: tag.id })
-          }
-        }
-
-        // 新しいタグを追加
-        for (const tagId of tagIds) {
-          await addSessionTagMutation.mutateAsync({ sessionId, tagId })
-        }
-
-        setIsLoading(false)
-        return true
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'タグの設定に失敗しました'
-        setError(message)
-        setIsLoading(false)
-        return false
-      }
-    },
-    [addSessionTagMutation, removeSessionTagMutation]
-  )
+      setIsLoading(false)
+      return false
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'タグの設定に失敗しました'
+      setError(message)
+      setIsLoading(false)
+      return false
+    }
+  }, [])
 
   return {
     // State
