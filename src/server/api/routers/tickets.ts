@@ -8,20 +8,19 @@ import { z } from 'zod'
 
 import { createClient } from '@/lib/supabase/server'
 import {
-  createTagSchema,
-  updateTagSchema,
-  tagIdSchema,
-  createTicketSchema,
-  updateTicketSchema,
-  ticketIdSchema,
-  ticketFilterSchema,
-  createSessionSchema,
-  updateSessionSchema,
-  sessionIdSchema,
-  sessionFilterSchema,
   createRecordSchema,
-  updateRecordSchema,
+  createSessionSchema,
+  createTagSchema,
+  createTicketSchema,
   recordIdSchema,
+  sessionFilterSchema,
+  sessionIdSchema,
+  tagIdSchema,
+  ticketFilterSchema,
+  ticketIdSchema,
+  updateSessionSchema,
+  updateTagSchema,
+  updateTicketSchema,
 } from '@/schemas/tickets'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 
@@ -150,12 +149,7 @@ export const ticketsRouter = createTRPCRouter({
     const supabase = await createClient()
     const userId = ctx.userId
 
-    const { data, error } = await supabase
-      .from('tickets')
-      .select('*')
-      .eq('id', input.id)
-      .eq('user_id', userId)
-      .single()
+    const { data, error } = await supabase.from('tickets').select('*').eq('id', input.id).eq('user_id', userId).single()
 
     if (error) {
       throw new TRPCError({
@@ -346,6 +340,150 @@ export const ticketsRouter = createTRPCRouter({
       return { success: true }
     }),
   },
+
+  // ========================================
+  // Ticket Tags Management
+  // ========================================
+  addTag: protectedProcedure
+    .input(z.object({ ticketId: z.string().uuid(), tagId: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { data, error } = await supabase
+        .from('ticket_tags')
+        .insert({
+          user_id: userId,
+          ticket_id: input.ticketId,
+          tag_id: input.tagId,
+        })
+        .select()
+        .single()
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `タグの追加に失敗しました: ${error.message}`,
+        })
+      }
+
+      return data
+    }),
+
+  removeTag: protectedProcedure
+    .input(z.object({ ticketId: z.string().uuid(), tagId: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { error } = await supabase
+        .from('ticket_tags')
+        .delete()
+        .eq('ticket_id', input.ticketId)
+        .eq('tag_id', input.tagId)
+        .eq('user_id', userId)
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `タグの削除に失敗しました: ${error.message}`,
+        })
+      }
+
+      return { success: true }
+    }),
+
+  getTags: protectedProcedure.input(z.object({ ticketId: z.string().uuid() })).query(async ({ ctx, input }) => {
+    const supabase = await createClient()
+    const userId = ctx.userId
+
+    const { data, error } = await supabase
+      .from('ticket_tags')
+      .select('tag_id, tags(*)')
+      .eq('ticket_id', input.ticketId)
+      .eq('user_id', userId)
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `タグ一覧の取得に失敗しました: ${error.message}`,
+      })
+    }
+
+    return data.map((item) => item.tags).filter(Boolean)
+  }),
+
+  // ========================================
+  // Session Tags Management
+  // ========================================
+  addSessionTag: protectedProcedure
+    .input(z.object({ sessionId: z.string().uuid(), tagId: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { data, error } = await supabase
+        .from('session_tags')
+        .insert({
+          user_id: userId,
+          session_id: input.sessionId,
+          tag_id: input.tagId,
+        })
+        .select()
+        .single()
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `セッションタグの追加に失敗しました: ${error.message}`,
+        })
+      }
+
+      return data
+    }),
+
+  removeSessionTag: protectedProcedure
+    .input(z.object({ sessionId: z.string().uuid(), tagId: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { error } = await supabase
+        .from('session_tags')
+        .delete()
+        .eq('session_id', input.sessionId)
+        .eq('tag_id', input.tagId)
+        .eq('user_id', userId)
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `セッションタグの削除に失敗しました: ${error.message}`,
+        })
+      }
+
+      return { success: true }
+    }),
+
+  getSessionTags: protectedProcedure.input(z.object({ sessionId: z.string().uuid() })).query(async ({ ctx, input }) => {
+    const supabase = await createClient()
+    const userId = ctx.userId
+
+    const { data, error } = await supabase
+      .from('session_tags')
+      .select('tag_id, tags(*)')
+      .eq('session_id', input.sessionId)
+      .eq('user_id', userId)
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `セッションタグ一覧の取得に失敗しました: ${error.message}`,
+      })
+    }
+
+    return data.map((item) => item.tags).filter(Boolean)
+  }),
 
   // ========================================
   // Records CRUD
