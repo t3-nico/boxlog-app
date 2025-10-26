@@ -1,12 +1,17 @@
 'use client'
 
 import { Mail, PlusCircle, type LucideIcon } from 'lucide-react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { TicketForm } from '@/features/tickets/components'
+import { useTickets } from '@/features/tickets/hooks'
 import { cn } from '@/lib/utils'
+import type { CreateTicketInput } from '@/schemas/tickets/ticket'
 import type { TranslatedString } from '@/types/i18n-branded'
 
 export function NavMain({
@@ -19,56 +24,87 @@ export function NavMain({
   }[]
 }) {
   const pathname = usePathname()
+  const router = useRouter()
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t } = useI18n(localeFromPath)
+  const { createTicket } = useTickets()
+
+  const [isTicketDialogOpen, setIsTicketDialogOpen] = useState(false)
+
+  const handleCreateTicket = async (data: CreateTicketInput) => {
+    const newTicket = await createTicket(data)
+    setIsTicketDialogOpen(false)
+    if (newTicket) {
+      // チケット詳細ページに遷移
+      router.push(`/${localeFromPath}/tickets/${newTicket.id}`)
+    }
+  }
 
   return (
-    <div className="flex flex-col gap-2">
-      {/* Quick Create Section */}
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          className="bg-primary text-primary-foreground hover:bg-primary/90 flex min-w-8 flex-1 items-center gap-2 rounded-md px-4 py-2 text-sm font-medium duration-200 ease-linear"
-        >
-          <PlusCircle className="h-4 w-4" />
-          <span>{t('sidebar.quickCreate')}</span>
-        </button>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button size="icon" className="h-8 w-8 shrink-0" variant="outline">
-              <Mail className="h-4 w-4" />
-              <span className="sr-only">{t('sidebar.inbox')}</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{t('sidebar.inbox')}</p>
-          </TooltipContent>
-        </Tooltip>
-      </div>
+    <>
+      <div className="flex flex-col gap-2">
+        {/* Quick Create Section */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsTicketDialogOpen(true)}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex min-w-8 flex-1 items-center gap-2 rounded-md px-4 py-2 text-sm font-medium duration-200 ease-linear"
+          >
+            <PlusCircle className="h-4 w-4" />
+            <span>{t('sidebar.quickCreate')}</span>
+          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" className="h-8 w-8 shrink-0" variant="outline">
+                <Mail className="h-4 w-4" />
+                <span className="sr-only">{t('sidebar.inbox')}</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{t('sidebar.inbox')}</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
 
-      {/* Navigation Items */}
-      <div className="flex flex-col">
-        <div className="text-muted-foreground px-2 py-2 text-xs font-semibold">{t('sidebar.views')}</div>
+        {/* Navigation Items */}
         <div className="flex flex-col">
-          {items.map((item) => {
-            // パス比較: 両方のパスを正規化して比較
-            const isActive = pathname === item.url || pathname?.startsWith(item.url + '/')
-            return (
-              <a
-                key={item.title}
-                href={item.url}
-                className={cn(
-                  'flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors',
-                  isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'hover:bg-sidebar-accent/50'
-                )}
-              >
-                {item.icon && <item.icon className="h-4 w-4" />}
-                <span>{item.title}</span>
-              </a>
-            )
-          })}
+          <div className="text-muted-foreground px-2 py-2 text-xs font-semibold">{t('sidebar.views')}</div>
+          <div className="flex flex-col">
+            {items.map((item) => {
+              // パス比較: 両方のパスを正規化して比較
+              const isActive = pathname === item.url || pathname?.startsWith(item.url + '/')
+              return (
+                <a
+                  key={item.title}
+                  href={item.url}
+                  className={cn(
+                    'flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors',
+                    isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'hover:bg-sidebar-accent/50'
+                  )}
+                >
+                  {item.icon && <item.icon className="h-4 w-4" />}
+                  <span>{item.title}</span>
+                </a>
+              )
+            })}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Ticket作成ダイアログ */}
+      <Dialog open={isTicketDialogOpen} onOpenChange={setIsTicketDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>新規チケット作成</DialogTitle>
+            <DialogDescription>作業チケットを作成します。作成後、チケット詳細ページに移動します。</DialogDescription>
+          </DialogHeader>
+          <TicketForm
+            onSubmit={handleCreateTicket}
+            onCancel={() => setIsTicketDialogOpen(false)}
+            submitLabel="チケットを作成"
+          />
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
