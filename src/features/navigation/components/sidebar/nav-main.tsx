@@ -9,7 +9,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { TicketForm } from '@/features/tickets/components'
-import { useTickets } from '@/features/tickets/hooks'
+import { useTicketStore } from '@/features/tickets/stores'
+import { api } from '@/lib/trpc'
 import { cn } from '@/lib/utils'
 import type { CreateTicketInput } from '@/schemas/tickets/ticket'
 import type { TranslatedString } from '@/types/i18n-branded'
@@ -27,17 +28,23 @@ export function NavMain({
   const router = useRouter()
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t } = useI18n(localeFromPath)
-  const { createTicket } = useTickets()
+  const { addTicket } = useTicketStore()
 
   const [isTicketDialogOpen, setIsTicketDialogOpen] = useState(false)
 
-  const handleCreateTicket = async (data: CreateTicketInput) => {
-    const newTicket = await createTicket(data)
-    setIsTicketDialogOpen(false)
-    if (newTicket) {
-      // チケット詳細ページに遷移
+  const createTicketMutation = api.tickets.create.useMutation({
+    onSuccess: (newTicket) => {
+      addTicket(newTicket)
+      setIsTicketDialogOpen(false)
       router.push(`/${localeFromPath}/tickets/${newTicket.id}`)
-    }
+    },
+    onError: (error) => {
+      console.error('チケット作成エラー:', error)
+    },
+  })
+
+  const handleCreateTicket = async (data: CreateTicketInput) => {
+    await createTicketMutation.mutateAsync(data)
   }
 
   return (
