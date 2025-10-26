@@ -26,6 +26,17 @@ const nextConfig = {
 
   // セキュリティヘッダー設定
   async headers() {
+    // 開発環境ではローカルSupabaseへの接続を許可
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    const connectSrc = [
+      "'self'",
+      "https://*.supabase.co",
+      "https://vercel.live",
+      "wss://*.supabase.co",
+      "https://vitals.vercel-insights.com",
+      ...(isDevelopment ? ["http://127.0.0.1:54321", "http://localhost:54321"] : []),
+    ].join(' ');
+
     return [
       {
         source: '/(.*)',
@@ -44,7 +55,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.supabase.co https://vercel.live wss://*.supabase.co https://vitals.vercel-insights.com",
+              `connect-src ${connectSrc}`,
               "frame-src 'self' https://vercel.live",
               "object-src 'none'",
               "base-uri 'self'",
