@@ -1,0 +1,414 @@
+/**
+ * tRPC Router: Tickets
+ * チケット・セッション・タグ管理API
+ */
+
+import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
+
+import { createClient } from '@/lib/supabase/server'
+import {
+  createTagSchema,
+  updateTagSchema,
+  tagIdSchema,
+  createTicketSchema,
+  updateTicketSchema,
+  ticketIdSchema,
+  ticketFilterSchema,
+  createSessionSchema,
+  updateSessionSchema,
+  sessionIdSchema,
+  sessionFilterSchema,
+  createRecordSchema,
+  updateRecordSchema,
+  recordIdSchema,
+} from '@/schemas/tickets'
+import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
+
+export const ticketsRouter = createTRPCRouter({
+  // ========================================
+  // Tags CRUD
+  // ========================================
+  tags: {
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { data, error } = await supabase
+        .from('tags')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `タグ一覧の取得に失敗しました: ${error.message}`,
+        })
+      }
+
+      return data
+    }),
+
+    create: protectedProcedure.input(createTagSchema).mutation(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { data, error } = await supabase
+        .from('tags')
+        .insert({
+          user_id: userId,
+          ...input,
+        })
+        .select()
+        .single()
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `タグの作成に失敗しました: ${error.message}`,
+        })
+      }
+
+      return data
+    }),
+
+    update: protectedProcedure
+      .input(z.object({ id: z.string().uuid(), data: updateTagSchema }))
+      .mutation(async ({ ctx, input }) => {
+        const supabase = await createClient()
+        const userId = ctx.userId
+
+        const { data, error } = await supabase
+          .from('tags')
+          .update(input.data)
+          .eq('id', input.id)
+          .eq('user_id', userId)
+          .select()
+          .single()
+
+        if (error) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: `タグの更新に失敗しました: ${error.message}`,
+          })
+        }
+
+        return data
+      }),
+
+    delete: protectedProcedure.input(tagIdSchema).mutation(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { error } = await supabase.from('tags').delete().eq('id', input.id).eq('user_id', userId)
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `タグの削除に失敗しました: ${error.message}`,
+        })
+      }
+
+      return { success: true }
+    }),
+  },
+
+  // ========================================
+  // Tickets CRUD
+  // ========================================
+  list: protectedProcedure.input(ticketFilterSchema.optional()).query(async ({ ctx, input }) => {
+    const supabase = await createClient()
+    const userId = ctx.userId
+
+    let query = supabase.from('tickets').select('*').eq('user_id', userId)
+
+    // フィルター適用
+    if (input?.status) {
+      query = query.eq('status', input.status)
+    }
+    if (input?.priority) {
+      query = query.eq('priority', input.priority)
+    }
+    if (input?.search) {
+      query = query.or(`title.ilike.%${input.search}%,description.ilike.%${input.search}%`)
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false })
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `チケット一覧の取得に失敗しました: ${error.message}`,
+      })
+    }
+
+    return data
+  }),
+
+  getById: protectedProcedure.input(ticketIdSchema).query(async ({ ctx, input }) => {
+    const supabase = await createClient()
+    const userId = ctx.userId
+
+    const { data, error } = await supabase
+      .from('tickets')
+      .select('*')
+      .eq('id', input.id)
+      .eq('user_id', userId)
+      .single()
+
+    if (error) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: `チケットが見つかりません: ${error.message}`,
+      })
+    }
+
+    return data
+  }),
+
+  create: protectedProcedure.input(createTicketSchema).mutation(async ({ ctx, input }) => {
+    const supabase = await createClient()
+    const userId = ctx.userId
+
+    const { data, error } = await supabase
+      .from('tickets')
+      .insert({
+        user_id: userId,
+        ticket_number: '', // トリガーで自動採番
+        ...input,
+      })
+      .select()
+      .single()
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `チケットの作成に失敗しました: ${error.message}`,
+      })
+    }
+
+    return data
+  }),
+
+  update: protectedProcedure
+    .input(z.object({ id: z.string().uuid(), data: updateTicketSchema }))
+    .mutation(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { data, error } = await supabase
+        .from('tickets')
+        .update(input.data)
+        .eq('id', input.id)
+        .eq('user_id', userId)
+        .select()
+        .single()
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `チケットの更新に失敗しました: ${error.message}`,
+        })
+      }
+
+      return data
+    }),
+
+  delete: protectedProcedure.input(ticketIdSchema).mutation(async ({ ctx, input }) => {
+    const supabase = await createClient()
+    const userId = ctx.userId
+
+    const { error } = await supabase.from('tickets').delete().eq('id', input.id).eq('user_id', userId)
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `チケットの削除に失敗しました: ${error.message}`,
+      })
+    }
+
+    return { success: true }
+  }),
+
+  // ========================================
+  // Sessions CRUD
+  // ========================================
+  sessions: {
+    list: protectedProcedure.input(sessionFilterSchema.optional()).query(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      let query = supabase.from('sessions').select('*').eq('user_id', userId)
+
+      // フィルター適用
+      if (input?.ticket_id) {
+        query = query.eq('ticket_id', input.ticket_id)
+      }
+      if (input?.status) {
+        query = query.eq('status', input.status)
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false })
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `セッション一覧の取得に失敗しました: ${error.message}`,
+        })
+      }
+
+      return data
+    }),
+
+    getById: protectedProcedure.input(sessionIdSchema).query(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { data, error } = await supabase
+        .from('sessions')
+        .select('*')
+        .eq('id', input.id)
+        .eq('user_id', userId)
+        .single()
+
+      if (error) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `セッションが見つかりません: ${error.message}`,
+        })
+      }
+
+      return data
+    }),
+
+    create: protectedProcedure.input(createSessionSchema).mutation(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { data, error } = await supabase
+        .from('sessions')
+        .insert({
+          user_id: userId,
+          session_number: '', // トリガーで自動採番
+          ...input,
+        })
+        .select()
+        .single()
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `セッションの作成に失敗しました: ${error.message}`,
+        })
+      }
+
+      return data
+    }),
+
+    update: protectedProcedure
+      .input(z.object({ id: z.string().uuid(), data: updateSessionSchema }))
+      .mutation(async ({ ctx, input }) => {
+        const supabase = await createClient()
+        const userId = ctx.userId
+
+        const { data, error } = await supabase
+          .from('sessions')
+          .update(input.data)
+          .eq('id', input.id)
+          .eq('user_id', userId)
+          .select()
+          .single()
+
+        if (error) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: `セッションの更新に失敗しました: ${error.message}`,
+          })
+        }
+
+        return data
+      }),
+
+    delete: protectedProcedure.input(sessionIdSchema).mutation(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { error } = await supabase.from('sessions').delete().eq('id', input.id).eq('user_id', userId)
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `セッションの削除に失敗しました: ${error.message}`,
+        })
+      }
+
+      return { success: true }
+    }),
+  },
+
+  // ========================================
+  // Records CRUD
+  // ========================================
+  records: {
+    list: protectedProcedure.input(z.object({ session_id: z.string().uuid() })).query(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { data, error } = await supabase
+        .from('records')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('session_id', input.session_id)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `記録一覧の取得に失敗しました: ${error.message}`,
+        })
+      }
+
+      return data
+    }),
+
+    create: protectedProcedure.input(createRecordSchema).mutation(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { data, error } = await supabase
+        .from('records')
+        .insert({
+          user_id: userId,
+          ...input,
+        })
+        .select()
+        .single()
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `記録の作成に失敗しました: ${error.message}`,
+        })
+      }
+
+      return data
+    }),
+
+    delete: protectedProcedure.input(recordIdSchema).mutation(async ({ ctx, input }) => {
+      const supabase = await createClient()
+      const userId = ctx.userId
+
+      const { error } = await supabase.from('records').delete().eq('id', input.id).eq('user_id', userId)
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `記録の削除に失敗しました: ${error.message}`,
+        })
+      }
+
+      return { success: true }
+    }),
+  },
+})
