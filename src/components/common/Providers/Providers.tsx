@@ -72,15 +72,15 @@ export const Providers = ({ children }: ProvidersProps) => {
   )
 
   return (
-    <api.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <api.Provider client={trpcClient} queryClient={queryClient}>
         <AuthStoreInitializer />
         <CommandPaletteProvider>
           <PreloadResources />
           {children}
         </CommandPaletteProvider>
-      </QueryClientProvider>
-    </api.Provider>
+      </api.Provider>
+    </QueryClientProvider>
   )
 }
 
