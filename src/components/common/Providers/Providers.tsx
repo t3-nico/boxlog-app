@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { AuthStoreInitializer } from '@/features/auth/stores/AuthStoreInitializer'
 import { CommandPaletteProvider, useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
+import { api } from '@/lib/trpc'
 
 import { PreloadResources } from '../Preload'
 
@@ -38,13 +39,15 @@ export const Providers = ({ children }: ProvidersProps) => {
   )
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthStoreInitializer />
-      <CommandPaletteProvider>
-        <PreloadResources />
-        {children}
-      </CommandPaletteProvider>
-    </QueryClientProvider>
+    <api.Provider client={api} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <AuthStoreInitializer />
+        <CommandPaletteProvider>
+          <PreloadResources />
+          {children}
+        </CommandPaletteProvider>
+      </QueryClientProvider>
+    </api.Provider>
   )
 }
 
