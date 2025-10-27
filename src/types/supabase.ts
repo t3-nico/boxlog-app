@@ -96,30 +96,178 @@ export type Database = {
         }
         Relationships: []
       }
+      records: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          record_type: string
+          session_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          record_type: string
+          session_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          record_type?: string
+          session_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'records_session_id_fkey'
+            columns: ['session_id']
+            isOneToOne: false
+            referencedRelation: 'sessions'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      session_tags: {
+        Row: {
+          created_at: string | null
+          id: string
+          session_id: string
+          tag_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          session_id: string
+          tag_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          session_id?: string
+          tag_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'session_tags_session_id_fkey'
+            columns: ['session_id']
+            isOneToOne: false
+            referencedRelation: 'sessions'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'session_tags_tag_id_fkey'
+            columns: ['tag_id']
+            isOneToOne: false
+            referencedRelation: 'tags'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      sessions: {
+        Row: {
+          actual_end: string | null
+          actual_start: string | null
+          created_at: string | null
+          duration_minutes: number | null
+          id: string
+          notes: string | null
+          planned_end: string | null
+          planned_start: string | null
+          session_number: string
+          status: string
+          ticket_id: string
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          actual_end?: string | null
+          actual_start?: string | null
+          created_at?: string | null
+          duration_minutes?: number | null
+          id?: string
+          notes?: string | null
+          planned_end?: string | null
+          planned_start?: string | null
+          session_number: string
+          status?: string
+          ticket_id: string
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          actual_end?: string | null
+          actual_start?: string | null
+          created_at?: string | null
+          duration_minutes?: number | null
+          id?: string
+          notes?: string | null
+          planned_end?: string | null
+          planned_start?: string | null
+          session_number?: string
+          status?: string
+          ticket_id?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'sessions_ticket_id_fkey'
+            columns: ['ticket_id']
+            isOneToOne: false
+            referencedRelation: 'tickets'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       tags: {
         Row: {
           color: string | null
           created_at: string | null
           depth: number | null
+          description: string | null
           id: string
           name: string
           parent_id: string | null
+          updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           color?: string | null
           created_at?: string | null
           depth?: number | null
+          description?: string | null
           id?: string
           name: string
           parent_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           color?: string | null
           created_at?: string | null
           depth?: number | null
+          description?: string | null
           id?: string
           name?: string
           parent_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -130,6 +278,87 @@ export type Database = {
             referencedColumns: ['id']
           },
         ]
+      }
+      ticket_tags: {
+        Row: {
+          created_at: string | null
+          id: string
+          tag_id: string
+          ticket_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          tag_id: string
+          ticket_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          tag_id?: string
+          ticket_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'ticket_tags_tag_id_fkey'
+            columns: ['tag_id']
+            isOneToOne: false
+            referencedRelation: 'tags'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'ticket_tags_ticket_id_fkey'
+            columns: ['ticket_id']
+            isOneToOne: false
+            referencedRelation: 'tickets'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      tickets: {
+        Row: {
+          actual_hours: number | null
+          created_at: string | null
+          description: string | null
+          id: string
+          planned_hours: number | null
+          priority: string | null
+          status: string
+          ticket_number: string
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          actual_hours?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          planned_hours?: number | null
+          priority?: string | null
+          status?: string
+          ticket_number: string
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          actual_hours?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          planned_hours?: number | null
+          priority?: string | null
+          status?: string
+          ticket_number?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {

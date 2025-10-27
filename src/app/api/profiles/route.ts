@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
     const body = await request.json()
-    const { id, email, name, avatar_url } = body
+    const { id, email, full_name, avatar_url } = body
 
     // バリデーション
     if (!id || !isValidUUID(id)) {
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     const profileData: Database['public']['Tables']['profiles']['Insert'] = {
       id,
       email: email.trim().toLowerCase(),
-      name: name?.trim() || null,
+      full_name: full_name?.trim() || null,
       avatar_url: avatar_url || null,
     }
 
@@ -86,7 +86,7 @@ export async function PUT(request: NextRequest) {
   try {
     const supabase = await createClient()
     const body = await request.json()
-    const { id, name, avatar_url } = body
+    const { id, full_name, avatar_url } = body
 
     if (!id || !isValidUUID(id)) {
       return NextResponse.json({ error: 'Valid user ID is required' }, { status: 400 })
@@ -96,8 +96,8 @@ export async function PUT(request: NextRequest) {
       updated_at: new Date().toISOString(),
     }
 
-    if (name !== undefined) {
-      updateData.name = name?.trim() || null
+    if (full_name !== undefined) {
+      updateData.full_name = full_name?.trim() || null
     }
 
     if (avatar_url !== undefined) {

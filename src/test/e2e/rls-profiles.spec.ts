@@ -115,21 +115,21 @@ test.describe('RLS: profiles テーブル', () => {
 
     const { data, error } = await supabaseA
       .from('profiles')
-      .update({ name: newName })
+      .update({ full_name: newName })
       .eq('id', userAId)
       .select()
       .single()
 
     expect(error).toBeNull()
     expect(data).not.toBeNull()
-    expect(data?.name).toBe(newName)
+    expect(data?.full_name).toBe(newName)
     console.log(`✅ ユーザーAは自分のプロフィール更新成功: ${newName}`)
   })
 
   test('ユーザーAは他人（ユーザーB）のプロフィールを更新できない', async () => {
     const { data, error, count } = await supabaseA
       .from('profiles')
-      .update({ name: 'Hacked by User A' })
+      .update({ full_name: 'Hacked by User A' })
       .eq('id', userBId)
       .select()
 
