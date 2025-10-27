@@ -30,3 +30,9 @@ export const sessionFilterSchema = z.object({
   ticket_id: z.string().uuid().optional(),
   status: sessionStatusSchema.optional(),
 })
+
+// 型エクスポート
+export type CreateSessionInput = z.infer<typeof createSessionSchema>
+export type UpdateSessionInput = z.infer<typeof updateSessionSchema>
+export type SessionStatus = z.infer<typeof sessionStatusSchema>
+export type SessionFilter = z.infer<typeof sessionFilterSchema>

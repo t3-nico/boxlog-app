@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { httpBatchLink, loggerLink } from '@trpc/client'
+import superjson from 'superjson'
 
 import { AuthStoreInitializer } from '@/features/auth/stores/AuthStoreInitializer'
 import { CommandPaletteProvider, useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
@@ -54,6 +55,7 @@ export const Providers = ({ children }: ProvidersProps) => {
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
+          transformer: superjson,
           headers() {
             const headers: Record<string, string> = {}
             if (typeof window !== 'undefined') {

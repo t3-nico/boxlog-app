@@ -24,3 +24,10 @@ export const ticketFilterSchema = z.object({
   priority: ticketPrioritySchema.optional(),
   search: z.string().optional(),
 })
+
+// 型エクスポート
+export type CreateTicketInput = z.infer<typeof createTicketSchema>
+export type UpdateTicketInput = z.infer<typeof updateTicketSchema>
+export type TicketStatus = z.infer<typeof ticketStatusSchema>
+export type TicketPriority = z.infer<typeof ticketPrioritySchema>
+export type TicketFilter = z.infer<typeof ticketFilterSchema>
