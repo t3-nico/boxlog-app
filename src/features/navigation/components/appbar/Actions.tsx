@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { NotificationDropdown } from '@/features/notifications'
 import { TicketForm } from '@/features/tickets/components'
 import { useTicketStore } from '@/features/tickets/stores'
-import { api } from '@/lib/trpc/client'
+import { api } from '@/lib/trpc'
 import type { CreateTicketInput } from '@/schemas/tickets/ticket'
 import { Moon, PlusCircle, Search, Sun } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
