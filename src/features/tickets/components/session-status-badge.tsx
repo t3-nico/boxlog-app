@@ -1,0 +1,51 @@
+'use client'
+
+import { Badge } from '@/components/ui/badge'
+import type { SessionStatus } from '../types/session'
+
+interface SessionStatusBadgeProps {
+  status: SessionStatus
+  size?: 'sm' | 'md' | 'lg'
+}
+
+const STATUS_CONFIG: Record<
+  SessionStatus,
+  {
+    label: string
+    className: string
+  }
+> = {
+  planned: {
+    label: '予定',
+    className: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800',
+  },
+  in_progress: {
+    label: '実行中',
+    className:
+      'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800',
+  },
+  completed: {
+    label: '完了',
+    className: 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800',
+  },
+  cancelled: {
+    label: 'キャンセル',
+    className: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800',
+  },
+}
+
+const SIZE_CLASSES = {
+  sm: 'text-xs px-2 py-0.5',
+  md: 'text-sm px-3 py-1',
+  lg: 'text-base px-4 py-1.5',
+}
+
+export function SessionStatusBadge({ status, size = 'sm' }: SessionStatusBadgeProps) {
+  const config = STATUS_CONFIG[status]
+
+  return (
+    <Badge variant="outline" className={`${config.className} ${SIZE_CLASSES[size]} font-medium`}>
+      {config.label}
+    </Badge>
+  )
+}

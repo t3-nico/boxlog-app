@@ -46,9 +46,10 @@ export function CalendarSidebar() {
         <div className="flex w-full flex-col">
           <MiniCalendar
             selectedDate={navigation?.currentDate}
+            month={navigation?.currentDate}
             onDateSelect={(date) => {
               if (date && navigation) {
-                navigation.navigateToDate(date)
+                navigation.navigateToDate(date, true)
               }
             }}
             showWeekNumbers={true}

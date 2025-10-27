@@ -2,7 +2,7 @@
 // TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 import { describe, expect, it } from 'vitest'
 
-import type { Event } from '@/features/events/types/events'
+import type { Event } from '@/features/calendar/types/calendar.types'
 
 import {
   eventToTimedEvent,

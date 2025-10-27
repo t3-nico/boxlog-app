@@ -1,7 +1,8 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
+// TODO(#621): Events削除後、Tickets/Sessionsに移行予定
 'use client'
 
-import { Event } from '@/features/events/types/events'
+// import { Event } from '@/features/events/types/events'
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
 import { SmartFolder } from '@/types/smart-folders'
 import { DeletedItem } from '@/types/trash'
@@ -49,7 +50,7 @@ export const useDelete = () => {
     // Delete implementation tracked in Issue #85
   }
 
-  const deleteEvent = async (event: Event, originalPath?: string) => {
+  const deleteEvent = async (event: DeletableItem, originalPath?: string) => {
     await deleteWithTrash(event, 'event', originalPath)
     // Delete implementation tracked in Issue #85
   }

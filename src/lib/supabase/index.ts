@@ -18,7 +18,8 @@ export { createClient as createBrowserClient, type SupabaseClient } from './clie
 export { updateSession } from './middleware'
 
 // Client Components用フック
-export { useAuth, useProfile, useTasks } from './hooks'
+// 注: useTasks は削除済み（src/features/tickets/hooks/useTickets.ts を使用）
+export { useAuth, useProfile } from './hooks'
 
 // ユーティリティ
 export * from './utils'

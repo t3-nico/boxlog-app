@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { RotateCcw, Undo2, X } from 'lucide-react'
 
-import type { CalendarEvent } from '@/features/events'
+// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 

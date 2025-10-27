@@ -17,9 +17,7 @@ import { createClient } from './client'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
-type Task = Database['public']['Tables']['tasks']['Row']
-type TaskInsert = Database['public']['Tables']['tasks']['Insert']
-type TaskUpdate = Database['public']['Tables']['tasks']['Update']
+// 注: Task型は削除済み（Ticketsに移行）
 
 /**
  * 認証状態を管理するフック
@@ -212,112 +210,5 @@ export function useProfile() {
 /**
  * タスク管理フック
  */
-export function useTasks() {
-  const { user } = useAuth()
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const fetchTasks = useCallback(async () => {
-    if (!user) return
-
-    const supabase = createClient()
-    try {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('tasks')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setTasks(data || [])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch tasks')
-    } finally {
-      setLoading(false)
-    }
-  }, [user])
-
-  const createTask = useCallback(
-    async (task: TaskInsert) => {
-      if (!user) return
-
-      const supabase = createClient()
-      try {
-        setLoading(true)
-        const insertData: Database['public']['Tables']['tasks']['Insert'] = {
-          ...task,
-          user_id: user.id,
-        }
-        // @ts-expect-error - Supabase型推論の問題（既知の問題、src/server/api/routers/profile.ts:44参照）
-        const { data, error } = await supabase.from('tasks').insert(insertData).select().single()
-
-        if (error) throw error
-        setTasks((prev) => [data, ...prev])
-        return { data, error: null }
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to create task'
-        setError(message)
-        return { data: null, error: message }
-      } finally {
-        setLoading(false)
-      }
-    },
-    [user]
-  )
-
-  const updateTask = useCallback(async (id: string, updates: TaskUpdate) => {
-    const supabase = createClient()
-    try {
-      setLoading(true)
-      const updateData: Database['public']['Tables']['tasks']['Update'] = {
-        ...updates,
-      }
-      // @ts-expect-error - Supabase型推論の問題（既知の問題、src/server/api/routers/profile.ts:44参照）
-      const { data, error } = await supabase.from('tasks').update(updateData).eq('id', id).select().single()
-
-      if (error) throw error
-      setTasks((prev) => prev.map((task) => (task.id === id ? data : task)))
-      return { data, error: null }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to update task'
-      setError(message)
-      return { data: null, error: message }
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  const deleteTask = useCallback(async (id: string) => {
-    const supabase = createClient()
-    try {
-      setLoading(true)
-      const { error } = await supabase.from('tasks').delete().eq('id', id)
-
-      if (error) throw error
-      setTasks((prev) => prev.filter((task) => task.id !== id))
-      return { error: null }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to delete task'
-      setError(message)
-      return { error: message }
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchTasks()
-  }, [fetchTasks])
-
-  return {
-    tasks,
-    loading,
-    error,
-    createTask,
-    updateTask,
-    deleteTask,
-    refetch: fetchTasks,
-  }
-}
+// 注: useTasks関数は削除済み（Tickets/Sessions機能に移行）
+// src/features/tickets/hooks/useTickets.tsを使用してください

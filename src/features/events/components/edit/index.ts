@@ -1,1 +1,0 @@
-export { EditEventModal } from './EditEventModal'

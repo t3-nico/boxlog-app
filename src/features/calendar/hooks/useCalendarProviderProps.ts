@@ -21,7 +21,8 @@ export function useCalendarProviderProps(
   pathname: string,
   searchParams: URLSearchParams
 ): UseCalendarProviderPropsReturn {
-  const isCalendarPage = pathname.startsWith('/calendar')
+  // ロケールプレフィックス対応: /ja/calendar, /en/calendar 等
+  const isCalendarPage = pathname.includes('/calendar')
 
   if (!isCalendarPage) {
     return { isCalendarPage, calendarProviderProps: null }

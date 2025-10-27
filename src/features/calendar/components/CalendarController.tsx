@@ -1,5 +1,6 @@
 // @ts-nocheck
 // TODO(#389): 型エラーを修正後、@ts-nocheckを削除
+// TODO(#621): Events/Tasks削除後の一時的な型エラー回避
 'use client'
 
 import React, { Suspense, useCallback, useEffect, useMemo } from 'react'
@@ -8,13 +9,14 @@ import { useRouter } from 'next/navigation'
 
 import { format } from 'date-fns'
 
-import { useEventStore } from '@/features/events'
-import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
-import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
+// import { useEventStore } from '@/features/calendar/types/calendar.types'
+// TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
+// import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
+// import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'
-import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
+// import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { logger } from '@/lib/logger'
 
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
@@ -117,34 +119,37 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   // キーボードショートカット（Cmd/Ctrl + W）
   useWeekendToggleShortcut()
-  const taskStore = useTaskStore()
-  const { getTasksForDateRange } = taskStore
+  // TODO(#621): Tasks削除後、Tickets/Sessions統合後に再実装
+  // const taskStore = useTaskStore()
+  // const { getTasksForDateRange } = taskStore
 
-  const eventStore = useEventStore()
-  const { events } = eventStore
+  // const eventStore = useEventStore()
+  // const { events } = eventStore
 
   // デバッグ: イベントストアの状態を確認
-  logger.log('🔍 EventStore状態確認:', {
-    eventsCount: events.length,
-    events: events.slice(0, 3).map((e) => ({
-      id: e.id,
-      title: e.title,
-      startDate: e.startDate?.toISOString?.(),
-      endDate: e.endDate?.toISOString?.(),
-      isDeleted: e.isDeleted,
-    })),
-  })
+  // logger.log('🔍 EventStore状態確認:', {
+  //   eventsCount: events.length,
+  //   events: events.slice(0, 3).map((e) => ({
+  //     id: e.id,
+  //     title: e.title,
+  //     startDate: e.startDate?.toISOString?.(),
+  //     endDate: e.endDate?.toISOString?.(),
+  //     isDeleted: e.isDeleted,
+  //   })),
+  // })
 
-  const { openCreateInspector } = useCreateEventInspector()
-  const { setSelectedEvent, setActiveContent, setInspectorOpen } = useInspectorStore()
+  // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
+  // const { openCreateInspector } = useCreateEventInspector()
+  // const { setSelectedEvent, setActiveContent, setInspectorOpen } = useInspectorStore()
 
   // 通知機能の統合
+  // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
   const {
     permission: notificationPermission,
     hasRequested: hasRequestedNotification,
     requestPermission: requestNotificationPermission,
   } = useNotifications({
-    events,
+    events: [], // TODO(#621): Sessions統合後に実装
     onReminderTriggered: () => {
       // Reminder triggered for event
     },
@@ -212,137 +217,143 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   }, [viewType, currentDate])
 
   // 表示範囲のタスクを取得
+  // TODO(#621): Tasks削除後、Tickets/Sessions統合後に再実装
   const filteredTasks = useMemo(() => {
-    return getTasksForDateRange(viewDateRange.start, viewDateRange.end)
-  }, [getTasksForDateRange, viewDateRange.start, viewDateRange.end])
+    return [] // TODO(#621): Sessions統合後に実装
+    // return getTasksForDateRange(viewDateRange.start, viewDateRange.end)
+  }, [viewDateRange.start, viewDateRange.end])
 
   // 表示範囲のイベントを取得してCalendarEvent型に変換（削除済みを除外）
+  // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
   const filteredEvents = useMemo(() => {
+    // TODO(#621): Sessions統合後に実装
+    return []
+
     // サーバーサイドでは空配列を返してhydrationエラーを防ぐ
-    if (typeof window === 'undefined') {
-      return []
-    }
+    // if (typeof window === 'undefined') {
+    //   return []
+    // }
 
-    // 日付範囲を年月日のみで比較するため、時刻をリセット
-    const startDateOnly = new Date(
-      viewDateRange.start.getFullYear(),
-      viewDateRange.start.getMonth(),
-      viewDateRange.start.getDate()
-    )
-    const endDateOnly = new Date(
-      viewDateRange.end.getFullYear(),
-      viewDateRange.end.getMonth(),
-      viewDateRange.end.getDate()
-    )
+    // // 日付範囲を年月日のみで比較するため、時刻をリセット
+    // const startDateOnly = new Date(
+    //   viewDateRange.start.getFullYear(),
+    //   viewDateRange.start.getMonth(),
+    //   viewDateRange.start.getDate()
+    // )
+    // const endDateOnly = new Date(
+    //   viewDateRange.end.getFullYear(),
+    //   viewDateRange.end.getMonth(),
+    //   viewDateRange.end.getDate()
+    // )
 
-    // 全ビューでデバッグログを追加
-    logger.log(`🔧 ${viewType} FilteredEvents Debug:`, {
-      viewType,
-      totalEvents: events.length,
-      dateRange: { start: viewDateRange.start.toDateString(), end: viewDateRange.end.toDateString() },
-      startDateOnly: startDateOnly.toDateString(),
-      endDateOnly: endDateOnly.toDateString(),
-    })
+    // // 全ビューでデバッグログを追加
+    // logger.log(`🔧 ${viewType} FilteredEvents Debug:`, {
+    //   viewType,
+    //   totalEvents: events.length,
+    //   dateRange: { start: viewDateRange.start.toDateString(), end: viewDateRange.end.toDateString() },
+    //   startDateOnly: startDateOnly.toDateString(),
+    //   endDateOnly: endDateOnly.toDateString(),
+    // })
 
-    const filteredByRange = events.filter((event) => {
-      // 削除済みイベントを除外
-      if (event.isDeleted) {
-        return false
-      }
+    // const filteredByRange = events.filter((event) => {
+    //   // 削除済みイベントを除外
+    //   if (event.isDeleted) {
+    //     return false
+    //   }
 
-      // startDateがない場合はフィルタリングから除外
-      if (!event.startDate) {
-        return false
-      }
+    //   // startDateがない場合はフィルタリングから除外
+    //   if (!event.startDate) {
+    //     return false
+    //   }
 
-      // startDateをDateオブジェクトに変換（文字列の場合に対応）
-      const startDate = event.startDate instanceof Date ? event.startDate : new Date(event.startDate)
-      if (isNaN(startDate.getTime())) {
-        return false
-      }
+    //   // startDateをDateオブジェクトに変換（文字列の場合に対応）
+    //   const startDate = event.startDate instanceof Date ? event.startDate : new Date(event.startDate)
+    //   if (isNaN(startDate.getTime())) {
+    //     return false
+    //   }
 
-      // イベントの日付も年月日のみで比較
-      const eventStartDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
-      let eventEndDateOnly = eventStartDateOnly
-      if (event.endDate) {
-        const endDate = event.endDate instanceof Date ? event.endDate : new Date(event.endDate)
-        if (!isNaN(endDate.getTime())) {
-          eventEndDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
-        }
-      }
+    //   // イベントの日付も年月日のみで比較
+    //   const eventStartDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+    //   let eventEndDateOnly = eventStartDateOnly
+    //   if (event.endDate) {
+    //     const endDate = event.endDate instanceof Date ? event.endDate : new Date(event.endDate)
+    //     if (!isNaN(endDate.getTime())) {
+    //       eventEndDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
+    //     }
+    //   }
 
-      return (
-        (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
-        (eventEndDateOnly >= startDateOnly && eventEndDateOnly <= endDateOnly) ||
-        (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
-      )
-    })
+    //   return (
+    //     (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
+    //     (eventEndDateOnly >= startDateOnly && eventEndDateOnly <= endDateOnly) ||
+    //     (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
+    //   )
+    // })
 
-    // 全ビューでフィルタリング結果のログを出力
-    logger.log(`[CalendarController] ${viewType}イベントフィルタリング:`, {
-      totalEvents: events.length,
-      filteredCount: filteredByRange.length,
-      dateRange: {
-        start: startDateOnly.toDateString(),
-        end: endDateOnly.toDateString(),
-      },
-      sampleEvents: filteredByRange.slice(0, 3).map((e) => ({
-        title: e.title,
-        startDate: e.startDate?.toDateString?.() || e.startDate,
-        originalStartDate: e.startDate instanceof Date ? e.startDate.toISOString() : e.startDate,
-      })),
-    })
+    // // 全ビューでフィルタリング結果のログを出力
+    // logger.log(`[CalendarController] ${viewType}イベントフィルタリング:`, {
+    //   totalEvents: events.length,
+    //   filteredCount: filteredByRange.length,
+    //   dateRange: {
+    //     start: startDateOnly.toDateString(),
+    //     end: endDateOnly.toDateString(),
+    //   },
+    //   sampleEvents: filteredByRange.slice(0, 3).map((e) => ({
+    //     title: e.title,
+    //     startDate: e.startDate?.toDateString?.() || e.startDate,
+    //     originalStartDate: e.startDate instanceof Date ? e.startDate.toISOString() : e.startDate,
+    //   })),
+    // })
 
-    // Event[]をCalendarEvent[]に変換（安全な日付処理）
-    const calendarEvents = filteredByRange.map((event) => {
-      // startDate を安全にDateオブジェクトに変換
-      const startDate = event.startDate
-        ? event.startDate instanceof Date
-          ? event.startDate
-          : new Date(event.startDate)
-        : new Date()
+    // // Event[]をCalendarEvent[]に変換（安全な日付処理）
+    // const calendarEvents = filteredByRange.map((event) => {
+    //   // startDate を安全にDateオブジェクトに変換
+    //   const startDate = event.startDate
+    //     ? event.startDate instanceof Date
+    //       ? event.startDate
+    //       : new Date(event.startDate)
+    //     : new Date()
 
-      // endDate を安全にDateオブジェクトに変換
-      const endDate = event.endDate
-        ? event.endDate instanceof Date
-          ? event.endDate
-          : new Date(event.endDate)
-        : new Date()
+    //   // endDate を安全にDateオブジェクトに変換
+    //   const endDate = event.endDate
+    //     ? event.endDate instanceof Date
+    //       ? event.endDate
+    //       : new Date(event.endDate)
+    //     : new Date()
 
-      // 無効な日付の場合はデフォルト値を使用
-      const validStartDate = isNaN(startDate.getTime()) ? new Date() : startDate
-      const validEndDate = isNaN(endDate.getTime()) ? new Date() : endDate
+    //   // 無効な日付の場合はデフォルト値を使用
+    //   const validStartDate = isNaN(startDate.getTime()) ? new Date() : startDate
+    //   const validEndDate = isNaN(endDate.getTime()) ? new Date() : endDate
 
-      return {
-        ...event,
-        startDate: validStartDate,
-        endDate: validEndDate,
-        displayStartDate: validStartDate,
-        displayEndDate: validEndDate,
-        duration:
-          event.endDate && event.startDate
-            ? (validEndDate.getTime() - validStartDate.getTime()) / (1000 * 60) // minutes
-            : 60, // default 1 hour
-        isMultiDay:
-          event.startDate && event.endDate ? validStartDate.toDateString() !== validEndDate.toDateString() : false,
-        isRecurring: event.isRecurring || false,
-        type: event.type || 'event',
-      }
-    })
+    //   return {
+    //     ...event,
+    //     startDate: validStartDate,
+    //     endDate: validEndDate,
+    //     displayStartDate: validStartDate,
+    //     displayEndDate: validEndDate,
+    //     duration:
+    //       event.endDate && event.startDate
+    //         ? (validEndDate.getTime() - validStartDate.getTime()) / (1000 * 60) // minutes
+    //         : 60, // default 1 hour
+    //     isMultiDay:
+    //       event.startDate && event.endDate ? validStartDate.toDateString() !== validEndDate.toDateString() : false,
+    //     isRecurring: event.isRecurring || false,
+    //     type: event.type || 'event',
+    //   }
+    // })
 
-    if (viewType === '2week') {
-      logger.log('🔧 TwoWeekView Filtered Result:', {
-        filteredEventsCount: calendarEvents.length,
-        sampleEvents: calendarEvents.slice(0, 3).map((e) => ({
-          id: e.id,
-          title: e.title,
-          startDate: e.startDate.toISOString(),
-        })),
-      })
-    }
+    // if (viewType === '2week') {
+    //   logger.log('🔧 TwoWeekView Filtered Result:', {
+    //     filteredEventsCount: calendarEvents.length,
+    //     sampleEvents: calendarEvents.slice(0, 3).map((e) => ({
+    //       id: e.id,
+    //       title: e.title,
+    //       startDate: e.startDate.toISOString(),
+    //     })),
+    //   })
+    // }
 
-    return calendarEvents
-  }, [events, viewDateRange.start, viewDateRange.end, viewType])
+    // return calendarEvents
+  }, [viewDateRange.start, viewDateRange.end, viewType])
 
   // タスククリックハンドラー
   const handleTaskClick = useCallback(() => {
@@ -350,15 +361,14 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   }, [])
 
   // イベント関連のハンドラー
-  const handleEventClick = useCallback(
-    (event: CalendarEvent) => {
-      // イベント詳細表示モードでInspectorを開く
-      setSelectedEvent(event)
-      setActiveContent('event')
-      setInspectorOpen(true)
-    },
-    [setSelectedEvent, setActiveContent, setInspectorOpen]
-  )
+  const handleEventClick = useCallback((_event: CalendarEvent) => {
+    // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
+    // イベント詳細表示モードでInspectorを開く
+    // setSelectedEvent(event)
+    // setActiveContent('event')
+    // setInspectorOpen(true)
+    console.log('TODO: Sessions統合後に実装')
+  }, [])
 
   const handleCreateEvent = useCallback(
     (date?: Date, time?: string) => {
@@ -403,25 +413,27 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         }
       }
 
+      // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
       // CreateEventInspectorを新規作成モードで開く
-      if (startTime && endTime && date) {
-        openCreateInspector({
-          initialData: {
-            startDate: startTime,
-            endDate: endTime,
-            type: 'event',
-            status: 'planned',
-            priority: 'necessary',
-          },
-          context: {
-            source: 'calendar',
-            date,
-            viewType,
-          },
-        })
-      }
+      // if (startTime && endTime && date) {
+      //   openCreateInspector({
+      //     initialData: {
+      //       startDate: startTime,
+      //       endDate: endTime,
+      //       type: 'event',
+      //       status: 'planned',
+      //       priority: 'necessary',
+      //     },
+      //     context: {
+      //       source: 'calendar',
+      //       date,
+      //       viewType,
+      //     },
+      //   })
+      // }
+      console.log('TODO: Sessions統合後に実装', { startTime, endTime, date })
     },
-    [openCreateInspector, viewType, currentDate]
+    [viewType, currentDate]
   )
 
   // 週末スキップナビゲーション（フック化）
@@ -570,8 +582,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   )
 
   // タスク作成ハンドラー
+  // TODO(#621): Tasks削除後、Tickets/Sessions統合後に再実装
   const handleCreateTask = useCallback(
-    (taskData: {
+    (_taskData: {
       title: string
       planned_start: Date
       planned_duration: number
@@ -580,9 +593,10 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       description?: string
       tags?: string[]
     }) => {
-      taskStore.createTask(taskData)
+      console.log('TODO: Sessions統合後に実装')
+      // taskStore.createTask(taskData)
     },
-    [taskStore]
+    []
   )
 
   // 記録作成ハンドラー
@@ -641,23 +655,25 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         endDate: endTime,
       })
 
+      // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
       // CreateEventInspectorを開く
-      openCreateInspector({
-        initialData: {
-          startDate: startTime,
-          endDate: endTime,
-          type: 'event',
-          status: 'planned',
-          priority: 'necessary',
-        },
-        context: {
-          source: 'calendar',
-          date: selection.date,
-          viewType,
-        },
-      })
+      // openCreateInspector({
+      //   initialData: {
+      //     startDate: startTime,
+      //     endDate: endTime,
+      //     type: 'event',
+      //     status: 'planned',
+      //     priority: 'necessary',
+      //   },
+      //   context: {
+      //     source: 'calendar',
+      //     date: selection.date,
+      //     viewType,
+      //   },
+      // })
+      console.log('TODO: Sessions統合後に実装', { startTime, endTime, selection })
     },
-    [openCreateInspector, viewType]
+    [viewType]
   )
 
   return (

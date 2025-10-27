@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useRef } from 'react'
 
-import type { CalendarEvent } from '@/features/events'
+import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
 // メモ化キーの生成
 interface MemoizationKey {

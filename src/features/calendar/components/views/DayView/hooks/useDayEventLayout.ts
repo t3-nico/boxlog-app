@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { useMemo } from 'react'
 
-import type { CalendarEvent } from '@/features/events'
+// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
 import { useEventPositioning } from '../../shared/hooks/useEventPositioning'
 import type { EventPosition } from '../DayView.types'

@@ -4,7 +4,7 @@
  * 正規化、インデックス化、クエリ最適化を提供
  */
 
-import type { CalendarEvent } from '@/features/events'
+// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
 // 正規化されたイベントデータ
 interface NormalizedEvent {

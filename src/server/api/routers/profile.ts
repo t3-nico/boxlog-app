@@ -35,7 +35,7 @@ export const profileRouter = createTRPCRouter({
 
       // profiles テーブルを更新
       const updateData: Database['public']['Tables']['profiles']['Update'] = {
-        name: input.username,
+        username: input.username,
         avatar_url: input.avatarUrl ?? null,
         updated_at: new Date().toISOString(),
       }

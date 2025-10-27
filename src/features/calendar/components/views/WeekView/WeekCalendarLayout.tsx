@@ -8,7 +8,7 @@ import { X } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
-import type { CalendarEvent } from '@/features/events'
+// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'

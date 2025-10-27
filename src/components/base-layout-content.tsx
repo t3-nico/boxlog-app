@@ -13,8 +13,9 @@ import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarP
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 
-import { Inspector } from '@/features/inspector'
-import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
+// TODO(#621): Inspector削除後の一時的な型エラー回避
+// import { Inspector } from '@/features/inspector'
+// import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
 
@@ -30,19 +31,21 @@ interface BaseLayoutContentProps {
  */
 export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const { t } = useI18n()
-  const { openCreateInspector } = useCreateEventInspector()
+  // const { openCreateInspector } = useCreateEventInspector()
   const isMobile = useMediaQuery('(max-width: 768px)')
   const pathname = usePathname() || '/'
   const searchParams = useSearchParams()
 
+  // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
   // jsx-no-bind optimization: Create event handler
   const handleCreateEventClick = useCallback(() => {
-    openCreateInspector({
-      context: {
-        source: 'fab',
-      },
-    })
-  }, [openCreateInspector])
+    // openCreateInspector({
+    //   context: {
+    //     source: 'fab',
+    //   },
+    // })
+    console.log('TODO: Sessions統合後に実装')
+  }, [])
 
   const { isCalendarPage, calendarProviderProps } = useCalendarProviderProps(
     pathname,
@@ -81,8 +84,8 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
                   </main>
                 </div>
 
-                {/* Inspector - 右端 */}
-                <Inspector />
+                {/* TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装 */}
+                {/* <Inspector /> */}
               </div>
             </div>
           </ResizablePanel>
