@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { TicketForm } from '@/features/tickets/components'
 import { useTicketStore } from '@/features/tickets/stores'
-import { trpc } from '@/lib/trpc'
+import { api } from '@/lib/trpc'
 import type { CreateTicketInput } from '@/schemas/tickets/ticket'
 
 export function QuickCreateButton() {
@@ -20,7 +20,7 @@ export function QuickCreateButton() {
 
   const [isTicketDialogOpen, setIsTicketDialogOpen] = useState(false)
 
-  const createTicketMutation = trpc.tickets.create.useMutation({
+  const createTicketMutation = api.tickets.create.useMutation({
     onSuccess: (newTicket) => {
       addTicket(newTicket)
       setIsTicketDialogOpen(false)

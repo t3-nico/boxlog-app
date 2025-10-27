@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 
-import { trpc } from '@/lib/trpc'
+import { api } from '@/lib/trpc'
 
 /**
  * チケット・セッションとタグの関連付け管理フック
@@ -11,12 +11,12 @@ export function useTicketTags() {
   const [error, setError] = useState<string | null>(null)
 
   // tRPC Mutation統合（チケットタグ）
-  const addTicketTagMutation = trpc.tickets.addTag.useMutation()
-  const removeTicketTagMutation = trpc.tickets.removeTag.useMutation()
+  const addTicketTagMutation = api.tickets.addTag.useMutation()
+  const removeTicketTagMutation = api.tickets.removeTag.useMutation()
 
   // tRPC Mutation統合（セッションタグ）
-  const addSessionTagMutation = trpc.tickets.addSessionTag.useMutation()
-  const removeSessionTagMutation = trpc.tickets.removeSessionTag.useMutation()
+  const addSessionTagMutation = api.tickets.addSessionTag.useMutation()
+  const removeSessionTagMutation = api.tickets.removeSessionTag.useMutation()
 
   /**
    * チケットにタグを追加

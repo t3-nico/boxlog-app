@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { TicketForm } from '@/features/tickets/components'
 import { useTicketStore } from '@/features/tickets/stores'
-import { trpc } from '@/lib/trpc'
+import { api } from '@/lib/trpc'
 import type { CreateTicketInput } from '@/schemas/tickets/ticket'
 
 interface TicketCreateButtonProps {
@@ -30,7 +30,7 @@ export function TicketCreateButton({ label, onClick }: TicketCreateButtonProps) 
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
 
   // Ticket作成mutation
-  const createTicketMutation = trpc.tickets.create.useMutation({
+  const createTicketMutation = api.tickets.create.useMutation({
     onSuccess: (newTicket) => {
       addTicket(newTicket)
       setIsTicketDialogOpen(false)

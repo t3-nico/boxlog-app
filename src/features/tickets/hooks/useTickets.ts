@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react'
 
-import { trpc } from '@/lib/trpc'
+import { api } from '@/lib/trpc'
 import { useTicketStore } from '../stores/useTicketStore'
 import type { CreateTicketInput, Ticket, UpdateTicketInput } from '../types/ticket'
 
@@ -31,7 +31,7 @@ export function useTickets() {
   } = useTicketStore()
 
   // tRPC Query統合
-  const { data: ticketsData, isLoading: isFetchingTickets, error: fetchError } = trpc.tickets.list.useQuery(filters)
+  const { data: ticketsData, isLoading: isFetchingTickets, error: fetchError } = api.tickets.list.useQuery(filters)
 
   // 取得したデータをStoreに同期
   useEffect(() => {
@@ -69,7 +69,7 @@ export function useTickets() {
   }, [])
 
   // tRPC Mutation統合
-  const createMutation = trpc.tickets.create.useMutation({
+  const createMutation = api.tickets.create.useMutation({
     onSuccess: (newTicket) => {
       addTicket(newTicket)
     },
@@ -95,7 +95,7 @@ export function useTickets() {
     [createMutation, setError]
   )
 
-  const updateMutation = trpc.tickets.update.useMutation({
+  const updateMutation = api.tickets.update.useMutation({
     onSuccess: (updatedTicket) => {
       updateTicketStore(updatedTicket.id, updatedTicket)
     },
@@ -121,7 +121,7 @@ export function useTickets() {
     [updateMutation, setError]
   )
 
-  const deleteMutation = trpc.tickets.delete.useMutation({
+  const deleteMutation = api.tickets.delete.useMutation({
     onSuccess: (_, variables) => {
       removeTicket(variables.id)
     },

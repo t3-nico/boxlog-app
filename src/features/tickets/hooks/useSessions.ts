@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react'
 
-import { trpc } from '@/lib/trpc'
+import { api } from '@/lib/trpc'
 import { useSessionStore } from '../stores/useSessionStore'
 import type { CreateSessionInput, Session, UpdateSessionInput } from '../types/session'
 
@@ -41,7 +41,7 @@ export function useSessions() {
     data: sessionsData,
     isLoading: isFetchingSessions,
     error: fetchError,
-  } = trpc.tickets.sessions.list.useQuery(filters)
+  } = api.tickets.sessions.list.useQuery(filters)
 
   // 取得したデータをStoreに同期
   useEffect(() => {
@@ -79,7 +79,7 @@ export function useSessions() {
   }, [])
 
   // tRPC Mutation統合
-  const createMutation = trpc.tickets.sessions.create.useMutation({
+  const createMutation = api.tickets.sessions.create.useMutation({
     onSuccess: (newSession) => {
       addSession(newSession)
     },
@@ -105,7 +105,7 @@ export function useSessions() {
     [createMutation, setError]
   )
 
-  const updateMutation = trpc.tickets.sessions.update.useMutation({
+  const updateMutation = api.tickets.sessions.update.useMutation({
     onSuccess: (updatedSession) => {
       updateSessionStore(updatedSession.id, updatedSession)
     },
@@ -131,7 +131,7 @@ export function useSessions() {
     [updateMutation, setError]
   )
 
-  const deleteMutation = trpc.tickets.sessions.delete.useMutation({
+  const deleteMutation = api.tickets.sessions.delete.useMutation({
     onSuccess: (_, variables) => {
       removeSession(variables.id)
     },
