@@ -4,7 +4,6 @@ import { NotificationDropdown } from '@/features/notifications'
 import { Moon, Search, Sun } from 'lucide-react'
 import { useCallback } from 'react'
 import { Item } from './Item'
-import { TicketCreateButton } from './ticket-create-button'
 
 interface ActionsProps {
   onSearch: () => void
@@ -16,7 +15,7 @@ interface ActionsProps {
 /**
  * AppBarアクションセクション
  *
- * Ticket作成、Search、Theme、Notificationsのアクションボタンを表示
+ * Search、Theme、Notificationsのアクションボタンを表示
  * useCallbackを使用してjsx-no-bind警告を回避
  */
 export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsProps) {
@@ -39,7 +38,6 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
 
   return (
     <div className="bg-sidebar flex flex-col items-center gap-2 px-2">
-      <TicketCreateButton label="チケット作成" />
       <Item icon={Search} label={t('actions.search')} url="#" isActive={false} onClick={handleSearchClick} />
       <Item
         icon={resolvedTheme === 'light' ? Moon : Sun}
