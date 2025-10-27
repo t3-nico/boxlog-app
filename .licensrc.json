@@ -1,3 +1,33 @@
 {
-  "onlyAllow": "MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;MPL-2.0;CC0-1.0;CC-BY-4.0;0BSD;Unlicense;BlueOak-1.0.0;Python-2.0;(MIT OR CC0-1.0);(AFL-2.1 OR BSD-3-Clause);(MPL-2.0 OR Apache-2.0);MIT*"
+  "$comment": "SPDX License List v3.27 準拠 - OSS Review Board ガイドラインに基づく許可リスト",
+  "onlyAllow": "MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;MPL-2.0;CC0-1.0;CC-BY-4.0;0BSD;Unlicense;BlueOak-1.0.0;Python-2.0;(MIT OR CC0-1.0);(AFL-2.1 OR BSD-3-Clause);(MPL-2.0 OR Apache-2.0);MIT*;MIT AND ISC",
+  "prohibited": {
+    "licenses": [
+      "GPL-2.0",
+      "GPL-2.0-only",
+      "GPL-2.0-or-later",
+      "GPL-3.0",
+      "GPL-3.0-only",
+      "GPL-3.0-or-later",
+      "AGPL-3.0",
+      "AGPL-3.0-only",
+      "AGPL-3.0-or-later",
+      "LGPL-2.1",
+      "LGPL-2.1-only",
+      "LGPL-2.1-or-later",
+      "LGPL-3.0",
+      "LGPL-3.0-only",
+      "LGPL-3.0-or-later",
+      "EUPL-1.1",
+      "EUPL-1.2",
+      "CDDL-1.0",
+      "EPL-1.0",
+      "EPL-2.0"
+    ],
+    "reason": "Strong copyleft licenses that require source code disclosure or have incompatible terms with commercial SaaS"
+  },
+  "warning": {
+    "licenses": ["MPL-2.0"],
+    "reason": "Weak copyleft - file-level copyleft. Acceptable but requires review."
+  }
 }

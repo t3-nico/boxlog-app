@@ -2,3 +2,13 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 npx lint-staged
+
+# License check if package.json or package-lock.json changed
+if git diff --cached --name-only | grep -E "package(-lock)?.json" > /dev/null; then
+  echo "📦 Checking licenses..."
+  npm run license:check || {
+    echo "❌ License check failed. Please ensure all dependencies use approved licenses."
+    echo "   See .licensrc.json for allowed licenses."
+    exit 1
+  }
+fi

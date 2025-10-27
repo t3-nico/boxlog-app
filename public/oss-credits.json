@@ -1483,7 +1483,7 @@
   },
   {
     "name": "@swc/helpers",
-    "version": "0.5.17",
+    "version": "0.5.15",
     "license": "Apache-2.0",
     "repository": "https://github.com/swc-project/swc",
     "publisher": "강동윤"
@@ -2112,6 +2112,12 @@
     "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
   },
   {
+    "name": "@types/prismjs",
+    "version": "1.26.5",
+    "license": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+  },
+  {
     "name": "@types/prop-types",
     "version": "15.7.15",
     "license": "MIT",
@@ -2184,11 +2190,50 @@
     "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
   },
   {
+    "name": "@uiw/copy-to-clipboard",
+    "version": "1.0.17",
+    "license": "MIT",
+    "repository": "https://github.com/uiwjs/copy-to-clipboard",
+    "publisher": "Kenny Wang"
+  },
+  {
+    "name": "@uiw/react-markdown-preview",
+    "version": "5.1.5",
+    "license": "MIT",
+    "repository": "https://github.com/uiwjs/react-markdown-preview",
+    "publisher": "kenny wang"
+  },
+  {
+    "name": "@uiw/react-md-editor",
+    "version": "4.0.8",
+    "license": "MIT",
+    "repository": "https://github.com/uiwjs/react-md-editor",
+    "publisher": "kenny wang"
+  },
+  {
     "name": "@ungap/structured-clone",
     "version": "1.3.0",
     "license": "ISC",
     "repository": "https://github.com/ungap/structured-clone",
     "publisher": "Andrea Giammarchi"
+  },
+  {
+    "name": "@upstash/core-analytics",
+    "version": "0.0.10",
+    "license": "MIT",
+    "publisher": "Andreas Thomas"
+  },
+  {
+    "name": "@upstash/ratelimit",
+    "version": "2.0.6",
+    "license": "MIT"
+  },
+  {
+    "name": "@upstash/redis",
+    "version": "1.35.6",
+    "license": "MIT",
+    "repository": "https://github.com/upstash/upstash-redis",
+    "publisher": "Andreas Thomas"
   },
   {
     "name": "@vercel/analytics",
@@ -2446,6 +2491,13 @@
     "repository": "https://github.com/web-platform-dx/baseline-browser-mapping"
   },
   {
+    "name": "bcp-47-match",
+    "version": "2.0.3",
+    "license": "MIT",
+    "repository": "https://github.com/wooorm/bcp-47-match",
+    "publisher": "Titus Wormer"
+  },
+  {
     "name": "binary-extensions",
     "version": "2.3.0",
     "license": "MIT",
@@ -2453,8 +2505,15 @@
     "publisher": "Sindre Sorhus"
   },
   {
+    "name": "boolbase",
+    "version": "1.0.0",
+    "license": "ISC",
+    "repository": "https://github.com/fb55/boolbase",
+    "publisher": "Felix Boehm"
+  },
+  {
     "name": "boxlog-app",
-    "version": "0.1.0",
+    "version": "0.2.1",
     "license": "UNLICENSED"
   },
   {
@@ -2785,6 +2844,13 @@
     "publisher": "Alex Reardon"
   },
   {
+    "name": "css-selector-parser",
+    "version": "3.1.3",
+    "license": "MIT",
+    "repository": "https://github.com/mdevils/css-selector-parser",
+    "publisher": "Marat Dulin"
+  },
+  {
     "name": "csstype",
     "version": "3.1.3",
     "license": "MIT",
@@ -3102,6 +3168,13 @@
     "publisher": "Sindre Sorhus"
   },
   {
+    "name": "decimal.js-light",
+    "version": "2.5.1",
+    "license": "MIT",
+    "repository": "https://github.com/MikeMcl/decimal.js-light",
+    "publisher": "Michael Mclaughlin"
+  },
+  {
     "name": "decode-named-character-reference",
     "version": "1.2.0",
     "license": "MIT",
@@ -3143,10 +3216,24 @@
     "repository": "https://github.com/tcort/dijkstrajs"
   },
   {
+    "name": "direction",
+    "version": "2.0.1",
+    "license": "MIT",
+    "repository": "https://github.com/wooorm/direction",
+    "publisher": "Titus Wormer"
+  },
+  {
     "name": "dnd-core",
     "version": "16.0.1",
     "license": "MIT",
     "repository": "https://github.com/react-dnd/react-dnd"
+  },
+  {
+    "name": "dom-helpers",
+    "version": "5.2.1",
+    "license": "MIT",
+    "repository": "https://github.com/react-bootstrap/dom-helpers",
+    "publisher": "Jason Quense"
   },
   {
     "name": "dompurify",
@@ -3290,6 +3377,13 @@
     "publisher": "Rich Harris"
   },
   {
+    "name": "eventemitter3",
+    "version": "4.0.7",
+    "license": "MIT",
+    "repository": "https://github.com/primus/eventemitter3",
+    "publisher": "Arnout Kazemier"
+  },
+  {
     "name": "events",
     "version": "3.3.0",
     "license": "MIT",
@@ -3322,6 +3416,13 @@
     "license": "MIT",
     "repository": "https://github.com/epoberezkin/fast-deep-equal",
     "publisher": "Evgeny Poberezkin"
+  },
+  {
+    "name": "fast-equals",
+    "version": "5.3.2",
+    "license": "MIT",
+    "repository": "https://github.com/planttheidea/fast-equals",
+    "publisher": "tony_quetano@planttheidea.com"
   },
   {
     "name": "fast-uri",
@@ -3435,6 +3536,13 @@
     "publisher": "Anton Korzunov"
   },
   {
+    "name": "github-slugger",
+    "version": "2.0.0",
+    "license": "ISC",
+    "repository": "https://github.com/Flet/github-slugger",
+    "publisher": "Dan Flettre"
+  },
+  {
     "name": "glob",
     "version": "9.3.5",
     "license": "ISC",
@@ -3525,6 +3633,20 @@
     "publisher": "Titus Wormer"
   },
   {
+    "name": "hast-util-has-property",
+    "version": "3.0.0",
+    "license": "MIT",
+    "repository": "https://github.com/syntax-tree/hast-util-has-property",
+    "publisher": "Titus Wormer"
+  },
+  {
+    "name": "hast-util-heading-rank",
+    "version": "3.0.0",
+    "license": "MIT",
+    "repository": "https://github.com/syntax-tree/hast-util-heading-rank",
+    "publisher": "Titus Wormer"
+  },
+  {
     "name": "hast-util-is-element",
     "version": "3.0.0",
     "license": "MIT",
@@ -3534,6 +3656,13 @@
   {
     "name": "hast-util-parse-selector",
     "version": "2.2.5",
+    "license": "MIT",
+    "repository": "https://github.com/syntax-tree/hast-util-parse-selector",
+    "publisher": "Titus Wormer"
+  },
+  {
+    "name": "hast-util-parse-selector",
+    "version": "3.1.1",
     "license": "MIT",
     "repository": "https://github.com/syntax-tree/hast-util-parse-selector",
     "publisher": "Titus Wormer"
@@ -3550,6 +3679,13 @@
     "version": "9.1.0",
     "license": "MIT",
     "repository": "https://github.com/syntax-tree/hast-util-raw",
+    "publisher": "Titus Wormer"
+  },
+  {
+    "name": "hast-util-select",
+    "version": "6.0.4",
+    "license": "MIT",
+    "repository": "https://github.com/syntax-tree/hast-util-select",
     "publisher": "Titus Wormer"
   },
   {
@@ -3574,6 +3710,13 @@
     "publisher": "Titus Wormer"
   },
   {
+    "name": "hast-util-to-string",
+    "version": "3.0.1",
+    "license": "MIT",
+    "repository": "https://github.com/rehypejs/rehype-minify/tree/main/packages/hast-util-to-string",
+    "publisher": "Titus Wormer"
+  },
+  {
     "name": "hast-util-to-text",
     "version": "4.0.2",
     "license": "MIT",
@@ -3590,6 +3733,13 @@
   {
     "name": "hastscript",
     "version": "6.0.0",
+    "license": "MIT",
+    "repository": "https://github.com/syntax-tree/hastscript",
+    "publisher": "Titus Wormer"
+  },
+  {
+    "name": "hastscript",
+    "version": "7.2.0",
     "license": "MIT",
     "repository": "https://github.com/syntax-tree/hastscript",
     "publisher": "Titus Wormer"
@@ -3671,15 +3821,15 @@
     "repository": "https://github.com/remarkablemark/inline-style-parser"
   },
   {
-    "name": "internmap",
-    "version": "1.0.1",
-    "license": "ISC",
-    "repository": "https://github.com/mbostock/internmap",
-    "publisher": "Mike Bostock"
+    "name": "input-otp",
+    "version": "1.4.2",
+    "license": "MIT",
+    "repository": "https://github.com/guilhermerodz/input-otp",
+    "publisher": "Guilherme Rodz"
   },
   {
     "name": "internmap",
-    "version": "2.0.3",
+    "version": "1.0.1",
     "license": "ISC",
     "repository": "https://github.com/mbostock/internmap",
     "publisher": "Mike Bostock"
@@ -3965,6 +4115,13 @@
     "publisher": "Sindre Sorhus"
   },
   {
+    "name": "lodash",
+    "version": "4.17.21",
+    "license": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton"
+  },
+  {
     "name": "lodash-es",
     "version": "4.17.21",
     "license": "MIT",
@@ -4015,7 +4172,7 @@
   },
   {
     "name": "lucide-react",
-    "version": "0.545.0",
+    "version": "0.546.0",
     "license": "ISC",
     "repository": "https://github.com/lucide-icons/lucide",
     "publisher": "Eric Fennis"
@@ -4517,6 +4674,13 @@
     "repository": "https://github.com/vercel/next.js"
   },
   {
+    "name": "next-recaptcha-v3",
+    "version": "1.5.2",
+    "license": "MIT",
+    "repository": "https://github.com/snelsi/next-recaptcha-v3",
+    "publisher": "Roman Zhuravlov"
+  },
+  {
     "name": "next-themes",
     "version": "0.4.6",
     "license": "MIT",
@@ -4542,6 +4706,20 @@
     "license": "MIT",
     "repository": "https://github.com/jonschlinkert/normalize-path",
     "publisher": "Jon Schlinkert"
+  },
+  {
+    "name": "nth-check",
+    "version": "2.1.1",
+    "license": "BSD-2-Clause",
+    "repository": "https://github.com/fb55/nth-check",
+    "publisher": "Felix Boehm"
+  },
+  {
+    "name": "object-assign",
+    "version": "4.1.1",
+    "license": "MIT",
+    "repository": "https://github.com/sindresorhus/object-assign",
+    "publisher": "Sindre Sorhus"
   },
   {
     "name": "oniguruma-parser",
@@ -4619,6 +4797,13 @@
     "license": "MIT",
     "repository": "https://github.com/wooorm/parse-entities",
     "publisher": "Titus Wormer"
+  },
+  {
+    "name": "parse-numeric-range",
+    "version": "1.3.0",
+    "license": "ISC",
+    "repository": "https://github.com/euank/node-parse-numeric-range",
+    "publisher": "Euan Kemp"
   },
   {
     "name": "parse5",
@@ -4802,6 +4987,12 @@
     "license": "MIT",
     "repository": "https://github.com/visionmedia/node-progress",
     "publisher": "TJ Holowaychuk"
+  },
+  {
+    "name": "prop-types",
+    "version": "15.8.1",
+    "license": "MIT",
+    "repository": "https://github.com/facebook/prop-types"
   },
   {
     "name": "property-information",
@@ -5031,8 +5222,21 @@
     "repository": "https://github.com/facebook/react"
   },
   {
+    "name": "react-is",
+    "version": "18.3.1",
+    "license": "MIT",
+    "repository": "https://github.com/facebook/react"
+  },
+  {
     "name": "react-markdown",
     "version": "10.1.0",
+    "license": "MIT",
+    "repository": "https://github.com/remarkjs/react-markdown",
+    "publisher": "Espen Hovlandsdal"
+  },
+  {
+    "name": "react-markdown",
+    "version": "9.0.3",
     "license": "MIT",
     "repository": "https://github.com/remarkjs/react-markdown",
     "publisher": "Espen Hovlandsdal"
@@ -5066,6 +5270,13 @@
     "publisher": "Brian Vaughn"
   },
   {
+    "name": "react-smooth",
+    "version": "4.0.4",
+    "license": "MIT",
+    "repository": "https://github.com/recharts/react-smooth",
+    "publisher": "JasonHzq"
+  },
+  {
     "name": "react-style-singleton",
     "version": "2.2.3",
     "license": "MIT",
@@ -5078,6 +5289,12 @@
     "license": "MIT",
     "repository": "https://github.com/react-syntax-highlighter/react-syntax-highlighter",
     "publisher": "Conor Hastings"
+  },
+  {
+    "name": "react-transition-group",
+    "version": "4.4.5",
+    "license": "BSD-3-Clause",
+    "repository": "https://github.com/reactjs/react-transition-group"
   },
   {
     "name": "react-window",
@@ -5094,6 +5311,20 @@
     "publisher": "Thorsten Lorenz"
   },
   {
+    "name": "recharts",
+    "version": "2.15.4",
+    "license": "MIT",
+    "repository": "https://github.com/recharts/recharts",
+    "publisher": "recharts group"
+  },
+  {
+    "name": "recharts-scale",
+    "version": "0.4.5",
+    "license": "MIT",
+    "repository": "https://github.com/recharts/recharts-scale",
+    "publisher": "recharts group"
+  },
+  {
     "name": "redux",
     "version": "4.2.1",
     "license": "MIT",
@@ -5108,6 +5339,13 @@
   {
     "name": "refractor",
     "version": "3.6.0",
+    "license": "MIT",
+    "repository": "https://github.com/wooorm/refractor",
+    "publisher": "Titus Wormer"
+  },
+  {
+    "name": "refractor",
+    "version": "4.9.0",
     "license": "MIT",
     "repository": "https://github.com/wooorm/refractor",
     "publisher": "Titus Wormer"
@@ -5134,11 +5372,39 @@
     "publisher": "Steven Levithan"
   },
   {
+    "name": "rehype",
+    "version": "13.0.2",
+    "license": "MIT",
+    "repository": "https://github.com/rehypejs/rehype/tree/main/packages/rehype",
+    "publisher": "Titus Wormer"
+  },
+  {
+    "name": "rehype-attr",
+    "version": "3.0.3",
+    "license": "MIT",
+    "repository": "https://github.com/jaywcjlove/rehype-attr",
+    "publisher": "Kenny Wong"
+  },
+  {
+    "name": "rehype-autolink-headings",
+    "version": "7.1.0",
+    "license": "MIT",
+    "repository": "https://github.com/rehypejs/rehype-autolink-headings",
+    "publisher": "Titus Wormer"
+  },
+  {
     "name": "rehype-harden",
     "version": "1.1.5",
     "license": "MIT",
     "repository": "https://github.com/vercel-labs/markdown-sanitizers",
     "publisher": "S. Elliott Johnson"
+  },
+  {
+    "name": "rehype-ignore",
+    "version": "2.0.2",
+    "license": "MIT",
+    "repository": "https://github.com/jaywcjlove/rehype-ignore",
+    "publisher": "Kenny Wong"
   },
   {
     "name": "rehype-katex",
@@ -5148,10 +5414,52 @@
     "publisher": "Junyoung Choi"
   },
   {
+    "name": "rehype-parse",
+    "version": "9.0.1",
+    "license": "MIT",
+    "repository": "https://github.com/rehypejs/rehype/tree/main/packages/rehype-parse",
+    "publisher": "Titus Wormer"
+  },
+  {
+    "name": "rehype-prism-plus",
+    "version": "2.0.0",
+    "license": "MIT",
+    "repository": "https://github.com/timlrx/rehype-prism-plus",
+    "publisher": "Timothy Lin"
+  },
+  {
+    "name": "rehype-prism-plus",
+    "version": "2.0.1",
+    "license": "MIT",
+    "repository": "https://github.com/timlrx/rehype-prism-plus",
+    "publisher": "Timothy Lin"
+  },
+  {
     "name": "rehype-raw",
     "version": "7.0.0",
     "license": "MIT",
     "repository": "https://github.com/rehypejs/rehype-raw",
+    "publisher": "Titus Wormer"
+  },
+  {
+    "name": "rehype-rewrite",
+    "version": "4.0.3",
+    "license": "MIT",
+    "repository": "https://github.com/jaywcjlove/rehype-rewrite",
+    "publisher": "Kenny Wong"
+  },
+  {
+    "name": "rehype-slug",
+    "version": "6.0.0",
+    "license": "MIT",
+    "repository": "https://github.com/rehypejs/rehype-slug",
+    "publisher": "Titus Wormer"
+  },
+  {
+    "name": "rehype-stringify",
+    "version": "10.0.1",
+    "license": "MIT",
+    "repository": "https://github.com/rehypejs/rehype/tree/main/packages/rehype-stringify",
     "publisher": "Titus Wormer"
   },
   {
@@ -5160,6 +5468,13 @@
     "license": "MIT",
     "repository": "https://github.com/remarkjs/remark-gfm",
     "publisher": "Titus Wormer"
+  },
+  {
+    "name": "remark-github-blockquote-alert",
+    "version": "1.3.1",
+    "license": "MIT",
+    "repository": "https://github.com/jaywcjlove/remark-github-blockquote-alert",
+    "publisher": "Kenny Wong"
   },
   {
     "name": "remark-math",
@@ -5628,6 +5943,12 @@
     "repository": "https://github.com/unjs/ufo"
   },
   {
+    "name": "uncrypto",
+    "version": "0.1.3",
+    "license": "MIT",
+    "repository": "https://github.com/unjs/uncrypto"
+  },
+  {
     "name": "undici-types",
     "version": "6.21.0",
     "license": "MIT",
@@ -5639,6 +5960,13 @@
     "license": "MIT",
     "repository": "https://github.com/unifiedjs/unified",
     "publisher": "Titus Wormer"
+  },
+  {
+    "name": "unist-util-filter",
+    "version": "5.0.1",
+    "license": "MIT",
+    "repository": "https://github.com/syntax-tree/unist-util-filter",
+    "publisher": "Eugene Sharygin"
   },
   {
     "name": "unist-util-find-after",
@@ -5761,6 +6089,13 @@
     "license": "MIT",
     "repository": "https://github.com/vfile/vfile-message",
     "publisher": "Titus Wormer"
+  },
+  {
+    "name": "victory-vendor",
+    "version": "36.9.2",
+    "license": "MIT AND ISC",
+    "repository": "https://github.com/FormidableLabs/victory",
+    "publisher": "Formidable"
   },
   {
     "name": "vscode-jsonrpc",
