@@ -239,7 +239,7 @@ export function FloatingActionButton({ locale }: FloatingActionButtonProps) {
       onClick={handleCreateEventClick}
       size="icon"
       aria-label={t('common.createNewEvent')}
-      className="fixed right-4 bottom-20 z-50 h-14 w-14 rounded-2xl shadow-lg md:right-6 md:bottom-6 md:h-16 md:w-16 lg:hidden"
+      className="fixed bottom-20 right-4 z-50 h-14 w-14 rounded-2xl shadow-lg md:bottom-6 md:right-6 md:h-16 md:w-16 lg:hidden"
     >
       <Plus className="h-6 w-6 md:h-7 md:w-7" />
     </Button>
