@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { DndContext, DragOverlay } from '@dnd-kit/core'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useKanbanDnd } from '../../hooks/useKanbanDnd'
 import { useKanbanStore } from '../../stores/useKanbanStore'
@@ -23,6 +24,10 @@ import { KanbanColumn } from '../shared/KanbanColumn'
  * ```
  */
 export function DesktopKanbanBoard() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const locale = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
+
   const { activeBoard, addCard, updateCard, deleteCard, isLoading } = useKanbanStore()
   const { sensors, handleDragStart, handleDragEnd, handleDragCancel, activeCard } = useKanbanDnd()
 
@@ -48,10 +53,8 @@ export function DesktopKanbanBoard() {
     )
   }
 
-  const handleAddCard = (columnId: string) => {
-    setTargetColumnId(columnId)
-    setEditingCard(undefined)
-    setIsDialogOpen(true)
+  const handleAddCard = () => {
+    router.push(`/${locale}/tickets/new`)
   }
 
   const handleEditCard = (card: KanbanCardType) => {
