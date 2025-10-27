@@ -11,7 +11,6 @@ import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React from 'react'
 import { DesktopLayout } from './desktop-layout'
-import { FloatingActionButton } from './floating-action-button'
 import { MobileLayout } from './mobile-layout'
 
 interface BaseLayoutContentProps {
@@ -54,9 +53,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
       ) : (
         <DesktopLayout locale={localeFromPath}>{children}</DesktopLayout>
       )}
-
-      {/* Floating Action Button */}
-      <FloatingActionButton locale={localeFromPath} />
 
       {/* Settings Dialog */}
       <SettingsDialog />

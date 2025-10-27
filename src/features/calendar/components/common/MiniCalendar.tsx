@@ -19,6 +19,8 @@ export interface MiniCalendarProps {
     start: Date
     end: Date
   }
+  // 表示する月（メインカレンダーの日付に同期）
+  month?: Date
 }
 
 /**
@@ -33,7 +35,7 @@ export interface MiniCalendarProps {
  * - ✅ 表示期間のハイライト（週表示など）
  */
 export const MiniCalendar = React.memo<MiniCalendarProps>(
-  ({ selectedDate, onDateSelect, onMonthChange, className, showWeekNumbers = false, displayRange }) => {
+  ({ selectedDate, onDateSelect, onMonthChange, className, showWeekNumbers = false, displayRange, month }) => {
     const { locale } = useI18n()
     const [isMounted, setIsMounted] = React.useState(false)
 
@@ -57,6 +59,7 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
         <Calendar
           mode="range"
           selected={range}
+          month={month}
           onSelect={(newRange) => {
             // rangeモードでは日付クリック時にその日に移動
             if (newRange?.from) {
@@ -68,6 +71,8 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
           captionLayout="dropdown"
           locale={locale === 'ja' ? ja : undefined}
           weekStartsOn={1}
+          fromYear={2020}
+          toYear={2050}
           className={className}
         />
       )
@@ -79,12 +84,15 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
         mode="single"
         required={false}
         selected={selectedDate}
+        month={month}
         onSelect={onDateSelect}
         onMonthChange={onMonthChange}
         showWeekNumber={false}
         captionLayout="dropdown"
         locale={locale === 'ja' ? ja : undefined}
         weekStartsOn={1}
+        fromYear={2020}
+        toYear={2050}
         className={className}
       />
     )

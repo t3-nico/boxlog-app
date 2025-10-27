@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useState } from 'react'
 
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 import { format } from 'date-fns'
 
@@ -28,8 +28,12 @@ export const CalendarNavigationProvider = ({
   initialView?: CalendarViewType
 }) => {
   const router = useRouter()
+  const pathname = usePathname()
   const [currentDate, setCurrentDate] = useState(initialDate)
   const [viewType, setViewType] = useState<CalendarViewType>(initialView)
+
+  // 現在のlocaleを取得（例: /ja/calendar/day -> ja）
+  const locale = pathname?.split('/')[1] || 'ja'
 
   // 初期値の変更を検知して状態を更新（一度だけ）
   const [isInitialized, setIsInitialized] = React.useState(false)
@@ -51,21 +55,21 @@ export const CalendarNavigationProvider = ({
       // URLの更新が明示的に要求された場合のみ実行
       if (updateUrl) {
         const dateString = format(date, 'yyyy-MM-dd')
-        const newUrl = `/calendar/${viewType}?date=${dateString}`
+        const newUrl = `/${locale}/calendar/${viewType}?date=${dateString}`
         console.log('🚀 Pushing to:', newUrl)
         router.push(newUrl, { scroll: false })
       }
     },
-    [router, viewType, currentDate]
+    [router, viewType, currentDate, locale]
   )
 
   const changeView = useCallback(
     (view: CalendarViewType) => {
       setViewType(view)
       const dateString = format(currentDate, 'yyyy-MM-dd')
-      router.push(`/calendar/${view}?date=${dateString}`)
+      router.push(`/${locale}/calendar/${view}?date=${dateString}`)
     },
-    [router, currentDate]
+    [router, currentDate, locale]
   )
 
   const navigateRelative = useCallback(
@@ -103,7 +107,7 @@ export const CalendarNavigationProvider = ({
       }
 
       console.log('🧭 NavigateRelative computed new date:', newDate)
-      navigateToDate(newDate)
+      navigateToDate(newDate, true) // URLも更新する
     },
     [currentDate, viewType, navigateToDate]
   )

@@ -7,7 +7,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import type { CalendarEvent } from '@/features/events'
+import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
 interface TimeRange {
   startTime: string

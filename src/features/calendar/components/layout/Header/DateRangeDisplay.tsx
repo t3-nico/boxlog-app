@@ -68,6 +68,7 @@ const createStaticContent = (
 
 /**
  * クリック可能な日付表示コンテンツを作成（ポップアップ削除）
+ * 注意: ヘッダーの日付表示はクリック対象ではないため、現在は静的表示と同じ
  */
 const createClickableContent = (
   dateContent: React.ReactNode,

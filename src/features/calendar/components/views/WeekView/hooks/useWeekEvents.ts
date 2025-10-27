@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 import { isSameDay } from 'date-fns'
 
-import type { CalendarEvent } from '@/features/events'
+// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
 import { getDateKey, isValidEvent, sortEventsByDateKeys } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'

@@ -4,7 +4,7 @@
 
 import React, { useCallback } from 'react'
 
-import type { CalendarEvent } from '@/features/events'
+// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 import {

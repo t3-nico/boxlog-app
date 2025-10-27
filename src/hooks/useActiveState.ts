@@ -1,9 +1,11 @@
+// TODO(#621): Tasks削除後、Tickets/Sessionsに移行予定
 'use client'
-import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
+// import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { usePathname } from 'next/navigation'
 export const useActiveState = () => {
   const pathname = usePathname()
-  const { filters } = useTaskStore()
+  // const { filters } = useTaskStore()
+  const filters: { tags: string[]; smartFolder: string | null } = { tags: [], smartFolder: null } // 一時的にモック
   const currentView = (pathname || '/').split('/')[1] || 'calendar'
   const selectedTag = filters.tags?.[0] || null
   const selectedSmartFolder = filters.smartFolder || null
