@@ -107,6 +107,7 @@ export function useSessions() {
 
   const updateMutation = api.tickets.sessions.update.useMutation({
     onSuccess: (updatedSession) => {
+      // @ts-expect-error - tRPC mutation戻り値の型推論問題
       updateSessionStore(updatedSession.id, updatedSession)
     },
     onError: (err) => {

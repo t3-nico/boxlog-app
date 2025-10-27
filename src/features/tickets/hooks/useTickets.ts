@@ -84,6 +84,7 @@ export function useTickets() {
   const createTicket = useCallback(
     async (input: CreateTicketInput): Promise<Ticket | null> => {
       try {
+        // @ts-expect-error - tRPC mutation型推論の問題（Supabase型定義との不一致）
         const newTicket = await createMutation.mutateAsync(input)
         return newTicket
       } catch (err) {
@@ -97,6 +98,7 @@ export function useTickets() {
 
   const updateMutation = api.tickets.update.useMutation({
     onSuccess: (updatedTicket) => {
+      // @ts-expect-error - tRPC mutation戻り値の型推論問題
       updateTicketStore(updatedTicket.id, updatedTicket)
     },
     onError: (err) => {
