@@ -4,7 +4,10 @@ import { z } from 'zod'
 
 export const createTagSchema = z.object({
   name: z.string().min(1, 'タグ名は必須です').max(50, 'タグ名は50文字以内です'),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, '正しいカラーコードを入力してください').default('#3B82F6'),
+  color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, '正しいカラーコードを入力してください')
+    .default('#3B82F6'),
   description: z.string().max(200, '説明は200文字以内です').optional(),
 })
 
