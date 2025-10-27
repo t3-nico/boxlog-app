@@ -1,7 +1,8 @@
 'use client'
 
+import { useTicketInspectorStore } from '@/features/inspector/stores/useTicketInspectorStore'
 import { NotificationDropdown } from '@/features/notifications'
-import { Moon, Search, Sun } from 'lucide-react'
+import { Moon, Plus, Search, Sun } from 'lucide-react'
 import { useCallback } from 'react'
 import { Item } from './Item'
 
@@ -19,7 +20,17 @@ interface ActionsProps {
  * useCallbackを使用してjsx-no-bind警告を回避
  */
 export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsProps) {
+  const { open: openInspector } = useTicketInspectorStore()
+
   // useCallbackでイベントハンドラを定義（jsx-no-bind対策）
+  const handleCreateClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      openInspector('create-ticket')
+    },
+    [openInspector]
+  )
+
   const handleSearchClick = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault()
@@ -38,6 +49,7 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
 
   return (
     <div className="bg-sidebar flex flex-col items-center gap-2 px-2">
+      <Item icon={Plus} label={t('actions.create')} url="#" isActive={false} onClick={handleCreateClick} />
       <Item icon={Search} label={t('actions.search')} url="#" isActive={false} onClick={handleSearchClick} />
       <Item
         icon={resolvedTheme === 'light' ? Moon : Sun}

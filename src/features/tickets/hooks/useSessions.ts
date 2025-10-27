@@ -36,12 +36,16 @@ export function useSessions() {
     getSessionDuration,
   } = useSessionStore()
 
-  // tRPC Query統合
+  // tRPC Query統合（エラーハンドリング付き）
   const {
     data: sessionsData,
     isLoading: isFetchingSessions,
     error: fetchError,
-  } = api.tickets.sessions.list.useQuery(filters)
+  } = api.tickets.sessions.list.useQuery(filters, {
+    retry: false,
+    refetchOnWindowFocus: false,
+    enabled: true,
+  })
 
   // 取得したデータをStoreに同期
   useEffect(() => {

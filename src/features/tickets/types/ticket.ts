@@ -1,7 +1,6 @@
 // Ticket型定義
 
 export type TicketStatus = 'open' | 'in_progress' | 'completed' | 'cancelled'
-export type TicketPriority = 'urgent' | 'high' | 'normal' | 'low'
 
 export interface Ticket {
   id: string
@@ -10,8 +9,7 @@ export interface Ticket {
   title: string
   description?: string
   status: TicketStatus
-  priority?: TicketPriority
-  planned_hours?: number
+  milestone?: string
   actual_hours: number
   created_at: string
   updated_at: string
@@ -21,16 +19,14 @@ export interface CreateTicketInput {
   title: string
   description?: string
   status?: TicketStatus
-  priority?: TicketPriority
-  planned_hours?: number
+  milestone?: string
 }
 
 export interface UpdateTicketInput {
   title?: string
   description?: string
   status?: TicketStatus
-  priority?: TicketPriority
-  planned_hours?: number
+  milestone?: string
 }
 
 export interface TicketWithTags extends Ticket {

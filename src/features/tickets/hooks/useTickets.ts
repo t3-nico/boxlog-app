@@ -30,8 +30,17 @@ export function useTickets() {
     getFilteredTickets,
   } = useTicketStore()
 
-  // tRPC Query統合
-  const { data: ticketsData, isLoading: isFetchingTickets, error: fetchError } = api.tickets.list.useQuery(filters)
+  // tRPC Query統合（エラーハンドリング付き）
+  const {
+    data: ticketsData,
+    isLoading: isFetchingTickets,
+    error: fetchError,
+  } = api.tickets.list.useQuery(filters, {
+    retry: false,
+    refetchOnWindowFocus: false,
+    // tRPCコンテキストが利用可能になるまで待機
+    enabled: true,
+  })
 
   // 取得したデータをStoreに同期
   useEffect(() => {
