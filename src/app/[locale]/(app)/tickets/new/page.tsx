@@ -12,7 +12,7 @@ import type { CreateTicketInput } from '@/schemas/tickets/ticket'
 export default function NewTicketPage() {
   const params = useParams()
   const router = useRouter()
-  const locale = (params.locale as string) || 'ja'
+  const locale = (params?.locale as string) || 'ja'
 
   const { createTicket } = useTickets()
 

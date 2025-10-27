@@ -21,7 +21,7 @@ import type { CreateSessionInput, Session } from '@/features/tickets/types/sessi
 
 export default function TicketDetailPage() {
   const params = useParams()
-  const ticketId = params.id as string
+  const ticketId = params?.id as string
 
   const { getTicketById, isLoading: ticketsLoading } = useTickets()
   const {

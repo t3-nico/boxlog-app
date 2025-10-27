@@ -8,8 +8,8 @@ export const ticketPrioritySchema = z.enum(['urgent', 'high', 'normal', 'low'])
 export const createTicketSchema = z.object({
   title: z.string().min(1, 'タイトルは必須です').max(200, 'タイトルは200文字以内です'),
   description: z.string().max(2000, '説明は2000文字以内です').optional(),
-  status: ticketStatusSchema.default('open'),
-  priority: ticketPrioritySchema.default('normal'),
+  status: ticketStatusSchema,
+  priority: ticketPrioritySchema,
   planned_hours: z.number().positive('予定時間は正の数値を入力してください').optional(),
 })
 
