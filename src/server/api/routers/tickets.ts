@@ -6,7 +6,6 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import { createClient } from '@/lib/supabase/server'
 import {
   createRecordSchema,
   createSessionSchema,
@@ -30,8 +29,7 @@ export const ticketsRouter = createTRPCRouter({
   // ========================================
   tags: {
     list: protectedProcedure.query(async ({ ctx }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { data, error } = await supabase
         .from('tags')
@@ -50,8 +48,7 @@ export const ticketsRouter = createTRPCRouter({
     }),
 
     create: protectedProcedure.input(createTagSchema).mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { data, error } = await supabase
         .from('tags')
@@ -76,8 +73,7 @@ export const ticketsRouter = createTRPCRouter({
     update: protectedProcedure
       .input(z.object({ id: z.string().uuid(), data: updateTagSchema }))
       .mutation(async ({ ctx, input }) => {
-        const supabase = await createClient()
-        const userId = ctx.userId
+        const { supabase, userId } = ctx
 
         const { data, error } = await supabase
           .from('tags')
@@ -99,8 +95,7 @@ export const ticketsRouter = createTRPCRouter({
       }),
 
     delete: protectedProcedure.input(tagIdSchema).mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { error } = await supabase.from('tags').delete().eq('id', input.id).eq('user_id', userId)
 
@@ -118,9 +113,8 @@ export const ticketsRouter = createTRPCRouter({
   // ========================================
   // Tickets CRUD
   // ========================================
-  list: protectedProcedure.input(ticketFilterSchema.optional()).query(async ({ ctx, input }) => {
-    const supabase = await createClient()
-    const userId = ctx.userId
+  getAll: protectedProcedure.input(ticketFilterSchema.optional()).query(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx
 
     let query = supabase.from('tickets').select('*').eq('user_id', userId)
 
@@ -148,8 +142,7 @@ export const ticketsRouter = createTRPCRouter({
   }),
 
   getById: protectedProcedure.input(ticketIdSchema).query(async ({ ctx, input }) => {
-    const supabase = await createClient()
-    const userId = ctx.userId
+    const { supabase, userId } = ctx
 
     const { data, error } = await supabase.from('tickets').select('*').eq('id', input.id).eq('user_id', userId).single()
 
@@ -164,8 +157,7 @@ export const ticketsRouter = createTRPCRouter({
   }),
 
   create: protectedProcedure.input(createTicketSchema).mutation(async ({ ctx, input }) => {
-    const supabase = await createClient()
-    const userId = ctx.userId
+    const { supabase, userId } = ctx
 
     const { data, error } = await supabase
       .from('tickets')
@@ -191,8 +183,7 @@ export const ticketsRouter = createTRPCRouter({
   update: protectedProcedure
     .input(z.object({ id: z.string().uuid(), data: updateTicketSchema }))
     .mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { data, error } = await supabase
         .from('tickets')
@@ -214,8 +205,7 @@ export const ticketsRouter = createTRPCRouter({
     }),
 
   delete: protectedProcedure.input(ticketIdSchema).mutation(async ({ ctx, input }) => {
-    const supabase = await createClient()
-    const userId = ctx.userId
+    const { supabase, userId } = ctx
 
     const { error } = await supabase.from('tickets').delete().eq('id', input.id).eq('user_id', userId)
 
@@ -234,8 +224,7 @@ export const ticketsRouter = createTRPCRouter({
   // ========================================
   sessions: {
     list: protectedProcedure.input(sessionFilterSchema.optional()).query(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       let query = supabase.from('sessions').select('*').eq('user_id', userId)
 
@@ -260,8 +249,7 @@ export const ticketsRouter = createTRPCRouter({
     }),
 
     getById: protectedProcedure.input(sessionIdSchema).query(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { data, error } = await supabase
         .from('sessions')
@@ -281,8 +269,7 @@ export const ticketsRouter = createTRPCRouter({
     }),
 
     create: protectedProcedure.input(createSessionSchema).mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { data, error } = await supabase
         .from('sessions')
@@ -308,8 +295,7 @@ export const ticketsRouter = createTRPCRouter({
     update: protectedProcedure
       .input(z.object({ id: z.string().uuid(), data: updateSessionSchema }))
       .mutation(async ({ ctx, input }) => {
-        const supabase = await createClient()
-        const userId = ctx.userId
+        const { supabase, userId } = ctx
 
         const { data, error } = await supabase
           .from('sessions')
@@ -331,8 +317,7 @@ export const ticketsRouter = createTRPCRouter({
       }),
 
     delete: protectedProcedure.input(sessionIdSchema).mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { error } = await supabase.from('sessions').delete().eq('id', input.id).eq('user_id', userId)
 
@@ -353,8 +338,7 @@ export const ticketsRouter = createTRPCRouter({
   addTag: protectedProcedure
     .input(z.object({ ticketId: z.string().uuid(), tagId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { data, error } = await supabase
         .from('ticket_tags')
@@ -380,8 +364,7 @@ export const ticketsRouter = createTRPCRouter({
   removeTag: protectedProcedure
     .input(z.object({ ticketId: z.string().uuid(), tagId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { error } = await supabase
         .from('ticket_tags')
@@ -401,8 +384,7 @@ export const ticketsRouter = createTRPCRouter({
     }),
 
   getTags: protectedProcedure.input(z.object({ ticketId: z.string().uuid() })).query(async ({ ctx, input }) => {
-    const supabase = await createClient()
-    const userId = ctx.userId
+    const { supabase, userId } = ctx
 
     const { data, error } = await supabase
       .from('ticket_tags')
@@ -427,8 +409,7 @@ export const ticketsRouter = createTRPCRouter({
   addSessionTag: protectedProcedure
     .input(z.object({ sessionId: z.string().uuid(), tagId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { data, error } = await supabase
         .from('session_tags')
@@ -454,8 +435,7 @@ export const ticketsRouter = createTRPCRouter({
   removeSessionTag: protectedProcedure
     .input(z.object({ sessionId: z.string().uuid(), tagId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { error } = await supabase
         .from('session_tags')
@@ -475,8 +455,7 @@ export const ticketsRouter = createTRPCRouter({
     }),
 
   getSessionTags: protectedProcedure.input(z.object({ sessionId: z.string().uuid() })).query(async ({ ctx, input }) => {
-    const supabase = await createClient()
-    const userId = ctx.userId
+    const { supabase, userId } = ctx
 
     const { data, error } = await supabase
       .from('session_tags')
@@ -500,8 +479,7 @@ export const ticketsRouter = createTRPCRouter({
   // ========================================
   records: {
     list: protectedProcedure.input(z.object({ session_id: z.string().uuid() })).query(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { data, error } = await supabase
         .from('records')
@@ -521,8 +499,7 @@ export const ticketsRouter = createTRPCRouter({
     }),
 
     create: protectedProcedure.input(createRecordSchema).mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { data, error } = await supabase
         .from('records')
@@ -545,8 +522,7 @@ export const ticketsRouter = createTRPCRouter({
     }),
 
     delete: protectedProcedure.input(recordIdSchema).mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { error } = await supabase.from('records').delete().eq('id', input.id).eq('user_id', userId)
 

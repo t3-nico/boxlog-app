@@ -12,6 +12,9 @@ import { z } from 'zod'
 import { createAppError, ERROR_CODES } from '@/config/error-patterns'
 import { trackError } from '@/lib/analytics/vercel-analytics'
 
+import type { Database } from '@/types/supabase'
+import type { SupabaseClient } from '@supabase/supabase-js'
+
 /**
  * リクエストコンテキストの型定義
  */
@@ -20,6 +23,7 @@ export interface Context {
   res: CreateNextContextOptions['res']
   userId?: string
   sessionId?: string
+  supabase: SupabaseClient<Database>
 }
 
 /**
@@ -32,25 +36,25 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
   let userId: string | undefined
   let sessionId: string | undefined
 
-  try {
-    // Supabaseのセッションクッキーから認証情報を取得
-    const { createServerClient } = await import('@supabase/ssr')
+  // Supabaseのセッションクッキーから認証情報を取得
+  const { createServerClient } = await import('@supabase/ssr')
 
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get: (name) => {
-            const cookie = req.cookies[name]
-            return cookie
-          },
-          set: () => {},
-          remove: () => {},
+  const supabase = createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => {
+          const cookie = req.cookies[name]
+          return cookie
         },
-      }
-    )
+        set: () => {},
+        remove: () => {},
+      },
+    }
+  )
 
+  try {
     const {
       data: { session },
     } = await supabase.auth.getSession()
@@ -69,6 +73,7 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
     res,
     userId,
     sessionId,
+    supabase,
   }
 }
 
