@@ -10,6 +10,7 @@ export interface Ticket {
   description?: string
   status: TicketStatus
   milestone?: string
+  due_date?: string
   actual_hours: number
   created_at: string
   updated_at: string
@@ -20,6 +21,7 @@ export interface CreateTicketInput {
   description?: string
   status?: TicketStatus
   milestone?: string
+  due_date?: string
 }
 
 export interface UpdateTicketInput {
@@ -27,6 +29,7 @@ export interface UpdateTicketInput {
   description?: string
   status?: TicketStatus
   milestone?: string
+  due_date?: string
 }
 
 export interface TicketWithTags extends Ticket {

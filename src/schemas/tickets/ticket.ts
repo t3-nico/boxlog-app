@@ -8,6 +8,7 @@ export const createTicketSchema = z.object({
   title: z.string().min(1, 'タイトルは必須です').max(200, 'タイトルは200文字以内です'),
   description: z.string().max(10000, '説明は10000文字以内です').optional(), // Markdown対応のため拡張
   status: ticketStatusSchema,
+  due_date: z.string().datetime().optional(), // ISO 8601形式の日時
 })
 
 export const updateTicketSchema = createTicketSchema.partial()

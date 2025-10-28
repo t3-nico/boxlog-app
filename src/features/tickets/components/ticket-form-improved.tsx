@@ -42,6 +42,7 @@ export function TicketFormImproved({
       title: defaultValues?.title ?? '',
       description: defaultValues?.description ?? '',
       status: defaultValues?.status ?? 'open',
+      due_date: defaultValues?.due_date ?? undefined,
     },
   })
 
@@ -102,35 +103,111 @@ export function TicketFormImproved({
           )}
         />
 
-        {/* ステータス */}
-        <FormField
-          control={form.control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>ステータス</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+        {/* ステータスと期限 */}
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>ステータス</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="ステータスを選択" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="open">未着手</SelectItem>
+                    <SelectItem value="in_progress">進行中</SelectItem>
+                    <SelectItem value="completed">完了</SelectItem>
+                    <SelectItem value="cancelled">キャンセル</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="due_date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>期限（任意）</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="ステータスを選択" />
-                  </SelectTrigger>
+                  <Input
+                    type="datetime-local"
+                    value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
+                    onChange={(e) =>
+                      field.onChange(e.target.value ? new Date(e.target.value).toISOString() : undefined)
+                    }
+                  />
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="open">未着手</SelectItem>
-                  <SelectItem value="in_progress">進行中</SelectItem>
-                  <SelectItem value="completed">完了</SelectItem>
-                  <SelectItem value="cancelled">キャンセル</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         {/* タグ */}
         <div className="space-y-2">
           <label className="text-sm font-medium">タグ</label>
           <TagSelector selectedTagIds={selectedTagIds} onTagsChange={setSelectedTagIds} placeholder="タグを選択..." />
+        </div>
+
+        {/* Session（予定） */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-semibold">予定</h3>
+          </div>
+
+          <div className="space-y-4 rounded-lg border p-4">
+            {/* 開始・終了時間 */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">開始日時</label>
+                <Input type="datetime-local" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">終了日時</label>
+                <Input type="datetime-local" />
+              </div>
+            </div>
+
+            {/* リマインダーと繰り返し */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">リマインダー</label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="選択..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">通知なし</SelectItem>
+                    <SelectItem value="15">15分前</SelectItem>
+                    <SelectItem value="30">30分前</SelectItem>
+                    <SelectItem value="60">1時間前</SelectItem>
+                    <SelectItem value="1440">1日前</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">繰り返し</label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="選択..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">繰り返しなし</SelectItem>
+                    <SelectItem value="daily">毎日</SelectItem>
+                    <SelectItem value="weekly">毎週</SelectItem>
+                    <SelectItem value="monthly">毎月</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* メタ情報（編集モードのみ） */}

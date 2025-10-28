@@ -1,6 +1,6 @@
 'use client'
 
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface ResizableSheetProps {
@@ -72,7 +72,7 @@ export function ResizableSheet({
       <SheetContent
         ref={sheetRef}
         side="right"
-        className="overflow-y-auto p-0"
+        className="overflow-y-auto p-0 pt-2"
         style={{ width: `${width}px`, maxWidth: '100vw' }}
       >
         {/* リサイズハンドル */}
@@ -83,13 +83,13 @@ export function ResizableSheet({
           <div className="bg-border absolute top-1/2 left-0 h-12 w-1 -translate-y-1/2 rounded-r" />
         </div>
 
-        {/* コンテンツ */}
-        <div className="p-6">
-          <SheetHeader>
-            <SheetTitle>{title}</SheetTitle>
-          </SheetHeader>
-          <div className="mt-6">{children}</div>
+        {/* ヘッダー（AppBarと同じ高さ h-10） */}
+        <div className="flex h-10 items-center px-6">
+          <SheetTitle className="text-base font-semibold">{title}</SheetTitle>
         </div>
+
+        {/* コンテンツ */}
+        <div className="px-6 py-8">{children}</div>
       </SheetContent>
     </Sheet>
   )
