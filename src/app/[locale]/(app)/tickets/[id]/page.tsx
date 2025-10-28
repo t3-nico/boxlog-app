@@ -7,46 +7,23 @@ import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import {
-  LoadingState,
-  PriorityBadge,
-  SessionForm,
-  SessionList,
-  SessionTimer,
-  TicketStatusBadge,
-} from '@/features/tickets/components'
+import { useTicketInspectorStore } from '@/features/inspector/stores/useTicketInspectorStore'
+import { LoadingState, SessionList, SessionTimer, TicketStatusBadge } from '@/features/tickets/components'
 import { useSessions, useTickets } from '@/features/tickets/hooks'
-import type { CreateSessionInput, Session } from '@/features/tickets/types/session'
+import type { Session } from '@/features/tickets/types/session'
 
 export default function TicketDetailPage() {
   const params = useParams()
   const ticketId = params?.id as string
 
   const { getTicketById, isLoading: ticketsLoading } = useTickets()
-  const {
-    sessions,
-    isLoading: sessionsLoading,
-    createSession,
-    deleteSession,
-    startSession,
-    stopSession,
-    getSessionsByTicketId,
-  } = useSessions()
+  const { isLoading: sessionsLoading, deleteSession, startSession, stopSession, getSessionsByTicketId } = useSessions()
 
   const ticket = getTicketById(ticketId)
   const ticketSessions = getSessionsByTicketId(ticketId)
 
-  const [isSessionFormOpen, setIsSessionFormOpen] = useState(false)
+  const { open: openInspector } = useTicketInspectorStore()
   const [activeSession, setActiveSession] = useState<Session | null>(null)
-
-  const handleCreateSession = async (data: CreateSessionInput) => {
-    const newSession = await createSession(data)
-    setIsSessionFormOpen(false)
-    if (newSession) {
-      setActiveSession(newSession)
-    }
-  }
 
   const handleStartSession = async (session: Session) => {
     await startSession(session.id)
@@ -102,10 +79,7 @@ export default function TicketDetailPage() {
               <p className="text-muted-foreground font-mono text-sm">{ticket.ticket_number}</p>
               <CardTitle className="text-2xl">{ticket.title}</CardTitle>
             </div>
-            <div className="flex gap-2">
-              <TicketStatusBadge status={ticket.status} size="md" />
-              {ticket.priority && <PriorityBadge priority={ticket.priority} size="md" />}
-            </div>
+            <TicketStatusBadge status={ticket.status} size="md" />
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -116,23 +90,9 @@ export default function TicketDetailPage() {
             </div>
           )}
 
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <h3 className="text-muted-foreground mb-1 text-sm font-medium">予定時間</h3>
-              <p className="text-foreground text-2xl font-semibold">
-                {ticket.planned_hours !== undefined ? `${ticket.planned_hours}h` : '-'}
-              </p>
-            </div>
-            <div>
-              <h3 className="text-muted-foreground mb-1 text-sm font-medium">実績時間</h3>
-              <p className="text-foreground text-2xl font-semibold">{ticket.actual_hours}h</p>
-            </div>
-            <div>
-              <h3 className="text-muted-foreground mb-1 text-sm font-medium">進捗率</h3>
-              <p className="text-foreground text-2xl font-semibold">
-                {ticket.planned_hours ? `${Math.round((ticket.actual_hours / ticket.planned_hours) * 100)}%` : '-'}
-              </p>
-            </div>
+          <div>
+            <h3 className="text-muted-foreground mb-1 text-sm font-medium">実績時間</h3>
+            <p className="text-foreground text-2xl font-semibold">{ticket.actual_hours}h</p>
           </div>
         </CardContent>
       </Card>
@@ -143,7 +103,7 @@ export default function TicketDetailPage() {
         <div className="space-y-4 lg:col-span-2">
           <div className="flex items-center justify-between">
             <h2 className="text-foreground text-xl font-semibold">セッション</h2>
-            <Button onClick={() => setIsSessionFormOpen(true)} size="sm" className="gap-2">
+            <Button onClick={() => openInspector('create-session', ticketId)} size="sm" className="gap-2">
               <Plus className="h-4 w-4" />
               新規セッション
             </Button>
@@ -167,21 +127,6 @@ export default function TicketDetailPage() {
           />
         </div>
       </div>
-
-      {/* セッション作成ダイアログ */}
-      <Dialog open={isSessionFormOpen} onOpenChange={setIsSessionFormOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>新規セッション作成</DialogTitle>
-            <DialogDescription>{ticket.title}の作業セッションを作成します</DialogDescription>
-          </DialogHeader>
-          <SessionForm
-            ticketId={ticketId}
-            onSubmit={handleCreateSession}
-            onCancel={() => setIsSessionFormOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

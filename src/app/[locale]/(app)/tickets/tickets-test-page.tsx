@@ -1,6 +1,5 @@
 'use client'
 
-import { TicketInspector } from '@/features/inspector/components/TicketInspector'
 import { useTicketInspectorStore } from '@/features/inspector/stores/useTicketInspectorStore'
 import { api } from '@/lib/trpc'
 
@@ -78,8 +77,6 @@ export function TicketsTestPage() {
           ) : null}
         </div>
       </div>
-
-      <TicketInspector />
     </>
   )
 }
