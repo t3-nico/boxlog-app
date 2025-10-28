@@ -1,0 +1,127 @@
+name: License Audit (Monthly)
+
+# 月次でライセンス変更を監視（動的ライセンス変更の早期検出）
+on:
+  schedule:
+    - cron: '0 0 1 * *' # 毎月1日 00:00 UTC
+
+  # 手動実行可能
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18'
+
+permissions:
+  contents: read
+  issues: write # Issue作成用
+
+jobs:
+  license-audit:
+    name: 🔒 Monthly License Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Run License Risk Checker
+        id: risk_check
+        run: |
+          echo "## 🔒 Monthly License Audit" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Date**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if npm run license:check-risks 2>&1 | tee /tmp/license-risks.log; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "### ✅ Status: SAFE" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "All dependencies are using approved licenses." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "### ⚠️ Status: RISKS DETECTED" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat /tmp/license-risks.log | tail -30 >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 📊 Generate License Statistics
+        if: always()
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 License Distribution" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          npm run license:audit 2>&1 | grep -E "├─|└─" | head -20 >> $GITHUB_STEP_SUMMARY || true
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🚨 Create Issue on Risk Detection
+        if: steps.risk_check.outputs.status == 'failed'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const fs = require('fs');
+            const logContent = fs.readFileSync('/tmp/license-risks.log', 'utf8');
+
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 License Risk Detected - ${new Date().toISOString().split('T')[0]}`,
+              body: `## 🔒 Monthly License Audit - Risk Detected
+
+### ⚠️ Summary
+
+The automated monthly license audit has detected potential license risks in the project dependencies.
+
+### 📋 Details
+
+\`\`\`
+${logContent}
+\`\`\`
+
+### 🔧 Action Required
+
+1. Review the detected risks above
+2. Check if any dependencies have changed licenses
+3. Remove or replace packages with prohibited licenses
+4. Update \`.licensrc.json\` if necessary
+5. Run \`npm run license:check-risks\` locally to verify
+
+### 🔗 Resources
+
+- [License Compliance Plan](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/docs/legal/LICENSE_COMPLIANCE_PLAN.md)
+- [Approved Licenses](.licensrc.json)
+
+### 📅 Audit Date
+
+${new Date().toISOString()}
+
+---
+<sub>🤖 Automated by Monthly License Audit</sub>`,
+              labels: ['security', 'license', 'automated'],
+            });
+
+            console.log(`Created issue #${issue.data.number}`);
+
+      - name: ❌ Fail if risks detected
+        if: steps.risk_check.outputs.status == 'failed'
+        run: |
+          echo "::error::❌ License risks detected"
+          echo "::error::Please check the workflow summary and created issue"
+          exit 1
+
+      - name: ✅ Success
+        if: steps.risk_check.outputs.status == 'success'
+        run: |
+          echo "✅ Monthly license audit passed"
+          echo "All dependencies use approved licenses"

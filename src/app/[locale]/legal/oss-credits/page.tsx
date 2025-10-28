@@ -31,7 +31,14 @@ export async function generateMetadata(): Promise<Metadata> {
 /**
  * OSSクレジットページ（Server Component）
  */
-export default async function OSSCreditsPage() {
+interface PageProps {
+  params: Promise<{ locale?: Locale }>
+}
+
+export default async function OSSCreditsPage({ params }: PageProps) {
+  // localeパラメータを取得
+  const { locale = 'ja' } = await params
+
   // OSSクレジット情報を読み込み
   const creditsPath = join(process.cwd(), 'public/oss-credits.json')
   let credits: CreditInfo[] = []
@@ -45,8 +52,7 @@ export default async function OSSCreditsPage() {
     loadError = true
   }
 
-  // i18n翻訳取得（デフォルトロケールja）
-  const locale: Locale = 'ja'
+  // i18n翻訳取得
   const dictionary = await getDictionary(locale)
   const t = createTranslation(dictionary, locale)
 
