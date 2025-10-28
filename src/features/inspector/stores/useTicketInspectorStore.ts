@@ -14,8 +14,12 @@ interface TicketInspectorState {
   mode: InspectorMode
   ticketId: string | null
   sessionId: string | null
+  width: number
+  isResizing: boolean
   open: (mode: InspectorMode, ticketId?: string, sessionId?: string) => void
   close: () => void
+  setWidth: (width: number) => void
+  setIsResizing: (isResizing: boolean) => void
 }
 
 export const useTicketInspectorStore = create<TicketInspectorState>((set) => ({
@@ -23,6 +27,8 @@ export const useTicketInspectorStore = create<TicketInspectorState>((set) => ({
   mode: null,
   ticketId: null,
   sessionId: null,
+  width: 700,
+  isResizing: false,
   open: (mode, ticketId, sessionId) =>
     set({
       isOpen: true,
@@ -37,4 +43,6 @@ export const useTicketInspectorStore = create<TicketInspectorState>((set) => ({
       ticketId: null,
       sessionId: null,
     }),
+  setWidth: (width) => set({ width }),
+  setIsResizing: (isResizing) => set({ isResizing }),
 }))
