@@ -4,6 +4,7 @@
  * プロシージャ定義とコンテキスト管理
  */
 
+import { SupabaseClient } from '@supabase/supabase-js'
 import { initTRPC, TRPCError } from '@trpc/server'
 import { CreateNextContextOptions } from '@trpc/server/adapters/next'
 import superjson from 'superjson'
@@ -20,6 +21,7 @@ export interface Context {
   res: CreateNextContextOptions['res']
   userId?: string
   sessionId?: string
+  supabase: SupabaseClient
 }
 
 /**
@@ -32,25 +34,25 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
   let userId: string | undefined
   let sessionId: string | undefined
 
-  try {
-    // Supabaseのセッションクッキーから認証情報を取得
-    const { createServerClient } = await import('@supabase/ssr')
+  // Supabaseクライアントの作成
+  const { createServerClient } = await import('@supabase/ssr')
 
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get: (name) => {
-            const cookie = req.cookies[name]
-            return cookie
-          },
-          set: () => {},
-          remove: () => {},
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => {
+          const cookie = req.cookies[name]
+          return cookie
         },
-      }
-    )
+        set: () => {},
+        remove: () => {},
+      },
+    }
+  )
 
+  try {
     const {
       data: { session },
     } = await supabase.auth.getSession()
@@ -69,6 +71,7 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
     res,
     userId,
     sessionId,
+    supabase,
   }
 }
 

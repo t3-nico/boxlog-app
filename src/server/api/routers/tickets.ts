@@ -119,8 +119,7 @@ export const ticketsRouter = createTRPCRouter({
   // Tickets CRUD
   // ========================================
   list: protectedProcedure.input(ticketFilterSchema.optional()).query(async ({ ctx, input }) => {
-    const supabase = await createClient()
-    const userId = ctx.userId
+    const { supabase, userId } = ctx
 
     let query = supabase.from('tickets').select('*').eq('user_id', userId)
 
@@ -234,8 +233,7 @@ export const ticketsRouter = createTRPCRouter({
   // ========================================
   sessions: {
     list: protectedProcedure.input(sessionFilterSchema.optional()).query(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       let query = supabase.from('sessions').select('*').eq('user_id', userId)
 
