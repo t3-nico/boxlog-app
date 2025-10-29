@@ -14,8 +14,7 @@
   "appbar": {
     "navigation": {
       "calendar": "Calendar",
-      "board": "Board",
-      "table": "Table",
+      "inbox": "Inbox",
       "stats": "Stats",
       "settings": "Settings"
     },
@@ -33,8 +32,7 @@
     "resize": "Resize",
     "navigation": {
       "calendar": "Calendar",
-      "board": "Board",
-      "table": "Table",
+      "inbox": "Inbox",
       "stats": "Stats",
       "settings": "Settings",
       "search": "Search"
