@@ -29,6 +29,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
   // ページごとにSidebarを切り替え
   const isCalendarPage = pathname?.startsWith(`/${locale}/calendar`) ?? false
+  const isInboxPage = pathname?.startsWith(`/${locale}/inbox`) ?? false
 
   return (
     <div className="flex h-full">
@@ -40,7 +41,8 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
       {/* 元のレイアウト（ResizablePanel） */}
       <ResizablePanelGroup direction="horizontal" className="flex-1">
         {/* Sidebar（240px、開閉可能）← ページごとに動的切り替え */}
-        {isOpen && (
+        {/* Inboxページでは非表示 */}
+        {isOpen && !isInboxPage && (
           <>
             <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
               {isCalendarPage ? <CalendarSidebar /> : <AppSidebar />}
