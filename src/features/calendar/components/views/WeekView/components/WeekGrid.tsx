@@ -7,7 +7,7 @@ import { isToday } from 'date-fns'
 
 import { cn } from '@/lib/utils'
 
-import { CalendarDateHeader, DateDisplay, HourLines, ScrollableCalendarLayout, getDateKey } from '../../shared'
+import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout, getDateKey } from '../../shared'
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight'
 import { useWeekEvents } from '../hooks/useWeekEvents'
 
@@ -104,11 +104,6 @@ export const WeekGrid = ({
         }}
         enableKeyboardNavigation={true}
       >
-        {/* 共通のグリッド線（ThreeDayViewと同じパターン） */}
-        <div className="pointer-events-none absolute inset-0">
-          <HourLines startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
-        </div>
-
         {/* 7日分のグリッド */}
         {weekDates.map((date, dayIndex) => {
           const dateKey = getDateKey(date)
