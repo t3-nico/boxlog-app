@@ -57,7 +57,7 @@ export function InboxViewTabs() {
   }
 
   const handleDeleteView = (viewId: string) => {
-    if (confirm('このViewを削除しますか？')) {
+    if (confirm('この表示設定を削除しますか？')) {
       deleteView(viewId)
     }
   }
@@ -76,7 +76,7 @@ export function InboxViewTabs() {
   return (
     <>
       <div role="tablist" aria-label="Inbox view selector" className="flex h-10 items-center gap-0">
-        {/* 既存のView */}
+        {/* 既存のタブ */}
         {views.map((view) => (
           <div key={view.id} className="group relative flex items-center">
             <button
@@ -94,7 +94,7 @@ export function InboxViewTabs() {
               <span>{view.name}</span>
             </button>
 
-            {/* デフォルトView以外は編集・削除メニュー表示 */}
+            {/* デフォルト以外は編集・削除メニュー表示 */}
             {!view.id.startsWith('default-') && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -104,7 +104,7 @@ export function InboxViewTabs() {
                     className="absolute top-1/2 -right-2 h-6 w-6 -translate-y-1/2 p-0 opacity-0 group-hover:opacity-100"
                   >
                     <MoreHorizontal className="h-3 w-3" />
-                    <span className="sr-only">View メニュー</span>
+                    <span className="sr-only">メニュー</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -126,7 +126,7 @@ export function InboxViewTabs() {
           </div>
         ))}
 
-        {/* 新規View追加ボタン */}
+        {/* 新規タブ追加ボタン */}
         <Button
           variant="ghost"
           size="sm"
@@ -134,11 +134,11 @@ export function InboxViewTabs() {
           className="text-muted-foreground hover:text-foreground ml-2 h-10 gap-2 border-b-2 border-transparent px-4"
         >
           <Plus className="h-4 w-4" />
-          <span>新規View</span>
+          <span>新規</span>
         </Button>
       </div>
 
-      {/* View保存ダイアログ */}
+      {/* 保存ダイアログ */}
       <SaveViewDialog
         open={showSaveDialog}
         onOpenChange={setShowSaveDialog}
@@ -146,11 +146,11 @@ export function InboxViewTabs() {
         currentFilters={{}}
       />
 
-      {/* View編集ダイアログ（TODO: 実装予定） */}
+      {/* 編集ダイアログ（TODO: 実装予定） */}
       {editingView && (
         <div>
           {/* 編集ダイアログをここに実装 */}
-          <p>Edit View: {editingView.name}</p>
+          <p>編集: {editingView.name}</p>
         </div>
       )}
     </>

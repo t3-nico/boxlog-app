@@ -41,7 +41,7 @@ type InboxViewState = {
 const DEFAULT_VIEWS: InboxView[] = [
   {
     id: 'default-board',
-    name: 'Board View',
+    name: 'Board',
     type: 'board',
     filters: {},
     isDefault: true,
@@ -50,7 +50,7 @@ const DEFAULT_VIEWS: InboxView[] = [
   },
   {
     id: 'default-table',
-    name: 'Table View',
+    name: 'Table',
     type: 'table',
     filters: {},
     isDefault: false,
