@@ -27,7 +27,9 @@ function InboxContent() {
       </div>
 
       {/* ビューコンテンツ */}
-      <div className="flex-1 overflow-hidden">{view === 'board' ? <InboxBoardView /> : <InboxTableView />}</div>
+      <div className="flex-1 overflow-hidden">
+        {view === 'board' ? <InboxBoardView key="board-view" /> : <InboxTableView key="table-view" />}
+      </div>
     </>
   )
 }
