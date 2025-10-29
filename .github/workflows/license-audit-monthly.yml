@@ -73,41 +73,45 @@ jobs:
             const fs = require('fs');
             const logContent = fs.readFileSync('/tmp/license-risks.log', 'utf8');
 
+            const issueBody = [
+              '## 🔒 Monthly License Audit - Risk Detected',
+              '',
+              '### ⚠️ Summary',
+              '',
+              'The automated monthly license audit has detected potential license risks in the project dependencies.',
+              '',
+              '### 📋 Details',
+              '',
+              '```',
+              logContent,
+              '```',
+              '',
+              '### 🔧 Action Required',
+              '',
+              '1. Review the detected risks above',
+              '2. Check if any dependencies have changed licenses',
+              '3. Remove or replace packages with prohibited licenses',
+              '4. Update `.licensrc.json` if necessary',
+              '5. Run `npm run license:check-risks` locally to verify',
+              '',
+              '### 🔗 Resources',
+              '',
+              `- [License Compliance Plan](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/docs/legal/LICENSE_COMPLIANCE_PLAN.md)`,
+              '- [Approved Licenses](.licensrc.json)',
+              '',
+              '### 📅 Audit Date',
+              '',
+              new Date().toISOString(),
+              '',
+              '---',
+              '<sub>🤖 Automated by Monthly License Audit</sub>'
+            ].join('\n');
+
             const issue = await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `🚨 License Risk Detected - ${new Date().toISOString().split('T')[0]}`,
-              body: `## 🔒 Monthly License Audit - Risk Detected
-
-### ⚠️ Summary
-
-The automated monthly license audit has detected potential license risks in the project dependencies.
-
-### 📋 Details
-
-\`\`\`
-${logContent}
-\`\`\`
-
-### 🔧 Action Required
-
-1. Review the detected risks above
-2. Check if any dependencies have changed licenses
-3. Remove or replace packages with prohibited licenses
-4. Update \`.licensrc.json\` if necessary
-5. Run \`npm run license:check-risks\` locally to verify
-
-### 🔗 Resources
-
-- [License Compliance Plan](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/docs/legal/LICENSE_COMPLIANCE_PLAN.md)
-- [Approved Licenses](.licensrc.json)
-
-### 📅 Audit Date
-
-${new Date().toISOString()}
-
----
-<sub>🤖 Automated by Monthly License Audit</sub>`,
+              body: issueBody,
               labels: ['security', 'license', 'automated'],
             });
 
