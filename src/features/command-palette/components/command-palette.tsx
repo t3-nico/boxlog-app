@@ -163,7 +163,8 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
     } else {
       loadInitialResults()
     }
-  }, [debouncedQuery, performSearch, loadInitialResults])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedQuery])
 
   // Handle URL sync - restore query from URL when opening
   useEffect(() => {
@@ -205,7 +206,8 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
       setQuery('')
       setResults([])
     }
-  }, [isOpen, query, loadInitialResults])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen])
 
   // Get category display info
   const getCategoryInfo = (category: string) => {
