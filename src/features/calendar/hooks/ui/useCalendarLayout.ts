@@ -241,7 +241,6 @@ export function useCalendarLayout(options?: {
 
         switch (state.viewType) {
           case 'day':
-          case 'split-day':
             newDate = new Date(state.currentDate)
             newDate.setDate(state.currentDate.getDate() + 1 * multiplier)
             break
@@ -251,20 +250,14 @@ export function useCalendarLayout(options?: {
             newDate.setDate(state.currentDate.getDate() + 3 * multiplier)
             break
 
+          case '5day':
+            newDate = new Date(state.currentDate)
+            newDate.setDate(state.currentDate.getDate() + 5 * multiplier)
+            break
+
           case 'week':
-          case 'week-no-weekend':
             newDate = new Date(state.currentDate)
             newDate.setDate(state.currentDate.getDate() + 7 * multiplier)
-            break
-
-          case '2week':
-            newDate = new Date(state.currentDate)
-            newDate.setDate(state.currentDate.getDate() + 14 * multiplier)
-            break
-
-          case 'month':
-            newDate = new Date(state.currentDate)
-            newDate.setMonth(state.currentDate.getMonth() + multiplier)
             break
 
           default:
@@ -295,7 +288,6 @@ export function useCalendarLayout(options?: {
 
     switch (state.viewType) {
       case 'day':
-      case 'split-day':
         break
 
       case '3day': {
@@ -304,27 +296,17 @@ export function useCalendarLayout(options?: {
         break
       }
 
-      case 'week':
-      case 'week-no-weekend': {
+      case '5day': {
+        start.setDate(state.currentDate.getDate() - 2)
+        end.setDate(state.currentDate.getDate() + 2)
+        break
+      }
+
+      case 'week': {
         const dayOfWeek = state.currentDate.getDay()
         const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1
         start.setDate(state.currentDate.getDate() - mondayOffset)
         end.setDate(start.getDate() + 6)
-        break
-      }
-
-      case '2week': {
-        const dayOfWeek = state.currentDate.getDay()
-        const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1
-        start.setDate(state.currentDate.getDate() - mondayOffset)
-        end.setDate(start.getDate() + 13)
-        break
-      }
-
-      case 'month': {
-        start.setDate(1)
-        end.setMonth(state.currentDate.getMonth() + 1)
-        end.setDate(0)
         break
       }
 
@@ -354,19 +336,12 @@ export function useCalendarLayout(options?: {
       day: 'numeric',
     }
 
-    if (state.viewType === 'day' || state.viewType === 'split-day') {
+    if (state.viewType === 'day') {
       return state.currentDate.toLocaleDateString('ja-JP', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
         weekday: 'long',
-      })
-    }
-
-    if (state.viewType === 'month') {
-      return state.currentDate.toLocaleDateString('ja-JP', {
-        year: 'numeric',
-        month: 'long',
       })
     }
 

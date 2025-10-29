@@ -9,7 +9,7 @@ import { addDays, startOfWeek, subDays } from 'date-fns'
 
 export interface UseDateUtilitiesOptions {
   referenceDate: Date
-  viewType: 'week' | 'twoweek' | 'threeday' | 'agenda'
+  viewType: 'week' | 'twoweek' | 'threeday' | 'fiveday' | 'agenda'
   weekStartsOn?: 0 | 1
   showWeekends?: boolean
   agendaDays?: number // AgendaView用の表示日数
@@ -31,6 +31,7 @@ export interface UseDateUtilitiesReturn {
  * - WeekView: 週の7日間
  * - TwoWeekView: 2週間14日間
  * - ThreeDayView: 中央日±1日の3日間
+ * - FiveDayView: 中央日±2日の5日間
  * - AgendaView: 指定日数分の連続日付
  */
 export function useDateUtilities({
@@ -96,6 +97,53 @@ export function useDateUtilities({
         break
       }
 
+      case 'fiveday': {
+        // 5日間を生成（週末非表示の場合は平日のみで5日間確保）
+        if (!showWeekends) {
+          // 週末を除外して5日間の平日を取得
+          const weekdayDates: Date[] = []
+          let checkDate = referenceDate
+
+          // 中央日が週末の場合、次の平日を探す
+          while (checkDate.getDay() === 0 || checkDate.getDay() === 6) {
+            checkDate = addDays(checkDate, 1)
+          }
+
+          // 中央日を基準に前後2日ずつの平日を探す
+          // 前の2つの平日を探す
+          const prevDates: Date[] = []
+          let tempDate = subDays(checkDate, 1)
+          while (prevDates.length < 2) {
+            if (tempDate.getDay() !== 0 && tempDate.getDay() !== 6) {
+              prevDates.unshift(tempDate)
+            }
+            tempDate = subDays(tempDate, 1)
+          }
+
+          // 次の2つの平日を探す
+          const nextDates: Date[] = []
+          tempDate = addDays(checkDate, 1)
+          while (nextDates.length < 2) {
+            if (tempDate.getDay() !== 0 && tempDate.getDay() !== 6) {
+              nextDates.push(tempDate)
+            }
+            tempDate = addDays(tempDate, 1)
+          }
+
+          fullDates = [...prevDates, checkDate, ...nextDates]
+        } else {
+          // 週末表示時は単純に前後2日
+          fullDates = [
+            subDays(referenceDate, 2), // 2日前
+            subDays(referenceDate, 1), // 前日
+            referenceDate, // 当日
+            addDays(referenceDate, 1), // 翌日
+            addDays(referenceDate, 2), // 2日後
+          ]
+        }
+        break
+      }
+
       case 'agenda': {
         // referenceDate から指定日数分の連続日付
         fullDates = Array.from({ length: agendaDays }, (_, index) => addDays(referenceDate, index))
@@ -107,8 +155,8 @@ export function useDateUtilities({
     }
 
     // Step 2: 週末フィルタリングを統一的に適用
-    // threedayビューは既に処理済みなので、他のビューのみフィルタリング
-    if (!showWeekends && viewType !== 'threeday') {
+    // threeday, fivedayビューは既に処理済みなので、他のビューのみフィルタリング
+    if (!showWeekends && viewType !== 'threeday' && viewType !== 'fiveday') {
       return fullDates.filter((date) => {
         const day = date.getDay()
         return day !== 0 && day !== 6 // 日曜(0)、土曜(6)を除外

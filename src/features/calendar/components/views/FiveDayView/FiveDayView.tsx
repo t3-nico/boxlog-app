@@ -14,14 +14,14 @@ import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight
 
 import type { EventPosition } from '../DayView/DayView.types'
 
-import { ThreeDayContent } from './components'
-import { useThreeDayView } from './hooks/useThreeDayView'
-import type { ThreeDayViewProps } from './ThreeDayView.types'
+import { FiveDayContent } from './components'
+import type { FiveDayViewProps } from './FiveDayView.types'
+import { useFiveDayView } from './hooks/useFiveDayView'
 
 /**
- * ThreeDayView - 3-day view component
+ * FiveDayView - 5-day view component
  */
-export const ThreeDayView = ({
+export const FiveDayView = ({
   dateRange: _dateRange,
   tasks: _tasks,
   events,
@@ -44,7 +44,7 @@ export const ThreeDayView = ({
   onNavigatePrev: _onNavigatePrev,
   onNavigateNext: _onNavigateNext,
   onNavigateToday: _onNavigateToday,
-}: ThreeDayViewProps) => {
+}: FiveDayViewProps) => {
   const { timezone } = useCalendarSettingsStore()
 
   // レスポンシブな時間高さ
@@ -54,15 +54,15 @@ export const ThreeDayView = ({
     desktop: 72,
   })
 
-  // ThreeDayViewではcurrentDateを中心とした3日間を表示
+  // FiveDayViewではcurrentDateを中心とした5日間を表示
   const displayCenterDate = useMemo(() => {
     const date = new Date(currentDate)
     date.setHours(0, 0, 0, 0)
     return date
   }, [currentDate])
 
-  // ThreeDayView specific logic
-  const { threeDayDates, eventsByDate, isCurrentDay } = useThreeDayView({
+  // FiveDayView specific logic
+  const { fiveDayDates, eventsByDate, isCurrentDay } = useFiveDayView({
     centerDate: displayCenterDate,
     events,
     showWeekends,
@@ -70,8 +70,8 @@ export const ThreeDayView = ({
 
   // 統一された日付配列を使用（週末表示設定も考慮済み）
   const displayDates = useMemo(() => {
-    return threeDayDates
-  }, [threeDayDates])
+    return fiveDayDates
+  }, [fiveDayDates])
 
   // イベント位置計算（統一された日付配列ベース）
   const eventPositions = useMemo(() => {
@@ -153,7 +153,7 @@ export const ThreeDayView = ({
   )
 
   return (
-    <CalendarViewAnimation viewType="3day">
+    <CalendarViewAnimation viewType="5day">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         {/* 固定日付ヘッダー */}
         <CalendarDateHeader header={headerComponent} timezone={timezone} />
@@ -163,15 +163,15 @@ export const ThreeDayView = ({
           timezone={timezone}
           scrollToHour={isCurrentDay ? undefined : 8}
           displayDates={displayDates}
-          viewMode="3day"
+          viewMode="5day"
           onTimeClick={(hour, minute) => {
-            // ThreeDayViewでは最初にクリックされた日付を使用
+            // FiveDayViewでは最初にクリックされた日付を使用
             const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
             onEmptyClick?.(displayDates[0], timeString)
           }}
           enableKeyboardNavigation={true}
         >
-          {/* 3日分のグリッド */}
+          {/* 5日分のグリッド */}
           {displayDates.map((date, dayIndex) => {
             const dateKey = format(date, 'yyyy-MM-dd')
             // 統一フィルタリング済みの日付に対応するイベントを取得
@@ -190,7 +190,7 @@ export const ThreeDayView = ({
                 style={{ width: `${100 / displayDates.length}%` }}
               >
                 {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある */}
-                <ThreeDayContent
+                <FiveDayContent
                   date={date}
                   events={dayEvents}
                   eventStyles={eventStyles}

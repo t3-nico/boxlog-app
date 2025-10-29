@@ -33,8 +33,8 @@ interface CalendarHeaderProps {
 const viewOptions = [
   { value: 'day' as CalendarViewType, label: 'Day', shortcut: 'D' },
   { value: '3day' as CalendarViewType, label: '3 Days', shortcut: '3' },
+  { value: '5day' as CalendarViewType, label: '5 Days', shortcut: '5' },
   { value: 'week' as CalendarViewType, label: 'Week', shortcut: 'W' },
-  { value: '2week' as CalendarViewType, label: '2 Weeks', shortcut: '2' },
 ]
 
 /**

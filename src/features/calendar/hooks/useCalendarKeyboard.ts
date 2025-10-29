@@ -48,13 +48,13 @@ export const useCalendarKeyboard = ({
             e.preventDefault()
             onViewChange('day')
             break
-          case '2':
-            e.preventDefault()
-            onViewChange('split-day')
-            break
           case '3':
             e.preventDefault()
             onViewChange('3day')
+            break
+          case '5':
+            e.preventDefault()
+            onViewChange('5day')
             break
           case '7':
             e.preventDefault()

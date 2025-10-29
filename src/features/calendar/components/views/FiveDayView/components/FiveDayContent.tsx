@@ -4,7 +4,6 @@
 
 import React, { useCallback } from 'react'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 import {
@@ -12,31 +11,30 @@ import {
   calculatePreviewTime,
   CalendarDragSelection,
   EventBlock,
-  useEventStyles,
   useGlobalDragCursor,
   useTimeCalculation,
 } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 
-interface WeekContentProps {
+interface FiveDayContentProps {
   date: Date
   events: CalendarEvent[]
-  eventPositions: unknown[] // WeekEventPosition[]
+  eventStyles: Record<string, React.CSSProperties>
   onEventClick?: (event: CalendarEvent) => void
   onEventContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onEventUpdate?: (event: CalendarEvent) => void
-  onTimeRangeSelect?: (selection: import('../../shared').DateTimeSelection) => void
+  onEventUpdate?: (eventId: string, updates: Partial<CalendarEvent>) => void
+  onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
   className?: string
-  dayIndex: number // 週内での日付インデックス（0-6）
-  displayDates?: Date[] // 週の全日付配列（日付間移動用）
+  dayIndex: number // 5日間内での日付インデックス（0-4）
+  displayDates?: Date[] // 5日間の全日付配列（日付間移動用）
 }
 
-export const WeekContent = ({
+export const FiveDayContent = ({
   date,
   events,
-  eventPositions,
+  eventStyles,
   onEventClick,
   onEventContextMenu,
   onEmptyClick,
@@ -45,13 +43,13 @@ export const WeekContent = ({
   className,
   dayIndex,
   displayDates,
-}: WeekContentProps) => {
+}: FiveDayContentProps) => {
   // ドラッグ&ドロップ機能用にonEventUpdateを変換
   const handleEventUpdate = useCallback(
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onEventUpdate) return
 
-      console.log('🔧 WeekContent: イベント更新要求:', {
+      console.log('🔧 FiveDayContent: イベント更新要求:', {
         eventId,
         startTime: updates.startTime.toISOString(),
         endTime: updates.endTime.toISOString(),
@@ -73,7 +71,7 @@ export const WeekContent = ({
     date,
     events,
     displayDates,
-    viewMode: 'week',
+    viewMode: '5day',
   })
 
   // 時間計算機能
@@ -82,26 +80,8 @@ export const WeekContent = ({
   // グローバルドラッグカーソー管理（共通化）
   useGlobalDragCursor(dragState, handlers)
 
-  // この日のイベント位置を統一方式で変換
-  const dayEventPositions = React.useMemo(() => {
-    // eventPositionsから該当dayIndexのイベントを抽出（統一フィルタリング済み）
-    return eventPositions
-      .filter((pos) => pos.dayIndex === dayIndex)
-      .map((pos) => ({
-        event: pos.event,
-        top: pos.top,
-        height: pos.height,
-        left: 2, // 列内での位置（px）
-        width: 96, // 列幅の96%使用
-        zIndex: pos.zIndex,
-        opacity: 1.0,
-      }))
-  }, [eventPositions, dayIndex])
-
-  const eventStyles = useEventStyles(dayEventPositions)
-
   // 空白クリックハンドラー
-  const _handleEmptyClick = useCallback(
+  const handleEmptyClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!onEmptyClick) return
 
@@ -112,7 +92,7 @@ export const WeekContent = ({
   )
 
   // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
-  const _handleEventClick = useCallback(
+  const handleEventClick = useCallback(
     (event: CalendarEvent) => {
       // ドラッグ・リサイズ操作中のクリックは無視
       if (dragState.isDragging || dragState.isResizing) {
@@ -146,22 +126,12 @@ export const WeekContent = ({
   ))
 
   return (
-    <div
-      className={cn(
-        'bg-background relative h-full flex-1',
-        dragState.isDragging ? 'overflow-visible' : 'overflow-hidden',
-        className
-      )}
-      data-calendar-grid
-    >
+    <div className={cn('bg-background relative h-full flex-1 overflow-hidden', className)} data-calendar-grid>
       {/* CalendarDragSelectionを使用 */}
       <CalendarDragSelection
         date={date}
-        className="absolute inset-0 z-10"
-        onTimeRangeSelect={(selection) => {
-          // DayViewと同じように直接DateTimeSelectionを渡す
-          onTimeRangeSelect?.(selection)
-        }}
+        className="absolute inset-0"
+        onTimeRangeSelect={(startTime, endTime) => onTimeRangeSelect?.(date, startTime, endTime)}
         onSingleClick={onEmptyClick}
         disabled={dragState.isDragging || dragState.isResizing}
       >
@@ -173,15 +143,11 @@ export const WeekContent = ({
 
       {/* イベント表示エリア */}
       <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
-        {/* 通常のイベント表示 */}
         {events.map((event) => {
           const style = eventStyles[event.id]
           if (!style) return null
 
           const isDragging = dragState.draggedEventId === event.id && dragState.isDragging
-
-          // ドラッグ中のイベント表示制御：元のカラムで水平移動表示
-          // （非表示にせず、水平位置を調整して表示継続）
           const isResizingThis = dragState.isResizing && dragState.draggedEventId === event.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
@@ -242,45 +208,12 @@ export const WeekContent = ({
                   isDragging={isDragging}
                   isResizing={isResizingThis}
                   previewTime={calculatePreviewTime(event.id, dragState)}
-                  showTime={true}
-                  showDuration={true}
-                  variant="week"
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>
             </div>
           )
         })}
-
-        {/* ドラッグ中のイベントを他の日付カラムで表示 */}
-        {dragState.isDragging &&
-        dragState.draggedEventId &&
-        dragState.targetDateIndex !== undefined &&
-        dragState.targetDateIndex === dayIndex &&
-        !events.find((e) => e.id === dragState.draggedEventId) &&
-        displayDates
-          ? (() => {
-              // 週の全イベントからドラッグ中のイベントを探す
-              // displayDates配列を使って全日付のイベントを探索
-              const _draggedEvent: CalendarEvent | null = null
-
-              // 他のWeekContentインスタンスが保持しているイベントを探すのは困難
-              // そのため、親コンポーネントから渡されるevents配列から探す
-              // 現在はeventsには当日のイベントのみ含まれているため、
-              // WeekGridから全イベントを渡すよう修正が必要
-
-              // 一時的な解決策として、コンソールログで状況を確認
-              console.log('🔧 他日付カラムでのドラッグイベント表示試行:', {
-                draggedEventId: dragState.draggedEventId,
-                targetDateIndex: dragState.targetDateIndex,
-                currentDayIndex: dayIndex,
-                hasSnappedPosition: !!dragState.snappedPosition,
-              })
-
-              // Implementation tracked in Issue #89
-              return null
-            })()
-          : null}
       </div>
     </div>
   )
