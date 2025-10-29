@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Providers } from '../providers'
+import { Providers } from '../common/Providers/Providers'
 import { BaseLayoutContent } from './base-layout-content'
 
 interface BaseLayoutProps {

@@ -1,6 +1,6 @@
 'use client'
 
-import { BarChart3, Calendar, PanelLeftClose, PanelLeftOpen, SquareKanban, Table as TableIcon } from 'lucide-react'
+import { BarChart3, Calendar, Inbox, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
@@ -21,7 +21,7 @@ import type { AppBarNavItem } from './types'
  *
  * 3つのセクションに分離：
  * - アカウント: ユーザーアバター + ドロップダウンメニュー
- * - ナビゲーション: Calendar/Board/Table/Stats
+ * - ナビゲーション: Calendar/Inbox/Stats
  * - アクション: Search/Theme/Notifications/Settings
  *
  * **デザイン仕様**:
@@ -61,16 +61,10 @@ export function AppBar() {
         url: `/${locale}/calendar`,
       },
       {
-        id: 'board',
-        icon: SquareKanban,
-        label: t('sidebar.navigation.board'),
-        url: `/${locale}/board`,
-      },
-      {
-        id: 'table',
-        icon: TableIcon,
-        label: t('sidebar.navigation.table'),
-        url: `/${locale}/table`,
+        id: 'inbox',
+        icon: Inbox,
+        label: t('sidebar.navigation.inbox'),
+        url: `/${locale}/inbox`,
       },
       {
         id: 'stats',
