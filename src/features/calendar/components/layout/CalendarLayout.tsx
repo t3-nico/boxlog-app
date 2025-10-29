@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 
 import type { CalendarViewType } from '../../types/calendar.types'
 
+import { CalendarNavigationArea } from './CalendarNavigationArea'
 import { CalendarHeader } from './Header'
 
 interface CalendarLayoutProps {
@@ -33,11 +34,14 @@ interface CalendarLayoutProps {
     start: Date
     end: Date
   }
+
+  // Navigation area content
+  navigationContent?: React.ReactNode
 }
 
 /**
  * カレンダー最上位レイアウトコンポーネント
- * ヘッダーとメインコンテンツを管理
+ * ヘッダー、ナビゲーションエリア、メインコンテンツを管理
  */
 export const CalendarLayout = memo<CalendarLayoutProps>(
   ({
@@ -57,6 +61,9 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     // Date selection for mini calendar
     onDateSelect,
     displayRange,
+
+    // Navigation area
+    navigationContent,
   }) => {
     return (
       <div className={cn('calendar-layout bg-background flex h-full flex-col', className)}>
@@ -74,6 +81,9 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           showMiniCalendar={true}
           displayRange={displayRange}
         />
+
+        {/* ナビゲーションエリア */}
+        <CalendarNavigationArea>{navigationContent}</CalendarNavigationArea>
 
         {/* メインコンテンツ */}
         <main data-calendar-main className="flex min-h-0 flex-1 flex-col overflow-hidden pb-2">
