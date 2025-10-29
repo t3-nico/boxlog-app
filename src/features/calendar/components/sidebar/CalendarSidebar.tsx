@@ -15,10 +15,8 @@ import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
  * **タブ構成**:
  * - Inbox: Inboxタスク一覧
  * - Calendar: ミニカレンダー（日付選択・月移動）
- * - Events: イベント一覧（時系列）
  *
  * **TODO**:
- * - EventsList コンポーネント実装
  * - InboxList コンポーネント実装
  */
 export function CalendarSidebar() {
@@ -61,32 +59,6 @@ export function CalendarSidebar() {
             displayRange={displayRange}
             className="w-full !bg-transparent p-0"
           />
-        </div>
-      ),
-    },
-    {
-      value: 'events',
-      label: 'Events',
-      content: (
-        <div className="flex flex-col gap-4">
-          <div className="flex h-10 items-center">
-            <h3 className="text-sm font-semibold">View Tab</h3>
-          </div>
-          <div className="flex flex-col gap-4">
-            <p className="text-muted-foreground text-sm">表示設定がここに表示されます</p>
-            <div className="bg-muted rounded-lg p-4">
-              <p className="text-xs">DatePicker</p>
-              <p className="text-muted-foreground mt-2 text-xs">カレンダーの月選択ウィジェット</p>
-            </div>
-            <div className="bg-muted rounded-lg p-4">
-              <p className="text-xs">Filters</p>
-              <p className="text-muted-foreground mt-2 text-xs">タグ・カレンダーフィルター</p>
-            </div>
-            <div className="bg-muted rounded-lg p-4">
-              <p className="text-xs">View Options</p>
-              <p className="text-muted-foreground mt-2 text-xs">Day / Week / Month 切り替え</p>
-            </div>
-          </div>
         </div>
       ),
     },
