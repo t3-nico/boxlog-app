@@ -11,6 +11,7 @@ interface SidePanelProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   tabs: SidebarTab[]
+  title?: string
   defaultTab?: string
   defaultWidth?: number
   minWidth?: number
@@ -21,6 +22,7 @@ export function SidePanel({
   open,
   onOpenChange,
   tabs,
+  title,
   defaultTab,
   defaultWidth = 700,
   minWidth = 400,
@@ -84,15 +86,16 @@ export function SidePanel({
         <div className="bg-border absolute top-1/2 left-0 h-12 w-1 -translate-y-1/2 rounded-r" />
       </div>
 
-      {/* 閉じるボタン */}
-      <div className="absolute top-2 right-2 z-10">
-        <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
+      {/* ヘッダー */}
+      <div className="border-border relative flex items-center border-b px-6 py-4">
+        {title && <h2 className="flex-1 truncate pr-8 text-lg font-semibold">{title}</h2>}
+        <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="absolute top-2 right-2">
           <X className="h-5 w-5" />
         </Button>
       </div>
 
       {/* タブナビゲーション */}
-      <div className="flex h-full flex-col">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <SidebarTabLayout tabs={tabs} defaultTab={defaultTab} />
       </div>
     </div>

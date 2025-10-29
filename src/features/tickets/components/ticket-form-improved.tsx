@@ -46,6 +46,18 @@ export function TicketFormImproved({
     },
   })
 
+  // defaultValuesが変わった時にフォームを更新
+  useEffect(() => {
+    if (defaultValues) {
+      form.reset({
+        title: defaultValues.title ?? '',
+        description: defaultValues.description ?? '',
+        status: defaultValues.status ?? 'open',
+        due_date: defaultValues.due_date ?? undefined,
+      })
+    }
+  }, [defaultValues, form])
+
   // 編集モードの場合、既存のタグを取得
   const { data: existingTags } = api.tickets.getTags.useQuery(
     { ticketId: defaultValues?.id ?? '' },

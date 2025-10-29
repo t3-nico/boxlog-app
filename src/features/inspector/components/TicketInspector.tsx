@@ -4,11 +4,32 @@ import { useTicketInspectorStore } from '@/features/inspector/stores/useTicketIn
 import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
 import { SessionFormWrapper } from '@/features/tickets/components/session-form-wrapper'
 import { TicketFormWrapper } from '@/features/tickets/components/ticket-form-wrapper'
+import { api } from '@/lib/trpc'
 import { Suspense, useMemo } from 'react'
 import { SidePanel } from './SidePanel'
 
 export function TicketInspector() {
   const { isOpen, mode, ticketId, sessionId, close } = useTicketInspectorStore()
+
+  // チケット情報を取得してタイトルを表示
+  const { data: ticketData } = api.tickets.getById.useQuery({ id: ticketId! }, { enabled: !!ticketId && isOpen })
+  const { data: sessionData } = api.sessions.getById.useQuery({ id: sessionId! }, { enabled: !!sessionId && isOpen })
+
+  const getTitle = () => {
+    if (mode === 'create-ticket') {
+      return '新規チケット作成'
+    }
+    if (mode === 'create-session') {
+      return '新規セッション作成'
+    }
+    if ((mode === 'edit-ticket' || mode === 'view-ticket') && ticketData) {
+      return ticketData.title
+    }
+    if ((mode === 'edit-session' || mode === 'view-session') && sessionData) {
+      return `セッション - ${sessionData.ticket_id ? ticketData?.title || 'Ticket' : 'Session'}`
+    }
+    return ''
+  }
 
   const tabs: SidebarTab[] = useMemo(
     () => [
@@ -49,6 +70,7 @@ export function TicketInspector() {
       open={isOpen}
       onOpenChange={(open) => !open && close()}
       tabs={tabs}
+      title={getTitle()}
       defaultTab="overview"
       defaultWidth={700}
       minWidth={400}
