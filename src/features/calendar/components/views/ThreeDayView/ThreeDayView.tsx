@@ -8,6 +8,7 @@ import { format, isToday } from 'date-fns'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 
+import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { CalendarDateHeader, DateDisplay, HourLines, ScrollableCalendarLayout, useEventStyles } from '../shared'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 
@@ -152,76 +153,78 @@ export const ThreeDayView = ({
   )
 
   return (
-    <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
-      {/* 固定日付ヘッダー */}
-      <CalendarDateHeader header={headerComponent} timezone={timezone} />
+    <CalendarViewAnimation viewType="3day">
+      <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
+        {/* 固定日付ヘッダー */}
+        <CalendarDateHeader header={headerComponent} timezone={timezone} />
 
-      {/* スクロール可能コンテンツ */}
-      <ScrollableCalendarLayout
-        timezone={timezone}
-        scrollToHour={isCurrentDay ? undefined : 8}
-        displayDates={displayDates}
-        viewMode="3day"
-        onTimeClick={(hour, minute) => {
-          // ThreeDayViewでは最初にクリックされた日付を使用
-          const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-          onEmptyClick?.(displayDates[0], timeString)
-        }}
-        enableKeyboardNavigation={true}
-      >
-        {/* DayViewと同じ構造：ScrollableCalendarLayoutの子要素として直接配置 */}
-        <div className="relative h-full">
-          {/* 共通の時間グリッド線 */}
-          <div className="pointer-events-none absolute inset-0">
-            <HourLines startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
+        {/* スクロール可能コンテンツ */}
+        <ScrollableCalendarLayout
+          timezone={timezone}
+          scrollToHour={isCurrentDay ? undefined : 8}
+          displayDates={displayDates}
+          viewMode="3day"
+          onTimeClick={(hour, minute) => {
+            // ThreeDayViewでは最初にクリックされた日付を使用
+            const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+            onEmptyClick?.(displayDates[0], timeString)
+          }}
+          enableKeyboardNavigation={true}
+        >
+          {/* DayViewと同じ構造：ScrollableCalendarLayoutの子要素として直接配置 */}
+          <div className="relative h-full">
+            {/* 共通の時間グリッド線 */}
+            <div className="pointer-events-none absolute inset-0">
+              <HourLines startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
+            </div>
+
+            {/* displayDatesに基づくカラム（週末フィルタリング対応） */}
+            <div className="relative flex h-full">
+              {displayDates.map((date, dayIndex) => {
+                const dateKey = format(date, 'yyyy-MM-dd')
+                // 統一フィルタリング済みの日付に対応するイベントを取得
+                const dayEvents = events.filter((event) => {
+                  const eventDate = event.startDate || new Date()
+                  return format(eventDate, 'yyyy-MM-dd') === dateKey
+                })
+
+                return (
+                  <div
+                    key={date.toISOString()}
+                    className={cn(
+                      'relative flex-1 border-r border-neutral-900/20 last:border-r-0 dark:border-neutral-100/20'
+                    )}
+                    style={{ width: `${100 / displayDates.length}%` }}
+                  >
+                    {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある */}
+                    <ThreeDayContent
+                      date={date}
+                      events={dayEvents}
+                      eventStyles={eventStyles}
+                      onEventClick={onEventClick}
+                      onEventContextMenu={onEventContextMenu}
+                      onEmptyClick={onEmptyClick}
+                      onEventUpdate={onUpdateEvent}
+                      onTimeRangeSelect={(date, startTime, endTime) => {
+                        // 時間範囲選択時の処理（必要に応じて実装）
+                        const startDate = new Date(date)
+                        const [startHour, startMinute] = startTime.split(':').map(Number)
+                        startDate.setHours(startHour, startMinute, 0, 0)
+
+                        // onCreateEventは(date: Date, time?: string)の形式なので、startTimeのみ渡す
+                        onCreateEvent?.(startDate, startTime)
+                      }}
+                      className="h-full"
+                      dayIndex={dayIndex}
+                      displayDates={displayDates}
+                    />
+                  </div>
+                )
+              })}
+            </div>
           </div>
-
-          {/* displayDatesに基づくカラム（週末フィルタリング対応） */}
-          <div className="relative flex h-full">
-            {displayDates.map((date, dayIndex) => {
-              const dateKey = format(date, 'yyyy-MM-dd')
-              // 統一フィルタリング済みの日付に対応するイベントを取得
-              const dayEvents = events.filter((event) => {
-                const eventDate = event.startDate || new Date()
-                return format(eventDate, 'yyyy-MM-dd') === dateKey
-              })
-
-              return (
-                <div
-                  key={date.toISOString()}
-                  className={cn(
-                    'relative flex-1 border-r border-neutral-900/20 last:border-r-0 dark:border-neutral-100/20'
-                  )}
-                  style={{ width: `${100 / displayDates.length}%` }}
-                >
-                  {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある */}
-                  <ThreeDayContent
-                    date={date}
-                    events={dayEvents}
-                    eventStyles={eventStyles}
-                    onEventClick={onEventClick}
-                    onEventContextMenu={onEventContextMenu}
-                    onEmptyClick={onEmptyClick}
-                    onEventUpdate={onUpdateEvent}
-                    onTimeRangeSelect={(date, startTime, endTime) => {
-                      // 時間範囲選択時の処理（必要に応じて実装）
-                      const startDate = new Date(date)
-                      const [startHour, startMinute] = startTime.split(':').map(Number)
-                      startDate.setHours(startHour, startMinute, 0, 0)
-
-                      // onCreateEventは(date: Date, time?: string)の形式なので、startTimeのみ渡す
-                      onCreateEvent?.(startDate, startTime)
-                    }}
-                    className="h-full"
-                    dayIndex={dayIndex}
-                    displayDates={displayDates}
-                  />
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </ScrollableCalendarLayout>
-    </div>
+        </ScrollableCalendarLayout>
+      </div>
+    </CalendarViewAnimation>
   )
 }

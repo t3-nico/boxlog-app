@@ -14,7 +14,7 @@ import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
  *
  * **タブ構成**:
  * - Inbox: Inboxタスク一覧
- * - Calendar: ミニカレンダー（日付選択・月移動）
+ * - View: ミニカレンダー（日付選択・月移動）
  *
  * **TODO**:
  * - InboxList コンポーネント実装
@@ -43,8 +43,8 @@ export function CalendarSidebar() {
       content: <div className="flex flex-col gap-4">{/* Inbox content will be implemented */}</div>,
     },
     {
-      value: 'calendar',
-      label: 'Calendar',
+      value: 'view',
+      label: 'View',
       content: (
         <div className="flex w-full flex-col">
           <MiniCalendar
