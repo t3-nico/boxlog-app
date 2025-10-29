@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { InboxViewTabs } from './InboxViewTabs'
@@ -8,6 +8,7 @@ import { InboxViewTabs } from './InboxViewTabs'
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
   useSearchParams: vi.fn(),
+  useParams: vi.fn(),
 }))
 
 describe('InboxViewTabs', () => {
@@ -20,6 +21,9 @@ describe('InboxViewTabs', () => {
       push: mockPush,
     })
     ;(useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue(mockSearchParams)
+    ;(useParams as ReturnType<typeof vi.fn>).mockReturnValue({
+      locale: 'ja',
+    })
   })
 
   describe('基本レンダリング', () => {
@@ -84,22 +88,22 @@ describe('InboxViewTabs', () => {
   })
 
   describe('タブ切り替え', () => {
-    it('Boardタブクリックで /inbox?view=board に遷移する', () => {
+    it('Boardタブクリックで /ja/inbox?view=board に遷移する', () => {
       render(<InboxViewTabs />)
 
       const boardTab = screen.getByRole('tab', { name: 'Board' })
       fireEvent.click(boardTab)
 
-      expect(mockPush).toHaveBeenCalledWith('/inbox?view=board')
+      expect(mockPush).toHaveBeenCalledWith('/ja/inbox?view=board')
     })
 
-    it('Tableタブクリックで /inbox?view=table に遷移する', () => {
+    it('Tableタブクリックで /ja/inbox?view=table に遷移する', () => {
       render(<InboxViewTabs />)
 
       const tableTab = screen.getByRole('tab', { name: 'Table' })
       fireEvent.click(tableTab)
 
-      expect(mockPush).toHaveBeenCalledWith('/inbox?view=table')
+      expect(mockPush).toHaveBeenCalledWith('/ja/inbox?view=table')
     })
 
     it('既存のクエリパラメータを保持する', () => {
@@ -111,7 +115,7 @@ describe('InboxViewTabs', () => {
       const tableTab = screen.getByRole('tab', { name: 'Table' })
       fireEvent.click(tableTab)
 
-      expect(mockPush).toHaveBeenCalledWith('/inbox?filter=active&sort=date&view=table')
+      expect(mockPush).toHaveBeenCalledWith('/ja/inbox?filter=active&sort=date&view=table')
     })
   })
 

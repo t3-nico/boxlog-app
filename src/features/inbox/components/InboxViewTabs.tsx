@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 
 type ViewType = 'board' | 'table'
@@ -8,15 +8,17 @@ type ViewType = 'board' | 'table'
 export function InboxViewTabs() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const params = useParams()
+  const locale = params?.locale as string
   const currentView = (searchParams?.get('view') as ViewType) || 'board'
 
   const handleViewChange = useCallback(
     (view: ViewType) => {
-      const params = new URLSearchParams(searchParams?.toString() || '')
-      params.set('view', view)
-      router.push(`/inbox?${params.toString()}`)
+      const urlParams = new URLSearchParams(searchParams?.toString() || '')
+      urlParams.set('view', view)
+      router.push(`/${locale}/inbox?${urlParams.toString()}`)
     },
-    [searchParams, router]
+    [searchParams, router, locale]
   )
 
   return (
