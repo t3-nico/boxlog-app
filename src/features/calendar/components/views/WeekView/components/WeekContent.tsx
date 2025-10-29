@@ -136,7 +136,14 @@ export const WeekContent = ({
     [onEventContextMenu, dragState.isDragging, dragState.isResizing]
   )
 
-  // WeekContent初期化
+  // 時間グリッドの生成（DayViewと同じパターン）
+  const timeGrid = Array.from({ length: 24 }, (_, hour) => (
+    <div
+      key={hour}
+      className={`relative ${hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : ''}`}
+      style={{ height: HOUR_HEIGHT }}
+    />
+  ))
 
   return (
     <div
@@ -158,8 +165,10 @@ export const WeekContent = ({
         onSingleClick={onEmptyClick}
         disabled={dragState.isDragging || dragState.isResizing}
       >
-        {/* 背景グリッドはHourLinesがレンダリング済み */}
-        <div className="absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }} />
+        {/* 背景グリッド（DayViewと同じパターン） */}
+        <div className="absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
+          {timeGrid}
+        </div>
       </CalendarDragSelection>
 
       {/* イベント表示エリア */}

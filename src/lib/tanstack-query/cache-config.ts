@@ -48,6 +48,9 @@ export const cacheStrategies = {
   tagStats: standardCache,
   smartFolders: standardCache,
   userSettings: staticCache,
+  inbox: realtimeCache, // Inboxデータはリアルタイム性が重要
+  tickets: realtimeCache, // チケットもリアルタイム性が重要
+  sessions: realtimeCache, // セッションもリアルタイム性が重要
 } as const
 
 /**

@@ -4,6 +4,7 @@
  * プロシージャ定義とコンテキスト管理
  */
 
+import { SupabaseClient } from '@supabase/supabase-js'
 import { initTRPC, TRPCError } from '@trpc/server'
 import { CreateNextContextOptions } from '@trpc/server/adapters/next'
 import superjson from 'superjson'
@@ -13,7 +14,6 @@ import { createAppError, ERROR_CODES } from '@/config/error-patterns'
 import { trackError } from '@/lib/analytics/vercel-analytics'
 
 import type { Database } from '@/types/supabase'
-import type { SupabaseClient } from '@supabase/supabase-js'
 
 /**
  * リクエストコンテキストの型定義

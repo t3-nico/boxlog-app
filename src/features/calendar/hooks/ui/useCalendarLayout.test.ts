@@ -142,11 +142,11 @@ describe('useCalendarLayout', () => {
       expect(onViewChange).toHaveBeenCalledWith('day')
 
       act(() => {
-        result.current.changeView('month')
+        result.current.changeView('week')
       })
 
-      expect(result.current.viewType).toBe('month')
-      expect(onViewChange).toHaveBeenCalledWith('month')
+      expect(result.current.viewType).toBe('week')
+      expect(onViewChange).toHaveBeenCalledWith('week')
     })
   })
 

@@ -18,9 +18,7 @@ export const SCREENS = {
   DASHBOARD: 'dashboard',
   CALENDAR: 'calendar',
   CALENDAR_VIEW: 'calendar_view', // /calendar/[view]
-  BOARD: 'board',
-  TABLE: 'table',
-  TABLE_DETAIL: 'table_detail', // /table/[id]
+  INBOX: 'inbox',
   AI_CHAT: 'ai_chat',
   STATS: 'stats',
   STATS_DETAIL: 'stats_detail', // /stats/[id]
@@ -198,9 +196,7 @@ export const ROUTES = {
   dashboard: () => '/',
   calendar: () => '/calendar',
   calendarView: (view: string) => `/calendar/${view}`,
-  board: () => '/board',
-  table: () => '/table',
-  tableDetail: (id: string) => `/table/${id}`,
+  inbox: () => '/inbox',
   aiChat: () => '/ai-chat',
   stats: () => '/stats',
   statsDetail: (id: string) => `/stats/${id}`,

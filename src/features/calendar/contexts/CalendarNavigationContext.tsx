@@ -85,21 +85,16 @@ export const CalendarNavigationProvider = ({
 
         switch (viewType) {
           case 'day':
-          case 'split-day':
             newDate.setDate(currentDate.getDate() + 1 * multiplier)
             break
           case '3day':
             newDate.setDate(currentDate.getDate() + 3 * multiplier)
             break
+          case '5day':
+            newDate.setDate(currentDate.getDate() + 5 * multiplier)
+            break
           case 'week':
-          case 'week-no-weekend':
             newDate.setDate(currentDate.getDate() + 7 * multiplier)
-            break
-          case '2week':
-            newDate.setDate(currentDate.getDate() + 14 * multiplier)
-            break
-          case 'month':
-            newDate.setMonth(currentDate.getMonth() + multiplier)
             break
           default:
             newDate.setDate(currentDate.getDate() + 7 * multiplier)

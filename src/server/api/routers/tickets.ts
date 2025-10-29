@@ -113,7 +113,7 @@ export const ticketsRouter = createTRPCRouter({
   // ========================================
   // Tickets CRUD
   // ========================================
-  getAll: protectedProcedure.input(ticketFilterSchema.optional()).query(async ({ ctx, input }) => {
+  list: protectedProcedure.input(ticketFilterSchema.optional()).query(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
     let query = supabase.from('tickets').select('*').eq('user_id', userId)
