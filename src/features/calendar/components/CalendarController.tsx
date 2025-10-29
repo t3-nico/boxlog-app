@@ -42,7 +42,7 @@ const WeekView = React.lazy(() => import('./views/WeekView').then((module) => ({
 const ThreeDayView = React.lazy(() =>
   import('./views/ThreeDayView').then((module) => ({ default: module.ThreeDayView }))
 )
-const TwoWeekView = React.lazy(() => import('./views/TwoWeekView').then((module) => ({ default: module.TwoWeekView })))
+const FiveDayView = React.lazy(() => import('./views/FiveDayView').then((module) => ({ default: module.FiveDayView })))
 
 // ローディングフォールバック
 const CalendarViewSkeleton = () => (
@@ -169,13 +169,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     }
   }, [hasRequestedNotification, notificationPermission, requestNotificationPermission])
 
-  // week-no-weekendでアクセスされた場合の処理
-  useEffect(() => {
-    if (viewType === 'week-no-weekend') {
-      logger.log('📅 week-no-weekend detected, setting showWeekends=false')
-      updateSettings({ showWeekends: false })
-    }
-  }, [viewType, updateSettings])
+  // 削除: week-no-weekendは廃止
 
   // URLパラメータの日付変更を検知（Context利用時は無効にする）
   useEffect(() => {
@@ -488,14 +482,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   const handleViewChange = useCallback(
     (newView: CalendarViewType) => {
-      if (newView === 'week-no-weekend') {
-        updateSettings({ showWeekends: false })
-        newView = 'week'
-      }
-
       changeView(newView)
     },
-    [changeView, updateSettings]
+    [changeView]
   )
 
   // Navigation callback handlers
@@ -548,22 +537,12 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
           switch (viewType) {
             case 'day':
               return <DayView {...commonProps} showWeekends={showWeekends} />
-            case 'split-day':
-              // Split-day view is currently not available, fallback to day view
-              return <DayView {...commonProps} />
             case '3day':
-              // 3DayViewに週末表示設定を渡す
               return <ThreeDayView {...commonProps} showWeekends={showWeekends} />
+            case '5day':
+              return <FiveDayView {...commonProps} showWeekends={showWeekends} />
             case 'week':
               return <WeekView {...commonProps} showWeekends={showWeekends} />
-            case 'week-no-weekend':
-              // 後方互換性のため残す（設定より優先）
-              return <WeekView {...commonProps} showWeekends={false} />
-            case '2week':
-              return <TwoWeekView {...commonProps} showWeekends={showWeekends} />
-            case 'month':
-              // MonthViewはまだ実装されていないため、TwoWeekViewを使用
-              return <TwoWeekView {...commonProps} />
             default:
               return <DayView {...commonProps} />
           }

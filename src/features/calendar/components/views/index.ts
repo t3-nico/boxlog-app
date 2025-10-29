@@ -1,7 +1,7 @@
 // ビューコンポーネント
 export { DayView } from './DayView'
+export { FiveDayView } from './FiveDayView'
 export { ThreeDayView } from './ThreeDayView'
-export { TwoWeekView } from './TwoWeekView'
 export { WeekView } from './WeekView'
 
 // 共有コンポーネント

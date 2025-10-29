@@ -5,16 +5,7 @@ import { useCallback, useEffect } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
 
 import { buttonVariants } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { useI18n } from '@/features/i18n/lib/hooks'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 
 export type ViewOption = {
@@ -36,9 +27,7 @@ interface ViewSwitcherProps {
  * shadcn/ui公式DropdownMenuを使用
  */
 export const ViewSwitcher = ({ options, currentView, onChange, className }: ViewSwitcherProps) => {
-  const { t } = useI18n()
   const currentOption = options.find((opt) => opt.value === currentView)
-  const { showWeekends, updateSettings } = useCalendarSettingsStore()
 
   const handleSelect = useCallback(
     (value: string) => {
@@ -46,10 +35,6 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
     },
     [onChange]
   )
-
-  const handleWeekendToggle = useCallback(() => {
-    updateSettings({ showWeekends: !showWeekends })
-  }, [showWeekends, updateSettings])
 
   // ショートカットキー機能
   useEffect(() => {
@@ -110,13 +95,6 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
             )}
           </DropdownMenuItem>
         ))}
-
-        <DropdownMenuSeparator />
-
-        {/* 週末表示オプション */}
-        <DropdownMenuCheckboxItem checked={showWeekends} onCheckedChange={handleWeekendToggle}>
-          {t('calendar.viewSwitcher.showWeekends')}
-        </DropdownMenuCheckboxItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
