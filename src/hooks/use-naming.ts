@@ -163,9 +163,7 @@ export function useNamingNavigation() {
     if ((pathname || '/').startsWith('/auth')) return 'auth'
     if ((pathname || '/').startsWith('/calendar/')) return 'calendar_view'
     if ((pathname || '/') === '/calendar') return 'calendar'
-    if ((pathname || '/') === '/board') return 'board'
-    if ((pathname || '/').startsWith('/table/')) return 'table_detail'
-    if ((pathname || '/') === '/table') return 'table'
+    if ((pathname || '/').startsWith('/inbox')) return 'inbox'
     if ((pathname || '/') === '/ai-chat') return 'ai_chat'
     if ((pathname || '/').startsWith('/stats/') && pathname !== '/stats') {
       // 詳細な統計ページの判定

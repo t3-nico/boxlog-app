@@ -4,13 +4,7 @@ import React, { useCallback } from 'react'
 
 import { usePathname, useRouter } from 'next/navigation'
 
-import {
-  SquareKanban as BoardIcon,
-  Calendar as CalendarIcon,
-  Menu as MenuIcon,
-  BarChart3 as StatsIcon,
-  TableProperties as TableIcon,
-} from 'lucide-react'
+import { Calendar as CalendarIcon, Inbox as InboxIcon, Menu as MenuIcon, BarChart3 as StatsIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -33,18 +27,11 @@ const bottomNavItems: BottomNavItem[] = [
     isActive: (pathname) => pathname.includes('/calendar'),
   },
   {
-    id: 'board',
-    label: 'Board',
-    href: '/board',
-    icon: BoardIcon,
-    isActive: (pathname) => pathname.includes('/board'),
-  },
-  {
-    id: 'table',
-    label: 'Table',
-    href: '/table',
-    icon: TableIcon,
-    isActive: (pathname) => pathname.includes('/table'),
+    id: 'inbox',
+    label: 'Inbox',
+    href: '/inbox',
+    icon: InboxIcon,
+    isActive: (pathname) => pathname.includes('/inbox'),
   },
   {
     id: 'stats',
