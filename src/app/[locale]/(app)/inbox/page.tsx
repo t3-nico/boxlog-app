@@ -18,12 +18,9 @@ function InboxContent() {
 
   return (
     <>
-      {/* タブ */}
-      <div className="border-border shrink-0 border-b px-4 py-3 md:px-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Inbox</h1>
-          <InboxViewTabs />
-        </div>
+      {/* タブヘッダー - Sidebar風アンダーラインデザイン */}
+      <div className="border-border shrink-0 border-b px-4 md:px-6">
+        <InboxViewTabs />
       </div>
 
       {/* ビューコンテンツ */}

@@ -5,6 +5,13 @@ import { useCallback } from 'react'
 
 type ViewType = 'board' | 'table'
 
+/**
+ * Inbox View Tabs Component
+ *
+ * Sidebar風アンダーラインタブデザイン
+ * - Slack風の下部ボーダー表示
+ * - セマンティックトークン使用
+ */
 export function InboxViewTabs() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -22,17 +29,17 @@ export function InboxViewTabs() {
   )
 
   return (
-    <div role="tablist" aria-label="Inbox view selector" className="bg-muted inline-flex items-center rounded-lg p-1">
+    <div role="tablist" aria-label="Inbox view selector" className="flex h-10 items-center gap-0">
       <button
         role="tab"
         aria-selected={currentView === 'board'}
         aria-controls="inbox-view-panel"
         onClick={() => handleViewChange('board')}
-        className={`focus-visible:ring-ring rounded-md px-4 py-2 text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
+        className={`focus-visible:ring-ring h-10 rounded-none border-b-2 px-4 py-0 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
           currentView === 'board'
-            ? 'bg-background text-foreground shadow-sm'
-            : 'text-muted-foreground hover:text-foreground'
-        } `}
+            ? 'border-primary text-foreground'
+            : 'text-muted-foreground hover:border-primary/50 hover:text-foreground border-transparent'
+        }`}
       >
         Board
       </button>
@@ -41,11 +48,11 @@ export function InboxViewTabs() {
         aria-selected={currentView === 'table'}
         aria-controls="inbox-view-panel"
         onClick={() => handleViewChange('table')}
-        className={`focus-visible:ring-ring rounded-md px-4 py-2 text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
+        className={`focus-visible:ring-ring h-10 rounded-none border-b-2 px-4 py-0 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
           currentView === 'table'
-            ? 'bg-background text-foreground shadow-sm'
-            : 'text-muted-foreground hover:text-foreground'
-        } `}
+            ? 'border-primary text-foreground'
+            : 'text-muted-foreground hover:border-primary/50 hover:text-foreground border-transparent'
+        }`}
       >
         Table
       </button>

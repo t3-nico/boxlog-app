@@ -128,54 +128,65 @@ export function InboxTableView() {
 
   return (
     <div className="flex h-full flex-col">
-      <DataTableToolbar table={table} />
-      <ScrollArea className="border-input mt-4 flex-1 rounded-md border">
-        <Table style={{ minWidth: table.getTotalSize() }}>
-          <TableCaption className="sr-only">Inbox一覧テーブル</TableCaption>
-          <TableHeader className="bg-background sticky top-0 z-10">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} style={{ width: header.getSize(), position: 'relative' }}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      {/* リサイズハンドル */}
-                      <div
-                        onMouseDown={header.getResizeHandler()}
-                        onTouchStart={header.getResizeHandler()}
-                        className={`absolute top-0 right-0 h-full w-1 cursor-col-resize touch-none select-none ${
-                          header.column.getIsResizing() ? 'bg-primary' : 'hover:bg-primary/50'
-                        }`}
-                      />
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
+      {/* ツールバー: フィルター・検索 */}
+      <div className="flex shrink-0 px-4 py-4 md:px-6">
+        <DataTableToolbar table={table} />
+      </div>
+
+      {/* テーブル: 残りのスペース */}
+      <div className="flex-1 overflow-hidden px-4 md:px-6">
+        <ScrollArea className="border-input h-full rounded-md border">
+          <Table style={{ minWidth: table.getTotalSize() }}>
+            <TableCaption className="sr-only">Inbox一覧テーブル</TableCaption>
+            <TableHeader className="bg-background sticky top-0 z-10">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} style={{ width: header.getSize(), position: 'relative' }}>
+                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                        {/* リサイズハンドル */}
+                        <div
+                          onMouseDown={header.getResizeHandler()}
+                          onTouchStart={header.getResizeHandler()}
+                          className={`absolute top-0 right-0 h-full w-1 cursor-col-resize touch-none select-none ${
+                            header.column.getIsResizing() ? 'bg-primary' : 'hover:bg-primary/50'
+                          }`}
+                        />
+                      </TableHead>
+                    )
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  <DataTableEmpty />
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
-      <DataTablePagination table={table} className="mt-4" />
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    <DataTableEmpty />
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+
+        {/* ページネーション */}
+        <div className="px-4 py-4 md:px-6">
+          <DataTablePagination table={table} />
+        </div>
+      </div>
     </div>
   )
 }

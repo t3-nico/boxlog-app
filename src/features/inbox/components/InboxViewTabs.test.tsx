@@ -138,11 +138,11 @@ describe('InboxViewTabs', () => {
   })
 
   describe('スタイリング', () => {
-    it('アクティブなタブに正しいスタイルが適用される', () => {
+    it('アクティブなタブに正しいスタイルが適用される（アンダーラインデザイン）', () => {
       render(<InboxViewTabs />)
 
       const boardTab = screen.getByRole('tab', { name: 'Board' })
-      expect(boardTab.className).toContain('bg-background')
+      expect(boardTab.className).toContain('border-primary') // アクティブ時はプライマリカラーのボーダー
       expect(boardTab.className).toContain('text-foreground')
     })
 
@@ -150,6 +150,7 @@ describe('InboxViewTabs', () => {
       render(<InboxViewTabs />)
 
       const tableTab = screen.getByRole('tab', { name: 'Table' })
+      expect(tableTab.className).toContain('border-transparent') // 非アクティブ時は透明ボーダー
       expect(tableTab.className).toContain('text-muted-foreground')
       expect(tableTab.className).toContain('hover:text-foreground')
     })
