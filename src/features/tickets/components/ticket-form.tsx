@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { CheckSquare, Flag } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
@@ -40,20 +41,44 @@ export function TicketForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* タイトル */}
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>タイトル</FormLabel>
-              <FormControl>
-                <Input placeholder="チケットのタイトルを入力" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* タイトル入力エリア（アイコン付き） */}
+        <div className="space-y-2">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>タイトル</FormLabel>
+                <FormControl>
+                  <div className="flex items-center gap-2">
+                    <Input placeholder="チケットのタイトルを入力" {...field} className="flex-1" />
+                    <div className="flex items-center gap-1">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="text-muted-foreground hover:text-foreground h-9 w-9"
+                        title="優先度を設定"
+                      >
+                        <Flag className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="text-muted-foreground hover:text-foreground h-9 w-9"
+                        title="チェックリストを追加"
+                      >
+                        <CheckSquare className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         {/* 説明 */}
         <FormField

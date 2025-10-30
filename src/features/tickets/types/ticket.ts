@@ -4,6 +4,8 @@ export type TicketStatus = 'open' | 'in_progress' | 'completed' | 'cancelled'
 
 export type TicketPriority = 'urgent' | 'high' | 'normal' | 'low'
 
+export type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly'
+
 export interface Ticket {
   id: string
   user_id: string
@@ -14,8 +16,10 @@ export interface Ticket {
   priority?: TicketPriority
   milestone?: string
   due_date?: string
-  planned_hours?: number
-  actual_hours: number
+  start_time?: string
+  end_time?: string
+  recurrence_type?: RecurrenceType
+  recurrence_end_date?: string
   created_at: string
   updated_at: string
 }
@@ -27,7 +31,10 @@ export interface CreateTicketInput {
   priority?: TicketPriority
   milestone?: string
   due_date?: string
-  planned_hours?: number
+  start_time?: string
+  end_time?: string
+  recurrence_type?: RecurrenceType
+  recurrence_end_date?: string
 }
 
 export interface UpdateTicketInput {
@@ -37,7 +44,10 @@ export interface UpdateTicketInput {
   priority?: TicketPriority
   milestone?: string
   due_date?: string
-  planned_hours?: number
+  start_time?: string
+  end_time?: string
+  recurrence_type?: RecurrenceType
+  recurrence_end_date?: string
 }
 
 export interface TicketWithTags extends Ticket {
