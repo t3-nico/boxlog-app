@@ -4,7 +4,6 @@ import { CookieConsentBanner } from '@/components/common/cookie-consent-banner'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { TicketInspector } from '@/features/inspector/components/TicketInspector'
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
 import { NotificationDialog } from '@/features/notifications'
 import { SettingsDialog } from '@/features/settings/components/dialog'
@@ -59,9 +58,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
       {/* Notification Dialog */}
       <NotificationDialog />
-
-      {/* Ticket Inspector */}
-      <TicketInspector />
 
       {/* Cookie Consent Banner */}
       <CookieConsentBanner />

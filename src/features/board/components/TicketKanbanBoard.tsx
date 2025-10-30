@@ -1,6 +1,7 @@
 'use client'
 
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
+import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 
 interface TicketKanbanBoardProps {
   items: InboxItem[]
@@ -72,6 +73,8 @@ function KanbanColumn({ title, count, variant, children }: KanbanColumnProps) {
 }
 
 function TicketCard({ item }: { item: InboxItem }) {
+  const { openInspector } = useTicketInspectorStore()
+
   const priorityStyles: Record<string, string> = {
     high: 'bg-red-100 text-red-800 dark:bg-red-950/50 dark:text-red-300',
     medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950/50 dark:text-yellow-300',
@@ -80,8 +83,17 @@ function TicketCard({ item }: { item: InboxItem }) {
 
   const priorityClass = item.priority ? priorityStyles[item.priority] || priorityStyles.low : ''
 
+  const handleClick = () => {
+    if (item.type === 'ticket') {
+      openInspector(item.id)
+    }
+  }
+
   return (
-    <div className="bg-card hover:bg-accent group cursor-pointer rounded-lg border p-3 shadow-sm transition-all hover:shadow-md">
+    <div
+      onClick={handleClick}
+      className="bg-card hover:bg-accent group cursor-pointer rounded-lg border p-3 shadow-sm transition-all hover:shadow-md"
+    >
       <div className="text-foreground mb-1 text-sm font-medium">{item.title}</div>
       <div className="text-muted-foreground mb-2 text-xs">
         {item.type === 'ticket' && item.ticket_number ? `#${item.ticket_number}` : item.type}
