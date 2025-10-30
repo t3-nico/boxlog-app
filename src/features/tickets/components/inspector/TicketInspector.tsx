@@ -8,8 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
+import { api } from '@/lib/trpc'
 import { format } from 'date-fns'
-import { Clock, PanelRight } from 'lucide-react'
+import { ChevronDown, ChevronUp, Clock, PanelRight } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTicket } from '../../hooks/useTicket'
 import { useTicketMutations } from '../../hooks/useTicketMutations'
@@ -49,12 +50,35 @@ const TIME_OPTIONS = generateTimeOptions()
  * ```
  */
 export function TicketInspector() {
-  const { isOpen, ticketId, closeInspector } = useTicketInspectorStore()
+  const { isOpen, ticketId, closeInspector, openInspector } = useTicketInspectorStore()
 
   // Ticketデータ取得
   const { data: ticketData, isLoading } = useTicket(ticketId!, { enabled: !!ticketId })
   // Type assertion: In practice ticketData is Ticket | undefined (tRPC error handling is separate)
   const ticket = (ticketData ?? null) as Ticket | null
+
+  // 全チケットリスト取得（ナビゲーション用）
+  const { data: allTickets = [] } = api.tickets.list.useQuery()
+
+  // 現在のチケットのインデックスを計算
+  const currentIndex = useMemo(() => {
+    return allTickets.findIndex((t) => t.id === ticketId)
+  }, [allTickets, ticketId])
+
+  const hasPrevious = currentIndex > 0
+  const hasNext = currentIndex >= 0 && currentIndex < allTickets.length - 1
+
+  const goToPrevious = () => {
+    if (hasPrevious) {
+      openInspector(allTickets[currentIndex - 1]!.id)
+    }
+  }
+
+  const goToNext = () => {
+    if (hasNext) {
+      openInspector(allTickets[currentIndex + 1]!.id)
+    }
+  }
 
   // Mutations（Toast通知・キャッシュ無効化込み）
   const { updateTicket } = useTicketMutations()
@@ -205,7 +229,7 @@ export function TicketInspector() {
         ) : (
           <>
             {/* ヘッダー */}
-            <div className="flex h-10 items-center pt-2">
+            <div className="flex h-10 items-center gap-1 pt-2">
               <Button
                 variant="ghost"
                 size="icon"
@@ -215,6 +239,28 @@ export function TicketInspector() {
               >
                 <PanelRight className="h-4 w-4" />
               </Button>
+              <div className="flex items-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={goToPrevious}
+                  disabled={!hasPrevious}
+                  aria-label="前のチケット"
+                >
+                  <ChevronUp className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={goToNext}
+                  disabled={!hasNext}
+                  aria-label="次のチケット"
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             {/* タブ構成 */}
@@ -306,7 +352,7 @@ export function TicketInspector() {
                 </div>
 
                 {/* 日付・時間（作成ページと同じUI） */}
-                <div className="relative border-t pt-4">
+                <div className="relative pt-4">
                   <div className="flex items-center gap-3">
                     {/* 日付選択ボタン */}
                     <Button
@@ -353,25 +399,9 @@ export function TicketInspector() {
                           // 開始時刻以前の時刻は表示しない
                           if (endMinutes <= startMinutes) return null
 
-                          const diff = endMinutes - startMinutes
-                          const hours = Math.floor(diff / 60)
-                          const minutes = diff % 60
-
-                          let duration = ''
-                          if (hours > 0 && minutes > 0) {
-                            duration = ` (${hours * 60 + minutes}分)`
-                          } else if (hours > 0) {
-                            duration = ` (${hours * 60}分)`
-                          } else {
-                            duration = ` (${minutes}分)`
-                          }
-
                           return (
                             <SelectItem key={`end-${time}`} value={time}>
-                              <div className="flex items-center gap-2">
-                                <span>{time}</span>
-                                <span className="text-muted-foreground text-xs">{duration}</span>
-                              </div>
+                              {time}
                             </SelectItem>
                           )
                         })}
@@ -399,7 +429,7 @@ export function TicketInspector() {
 
                 {/* メタデータ */}
                 {'id' in ticket && (
-                  <div className="text-muted-foreground space-y-2 border-t pt-4 text-sm">
+                  <div className="text-muted-foreground space-y-2 pt-4 text-sm">
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />
                       <span>作成: {new Date(ticket.created_at || '').toLocaleString('ja-JP')}</span>
