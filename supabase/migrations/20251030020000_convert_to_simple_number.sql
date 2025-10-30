@@ -6,13 +6,9 @@
 -- 既存の旧形式チケットを削除
 DELETE FROM tickets WHERE ticket_number LIKE 'TKT-%';
 
--- 既存の旧形式セッションを削除
-DELETE FROM sessions WHERE session_number LIKE 'SES-%';
-
 -- 確認用ログ
 DO $$
 BEGIN
   RAISE NOTICE '旧形式データを削除しました';
   RAISE NOTICE 'Tickets 残存件数: %', (SELECT COUNT(*) FROM tickets);
-  RAISE NOTICE 'Sessions 残存件数: %', (SELECT COUNT(*) FROM sessions);
 END $$;

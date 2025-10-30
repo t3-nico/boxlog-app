@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { api } from '@/lib/trpc'
 import { Calendar, ChevronRight, Clock } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useTicketMutations } from '../hooks/useTicketMutations'
 import { useTicketInspectorStore } from '../stores/useTicketInspectorStore'
 
 /**
@@ -36,15 +37,8 @@ export function TicketInspector() {
   // Ticketデータ取得
   const { data: ticket, isLoading } = api.tickets.getById.useQuery({ id: ticketId! }, { enabled: !!ticketId })
 
-  // 更新Mutation
-  const utils = api.useUtils()
-  const updateMutation = api.tickets.update.useMutation({
-    onSuccess: () => {
-      setIsEditing(false)
-      utils.tickets.getById.invalidate({ id: ticketId! })
-      utils.tickets.list.invalidate()
-    },
-  })
+  // Mutations（Toast通知・キャッシュ無効化込み）
+  const { updateTicket } = useTicketMutations()
 
   // フォームの状態（編集用）
   const [formData, setFormData] = useState({
@@ -67,14 +61,21 @@ export function TicketInspector() {
 
   const handleSave = () => {
     if (!ticketId) return
-    updateMutation.mutate({
-      id: ticketId,
-      data: {
-        title: formData.title,
-        description: formData.description,
-        status: formData.status as 'open' | 'in_progress' | 'completed' | 'cancelled',
+    updateTicket.mutate(
+      {
+        id: ticketId,
+        data: {
+          title: formData.title,
+          description: formData.description,
+          status: formData.status as 'open' | 'in_progress' | 'completed' | 'cancelled',
+        },
       },
-    })
+      {
+        onSuccess: () => {
+          setIsEditing(false)
+        },
+      }
+    )
   }
 
   return (
@@ -218,7 +219,7 @@ export function TicketInspector() {
                   <Button variant="outline" onClick={() => setIsEditing(false)}>
                     キャンセル
                   </Button>
-                  <Button onClick={handleSave} disabled={updateMutation.isPending}>
+                  <Button onClick={handleSave} disabled={updateTicket.isPending}>
                     保存
                   </Button>
                 </>

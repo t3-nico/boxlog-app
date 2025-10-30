@@ -1,4 +1,3 @@
-import type { SessionStatus } from '@/features/tickets/types/session'
 import type { TicketPriority, TicketStatus } from '@/features/tickets/types/ticket'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
@@ -8,7 +7,7 @@ import { persist } from 'zustand/middleware'
  * Board/Table両方で共有するフィルター
  */
 interface InboxFilterState {
-  status: Array<TicketStatus | SessionStatus>
+  status: TicketStatus[]
   priority: TicketPriority[]
   tags: string[]
   search: string
@@ -19,7 +18,7 @@ interface InboxFilterState {
  * Inbox共通フィルタストア
  */
 interface InboxFilterStore extends InboxFilterState {
-  setStatus: (status: Array<TicketStatus | SessionStatus>) => void
+  setStatus: (status: TicketStatus[]) => void
   setPriority: (priority: TicketPriority[]) => void
   setTags: (tags: string[]) => void
   setSearch: (search: string) => void

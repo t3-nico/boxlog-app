@@ -9,7 +9,6 @@ import { Suspense } from 'react'
 
 import { CookieConsentBanner, GlobalErrorBoundary } from '@/components/common'
 import { Providers } from '@/components/providers'
-import { Toaster } from '@/components/ui/sonner'
 import { WebVitalsReporter } from '@/components/WebVitalsReporter'
 import { cn } from '@/lib/utils'
 
@@ -40,7 +39,6 @@ const RootLayout = ({ children }: RootLayoutProps) => {
           <GlobalErrorBoundary maxRetries={3} retryDelay={1000}>
             <Providers>
               {children}
-              <Toaster />
               <CookieConsentBanner />
             </Providers>
           </GlobalErrorBoundary>

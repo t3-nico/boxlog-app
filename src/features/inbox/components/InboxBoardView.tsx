@@ -2,7 +2,8 @@
 
 import { KanbanBoard } from '@/features/board'
 import { KanbanToolbar } from '@/features/board/components/KanbanToolbar'
-import { useInboxData, type InboxFilters } from '../hooks/useInboxData'
+import type { TicketStatus } from '@/features/tickets/types/ticket'
+import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 
 /**
@@ -20,7 +21,7 @@ import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 export function InboxBoardView() {
   const filters = useInboxFilterStore()
   const { items, isLoading, error } = useInboxData({
-    status: filters.status[0] as InboxFilters['status'],
+    status: filters.status[0] as TicketStatus | undefined,
     search: filters.search,
   })
 
