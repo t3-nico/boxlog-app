@@ -31,6 +31,10 @@ export function SidePanel({
   const { width, setWidth, isResizing, setIsResizing } = useTicketInspectorStore()
   const panelRef = useRef<HTMLDivElement>(null)
 
+  useEffect(() => {
+    console.log('[SidePanel] State changed:', { open, title, width, tabsCount: tabs.length })
+  }, [open, title, width, tabs.length])
+
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
     setIsResizing(true)
@@ -75,7 +79,7 @@ export function SidePanel({
   return (
     <div
       ref={panelRef}
-      className="border-border bg-background fixed top-0 right-0 bottom-0 z-40 flex flex-col border-l shadow-lg"
+      className="border-border bg-background fixed top-0 right-0 bottom-0 z-[9999] flex flex-col border-l shadow-lg"
       style={{ width: `${width}px`, maxWidth: '100vw' }}
     >
       {/* リサイズハンドル */}

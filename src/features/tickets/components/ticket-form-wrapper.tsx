@@ -23,16 +23,35 @@ export function TicketFormWrapper({ ticketId, onSuccess }: TicketFormWrapperProp
   const deleteMutation = api.tickets.delete.useMutation()
 
   // 編集モードの場合、ticketデータを取得
-  const { data: ticketData } = api.tickets.getById.useQuery({ id: ticketId! }, { enabled: !!ticketId })
+  const { data: ticketData, isLoading: isLoadingTicket } = api.tickets.getById.useQuery(
+    { id: ticketId! },
+    { enabled: !!ticketId }
+  )
 
-  // 既存のタグを取得
-  const { data: existingTags } = api.tickets.getTags.useQuery({ ticketId: ticketId! }, { enabled: !!ticketId })
+  // 既存のタグを取得（TODO: tagsテーブルのパーミッション設定後に有効化）
+  // const { data: existingTags, isLoading: isLoadingTags } = api.tickets.getTags.useQuery(
+  //   { ticketId: ticketId! },
+  //   { enabled: !!ticketId }
+  // )
+  const existingTags: never[] = []
+  const isLoadingTags = false
+
+  const isLoadingData = isLoadingTicket || isLoadingTags
 
   useEffect(() => {
     if (ticketData) {
       setTicket(ticketData)
     }
   }, [ticketData])
+
+  // データ取得中の表示
+  if (ticketId && isLoadingData) {
+    return (
+      <div className="flex h-full items-center justify-center py-8">
+        <div className="text-muted-foreground">読み込み中...</div>
+      </div>
+    )
+  }
 
   const handleSubmit = async (data: CreateTicketInput, tagIds: string[]) => {
     setIsSubmitting(true)

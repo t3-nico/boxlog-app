@@ -4,7 +4,7 @@ import { InboxBoardView } from '@/features/inbox/components/InboxBoardView'
 import { InboxTableView } from '@/features/inbox/components/InboxTableView'
 import { InboxViewTabs } from '@/features/inbox/components/InboxViewTabs'
 import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore'
-import { useSearchParams } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect } from 'react'
 
 /**
@@ -14,9 +14,19 @@ import { Suspense, useEffect } from 'react'
  * デフォルト: default-board
  */
 function InboxContent() {
+  const router = useRouter()
+  const params = useParams()
   const searchParams = useSearchParams()
   const viewId = searchParams?.get('view')
   const { getViewById, activeViewId, setActiveView } = useInboxViewStore()
+
+  // viewパラメータがない場合、デフォルトのボードビューにリダイレクト
+  useEffect(() => {
+    if (!viewId) {
+      const locale = params?.locale || 'ja'
+      router.replace(`/${locale}/inbox?view=default-board`)
+    }
+  }, [viewId, params, router])
 
   // URLパラメータからView IDを取得してアクティブViewを設定
   useEffect(() => {
@@ -27,6 +37,15 @@ function InboxContent() {
       }
     }
   }, [viewId, getViewById, activeViewId, setActiveView])
+
+  // viewパラメータがない場合はリダイレクト中なので何も表示しない
+  if (!viewId) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-muted-foreground">読み込み中...</div>
+      </div>
+    )
+  }
 
   // アクティブなViewを取得
   const activeView = getViewById(activeViewId || 'default-board')

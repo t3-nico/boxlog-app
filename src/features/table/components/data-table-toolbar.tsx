@@ -59,6 +59,20 @@ export function DataTableToolbar<TData>({ table, onDeleteSelected }: DataTableTo
         )}
       </div>
       <div className="flex items-center space-x-2">
+        {selectedRows.length > 0 && onDeleteSelected && (
+          <Button
+            variant="destructive"
+            size="sm"
+            className="h-8"
+            onClick={() => {
+              const ids = selectedRows.map((row) => (row.original as { id: string }).id)
+              onDeleteSelected(ids)
+            }}
+          >
+            <X className="mr-2 h-4 w-4" />
+            選択した{selectedRows.length}件を削除
+          </Button>
+        )}
         <DataTableViewOptions table={table} />
         <Button variant="default" size="sm" className="h-8">
           <Plus className="mr-2 h-4 w-4" />

@@ -10,7 +10,6 @@ import { Input } from '@/components/ui/input'
 import { MarkdownEditor } from '@/components/ui/markdown-editor'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { TagSelector } from '@/features/tags/components/tag-selector'
-import { api } from '@/lib/trpc'
 import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ticket'
 import type { Ticket } from '../types/ticket'
 
@@ -58,11 +57,12 @@ export function TicketFormImproved({
     }
   }, [defaultValues, form])
 
-  // 編集モードの場合、既存のタグを取得
-  const { data: existingTags } = api.tickets.getTags.useQuery(
-    { ticketId: defaultValues?.id ?? '' },
-    { enabled: mode === 'edit' && !!defaultValues?.id }
-  )
+  // 編集モードの場合、既存のタグを取得（TODO: tagsテーブルのパーミッション設定後に有効化）
+  // const { data: existingTags } = api.tickets.getTags.useQuery(
+  //   { ticketId: defaultValues?.id ?? '' },
+  //   { enabled: mode === 'edit' && !!defaultValues?.id }
+  // )
+  const existingTags: never[] = []
 
   useEffect(() => {
     if (existingTags && mode === 'edit') {

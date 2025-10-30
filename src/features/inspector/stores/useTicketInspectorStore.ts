@@ -29,13 +29,16 @@ export const useTicketInspectorStore = create<TicketInspectorState>((set) => ({
   sessionId: null,
   width: 700,
   isResizing: false,
-  open: (mode, ticketId, sessionId) =>
+  open: (mode, ticketId, sessionId) => {
+    console.log('[TicketInspectorStore] open() called:', { mode, ticketId, sessionId })
     set({
       isOpen: true,
       mode,
       ticketId: ticketId ?? null,
       sessionId: sessionId ?? null,
-    }),
+    })
+    console.log('[TicketInspectorStore] State updated to open')
+  },
   close: () =>
     set({
       isOpen: false,

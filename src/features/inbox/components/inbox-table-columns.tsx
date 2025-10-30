@@ -5,6 +5,17 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { MoreHorizontal } from 'lucide-react'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -18,6 +29,15 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { DataTableColumnHeader } from '@/features/table/components/data-table-column-header'
 import type { InboxItem } from '../hooks/useInboxData'
+
+/**
+ * アクションハンドラー
+ */
+interface ActionsHandlers {
+  onView?: (item: InboxItem) => void
+  onEdit?: (item: InboxItem) => void
+  onDelete?: (item: InboxItem) => void
+}
 
 /**
  * ステータスバッジの色マッピング
@@ -68,7 +88,7 @@ const priorityLabelMap: Record<string, string> = {
 /**
  * InboxItemテーブルのカラム定義
  */
-export function getInboxTableColumns(): ColumnDef<InboxItem>[] {
+export function getInboxTableColumns(handlers?: ActionsHandlers): ColumnDef<InboxItem>[] {
   return [
     // 選択チェックボックス
     {
@@ -120,24 +140,33 @@ export function getInboxTableColumns(): ColumnDef<InboxItem>[] {
       cell: ({ row }) => {
         const item = row.original
         const number = item.type === 'ticket' ? item.ticket_number : item.session_number
-        return <div className="font-mono text-sm">{number || '-'}</div>
+        return <div className="font-mono text-sm">#{number || '-'}</div>
       },
       enableSorting: true,
       enableHiding: true,
-      size: 120,
-      minSize: 100,
-      maxSize: 150,
+      size: 100,
+      minSize: 80,
+      maxSize: 120,
     },
 
-    // タイトル（ソート可能）
+    // タイトル（ソート可能、クリック可能）
     {
       accessorKey: 'title',
       header: ({ column }) => <DataTableColumnHeader column={column} title="タイトル" />,
       cell: ({ row }) => {
         const title = row.getValue('title') as string
+        const item = row.original
+
         return (
-          <div className="max-w-[500px]">
-            <div className="truncate font-medium">{title}</div>
+          <div
+            className="max-w-[500px] cursor-pointer"
+            onClick={() => {
+              if (handlers?.onView) {
+                handlers.onView(item)
+              }
+            }}
+          >
+            <div className="truncate font-medium hover:underline">{title}</div>
           </div>
         )
       },
@@ -230,13 +259,62 @@ export function getInboxTableColumns(): ColumnDef<InboxItem>[] {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>操作</DropdownMenuLabel>
+              <DropdownMenuLabel>アクション</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => navigator.clipboard.writeText(item.id)}>IDをコピー</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>詳細を表示</DropdownMenuItem>
-              <DropdownMenuItem>編集</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive">削除</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  if (handlers?.onView) {
+                    handlers.onView(item)
+                  }
+                }}
+              >
+                詳細を表示
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  if (handlers?.onEdit) {
+                    handlers.onEdit(item)
+                  }
+                }}
+              >
+                編集
+              </DropdownMenuItem>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                    }}
+                  >
+                    削除
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {item.type === 'ticket' ? 'チケット' : 'セッション'}「{item.title}」を削除します。
+                      <br />
+                      この操作は取り消すことができません。
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => {
+                        if (handlers?.onDelete) {
+                          handlers.onDelete(item)
+                        }
+                      }}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      削除
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -244,9 +322,9 @@ export function getInboxTableColumns(): ColumnDef<InboxItem>[] {
       enableSorting: false,
       enableHiding: false,
       enableResizing: false,
-      size: 60,
-      minSize: 60,
-      maxSize: 60,
+      size: 80,
+      minSize: 80,
+      maxSize: 80,
     },
   ]
 }

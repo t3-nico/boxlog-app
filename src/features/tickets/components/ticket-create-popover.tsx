@@ -15,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
-import { api } from '@/lib/trpc'
+import { trpc } from '@/lib/trpc/client'
 import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ticket'
 
 // 15分刻みの時間オプションを生成（0:00 - 23:45）
@@ -60,15 +60,18 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const [reminderType, setReminderType] = useState<string>('')
   const [showTagSearch, setShowTagSearch] = useState(false)
   const [tagSearchQuery, setTagSearchQuery] = useState('')
-  const createMutation = api.tickets.create.useMutation()
-  const utils = api.useUtils()
+  const createMutation = trpc.tickets.create.useMutation()
+  const utils = trpc.useUtils()
   const { addTicketTag } = useTicketTags()
 
-  // タグ一覧を取得
-  const { data: allTags = [] } = api.tags.getAll.useQuery()
+  // タグ一覧を取得（TODO: tagsテーブルのパーミッション設定後に有効化）
+  // const { data: allTags = [] } = trpc.tickets.tags.list.useQuery()
+  const allTags: never[] = []
 
   // タグ検索結果をフィルタリング
-  const filteredTags = allTags.filter((tag) => tag.name.toLowerCase().includes(tagSearchQuery.toLowerCase()))
+  const filteredTags = allTags.filter((tag: { name: string }) =>
+    tag.name.toLowerCase().includes(tagSearchQuery.toLowerCase())
+  )
 
   const form = useForm<CreateTicketInput>({
     resolver: zodResolver(createTicketSchema),
@@ -108,7 +111,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
         await Promise.all(selectedTagIds.map((tagId) => addTicketTag(newTicket.id, tagId)))
       }
 
-      await utils.tickets.getAll.invalidate()
+      await utils.tickets.list.invalidate()
       onSuccess?.()
       form.reset()
       setSelectedDate(undefined)

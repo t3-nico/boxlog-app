@@ -16,9 +16,13 @@ import * as React from 'react'
 
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useTicketInspectorStore } from '@/features/inspector/stores/useTicketInspectorStore'
 import { DataTableEmpty } from '@/features/table/components/data-table-empty'
 import { DataTablePagination } from '@/features/table/components/data-table-pagination'
 import { DataTableToolbar } from '@/features/table/components/data-table-toolbar'
+import { api } from '@/lib/trpc'
+import { toast } from 'sonner'
+import type { InboxItem } from '../hooks/useInboxData'
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxTableFilterStore } from '../stores/useInboxTableFilterStore'
 import { getInboxTableColumns } from './inbox-table-columns'
@@ -40,6 +44,22 @@ export function InboxTableView() {
   // フィルタ状態（Phase 1-Cで実装したuseInboxTableFilterStore）
   const { status, priority, tags, search } = useInboxTableFilterStore()
 
+  // Inspector store
+  const { open: openInspector } = useTicketInspectorStore()
+
+  // tRPC mutations
+  const utils = api.useUtils()
+  const deleteTicketMutation = api.tickets.delete.useMutation({
+    onSuccess: () => {
+      utils.tickets.list.invalidate()
+    },
+  })
+  const deleteSessionMutation = api.tickets.sessions.delete.useMutation({
+    onSuccess: () => {
+      utils.tickets.sessions.list.invalidate()
+    },
+  })
+
   // Table state
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -47,8 +67,63 @@ export function InboxTableView() {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>({})
 
+  // アクションハンドラー
+  const handleView = React.useCallback(
+    (item: InboxItem) => {
+      if (item.type === 'ticket') {
+        openInspector('view-ticket', item.id)
+      } else {
+        console.log('Session view is not implemented yet:', item.id)
+      }
+    },
+    [openInspector]
+  )
+
+  const handleEdit = React.useCallback(
+    (item: InboxItem) => {
+      if (item.type === 'ticket') {
+        openInspector('edit-ticket', item.id)
+      } else {
+        console.log('Session edit is not implemented yet:', item.id)
+      }
+    },
+    [openInspector]
+  )
+
+  const handleDelete = React.useCallback(
+    async (item: InboxItem) => {
+      const itemType = item.type === 'ticket' ? 'チケット' : 'セッション'
+      const itemTitle = item.title
+
+      try {
+        if (item.type === 'ticket') {
+          await deleteTicketMutation.mutateAsync({ id: item.id })
+        } else {
+          await deleteSessionMutation.mutateAsync({ id: item.id })
+        }
+        toast.success(`${itemType}を削除しました`, {
+          description: `「${itemTitle}」を削除しました`,
+        })
+      } catch (error) {
+        console.error('Failed to delete item:', error)
+        toast.error(`${itemType}の削除に失敗しました`, {
+          description: error instanceof Error ? error.message : '不明なエラーが発生しました',
+        })
+      }
+    },
+    [deleteTicketMutation, deleteSessionMutation]
+  )
+
   // カラム定義
-  const columns = React.useMemo(() => getInboxTableColumns(), [])
+  const columns = React.useMemo(
+    () =>
+      getInboxTableColumns({
+        onView: handleView,
+        onEdit: handleEdit,
+        onDelete: handleDelete,
+      }),
+    [handleView, handleEdit, handleDelete]
+  )
 
   // フィルタリング適用
   const filteredItems = React.useMemo(() => {
@@ -83,6 +158,21 @@ export function InboxTableView() {
     })
   }, [items, status, priority, search])
 
+  // 行クリックハンドラー
+  const handleRowClick = React.useCallback(
+    (itemId: string, itemType: 'ticket' | 'session') => {
+      console.log('[InboxTableView] Row clicked:', { itemId, itemType })
+      if (itemType === 'ticket') {
+        console.log('[InboxTableView] Opening inspector for ticket:', itemId)
+        openInspector('edit-ticket', itemId)
+      } else {
+        // Session用のInspectorは将来実装予定
+        console.log('Session Inspector is not implemented yet:', itemId)
+      }
+    },
+    [openInspector]
+  )
+
   // TanStack Table インスタンス
   const table = useReactTable({
     data: filteredItems,
@@ -108,6 +198,30 @@ export function InboxTableView() {
     getSortedRowModel: getSortedRowModel(),
   })
 
+  // 一括削除ハンドラー（tableが定義された後に定義）
+  const handleDeleteSelected = React.useCallback(async () => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows
+    if (selectedRows.length === 0) return
+
+    try {
+      await Promise.all(
+        selectedRows.map((row) => {
+          const item = row.original
+          if (item.type === 'ticket') {
+            return deleteTicketMutation.mutateAsync({ id: item.id })
+          } else {
+            return deleteSessionMutation.mutateAsync({ id: item.id })
+          }
+        })
+      )
+      // 選択をクリア
+      table.resetRowSelection()
+    } catch (error) {
+      console.error('Failed to delete selected items:', error)
+      // TODO: トーストで一括削除失敗を通知
+    }
+  }, [table, deleteTicketMutation, deleteSessionMutation])
+
   // ローディング状態
   if (isLoading) {
     return (
@@ -130,7 +244,7 @@ export function InboxTableView() {
     <div className="flex h-full flex-col">
       {/* ツールバー: フィルター・検索 */}
       <div className="flex shrink-0 px-4 py-4 md:px-6">
-        <DataTableToolbar table={table} />
+        <DataTableToolbar table={table} onDeleteSelected={handleDeleteSelected} />
       </div>
 
       {/* テーブル: 残りのスペース */}
@@ -163,11 +277,19 @@ export function InboxTableView() {
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
+                    {row.getVisibleCells().map((cell) => {
+                      const isClickable = cell.column.id !== 'select' && cell.column.id !== 'actions'
+                      return (
+                        <TableCell
+                          key={cell.id}
+                          style={{ width: cell.column.getSize() }}
+                          onClick={isClickable ? () => handleRowClick(row.original.id, row.original.type) : undefined}
+                          className={isClickable ? 'cursor-pointer' : ''}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      )
+                    })}
                   </TableRow>
                 ))
               ) : (
