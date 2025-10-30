@@ -37,42 +37,42 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
   return (
     <div className="flex h-full gap-4 overflow-x-auto p-4">
       {/* Backlog カラム */}
-      <KanbanColumn title="Backlog" subtitle="準備中" count={columns.backlog.length} variant="default" status="backlog">
+      <KanbanColumn title="Backlog" count={columns.backlog.length} variant="default" status="backlog">
         {columns.backlog.map((item) => (
           <TicketCard key={item.id} item={item} />
         ))}
       </KanbanColumn>
 
       {/* Ready カラム */}
-      <KanbanColumn title="Ready" subtitle="配置済み" count={columns.ready.length} variant="default" status="ready">
+      <KanbanColumn title="Ready" count={columns.ready.length} variant="ready" status="ready">
         {columns.ready.map((item) => (
           <TicketCard key={item.id} item={item} />
         ))}
       </KanbanColumn>
 
       {/* Active カラム */}
-      <KanbanColumn title="Active" subtitle="作業中" count={columns.active.length} variant="progress" status="active">
+      <KanbanColumn title="Active" count={columns.active.length} variant="active" status="active">
         {columns.active.map((item) => (
           <TicketCard key={item.id} item={item} />
         ))}
       </KanbanColumn>
 
       {/* Wait カラム */}
-      <KanbanColumn title="Wait" subtitle="待ち" count={columns.wait.length} variant="default" status="wait">
+      <KanbanColumn title="Wait" count={columns.wait.length} variant="wait" status="wait">
         {columns.wait.map((item) => (
           <TicketCard key={item.id} item={item} />
         ))}
       </KanbanColumn>
 
       {/* Done カラム */}
-      <KanbanColumn title="Done" subtitle="完了" count={columns.done.length} variant="done" status="done">
+      <KanbanColumn title="Done" count={columns.done.length} variant="done" status="done">
         {columns.done.map((item) => (
           <TicketCard key={item.id} item={item} />
         ))}
       </KanbanColumn>
 
       {/* Cancel カラム */}
-      <KanbanColumn title="Cancel" subtitle="中止" count={columns.cancel.length} variant="default" status="cancel">
+      <KanbanColumn title="Cancel" count={columns.cancel.length} variant="cancel" status="cancel">
         {columns.cancel.map((item) => (
           <TicketCard key={item.id} item={item} />
         ))}
@@ -83,14 +83,13 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
 
 interface KanbanColumnProps {
   title: string
-  subtitle: string
   count: number
-  variant: 'default' | 'progress' | 'done'
+  variant: 'default' | 'ready' | 'active' | 'wait' | 'done' | 'cancel'
   status: 'backlog' | 'ready' | 'active' | 'wait' | 'done' | 'cancel'
   children: React.ReactNode
 }
 
-function KanbanColumn({ title, subtitle, count, variant, status, children }: KanbanColumnProps) {
+function KanbanColumn({ title, count, variant, status, children }: KanbanColumnProps) {
   const [isAdding, setIsAdding] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [priority, setPriority] = useState<'urgent' | 'high' | 'normal' | 'low'>('normal')
@@ -112,8 +111,11 @@ function KanbanColumn({ title, subtitle, count, variant, status, children }: Kan
 
   const bgColor = {
     default: 'bg-muted/50',
-    progress: 'bg-blue-50 dark:bg-blue-950/20',
+    ready: 'bg-cyan-50 dark:bg-cyan-950/20',
+    active: 'bg-blue-50 dark:bg-blue-950/20',
+    wait: 'bg-yellow-50 dark:bg-yellow-950/20',
     done: 'bg-green-50 dark:bg-green-950/20',
+    cancel: 'bg-red-50 dark:bg-red-950/20',
   }[variant]
 
   const handleCreate = () => {
@@ -158,37 +160,27 @@ function KanbanColumn({ title, subtitle, count, variant, status, children }: Kan
   return (
     <div className="flex min-w-[300px] flex-col rounded-lg">
       <div className={`${bgColor} flex items-center justify-between rounded-t-lg p-4`}>
-        <div className="flex flex-col">
-          <h3 className="text-foreground font-semibold">
-            {title} <span className="text-muted-foreground">({count})</span>
-          </h3>
-          <p className="text-muted-foreground text-xs">{subtitle}</p>
-        </div>
+        <h3 className="text-foreground font-semibold">
+          {title} <span className="text-muted-foreground">({count})</span>
+        </h3>
         <div className="flex items-center gap-1">
-          <TooltipProvider delayDuration={300}>
-            {/* ドロップダウンメニュー */}
-            <DropdownMenu>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-6 w-6">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  <p>その他のオプション</p>
-                </TooltipContent>
-              </Tooltip>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>すべて完了にする</DropdownMenuItem>
-                <DropdownMenuItem>すべてアーカイブ</DropdownMenuItem>
-                <DropdownMenuItem>カラムをクリア</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {/* ドロップダウンメニュー */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-6 w-6">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>すべて完了にする</DropdownMenuItem>
+              <DropdownMenuItem>すべてアーカイブ</DropdownMenuItem>
+              <DropdownMenuItem>カラムをクリア</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-            {/* プラスアイコン */}
-            <Tooltip>
+          {/* プラスアイコン（ツールチップ付き） */}
+          <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+            <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
@@ -200,7 +192,7 @@ function KanbanColumn({ title, subtitle, count, variant, status, children }: Kan
                   <Plus className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom">
+              <TooltipContent side="top">
                 <p>新規チケットを追加</p>
               </TooltipContent>
             </Tooltip>

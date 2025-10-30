@@ -4,10 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
+import { NovelEditor } from '@/components/app/editor/novel-editor'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { MarkdownEditor } from '@/components/ui/markdown-editor'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { TagSelector } from '@/features/tags/components/tag-selector'
 import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ticket'
@@ -95,19 +95,18 @@ export function TicketFormImproved({
           )}
         />
 
-        {/* 説明（Markdown） */}
+        {/* 説明（リッチテキスト） */}
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>説明（Markdown対応）</FormLabel>
+              <FormLabel>説明</FormLabel>
               <FormControl>
-                <MarkdownEditor
+                <NovelEditor
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="詳細な説明をMarkdown形式で入力..."
-                  height={250}
+                  placeholder="詳細な説明を入力... （/ でコマンド表示）"
                 />
               </FormControl>
               <FormMessage />

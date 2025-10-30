@@ -53,6 +53,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const tagSearchRef = useRef<HTMLDivElement>(null)
   const repeatRef = useRef<HTMLDivElement>(null)
   const reminderRef = useRef<HTMLDivElement>(null)
+  const titleInputRef = useRef<HTMLInputElement>(null)
 
   const [isOpen, setIsOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -106,6 +107,17 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
+
+  // ポップアップが開いたときにタイトル入力欄にフォーカス
+  useEffect(() => {
+    if (isOpen) {
+      // Popoverのアニメーション完了を待つ
+      const timer = setTimeout(() => {
+        titleInputRef.current?.focus()
+      }, 150)
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen])
 
   const form = useForm<CreateTicketInput>({
     resolver: zodResolver(createTicketSchema),
@@ -164,7 +176,16 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   return (
     <Popover modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>{triggerElement}</PopoverTrigger>
-      <PopoverContent className="w-[560px] p-0" align="end" side="right" sideOffset={8}>
+      <PopoverContent
+        className="w-[560px] p-0"
+        align="end"
+        side="right"
+        sideOffset={8}
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+          titleInputRef.current?.focus()
+        }}
+      >
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col">
             {/* 閉じるボタン */}
@@ -191,6 +212,10 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                       <Input
                         placeholder="Add a title"
                         {...field}
+                        ref={(e) => {
+                          field.ref(e)
+                          titleInputRef.current = e
+                        }}
                         className="border-0 bg-white px-0 text-lg font-semibold shadow-none focus-visible:ring-0 dark:bg-neutral-900"
                       />
                     </FormControl>
@@ -326,7 +351,12 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                       size="icon"
                       className="size-8"
                       type="button"
-                      onClick={() => setShowDateTime(!showDateTime)}
+                      onClick={() => {
+                        setShowDateTime(!showDateTime)
+                        if (!showDateTime) {
+                          setShowCalendar(true)
+                        }
+                      }}
                     >
                       <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
