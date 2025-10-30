@@ -115,23 +115,6 @@ export function getInboxTableColumns(handlers?: ActionsHandlers): ColumnDef<Inbo
       maxSize: 50,
     },
 
-    // タイプ（Ticket or Session）
-    {
-      accessorKey: 'type',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="タイプ" />,
-      cell: ({ row }) => {
-        const type = row.getValue('type') as string
-        const label = type === 'ticket' ? 'チケット' : 'セッション'
-        const variant = type === 'ticket' ? 'default' : 'secondary'
-        return <Badge variant={variant}>{label}</Badge>
-      },
-      enableSorting: true,
-      enableHiding: true,
-      size: 100,
-      minSize: 80,
-      maxSize: 120,
-    },
-
     // 番号（Ticket Number or Session Number）
     {
       accessorKey: 'ticket_number',
@@ -160,7 +143,8 @@ export function getInboxTableColumns(handlers?: ActionsHandlers): ColumnDef<Inbo
         return (
           <div
             className="max-w-[500px] cursor-pointer"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation()
               if (handlers?.onView) {
                 handlers.onView(item)
               }
