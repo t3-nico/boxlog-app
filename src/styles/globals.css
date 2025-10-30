@@ -741,3 +741,7 @@ aside * {
 .rdp-weeks {
   display: none;
 }
+
+.rdp-week_number_header {
+  display: none;
+}
