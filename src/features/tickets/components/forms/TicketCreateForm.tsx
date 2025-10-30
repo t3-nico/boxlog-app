@@ -4,14 +4,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
-import { NovelEditor } from '@/components/app/editor/novel-editor'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 import { TagSelector } from '@/features/tags/components/tag-selector'
 import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ticket'
-import type { Ticket } from '../types/ticket'
+import type { Ticket } from '../../types/ticket'
 
 interface TicketFormImprovedProps {
   defaultValues?: Partial<Ticket>
@@ -40,7 +40,7 @@ export function TicketFormImproved({
     defaultValues: {
       title: defaultValues?.title ?? '',
       description: defaultValues?.description ?? '',
-      status: defaultValues?.status ?? 'open',
+      status: defaultValues?.status ?? 'backlog',
       due_date: defaultValues?.due_date ?? undefined,
     },
   })
@@ -51,7 +51,7 @@ export function TicketFormImproved({
       form.reset({
         title: defaultValues.title ?? '',
         description: defaultValues.description ?? '',
-        status: defaultValues.status ?? 'open',
+        status: defaultValues.status ?? 'backlog',
         due_date: defaultValues.due_date ?? undefined,
       })
     }
@@ -95,7 +95,7 @@ export function TicketFormImproved({
           )}
         />
 
-        {/* 説明（リッチテキスト） */}
+        {/* 説明 */}
         <FormField
           control={form.control}
           name="description"
@@ -103,11 +103,7 @@ export function TicketFormImproved({
             <FormItem>
               <FormLabel>説明</FormLabel>
               <FormControl>
-                <NovelEditor
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="詳細な説明を入力... （/ でコマンド表示）"
-                />
+                <Textarea placeholder="詳細な説明を入力..." className="min-h-[200px]" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -129,10 +125,12 @@ export function TicketFormImproved({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="open">未着手</SelectItem>
-                    <SelectItem value="in_progress">進行中</SelectItem>
-                    <SelectItem value="completed">完了</SelectItem>
-                    <SelectItem value="cancelled">キャンセル</SelectItem>
+                    <SelectItem value="backlog">準備中</SelectItem>
+                    <SelectItem value="ready">配置済み</SelectItem>
+                    <SelectItem value="active">作業中</SelectItem>
+                    <SelectItem value="wait">待ち</SelectItem>
+                    <SelectItem value="done">完了</SelectItem>
+                    <SelectItem value="cancel">中止</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -241,11 +239,6 @@ export function TicketFormImproved({
                 <div>
                   <span className="font-medium">更新日時:</span>{' '}
                   {new Date(defaultValues.updated_at).toLocaleString('ja-JP')}
-                </div>
-              )}
-              {defaultValues.actual_hours !== undefined && (
-                <div>
-                  <span className="font-medium">実績時間:</span> {defaultValues.actual_hours.toFixed(1)}時間
                 </div>
               )}
             </div>

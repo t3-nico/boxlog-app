@@ -55,13 +55,14 @@ export function useTicketMutations() {
   const updateTicket = api.tickets.update.useMutation({
     onMutate: async ({ id, data }) => {
       // 楽観的更新の準備
-      await utils.tickets.getById.cancel({ id })
+      await utils.tickets.getById.cancel({ id, include: undefined })
 
-      const previousTicket = utils.tickets.getById.getData({ id })
+      const previousTicket = utils.tickets.getById.getData({ id, include: undefined })
 
       // 楽観的更新
-      if (previousTicket) {
-        utils.tickets.getById.setData({ id }, { ...previousTicket, ...data })
+      if (previousTicket && typeof previousTicket === 'object' && 'id' in previousTicket) {
+        // Safe to spread because we've confirmed it's a valid ticket object
+        utils.tickets.getById.setData({ id, include: undefined }, Object.assign({}, previousTicket, data))
       }
 
       return { previousTicket }
@@ -76,7 +77,7 @@ export function useTicketMutations() {
     onError: (err, variables, context) => {
       // エラー時は元に戻す
       if (context?.previousTicket) {
-        utils.tickets.getById.setData({ id: variables.id }, context.previousTicket)
+        utils.tickets.getById.setData({ id: variables.id, include: undefined }, context.previousTicket)
       }
       toast.error('更新に失敗しました')
     },
@@ -96,9 +97,34 @@ export function useTicketMutations() {
     },
   })
 
+  // ✨ 一括更新
+  const bulkUpdateTicket = api.tickets.bulkUpdate.useMutation({
+    onSuccess: (result) => {
+      toast.success(`${result.count}件のチケットを更新しました`)
+      utils.tickets.list.invalidate()
+    },
+    onError: (error) => {
+      toast.error(`一括更新に失敗しました: ${error.message}`)
+    },
+  })
+
+  // ✨ 一括削除
+  const bulkDeleteTicket = api.tickets.bulkDelete.useMutation({
+    onSuccess: (result) => {
+      toast.success(`${result.count}件のチケットを削除しました`)
+      closeInspector()
+      utils.tickets.list.invalidate()
+    },
+    onError: (error) => {
+      toast.error(`一括削除に失敗しました: ${error.message}`)
+    },
+  })
+
   return {
     createTicket,
     updateTicket,
     deleteTicket,
+    bulkUpdateTicket,
+    bulkDeleteTicket,
   }
 }

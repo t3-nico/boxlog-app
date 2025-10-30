@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ticket'
-import type { Ticket } from '../types/ticket'
+import type { Ticket } from '../../types/ticket'
 
 interface TicketFormProps {
   defaultValues?: Partial<Ticket>
@@ -31,10 +31,10 @@ export function TicketForm({
     resolver: zodResolver(createTicketSchema),
     defaultValues: {
       title: defaultValues?.title ?? '',
-      description: defaultValues?.description ?? '',
-      status: defaultValues?.status ?? 'open',
+      description: defaultValues?.description ?? undefined,
+      status: defaultValues?.status ?? 'backlog',
       priority: defaultValues?.priority ?? 'normal',
-      planned_hours: defaultValues?.planned_hours,
+      due_date: defaultValues?.due_date ?? undefined,
     },
   })
 
@@ -110,10 +110,12 @@ export function TicketForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="open">未着手</SelectItem>
-                    <SelectItem value="in_progress">進行中</SelectItem>
-                    <SelectItem value="completed">完了</SelectItem>
-                    <SelectItem value="cancelled">キャンセル</SelectItem>
+                    <SelectItem value="backlog">準備中</SelectItem>
+                    <SelectItem value="ready">配置済み</SelectItem>
+                    <SelectItem value="active">作業中</SelectItem>
+                    <SelectItem value="wait">待ち</SelectItem>
+                    <SelectItem value="done">完了</SelectItem>
+                    <SelectItem value="cancel">中止</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -146,23 +148,15 @@ export function TicketForm({
           />
         </div>
 
-        {/* 予定時間 */}
+        {/* 期限日 */}
         <FormField
           control={form.control}
-          name="planned_hours"
+          name="due_date"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>予定時間（時間）</FormLabel>
+              <FormLabel>期限日</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  placeholder="例: 2.5"
-                  {...field}
-                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                  value={field.value ?? ''}
-                />
+                <Input type="date" {...field} value={field.value ?? ''} />
               </FormControl>
               <FormDescription>このチケットの作業にかかる予定時間を入力してください</FormDescription>
               <FormMessage />

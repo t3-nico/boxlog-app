@@ -1,6 +1,6 @@
 'use client'
 
-import { Clock, MoreVertical, Target } from 'lucide-react'
+import { Calendar, MoreVertical } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -11,9 +11,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import type { Ticket } from '../types/ticket'
-import { PriorityBadge } from './priority-badge'
-import { TicketStatusBadge } from './ticket-status-badge'
+import type { Ticket } from '../../types/ticket'
+import { PriorityBadge } from './TicketPriorityBadge'
+import { TicketStatusBadge } from './TicketStatusBadge'
 
 interface TicketCardProps {
   ticket: Ticket
@@ -83,19 +83,13 @@ export function TicketCard({ ticket, onEdit, onDelete, onClick, tags = [] }: Tic
           {ticket.priority && <PriorityBadge priority={ticket.priority} />}
         </div>
 
-        {/* 時間情報 */}
-        <div className="text-muted-foreground flex items-center gap-4 text-sm">
-          {ticket.planned_hours !== undefined && (
-            <div className="flex items-center gap-1">
-              <Target className="h-4 w-4" />
-              <span>{ticket.planned_hours}h 予定</span>
-            </div>
-          )}
-          <div className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            <span>{ticket.actual_hours}h 実績</span>
+        {/* 期限日 */}
+        {ticket.due_date && (
+          <div className="text-muted-foreground flex items-center gap-1 text-sm">
+            <Calendar className="h-4 w-4" />
+            <span>{new Date(ticket.due_date).toLocaleDateString('ja-JP')}</span>
           </div>
-        </div>
+        )}
 
         {/* タグ */}
         {tags.length > 0 && (

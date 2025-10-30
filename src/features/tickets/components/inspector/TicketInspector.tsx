@@ -1,6 +1,5 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Input } from '@/components/ui/input'
@@ -9,12 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
-import { api } from '@/lib/trpc'
 import { format } from 'date-fns'
-import { ChevronRight, Clock } from 'lucide-react'
+import { Clock, PanelRight } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useTicketMutations } from '../hooks/useTicketMutations'
-import { useTicketInspectorStore } from '../stores/useTicketInspectorStore'
+import { useTicket } from '../../hooks/useTicket'
+import { useTicketMutations } from '../../hooks/useTicketMutations'
+import { useTicketInspectorStore } from '../../stores/useTicketInspectorStore'
+import type { Ticket } from '../../types/ticket'
 
 // 15分刻みの時間オプションを生成（0:00 - 23:45）
 const generateTimeOptions = () => {
@@ -52,7 +52,9 @@ export function TicketInspector() {
   const { isOpen, ticketId, closeInspector } = useTicketInspectorStore()
 
   // Ticketデータ取得
-  const { data: ticket, isLoading } = api.tickets.getById.useQuery({ id: ticketId! }, { enabled: !!ticketId })
+  const { data: ticketData, isLoading } = useTicket(ticketId!, { enabled: !!ticketId })
+  // Type assertion: In practice ticketData is Ticket | undefined (tRPC error handling is separate)
+  const ticket = (ticketData ?? null) as Ticket | null
 
   // Mutations（Toast通知・キャッシュ無効化込み）
   const { updateTicket } = useTicketMutations()
@@ -68,27 +70,21 @@ export function TicketInspector() {
 
   // Ticketデータが読み込まれたら状態を初期化
   useEffect(() => {
-    if (ticket) {
-      // @ts-expect-error - tRPC型にdue_date, start_time, end_timeが含まれていないが、実際には存在する
+    if (ticket && 'id' in ticket) {
       if (ticket.due_date) {
-        // @ts-expect-error - 同上
         setSelectedDate(new Date(ticket.due_date))
       } else {
         setSelectedDate(undefined)
       }
 
-      // @ts-expect-error - 同上
       if (ticket.start_time) {
-        // @ts-expect-error - 同上
         const date = new Date(ticket.start_time)
         setStartTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setStartTime('')
       }
 
-      // @ts-expect-error - 同上
       if (ticket.end_time) {
-        // @ts-expect-error - 同上
         const date = new Date(ticket.end_time)
         setEndTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
@@ -190,55 +186,88 @@ export function TicketInspector() {
     }
   }, [])
 
+  // Early return if no ticket
+  if (!isOpen) {
+    return null
+  }
+
   return (
-    <Sheet open={isOpen} onOpenChange={(open) => !open && closeInspector()}>
-      <SheetContent className="w-[400px] overflow-y-auto sm:w-[540px]">
+    <Sheet open={isOpen} onOpenChange={(open) => !open && closeInspector()} modal={false}>
+      <SheetContent className="w-[400px] gap-0 overflow-y-auto sm:w-[540px]" showCloseButton={false}>
         {isLoading ? (
           <div className="flex h-full items-center justify-center">
             <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2" />
           </div>
-        ) : ticket ? (
+        ) : !ticket ? (
+          <div className="flex h-full items-center justify-center">
+            <p className="text-muted-foreground">チケットが見つかりません</p>
+          </div>
+        ) : (
           <>
-            {/* ヘッダー（チケット番号とステータスのみ） */}
-            <div className="text-muted-foreground flex items-center gap-2 pb-3 text-sm">
-              <span>#{ticket.ticket_number}</span>
-              <ChevronRight className="h-4 w-4" />
-              <Badge variant={ticket.status === 'completed' ? 'default' : 'secondary'}>{ticket.status}</Badge>
+            {/* ヘッダー */}
+            <div className="flex h-10 items-center pt-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => closeInspector()}
+                aria-label="閉じる"
+              >
+                <PanelRight className="h-4 w-4" />
+              </Button>
             </div>
 
             {/* タブ構成 */}
             <Tabs defaultValue="details" className="mt-0">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="details">詳細</TabsTrigger>
-                <TabsTrigger value="sessions">セッション</TabsTrigger>
-                <TabsTrigger value="activity">アクティビティ</TabsTrigger>
-                <TabsTrigger value="comments">コメント</TabsTrigger>
+              <TabsList className="border-border grid h-10 w-full grid-cols-4 rounded-none border-b bg-transparent p-0">
+                <TabsTrigger
+                  value="details"
+                  className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                >
+                  詳細
+                </TabsTrigger>
+                <TabsTrigger
+                  value="sessions"
+                  className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                >
+                  セッション
+                </TabsTrigger>
+                <TabsTrigger
+                  value="activity"
+                  className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                >
+                  アクティビティ
+                </TabsTrigger>
+                <TabsTrigger
+                  value="comments"
+                  className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                >
+                  コメント
+                </TabsTrigger>
               </TabsList>
 
               {/* 詳細タブ */}
               <TabsContent value="details" className="space-y-4">
                 {/* タイトル */}
-                <div className="space-y-2">
-                  <Label htmlFor="title">タイトル</Label>
+                <div className="px-6 pt-2">
                   <Input
                     id="title"
                     defaultValue={ticket.title}
                     onChange={(e) => autoSave('title', e.target.value)}
-                    className="text-lg font-semibold"
-                    placeholder="タイトルを入力"
+                    className="bg-card dark:bg-card border-0 px-0 text-lg font-semibold shadow-none focus-visible:ring-0"
+                    placeholder="Add a title"
                   />
                 </div>
 
                 {/* 説明 */}
-                <div className="space-y-2">
-                  <Label htmlFor="description">説明</Label>
+                <div className="px-6 pb-2">
                   <Textarea
                     id="description"
                     key={ticket.id}
                     defaultValue={ticket.description || ''}
                     onChange={(e) => autoSave('description', e.target.value)}
-                    className="min-h-[100px]"
-                    placeholder="説明を入力"
+                    className="text-muted-foreground bg-card dark:bg-card min-h-[60px] resize-none border-0 px-0 text-sm shadow-none focus-visible:ring-0"
+                    placeholder="Add description..."
                   />
                 </div>
 
@@ -369,22 +398,24 @@ export function TicketInspector() {
                 </div>
 
                 {/* メタデータ */}
-                <div className="text-muted-foreground space-y-2 border-t pt-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    <span>作成: {new Date(ticket.created_at || '').toLocaleString('ja-JP')}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    <span>更新: {new Date(ticket.updated_at || '').toLocaleString('ja-JP')}</span>
-                  </div>
-                  {ticket.planned_hours && (
+                {'id' in ticket && (
+                  <div className="text-muted-foreground space-y-2 border-t pt-4 text-sm">
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />
-                      <span>予定時間: {ticket.planned_hours}h</span>
+                      <span>作成: {new Date(ticket.created_at || '').toLocaleString('ja-JP')}</span>
                     </div>
-                  )}
-                </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>更新: {new Date(ticket.updated_at || '').toLocaleString('ja-JP')}</span>
+                    </div>
+                    {ticket.due_date && (
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        <span>期限: {new Date(ticket.due_date).toLocaleDateString('ja-JP')}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </TabsContent>
 
               {/* その他のタブ（将来実装） */}
@@ -401,8 +432,6 @@ export function TicketInspector() {
               </TabsContent>
             </Tabs>
           </>
-        ) : (
-          <div>Ticket not found</div>
         )}
       </SheetContent>
     </Sheet>

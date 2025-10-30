@@ -5,7 +5,7 @@ import { Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { TicketPriority, TicketStatus } from '../types/ticket'
+import type { TicketPriority, TicketStatus } from '../../types/ticket'
 
 interface TicketFiltersProps {
   searchQuery?: string

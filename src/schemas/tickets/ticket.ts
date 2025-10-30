@@ -28,6 +28,33 @@ export const ticketFilterSchema = z.object({
   status: ticketStatusSchema.optional(),
   priority: ticketPrioritySchema.optional(),
   search: z.string().optional(),
+  // ソート
+  sortBy: z.enum(['created_at', 'updated_at', 'priority', 'due_date', 'title']).optional(),
+  sortOrder: z.enum(['asc', 'desc']).optional(),
+  // ページネーション
+  limit: z.number().min(1).max(100).optional(),
+  offset: z.number().min(0).optional(),
+})
+
+// リレーション取得オプション
+export const ticketIncludeSchema = z.object({
+  tags: z.boolean().optional(),
+})
+
+// getById用のスキーマ
+export const getTicketByIdSchema = z.object({
+  id: z.string().uuid('正しいIDを指定してください'),
+  include: ticketIncludeSchema.optional(),
+})
+
+// 一括操作用のスキーマ
+export const bulkUpdateTicketSchema = z.object({
+  ids: z.array(z.string().uuid()),
+  data: updateTicketSchema,
+})
+
+export const bulkDeleteTicketSchema = z.object({
+  ids: z.array(z.string().uuid()),
 })
 
 // 型エクスポート
@@ -35,3 +62,7 @@ export type CreateTicketInput = z.infer<typeof createTicketSchema>
 export type UpdateTicketInput = z.infer<typeof updateTicketSchema>
 export type TicketStatus = z.infer<typeof ticketStatusSchema>
 export type TicketFilter = z.infer<typeof ticketFilterSchema>
+export type TicketInclude = z.infer<typeof ticketIncludeSchema>
+export type GetTicketByIdInput = z.infer<typeof getTicketByIdSchema>
+export type BulkUpdateTicketInput = z.infer<typeof bulkUpdateTicketSchema>
+export type BulkDeleteTicketInput = z.infer<typeof bulkDeleteTicketSchema>

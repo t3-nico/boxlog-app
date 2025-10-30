@@ -1,7 +1,7 @@
 'use client'
 
 import { NotificationDropdown } from '@/features/notifications'
-import { TicketCreatePopover } from '@/features/tickets/components/ticket-create-popover'
+import { TicketCreatePopover } from '@/features/tickets/components'
 import { Moon, Plus, Search, Sun } from 'lucide-react'
 import { useCallback } from 'react'
 import { Item } from './Item'

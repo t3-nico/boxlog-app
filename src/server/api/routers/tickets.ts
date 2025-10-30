@@ -7,8 +7,11 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
 import {
+  bulkDeleteTicketSchema,
+  bulkUpdateTicketSchema,
   createTagSchema,
   createTicketSchema,
+  getTicketByIdSchema,
   tagIdSchema,
   ticketFilterSchema,
   ticketIdSchema,
@@ -70,7 +73,6 @@ export const ticketsRouter = createTRPCRouter({
 
         const { data, error } = await supabase
           .from('tags')
-          // @ts-expect-error - Supabase型推論の問題（既知の問題）
           .update(input.data)
           .eq('id', input.id)
           .eq('user_id', userId)
@@ -122,7 +124,20 @@ export const ticketsRouter = createTRPCRouter({
       query = query.or(`title.ilike.%${input.search}%,description.ilike.%${input.search}%`)
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false })
+    // ソート適用
+    const sortBy = input?.sortBy ?? 'created_at'
+    const sortOrder = input?.sortOrder ?? 'desc'
+    query = query.order(sortBy, { ascending: sortOrder === 'asc' })
+
+    // ページネーション適用
+    if (input?.limit) {
+      query = query.limit(input.limit)
+    }
+    if (input?.offset) {
+      query = query.range(input.offset, input.offset + (input.limit ?? 100) - 1)
+    }
+
+    const { data, error } = await query
 
     if (error) {
       throw new TRPCError({
@@ -134,16 +149,37 @@ export const ticketsRouter = createTRPCRouter({
     return data
   }),
 
-  getById: protectedProcedure.input(ticketIdSchema).query(async ({ ctx, input }) => {
+  getById: protectedProcedure.input(getTicketByIdSchema).query(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
-    const { data, error } = await supabase.from('tickets').select('*').eq('id', input.id).eq('user_id', userId).single()
+    // リレーション取得の設定
+    let selectQuery = '*'
+    if (input.include?.tags) {
+      selectQuery = '*, ticket_tags(tag_id, tags(*))'
+    }
+
+    const { data, error } = await supabase
+      .from('tickets')
+      .select(selectQuery)
+      .eq('id', input.id)
+      .eq('user_id', userId)
+      .single()
 
     if (error) {
       throw new TRPCError({
         code: 'NOT_FOUND',
         message: `チケットが見つかりません: ${error.message}`,
       })
+    }
+
+    // タグデータの整形
+    if (input.include?.tags && data) {
+      const ticketWithTags = data as unknown as {
+        ticket_tags?: Array<{ tag_id: string; tags: unknown }>
+      }
+      const tags = ticketWithTags.ticket_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
+      const { ticket_tags, ...ticketData } = ticketWithTags
+      return { ...ticketData, tags } as typeof data & { tags: unknown[] }
     }
 
     return data
@@ -154,7 +190,6 @@ export const ticketsRouter = createTRPCRouter({
 
     const { data, error } = await supabase
       .from('tickets')
-      // @ts-expect-error - Supabase型推論の問題（既知の問題）
       .insert({
         user_id: userId,
         ticket_number: '', // トリガーで自動採番
@@ -180,7 +215,6 @@ export const ticketsRouter = createTRPCRouter({
 
       const { data, error } = await supabase
         .from('tickets')
-        // @ts-expect-error - Supabase型推論の問題（既知の問題）
         .update(input.data)
         .eq('id', input.id)
         .eq('user_id', userId)
@@ -222,7 +256,6 @@ export const ticketsRouter = createTRPCRouter({
 
       const { data, error } = await supabase
         .from('ticket_tags')
-        // @ts-expect-error - Supabase型推論の問題（既知の問題）
         .insert({
           user_id: userId,
           ticket_id: input.ticketId,
@@ -279,7 +312,87 @@ export const ticketsRouter = createTRPCRouter({
       })
     }
 
-    // @ts-expect-error - Supabase型推論の問題（既知の問題）
     return data.map((item) => item.tags).filter(Boolean)
+  }),
+
+  // ========================================
+  // Bulk Operations
+  // ========================================
+  bulkUpdate: protectedProcedure.input(bulkUpdateTicketSchema).mutation(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx
+
+    const { data, error } = await supabase
+      .from('tickets')
+      .update(input.data)
+      .in('id', input.ids)
+      .eq('user_id', userId)
+      .select()
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `チケットの一括更新に失敗しました: ${error.message}`,
+      })
+    }
+
+    return { count: data.length, tickets: data }
+  }),
+
+  bulkDelete: protectedProcedure.input(bulkDeleteTicketSchema).mutation(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx
+
+    const { error, count } = await supabase.from('tickets').delete().in('id', input.ids).eq('user_id', userId)
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `チケットの一括削除に失敗しました: ${error.message}`,
+      })
+    }
+
+    return { success: true, count: count ?? 0 }
+  }),
+
+  // ========================================
+  // Statistics
+  // ========================================
+  getStats: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase, userId } = ctx
+
+    // 全チケット取得（最適化: select で必要なフィールドのみ取得）
+    const { data: tickets, error } = await supabase.from('tickets').select('id, status, priority').eq('user_id', userId)
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `統計情報の取得に失敗しました: ${error.message}`,
+      })
+    }
+
+    // ステータス別カウント
+    const byStatus = tickets.reduce(
+      (acc, ticket) => {
+        acc[ticket.status] = (acc[ticket.status] ?? 0) + 1
+        return acc
+      },
+      {} as Record<string, number>
+    )
+
+    // 優先度別カウント
+    const byPriority = tickets.reduce(
+      (acc, ticket) => {
+        if (ticket.priority) {
+          acc[ticket.priority] = (acc[ticket.priority] ?? 0) + 1
+        }
+        return acc
+      },
+      {} as Record<string, number>
+    )
+
+    return {
+      total: tickets.length,
+      byStatus,
+      byPriority,
+    }
   }),
 })

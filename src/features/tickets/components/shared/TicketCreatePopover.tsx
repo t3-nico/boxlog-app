@@ -15,8 +15,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
-import { trpc } from '@/lib/trpc/client'
+import { api } from '@/lib/trpc'
 import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ticket'
 
 // 15分刻みの時間オプションを生成（0:00 - 23:45）
@@ -72,18 +73,14 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const [reminderType, setReminderType] = useState<string>('')
   const [showTagSearch, setShowTagSearch] = useState(false)
   const [tagSearchQuery, setTagSearchQuery] = useState('')
-  const createMutation = trpc.tickets.create.useMutation()
-  const utils = trpc.useUtils()
+  const { createTicket } = useTicketMutations()
   const { addTicketTag } = useTicketTags()
 
-  // タグ一覧を取得（TODO: tagsテーブルのパーミッション設定後に有効化）
-  // const { data: allTags = [] } = trpc.tickets.tags.list.useQuery()
-  const allTags: never[] = []
+  // タグ一覧を取得
+  const { data: allTags = [] } = api.tickets.tags.list.useQuery()
 
   // タグ検索結果をフィルタリング
-  const filteredTags = allTags.filter((tag: { name: string }) =>
-    tag.name.toLowerCase().includes(tagSearchQuery.toLowerCase())
-  )
+  const filteredTags = allTags.filter((tag) => tag.name.toLowerCase().includes(tagSearchQuery.toLowerCase()))
 
   // 外側クリックでポップアップを閉じる
   useEffect(() => {
@@ -124,7 +121,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
     defaultValues: {
       title: '',
       description: '',
-      status: 'open',
+      status: 'backlog',
       priority: 'normal',
     },
   })
@@ -151,23 +148,23 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const handleSubmit = async (data: CreateTicketInput) => {
     setIsSubmitting(true)
     try {
-      const newTicket = await createMutation.mutateAsync(data)
+      await createTicket.mutateAsync(data)
 
-      // タグを追加（チケット作成後に個別に追加）
-      if (selectedTagIds.length > 0) {
-        await Promise.all(selectedTagIds.map((tagId) => addTicketTag(newTicket.id, tagId)))
-      }
+      // タグを追加は将来的に実装
+      // if (selectedTagIds.length > 0) {
+      //   await Promise.all(selectedTagIds.map((tagId) => addTicketTag(newTicket.id, tagId)))
+      // }
 
-      await utils.tickets.list.invalidate()
       onSuccess?.()
       form.reset()
       setSelectedDate(undefined)
       setStartTime(getCurrentTime())
       setEndTime('')
       setSelectedTagIds([])
+      setIsOpen(false)
     } catch (error) {
       console.error('Failed to create ticket:', error)
-      alert('Ticketの作成に失敗しました')
+      // Toast通知はuseTicketMutationsで処理される
     } finally {
       setIsSubmitting(false)
     }
@@ -214,7 +211,11 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                         {...field}
                         ref={(e) => {
                           field.ref(e)
-                          titleInputRef.current = e
+                          // Merge refs for focus management
+                          if (titleInputRef.current !== e) {
+                            // @ts-expect-error - Ref assignment is needed for focus management
+                            titleInputRef.current = e
+                          }
                         }}
                         className="border-0 bg-white px-0 text-lg font-semibold shadow-none focus-visible:ring-0 dark:bg-neutral-900"
                       />
