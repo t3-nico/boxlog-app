@@ -736,3 +736,8 @@ aside * {
     border-bottom-color: var(--color-border);
   }
 }
+
+/* Calendar - 週番号を非表示 */
+.rdp-weeks {
+  display: none;
+}
