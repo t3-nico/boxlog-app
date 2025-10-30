@@ -1,11 +1,10 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { useTicketInspectorStore } from '@/features/inspector/stores/useTicketInspectorStore'
 import { SidebarTabLayout } from '@/features/navigation/components/sidebar/SidebarTabLayout'
 import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
-import { X } from 'lucide-react'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect } from 'react'
 
 interface SidePanelProps {
   open: boolean
@@ -29,16 +28,18 @@ export function SidePanel({
   maxWidth = 1200,
 }: SidePanelProps) {
   const { width, setWidth, isResizing, setIsResizing } = useTicketInspectorStore()
-  const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     console.log('[SidePanel] State changed:', { open, title, width, tabsCount: tabs.length })
   }, [open, title, width, tabs.length])
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
-    setIsResizing(true)
-  }, [])
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      setIsResizing(true)
+    },
+    [setIsResizing]
+  )
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -49,12 +50,12 @@ export function SidePanel({
         setWidth(newWidth)
       }
     },
-    [isResizing, minWidth, maxWidth]
+    [isResizing, minWidth, maxWidth, setWidth]
   )
 
   const handleMouseUp = useCallback(() => {
     setIsResizing(false)
-  }, [])
+  }, [setIsResizing])
 
   useEffect(() => {
     if (isResizing) {
@@ -72,36 +73,34 @@ export function SidePanel({
     }
   }, [isResizing, handleMouseMove, handleMouseUp])
 
-  if (!open) {
-    return null
-  }
-
   return (
-    <div
-      ref={panelRef}
-      className="border-border bg-background fixed top-0 right-0 bottom-0 z-[9999] flex flex-col border-l shadow-lg"
-      style={{ width: `${width}px`, maxWidth: '100vw' }}
-    >
-      {/* リサイズハンドル */}
-      <div
-        className="hover:bg-primary/20 absolute top-0 bottom-0 left-0 w-1 cursor-ew-resize transition-colors"
-        onMouseDown={handleMouseDown}
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="right"
+        className="flex flex-col p-0 sm:max-w-none"
+        style={{ width: `${width}px`, maxWidth: '100vw' }}
+        showCloseButton={false}
       >
-        <div className="bg-border absolute top-1/2 left-0 h-12 w-1 -translate-y-1/2 rounded-r" />
-      </div>
+        {/* リサイズハンドル */}
+        <div
+          className="hover:bg-primary/20 absolute top-0 bottom-0 left-0 w-1 cursor-ew-resize transition-colors"
+          onMouseDown={handleMouseDown}
+        >
+          <div className="bg-border absolute top-1/2 left-0 h-12 w-1 -translate-y-1/2 rounded-r" />
+        </div>
 
-      {/* ヘッダー */}
-      <div className="border-border relative flex items-center border-b px-6 py-4">
-        {title && <h2 className="flex-1 truncate pr-8 text-lg font-semibold">{title}</h2>}
-        <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="absolute top-2 right-2">
-          <X className="h-5 w-5" />
-        </Button>
-      </div>
+        {/* ヘッダー */}
+        {title && (
+          <SheetHeader className="border-border border-b px-6 py-4">
+            <SheetTitle>{title}</SheetTitle>
+          </SheetHeader>
+        )}
 
-      {/* タブナビゲーション */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <SidebarTabLayout tabs={tabs} defaultTab={defaultTab} />
-      </div>
-    </div>
+        {/* タブナビゲーション */}
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <SidebarTabLayout tabs={tabs} defaultTab={defaultTab} />
+        </div>
+      </SheetContent>
+    </Sheet>
   )
 }

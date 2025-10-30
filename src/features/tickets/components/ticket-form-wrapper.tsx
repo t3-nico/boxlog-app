@@ -3,6 +3,7 @@
 import { api } from '@/lib/trpc'
 import type { CreateTicketInput } from '@/schemas/tickets/ticket'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { useTicketTags } from '../hooks/useTicketTags'
 import type { Ticket } from '../types/ticket'
 import { TicketFormImproved } from './ticket-form-improved'
@@ -17,10 +18,28 @@ export function TicketFormWrapper({ ticketId, onSuccess }: TicketFormWrapperProp
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { addTicketTag, removeTicketTag } = useTicketTags()
 
+  // tRPC Utils（キャッシュ無効化用）
+  const utils = api.useUtils()
+
   // tRPC Mutations
-  const createMutation = api.tickets.create.useMutation()
-  const updateMutation = api.tickets.update.useMutation()
-  const deleteMutation = api.tickets.delete.useMutation()
+  const createMutation = api.tickets.create.useMutation({
+    onSuccess: () => {
+      utils.tickets.list.invalidate()
+    },
+  })
+  const updateMutation = api.tickets.update.useMutation({
+    onSuccess: () => {
+      utils.tickets.list.invalidate()
+      if (ticketId) {
+        utils.tickets.getById.invalidate({ id: ticketId })
+      }
+    },
+  })
+  const deleteMutation = api.tickets.delete.useMutation({
+    onSuccess: () => {
+      utils.tickets.list.invalidate()
+    },
+  })
 
   // 編集モードの場合、ticketデータを取得
   const { data: ticketData, isLoading: isLoadingTicket } = api.tickets.getById.useQuery(
@@ -73,6 +92,10 @@ export function TicketFormWrapper({ ticketId, onSuccess }: TicketFormWrapperProp
         for (const tagId of removedTags) {
           await removeTicketTag(ticketId, tagId)
         }
+
+        toast.success('チケットを更新しました', {
+          description: `「${data.title}」を更新しました`,
+        })
       } else {
         // 新規作成
         const result = await createMutation.mutateAsync(data)
@@ -82,11 +105,18 @@ export function TicketFormWrapper({ ticketId, onSuccess }: TicketFormWrapperProp
         for (const tagId of tagIds) {
           await addTicketTag(result.id, tagId)
         }
+
+        toast.success('チケットを作成しました', {
+          description: `「${data.title}」を作成しました`,
+        })
       }
       onSuccess?.()
     } catch (error) {
       console.error('Failed to submit ticket:', error)
-      alert('保存に失敗しました')
+      const errorMessage = error instanceof Error ? error.message : '不明なエラーが発生しました'
+      toast.error(ticketId ? 'チケットの更新に失敗しました' : 'チケットの作成に失敗しました', {
+        description: errorMessage,
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -99,10 +129,16 @@ export function TicketFormWrapper({ ticketId, onSuccess }: TicketFormWrapperProp
     setIsSubmitting(true)
     try {
       await deleteMutation.mutateAsync({ id: ticketId })
+      toast.success('チケットを削除しました', {
+        description: `「${ticket?.title ?? 'チケット'}」を削除しました`,
+      })
       onSuccess?.()
     } catch (error) {
       console.error('Failed to delete ticket:', error)
-      alert('削除に失敗しました')
+      const errorMessage = error instanceof Error ? error.message : '不明なエラーが発生しました'
+      toast.error('チケットの削除に失敗しました', {
+        description: errorMessage,
+      })
     } finally {
       setIsSubmitting(false)
     }

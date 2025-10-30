@@ -3,7 +3,7 @@
 import { KanbanBoard } from '@/features/board'
 import { KanbanToolbar } from '@/features/board/components/KanbanToolbar'
 import { useInboxData, type InboxFilters } from '../hooks/useInboxData'
-import { useInboxBoardFilterStore } from '../stores/useInboxBoardFilterStore'
+import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 
 /**
  * Inbox Board View コンポーネント
@@ -18,10 +18,9 @@ import { useInboxBoardFilterStore } from '../stores/useInboxBoardFilterStore'
  * ```
  */
 export function InboxBoardView() {
-  const filters = useInboxBoardFilterStore()
+  const filters = useInboxFilterStore()
   const { items, isLoading, error } = useInboxData({
     status: filters.status[0] as InboxFilters['status'],
-    priority: filters.priority[0] as InboxFilters['priority'],
     search: filters.search,
   })
 
@@ -54,7 +53,7 @@ export function InboxBoardView() {
             </div>
           </div>
         ) : (
-          <KanbanBoard />
+          <KanbanBoard items={items} />
         )}
       </div>
     </div>

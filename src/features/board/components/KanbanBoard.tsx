@@ -1,21 +1,18 @@
 'use client'
 
-import { useMediaQuery } from '@/hooks/use-media-query'
-import { DesktopKanbanBoard } from './desktop/DesktopKanbanBoard'
-import { MobileKanbanBoard } from './mobile/MobileKanbanBoard'
+import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
+import { TicketKanbanBoard } from './TicketKanbanBoard'
 
 /**
  * Kanbanボードコンポーネント（メイン）
  *
- * レスポンシブ分岐：モバイル（lg未満）/デスクトップ（lg以上）
+ * InboxItemデータを受け取り、ステータスごとにカラム表示
  *
  * @example
  * ```tsx
- * <KanbanBoard />
+ * <KanbanBoard items={inboxItems} />
  * ```
  */
-export function KanbanBoard() {
-  const isDesktop = useMediaQuery('(min-width: 1024px)')
-
-  return isDesktop ? <DesktopKanbanBoard /> : <MobileKanbanBoard />
+export function KanbanBoard({ items }: { items: InboxItem[] }) {
+  return <TicketKanbanBoard items={items} />
 }

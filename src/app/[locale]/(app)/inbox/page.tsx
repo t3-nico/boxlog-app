@@ -1,69 +1,15 @@
 'use client'
 
 import { InboxBoardView } from '@/features/inbox/components/InboxBoardView'
-import { InboxTableView } from '@/features/inbox/components/InboxTableView'
-import { InboxViewTabs } from '@/features/inbox/components/InboxViewTabs'
-import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore'
-import { useParams, useRouter, useSearchParams } from 'next/navigation'
-import { Suspense, useEffect } from 'react'
+import { Suspense } from 'react'
 
 /**
  * Inboxページ
  *
- * URLパラメータ `?view={viewId}` でビューを切り替え
- * デフォルト: default-board
+ * Board View のみ表示
  */
 function InboxContent() {
-  const router = useRouter()
-  const params = useParams()
-  const searchParams = useSearchParams()
-  const viewId = searchParams?.get('view')
-  const { getViewById, activeViewId, setActiveView } = useInboxViewStore()
-
-  // viewパラメータがない場合、デフォルトのボードビューにリダイレクト
-  useEffect(() => {
-    if (!viewId) {
-      const locale = params?.locale || 'ja'
-      router.replace(`/${locale}/inbox?view=default-board`)
-    }
-  }, [viewId, params, router])
-
-  // URLパラメータからView IDを取得してアクティブViewを設定
-  useEffect(() => {
-    if (viewId) {
-      const view = getViewById(viewId)
-      if (view && activeViewId !== viewId) {
-        setActiveView(viewId)
-      }
-    }
-  }, [viewId, getViewById, activeViewId, setActiveView])
-
-  // viewパラメータがない場合はリダイレクト中なので何も表示しない
-  if (!viewId) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="text-muted-foreground">読み込み中...</div>
-      </div>
-    )
-  }
-
-  // アクティブなViewを取得
-  const activeView = getViewById(activeViewId || 'default-board')
-  const viewType = activeView?.type || 'board'
-
-  return (
-    <>
-      {/* タブヘッダー - Sidebar風アンダーラインデザイン（h-12: 48px = 8px padding-top + 40px tabs） */}
-      <div className="border-border h-12 shrink-0 border-b px-4 pt-2 md:px-6">
-        <InboxViewTabs />
-      </div>
-
-      {/* ビューコンテンツ */}
-      <div className="flex-1 overflow-hidden">
-        {viewType === 'board' ? <InboxBoardView key={activeViewId} /> : <InboxTableView key={activeViewId} />}
-      </div>
-    </>
-  )
+  return <InboxBoardView />
 }
 
 export default function InboxPage() {

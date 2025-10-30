@@ -4,43 +4,47 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 /**
- * Inbox Table用フィルタ状態
- * Ticket/Session統合のため、両方の型を許容
+ * Inbox共通フィルタ状態
+ * Board/Table両方で共有するフィルター
  */
-interface InboxTableFilterState {
+interface InboxFilterState {
   status: Array<TicketStatus | SessionStatus>
   priority: TicketPriority[]
   tags: string[]
   search: string
+  assignee: string
 }
 
 /**
- * Inbox Table用フィルタストア
+ * Inbox共通フィルタストア
  */
-interface InboxTableFilterStore extends InboxTableFilterState {
+interface InboxFilterStore extends InboxFilterState {
   setStatus: (status: Array<TicketStatus | SessionStatus>) => void
   setPriority: (priority: TicketPriority[]) => void
   setTags: (tags: string[]) => void
   setSearch: (search: string) => void
+  setAssignee: (assignee: string) => void
   reset: () => void
 }
 
 /**
  * 初期状態
  */
-const initialState: InboxTableFilterState = {
+const initialState: InboxFilterState = {
   status: [],
   priority: [],
   tags: [],
   search: '',
+  assignee: '',
 }
 
 /**
- * Inbox Table用フィルタストア
+ * Inbox共通フィルタストア
  *
+ * Board/Table間でフィルター状態を共有
  * LocalStorageで永続化
  */
-export const useInboxTableFilterStore = create<InboxTableFilterStore>()(
+export const useInboxFilterStore = create<InboxFilterStore>()(
   persist(
     (set) => ({
       ...initialState,
@@ -48,10 +52,11 @@ export const useInboxTableFilterStore = create<InboxTableFilterStore>()(
       setPriority: (priority) => set({ priority }),
       setTags: (tags) => set({ tags }),
       setSearch: (search) => set({ search }),
+      setAssignee: (assignee) => set({ assignee }),
       reset: () => set(initialState),
     }),
     {
-      name: 'inbox-table-filter',
+      name: 'inbox-filter',
     }
   )
 )
