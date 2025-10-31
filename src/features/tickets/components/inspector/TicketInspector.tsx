@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { api } from '@/lib/trpc'
 import { format } from 'date-fns'
-import { ChevronDown, ChevronUp, Clock, PanelRight } from 'lucide-react'
+import { ChevronDown, ChevronUp, PanelRight } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTicket } from '../../hooks/useTicket'
 import { useTicketMutations } from '../../hooks/useTicketMutations'
@@ -318,7 +318,7 @@ export function TicketInspector() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
+                  <div className="flex flex-col gap-2">
                     <Label htmlFor="priority">優先度</Label>
                     <select
                       id="priority"
@@ -334,7 +334,7 @@ export function TicketInspector() {
                     </select>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="flex flex-col gap-2">
                     <Label htmlFor="status">ステータス</Label>
                     <select
                       id="status"
@@ -430,26 +430,6 @@ export function TicketInspector() {
                     </div>
                   )}
                 </div>
-
-                {/* メタデータ */}
-                {'id' in ticket && (
-                  <div className="text-muted-foreground space-y-2 pt-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      <span>作成: {new Date(ticket.created_at || '').toLocaleString('ja-JP')}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      <span>更新: {new Date(ticket.updated_at || '').toLocaleString('ja-JP')}</span>
-                    </div>
-                    {ticket.due_date && (
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        <span>期限: {new Date(ticket.due_date).toLocaleDateString('ja-JP')}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
               </TabsContent>
 
               {/* その他のタブ（将来実装） */}
