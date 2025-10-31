@@ -32,7 +32,7 @@ const SheetOverlay = React.forwardRef<
       ref={ref}
       data-slot="sheet-overlay"
       className={cn(
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50',
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-transparent',
         className
       )}
       {...props}
@@ -57,10 +57,10 @@ const SheetContent = ({
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(
-          'fixed z-50 flex flex-col gap-4 bg-white shadow-lg transition ease-in-out',
-          'dark:bg-neutral-900',
+          'bg-card fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out',
           'data-[state=open]:animate-in data-[state=closed]:animate-out',
           'data-[state=closed]:duration-300 data-[state=open]:duration-500',
+          'focus:outline-hidden focus-visible:ring-0',
           side === 'right' &&
             'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full border-l border-neutral-200 dark:border-neutral-800',
           side === 'left' &&
@@ -78,7 +78,7 @@ const SheetContent = ({
           <SheetPrimitive.Close
             className={cn(
               'absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100',
-              'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-hidden',
+              'focus:outline-hidden focus-visible:ring-0',
               'disabled:pointer-events-none',
               'data-[state=open]:bg-neutral-300 dark:data-[state=open]:bg-neutral-700'
             )}
