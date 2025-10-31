@@ -22,6 +22,10 @@ export interface InboxItem {
   ticket_number?: string
   planned_hours?: number
   description?: string
+  due_date?: string | null // 期限日（YYYY-MM-DD）
+  start_time?: string | null // 開始時刻（ISO 8601）
+  end_time?: string | null // 終了時刻（ISO 8601）
+  tags?: Array<{ id: string; name: string; color?: string }> // タグ情報
 }
 
 /**
@@ -42,12 +46,15 @@ function ticketToInboxItem(ticket: Ticket): InboxItem {
     type: 'ticket',
     title: ticket.title,
     status: ticket.status,
-    priority: ticket.priority,
-    created_at: ticket.created_at,
-    updated_at: ticket.updated_at,
+    priority: ticket.priority ?? undefined,
+    created_at: ticket.created_at ?? new Date().toISOString(),
+    updated_at: ticket.updated_at ?? new Date().toISOString(),
     ticket_number: ticket.ticket_number,
-    planned_hours: ticket.planned_hours,
-    description: ticket.description,
+    description: ticket.description ?? undefined,
+    due_date: ticket.due_date,
+    start_time: ticket.start_time,
+    end_time: ticket.end_time,
+    tags: 'tags' in ticket ? (ticket as { tags: Array<{ id: string; name: string; color?: string }> }).tags : undefined,
   }
 }
 
@@ -90,7 +97,8 @@ export function useInboxData(filters: InboxFilters = {}) {
   )
 
   // TicketをInboxItemに変換
-  const items: InboxItem[] = ticketsData?.map(ticketToInboxItem) || []
+  // APIレスポンスは部分的な型なので、unknown経由でキャスト
+  const items: InboxItem[] = ticketsData?.map((t) => ticketToInboxItem(t as unknown as Ticket)) || []
 
   // 更新日時の降順でソート
   items.sort((a, b) => {

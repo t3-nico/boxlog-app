@@ -10,6 +10,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
+import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { Calendar as CalendarIcon, Check, Flag, MoreVertical, Plus, Tag } from 'lucide-react'
 import { useState } from 'react'
@@ -407,15 +408,54 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
 }
 
 function TicketCard({ item }: { item: InboxItem }) {
-  const { openInspector } = useTicketInspectorStore()
+  const { openInspector, ticketId } = useTicketInspectorStore()
+  const isActive = ticketId === item.id
 
-  const priorityStyles: Record<string, string> = {
-    high: 'bg-red-100 text-red-800 dark:bg-red-950/50 dark:text-red-300',
-    medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950/50 dark:text-yellow-300',
-    low: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300',
+  // 優先度ラベル
+  const priorityLabel: Record<string, string> = {
+    urgent: '緊急',
+    high: '高',
+    normal: '中',
+    low: '低',
   }
 
-  const priorityClass = item.priority ? priorityStyles[item.priority] || priorityStyles.low : ''
+  // 優先度バッジのクラス（カスタムカラー）
+  const priorityBadgeClass: Record<string, string> = {
+    urgent: 'bg-red-500/10 text-red-700 border-red-200 dark:bg-red-500/20 dark:text-red-300 dark:border-red-800',
+    high: 'bg-orange-500/10 text-orange-700 border-orange-200 dark:bg-orange-500/20 dark:text-orange-300 dark:border-orange-800',
+    normal:
+      'bg-yellow-500/10 text-yellow-700 border-yellow-200 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800',
+    low: 'bg-blue-500/10 text-blue-700 border-blue-200 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-800',
+  }
+
+  // 時間フォーマット関数
+  const formatDateTime = () => {
+    if (!item.due_date && !item.start_time && !item.end_time) return null
+
+    const parts: string[] = []
+
+    // 日付
+    if (item.due_date) {
+      const date = new Date(item.due_date)
+      parts.push(date.toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' }))
+    }
+
+    // 時間範囲
+    if (item.start_time && item.end_time) {
+      const start = new Date(item.start_time)
+      const end = new Date(item.end_time)
+      parts.push(
+        `${start.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}-${end.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}`
+      )
+    } else if (item.start_time) {
+      const start = new Date(item.start_time)
+      parts.push(start.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }))
+    }
+
+    return parts.join(' ')
+  }
+
+  const timeDisplay = formatDateTime()
 
   const handleClick = () => {
     if (item.type === 'ticket') {
@@ -426,14 +466,60 @@ function TicketCard({ item }: { item: InboxItem }) {
   return (
     <div
       onClick={handleClick}
-      className="bg-card hover:bg-accent border-border group cursor-pointer rounded-lg border p-3 shadow-sm transition-all hover:shadow-md"
+      className={`bg-card hover:bg-accent border-border group flex cursor-pointer flex-col gap-2 rounded-lg border p-3 shadow-sm transition-all hover:shadow-md ${
+        isActive ? 'border-primary' : ''
+      }`}
     >
-      <div className="text-foreground mb-1 text-sm font-medium">{item.title}</div>
-      <div className="text-muted-foreground mb-2 text-xs">
-        {item.type === 'ticket' && item.ticket_number ? `#${item.ticket_number}` : item.type}
+      {/* 1. タイトル */}
+      <div>
+        <h3 className="text-foreground text-sm leading-tight font-medium">{item.title}</h3>
       </div>
+
+      {/* 2. 時間 */}
+      {timeDisplay && (
+        <div className="text-muted-foreground flex items-center text-xs">
+          <span>{timeDisplay}</span>
+        </div>
+      )}
+
+      {/* 3. Tags */}
+      {item.tags && item.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {item.tags.slice(0, 3).map((tag) => (
+            <Badge
+              key={tag.id}
+              variant="outline"
+              className={cn(
+                tag.color && `border-[${tag.color}] bg-[${tag.color}]/10 text-[${tag.color}] dark:bg-[${tag.color}]/20`
+              )}
+              style={
+                tag.color
+                  ? {
+                      backgroundColor: `${tag.color}20`,
+                      borderColor: tag.color,
+                      color: tag.color,
+                    }
+                  : undefined
+              }
+            >
+              {tag.name}
+            </Badge>
+          ))}
+          {item.tags.length > 3 && (
+            <Badge variant="secondary" className="bg-muted text-muted-foreground">
+              +{item.tags.length - 3}
+            </Badge>
+          )}
+        </div>
+      )}
+
+      {/* 4. 優先順位 */}
       {item.priority && (
-        <span className={`inline-block rounded px-2 py-1 text-xs ${priorityClass}`}>{item.priority}</span>
+        <div>
+          <Badge variant="outline" className={priorityBadgeClass[item.priority] || priorityBadgeClass.low}>
+            優先度: {priorityLabel[item.priority] || item.priority}
+          </Badge>
+        </div>
       )}
     </div>
   )
