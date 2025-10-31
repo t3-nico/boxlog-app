@@ -417,9 +417,11 @@ export const useKanbanStore = create<KanbanStore>()(
                     ...col,
                     cards: col.cards.map((card) => ({
                       ...card,
-                      createdAt: card.createdAt.toISOString(),
-                      updatedAt: card.updatedAt.toISOString(),
-                      dueDate: card.dueDate?.toISOString(),
+                      createdAt: card.createdAt instanceof Date ? card.createdAt.toISOString() : card.createdAt,
+                      updatedAt: card.updatedAt instanceof Date ? card.updatedAt.toISOString() : card.updatedAt,
+                      dueDate: card.dueDate instanceof Date ? card.dueDate.toISOString() : card.dueDate,
+                      startTime: card.startTime instanceof Date ? card.startTime.toISOString() : card.startTime,
+                      endTime: card.endTime instanceof Date ? card.endTime.toISOString() : card.endTime,
                     })),
                   })),
                 })),
@@ -432,9 +434,11 @@ export const useKanbanStore = create<KanbanStore>()(
                         ...col,
                         cards: col.cards.map((card) => ({
                           ...card,
-                          createdAt: card.createdAt.toISOString(),
-                          updatedAt: card.updatedAt.toISOString(),
-                          dueDate: card.dueDate?.toISOString(),
+                          createdAt: card.createdAt instanceof Date ? card.createdAt.toISOString() : card.createdAt,
+                          updatedAt: card.updatedAt instanceof Date ? card.updatedAt.toISOString() : card.updatedAt,
+                          dueDate: card.dueDate instanceof Date ? card.dueDate.toISOString() : card.dueDate,
+                          startTime: card.startTime instanceof Date ? card.startTime.toISOString() : card.startTime,
+                          endTime: card.endTime instanceof Date ? card.endTime.toISOString() : card.endTime,
                         })),
                       })),
                     }
@@ -442,9 +446,26 @@ export const useKanbanStore = create<KanbanStore>()(
                 selectedCard: state.selectedCard
                   ? {
                       ...state.selectedCard,
-                      createdAt: state.selectedCard.createdAt.toISOString(),
-                      updatedAt: state.selectedCard.updatedAt.toISOString(),
-                      dueDate: state.selectedCard.dueDate?.toISOString(),
+                      createdAt:
+                        state.selectedCard.createdAt instanceof Date
+                          ? state.selectedCard.createdAt.toISOString()
+                          : state.selectedCard.createdAt,
+                      updatedAt:
+                        state.selectedCard.updatedAt instanceof Date
+                          ? state.selectedCard.updatedAt.toISOString()
+                          : state.selectedCard.updatedAt,
+                      dueDate:
+                        state.selectedCard.dueDate instanceof Date
+                          ? state.selectedCard.dueDate.toISOString()
+                          : state.selectedCard.dueDate,
+                      startTime:
+                        state.selectedCard.startTime instanceof Date
+                          ? state.selectedCard.startTime.toISOString()
+                          : state.selectedCard.startTime,
+                      endTime:
+                        state.selectedCard.endTime instanceof Date
+                          ? state.selectedCard.endTime.toISOString()
+                          : state.selectedCard.endTime,
                     }
                   : null,
               },

@@ -6,22 +6,20 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import { createClient } from '@/lib/supabase/server'
+import type { TicketActivity } from '@/features/tickets/types/activity'
 import {
-  createRecordSchema,
-  createSessionSchema,
+  bulkDeleteTicketSchema,
+  bulkUpdateTicketSchema,
   createTagSchema,
   createTicketSchema,
-  recordIdSchema,
-  sessionFilterSchema,
-  sessionIdSchema,
+  getTicketByIdSchema,
   tagIdSchema,
   ticketFilterSchema,
   ticketIdSchema,
-  updateSessionSchema,
   updateTagSchema,
   updateTicketSchema,
 } from '@/schemas/tickets'
+import { createTicketActivitySchema, getTicketActivitiesSchema } from '@/schemas/tickets/activity'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 
 export const ticketsRouter = createTRPCRouter({
@@ -30,8 +28,7 @@ export const ticketsRouter = createTRPCRouter({
   // ========================================
   tags: {
     list: protectedProcedure.query(async ({ ctx }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { data, error } = await supabase
         .from('tags')
@@ -50,12 +47,10 @@ export const ticketsRouter = createTRPCRouter({
     }),
 
     create: protectedProcedure.input(createTagSchema).mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { data, error } = await supabase
         .from('tags')
-        // @ts-expect-error - Supabase型推論の問題（既知の問題）
         .insert({
           user_id: userId,
           ...input,
@@ -76,12 +71,10 @@ export const ticketsRouter = createTRPCRouter({
     update: protectedProcedure
       .input(z.object({ id: z.string().uuid(), data: updateTagSchema }))
       .mutation(async ({ ctx, input }) => {
-        const supabase = await createClient()
-        const userId = ctx.userId
+        const { supabase, userId } = ctx
 
         const { data, error } = await supabase
           .from('tags')
-          // @ts-expect-error - Supabase型推論の問題（既知の問題）
           .update(input.data)
           .eq('id', input.id)
           .eq('user_id', userId)
@@ -99,8 +92,7 @@ export const ticketsRouter = createTRPCRouter({
       }),
 
     delete: protectedProcedure.input(tagIdSchema).mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
 
       const { error } = await supabase.from('tags').delete().eq('id', input.id).eq('user_id', userId)
 
@@ -127,14 +119,24 @@ export const ticketsRouter = createTRPCRouter({
     if (input?.status) {
       query = query.eq('status', input.status)
     }
-    if (input?.priority) {
-      query = query.eq('priority', input.priority)
-    }
     if (input?.search) {
       query = query.or(`title.ilike.%${input.search}%,description.ilike.%${input.search}%`)
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false })
+    // ソート適用
+    const sortBy = input?.sortBy ?? 'created_at'
+    const sortOrder = input?.sortOrder ?? 'desc'
+    query = query.order(sortBy, { ascending: sortOrder === 'asc' })
+
+    // ページネーション適用
+    if (input?.limit) {
+      query = query.limit(input.limit)
+    }
+    if (input?.offset) {
+      query = query.range(input.offset, input.offset + (input.limit ?? 100) - 1)
+    }
+
+    const { data, error } = await query
 
     if (error) {
       throw new TRPCError({
@@ -146,11 +148,21 @@ export const ticketsRouter = createTRPCRouter({
     return data
   }),
 
-  getById: protectedProcedure.input(ticketIdSchema).query(async ({ ctx, input }) => {
-    const supabase = await createClient()
-    const userId = ctx.userId
+  getById: protectedProcedure.input(getTicketByIdSchema).query(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx
 
-    const { data, error } = await supabase.from('tickets').select('*').eq('id', input.id).eq('user_id', userId).single()
+    // リレーション取得の設定
+    let selectQuery = '*'
+    if (input.include?.tags) {
+      selectQuery = '*, ticket_tags(tag_id, tags(*))'
+    }
+
+    const { data, error } = await supabase
+      .from('tickets')
+      .select(selectQuery)
+      .eq('id', input.id)
+      .eq('user_id', userId)
+      .single()
 
     if (error) {
       throw new TRPCError({
@@ -159,16 +171,24 @@ export const ticketsRouter = createTRPCRouter({
       })
     }
 
+    // タグデータの整形
+    if (input.include?.tags && data) {
+      const ticketWithTags = data as unknown as {
+        ticket_tags?: Array<{ tag_id: string; tags: unknown }>
+      }
+      const tags = ticketWithTags.ticket_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
+      const { ticket_tags, ...ticketData } = ticketWithTags
+      return { ...ticketData, tags } as typeof data & { tags: unknown[] }
+    }
+
     return data
   }),
 
   create: protectedProcedure.input(createTicketSchema).mutation(async ({ ctx, input }) => {
-    const supabase = await createClient()
-    const userId = ctx.userId
+    const { supabase, userId } = ctx
 
     const { data, error } = await supabase
       .from('tickets')
-      // @ts-expect-error - Supabase型推論の問題（既知の問題）
       .insert({
         user_id: userId,
         ticket_number: '', // トリガーで自動採番
@@ -184,18 +204,31 @@ export const ticketsRouter = createTRPCRouter({
       })
     }
 
+    // アクティビティ記録: チケット作成
+    await supabase.from('ticket_activities').insert({
+      ticket_id: data.id,
+      user_id: userId,
+      action_type: 'created',
+    })
+
     return data
   }),
 
   update: protectedProcedure
     .input(z.object({ id: z.string().uuid(), data: updateTicketSchema }))
     .mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
+
+      // 更新前のデータを取得（変更検出用）
+      const { data: oldData } = await supabase
+        .from('tickets')
+        .select('*')
+        .eq('id', input.id)
+        .eq('user_id', userId)
+        .single()
 
       const { data, error } = await supabase
         .from('tickets')
-        // @ts-expect-error - Supabase型推論の問題（既知の問題）
         .update(input.data)
         .eq('id', input.id)
         .eq('user_id', userId)
@@ -209,12 +242,34 @@ export const ticketsRouter = createTRPCRouter({
         })
       }
 
+      // アクティビティ記録: 変更検出して記録
+      if (oldData) {
+        const { trackTicketChanges } = await import('@/server/utils/activity-tracker')
+        await trackTicketChanges(supabase, input.id, userId, oldData, data)
+      }
+
       return data
     }),
 
   delete: protectedProcedure.input(ticketIdSchema).mutation(async ({ ctx, input }) => {
-    const supabase = await createClient()
-    const userId = ctx.userId
+    const { supabase, userId } = ctx
+
+    // チケット情報を取得（アクティビティ記録用）
+    const { data: ticket } = await supabase
+      .from('tickets')
+      .select('title')
+      .eq('id', input.id)
+      .eq('user_id', userId)
+      .single()
+
+    // アクティビティ記録: チケット削除（削除前に記録）
+    await supabase.from('ticket_activities').insert({
+      ticket_id: input.id,
+      user_id: userId,
+      action_type: 'deleted',
+      field_name: 'title',
+      old_value: ticket?.title || '',
+    })
 
     const { error } = await supabase.from('tickets').delete().eq('id', input.id).eq('user_id', userId)
 
@@ -229,134 +284,18 @@ export const ticketsRouter = createTRPCRouter({
   }),
 
   // ========================================
-  // Sessions CRUD
-  // ========================================
-  sessions: {
-    list: protectedProcedure.input(sessionFilterSchema.optional()).query(async ({ ctx, input }) => {
-      const { supabase, userId } = ctx
-
-      let query = supabase.from('sessions').select('*').eq('user_id', userId)
-
-      // フィルター適用
-      if (input?.ticket_id) {
-        query = query.eq('ticket_id', input.ticket_id)
-      }
-      if (input?.status) {
-        query = query.eq('status', input.status)
-      }
-
-      const { data, error } = await query.order('created_at', { ascending: false })
-
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: `セッション一覧の取得に失敗しました: ${error.message}`,
-        })
-      }
-
-      return data
-    }),
-
-    getById: protectedProcedure.input(sessionIdSchema).query(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
-
-      const { data, error } = await supabase
-        .from('sessions')
-        .select('*')
-        .eq('id', input.id)
-        .eq('user_id', userId)
-        .single()
-
-      if (error) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: `セッションが見つかりません: ${error.message}`,
-        })
-      }
-
-      return data
-    }),
-
-    create: protectedProcedure.input(createSessionSchema).mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
-
-      const { data, error } = await supabase
-        .from('sessions')
-        // @ts-expect-error - Supabase型推論の問題（既知の問題）
-        .insert({
-          user_id: userId,
-          session_number: '', // トリガーで自動採番
-          ...input,
-        })
-        .select()
-        .single()
-
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: `セッションの作成に失敗しました: ${error.message}`,
-        })
-      }
-
-      return data
-    }),
-
-    update: protectedProcedure
-      .input(z.object({ id: z.string().uuid(), data: updateSessionSchema }))
-      .mutation(async ({ ctx, input }) => {
-        const supabase = await createClient()
-        const userId = ctx.userId
-
-        const { data, error } = await supabase
-          .from('sessions')
-          // @ts-expect-error - Supabase型推論の問題（既知の問題）
-          .update(input.data)
-          .eq('id', input.id)
-          .eq('user_id', userId)
-          .select()
-          .single()
-
-        if (error) {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: `セッションの更新に失敗しました: ${error.message}`,
-          })
-        }
-
-        return data
-      }),
-
-    delete: protectedProcedure.input(sessionIdSchema).mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
-
-      const { error } = await supabase.from('sessions').delete().eq('id', input.id).eq('user_id', userId)
-
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: `セッションの削除に失敗しました: ${error.message}`,
-        })
-      }
-
-      return { success: true }
-    }),
-  },
-
-  // ========================================
   // Ticket Tags Management
   // ========================================
   addTag: protectedProcedure
     .input(z.object({ ticketId: z.string().uuid(), tagId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
+
+      // タグ名を取得
+      const { data: tag } = await supabase.from('tags').select('name').eq('id', input.tagId).single()
 
       const { data, error } = await supabase
         .from('ticket_tags')
-        // @ts-expect-error - Supabase型推論の問題（既知の問題）
         .insert({
           user_id: userId,
           ticket_id: input.ticketId,
@@ -372,14 +311,25 @@ export const ticketsRouter = createTRPCRouter({
         })
       }
 
+      // アクティビティ記録: タグ追加
+      await supabase.from('ticket_activities').insert({
+        ticket_id: input.ticketId,
+        user_id: userId,
+        action_type: 'tag_added',
+        field_name: 'tag',
+        new_value: tag?.name || '',
+      })
+
       return data
     }),
 
   removeTag: protectedProcedure
     .input(z.object({ ticketId: z.string().uuid(), tagId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+      const { supabase, userId } = ctx
+
+      // タグ名を取得
+      const { data: tag } = await supabase.from('tags').select('name').eq('id', input.tagId).single()
 
       const { error } = await supabase
         .from('ticket_tags')
@@ -395,12 +345,20 @@ export const ticketsRouter = createTRPCRouter({
         })
       }
 
+      // アクティビティ記録: タグ削除
+      await supabase.from('ticket_activities').insert({
+        ticket_id: input.ticketId,
+        user_id: userId,
+        action_type: 'tag_removed',
+        field_name: 'tag',
+        old_value: tag?.name || '',
+      })
+
       return { success: true }
     }),
 
   getTags: protectedProcedure.input(z.object({ ticketId: z.string().uuid() })).query(async ({ ctx, input }) => {
-    const supabase = await createClient()
-    const userId = ctx.userId
+    const { supabase, userId } = ctx
 
     const { data, error } = await supabase
       .from('ticket_tags')
@@ -415,147 +373,167 @@ export const ticketsRouter = createTRPCRouter({
       })
     }
 
-    // @ts-expect-error - Supabase型推論の問題（既知の問題）
     return data.map((item) => item.tags).filter(Boolean)
   }),
 
   // ========================================
-  // Session Tags Management
+  // Bulk Operations
   // ========================================
-  addSessionTag: protectedProcedure
-    .input(z.object({ sessionId: z.string().uuid(), tagId: z.string().uuid() }))
-    .mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
-
-      const { data, error } = await supabase
-        .from('session_tags')
-        // @ts-expect-error - Supabase型推論の問題（既知の問題）
-        .insert({
-          user_id: userId,
-          session_id: input.sessionId,
-          tag_id: input.tagId,
-        })
-        .select()
-        .single()
-
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: `セッションタグの追加に失敗しました: ${error.message}`,
-        })
-      }
-
-      return data
-    }),
-
-  removeSessionTag: protectedProcedure
-    .input(z.object({ sessionId: z.string().uuid(), tagId: z.string().uuid() }))
-    .mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
-
-      const { error } = await supabase
-        .from('session_tags')
-        .delete()
-        .eq('session_id', input.sessionId)
-        .eq('tag_id', input.tagId)
-        .eq('user_id', userId)
-
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: `セッションタグの削除に失敗しました: ${error.message}`,
-        })
-      }
-
-      return { success: true }
-    }),
-
-  getSessionTags: protectedProcedure.input(z.object({ sessionId: z.string().uuid() })).query(async ({ ctx, input }) => {
-    const supabase = await createClient()
-    const userId = ctx.userId
+  bulkUpdate: protectedProcedure.input(bulkUpdateTicketSchema).mutation(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx
 
     const { data, error } = await supabase
-      .from('session_tags')
-      .select('tag_id, tags(*)')
-      .eq('session_id', input.sessionId)
+      .from('tickets')
+      .update(input.data)
+      .in('id', input.ids)
       .eq('user_id', userId)
+      .select()
 
     if (error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `セッションタグ一覧の取得に失敗しました: ${error.message}`,
+        message: `チケットの一括更新に失敗しました: ${error.message}`,
       })
     }
 
-    // @ts-expect-error - Supabase型推論の問題（既知の問題）
-    return data.map((item) => item.tags).filter(Boolean)
+    return { count: data.length, tickets: data }
+  }),
+
+  bulkDelete: protectedProcedure.input(bulkDeleteTicketSchema).mutation(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx
+
+    const { error, count } = await supabase.from('tickets').delete().in('id', input.ids).eq('user_id', userId)
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `チケットの一括削除に失敗しました: ${error.message}`,
+      })
+    }
+
+    return { success: true, count: count ?? 0 }
   }),
 
   // ========================================
-  // Records CRUD
+  // Statistics
   // ========================================
-  records: {
-    list: protectedProcedure.input(z.object({ session_id: z.string().uuid() })).query(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+  getStats: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase, userId } = ctx
 
-      const { data, error } = await supabase
-        .from('records')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('session_id', input.session_id)
-        .order('created_at', { ascending: false })
+    // 全チケット取得（最適化: select で必要なフィールドのみ取得）
+    const { data: tickets, error } = await supabase.from('tickets').select('id, status').eq('user_id', userId)
 
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: `記録一覧の取得に失敗しました: ${error.message}`,
-        })
-      }
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `統計情報の取得に失敗しました: ${error.message}`,
+      })
+    }
 
-      return data
-    }),
+    // ステータス別カウント
+    const byStatus = tickets.reduce(
+      (acc, ticket) => {
+        acc[ticket.status] = (acc[ticket.status] ?? 0) + 1
+        return acc
+      },
+      {} as Record<string, number>
+    )
 
-    create: protectedProcedure.input(createRecordSchema).mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+    return {
+      total: tickets.length,
+      byStatus,
+    }
+  }),
 
-      const { data, error } = await supabase
-        .from('records')
-        // @ts-expect-error - Supabase型推論の問題（既知の問題）
-        .insert({
-          user_id: userId,
-          ...input,
-        })
-        .select()
-        .single()
+  // ========================================
+  // Activities（アクティビティ履歴）
+  // ========================================
 
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: `記録の作成に失敗しました: ${error.message}`,
-        })
-      }
+  /**
+   * アクティビティ一覧取得
+   */
+  activities: protectedProcedure.input(getTicketActivitiesSchema).query(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx
+    const { ticket_id, limit, offset, order } = input
 
-      return data
-    }),
+    // チケットの所有権確認
+    const { data: ticket, error: ticketError } = await supabase
+      .from('tickets')
+      .select('id')
+      .eq('id', ticket_id)
+      .eq('user_id', userId)
+      .single()
 
-    delete: protectedProcedure.input(recordIdSchema).mutation(async ({ ctx, input }) => {
-      const supabase = await createClient()
-      const userId = ctx.userId
+    if (ticketError || !ticket) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Ticket not found or access denied',
+      })
+    }
 
-      const { error } = await supabase.from('records').delete().eq('id', input.id).eq('user_id', userId)
+    // アクティビティ取得（order: desc=最新順, asc=古い順）
+    const { data: activities, error } = await supabase
+      .from('ticket_activities')
+      .select('*')
+      .eq('ticket_id', ticket_id)
+      .order('created_at', { ascending: order === 'asc' })
+      .range(offset, offset + limit - 1)
 
-      if (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: `記録の削除に失敗しました: ${error.message}`,
-        })
-      }
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch activities: ${error.message}`,
+      })
+    }
 
-      return { success: true }
-    }),
-  },
+    // Supabaseの型を厳密なTicketActivity型にキャスト
+    return (activities ?? []) as TicketActivity[]
+  }),
+
+  /**
+   * アクティビティ作成
+   */
+  createActivity: protectedProcedure.input(createTicketActivitySchema).mutation(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx
+
+    // チケットの所有権確認
+    const { data: ticket, error: ticketError } = await supabase
+      .from('tickets')
+      .select('id')
+      .eq('id', input.ticket_id)
+      .eq('user_id', userId)
+      .single()
+
+    if (ticketError || !ticket) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Ticket not found or access denied',
+      })
+    }
+
+    // アクティビティ作成
+    const { data: activity, error } = await supabase
+      .from('ticket_activities')
+      .insert({
+        ticket_id: input.ticket_id,
+        user_id: userId,
+        action_type: input.action_type,
+        field_name: input.field_name,
+        old_value: input.old_value,
+        new_value: input.new_value,
+        metadata: (input.metadata ?? {}) as never, // Supabaseの Json 型にキャスト
+      })
+      .select()
+      .single()
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to create activity: ${error.message}`,
+      })
+    }
+
+    // Supabaseの型を厳密なTicketActivity型にキャスト
+    return activity as TicketActivity
+  }),
 })

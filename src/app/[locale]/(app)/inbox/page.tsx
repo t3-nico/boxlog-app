@@ -1,50 +1,15 @@
 'use client'
 
 import { InboxBoardView } from '@/features/inbox/components/InboxBoardView'
-import { InboxTableView } from '@/features/inbox/components/InboxTableView'
-import { InboxViewTabs } from '@/features/inbox/components/InboxViewTabs'
-import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore'
-import { useSearchParams } from 'next/navigation'
-import { Suspense, useEffect } from 'react'
+import { Suspense } from 'react'
 
 /**
  * Inboxページ
  *
- * URLパラメータ `?view={viewId}` でビューを切り替え
- * デフォルト: default-board
+ * Board View のみ表示
  */
 function InboxContent() {
-  const searchParams = useSearchParams()
-  const viewId = searchParams?.get('view')
-  const { getViewById, activeViewId, setActiveView } = useInboxViewStore()
-
-  // URLパラメータからView IDを取得してアクティブViewを設定
-  useEffect(() => {
-    if (viewId) {
-      const view = getViewById(viewId)
-      if (view && activeViewId !== viewId) {
-        setActiveView(viewId)
-      }
-    }
-  }, [viewId, getViewById, activeViewId, setActiveView])
-
-  // アクティブなViewを取得
-  const activeView = getViewById(activeViewId || 'default-board')
-  const viewType = activeView?.type || 'board'
-
-  return (
-    <>
-      {/* タブヘッダー - Sidebar風アンダーラインデザイン（h-12: 48px = 8px padding-top + 40px tabs） */}
-      <div className="border-border h-12 shrink-0 border-b px-4 pt-2 md:px-6">
-        <InboxViewTabs />
-      </div>
-
-      {/* ビューコンテンツ */}
-      <div className="flex-1 overflow-hidden">
-        {viewType === 'board' ? <InboxBoardView key={activeViewId} /> : <InboxTableView key={activeViewId} />}
-      </div>
-    </>
-  )
+  return <InboxBoardView />
 }
 
 export default function InboxPage() {

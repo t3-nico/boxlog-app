@@ -34,7 +34,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const { t } = useI18n(localeFromPath)
   const isMobile = useMediaQuery('(max-width: 768px)')
   const searchParams = useSearchParams()
-
   const { calendarProviderProps } = useCalendarProviderProps(pathname, searchParams || new URLSearchParams())
 
   const content = (

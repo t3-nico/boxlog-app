@@ -1,14 +1,13 @@
 // Components
-export { DesktopKanbanBoard } from './components/desktop/DesktopKanbanBoard'
 export { KanbanBoard } from './components/KanbanBoard'
 export { KanbanToolbar } from './components/KanbanToolbar'
-export { MobileKanbanBoard } from './components/mobile/MobileKanbanBoard'
 export { KanbanBoardSkeleton } from './components/shared/KanbanBoardSkeleton'
 export { KanbanCard } from './components/shared/KanbanCard'
 export { KanbanCardDialog } from './components/shared/KanbanCardDialog'
 export { KanbanCardSkeleton } from './components/shared/KanbanCardSkeleton'
 export { KanbanColumn } from './components/shared/KanbanColumn'
 export { KanbanColumnSkeleton } from './components/shared/KanbanColumnSkeleton'
+export { TicketKanbanBoard } from './components/TicketKanbanBoard'
 
 // Hooks
 export { useKanbanDnd } from './hooks/useKanbanDnd'

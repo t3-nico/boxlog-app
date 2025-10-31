@@ -31,37 +31,37 @@ permissions:
 
 jobs:
   license-compliance:
-    name: 🔒 Check License Compliance
+    name: Check License Compliance
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: 📥 Checkout
+      - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
 
-      - name: 🏗️ Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: 📦 Install dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: 🔍 License Compliance Check (Strict)
+      - name: License Compliance Check (Strict)
         id: license_check
         run: |
-          echo "## 🔒 License Compliance Check" >> $GITHUB_STEP_SUMMARY
+          echo "## License Compliance Check" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # 基本チェック実行
           if npm run license:check 2>&1 | tee /tmp/license-check.log; then
             echo "check_status=passed" >> $GITHUB_OUTPUT
-            echo "✅ **Status**: PASSED" >> $GITHUB_STEP_SUMMARY
+            echo "**Status**: PASSED" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "All packages use approved licenses." >> $GITHUB_STEP_SUMMARY
           else
             echo "check_status=failed" >> $GITHUB_OUTPUT
-            echo "❌ **Status**: FAILED" >> $GITHUB_STEP_SUMMARY
+            echo "**Status**: FAILED" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### ⚠️ Restricted Licenses Detected" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
@@ -70,17 +70,17 @@ jobs:
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: 📊 Generate License Report
+      - name: Generate License Report
         if: always()
         run: |
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📊 License Statistics" >> $GITHUB_STEP_SUMMARY
+          echo "### License Statistics" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # サマリー表示
           npm run license:audit | grep -E "├─|└─" | head -20 >> $GITHUB_STEP_SUMMARY || true
 
-      - name: 💬 Comment on PR (Failure)
+      - name: Comment on PR (Failure)
         if: steps.license_check.outputs.check_status == 'failed' && github.event_name == 'pull_request'
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
         with:
@@ -88,7 +88,7 @@ jobs:
             const fs = require('fs');
             const logContent = fs.readFileSync('/tmp/license-check.log', 'utf8');
 
-            const comment = `## 🔒 License Compliance Check Failed ❌
+            const comment = `## License Compliance Check Failed ❌
 
 ### ⚠️ Action Required
 
@@ -97,16 +97,16 @@ This PR introduces dependencies with **restricted licenses** that are not approv
 ### 📋 Restricted License Policy
 
 **Prohibited Licenses:**
-- ❌ GPL-2.0, GPL-3.0 (Strong copyleft - requires source code disclosure)
-- ❌ AGPL-3.0 (Network copyleft - requires SaaS source disclosure)
-- ❌ LGPL-2.1, LGPL-3.0 (Weak copyleft - linking restrictions)
-- ❌ EUPL-1.1, EUPL-1.2 (European copyleft)
-- ❌ CDDL-1.0, EPL-1.0, EPL-2.0 (File-level copyleft)
+- GPL-2.0, GPL-3.0 (Strong copyleft - requires source code disclosure)
+- AGPL-3.0 (Network copyleft - requires SaaS source disclosure)
+- LGPL-2.1, LGPL-3.0 (Weak copyleft - linking restrictions)
+- EUPL-1.1, EUPL-1.2 (European copyleft)
+- CDDL-1.0, EPL-1.0, EPL-2.0 (File-level copyleft)
 
 **Approved Licenses:**
-- ✅ MIT, BSD-2-Clause, BSD-3-Clause
-- ✅ Apache-2.0, ISC, CC0-1.0
-- ✅ MPL-2.0 (with review)
+- MIT, BSD-2-Clause, BSD-3-Clause
+- Apache-2.0, ISC, CC0-1.0
+- MPL-2.0 (with review)
 
 ### 🔧 How to Fix
 
@@ -140,16 +140,16 @@ ${logContent.split('\n').slice(-30).join('\n')}
               body: comment
             });
 
-      - name: 💬 Comment on PR (Success)
+      - name: Comment on PR (Success)
         if: steps.license_check.outputs.check_status == 'passed' && github.event_name == 'pull_request'
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
         with:
           script: |
-            const comment = `## 🔒 License Compliance Check Passed ✅
+            const comment = `## License Compliance Check Passed ✅
 
 All dependencies use approved licenses. This PR is safe to merge from a licensing perspective.
 
-### ✅ Compliance Status
+### Compliance Status
 - No restricted licenses detected
 - All packages comply with project license policy
 
@@ -163,17 +163,17 @@ All dependencies use approved licenses. This PR is safe to merge from a licensin
               body: comment
             });
 
-      - name: ❌ Fail if restricted licenses detected
+      - name: Fail if restricted licenses detected
         if: steps.license_check.outputs.check_status == 'failed'
         run: |
-          echo "::error::❌ License compliance check failed"
+          echo "::error::License compliance check failed"
           echo "::error::Restricted licenses detected in dependencies"
           echo "::error::Please remove packages with GPL/AGPL/LGPL licenses"
           echo "::error::See workflow summary for details"
           exit 1
 
-      - name: ✅ Success
+      - name: Success
         if: steps.license_check.outputs.check_status == 'passed'
         run: |
-          echo "✅ License compliance check passed"
+          echo "License compliance check passed"
           echo "All dependencies use approved licenses"

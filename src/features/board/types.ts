@@ -13,6 +13,17 @@ export const kanbanPrioritySchema = z.enum(['low', 'medium', 'high'])
 export type KanbanPriority = z.infer<typeof kanbanPrioritySchema>
 
 /**
+ * タグ情報
+ */
+export const kanbanTagSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  color: z.string().optional(),
+})
+
+export type KanbanTag = z.infer<typeof kanbanTagSchema>
+
+/**
  * Kanbanカードスキーマ（Zodバリデーション）
  */
 export const kanbanCardSchema = z.object({
@@ -22,8 +33,10 @@ export const kanbanCardSchema = z.object({
   status: kanbanStatusSchema,
   priority: kanbanPrioritySchema,
   assignee: z.string().optional(),
-  tags: z.array(z.string()).default([]),
-  dueDate: z.date().optional(),
+  tags: z.array(z.union([z.string(), kanbanTagSchema])).default([]),
+  dueDate: z.union([z.date(), z.string()]).optional(), // Date型または文字列（YYYY-MM-DD）
+  startTime: z.union([z.date(), z.string()]).optional(), // 開始時刻（ISO 8601形式）
+  endTime: z.union([z.date(), z.string()]).optional(), // 終了時刻（ISO 8601形式）
   isBlocked: z.boolean().default(false), // ブロック状態
   blockedReason: z.string().optional(), // ブロック理由
   startedAt: z.date().optional(), // 作業開始日時（サイクルタイム計測用）

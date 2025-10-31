@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as useInboxDataModule from '../hooks/useInboxData'
-import * as useInboxBoardFilterStoreModule from '../stores/useInboxBoardFilterStore'
+import * as useInboxFilterStoreModule from '../stores/useInboxFilterStore'
 import { InboxBoardView } from './InboxBoardView'
 
 // KanbanBoardとKanbanToolbarのモック
@@ -32,11 +32,10 @@ describe('InboxBoardView', () => {
     vi.clearAllMocks()
 
     // デフォルトのモック
-    vi.spyOn(useInboxBoardFilterStoreModule, 'useInboxBoardFilterStore').mockReturnValue(mockFilters)
+    vi.spyOn(useInboxFilterStoreModule, 'useInboxFilterStore').mockReturnValue(mockFilters)
     vi.spyOn(useInboxDataModule, 'useInboxData').mockReturnValue({
       items: [],
       tickets: [],
-      sessions: [],
       isLoading: false,
       error: null,
     })
@@ -63,7 +62,6 @@ describe('InboxBoardView', () => {
       vi.spyOn(useInboxDataModule, 'useInboxData').mockReturnValue({
         items: [],
         tickets: [],
-        sessions: [],
         isLoading: true,
         error: null,
       })
@@ -86,7 +84,6 @@ describe('InboxBoardView', () => {
       vi.spyOn(useInboxDataModule, 'useInboxData').mockReturnValue({
         items: [],
         tickets: [],
-        sessions: [],
         isLoading: false,
         error: mockError as any,
       })
@@ -100,8 +97,8 @@ describe('InboxBoardView', () => {
   })
 
   describe('フィルタ連携', () => {
-    it('useInboxBoardFilterStoreからフィルタを取得する', () => {
-      const spy = vi.spyOn(useInboxBoardFilterStoreModule, 'useInboxBoardFilterStore')
+    it('useInboxFilterStoreからフィルタを取得する', () => {
+      const spy = vi.spyOn(useInboxFilterStoreModule, 'useInboxFilterStore')
 
       render(<InboxBoardView />)
 
@@ -115,7 +112,7 @@ describe('InboxBoardView', () => {
         priority: ['high' as const],
         search: 'test query',
       }
-      vi.spyOn(useInboxBoardFilterStoreModule, 'useInboxBoardFilterStore').mockReturnValue(filters)
+      vi.spyOn(useInboxFilterStoreModule, 'useInboxFilterStore').mockReturnValue(filters)
 
       const dataSpy = vi.spyOn(useInboxDataModule, 'useInboxData')
 
@@ -123,7 +120,6 @@ describe('InboxBoardView', () => {
 
       expect(dataSpy).toHaveBeenCalledWith({
         status: 'open',
-        priority: 'high',
         search: 'test query',
       })
     })
@@ -135,7 +131,6 @@ describe('InboxBoardView', () => {
 
       expect(dataSpy).toHaveBeenCalledWith({
         status: undefined,
-        priority: undefined,
         search: '',
       })
     })

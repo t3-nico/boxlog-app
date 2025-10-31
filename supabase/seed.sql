@@ -1,0 +1,33 @@
+-- ========================================
+-- BoxLog App - 開発用シードデータ
+-- ========================================
+-- このファイルは `supabase db reset` 実行時に自動的に読み込まれます
+--
+-- 注意: シードデータは無効化されています
+-- サインアップ後、アプリケーション上でデータを作成してください
+
+-- ========================================
+-- テスト用アクティビティデータ（開発用）
+-- ========================================
+-- 既存のチケットに対してアクティビティを追加する場合、
+-- 以下のSQLを手動で実行してください：
+--
+-- Supabase SQL Editorで実行:
+-- INSERT INTO ticket_activities (ticket_id, user_id, action_type, field_name, old_value, new_value)
+-- SELECT
+--   t.id,
+--   t.user_id,
+--   'created',
+--   NULL,
+--   NULL,
+--   NULL
+-- FROM tickets t
+-- WHERE t.user_id = auth.uid()
+-- LIMIT 1;
+--
+-- その他のアクティビティ例：
+-- INSERT INTO ticket_activities (ticket_id, user_id, action_type, field_name, old_value, new_value)
+-- VALUES
+--   ((SELECT id FROM tickets WHERE user_id = auth.uid() LIMIT 1), auth.uid(), 'status_changed', 'status', 'backlog', 'active'),
+--   ((SELECT id FROM tickets WHERE user_id = auth.uid() LIMIT 1), auth.uid(), 'priority_changed', 'priority', 'normal', 'high'),
+--   ((SELECT id FROM tickets WHERE user_id = auth.uid() LIMIT 1), auth.uid(), 'title_changed', 'title', '旧タイトル', '新タイトル');

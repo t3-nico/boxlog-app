@@ -1,8 +1,7 @@
-// Feature: Tickets & Sessions Management
+// Feature: Tickets Management
 // Re-export all public APIs
 
 // Types
-export * from './types/session'
 export * from './types/tag'
 export * from './types/ticket'
 

@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    // 必須拡張機能
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+
+    // Tailwind CSS（必須）
+    "bradlc.vscode-tailwindcss",
+
+    // TypeScript強化（推奨）
+    "ms-vscode.vscode-typescript-next",
+
+    // その他便利な拡張機能（オプション）
+    "usernamehw.errorlens",
+    "streetsidesoftware.code-spell-checker"
+  ]
+}

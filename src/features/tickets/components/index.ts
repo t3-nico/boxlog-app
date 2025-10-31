@@ -1,18 +1,18 @@
-// Ticket Components
-export { TicketCard } from './ticket-card'
-export { TicketFilters } from './ticket-filters'
-export { TicketForm } from './ticket-form'
-export { TicketList } from './ticket-list'
-export { TicketStatusBadge } from './ticket-status-badge'
+// Inspector Components
+export { TicketInspector } from './inspector/TicketInspector'
 
-// Session Components
-export { SessionCard } from './session-card'
-export { SessionForm } from './session-form'
-export { SessionList } from './session-list'
-export { SessionStatusBadge } from './session-status-badge'
-export { SessionTimer } from './session-timer'
+// Form Components
+export { TicketFormImproved as TicketCreateForm } from './forms/TicketCreateForm'
+export { TicketForm as TicketEditForm, TicketForm } from './forms/TicketEditForm'
 
-// Common Components
-export { EmptyState } from './empty-state'
-export { LoadingState } from './loading-state'
-export { PriorityBadge } from './priority-badge'
+// Display Components
+export { TicketCard } from './display/TicketCard'
+export { TicketStatusBadge } from './display/TicketStatusBadge'
+
+// Filter Components (renamed to avoid conflict with TicketFilters type)
+export { TicketFilters as TicketFiltersComponent } from './filters/TicketFilters'
+
+// Shared Components
+export { EmptyState } from './shared/EmptyState'
+export { LoadingState } from './shared/LoadingState'
+export { TicketCreatePopover } from './shared/TicketCreatePopover'

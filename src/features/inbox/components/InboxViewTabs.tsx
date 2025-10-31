@@ -1,6 +1,6 @@
 'use client'
 
-import { Columns3, MoreHorizontal, Pencil, Plus, Table2, Trash2 } from 'lucide-react'
+import { Columns3, MoreHorizontal, Pencil, Table2, Trash2 } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -15,7 +15,6 @@ import {
 
 import { useInboxViewStore } from '../stores/useInboxViewStore'
 import type { InboxView, InboxViewType } from '../types/view'
-import { SaveViewDialog } from './SaveViewDialog'
 
 /**
  * Inbox View Tabs Component
@@ -32,11 +31,8 @@ export function InboxViewTabs() {
   const params = useParams()
   const locale = params?.locale as string
 
-  const { views, activeViewId, setActiveView, deleteView, createView } = useInboxViewStore()
-  const [showSaveDialog, setShowSaveDialog] = useState(false)
+  const { views, activeViewId, setActiveView, deleteView } = useInboxViewStore()
   const [editingView, setEditingView] = useState<InboxView | null>(null)
-
-  const activeView = views.find((v) => v.id === activeViewId)
 
   const handleViewChange = (viewId: string) => {
     const view = views.find((v) => v.id === viewId)
@@ -44,16 +40,6 @@ export function InboxViewTabs() {
 
     setActiveView(viewId)
     router.push(`/${locale}/inbox?view=${viewId}`)
-  }
-
-  const handleSaveView = (name: string, type: InboxViewType) => {
-    // TODO: 現在のフィルター状態を取得して保存
-    // 今はダミーで空のフィルターを保存
-    createView({
-      name,
-      type,
-      filters: {},
-    })
   }
 
   const handleDeleteView = (viewId: string) => {
@@ -125,26 +111,7 @@ export function InboxViewTabs() {
             )}
           </div>
         ))}
-
-        {/* 新規タブ追加ボタン */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowSaveDialog(true)}
-          className="text-muted-foreground hover:text-foreground ml-2 h-10 gap-2 border-b-2 border-transparent px-4"
-        >
-          <Plus className="h-4 w-4" />
-          <span>新規</span>
-        </Button>
       </div>
-
-      {/* 保存ダイアログ */}
-      <SaveViewDialog
-        open={showSaveDialog}
-        onOpenChange={setShowSaveDialog}
-        onSave={handleSaveView}
-        currentFilters={{}}
-      />
 
       {/* 編集ダイアログ（TODO: 実装予定） */}
       {editingView && (
