@@ -40,6 +40,7 @@ export const getTicketActivitiesSchema = z.object({
   ticket_id: z.string().uuid(),
   limit: z.number().min(1).max(100).optional().default(50),
   offset: z.number().min(0).optional().default(0),
+  order: z.enum(['asc', 'desc']).optional().default('desc'), // desc=最新順, asc=古い順
 })
 
 export type GetTicketActivitiesInput = z.infer<typeof getTicketActivitiesSchema>

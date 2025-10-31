@@ -20,6 +20,7 @@ export function useTicketActivities(
   options?: {
     limit?: number
     offset?: number
+    order?: 'asc' | 'desc' // asc=古い順, desc=最新順
     enabled?: boolean
   }
 ) {
@@ -31,6 +32,7 @@ export function useTicketActivities(
       ticket_id: ticketId,
       limit: options?.limit ?? 50,
       offset: options?.offset ?? 0,
+      order: options?.order ?? 'desc',
     },
     {
       retry: 1,
@@ -55,20 +57,25 @@ export function useTicketActivities(
           filter: `ticket_id=eq.${ticketId}`,
         },
         (payload: RealtimePostgresInsertPayload<Database['public']['Tables']['ticket_activities']['Row']>) => {
-          // 新しいアクティビティを先頭に追加
+          // 新しいアクティビティを追加（order に応じて先頭 or 末尾）
           const queryKey = getQueryKey(
             api.tickets.activities,
             {
               ticket_id: ticketId,
               limit: options?.limit ?? 50,
               offset: options?.offset ?? 0,
+              order: options?.order ?? 'desc',
             },
             'query'
           )
 
+          const order = options?.order ?? 'desc'
           queryClient.setQueryData<TicketActivity[]>(queryKey, (oldData) => {
             if (!oldData) return [payload.new as TicketActivity]
-            return [payload.new as TicketActivity, ...oldData]
+            // desc（最新順）なら先頭に追加、asc（古い順）なら末尾に追加
+            return order === 'desc'
+              ? [payload.new as TicketActivity, ...oldData]
+              : [...oldData, payload.new as TicketActivity]
           })
         }
       )
@@ -77,7 +84,7 @@ export function useTicketActivities(
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [ticketId, options?.enabled, options?.limit, options?.offset, queryClient, supabase])
+  }, [ticketId, options?.enabled, options?.limit, options?.offset, options?.order, queryClient, supabase])
 
   return query
 }

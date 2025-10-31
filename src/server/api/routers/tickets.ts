@@ -469,7 +469,7 @@ export const ticketsRouter = createTRPCRouter({
    */
   activities: protectedProcedure.input(getTicketActivitiesSchema).query(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
-    const { ticket_id, limit, offset } = input
+    const { ticket_id, limit, offset, order } = input
 
     // チケットの所有権確認
     const { data: ticket, error: ticketError } = await supabase
@@ -486,12 +486,12 @@ export const ticketsRouter = createTRPCRouter({
       })
     }
 
-    // アクティビティ取得（時系列降順）
+    // アクティビティ取得（order: desc=最新順, asc=古い順）
     const { data: activities, error } = await supabase
       .from('ticket_activities')
       .select('*')
       .eq('ticket_id', ticket_id)
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: order === 'asc' })
       .range(offset, offset + limit - 1)
 
     if (error) {

@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
+import { Calendar as CalendarComponent } from '@/components/ui/calendar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +19,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { api } from '@/lib/trpc'
 import { format } from 'date-fns'
 import {
+  ArrowUpDown,
+  Calendar,
   CheckCircle,
   ChevronDown,
   ChevronUp,
@@ -42,6 +44,8 @@ import { useTicketMutations } from '../../hooks/useTicketMutations'
 import { useTicketInspectorStore } from '../../stores/useTicketInspectorStore'
 import type { Ticket } from '../../types/ticket'
 import { formatActivity, formatRelativeTime } from '../../utils/activityFormatter'
+import { RecurrencePopover } from '../shared/RecurrencePopover'
+import { ReminderPopover } from '../shared/ReminderPopover'
 
 // 15分刻みの時間オプションを生成（0:00 - 23:45）
 const generateTimeOptions = () => {
@@ -165,6 +169,8 @@ export function TicketInspector() {
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
   const [showCalendar, setShowCalendar] = useState(false)
+  const [repeatType, setRepeatType] = useState<string>('')
+  const [reminderType, setReminderType] = useState<string>('')
 
   // Ticketデータが読み込まれたら状態を初期化
   useEffect(() => {
@@ -455,25 +461,15 @@ export function TicketInspector() {
                   />
                 </div>
 
-                {/* Tags */}
-                <div className="px-6 py-4">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Tag className="text-muted-foreground h-4 w-4" />
-                    <div className="flex flex-wrap gap-2">
-                      {/* タグ表示エリア（後で実装） */}
-                      <span className="text-muted-foreground text-sm">タグを追加...</span>
-                    </div>
-                  </div>
-                </div>
-
                 {/* 日付・時間（作成ページと同じUI） */}
-                <div className="relative px-6">
+                <div className="border-border/50 relative border-t px-6 py-2">
                   <div className="flex items-center gap-3">
+                    <Calendar className="text-muted-foreground h-4 w-4 flex-shrink-0" />
                     {/* 日付選択ボタン */}
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      className="h-10 w-auto px-2"
+                      className="h-10 w-auto px-2 hover:bg-transparent"
                       type="button"
                       onClick={() => setShowCalendar(!showCalendar)}
                     >
@@ -482,7 +478,7 @@ export function TicketInspector() {
 
                     {/* 開始時間 - Selectドロップダウン */}
                     <Select value={startTime} onValueChange={handleStartTimeChange}>
-                      <SelectTrigger className="w-auto [&_svg]:hidden">
+                      <SelectTrigger className="w-auto !border-0 !bg-transparent !shadow-none hover:!bg-transparent focus:!ring-0 [&_svg]:hidden">
                         <SelectValue placeholder="開始" />
                       </SelectTrigger>
                       <SelectContent side="bottom" align="start" className="max-h-[240px] overflow-y-auto">
@@ -498,7 +494,7 @@ export function TicketInspector() {
 
                     {/* 終了時間 - Selectドロップダウン */}
                     <Select value={endTime} onValueChange={handleEndTimeChange} disabled={!startTime}>
-                      <SelectTrigger className="w-auto [&_svg]:hidden">
+                      <SelectTrigger className="w-auto !border-0 !bg-transparent !shadow-none hover:!bg-transparent focus:!ring-0 [&_svg]:hidden">
                         <SelectValue placeholder="終了" />
                       </SelectTrigger>
                       <SelectContent side="bottom" align="start" className="max-h-[240px] overflow-y-auto">
@@ -529,8 +525,8 @@ export function TicketInspector() {
 
                   {/* カレンダー展開 - 絶対配置 */}
                   {showCalendar && (
-                    <div className="border-input bg-popover absolute top-12 left-0 z-50 rounded-md border shadow-md">
-                      <Calendar
+                    <div className="border-input bg-popover absolute top-16 left-6 z-[200] rounded-md border shadow-md">
+                      <CalendarComponent
                         mode="single"
                         selected={selectedDate}
                         onSelect={(date) => {
@@ -544,6 +540,25 @@ export function TicketInspector() {
                       />
                     </div>
                   )}
+                </div>
+
+                {/* リピートと通知 */}
+                <div className="flex items-center gap-4 px-6 pb-2">
+                  <div className="ml-6 flex items-center gap-4">
+                    <RecurrencePopover repeatType={repeatType} onRepeatTypeChange={setRepeatType} />
+                    <ReminderPopover reminderType={reminderType} onReminderTypeChange={setReminderType} />
+                  </div>
+                </div>
+
+                {/* Tags */}
+                <div className="px-6 py-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Tag className="text-muted-foreground h-4 w-4" />
+                    <div className="flex flex-wrap gap-2">
+                      {/* タグ表示エリア（後で実装） */}
+                      <span className="text-muted-foreground text-sm">タグを追加...</span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* 優先度とステータス */}
@@ -602,7 +617,8 @@ export function TicketInspector() {
  * アクティビティタブコンポーネント
  */
 function ActivityTab({ ticketId }: { ticketId: string }) {
-  const { data: activities, isLoading } = useTicketActivities(ticketId)
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc') // desc=最新順, asc=古い順
+  const { data: activities, isLoading } = useTicketActivities(ticketId, { order })
 
   if (isLoading) {
     return (
@@ -617,26 +633,50 @@ function ActivityTab({ ticketId }: { ticketId: string }) {
   }
 
   return (
-    <div className="space-y-4 px-6 py-4">
-      {activities.map((activity) => {
-        const formatted = formatActivity(activity)
-        const IconComponent = getActivityIcon(formatted.icon)
+    <div>
+      {/* ヘッダー：並び替えボタン */}
+      <div className="border-border flex items-center justify-between border-b px-6 py-3">
+        <span className="text-muted-foreground text-sm">{order === 'desc' ? '最新順' : '古い順'}で表示</span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setOrder(order === 'desc' ? 'asc' : 'desc')}
+          className="h-8 gap-2"
+        >
+          <ArrowUpDown className="h-4 w-4" />
+          {order === 'desc' ? '古い順' : '最新順'}に変更
+        </Button>
+      </div>
 
-        return (
-          <div key={activity.id} className="flex gap-3">
-            {/* アイコン */}
-            <div className="bg-muted flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
-              <IconComponent className="h-4 w-4" />
-            </div>
+      {/* アクティビティリスト */}
+      <div className="px-6 py-4">
+        {activities.map((activity, index) => {
+          const formatted = formatActivity(activity)
+          const IconComponent = getActivityIcon(formatted.icon)
+          const isLast = index === activities.length - 1
 
-            {/* 内容 */}
-            <div className="flex-1 space-y-1">
-              <p className="text-sm">{formatted.message}</p>
-              <p className="text-muted-foreground text-xs">{formatRelativeTime(activity.created_at)}</p>
+          return (
+            <div key={activity.id} className="flex gap-3">
+              {/* タイムラインライン + アイコン */}
+              <div className="relative flex flex-col items-center">
+                {/* アイコン */}
+                <div className="bg-muted relative z-10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
+                  <IconComponent className="h-4 w-4" />
+                </div>
+
+                {/* 縦線（最後のアイテム以外） */}
+                {!isLast && <div className="bg-border absolute top-8 left-1/2 h-full w-px -translate-x-1/2" />}
+              </div>
+
+              {/* 内容 */}
+              <div className="flex-1 space-y-1 pb-6">
+                <p className="text-sm">{formatted.message}</p>
+                <p className="text-muted-foreground text-xs">{formatRelativeTime(activity.created_at)}</p>
+              </div>
             </div>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
     </div>
   )
 }
