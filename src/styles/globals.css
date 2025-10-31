@@ -750,3 +750,12 @@ aside * {
 .rdp-weekdays {
   display: none;
 }
+
+/* Calendar - 月年表示とナビゲーションを非表示 */
+.rdp-month_caption {
+  display: none;
+}
+
+.rdp-nav {
+  display: none;
+}

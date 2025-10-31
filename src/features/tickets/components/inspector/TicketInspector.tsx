@@ -422,10 +422,6 @@ export function TicketInspector() {
                           handleDateChange(date)
                           setShowCalendar(false)
                         }}
-                        classNames={{
-                          month_caption: 'hidden',
-                          nav: 'hidden',
-                        }}
                       />
                     </div>
                   )}
