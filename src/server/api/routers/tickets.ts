@@ -119,9 +119,6 @@ export const ticketsRouter = createTRPCRouter({
     if (input?.status) {
       query = query.eq('status', input.status)
     }
-    if (input?.priority) {
-      query = query.eq('priority', input.priority)
-    }
     if (input?.search) {
       query = query.or(`title.ilike.%${input.search}%,description.ilike.%${input.search}%`)
     }
@@ -424,7 +421,7 @@ export const ticketsRouter = createTRPCRouter({
     const { supabase, userId } = ctx
 
     // 全チケット取得（最適化: select で必要なフィールドのみ取得）
-    const { data: tickets, error } = await supabase.from('tickets').select('id, status, priority').eq('user_id', userId)
+    const { data: tickets, error } = await supabase.from('tickets').select('id, status').eq('user_id', userId)
 
     if (error) {
       throw new TRPCError({
@@ -442,21 +439,9 @@ export const ticketsRouter = createTRPCRouter({
       {} as Record<string, number>
     )
 
-    // 優先度別カウント
-    const byPriority = tickets.reduce(
-      (acc, ticket) => {
-        if (ticket.priority) {
-          acc[ticket.priority] = (acc[ticket.priority] ?? 0) + 1
-        }
-        return acc
-      },
-      {} as Record<string, number>
-    )
-
     return {
       total: tickets.length,
       byStatus,
-      byPriority,
     }
   }),
 

@@ -34,20 +34,6 @@ export function formatActivity(activity: TicketActivity): TicketActivityDisplay 
       break
     }
 
-    case 'priority_changed': {
-      const priorityLabels: Record<string, string> = {
-        urgent: '緊急',
-        high: '高',
-        normal: '通常',
-        low: '低',
-      }
-      const oldLabel = activity.old_value ? priorityLabels[activity.old_value] || activity.old_value : ''
-      const newLabel = activity.new_value ? priorityLabels[activity.new_value] || activity.new_value : ''
-      message = `優先度を「${oldLabel}」から「${newLabel}」に変更`
-      icon = 'priority'
-      break
-    }
-
     case 'title_changed':
       message =
         activity.old_value && activity.new_value

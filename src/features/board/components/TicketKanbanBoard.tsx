@@ -12,7 +12,7 @@ import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
-import { Calendar as CalendarIcon, Check, Flag, MoreVertical, Plus, Tag } from 'lucide-react'
+import { Calendar as CalendarIcon, Check, MoreVertical, Plus, Tag } from 'lucide-react'
 import { useState } from 'react'
 
 interface TicketKanbanBoardProps {
@@ -93,11 +93,9 @@ interface KanbanColumnProps {
 function KanbanColumn({ title, count, variant, status, children }: KanbanColumnProps) {
   const [isAdding, setIsAdding] = useState(false)
   const [newTitle, setNewTitle] = useState('')
-  const [priority, setPriority] = useState<'urgent' | 'high' | 'normal' | 'low'>('normal')
   const [selectedDate, setSelectedDate] = useState<Date>()
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [tagSearchQuery, setTagSearchQuery] = useState('')
-  const [showPriority, setShowPriority] = useState(false)
   const [showCalendar, setShowCalendar] = useState(false)
   const [showTags, setShowTags] = useState(false)
   const { createTicket } = useTicketMutations()
@@ -125,17 +123,14 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
     createTicket.mutate({
       title: newTitle,
       status,
-      priority,
       due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
     })
 
     // リセット
     setNewTitle('')
-    setPriority('normal')
     setSelectedDate(undefined)
     setSelectedTagIds([])
     setTagSearchQuery('')
-    setShowPriority(false)
     setShowCalendar(false)
     setShowTags(false)
     setIsAdding(false)
@@ -148,11 +143,9 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
     } else if (e.key === 'Escape') {
       setIsAdding(false)
       setNewTitle('')
-      setPriority('normal')
       setSelectedDate(undefined)
       setSelectedTagIds([])
       setTagSearchQuery('')
-      setShowPriority(false)
       setShowCalendar(false)
       setShowTags(false)
     }
@@ -244,18 +237,6 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
                 <CalendarIcon className="h-3.5 w-3.5" />
               </Button>
 
-              {/* 優先度アイコン */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-7"
-                type="button"
-                title="優先度を設定"
-                onClick={() => setShowPriority(!showPriority)}
-              >
-                <Flag className="h-3.5 w-3.5" />
-              </Button>
-
               {/* Tagsアイコン */}
               <Button
                 variant="ghost"
@@ -285,58 +266,6 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
                     setShowCalendar(false)
                   }}
                 />
-              </div>
-            )}
-
-            {/* 優先度選択ポップアップ */}
-            {showPriority && (
-              <div className="border-input bg-popover absolute top-full left-0 z-50 mt-1 w-40 rounded-md border shadow-md">
-                <div className="p-1">
-                  <button
-                    className="hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm"
-                    onClick={() => {
-                      setPriority('urgent')
-                      setShowPriority(false)
-                    }}
-                    type="button"
-                  >
-                    <span className="text-red-500">🔴</span>
-                    <span>緊急</span>
-                  </button>
-                  <button
-                    className="hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm"
-                    onClick={() => {
-                      setPriority('high')
-                      setShowPriority(false)
-                    }}
-                    type="button"
-                  >
-                    <span className="text-orange-500">🟠</span>
-                    <span>高</span>
-                  </button>
-                  <button
-                    className="hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm"
-                    onClick={() => {
-                      setPriority('normal')
-                      setShowPriority(false)
-                    }}
-                    type="button"
-                  >
-                    <span className="text-gray-500">⚪</span>
-                    <span>中</span>
-                  </button>
-                  <button
-                    className="hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm"
-                    onClick={() => {
-                      setPriority('low')
-                      setShowPriority(false)
-                    }}
-                    type="button"
-                  >
-                    <span className="text-gray-400">⚫</span>
-                    <span>低</span>
-                  </button>
-                </div>
               </div>
             )}
 
@@ -410,23 +339,6 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
 function TicketCard({ item }: { item: InboxItem }) {
   const { openInspector, ticketId } = useTicketInspectorStore()
   const isActive = ticketId === item.id
-
-  // 優先度ラベル
-  const priorityLabel: Record<string, string> = {
-    urgent: '緊急',
-    high: '高',
-    normal: '中',
-    low: '低',
-  }
-
-  // 優先度バッジのクラス（カスタムカラー）
-  const priorityBadgeClass: Record<string, string> = {
-    urgent: 'bg-red-500/10 text-red-700 border-red-200 dark:bg-red-500/20 dark:text-red-300 dark:border-red-800',
-    high: 'bg-orange-500/10 text-orange-700 border-orange-200 dark:bg-orange-500/20 dark:text-orange-300 dark:border-orange-800',
-    normal:
-      'bg-yellow-500/10 text-yellow-700 border-yellow-200 dark:bg-yellow-500/20 dark:text-yellow-300 dark:border-yellow-800',
-    low: 'bg-blue-500/10 text-blue-700 border-blue-200 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-800',
-  }
 
   // 時間フォーマット関数
   const formatDateTime = () => {
@@ -510,15 +422,6 @@ function TicketCard({ item }: { item: InboxItem }) {
               +{item.tags.length - 3}
             </Badge>
           )}
-        </div>
-      )}
-
-      {/* 4. 優先順位 */}
-      {item.priority && (
-        <div>
-          <Badge variant="outline" className={priorityBadgeClass[item.priority] || priorityBadgeClass.low}>
-            優先度: {priorityLabel[item.priority] || item.priority}
-          </Badge>
         </div>
       )}
     </div>

@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Calendar as CalendarComponent } from '@/components/ui/calendar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,12 +18,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { api } from '@/lib/trpc'
 import { format } from 'date-fns'
 import {
-  ArrowUpDown,
   Calendar,
   CheckCircle,
   ChevronDown,
   ChevronUp,
-  Clock,
   Copy,
   Edit,
   ExternalLink,
@@ -44,8 +41,10 @@ import { useTicketMutations } from '../../hooks/useTicketMutations'
 import { useTicketInspectorStore } from '../../stores/useTicketInspectorStore'
 import type { Ticket } from '../../types/ticket'
 import { formatActivity, formatRelativeTime } from '../../utils/activityFormatter'
+import { DatePickerPopover } from '../shared/DatePickerPopover'
 import { RecurrencePopover } from '../shared/RecurrencePopover'
 import { ReminderPopover } from '../shared/ReminderPopover'
+import { TestSelectPopover } from '../shared/TestSelectPopover'
 
 // 15分刻みの時間オプションを生成（0:00 - 23:45）
 const generateTimeOptions = () => {
@@ -97,6 +96,9 @@ export function TicketInspector() {
 
   const hasPrevious = currentIndex > 0
   const hasNext = currentIndex >= 0 && currentIndex < allTickets.length - 1
+
+  // アクティビティの並び順状態
+  const [activityOrder, setActivityOrder] = useState<'asc' | 'desc'>('desc')
 
   const goToPrevious = () => {
     if (hasPrevious) {
@@ -168,9 +170,9 @@ export function TicketInspector() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
-  const [showCalendar, setShowCalendar] = useState(false)
   const [repeatType, setRepeatType] = useState<string>('')
   const [reminderType, setReminderType] = useState<string>('')
+  const [testValue, setTestValue] = useState<string>('')
 
   // Ticketデータが読み込まれたら状態を初期化
   useEffect(() => {
@@ -232,8 +234,6 @@ export function TicketInspector() {
       // フィールドに応じて適切な型で設定
       if (field === 'status' && value) {
         updateData.status = value as 'open' | 'in_progress' | 'completed' | 'cancelled'
-      } else if (field === 'priority' && value) {
-        updateData.priority = value as 'urgent' | 'high' | 'normal' | 'low'
       } else {
         updateData[field] = value
       }
@@ -422,7 +422,32 @@ export function TicketInspector() {
                   value="activity"
                   className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                 >
-                  アクティビティ
+                  <span className="flex items-center gap-1.5">
+                    アクティビティ
+                    <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+                      <Tooltip delayDuration={0} disableHoverableContent={true}>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setActivityOrder(activityOrder === 'desc' ? 'asc' : 'desc')
+                            }}
+                            className="hover:bg-accent rounded p-0.5 transition-colors"
+                            aria-label={activityOrder === 'desc' ? '古い順に変更' : '最新順に変更'}
+                          >
+                            {activityOrder === 'desc' ? (
+                              <ChevronDown className="h-3.5 w-3.5" />
+                            ) : (
+                              <ChevronUp className="h-3.5 w-3.5" />
+                            )}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                          <p className="text-xs">{activityOrder === 'desc' ? '最新順で表示中' : '古い順で表示中'}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="comments"
@@ -461,20 +486,14 @@ export function TicketInspector() {
                   />
                 </div>
 
-                {/* 日付・時間（作成ページと同じUI） */}
-                <div className="border-border/50 relative border-t px-6 py-2">
+                {/* 日付・時間 */}
+                <div className="border-border/50 border-t px-6 pt-3">
                   <div className="flex items-center gap-3">
                     <Calendar className="text-muted-foreground h-4 w-4 flex-shrink-0" />
-                    {/* 日付選択ボタン */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-10 w-auto px-2 hover:bg-transparent"
-                      type="button"
-                      onClick={() => setShowCalendar(!showCalendar)}
-                    >
-                      <span className="text-sm">{selectedDate ? format(selectedDate, 'yyyy/MM/dd') : '日付'}</span>
-                    </Button>
+
+                    <DatePickerPopover selectedDate={selectedDate} onDateChange={handleDateChange} />
+
+                    <TestSelectPopover value={testValue} onValueChange={setTestValue} />
 
                     {/* 開始時間 - Selectドロップダウン */}
                     <Select value={startTime} onValueChange={handleStartTimeChange}>
@@ -522,28 +541,10 @@ export function TicketInspector() {
                     {/* 総経過時間を表示 */}
                     {elapsedTime && <span className="text-muted-foreground text-sm">{elapsedTime}</span>}
                   </div>
-
-                  {/* カレンダー展開 - 絶対配置 */}
-                  {showCalendar && (
-                    <div className="border-input bg-popover absolute top-16 left-6 z-[200] rounded-md border shadow-md">
-                      <CalendarComponent
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={(date) => {
-                          handleDateChange(date)
-                          setShowCalendar(false)
-                        }}
-                        classNames={{
-                          month_caption: 'hidden',
-                          nav: 'hidden',
-                        }}
-                      />
-                    </div>
-                  )}
                 </div>
 
                 {/* リピートと通知 */}
-                <div className="flex items-center gap-4 px-6 pb-2">
+                <div className="flex items-center gap-4 px-6 pb-3">
                   <div className="ml-6 flex items-center gap-4">
                     <RecurrencePopover repeatType={repeatType} onRepeatTypeChange={setRepeatType} />
                     <ReminderPopover reminderType={reminderType} onReminderTypeChange={setReminderType} />
@@ -551,7 +552,7 @@ export function TicketInspector() {
                 </div>
 
                 {/* Tags */}
-                <div className="px-6 py-4">
+                <div className="border-border/50 border-t px-6 py-4">
                   <div className="flex flex-wrap items-center gap-2">
                     <Tag className="text-muted-foreground h-4 w-4" />
                     <div className="flex flex-wrap gap-2">
@@ -561,24 +562,8 @@ export function TicketInspector() {
                   </div>
                 </div>
 
-                {/* 優先度とステータス */}
+                {/* ステータス */}
                 <div className="flex flex-col gap-4 px-6 py-4">
-                  <div className="flex flex-col gap-2">
-                    <Label htmlFor="priority">優先度</Label>
-                    <select
-                      id="priority"
-                      key={`priority-${ticket.id}`}
-                      defaultValue={ticket.priority || 'normal'}
-                      onChange={(e) => autoSave('priority', e.target.value)}
-                      className="bg-background border-input ring-offset-background focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                    >
-                      <option value="low">低</option>
-                      <option value="normal">中</option>
-                      <option value="high">高</option>
-                      <option value="urgent">緊急</option>
-                    </select>
-                  </div>
-
                   <div className="flex flex-col gap-2">
                     <Label htmlFor="status">ステータス</Label>
                     <select
@@ -599,7 +584,7 @@ export function TicketInspector() {
 
               {/* アクティビティタブ */}
               <TabsContent value="activity">
-                <ActivityTab ticketId={ticketId!} />
+                <ActivityTab ticketId={ticketId!} order={activityOrder} onOrderChange={setActivityOrder} />
               </TabsContent>
 
               <TabsContent value="comments">
@@ -616,8 +601,15 @@ export function TicketInspector() {
 /**
  * アクティビティタブコンポーネント
  */
-function ActivityTab({ ticketId }: { ticketId: string }) {
-  const [order, setOrder] = useState<'asc' | 'desc'>('desc') // desc=最新順, asc=古い順
+function ActivityTab({
+  ticketId,
+  order,
+  onOrderChange,
+}: {
+  ticketId: string
+  order: 'asc' | 'desc'
+  onOrderChange: (order: 'asc' | 'desc') => void
+}) {
   const { data: activities, isLoading } = useTicketActivities(ticketId, { order })
 
   if (isLoading) {
@@ -634,20 +626,6 @@ function ActivityTab({ ticketId }: { ticketId: string }) {
 
   return (
     <div>
-      {/* ヘッダー：並び替えボタン */}
-      <div className="border-border flex items-center justify-between border-b px-6 py-3">
-        <span className="text-muted-foreground text-sm">{order === 'desc' ? '最新順' : '古い順'}で表示</span>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setOrder(order === 'desc' ? 'asc' : 'desc')}
-          className="h-8 gap-2"
-        >
-          <ArrowUpDown className="h-4 w-4" />
-          {order === 'desc' ? '古い順' : '最新順'}に変更
-        </Button>
-      </div>
-
       {/* アクティビティリスト */}
       <div className="px-6 py-4">
         {activities.map((activity, index) => {
@@ -684,7 +662,7 @@ function ActivityTab({ ticketId }: { ticketId: string }) {
 /**
  * アクティビティアイコン取得
  */
-function getActivityIcon(icon: 'create' | 'update' | 'status' | 'priority' | 'tag' | 'delete') {
+function getActivityIcon(icon: 'create' | 'update' | 'status' | 'tag' | 'delete') {
   switch (icon) {
     case 'create':
       return Plus
@@ -692,8 +670,6 @@ function getActivityIcon(icon: 'create' | 'update' | 'status' | 'priority' | 'ta
       return Edit
     case 'status':
       return CheckCircle
-    case 'priority':
-      return Clock
     case 'tag':
       return Tag
     case 'delete':

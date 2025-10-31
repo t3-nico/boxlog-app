@@ -1,4 +1,4 @@
-import type { TicketPriority, TicketStatus } from '../types/ticket'
+import type { TicketStatus } from '../types/ticket'
 
 /**
  * チケット番号のフォーマット
@@ -26,19 +26,6 @@ export function formatTicketStatus(status: TicketStatus): string {
     cancel: '中止',
   }
   return statusMap[status]
-}
-
-/**
- * チケット優先度の表示名
- */
-export function formatTicketPriority(priority: TicketPriority): string {
-  const priorityMap: Record<TicketPriority, string> = {
-    urgent: '緊急',
-    high: '高',
-    normal: '通常',
-    low: '低',
-  }
-  return priorityMap[priority]
 }
 
 /**

@@ -4,7 +4,7 @@
  * TanStack Query統合済み
  */
 
-import type { Ticket, TicketPriority, TicketStatus } from '@/features/tickets/types/ticket'
+import type { Ticket, TicketStatus } from '@/features/tickets/types/ticket'
 import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
 import { api } from '@/lib/trpc'
 
@@ -16,7 +16,6 @@ export interface InboxItem {
   type: 'ticket'
   title: string
   status: TicketStatus
-  priority?: TicketPriority
   created_at: string
   updated_at: string
   ticket_number?: string
@@ -33,7 +32,6 @@ export interface InboxItem {
  */
 export interface InboxFilters {
   status?: TicketStatus
-  priority?: TicketPriority
   search?: string
 }
 
@@ -46,7 +44,6 @@ function ticketToInboxItem(ticket: Ticket): InboxItem {
     type: 'ticket',
     title: ticket.title,
     status: ticket.status,
-    priority: ticket.priority ?? undefined,
     created_at: ticket.created_at ?? new Date().toISOString(),
     updated_at: ticket.updated_at ?? new Date().toISOString(),
     ticket_number: ticket.ticket_number,
@@ -90,7 +87,6 @@ export function useInboxData(filters: InboxFilters = {}) {
   } = api.tickets.list.useQuery(
     {
       status: filters.status,
-      priority: filters.priority,
       search: filters.search,
     },
     cacheStrategies.inbox

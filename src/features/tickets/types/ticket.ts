@@ -12,11 +12,6 @@
 export type TicketStatus = 'backlog' | 'ready' | 'active' | 'wait' | 'done' | 'cancel'
 
 /**
- * チケット優先度
- */
-export type TicketPriority = 'urgent' | 'high' | 'normal' | 'low'
-
-/**
  * 繰り返しタイプ
  */
 export type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly'
@@ -31,7 +26,6 @@ export interface Ticket {
   title: string
   description: string | null
   status: TicketStatus
-  priority: TicketPriority | null
   due_date: string | null // DATE型（YYYY-MM-DD）
   start_time: string | null // TIMESTAMPTZ型（ISO 8601）
   end_time: string | null // TIMESTAMPTZ型（ISO 8601）
@@ -48,7 +42,6 @@ export interface CreateTicketInput {
   title: string
   description?: string
   status: TicketStatus
-  priority?: TicketPriority
   due_date?: string // YYYY-MM-DD形式
   start_time?: string // ISO 8601形式
   end_time?: string // ISO 8601形式
@@ -63,7 +56,6 @@ export interface UpdateTicketInput {
   title?: string
   description?: string
   status?: TicketStatus
-  priority?: TicketPriority
   due_date?: string // YYYY-MM-DD形式
   start_time?: string // ISO 8601形式
   end_time?: string // ISO 8601形式
@@ -83,9 +75,8 @@ export interface TicketWithTags extends Ticket {
  */
 export interface TicketFilters {
   status?: TicketStatus
-  priority?: TicketPriority
   search?: string
-  sortBy?: 'created_at' | 'updated_at' | 'priority' | 'due_date' | 'title'
+  sortBy?: 'created_at' | 'updated_at' | 'due_date' | 'title'
   sortOrder?: 'asc' | 'desc'
   limit?: number
   offset?: number
@@ -97,5 +88,4 @@ export interface TicketFilters {
 export interface TicketStats {
   total: number
   byStatus: Record<string, number>
-  byPriority: Record<string, number>
 }

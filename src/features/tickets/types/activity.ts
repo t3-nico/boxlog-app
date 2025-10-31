@@ -21,5 +21,5 @@ export type TicketActivity = Omit<
  */
 export interface TicketActivityDisplay extends TicketActivity {
   message: string // 表示用メッセージ（例: "ステータスを「作業中」に変更"）
-  icon: 'create' | 'update' | 'status' | 'priority' | 'tag' | 'delete' // アイコン種別
+  icon: 'create' | 'update' | 'status' | 'tag' | 'delete' // アイコン種別
 }

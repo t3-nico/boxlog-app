@@ -5,28 +5,24 @@ import { Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { TicketPriority, TicketStatus } from '../../types/ticket'
+import type { TicketStatus } from '../../types/ticket'
 
 interface TicketFiltersProps {
   searchQuery?: string
   status?: TicketStatus
-  priority?: TicketPriority
   onSearchChange?: (query: string) => void
   onStatusChange?: (status: TicketStatus | undefined) => void
-  onPriorityChange?: (priority: TicketPriority | undefined) => void
   onClearFilters?: () => void
 }
 
 export function TicketFilters({
   searchQuery = '',
   status,
-  priority,
   onSearchChange,
   onStatusChange,
-  onPriorityChange,
   onClearFilters,
 }: TicketFiltersProps) {
-  const hasActiveFilters = searchQuery || status || priority
+  const hasActiveFilters = searchQuery || status
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -55,23 +51,6 @@ export function TicketFilters({
           <SelectItem value="in_progress">進行中</SelectItem>
           <SelectItem value="completed">完了</SelectItem>
           <SelectItem value="cancelled">キャンセル</SelectItem>
-        </SelectContent>
-      </Select>
-
-      {/* 優先度フィルタ */}
-      <Select
-        value={priority ?? 'all'}
-        onValueChange={(v) => onPriorityChange?.(v === 'all' ? undefined : (v as TicketPriority))}
-      >
-        <SelectTrigger className="w-full sm:w-[140px]">
-          <SelectValue placeholder="優先度" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">すべて</SelectItem>
-          <SelectItem value="urgent">緊急</SelectItem>
-          <SelectItem value="high">高</SelectItem>
-          <SelectItem value="normal">通常</SelectItem>
-          <SelectItem value="low">低</SelectItem>
         </SelectContent>
       </Select>
 

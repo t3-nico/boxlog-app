@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CheckSquare, Flag } from 'lucide-react'
+import { CheckSquare } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
@@ -33,7 +33,6 @@ export function TicketForm({
       title: defaultValues?.title ?? '',
       description: defaultValues?.description ?? undefined,
       status: defaultValues?.status ?? 'backlog',
-      priority: defaultValues?.priority ?? 'normal',
       due_date: defaultValues?.due_date ?? undefined,
     },
   })
@@ -53,15 +52,6 @@ export function TicketForm({
                   <div className="flex items-center gap-2">
                     <Input placeholder="チケットのタイトルを入力" {...field} className="flex-1" />
                     <div className="flex items-center gap-1">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="text-muted-foreground hover:text-foreground h-9 w-9"
-                        title="優先度を設定"
-                      >
-                        <Flag className="h-4 w-4" />
-                      </Button>
                       <Button
                         type="button"
                         variant="ghost"
@@ -95,58 +85,32 @@ export function TicketForm({
           )}
         />
 
-        {/* ステータスと優先度 */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>ステータス</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="ステータスを選択" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="backlog">準備中</SelectItem>
-                    <SelectItem value="ready">配置済み</SelectItem>
-                    <SelectItem value="active">作業中</SelectItem>
-                    <SelectItem value="wait">待ち</SelectItem>
-                    <SelectItem value="done">完了</SelectItem>
-                    <SelectItem value="cancel">中止</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="priority"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>優先度</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="優先度を選択" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="urgent">緊急</SelectItem>
-                    <SelectItem value="high">高</SelectItem>
-                    <SelectItem value="normal">通常</SelectItem>
-                    <SelectItem value="low">低</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        {/* ステータス */}
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>ステータス</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="ステータスを選択" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="backlog">準備中</SelectItem>
+                  <SelectItem value="ready">配置済み</SelectItem>
+                  <SelectItem value="active">作業中</SelectItem>
+                  <SelectItem value="wait">待ち</SelectItem>
+                  <SelectItem value="done">完了</SelectItem>
+                  <SelectItem value="cancel">中止</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* 期限日 */}
         <FormField

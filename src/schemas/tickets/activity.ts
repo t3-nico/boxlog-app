@@ -7,7 +7,6 @@ export const activityActionTypeSchema = z.enum([
   'created',
   'updated',
   'status_changed',
-  'priority_changed',
   'title_changed',
   'description_changed',
   'due_date_changed',

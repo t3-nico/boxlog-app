@@ -3,14 +3,12 @@ import { z } from 'zod'
 // Ticket用Zodスキーマ
 
 export const ticketStatusSchema = z.enum(['backlog', 'ready', 'active', 'wait', 'done', 'cancel'])
-export const ticketPrioritySchema = z.enum(['urgent', 'high', 'normal', 'low'])
 export const recurrenceTypeSchema = z.enum(['none', 'daily', 'weekly', 'monthly'])
 
 export const createTicketSchema = z.object({
   title: z.string().min(1, 'タイトルは必須です').max(200, 'タイトルは200文字以内です'),
   description: z.string().max(10000, '説明は10000文字以内です').optional(), // Markdown対応のため拡張
   status: ticketStatusSchema,
-  priority: ticketPrioritySchema.optional(),
   due_date: z.string().optional(), // 日付（YYYY-MM-DD形式）
   start_time: z.string().datetime().optional(), // 開始日時（ISO 8601形式）
   end_time: z.string().datetime().optional(), // 終了日時（ISO 8601形式）
@@ -26,10 +24,9 @@ export const ticketIdSchema = z.object({
 
 export const ticketFilterSchema = z.object({
   status: ticketStatusSchema.optional(),
-  priority: ticketPrioritySchema.optional(),
   search: z.string().optional(),
   // ソート
-  sortBy: z.enum(['created_at', 'updated_at', 'priority', 'due_date', 'title']).optional(),
+  sortBy: z.enum(['created_at', 'updated_at', 'due_date', 'title']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),
   // ページネーション
   limit: z.number().min(1).max(100).optional(),

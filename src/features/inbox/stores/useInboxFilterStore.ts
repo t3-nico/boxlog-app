@@ -1,4 +1,4 @@
-import type { TicketPriority, TicketStatus } from '@/features/tickets/types/ticket'
+import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -8,7 +8,6 @@ import { persist } from 'zustand/middleware'
  */
 interface InboxFilterState {
   status: TicketStatus[]
-  priority: TicketPriority[]
   tags: string[]
   search: string
   assignee: string
@@ -19,7 +18,6 @@ interface InboxFilterState {
  */
 interface InboxFilterStore extends InboxFilterState {
   setStatus: (status: TicketStatus[]) => void
-  setPriority: (priority: TicketPriority[]) => void
   setTags: (tags: string[]) => void
   setSearch: (search: string) => void
   setAssignee: (assignee: string) => void
@@ -31,7 +29,6 @@ interface InboxFilterStore extends InboxFilterState {
  */
 const initialState: InboxFilterState = {
   status: [],
-  priority: [],
   tags: [],
   search: '',
   assignee: '',
@@ -48,7 +45,6 @@ export const useInboxFilterStore = create<InboxFilterStore>()(
     (set) => ({
       ...initialState,
       setStatus: (status) => set({ status }),
-      setPriority: (priority) => set({ priority }),
       setTags: (tags) => set({ tags }),
       setSearch: (search) => set({ search }),
       setAssignee: (assignee) => set({ assignee }),

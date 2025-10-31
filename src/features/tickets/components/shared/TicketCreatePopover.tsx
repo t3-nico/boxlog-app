@@ -50,7 +50,6 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   }
 
   // 各ポップアップのref
-  const priorityRef = useRef<HTMLDivElement>(null)
   const tagSearchRef = useRef<HTMLDivElement>(null)
   const repeatRef = useRef<HTMLDivElement>(null)
   const reminderRef = useRef<HTMLDivElement>(null)
@@ -64,9 +63,6 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [showCalendar, setShowCalendar] = useState(false)
   const [showDateTime, setShowDateTime] = useState(false)
-  const [showPriority, setShowPriority] = useState(false)
-  const [selectedPriority, setSelectedPriority] = useState<string>('')
-  const [selectedPriorityValue, setSelectedPriorityValue] = useState<string>('')
   const [showRepeat, setShowRepeat] = useState(false)
   const [showReminder, setShowReminder] = useState(false)
   const [repeatType, setRepeatType] = useState<string>('')
@@ -85,9 +81,6 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   // 外側クリックでポップアップを閉じる
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (priorityRef.current && !priorityRef.current.contains(event.target as Node)) {
-        setShowPriority(false)
-      }
       if (tagSearchRef.current && !tagSearchRef.current.contains(event.target as Node)) {
         setShowTagSearch(false)
       }
@@ -122,7 +115,6 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
       title: '',
       description: '',
       status: 'backlog',
-      priority: 'normal',
     },
   })
 
@@ -354,9 +346,6 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                       type="button"
                       onClick={() => {
                         setShowDateTime(!showDateTime)
-                        if (!showDateTime) {
-                          setShowCalendar(true)
-                        }
                       }}
                     >
                       <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -369,118 +358,6 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>日付と時間を設定</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                {/* 優先度アイコン */}
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <div className="relative" ref={priorityRef}>
-                      <Button
-                        variant="ghost"
-                        className={selectedPriority ? 'h-8 gap-1 px-2' : 'size-8'}
-                        type="button"
-                        onClick={() => setShowPriority(!showPriority)}
-                      >
-                        <svg
-                          className={`size-4 shrink-0 ${
-                            selectedPriorityValue === 'urgent'
-                              ? 'text-red-500'
-                              : selectedPriorityValue === 'high'
-                                ? 'text-orange-500'
-                                : selectedPriorityValue === 'normal'
-                                  ? 'text-blue-500'
-                                  : selectedPriorityValue === 'low'
-                                    ? 'text-gray-500'
-                                    : ''
-                          }`}
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-                          <line x1="4" y1="22" x2="4" y2="15" />
-                        </svg>
-                        {selectedPriority && <span className="text-xs">{selectedPriority}</span>}
-                      </Button>
-                      {/* 優先度選択ポップアップ */}
-                      {showPriority && (
-                        <div className="border-input bg-popover absolute top-10 left-0 z-50 w-40 rounded-md border shadow-md">
-                          <div className="p-1">
-                            <button
-                              className="hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                form.setValue('priority', undefined)
-                                setSelectedPriority('')
-                                setSelectedPriorityValue('')
-                                setShowPriority(false)
-                              }}
-                              type="button"
-                            >
-                              <span className="text-muted-foreground">⚪</span>
-                              <span>選択しない</span>
-                            </button>
-                            <div className="border-border my-1 border-t" />
-                            <button
-                              className="hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                form.setValue('priority', 'urgent')
-                                setSelectedPriority('緊急')
-                                setSelectedPriorityValue('urgent')
-                                setShowPriority(false)
-                              }}
-                              type="button"
-                            >
-                              <span className="text-red-500">🔴</span>
-                              <span>緊急</span>
-                            </button>
-                            <button
-                              className="hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                form.setValue('priority', 'high')
-                                setSelectedPriority('高')
-                                setSelectedPriorityValue('high')
-                                setShowPriority(false)
-                              }}
-                              type="button"
-                            >
-                              <span className="text-orange-500">🟠</span>
-                              <span>高</span>
-                            </button>
-                            <button
-                              className="hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                form.setValue('priority', 'normal')
-                                setSelectedPriority('通常')
-                                setSelectedPriorityValue('normal')
-                                setShowPriority(false)
-                              }}
-                              type="button"
-                            >
-                              <span className="text-blue-500">🔵</span>
-                              <span>通常</span>
-                            </button>
-                            <button
-                              className="hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                form.setValue('priority', 'low')
-                                setSelectedPriority('低')
-                                setSelectedPriorityValue('low')
-                                setShowPriority(false)
-                              }}
-                              type="button"
-                            >
-                              <span className="text-gray-500">⚪</span>
-                              <span>低</span>
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>優先度を設定</p>
                   </TooltipContent>
                 </Tooltip>
 

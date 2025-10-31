@@ -12,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { Ticket } from '../../types/ticket'
-import { PriorityBadge } from './TicketPriorityBadge'
 import { TicketStatusBadge } from './TicketStatusBadge'
 
 interface TicketCardProps {
@@ -77,10 +76,9 @@ export function TicketCard({ ticket, onEdit, onDelete, onClick, tags = [] }: Tic
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {/* ステータスと優先度 */}
+        {/* ステータス */}
         <div className="flex flex-wrap gap-2">
           <TicketStatusBadge status={ticket.status} />
-          {ticket.priority && <PriorityBadge priority={ticket.priority} />}
         </div>
 
         {/* 期限日 */}

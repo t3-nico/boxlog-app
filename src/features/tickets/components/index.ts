@@ -7,7 +7,6 @@ export { TicketForm as TicketEditForm, TicketForm } from './forms/TicketEditForm
 
 // Display Components
 export { TicketCard } from './display/TicketCard'
-export { PriorityBadge, PriorityBadge as TicketPriorityBadge } from './display/TicketPriorityBadge'
 export { TicketStatusBadge } from './display/TicketStatusBadge'
 
 // Filter Components (renamed to avoid conflict with TicketFilters type)

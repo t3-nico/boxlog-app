@@ -225,7 +225,6 @@ export type Database = {
           due_date: string | null
           end_time: string | null
           id: string
-          priority: string | null
           recurrence_end_date: string | null
           recurrence_type: string | null
           start_time: string | null
@@ -241,7 +240,6 @@ export type Database = {
           due_date?: string | null
           end_time?: string | null
           id?: string
-          priority?: string | null
           recurrence_end_date?: string | null
           recurrence_type?: string | null
           start_time?: string | null
@@ -257,7 +255,6 @@ export type Database = {
           due_date?: string | null
           end_time?: string | null
           id?: string
-          priority?: string | null
           recurrence_end_date?: string | null
           recurrence_type?: string | null
           start_time?: string | null
@@ -274,10 +271,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      cleanup_old_login_attempts: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      cleanup_old_login_attempts: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

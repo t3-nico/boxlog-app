@@ -54,16 +54,6 @@ function detectChanges(oldData: Record<string, any>, newData: Record<string, any
     })
   }
 
-  // 優先度変更
-  if (oldData.priority !== newData.priority) {
-    changes.push({
-      field_name: 'priority',
-      old_value: oldData.priority || '',
-      new_value: newData.priority || '',
-      action_type: 'priority_changed',
-    })
-  }
-
   // タイトル変更
   if (oldData.title !== newData.title) {
     changes.push({
