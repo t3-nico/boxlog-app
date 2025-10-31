@@ -6,6 +6,7 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
+import type { TicketActivity } from '@/features/tickets/types/activity'
 import {
   bulkDeleteTicketSchema,
   bulkUpdateTicketSchema,
@@ -18,6 +19,7 @@ import {
   updateTagSchema,
   updateTicketSchema,
 } from '@/schemas/tickets'
+import { createTicketActivitySchema, getTicketActivitiesSchema } from '@/schemas/tickets/activity'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 
 export const ticketsRouter = createTRPCRouter({
@@ -205,6 +207,13 @@ export const ticketsRouter = createTRPCRouter({
       })
     }
 
+    // アクティビティ記録: チケット作成
+    await supabase.from('ticket_activities').insert({
+      ticket_id: data.id,
+      user_id: userId,
+      action_type: 'created',
+    })
+
     return data
   }),
 
@@ -212,6 +221,14 @@ export const ticketsRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid(), data: updateTicketSchema }))
     .mutation(async ({ ctx, input }) => {
       const { supabase, userId } = ctx
+
+      // 更新前のデータを取得（変更検出用）
+      const { data: oldData } = await supabase
+        .from('tickets')
+        .select('*')
+        .eq('id', input.id)
+        .eq('user_id', userId)
+        .single()
 
       const { data, error } = await supabase
         .from('tickets')
@@ -228,11 +245,34 @@ export const ticketsRouter = createTRPCRouter({
         })
       }
 
+      // アクティビティ記録: 変更検出して記録
+      if (oldData) {
+        const { trackTicketChanges } = await import('@/server/utils/activity-tracker')
+        await trackTicketChanges(supabase, input.id, userId, oldData, data)
+      }
+
       return data
     }),
 
   delete: protectedProcedure.input(ticketIdSchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
+
+    // チケット情報を取得（アクティビティ記録用）
+    const { data: ticket } = await supabase
+      .from('tickets')
+      .select('title')
+      .eq('id', input.id)
+      .eq('user_id', userId)
+      .single()
+
+    // アクティビティ記録: チケット削除（削除前に記録）
+    await supabase.from('ticket_activities').insert({
+      ticket_id: input.id,
+      user_id: userId,
+      action_type: 'deleted',
+      field_name: 'title',
+      old_value: ticket?.title || '',
+    })
 
     const { error } = await supabase.from('tickets').delete().eq('id', input.id).eq('user_id', userId)
 
@@ -254,6 +294,9 @@ export const ticketsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { supabase, userId } = ctx
 
+      // タグ名を取得
+      const { data: tag } = await supabase.from('tags').select('name').eq('id', input.tagId).single()
+
       const { data, error } = await supabase
         .from('ticket_tags')
         .insert({
@@ -271,6 +314,15 @@ export const ticketsRouter = createTRPCRouter({
         })
       }
 
+      // アクティビティ記録: タグ追加
+      await supabase.from('ticket_activities').insert({
+        ticket_id: input.ticketId,
+        user_id: userId,
+        action_type: 'tag_added',
+        field_name: 'tag',
+        new_value: tag?.name || '',
+      })
+
       return data
     }),
 
@@ -278,6 +330,9 @@ export const ticketsRouter = createTRPCRouter({
     .input(z.object({ ticketId: z.string().uuid(), tagId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       const { supabase, userId } = ctx
+
+      // タグ名を取得
+      const { data: tag } = await supabase.from('tags').select('name').eq('id', input.tagId).single()
 
       const { error } = await supabase
         .from('ticket_tags')
@@ -292,6 +347,15 @@ export const ticketsRouter = createTRPCRouter({
           message: `タグの削除に失敗しました: ${error.message}`,
         })
       }
+
+      // アクティビティ記録: タグ削除
+      await supabase.from('ticket_activities').insert({
+        ticket_id: input.ticketId,
+        user_id: userId,
+        action_type: 'tag_removed',
+        field_name: 'tag',
+        old_value: tag?.name || '',
+      })
 
       return { success: true }
     }),
@@ -394,5 +458,97 @@ export const ticketsRouter = createTRPCRouter({
       byStatus,
       byPriority,
     }
+  }),
+
+  // ========================================
+  // Activities（アクティビティ履歴）
+  // ========================================
+
+  /**
+   * アクティビティ一覧取得
+   */
+  activities: protectedProcedure.input(getTicketActivitiesSchema).query(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx
+    const { ticket_id, limit, offset } = input
+
+    // チケットの所有権確認
+    const { data: ticket, error: ticketError } = await supabase
+      .from('tickets')
+      .select('id')
+      .eq('id', ticket_id)
+      .eq('user_id', userId)
+      .single()
+
+    if (ticketError || !ticket) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Ticket not found or access denied',
+      })
+    }
+
+    // アクティビティ取得（時系列降順）
+    const { data: activities, error } = await supabase
+      .from('ticket_activities')
+      .select('*')
+      .eq('ticket_id', ticket_id)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1)
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch activities: ${error.message}`,
+      })
+    }
+
+    // Supabaseの型を厳密なTicketActivity型にキャスト
+    return (activities ?? []) as TicketActivity[]
+  }),
+
+  /**
+   * アクティビティ作成
+   */
+  createActivity: protectedProcedure.input(createTicketActivitySchema).mutation(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx
+
+    // チケットの所有権確認
+    const { data: ticket, error: ticketError } = await supabase
+      .from('tickets')
+      .select('id')
+      .eq('id', input.ticket_id)
+      .eq('user_id', userId)
+      .single()
+
+    if (ticketError || !ticket) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Ticket not found or access denied',
+      })
+    }
+
+    // アクティビティ作成
+    const { data: activity, error } = await supabase
+      .from('ticket_activities')
+      .insert({
+        ticket_id: input.ticket_id,
+        user_id: userId,
+        action_type: input.action_type,
+        field_name: input.field_name,
+        old_value: input.old_value,
+        new_value: input.new_value,
+        metadata: (input.metadata ?? {}) as never, // Supabaseの Json 型にキャスト
+      })
+      .select()
+      .single()
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to create activity: ${error.message}`,
+      })
+    }
+
+    // Supabaseの型を厳密なTicketActivity型にキャスト
+    return activity as TicketActivity
   }),
 })

@@ -1,11 +1,6 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: '12.2.3 (519615d)'
-  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -96,145 +91,6 @@ export type Database = {
         }
         Relationships: []
       }
-      records: {
-        Row: {
-          content: string
-          created_at: string | null
-          id: string
-          metadata: Json | null
-          record_type: string
-          session_id: string
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          content: string
-          created_at?: string | null
-          id?: string
-          metadata?: Json | null
-          record_type: string
-          session_id: string
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          content?: string
-          created_at?: string | null
-          id?: string
-          metadata?: Json | null
-          record_type?: string
-          session_id?: string
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'records_session_id_fkey'
-            columns: ['session_id']
-            isOneToOne: false
-            referencedRelation: 'sessions'
-            referencedColumns: ['id']
-          },
-        ]
-      }
-      session_tags: {
-        Row: {
-          created_at: string | null
-          id: string
-          session_id: string
-          tag_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          session_id: string
-          tag_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          session_id?: string
-          tag_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'session_tags_session_id_fkey'
-            columns: ['session_id']
-            isOneToOne: false
-            referencedRelation: 'sessions'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'session_tags_tag_id_fkey'
-            columns: ['tag_id']
-            isOneToOne: false
-            referencedRelation: 'tags'
-            referencedColumns: ['id']
-          },
-        ]
-      }
-      sessions: {
-        Row: {
-          actual_end: string | null
-          actual_start: string | null
-          created_at: string | null
-          duration_minutes: number | null
-          id: string
-          notes: string | null
-          planned_end: string | null
-          planned_start: string | null
-          session_number: string
-          status: string
-          ticket_id: string
-          title: string
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          actual_end?: string | null
-          actual_start?: string | null
-          created_at?: string | null
-          duration_minutes?: number | null
-          id?: string
-          notes?: string | null
-          planned_end?: string | null
-          planned_start?: string | null
-          session_number: string
-          status?: string
-          ticket_id: string
-          title: string
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          actual_end?: string | null
-          actual_start?: string | null
-          created_at?: string | null
-          duration_minutes?: number | null
-          id?: string
-          notes?: string | null
-          planned_end?: string | null
-          planned_start?: string | null
-          session_number?: string
-          status?: string
-          ticket_id?: string
-          title?: string
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'sessions_ticket_id_fkey'
-            columns: ['ticket_id']
-            isOneToOne: false
-            referencedRelation: 'tickets'
-            referencedColumns: ['id']
-          },
-        ]
-      }
       tags: {
         Row: {
           color: string | null
@@ -275,6 +131,50 @@ export type Database = {
             columns: ['parent_id']
             isOneToOne: false
             referencedRelation: 'tags'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      ticket_activities: {
+        Row: {
+          action_type: string
+          created_at: string
+          field_name: string | null
+          id: string
+          metadata: Json | null
+          new_value: string | null
+          old_value: string | null
+          ticket_id: string | null
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          field_name?: string | null
+          id?: string
+          metadata?: Json | null
+          new_value?: string | null
+          old_value?: string | null
+          ticket_id?: string | null
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          field_name?: string | null
+          id?: string
+          metadata?: Json | null
+          new_value?: string | null
+          old_value?: string | null
+          ticket_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'ticket_activities_ticket_id_fkey'
+            columns: ['ticket_id']
+            isOneToOne: false
+            referencedRelation: 'tickets'
             referencedColumns: ['id']
           },
         ]
@@ -320,12 +220,15 @@ export type Database = {
       }
       tickets: {
         Row: {
-          actual_hours: number | null
           created_at: string | null
           description: string | null
+          due_date: string | null
+          end_time: string | null
           id: string
-          planned_hours: number | null
           priority: string | null
+          recurrence_end_date: string | null
+          recurrence_type: string | null
+          start_time: string | null
           status: string
           ticket_number: string
           title: string
@@ -333,12 +236,15 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          actual_hours?: number | null
           created_at?: string | null
           description?: string | null
+          due_date?: string | null
+          end_time?: string | null
           id?: string
-          planned_hours?: number | null
           priority?: string | null
+          recurrence_end_date?: string | null
+          recurrence_type?: string | null
+          start_time?: string | null
           status?: string
           ticket_number: string
           title: string
@@ -346,12 +252,15 @@ export type Database = {
           user_id: string
         }
         Update: {
-          actual_hours?: number | null
           created_at?: string | null
           description?: string | null
+          due_date?: string | null
+          end_time?: string | null
           id?: string
-          planned_hours?: number | null
           priority?: string | null
+          recurrence_end_date?: string | null
+          recurrence_type?: string | null
+          start_time?: string | null
           status?: string
           ticket_number?: string
           title?: string
@@ -365,7 +274,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      cleanup_old_login_attempts: { Args: never; Returns: undefined }
+      cleanup_old_login_attempts: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

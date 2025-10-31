@@ -2,20 +2,46 @@
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { api } from '@/lib/trpc'
 import { format } from 'date-fns'
-import { ChevronDown, ChevronUp, Clock, PanelRight } from 'lucide-react'
+import {
+  CheckCircle,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Copy,
+  Edit,
+  ExternalLink,
+  Link,
+  MoreHorizontal,
+  PanelRight,
+  Plus,
+  Save,
+  Tag,
+  Trash,
+  Trash2,
+} from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTicket } from '../../hooks/useTicket'
+import { useTicketActivities } from '../../hooks/useTicketActivities'
 import { useTicketMutations } from '../../hooks/useTicketMutations'
 import { useTicketInspectorStore } from '../../stores/useTicketInspectorStore'
 import type { Ticket } from '../../types/ticket'
+import { formatActivity, formatRelativeTime } from '../../utils/activityFormatter'
 
 // 15分刻みの時間オプションを生成（0:00 - 23:45）
 const generateTimeOptions = () => {
@@ -81,7 +107,55 @@ export function TicketInspector() {
   }
 
   // Mutations（Toast通知・キャッシュ無効化込み）
-  const { updateTicket } = useTicketMutations()
+  const { updateTicket, deleteTicket } = useTicketMutations()
+
+  // 削除ハンドラー
+  const handleDelete = () => {
+    if (!ticketId) return
+    if (confirm('このチケットを削除しますか？')) {
+      deleteTicket.mutate({ id: ticketId })
+      closeInspector()
+    }
+  }
+
+  // IDコピー
+  const handleCopyId = () => {
+    if (!ticketId) return
+    navigator.clipboard.writeText(ticketId)
+  }
+
+  // 新しいタブで開く
+  const handleOpenInNewTab = () => {
+    if (!ticketId) return
+    window.open(`/tickets/${ticketId}`, '_blank')
+  }
+
+  // 複製
+  const handleDuplicate = () => {
+    if (!ticket) return
+    // TODO: 複製ロジックを実装
+    console.log('Duplicate ticket:', ticket)
+  }
+
+  // リンクをコピー
+  const handleCopyLink = () => {
+    if (!ticketId) return
+    const url = `${window.location.origin}/tickets/${ticketId}`
+    navigator.clipboard.writeText(url)
+  }
+
+  // テンプレートとして保存
+  const handleSaveAsTemplate = () => {
+    if (!ticket) return
+    // TODO: テンプレート保存ロジックを実装
+    console.log('Save as template:', ticket)
+  }
+
+  // タグを追加
+  const handleAddTags = () => {
+    // TODO: タグ追加UIを実装
+    console.log('Add tags')
+  }
 
   // デバウンスタイマー
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
@@ -229,54 +303,114 @@ export function TicketInspector() {
         ) : (
           <>
             {/* ヘッダー */}
-            <div className="flex h-10 items-center gap-1 pt-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => closeInspector()}
-                aria-label="閉じる"
-              >
-                <PanelRight className="h-4 w-4" />
-              </Button>
-              <div className="flex items-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={goToPrevious}
-                  disabled={!hasPrevious}
-                  aria-label="前のチケット"
-                >
-                  <ChevronUp className="h-6 w-6" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={goToNext}
-                  disabled={!hasNext}
-                  aria-label="次のチケット"
-                >
-                  <ChevronDown className="h-6 w-6" />
-                </Button>
-              </div>
+            <div className="flex h-10 items-center justify-between pt-2">
+              <TooltipProvider>
+                <div className="flex items-center gap-1">
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => closeInspector()}
+                        aria-label="閉じる"
+                      >
+                        <PanelRight className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p>閉じる</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <div className="flex items-center">
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={goToPrevious}
+                          disabled={!hasPrevious}
+                          aria-label="前のチケット"
+                        >
+                          <ChevronUp className="h-6 w-6" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        <p>前のチケット</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={goToNext}
+                          disabled={!hasNext}
+                          aria-label="次のチケット"
+                        >
+                          <ChevronDown className="h-6 w-6" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        <p>次のチケット</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </div>
+              </TooltipProvider>
+
+              {/* オプションメニュー */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 focus-visible:ring-0" aria-label="オプション">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem onClick={handleAddTags}>
+                    <Tag className="mr-2 h-4 w-4" />
+                    タグを追加
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleDuplicate}>
+                    <Copy className="mr-2 h-4 w-4" />
+                    複製する
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleCopyLink}>
+                    <Link className="mr-2 h-4 w-4" />
+                    リンクをコピー
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSaveAsTemplate}>
+                    <Save className="mr-2 h-4 w-4" />
+                    テンプレートとして保存
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleCopyId}>
+                    <Copy className="mr-2 h-4 w-4" />
+                    IDをコピー
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleOpenInNewTab}>
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    新しいタブで開く
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleDelete} variant="destructive">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    削除
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             {/* タブ構成 */}
-            <Tabs defaultValue="details">
-              <TabsList className="border-border grid h-10 w-full grid-cols-4 rounded-none border-b bg-transparent p-0">
+            <Tabs defaultValue="details" className="pt-2">
+              <TabsList className="border-border grid h-10 w-full grid-cols-3 rounded-none border-b bg-transparent p-0">
                 <TabsTrigger
                   value="details"
                   className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                 >
                   詳細
-                </TabsTrigger>
-                <TabsTrigger
-                  value="sessions"
-                  className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-                >
-                  セッション
                 </TabsTrigger>
                 <TabsTrigger
                   value="activity"
@@ -295,64 +429,45 @@ export function TicketInspector() {
               {/* 詳細タブ */}
               <TabsContent value="details">
                 {/* タイトル */}
-                <div>
+                <div className="px-6 pt-4 pb-2">
                   <Input
                     id="title"
                     defaultValue={ticket.title}
                     onChange={(e) => autoSave('title', e.target.value)}
-                    className="bg-card dark:bg-card border-0 px-0 text-2xl font-semibold shadow-none focus-visible:ring-0"
+                    className="bg-card dark:bg-card border-0 px-0 text-[2rem] font-bold shadow-none focus-visible:ring-0"
                     placeholder="Add a title"
+                    style={{ fontSize: 'var(--font-size-xl)' }}
                   />
                 </div>
 
                 {/* 説明 */}
-                <div>
+                <div className="px-6">
                   <Textarea
                     id="description"
                     key={ticket.id}
                     defaultValue={ticket.description || ''}
                     onChange={(e) => autoSave('description', e.target.value)}
-                    className="text-muted-foreground bg-card dark:bg-card min-h-[60px] resize-none border-0 px-0 text-sm shadow-none focus-visible:ring-0"
+                    className="text-muted-foreground bg-card dark:bg-card h-32 max-h-32 resize-none overflow-y-auto border-0 px-0 text-sm shadow-none focus-visible:ring-0"
                     placeholder="Add description..."
+                    style={{
+                      scrollbarColor: 'var(--color-muted-foreground) var(--color-card)',
+                    }}
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-2">
-                    <Label htmlFor="priority">優先度</Label>
-                    <select
-                      id="priority"
-                      key={`priority-${ticket.id}`}
-                      defaultValue={ticket.priority || 'normal'}
-                      onChange={(e) => autoSave('priority', e.target.value)}
-                      className="bg-background border-input ring-offset-background focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                    >
-                      <option value="low">低</option>
-                      <option value="normal">中</option>
-                      <option value="high">高</option>
-                      <option value="urgent">緊急</option>
-                    </select>
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <Label htmlFor="status">ステータス</Label>
-                    <select
-                      id="status"
-                      key={`status-${ticket.id}`}
-                      defaultValue={ticket.status}
-                      onChange={(e) => autoSave('status', e.target.value)}
-                      className="bg-background border-input ring-offset-background focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                    >
-                      <option value="open">Open</option>
-                      <option value="in_progress">In Progress</option>
-                      <option value="completed">Completed</option>
-                      <option value="cancelled">Cancelled</option>
-                    </select>
+                {/* Tags */}
+                <div className="px-6 py-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Tag className="text-muted-foreground h-4 w-4" />
+                    <div className="flex flex-wrap gap-2">
+                      {/* タグ表示エリア（後で実装） */}
+                      <span className="text-muted-foreground text-sm">タグを追加...</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* 日付・時間（作成ページと同じUI） */}
-                <div className="relative">
+                <div className="relative px-6">
                   <div className="flex items-center gap-3">
                     {/* 日付選択ボタン */}
                     <Button
@@ -422,33 +537,54 @@ export function TicketInspector() {
                           handleDateChange(date)
                           setShowCalendar(false)
                         }}
+                        classNames={{
+                          month_caption: 'hidden',
+                          nav: 'hidden',
+                        }}
                       />
                     </div>
                   )}
                 </div>
 
-                {/* メタデータ */}
-                {'id' in ticket && (
-                  <div className="text-muted-foreground flex flex-col gap-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      <span>作成: {new Date(ticket.created_at || '').toLocaleString('ja-JP')}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      <span>更新: {new Date(ticket.updated_at || '').toLocaleString('ja-JP')}</span>
-                    </div>
+                {/* 優先度とステータス */}
+                <div className="flex flex-col gap-4 px-6 py-4">
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="priority">優先度</Label>
+                    <select
+                      id="priority"
+                      key={`priority-${ticket.id}`}
+                      defaultValue={ticket.priority || 'normal'}
+                      onChange={(e) => autoSave('priority', e.target.value)}
+                      className="bg-background border-input ring-offset-background focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                    >
+                      <option value="low">低</option>
+                      <option value="normal">中</option>
+                      <option value="high">高</option>
+                      <option value="urgent">緊急</option>
+                    </select>
                   </div>
-                )}
+
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="status">ステータス</Label>
+                    <select
+                      id="status"
+                      key={`status-${ticket.id}`}
+                      defaultValue={ticket.status}
+                      onChange={(e) => autoSave('status', e.target.value)}
+                      className="bg-background border-input ring-offset-background focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                    >
+                      <option value="open">Open</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="completed">Completed</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  </div>
+                </div>
               </TabsContent>
 
-              {/* その他のタブ（将来実装） */}
-              <TabsContent value="sessions">
-                <div className="text-muted-foreground py-8 text-center">セッション機能は準備中です</div>
-              </TabsContent>
-
+              {/* アクティビティタブ */}
               <TabsContent value="activity">
-                <div className="text-muted-foreground py-8 text-center">アクティビティログは準備中です</div>
+                <ActivityTab ticketId={ticketId!} />
               </TabsContent>
 
               <TabsContent value="comments">
@@ -460,4 +596,69 @@ export function TicketInspector() {
       </SheetContent>
     </Sheet>
   )
+}
+
+/**
+ * アクティビティタブコンポーネント
+ */
+function ActivityTab({ ticketId }: { ticketId: string }) {
+  const { data: activities, isLoading } = useTicketActivities(ticketId)
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="border-primary h-6 w-6 animate-spin rounded-full border-b-2" />
+      </div>
+    )
+  }
+
+  if (!activities || activities.length === 0) {
+    return <div className="text-muted-foreground py-8 text-center text-sm">まだアクティビティがありません</div>
+  }
+
+  return (
+    <div className="space-y-4 px-6 py-4">
+      {activities.map((activity) => {
+        const formatted = formatActivity(activity)
+        const IconComponent = getActivityIcon(formatted.icon)
+
+        return (
+          <div key={activity.id} className="flex gap-3">
+            {/* アイコン */}
+            <div className="bg-muted flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
+              <IconComponent className="h-4 w-4" />
+            </div>
+
+            {/* 内容 */}
+            <div className="flex-1 space-y-1">
+              <p className="text-sm">{formatted.message}</p>
+              <p className="text-muted-foreground text-xs">{formatRelativeTime(activity.created_at)}</p>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/**
+ * アクティビティアイコン取得
+ */
+function getActivityIcon(icon: 'create' | 'update' | 'status' | 'priority' | 'tag' | 'delete') {
+  switch (icon) {
+    case 'create':
+      return Plus
+    case 'update':
+      return Edit
+    case 'status':
+      return CheckCircle
+    case 'priority':
+      return Clock
+    case 'tag':
+      return Tag
+    case 'delete':
+      return Trash
+    default:
+      return Edit
+  }
 }
