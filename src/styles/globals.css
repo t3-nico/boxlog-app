@@ -745,3 +745,8 @@ aside * {
 .rdp-week_number_header {
   display: none;
 }
+
+/* Calendar - 曜日ヘッダーを非表示 */
+.rdp-weekdays {
+  display: none;
+}
