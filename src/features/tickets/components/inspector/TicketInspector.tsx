@@ -248,7 +248,7 @@ export function TicketInspector() {
                   disabled={!hasPrevious}
                   aria-label="前のチケット"
                 >
-                  <ChevronUp className="h-4 w-4" />
+                  <ChevronUp className="h-6 w-6" />
                 </Button>
                 <Button
                   variant="ghost"
@@ -258,13 +258,13 @@ export function TicketInspector() {
                   disabled={!hasNext}
                   aria-label="次のチケット"
                 >
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown className="h-6 w-6" />
                 </Button>
               </div>
             </div>
 
             {/* タブ構成 */}
-            <Tabs defaultValue="details" className="mt-0">
+            <Tabs defaultValue="details">
               <TabsList className="border-border grid h-10 w-full grid-cols-4 rounded-none border-b bg-transparent p-0">
                 <TabsTrigger
                   value="details"
@@ -293,14 +293,14 @@ export function TicketInspector() {
               </TabsList>
 
               {/* 詳細タブ */}
-              <TabsContent value="details" className="space-y-4">
+              <TabsContent value="details" className="flex flex-col gap-4">
                 {/* タイトル */}
                 <div className="px-6 pt-2">
                   <Input
                     id="title"
                     defaultValue={ticket.title}
                     onChange={(e) => autoSave('title', e.target.value)}
-                    className="bg-card dark:bg-card border-0 px-0 text-lg font-semibold shadow-none focus-visible:ring-0"
+                    className="bg-card dark:bg-card border-0 px-0 text-2xl font-semibold shadow-none focus-visible:ring-0"
                     placeholder="Add a title"
                   />
                 </div>
@@ -421,6 +421,10 @@ export function TicketInspector() {
                         onSelect={(date) => {
                           handleDateChange(date)
                           setShowCalendar(false)
+                        }}
+                        classNames={{
+                          month_caption: 'hidden',
+                          nav: 'hidden',
                         }}
                       />
                     </div>
