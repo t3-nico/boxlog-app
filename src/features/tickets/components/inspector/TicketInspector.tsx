@@ -44,7 +44,6 @@ import { formatActivity, formatRelativeTime } from '../../utils/activityFormatte
 import { DatePickerPopover } from '../shared/DatePickerPopover'
 import { RecurrencePopover } from '../shared/RecurrencePopover'
 import { ReminderPopover } from '../shared/ReminderPopover'
-import { TestSelectPopover } from '../shared/TestSelectPopover'
 
 // 15分刻みの時間オプションを生成（0:00 - 23:45）
 const generateTimeOptions = () => {
@@ -99,6 +98,8 @@ export function TicketInspector() {
 
   // アクティビティの並び順状態
   const [activityOrder, setActivityOrder] = useState<'asc' | 'desc'>('desc')
+  // ソートアイコンのホバー状態
+  const [isHoveringSort, setIsHoveringSort] = useState(false)
 
   const goToPrevious = () => {
     if (hasPrevious) {
@@ -172,7 +173,6 @@ export function TicketInspector() {
   const [endTime, setEndTime] = useState('')
   const [repeatType, setRepeatType] = useState<string>('')
   const [reminderType, setReminderType] = useState<string>('')
-  const [testValue, setTestValue] = useState<string>('')
 
   // Ticketデータが読み込まれたら状態を初期化
   useEffect(() => {
@@ -422,31 +422,29 @@ export function TicketInspector() {
                   value="activity"
                   className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                 >
-                  <span className="flex items-center gap-1.5">
+                  <span className="relative flex items-center gap-1.5">
                     アクティビティ
-                    <TooltipProvider delayDuration={0} skipDelayDuration={0}>
-                      <Tooltip delayDuration={0} disableHoverableContent={true}>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setActivityOrder(activityOrder === 'desc' ? 'asc' : 'desc')
-                            }}
-                            className="hover:bg-accent rounded p-0.5 transition-colors"
-                            aria-label={activityOrder === 'desc' ? '古い順に変更' : '最新順に変更'}
-                          >
-                            {activityOrder === 'desc' ? (
-                              <ChevronDown className="h-3.5 w-3.5" />
-                            ) : (
-                              <ChevronUp className="h-3.5 w-3.5" />
-                            )}
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">
-                          <p className="text-xs">{activityOrder === 'desc' ? '最新順で表示中' : '古い順で表示中'}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setActivityOrder(activityOrder === 'desc' ? 'asc' : 'desc')
+                      }}
+                      onMouseEnter={() => setIsHoveringSort(true)}
+                      onMouseLeave={() => setIsHoveringSort(false)}
+                      className="hover:bg-accent rounded p-0.5 transition-colors"
+                      aria-label={activityOrder === 'desc' ? '古い順に変更' : '最新順に変更'}
+                    >
+                      {activityOrder === 'desc' ? (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronUp className="h-3.5 w-3.5" />
+                      )}
+                    </button>
+                    {isHoveringSort && (
+                      <div className="bg-foreground text-background absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 rounded-md px-3 py-1.5 text-xs whitespace-nowrap">
+                        {activityOrder === 'desc' ? '最新順で表示中' : '古い順で表示中'}
+                      </div>
+                    )}
                   </span>
                 </TabsTrigger>
                 <TabsTrigger
@@ -492,8 +490,6 @@ export function TicketInspector() {
                     <Calendar className="text-muted-foreground h-4 w-4 flex-shrink-0" />
 
                     <DatePickerPopover selectedDate={selectedDate} onDateChange={handleDateChange} />
-
-                    <TestSelectPopover value={testValue} onValueChange={setTestValue} />
 
                     {/* 開始時間 - Selectドロップダウン */}
                     <Select value={startTime} onValueChange={handleStartTimeChange}>
