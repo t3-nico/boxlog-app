@@ -1,5 +1,6 @@
 'use client'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -44,6 +45,30 @@ import { formatActivity, formatRelativeTime } from '../../utils/activityFormatte
 import { DatePickerPopover } from '../shared/DatePickerPopover'
 import { RecurrencePopover } from '../shared/RecurrencePopover'
 import { ReminderPopover } from '../shared/ReminderPopover'
+
+// モックタグデータ（TODO: 後でDBから取得に置き換え）
+const MOCK_TAGS = [
+  { id: '1', name: 'バグ', color: '#ef4444' },
+  { id: '2', name: '機能追加', color: '#3b82f6' },
+  { id: '3', name: '緊急', color: '#f97316' },
+  { id: '4', name: 'UI改善', color: '#8b5cf6' },
+  { id: '5', name: 'ドキュメント', color: '#10b981' },
+  { id: '6', name: 'パフォーマンス', color: '#f59e0b' },
+  { id: '7', name: 'セキュリティ', color: '#dc2626' },
+  { id: '8', name: 'テスト', color: '#06b6d4' },
+  { id: '9', name: 'リファクタリング', color: '#6366f1' },
+  { id: '10', name: 'デザイン', color: '#ec4899' },
+  { id: '11', name: 'バックエンド', color: '#14b8a6' },
+  { id: '12', name: 'フロントエンド', color: '#8b5cf6' },
+  { id: '13', name: 'アクセシビリティ', color: '#84cc16' },
+  { id: '14', name: 'API', color: '#0ea5e9' },
+  { id: '15', name: 'データベース', color: '#f43f5e' },
+  { id: '16', name: 'インフラ', color: '#a855f7' },
+  { id: '17', name: 'モバイル', color: '#22c55e' },
+  { id: '18', name: 'レビュー', color: '#eab308' },
+  { id: '19', name: 'デプロイ', color: '#64748b' },
+  { id: '20', name: '調査', color: '#78716c' },
+]
 
 // 15分刻みの時間オプションを生成（0:00 - 23:45）
 const generateTimeOptions = () => {
@@ -100,6 +125,34 @@ export function TicketInspector() {
   const [activityOrder, setActivityOrder] = useState<'asc' | 'desc'>('desc')
   // ソートアイコンのホバー状態
   const [isHoveringSort, setIsHoveringSort] = useState(false)
+  // 選択されたタグのID配列（TODO: 後でDBから取得に置き換え）
+  const [selectedTags, setSelectedTags] = useState<string[]>([
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16',
+    '17',
+    '18',
+    '19',
+    '20',
+  ])
+
+  // タグ削除ハンドラー
+  const handleRemoveTag = (tagId: string) => {
+    setSelectedTags((prev) => prev.filter((id) => id !== tagId))
+  }
 
   const goToPrevious = () => {
     if (hasPrevious) {
@@ -549,11 +602,58 @@ export function TicketInspector() {
 
                 {/* Tags */}
                 <div className="border-border/50 border-t px-6 py-4">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Tag className="text-muted-foreground h-4 w-4" />
-                    <div className="flex flex-wrap gap-2">
-                      {/* タグ表示エリア（後で実装） */}
-                      <span className="text-muted-foreground text-sm">タグを追加...</span>
+                  <div className="flex items-start gap-2">
+                    <Tag className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <div
+                        className="bg-card dark:bg-card scrollbar-thin flex max-h-[5.25rem] flex-wrap items-center gap-2 overflow-y-auto pr-2"
+                        style={{
+                          scrollbarColor: 'var(--color-muted-foreground) var(--color-card)',
+                        }}
+                      >
+                        {selectedTags.length === 0 ? (
+                          <button
+                            onClick={() => {
+                              // TODO: タグ選択ダイアログを開く
+                              console.log('タグ追加（プレースホルダーから）')
+                            }}
+                            className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                          >
+                            タグを追加...
+                          </button>
+                        ) : (
+                          <>
+                            {selectedTags.map((tagId) => {
+                              const tag = MOCK_TAGS.find((t) => t.id === tagId)
+                              if (!tag) return null
+                              return (
+                                <Badge
+                                  key={tag.id}
+                                  variant="outline"
+                                  style={{
+                                    backgroundColor: `${tag.color}20`,
+                                    borderColor: tag.color,
+                                    color: tag.color,
+                                  }}
+                                >
+                                  {tag.name}
+                                </Badge>
+                              )
+                            })}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 flex-shrink-0"
+                              onClick={() => {
+                                // TODO: タグ選択ダイアログを開く
+                                console.log('タグ追加')
+                              }}
+                            >
+                              <Plus className="h-3.5 w-3.5" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
