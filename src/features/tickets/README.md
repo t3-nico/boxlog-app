@@ -164,7 +164,6 @@ interface Ticket {
 ```tsx
 // レイアウトに配置（常にマウント）
 import { TicketInspector } from '@/features/tickets'
-
 ;<TicketInspector />
 ```
 
@@ -174,7 +173,6 @@ import { TicketInspector } from '@/features/tickets'
 
 ```tsx
 import { TicketCard } from '@/features/tickets/components'
-
 ;<TicketCard
   ticket={ticket}
   onEdit={(t) => console.log('Edit:', t)}
@@ -190,7 +188,6 @@ import { TicketCard } from '@/features/tickets/components'
 
 ```tsx
 import { TicketCreatePopover } from '@/features/tickets/components'
-
 ;<TicketCreatePopover triggerElement={<Button>新規作成</Button>} onSuccess={() => console.log('Created!')} />
 ```
 
