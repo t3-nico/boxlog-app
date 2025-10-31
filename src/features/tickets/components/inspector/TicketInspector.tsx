@@ -149,10 +149,46 @@ export function TicketInspector() {
     '20',
   ])
 
+  // Inspectorの幅管理
+  const [inspectorWidth, setInspectorWidth] = useState(540)
+  const [isResizing, setIsResizing] = useState(false)
+
   // タグ削除ハンドラー
   const handleRemoveTag = (tagId: string) => {
     setSelectedTags((prev) => prev.filter((id) => id !== tagId))
   }
+
+  // リサイズハンドラー
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsResizing(true)
+    e.preventDefault()
+  }
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return
+
+      const newWidth = window.innerWidth - e.clientX
+      // 最小400px、最大800px
+      if (newWidth >= 400 && newWidth <= 800) {
+        setInspectorWidth(newWidth)
+      }
+    }
+
+    const handleMouseUp = () => {
+      setIsResizing(false)
+    }
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [isResizing])
 
   const goToPrevious = () => {
     if (hasPrevious) {
@@ -350,7 +386,15 @@ export function TicketInspector() {
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && closeInspector()} modal={false}>
-      <SheetContent className="w-[400px] gap-0 overflow-y-auto sm:w-[540px]" showCloseButton={false}>
+      <SheetContent className="gap-0 overflow-y-auto" style={{ width: `${inspectorWidth}px` }} showCloseButton={false}>
+        {/* リサイズハンドル */}
+        <div
+          onMouseDown={handleMouseDown}
+          className={`hover:bg-primary/50 absolute top-0 left-0 h-full w-1 cursor-ew-resize ${
+            isResizing ? 'bg-primary' : ''
+          }`}
+          style={{ touchAction: 'none' }}
+        />
         {isLoading ? (
           <div className="flex h-full items-center justify-center">
             <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2" />
