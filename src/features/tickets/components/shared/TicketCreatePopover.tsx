@@ -16,7 +16,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
-import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
 import { api } from '@/lib/trpc'
 import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ticket'
 
@@ -58,7 +57,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const [isOpen, setIsOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date>()
-  const [startTime, setStartTime] = useState(getCurrentTime())
+  const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [showCalendar, setShowCalendar] = useState(false)
@@ -70,7 +69,11 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const [showTagSearch, setShowTagSearch] = useState(false)
   const [tagSearchQuery, setTagSearchQuery] = useState('')
   const { createTicket } = useTicketMutations()
-  const { addTicketTag } = useTicketTags()
+
+  // クライアント側でのみ現在時刻を設定（Hydration Error回避）
+  useEffect(() => {
+    setStartTime(getCurrentTime())
+  }, [])
 
   // タグ一覧を取得
   const { data: allTags = [] } = api.tickets.tags.list.useQuery()
@@ -150,7 +153,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
       onSuccess?.()
       form.reset()
       setSelectedDate(undefined)
-      setStartTime(getCurrentTime())
+      setStartTime(getCurrentTime()) // リセット時に最新の時刻を設定
       setEndTime('')
       setSelectedTagIds([])
       setIsOpen(false)
@@ -166,7 +169,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
     <Popover modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>{triggerElement}</PopoverTrigger>
       <PopoverContent
-        className="w-[560px] p-0"
+        className="bg-card dark:bg-card w-[560px] p-0"
         align="end"
         side="right"
         sideOffset={8}
@@ -209,7 +212,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                             titleInputRef.current = e
                           }
                         }}
-                        className="border-0 bg-white px-0 text-lg font-semibold shadow-none focus-visible:ring-0 dark:bg-neutral-900"
+                        className="bg-card dark:bg-card border-0 px-0 text-lg font-semibold shadow-none focus-visible:ring-0"
                       />
                     </FormControl>
                     <FormMessage />
@@ -229,7 +232,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                       <Textarea
                         placeholder="Add description..."
                         {...field}
-                        className="text-muted-foreground min-h-[60px] resize-none border-0 bg-white px-0 text-sm shadow-none focus-visible:ring-0 dark:bg-neutral-900"
+                        className="bg-card text-muted-foreground dark:bg-card min-h-[60px] resize-none border-0 px-0 text-sm shadow-none focus-visible:ring-0"
                       />
                     </FormControl>
                     <FormMessage />
