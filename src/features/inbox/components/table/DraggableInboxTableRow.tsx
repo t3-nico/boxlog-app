@@ -1,45 +1,43 @@
+'use client'
+
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuTrigger,
-} from '@/components/ui/context-menu'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { TicketStatusBadge } from '@/features/tickets/components/display/TicketStatusBadge'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 import { cn } from '@/lib/utils'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { formatDistanceToNow } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Archive, Copy, Pencil, Trash2 } from 'lucide-react'
+import { GripVertical } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import type { InboxItem } from '../../hooks/useInboxData'
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
 import { useInboxFocusStore } from '../../stores/useInboxFocusStore'
 import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
 
-interface InboxTableRowProps {
+interface DraggableInboxTableRowProps {
   /** 表示するInboxアイテム */
   item: InboxItem
+  /** ドラッグが有効かどうか */
+  isDragEnabled?: boolean
 }
 
 /**
- * Inboxテーブル行コンポーネント
+ * ドラッグ可能なInboxテーブル行コンポーネント
  *
- * 行の表示ロジックを独立したコンポーネントに分離
- * - Inspector表示
- * - 日付フォーマット
- * - タグ表示
- * - アクションメニュー
+ * InboxTableRowにドラッグ&ドロップ機能を追加
+ * - @dnd-kit/sortable でドラッグ&ドロップを実現
+ * - 手動ソートモード時のみドラッグハンドルを表示
+ * - 既存の Inspector、選択、フォーカス機能はそのまま
  *
  * @example
  * ```tsx
- * <InboxTableRow item={item} />
+ * <DraggableInboxTableRow item={item} isDragEnabled={true} />
  * ```
  */
-export function InboxTableRow({ item }: InboxTableRowProps) {
+export function DraggableInboxTableRow({ item, isDragEnabled = false }: DraggableInboxTableRowProps) {
   const { openInspector } = useTicketInspectorStore()
   const { isSelected, toggleSelection } = useInboxSelectionStore()
   const { getVisibleColumns } = useInboxColumnStore()
@@ -50,24 +48,16 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   const isFocused = focusedId === item.id
   const visibleColumns = getVisibleColumns()
 
-  // コンテキストメニューアクション
-  const handleEdit = () => {
-    openInspector(item.id)
-  }
+  // dnd-kit sortable
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: item.id,
+    disabled: !isDragEnabled,
+  })
 
-  const handleDuplicate = () => {
-    // TODO: 複製機能実装
-    console.log('Duplicate:', item.id)
-  }
-
-  const handleArchive = () => {
-    // TODO: アーカイブ機能実装
-    console.log('Archive:', item.id)
-  }
-
-  const handleDelete = () => {
-    // TODO: 削除機能実装
-    console.log('Delete:', item.id)
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
   }
 
   // フォーカスされた行をスクロールして表示
@@ -83,7 +73,20 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
       case 'selection':
         return (
           <TableCell key={columnId} onClick={(e) => e.stopPropagation()}>
-            <Checkbox checked={selected} onCheckedChange={() => toggleSelection(item.id)} />
+            <div className="flex items-center gap-2">
+              {/* ドラッグハンドル */}
+              {isDragEnabled && (
+                <button
+                  type="button"
+                  className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing"
+                  {...attributes}
+                  {...listeners}
+                >
+                  <GripVertical className="size-4" />
+                </button>
+              )}
+              <Checkbox checked={selected} onCheckedChange={() => toggleSelection(item.id)} />
+            </div>
           </TableCell>
         )
 
@@ -155,42 +158,24 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   }
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger asChild>
-        <TableRow
-          ref={rowRef}
-          className={cn(
-            'hover:bg-muted/50 cursor-pointer transition-colors',
-            selected && 'bg-primary/10 hover:bg-primary/15',
-            isFocused && 'ring-primary ring-2 ring-inset'
-          )}
-          onClick={() => {
-            openInspector(item.id)
-            setFocusedId(item.id)
-          }}
-        >
-          {visibleColumns.map((column) => renderCell(column.id))}
-        </TableRow>
-      </ContextMenuTrigger>
-      <ContextMenuContent>
-        <ContextMenuItem onClick={handleEdit}>
-          <Pencil className="mr-2 size-4" />
-          編集
-        </ContextMenuItem>
-        <ContextMenuItem onClick={handleDuplicate}>
-          <Copy className="mr-2 size-4" />
-          複製
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem onClick={handleArchive}>
-          <Archive className="mr-2 size-4" />
-          アーカイブ
-        </ContextMenuItem>
-        <ContextMenuItem onClick={handleDelete} className="text-destructive">
-          <Trash2 className="mr-2 size-4" />
-          削除
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+    <TableRow
+      ref={(node) => {
+        setNodeRef(node)
+        if (rowRef) {
+          ;(rowRef as any).current = node
+        }
+      }}
+      style={style}
+      className={cn(
+        'hover:bg-muted/50 cursor-pointer transition-colors',
+        isFocused && 'bg-accent/50 ring-primary ring-2 ring-inset'
+      )}
+      onClick={() => {
+        openInspector(item.id)
+        setFocusedId(item.id)
+      }}
+    >
+      {visibleColumns.map((column) => renderCell(column.id))}
+    </TableRow>
   )
 }
