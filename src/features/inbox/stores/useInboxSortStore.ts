@@ -1,0 +1,63 @@
+import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
+
+/**
+ * ソート対象フィールド
+ */
+export type SortField = 'ticket_number' | 'title' | 'status' | 'due_date' | 'created_at'
+
+/**
+ * ソート方向
+ */
+export type SortDirection = 'asc' | 'desc' | null
+
+/**
+ * Inboxソート状態
+ */
+interface InboxSortState {
+  sortField: SortField | null
+  sortDirection: SortDirection
+  setSortField: (field: SortField) => void
+  clearSort: () => void
+}
+
+/**
+ * Inboxソートストア
+ *
+ * テーブルヘッダークリックでソート状態を管理
+ * asc → desc → null の順で切り替わる
+ *
+ * @example
+ * ```tsx
+ * const { sortField, sortDirection, setSortField } = useInboxSortStore()
+ *
+ * // ソート切り替え
+ * setSortField('title')
+ * ```
+ */
+export const useInboxSortStore = create<InboxSortState>()(
+  devtools(
+    (set, get) => ({
+      sortField: null,
+      sortDirection: null,
+
+      setSortField: (field) => {
+        const { sortField, sortDirection } = get()
+
+        if (sortField === field) {
+          // 同じフィールド: asc → desc → null
+          set({
+            sortDirection: sortDirection === 'asc' ? 'desc' : sortDirection === 'desc' ? null : 'asc',
+            sortField: sortDirection === 'desc' ? null : field,
+          })
+        } else {
+          // 別フィールド: asc から開始
+          set({ sortField: field, sortDirection: 'asc' })
+        }
+      },
+
+      clearSort: () => set({ sortField: null, sortDirection: null }),
+    }),
+    { name: 'inbox-sort-store' }
+  )
+)
