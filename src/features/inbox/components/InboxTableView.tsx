@@ -1,8 +1,9 @@
 'use client'
 
 import { Checkbox } from '@/components/ui/checkbox'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
+import { Activity, Calendar, CalendarClock, FileText, Hash, Tag } from 'lucide-react'
 import { useEffect, useMemo, useRef } from 'react'
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxKeyboardShortcuts } from '../hooks/useInboxKeyboardShortcuts'
@@ -17,11 +18,22 @@ import { groupItems } from '../utils/grouping'
 import { BulkActionsToolbar } from './table/BulkActionsToolbar'
 import { GroupBySelector } from './table/GroupBySelector'
 import { GroupHeader } from './table/GroupHeader'
+import { InboxTableEmptyState } from './table/InboxTableEmptyState'
 import { InboxTableRow } from './table/InboxTableRow'
 import { ResizableTableHead } from './table/ResizableTableHead'
 import { SavedViewsSelector } from './table/SavedViewsSelector'
 import { TablePagination } from './table/TablePagination'
 import { TableToolbar } from './table/TableToolbar'
+
+// 列IDとアイコンのマッピング
+const columnIcons = {
+  ticket_number: Hash,
+  title: FileText,
+  status: Activity,
+  tags: Tag,
+  due_date: CalendarClock,
+  created_at: Calendar,
+} as const
 
 /**
  * Inbox Table View コンポーネント
@@ -210,71 +222,85 @@ export function InboxTableView() {
       <BulkActionsToolbar />
 
       {/* テーブル */}
-      <div className="flex-1 overflow-x-auto overflow-y-auto px-4 md:px-6">
-        <Table className="border-border min-w-full rounded-lg border">
-          <TableHeader>
-            <TableRow>
-              {visibleColumns.map((column) => {
-                if (column.id === 'selection') {
-                  return (
-                    <TableHead key={column.id} style={{ width: `${column.width}px` }}>
-                      <Checkbox
-                        checked={allSelected ? true : someSelected ? 'indeterminate' : false}
-                        onCheckedChange={handleToggleAll}
+      <div className="flex-1 overflow-hidden px-4 md:px-6">
+        <div className="border-border flex h-full flex-col overflow-hidden rounded-lg border">
+          {/* ヘッダー: 固定 */}
+          <div className="overflow-x-auto">
+            <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
+              <TableHeader>
+                <TableRow>
+                  {visibleColumns.map((column) => {
+                    if (column.id === 'selection') {
+                      return (
+                        <TableHead key={column.id} style={{ width: `${column.width}px` }}>
+                          <Checkbox
+                            checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+                            onCheckedChange={handleToggleAll}
+                          />
+                        </TableHead>
+                      )
+                    }
+
+                    // アイコンを取得
+                    const Icon = columnIcons[column.id as keyof typeof columnIcons]
+
+                    if (column.id === 'tags') {
+                      return (
+                        <ResizableTableHead key={column.id} columnId={column.id} icon={Icon}>
+                          {column.label}
+                        </ResizableTableHead>
+                      )
+                    }
+
+                    // ソート可能な列
+                    return (
+                      <ResizableTableHead key={column.id} columnId={column.id} sortField={column.id as any} icon={Icon}>
+                        {column.label}
+                      </ResizableTableHead>
+                    )
+                  })}
+                </TableRow>
+              </TableHeader>
+            </Table>
+          </div>
+
+          {/* ボディ: スクロール可能 */}
+          <div className="flex-1 overflow-x-auto overflow-y-auto">
+            <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
+              <TableBody>
+                {paginatedItems.length === 0 ? (
+                  <InboxTableEmptyState columnCount={visibleColumns.length} totalItems={items.length} />
+                ) : groupBy ? (
+                  // グループ化表示
+                  groupedData.map((group) => (
+                    <>
+                      <GroupHeader
+                        key={`header-${group.groupKey}`}
+                        groupKey={group.groupKey}
+                        groupLabel={group.groupLabel}
+                        count={group.count}
+                        columnCount={visibleColumns.length}
                       />
-                    </TableHead>
-                  )
-                }
+                      {!collapsedGroups.has(group.groupKey) &&
+                        group.items.map((item) => <InboxTableRow key={item.id} item={item} />)}
+                    </>
+                  ))
+                ) : (
+                  // 通常表示
+                  paginatedItems.map((item) => <InboxTableRow key={item.id} item={item} />)
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
-                if (column.id === 'tags') {
-                  return (
-                    <ResizableTableHead key={column.id} columnId={column.id}>
-                      {column.label}
-                    </ResizableTableHead>
-                  )
-                }
-
-                // ソート可能な列
-                return (
-                  <ResizableTableHead key={column.id} columnId={column.id} sortField={column.id as any}>
-                    {column.label}
-                  </ResizableTableHead>
-                )
-              })}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedItems.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={visibleColumns.length} className="h-24 text-center">
-                  <p className="text-muted-foreground">アイテムがありません</p>
-                </TableCell>
-              </TableRow>
-            ) : groupBy ? (
-              // グループ化表示
-              groupedData.map((group) => (
-                <>
-                  <GroupHeader
-                    key={`header-${group.groupKey}`}
-                    groupKey={group.groupKey}
-                    groupLabel={group.groupLabel}
-                    count={group.count}
-                    columnCount={visibleColumns.length}
-                  />
-                  {!collapsedGroups.has(group.groupKey) &&
-                    group.items.map((item) => <InboxTableRow key={item.id} item={item} />)}
-                </>
-              ))
-            ) : (
-              // 通常表示
-              paginatedItems.map((item) => <InboxTableRow key={item.id} item={item} />)
-            )}
-          </TableBody>
-        </Table>
+          {/* フッター: ページネーション（グループ化なしの場合のみ） */}
+          {!groupBy && (
+            <div className="bg-muted/30 shrink-0">
+              <TablePagination totalItems={sortedItems.length} />
+            </div>
+          )}
+        </div>
       </div>
-
-      {/* ページネーション（グループ化なしの場合のみ） */}
-      {!groupBy && <TablePagination totalItems={sortedItems.length} />}
     </div>
   )
 }

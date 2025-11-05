@@ -1,5 +1,5 @@
 import { TableHead } from '@/components/ui/table'
-import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
+import { ArrowDown, ArrowUp, ArrowUpDown, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
 import type { ColumnId } from '../../stores/useInboxColumnStore'
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
@@ -15,6 +15,8 @@ interface ResizableTableHeadProps {
   className?: string
   /** ソート可能な列のフィールド名 */
   sortField?: SortField
+  /** 列アイコン */
+  icon?: LucideIcon
 }
 
 /**
@@ -33,7 +35,13 @@ interface ResizableTableHeadProps {
  * </ResizableTableHead>
  * ```
  */
-export function ResizableTableHead({ columnId, children, className, sortField }: ResizableTableHeadProps) {
+export function ResizableTableHead({
+  columnId,
+  children,
+  className,
+  sortField,
+  icon: ColumnIcon,
+}: ResizableTableHeadProps) {
   const { columns, setColumnWidth } = useInboxColumnStore()
   const { sortField: currentSortField, sortDirection, setSortField } = useInboxSortStore()
   const [isResizing, setIsResizing] = useState(false)
@@ -81,19 +89,25 @@ export function ResizableTableHead({ columnId, children, className, sortField }:
   }
 
   return (
-    <TableHead className={className} style={{ width: `${width}px`, position: 'relative' }}>
-      {sortField ? (
-        <button
-          type="button"
-          onClick={handleSort}
-          className="hover:text-foreground flex items-center gap-2 transition-colors"
-        >
-          <span>{children}</span>
-          <Icon className={`size-4 ${isActive ? 'text-foreground' : 'text-muted-foreground'}`} />
-        </button>
-      ) : (
-        children
-      )}
+    <TableHead className={className} style={{ width: `${width}px`, position: 'relative', maxWidth: `${width}px` }}>
+      <div className="flex items-center gap-1">
+        {sortField ? (
+          <button
+            type="button"
+            onClick={handleSort}
+            className="hover:text-foreground flex min-w-0 items-center gap-1 transition-colors"
+          >
+            {ColumnIcon && <ColumnIcon className="text-muted-foreground size-4 shrink-0" />}
+            <span className="truncate">{children}</span>
+            <Icon className={`size-4 shrink-0 ${isActive ? 'text-foreground' : 'text-muted-foreground'}`} />
+          </button>
+        ) : (
+          <div className="flex min-w-0 items-center gap-1">
+            {ColumnIcon && <ColumnIcon className="text-muted-foreground size-4 shrink-0" />}
+            <span className="truncate">{children}</span>
+          </div>
+        )}
+      </div>
 
       {/* リサイズハンドル */}
       {resizable && (
