@@ -6,6 +6,7 @@ import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { formatDistanceToNow } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import type { InboxItem } from '../../hooks/useInboxData'
+import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
 import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
 import { InboxTableRowActions } from './InboxTableRowActions'
 
@@ -51,66 +52,98 @@ function StatusBadge({ status }: { status: TicketStatus }) {
 export function InboxTableRow({ item }: InboxTableRowProps) {
   const { openInspector } = useTicketInspectorStore()
   const { isSelected, toggleSelection } = useInboxSelectionStore()
+  const { getVisibleColumns } = useInboxColumnStore()
 
   const selected = isSelected(item.id)
+  const visibleColumns = getVisibleColumns()
+
+  // 列IDをキーにセルをレンダリング
+  const renderCell = (columnId: string) => {
+    switch (columnId) {
+      case 'selection':
+        return (
+          <TableCell key={columnId} onClick={(e) => e.stopPropagation()}>
+            <Checkbox checked={selected} onCheckedChange={() => toggleSelection(item.id)} />
+          </TableCell>
+        )
+
+      case 'ticket_number':
+        return (
+          <TableCell key={columnId} className="font-mono text-xs">
+            {item.ticket_number || '-'}
+          </TableCell>
+        )
+
+      case 'title':
+        return (
+          <TableCell key={columnId} className="font-medium">
+            {item.title}
+          </TableCell>
+        )
+
+      case 'status':
+        return (
+          <TableCell key={columnId}>
+            <StatusBadge status={item.status} />
+          </TableCell>
+        )
+
+      case 'tags':
+        return (
+          <TableCell key={columnId}>
+            <div className="flex gap-1">
+              {item.tags?.slice(0, 2).map((tag) => (
+                <Badge key={tag.id} variant="secondary" className="text-xs">
+                  {tag.name}
+                </Badge>
+              ))}
+              {item.tags && item.tags.length > 2 && (
+                <Badge variant="secondary" className="text-xs">
+                  +{item.tags.length - 2}
+                </Badge>
+              )}
+              {!item.tags || item.tags.length === 0 ? <span className="text-muted-foreground text-xs">-</span> : null}
+            </div>
+          </TableCell>
+        )
+
+      case 'due_date':
+        return (
+          <TableCell key={columnId} className="text-muted-foreground text-sm">
+            {item.due_date
+              ? formatDistanceToNow(new Date(item.due_date), {
+                  addSuffix: true,
+                  locale: ja,
+                })
+              : '-'}
+          </TableCell>
+        )
+
+      case 'created_at':
+        return (
+          <TableCell key={columnId} className="text-muted-foreground text-sm">
+            {formatDistanceToNow(new Date(item.created_at), {
+              addSuffix: true,
+              locale: ja,
+            })}
+          </TableCell>
+        )
+
+      case 'actions':
+        return (
+          <TableCell key={columnId} onClick={(e) => e.stopPropagation()}>
+            <InboxTableRowActions item={item} />
+          </TableCell>
+        )
+
+      default:
+        return null
+    }
+  }
 
   return (
     <TableRow className="hover:bg-muted/50 cursor-pointer" onClick={() => openInspector(item.id)}>
-      {/* チェックボックス */}
-      <TableCell onClick={(e) => e.stopPropagation()}>
-        <Checkbox checked={selected} onCheckedChange={() => toggleSelection(item.id)} />
-      </TableCell>
-
-      {/* チケット番号 */}
-      <TableCell className="font-mono text-xs">{item.ticket_number || '-'}</TableCell>
-
-      {/* タイトル */}
-      <TableCell className="font-medium">{item.title}</TableCell>
-
-      {/* ステータス */}
-      <TableCell>
-        <StatusBadge status={item.status} />
-      </TableCell>
-
-      {/* タグ */}
-      <TableCell>
-        <div className="flex gap-1">
-          {item.tags?.slice(0, 2).map((tag) => (
-            <Badge key={tag.id} variant="secondary" className="text-xs">
-              {tag.name}
-            </Badge>
-          ))}
-          {item.tags && item.tags.length > 2 && (
-            <Badge variant="secondary" className="text-xs">
-              +{item.tags.length - 2}
-            </Badge>
-          )}
-          {!item.tags || item.tags.length === 0 ? <span className="text-muted-foreground text-xs">-</span> : null}
-        </div>
-      </TableCell>
-
-      {/* 期限 */}
-      <TableCell className="text-muted-foreground text-sm">
-        {item.due_date
-          ? formatDistanceToNow(new Date(item.due_date), {
-              addSuffix: true,
-              locale: ja,
-            })
-          : '-'}
-      </TableCell>
-
-      {/* 作成日時 */}
-      <TableCell className="text-muted-foreground text-sm">
-        {formatDistanceToNow(new Date(item.created_at), {
-          addSuffix: true,
-          locale: ja,
-        })}
-      </TableCell>
-
-      {/* アクション */}
-      <TableCell onClick={(e) => e.stopPropagation()}>
-        <InboxTableRowActions item={item} />
-      </TableCell>
+      {visibleColumns.map((column) => renderCell(column.id))}
     </TableRow>
   )
 }

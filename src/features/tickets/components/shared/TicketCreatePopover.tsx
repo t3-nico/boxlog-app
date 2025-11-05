@@ -1,37 +1,22 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as SelectPrimitive from '@radix-ui/react-select'
-import { format } from 'date-fns'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { api } from '@/lib/trpc'
 import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ticket'
-
-// 15分刻みの時間オプションを生成（0:00 - 23:45）
-const generateTimeOptions = () => {
-  const options: string[] = []
-  for (let hour = 0; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 15) {
-      const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-      options.push(timeString)
-    }
-  }
-  return options
-}
-
-const TIME_OPTIONS = generateTimeOptions()
+import { RecurrencePopover } from './RecurrencePopover'
+import { ReminderPopover } from './ReminderPopover'
+import { TicketDateTimeInput } from './TicketDateTimeInput'
+import { TicketDescriptionTextarea } from './TicketDescriptionTextarea'
+import { TicketTitleInput } from './TicketTitleInput'
 
 interface TicketCreatePopoverProps {
   triggerElement: React.ReactNode
@@ -50,9 +35,9 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
 
   // 各ポップアップのref
   const tagSearchRef = useRef<HTMLDivElement>(null)
+  const titleInputRef = useRef<HTMLInputElement>(null)
   const repeatRef = useRef<HTMLDivElement>(null)
   const reminderRef = useRef<HTMLDivElement>(null)
-  const titleInputRef = useRef<HTMLInputElement>(null)
 
   const [isOpen, setIsOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -60,13 +45,11 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const [showCalendar, setShowCalendar] = useState(false)
-  const [showDateTime, setShowDateTime] = useState(false)
-  const [showRepeat, setShowRepeat] = useState(false)
-  const [showReminder, setShowReminder] = useState(false)
   const [repeatType, setRepeatType] = useState<string>('')
   const [reminderType, setReminderType] = useState<string>('')
   const [showTagSearch, setShowTagSearch] = useState(false)
+  const [showRepeat, setShowRepeat] = useState(false)
+  const [showReminder, setShowReminder] = useState(false)
   const [tagSearchQuery, setTagSearchQuery] = useState('')
   const { createTicket } = useTicketMutations()
 
@@ -121,25 +104,6 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
     },
   })
 
-  // 経過時間を計算（00:00形式）
-  const elapsedTime = useMemo(() => {
-    if (!startTime || !endTime) return null
-
-    const [startHour, startMin] = startTime.split(':').map(Number)
-    const [endHour, endMin] = endTime.split(':').map(Number)
-
-    const startMinutes = startHour * 60 + startMin
-    const endMinutes = endHour * 60 + endMin
-
-    if (endMinutes <= startMinutes) return null
-
-    const diff = endMinutes - startMinutes
-    const hours = Math.floor(diff / 60)
-    const minutes = diff % 60
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
-  }, [startTime, endTime])
-
   const handleSubmit = async (data: CreateTicketInput) => {
     setIsSubmitting(true)
     try {
@@ -169,7 +133,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
     <Popover modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>{triggerElement}</PopoverTrigger>
       <PopoverContent
-        className="bg-card dark:bg-card w-[560px] p-0"
+        className="!border-border bg-card dark:bg-card w-[560px] !border p-0"
         align="end"
         side="right"
         sideOffset={8}
@@ -201,7 +165,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
+                      <TicketTitleInput
                         placeholder="Add a title"
                         {...field}
                         ref={(e) => {
@@ -212,7 +176,6 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                             titleInputRef.current = e
                           }
                         }}
-                        className="bg-card dark:bg-card border-0 px-0 text-lg font-semibold shadow-none focus-visible:ring-0"
                       />
                     </FormControl>
                     <FormMessage />
@@ -229,11 +192,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Textarea
-                        placeholder="Add description..."
-                        {...field}
-                        className="bg-card text-muted-foreground dark:bg-card min-h-[60px] resize-none border-0 px-0 text-sm shadow-none focus-visible:ring-0"
-                      />
+                      <TicketDescriptionTextarea placeholder="Add description..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -241,129 +200,28 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
               />
             </div>
 
-            {/* 2行目: 日付 + 時間（展開式） */}
-            {showDateTime && (
-              <div className="relative px-6 pb-4">
-                <div className="flex items-center gap-3">
-                  {/* 日付選択ボタン */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-10 w-auto px-2"
-                    type="button"
-                    onClick={() => setShowCalendar(!showCalendar)}
-                  >
-                    <span className="text-sm">{selectedDate ? format(selectedDate, 'yyyy/MM/dd') : '日付'}</span>
-                  </Button>
+            {/* 2行目: 日付 + 時間（常に表示） */}
+            <TicketDateTimeInput
+              selectedDate={selectedDate}
+              startTime={startTime}
+              endTime={endTime}
+              onDateChange={setSelectedDate}
+              onStartTimeChange={setStartTime}
+              onEndTimeChange={setEndTime}
+              showBorderTop={true}
+            />
 
-                  {/* 時間入力 - Selectドロップダウン */}
-                  <Select value={startTime} onValueChange={setStartTime}>
-                    <SelectTrigger className="w-auto [&_svg]:hidden">
-                      <SelectValue placeholder="開始" />
-                    </SelectTrigger>
-                    <SelectContent side="bottom" align="start" className="max-h-[240px] overflow-y-auto">
-                      {TIME_OPTIONS.map((time) => (
-                        <SelectItem key={`start-${time}`} value={time}>
-                          {time}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <span className="text-muted-foreground">→</span>
-
-                  <Select value={endTime} onValueChange={setEndTime} disabled={!startTime}>
-                    <SelectTrigger className="w-auto [&_svg]:hidden">
-                      <SelectValue placeholder="終了" />
-                    </SelectTrigger>
-                    <SelectContent side="bottom" align="start" className="max-h-[240px] overflow-y-auto">
-                      {TIME_OPTIONS.map((time) => {
-                        if (!startTime) return null
-
-                        // 各終了時刻に対する経過時間を計算
-                        const [startHour, startMin] = startTime.split(':').map(Number)
-                        const [endHour, endMin] = time.split(':').map(Number)
-                        const startMinutes = startHour * 60 + startMin
-                        const endMinutes = endHour * 60 + endMin
-
-                        // 開始時刻以前の時刻は表示しない
-                        if (endMinutes <= startMinutes) return null
-
-                        const diff = endMinutes - startMinutes
-                        const hours = Math.floor(diff / 60)
-                        const minutes = diff % 60
-
-                        let duration = ''
-                        if (hours > 0 && minutes > 0) {
-                          duration = ` (${hours * 60 + minutes}分)`
-                        } else if (hours > 0) {
-                          duration = ` (${hours * 60}分)`
-                        } else {
-                          duration = ` (${minutes}分)`
-                        }
-
-                        return (
-                          <SelectPrimitive.Item
-                            key={`end-${time}`}
-                            value={time}
-                            className="focus:bg-accent focus:text-accent-foreground relative flex w-full cursor-default items-center rounded-sm py-2 pr-8 pl-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                          >
-                            <SelectPrimitive.ItemText>{time}</SelectPrimitive.ItemText>
-                            <span className="text-muted-foreground ml-2">{duration}</span>
-                          </SelectPrimitive.Item>
-                        )
-                      })}
-                    </SelectContent>
-                  </Select>
-
-                  {/* 総経過時間を表示 */}
-                  {elapsedTime && <span className="text-muted-foreground text-sm">{elapsedTime}</span>}
-                </div>
-
-                {/* カレンダー展開 - 絶対配置 */}
-                {showCalendar && (
-                  <div className="border-input bg-popover absolute top-12 left-0 z-50 rounded-md border shadow-md">
-                    <Calendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={(date) => {
-                        setSelectedDate(date)
-                        setShowCalendar(false)
-                      }}
-                    />
-                  </div>
-                )}
+            {/* リピートと通知 */}
+            <div className="flex items-center gap-4 px-6 pb-3">
+              <div className="ml-6 flex items-center gap-4">
+                <RecurrencePopover repeatType={repeatType} onRepeatTypeChange={setRepeatType} />
+                <ReminderPopover reminderType={reminderType} onReminderTypeChange={setReminderType} />
               </div>
-            )}
+            </div>
 
             {/* 3行目: オプション機能アイコン */}
             <TooltipProvider delayDuration={0}>
               <div className="relative flex gap-1 px-6 pb-4">
-                {/* 日付・時間アイコン */}
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="size-8"
-                      type="button"
-                      onClick={() => {
-                        setShowDateTime(!showDateTime)
-                      }}
-                    >
-                      <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                        <line x1="16" y1="2" x2="16" y2="6" />
-                        <line x1="8" y1="2" x2="8" y2="6" />
-                        <line x1="3" y1="10" x2="21" y2="10" />
-                      </svg>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>日付と時間を設定</p>
-                  </TooltipContent>
-                </Tooltip>
-
                 {/* Tagsアイコン */}
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
@@ -473,219 +331,6 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>タグを追加</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                {/* リピート（繰り返し）アイコン */}
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <div className="relative" ref={repeatRef}>
-                      <Button
-                        variant="ghost"
-                        className={repeatType ? 'h-8 gap-1 px-2' : 'size-8'}
-                        type="button"
-                        onClick={() => setShowRepeat(!showRepeat)}
-                      >
-                        <svg
-                          className="size-4 shrink-0"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M17 1l4 4-4 4" />
-                          <path d="M3 11V9a4 4 0 0 1 4-4h14" />
-                          <path d="M7 23l-4-4 4-4" />
-                          <path d="M21 13v2a4 4 0 0 1-4 4H3" />
-                        </svg>
-                        {repeatType && <span className="text-xs">{repeatType}</span>}
-                      </Button>
-                      {/* リピート設定ポップアップ（Googleカレンダー風） */}
-                      {showRepeat && (
-                        <div className="border-input bg-popover absolute top-10 left-0 z-50 w-48 rounded-md border shadow-md">
-                          <div className="p-1">
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setRepeatType('')
-                                setShowRepeat(false)
-                              }}
-                            >
-                              選択しない
-                            </button>
-                            <div className="border-border my-1 border-t" />
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setRepeatType('毎日')
-                                setShowRepeat(false)
-                              }}
-                            >
-                              毎日
-                            </button>
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setRepeatType('毎週')
-                                setShowRepeat(false)
-                              }}
-                            >
-                              毎週
-                            </button>
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setRepeatType('毎月')
-                                setShowRepeat(false)
-                              }}
-                            >
-                              毎月
-                            </button>
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setRepeatType('毎年')
-                                setShowRepeat(false)
-                              }}
-                            >
-                              毎年
-                            </button>
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setRepeatType('平日')
-                                setShowRepeat(false)
-                              }}
-                            >
-                              平日（月〜金）
-                            </button>
-                            <div className="border-border my-1 border-t" />
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setRepeatType('カスタム')
-                                setShowRepeat(false)
-                              }}
-                            >
-                              カスタム...
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>繰り返しを設定</p>
-                  </TooltipContent>
-                </Tooltip>
-
-                {/* 通知（リマインダー）アイコン */}
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <div className="relative" ref={reminderRef}>
-                      <Button
-                        variant="ghost"
-                        className={reminderType ? 'h-8 gap-1 px-2' : 'size-8'}
-                        type="button"
-                        onClick={() => setShowReminder(!showReminder)}
-                      >
-                        <svg
-                          className="size-4 shrink-0"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                        </svg>
-                        {reminderType && <span className="text-xs">{reminderType}</span>}
-                      </Button>
-                      {/* リマインダー設定ポップアップ（Googleカレンダー風） */}
-                      {showReminder && (
-                        <div className="border-input bg-popover absolute top-10 left-0 z-50 w-56 rounded-md border shadow-md">
-                          <div className="p-1">
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setReminderType('')
-                                setShowReminder(false)
-                              }}
-                            >
-                              選択しない
-                            </button>
-                            <div className="border-border my-1 border-t" />
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setReminderType('開始時刻')
-                                setShowReminder(false)
-                              }}
-                            >
-                              イベント開始時刻
-                            </button>
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setReminderType('10分前')
-                                setShowReminder(false)
-                              }}
-                            >
-                              10分前
-                            </button>
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setReminderType('30分前')
-                                setShowReminder(false)
-                              }}
-                            >
-                              30分前
-                            </button>
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setReminderType('1時間前')
-                                setShowReminder(false)
-                              }}
-                            >
-                              1時間前
-                            </button>
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setReminderType('1日前')
-                                setShowReminder(false)
-                              }}
-                            >
-                              1日前
-                            </button>
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setReminderType('1週間前')
-                                setShowReminder(false)
-                              }}
-                            >
-                              1週間前
-                            </button>
-                            <div className="border-border my-1 border-t" />
-                            <button
-                              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                              onClick={() => {
-                                setReminderType('カスタム')
-                                setShowReminder(false)
-                              }}
-                            >
-                              カスタム...
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>通知を設定</p>
                   </TooltipContent>
                 </Tooltip>
               </div>

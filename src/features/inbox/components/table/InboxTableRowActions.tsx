@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -68,7 +70,7 @@ export function InboxTableRowActions({ item }: InboxTableRowActionsProps) {
           <Archive className="mr-2 size-4" />
           アーカイブ
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+        <DropdownMenuItem onClick={handleDelete} variant="destructive">
           <Trash2 className="mr-2 size-4" />
           削除
         </DropdownMenuItem>
