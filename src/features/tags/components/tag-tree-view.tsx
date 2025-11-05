@@ -53,7 +53,8 @@ const TagTreeNode = ({
   const [editName, setEditName] = useState(tag.name)
 
   const hasChildren = tag.children && tag.children.length > 0
-  const canHaveChildren = tag.level < 2 // 最大3階層
+  const isGroup = tag.level === 0 // Level 0 はグループ
+  const canHaveChildren = tag.level === 0 // グループのみ子を持てる
 
   const handleToggleExpanded = useCallback(() => {
     if (hasChildren) {
@@ -174,58 +175,58 @@ const TagTreeNode = ({
 
         {/* アクションボタン */}
         <div className="flex flex-shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-          {/* 子タグ追加ボタン */}
-          {canHaveChildren === true && (
+          {/* グループ（Level 0）: 子タグ追加ボタンのみ */}
+          {isGroup ? (
             <button
               type="button"
               onClick={handleCreateChildTag}
               className="rounded p-1 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-400"
-              title={t('tags.actions.addChild')}
+              title="タグを追加"
             >
               <PlusIcon className="h-4 w-4" data-slot="icon" />
             </button>
+          ) : (
+            /* タグ（Level 1）: 編集・削除メニュー */
+            <div className="relative">
+              <button
+                type="button"
+                onClick={handleToggleMenu}
+                className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+              >
+                <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
+              </button>
+
+              {/* コンテキストメニュー */}
+              {showMenu != null && (
+                <div className="absolute top-full right-0 z-10 mt-1 min-w-[120px] rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                  <button
+                    type="button"
+                    onClick={handleEditTag}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                  >
+                    <PencilIcon className="h-4 w-4" data-slot="icon" />
+                    {t('tags.actions.edit')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleStartEdit}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                  >
+                    <PencilIcon className="h-4 w-4" data-slot="icon" />
+                    {t('tags.actions.rename')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDeleteTag}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                  >
+                    <TrashIcon className="h-4 w-4" data-slot="icon" />
+                    {t('tags.actions.delete')}
+                  </button>
+                </div>
+              )}
+            </div>
           )}
-
-          {/* メニューボタン */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={handleToggleMenu}
-              className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-            >
-              <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
-            </button>
-
-            {/* コンテキストメニュー */}
-            {showMenu != null && (
-              <div className="absolute top-full right-0 z-10 mt-1 min-w-[120px] rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
-                <button
-                  type="button"
-                  onClick={handleEditTag}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
-                >
-                  <PencilIcon className="h-4 w-4" data-slot="icon" />
-                  {t('tags.actions.edit')}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleStartEdit}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
-                >
-                  <PencilIcon className="h-4 w-4" data-slot="icon" />
-                  {t('tags.actions.rename')}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDeleteTag}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-                >
-                  <TrashIcon className="h-4 w-4" data-slot="icon" />
-                  {t('tags.actions.delete')}
-                </button>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 

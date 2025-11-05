@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { ErrorBoundary } from '@/components/error-boundary'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
@@ -25,7 +25,6 @@ const TagTreeView = dynamic(
 const TagsSettings = () => {
   const [isMounted, setIsMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [showInactive, setShowInactive] = useState(false)
 
   // クライアントサイドでのみレンダリング
   useEffect(() => {
@@ -40,6 +39,7 @@ const TagsSettings = () => {
     showCreateModal,
     showEditModal,
     selectedTag,
+    createParentTag,
     handleCreateTag,
     handleSaveNewTag,
     handleEditTag,
@@ -51,7 +51,6 @@ const TagsSettings = () => {
 
   // フィルタリング
   const filteredTags = tags.filter((tag) => {
-    if (!showInactive && !tag.is_active) return false
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       return (
@@ -62,11 +61,6 @@ const TagsSettings = () => {
     }
     return true
   })
-
-  // イベントハンドラー
-  const handleToggleInactive = useCallback(() => {
-    setShowInactive(!showInactive)
-  }, [showInactive])
 
   // SSR時は何も表示しない（Hydrationエラー回避）
   if (!isMounted) {
@@ -122,15 +116,6 @@ const TagsSettings = () => {
           >
             新規タグ
           </button>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={showInactive}
-              onChange={handleToggleInactive}
-              className="rounded border-neutral-300"
-            />
-            非アクティブを表示
-          </label>
         </div>
 
         {/* タグツリービュー */}
@@ -156,7 +141,7 @@ const TagsSettings = () => {
               isOpen={showCreateModal}
               onClose={handleCloseModals}
               onSave={handleSaveNewTag}
-              parentTag={null}
+              parentTag={createParentTag}
             />
 
             <TagEditModal isOpen={showEditModal} tag={selectedTag} onClose={handleCloseModals} onSave={handleSaveTag} />

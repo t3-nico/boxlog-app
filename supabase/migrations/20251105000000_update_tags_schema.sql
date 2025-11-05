@@ -64,8 +64,8 @@ BEGIN
   END IF;
 
   -- level が 3 以上（depth 4以上）の場合はエラー
-  IF (NEW.level >= 3) THEN
-    RAISE EXCEPTION 'Tag level cannot be 3 or greater (max 2, which is depth 3)';
+  IF (NEW.level >= 2) THEN
+    RAISE EXCEPTION 'Tag level cannot be 2 or greater (max 1: Group -> Tag only)';
   END IF;
 
   RETURN NEW;

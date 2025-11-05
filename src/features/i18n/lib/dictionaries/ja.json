@@ -33,6 +33,7 @@
     "navigation": {
       "calendar": "カレンダー",
       "inbox": "Inbox",
+      "tags": "タグ",
       "stats": "統計",
       "settings": "設定",
       "search": "検索"
