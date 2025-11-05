@@ -11,6 +11,7 @@ interface InboxSelectionState {
   clearSelection: () => void
   isSelected: (id: string) => boolean
   getSelectedCount: () => number
+  getSelectedIds: () => Set<string>
 }
 
 /**
@@ -67,6 +68,8 @@ export const useInboxSelectionStore = create<InboxSelectionState>()(
       isSelected: (id) => get().selectedIds.has(id),
 
       getSelectedCount: () => get().selectedIds.size,
+
+      getSelectedIds: () => get().selectedIds,
     }),
     { name: 'inbox-selection-store' }
   )

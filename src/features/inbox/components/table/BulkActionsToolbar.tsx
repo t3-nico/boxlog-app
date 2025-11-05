@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -8,15 +10,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
-import { Archive, Trash2, X } from 'lucide-react'
+import { Archive, Calendar, Tag, Trash2, X } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
+import { BulkDatePickerDialog } from './BulkDatePickerDialog'
+import { BulkTagsDialog } from './BulkTagsDialog'
 
 /**
  * 一括操作ツールバーコンポーネント
  *
  * 選択されたアイテムに対する一括操作を提供
  * - ステータス一括変更
+ * - タグ一括追加/削除
+ * - 期限一括設定
  * - 一括アーカイブ
  * - 一括削除
  * - 選択クリア
@@ -27,8 +36,12 @@ import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
  * ```
  */
 export function BulkActionsToolbar() {
-  const { getSelectedCount, clearSelection } = useInboxSelectionStore()
+  const { getSelectedCount, getSelectedIds, clearSelection } = useInboxSelectionStore()
+  const { bulkUpdateTicket, bulkDeleteTicket } = useTicketMutations()
   const selectedCount = getSelectedCount()
+  const [showTagsDialog, setShowTagsDialog] = useState(false)
+  const [showDateDialog, setShowDateDialog] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   // 選択がない場合は非表示
   if (selectedCount === 0) {
@@ -36,24 +49,77 @@ export function BulkActionsToolbar() {
   }
 
   // ステータス変更ハンドラー
-  const handleStatusChange = (status: TicketStatus) => {
-    // TODO: ステータス一括変更実装
-    console.log('Bulk status change:', status, 'for', selectedCount, 'items')
-    clearSelection()
+  const handleStatusChange = async (status: TicketStatus) => {
+    setIsProcessing(true)
+    try {
+      const selectedIds = Array.from(getSelectedIds())
+      await bulkUpdateTicket.mutateAsync({
+        ids: selectedIds,
+        data: { status },
+      })
+
+      toast.success(`${selectedIds.length}件のチケットのステータスを変更しました`)
+      clearSelection()
+    } catch (error) {
+      toast.error('ステータスの変更に失敗しました')
+      console.error('Bulk status change error:', error)
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  // タグ編集ダイアログを開く
+  const handleOpenTagsDialog = () => {
+    setShowTagsDialog(true)
+  }
+
+  // 期限設定ダイアログを開く
+  const handleOpenDateDialog = () => {
+    setShowDateDialog(true)
   }
 
   // アーカイブハンドラー
-  const handleArchive = () => {
-    // TODO: 一括アーカイブ実装
-    console.log('Bulk archive:', selectedCount, 'items')
-    clearSelection()
+  const handleArchive = async () => {
+    setIsProcessing(true)
+    try {
+      const selectedIds = Array.from(getSelectedIds())
+      await bulkUpdateTicket.mutateAsync({
+        ids: selectedIds,
+        data: { status: 'done' }, // アーカイブ = 完了ステータスに変更
+      })
+
+      toast.success(`${selectedIds.length}件のチケットをアーカイブしました`)
+      clearSelection()
+    } catch (error) {
+      toast.error('アーカイブに失敗しました')
+      console.error('Bulk archive error:', error)
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   // 削除ハンドラー
-  const handleDelete = () => {
-    // TODO: 一括削除実装
-    console.log('Bulk delete:', selectedCount, 'items')
-    clearSelection()
+  const handleDelete = async () => {
+    // 確認ダイアログ
+    if (!window.confirm(`${selectedCount}件のチケットを削除しますか？この操作は取り消せません。`)) {
+      return
+    }
+
+    setIsProcessing(true)
+    try {
+      const selectedIds = Array.from(getSelectedIds())
+      await bulkDeleteTicket.mutateAsync({
+        ids: selectedIds,
+      })
+
+      toast.success(`${selectedIds.length}件のチケットを削除しました`)
+      clearSelection()
+    } catch (error) {
+      toast.error('削除に失敗しました')
+      console.error('Bulk delete error:', error)
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   return (
@@ -70,7 +136,7 @@ export function BulkActionsToolbar() {
       {/* 右側: 一括操作ボタン */}
       <div className="flex items-center gap-2">
         {/* ステータス変更 */}
-        <Select onValueChange={(value) => handleStatusChange(value as TicketStatus)}>
+        <Select onValueChange={(value) => handleStatusChange(value as TicketStatus)} disabled={isProcessing}>
           <SelectTrigger className="h-8 w-[140px]">
             <SelectValue placeholder="ステータス変更" />
           </SelectTrigger>
@@ -87,18 +153,52 @@ export function BulkActionsToolbar() {
           </SelectContent>
         </Select>
 
+        {/* タグ編集 */}
+        <Button variant="outline" size="sm" onClick={handleOpenTagsDialog} disabled={isProcessing} className="h-8">
+          <Tag className="mr-1 size-4" />
+          タグ
+        </Button>
+
+        {/* 期限設定 */}
+        <Button variant="outline" size="sm" onClick={handleOpenDateDialog} disabled={isProcessing} className="h-8">
+          <Calendar className="mr-1 size-4" />
+          期限
+        </Button>
+
         {/* アーカイブ */}
-        <Button variant="outline" size="sm" onClick={handleArchive} className="h-8">
+        <Button variant="outline" size="sm" onClick={handleArchive} disabled={isProcessing} className="h-8">
           <Archive className="mr-1 size-4" />
           アーカイブ
         </Button>
 
         {/* 削除 */}
-        <Button variant="destructive" size="sm" onClick={handleDelete} className="h-8">
+        <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isProcessing} className="h-8">
           <Trash2 className="mr-1 size-4" />
           削除
         </Button>
       </div>
+
+      {/* タグ編集ダイアログ */}
+      <BulkTagsDialog
+        open={showTagsDialog}
+        onOpenChange={setShowTagsDialog}
+        selectedIds={Array.from(getSelectedIds())}
+        onSuccess={() => {
+          clearSelection()
+          setShowTagsDialog(false)
+        }}
+      />
+
+      {/* 期限設定ダイアログ */}
+      <BulkDatePickerDialog
+        open={showDateDialog}
+        onOpenChange={setShowDateDialog}
+        selectedIds={Array.from(getSelectedIds())}
+        onSuccess={() => {
+          clearSelection()
+          setShowDateDialog(false)
+        }}
+      />
     </div>
   )
 }
