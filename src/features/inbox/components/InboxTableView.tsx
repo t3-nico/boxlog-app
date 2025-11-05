@@ -273,19 +273,18 @@ export function InboxTableView() {
                   <InboxTableEmptyState columnCount={visibleColumns.length} totalItems={items.length} />
                 ) : groupBy ? (
                   // グループ化表示
-                  groupedData.map((group) => (
-                    <>
-                      <GroupHeader
-                        key={`header-${group.groupKey}`}
-                        groupKey={group.groupKey}
-                        groupLabel={group.groupLabel}
-                        count={group.count}
-                        columnCount={visibleColumns.length}
-                      />
-                      {!collapsedGroups.has(group.groupKey) &&
-                        group.items.map((item) => <InboxTableRow key={item.id} item={item} />)}
-                    </>
-                  ))
+                  groupedData.map((group) => [
+                    <GroupHeader
+                      key={`header-${group.groupKey}`}
+                      groupKey={group.groupKey}
+                      groupLabel={group.groupLabel}
+                      count={group.count}
+                      columnCount={visibleColumns.length}
+                    />,
+                    ...(collapsedGroups.has(group.groupKey)
+                      ? []
+                      : group.items.map((item) => <InboxTableRow key={item.id} item={item} />)),
+                  ])
                 ) : (
                   // 通常表示
                   paginatedItems.map((item) => <InboxTableRow key={item.id} item={item} />)
