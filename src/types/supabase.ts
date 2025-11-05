@@ -97,9 +97,13 @@ export type Database = {
           created_at: string | null
           depth: number | null
           description: string | null
+          icon: string | null
           id: string
+          is_active: boolean
+          level: number
           name: string
           parent_id: string | null
+          path: string | null
           updated_at: string | null
           user_id: string | null
         }
@@ -108,9 +112,13 @@ export type Database = {
           created_at?: string | null
           depth?: number | null
           description?: string | null
+          icon?: string | null
           id?: string
+          is_active?: boolean
+          level?: number
           name: string
           parent_id?: string | null
+          path?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -119,9 +127,13 @@ export type Database = {
           created_at?: string | null
           depth?: number | null
           description?: string | null
+          icon?: string | null
           id?: string
+          is_active?: boolean
+          level?: number
           name?: string
           parent_id?: string | null
+          path?: string | null
           updated_at?: string | null
           user_id?: string | null
         }

@@ -23,7 +23,11 @@ CREATE INDEX IF NOT EXISTS idx_tags_name ON tags(name);
 -- 既存のRLSポリシーを削除して新しいものを作成
 DROP POLICY IF EXISTS "individual_access" ON tags;
 
--- 新しいRLSポリシー（user_idベース）は後で設定
+-- 新しいRLSポリシー（user_idベース）を即座に作成
+CREATE POLICY "Users can view own tags" ON tags FOR SELECT USING (auth.uid() = user_id OR user_id IS NULL);
+CREATE POLICY "Users can insert own tags" ON tags FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own tags" ON tags FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own tags" ON tags FOR DELETE USING (auth.uid() = user_id);
 
 -- ========================================
 -- 2. Tickets テーブル
@@ -255,11 +259,7 @@ ALTER TABLE records ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ticket_tags ENABLE ROW LEVEL SECURITY;
 ALTER TABLE session_tags ENABLE ROW LEVEL SECURITY;
 
--- Tags RLS（既存ポリシー削除済み、新規作成）
-CREATE POLICY "Users can view own tags" ON tags FOR SELECT USING (auth.uid() = user_id OR user_id IS NULL);
-CREATE POLICY "Users can insert own tags" ON tags FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update own tags" ON tags FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Users can delete own tags" ON tags FOR DELETE USING (auth.uid() = user_id);
+-- Tags RLS（既存ポリシー削除済み、ファイル上部で作成済み）
 
 -- Tickets RLS
 CREATE POLICY "Users can view own tickets" ON tickets FOR SELECT USING (auth.uid() = user_id);
