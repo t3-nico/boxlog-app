@@ -3,16 +3,27 @@
 import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
-import { useEffect, useMemo } from 'react'
+import { DndContext, DragEndEvent, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
+import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useInboxData } from '../hooks/useInboxData'
+import { useInboxKeyboardShortcuts } from '../hooks/useInboxKeyboardShortcuts'
+import type { ColumnId } from '../stores/useInboxColumnStore'
 import { useInboxColumnStore } from '../stores/useInboxColumnStore'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
+import { useInboxGroupStore } from '../stores/useInboxGroupStore'
 import { useInboxPaginationStore } from '../stores/useInboxPaginationStore'
 import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'
+import type { SortField } from '../stores/useInboxSortStore'
 import { useInboxSortStore } from '../stores/useInboxSortStore'
+import { useInboxViewStore } from '../stores/useInboxViewStore'
+import { groupItems } from '../utils/grouping'
 import { BulkActionsToolbar } from './table/BulkActionsToolbar'
+import { DraggableTableHead } from './table/DraggableTableHead'
+import { GroupBySelector } from './table/GroupBySelector'
+import { GroupHeader } from './table/GroupHeader'
 import { InboxTableRow } from './table/InboxTableRow'
-import { ResizableTableHead } from './table/ResizableTableHead'
+import { SavedViewsSelector } from './table/SavedViewsSelector'
 import { TablePagination } from './table/TablePagination'
 import { TableToolbar } from './table/TableToolbar'
 
@@ -31,17 +42,87 @@ import { TableToolbar } from './table/TableToolbar'
  */
 export function InboxTableView() {
   const filters = useInboxFilterStore()
-  const { sortField, sortDirection } = useInboxSortStore()
-  const { currentPage, pageSize, setCurrentPage } = useInboxPaginationStore()
+  const { sortField, sortDirection, setSort } = useInboxSortStore()
+  const { currentPage, pageSize, setCurrentPage, setPageSize } = useInboxPaginationStore()
   const { selectedIds, toggleAll } = useInboxSelectionStore()
-  const { getVisibleColumns } = useInboxColumnStore()
+  const { getVisibleColumns, getOrderedColumns, reorderColumns, columnOrder } = useInboxColumnStore()
+  const { getActiveView } = useInboxViewStore()
+  const { groupBy, collapsedGroups } = useInboxGroupStore()
   const { items, isLoading, error } = useInboxData({
     status: filters.status[0] as TicketStatus | undefined,
     search: filters.search,
   })
 
-  // 表示する列を取得
-  const visibleColumns = getVisibleColumns()
+  // dnd-kit センサー設定（マウス・タッチ対応）
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 10, // 10px移動したらドラッグ開始
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250, // 250ms長押しでドラッグ開始
+        tolerance: 5,
+      },
+    })
+  )
+
+  // 列の並び替えハンドラー
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event
+
+      if (!over || active.id === over.id) return
+
+      const oldIndex = columnOrder.indexOf(active.id as ColumnId)
+      const newIndex = columnOrder.indexOf(over.id as ColumnId)
+
+      if (oldIndex === -1 || newIndex === -1) return
+
+      const newOrder = [...columnOrder]
+      newOrder.splice(oldIndex, 1)
+      newOrder.splice(newIndex, 0, active.id as ColumnId)
+
+      reorderColumns(newOrder)
+    },
+    [columnOrder, reorderColumns]
+  )
+
+  // アクティブなビューを取得
+  const activeView = getActiveView()
+
+  // 検索フィールドのref（キーボードショートカット用）
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // 表示する列を取得（順序適用済み）
+  const orderedVisibleColumns = useMemo(() => {
+    const orderedCols = getOrderedColumns()
+    return orderedCols.filter((col) => col.visible)
+  }, [getOrderedColumns])
+
+  // アクティブビュー変更時にフィルター・ソート・ページサイズを適用
+  useEffect(() => {
+    if (!activeView) return
+
+    // フィルター適用
+    if (activeView.filters.status) {
+      filters.setStatus(activeView.filters.status as TicketStatus[])
+    }
+    if (activeView.filters.search) {
+      filters.setSearch(activeView.filters.search)
+    }
+
+    // ソート適用
+    if (activeView.sorting) {
+      setSort(activeView.sorting.field, activeView.sorting.direction)
+    }
+
+    // ページサイズ適用
+    if (activeView.pageSize) {
+      setPageSize(activeView.pageSize)
+    }
+  }, [activeView, filters, setSort, setPageSize])
 
   // フィルター変更時にページ1に戻る
   useEffect(() => {
@@ -90,12 +171,18 @@ export function InboxTableView() {
     })
   }, [items, sortField, sortDirection])
 
-  // ページネーション適用
+  // グループ化適用
+  const groupedData = useMemo(() => {
+    return groupItems(sortedItems, groupBy)
+  }, [sortedItems, groupBy])
+
+  // ページネーション適用（グループ化なしの場合のみ）
   const paginatedItems = useMemo(() => {
+    if (groupBy) return sortedItems // グループ化時はページネーションなし
     const startIndex = (currentPage - 1) * pageSize
     const endIndex = startIndex + pageSize
     return sortedItems.slice(startIndex, endIndex)
-  }, [sortedItems, currentPage, pageSize])
+  }, [sortedItems, currentPage, pageSize, groupBy])
 
   // 全選択状態の計算（フックはreturnの前に必ず配置）
   const currentPageIds = useMemo(() => paginatedItems.map((item) => item.id), [paginatedItems])
@@ -110,6 +197,13 @@ export function InboxTableView() {
   const handleToggleAll = () => {
     toggleAll(currentPageIds)
   }
+
+  // キーボードショートカットを有効化
+  useInboxKeyboardShortcuts({
+    itemIds: currentPageIds,
+    searchInputRef,
+    enabled: !isLoading && !error,
+  })
 
   // エラー表示
   if (error) {
@@ -138,8 +232,21 @@ export function InboxTableView() {
   return (
     <div id="inbox-table-view-panel" role="tabpanel" className="flex h-full flex-col">
       {/* ツールバー: フィルター・検索 */}
-      <div className="flex shrink-0 px-4 py-4 md:px-6">
-        <TableToolbar />
+      <div className="flex shrink-0 items-center justify-between gap-4 px-4 py-4 md:px-6">
+        <div className="flex items-center gap-2">
+          <SavedViewsSelector
+            currentState={{
+              filters: {
+                status: filters.status,
+                search: filters.search,
+              },
+              sorting: sortField && sortDirection ? { field: sortField, direction: sortDirection } : undefined,
+              pageSize,
+            }}
+          />
+          <GroupBySelector />
+        </div>
+        <TableToolbar searchInputRef={searchInputRef} />
       </div>
 
       {/* 一括操作ツールバー */}
@@ -147,62 +254,82 @@ export function InboxTableView() {
 
       {/* テーブル */}
       <div className="flex-1 overflow-auto px-4 md:px-6">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {visibleColumns.map((column) => {
-                if (column.id === 'selection') {
-                  return (
-                    <TableHead key={column.id} style={{ width: `${column.width}px` }}>
-                      <Checkbox
-                        checked={allSelected ? true : someSelected ? 'indeterminate' : false}
-                        onCheckedChange={handleToggleAll}
-                      />
-                    </TableHead>
-                  )
-                }
-
-                if (column.id === 'actions') {
-                  return (
-                    <ResizableTableHead key={column.id} columnId={column.id}>
-                      {column.label}
-                    </ResizableTableHead>
-                  )
-                }
-
-                if (column.id === 'tags') {
-                  return (
-                    <ResizableTableHead key={column.id} columnId={column.id}>
-                      {column.label}
-                    </ResizableTableHead>
-                  )
-                }
-
-                // ソート可能な列
-                return (
-                  <ResizableTableHead key={column.id} columnId={column.id} sortField={column.id as any}>
-                    {column.label}
-                  </ResizableTableHead>
-                )
-              })}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedItems.length === 0 ? (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={visibleColumns.length} className="h-24 text-center">
-                  <p className="text-muted-foreground">アイテムがありません</p>
-                </TableCell>
+                <SortableContext items={columnOrder} strategy={horizontalListSortingStrategy}>
+                  {orderedVisibleColumns.map((column) => {
+                    if (column.id === 'selection') {
+                      return (
+                        <TableHead key={column.id} style={{ width: `${column.width}px` }}>
+                          <Checkbox
+                            checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+                            onCheckedChange={handleToggleAll}
+                          />
+                        </TableHead>
+                      )
+                    }
+
+                    if (column.id === 'actions') {
+                      return (
+                        <DraggableTableHead key={column.id} columnId={column.id} isDragEnabled={false}>
+                          {column.label}
+                        </DraggableTableHead>
+                      )
+                    }
+
+                    if (column.id === 'tags') {
+                      return (
+                        <DraggableTableHead key={column.id} columnId={column.id}>
+                          {column.label}
+                        </DraggableTableHead>
+                      )
+                    }
+
+                    // ソート可能な列
+                    return (
+                      <DraggableTableHead key={column.id} columnId={column.id} sortField={column.id as SortField}>
+                        {column.label}
+                      </DraggableTableHead>
+                    )
+                  })}
+                </SortableContext>
               </TableRow>
-            ) : (
-              paginatedItems.map((item) => <InboxTableRow key={item.id} item={item} />)
-            )}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {paginatedItems.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={orderedVisibleColumns.length} className="h-24 text-center">
+                    <p className="text-muted-foreground">アイテムがありません</p>
+                  </TableCell>
+                </TableRow>
+              ) : groupBy ? (
+                // グループ化表示
+                groupedData.map((group) => (
+                  <>
+                    <GroupHeader
+                      key={`header-${group.groupKey}`}
+                      groupKey={group.groupKey}
+                      groupLabel={group.groupLabel}
+                      count={group.count}
+                      columnCount={orderedVisibleColumns.length}
+                    />
+                    {!collapsedGroups.has(group.groupKey) &&
+                      group.items.map((item) => <InboxTableRow key={item.id} item={item} />)}
+                  </>
+                ))
+              ) : (
+                // 通常表示
+                paginatedItems.map((item) => <InboxTableRow key={item.id} item={item} />)
+              )}
+            </TableBody>
+          </Table>
+        </DndContext>
       </div>
 
-      {/* ページネーション */}
-      <TablePagination totalItems={sortedItems.length} />
+      {/* ページネーション（グループ化なしの場合のみ） */}
+      {!groupBy && <TablePagination totalItems={sortedItems.length} />}
     </div>
   )
 }
