@@ -12,6 +12,7 @@ import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 import { useInboxGroupStore } from '../stores/useInboxGroupStore'
 import { useInboxPaginationStore } from '../stores/useInboxPaginationStore'
 import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'
+import type { SortField } from '../stores/useInboxSortStore'
 import { useInboxSortStore } from '../stores/useInboxSortStore'
 import { useInboxViewStore } from '../stores/useInboxViewStore'
 import { groupItems } from '../utils/grouping'
@@ -245,6 +246,7 @@ export function InboxTableView() {
                     // アイコンを取得
                     const Icon = columnIcons[column.id as keyof typeof columnIcons]
 
+                    // tagsはソート不可
                     if (column.id === 'tags') {
                       return (
                         <ResizableTableHead key={column.id} columnId={column.id} icon={Icon}>
@@ -253,9 +255,14 @@ export function InboxTableView() {
                       )
                     }
 
-                    // ソート可能な列
+                    // ソート可能な列（selection, tags以外）
                     return (
-                      <ResizableTableHead key={column.id} columnId={column.id} sortField={column.id as any} icon={Icon}>
+                      <ResizableTableHead
+                        key={column.id}
+                        columnId={column.id}
+                        sortField={column.id as SortField}
+                        icon={Icon}
+                      >
                         {column.label}
                       </ResizableTableHead>
                     )
