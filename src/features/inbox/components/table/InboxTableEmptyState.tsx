@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
