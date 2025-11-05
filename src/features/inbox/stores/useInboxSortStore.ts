@@ -18,6 +18,7 @@ interface InboxSortState {
   sortField: SortField | null
   sortDirection: SortDirection
   setSortField: (field: SortField) => void
+  setSort: (field: string, direction: 'asc' | 'desc') => void
   clearSort: () => void
 }
 
@@ -54,6 +55,10 @@ export const useInboxSortStore = create<InboxSortState>()(
           // 別フィールド: asc から開始
           set({ sortField: field, sortDirection: 'asc' })
         }
+      },
+
+      setSort: (field, direction) => {
+        set({ sortField: field as SortField, sortDirection: direction })
       },
 
       clearSort: () => set({ sortField: null, sortDirection: null }),

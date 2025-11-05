@@ -14,7 +14,7 @@ import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
  * 列の表示/非表示を切り替えるUI
  * - Popoverで列の表示/非表示を切り替え
  * - リセットボタン
- * - selection と actions は常に表示（切り替え不可）
+ * - selection は常に表示（切り替え不可）
  *
  * @example
  * ```tsx
@@ -25,7 +25,7 @@ export function ColumnSettings() {
   const { columns, toggleColumnVisibility, resetColumns } = useInboxColumnStore()
 
   // 表示/非表示を切り替え可能な列のみ
-  const configurableColumns = columns.filter((col) => col.id !== 'selection' && col.id !== 'actions')
+  const configurableColumns = columns.filter((col) => col.id !== 'selection')
 
   return (
     <Popover>

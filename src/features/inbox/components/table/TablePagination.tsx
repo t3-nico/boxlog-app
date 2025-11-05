@@ -51,12 +51,12 @@ export function TablePagination({ totalItems }: TablePaginationProps) {
   }
 
   return (
-    <div className="border-border flex items-center justify-between border-t px-4 py-4 md:px-6">
+    <div className="flex items-center justify-between px-4 py-4 md:px-6">
       {/* 左側: 表示件数選択 */}
       <div className="flex items-center gap-2">
         <span className="text-muted-foreground text-sm">表示件数</span>
         <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
-          <SelectTrigger className="h-9 w-[80px]">
+          <SelectTrigger className="h-9 w-[64px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

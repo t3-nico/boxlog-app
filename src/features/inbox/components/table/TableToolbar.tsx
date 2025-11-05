@@ -2,10 +2,17 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { X } from 'lucide-react'
+import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
+import { Plus, X } from 'lucide-react'
+import type { RefObject } from 'react'
 import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
 import { ColumnSettings } from './ColumnSettings'
 import { TableFilters } from './TableFilters'
+
+interface TableToolbarProps {
+  /** 検索フィールドのref（キーボードショートカット用） */
+  searchInputRef?: RefObject<HTMLInputElement>
+}
 
 /**
  * Tableビュー用ツールバー
@@ -14,18 +21,26 @@ import { TableFilters } from './TableFilters'
  * - 検索ボックス
  * - TableFilters（Popover版フィルター）
  * - ColumnSettings（列設定）
+ * - 新規作成ボタン
  * - リセットボタン
  */
-export function TableToolbar() {
+export function TableToolbar({ searchInputRef }: TableToolbarProps) {
   const { search, status, setSearch, reset } = useInboxFilterStore()
+  const { openInspector } = useTicketInspectorStore()
 
   const isFiltered = search !== '' || status.length > 0
+
+  // 新規作成ハンドラー
+  const handleCreate = () => {
+    openInspector('new')
+  }
 
   return (
     <div className="flex w-full items-center justify-between gap-4">
       <div className="flex flex-1 items-center gap-2">
         {/* 検索 */}
         <Input
+          ref={searchInputRef}
           placeholder="チケットを検索..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -44,9 +59,13 @@ export function TableToolbar() {
         )}
       </div>
 
-      {/* 右側: 列設定 */}
+      {/* 右側: 列設定・新規作成 */}
       <div className="flex items-center gap-2">
         <ColumnSettings />
+        <Button onClick={handleCreate} size="sm" className="h-9">
+          <Plus className="mr-2 size-4" />
+          新規作成
+        </Button>
       </div>
     </div>
   )

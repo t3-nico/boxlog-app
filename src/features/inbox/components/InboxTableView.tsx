@@ -222,8 +222,9 @@ export function InboxTableView() {
       <BulkActionsToolbar />
 
       {/* テーブル */}
-      <div className="flex-1 overflow-hidden px-4 md:px-6">
-        <div className="border-border flex h-full flex-col overflow-hidden rounded-lg border">
+      <div className="flex flex-1 flex-col overflow-hidden px-4 md:px-6">
+        {/* テーブル部分: 枠で囲む */}
+        <div className="border-border flex-1 overflow-hidden rounded-lg border">
           {/* ヘッダー: 固定 */}
           <div className="overflow-x-auto">
             <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
@@ -265,7 +266,7 @@ export function InboxTableView() {
           </div>
 
           {/* ボディ: スクロール可能 */}
-          <div className="flex-1 overflow-x-auto overflow-y-auto">
+          <div className="h-full overflow-x-auto overflow-y-auto" style={{ height: 'calc(100% - 41px)' }}>
             <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
               <TableBody>
                 {paginatedItems.length === 0 ? (
@@ -292,14 +293,14 @@ export function InboxTableView() {
               </TableBody>
             </Table>
           </div>
-
-          {/* フッター: ページネーション（グループ化なしの場合のみ） */}
-          {!groupBy && (
-            <div className="bg-muted/30 shrink-0">
-              <TablePagination totalItems={sortedItems.length} />
-            </div>
-          )}
         </div>
+
+        {/* フッター: テーブルの外側に配置（グループ化なしの場合のみ） */}
+        {!groupBy && (
+          <div className="shrink-0">
+            <TablePagination totalItems={sortedItems.length} />
+          </div>
+        )}
       </div>
     </div>
   )

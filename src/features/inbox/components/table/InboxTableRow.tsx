@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   ContextMenu,
@@ -8,8 +7,8 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { TicketStatusBadge } from '@/features/tickets/components/display/TicketStatusBadge'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
+import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -19,6 +18,9 @@ import type { InboxItem } from '../../hooks/useInboxData'
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
 import { useInboxFocusStore } from '../../stores/useInboxFocusStore'
 import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
+import { DueDateEditCell } from './DueDateEditCell'
+import { StatusEditCell } from './StatusEditCell'
+import { TagsEditCell } from './TagsEditCell'
 
 interface InboxTableRowProps {
   /** 表示するInboxアイテム */
@@ -50,6 +52,22 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   const isFocused = focusedId === item.id
   const visibleColumns = getVisibleColumns()
 
+  // インライン編集ハンドラー
+  const handleStatusChange = (status: TicketStatus) => {
+    // TODO: APIでステータスを更新
+    console.log('Update status:', item.id, status)
+  }
+
+  const handleTagsChange = (tags: InboxItem['tags']) => {
+    // TODO: APIでタグを更新
+    console.log('Update tags:', item.id, tags)
+  }
+
+  const handleDueDateChange = (dueDate: string | null) => {
+    // TODO: APIで期限日を更新
+    console.log('Update due date:', item.id, dueDate)
+  }
+
   // コンテキストメニューアクション
   const handleEdit = () => {
     openInspector(item.id)
@@ -79,69 +97,68 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
 
   // 列IDをキーにセルをレンダリング
   const renderCell = (columnId: string) => {
+    // 列情報を取得して幅を適用
+    const column = visibleColumns.find((col) => col.id === columnId)
+    const style = column ? { width: `${column.width}px` } : undefined
+
     switch (columnId) {
       case 'selection':
         return (
-          <TableCell key={columnId} onClick={(e) => e.stopPropagation()}>
+          <TableCell key={columnId} onClick={(e) => e.stopPropagation()} style={style}>
             <Checkbox checked={selected} onCheckedChange={() => toggleSelection(item.id)} />
           </TableCell>
         )
 
       case 'ticket_number':
         return (
-          <TableCell key={columnId} className="font-mono text-xs">
+          <TableCell key={columnId} className="font-mono text-xs" style={style}>
             {item.ticket_number || '-'}
           </TableCell>
         )
 
       case 'title':
         return (
-          <TableCell key={columnId} className="font-medium">
-            {item.title}
+          <TableCell key={columnId} className="font-medium" style={style}>
+            <div className="group cursor-pointer">
+              <span className="group-hover:underline">{item.title}</span>
+            </div>
           </TableCell>
         )
 
       case 'status':
         return (
-          <TableCell key={columnId}>
-            <TicketStatusBadge status={item.status} />
-          </TableCell>
+          <StatusEditCell
+            key={columnId}
+            status={item.status}
+            width={column?.width}
+            onStatusChange={handleStatusChange}
+          />
         )
 
       case 'tags':
         return (
-          <TableCell key={columnId}>
-            <div className="flex gap-1">
-              {item.tags?.slice(0, 2).map((tag) => (
-                <Badge key={tag.id} variant="secondary" className="text-xs">
-                  {tag.name}
-                </Badge>
-              ))}
-              {item.tags && item.tags.length > 2 && (
-                <Badge variant="secondary" className="text-xs">
-                  +{item.tags.length - 2}
-                </Badge>
-              )}
-              {!item.tags || item.tags.length === 0 ? <span className="text-muted-foreground text-xs">-</span> : null}
-            </div>
-          </TableCell>
+          <TagsEditCell
+            key={columnId}
+            tags={item.tags}
+            width={column?.width}
+            onTagsChange={handleTagsChange}
+            availableTags={[]}
+          />
         )
 
       case 'due_date':
         return (
-          <TableCell key={columnId} className="text-muted-foreground text-sm">
-            {item.due_date
-              ? formatDistanceToNow(new Date(item.due_date), {
-                  addSuffix: true,
-                  locale: ja,
-                })
-              : '-'}
-          </TableCell>
+          <DueDateEditCell
+            key={columnId}
+            dueDate={item.due_date}
+            width={column?.width}
+            onDueDateChange={handleDueDateChange}
+          />
         )
 
       case 'created_at':
         return (
-          <TableCell key={columnId} className="text-muted-foreground text-sm">
+          <TableCell key={columnId} className="text-muted-foreground text-sm" style={style}>
             {formatDistanceToNow(new Date(item.created_at), {
               addSuffix: true,
               locale: ja,

@@ -59,6 +59,16 @@ export type InboxView = {
     direction: 'asc' | 'desc'
   }
 
+  /** Table view専用: 列設定 */
+  columns?: Array<{
+    id: string
+    visible: boolean
+    width: number
+  }>
+
+  /** Table view専用: ページサイズ */
+  pageSize?: number
+
   /** デフォルトViewかどうか */
   isDefault?: boolean
 

@@ -4,15 +4,7 @@ import { devtools, persist } from 'zustand/middleware'
 /**
  * 列ID
  */
-export type ColumnId =
-  | 'selection'
-  | 'ticket_number'
-  | 'title'
-  | 'status'
-  | 'tags'
-  | 'due_date'
-  | 'created_at'
-  | 'actions'
+export type ColumnId = 'selection' | 'ticket_number' | 'title' | 'status' | 'tags' | 'due_date' | 'created_at'
 
 /**
  * 列設定
@@ -36,7 +28,6 @@ const DEFAULT_COLUMNS: ColumnConfig[] = [
   { id: 'tags', label: 'タグ', visible: true, width: 200, resizable: true },
   { id: 'due_date', label: '期限', visible: true, width: 140, resizable: true },
   { id: 'created_at', label: '作成日時', visible: true, width: 140, resizable: true },
-  { id: 'actions', label: 'アクション', visible: true, width: 70, resizable: false },
 ]
 
 /**
@@ -85,8 +76,8 @@ export const useInboxColumnStore = create<InboxColumnState>()(
         },
 
         toggleColumnVisibility: (id) => {
-          // selection と actions は常に表示
-          if (id === 'selection' || id === 'actions') return
+          // selection は常に表示
+          if (id === 'selection') return
 
           set({
             columns: get().columns.map((col) => (col.id === id ? { ...col, visible: !col.visible } : col)),
@@ -98,9 +89,9 @@ export const useInboxColumnStore = create<InboxColumnState>()(
         getVisibleColumns: () => get().columns.filter((col) => col.visible),
       }),
       {
-        name: 'inbox-column-store',
+        name: 'inbox-column-store-v2',
       }
     ),
-    { name: 'inbox-column-store' }
+    { name: 'inbox-column-store-v2' }
   )
 )
