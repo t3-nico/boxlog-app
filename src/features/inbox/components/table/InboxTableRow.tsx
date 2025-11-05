@@ -1,10 +1,12 @@
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { formatDistanceToNow } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import type { InboxItem } from '../../hooks/useInboxData'
+import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
 import { InboxTableRowActions } from './InboxTableRowActions'
 
 interface InboxTableRowProps {
@@ -48,9 +50,17 @@ function StatusBadge({ status }: { status: TicketStatus }) {
  */
 export function InboxTableRow({ item }: InboxTableRowProps) {
   const { openInspector } = useTicketInspectorStore()
+  const { isSelected, toggleSelection } = useInboxSelectionStore()
+
+  const selected = isSelected(item.id)
 
   return (
     <TableRow className="hover:bg-muted/50 cursor-pointer" onClick={() => openInspector(item.id)}>
+      {/* チェックボックス */}
+      <TableCell onClick={(e) => e.stopPropagation()}>
+        <Checkbox checked={selected} onCheckedChange={() => toggleSelection(item.id)} />
+      </TableCell>
+
       {/* チケット番号 */}
       <TableCell className="font-mono text-xs">{item.ticket_number || '-'}</TableCell>
 

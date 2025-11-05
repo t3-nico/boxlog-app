@@ -1,13 +1,18 @@
 'use client'
 
+import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
+import { useInboxPaginationStore } from '../stores/useInboxPaginationStore'
+import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'
 import { useInboxSortStore } from '../stores/useInboxSortStore'
+import { BulkActionsToolbar } from './table/BulkActionsToolbar'
 import { InboxTableRow } from './table/InboxTableRow'
 import { SortableTableHead } from './table/SortableTableHead'
+import { TablePagination } from './table/TablePagination'
 import { TableToolbar } from './table/TableToolbar'
 
 /**
@@ -26,10 +31,17 @@ import { TableToolbar } from './table/TableToolbar'
 export function InboxTableView() {
   const filters = useInboxFilterStore()
   const { sortField, sortDirection } = useInboxSortStore()
+  const { currentPage, pageSize, setCurrentPage } = useInboxPaginationStore()
+  const { selectedIds, toggleAll } = useInboxSelectionStore()
   const { items, isLoading, error } = useInboxData({
     status: filters.status[0] as TicketStatus | undefined,
     search: filters.search,
   })
+
+  // フィルター変更時にページ1に戻る
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filters.status, filters.search, setCurrentPage])
 
   // ソート適用
   const sortedItems = useMemo(() => {
@@ -73,6 +85,27 @@ export function InboxTableView() {
     })
   }, [items, sortField, sortDirection])
 
+  // ページネーション適用
+  const paginatedItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize
+    const endIndex = startIndex + pageSize
+    return sortedItems.slice(startIndex, endIndex)
+  }, [sortedItems, currentPage, pageSize])
+
+  // 全選択状態の計算（フックはreturnの前に必ず配置）
+  const currentPageIds = useMemo(() => paginatedItems.map((item) => item.id), [paginatedItems])
+  const selectedCount = useMemo(
+    () => currentPageIds.filter((id) => selectedIds.has(id)).length,
+    [currentPageIds, selectedIds]
+  )
+  const allSelected = selectedCount === currentPageIds.length && currentPageIds.length > 0
+  const someSelected = selectedCount > 0 && selectedCount < currentPageIds.length
+
+  // 全選択ハンドラー
+  const handleToggleAll = () => {
+    toggleAll(currentPageIds)
+  }
+
   // エラー表示
   if (error) {
     return (
@@ -104,11 +137,20 @@ export function InboxTableView() {
         <TableToolbar />
       </div>
 
+      {/* 一括操作ツールバー */}
+      <BulkActionsToolbar />
+
       {/* テーブル */}
       <div className="flex-1 overflow-auto px-4 md:px-6">
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[50px]">
+                <Checkbox
+                  checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+                  onCheckedChange={handleToggleAll}
+                />
+              </TableHead>
               <SortableTableHead field="ticket_number" className="w-[80px]">
                 #
               </SortableTableHead>
@@ -129,18 +171,21 @@ export function InboxTableView() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedItems.length === 0 ? (
+            {paginatedItems.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
+                <TableCell colSpan={8} className="h-24 text-center">
                   <p className="text-muted-foreground">アイテムがありません</p>
                 </TableCell>
               </TableRow>
             ) : (
-              sortedItems.map((item) => <InboxTableRow key={item.id} item={item} />)
+              paginatedItems.map((item) => <InboxTableRow key={item.id} item={item} />)
             )}
           </TableBody>
         </Table>
       </div>
+
+      {/* ページネーション */}
+      <TablePagination totalItems={sortedItems.length} />
     </div>
   )
 }
