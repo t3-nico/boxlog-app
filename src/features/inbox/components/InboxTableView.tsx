@@ -1,37 +1,14 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
-import { formatDistanceToNow } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useMemo } from 'react'
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 import { useInboxSortStore } from '../stores/useInboxSortStore'
+import { InboxTableRow } from './table/InboxTableRow'
 import { SortableTableHead } from './table/SortableTableHead'
 import { TableToolbar } from './table/TableToolbar'
-
-/**
- * ステータスバッジ表示
- */
-function StatusBadge({ status }: { status: TicketStatus }) {
-  const statusConfig: Record<
-    TicketStatus,
-    { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }
-  > = {
-    backlog: { label: '準備中', variant: 'secondary' },
-    ready: { label: '配置済み', variant: 'outline' },
-    active: { label: '作業中', variant: 'default' },
-    wait: { label: '待ち', variant: 'secondary' },
-    done: { label: '完了', variant: 'outline' },
-    cancel: { label: '中止', variant: 'destructive' },
-  }
-
-  const config = statusConfig[status]
-  return <Badge variant={config.variant}>{config.label}</Badge>
-}
 
 /**
  * Inbox Table View コンポーネント
@@ -53,7 +30,6 @@ export function InboxTableView() {
     status: filters.status[0] as TicketStatus | undefined,
     search: filters.search,
   })
-  const { openInspector } = useTicketInspectorStore()
 
   // ソート適用
   const sortedItems = useMemo(() => {
@@ -149,71 +125,18 @@ export function InboxTableView() {
               <SortableTableHead field="created_at" className="w-[140px]">
                 作成日時
               </SortableTableHead>
+              <TableHead className="w-[70px]">アクション</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {sortedItems.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={7} className="h-24 text-center">
                   <p className="text-muted-foreground">アイテムがありません</p>
                 </TableCell>
               </TableRow>
             ) : (
-              sortedItems.map((item) => (
-                <TableRow
-                  key={item.id}
-                  className="hover:bg-muted/50 cursor-pointer"
-                  onClick={() => openInspector(item.id)}
-                >
-                  {/* チケット番号 */}
-                  <TableCell className="font-mono text-xs">{item.ticket_number || '-'}</TableCell>
-
-                  {/* タイトル */}
-                  <TableCell className="font-medium">{item.title}</TableCell>
-
-                  {/* ステータス */}
-                  <TableCell>
-                    <StatusBadge status={item.status} />
-                  </TableCell>
-
-                  {/* タグ */}
-                  <TableCell>
-                    <div className="flex gap-1">
-                      {item.tags?.slice(0, 2).map((tag) => (
-                        <Badge key={tag.id} variant="secondary" className="text-xs">
-                          {tag.name}
-                        </Badge>
-                      ))}
-                      {item.tags && item.tags.length > 2 && (
-                        <Badge variant="secondary" className="text-xs">
-                          +{item.tags.length - 2}
-                        </Badge>
-                      )}
-                      {!item.tags || item.tags.length === 0 ? (
-                        <span className="text-muted-foreground text-xs">-</span>
-                      ) : null}
-                    </div>
-                  </TableCell>
-
-                  {/* 期限 */}
-                  <TableCell className="text-muted-foreground text-sm">
-                    {item.due_date
-                      ? formatDistanceToNow(new Date(item.due_date), {
-                          addSuffix: true,
-                          locale: ja,
-                        })
-                      : '-'}
-                  </TableCell>
-
-                  {/* 作成日時 */}
-                  <TableCell className="text-muted-foreground text-sm">
-                    {formatDistanceToNow(new Date(item.created_at), {
-                      addSuffix: true,
-                      locale: ja,
-                    })}
-                  </TableCell>
-                </TableRow>
-              ))
+              sortedItems.map((item) => <InboxTableRow key={item.id} item={item} />)
             )}
           </TableBody>
         </Table>

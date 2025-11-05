@@ -2,26 +2,20 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { X } from 'lucide-react'
 import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
+import { TableFilters } from './TableFilters'
 
 /**
  * Tableビュー用ツールバー
  *
- * 検索、ステータスフィルター機能を提供
+ * 検索、フィルター機能を提供
+ * - 検索ボックス
+ * - TableFilters（Popover版フィルター）
+ * - リセットボタン
  */
 export function TableToolbar() {
-  const { search, status, setSearch, setStatus, reset } = useInboxFilterStore()
+  const { search, status, setSearch, reset } = useInboxFilterStore()
 
   const isFiltered = search !== '' || status.length > 0
 
@@ -36,27 +30,8 @@ export function TableToolbar() {
           className="h-9 w-[150px] lg:w-[250px]"
         />
 
-        {/* ステータスフィルター */}
-        <Select
-          value={status?.[0] ?? 'all'}
-          onValueChange={(value) => setStatus(value === 'all' ? [] : ([value] as TicketStatus[]))}
-        >
-          <SelectTrigger className="h-9 w-[120px]">
-            <SelectValue placeholder="ステータス" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>ステータス</SelectLabel>
-              <SelectItem value="all">すべて</SelectItem>
-              <SelectItem value="backlog">準備中</SelectItem>
-              <SelectItem value="ready">配置済み</SelectItem>
-              <SelectItem value="active">作業中</SelectItem>
-              <SelectItem value="wait">待ち</SelectItem>
-              <SelectItem value="done">完了</SelectItem>
-              <SelectItem value="cancel">中止</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        {/* フィルター（Popover版） */}
+        <TableFilters />
 
         {/* フィルターリセット */}
         {isFiltered && (
