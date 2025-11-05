@@ -22,7 +22,7 @@ export interface ColumnConfig {
  */
 const DEFAULT_COLUMNS: ColumnConfig[] = [
   { id: 'selection', label: '', visible: true, width: 50, resizable: false },
-  { id: 'ticket_number', label: '#', visible: true, width: 80, resizable: true },
+  { id: 'ticket_number', label: '番号', visible: true, width: 80, resizable: true },
   { id: 'title', label: 'タイトル', visible: true, width: 300, resizable: true },
   { id: 'status', label: 'ステータス', visible: true, width: 120, resizable: true },
   { id: 'tags', label: 'タグ', visible: true, width: 200, resizable: true },
