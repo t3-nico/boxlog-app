@@ -5,13 +5,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { useEffect, useMemo } from 'react'
 import { useInboxData } from '../hooks/useInboxData'
+import { useInboxColumnStore } from '../stores/useInboxColumnStore'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 import { useInboxPaginationStore } from '../stores/useInboxPaginationStore'
 import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'
 import { useInboxSortStore } from '../stores/useInboxSortStore'
 import { BulkActionsToolbar } from './table/BulkActionsToolbar'
 import { InboxTableRow } from './table/InboxTableRow'
-import { SortableTableHead } from './table/SortableTableHead'
+import { ResizableTableHead } from './table/ResizableTableHead'
 import { TablePagination } from './table/TablePagination'
 import { TableToolbar } from './table/TableToolbar'
 
@@ -33,10 +34,14 @@ export function InboxTableView() {
   const { sortField, sortDirection } = useInboxSortStore()
   const { currentPage, pageSize, setCurrentPage } = useInboxPaginationStore()
   const { selectedIds, toggleAll } = useInboxSelectionStore()
+  const { getVisibleColumns } = useInboxColumnStore()
   const { items, isLoading, error } = useInboxData({
     status: filters.status[0] as TicketStatus | undefined,
     search: filters.search,
   })
+
+  // 表示する列を取得
+  const visibleColumns = getVisibleColumns()
 
   // フィルター変更時にページ1に戻る
   useEffect(() => {
@@ -145,35 +150,47 @@ export function InboxTableView() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[50px]">
-                <Checkbox
-                  checked={allSelected ? true : someSelected ? 'indeterminate' : false}
-                  onCheckedChange={handleToggleAll}
-                />
-              </TableHead>
-              <SortableTableHead field="ticket_number" className="w-[80px]">
-                #
-              </SortableTableHead>
-              <SortableTableHead field="title" className="min-w-[200px]">
-                タイトル
-              </SortableTableHead>
-              <SortableTableHead field="status" className="w-[120px]">
-                ステータス
-              </SortableTableHead>
-              <TableHead className="w-[200px]">タグ</TableHead>
-              <SortableTableHead field="due_date" className="w-[140px]">
-                期限
-              </SortableTableHead>
-              <SortableTableHead field="created_at" className="w-[140px]">
-                作成日時
-              </SortableTableHead>
-              <TableHead className="w-[70px]">アクション</TableHead>
+              {visibleColumns.map((column) => {
+                if (column.id === 'selection') {
+                  return (
+                    <TableHead key={column.id} style={{ width: `${column.width}px` }}>
+                      <Checkbox
+                        checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+                        onCheckedChange={handleToggleAll}
+                      />
+                    </TableHead>
+                  )
+                }
+
+                if (column.id === 'actions') {
+                  return (
+                    <ResizableTableHead key={column.id} columnId={column.id}>
+                      {column.label}
+                    </ResizableTableHead>
+                  )
+                }
+
+                if (column.id === 'tags') {
+                  return (
+                    <ResizableTableHead key={column.id} columnId={column.id}>
+                      {column.label}
+                    </ResizableTableHead>
+                  )
+                }
+
+                // ソート可能な列
+                return (
+                  <ResizableTableHead key={column.id} columnId={column.id} sortField={column.id as any}>
+                    {column.label}
+                  </ResizableTableHead>
+                )
+              })}
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedItems.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center">
+                <TableCell colSpan={visibleColumns.length} className="h-24 text-center">
                   <p className="text-muted-foreground">アイテムがありません</p>
                 </TableCell>
               </TableRow>
