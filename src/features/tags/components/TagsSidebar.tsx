@@ -1,6 +1,7 @@
 'use client'
 
-import { Tags } from 'lucide-react'
+import { Archive, Tags } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
 
 interface TagsSidebarProps {
   onAllTagsClick: () => void
@@ -8,11 +9,16 @@ interface TagsSidebarProps {
 }
 
 /**
- * タグページ用サイドバー（シンプル版）
+ * タグページ用サイドバー
  *
- * すべてのタグビューのみを提供
+ * すべてのタグとアーカイブビューを提供
  */
 export function TagsSidebar({ onAllTagsClick, isLoading = false }: TagsSidebarProps) {
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const isArchivePage = pathname?.includes('/archive')
+
   if (isLoading) {
     return (
       <aside className="bg-background text-foreground flex h-full w-full flex-col">
@@ -21,6 +27,11 @@ export function TagsSidebar({ onAllTagsClick, isLoading = false }: TagsSidebarPr
         </div>
       </aside>
     )
+  }
+
+  const handleArchiveClick = () => {
+    const locale = pathname?.split('/')[1] || 'ja'
+    router.push(`/${locale}/tags/archive`)
   }
 
   return (
@@ -36,11 +47,26 @@ export function TagsSidebar({ onAllTagsClick, isLoading = false }: TagsSidebarPr
           <button
             type="button"
             onClick={onAllTagsClick}
-            className="bg-accent text-accent-foreground w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors"
+            className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
+              isArchivePage ? 'hover:bg-accent hover:text-accent-foreground' : 'bg-accent text-accent-foreground'
+            }`}
           >
             <div className="flex items-center gap-2">
               <Tags className="h-4 w-4 shrink-0" />
               <span>すべてのタグ</span>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleArchiveClick}
+            className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
+              isArchivePage ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Archive className="h-4 w-4 shrink-0" />
+              <span>アーカイブ</span>
             </div>
           </button>
         </div>

@@ -1,14 +1,13 @@
 'use client'
 
 import {
-  Archive,
   ArrowDown,
   ArrowUp,
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
   MoreHorizontal,
-  Plus,
+  RotateCcw,
   Trash2,
 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
@@ -21,8 +20,6 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
-import { TagEditModal } from '@/features/tags/components/tag-edit-modal'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
@@ -47,7 +44,7 @@ const PRESET_COLORS = [
   { name: 'インディゴ', value: '#6366F1' },
 ]
 
-export function TagsPageClient() {
+export function ArchivePageClient() {
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
   const { tags, setTags, setIsLoading } = useTagsPageContext()
   const router = useRouter()
@@ -63,18 +60,7 @@ export function TagsPageClient() {
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
-  const {
-    showCreateModal,
-    showEditModal,
-    selectedTag,
-    createParentTag,
-    handleCreateTag,
-    handleSaveNewTag,
-    handleEditTag,
-    handleSaveTag,
-    handleDeleteTag,
-    handleCloseModals,
-  } = useTagOperations(tags)
+  const { handleDeleteTag } = useTagOperations(tags)
 
   const updateTagMutation = useUpdateTag()
   const toast = useToast()
@@ -135,12 +121,12 @@ export function TagsPageClient() {
     [updateTagMutation]
   )
 
-  // アーカイブハンドラー（is_active = false）
-  const handleArchiveTag = useCallback(
+  // 復元ハンドラー（is_active = true）
+  const handleRestoreTag = useCallback(
     async (tag: TagWithChildren) => {
       if (
         !confirm(
-          `タグ「${tag.name}」をアーカイブしますか？\n\nアーカイブされたタグは新規のタグ付けには使用できませんが、統計や過去のデータには表示されます。`
+          `タグ「${tag.name}」を復元しますか？\n\n復元されたタグは再び新規のタグ付けに使用できるようになります。`
         )
       ) {
         return
@@ -149,12 +135,12 @@ export function TagsPageClient() {
       try {
         await updateTagMutation.mutateAsync({
           id: tag.id,
-          data: { is_active: false },
+          data: { is_active: true },
         })
-        toast.success(`タグ「${tag.name}」をアーカイブしました`)
+        toast.success(`タグ「${tag.name}」を復元しました`)
       } catch (error) {
-        console.error('Failed to archive tag:', error)
-        toast.error('タグのアーカイブに失敗しました')
+        console.error('Failed to restore tag:', error)
+        toast.error('タグの復元に失敗しました')
       }
     },
     [updateTagMutation, toast]
@@ -184,9 +170,8 @@ export function TagsPageClient() {
     }
   }, [deleteConfirmTag, handleDeleteTag, toast])
 
-  // すべてのLevel 0タグ（ルートタグ）を直接取得
-  // is_active = true のみをフィルタリング
-  const baseTags = tags.filter((tag) => tag.level === 0 && tag.is_active)
+  // アーカイブされたタグのみを取得（is_active = false）
+  const baseTags = tags.filter((tag) => tag.level === 0 && !tag.is_active)
 
   // 検索フィルター適用
   const filteredTags = useMemo(() => {
@@ -256,7 +241,7 @@ export function TagsPageClient() {
 
   const handleBulkDelete = async () => {
     if (selectedTagIds.length === 0) return
-    if (!confirm(`選択した${selectedTagIds.length}件のタグを削除しますか？`)) return
+    if (!confirm(`選択した${selectedTagIds.length}件のタグを完全に削除しますか？`)) return
 
     for (const tagId of selectedTagIds) {
       const tag = displayTags.find((t) => t.id === tagId)
@@ -289,11 +274,11 @@ export function TagsPageClient() {
 
   return (
     <div className="flex h-full flex-col">
-      {/* メインエリア: タグ一覧 */}
+      {/* メインエリア: アーカイブタグ一覧 */}
       <div className="flex-1 overflow-y-auto p-6">
         {/* ヘッダー */}
         <div className="mb-6">
-          <h1 className="text-foreground mb-4 text-2xl font-bold">すべてのタグ</h1>
+          <h1 className="text-foreground mb-4 text-2xl font-bold">アーカイブ</h1>
 
           {/* ツールバー */}
           <div className="flex w-full items-center justify-between gap-4">
@@ -314,12 +299,6 @@ export function TagsPageClient() {
                 </Button>
               )}
             </div>
-
-            {/* 右側: 新規作成 */}
-            <Button onClick={() => handleCreateTag()} size="sm" className="h-9">
-              <Plus className="mr-2 size-4" />
-              新規作成
-            </Button>
           </div>
         </div>
 
@@ -327,11 +306,7 @@ export function TagsPageClient() {
         {displayTags.length === 0 ? (
           <div className="border-border flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
             <div className="text-center">
-              <p className="text-muted-foreground mb-4">タグがありません</p>
-              <Button onClick={() => handleCreateTag()}>
-                <Plus className="mr-2 h-4 w-4" />
-                最初のタグを追加
-              </Button>
+              <p className="text-muted-foreground mb-4">アーカイブされたタグはありません</p>
             </div>
           </div>
         ) : (
@@ -506,19 +481,11 @@ export function TagsPageClient() {
                           <DropdownMenuItem
                             onClick={(e) => {
                               e.stopPropagation()
-                              handleEditTag(tag)
+                              handleRestoreTag(tag)
                             }}
                           >
-                            編集
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleArchiveTag(tag)
-                            }}
-                          >
-                            <Archive className="mr-2 h-4 w-4" />
-                            アーカイブ
+                            <RotateCcw className="mr-2 h-4 w-4" />
+                            復元
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={(e) => {
@@ -594,18 +561,8 @@ export function TagsPageClient() {
         )}
       </div>
 
-      {/* モーダル */}
-      <TagCreateModal isOpen={showCreateModal} onClose={handleCloseModals} onSave={handleSaveNewTag} />
-
-      <TagEditModal isOpen={showEditModal} tag={selectedTag} onClose={handleCloseModals} onSave={handleSaveTag} />
-
       {/* 削除確認ダイアログ */}
-      <TagDeleteDialog
-        tag={deleteConfirmTag}
-        onClose={handleCloseDeleteConfirm}
-        onConfirm={handleConfirmDelete}
-        onArchive={handleArchiveTag}
-      />
+      <TagDeleteDialog tag={deleteConfirmTag} onClose={handleCloseDeleteConfirm} onConfirm={handleConfirmDelete} />
     </div>
   )
 }

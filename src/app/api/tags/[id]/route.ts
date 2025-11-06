@@ -11,12 +11,14 @@ import type { UpdateTagInput } from '@/types/tags'
 
 /**
  * 個別タグ取得 (GET)
- * @description 特定のタグを取得
+ * @description 特定のタグを取得（?usage=true で使用状況も取得）
  */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient()
     const { id } = await params
+    const { searchParams } = new URL(request.url)
+    const includeUsage = searchParams.get('usage') === 'true'
 
     // 認証チェック
     const {
@@ -34,6 +36,58 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         return NextResponse.json({ error: 'Tag not found' }, { status: 404 })
       }
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
+    }
+
+    // 使用状況を取得
+    if (includeUsage) {
+      // TODO: 実際のテーブル名に置き換える必要があります
+      // 現在は仮の実装として0を返します
+      const usage = {
+        ticketCount: 0,
+        eventCount: 0,
+        taskCount: 0,
+        totalCount: 0,
+      }
+
+      // ticket_tagsテーブルが存在する場合
+      try {
+        const { count: ticketCount } = await supabase
+          .from('ticket_tags')
+          .select('*', { count: 'exact', head: true })
+          .eq('tag_id', id)
+
+        usage.ticketCount = ticketCount || 0
+      } catch {
+        // テーブルが存在しない場合は0のまま
+      }
+
+      // event_tagsテーブルが存在する場合
+      try {
+        const { count: eventCount } = await supabase
+          .from('event_tags')
+          .select('*', { count: 'exact', head: true })
+          .eq('tag_id', id)
+
+        usage.eventCount = eventCount || 0
+      } catch {
+        // テーブルが存在しない場合は0のまま
+      }
+
+      // task_tagsテーブルが存在する場合
+      try {
+        const { count: taskCount } = await supabase
+          .from('task_tags')
+          .select('*', { count: 'exact', head: true })
+          .eq('tag_id', id)
+
+        usage.taskCount = taskCount || 0
+      } catch {
+        // テーブルが存在しない場合は0のまま
+      }
+
+      usage.totalCount = usage.ticketCount + usage.eventCount + usage.taskCount
+
+      return NextResponse.json({ data, usage })
     }
 
     return NextResponse.json({ data })

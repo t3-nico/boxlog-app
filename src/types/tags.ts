@@ -59,6 +59,14 @@ export interface UpdateTagInput {
   is_active?: boolean
 }
 
+// タグ使用状況
+export interface TagUsage {
+  ticketCount: number
+  eventCount: number
+  taskCount: number
+  totalCount: number
+}
+
 // タグ関連付け
 export type EntityType = 'task' | 'event' | 'record'
 
