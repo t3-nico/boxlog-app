@@ -7,15 +7,18 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
+  Folder,
   MoreHorizontal,
   Plus,
   Trash2,
+  X,
 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -25,7 +28,9 @@ import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagEditModal } from '@/features/tags/components/tag-edit-modal'
+import { TagGroupsSection } from '@/features/tags/components/tag-groups-section'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
+import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
 import { useToast } from '@/lib/toast/use-toast'
@@ -48,8 +53,13 @@ const PRESET_COLORS = [
   { name: 'インディゴ', value: '#6366F1' },
 ]
 
-export function TagsPageClient() {
+interface TagsPageClientProps {
+  initialGroupNumber?: string
+}
+
+export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {}) {
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
+  const { data: groups = [] } = useTagGroups()
   const { tags, setTags, setIsLoading } = useTagsPageContext()
   const router = useRouter()
   const pathname = usePathname()
@@ -64,6 +74,21 @@ export function TagsPageClient() {
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showGroupsSection, setShowGroupsSection] = useState(false)
+
+  // initialGroupNumber からグループIDを解決
+  const initialGroup = useMemo(() => {
+    if (!initialGroupNumber) return null
+    const group = groups.find((g) => g.group_number === Number(initialGroupNumber))
+    console.log('[TagsPageClient] Resolving group:', {
+      initialGroupNumber,
+      groups,
+      foundGroup: group,
+    })
+    return group
+  }, [initialGroupNumber, groups])
+
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(initialGroup?.id || null)
 
   const {
     showCreateModal,
@@ -80,6 +105,18 @@ export function TagsPageClient() {
 
   const updateTagMutation = useUpdateTag()
   const toast = useToast()
+
+  // 選択されたグループ情報を取得
+  const selectedGroup = useMemo(() => {
+    return selectedGroupId ? groups.find((g) => g.id === selectedGroupId) : null
+  }, [selectedGroupId, groups])
+
+  // initialGroup が解決されたら selectedGroupId を更新
+  useEffect(() => {
+    if (initialGroup) {
+      setSelectedGroupId(initialGroup.id)
+    }
+  }, [initialGroup])
 
   // タグデータをContextに同期
   useEffect(() => {
@@ -192,17 +229,36 @@ export function TagsPageClient() {
   // is_active = true のみをフィルタリング
   const baseTags = tags.filter((tag) => tag.level === 0 && tag.is_active)
 
-  // 検索フィルター適用
+  // 検索とグループフィルタ適用
   const filteredTags = useMemo(() => {
-    if (!searchQuery.trim()) return baseTags
-    const query = searchQuery.toLowerCase()
-    return baseTags.filter(
-      (tag) =>
-        tag.name.toLowerCase().includes(query) ||
-        (tag.description && tag.description.toLowerCase().includes(query)) ||
-        `t-${tag.tag_number}`.includes(query)
-    )
-  }, [baseTags, searchQuery])
+    let filtered = baseTags
+
+    // グループフィルタ
+    if (selectedGroupId) {
+      console.log('[TagsPageClient] Filtering by group:', {
+        selectedGroupId,
+        baseTags: baseTags.map((t) => ({ id: t.id, name: t.name, group_id: t.group_id })),
+      })
+      filtered = filtered.filter((tag) => tag.group_id === selectedGroupId)
+      console.log(
+        '[TagsPageClient] Filtered tags:',
+        filtered.map((t) => ({ id: t.id, name: t.name }))
+      )
+    }
+
+    // 検索フィルタ
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(
+        (tag) =>
+          tag.name.toLowerCase().includes(query) ||
+          (tag.description && tag.description.toLowerCase().includes(query)) ||
+          `t-${tag.tag_number}`.includes(query)
+      )
+    }
+
+    return filtered
+  }, [baseTags, searchQuery, selectedGroupId])
 
   // ソート適用
   const sortedTags = useMemo(() => {
@@ -304,6 +360,23 @@ export function TagsPageClient() {
             className="h-9 w-[150px] lg:w-[250px]"
           />
 
+          {/* グループフィルタバッジ */}
+          {selectedGroup && (
+            <div className="bg-accent text-accent-foreground flex items-center gap-1 rounded-md px-2 py-1 text-sm">
+              <div
+                className="h-2 w-2 shrink-0 rounded-full"
+                style={{ backgroundColor: selectedGroup.color || '#6B7280' }}
+              />
+              <span>{selectedGroup.name}</span>
+              <button
+                onClick={() => setSelectedGroupId(null)}
+                className="hover:bg-accent-foreground/20 ml-1 rounded-sm p-0.5 transition-colors"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          )}
+
           {/* 一括削除ボタン（選択時のみ表示） */}
           {selectedTagIds.length > 0 && (
             <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-9">
@@ -313,11 +386,17 @@ export function TagsPageClient() {
           )}
         </div>
 
-        {/* 右側: 新規作成 */}
-        <Button onClick={() => handleCreateTag()} size="sm" className="h-9">
-          <Plus className="mr-2 size-4" />
-          新規作成
-        </Button>
+        {/* 右側: ボタン群 */}
+        <div className="flex items-center gap-2">
+          <Button onClick={() => setShowGroupsSection(true)} size="sm" variant="outline" className="h-9">
+            <Folder className="mr-2 size-4" />
+            グループを管理
+          </Button>
+          <Button onClick={() => handleCreateTag()} size="sm" className="h-9">
+            <Plus className="mr-2 size-4" />
+            タグを作成
+          </Button>
+        </div>
       </div>
 
       {/* テーブル */}
@@ -371,9 +450,7 @@ export function TagsPageClient() {
                           {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
                         </Button>
                       </TableHead>
-                      <TableHead style={{ width: '192px' }} className="text-right">
-                        アクション
-                      </TableHead>
+                      <TableHead style={{ width: '192px' }} className="text-right"></TableHead>
                     </TableRow>
                   </TableHeader>
                 </Table>
@@ -406,7 +483,7 @@ export function TagsPageClient() {
                           <Popover>
                             <PopoverTrigger asChild>
                               <button
-                                className="hover:ring-offset-background focus-visible:ring-ring h-4 w-4 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-offset-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                                className="hover:ring-offset-background focus-visible:ring-ring h-3 w-3 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-offset-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                                 style={{ backgroundColor: tag.color || '#3B82F6' }}
                                 aria-label="カラーを変更"
                               />
@@ -458,7 +535,7 @@ export function TagsPageClient() {
                               className="h-8 border-0 bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             />
                           ) : (
-                            <div className="flex h-4 items-center">
+                            <div className="flex h-3 items-center">
                               <span className="cursor-text">{tag.name}</span>
                             </div>
                           )}
@@ -486,7 +563,7 @@ export function TagsPageClient() {
                               className="h-8 border-0 bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             />
                           ) : (
-                            <div className="flex h-4 items-center">
+                            <div className="flex h-3 items-center">
                               <span className="cursor-text truncate">{tag.description || '-'}</span>
                             </div>
                           )}
@@ -539,7 +616,7 @@ export function TagsPageClient() {
                                   e.stopPropagation()
                                   handleOpenDeleteConfirm(tag)
                                 }}
-                                className="text-destructive"
+                                className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
                               >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 完全に削除
@@ -622,6 +699,22 @@ export function TagsPageClient() {
 
       {/* 削除確認ダイアログ */}
       <TagDeleteDialog tag={deleteConfirmTag} onClose={handleCloseDeleteConfirm} onConfirm={handleConfirmDelete} />
+
+      {/* グループ管理モーダル */}
+      <Dialog open={showGroupsSection} onOpenChange={setShowGroupsSection}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>グループを管理</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <TagGroupsSection
+              onSelectGroup={setSelectedGroupId}
+              selectedGroupId={selectedGroupId}
+              onClose={() => setShowGroupsSection(false)}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
