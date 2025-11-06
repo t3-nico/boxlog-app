@@ -18,8 +18,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -28,13 +35,13 @@ import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagEditModal } from '@/features/tags/components/tag-edit-modal'
-import { TagGroupsSection } from '@/features/tags/components/tag-groups-section'
+import { TagGroupCreateModal } from '@/features/tags/components/tag-group-create-modal'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
-import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
+import { useCreateTagGroup, useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
 import { useToast } from '@/lib/toast/use-toast'
-import type { TagWithChildren } from '@/types/tags'
+import type { CreateTagGroupInput, TagWithChildren } from '@/types/tags'
 
 type SortField = 'name' | 'created_at'
 type SortDirection = 'asc' | 'desc'
@@ -74,7 +81,7 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
-  const [showGroupsSection, setShowGroupsSection] = useState(false)
+  const [showGroupCreateModal, setShowGroupCreateModal] = useState(false)
 
   // initialGroupNumber からグループIDを解決
   const initialGroup = useMemo(() => {
@@ -104,6 +111,7 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
   } = useTagOperations(tags)
 
   const updateTagMutation = useUpdateTag()
+  const createGroupMutation = useCreateTagGroup()
   const toast = useToast()
 
   // 選択されたグループ情報を取得
@@ -224,6 +232,46 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
       toast.error('タグの削除に失敗しました')
     }
   }, [deleteConfirmTag, handleDeleteTag, toast])
+
+  // グループ作成ハンドラー
+  const handleCreateGroup = useCallback(
+    async (data: CreateTagGroupInput) => {
+      try {
+        const result = await createGroupMutation.mutateAsync(data)
+        toast.success(`グループ「${data.name}」を作成しました`)
+        setShowGroupCreateModal(false)
+
+        // 作成したグループのページに遷移
+        const locale = pathname?.split('/')[1] || 'ja'
+        router.push(`/${locale}/tags/g-${result.group_number}`)
+      } catch (error) {
+        console.error('Failed to create tag group:', error)
+        toast.error('グループの作成に失敗しました')
+        throw error
+      }
+    },
+    [createGroupMutation, toast, router, pathname]
+  )
+
+  // タグをグループに移動
+  const handleMoveToGroup = useCallback(
+    async (tag: TagWithChildren, groupId: string | null) => {
+      try {
+        await updateTagMutation.mutateAsync({
+          id: tag.id,
+          data: {
+            group_id: groupId,
+          },
+        })
+        const groupName = groupId ? groups.find((g) => g.id === groupId)?.name : 'グループなし'
+        toast.success(`タグ「${tag.name}」を${groupName}に移動しました`)
+      } catch (error) {
+        console.error('Failed to move tag to group:', error)
+        toast.error('タグの移動に失敗しました')
+      }
+    },
+    [updateTagMutation, toast, groups]
+  )
 
   // すべてのLevel 0タグ（ルートタグ）を直接取得
   // is_active = true のみをフィルタリング
@@ -388,9 +436,9 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
 
         {/* 右側: ボタン群 */}
         <div className="flex items-center gap-2">
-          <Button onClick={() => setShowGroupsSection(true)} size="sm" variant="outline" className="h-9">
-            <Folder className="mr-2 size-4" />
-            グループを管理
+          <Button onClick={() => setShowGroupCreateModal(true)} size="sm" variant="outline" className="h-9">
+            <Plus className="mr-2 size-4" />
+            グループを作成
           </Button>
           <Button onClick={() => handleCreateTag()} size="sm" className="h-9">
             <Plus className="mr-2 size-4" />
@@ -463,7 +511,7 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
                     {displayTags.map((tag) => (
                       <TableRow
                         key={tag.id}
-                        className="hover:bg-accent/50 cursor-pointer"
+                        className="cursor-pointer"
                         onClick={() => {
                           const locale = pathname?.split('/')[1] || 'ja'
                           router.push(`/${locale}/tags/t-${tag.tag_number}`)
@@ -512,33 +560,8 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
                             </PopoverContent>
                           </Popover>
                         </TableCell>
-                        <TableCell
-                          className="pl-1 font-medium"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            startEditing(tag.id, 'name', tag.name)
-                          }}
-                        >
-                          {editingTagId === tag.id && editingField === 'name' ? (
-                            <Input
-                              value={editValue}
-                              onChange={(e) => setEditValue(e.target.value)}
-                              onBlur={() => saveInlineEdit(tag.id)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  saveInlineEdit(tag.id)
-                                } else if (e.key === 'Escape') {
-                                  cancelEditing()
-                                }
-                              }}
-                              autoFocus
-                              className="h-8 border-0 bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                            />
-                          ) : (
-                            <div className="flex h-3 items-center">
-                              <span className="cursor-text">{tag.name}</span>
-                            </div>
-                          )}
+                        <TableCell className="pl-1 font-medium">
+                          <span className="cursor-pointer hover:underline">{tag.name}</span>
                         </TableCell>
                         <TableCell
                           className="text-muted-foreground"
@@ -584,7 +607,7 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
+                            <DropdownMenuContent align="end" className="z-50">
                               <DropdownMenuItem
                                 onClick={(e) => {
                                   e.stopPropagation()
@@ -602,6 +625,37 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
                               >
                                 編集
                               </DropdownMenuItem>
+                              <DropdownMenuSub>
+                                <DropdownMenuSubTrigger>
+                                  <Folder className="mr-2 h-4 w-4" />
+                                  グループに移動
+                                </DropdownMenuSubTrigger>
+                                <DropdownMenuSubContent>
+                                  <DropdownMenuItem
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleMoveToGroup(tag, null)
+                                    }}
+                                  >
+                                    グループなし
+                                  </DropdownMenuItem>
+                                  {groups.map((group) => (
+                                    <DropdownMenuItem
+                                      key={group.id}
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleMoveToGroup(tag, group.id)
+                                      }}
+                                    >
+                                      <div
+                                        className="mr-2 h-3 w-3 rounded-full"
+                                        style={{ backgroundColor: group.color || '#6B7280' }}
+                                      />
+                                      {group.name}
+                                    </DropdownMenuItem>
+                                  ))}
+                                </DropdownMenuSubContent>
+                              </DropdownMenuSub>
                               <DropdownMenuItem
                                 onClick={(e) => {
                                   e.stopPropagation()
@@ -700,21 +754,12 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
       {/* 削除確認ダイアログ */}
       <TagDeleteDialog tag={deleteConfirmTag} onClose={handleCloseDeleteConfirm} onConfirm={handleConfirmDelete} />
 
-      {/* グループ管理モーダル */}
-      <Dialog open={showGroupsSection} onOpenChange={setShowGroupsSection}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>グループを管理</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <TagGroupsSection
-              onSelectGroup={setSelectedGroupId}
-              selectedGroupId={selectedGroupId}
-              onClose={() => setShowGroupsSection(false)}
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* グループ作成モーダル */}
+      <TagGroupCreateModal
+        isOpen={showGroupCreateModal}
+        onClose={() => setShowGroupCreateModal(false)}
+        onSave={handleCreateGroup}
+      />
     </div>
   )
 }

@@ -70,9 +70,9 @@ export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }
           <div className="space-y-2">
             <p className="text-sm font-medium">削除すると:</p>
             <ul className="text-muted-foreground space-y-1 text-sm">
-              <li>✓ グループは永久に削除されます</li>
-              <li>✓ 属するタグは「未分類」に移動します</li>
-              <li>✓ タグ自体は削除されません</li>
+              <li>• グループのみが削除されます</li>
+              <li>• 属するタグは「グループなし」状態になります</li>
+              <li>• タグ自体は削除されず、引き続き使用できます</li>
             </ul>
           </div>
 

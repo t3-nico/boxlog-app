@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import type { CreateTagGroupInput } from '@/types/tags'
 
 // プリセットカラー（10色）
@@ -39,7 +38,6 @@ interface TagGroupCreateModalProps {
 export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateModalProps) => {
   const [name, setName] = useState('')
   const [color, setColor] = useState('#3B82F6')
-  const [description, setDescription] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -48,7 +46,6 @@ export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateM
     if (isOpen) {
       setName('')
       setColor('#3B82F6')
-      setDescription('')
       setError('')
     }
   }, [isOpen])
@@ -68,7 +65,7 @@ export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateM
         await onSave({
           name: name.trim(),
           slug: '', // 空文字列（将来的に削除予定）
-          description: description.trim() || null,
+          description: null,
           color: color || null,
         })
         onClose()
@@ -79,7 +76,7 @@ export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateM
         setIsLoading(false)
       }
     },
-    [name, color, description, onSave, onClose]
+    [name, color, onSave, onClose]
   )
 
   return (
@@ -122,18 +119,6 @@ export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateM
                   />
                 ))}
               </div>
-            </div>
-
-            {/* 説明 */}
-            <div className="grid gap-2">
-              <Label htmlFor="description">説明</Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="グループの説明（任意）"
-                rows={3}
-              />
             </div>
 
             {/* エラー表示 */}
