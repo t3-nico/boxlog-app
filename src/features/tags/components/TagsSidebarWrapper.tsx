@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname, useRouter } from 'next/navigation'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { useTagsPageContext } from '../contexts/TagsPageContext'
 import { TagsSidebar } from './TagsSidebar'
@@ -12,7 +12,7 @@ import { TagsSidebar } from './TagsSidebar'
  * DesktopLayoutから呼び出され、TagsPageContextのデータを使用する
  */
 export function TagsSidebarWrapper() {
-  const { isLoading } = useTagsPageContext()
+  const { tags, isLoading } = useTagsPageContext()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -22,5 +22,22 @@ export function TagsSidebarWrapper() {
     router.push(`/${locale}/tags`)
   }, [router, pathname])
 
-  return <TagsSidebar onAllTagsClick={handleAllTagsClick} isLoading={isLoading} />
+  // アクティブなタグの数をカウント（is_active = true のみ）
+  const activeTagsCount = useMemo(() => {
+    return tags.filter((tag) => tag.is_active && tag.level === 0).length
+  }, [tags])
+
+  // アーカイブされたタグの数をカウント（is_active = false）
+  const archivedTagsCount = useMemo(() => {
+    return tags.filter((tag) => !tag.is_active && tag.level === 0).length
+  }, [tags])
+
+  return (
+    <TagsSidebar
+      onAllTagsClick={handleAllTagsClick}
+      isLoading={isLoading}
+      activeTagsCount={activeTagsCount}
+      archivedTagsCount={archivedTagsCount}
+    />
+  )
 }

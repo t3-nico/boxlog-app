@@ -274,35 +274,29 @@ export function ArchivePageClient() {
 
   return (
     <div className="flex h-full flex-col">
-      {/* メインエリア: アーカイブタグ一覧 */}
-      <div className="flex-1 overflow-y-auto p-6">
-        {/* ヘッダー */}
-        <div className="mb-6">
-          <h1 className="text-foreground mb-4 text-2xl font-bold">アーカイブ</h1>
+      {/* ツールバー */}
+      <div className="flex shrink-0 items-center justify-between gap-4 px-4 py-4 md:px-6">
+        <div className="flex flex-1 items-center gap-2">
+          {/* 検索 */}
+          <Input
+            placeholder="タグを検索..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="h-9 w-[150px] lg:w-[250px]"
+          />
 
-          {/* ツールバー */}
-          <div className="flex w-full items-center justify-between gap-4">
-            <div className="flex flex-1 items-center gap-2">
-              {/* 検索 */}
-              <Input
-                placeholder="タグを検索..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-9 w-[150px] lg:w-[250px]"
-              />
-
-              {/* 一括削除ボタン（選択時のみ表示） */}
-              {selectedTagIds.length > 0 && (
-                <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-9">
-                  <Trash2 className="mr-2 size-4" />
-                  削除 ({selectedTagIds.length})
-                </Button>
-              )}
-            </div>
-          </div>
+          {/* 一括削除ボタン（選択時のみ表示） */}
+          {selectedTagIds.length > 0 && (
+            <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-9">
+              <Trash2 className="mr-2 size-4" />
+              削除 ({selectedTagIds.length})
+            </Button>
+          )}
         </div>
+      </div>
 
-        {/* タグテーブル */}
+      {/* テーブル */}
+      <div className="flex flex-1 flex-col overflow-hidden px-4 md:px-6">
         {displayTags.length === 0 ? (
           <div className="border-border flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
             <div className="text-center">
@@ -310,254 +304,274 @@ export function ArchivePageClient() {
             </div>
           </div>
         ) : (
-          <div className="border-border rounded-lg border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12">
-                    <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} aria-label="すべて選択" />
-                  </TableHead>
-                  <TableHead className="w-20">ID</TableHead>
-                  <TableHead className="w-8"></TableHead>
-                  <TableHead>
-                    <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
-                      名前
-                      {sortField === 'name' &&
-                        (sortDirection === 'asc' ? (
-                          <ArrowUp className="ml-1 h-4 w-4" />
-                        ) : (
-                          <ArrowDown className="ml-1 h-4 w-4" />
-                        ))}
-                      {sortField !== 'name' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                    </Button>
-                  </TableHead>
-                  <TableHead>説明</TableHead>
-                  <TableHead className="w-40">
-                    <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
-                      作成日時
-                      {sortField === 'created_at' &&
-                        (sortDirection === 'asc' ? (
-                          <ArrowUp className="ml-1 h-4 w-4" />
-                        ) : (
-                          <ArrowDown className="ml-1 h-4 w-4" />
-                        ))}
-                      {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                    </Button>
-                  </TableHead>
-                  <TableHead className="w-48 text-right">アクション</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {displayTags.map((tag) => (
-                  <TableRow
-                    key={tag.id}
-                    className="hover:bg-accent/50 cursor-pointer"
-                    onClick={() => {
-                      const locale = pathname?.split('/')[1] || 'ja'
-                      router.push(`/${locale}/tags/t-${tag.tag_number}`)
-                    }}
-                  >
-                    <TableCell onClick={(e) => e.stopPropagation()}>
-                      <Checkbox
-                        checked={selectedTagIds.includes(tag.id)}
-                        onCheckedChange={() => handleSelectTag(tag.id)}
-                        aria-label={`${tag.name}を選択`}
-                      />
-                    </TableCell>
-                    <TableCell className="text-muted-foreground font-mono text-sm">t-{tag.tag_number}</TableCell>
-                    <TableCell className="pr-1" onClick={(e) => e.stopPropagation()}>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <button
-                            className="hover:ring-offset-background focus-visible:ring-ring h-4 w-4 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-offset-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                            style={{ backgroundColor: tag.color || '#3B82F6' }}
-                            aria-label="カラーを変更"
-                          />
-                        </PopoverTrigger>
-                        <PopoverContent className="w-64 p-3" align="start">
-                          <div className="space-y-2">
-                            <h4 className="text-sm font-semibold">カラーを選択</h4>
-                            <div className="grid grid-cols-5 gap-2">
-                              {PRESET_COLORS.map((presetColor) => (
-                                <button
-                                  key={presetColor.value}
-                                  type="button"
-                                  onClick={() => handleColorChange(tag.id, presetColor.value)}
-                                  className={`h-10 w-full rounded-md border-2 transition-all hover:scale-110 ${
-                                    tag.color === presetColor.value
-                                      ? 'border-foreground ring-2 ring-offset-2'
-                                      : 'border-border hover:border-foreground/50'
-                                  }`}
-                                  style={{ backgroundColor: presetColor.value }}
-                                  title={presetColor.name}
-                                  aria-label={presetColor.name}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                    </TableCell>
-                    <TableCell
-                      className="pl-1 font-medium"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        startEditing(tag.id, 'name', tag.name)
-                      }}
-                    >
-                      {editingTagId === tag.id && editingField === 'name' ? (
-                        <Input
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          onBlur={() => saveInlineEdit(tag.id)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              saveInlineEdit(tag.id)
-                            } else if (e.key === 'Escape') {
-                              cancelEditing()
-                            }
-                          }}
-                          autoFocus
-                          className="h-8 border-0 bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                        />
-                      ) : (
-                        <div className="flex h-4 items-center">
-                          <span className="cursor-text">{tag.name}</span>
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell
-                      className="text-muted-foreground"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        startEditing(tag.id, 'description', tag.description || '')
-                      }}
-                    >
-                      {editingTagId === tag.id && editingField === 'description' ? (
-                        <Input
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          onBlur={() => saveInlineEdit(tag.id)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              saveInlineEdit(tag.id)
-                            } else if (e.key === 'Escape') {
-                              cancelEditing()
-                            }
-                          }}
-                          autoFocus
-                          className="h-8 border-0 bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                        />
-                      ) : (
-                        <div className="flex h-4 items-center">
-                          <span className="cursor-text truncate">{tag.description || '-'}</span>
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-xs">{formatDate(tag.created_at)}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                            }}
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              const locale = pathname?.split('/')[1] || 'ja'
-                              router.push(`/${locale}/tags/t-${tag.tag_number}`)
-                            }}
-                          >
-                            表示
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleRestoreTag(tag)
-                            }}
-                          >
-                            <RotateCcw className="mr-2 h-4 w-4" />
-                            復元
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleOpenDeleteConfirm(tag)
-                            }}
-                            className="text-destructive"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            完全に削除
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-
-        {/* フッター: ページネーション */}
-        {sortedTags.length > 0 && (
-          <div className="flex items-center justify-between px-4 py-4">
-            {/* 左側: 表示件数選択 */}
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground text-sm">表示件数</span>
-              <Select value={String(pageSize)} onValueChange={(value) => setPageSize(Number(value))}>
-                <SelectTrigger className="h-9 w-[64px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* 中央: ページ情報 */}
-            <div className="text-muted-foreground text-sm">
-              {startIndex + 1}〜{Math.min(endIndex, sortedTags.length)}件 / 全{sortedTags.length}件
-            </div>
-
-            {/* 右側: ページ移動ボタン */}
-            <div className="flex items-center gap-1">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
-                className="h-9 w-9 p-0"
-              >
-                <ChevronLeft className="size-4" />
-                <span className="sr-only">前のページ</span>
-              </Button>
-              <div className="text-muted-foreground flex h-9 items-center px-3 text-sm">
-                ページ {currentPage} / {totalPages}
+          <>
+            {/* テーブル部分: 枠で囲む */}
+            <div className="border-border flex-1 overflow-hidden rounded-lg border">
+              {/* ヘッダー: 固定 */}
+              <div className="overflow-x-auto">
+                <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead style={{ width: '48px' }}>
+                        <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} aria-label="すべて選択" />
+                      </TableHead>
+                      <TableHead style={{ width: '80px' }}>ID</TableHead>
+                      <TableHead style={{ width: '32px' }}></TableHead>
+                      <TableHead>
+                        <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
+                          名前
+                          {sortField === 'name' &&
+                            (sortDirection === 'asc' ? (
+                              <ArrowUp className="ml-1 h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="ml-1 h-4 w-4" />
+                            ))}
+                          {sortField !== 'name' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
+                        </Button>
+                      </TableHead>
+                      <TableHead>説明</TableHead>
+                      <TableHead style={{ width: '160px' }}>
+                        <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
+                          作成日時
+                          {sortField === 'created_at' &&
+                            (sortDirection === 'asc' ? (
+                              <ArrowUp className="ml-1 h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="ml-1 h-4 w-4" />
+                            ))}
+                          {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
+                        </Button>
+                      </TableHead>
+                      <TableHead style={{ width: '192px' }} className="text-right">
+                        アクション
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                </Table>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                disabled={currentPage === totalPages}
-                className="h-9 w-9 p-0"
-              >
-                <ChevronRight className="size-4" />
-                <span className="sr-only">次のページ</span>
-              </Button>
+
+              {/* ボディ: スクロール可能 */}
+              <div className="h-full overflow-x-auto overflow-y-auto" style={{ height: 'calc(100% - 41px)' }}>
+                <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
+                  <TableBody>
+                    {displayTags.map((tag) => (
+                      <TableRow
+                        key={tag.id}
+                        className="hover:bg-accent/50 cursor-pointer"
+                        onClick={() => {
+                          const locale = pathname?.split('/')[1] || 'ja'
+                          router.push(`/${locale}/tags/t-${tag.tag_number}`)
+                        }}
+                      >
+                        <TableCell style={{ width: '48px' }} onClick={(e) => e.stopPropagation()}>
+                          <Checkbox
+                            checked={selectedTagIds.includes(tag.id)}
+                            onCheckedChange={() => handleSelectTag(tag.id)}
+                            aria-label={`${tag.name}を選択`}
+                          />
+                        </TableCell>
+                        <TableCell style={{ width: '80px' }} className="text-muted-foreground font-mono text-sm">
+                          t-{tag.tag_number}
+                        </TableCell>
+                        <TableCell style={{ width: '32px' }} className="pr-1" onClick={(e) => e.stopPropagation()}>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button
+                                className="hover:ring-offset-background focus-visible:ring-ring h-4 w-4 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-offset-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                                style={{ backgroundColor: tag.color || '#3B82F6' }}
+                                aria-label="カラーを変更"
+                              />
+                            </PopoverTrigger>
+                            <PopoverContent className="w-64 p-3" align="start">
+                              <div className="space-y-2">
+                                <h4 className="text-sm font-semibold">カラーを選択</h4>
+                                <div className="grid grid-cols-5 gap-2">
+                                  {PRESET_COLORS.map((presetColor) => (
+                                    <button
+                                      key={presetColor.value}
+                                      type="button"
+                                      onClick={() => handleColorChange(tag.id, presetColor.value)}
+                                      className={`h-10 w-full rounded-md border-2 transition-all hover:scale-110 ${
+                                        tag.color === presetColor.value
+                                          ? 'border-foreground ring-2 ring-offset-2'
+                                          : 'border-border hover:border-foreground/50'
+                                      }`}
+                                      style={{ backgroundColor: presetColor.value }}
+                                      title={presetColor.name}
+                                      aria-label={presetColor.name}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                        </TableCell>
+                        <TableCell
+                          className="pl-1 font-medium"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            startEditing(tag.id, 'name', tag.name)
+                          }}
+                        >
+                          {editingTagId === tag.id && editingField === 'name' ? (
+                            <Input
+                              value={editValue}
+                              onChange={(e) => setEditValue(e.target.value)}
+                              onBlur={() => saveInlineEdit(tag.id)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  saveInlineEdit(tag.id)
+                                } else if (e.key === 'Escape') {
+                                  cancelEditing()
+                                }
+                              }}
+                              autoFocus
+                              className="h-8 border-0 bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            />
+                          ) : (
+                            <div className="flex h-4 items-center">
+                              <span className="cursor-text">{tag.name}</span>
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell
+                          className="text-muted-foreground"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            startEditing(tag.id, 'description', tag.description || '')
+                          }}
+                        >
+                          {editingTagId === tag.id && editingField === 'description' ? (
+                            <Input
+                              value={editValue}
+                              onChange={(e) => setEditValue(e.target.value)}
+                              onBlur={() => saveInlineEdit(tag.id)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  saveInlineEdit(tag.id)
+                                } else if (e.key === 'Escape') {
+                                  cancelEditing()
+                                }
+                              }}
+                              autoFocus
+                              className="h-8 border-0 bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            />
+                          ) : (
+                            <div className="flex h-4 items-center">
+                              <span className="cursor-text truncate">{tag.description || '-'}</span>
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell style={{ width: '160px' }} className="text-muted-foreground text-xs">
+                          {formatDate(tag.created_at)}
+                        </TableCell>
+                        <TableCell style={{ width: '192px' }} className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                }}
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  const locale = pathname?.split('/')[1] || 'ja'
+                                  router.push(`/${locale}/tags/t-${tag.tag_number}`)
+                                }}
+                              >
+                                表示
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleRestoreTag(tag)
+                                }}
+                              >
+                                <RotateCcw className="mr-2 h-4 w-4" />
+                                復元
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleOpenDeleteConfirm(tag)
+                                }}
+                                className="text-destructive"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                完全に削除
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
-          </div>
+
+            {/* フッター: テーブルの外側に配置 */}
+            <div className="shrink-0">
+              <div className="flex items-center justify-between px-4 py-4 md:px-6">
+                {/* 左側: 表示件数選択 */}
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground text-sm">表示件数</span>
+                  <Select value={String(pageSize)} onValueChange={(value) => setPageSize(Number(value))}>
+                    <SelectTrigger className="h-9 w-[64px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* 中央: ページ情報 */}
+                <div className="text-muted-foreground text-sm">
+                  {sortedTags.length > 0
+                    ? `${startIndex + 1}〜${Math.min(endIndex, sortedTags.length)}件 / 全${sortedTags.length}件`
+                    : '0件'}
+                </div>
+
+                {/* 右側: ページ移動ボタン */}
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="h-9 w-9 p-0"
+                  >
+                    <ChevronLeft className="size-4" />
+                    <span className="sr-only">前のページ</span>
+                  </Button>
+                  <div className="text-muted-foreground flex h-9 items-center px-3 text-sm">
+                    ページ {currentPage} / {totalPages || 1}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    className="h-9 w-9 p-0"
+                  >
+                    <ChevronRight className="size-4" />
+                    <span className="sr-only">次のページ</span>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
 

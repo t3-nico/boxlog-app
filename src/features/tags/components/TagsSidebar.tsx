@@ -6,6 +6,8 @@ import { usePathname, useRouter } from 'next/navigation'
 interface TagsSidebarProps {
   onAllTagsClick: () => void
   isLoading?: boolean
+  activeTagsCount?: number
+  archivedTagsCount?: number
 }
 
 /**
@@ -13,7 +15,12 @@ interface TagsSidebarProps {
  *
  * すべてのタグとアーカイブビューを提供
  */
-export function TagsSidebar({ onAllTagsClick, isLoading = false }: TagsSidebarProps) {
+export function TagsSidebar({
+  onAllTagsClick,
+  isLoading = false,
+  activeTagsCount = 0,
+  archivedTagsCount = 0,
+}: TagsSidebarProps) {
   const router = useRouter()
   const pathname = usePathname()
 
@@ -51,9 +58,12 @@ export function TagsSidebar({ onAllTagsClick, isLoading = false }: TagsSidebarPr
               isArchivePage ? 'hover:bg-accent hover:text-accent-foreground' : 'bg-accent text-accent-foreground'
             }`}
           >
-            <div className="flex items-center gap-2">
-              <Tags className="h-4 w-4 shrink-0" />
-              <span>すべてのタグ</span>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Tags className="h-4 w-4 shrink-0" />
+                <span>すべてのタグ</span>
+              </div>
+              <span className="text-muted-foreground text-xs">{activeTagsCount}</span>
             </div>
           </button>
 
@@ -64,9 +74,12 @@ export function TagsSidebar({ onAllTagsClick, isLoading = false }: TagsSidebarPr
               isArchivePage ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'
             }`}
           >
-            <div className="flex items-center gap-2">
-              <Archive className="h-4 w-4 shrink-0" />
-              <span>アーカイブ</span>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Archive className="h-4 w-4 shrink-0" />
+                <span>アーカイブ</span>
+              </div>
+              <span className="text-muted-foreground text-xs">{archivedTagsCount}</span>
             </div>
           </button>
         </div>
