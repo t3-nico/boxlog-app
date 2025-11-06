@@ -16,10 +16,13 @@ import type {
 const tagGroupAPI = {
   // 全タググループ取得
   async fetchTagGroups(): Promise<TagGroup[]> {
+    console.log('[tagGroupAPI.fetchTagGroups] Fetching...')
     const response = await fetch('/api/tag-groups')
     if (!response.ok) throw new Error('Failed to fetch tag groups')
 
     const data: TagGroupsResponse = await response.json()
+    console.log('[tagGroupAPI.fetchTagGroups] Received data:', data)
+    console.log('[tagGroupAPI.fetchTagGroups] data.data:', data.data)
     return data.data
   },
 

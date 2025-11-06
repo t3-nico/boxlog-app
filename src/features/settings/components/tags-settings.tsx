@@ -137,12 +137,7 @@ const TagsSettings = () => {
         {/* モーダル */}
         {isMounted && (
           <>
-            <TagCreateModal
-              isOpen={showCreateModal}
-              onClose={handleCloseModals}
-              onSave={handleSaveNewTag}
-              parentTag={createParentTag}
-            />
+            <TagCreateModal isOpen={showCreateModal} onClose={handleCloseModals} onSave={handleSaveNewTag} />
 
             <TagEditModal isOpen={showEditModal} tag={selectedTag} onClose={handleCloseModals} onSave={handleSaveTag} />
           </>

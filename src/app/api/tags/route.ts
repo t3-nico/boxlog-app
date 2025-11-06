@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body: CreateTagInput = await request.json()
-    const { name, color, description, icon, parent_id, level } = body
+    const { name, color, description, icon, parent_id, level, group_id } = body
 
     // バリデーション
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
@@ -150,6 +150,7 @@ export async function POST(request: NextRequest) {
       level: level || 0,
       path,
       is_active: true,
+      group_id: group_id || null,
     }
 
     const { data, error } = await supabase

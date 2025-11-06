@@ -58,6 +58,7 @@ export function useTagOperations(tags: TagWithChildren[]) {
           description: data.description || null,
           icon: null,
           is_active: true,
+          group_id: null,
           created_at: new Date(),
           updated_at: new Date(),
           children: [],

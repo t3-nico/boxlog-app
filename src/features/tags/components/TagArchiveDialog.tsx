@@ -11,28 +11,24 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import type { TagUsage, TagWithChildren } from '@/types/tags'
 import { AlertTriangle } from 'lucide-react'
 
-interface TagDeleteDialogProps {
+interface TagArchiveDialogProps {
   tag: TagWithChildren | null
   onClose: () => void
   onConfirm: () => Promise<void>
 }
 
-export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProps) {
-  const [confirmText, setConfirmText] = useState('')
+export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogProps) {
   const [usage, setUsage] = useState<TagUsage | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [isArchiving, setIsArchiving] = useState(false)
 
   // タグの使用状況を取得
   useEffect(() => {
     if (!tag) {
       setUsage(null)
-      setConfirmText('')
       return
     }
 
@@ -59,29 +55,26 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
   }, [tag])
 
   const handleConfirm = async () => {
-    setIsDeleting(true)
+    setIsArchiving(true)
     try {
       await onConfirm()
     } finally {
-      setIsDeleting(false)
+      setIsArchiving(false)
     }
   }
-
-  const requiresConfirmation = (usage?.totalCount || 0) > 50
-  const canDelete = !requiresConfirmation || confirmText === tag?.name
 
   return (
     <AlertDialog open={!!tag} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent className="max-w-3xl gap-0 p-6">
         <AlertDialogHeader className="mb-4">
-          <AlertDialogTitle>タグ「{tag?.name}」を完全に削除しますか？</AlertDialogTitle>
+          <AlertDialogTitle>タグ「{tag?.name}」をアーカイブしますか？</AlertDialogTitle>
         </AlertDialogHeader>
 
         <div className="space-y-3">
           {/* 警告 */}
-          <div className="bg-destructive/10 text-destructive border-destructive/20 flex items-center gap-2 rounded-lg border p-3">
+          <div className="flex items-center gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-yellow-700 dark:text-yellow-400">
             <AlertTriangle className="h-4 w-4 shrink-0" />
-            <p className="text-sm font-medium">この操作は元に戻せません</p>
+            <p className="text-sm font-medium">アーカイブされたタグは新規のタグ付けには使用できません</p>
           </div>
 
           {/* 使用状況 */}
@@ -91,7 +84,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
             </div>
           ) : usage ? (
             <div className="bg-muted rounded-lg p-4">
-              <p className="mb-2 text-sm font-medium">影響を受けるアイテム:</p>
+              <p className="mb-2 text-sm font-medium">現在の使用状況:</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
                 <li>• Tickets: {usage.ticketCount}件</li>
                 <li>• Events: {usage.eventCount}件</li>
@@ -101,41 +94,26 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
             </div>
           ) : null}
 
-          {/* 削除後の処理 */}
+          {/* アーカイブ後の処理 */}
           <div className="space-y-2">
-            <p className="text-sm font-medium">削除すると:</p>
+            <p className="text-sm font-medium">アーカイブすると:</p>
             <ul className="text-muted-foreground space-y-1 text-sm">
-              <li>✓ タグ「t-{tag?.tag_number}」は永久に削除されます</li>
-              <li>✓ 既存アイテムからこのタグが外れます</li>
-              <li>✓ 統計データからも除外されます</li>
+              <li>✓ 新規のタグ付けには使用できなくなります</li>
+              <li>✓ 既存のアイテムには引き続き表示されます</li>
+              <li>✓ 統計データにも引き続き含まれます</li>
+              <li>✓ アーカイブページからいつでも復元できます</li>
             </ul>
           </div>
-
-          {/* 確認入力（使用件数が50件を超える場合） */}
-          {requiresConfirmation && (
-            <div className="space-y-2">
-              <Label htmlFor="confirm-input" className="text-sm font-medium">
-                確認のため、タグ名「{tag?.name}」を入力してください
-              </Label>
-              <Input
-                id="confirm-input"
-                placeholder={tag?.name}
-                value={confirmText}
-                onChange={(e) => setConfirmText(e.target.value)}
-                className="font-mono"
-              />
-            </div>
-          )}
         </div>
 
         <AlertDialogFooter className="mt-6">
-          <AlertDialogCancel disabled={isDeleting}>キャンセル</AlertDialogCancel>
+          <AlertDialogCancel disabled={isArchiving}>キャンセル</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
-            disabled={!canDelete || isDeleting}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            disabled={isArchiving}
+            className="bg-yellow-600 text-white hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600"
           >
-            {isDeleting ? '削除中...' : '完全に削除'}
+            {isArchiving ? 'アーカイブ中...' : 'アーカイブ'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

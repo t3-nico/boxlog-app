@@ -163,6 +163,7 @@ export const useTagStore = create<TagStore>()(
               description: tagData.description || null,
               icon: tagData.icon || null,
               is_active: true,
+              group_id: null,
               created_at: new Date(),
               updated_at: new Date(),
             }

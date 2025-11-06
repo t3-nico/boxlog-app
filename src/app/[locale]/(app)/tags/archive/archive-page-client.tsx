@@ -342,9 +342,7 @@ export function ArchivePageClient() {
                           {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
                         </Button>
                       </TableHead>
-                      <TableHead style={{ width: '192px' }} className="text-right">
-                        アクション
-                      </TableHead>
+                      <TableHead style={{ width: '192px' }} className="text-right"></TableHead>
                     </TableRow>
                   </TableHeader>
                 </Table>
@@ -377,7 +375,7 @@ export function ArchivePageClient() {
                           <Popover>
                             <PopoverTrigger asChild>
                               <button
-                                className="hover:ring-offset-background focus-visible:ring-ring h-4 w-4 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-offset-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+                                className="hover:ring-offset-background focus-visible:ring-ring h-3 w-3 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-offset-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                                 style={{ backgroundColor: tag.color || '#3B82F6' }}
                                 aria-label="カラーを変更"
                               />
@@ -429,7 +427,7 @@ export function ArchivePageClient() {
                               className="h-8 border-0 bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             />
                           ) : (
-                            <div className="flex h-4 items-center">
+                            <div className="flex h-3 items-center">
                               <span className="cursor-text">{tag.name}</span>
                             </div>
                           )}
@@ -457,7 +455,7 @@ export function ArchivePageClient() {
                               className="h-8 border-0 bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             />
                           ) : (
-                            <div className="flex h-4 items-center">
+                            <div className="flex h-3 items-center">
                               <span className="cursor-text truncate">{tag.description || '-'}</span>
                             </div>
                           )}
@@ -502,7 +500,7 @@ export function ArchivePageClient() {
                                   e.stopPropagation()
                                   handleOpenDeleteConfirm(tag)
                                 }}
-                                className="text-destructive"
+                                className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
                               >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 完全に削除

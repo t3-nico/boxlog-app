@@ -170,6 +170,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       updateData.is_active = body.is_active
     }
 
+    if (body.group_id !== undefined) {
+      updateData.group_id = body.group_id
+    }
+
     const { data, error } = await supabase
       .from('tags')
       // @ts-expect-error - Supabase type inference issue with tags table
