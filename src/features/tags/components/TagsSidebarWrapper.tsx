@@ -1,5 +1,8 @@
 'use client'
 
+import { usePathname, useRouter } from 'next/navigation'
+import { useCallback } from 'react'
+
 import { useTagsPageContext } from '../contexts/TagsPageContext'
 import { TagsSidebar } from './TagsSidebar'
 
@@ -9,24 +12,15 @@ import { TagsSidebar } from './TagsSidebar'
  * DesktopLayoutから呼び出され、TagsPageContextのデータを使用する
  */
 export function TagsSidebarWrapper() {
-  const { tags, selectedGroupId, setSelectedGroupId, isLoading, onCreateGroup } = useTagsPageContext()
+  const { isLoading } = useTagsPageContext()
+  const router = useRouter()
+  const pathname = usePathname()
 
-  // グループ（Level 0）のみ抽出
-  const groups = tags.filter((tag) => tag.level === 0)
+  const handleAllTagsClick = useCallback(() => {
+    // URLを /tags に変更
+    const locale = pathname?.split('/')[1] || 'ja'
+    router.push(`/${locale}/tags`)
+  }, [router, pathname])
 
-  const handleCreateGroup = () => {
-    if (onCreateGroup) {
-      onCreateGroup()
-    }
-  }
-
-  return (
-    <TagsSidebar
-      groups={groups}
-      activeGroupId={selectedGroupId}
-      onGroupSelect={setSelectedGroupId}
-      onCreateGroup={handleCreateGroup}
-      isLoading={isLoading}
-    />
-  )
+  return <TagsSidebar onAllTagsClick={handleAllTagsClick} isLoading={isLoading} />
 }

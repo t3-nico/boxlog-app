@@ -59,7 +59,18 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
         onClose()
       } catch (err) {
         console.error('Tag update failed:', err)
-        setError('タグの更新に失敗しました')
+        // エラーメッセージから重複エラーを検出
+        const errorMessage = err instanceof Error ? err.message : String(err)
+        if (
+          errorMessage.includes('duplicate') ||
+          errorMessage.includes('unique') ||
+          errorMessage.includes('重複') ||
+          errorMessage.includes('既に存在')
+        ) {
+          setError(`タグ名「${name.trim()}」は既に使用されています`)
+        } else {
+          setError('タグの更新に失敗しました')
+        }
       } finally {
         setIsLoading(false)
       }

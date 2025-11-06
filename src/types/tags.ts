@@ -1,6 +1,6 @@
-// 3階層対応タグシステムの型定義
+// シンプルなタグシステムの型定義（Level 1のみ）
 
-export type TagLevel = 0 | 1 | 2
+export type TagLevel = 0 | 1
 
 export interface Tag {
   id: string
@@ -10,6 +10,7 @@ export interface Tag {
   color: string
   level: TagLevel
   path: string
+  tag_number: number
   description: string | null
   icon: string | null
   is_active: boolean
@@ -35,7 +36,6 @@ export interface TagHierarchy {
   depth: number
   root_name: string
   level1_name: string | null
-  level2_name: string | null
 }
 
 // タグ作成用入力型

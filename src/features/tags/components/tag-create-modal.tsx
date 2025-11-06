@@ -14,16 +14,29 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import type { CreateTagInput, TagLevel, TagWithChildren } from '@/types/tags'
+import type { CreateTagInput, TagLevel } from '@/types/tags'
+
+// プリセットカラー（10色）
+const PRESET_COLORS = [
+  { name: '青', value: '#3B82F6' },
+  { name: '緑', value: '#10B981' },
+  { name: '赤', value: '#EF4444' },
+  { name: '黄', value: '#F59E0B' },
+  { name: '紫', value: '#8B5CF6' },
+  { name: 'ピンク', value: '#EC4899' },
+  { name: 'シアン', value: '#06B6D4' },
+  { name: 'オレンジ', value: '#F97316' },
+  { name: 'グレー', value: '#6B7280' },
+  { name: 'インディゴ', value: '#6366F1' },
+]
 
 interface TagCreateModalProps {
   isOpen: boolean
   onClose: () => void
   onSave: (data: CreateTagInput) => Promise<void>
-  parentTag?: TagWithChildren | null
 }
 
-export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag }: TagCreateModalProps) => {
+export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps) => {
   const [name, setName] = useState('')
   const [color, setColor] = useState('#3B82F6')
   const [description, setDescription] = useState('')
@@ -52,24 +65,37 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag }: TagCreate
 
       setIsLoading(true)
       try {
-        const level: TagLevel = parentTag ? ((parentTag.level + 1) as TagLevel) : 0
+        // シンプルにLevel 1のタグとして作成（parent_idはnull）
+        const level: TagLevel = 1
+        const parent_id = null
 
         await onSave({
           name: name.trim(),
           color,
           description: description.trim() || null,
-          parent_id: parentTag?.id || null,
+          parent_id,
           level,
         })
         onClose()
       } catch (err) {
         console.error('Tag creation failed:', err)
-        setError('タグの作成に失敗しました')
+        // エラーメッセージから重複エラーを検出
+        const errorMessage = err instanceof Error ? err.message : String(err)
+        if (
+          errorMessage.includes('duplicate') ||
+          errorMessage.includes('unique') ||
+          errorMessage.includes('重複') ||
+          errorMessage.includes('既に存在')
+        ) {
+          setError(`タグ名「${name.trim()}」は既に使用されています`)
+        } else {
+          setError('タグの作成に失敗しました')
+        }
       } finally {
         setIsLoading(false)
       }
     },
-    [name, color, description, parentTag, onSave, onClose]
+    [name, color, description, onSave, onClose]
   )
 
   return (
@@ -77,9 +103,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag }: TagCreate
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>新規タグ作成</DialogTitle>
-          <DialogDescription>
-            {parentTag ? `親タグ: ${parentTag.name}` : 'ルートレベルのタグを作成します'}
-          </DialogDescription>
+          <DialogDescription>新しいタグを作成します</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
@@ -93,15 +117,20 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag }: TagCreate
             {/* カラー */}
             <div className="grid gap-2">
               <Label htmlFor="color">カラー</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="color"
-                  type="color"
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                  className="h-10 w-20"
-                />
-                <span className="text-muted-foreground text-sm">{color}</span>
+              <div className="grid grid-cols-5 gap-2">
+                {PRESET_COLORS.map((presetColor) => (
+                  <button
+                    key={presetColor.value}
+                    type="button"
+                    onClick={() => setColor(presetColor.value)}
+                    className={`h-10 w-full rounded-md border-2 transition-all ${
+                      color === presetColor.value ? 'border-foreground ring-2 ring-offset-2' : 'border-transparent'
+                    }`}
+                    style={{ backgroundColor: presetColor.value }}
+                    title={presetColor.name}
+                    aria-label={presetColor.name}
+                  />
+                ))}
               </div>
             </div>
 
