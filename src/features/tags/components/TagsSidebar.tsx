@@ -2,7 +2,7 @@
 
 import { Archive, Edit, Folder, FolderOpen, MoreHorizontal, Palette, Plus, Tags, Trash2 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import {
@@ -65,6 +66,9 @@ export function TagsSidebar({
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null)
   const [editingGroupName, setEditingGroupName] = useState('')
 
+  // インライン作成フォームのref
+  const inlineFormRef = useRef<HTMLDivElement>(null)
+
   // 外部から制御される isCreating を使用
   const isCreating = externalIsCreating
 
@@ -89,6 +93,27 @@ export function TagsSidebar({
     setNewGroupName('')
     setNewGroupColor('#6B7280')
   }, [setIsCreatingGroup])
+
+  // クリックアウトサイド検知
+  useEffect(() => {
+    if (!isCreating) return
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (inlineFormRef.current && !inlineFormRef.current.contains(event.target as Node)) {
+        handleCancelCreating()
+      }
+    }
+
+    // 少し遅延させてイベントリスナーを追加（作成ボタンクリックと競合しないように）
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside)
+    }, 0)
+
+    return () => {
+      clearTimeout(timeoutId)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isCreating, handleCancelCreating])
 
   // インライン作成を保存
   const handleSaveNewGroup = useCallback(async () => {
@@ -314,7 +339,7 @@ export function TagsSidebar({
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex flex-1 items-center gap-2">
+                    <div className="flex min-w-0 flex-1 items-center gap-2">
                       {/* カラーアイコン（クリック可能） */}
                       <Popover>
                         <PopoverTrigger asChild>
@@ -396,15 +421,13 @@ export function TagsSidebar({
                           className="h-auto flex-1 border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0"
                         />
                       ) : (
-                        <span
-                          className="flex-1 truncate"
+                        <GroupNameWithTooltip
+                          name={group.name}
                           onDoubleClick={(e) => {
                             e.stopPropagation()
                             handleStartEditing(group)
                           }}
-                        >
-                          {group.name}
-                        </span>
+                        />
                       )}
                     </div>
 
@@ -522,62 +545,64 @@ export function TagsSidebar({
 
               {/* インライン作成フォーム */}
               {isCreating && (
-                <div className="hover:bg-accent flex items-center gap-2 rounded-md px-3 py-2 transition-colors">
-                  {/* カラーアイコン（左側） */}
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button
-                        type="button"
-                        className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                        aria-label="カラーを変更"
-                      >
-                        <Folder className="h-4 w-4" style={{ color: newGroupColor }} fill={newGroupColor} />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-3" align="start">
-                      <div className="grid grid-cols-5 gap-2">
-                        {[
-                          '#3B82F6',
-                          '#10B981',
-                          '#EF4444',
-                          '#F59E0B',
-                          '#8B5CF6',
-                          '#EC4899',
-                          '#06B6D4',
-                          '#F97316',
-                          '#6B7280',
-                          '#6366F1',
-                        ].map((color) => (
-                          <button
-                            key={color}
-                            type="button"
-                            onClick={() => setNewGroupColor(color)}
-                            className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                              newGroupColor === color ? 'border-foreground scale-110' : 'border-transparent'
-                            }`}
-                            style={{ backgroundColor: color }}
-                            aria-label={`カラー ${color}`}
-                          />
-                        ))}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                <div ref={inlineFormRef} className="w-full rounded-md px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    {/* カラーアイコン（左側） */}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                          type="button"
+                          className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                          aria-label="カラーを変更"
+                        >
+                          <Folder className="h-4 w-4" style={{ color: newGroupColor }} fill={newGroupColor} />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-3" align="start">
+                        <div className="grid grid-cols-5 gap-2">
+                          {[
+                            '#3B82F6',
+                            '#10B981',
+                            '#EF4444',
+                            '#F59E0B',
+                            '#8B5CF6',
+                            '#EC4899',
+                            '#06B6D4',
+                            '#F97316',
+                            '#6B7280',
+                            '#6366F1',
+                          ].map((color) => (
+                            <button
+                              key={color}
+                              type="button"
+                              onClick={() => setNewGroupColor(color)}
+                              className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
+                                newGroupColor === color ? 'border-foreground scale-110' : 'border-transparent'
+                              }`}
+                              style={{ backgroundColor: color }}
+                              aria-label={`カラー ${color}`}
+                            />
+                          ))}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
 
-                  {/* グループ名入力（右側） */}
-                  <Input
-                    value={newGroupName}
-                    onChange={(e) => setNewGroupName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSaveNewGroup()
-                      } else if (e.key === 'Escape') {
-                        handleCancelCreating()
-                      }
-                    }}
-                    placeholder="グループ名を入力"
-                    autoFocus
-                    className="h-auto flex-1 border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0"
-                  />
+                    {/* グループ名入力（右側） */}
+                    <Input
+                      value={newGroupName}
+                      onChange={(e) => setNewGroupName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSaveNewGroup()
+                        } else if (e.key === 'Escape') {
+                          handleCancelCreating()
+                        }
+                      }}
+                      placeholder="グループ名を入力"
+                      autoFocus
+                      className="h-auto flex-1 border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
+                    />
+                  </div>
                 </div>
               )}
             </>
@@ -593,5 +618,50 @@ export function TagsSidebar({
         onConfirm={handleDeleteGroup}
       />
     </aside>
+  )
+}
+
+/**
+ * グループ名表示 - 省略時のみツールチップを表示
+ */
+function GroupNameWithTooltip({ name, onDoubleClick }: { name: string; onDoubleClick: (e: React.MouseEvent) => void }) {
+  const textRef = useRef<HTMLSpanElement>(null)
+  const [isTruncated, setIsTruncated] = useState(false)
+
+  useEffect(() => {
+    const element = textRef.current
+    if (!element) return
+
+    // 省略されているかどうかをチェック
+    const checkTruncation = () => {
+      setIsTruncated(element.scrollWidth > element.clientWidth)
+    }
+
+    checkTruncation()
+
+    // リサイズ時に再チェック
+    window.addEventListener('resize', checkTruncation)
+    return () => window.removeEventListener('resize', checkTruncation)
+  }, [name])
+
+  const content = (
+    <span ref={textRef} className="flex-1 truncate" onDoubleClick={onDoubleClick}>
+      {name}
+    </span>
+  )
+
+  if (!isTruncated) {
+    return content
+  }
+
+  return (
+    <TooltipProvider delayDuration={300}>
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>{content}</TooltipTrigger>
+        <TooltipContent side="top" sideOffset={4}>
+          <p className="whitespace-nowrap">{name}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }
