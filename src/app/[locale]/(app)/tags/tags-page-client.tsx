@@ -14,7 +14,7 @@ import {
   X,
 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -28,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
@@ -37,7 +38,7 @@ import { TagEditModal } from '@/features/tags/components/tag-edit-modal'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
-import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
+import { useCreateTag, useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
 import { useToast } from '@/lib/toast/use-toast'
 import type { TagWithChildren } from '@/types/tags'
 
@@ -52,7 +53,7 @@ interface TagsPageClientProps {
 export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = false }: TagsPageClientProps = {}) {
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
   const { data: groups = [] } = useTagGroups()
-  const { tags, setTags, setIsLoading, setIsCreatingGroup } = useTagsPageContext()
+  const { tags, setTags, setIsLoading, setIsCreatingGroup, isCreatingTag, setIsCreatingTag } = useTagsPageContext()
   const router = useRouter()
   const pathname = usePathname()
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
@@ -66,6 +67,12 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+
+  // インライン作成用の状態
+  const inlineFormRef = useRef<HTMLTableRowElement>(null)
+  const [newTagName, setNewTagName] = useState('')
+  const [newTagDescription, setNewTagDescription] = useState('')
+  const [newTagColor, setNewTagColor] = useState('#3B82F6')
 
   // initialGroupNumber からグループIDを解決
   const initialGroup = useMemo(() => {
@@ -95,6 +102,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   } = useTagOperations(tags)
 
   const updateTagMutation = useUpdateTag()
+  const createTagMutation = useCreateTag()
   const toast = useToast()
 
   // 選択されたグループ情報を取得
@@ -102,18 +110,85 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     return selectedGroupId ? groups.find((g) => g.id === selectedGroupId) : null
   }, [selectedGroupId, groups])
 
-  // initialGroup が解決されたら selectedGroupId を更新
+  // initialGroup が解決されたら selectedGroupId を更新（selectedGroupIdが未設定の場合のみ）
   useEffect(() => {
-    if (initialGroup) {
+    if (initialGroup && selectedGroupId !== initialGroup.id) {
       setSelectedGroupId(initialGroup.id)
     }
-  }, [initialGroup])
+  }, [initialGroup, selectedGroupId])
 
   // タグデータをContextに同期
   useEffect(() => {
     setTags(fetchedTags)
     setIsLoading(isFetching)
   }, [fetchedTags, isFetching, setTags, setIsLoading])
+
+  // インライン作成開始
+  const handleStartInlineCreation = useCallback(() => {
+    setIsCreatingTag(true)
+    setNewTagName('')
+    setNewTagDescription('')
+    setNewTagColor('#3B82F6')
+  }, [setIsCreatingTag])
+
+  // インライン作成キャンセル
+  const handleCancelInlineCreation = useCallback(() => {
+    setIsCreatingTag(false)
+    setNewTagName('')
+    setNewTagDescription('')
+    setNewTagColor('#3B82F6')
+  }, [setIsCreatingTag])
+
+  // インライン作成保存
+  const handleSaveInlineTag = useCallback(async () => {
+    if (newTagName.trim() === '') {
+      handleCancelInlineCreation()
+      return
+    }
+
+    try {
+      await createTagMutation.mutateAsync({
+        name: newTagName.trim(),
+        description: newTagDescription.trim() || undefined,
+        color: newTagColor,
+        group_id: selectedGroupId,
+        level: 0,
+      })
+      toast.success(`タグ「${newTagName}」を作成しました`)
+      handleCancelInlineCreation()
+    } catch (error) {
+      console.error('Failed to create tag:', error)
+      toast.error('タグの作成に失敗しました')
+    }
+  }, [
+    newTagName,
+    newTagDescription,
+    newTagColor,
+    selectedGroupId,
+    createTagMutation,
+    toast,
+    handleCancelInlineCreation,
+  ])
+
+  // クリックアウトサイド検出
+  useEffect(() => {
+    if (!isCreatingTag) return
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (inlineFormRef.current && !inlineFormRef.current.contains(event.target as Node)) {
+        handleCancelInlineCreation()
+      }
+    }
+
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside)
+    }, 0)
+
+    return () => {
+      clearTimeout(timeoutId)
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isCreatingTag, handleCancelInlineCreation])
 
   // インライン編集開始
   const startEditing = useCallback((tagId: string, field: 'name' | 'description', currentValue: string) => {
@@ -406,7 +481,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
             <Plus className="mr-2 size-4" />
             グループを作成
           </Button>
-          <Button onClick={() => handleCreateTag()} size="sm" className="h-9">
+          <Button onClick={handleStartInlineCreation} size="sm" className="h-9">
             <Plus className="mr-2 size-4" />
             タグを作成
           </Button>
@@ -414,12 +489,12 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       </div>
 
       {/* テーブル */}
-      <div className="flex flex-1 flex-col overflow-hidden px-4 md:px-6">
+      <div className="flex flex-1 flex-col overflow-auto px-4 md:px-6">
         {displayTags.length === 0 ? (
           <div className="border-border flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
             <div className="text-center">
               <p className="text-muted-foreground mb-4">タグがありません</p>
-              <Button onClick={() => handleCreateTag()}>
+              <Button onClick={handleStartInlineCreation}>
                 <Plus className="mr-2 h-4 w-4" />
                 最初のタグを追加
               </Button>
@@ -427,175 +502,256 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           </div>
         ) : (
           <>
-            {/* テーブル部分: 枠で囲む */}
-            <div className="border-border flex-1 rounded-lg border" style={{ overflow: 'clip' }}>
-              {/* ヘッダー: 固定 */}
-              <div style={{ overflowX: 'auto', overflowY: 'hidden' }}>
-                <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead style={{ width: '48px' }}>
-                        <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} aria-label="すべて選択" />
-                      </TableHead>
-                      <TableHead style={{ width: '80px' }}>ID</TableHead>
-                      <TableHead style={{ width: '32px' }}></TableHead>
-                      <TableHead>
-                        <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
-                          名前
-                          {sortField === 'name' &&
-                            (sortDirection === 'asc' ? (
-                              <ArrowUp className="ml-1 h-4 w-4" />
-                            ) : (
-                              <ArrowDown className="ml-1 h-4 w-4" />
-                            ))}
-                          {sortField !== 'name' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                        </Button>
-                      </TableHead>
-                      <TableHead>説明</TableHead>
-                      <TableHead style={{ width: '160px' }}>
-                        <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
-                          作成日時
-                          {sortField === 'created_at' &&
-                            (sortDirection === 'asc' ? (
-                              <ArrowUp className="ml-1 h-4 w-4" />
-                            ) : (
-                              <ArrowDown className="ml-1 h-4 w-4" />
-                            ))}
-                          {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                        </Button>
-                      </TableHead>
-                      <TableHead style={{ width: '192px' }} className="text-right"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                </Table>
-              </div>
-
-              {/* ボディ: スクロール可能 */}
-              <div
-                className="h-full"
-                style={{ height: 'calc(100% - 41px)', overflowX: 'auto', overflowY: 'auto', overflowClipMargin: '0px' }}
-              >
-                <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
-                  <TableBody>
-                    {displayTags.map((tag) => (
-                      <TableRow key={tag.id}>
-                        <TableCell style={{ width: '48px' }} onClick={(e) => e.stopPropagation()}>
-                          <Checkbox
-                            checked={selectedTagIds.includes(tag.id)}
-                            onCheckedChange={() => handleSelectTag(tag.id)}
-                            aria-label={`${tag.name}を選択`}
-                          />
-                        </TableCell>
-                        <TableCell style={{ width: '80px' }} className="text-muted-foreground font-mono text-sm">
-                          t-{tag.tag_number}
-                        </TableCell>
-                        <TableCell style={{ width: '32px' }} className="pr-1">
-                          <div
-                            className="h-3 w-3 rounded-full"
-                            style={{ backgroundColor: tag.color || '#3B82F6' }}
-                            aria-label="タグカラー"
-                          />
-                        </TableCell>
-                        <TableCell className="pl-1 font-medium">
-                          <span
-                            className="cursor-pointer hover:underline"
-                            onClick={() => {
-                              const locale = pathname?.split('/')[1] || 'ja'
-                              router.push(`/${locale}/tags/t-${tag.tag_number}`)
-                            }}
-                          >
-                            {tag.name}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          <span className="truncate">{tag.description || '-'}</span>
-                        </TableCell>
-                        <TableCell style={{ width: '160px' }} className="text-muted-foreground text-xs">
-                          {formatDate(tag.created_at)}
-                        </TableCell>
-                        <TableCell style={{ width: '192px' }} className="text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  const locale = pathname?.split('/')[1] || 'ja'
-                                  router.push(`/${locale}/tags/t-${tag.tag_number}`)
-                                }}
-                              >
-                                表示
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleEditTag(tag)
-                                }}
-                              >
-                                編集
-                              </DropdownMenuItem>
-                              <DropdownMenuSub>
-                                <DropdownMenuSubTrigger>
-                                  <Folder className="mr-2 h-4 w-4" />
-                                  グループに移動
-                                </DropdownMenuSubTrigger>
-                                <DropdownMenuSubContent>
+            {/* テーブル部分 */}
+            <div className="border-border rounded-lg border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[48px]">
+                      <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} aria-label="すべて選択" />
+                    </TableHead>
+                    <TableHead className="w-[80px]">ID</TableHead>
+                    <TableHead className="w-[32px]"></TableHead>
+                    <TableHead>
+                      <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
+                        名前
+                        {sortField === 'name' &&
+                          (sortDirection === 'asc' ? (
+                            <ArrowUp className="ml-1 h-4 w-4" />
+                          ) : (
+                            <ArrowDown className="ml-1 h-4 w-4" />
+                          ))}
+                        {sortField !== 'name' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
+                      </Button>
+                    </TableHead>
+                    <TableHead>説明</TableHead>
+                    <TableHead className="w-[160px]">
+                      <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
+                        作成日時
+                        {sortField === 'created_at' &&
+                          (sortDirection === 'asc' ? (
+                            <ArrowUp className="ml-1 h-4 w-4" />
+                          ) : (
+                            <ArrowDown className="ml-1 h-4 w-4" />
+                          ))}
+                        {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
+                      </Button>
+                    </TableHead>
+                    <TableHead className="w-[192px] text-right"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {/* 既存のタグ行 */}
+                  {displayTags.map((tag) => (
+                    <TableRow key={tag.id}>
+                      <TableCell className="w-[48px]" onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={selectedTagIds.includes(tag.id)}
+                          onCheckedChange={() => handleSelectTag(tag.id)}
+                          aria-label={`${tag.name}を選択`}
+                        />
+                      </TableCell>
+                      <TableCell className="text-muted-foreground w-[80px] font-mono text-sm">
+                        t-{tag.tag_number}
+                      </TableCell>
+                      <TableCell className="w-[32px] pr-1">
+                        <div
+                          className="h-3 w-3 rounded-full"
+                          style={{ backgroundColor: tag.color || '#3B82F6' }}
+                          aria-label="タグカラー"
+                        />
+                      </TableCell>
+                      <TableCell className="pl-1 font-medium">
+                        <span
+                          className="cursor-pointer hover:underline"
+                          onClick={() => {
+                            const locale = pathname?.split('/')[1] || 'ja'
+                            router.push(`/${locale}/tags/t-${tag.tag_number}`)
+                          }}
+                        >
+                          {tag.name}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        <span className="truncate">{tag.description || '-'}</span>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground w-[160px] text-xs">
+                        {formatDate(tag.created_at)}
+                      </TableCell>
+                      <TableCell className="w-[192px] text-right">
+                        <DropdownMenu modal={false}>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                console.log('🔴 DropdownMenuTrigger clicked for tag:', tag.name)
+                              }}
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent side="bottom" align="end" sideOffset={5} avoidCollisions={true}>
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                const locale = pathname?.split('/')[1] || 'ja'
+                                router.push(`/${locale}/tags/t-${tag.tag_number}`)
+                              }}
+                            >
+                              表示
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleEditTag(tag)
+                              }}
+                            >
+                              編集
+                            </DropdownMenuItem>
+                            <DropdownMenuSub>
+                              <DropdownMenuSubTrigger>
+                                <Folder className="mr-2 h-4 w-4" />
+                                グループに移動
+                              </DropdownMenuSubTrigger>
+                              <DropdownMenuSubContent>
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleMoveToGroup(tag, null)
+                                  }}
+                                >
+                                  グループなし
+                                </DropdownMenuItem>
+                                {groups.map((group) => (
                                   <DropdownMenuItem
+                                    key={group.id}
                                     onClick={(e) => {
                                       e.stopPropagation()
-                                      handleMoveToGroup(tag, null)
+                                      handleMoveToGroup(tag, group.id)
                                     }}
                                   >
-                                    グループなし
+                                    <div
+                                      className="mr-2 h-3 w-3 rounded-full"
+                                      style={{ backgroundColor: group.color || '#6B7280' }}
+                                    />
+                                    {group.name}
                                   </DropdownMenuItem>
-                                  {groups.map((group) => (
-                                    <DropdownMenuItem
-                                      key={group.id}
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleMoveToGroup(tag, group.id)
-                                      }}
-                                    >
-                                      <div
-                                        className="mr-2 h-3 w-3 rounded-full"
-                                        style={{ backgroundColor: group.color || '#6B7280' }}
-                                      />
-                                      {group.name}
-                                    </DropdownMenuItem>
-                                  ))}
-                                </DropdownMenuSubContent>
-                              </DropdownMenuSub>
-                              <DropdownMenuItem
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleOpenArchiveConfirm(tag)
-                                }}
-                              >
-                                <Archive className="mr-2 h-4 w-4" />
-                                アーカイブ
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleOpenDeleteConfirm(tag)
-                                }}
-                                className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                完全に削除
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                                ))}
+                              </DropdownMenuSubContent>
+                            </DropdownMenuSub>
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleOpenArchiveConfirm(tag)
+                              }}
+                            >
+                              <Archive className="mr-2 h-4 w-4" />
+                              アーカイブ
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleOpenDeleteConfirm(tag)
+                              }}
+                              className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              完全に削除
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+
+                  {/* インライン作成行（最下部） */}
+                  {isCreatingTag && (
+                    <TableRow ref={inlineFormRef} className="bg-muted/30">
+                      <TableCell className="w-[48px]"></TableCell>
+                      <TableCell className="text-muted-foreground w-[80px] font-mono text-sm">-</TableCell>
+                      <TableCell className="w-[32px] pr-1">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <button
+                              type="button"
+                              className="hover:ring-offset-background focus-visible:ring-ring transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                              aria-label="カラーを変更"
+                            >
+                              <div
+                                className="h-3 w-3 rounded-full"
+                                style={{ backgroundColor: newTagColor }}
+                                aria-label="タグカラー"
+                              />
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-3" align="start">
+                            <div className="grid grid-cols-5 gap-2">
+                              {[
+                                '#3B82F6',
+                                '#10B981',
+                                '#EF4444',
+                                '#F59E0B',
+                                '#8B5CF6',
+                                '#EC4899',
+                                '#06B6D4',
+                                '#F97316',
+                                '#6B7280',
+                                '#6366F1',
+                              ].map((color) => (
+                                <button
+                                  key={color}
+                                  type="button"
+                                  onClick={() => setNewTagColor(color)}
+                                  className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
+                                    newTagColor === color ? 'border-foreground scale-110' : 'border-transparent'
+                                  }`}
+                                  style={{ backgroundColor: color }}
+                                  aria-label={`カラー ${color}`}
+                                />
+                              ))}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </TableCell>
+                      <TableCell className="pl-1">
+                        <Input
+                          value={newTagName}
+                          onChange={(e) => setNewTagName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleSaveInlineTag()
+                            } else if (e.key === 'Escape') {
+                              handleCancelInlineCreation()
+                            }
+                          }}
+                          placeholder="タグ名を入力"
+                          autoFocus
+                          className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          value={newTagDescription}
+                          onChange={(e) => setNewTagDescription(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleSaveInlineTag()
+                            } else if (e.key === 'Escape') {
+                              handleCancelInlineCreation()
+                            }
+                          }}
+                          placeholder="説明を入力（任意）"
+                          className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
+                        />
+                      </TableCell>
+                      <TableCell className="text-muted-foreground w-[160px] text-xs">-</TableCell>
+                      <TableCell className="w-[192px] text-right"></TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </div>
 
             {/* フッター: テーブルの外側に配置 */}

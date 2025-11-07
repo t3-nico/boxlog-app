@@ -11,6 +11,8 @@ interface TagsPageContextValue {
   setIsLoading: (loading: boolean) => void
   isCreatingGroup: boolean
   setIsCreatingGroup: (creating: boolean) => void
+  isCreatingTag: boolean
+  setIsCreatingTag: (creating: boolean) => void
 }
 
 const TagsPageContext = createContext<TagsPageContextValue | null>(null)
@@ -31,6 +33,7 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
   const [tags, setTags] = useState<TagWithChildren[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isCreatingGroup, setIsCreatingGroup] = useState(false)
+  const [isCreatingTag, setIsCreatingTag] = useState(false)
 
   return (
     <TagsPageContext.Provider
@@ -41,6 +44,8 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
         setIsLoading,
         isCreatingGroup,
         setIsCreatingGroup,
+        isCreatingTag,
+        setIsCreatingTag,
       }}
     >
       {children}
