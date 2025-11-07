@@ -12,7 +12,7 @@ import { TagsSidebar } from './TagsSidebar'
  * DesktopLayoutから呼び出され、TagsPageContextのデータを使用する
  */
 export function TagsSidebarWrapper() {
-  const { tags, isLoading } = useTagsPageContext()
+  const { tags, isLoading, isCreatingGroup } = useTagsPageContext()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -38,6 +38,7 @@ export function TagsSidebarWrapper() {
       isLoading={isLoading}
       activeTagsCount={activeTagsCount}
       archivedTagsCount={archivedTagsCount}
+      externalIsCreating={isCreatingGroup}
     />
   )
 }

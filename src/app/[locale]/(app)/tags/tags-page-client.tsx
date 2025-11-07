@@ -28,37 +28,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagEditModal } from '@/features/tags/components/tag-edit-modal'
-import { TagGroupCreateModal } from '@/features/tags/components/tag-group-create-modal'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
-import { useCreateTagGroup, useTagGroups } from '@/features/tags/hooks/use-tag-groups'
+import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
 import { useToast } from '@/lib/toast/use-toast'
-import type { CreateTagGroupInput, TagWithChildren } from '@/types/tags'
+import type { TagWithChildren } from '@/types/tags'
 
 type SortField = 'name' | 'created_at'
 type SortDirection = 'asc' | 'desc'
-
-// プリセットカラー（10色）
-const PRESET_COLORS = [
-  { name: '青', value: '#3B82F6' },
-  { name: '緑', value: '#10B981' },
-  { name: '赤', value: '#EF4444' },
-  { name: '黄', value: '#F59E0B' },
-  { name: '紫', value: '#8B5CF6' },
-  { name: 'ピンク', value: '#EC4899' },
-  { name: 'シアン', value: '#06B6D4' },
-  { name: 'オレンジ', value: '#F97316' },
-  { name: 'グレー', value: '#6B7280' },
-  { name: 'インディゴ', value: '#6366F1' },
-]
 
 interface TagsPageClientProps {
   initialGroupNumber?: string
@@ -68,7 +52,7 @@ interface TagsPageClientProps {
 export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = false }: TagsPageClientProps = {}) {
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
   const { data: groups = [] } = useTagGroups()
-  const { tags, setTags, setIsLoading } = useTagsPageContext()
+  const { tags, setTags, setIsLoading, setIsCreatingGroup } = useTagsPageContext()
   const router = useRouter()
   const pathname = usePathname()
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
@@ -82,7 +66,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
-  const [showGroupCreateModal, setShowGroupCreateModal] = useState(false)
 
   // initialGroupNumber からグループIDを解決
   const initialGroup = useMemo(() => {
@@ -112,7 +95,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   } = useTagOperations(tags)
 
   const updateTagMutation = useUpdateTag()
-  const createGroupMutation = useCreateTagGroup()
   const toast = useToast()
 
   // 選択されたグループ情報を取得
@@ -233,26 +215,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       toast.error('タグの削除に失敗しました')
     }
   }, [deleteConfirmTag, handleDeleteTag, toast])
-
-  // グループ作成ハンドラー
-  const handleCreateGroup = useCallback(
-    async (data: CreateTagGroupInput) => {
-      try {
-        const result = await createGroupMutation.mutateAsync(data)
-        toast.success(`グループ「${data.name}」を作成しました`)
-        setShowGroupCreateModal(false)
-
-        // 作成したグループのページに遷移
-        const locale = pathname?.split('/')[1] || 'ja'
-        router.push(`/${locale}/tags/g-${result.group_number}`)
-      } catch (error) {
-        console.error('Failed to create tag group:', error)
-        toast.error('グループの作成に失敗しました')
-        throw error
-      }
-    },
-    [createGroupMutation, toast, router, pathname]
-  )
 
   // タグをグループに移動
   const handleMoveToGroup = useCallback(
@@ -440,7 +402,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
         {/* 右側: ボタン群 */}
         <div className="flex items-center gap-2">
-          <Button onClick={() => setShowGroupCreateModal(true)} size="sm" variant="outline" className="h-9">
+          <Button onClick={() => setIsCreatingGroup(true)} size="sm" variant="outline" className="h-9">
             <Plus className="mr-2 size-4" />
             グループを作成
           </Button>
@@ -466,9 +428,9 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         ) : (
           <>
             {/* テーブル部分: 枠で囲む */}
-            <div className="border-border flex-1 overflow-hidden rounded-lg border">
+            <div className="border-border flex-1 rounded-lg border" style={{ overflow: 'clip' }}>
               {/* ヘッダー: 固定 */}
-              <div className="overflow-x-auto">
+              <div style={{ overflowX: 'auto', overflowY: 'hidden' }}>
                 <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
                   <TableHeader>
                     <TableRow>
@@ -509,7 +471,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
               </div>
 
               {/* ボディ: スクロール可能 */}
-              <div className="h-full overflow-x-auto overflow-y-auto" style={{ height: 'calc(100% - 41px)' }}>
+              <div
+                className="h-full"
+                style={{ height: 'calc(100% - 41px)', overflowX: 'auto', overflowY: 'auto', overflowClipMargin: '0px' }}
+              >
                 <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
                   <TableBody>
                     {displayTags.map((tag) => (
@@ -524,75 +489,26 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                         <TableCell style={{ width: '80px' }} className="text-muted-foreground font-mono text-sm">
                           t-{tag.tag_number}
                         </TableCell>
-                        <TableCell style={{ width: '32px' }} className="pr-1" onClick={(e) => e.stopPropagation()}>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <button
-                                className="hover:ring-offset-background focus-visible:ring-ring h-3 w-3 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-offset-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                                style={{ backgroundColor: tag.color || '#3B82F6' }}
-                                aria-label="カラーを変更"
-                              />
-                            </PopoverTrigger>
-                            <PopoverContent className="w-64 p-3" align="start">
-                              <div className="space-y-2">
-                                <h4 className="text-sm font-semibold">カラーを選択</h4>
-                                <div className="grid grid-cols-5 gap-2">
-                                  {PRESET_COLORS.map((presetColor) => (
-                                    <button
-                                      key={presetColor.value}
-                                      type="button"
-                                      onClick={() => handleColorChange(tag.id, presetColor.value)}
-                                      className={`h-10 w-full rounded-md border-2 transition-all hover:scale-110 ${
-                                        tag.color === presetColor.value
-                                          ? 'border-foreground ring-2 ring-offset-2'
-                                          : 'border-border hover:border-foreground/50'
-                                      }`}
-                                      style={{ backgroundColor: presetColor.value }}
-                                      title={presetColor.name}
-                                      aria-label={presetColor.name}
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-                            </PopoverContent>
-                          </Popover>
+                        <TableCell style={{ width: '32px' }} className="pr-1">
+                          <div
+                            className="h-3 w-3 rounded-full"
+                            style={{ backgroundColor: tag.color || '#3B82F6' }}
+                            aria-label="タグカラー"
+                          />
                         </TableCell>
-                        <TableCell
-                          className="pl-1 font-medium"
-                          onClick={() => {
-                            const locale = pathname?.split('/')[1] || 'ja'
-                            router.push(`/${locale}/tags/t-${tag.tag_number}`)
-                          }}
-                        >
-                          <span className="cursor-pointer hover:underline">{tag.name}</span>
+                        <TableCell className="pl-1 font-medium">
+                          <span
+                            className="cursor-pointer hover:underline"
+                            onClick={() => {
+                              const locale = pathname?.split('/')[1] || 'ja'
+                              router.push(`/${locale}/tags/t-${tag.tag_number}`)
+                            }}
+                          >
+                            {tag.name}
+                          </span>
                         </TableCell>
-                        <TableCell
-                          className="text-muted-foreground"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            startEditing(tag.id, 'description', tag.description || '')
-                          }}
-                        >
-                          {editingTagId === tag.id && editingField === 'description' ? (
-                            <Input
-                              value={editValue}
-                              onChange={(e) => setEditValue(e.target.value)}
-                              onBlur={() => saveInlineEdit(tag.id)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  saveInlineEdit(tag.id)
-                                } else if (e.key === 'Escape') {
-                                  cancelEditing()
-                                }
-                              }}
-                              autoFocus
-                              className="h-8 border-0 bg-transparent px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                            />
-                          ) : (
-                            <div className="flex h-3 items-center">
-                              <span className="cursor-text truncate">{tag.description || '-'}</span>
-                            </div>
-                          )}
+                        <TableCell className="text-muted-foreground">
+                          <span className="truncate">{tag.description || '-'}</span>
                         </TableCell>
                         <TableCell style={{ width: '160px' }} className="text-muted-foreground text-xs">
                           {formatDate(tag.created_at)}
@@ -600,7 +516,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                         <TableCell style={{ width: '192px' }} className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm">
+                              <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
@@ -750,13 +666,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
       {/* 削除確認ダイアログ */}
       <TagDeleteDialog tag={deleteConfirmTag} onClose={handleCloseDeleteConfirm} onConfirm={handleConfirmDelete} />
-
-      {/* グループ作成モーダル */}
-      <TagGroupCreateModal
-        isOpen={showGroupCreateModal}
-        onClose={() => setShowGroupCreateModal(false)}
-        onSave={handleCreateGroup}
-      />
     </div>
   )
 }

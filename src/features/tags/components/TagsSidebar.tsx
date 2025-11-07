@@ -17,8 +17,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { TagGroupCreateModal } from '@/features/tags/components/tag-group-create-modal'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
+import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import {
   useCreateTagGroup,
   useDeleteTagGroup,
@@ -27,13 +27,14 @@ import {
 } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import { useToast } from '@/lib/toast/use-toast'
-import type { CreateTagGroupInput, TagGroup } from '@/types/tags'
+import type { TagGroup } from '@/types/tags'
 
 interface TagsSidebarProps {
   onAllTagsClick: () => void
   isLoading?: boolean
   activeTagsCount?: number
   archivedTagsCount?: number
+  externalIsCreating?: boolean
 }
 
 /**
@@ -46,9 +47,11 @@ export function TagsSidebar({
   isLoading = false,
   activeTagsCount = 0,
   archivedTagsCount = 0,
+  externalIsCreating = false,
 }: TagsSidebarProps) {
   const router = useRouter()
   const pathname = usePathname()
+  const { setIsCreatingGroup } = useTagsPageContext()
   const { data: groups = [], isLoading: isLoadingGroups } = useTagGroups()
   const { data: allTags = [] } = useTags(true) // タグ数カウント用
   const createGroupMutation = useCreateTagGroup()
@@ -56,13 +59,14 @@ export function TagsSidebar({
   const deleteGroupMutation = useDeleteTagGroup()
   const toast = useToast()
 
-  const [showCreateModal, setShowCreateModal] = useState(false)
   const [deletingGroup, setDeletingGroup] = useState<TagGroup | null>(null)
-  const [isCreating, setIsCreating] = useState(false)
   const [newGroupName, setNewGroupName] = useState('')
   const [newGroupColor, setNewGroupColor] = useState('#6B7280')
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null)
   const [editingGroupName, setEditingGroupName] = useState('')
+
+  // 外部から制御される isCreating を使用
+  const isCreating = externalIsCreating
 
   const isArchivePage = pathname?.includes('/archive')
   const isUncategorizedPage = pathname?.includes('/uncategorized')
@@ -74,17 +78,17 @@ export function TagsSidebar({
 
   // インライン作成を開始
   const handleStartCreating = useCallback(() => {
-    setIsCreating(true)
+    setIsCreatingGroup(true)
     setNewGroupName('')
     setNewGroupColor('#6B7280')
-  }, [])
+  }, [setIsCreatingGroup])
 
   // インライン作成をキャンセル
   const handleCancelCreating = useCallback(() => {
-    setIsCreating(false)
+    setIsCreatingGroup(false)
     setNewGroupName('')
     setNewGroupColor('#6B7280')
-  }, [])
+  }, [setIsCreatingGroup])
 
   // インライン作成を保存
   const handleSaveNewGroup = useCallback(async () => {
@@ -109,7 +113,7 @@ export function TagsSidebar({
         color: newGroupColor || null,
       })
       toast.success(`グループ「${newGroupName}」を作成しました`)
-      setIsCreating(false)
+      setIsCreatingGroup(false)
       setNewGroupName('')
       setNewGroupColor('#6B7280')
 
@@ -120,27 +124,7 @@ export function TagsSidebar({
       console.error('Failed to create tag group:', error)
       toast.error('グループの作成に失敗しました')
     }
-  }, [newGroupName, newGroupColor, createGroupMutation, toast, router, pathname])
-
-  // グループ作成（モーダル用 - 後方互換性のため残す）
-  const handleCreateGroup = useCallback(
-    async (data: CreateTagGroupInput) => {
-      try {
-        const result = await createGroupMutation.mutateAsync(data)
-        toast.success(`グループ「${data.name}」を作成しました`)
-        setShowCreateModal(false)
-
-        // 作成したグループのページに遷移
-        const locale = pathname?.split('/')[1] || 'ja'
-        router.push(`/${locale}/tags/g-${result.group_number}`)
-      } catch (error) {
-        console.error('Failed to create tag group:', error)
-        toast.error('グループの作成に失敗しました')
-        throw error
-      }
-    },
-    [createGroupMutation, toast, router, pathname]
-  )
+  }, [newGroupName, newGroupColor, createGroupMutation, toast, router, pathname, setIsCreatingGroup])
 
   // グループ削除
   const handleDeleteGroup = useCallback(async () => {
@@ -307,7 +291,7 @@ export function TagsSidebar({
           </button>
 
           {/* グループセクション */}
-          <div className="text-muted-foreground mt-4 mb-2 flex items-center justify-between px-3">
+          <div className="text-muted-foreground mt-4 mb-2 flex items-center justify-between pr-1 pl-3">
             <span className="text-xs font-semibold uppercase">グループ</span>
             <Button variant="ghost" size="sm" onClick={handleStartCreating} className="hover:bg-accent h-5 w-5 p-0">
               <Plus className="h-3 w-3" />
@@ -601,13 +585,7 @@ export function TagsSidebar({
         </div>
       </nav>
 
-      {/* モーダル */}
-      <TagGroupCreateModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onSave={handleCreateGroup}
-      />
-
+      {/* 削除確認ダイアログ */}
       <TagGroupDeleteDialog
         group={deletingGroup}
         tagCount={deletingGroup ? getGroupTagCount(deletingGroup.id) : 0}
