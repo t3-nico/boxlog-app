@@ -1,6 +1,6 @@
 'use client'
 
-import { Archive, Edit, Folder, MoreHorizontal, Palette, Plus, Tags, Trash2 } from 'lucide-react'
+import { Archive, Edit, Folder, FolderOpen, MoreHorizontal, Palette, Plus, Tags, Trash2 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 
@@ -65,6 +65,7 @@ export function TagsSidebar({
   const [editingGroupName, setEditingGroupName] = useState('')
 
   const isArchivePage = pathname?.includes('/archive')
+  const isUncategorizedPage = pathname?.includes('/uncategorized')
   const currentGroupNumber = useMemo(() => {
     if (!pathname) return null
     const match = pathname.match(/\/tags\/g-(\d+)/)
@@ -209,9 +210,19 @@ export function TagsSidebar({
     [allTags]
   )
 
+  // 未分類タグ数をカウント
+  const uncategorizedTagsCount = useMemo(() => {
+    return allTags.filter((tag) => !tag.group_id && tag.is_active && tag.level === 0).length
+  }, [allTags])
+
   const handleArchiveClick = useCallback(() => {
     const locale = pathname?.split('/')[1] || 'ja'
     router.push(`/${locale}/tags/archive`)
+  }, [router, pathname])
+
+  const handleUncategorizedClick = useCallback(() => {
+    const locale = pathname?.split('/')[1] || 'ja'
+    router.push(`/${locale}/tags/uncategorized`)
   }, [router, pathname])
 
   const handleGroupClick = useCallback(
@@ -247,7 +258,7 @@ export function TagsSidebar({
             type="button"
             onClick={onAllTagsClick}
             className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
-              !isArchivePage && !currentGroupNumber
+              !isArchivePage && !isUncategorizedPage && !currentGroupNumber
                 ? 'bg-accent text-accent-foreground'
                 : 'hover:bg-accent hover:text-accent-foreground'
             }`}
@@ -258,6 +269,23 @@ export function TagsSidebar({
                 <span>すべてのタグ</span>
               </div>
               <span className="text-muted-foreground text-xs">{activeTagsCount}</span>
+            </div>
+          </button>
+
+          {/* 未分類 */}
+          <button
+            type="button"
+            onClick={handleUncategorizedClick}
+            className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
+              isUncategorizedPage ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'
+            }`}
+          >
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <FolderOpen className="h-4 w-4 shrink-0" />
+                <span>未分類</span>
+              </div>
+              <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>
             </div>
           </button>
 

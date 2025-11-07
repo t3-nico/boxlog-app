@@ -62,9 +62,10 @@ const PRESET_COLORS = [
 
 interface TagsPageClientProps {
   initialGroupNumber?: string
+  showUncategorizedOnly?: boolean
 }
 
-export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {}) {
+export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = false }: TagsPageClientProps = {}) {
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
   const { data: groups = [] } = useTagGroups()
   const { tags, setTags, setIsLoading } = useTagsPageContext()
@@ -281,8 +282,11 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
   const filteredTags = useMemo(() => {
     let filtered = baseTags
 
-    // グループフィルタ
-    if (selectedGroupId) {
+    // 未分類フィルタ
+    if (showUncategorizedOnly) {
+      filtered = filtered.filter((tag) => !tag.group_id)
+    } else if (selectedGroupId) {
+      // グループフィルタ
       console.log('[TagsPageClient] Filtering by group:', {
         selectedGroupId,
         baseTags: baseTags.map((t) => ({ id: t.id, name: t.name, group_id: t.group_id })),
@@ -306,7 +310,7 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
     }
 
     return filtered
-  }, [baseTags, searchQuery, selectedGroupId])
+  }, [baseTags, searchQuery, selectedGroupId, showUncategorizedOnly])
 
   // ソート適用
   const sortedTags = useMemo(() => {
@@ -408,8 +412,8 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
             className="h-9 w-[150px] lg:w-[250px]"
           />
 
-          {/* グループフィルタバッジ */}
-          {selectedGroup && (
+          {/* グループフィルタバッジ（未分類ページでは非表示） */}
+          {!showUncategorizedOnly && selectedGroup && (
             <div className="bg-accent text-accent-foreground flex items-center gap-1 rounded-md px-2 py-1 text-sm">
               <div
                 className="h-2 w-2 shrink-0 rounded-full"
@@ -509,14 +513,7 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
                 <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
                   <TableBody>
                     {displayTags.map((tag) => (
-                      <TableRow
-                        key={tag.id}
-                        className="cursor-pointer"
-                        onClick={() => {
-                          const locale = pathname?.split('/')[1] || 'ja'
-                          router.push(`/${locale}/tags/t-${tag.tag_number}`)
-                        }}
-                      >
+                      <TableRow key={tag.id}>
                         <TableCell style={{ width: '48px' }} onClick={(e) => e.stopPropagation()}>
                           <Checkbox
                             checked={selectedTagIds.includes(tag.id)}
@@ -560,7 +557,13 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
                             </PopoverContent>
                           </Popover>
                         </TableCell>
-                        <TableCell className="pl-1 font-medium">
+                        <TableCell
+                          className="pl-1 font-medium"
+                          onClick={() => {
+                            const locale = pathname?.split('/')[1] || 'ja'
+                            router.push(`/${locale}/tags/t-${tag.tag_number}`)
+                          }}
+                        >
                           <span className="cursor-pointer hover:underline">{tag.name}</span>
                         </TableCell>
                         <TableCell
@@ -597,17 +600,11 @@ export function TagsPageClient({ initialGroupNumber }: TagsPageClientProps = {})
                         <TableCell style={{ width: '192px' }} className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                }}
-                              >
+                              <Button variant="ghost" size="sm">
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="z-50">
+                            <DropdownMenuContent align="end">
                               <DropdownMenuItem
                                 onClick={(e) => {
                                   e.stopPropagation()
