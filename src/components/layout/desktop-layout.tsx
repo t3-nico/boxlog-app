@@ -7,6 +7,7 @@ import { CalendarSidebar } from '@/features/calendar/components/sidebar/Calendar
 import { AppBar } from '@/features/navigation/components/appbar'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
+import { TagsSidebarWrapper } from '@/features/tags/components/TagsSidebarWrapper'
 
 import { MainContentWrapper } from './main-content-wrapper'
 
@@ -30,6 +31,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   // ページごとにSidebarを切り替え
   const isCalendarPage = pathname?.startsWith(`/${locale}/calendar`) ?? false
   const isInboxPage = pathname?.startsWith(`/${locale}/inbox`) ?? false
+  const isTagsPage = pathname?.startsWith(`/${locale}/tags`) ?? false
 
   return (
     <div className="flex h-full">
@@ -45,9 +47,9 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         {isOpen && !isInboxPage && (
           <>
             <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
-              {isCalendarPage ? <CalendarSidebar /> : <AppSidebar />}
+              {isCalendarPage ? <CalendarSidebar /> : isTagsPage ? <TagsSidebarWrapper /> : <AppSidebar />}
             </ResizablePanel>
-            <ResizableHandle className="border-border hover:border-primary w-0 border-r transition-colors" />
+            <ResizableHandle className="border-border hover:bg-accent/50 w-1 border-r transition-colors" />
           </>
         )}
 

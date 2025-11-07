@@ -1,6 +1,6 @@
 'use client'
 
-import { BarChart3, Calendar, Inbox, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { BarChart3, Calendar, Inbox, PanelLeftClose, PanelLeftOpen, Tag } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
@@ -71,6 +71,12 @@ export function AppBar() {
         icon: BarChart3,
         label: t('sidebar.navigation.stats'),
         url: `/${locale}/stats`,
+      },
+      {
+        id: 'tags',
+        icon: Tag,
+        label: t('sidebar.navigation.tags'),
+        url: `/${locale}/tags`,
       },
     ],
     [t, locale]

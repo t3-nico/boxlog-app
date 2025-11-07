@@ -44,6 +44,7 @@ export const cacheStrategies = {
   events: realtimeCache,
   calendars: realtimeCache,
   tags: standardCache,
+  tagGroups: standardCache, // タググループは頻繁に変更されない
   itemTags: standardCache,
   tagStats: standardCache,
   smartFolders: standardCache,

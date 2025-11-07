@@ -33,6 +33,7 @@
     "navigation": {
       "calendar": "Calendar",
       "inbox": "Inbox",
+      "tags": "Tags",
       "stats": "Stats",
       "settings": "Settings",
       "search": "Search"

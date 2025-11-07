@@ -1,6 +1,6 @@
-// 3階層対応タグシステムの型定義
+// シンプルなタグシステムの型定義（Level 1のみ）
 
-export type TagLevel = 0 | 1 | 2
+export type TagLevel = 0 | 1
 
 export interface Tag {
   id: string
@@ -10,9 +10,25 @@ export interface Tag {
   color: string
   level: TagLevel
   path: string
+  tag_number: number
   description: string | null
   icon: string | null
   is_active: boolean
+  group_id: string | null
+  created_at: Date
+  updated_at: Date
+}
+
+// タググループ
+export interface TagGroup {
+  id: string
+  user_id: string
+  name: string
+  slug: string
+  group_number: number
+  description: string | null
+  color: string | null
+  sort_order: number
   created_at: Date
   updated_at: Date
 }
@@ -35,7 +51,6 @@ export interface TagHierarchy {
   depth: number
   root_name: string
   level1_name: string | null
-  level2_name: string | null
 }
 
 // タグ作成用入力型
@@ -46,6 +61,7 @@ export interface CreateTagInput {
   icon?: string | null
   parent_id?: string | null
   level: TagLevel
+  group_id?: string | null
 }
 
 // タグ更新用入力型
@@ -57,6 +73,32 @@ export interface UpdateTagInput {
   parent_id?: string | null
   level?: TagLevel
   is_active?: boolean
+  group_id?: string | null
+}
+
+// タググループ作成用入力型
+export interface CreateTagGroupInput {
+  name: string
+  slug?: string
+  description?: string | null
+  color?: string | null
+  sort_order?: number
+}
+
+// タググループ更新用入力型
+export interface UpdateTagGroupInput {
+  name?: string
+  description?: string | null
+  color?: string | null
+  sort_order?: number
+}
+
+// タグ使用状況
+export interface TagUsage {
+  ticketCount: number
+  eventCount: number
+  taskCount: number
+  totalCount: number
 }
 
 // タグ関連付け
@@ -129,6 +171,12 @@ export interface TagSortOptions {
   order: TagSortOrder
 }
 
+// グループに所属するタグを含むグループ型
+export interface TagGroupWithTags extends TagGroup {
+  tags: Tag[]
+  totalTickets?: number
+}
+
 // API レスポンス型
 export interface TagsResponse {
   data: Tag[]
@@ -143,6 +191,16 @@ export interface TagWithChildrenResponse {
 
 export interface TagHierarchyResponse {
   data: TagHierarchy[]
+  count: number
+}
+
+export interface TagGroupsResponse {
+  data: TagGroup[]
+  count: number
+}
+
+export interface TagGroupWithTagsResponse {
+  data: TagGroupWithTags[]
   count: number
 }
 

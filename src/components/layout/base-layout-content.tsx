@@ -7,6 +7,7 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
 import { NotificationDialog } from '@/features/notifications'
 import { SettingsDialog } from '@/features/settings/components/dialog'
+import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React from 'react'
@@ -35,6 +36,9 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const isMobile = useMediaQuery('(max-width: 768px)')
   const searchParams = useSearchParams()
   const { calendarProviderProps } = useCalendarProviderProps(pathname, searchParams || new URLSearchParams())
+
+  // タグページかどうかを判定
+  const isTagsPage = pathname?.startsWith(`/${localeFromPath}/tags`) ?? false
 
   const content = (
     <div className="flex h-screen flex-col">
@@ -77,6 +81,11 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
         {content}
       </CalendarNavigationProvider>
     )
+  }
+
+  // タグページの場合はTagsPageProviderでラップ
+  if (isTagsPage) {
+    return <TagsPageProvider>{content}</TagsPageProvider>
   }
 
   return content

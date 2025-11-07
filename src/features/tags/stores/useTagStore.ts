@@ -159,9 +159,11 @@ export const useTagStore = create<TagStore>()(
               color: tagData.color,
               level: tagData.level,
               path,
+              tag_number: 0, // 仮の値、実際の値はサーバー側で自動採番される
               description: tagData.description || null,
               icon: tagData.icon || null,
               is_active: true,
+              group_id: null,
               created_at: new Date(),
               updated_at: new Date(),
             }

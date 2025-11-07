@@ -13,10 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
-import type { CreateTagInput, TagGroup, TagLevel } from '@/types/tags'
+import type { CreateTagGroupInput } from '@/types/tags'
 
 // プリセットカラー（10色）
 const PRESET_COLORS = [
@@ -32,30 +29,23 @@ const PRESET_COLORS = [
   { name: 'インディゴ', value: '#6366F1' },
 ]
 
-interface TagCreateModalProps {
+interface TagGroupCreateModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (data: CreateTagInput) => Promise<void>
+  onSave: (data: CreateTagGroupInput) => Promise<void>
 }
 
-export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps) => {
+export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateModalProps) => {
   const [name, setName] = useState('')
   const [color, setColor] = useState('#3B82F6')
-  const [description, setDescription] = useState('')
-  const [groupId, setGroupId] = useState<string>('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-
-  // タググループ取得
-  const { data: groups = [] as TagGroup[] } = useTagGroups()
 
   // モーダルが開いたらリセット
   useEffect(() => {
     if (isOpen) {
       setName('')
       setColor('#3B82F6')
-      setDescription('')
-      setGroupId('')
       setError('')
     }
   }, [isOpen])
@@ -66,60 +56,49 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
       setError('')
 
       if (!name.trim()) {
-        setError('タグ名を入力してください')
+        setError('グループ名を入力してください')
         return
       }
 
       setIsLoading(true)
       try {
-        // シンプルにLevel 0のタグとして作成（parent_idはnull）
-        const level: TagLevel = 0
-        const parent_id = null
-
         await onSave({
           name: name.trim(),
-          color,
-          description: description.trim() || null,
-          parent_id,
-          level,
-          group_id: groupId && groupId !== '__none__' ? groupId : null,
+          slug: '', // 空文字列（将来的に削除予定）
+          description: null,
+          color: color || null,
         })
         onClose()
       } catch (err) {
-        console.error('Tag creation failed:', err)
-        // エラーメッセージから重複エラーを検出
-        const errorMessage = err instanceof Error ? err.message : String(err)
-        if (
-          errorMessage.includes('duplicate') ||
-          errorMessage.includes('unique') ||
-          errorMessage.includes('重複') ||
-          errorMessage.includes('既に存在')
-        ) {
-          setError(`タグ名「${name.trim()}」は既に使用されています`)
-        } else {
-          setError('タグの作成に失敗しました')
-        }
+        console.error('Tag group creation failed:', err)
+        setError('グループの作成に失敗しました')
       } finally {
         setIsLoading(false)
       }
     },
-    [name, color, description, onSave, onClose]
+    [name, color, onSave, onClose]
   )
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>新規タグ作成</DialogTitle>
-          <DialogDescription>新しいタグを作成します</DialogDescription>
+          <DialogTitle>新規グループ作成</DialogTitle>
+          <DialogDescription>新しいタググループを作成します</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            {/* タグ名 */}
+            {/* グループ名 */}
             <div className="grid gap-2">
-              <Label htmlFor="name">タグ名 *</Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="例: 開発" required />
+              <Label htmlFor="name">グループ名 *</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="例: プロジェクト"
+                required
+              />
             </div>
 
             {/* カラー */}
@@ -140,36 +119,6 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
                   />
                 ))}
               </div>
-            </div>
-
-            {/* グループ */}
-            <div className="grid gap-2">
-              <Label htmlFor="group">グループ</Label>
-              <Select value={groupId || undefined} onValueChange={(value) => setGroupId(value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="グループを選択（任意）" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__none__">未分類</SelectItem>
-                  {groups.map((group) => (
-                    <SelectItem key={group.id} value={group.id}>
-                      {group.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* 説明 */}
-            <div className="grid gap-2">
-              <Label htmlFor="description">説明</Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="タグの説明（任意）"
-                rows={3}
-              />
             </div>
 
             {/* エラー表示 */}
