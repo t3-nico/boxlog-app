@@ -40,7 +40,7 @@ import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useCreateTag, useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
 import { useToast } from '@/lib/toast/use-toast'
-import type { TagWithChildren } from '@/types/tags'
+import type { TagGroup, TagWithChildren } from '@/types/tags'
 
 type SortField = 'name' | 'created_at'
 type SortDirection = 'asc' | 'desc'
@@ -52,7 +52,7 @@ interface TagsPageClientProps {
 
 export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = false }: TagsPageClientProps = {}) {
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
-  const { data: groups = [] } = useTagGroups()
+  const { data: groups = [] as TagGroup[] } = useTagGroups()
   const { tags, setTags, setIsLoading, setIsCreatingGroup, isCreatingTag, setIsCreatingTag } = useTagsPageContext()
   const router = useRouter()
   const pathname = usePathname()

@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
-import type { TagWithChildren, UpdateTagInput } from '@/types/tags'
+import type { TagGroup, TagWithChildren, UpdateTagInput } from '@/types/tags'
 
 interface TagEditModalProps {
   isOpen: boolean
@@ -34,7 +34,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
   const [error, setError] = useState('')
 
   // タググループ取得
-  const { data: groups = [] } = useTagGroups()
+  const { data: groups = [] as TagGroup[] } = useTagGroups()
 
   useEffect(() => {
     if (isOpen && tag) {

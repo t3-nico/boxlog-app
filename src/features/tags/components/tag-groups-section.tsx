@@ -42,7 +42,7 @@ export interface TagGroupsSectionRef {
  */
 export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSectionProps>(
   ({ onSelectGroup, selectedGroupId, onClose }, ref) => {
-    const { data: groups = [], isLoading } = useTagGroups()
+    const { data: groups = [] as TagGroup[], isLoading } = useTagGroups()
     const { data: allTags = [] } = useTags(true) // タグ数カウント用
     const createGroupMutation = useCreateTagGroup()
     const updateGroupMutation = useUpdateTagGroup()

@@ -53,7 +53,7 @@ export function TagsSidebar({
   const router = useRouter()
   const pathname = usePathname()
   const { setIsCreatingGroup } = useTagsPageContext()
-  const { data: groups = [], isLoading: isLoadingGroups } = useTagGroups()
+  const { data: groups = [] as TagGroup[], isLoading: isLoadingGroups } = useTagGroups()
   const { data: allTags = [] } = useTags(true) // タグ数カウント用
   const createGroupMutation = useCreateTagGroup()
   const updateGroupMutation = useUpdateTagGroup()

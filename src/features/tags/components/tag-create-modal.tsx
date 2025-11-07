@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
-import type { CreateTagInput, TagLevel } from '@/types/tags'
+import type { CreateTagInput, TagGroup, TagLevel } from '@/types/tags'
 
 // プリセットカラー（10色）
 const PRESET_COLORS = [
@@ -47,7 +47,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
   const [error, setError] = useState('')
 
   // タググループ取得
-  const { data: groups = [] } = useTagGroups()
+  const { data: groups = [] as TagGroup[] } = useTagGroups()
 
   // モーダルが開いたらリセット
   useEffect(() => {
