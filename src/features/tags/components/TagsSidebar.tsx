@@ -392,9 +392,23 @@ export function TagsSidebar({
           {/* グループセクション */}
           <div className="text-muted-foreground mt-4 mb-2 flex items-center justify-between pr-1 pl-3">
             <span className="text-xs font-semibold uppercase">{t('tags.sidebar.groups')}</span>
-            <Button variant="ghost" size="sm" onClick={handleStartCreating} className="hover:bg-accent h-5 w-5 p-0">
-              <Plus className="h-3 w-3" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleStartCreating}
+                    className="hover:bg-accent h-5 w-5 p-0"
+                  >
+                    <Plus className="h-3 w-3" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top" sideOffset={4}>
+                  <p>{t('tags.page.createGroup')}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           {reorderedGroups.length === 0 && !isCreating ? (

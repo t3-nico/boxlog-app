@@ -28,11 +28,11 @@ export function TagsPageHeader({ title, count, actions }: TagsPageHeaderProps) {
   return (
     <div className="bg-background flex h-12 shrink-0 items-end px-4 pt-2">
       {/* タイトルコンテナ（40px） */}
-      <div className="flex h-10 flex-1 items-center">
-        <h1 className="text-base font-semibold">
-          {title}
-          {count !== undefined && <span className="text-muted-foreground ml-1">({count})</span>}
-        </h1>
+      <div className="flex h-10 flex-1 items-center gap-1 overflow-hidden">
+        <h1 className="truncate text-base font-semibold">{title}</h1>
+        {count !== undefined && (
+          <span className="text-muted-foreground shrink-0 text-base font-semibold">({count})</span>
+        )}
       </div>
 
       {/* アクションボタン */}

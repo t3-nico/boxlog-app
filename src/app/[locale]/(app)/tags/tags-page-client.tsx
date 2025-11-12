@@ -1,17 +1,7 @@
 'use client'
 
-import {
-  Archive,
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  ChevronLeft,
-  ChevronRight,
-  Folder,
-  MoreHorizontal,
-  Plus,
-  Trash2,
-} from 'lucide-react'
+import { DndContext, DragOverlay, useDraggable } from '@dnd-kit/core'
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, Filter, Plus } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -26,29 +16,24 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
-import { TagEditModal } from '@/features/tags/components/tag-edit-modal'
+import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
+import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
+import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useCreateTag, useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
+import { useTagsDnd } from '@/features/tags/hooks/use-tags-dnd'
 import { useToast } from '@/lib/toast/use-toast'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 
@@ -128,15 +113,31 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     createParentTag,
     handleCreateTag,
     handleSaveNewTag,
-    handleEditTag,
+    handleEditTag: _handleEditTag,
     handleSaveTag,
     handleDeleteTag,
     handleCloseModals,
   } = useTagOperations(tags)
 
+  // handleEditTagをオーバーライド: モーダルではなくインライン編集にする
+  const handleEditTag = useCallback((tag: TagWithChildren) => {
+    setEditingTagId(tag.id)
+    setEditingField('name')
+    setEditValue(tag.name)
+  }, [])
+
   const updateTagMutation = useUpdateTag()
   const createTagMutation = useCreateTag()
   const toast = useToast()
+
+  // タグDnD機能
+  const {
+    sensors: tagDndSensors,
+    activeTag,
+    handleDragStart: handleTagDragStart,
+    handleDragEnd: handleTagDragEnd,
+    handleDragCancel: handleTagDragCancel,
+  } = useTagsDnd()
 
   // 選択されたグループ情報を取得
   const selectedGroup = useMemo(() => {
@@ -359,6 +360,17 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     [updateTagMutation, toast, groups, t]
   )
 
+  // DnDでタグをグループに移動
+  const handleDragDropToGroup = useCallback(
+    async (tagId: string, groupId: string | null) => {
+      const tag = tags.find((t) => t.id === tagId)
+      if (tag) {
+        await handleMoveToGroup(tag, groupId)
+      }
+    },
+    [tags, handleMoveToGroup]
+  )
+
   // すべてのLevel 0タグ（ルートタグ）を直接取得
   // is_active = true のみをフィルタリング
   const baseTags = tags.filter((tag) => tag.level === 0 && tag.is_active)
@@ -518,6 +530,41 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     }).format(d)
   }
 
+  // ドラッグ可能なテーブル行コンポーネント
+  const DraggableTableRow = ({
+    tag,
+    children,
+    onContextMenu,
+  }: {
+    tag: TagWithChildren
+    children: React.ReactNode
+    onContextMenu?: (e: React.MouseEvent) => void
+  }) => {
+    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+      id: tag.id,
+      data: {
+        tag,
+        onDropToGroup: handleDragDropToGroup,
+      },
+    })
+
+    return (
+      <TableRow
+        ref={setNodeRef}
+        {...attributes}
+        {...listeners}
+        className="group"
+        style={{
+          opacity: isDragging ? 0.5 : 1,
+          cursor: isDragging ? 'grabbing' : 'grab',
+        }}
+        onContextMenu={onContextMenu}
+      >
+        {children}
+      </TableRow>
+    )
+  }
+
   if (isFetching) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -527,171 +574,411 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   }
 
   return (
-    <div className="flex h-full flex-col">
-      {/* ヘッダー */}
-      <TagsPageHeader
-        title={pageTitle}
-        count={filteredTags.length}
-        actions={
-          <>
-            <Button onClick={() => setIsCreatingGroup(true)} size="sm" variant="outline" className="h-9">
-              <Plus className="mr-2 size-4" />
-              {t('tags.page.createGroup')}
-            </Button>
-            <Button onClick={handleStartInlineCreation} size="sm" className="h-9">
+    <DndContext
+      sensors={tagDndSensors}
+      onDragStart={handleTagDragStart}
+      onDragEnd={handleTagDragEnd}
+      onDragCancel={handleTagDragCancel}
+    >
+      <div className="flex h-full flex-col">
+        {/* ヘッダー */}
+        <TagsPageHeader title={pageTitle} count={filteredTags.length} />
+
+        {/* フィルターバー または 選択バー（Googleドライブ風） */}
+        {selectedTagIds.length > 0 ? (
+          <TagsSelectionBar
+            selectedCount={selectedTagIds.length}
+            onClearSelection={() => setSelectedTagIds([])}
+            actions={
+              <TagSelectionActions
+                selectedTagIds={selectedTagIds}
+                tags={tags}
+                groups={groups}
+                onMoveToGroup={handleMoveToGroup}
+                onArchive={async (tagIds) => {
+                  try {
+                    for (const tagId of tagIds) {
+                      const tag = tags.find((t) => t.id === tagId)
+                      if (tag) {
+                        await updateTagMutation.mutateAsync({
+                          id: tag.id,
+                          data: {
+                            is_active: false,
+                          },
+                        })
+                      }
+                    }
+                    toast.success(`${tagIds.length}件のタグをアーカイブしました`)
+                  } catch (error) {
+                    console.error('Failed to archive tags:', error)
+                    toast.error('タグのアーカイブに失敗しました')
+                  }
+                }}
+                onDelete={handleBulkDelete}
+                onEdit={handleEditTag}
+                onView={(tag) => {
+                  const locale = pathname?.split('/')[1] || 'ja'
+                  router.push(`/${locale}/tags/t-${tag.tag_number}`)
+                }}
+                onClearSelection={() => setSelectedTagIds([])}
+                t={t}
+              />
+            }
+          />
+        ) : (
+          <div className="flex h-12 shrink-0 items-center justify-between px-6">
+            <div className="flex items-center gap-2">
+              {/* フィルタータイプドロップダウン */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8 gap-1">
+                    <Filter className="h-3.5 w-3.5" />
+                    <span>タイプ</span>
+                    <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem>すべて</DropdownMenuItem>
+                  <DropdownMenuItem>未使用</DropdownMenuItem>
+                  <DropdownMenuItem>よく使う</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <Button onClick={handleStartInlineCreation} size="sm" className="h-8">
               <Plus className="mr-2 size-4" />
               {t('tags.page.createTag')}
             </Button>
-          </>
-        }
-      />
-
-      {/* 一括削除ボタン（選択時のみ表示） */}
-      {selectedTagIds.length > 0 && (
-        <div className="flex h-12 shrink-0 items-center gap-2 px-4 pt-2">
-          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-9">
-            <Trash2 className="mr-2 size-4" />
-            {t('tags.page.delete')} ({selectedTagIds.length})
-          </Button>
-        </div>
-      )}
-
-      {/* テーブル */}
-      <div className="flex flex-1 flex-col overflow-auto px-4 pt-4 pb-2">
-        {displayTags.length === 0 ? (
-          <div className="border-border flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
-            <div className="text-center">
-              <p className="text-muted-foreground mb-4">{t('tags.page.noTags')}</p>
-              <Button onClick={handleStartInlineCreation}>
-                <Plus className="mr-2 h-4 w-4" />
-                {t('tags.page.addFirstTag')}
-              </Button>
-            </div>
           </div>
-        ) : (
-          <>
-            {/* テーブル部分 */}
-            <div className="border-border overflow-x-auto rounded-lg border">
-              <Table
-                style={{
-                  minWidth: `${Object.values(columnWidths).reduce((sum, width) => sum + width, 0)}px`,
-                }}
-              >
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="relative" style={{ width: `${columnWidths.select}px` }}>
-                      <Checkbox
-                        checked={allSelected}
-                        onCheckedChange={handleSelectAll}
-                        aria-label={t('tags.page.selectAll')}
-                      />
-                    </TableHead>
-                    <TableHead className="relative" style={{ width: `${columnWidths.id}px` }}>
-                      ID
-                      <ResizeHandle columnId="id" />
-                    </TableHead>
-                    <TableHead className="relative" style={{ width: `${columnWidths.color}px` }}></TableHead>
-                    <TableHead className="relative" style={{ width: `${columnWidths.name}px` }}>
-                      <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
-                        {t('tags.page.name')}
-                        {sortField === 'name' &&
-                          (sortDirection === 'asc' ? (
-                            <ArrowUp className="ml-1 h-4 w-4" />
-                          ) : (
-                            <ArrowDown className="ml-1 h-4 w-4" />
-                          ))}
-                        {sortField !== 'name' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                      </Button>
-                      <ResizeHandle columnId="name" />
-                    </TableHead>
-                    <TableHead className="relative" style={{ width: `${columnWidths.description}px` }}>
-                      {t('tags.page.description')}
-                      <ResizeHandle columnId="description" />
-                    </TableHead>
-                    <TableHead className="relative" style={{ width: `${columnWidths.group}px` }}>
-                      {t('tags.sidebar.groups')}
-                      <ResizeHandle columnId="group" />
-                    </TableHead>
-                    <TableHead className="relative" style={{ width: `${columnWidths.created_at}px` }}>
-                      <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
-                        {t('tags.page.createdAt')}
-                        {sortField === 'created_at' &&
-                          (sortDirection === 'asc' ? (
-                            <ArrowUp className="ml-1 h-4 w-4" />
-                          ) : (
-                            <ArrowDown className="ml-1 h-4 w-4" />
-                          ))}
-                        {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                      </Button>
-                      <ResizeHandle columnId="created_at" />
-                    </TableHead>
-                    <TableHead
-                      className="relative text-right"
-                      style={{ width: `${columnWidths.actions}px` }}
-                    ></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {/* 既存のタグ行 */}
-                  {displayTags.map((tag) => (
-                    <ContextMenu key={tag.id}>
-                      <ContextMenuTrigger asChild>
-                        <TableRow
-                          className="group"
-                          onContextMenu={() => {
-                            // 右クリックされた行を選択
-                            if (!selectedTagIds.includes(tag.id)) {
-                              setSelectedTagIds([tag.id])
-                            }
-                          }}
-                        >
-                          <TableCell style={{ width: `${columnWidths.select}px` }} onClick={(e) => e.stopPropagation()}>
-                            <Checkbox
-                              checked={selectedTagIds.includes(tag.id)}
-                              onCheckedChange={() => handleSelectTag(tag.id)}
-                              aria-label={`${tag.name}を選択`}
-                            />
-                          </TableCell>
-                          <TableCell
-                            className="text-muted-foreground font-mono text-sm"
-                            style={{ width: `${columnWidths.id}px` }}
+        )}
+
+        {/* テーブル */}
+        <div
+          className="flex flex-1 flex-col overflow-auto px-6 pt-4 pb-2"
+          onClick={(e) => {
+            // テーブルコンテナの直接クリック（空白部分）で選択解除
+            if (e.target === e.currentTarget) {
+              setSelectedTagIds([])
+            }
+          }}
+        >
+          {displayTags.length === 0 ? (
+            <div className="border-border flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
+              <div className="text-center">
+                <p className="text-muted-foreground mb-4">{t('tags.page.noTags')}</p>
+                <Button onClick={handleStartInlineCreation}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t('tags.page.addFirstTag')}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* テーブル部分 */}
+              <div className="border-border overflow-x-auto rounded-lg border">
+                <Table
+                  style={{
+                    minWidth: `${Object.values(columnWidths).reduce((sum, width) => sum + width, 0)}px`,
+                  }}
+                >
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="relative" style={{ width: `${columnWidths.select}px` }}>
+                        <Checkbox
+                          checked={allSelected}
+                          onCheckedChange={handleSelectAll}
+                          aria-label={t('tags.page.selectAll')}
+                        />
+                      </TableHead>
+                      <TableHead className="relative" style={{ width: `${columnWidths.id}px` }}>
+                        ID
+                        <ResizeHandle columnId="id" />
+                      </TableHead>
+                      <TableHead className="relative" style={{ width: `${columnWidths.color}px` }}></TableHead>
+                      <TableHead className="relative" style={{ width: `${columnWidths.name}px` }}>
+                        <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
+                          {t('tags.page.name')}
+                          {sortField === 'name' &&
+                            (sortDirection === 'asc' ? (
+                              <ArrowUp className="ml-1 h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="ml-1 h-4 w-4" />
+                            ))}
+                          {sortField !== 'name' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
+                        </Button>
+                        <ResizeHandle columnId="name" />
+                      </TableHead>
+                      <TableHead className="relative" style={{ width: `${columnWidths.description}px` }}>
+                        {t('tags.page.description')}
+                        <ResizeHandle columnId="description" />
+                      </TableHead>
+                      <TableHead className="relative" style={{ width: `${columnWidths.group}px` }}>
+                        {t('tags.sidebar.groups')}
+                        <ResizeHandle columnId="group" />
+                      </TableHead>
+                      <TableHead className="relative" style={{ width: `${columnWidths.created_at}px` }}>
+                        <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
+                          {t('tags.page.createdAt')}
+                          {sortField === 'created_at' &&
+                            (sortDirection === 'asc' ? (
+                              <ArrowUp className="ml-1 h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="ml-1 h-4 w-4" />
+                            ))}
+                          {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
+                        </Button>
+                        <ResizeHandle columnId="created_at" />
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {/* 既存のタグ行 */}
+                    {displayTags.map((tag) => (
+                      <ContextMenu key={tag.id} modal={false}>
+                        <ContextMenuTrigger asChild>
+                          <DraggableTableRow
+                            tag={tag}
+                            onContextMenu={() => {
+                              // 右クリックされた行を選択
+                              if (!selectedTagIds.includes(tag.id)) {
+                                setSelectedTagIds([tag.id])
+                              }
+                            }}
                           >
-                            t-{tag.tag_number}
-                          </TableCell>
-                          <TableCell className="pr-1" style={{ width: `${columnWidths.color}px` }}>
-                            <div
-                              className="h-3 w-3 rounded-full"
-                              style={{ backgroundColor: tag.color || '#3B82F6' }}
-                              aria-label="タグカラー"
-                            />
-                          </TableCell>
-                          <TableCell className="pl-1 font-medium" style={{ width: `${columnWidths.name}px` }}>
-                            <span
-                              className="cursor-pointer hover:underline"
-                              onClick={() => {
-                                const locale = pathname?.split('/')[1] || 'ja'
-                                router.push(`/${locale}/tags/t-${tag.tag_number}`)
-                              }}
+                            <TableCell
+                              style={{ width: `${columnWidths.select}px` }}
+                              onClick={(e) => e.stopPropagation()}
                             >
-                              {tag.name} <span className="text-muted-foreground">(0)</span>
-                            </span>
-                          </TableCell>
-                          <TableCell
-                            className="text-muted-foreground"
-                            style={{ width: `${columnWidths.description}px` }}
-                          >
-                            <span className="truncate">
-                              {tag.description || (
-                                <span className="opacity-0 transition-opacity group-hover:opacity-100">
-                                  説明を追加...
+                              <Checkbox
+                                checked={selectedTagIds.includes(tag.id)}
+                                onCheckedChange={() => handleSelectTag(tag.id)}
+                                aria-label={`${tag.name}を選択`}
+                              />
+                            </TableCell>
+                            <TableCell
+                              className="text-muted-foreground font-mono text-sm"
+                              style={{ width: `${columnWidths.id}px` }}
+                            >
+                              t-{tag.tag_number}
+                            </TableCell>
+                            <TableCell className="pr-1" style={{ width: `${columnWidths.color}px` }}>
+                              <div
+                                className="h-3 w-3 rounded-full"
+                                style={{ backgroundColor: tag.color || '#3B82F6' }}
+                                aria-label="タグカラー"
+                              />
+                            </TableCell>
+                            <TableCell className="pl-1 font-medium" style={{ width: `${columnWidths.name}px` }}>
+                              {editingTagId === tag.id && editingField === 'name' ? (
+                                <Input
+                                  value={editValue}
+                                  onChange={(e) => setEditValue(e.target.value)}
+                                  onBlur={() => saveInlineEdit(tag.id)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      saveInlineEdit(tag.id)
+                                    } else if (e.key === 'Escape') {
+                                      cancelEditing()
+                                    }
+                                  }}
+                                  autoFocus
+                                  className="h-7 px-2"
+                                />
+                              ) : (
+                                <span
+                                  className="cursor-pointer hover:underline"
+                                  onClick={() => {
+                                    const locale = pathname?.split('/')[1] || 'ja'
+                                    router.push(`/${locale}/tags/t-${tag.tag_number}`)
+                                  }}
+                                >
+                                  {tag.name} <span className="text-muted-foreground">(0)</span>
                                 </span>
                               )}
-                            </span>
-                          </TableCell>
-                          <TableCell style={{ width: `${columnWidths.group}px` }}>
-                            {tag.group_id ? (
-                              (() => {
-                                const group = groups.find((g) => g.id === tag.group_id)
+                            </TableCell>
+                            <TableCell
+                              className="text-muted-foreground"
+                              style={{ width: `${columnWidths.description}px` }}
+                            >
+                              <span className="truncate">
+                                {tag.description || (
+                                  <span className="opacity-0 transition-opacity group-hover:opacity-100">
+                                    説明を追加...
+                                  </span>
+                                )}
+                              </span>
+                            </TableCell>
+                            <TableCell style={{ width: `${columnWidths.group}px` }}>
+                              {tag.group_id ? (
+                                (() => {
+                                  const group = groups.find((g) => g.id === tag.group_id)
+                                  if (!group) {
+                                    return null
+                                  }
+                                  const groupTagCount = tags.filter(
+                                    (t) => t.group_id === group.id && t.is_active && t.level === 0
+                                  ).length
+                                  return (
+                                    <div className="flex items-center gap-1">
+                                      <div
+                                        className="h-2 w-2 shrink-0 rounded-full"
+                                        style={{ backgroundColor: group.color || '#6B7280' }}
+                                      />
+                                      <span className="text-sm">
+                                        {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
+                                      </span>
+                                    </div>
+                                  )
+                                })()
+                              ) : (
+                                <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">
+                                  グループを追加...
+                                </span>
+                              )}
+                            </TableCell>
+                            <TableCell
+                              className="text-muted-foreground text-xs"
+                              style={{ width: `${columnWidths.created_at}px` }}
+                            >
+                              {formatDate(tag.created_at)}
+                            </TableCell>
+                          </DraggableTableRow>
+                        </ContextMenuTrigger>
+                        <ContextMenuContent>
+                          <TagActionMenuItems
+                            tag={tag}
+                            groups={groups}
+                            onView={(tag) => {
+                              const locale = pathname?.split('/')[1] || 'ja'
+                              router.push(`/${locale}/tags/t-${tag.tag_number}`)
+                            }}
+                            onEdit={handleEditTag}
+                            onMoveToGroup={handleMoveToGroup}
+                            onArchive={(tag) => handleOpenArchiveConfirm(tag)}
+                            onDelete={handleOpenDeleteConfirm}
+                            t={t}
+                            renderMenuItem={({ icon, label, onClick, variant }) => (
+                              <ContextMenuItem
+                                onClick={onClick}
+                                className={
+                                  variant === 'destructive'
+                                    ? 'text-destructive hover:bg-destructive hover:text-destructive-foreground'
+                                    : ''
+                                }
+                              >
+                                {icon}
+                                {label}
+                              </ContextMenuItem>
+                            )}
+                            renderSubMenu={({ trigger, items }) => (
+                              <ContextMenuSub>
+                                <ContextMenuSubTrigger>
+                                  {trigger.icon}
+                                  {trigger.label}
+                                </ContextMenuSubTrigger>
+                                <ContextMenuSubContent>
+                                  {items.map((item) => (
+                                    <ContextMenuItem key={item.key} onClick={item.onClick}>
+                                      {item.icon}
+                                      {item.label}
+                                    </ContextMenuItem>
+                                  ))}
+                                </ContextMenuSubContent>
+                              </ContextMenuSub>
+                            )}
+                          />
+                        </ContextMenuContent>
+                      </ContextMenu>
+                    ))}
+
+                    {/* インライン作成行（最下部） */}
+                    {isCreatingTag && (
+                      <TableRow ref={inlineFormRef} className="bg-muted/30">
+                        <TableCell style={{ width: `${columnWidths.select}px` }}></TableCell>
+                        <TableCell
+                          className="text-muted-foreground font-mono text-sm"
+                          style={{ width: `${columnWidths.id}px` }}
+                        >
+                          -
+                        </TableCell>
+                        <TableCell className="pr-1" style={{ width: `${columnWidths.color}px` }}>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button
+                                type="button"
+                                className="hover:ring-offset-background focus-visible:ring-ring transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                                aria-label="カラーを変更"
+                              >
+                                <div
+                                  className="h-3 w-3 rounded-full"
+                                  style={{ backgroundColor: newTagColor }}
+                                  aria-label="タグカラー"
+                                />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-3" align="start">
+                              <div className="grid grid-cols-5 gap-2">
+                                {[
+                                  '#3B82F6',
+                                  '#10B981',
+                                  '#EF4444',
+                                  '#F59E0B',
+                                  '#8B5CF6',
+                                  '#EC4899',
+                                  '#06B6D4',
+                                  '#F97316',
+                                  '#6B7280',
+                                  '#6366F1',
+                                ].map((color) => (
+                                  <button
+                                    key={color}
+                                    type="button"
+                                    onClick={() => setNewTagColor(color)}
+                                    className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
+                                      newTagColor === color ? 'border-foreground scale-110' : 'border-transparent'
+                                    }`}
+                                    style={{ backgroundColor: color }}
+                                    aria-label={`カラー ${color}`}
+                                  />
+                                ))}
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                        </TableCell>
+                        <TableCell className="pl-1" style={{ width: `${columnWidths.name}px` }}>
+                          <Input
+                            value={newTagName}
+                            onChange={(e) => setNewTagName(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleSaveInlineTag()
+                              } else if (e.key === 'Escape') {
+                                handleCancelInlineCreation()
+                              }
+                            }}
+                            placeholder={t('tags.page.name')}
+                            autoFocus
+                            className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
+                          />
+                        </TableCell>
+                        <TableCell style={{ width: `${columnWidths.description}px` }}>
+                          <Input
+                            value={newTagDescription}
+                            onChange={(e) => setNewTagDescription(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleSaveInlineTag()
+                              } else if (e.key === 'Escape') {
+                                handleCancelInlineCreation()
+                              }
+                            }}
+                            placeholder={t('tags.page.description')}
+                            className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
+                          />
+                        </TableCell>
+                        <TableCell style={{ width: `${columnWidths.group}px` }}>
+                          {selectedGroupId
+                            ? (() => {
+                                const group = groups.find((g) => g.id === selectedGroupId)
                                 if (!group) {
                                   return null
                                 }
@@ -710,339 +997,101 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                   </div>
                                 )
                               })()
-                            ) : (
-                              <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">
-                                グループを追加...
-                              </span>
-                            )}
-                          </TableCell>
-                          <TableCell
-                            className="text-muted-foreground text-xs"
-                            style={{ width: `${columnWidths.created_at}px` }}
-                          >
-                            {formatDate(tag.created_at)}
-                          </TableCell>
-                          <TableCell className="text-right" style={{ width: `${columnWidths.actions}px` }}>
-                            <DropdownMenu modal={false}>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="bg-background sticky right-4 opacity-0 transition-opacity group-hover:opacity-100"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    console.log('🔴 DropdownMenuTrigger clicked for tag:', tag.name)
-                                  }}
-                                >
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent side="bottom" align="end" sideOffset={5} avoidCollisions={true}>
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    const locale = pathname?.split('/')[1] || 'ja'
-                                    router.push(`/${locale}/tags/t-${tag.tag_number}`)
-                                  }}
-                                >
-                                  {t('common.view')}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleEditTag(tag)
-                                  }}
-                                >
-                                  {t('tags.page.edit')}
-                                </DropdownMenuItem>
-                                <DropdownMenuSub>
-                                  <DropdownMenuSubTrigger>
-                                    <Folder className="mr-2 h-4 w-4" />
-                                    {t('tags.page.moveToGroup')}
-                                  </DropdownMenuSubTrigger>
-                                  <DropdownMenuSubContent>
-                                    <DropdownMenuItem
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleMoveToGroup(tag, null)
-                                      }}
-                                    >
-                                      {t('tags.page.noGroup')}
-                                    </DropdownMenuItem>
-                                    {groups.map((group) => (
-                                      <DropdownMenuItem
-                                        key={group.id}
-                                        onClick={(e) => {
-                                          e.stopPropagation()
-                                          handleMoveToGroup(tag, group.id)
-                                        }}
-                                      >
-                                        <div
-                                          className="mr-2 h-3 w-3 rounded-full"
-                                          style={{ backgroundColor: group.color || '#6B7280' }}
-                                        />
-                                        {group.name}
-                                      </DropdownMenuItem>
-                                    ))}
-                                  </DropdownMenuSubContent>
-                                </DropdownMenuSub>
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleOpenArchiveConfirm(tag)
-                                  }}
-                                >
-                                  <Archive className="mr-2 h-4 w-4" />
-                                  {t('tags.page.archive')}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleOpenDeleteConfirm(tag)
-                                  }}
-                                  className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  {t('tags.page.permanentDelete')}
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      </ContextMenuTrigger>
-                      <ContextMenuContent>
-                        <ContextMenuItem
-                          onClick={() => {
-                            const locale = pathname?.split('/')[1] || 'ja'
-                            router.push(`/${locale}/tags/t-${tag.tag_number}`)
-                          }}
-                        >
-                          {t('common.view')}
-                        </ContextMenuItem>
-                        <ContextMenuItem onClick={() => handleEditTag(tag)}>{t('tags.page.edit')}</ContextMenuItem>
-                        <ContextMenuSub>
-                          <ContextMenuSubTrigger>
-                            <Folder className="mr-2 h-4 w-4" />
-                            {t('tags.page.moveToGroup')}
-                          </ContextMenuSubTrigger>
-                          <ContextMenuSubContent>
-                            <ContextMenuItem onClick={() => handleMoveToGroup(tag, null)}>
-                              {t('tags.page.noGroup')}
-                            </ContextMenuItem>
-                            {groups.map((group) => (
-                              <ContextMenuItem key={group.id} onClick={() => handleMoveToGroup(tag, group.id)}>
-                                <div
-                                  className="mr-2 h-3 w-3 rounded-full"
-                                  style={{ backgroundColor: group.color || '#6B7280' }}
-                                />
-                                {group.name}
-                              </ContextMenuItem>
-                            ))}
-                          </ContextMenuSubContent>
-                        </ContextMenuSub>
-                        <ContextMenuItem onClick={() => handleOpenArchiveConfirm(tag)}>
-                          <Archive className="mr-2 h-4 w-4" />
-                          {t('tags.page.archive')}
-                        </ContextMenuItem>
-                        <ContextMenuItem
-                          onClick={() => handleOpenDeleteConfirm(tag)}
-                          className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          {t('tags.page.permanentDelete')}
-                        </ContextMenuItem>
-                      </ContextMenuContent>
-                    </ContextMenu>
-                  ))}
+                            : null}
+                        </TableCell>
+                        <TableCell
+                          className="text-muted-foreground text-xs"
+                          style={{ width: `${columnWidths.created_at}px` }}
+                        ></TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
 
-                  {/* インライン作成行（最下部） */}
-                  {isCreatingTag && (
-                    <TableRow ref={inlineFormRef} className="bg-muted/30">
-                      <TableCell style={{ width: `${columnWidths.select}px` }}></TableCell>
-                      <TableCell
-                        className="text-muted-foreground font-mono text-sm"
-                        style={{ width: `${columnWidths.id}px` }}
-                      >
-                        -
-                      </TableCell>
-                      <TableCell className="pr-1" style={{ width: `${columnWidths.color}px` }}>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <button
-                              type="button"
-                              className="hover:ring-offset-background focus-visible:ring-ring transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                              aria-label="カラーを変更"
-                            >
-                              <div
-                                className="h-3 w-3 rounded-full"
-                                style={{ backgroundColor: newTagColor }}
-                                aria-label="タグカラー"
-                              />
-                            </button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-3" align="start">
-                            <div className="grid grid-cols-5 gap-2">
-                              {[
-                                '#3B82F6',
-                                '#10B981',
-                                '#EF4444',
-                                '#F59E0B',
-                                '#8B5CF6',
-                                '#EC4899',
-                                '#06B6D4',
-                                '#F97316',
-                                '#6B7280',
-                                '#6366F1',
-                              ].map((color) => (
-                                <button
-                                  key={color}
-                                  type="button"
-                                  onClick={() => setNewTagColor(color)}
-                                  className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                                    newTagColor === color ? 'border-foreground scale-110' : 'border-transparent'
-                                  }`}
-                                  style={{ backgroundColor: color }}
-                                  aria-label={`カラー ${color}`}
-                                />
-                              ))}
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      </TableCell>
-                      <TableCell className="pl-1" style={{ width: `${columnWidths.name}px` }}>
-                        <Input
-                          value={newTagName}
-                          onChange={(e) => setNewTagName(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleSaveInlineTag()
-                            } else if (e.key === 'Escape') {
-                              handleCancelInlineCreation()
-                            }
-                          }}
-                          placeholder={t('tags.page.name')}
-                          autoFocus
-                          className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
-                        />
-                      </TableCell>
-                      <TableCell style={{ width: `${columnWidths.description}px` }}>
-                        <Input
-                          value={newTagDescription}
-                          onChange={(e) => setNewTagDescription(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleSaveInlineTag()
-                            } else if (e.key === 'Escape') {
-                              handleCancelInlineCreation()
-                            }
-                          }}
-                          placeholder={t('tags.page.description')}
-                          className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
-                        />
-                      </TableCell>
-                      <TableCell style={{ width: `${columnWidths.group}px` }}>
-                        {selectedGroupId
-                          ? (() => {
-                              const group = groups.find((g) => g.id === selectedGroupId)
-                              if (!group) {
-                                return null
-                              }
-                              const groupTagCount = tags.filter(
-                                (t) => t.group_id === group.id && t.is_active && t.level === 0
-                              ).length
-                              return (
-                                <div className="flex items-center gap-1">
-                                  <div
-                                    className="h-2 w-2 shrink-0 rounded-full"
-                                    style={{ backgroundColor: group.color || '#6B7280' }}
-                                  />
-                                  <span className="text-sm">
-                                    {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
-                                  </span>
-                                </div>
-                              )
-                            })()
-                          : null}
-                      </TableCell>
-                      <TableCell
-                        className="text-muted-foreground text-xs"
-                        style={{ width: `${columnWidths.created_at}px` }}
-                      ></TableCell>
-                      <TableCell className="text-right" style={{ width: `${columnWidths.actions}px` }}></TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* フッター: テーブルの外側に配置 */}
-            <div className="shrink-0">
-              <div className="flex items-center justify-between px-4 py-4">
-                {/* 左側: 表示件数選択 */}
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground text-sm">{t('tags.page.rowsPerPage')}</span>
-                  <Select value={String(pageSize)} onValueChange={(value) => setPageSize(Number(value))}>
-                    <SelectTrigger className="h-9 w-[64px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* 中央: ページ情報 */}
-                <div className="text-muted-foreground text-sm">
-                  {sortedTags.length > 0
-                    ? `${startIndex + 1}〜${Math.min(endIndex, sortedTags.length)}件 ${t('tags.page.of')} ${sortedTags.length}件`
-                    : '0件'}
-                </div>
-
-                {/* 右側: ページ移動ボタン */}
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
-                    className="h-9 w-9 p-0"
-                  >
-                    <ChevronLeft className="size-4" />
-                    <span className="sr-only">{t('tags.page.previous')}</span>
-                  </Button>
-                  <div className="text-muted-foreground flex h-9 items-center px-3 text-sm">
-                    {t('tags.page.page')} {currentPage} {t('tags.page.of')} {totalPages || 1}
+              {/* フッター: テーブルの外側に配置 */}
+              <div className="shrink-0">
+                <div className="flex items-center justify-between px-6 py-4">
+                  {/* 左側: 表示件数選択 */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground text-sm">{t('tags.page.rowsPerPage')}</span>
+                    <Select value={String(pageSize)} onValueChange={(value) => setPageSize(Number(value))}>
+                      <SelectTrigger className="h-9 w-[64px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                    disabled={currentPage === totalPages || totalPages === 0}
-                    className="h-9 w-9 p-0"
-                  >
-                    <ChevronRight className="size-4" />
-                    <span className="sr-only">{t('tags.page.next')}</span>
-                  </Button>
+
+                  {/* 中央: ページ情報 */}
+                  <div className="text-muted-foreground text-sm">
+                    {sortedTags.length > 0
+                      ? `${startIndex + 1}〜${Math.min(endIndex, sortedTags.length)}件 ${t('tags.page.of')} ${sortedTags.length}件`
+                      : '0件'}
+                  </div>
+
+                  {/* 右側: ページ移動ボタン */}
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      className="h-9 w-9 p-0"
+                    >
+                      <ChevronLeft className="size-4" />
+                      <span className="sr-only">{t('tags.page.previous')}</span>
+                    </Button>
+                    <div className="text-muted-foreground flex h-9 items-center px-3 text-sm">
+                      {t('tags.page.page')} {currentPage} {t('tags.page.of')} {totalPages || 1}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages || totalPages === 0}
+                      className="h-9 w-9 p-0"
+                    >
+                      <ChevronRight className="size-4" />
+                      <span className="sr-only">{t('tags.page.next')}</span>
+                    </Button>
+                  </div>
                 </div>
               </div>
+            </>
+          )}
+        </div>
+
+        {/* モーダル */}
+        <TagCreateModal isOpen={showCreateModal} onClose={handleCloseModals} onSave={handleSaveNewTag} />
+
+        {/* アーカイブ確認ダイアログ */}
+        <TagArchiveDialog
+          tag={archiveConfirmTag}
+          onClose={handleCloseArchiveConfirm}
+          onConfirm={handleConfirmArchive}
+        />
+
+        {/* 削除確認ダイアログ */}
+        <TagDeleteDialog tag={deleteConfirmTag} onClose={handleCloseDeleteConfirm} onConfirm={handleConfirmDelete} />
+
+        {/* DragOverlay: ドラッグ中のタグを表示 */}
+        <DragOverlay>
+          {activeTag ? (
+            <div className="bg-accent text-accent-foreground rounded-md px-3 py-2 text-sm font-medium opacity-80 shadow-lg">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full" style={{ backgroundColor: activeTag.color || '#3B82F6' }} />
+                <span className="truncate">{activeTag.name}</span>
+              </div>
             </div>
-          </>
-        )}
+          ) : null}
+        </DragOverlay>
       </div>
-
-      {/* モーダル */}
-      <TagCreateModal isOpen={showCreateModal} onClose={handleCloseModals} onSave={handleSaveNewTag} />
-
-      <TagEditModal isOpen={showEditModal} tag={selectedTag} onClose={handleCloseModals} onSave={handleSaveTag} />
-
-      {/* アーカイブ確認ダイアログ */}
-      <TagArchiveDialog tag={archiveConfirmTag} onClose={handleCloseArchiveConfirm} onConfirm={handleConfirmArchive} />
-
-      {/* 削除確認ダイアログ */}
-      <TagDeleteDialog tag={deleteConfirmTag} onClose={handleCloseDeleteConfirm} onConfirm={handleConfirmDelete} />
-    </div>
+    </DndContext>
   )
 }

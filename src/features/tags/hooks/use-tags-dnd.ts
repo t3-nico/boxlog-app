@@ -57,6 +57,8 @@ export function useTagsDnd() {
     const { active } = event
     const tag = active.data.current?.tag as TagWithChildren | undefined
 
+    console.log('[useTagsDnd] Drag start:', { tag, activeId: active.id })
+
     if (tag) {
       setActiveTag(tag)
     }
@@ -68,20 +70,30 @@ export function useTagsDnd() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
 
+    console.log('[useTagsDnd] Drag end:', {
+      activeId: active.id,
+      overId: over?.id,
+      overData: over?.data.current,
+    })
+
     // ドロップ先がない場合は何もしない
     if (!over) {
+      console.log('[useTagsDnd] No drop target')
       setActiveTag(null)
       return
     }
 
     // ドロップ先がグループでない場合は何もしない
     if (!over.data.current?.type || over.data.current.type !== 'group') {
+      console.log('[useTagsDnd] Drop target is not a group:', over.data.current)
       setActiveTag(null)
       return
     }
 
     const tagId = active.id as string
     const targetGroupId = over.data.current.groupId as string | null
+
+    console.log('[useTagsDnd] Moving tag to group:', { tagId, targetGroupId })
 
     // コールバック関数があればイベントを通知
     if (active.data.current?.onDropToGroup) {

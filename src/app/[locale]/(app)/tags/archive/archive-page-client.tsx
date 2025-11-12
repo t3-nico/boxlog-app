@@ -22,7 +22,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
+import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
+import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
@@ -62,7 +64,7 @@ export function ArchivePageClient() {
   const [editValue, setEditValue] = useState('')
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
 
-  const { handleDeleteTag } = useTagOperations(tags)
+  const { handleDeleteTag, handleEditTag } = useTagOperations(tags)
 
   const updateTagMutation = useUpdateTag()
   const toast = useToast()
@@ -267,15 +269,27 @@ export function ArchivePageClient() {
       {/* ヘッダー */}
       <TagsPageHeader title={t('tags.sidebar.archive')} count={baseTags.length} />
 
-      {/* 一括削除ボタン（選択時のみ表示） */}
-      {selectedTagIds.length > 0 && (
-        <div className="flex h-12 shrink-0 items-center gap-2 px-4 pt-2">
-          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-9">
-            <Trash2 className="mr-2 size-4" />
-            削除 ({selectedTagIds.length})
-          </Button>
-        </div>
-      )}
+      {/* 選択バー（Googleドライブ風） */}
+      <TagsSelectionBar
+        selectedCount={selectedTagIds.length}
+        onClearSelection={() => setSelectedTagIds([])}
+        actions={
+          <TagSelectionActions
+            selectedTagIds={selectedTagIds}
+            tags={tags}
+            groups={[]}
+            onMoveToGroup={() => {}}
+            onDelete={handleBulkDelete}
+            onEdit={handleEditTag}
+            onView={(tag) => {
+              const locale = pathname?.split('/')[1] || 'ja'
+              router.push(`/${locale}/tags/t-${tag.tag_number}`)
+            }}
+            onClearSelection={() => setSelectedTagIds([])}
+            t={t}
+          />
+        }
+      />
 
       {/* テーブル */}
       <div className="flex flex-1 flex-col overflow-hidden px-4">
