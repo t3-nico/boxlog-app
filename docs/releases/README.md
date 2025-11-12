@@ -2,70 +2,56 @@
 
 このディレクトリには、BoxLogの各バージョンのリリースノートとバージョニング管理に関するドキュメントが含まれています。
 
+## ⚠️ リリース作業を行う前に必読
+
+**🎯 [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) - リリース作業チェックリスト**
+
+リリース作業を行う際は、**必ずこのチェックリストを上から順に確認**してください。
+このチェックリストに従うことで、以下のような重大なミスを防止できます：
+
+- ❌ 既存のバージョンタグを上書きしてしまう
+- ❌ package.json のバージョン更新を忘れる
+- ❌ Full Changelog リンクを含め忘れる
+- ❌ CI/CD チェックをスキップしてしまう
+
 ## 📁 ファイル構成
 
 ```
 docs/releases/
 ├── README.md              # このファイル
+├── RELEASE_CHECKLIST.md   # 【必読】リリース作業チェックリスト
+├── RELEASE_PROCESS.md     # リリースプロセス詳細
 ├── VERSIONING.md          # バージョニング管理ガイド
-├── template.md            # リリースノートテンプレート
-└── v0.0.1.md             # 各バージョンのリリースノート
+└── template.md            # リリースノートテンプレート
 ```
 
-## 📋 リリースノート一覧
+## 📋 最新リリース
 
-| バージョン | リリース日 | 概要 |
-|-----------|-----------|------|
-| [v0.0.1](v0.0.1.md) | 2025-10-01 | 初回リリース - 基本機能実装 |
+最新のリリース情報は [GitHub Releases](https://github.com/t3-nico/boxlog-app/releases) で確認できます。
+
+リリースノート本体は、プロジェクトルートの `RELEASE_NOTES_v*.md` ファイルに記載されています。
 
 ## 🚀 新しいリリースを作成する手順
 
-### 1. リリースノート作成
-```bash
-# テンプレートをコピー
-cp docs/releases/template.md docs/releases/vX.Y.Z.md
+**⚠️ 重要**: リリース作業を行う前に、必ず [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) を開いて、上から順番に全ての項目を確認してください。
 
-# 内容を編集
-# - バージョン番号を更新
-# - リリース日を記入
-# - 変更内容を記載
-```
+### クイックリファレンス
 
-### 2. CHANGELOG.md 更新
-```bash
-# [Unreleased] セクションの内容を新バージョンに移動
-# リリース日とバージョンリンクを追加
-```
+1. **[RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) を開く**（必須）
+2. **Phase 0**: リリース準備（バージョン番号確認、package.json更新、リリースノート作成）
+3. **Phase 1**: PRマージ（全CI/CDチェック通過確認）
+4. **Phase 2**: リリースタグ作成（自動GitHub Release）
+5. **Phase 3**: デプロイ確認（Vercel）
+6. **Phase 4**: リリース後の作業（ドキュメント更新、通知）
 
-### 3. バージョンアップ
-```bash
-# PATCH (バグ修正)
-npm version patch -m "chore: bump version to %s"
-
-# MINOR (新機能)
-npm version minor -m "feat: bump version to %s"
-
-# MAJOR (破壊的変更)
-npm version major -m "feat!: bump version to %s"
-```
-
-### 4. プッシュ & GitHub Release
-```bash
-# タグとコミットをプッシュ
-git push origin dev
-git push origin vX.Y.Z
-
-# GitHub Releaseを作成
-gh release create vX.Y.Z \
-  --title "Release vX.Y.Z" \
-  --notes-file .github/RELEASE_TEMPLATE.md
-```
+詳細な手順とコマンドは [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) を参照してください。
 
 ## 📖 関連ドキュメント
 
+- **[RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md)** - 【必読】リリース作業チェックリスト
+- [RELEASE_PROCESS.md](RELEASE_PROCESS.md) - リリースプロセスの詳細説明
 - [VERSIONING.md](VERSIONING.md) - 詳細なバージョニングガイド
-- [CHANGELOG.md](../../CHANGELOG.md) - 全バージョンの変更履歴
-- [.github/RELEASE_TEMPLATE.md](../../.github/RELEASE_TEMPLATE.md) - GitHub Releaseテンプレート
+- [template.md](template.md) - リリースノートテンプレート
 
 ## 🔗 外部リンク
 

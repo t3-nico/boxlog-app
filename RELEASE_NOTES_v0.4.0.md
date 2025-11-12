@@ -205,6 +205,10 @@ npm run dev
 
 ---
 
+---
+
+**Full Changelog**: https://github.com/t3-nico/boxlog-app/compare/v0.3.0...v0.4.0
+
 **🤖 Generated with [Claude Code](https://claude.com/claude-code)**
 
 **Co-Authored-By: Claude <noreply@anthropic.com>**
