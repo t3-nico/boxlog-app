@@ -439,7 +439,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   return (
     <div className="flex h-full flex-col">
       {/* ツールバー */}
-      <div className="flex shrink-0 items-center justify-between gap-4 px-4 py-4 md:px-6">
+      <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 pt-2 md:px-6">
         <div className="flex flex-1 items-center gap-2">
           {/* 検索 */}
           <Input
@@ -489,7 +489,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       </div>
 
       {/* テーブル */}
-      <div className="flex flex-1 flex-col overflow-auto px-4 md:px-6">
+      <div className="flex flex-1 flex-col overflow-auto px-4 pt-4 md:px-6">
         {displayTags.length === 0 ? (
           <div className="border-border flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
             <div className="text-center">

@@ -254,11 +254,6 @@ export function TagsSidebar({
 
   return (
     <aside className="bg-background text-foreground flex h-full w-full flex-col">
-      {/* Header - 見出し (40px) */}
-      <div className="border-border flex h-10 shrink-0 items-center border-b px-4">
-        <h2 className="text-foreground text-sm font-semibold">タグ</h2>
-      </div>
-
       {/* コンテンツ */}
       <nav className="flex-1 overflow-y-auto px-2 py-2">
         <div>
