@@ -224,6 +224,13 @@ npm run dev         # 開発サーバー起動・停止
 
 8. **コロケーション**: 関連ファイルは必ず近接配置（テスト・型・hooks・ドキュメント等）
 
+9. **リリース作業**: [`docs/releases/RELEASE_CHECKLIST.md`](docs/releases/RELEASE_CHECKLIST.md) を必ず参照
+   - **リリース作業開始前に必ずこのファイルを開く**（例外なし）
+   - 既存バージョンの重複チェック（Phase 0.1）を最優先で実施
+   - 重複が見つかった場合、必ず「v0.X.0じゃないですか？」と確認
+   - package.json 更新はPRマージ前（Phase 0.3）に実施
+   - Full Changelog リンクは必須
+
 **実装の詳細**: [`src/CLAUDE.md`](src/CLAUDE.md) - コーディングリファレンス
 
 ## 📚 詳細ドキュメント参照先
@@ -248,6 +255,26 @@ npm run dev         # 開発サーバー起動・停止
 - **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
 - **Issueラベル付けルール**: [`docs/development/ISSUE_LABELING_RULES.md`](docs/development/ISSUE_LABELING_RULES.md)
 - **セッション管理**: [`docs/development/CLAUDE_SESSION_MANAGEMENT.md`](docs/development/CLAUDE_SESSION_MANAGEMENT.md)
+
+### 🚀 リリース管理（⚠️ 必読）
+
+**AIがリリース作業を行う際は、必ず以下の順序でドキュメントを確認すること**：
+
+1. **[`docs/releases/RELEASE_CHECKLIST.md`](docs/releases/RELEASE_CHECKLIST.md)** - 【最優先】実作業チェックリスト
+   - リリース作業を行う前に**必ず**このファイルを開く
+   - 上から順番に全ての項目を確認
+   - 既存バージョンの重複チェック（Phase 0.1）が最重要
+   - package.json 更新はPRマージ前（Phase 0.3）
+2. **[`docs/releases/README.md`](docs/releases/README.md)** - リリース管理の全体像
+3. **[`docs/releases/RELEASE_PROCESS.md`](docs/releases/RELEASE_PROCESS.md)** - 詳細説明と背景情報
+4. **[`docs/releases/template.md`](docs/releases/template.md)** - リリースノートテンプレート
+
+**⚠️ 重要な注意事項**:
+
+- 既存のリリースバージョンを上書きしない（Phase 0.1で確認必須）
+- バージョン番号が既に存在する場合、必ず「v0.X.0じゃないですか？」と確認
+- package.json 更新を忘れない（PRマージ前に実施）
+- Full Changelog リンクを必ず含める
 
 ### システム管理
 
@@ -350,6 +377,28 @@ npm run docs:check          # ドキュメント整合性チェック
 
 ## 📝 変更履歴
 
+### v11.1（2025-11-12）- リリース管理の必須化
+
+**変更内容**:
+
+- ✅ 絶対遵守ルールに「リリース作業」を追加（ルール9）
+  - リリース作業前に `docs/releases/RELEASE_CHECKLIST.md` を必ず参照
+  - 既存バージョンの重複チェックを最優先化
+  - package.json 更新タイミングの明確化（PRマージ前）
+- ✅ 詳細ドキュメント参照先に「リリース管理」セクション追加
+  - RELEASE_CHECKLIST.md を最優先ドキュメントとして位置付け
+  - AIの行動規範を明確化（重複時は必ず確認）
+
+**理由**:
+
+- v0.4.0 リリース時の重大ミス（v0.3.0重複）を防止
+- AIがリリースドキュメントを参照する明確なトリガーが必要
+- 「既存があったのに v0.3.0 で更新するのはありえないミス」の再発防止
+
+**効果**: AIによるリリース作業の確実性向上
+
+---
+
 ### v11.0（2025-10-30）- 開発サーバー管理の抜本的見直し
 
 **変更内容**:
@@ -404,4 +453,4 @@ npm run docs:check          # ドキュメント整合性チェック
 
 ---
 
-**📖 最終更新**: 2025-10-30 | **バージョン**: v11.0
+**📖 最終更新**: 2025-11-12 | **バージョン**: v11.1
