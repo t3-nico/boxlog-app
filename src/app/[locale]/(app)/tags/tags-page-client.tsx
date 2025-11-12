@@ -33,6 +33,7 @@ import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useCreateTag, useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
 import { useToast } from '@/lib/toast/use-toast'
+import { api } from '@/lib/trpc'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 
 interface TagsPageClientProps {
@@ -68,6 +69,9 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const [editValue, setEditValue] = useState('')
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
+
+  // タグごとのチケット数を取得
+  const { data: tagTicketCounts = {} } = api.tickets.getTagTicketCounts.useQuery()
 
   // アクティブなタグ数を計算
   const activeTagsCount = useMemo(() => {
@@ -725,7 +729,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                   router.push(`/${locale}/tags/t-${tag.tag_number}`)
                                 }}
                               >
-                                {tag.name} <span className="text-muted-foreground">(0)</span>
+                                {tag.name}{' '}
+                                <span className="text-muted-foreground">({tagTicketCounts[tag.id] || 0})</span>
                               </span>
                             )}
                           </TableCell>

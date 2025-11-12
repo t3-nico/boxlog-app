@@ -559,4 +559,46 @@ export const ticketsRouter = createTRPCRouter({
     // Supabaseの型を厳密なTicketActivity型にキャスト
     return activity as TicketActivity
   }),
+
+  // タグごとのチケット数を取得
+  getTagTicketCounts: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase, userId } = ctx
+
+    // ユーザーのチケットIDを取得
+    const { data: userTickets, error: ticketsError } = await supabase.from('tickets').select('id').eq('user_id', userId)
+
+    if (ticketsError) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `チケットの取得に失敗しました: ${ticketsError.message}`,
+      })
+    }
+
+    const ticketIds = userTickets.map((t) => t.id)
+
+    if (ticketIds.length === 0) {
+      return {}
+    }
+
+    // ticket_tags からタグごとのカウントを取得
+    const { data: tagCounts, error: countsError } = await supabase
+      .from('ticket_tags')
+      .select('tag_id')
+      .in('ticket_id', ticketIds)
+
+    if (countsError) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `タグカウントの取得に失敗しました: ${countsError.message}`,
+      })
+    }
+
+    // タグIDごとにカウント
+    const counts: Record<string, number> = {}
+    tagCounts.forEach((item) => {
+      counts[item.tag_id] = (counts[item.tag_id] || 0) + 1
+    })
+
+    return counts
+  }),
 })
