@@ -2,7 +2,17 @@
 
 BoxLogの正式なリリース作業手順を定義します。
 
+## ⚠️ 必ず最初に確認
+
+**🎯 実際にリリース作業を行う際は、[RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) を開いて、上から順番に全ての項目をチェックしてください。**
+
+このドキュメント（RELEASE_PROCESS.md）は詳細な説明と背景情報を提供します。
+実作業では RELEASE_CHECKLIST.md を使用してください。
+
+---
+
 ## 📋 目次
+
 - [前提条件](#前提条件)
 - [リリース前チェックリスト](#リリース前チェックリスト)
 - [リリース手順](#リリース手順)
@@ -13,6 +23,7 @@ BoxLogの正式なリリース作業手順を定義します。
 ## 前提条件
 
 ### 必要なツール
+
 ```bash
 # Node.js & npm
 node --version  # v20以上
@@ -28,6 +39,7 @@ git --version
 ```
 
 ### 権限
+
 - リポジトリへのWrite権限
 - GitHub Releaseの作成権限
 - Vercelプロジェクトへのアクセス権
@@ -52,6 +64,7 @@ gh api repos/:owner/:repo/branches/main/protection \
 ```
 
 **推奨設定**:
+
 - ✅ Require a pull request before merging
   - Require approvals: 1
 - ✅ Require status checks to pass before merging
@@ -64,6 +77,7 @@ gh api repos/:owner/:repo/branches/main/protection \
 ## リリース前チェックリスト
 
 ### 1. コードの品質確認
+
 ```bash
 # Lint チェック
 npm run lint
@@ -79,17 +93,20 @@ npm run build
 ```
 
 ### 2. ドキュメント確認
+
 - [ ] CHANGELOG.md の [Unreleased] セクションに変更内容が記載されている
 - [ ] 新機能のドキュメントが更新されている
 - [ ] 破壊的変更がある場合、マイグレーションガイドが用意されている
 - [ ] README.md が最新の状態である
 
 ### 3. Issue/PR確認
+
 - [ ] マイルストーンに紐づく全てのIssueがクローズされている
 - [ ] マイルストーンに紐づく全てのPRがマージされている
 - [ ] 未解決の重大なバグがない
 
 ### 4. セキュリティ確認
+
 ```bash
 # 依存関係の脆弱性チェック
 npm audit
@@ -103,12 +120,14 @@ npm run license:check
 ### Phase 0: Pull Request作成（dev → main）
 
 #### 0.1 最新のコードを取得
+
 ```bash
 git checkout dev
 git pull origin dev
 ```
 
 #### 0.2 ブランチの状態確認
+
 ```bash
 # 未コミットの変更がないこと
 git status
@@ -121,6 +140,7 @@ git log main..dev --oneline
 ```
 
 #### 0.3 Pull Request作成
+
 ```bash
 # GitHub CLI でPR作成
 gh pr create \
@@ -159,18 +179,21 @@ EOF
 **自動実行されるチェック（`.github/workflows/ci.yml`）**:
 
 **Phase 1: Quick Checks（並列実行 / 3分以内）**
+
 - 🔍 ESLint & Prettier
 - 🔤 TypeScript型チェック
 - 🧪 Unit Tests（カバレッジ付き）
 - 🌍 i18n Translation Check
 
 **Phase 2: Quality Checks（並列実行 / 5分以内）**
+
 - 🏗️ Build（Next.js本番ビルド）
 - ♿ Accessibility（a11yチェック）
 - 🔍 Heavy Analysis（License, API, Performance）
 - 📚 Docs Consistency
 
 **Phase 3: Quality Gate**
+
 - 🚪 全チェック結果の集約
 - 💬 PRへのサマリーコメント自動投稿
 
@@ -188,6 +211,7 @@ gh pr view
 #### 0.5 レビュー & マージ
 
 **マージ条件**:
+
 - [ ] Quality Gate（全必須チェック）が通過
 - [ ] **PR内容の目視確認完了**（承認者不在でも実施必須）
 - [ ] コンフリクトなし
@@ -219,6 +243,7 @@ gh pr merge --squash --delete-branch=false
 ```
 
 **確認すべき項目**:
+
 - [ ] 意図しない変更が含まれていないか
 - [ ] セキュリティ上問題のある変更がないか
 - [ ] 設定ファイルの変更が正しいか
@@ -230,12 +255,14 @@ gh pr merge --squash --delete-branch=false
 ### Phase 1: バージョンタグ作成
 
 #### 1.1 mainブランチに切り替え
+
 ```bash
 git checkout main
 git pull origin main
 ```
 
 #### 1.2 ブランチの状態確認
+
 ```bash
 # PRマージが反映されていることを確認
 git log -5 --oneline
@@ -247,6 +274,7 @@ git log main..dev --oneline  # 何も表示されないはず
 ### Phase 2: リリースノート作成
 
 #### 2.1 リリースノートファイル作成
+
 ```bash
 # バージョン番号を決定（例: v0.1.0）
 VERSION="0.1.0"
@@ -256,12 +284,14 @@ cp docs/releases/template.md docs/releases/v${VERSION}.md
 ```
 
 #### 2.2 リリースノート編集
+
 ```bash
 # エディタで編集
 vim docs/releases/v${VERSION}.md
 ```
 
 **記載内容:**
+
 - リリース日
 - 概要
 - 新機能 (Added)
@@ -272,21 +302,25 @@ vim docs/releases/v${VERSION}.md
 - セキュリティ (Security)
 
 #### 2.3 CHANGELOG.md 更新
+
 ```bash
 # エディタで編集
 vim CHANGELOG.md
 ```
 
 **更新内容:**
+
 1. [Unreleased] セクションの内容を新バージョンに移動
 2. リリース日を追加
 3. バージョンリンクを追加
 
 **例:**
+
 ```markdown
 ## [0.1.0] - 2025-10-15
 
 ### Added
+
 - 新機能の説明
 
 [0.1.0]: https://github.com/t3-nico/boxlog-app/releases/tag/v0.1.0
@@ -295,6 +329,7 @@ vim CHANGELOG.md
 ### Phase 3: バージョンアップ
 
 #### 3.1 バージョンの決定
+
 ```bash
 # 現在のバージョン確認
 npm version
@@ -306,6 +341,7 @@ npm version
 ```
 
 #### 3.2 バージョンアップ実行
+
 ```bash
 # PATCH
 npm version patch -m "chore: bump version to %s"
@@ -318,11 +354,13 @@ npm version major -m "feat!: bump version to %s"
 ```
 
 **このコマンドが実行すること:**
+
 1. package.json の version を更新
 2. Git commit を作成
 3. Git tag を作成
 
 #### 3.3 変更内容の確認
+
 ```bash
 # 最新のコミットを確認
 git log -1
@@ -337,6 +375,7 @@ git show HEAD
 ### Phase 4: プッシュ
 
 #### 4.1 コミット & タグをプッシュ
+
 ```bash
 # コミットをプッシュ（mainブランチから）
 git push origin main
@@ -346,6 +385,7 @@ git push origin v${VERSION}
 ```
 
 #### 4.1.1 devブランチへの同期
+
 ```bash
 # mainの変更をdevに反映（Fast-forward）
 git checkout dev
@@ -354,6 +394,7 @@ git push origin dev
 ```
 
 #### 4.2 プッシュ確認
+
 ```bash
 # リモートのタグを確認
 git ls-remote --tags origin
@@ -365,6 +406,7 @@ gh repo view --web
 ### Phase 5: GitHub Release作成
 
 #### 5.1 GitHub Releaseテンプレート準備
+
 ```bash
 # テンプレートファイルを編集
 cp .github/RELEASE_TEMPLATE.md /tmp/release-v${VERSION}.md
@@ -372,6 +414,7 @@ vim /tmp/release-v${VERSION}.md
 ```
 
 #### 5.2 GitHub Release作成
+
 ```bash
 # GitHub CLI で作成
 gh release create v${VERSION} \
@@ -383,6 +426,7 @@ gh release create v${VERSION} \
 ```
 
 #### 5.3 Release確認
+
 ```bash
 # 作成されたReleaseを確認
 gh release view v${VERSION} --web
@@ -391,6 +435,7 @@ gh release view v${VERSION} --web
 ### Phase 6: デプロイ確認
 
 #### 6.1 自動デプロイの監視
+
 ```bash
 # Vercelのデプロイ状況を確認
 # https://vercel.com/t3-nico/boxlog-app
@@ -400,6 +445,7 @@ npm run deploy:stats
 ```
 
 #### 6.2 本番環境の動作確認
+
 ```bash
 # ヘルスチェック
 npm run deploy:health
@@ -409,6 +455,7 @@ npm run deploy:health
 ```
 
 **確認項目:**
+
 - [ ] サイトが正常に表示される
 - [ ] 新機能が動作する
 - [ ] 既存機能が正常に動作する
@@ -418,12 +465,14 @@ npm run deploy:health
 ## リリース後の作業
 
 ### 1. マイルストーンのクローズ
+
 ```bash
 # GitHub UI でマイルストーンをクローズ
 # https://github.com/t3-nico/boxlog-app/milestones
 ```
 
 ### 2. 関連Issueの更新
+
 ```bash
 # リリースされたことをIssueにコメント
 gh issue comment <issue_number> \
@@ -431,14 +480,17 @@ gh issue comment <issue_number> \
 ```
 
 ### 3. ドキュメントの更新
+
 - [ ] README.md のバージョン番号更新（必要に応じて）
 - [ ] docs/releases/README.md にバージョンを追加
 
 ### 4. 通知
+
 - [ ] チームへのリリース通知
 - [ ] ユーザーへのアナウンス（必要に応じて）
 
 ### 5. モニタリング
+
 ```bash
 # Sentryでエラー監視
 # https://sentry.io/organizations/boxlog/issues/
@@ -452,11 +504,13 @@ npm run analytics:stats
 ### 緊急時のロールバック
 
 #### 1. 重大な問題の確認
+
 - クリティカルなバグ
 - セキュリティ上の問題
 - データ損失の可能性
 
 #### 2. ロールバック実行
+
 ```bash
 # Vercelで前のデプロイに戻す
 npm run deploy:rollback
@@ -466,6 +520,7 @@ npm run deploy:rollback
 ```
 
 #### 3. GitHub Releaseの対応
+
 ```bash
 # Releaseをドラフトに変更（削除はしない）
 gh release edit v${VERSION} --draft
@@ -477,6 +532,7 @@ gh issue create \
 ```
 
 #### 4. 修正版のリリース
+
 ```bash
 # 問題を修正
 # ...
@@ -495,6 +551,7 @@ gh release create v${VERSION_PATCH} \
 ## トラブルシューティング
 
 ### Q: npm version でエラーが出る
+
 ```bash
 # 未コミットの変更がある場合
 git status
@@ -506,6 +563,7 @@ npm version patch --force
 ```
 
 ### Q: タグのプッシュに失敗する
+
 ```bash
 # タグの確認
 git tag -l
@@ -517,6 +575,7 @@ git push origin v${VERSION}
 ```
 
 ### Q: GitHub Releaseの作成に失敗する
+
 ```bash
 # GitHub CLI の認証確認
 gh auth status
@@ -529,6 +588,7 @@ gh auth login
 ```
 
 ### Q: デプロイが失敗する
+
 ```bash
 # Vercelのログを確認
 # https://vercel.com/t3-nico/boxlog-app/deployments
@@ -548,6 +608,7 @@ npm run vercel:check
 ## リリース v${VERSION} チェックシート
 
 ### リリース前（devブランチ）
+
 - [ ] npm run lint - 成功
 - [ ] npm run typecheck - 成功
 - [ ] npm run test:run - 成功
@@ -557,6 +618,7 @@ npm run vercel:check
 - [ ] マイルストーンの全Issue/PRクローズ済み
 
 ### Phase 0: PR作成 & マージ（dev → main）
+
 - [ ] PRテンプレート記入完了
 - [ ] CI/CD Quality Gate 通過
   - [ ] lint ✅
@@ -571,6 +633,7 @@ npm run vercel:check
 - [ ] PRマージ完了（Squash & Merge）
 
 ### Phase 1-4: バージョンタグ作成 & プッシュ（mainブランチ）
+
 - [ ] mainブランチに切り替え
 - [ ] PRマージ内容を確認
 - [ ] バージョンアップ実行（npm version）
@@ -579,17 +642,20 @@ npm run vercel:check
 - [ ] devブランチへ同期完了
 
 ### Phase 5-6: GitHub Release & デプロイ
+
 - [ ] GitHub Release作成完了
 - [ ] Vercelデプロイ成功
 - [ ] 本番環境動作確認OK
 - [ ] Sentryエラー監視OK
 
 ### リリース後
+
 - [ ] マイルストーンクローズ
 - [ ] 関連Issueへコメント
 - [ ] チームへ通知完了
 
 ### 日時
+
 - 開始: YYYY-MM-DD HH:MM
 - 完了: YYYY-MM-DD HH:MM
 - 実施者: @username
@@ -632,11 +698,13 @@ npm run vercel:check
 ## 参考リンク
 
 ### プロジェクト内
+
 - [VERSIONING.md](VERSIONING.md) - バージョニングルール
 - [CHANGELOG.md](../../CHANGELOG.md) - 変更履歴
 - [.github/workflows/ci.yml](../../.github/workflows/ci.yml) - CI/CD設定
 
 ### 公式ドキュメント
+
 - [Semantic Versioning](https://semver.org/)
 - [GitHub Releases](https://docs.github.com/ja/repositories/releasing-projects-on-github/managing-releases-in-a-repository)
 - [GitHub Branch Protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)
