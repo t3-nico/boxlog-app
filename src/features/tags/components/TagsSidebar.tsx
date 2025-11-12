@@ -18,6 +18,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import {
@@ -50,6 +51,7 @@ export function TagsSidebar({
   archivedTagsCount = 0,
   externalIsCreating = false,
 }: TagsSidebarProps) {
+  const { t } = useI18n()
   const router = useRouter()
   const pathname = usePathname()
   const { setIsCreatingGroup } = useTagsPageContext()
@@ -187,7 +189,7 @@ export function TagsSidebar({
   const handleSaveEditing = useCallback(
     async (group: TagGroup) => {
       if (!editingGroupName.trim()) {
-        toast.error('グループ名を入力してください')
+        toast.error(t('tags.toast.groupNameRequired'))
         return
       }
 
@@ -200,15 +202,15 @@ export function TagsSidebar({
             color: group.color,
           },
         })
-        toast.success(`グループ名を「${editingGroupName}」に変更しました`)
+        toast.success(t('tags.toast.groupNameChanged', { name: editingGroupName }))
         setEditingGroupId(null)
         setEditingGroupName('')
       } catch (error) {
         console.error('Failed to update tag group:', error)
-        toast.error('グループ名の変更に失敗しました')
+        toast.error(t('tags.toast.groupNameChangeFailed'))
       }
     },
-    [editingGroupName, updateGroupMutation, toast]
+    [editingGroupName, updateGroupMutation, toast, t]
   )
 
   // グループごとのタグ数をカウント
@@ -270,7 +272,7 @@ export function TagsSidebar({
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Tags className="h-4 w-4 shrink-0" />
-                <span>すべてのタグ</span>
+                <span>{t('tags.sidebar.allTags')}</span>
               </div>
               <span className="text-muted-foreground text-xs">{activeTagsCount}</span>
             </div>
@@ -287,7 +289,7 @@ export function TagsSidebar({
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <FolderOpen className="h-4 w-4 shrink-0" />
-                <span>未分類</span>
+                <span>{t('tags.sidebar.uncategorized')}</span>
               </div>
               <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>
             </div>
@@ -304,7 +306,7 @@ export function TagsSidebar({
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Archive className="h-4 w-4 shrink-0" />
-                <span>アーカイブ</span>
+                <span>{t('tags.sidebar.archive')}</span>
               </div>
               <span className="text-muted-foreground text-xs">{archivedTagsCount}</span>
             </div>
@@ -312,14 +314,14 @@ export function TagsSidebar({
 
           {/* グループセクション */}
           <div className="text-muted-foreground mt-4 mb-2 flex items-center justify-between pr-1 pl-3">
-            <span className="text-xs font-semibold uppercase">グループ</span>
+            <span className="text-xs font-semibold uppercase">{t('tags.sidebar.groups')}</span>
             <Button variant="ghost" size="sm" onClick={handleStartCreating} className="hover:bg-accent h-5 w-5 p-0">
               <Plus className="h-3 w-3" />
             </Button>
           </div>
 
           {groups.length === 0 && !isCreating ? (
-            <div className="text-muted-foreground px-3 py-2 text-xs">グループがありません</div>
+            <div className="text-muted-foreground px-3 py-2 text-xs">{t('tags.sidebar.noGroups')}</div>
           ) : (
             <>
               {groups.map((group) => (
@@ -344,7 +346,7 @@ export function TagsSidebar({
                               e.stopPropagation()
                             }}
                             className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                            aria-label={`${group.name}のカラーを変更`}
+                            aria-label={t('tags.sidebar.changeColorAria', { name: group.name })}
                           >
                             <Folder
                               className="h-4 w-4"
@@ -381,17 +383,17 @@ export function TagsSidebar({
                                         color,
                                       },
                                     })
-                                    toast.success('カラーを変更しました')
+                                    toast.success(t('tags.toast.colorChanged'))
                                   } catch (error) {
                                     console.error('Failed to update group color:', error)
-                                    toast.error('カラーの変更に失敗しました')
+                                    toast.error(t('tags.toast.colorChangeFailed'))
                                   }
                                 }}
                                 className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
                                   group.color === color ? 'border-foreground scale-110' : 'border-transparent'
                                 }`}
                                 style={{ backgroundColor: color }}
-                                aria-label={`カラー ${color}`}
+                                aria-label={t('tags.sidebar.colorLabel', { color })}
                               />
                             ))}
                           </div>
@@ -448,12 +450,12 @@ export function TagsSidebar({
                             }}
                           >
                             <Edit className="mr-2 h-4 w-4" />
-                            名前を変更
+                            {t('tags.sidebar.editName')}
                           </DropdownMenuItem>
                           <DropdownMenuSub>
                             <DropdownMenuSubTrigger>
                               <Palette className="mr-2 h-4 w-4" />
-                              カラーを変更
+                              {t('tags.sidebar.changeColor')}
                             </DropdownMenuSubTrigger>
                             <DropdownMenuSubContent>
                               <div className="grid grid-cols-5 gap-2 p-2">
@@ -483,17 +485,17 @@ export function TagsSidebar({
                                             color,
                                           },
                                         })
-                                        toast.success('カラーを変更しました')
+                                        toast.success(t('tags.toast.colorChanged'))
                                       } catch (error) {
                                         console.error('Failed to update group color:', error)
-                                        toast.error('カラーの変更に失敗しました')
+                                        toast.error(t('tags.toast.colorChangeFailed'))
                                       }
                                     }}
                                     className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
                                       group.color === color ? 'border-foreground scale-110' : 'border-transparent'
                                     }`}
                                     style={{ backgroundColor: color }}
-                                    aria-label={`カラー ${color}`}
+                                    aria-label={t('tags.sidebar.colorLabel', { color })}
                                   />
                                 ))}
                               </div>
@@ -508,7 +510,7 @@ export function TagsSidebar({
                               if (tagCount === 0) {
                                 try {
                                   await deleteGroupMutation.mutateAsync(group.id)
-                                  toast.success(`グループ「${group.name}」を削除しました`)
+                                  toast.success(t('tags.toast.groupDeleted', { name: group.name }))
                                   // 削除したグループのページを表示中だったら、タグ一覧に戻る
                                   if (currentGroupNumber === group.group_number) {
                                     const locale = pathname?.split('/')[1] || 'ja'
@@ -516,7 +518,7 @@ export function TagsSidebar({
                                   }
                                 } catch (error) {
                                   console.error('Failed to delete tag group:', error)
-                                  toast.error('グループの削除に失敗しました')
+                                  toast.error(t('tags.toast.groupDeleteFailed'))
                                 }
                               } else {
                                 // タグが1件以上の場合は確認ダイアログを表示
@@ -526,7 +528,7 @@ export function TagsSidebar({
                             className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            削除
+                            {t('tags.sidebar.delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -548,7 +550,7 @@ export function TagsSidebar({
                         <button
                           type="button"
                           className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                          aria-label="カラーを変更"
+                          aria-label={t('tags.sidebar.changeColor')}
                         >
                           <Folder className="h-4 w-4" style={{ color: newGroupColor }} fill={newGroupColor} />
                         </button>
@@ -575,7 +577,7 @@ export function TagsSidebar({
                                 newGroupColor === color ? 'border-foreground scale-110' : 'border-transparent'
                               }`}
                               style={{ backgroundColor: color }}
-                              aria-label={`カラー ${color}`}
+                              aria-label={t('tags.sidebar.colorLabel', { color })}
                             />
                           ))}
                         </div>
@@ -593,7 +595,7 @@ export function TagsSidebar({
                           handleCancelCreating()
                         }
                       }}
-                      placeholder="グループ名を入力"
+                      placeholder={t('tags.sidebar.groupNamePlaceholder')}
                       autoFocus
                       className="h-auto flex-1 border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
                     />

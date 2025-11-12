@@ -1561,6 +1561,28 @@
     },
     "actions": {
       "cancel": "Cancel"
+    },
+    "sidebar": {
+      "allTags": "All Tags",
+      "uncategorized": "Uncategorized",
+      "archive": "Archive",
+      "groups": "Groups",
+      "noGroups": "No groups",
+      "groupNamePlaceholder": "Enter group name",
+      "editName": "Edit name",
+      "changeColor": "Change color",
+      "delete": "Delete",
+      "colorLabel": "Color {{color}}",
+      "changeColorAria": "Change color of {{name}}"
+    },
+    "toast": {
+      "groupNameRequired": "Please enter a group name",
+      "groupNameChanged": "Changed group name to \"{{name}}\"",
+      "groupNameChangeFailed": "Failed to change group name",
+      "colorChanged": "Color changed",
+      "colorChangeFailed": "Failed to change color",
+      "groupDeleted": "Deleted group \"{{name}}\"",
+      "groupDeleteFailed": "Failed to delete group"
     }
   }
 }

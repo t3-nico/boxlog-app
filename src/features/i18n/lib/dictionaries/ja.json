@@ -1556,6 +1556,28 @@
     },
     "actions": {
       "cancel": "キャンセル"
+    },
+    "sidebar": {
+      "allTags": "すべてのタグ",
+      "uncategorized": "未分類",
+      "archive": "アーカイブ",
+      "groups": "グループ",
+      "noGroups": "グループがありません",
+      "groupNamePlaceholder": "グループ名を入力",
+      "editName": "名前を変更",
+      "changeColor": "カラーを変更",
+      "delete": "削除",
+      "colorLabel": "カラー {{color}}",
+      "changeColorAria": "{{name}}のカラーを変更"
+    },
+    "toast": {
+      "groupNameRequired": "グループ名を入力してください",
+      "groupNameChanged": "グループ名を「{{name}}」に変更しました",
+      "groupNameChangeFailed": "グループ名の変更に失敗しました",
+      "colorChanged": "カラーを変更しました",
+      "colorChangeFailed": "カラーの変更に失敗しました",
+      "groupDeleted": "グループ「{{name}}」を削除しました",
+      "groupDeleteFailed": "グループの削除に失敗しました"
     }
   }
 }
