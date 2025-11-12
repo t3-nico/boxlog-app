@@ -448,7 +448,24 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-9 w-[150px] lg:w-[250px]"
           />
+        </div>
 
+        {/* 右側: ボタン群 */}
+        <div className="flex items-center gap-2">
+          <Button onClick={() => setIsCreatingGroup(true)} size="sm" variant="outline" className="h-9">
+            <Plus className="mr-2 size-4" />
+            グループを作成
+          </Button>
+          <Button onClick={handleStartInlineCreation} size="sm" className="h-9">
+            <Plus className="mr-2 size-4" />
+            タグを作成
+          </Button>
+        </div>
+      </div>
+
+      {/* アクションコンテナ（条件付き表示） */}
+      {((!showUncategorizedOnly && selectedGroup) || selectedTagIds.length > 0) && (
+        <div className="flex h-12 shrink-0 items-center gap-2 px-4 pt-2 md:px-6">
           {/* グループフィルタバッジ（未分類ページでは非表示） */}
           {!showUncategorizedOnly && selectedGroup && (
             <div className="bg-accent text-accent-foreground flex items-center gap-1 rounded-md px-2 py-1 text-sm">
@@ -474,22 +491,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
             </Button>
           )}
         </div>
-
-        {/* 右側: ボタン群 */}
-        <div className="flex items-center gap-2">
-          <Button onClick={() => setIsCreatingGroup(true)} size="sm" variant="outline" className="h-9">
-            <Plus className="mr-2 size-4" />
-            グループを作成
-          </Button>
-          <Button onClick={handleStartInlineCreation} size="sm" className="h-9">
-            <Plus className="mr-2 size-4" />
-            タグを作成
-          </Button>
-        </div>
-      </div>
+      )}
 
       {/* テーブル */}
-      <div className="flex flex-1 flex-col overflow-auto px-4 pt-4 md:px-6">
+      <div className="flex flex-1 flex-col overflow-auto px-4 pt-4 pb-2 md:px-6">
         {displayTags.length === 0 ? (
           <div className="border-border flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
             <div className="text-center">
