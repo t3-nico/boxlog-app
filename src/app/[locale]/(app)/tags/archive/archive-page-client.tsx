@@ -281,7 +281,7 @@ export function ArchivePageClient() {
       <TagsPageHeader title={t('tags.sidebar.archive')} />
 
       {/* ツールバー */}
-      <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 pt-2 md:px-6">
+      <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 pt-2">
         <div className="flex flex-1 items-center gap-2">
           {/* 検索 */}
           <Input
@@ -302,7 +302,7 @@ export function ArchivePageClient() {
       </div>
 
       {/* テーブル */}
-      <div className="flex flex-1 flex-col overflow-hidden px-4 md:px-6">
+      <div className="flex flex-1 flex-col overflow-hidden px-4">
         {displayTags.length === 0 ? (
           <div className="border-border flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
             <div className="text-center">
@@ -523,7 +523,7 @@ export function ArchivePageClient() {
 
             {/* フッター: テーブルの外側に配置 */}
             <div className="shrink-0">
-              <div className="flex items-center justify-between px-4 py-4 md:px-6">
+              <div className="flex items-center justify-between px-4 py-4">
                 {/* 左側: 表示件数選択 */}
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground text-sm">表示件数</span>

@@ -535,7 +535,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       <TagsPageHeader title={pageTitle} />
 
       {/* ツールバー */}
-      <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 pt-2 md:px-6">
+      <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 pt-2">
         <div className="flex flex-1 items-center gap-2">
           {/* 検索 */}
           <Input
@@ -561,7 +561,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
       {/* 一括削除ボタン（選択時のみ表示） */}
       {selectedTagIds.length > 0 && (
-        <div className="flex h-12 shrink-0 items-center gap-2 px-4 pt-2 md:px-6">
+        <div className="flex h-12 shrink-0 items-center gap-2 px-4 pt-2">
           <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-9">
             <Trash2 className="mr-2 size-4" />
             {t('tags.page.delete')} ({selectedTagIds.length})
@@ -570,7 +570,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       )}
 
       {/* テーブル */}
-      <div className="flex flex-1 flex-col overflow-auto px-4 pt-4 pb-2 md:px-6">
+      <div className="flex flex-1 flex-col overflow-auto px-4 pt-4 pb-2">
         {displayTags.length === 0 ? (
           <div className="border-border flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
             <div className="text-center">
@@ -679,10 +679,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           {tag.name} <span className="text-muted-foreground">(0)</span>
                         </span>
                       </TableCell>
-                      <TableCell
-                        className="text-muted-foreground group cursor-pointer"
-                        style={{ width: `${columnWidths.description}px` }}
-                      >
+                      <TableCell className="text-muted-foreground" style={{ width: `${columnWidths.description}px` }}>
                         <span className="truncate">
                           {tag.description || (
                             <span className="opacity-0 transition-opacity group-hover:opacity-100">説明を追加...</span>
@@ -690,28 +687,32 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                         </span>
                       </TableCell>
                       <TableCell style={{ width: `${columnWidths.group}px` }}>
-                        {tag.group_id
-                          ? (() => {
-                              const group = groups.find((g) => g.id === tag.group_id)
-                              if (!group) {
-                                return null
-                              }
-                              const groupTagCount = tags.filter(
-                                (t) => t.group_id === group.id && t.is_active && t.level === 0
-                              ).length
-                              return (
-                                <div className="flex items-center gap-1">
-                                  <div
-                                    className="h-2 w-2 shrink-0 rounded-full"
-                                    style={{ backgroundColor: group.color || '#6B7280' }}
-                                  />
-                                  <span className="text-sm">
-                                    {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
-                                  </span>
-                                </div>
-                              )
-                            })()
-                          : null}
+                        {tag.group_id ? (
+                          (() => {
+                            const group = groups.find((g) => g.id === tag.group_id)
+                            if (!group) {
+                              return null
+                            }
+                            const groupTagCount = tags.filter(
+                              (t) => t.group_id === group.id && t.is_active && t.level === 0
+                            ).length
+                            return (
+                              <div className="flex items-center gap-1">
+                                <div
+                                  className="h-2 w-2 shrink-0 rounded-full"
+                                  style={{ backgroundColor: group.color || '#6B7280' }}
+                                />
+                                <span className="text-sm">
+                                  {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
+                                </span>
+                              </div>
+                            )
+                          })()
+                        ) : (
+                          <span className="text-sm opacity-0 transition-opacity group-hover:opacity-100">
+                            グループを追加...
+                          </span>
+                        )}
                       </TableCell>
                       <TableCell
                         className="text-muted-foreground text-xs"
@@ -929,7 +930,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
             {/* フッター: テーブルの外側に配置 */}
             <div className="shrink-0">
-              <div className="flex items-center justify-between px-4 py-4 md:px-6">
+              <div className="flex items-center justify-between px-4 py-4">
                 {/* 左側: 表示件数選択 */}
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground text-sm">{t('tags.page.rowsPerPage')}</span>
