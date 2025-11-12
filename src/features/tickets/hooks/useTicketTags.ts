@@ -9,10 +9,23 @@ import { api } from '@/lib/trpc'
 export function useTicketTags() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const utils = api.useUtils()
 
   // tRPC Mutation統合（チケットタグ）
-  const addTicketTagMutation = api.tickets.addTag.useMutation()
-  const removeTicketTagMutation = api.tickets.removeTag.useMutation()
+  const addTicketTagMutation = api.tickets.addTag.useMutation({
+    onSuccess: () => {
+      // チケットデータを再取得
+      utils.tickets.getById.invalidate()
+      utils.tickets.list.invalidate()
+    },
+  })
+  const removeTicketTagMutation = api.tickets.removeTag.useMutation({
+    onSuccess: () => {
+      // チケットデータを再取得
+      utils.tickets.getById.invalidate()
+      utils.tickets.list.invalidate()
+    },
+  })
 
   /**
    * チケットにタグを追加

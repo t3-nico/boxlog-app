@@ -22,7 +22,6 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = 'æ
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        console.log('[DatePickerPopover] Clicking outside, closing calendar')
         setShowCalendar(false)
       }
     }
@@ -32,10 +31,6 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = 'æ
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
-
-  useEffect(() => {
-    console.log('[DatePickerPopover] showCalendar changed:', showCalendar)
-  }, [showCalendar])
 
   const handleDateSelect = (date: Date | undefined) => {
     onDateChange(date)
@@ -49,21 +44,14 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = 'æ
         size="sm"
         className="text-muted-foreground h-8 gap-2 px-2"
         type="button"
-        onClick={() => {
-          console.log('[DatePickerPopover] Button clicked, current showCalendar:', showCalendar)
-          setShowCalendar(!showCalendar)
-        }}
+        onClick={() => setShowCalendar(!showCalendar)}
       >
         <CalendarIcon className="h-4 w-4" />
         <span className="text-sm">{selectedDate ? format(selectedDate, 'M/d', { locale: ja }) : placeholder}</span>
       </Button>
       {showCalendar && (
-        <div
-          className="border-input bg-popover absolute top-10 left-0 z-50 rounded-md border shadow-md"
-          style={{ minWidth: '300px', backgroundColor: 'var(--popover)', border: '2px solid red' }}
-        >
-          <div style={{ padding: '8px', color: 'red' }}>Calendar should appear here</div>
-          <Calendar mode="single" selected={selectedDate} captionLayout="dropdown" onSelect={handleDateSelect} />
+        <div className="border-input bg-popover absolute top-10 left-0 z-50 w-auto rounded-md border p-0 shadow-md">
+          <Calendar mode="single" selected={selectedDate} onSelect={handleDateSelect} captionLayout="dropdown" />
         </div>
       )}
     </div>

@@ -83,8 +83,8 @@ const TIME_OPTIONS = generateTimeOptions()
 export function TicketInspector() {
   const { isOpen, ticketId, closeInspector, openInspector } = useTicketInspectorStore()
 
-  // Ticketデータ取得
-  const { data: ticketData, isLoading } = useTicket(ticketId!, { enabled: !!ticketId })
+  // Ticketデータ取得（タグ情報も含む）
+  const { data: ticketData, isLoading } = useTicket(ticketId!, { includeTags: true, enabled: !!ticketId })
   // Type assertion: In practice ticketData is Ticket | undefined (tRPC error handling is separate)
   const ticket = (ticketData ?? null) as Ticket | null
 
@@ -107,6 +107,16 @@ export function TicketInspector() {
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [showTagDialog, setShowTagDialog] = useState(false)
   const { addTicketTag, removeTicketTag } = useTicketTags()
+
+  // チケットのタグ情報を selectedTagIds に反映
+  useEffect(() => {
+    if (ticketData && 'tags' in ticketData) {
+      const tagIds = (ticketData.tags as Array<{ id: string }>).map((tag) => tag.id)
+      setSelectedTagIds(tagIds)
+    } else {
+      setSelectedTagIds([])
+    }
+  }, [ticketData])
 
   // Inspectorの幅管理
   const [inspectorWidth, setInspectorWidth] = useState(540)
