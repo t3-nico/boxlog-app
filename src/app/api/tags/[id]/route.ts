@@ -26,14 +26,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       error: authError,
     } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 })
     }
 
     const { data, error } = await supabase.from('tags').select('*').eq('id', id).eq('user_id', user.id).single()
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return NextResponse.json({ error: 'Tag not found' }, { status: 404 })
+        return NextResponse.json({ error: 'tags.errors.tagNotFound' }, { status: 404 })
       }
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
     }
@@ -114,7 +114,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       error: authError,
     } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 })
     }
 
     const body: UpdateTagInput = await request.json()
@@ -128,7 +128,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       .single()
 
     if (checkError || !existingTag) {
-      return NextResponse.json({ error: 'Tag not found' }, { status: 404 })
+      return NextResponse.json({ error: 'tags.errors.tagNotFound' }, { status: 404 })
     }
 
     // 更新データ構築
@@ -138,10 +138,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     if (body.name !== undefined) {
       if (body.name.trim().length === 0) {
-        return NextResponse.json({ error: 'Tag name cannot be empty' }, { status: 400 })
+        return NextResponse.json({ error: 'tags.validation.nameEmpty' }, { status: 400 })
       }
       if (body.name.trim().length > 50) {
-        return NextResponse.json({ error: 'Tag name must be 50 characters or less' }, { status: 400 })
+        return NextResponse.json({ error: 'tags.validation.nameMaxLength' }, { status: 400 })
       }
       updateData.name = body.name.trim()
     }
@@ -210,7 +210,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       error: authError,
     } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 })
     }
 
     // 所有権チェック
@@ -222,7 +222,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       .single()
 
     if (checkError || !existingTag) {
-      return NextResponse.json({ error: 'Tag not found' }, { status: 404 })
+      return NextResponse.json({ error: 'tags.errors.tagNotFound' }, { status: 404 })
     }
 
     // 削除実行（CASCADE設定により子タグも削除される）

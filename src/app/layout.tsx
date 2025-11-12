@@ -29,11 +29,13 @@ export const metadata: Metadata = {
 
 interface RootLayoutProps {
   children: React.ReactNode
+  params: { locale?: string }
 }
 
-const RootLayout = ({ children }: RootLayoutProps) => {
+const RootLayout = ({ children, params }: RootLayoutProps) => {
+  const locale = params?.locale || 'en'
   return (
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
+    <html lang={locale} suppressHydrationWarning className={inter.variable}>
       <body className={cn('bg-background')} suppressHydrationWarning>
         <Suspense fallback={null}>
           <GlobalErrorBoundary maxRetries={3} retryDelay={1000}>

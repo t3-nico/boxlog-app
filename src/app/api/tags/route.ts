@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser()
     if (authError || !user) {
       console.error('Auth error:', authError)
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 })
     }
 
     console.log('Fetching tags for user:', user.id)
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
       error: authError,
     } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 })
     }
 
     const body: CreateTagInput = await request.json()
@@ -115,11 +115,11 @@ export async function POST(request: NextRequest) {
 
     // バリデーション
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
-      return NextResponse.json({ error: 'Tag name is required' }, { status: 400 })
+      return NextResponse.json({ error: 'tags.validation.nameRequired' }, { status: 400 })
     }
 
     if (name.trim().length > 50) {
-      return NextResponse.json({ error: 'Tag name must be 50 characters or less' }, { status: 400 })
+      return NextResponse.json({ error: 'tags.validation.nameMaxLength' }, { status: 400 })
     }
 
     // pathの計算
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (parentError || !parentTag) {
-        return NextResponse.json({ error: 'Parent tag not found' }, { status: 404 })
+        return NextResponse.json({ error: 'tags.errors.parentNotFound' }, { status: 404 })
       }
 
       // @ts-expect-error - Supabase type inference issue with tags table
@@ -187,14 +187,14 @@ export async function PATCH(request: NextRequest) {
       error: authError,
     } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 })
     }
 
     const body = await request.json()
     const { tag_id, action, data: updateData } = body
 
     if (!tag_id || !action) {
-      return NextResponse.json({ error: 'tag_id and action are required' }, { status: 400 })
+      return NextResponse.json({ error: 'tags.errors.invalidQueryParams' }, { status: 400 })
     }
 
     // タグの所有権チェック
@@ -206,7 +206,7 @@ export async function PATCH(request: NextRequest) {
       .single()
 
     if (checkError || !existingTag) {
-      return NextResponse.json({ error: 'Tag not found' }, { status: 404 })
+      return NextResponse.json({ error: 'tags.errors.tagNotFound' }, { status: 404 })
     }
 
     // アクション別処理
@@ -231,7 +231,7 @@ export async function PATCH(request: NextRequest) {
       case 'rename': {
         const { name } = updateData
         if (!name || name.trim().length === 0) {
-          return NextResponse.json({ error: 'Name is required' }, { status: 400 })
+          return NextResponse.json({ error: 'tags.validation.nameRequired' }, { status: 400 })
         }
 
         const { data, error } = await supabase
@@ -252,7 +252,7 @@ export async function PATCH(request: NextRequest) {
       case 'update_color': {
         const { color } = updateData
         if (!color) {
-          return NextResponse.json({ error: 'Color is required' }, { status: 400 })
+          return NextResponse.json({ error: 'tags.validation.colorInvalid' }, { status: 400 })
         }
 
         const { data, error } = await supabase
@@ -271,7 +271,7 @@ export async function PATCH(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+        return NextResponse.json({ error: 'tags.errors.invalidAction' }, { status: 400 })
     }
   } catch (error) {
     return NextResponse.json(

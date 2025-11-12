@@ -81,6 +81,23 @@ const tagGroupAPI = {
       throw new Error(error.error || 'Failed to delete tag group')
     }
   },
+
+  // タググループ並び替え（バルク更新）
+  async reorderTagGroups(groupIds: string[]): Promise<TagGroup[]> {
+    const response = await fetch('/api/tag-groups/reorder', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ groupIds }),
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || 'Failed to reorder tag groups')
+    }
+
+    const data = await response.json()
+    return data.data
+  },
 }
 
 // Query Keys
@@ -170,16 +187,13 @@ export function useDeleteTagGroup() {
 }
 
 /**
- * タググループの並び替え
+ * タググループの並び替え（バルク更新）
  */
 export function useReorderTagGroups() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (groups: Array<{ id: string; sort_order: number }>) => {
-      // 各グループの sort_order を更新
-      await Promise.all(groups.map((group) => tagGroupAPI.updateTagGroup(group.id, { sort_order: group.sort_order })))
-    },
+    mutationFn: (groupIds: string[]) => tagGroupAPI.reorderTagGroups(groupIds),
     onSuccess: () => {
       // 一覧を無効化して再取得
       queryClient.invalidateQueries({ queryKey: tagGroupKeys.lists() })
