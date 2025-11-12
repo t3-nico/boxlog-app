@@ -11,7 +11,6 @@ import {
   MoreHorizontal,
   Plus,
   Trash2,
-  X,
 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -560,33 +559,13 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         </div>
       </div>
 
-      {/* アクションコンテナ（条件付き表示） */}
-      {((!showUncategorizedOnly && selectedGroup) || selectedTagIds.length > 0) && (
+      {/* 一括削除ボタン（選択時のみ表示） */}
+      {selectedTagIds.length > 0 && (
         <div className="flex h-12 shrink-0 items-center gap-2 px-4 pt-2 md:px-6">
-          {/* グループフィルタバッジ（未分類ページでは非表示） */}
-          {!showUncategorizedOnly && selectedGroup && (
-            <div className="bg-accent text-accent-foreground flex items-center gap-1 rounded-md px-2 py-1 text-sm">
-              <div
-                className="h-2 w-2 shrink-0 rounded-full"
-                style={{ backgroundColor: selectedGroup.color || '#6B7280' }}
-              />
-              <span>{selectedGroup.name}</span>
-              <button
-                onClick={() => setSelectedGroupId(null)}
-                className="hover:bg-accent-foreground/20 ml-1 rounded-sm p-0.5 transition-colors"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </div>
-          )}
-
-          {/* 一括削除ボタン（選択時のみ表示） */}
-          {selectedTagIds.length > 0 && (
-            <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-9">
-              <Trash2 className="mr-2 size-4" />
-              {t('tags.page.delete')} ({selectedTagIds.length})
-            </Button>
-          )}
+          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-9">
+            <Trash2 className="mr-2 size-4" />
+            {t('tags.page.delete')} ({selectedTagIds.length})
+          </Button>
         </div>
       )}
 
@@ -700,8 +679,15 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           {tag.name} <span className="text-muted-foreground">(0)</span>
                         </span>
                       </TableCell>
-                      <TableCell className="text-muted-foreground" style={{ width: `${columnWidths.description}px` }}>
-                        <span className="truncate">{tag.description || ''}</span>
+                      <TableCell
+                        className="text-muted-foreground group cursor-pointer"
+                        style={{ width: `${columnWidths.description}px` }}
+                      >
+                        <span className="truncate">
+                          {tag.description || (
+                            <span className="opacity-0 transition-opacity group-hover:opacity-100">説明を追加...</span>
+                          )}
+                        </span>
                       </TableCell>
                       <TableCell style={{ width: `${columnWidths.group}px` }}>
                         {tag.group_id
