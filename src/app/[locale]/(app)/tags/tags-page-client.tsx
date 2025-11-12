@@ -602,14 +602,14 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                         aria-label={t('tags.page.selectAll')}
                       />
                     </TableHead>
-                    <TableHead className="text-muted-foreground relative" style={{ width: `${columnWidths.id}px` }}>
+                    <TableHead className="relative" style={{ width: `${columnWidths.id}px` }}>
                       ID
                       <ResizeHandle columnId="id" />
                     </TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.color}px` }}></TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.name}px` }}>
                       <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
-                        <span className="text-muted-foreground">{t('tags.page.name')}</span>
+                        {t('tags.page.name')}
                         {sortField === 'name' &&
                           (sortDirection === 'asc' ? (
                             <ArrowUp className="ml-1 h-4 w-4" />
@@ -679,7 +679,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                             router.push(`/${locale}/tags/t-${tag.tag_number}`)
                           }}
                         >
-                          {tag.name} (0)
+                          {tag.name} <span className="text-muted-foreground">(0)</span>
                         </span>
                       </TableCell>
                       <TableCell className="text-muted-foreground" style={{ width: `${columnWidths.description}px` }}>
@@ -701,7 +701,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                     className="h-2 w-2 shrink-0 rounded-full"
                                     style={{ backgroundColor: group.color || '#6B7280' }}
                                   />
-                                  <span className="text-muted-foreground text-sm">
+                                  <span className="text-sm">
                                     {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
                                   </span>
                                 </div>
@@ -904,7 +904,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                     className="h-2 w-2 shrink-0 rounded-full"
                                     style={{ backgroundColor: group.color || '#6B7280' }}
                                   />
-                                  <span className="text-muted-foreground text-sm">
+                                  <span className="text-sm">
                                     {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
                                   </span>
                                 </div>
