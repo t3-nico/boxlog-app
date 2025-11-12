@@ -587,8 +587,12 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         ) : (
           <>
             {/* テーブル部分 */}
-            <div className="border-border rounded-lg border">
-              <Table>
+            <div className="border-border overflow-x-auto rounded-lg border">
+              <Table
+                style={{
+                  minWidth: `${Object.values(columnWidths).reduce((sum, width) => sum + width, 0)}px`,
+                }}
+              >
                 <TableHeader>
                   <TableRow>
                     <TableHead className="relative" style={{ width: `${columnWidths.select}px` }}>
