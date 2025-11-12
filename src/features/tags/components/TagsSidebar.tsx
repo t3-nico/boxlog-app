@@ -1,24 +1,17 @@
 'use client'
 
-import { Archive, Edit, Folder, FolderOpen, MoreHorizontal, Palette, Plus, Tags, Trash2 } from 'lucide-react'
+import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { Archive, Folder, FolderOpen, Plus, Tags } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import {
@@ -377,225 +370,54 @@ export function TagsSidebar({
             </Button>
           </div>
 
-          {groups.length === 0 && !isCreating ? (
+          {reorderedGroups.length === 0 && !isCreating ? (
             <div className="text-muted-foreground px-3 py-2 text-xs">{t('tags.sidebar.noGroups')}</div>
           ) : (
             <>
-              {groups.map((group) => (
-                <button
-                  key={group.id}
-                  type="button"
-                  onClick={() => handleGroupClick(group.group_number)}
-                  className={`group w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
-                    currentGroupNumber === group.group_number
-                      ? 'bg-accent text-accent-foreground'
-                      : 'hover:bg-accent hover:text-accent-foreground'
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex min-w-0 flex-1 items-center gap-2">
-                      {/* カラーアイコン（クリック可能） */}
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                            }}
-                            className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                            aria-label={t('tags.sidebar.changeColorAria', { name: group.name })}
-                          >
-                            <Folder
-                              className="h-4 w-4"
-                              style={{ color: group.color || '#6B7280' }}
-                              fill={group.color || '#6B7280'}
-                            />
-                          </button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-3" align="start">
-                          <div className="grid grid-cols-5 gap-2">
-                            {[
-                              '#3B82F6',
-                              '#10B981',
-                              '#EF4444',
-                              '#F59E0B',
-                              '#8B5CF6',
-                              '#EC4899',
-                              '#06B6D4',
-                              '#F97316',
-                              '#6B7280',
-                              '#6366F1',
-                            ].map((color) => (
-                              <button
-                                key={color}
-                                type="button"
-                                onClick={async (e) => {
-                                  e.stopPropagation()
-                                  try {
-                                    await updateGroupMutation.mutateAsync({
-                                      id: group.id,
-                                      data: {
-                                        name: group.name,
-                                        description: group.description,
-                                        color,
-                                      },
-                                    })
-                                    toast.success(t('tags.toast.colorChanged'))
-                                  } catch (error) {
-                                    console.error('Failed to update group color:', error)
-                                    toast.error(t('tags.toast.colorChangeFailed'))
-                                  }
-                                }}
-                                className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                                  group.color === color ? 'border-foreground scale-110' : 'border-transparent'
-                                }`}
-                                style={{ backgroundColor: color }}
-                                aria-label={t('tags.sidebar.colorLabel', { color })}
-                              />
-                            ))}
-                          </div>
-                        </PopoverContent>
-                      </Popover>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                onDragCancel={handleDragCancel}
+              >
+                <SortableContext items={reorderedGroups.map((g) => g.id)} strategy={verticalListSortingStrategy}>
+                  {reorderedGroups.map((group) => (
+                    <SortableGroupItem
+                      key={group.id}
+                      group={group}
+                      isActive={currentGroupNumber === group.group_number}
+                      tagCount={getGroupTagCount(group.id)}
+                      onGroupClick={handleGroupClick}
+                      onStartEdit={handleStartEditing}
+                      onCancelEdit={handleCancelEditing}
+                      onSaveEdit={handleSaveEditing}
+                      onUpdateColor={handleUpdateColor}
+                      onDelete={handleDeleteGroup}
+                      isEditing={editingGroupId === group.id}
+                      editingName={editingGroupName}
+                      setEditingName={setEditingGroupName}
+                    />
+                  ))}
+                </SortableContext>
 
-                      {/* グループ名（インライン編集可能） */}
-                      {editingGroupId === group.id ? (
-                        <Input
-                          value={editingGroupName}
-                          onChange={(e) => setEditingGroupName(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleSaveEditing(group)
-                            } else if (e.key === 'Escape') {
-                              handleCancelEditing()
-                            }
-                          }}
-                          onBlur={() => handleSaveEditing(group)}
-                          onClick={(e) => e.stopPropagation()}
-                          autoFocus
-                          className="h-auto flex-1 border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0"
+                {/* DragOverlay: ドラッグ中のグループを表示 */}
+                <DragOverlay>
+                  {activeGroup ? (
+                    <div className="bg-accent text-accent-foreground w-full rounded-md px-3 py-2 text-left text-sm font-medium opacity-80 shadow-lg">
+                      <div className="flex items-center gap-2">
+                        <Folder
+                          className="h-4 w-4"
+                          style={{ color: activeGroup.color || '#6B7280' }}
+                          fill={activeGroup.color || '#6B7280'}
                         />
-                      ) : (
-                        <GroupNameWithTooltip
-                          name={group.name}
-                          onDoubleClick={(e) => {
-                            e.stopPropagation()
-                            handleStartEditing(group)
-                          }}
-                        />
-                      )}
+                        <span className="flex-1 truncate">{activeGroup.name}</span>
+                        <span className="text-muted-foreground text-xs">{getGroupTagCount(activeGroup.id)}</span>
+                      </div>
                     </div>
-
-                    <div className="flex items-center gap-1">
-                      {/* コンテキストメニュー */}
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button
-                            type="button"
-                            className="hover:bg-accent-foreground/10 flex h-6 w-6 shrink-0 items-center justify-center rounded p-0 opacity-0 transition-opacity group-hover:opacity-100"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                            }}
-                          >
-                            <MoreHorizontal className="h-3 w-3" />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleStartEditing(group)
-                            }}
-                          >
-                            <Edit className="mr-2 h-4 w-4" />
-                            {t('tags.sidebar.editName')}
-                          </DropdownMenuItem>
-                          <DropdownMenuSub>
-                            <DropdownMenuSubTrigger>
-                              <Palette className="mr-2 h-4 w-4" />
-                              {t('tags.sidebar.changeColor')}
-                            </DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent>
-                              <div className="grid grid-cols-5 gap-2 p-2">
-                                {[
-                                  '#3B82F6',
-                                  '#10B981',
-                                  '#EF4444',
-                                  '#F59E0B',
-                                  '#8B5CF6',
-                                  '#EC4899',
-                                  '#06B6D4',
-                                  '#F97316',
-                                  '#6B7280',
-                                  '#6366F1',
-                                ].map((color) => (
-                                  <button
-                                    key={color}
-                                    type="button"
-                                    onClick={async (e) => {
-                                      e.stopPropagation()
-                                      try {
-                                        await updateGroupMutation.mutateAsync({
-                                          id: group.id,
-                                          data: {
-                                            name: group.name,
-                                            description: group.description,
-                                            color,
-                                          },
-                                        })
-                                        toast.success(t('tags.toast.colorChanged'))
-                                      } catch (error) {
-                                        console.error('Failed to update group color:', error)
-                                        toast.error(t('tags.toast.colorChangeFailed'))
-                                      }
-                                    }}
-                                    className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                                      group.color === color ? 'border-foreground scale-110' : 'border-transparent'
-                                    }`}
-                                    style={{ backgroundColor: color }}
-                                    aria-label={t('tags.sidebar.colorLabel', { color })}
-                                  />
-                                ))}
-                              </div>
-                            </DropdownMenuSubContent>
-                          </DropdownMenuSub>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={async (e) => {
-                              e.stopPropagation()
-                              const tagCount = getGroupTagCount(group.id)
-                              // タグ数が0件の場合は即削除
-                              if (tagCount === 0) {
-                                try {
-                                  await deleteGroupMutation.mutateAsync(group.id)
-                                  toast.success(t('tags.toast.groupDeleted', { name: group.name }))
-                                  // 削除したグループのページを表示中だったら、タグ一覧に戻る
-                                  if (currentGroupNumber === group.group_number) {
-                                    const locale = pathname?.split('/')[1] || 'ja'
-                                    router.push(`/${locale}/tags`)
-                                  }
-                                } catch (error) {
-                                  console.error('Failed to delete tag group:', error)
-                                  toast.error(t('tags.toast.groupDeleteFailed'))
-                                }
-                              } else {
-                                // タグが1件以上の場合は確認ダイアログを表示
-                                setDeletingGroup(group)
-                              }
-                            }}
-                            className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            {t('tags.sidebar.delete')}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-
-                      {/* タグ数 */}
-                      <span className="text-muted-foreground text-xs">{getGroupTagCount(group.id)}</span>
-                    </div>
-                  </div>
-                </button>
-              ))}
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
 
               {/* インライン作成フォーム */}
               {isCreating && (
