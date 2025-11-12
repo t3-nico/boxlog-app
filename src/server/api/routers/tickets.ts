@@ -115,6 +115,29 @@ export const ticketsRouter = createTRPCRouter({
 
     let query = supabase.from('tickets').select('*').eq('user_id', userId)
 
+    // タグIDでフィルタ（ticket_tags テーブルと JOIN）
+    if (input?.tagId) {
+      // サブクエリで ticket_tags から該当するチケットIDを取得
+      const { data: ticketIdsData, error: ticketIdsError } = await supabase
+        .from('ticket_tags')
+        .select('ticket_id')
+        .eq('tag_id', input.tagId)
+
+      if (ticketIdsError) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: `タグフィルタの適用に失敗しました: ${ticketIdsError.message}`,
+        })
+      }
+
+      const ticketIds = ticketIdsData.map((row) => row.ticket_id)
+      if (ticketIds.length === 0) {
+        // タグに紐づくチケットがない場合は空配列を返す
+        return []
+      }
+      query = query.in('id', ticketIds)
+    }
+
     // フィルター適用
     if (input?.status) {
       query = query.eq('status', input.status)

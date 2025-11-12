@@ -5,6 +5,10 @@ import { useEffect } from 'react'
 
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { useTags } from '@/features/tags/hooks/use-tags'
+import { TicketCard } from '@/features/tickets/components/display/TicketCard'
+import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
+import type { Ticket } from '@/features/tickets/types/ticket'
+import { api } from '@/lib/trpc'
 
 interface TagDetailPageClientProps {
   tagNumber: string
@@ -13,8 +17,16 @@ interface TagDetailPageClientProps {
 export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
   const { data: tags = [], isLoading } = useTags(true)
   const router = useRouter()
+  const { openInspector } = useTicketInspectorStore()
 
   const tag = tags.find((t) => t.tag_number === Number(tagNumber))
+
+  // タグに紐づくチケットを取得
+  const { data: ticketsData = [], isLoading: isLoadingTickets } = api.tickets.list.useQuery(
+    { tagId: tag?.id },
+    { enabled: !!tag?.id }
+  )
+  const tickets = ticketsData as Ticket[]
 
   useEffect(() => {
     if (!isLoading && !tag) {
@@ -60,8 +72,24 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
             </div>
           )}
 
-          <div className="border-border rounded-lg border p-6">
-            <p className="text-muted-foreground text-center">タグの詳細ページは開発中です</p>
+          {/* チケット一覧 */}
+          <div>
+            <h2 className="mb-4 text-lg font-semibold">紐づいたチケット ({tickets.length})</h2>
+            {isLoadingTickets ? (
+              <div className="flex h-32 items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+              </div>
+            ) : tickets.length === 0 ? (
+              <div className="border-border rounded-lg border p-6">
+                <p className="text-muted-foreground text-center">このタグに紐づくチケットはありません</p>
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {tickets.map((ticket) => (
+                  <TicketCard key={ticket.id} ticket={ticket} onClick={(t) => openInspector(t.id)} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
