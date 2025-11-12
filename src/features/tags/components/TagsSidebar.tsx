@@ -27,6 +27,7 @@ import {
   useTagGroups,
   useUpdateTagGroup,
 } from '@/features/tags/hooks/use-tag-groups'
+import { useTagGroupsDnd } from '@/features/tags/hooks/use-tag-groups-dnd'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import { useToast } from '@/lib/toast/use-toast'
 import type { TagGroup } from '@/types/tags'
@@ -61,6 +62,10 @@ export function TagsSidebar({
   const updateGroupMutation = useUpdateTagGroup()
   const deleteGroupMutation = useDeleteTagGroup()
   const toast = useToast()
+
+  // ドラッグアンドドロップ機能
+  const { sensors, activeGroup, handleDragStart, handleDragEnd, handleDragCancel, reorderedGroups } =
+    useTagGroupsDnd(groups)
 
   const [deletingGroup, setDeletingGroup] = useState<TagGroup | null>(null)
   const [newGroupName, setNewGroupName] = useState('')
@@ -149,17 +154,17 @@ export function TagsSidebar({
       router.push(`/${locale}/tags/g-${result.group_number}`)
     } catch (error) {
       console.error('Failed to create tag group:', error)
-      toast.error('グループの作成に失敗しました')
+      toast.error(t('tags.toast.groupCreateFailed'))
     }
   }, [newGroupName, newGroupColor, createGroupMutation, toast, router, pathname, setIsCreatingGroup])
 
-  // グループ削除
-  const handleDeleteGroup = useCallback(async () => {
+  // 削除確認ダイアログからの削除実行
+  const handleConfirmDelete = useCallback(async () => {
     if (!deletingGroup) return
 
     try {
       await deleteGroupMutation.mutateAsync(deletingGroup.id)
-      toast.success(`グループ「${deletingGroup.name}」を削除しました`)
+      toast.success(t('tags.toast.groupDeleted', { name: deletingGroup.name }))
       setDeletingGroup(null)
 
       // 削除したグループのページを表示中だったら、タグ一覧に戻る
@@ -213,12 +218,64 @@ export function TagsSidebar({
     [editingGroupName, updateGroupMutation, toast, t]
   )
 
+  // カラー更新
+  const handleUpdateColor = useCallback(
+    async (groupId: string, color: string) => {
+      const group = reorderedGroups.find((g) => g.id === groupId)
+      if (!group) return
+
+      try {
+        await updateGroupMutation.mutateAsync({
+          id: groupId,
+          data: {
+            name: group.name,
+            description: group.description,
+            color,
+          },
+        })
+        toast.success(t('tags.toast.colorChanged'))
+      } catch (error) {
+        console.error('Failed to update group color:', error)
+        toast.error(t('tags.toast.colorChangeFailed'))
+      }
+    },
+    [reorderedGroups, updateGroupMutation, toast, t]
+  )
+
   // グループごとのタグ数をカウント
   const getGroupTagCount = useCallback(
     (groupId: string) => {
       return allTags.filter((tag) => tag.group_id === groupId && tag.is_active && tag.level === 0).length
     },
     [allTags]
+  )
+
+  // グループ削除（確認ダイアログを表示）
+  const handleDeleteGroup = useCallback(
+    (group: TagGroup) => {
+      const tagCount = getGroupTagCount(group.id)
+      // タグ数が0件の場合は即削除
+      if (tagCount === 0) {
+        deleteGroupMutation
+          .mutateAsync(group.id)
+          .then(() => {
+            toast.success(t('tags.toast.groupDeleted', { name: group.name }))
+            // 削除したグループのページを表示中だったら、タグ一覧に戻る
+            if (currentGroupNumber === group.group_number) {
+              const locale = pathname?.split('/')[1] || 'ja'
+              router.push(`/${locale}/tags`)
+            }
+          })
+          .catch((error) => {
+            console.error('Failed to delete tag group:', error)
+            toast.error(t('tags.toast.groupDeleteFailed'))
+          })
+      } else {
+        // タグが1件以上の場合は確認ダイアログを表示
+        setDeletingGroup(group)
+      }
+    },
+    [getGroupTagCount, deleteGroupMutation, toast, t, currentGroupNumber, pathname, router]
   )
 
   // 未分類タグ数をカウント
@@ -612,7 +669,7 @@ export function TagsSidebar({
         group={deletingGroup}
         tagCount={deletingGroup ? getGroupTagCount(deletingGroup.id) : 0}
         onClose={() => setDeletingGroup(null)}
-        onConfirm={handleDeleteGroup}
+        onConfirm={handleConfirmDelete}
       />
     </aside>
   )

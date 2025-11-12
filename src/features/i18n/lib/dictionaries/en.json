@@ -1003,7 +1003,8 @@
       "colorChanged": "Color changed",
       "colorChangeFailed": "Failed to change color",
       "groupDeleted": "Deleted group \"{{name}}\"",
-      "groupDeleteFailed": "Failed to delete group"
+      "groupDeleteFailed": "Failed to delete group",
+      "groupCreateFailed": "Failed to create group"
     },
     "page": {
       "searchPlaceholder": "Search tags...",

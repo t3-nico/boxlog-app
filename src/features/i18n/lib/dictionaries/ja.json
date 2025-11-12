@@ -998,7 +998,8 @@
       "colorChanged": "カラーを変更しました",
       "colorChangeFailed": "カラーの変更に失敗しました",
       "groupDeleted": "グループ「{{name}}」を削除しました",
-      "groupDeleteFailed": "グループの削除に失敗しました"
+      "groupDeleteFailed": "グループの削除に失敗しました",
+      "groupCreateFailed": "グループの作成に失敗しました"
     },
     "page": {
       "searchPlaceholder": "タグを検索...",
