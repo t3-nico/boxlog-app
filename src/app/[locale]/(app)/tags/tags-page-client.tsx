@@ -43,9 +43,6 @@ import { useCreateTag, useTags, useUpdateTag } from '@/features/tags/hooks/use-t
 import { useToast } from '@/lib/toast/use-toast'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 
-type SortField = 'name' | 'created_at'
-type SortDirection = 'asc' | 'desc'
-
 interface TagsPageClientProps {
   initialGroupNumber?: string
   showUncategorizedOnly?: boolean
@@ -59,8 +56,19 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const router = useRouter()
   const pathname = usePathname()
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const [sortField, setSortField] = useState<SortField>('created_at')
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [sortField, setSortField] = useState<'name' | 'created_at'>('created_at')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
+  // カラム幅の状態管理
+  const [columnWidths, setColumnWidths] = useState({
+    select: 48,
+    id: 80,
+    color: 32,
+    name: 200,
+    description: 300,
+    group: 120,
+    created_at: 160,
+    actions: 192,
+  })
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(50)
   const [editingTagId, setEditingTagId] = useState<string | null>(null)
@@ -396,7 +404,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   }, [sortField, sortDirection, pageSize])
 
   // ソート変更ハンドラー
-  const handleSort = (field: SortField) => {
+  const handleSort = (field: 'name' | 'created_at') => {
     if (sortField === field) {
       setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))
     } else {
@@ -432,6 +440,59 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       }
     }
     setSelectedTagIds([])
+  }
+
+  // カラムリサイズハンドラー
+  const handleColumnResize = useCallback((columnId: keyof typeof columnWidths, delta: number) => {
+    setColumnWidths((prev) => ({
+      ...prev,
+      [columnId]: Math.max(50, prev[columnId] + delta), // 最小幅50px
+    }))
+  }, [])
+
+  // リサイズハンドルコンポーネント
+  const ResizeHandle = ({ columnId }: { columnId: keyof typeof columnWidths }) => {
+    const [isResizing, setIsResizing] = useState(false)
+    const startXRef = useRef<number>(0)
+    const startWidthRef = useRef<number>(0)
+
+    const onMouseDown = useCallback(
+      (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsResizing(true)
+        startXRef.current = e.clientX
+        startWidthRef.current = columnWidths[columnId]
+
+        const onMouseMove = (moveEvent: MouseEvent) => {
+          const delta = moveEvent.clientX - startXRef.current
+          setColumnWidths((prev) => ({
+            ...prev,
+            [columnId]: Math.max(50, startWidthRef.current + delta),
+          }))
+        }
+
+        const onMouseUp = () => {
+          setIsResizing(false)
+          document.removeEventListener('mousemove', onMouseMove)
+          document.removeEventListener('mouseup', onMouseUp)
+        }
+
+        document.addEventListener('mousemove', onMouseMove)
+        document.addEventListener('mouseup', onMouseUp)
+      },
+      [columnId]
+    )
+
+    return (
+      <div
+        className={`hover:bg-primary absolute top-0 right-0 h-full w-1 cursor-col-resize ${
+          isResizing ? 'bg-primary' : ''
+        }`}
+        onMouseDown={onMouseDown}
+        style={{ userSelect: 'none' }}
+      />
+    )
   }
 
   // 日時フォーマット関数
@@ -530,18 +591,21 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[48px]">
+                    <TableHead className="relative" style={{ width: `${columnWidths.select}px` }}>
                       <Checkbox
                         checked={allSelected}
                         onCheckedChange={handleSelectAll}
                         aria-label={t('tags.page.selectAll')}
                       />
                     </TableHead>
-                    <TableHead className="w-[80px]">ID</TableHead>
-                    <TableHead className="w-[32px]"></TableHead>
-                    <TableHead>
+                    <TableHead className="text-muted-foreground relative" style={{ width: `${columnWidths.id}px` }}>
+                      ID
+                      <ResizeHandle columnId="id" />
+                    </TableHead>
+                    <TableHead className="relative" style={{ width: `${columnWidths.color}px` }}></TableHead>
+                    <TableHead className="relative" style={{ width: `${columnWidths.name}px` }}>
                       <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
-                        {t('tags.page.name')}
+                        <span className="text-muted-foreground">{t('tags.page.name')}</span>
                         {sortField === 'name' &&
                           (sortDirection === 'asc' ? (
                             <ArrowUp className="ml-1 h-4 w-4" />
@@ -550,10 +614,17 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           ))}
                         {sortField !== 'name' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
                       </Button>
+                      <ResizeHandle columnId="name" />
                     </TableHead>
-                    <TableHead>{t('tags.page.description')}</TableHead>
-                    <TableHead className="w-[120px]">{t('tags.sidebar.groups')}</TableHead>
-                    <TableHead className="w-[160px]">
+                    <TableHead className="relative" style={{ width: `${columnWidths.description}px` }}>
+                      {t('tags.page.description')}
+                      <ResizeHandle columnId="description" />
+                    </TableHead>
+                    <TableHead className="relative" style={{ width: `${columnWidths.group}px` }}>
+                      {t('tags.sidebar.groups')}
+                      <ResizeHandle columnId="group" />
+                    </TableHead>
+                    <TableHead className="relative" style={{ width: `${columnWidths.created_at}px` }}>
                       <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
                         {t('tags.page.createdAt')}
                         {sortField === 'created_at' &&
@@ -564,32 +635,39 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           ))}
                         {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
                       </Button>
+                      <ResizeHandle columnId="created_at" />
                     </TableHead>
-                    <TableHead className="w-[192px] text-right"></TableHead>
+                    <TableHead
+                      className="relative text-right"
+                      style={{ width: `${columnWidths.actions}px` }}
+                    ></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {/* 既存のタグ行 */}
                   {displayTags.map((tag) => (
                     <TableRow key={tag.id}>
-                      <TableCell className="w-[48px]" onClick={(e) => e.stopPropagation()}>
+                      <TableCell style={{ width: `${columnWidths.select}px` }} onClick={(e) => e.stopPropagation()}>
                         <Checkbox
                           checked={selectedTagIds.includes(tag.id)}
                           onCheckedChange={() => handleSelectTag(tag.id)}
                           aria-label={`${tag.name}を選択`}
                         />
                       </TableCell>
-                      <TableCell className="text-muted-foreground w-[80px] font-mono text-sm">
+                      <TableCell
+                        className="text-muted-foreground font-mono text-sm"
+                        style={{ width: `${columnWidths.id}px` }}
+                      >
                         t-{tag.tag_number}
                       </TableCell>
-                      <TableCell className="w-[32px] pr-1">
+                      <TableCell className="pr-1" style={{ width: `${columnWidths.color}px` }}>
                         <div
                           className="h-3 w-3 rounded-full"
                           style={{ backgroundColor: tag.color || '#3B82F6' }}
                           aria-label="タグカラー"
                         />
                       </TableCell>
-                      <TableCell className="pl-1 font-medium">
+                      <TableCell className="pl-1 font-medium" style={{ width: `${columnWidths.name}px` }}>
                         <span
                           className="cursor-pointer hover:underline"
                           onClick={() => {
@@ -600,10 +678,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           {tag.name} (0)
                         </span>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="text-muted-foreground" style={{ width: `${columnWidths.description}px` }}>
                         <span className="truncate">{tag.description || '-'}</span>
                       </TableCell>
-                      <TableCell className="w-[120px]">
+                      <TableCell style={{ width: `${columnWidths.group}px` }}>
                         {tag.group_id ? (
                           (() => {
                             const group = groups.find((g) => g.id === tag.group_id)
@@ -619,8 +697,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                   className="h-2 w-2 shrink-0 rounded-full"
                                   style={{ backgroundColor: group.color || '#6B7280' }}
                                 />
-                                <span className="text-sm">
-                                  {group.name} ({groupTagCount})
+                                <span className="text-muted-foreground text-sm">
+                                  {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
                                 </span>
                               </div>
                             )
@@ -629,10 +707,13 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           <span className="text-muted-foreground text-sm">-</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-muted-foreground w-[160px] text-xs">
+                      <TableCell
+                        className="text-muted-foreground text-xs"
+                        style={{ width: `${columnWidths.created_at}px` }}
+                      >
                         {formatDate(tag.created_at)}
                       </TableCell>
-                      <TableCell className="w-[192px] text-right">
+                      <TableCell className="text-right" style={{ width: `${columnWidths.actions}px` }}>
                         <DropdownMenu modal={false}>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -723,9 +804,14 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                   {/* インライン作成行（最下部） */}
                   {isCreatingTag && (
                     <TableRow ref={inlineFormRef} className="bg-muted/30">
-                      <TableCell className="w-[48px]"></TableCell>
-                      <TableCell className="text-muted-foreground w-[80px] font-mono text-sm">-</TableCell>
-                      <TableCell className="w-[32px] pr-1">
+                      <TableCell style={{ width: `${columnWidths.select}px` }}></TableCell>
+                      <TableCell
+                        className="text-muted-foreground font-mono text-sm"
+                        style={{ width: `${columnWidths.id}px` }}
+                      >
+                        -
+                      </TableCell>
+                      <TableCell className="pr-1" style={{ width: `${columnWidths.color}px` }}>
                         <Popover>
                           <PopoverTrigger asChild>
                             <button
@@ -769,7 +855,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           </PopoverContent>
                         </Popover>
                       </TableCell>
-                      <TableCell className="pl-1">
+                      <TableCell className="pl-1" style={{ width: `${columnWidths.name}px` }}>
                         <Input
                           value={newTagName}
                           onChange={(e) => setNewTagName(e.target.value)}
@@ -785,7 +871,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ width: `${columnWidths.description}px` }}>
                         <Input
                           value={newTagDescription}
                           onChange={(e) => setNewTagDescription(e.target.value)}
@@ -800,7 +886,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
                         />
                       </TableCell>
-                      <TableCell className="w-[120px]">
+                      <TableCell style={{ width: `${columnWidths.group}px` }}>
                         {selectedGroupId ? (
                           (() => {
                             const group = groups.find((g) => g.id === selectedGroupId)
@@ -816,8 +902,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                   className="h-2 w-2 shrink-0 rounded-full"
                                   style={{ backgroundColor: group.color || '#6B7280' }}
                                 />
-                                <span className="text-sm">
-                                  {group.name} ({groupTagCount})
+                                <span className="text-muted-foreground text-sm">
+                                  {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
                                 </span>
                               </div>
                             )
@@ -826,8 +912,13 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           <span className="text-muted-foreground text-sm">-</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-muted-foreground w-[160px] text-xs">-</TableCell>
-                      <TableCell className="w-[192px] text-right"></TableCell>
+                      <TableCell
+                        className="text-muted-foreground text-xs"
+                        style={{ width: `${columnWidths.created_at}px` }}
+                      >
+                        -
+                      </TableCell>
+                      <TableCell className="text-right" style={{ width: `${columnWidths.actions}px` }}></TableCell>
                     </TableRow>
                   )}
                 </TableBody>
