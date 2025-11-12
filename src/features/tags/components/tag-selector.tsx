@@ -2,15 +2,23 @@
 
 import { useState } from 'react'
 
-import { ChevronDown as ChevronDownIcon } from 'lucide-react'
+import { ChevronDown as ChevronDownIcon, Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { useCreateTag } from '@/features/tags/hooks/use-tags'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { Tag } from '@/types/unified'
 
+import { QuickTagCreateModal } from './quick-tag-create-modal'
 import { TagBadge } from './tag-badge'
 
 interface TagSelectorProps {
@@ -18,6 +26,7 @@ interface TagSelectorProps {
   onTagsChange: (tagIds: string[]) => void
   maxTags?: number
   placeholder?: string
+  enableCreate?: boolean
 }
 
 export const TagSelector = ({
@@ -25,10 +34,13 @@ export const TagSelector = ({
   onTagsChange,
   maxTags,
   placeholder = 'Select tags...',
+  enableCreate = true,
 }: TagSelectorProps) => {
   const { t } = useI18n()
   const { getAllTags, getTagHierarchy } = useTagStore()
   const [searchQuery, setSearchQuery] = useState('')
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const createTagMutation = useCreateTag()
 
   const allTags = getAllTags()
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
@@ -52,68 +64,108 @@ export const TagSelector = ({
     onTagsChange(selectedTagIds.filter((id) => id !== tagId))
   }
 
+  const handleCreateTag = async (newTag: { name: string; color: string }) => {
+    try {
+      const createdTag = await createTagMutation.mutateAsync({
+        name: newTag.name,
+        color: newTag.color,
+        description: undefined,
+        level: 0,
+      })
+
+      // 作成されたタグを自動的に選択
+      if (createdTag && createdTag.id) {
+        onTagsChange([...selectedTagIds, createdTag.id])
+      }
+
+      setShowCreateModal(false)
+    } catch (error) {
+      console.error('Failed to create tag:', error)
+    }
+  }
+
   return (
-    <div className="space-y-2">
-      {/* Selected Tags */}
-      {selectedTags.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {selectedTags.map((tag) => (
-            <TagBadge key={tag.id} tag={tag} onRemove={() => handleTagRemove(tag.id)} />
-          ))}
-        </div>
-      )}
-
-      {/* Tag Selector Dropdown */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            className="w-full justify-between"
-            disabled={maxTags ? selectedTagIds.length >= maxTags : false}
-          >
-            <span className="text-left">
-              {selectedTags.length > 0
-                ? `${selectedTags.length} tag${selectedTags.length !== 1 ? 's' : ''} selected`
-                : placeholder}
-            </span>
-            <ChevronDownIcon className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-64 p-0">
-          <div className="p-2">
-            <Input
-              placeholder="Search tags..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8"
-            />
+    <>
+      <div className="space-y-2">
+        {/* Selected Tags */}
+        {selectedTags.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {selectedTags.map((tag) => (
+              <TagBadge key={tag.id} tag={tag} onRemove={() => handleTagRemove(tag.id)} />
+            ))}
           </div>
-          <div className="max-h-48 overflow-y-auto">
-            {filteredTags.length > 0 ? (
-              filteredTags.map((tag) => (
-                <DropdownMenuItem
-                  key={tag.id}
-                  onClick={() => handleTagAdd(tag)}
-                  className={`flex items-center space-x-2 p-2 ${tag.level > 1 ? `ml-${(tag.level - 1) * 4}` : ''}`}
-                >
-                  <TagBadge tag={tag} showIcon={true} showPath={tag.level > 1} />
-                  {tag.description != null && <span className="truncate text-xs text-gray-500">{tag.description}</span>}
+        )}
+
+        {/* Tag Selector Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              disabled={maxTags ? selectedTagIds.length >= maxTags : false}
+            >
+              <span className="text-left">
+                {selectedTags.length > 0
+                  ? `${selectedTags.length} tag${selectedTags.length !== 1 ? 's' : ''} selected`
+                  : placeholder}
+              </span>
+              <ChevronDownIcon className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-64 p-0">
+            <div className="p-2">
+              <Input
+                placeholder="Search tags..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-8"
+              />
+            </div>
+            <div className="max-h-48 overflow-y-auto">
+              {filteredTags.length > 0 ? (
+                filteredTags.map((tag) => (
+                  <DropdownMenuItem
+                    key={tag.id}
+                    onClick={() => handleTagAdd(tag)}
+                    className={`flex items-center space-x-2 p-2 ${tag.level > 1 ? `ml-${(tag.level - 1) * 4}` : ''}`}
+                  >
+                    <TagBadge tag={tag} showIcon={true} showPath={tag.level > 1} />
+                    {tag.description != null && (
+                      <span className="truncate text-xs text-gray-500">{tag.description}</span>
+                    )}
+                  </DropdownMenuItem>
+                ))
+              ) : (
+                <div className="p-2 text-center text-sm text-gray-500">
+                  {searchQuery ? t('tags.search.noTags') : t('tags.search.noMoreTags')}
+                </div>
+              )}
+            </div>
+            {enableCreate && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setShowCreateModal(true)} className="p-2">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create New Tag
                 </DropdownMenuItem>
-              ))
-            ) : (
-              <div className="p-2 text-center text-sm text-gray-500">
-                {searchQuery ? t('tags.search.noTags') : t('tags.search.noMoreTags')}
-              </div>
+              </>
             )}
-          </div>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-      {maxTags != null && (
-        <div className="text-xs text-gray-500">
-          {selectedTagIds.length} / {maxTags} tags selected
-        </div>
-      )}
-    </div>
+        {maxTags != null && (
+          <div className="text-xs text-gray-500">
+            {selectedTagIds.length} / {maxTags} tags selected
+          </div>
+        )}
+      </div>
+
+      {/* QuickTagCreateModal */}
+      <QuickTagCreateModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreateTag={handleCreateTag}
+      />
+    </>
   )
 }
