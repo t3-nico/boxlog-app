@@ -184,6 +184,7 @@
     "undo": "Undo",
     "skipToMainContent": "Skip to main content",
     "createNewEvent": "Create new event",
+    "view": "View",
     "toast": {
       "eventDeleted": "Event deleted"
     }
@@ -1583,6 +1584,36 @@
       "colorChangeFailed": "Failed to change color",
       "groupDeleted": "Deleted group \"{{name}}\"",
       "groupDeleteFailed": "Failed to delete group"
+    },
+    "page": {
+      "searchPlaceholder": "Search tags...",
+      "createGroup": "Create Group",
+      "createTag": "Create Tag",
+      "noTags": "No tags",
+      "addFirstTag": "Add your first tag",
+      "selectAll": "Select All",
+      "name": "Name",
+      "description": "Description",
+      "createdAt": "Created At",
+      "rowsPerPage": "Rows per page",
+      "page": "Page",
+      "of": "of",
+      "previous": "Previous",
+      "next": "Next",
+      "edit": "Edit",
+      "archive": "Archive",
+      "delete": "Delete",
+      "moveToGroup": "Move to Group",
+      "noGroup": "No Group",
+      "permanentDelete": "Permanently Delete",
+      "tagCreated": "Created tag \"{{name}}\"",
+      "tagCreateFailed": "Failed to create tag",
+      "tagArchived": "Archived tag \"{{name}}\"",
+      "tagArchiveFailed": "Failed to archive tag",
+      "tagDeleted": "Permanently deleted tag \"{{name}}\"",
+      "tagDeleteFailed": "Failed to delete tag",
+      "tagMoved": "Moved tag \"{{name}}\" to {{group}}",
+      "tagMoveFailed": "Failed to move tag"
     }
   }
 }

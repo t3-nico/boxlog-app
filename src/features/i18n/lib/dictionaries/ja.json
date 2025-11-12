@@ -184,6 +184,7 @@
     "undo": "元に戻す",
     "skipToMainContent": "メインコンテンツへスキップ",
     "createNewEvent": "新しいイベントを作成",
+    "view": "表示",
     "toast": {
       "eventDeleted": "予定を削除しました"
     }
@@ -1578,6 +1579,36 @@
       "colorChangeFailed": "カラーの変更に失敗しました",
       "groupDeleted": "グループ「{{name}}」を削除しました",
       "groupDeleteFailed": "グループの削除に失敗しました"
+    },
+    "page": {
+      "searchPlaceholder": "タグを検索...",
+      "createGroup": "グループを作成",
+      "createTag": "タグを作成",
+      "noTags": "タグがありません",
+      "addFirstTag": "最初のタグを追加",
+      "selectAll": "すべて選択",
+      "name": "名前",
+      "description": "説明",
+      "createdAt": "作成日時",
+      "rowsPerPage": "表示件数",
+      "page": "ページ",
+      "of": "/",
+      "previous": "前へ",
+      "next": "次へ",
+      "edit": "編集",
+      "archive": "アーカイブ",
+      "delete": "削除",
+      "moveToGroup": "グループに移動",
+      "noGroup": "グループなし",
+      "permanentDelete": "完全に削除",
+      "tagCreated": "タグ「{{name}}」を作成しました",
+      "tagCreateFailed": "タグの作成に失敗しました",
+      "tagArchived": "タグ「{{name}}」をアーカイブしました",
+      "tagArchiveFailed": "タグのアーカイブに失敗しました",
+      "tagDeleted": "タグ「{{name}}」を完全に削除しました",
+      "tagDeleteFailed": "タグの削除に失敗しました",
+      "tagMoved": "タグ「{{name}}」を{{group}}に移動しました",
+      "tagMoveFailed": "タグの移動に失敗しました"
     }
   }
 }

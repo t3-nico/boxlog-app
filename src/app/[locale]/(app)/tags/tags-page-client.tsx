@@ -31,6 +31,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
@@ -51,6 +52,7 @@ interface TagsPageClientProps {
 }
 
 export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = false }: TagsPageClientProps = {}) {
+  const { t } = useI18n()
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
   const { data: groups = [] as TagGroup[] } = useTagGroups()
   const { tags, setTags, setIsLoading, setIsCreatingGroup, isCreatingTag, setIsCreatingTag } = useTagsPageContext()
@@ -67,6 +69,21 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+
+  // アクティブなタグ数を計算
+  const activeTagsCount = useMemo(() => {
+    return tags.filter((tag) => tag.level === 0 && tag.is_active).length
+  }, [tags])
+
+  // ページタイトルにタグ数を表示（タグ一覧ページのみ）
+  useEffect(() => {
+    if (!showUncategorizedOnly && !initialGroupNumber) {
+      document.title = `タグ管理 (${activeTagsCount})`
+    }
+    return () => {
+      document.title = 'タグ管理'
+    }
+  }, [activeTagsCount, showUncategorizedOnly, initialGroupNumber])
 
   // インライン作成用の状態
   const inlineFormRef = useRef<HTMLTableRowElement>(null)
@@ -154,11 +171,11 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         group_id: selectedGroupId,
         level: 0,
       })
-      toast.success(`タグ「${newTagName}」を作成しました`)
+      toast.success(t('tags.page.tagCreated', { name: newTagName }))
       handleCancelInlineCreation()
     } catch (error) {
       console.error('Failed to create tag:', error)
-      toast.error('タグの作成に失敗しました')
+      toast.error(t('tags.page.tagCreateFailed'))
     }
   }, [
     newTagName,
@@ -259,13 +276,13 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         id: archiveConfirmTag.id,
         data: { is_active: false },
       })
-      toast.success(`タグ「${archiveConfirmTag.name}」をアーカイブしました`)
+      toast.success(t('tags.page.tagArchived', { name: archiveConfirmTag.name }))
       setArchiveConfirmTag(null)
     } catch (error) {
       console.error('Failed to archive tag:', error)
-      toast.error('タグのアーカイブに失敗しました')
+      toast.error(t('tags.page.tagArchiveFailed'))
     }
-  }, [archiveConfirmTag, updateTagMutation, toast])
+  }, [archiveConfirmTag, updateTagMutation, toast, t])
 
   // 削除確認ダイアログを開く
   const handleOpenDeleteConfirm = useCallback((tag: TagWithChildren) => {
@@ -283,13 +300,13 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
     try {
       await handleDeleteTag(deleteConfirmTag)
-      toast.success(`タグ「${deleteConfirmTag.name}」を完全に削除しました`)
+      toast.success(t('tags.page.tagDeleted', { name: deleteConfirmTag.name }))
       setDeleteConfirmTag(null)
     } catch (error) {
       console.error('Failed to delete tag:', error)
-      toast.error('タグの削除に失敗しました')
+      toast.error(t('tags.page.tagDeleteFailed'))
     }
-  }, [deleteConfirmTag, handleDeleteTag, toast])
+  }, [deleteConfirmTag, handleDeleteTag, toast, t])
 
   // タグをグループに移動
   const handleMoveToGroup = useCallback(
@@ -301,14 +318,15 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
             group_id: groupId,
           },
         })
-        const groupName = groupId ? groups.find((g) => g.id === groupId)?.name : 'グループなし'
-        toast.success(`タグ「${tag.name}」を${groupName}に移動しました`)
+        const group = groupId ? groups.find((g) => g.id === groupId) : null
+        const groupName = group?.name ?? t('tags.page.noGroup')
+        toast.success(t('tags.page.tagMoved', { name: tag.name, group: groupName }))
       } catch (error) {
         console.error('Failed to move tag to group:', error)
-        toast.error('タグの移動に失敗しました')
+        toast.error(t('tags.page.tagMoveFailed'))
       }
     },
-    [updateTagMutation, toast, groups]
+    [updateTagMutation, toast, groups, t]
   )
 
   // すべてのLevel 0タグ（ルートタグ）を直接取得
@@ -443,7 +461,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         <div className="flex flex-1 items-center gap-2">
           {/* 検索 */}
           <Input
-            placeholder="タグを検索..."
+            placeholder={t('tags.page.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-9 w-[150px] lg:w-[250px]"
@@ -454,11 +472,11 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         <div className="flex items-center gap-2">
           <Button onClick={() => setIsCreatingGroup(true)} size="sm" variant="outline" className="h-9">
             <Plus className="mr-2 size-4" />
-            グループを作成
+            {t('tags.page.createGroup')}
           </Button>
           <Button onClick={handleStartInlineCreation} size="sm" className="h-9">
             <Plus className="mr-2 size-4" />
-            タグを作成
+            {t('tags.page.createTag')}
           </Button>
         </div>
       </div>
@@ -487,7 +505,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           {selectedTagIds.length > 0 && (
             <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-9">
               <Trash2 className="mr-2 size-4" />
-              削除 ({selectedTagIds.length})
+              {t('tags.page.delete')} ({selectedTagIds.length})
             </Button>
           )}
         </div>
@@ -498,10 +516,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         {displayTags.length === 0 ? (
           <div className="border-border flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
             <div className="text-center">
-              <p className="text-muted-foreground mb-4">タグがありません</p>
+              <p className="text-muted-foreground mb-4">{t('tags.page.noTags')}</p>
               <Button onClick={handleStartInlineCreation}>
                 <Plus className="mr-2 h-4 w-4" />
-                最初のタグを追加
+                {t('tags.page.addFirstTag')}
               </Button>
             </div>
           </div>
@@ -513,13 +531,17 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[48px]">
-                      <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} aria-label="すべて選択" />
+                      <Checkbox
+                        checked={allSelected}
+                        onCheckedChange={handleSelectAll}
+                        aria-label={t('tags.page.selectAll')}
+                      />
                     </TableHead>
                     <TableHead className="w-[80px]">ID</TableHead>
                     <TableHead className="w-[32px]"></TableHead>
                     <TableHead>
                       <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
-                        名前
+                        {t('tags.page.name')}
                         {sortField === 'name' &&
                           (sortDirection === 'asc' ? (
                             <ArrowUp className="ml-1 h-4 w-4" />
@@ -529,10 +551,11 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                         {sortField !== 'name' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
                       </Button>
                     </TableHead>
-                    <TableHead>説明</TableHead>
+                    <TableHead>{t('tags.page.description')}</TableHead>
+                    <TableHead className="w-[120px]">{t('tags.sidebar.groups')}</TableHead>
                     <TableHead className="w-[160px]">
                       <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
-                        作成日時
+                        {t('tags.page.createdAt')}
                         {sortField === 'created_at' &&
                           (sortDirection === 'asc' ? (
                             <ArrowUp className="ml-1 h-4 w-4" />
@@ -580,6 +603,26 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                       <TableCell className="text-muted-foreground">
                         <span className="truncate">{tag.description || '-'}</span>
                       </TableCell>
+                      <TableCell className="w-[120px]">
+                        {tag.group_id ? (
+                          (() => {
+                            const group = groups.find((g) => g.id === tag.group_id)
+                            return group ? (
+                              <div className="flex items-center gap-1">
+                                <div
+                                  className="h-2 w-2 shrink-0 rounded-full"
+                                  style={{ backgroundColor: group.color || '#6B7280' }}
+                                />
+                                <span className="text-sm">{group.name}</span>
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">-</span>
+                            )
+                          })()
+                        ) : (
+                          <span className="text-muted-foreground text-sm">-</span>
+                        )}
+                      </TableCell>
                       <TableCell className="text-muted-foreground w-[160px] text-xs">
                         {formatDate(tag.created_at)}
                       </TableCell>
@@ -605,7 +648,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                 router.push(`/${locale}/tags/t-${tag.tag_number}`)
                               }}
                             >
-                              表示
+                              {t('common.view')}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={(e) => {
@@ -613,12 +656,12 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                 handleEditTag(tag)
                               }}
                             >
-                              編集
+                              {t('tags.page.edit')}
                             </DropdownMenuItem>
                             <DropdownMenuSub>
                               <DropdownMenuSubTrigger>
                                 <Folder className="mr-2 h-4 w-4" />
-                                グループに移動
+                                {t('tags.page.moveToGroup')}
                               </DropdownMenuSubTrigger>
                               <DropdownMenuSubContent>
                                 <DropdownMenuItem
@@ -627,7 +670,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                     handleMoveToGroup(tag, null)
                                   }}
                                 >
-                                  グループなし
+                                  {t('tags.page.noGroup')}
                                 </DropdownMenuItem>
                                 {groups.map((group) => (
                                   <DropdownMenuItem
@@ -653,7 +696,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               }}
                             >
                               <Archive className="mr-2 h-4 w-4" />
-                              アーカイブ
+                              {t('tags.page.archive')}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={(e) => {
@@ -663,7 +706,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
-                              完全に削除
+                              {t('tags.page.permanentDelete')}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -731,7 +774,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               handleCancelInlineCreation()
                             }
                           }}
-                          placeholder="タグ名を入力"
+                          placeholder={t('tags.page.name')}
                           autoFocus
                           className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
                         />
@@ -747,9 +790,29 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               handleCancelInlineCreation()
                             }
                           }}
-                          placeholder="説明を入力（任意）"
+                          placeholder={t('tags.page.description')}
                           className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
                         />
+                      </TableCell>
+                      <TableCell className="w-[120px]">
+                        {selectedGroupId ? (
+                          (() => {
+                            const group = groups.find((g) => g.id === selectedGroupId)
+                            return group ? (
+                              <div className="flex items-center gap-1">
+                                <div
+                                  className="h-2 w-2 shrink-0 rounded-full"
+                                  style={{ backgroundColor: group.color || '#6B7280' }}
+                                />
+                                <span className="text-sm">{group.name}</span>
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">-</span>
+                            )
+                          })()
+                        ) : (
+                          <span className="text-muted-foreground text-sm">-</span>
+                        )}
                       </TableCell>
                       <TableCell className="text-muted-foreground w-[160px] text-xs">-</TableCell>
                       <TableCell className="w-[192px] text-right"></TableCell>
@@ -764,7 +827,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
               <div className="flex items-center justify-between px-4 py-4 md:px-6">
                 {/* 左側: 表示件数選択 */}
                 <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground text-sm">表示件数</span>
+                  <span className="text-muted-foreground text-sm">{t('tags.page.rowsPerPage')}</span>
                   <Select value={String(pageSize)} onValueChange={(value) => setPageSize(Number(value))}>
                     <SelectTrigger className="h-9 w-[64px]">
                       <SelectValue />
@@ -781,7 +844,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                 {/* 中央: ページ情報 */}
                 <div className="text-muted-foreground text-sm">
                   {sortedTags.length > 0
-                    ? `${startIndex + 1}〜${Math.min(endIndex, sortedTags.length)}件 / 全${sortedTags.length}件`
+                    ? `${startIndex + 1}〜${Math.min(endIndex, sortedTags.length)}件 ${t('tags.page.of')} ${sortedTags.length}件`
                     : '0件'}
                 </div>
 
@@ -795,10 +858,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                     className="h-9 w-9 p-0"
                   >
                     <ChevronLeft className="size-4" />
-                    <span className="sr-only">前のページ</span>
+                    <span className="sr-only">{t('tags.page.previous')}</span>
                   </Button>
                   <div className="text-muted-foreground flex h-9 items-center px-3 text-sm">
-                    ページ {currentPage} / {totalPages || 1}
+                    {t('tags.page.page')} {currentPage} {t('tags.page.of')} {totalPages || 1}
                   </div>
                   <Button
                     variant="outline"
@@ -808,7 +871,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                     className="h-9 w-9 p-0"
                   >
                     <ChevronRight className="size-4" />
-                    <span className="sr-only">次のページ</span>
+                    <span className="sr-only">{t('tags.page.next')}</span>
                   </Button>
                 </div>
               </div>
