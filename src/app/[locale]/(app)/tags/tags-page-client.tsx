@@ -32,10 +32,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
-import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagEditModal } from '@/features/tags/components/tag-edit-modal'
+import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
+import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
+import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
@@ -134,6 +135,20 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const selectedGroup = useMemo(() => {
     return selectedGroupId ? groups.find((g) => g.id === selectedGroupId) : null
   }, [selectedGroupId, groups])
+
+  // ページタイトルを決定（サイドバーの選択状態に基づく）
+  const pageTitle = useMemo(() => {
+    if (showUncategorizedOnly) {
+      return t('tags.sidebar.uncategorized')
+    }
+    if (pathname?.includes('/archive')) {
+      return t('tags.sidebar.archive')
+    }
+    if (selectedGroup) {
+      return selectedGroup.name
+    }
+    return t('tags.sidebar.allTags')
+  }, [showUncategorizedOnly, pathname, selectedGroup, t])
 
   // initialGroup が解決されたら selectedGroupId を更新（selectedGroupIdが未設定の場合のみ）
   useEffect(() => {
@@ -517,6 +532,9 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   return (
     <div className="flex h-full flex-col">
+      {/* ヘッダー */}
+      <TagsPageHeader title={pageTitle} />
+
       {/* ツールバー */}
       <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 pt-2 md:px-6">
         <div className="flex flex-1 items-center gap-2">
