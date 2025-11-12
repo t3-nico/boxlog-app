@@ -722,15 +722,13 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           >
                             {formatDate(tag.created_at)}
                           </TableCell>
-                          <TableCell
-                            className="bg-background sticky right-0 text-right opacity-0 transition-opacity group-hover:opacity-100"
-                            style={{ width: `${columnWidths.actions}px` }}
-                          >
+                          <TableCell className="text-right" style={{ width: `${columnWidths.actions}px` }}>
                             <DropdownMenu modal={false}>
                               <DropdownMenuTrigger asChild>
                                 <Button
                                   variant="ghost"
                                   size="sm"
+                                  className="bg-background sticky right-4 opacity-0 transition-opacity group-hover:opacity-100"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     console.log('🔴 DropdownMenuTrigger clicked for tag:', tag.name)
