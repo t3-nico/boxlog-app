@@ -61,7 +61,6 @@ export function ArchivePageClient() {
   const [editingField, setEditingField] = useState<'name' | 'description' | null>(null)
   const [editValue, setEditValue] = useState('')
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
 
   const { handleDeleteTag } = useTagOperations(tags)
 
@@ -176,21 +175,9 @@ export function ArchivePageClient() {
   // アーカイブされたタグのみを取得（is_active = false）
   const baseTags = tags.filter((tag) => tag.level === 0 && !tag.is_active)
 
-  // 検索フィルター適用
-  const filteredTags = useMemo(() => {
-    if (!searchQuery.trim()) return baseTags
-    const query = searchQuery.toLowerCase()
-    return baseTags.filter(
-      (tag) =>
-        tag.name.toLowerCase().includes(query) ||
-        (tag.description && tag.description.toLowerCase().includes(query)) ||
-        `t-${tag.tag_number}`.includes(query)
-    )
-  }, [baseTags, searchQuery])
-
   // ソート適用
   const sortedTags = useMemo(() => {
-    const sorted = [...filteredTags].sort((a, b) => {
+    const sorted = [...baseTags].sort((a, b) => {
       let comparison = 0
       switch (sortField) {
         case 'name':
@@ -203,7 +190,7 @@ export function ArchivePageClient() {
       return sortDirection === 'asc' ? comparison : -comparison
     })
     return sorted
-  }, [filteredTags, sortField, sortDirection])
+  }, [baseTags, sortField, sortDirection])
 
   // ページネーション
   const totalPages = Math.ceil(sortedTags.length / pageSize)
@@ -278,28 +265,17 @@ export function ArchivePageClient() {
   return (
     <div className="flex h-full flex-col">
       {/* ヘッダー */}
-      <TagsPageHeader title={t('tags.sidebar.archive')} />
+      <TagsPageHeader title={t('tags.sidebar.archive')} count={baseTags.length} />
 
-      {/* ツールバー */}
-      <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 pt-2">
-        <div className="flex flex-1 items-center gap-2">
-          {/* 検索 */}
-          <Input
-            placeholder="タグを検索..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-9 w-[150px] lg:w-[250px]"
-          />
-
-          {/* 一括削除ボタン（選択時のみ表示） */}
-          {selectedTagIds.length > 0 && (
-            <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-9">
-              <Trash2 className="mr-2 size-4" />
-              削除 ({selectedTagIds.length})
-            </Button>
-          )}
+      {/* 一括削除ボタン（選択時のみ表示） */}
+      {selectedTagIds.length > 0 && (
+        <div className="flex h-12 shrink-0 items-center gap-2 px-4 pt-2">
+          <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="h-9">
+            <Trash2 className="mr-2 size-4" />
+            削除 ({selectedTagIds.length})
+          </Button>
         </div>
-      </div>
+      )}
 
       {/* テーブル */}
       <div className="flex flex-1 flex-col overflow-hidden px-4">

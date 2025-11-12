@@ -35,10 +35,13 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
     return null
   }
 
+  // 子タグの数を計算（level === 1 かつ parent_id がこのタグのID）
+  const childTagCount = tags.filter((t) => t.parent_id === tag.id && t.level === 1 && t.is_active).length
+
   return (
     <div className="flex h-full flex-col">
       {/* ヘッダー */}
-      <TagsPageHeader title={tag.name} />
+      <TagsPageHeader title={tag.name} count={childTagCount} />
 
       {/* コンテンツ */}
       <div className="flex-1 overflow-auto">

@@ -1,6 +1,6 @@
 'use client'
 
-import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core'
+import { DndContext, DragOverlay, closestCenter, useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Archive, Folder, FolderOpen, Plus, Tags } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
@@ -295,6 +295,40 @@ export function TagsSidebar({
     [router, pathname]
   )
 
+  // 未分類へのドロップゾーン
+  const UncategorizedDropZone = () => {
+    const { setNodeRef, isOver } = useDroppable({
+      id: 'drop-uncategorized',
+      data: {
+        type: 'group',
+        groupId: null,
+      },
+    })
+
+    return (
+      <button
+        ref={setNodeRef}
+        type="button"
+        onClick={handleUncategorizedClick}
+        className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
+          isUncategorizedPage ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'
+        }`}
+        style={{
+          backgroundColor: isOver ? 'rgba(59, 130, 246, 0.1)' : undefined,
+          border: isOver ? '2px dashed rgba(59, 130, 246, 0.5)' : undefined,
+        }}
+      >
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <FolderOpen className="h-4 w-4 shrink-0" />
+            <span>{t('tags.sidebar.uncategorized')}</span>
+          </div>
+          <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>
+        </div>
+      </button>
+    )
+  }
+
   if (isLoading || isLoadingGroups) {
     return (
       <aside className="bg-background text-foreground flex h-full w-full flex-col">
@@ -336,21 +370,7 @@ export function TagsSidebar({
           </button>
 
           {/* 未分類 */}
-          <button
-            type="button"
-            onClick={handleUncategorizedClick}
-            className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
-              isUncategorizedPage ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'
-            }`}
-          >
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <FolderOpen className="h-4 w-4 shrink-0" />
-                <span>{t('tags.sidebar.uncategorized')}</span>
-              </div>
-              <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>
-            </div>
-          </button>
+          <UncategorizedDropZone />
 
           {/* アーカイブ */}
           <button

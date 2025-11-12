@@ -1,5 +1,6 @@
 'use client'
 
+import { useDroppable } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Edit, Folder, MoreHorizontal, Palette, Trash2 } from 'lucide-react'
@@ -69,10 +70,21 @@ export function SortableGroupItem({
   const { t } = useI18n()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: group.id })
 
+  // ドロップゾーンとして設定
+  const { setNodeRef: setDropRef, isOver } = useDroppable({
+    id: `drop-${group.id}`,
+    data: {
+      type: 'group',
+      groupId: group.id,
+    },
+  })
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+    backgroundColor: isOver ? 'rgba(59, 130, 246, 0.1)' : undefined,
+    border: isOver ? '2px dashed rgba(59, 130, 246, 0.5)' : undefined,
   }
 
   const handleSave = useCallback(() => {
@@ -90,9 +102,18 @@ export function SortableGroupItem({
     [handleSave, onCancelEdit]
   )
 
+  // ソートとドロップの両方のrefを設定
+  const setRefs = useCallback(
+    (node: HTMLElement | null) => {
+      setNodeRef(node)
+      setDropRef(node)
+    },
+    [setNodeRef, setDropRef]
+  )
+
   return (
     <button
-      ref={setNodeRef}
+      ref={setRefs}
       type="button"
       onClick={() => onGroupClick(group.group_number)}
       className={`group w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
