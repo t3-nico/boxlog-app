@@ -597,7 +597,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                             router.push(`/${locale}/tags/t-${tag.tag_number}`)
                           }}
                         >
-                          {tag.name}
+                          {tag.name} (0)
                         </span>
                       </TableCell>
                       <TableCell className="text-muted-foreground">
@@ -607,16 +607,22 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                         {tag.group_id ? (
                           (() => {
                             const group = groups.find((g) => g.id === tag.group_id)
-                            return group ? (
+                            if (!group) {
+                              return <span className="text-muted-foreground text-sm">-</span>
+                            }
+                            const groupTagCount = tags.filter(
+                              (t) => t.group_id === group.id && t.is_active && t.level === 0
+                            ).length
+                            return (
                               <div className="flex items-center gap-1">
                                 <div
                                   className="h-2 w-2 shrink-0 rounded-full"
                                   style={{ backgroundColor: group.color || '#6B7280' }}
                                 />
-                                <span className="text-sm">{group.name}</span>
+                                <span className="text-sm">
+                                  {group.name} ({groupTagCount})
+                                </span>
                               </div>
-                            ) : (
-                              <span className="text-muted-foreground text-sm">-</span>
                             )
                           })()
                         ) : (
@@ -798,16 +804,22 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                         {selectedGroupId ? (
                           (() => {
                             const group = groups.find((g) => g.id === selectedGroupId)
-                            return group ? (
+                            if (!group) {
+                              return <span className="text-muted-foreground text-sm">-</span>
+                            }
+                            const groupTagCount = tags.filter(
+                              (t) => t.group_id === group.id && t.is_active && t.level === 0
+                            ).length
+                            return (
                               <div className="flex items-center gap-1">
                                 <div
                                   className="h-2 w-2 shrink-0 rounded-full"
                                   style={{ backgroundColor: group.color || '#6B7280' }}
                                 />
-                                <span className="text-sm">{group.name}</span>
+                                <span className="text-sm">
+                                  {group.name} ({groupTagCount})
+                                </span>
                               </div>
-                            ) : (
-                              <span className="text-muted-foreground text-sm">-</span>
                             )
                           })()
                         ) : (
