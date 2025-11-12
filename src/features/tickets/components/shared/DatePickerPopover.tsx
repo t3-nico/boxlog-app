@@ -1,9 +1,10 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import { CalendarIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 interface DatePickerPopoverProps {
@@ -13,12 +14,7 @@ interface DatePickerPopoverProps {
   className?: string
 }
 
-export function DatePickerPopover({
-  selectedDate,
-  onDateChange,
-  placeholder = '日付を選択',
-  className,
-}: DatePickerPopoverProps) {
+export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '日付を選択' }: DatePickerPopoverProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [showCalendar, setShowCalendar] = useState(false)
 
@@ -26,6 +22,7 @@ export function DatePickerPopover({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        console.log('[DatePickerPopover] Clicking outside, closing calendar')
         setShowCalendar(false)
       }
     }
@@ -36,6 +33,10 @@ export function DatePickerPopover({
     }
   }, [])
 
+  useEffect(() => {
+    console.log('[DatePickerPopover] showCalendar changed:', showCalendar)
+  }, [showCalendar])
+
   const handleDateSelect = (date: Date | undefined) => {
     onDateChange(date)
     setShowCalendar(false)
@@ -43,21 +44,25 @@ export function DatePickerPopover({
 
   return (
     <div className="relative" ref={containerRef}>
-      <button
-        className={cn(
-          'bg-card text-card-foreground inline-flex items-center justify-start rounded-md px-2 py-2 text-left text-sm font-normal',
-          'hover:bg-accent hover:text-accent-foreground transition-all',
-          'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-          !selectedDate && 'text-muted-foreground',
-          className
-        )}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-muted-foreground h-8 gap-2 px-2"
         type="button"
-        onClick={() => setShowCalendar(!showCalendar)}
+        onClick={() => {
+          console.log('[DatePickerPopover] Button clicked, current showCalendar:', showCalendar)
+          setShowCalendar(!showCalendar)
+        }}
       >
-        {selectedDate ? format(selectedDate, 'yyyy年MM月dd日', { locale: ja }) : placeholder}
-      </button>
+        <CalendarIcon className="h-4 w-4" />
+        <span className="text-sm">{selectedDate ? format(selectedDate, 'M/d', { locale: ja }) : placeholder}</span>
+      </Button>
       {showCalendar && (
-        <div className="border-input bg-popover absolute top-10 left-0 z-[9999] rounded-md border shadow-md">
+        <div
+          className="border-input bg-popover absolute top-10 left-0 z-50 rounded-md border shadow-md"
+          style={{ minWidth: '300px', backgroundColor: 'var(--popover)', border: '2px solid red' }}
+        >
+          <div style={{ padding: '8px', color: 'red' }}>Calendar should appear here</div>
           <Calendar mode="single" selected={selectedDate} captionLayout="dropdown" onSelect={handleDateSelect} />
         </div>
       )}

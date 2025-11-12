@@ -2,7 +2,8 @@
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { useTagStore } from '@/features/tags/stores/useTagStore'
+import { useTags } from '@/features/tags/hooks/use-tags'
+import { Tag as TagType } from '@/types/unified'
 import { Plus, Tag, X } from 'lucide-react'
 
 interface TicketTagsSectionProps {
@@ -18,8 +19,27 @@ export function TicketTagsSection({
   onRemoveTag,
   showBorderTop = false,
 }: TicketTagsSectionProps) {
-  const { getAllTags } = useTagStore()
-  const allTags = getAllTags()
+  // データベースからタグを取得
+  const { data: tagsData } = useTags(true)
+
+  // TagWithChildren[] を Tag[] に変換（階層を平坦化）
+  const flattenTags = (tags: typeof tagsData): TagType[] => {
+    if (!tags) return []
+    const result: TagType[] = []
+    const flatten = (tagList: typeof tagsData) => {
+      if (!tagList) return
+      tagList.forEach((tag) => {
+        result.push(tag)
+        if (tag.children && tag.children.length > 0) {
+          flatten(tag.children)
+        }
+      })
+    }
+    flatten(tags)
+    return result
+  }
+
+  const allTags = flattenTags(tagsData)
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
 
   return (

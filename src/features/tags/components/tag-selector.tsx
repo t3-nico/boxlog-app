@@ -14,8 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { useCreateTag } from '@/features/tags/hooks/use-tags'
-import { useTagStore } from '@/features/tags/stores/useTagStore'
+import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
 import { Tag } from '@/types/unified'
 
 import { QuickTagCreateModal } from './quick-tag-create-modal'
@@ -37,14 +36,33 @@ export const TagSelector = ({
   enableCreate = true,
 }: TagSelectorProps) => {
   const { t } = useI18n()
-  const { getAllTags, getTagHierarchy } = useTagStore()
   const [searchQuery, setSearchQuery] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const createTagMutation = useCreateTag()
 
-  const allTags = getAllTags()
+  // データベースからタグを取得
+  const { data: tagsData, isLoading } = useTags(true)
+
+  // TagWithChildren[] を Tag[] に変換（階層を平坦化）
+  const flattenTags = (tags: typeof tagsData): Tag[] => {
+    if (!tags) return []
+    const result: Tag[] = []
+    const flatten = (tagList: typeof tagsData) => {
+      if (!tagList) return
+      tagList.forEach((tag) => {
+        result.push(tag)
+        if (tag.children && tag.children.length > 0) {
+          flatten(tag.children)
+        }
+      })
+    }
+    flatten(tags)
+    return result
+  }
+
+  const allTags = flattenTags(tagsData)
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
-  const availableTags = getTagHierarchy().filter((tag) => !selectedTagIds.includes(tag.id))
+  const availableTags = allTags.filter((tag) => !selectedTagIds.includes(tag.id))
 
   const filteredTags = searchQuery
     ? availableTags.filter(
