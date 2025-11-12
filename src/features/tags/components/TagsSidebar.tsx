@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
@@ -297,7 +298,10 @@ export function TagsSidebar({
   if (isLoading || isLoadingGroups) {
     return (
       <aside className="bg-background text-foreground flex h-full w-full flex-col">
-        <div className="flex h-full items-center justify-center">
+        {/* Header - ページタイトル */}
+        <SidebarHeader title={t('sidebar.navigation.tags')} />
+
+        <div className="flex flex-1 items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
         </div>
       </aside>
@@ -306,6 +310,9 @@ export function TagsSidebar({
 
   return (
     <aside className="bg-background text-foreground flex h-full w-full flex-col">
+      {/* Header - ページタイトル */}
+      <SidebarHeader title={t('sidebar.navigation.tags')} />
+
       {/* コンテンツ */}
       <nav className="flex-1 overflow-y-auto px-2 py-2">
         <div>

@@ -84,7 +84,7 @@ export function AppBar() {
 
   return (
     <aside
-      className="bg-sidebar text-sidebar-foreground flex h-full w-16 flex-col gap-4 py-2"
+      className="bg-sidebar text-sidebar-foreground flex h-full w-16 flex-col gap-0 py-2"
       role="navigation"
       aria-label="Main navigation"
     >
@@ -95,7 +95,7 @@ export function AppBar() {
           size="icon"
           variant="ghost"
           aria-label={isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')}
-          className="text-muted-foreground hover:text-foreground size-8 shrink-0"
+          className="text-muted-foreground hover:text-foreground size-10 shrink-0"
         >
           {isOpen ? <PanelLeftClose className="size-5" /> : <PanelLeftOpen className="size-5" />}
         </Button>

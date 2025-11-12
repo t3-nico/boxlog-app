@@ -1,25 +1,55 @@
 'use client'
 
-import { PanelLeftClose } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
-import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
 
 import { NavSecondary } from './nav-secondary'
 import { NavUser } from './nav-user'
+import { SidebarHeader } from './SidebarHeader'
 
+/**
+ * アプリケーション共通Sidebar
+ *
+ * - ページタイトル表示（SidebarHeader）
+ * - ユーザーメニュー（NavUser）
+ * - セカンダリナビゲーション（NavSecondary）
+ *
+ * **デザイン仕様**:
+ * - 幅: 240px（ResizablePanel制御）
+ * - 8pxグリッドシステム準拠
+ * - セマンティックトークン使用
+ */
 export function AppSidebar() {
   const user = useAuthStore((state) => state.user)
   const pathname = usePathname()
-  const { close } = useSidebarStore()
 
   // URLから locale を抽出 (例: /ja/calendar -> ja)
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t } = useI18n(localeFromPath)
+
+  // 現在のページに応じたタイトルを取得
+  const pageTitle = useMemo(() => {
+    if (!pathname) return ''
+
+    const pathSegments = pathname.split('/')
+    const page = pathSegments[2] // /[locale]/[page]
+
+    switch (page) {
+      case 'calendar':
+        return t('sidebar.navigation.calendar')
+      case 'inbox':
+        return t('sidebar.navigation.inbox')
+      case 'stats':
+        return t('sidebar.navigation.stats')
+      case 'tags':
+        return t('sidebar.navigation.tags')
+      default:
+        return ''
+    }
+  }, [pathname, t])
 
   const data = useMemo(
     () => ({
@@ -35,21 +65,13 @@ export function AppSidebar() {
   }
 
   return (
-    <aside className="bg-sidebar text-sidebar-foreground flex h-full w-full flex-col">
-      {/* Header - User Menu + 閉じるボタン */}
-      <div className="mb-2 flex min-h-12 items-center justify-between px-2">
-        <div className="flex-1">
-          <NavUser user={userData} />
-        </div>
-        <Button
-          onClick={close}
-          size="icon"
-          variant="ghost"
-          aria-label={t('sidebar.closeSidebar')}
-          className="text-muted-foreground hover:text-foreground size-8 shrink-0"
-        >
-          <PanelLeftClose className="size-4" />
-        </Button>
+    <aside className="bg-background text-foreground flex h-full w-full flex-col">
+      {/* Header - ページタイトル */}
+      <SidebarHeader title={pageTitle} />
+
+      {/* User Menu */}
+      <div className="mb-2 px-2">
+        <NavUser user={userData} />
       </div>
 
       {/* Content */}

@@ -39,7 +39,7 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
 
   return (
     <>
-      <div className="bg-sidebar flex flex-col items-center gap-2 px-2">
+      <div className="bg-sidebar flex flex-col items-center gap-1 px-2">
         <TicketCreatePopover
           triggerElement={
             <button className="flex flex-col items-center gap-1" type="button">

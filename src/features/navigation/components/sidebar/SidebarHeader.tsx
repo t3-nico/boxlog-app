@@ -1,48 +1,29 @@
 'use client'
 
-import { PanelLeftClose } from 'lucide-react'
-import { usePathname } from 'next/navigation'
-
-import { Button } from '@/components/ui/button'
-import { useI18n } from '@/features/i18n/lib/hooks'
-import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
-
 interface SidebarHeaderProps {
   title?: string
 }
 
 /**
- * Sidebarヘッダーコンポーネント
+ * Sidebarヘッダーコンポーネント（全ページ共通）
  *
- * - タイトル表示
- * - 閉じるボタン（AppBarと同じデザイン）
+ * - ページタイトル表示
  *
  * **デザイン仕様**:
- * - 高さ: 48px (h-12)
- * - スペーシング: px-2 (8px horizontal padding)
- * - AppBarとの整合性: 同じ閉じるボタンスタイル、8pxグリッド準拠
+ * - 全体の高さ: 48px固定（h-12）
+ * - 上パディング: 8px（pt-2）
+ * - コンテナ: 40px（h-10）
+ * - 左右パディング: 16px（px-4）
+ * - 背景: bg-background
+ * - 8pxグリッドシステム準拠
  */
 export function SidebarHeader({ title }: SidebarHeaderProps) {
-  const { close } = useSidebarStore()
-  const pathname = usePathname()
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t } = useI18n(localeFromPath)
-
   return (
-    <div className="flex h-12 items-center justify-between px-2">
-      {/* タイトル */}
-      <h2 className="text-base font-semibold">{title}</h2>
-
-      {/* 閉じるボタン */}
-      <Button
-        onClick={close}
-        size="icon"
-        variant="ghost"
-        aria-label={t('sidebar.closeSidebar')}
-        className="text-muted-foreground hover:text-foreground size-8 shrink-0"
-      >
-        <PanelLeftClose className="size-4" />
-      </Button>
+    <div className="bg-background flex h-12 items-end px-4 pt-2">
+      {/* タイトルコンテナ（40px） */}
+      <div className="flex h-10 flex-1 items-center">
+        <h2 className="text-base font-semibold">{title}</h2>
+      </div>
     </div>
   )
 }
