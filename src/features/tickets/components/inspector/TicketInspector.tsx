@@ -15,7 +15,6 @@ import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { TagSelector } from '@/features/tags/components/tag-selector'
 import { api } from '@/lib/trpc'
 import { format } from 'date-fns'
 import {
@@ -46,6 +45,8 @@ import { formatActivity, formatRelativeTime } from '../../utils/activityFormatte
 import { DatePickerPopover } from '../shared/DatePickerPopover'
 import { RecurrencePopover } from '../shared/RecurrencePopover'
 import { ReminderPopover } from '../shared/ReminderPopover'
+import { TicketTagSelectDialog } from '../shared/TicketTagSelectDialog'
+import { TicketTagsSection } from '../shared/TicketTagsSection'
 
 // 15分刻みの時間オプションを生成（0:00 - 23:45）
 const generateTimeOptions = () => {
@@ -104,21 +105,26 @@ export function TicketInspector() {
   const [isHoveringSort, setIsHoveringSort] = useState(false)
   // 選択されたタグのID配列
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
+  const [showTagDialog, setShowTagDialog] = useState(false)
   const { addTicketTag, removeTicketTag } = useTicketTags()
 
   // Inspectorの幅管理
   const [inspectorWidth, setInspectorWidth] = useState(540)
   const [isResizing, setIsResizing] = useState(false)
 
-  // タグ変更ハンドラー（追加・削除の差分を検出して実行）
+  // タグ追加ハンドラー
+  const handleAddTag = () => {
+    setShowTagDialog(true)
+  }
+
+  // タグ変更ハンドラー（追加の差分を検出して実行）
   const handleTagsChange = async (newTagIds: string[]) => {
     if (!ticketId) return
 
     const oldTagIds = selectedTagIds
     const added = newTagIds.filter((id) => !oldTagIds.includes(id))
-    const removed = oldTagIds.filter((id) => !newTagIds.includes(id))
 
-    // 楽観的更新（UIを即座に反映）
+    // 楽観的更新
     setSelectedTagIds(newTagIds)
 
     try {
@@ -126,13 +132,25 @@ export function TicketInspector() {
       for (const tagId of added) {
         await addTicketTag(ticketId, tagId)
       }
-
-      // 削除されたタグを保存
-      for (const tagId of removed) {
-        await removeTicketTag(ticketId, tagId)
-      }
     } catch (error) {
-      console.error('Failed to update tags:', error)
+      console.error('Failed to add tags:', error)
+      // エラー時は元に戻す
+      setSelectedTagIds(oldTagIds)
+    }
+  }
+
+  // タグ削除ハンドラー
+  const handleRemoveTag = async (tagId: string) => {
+    if (!ticketId) return
+
+    // 楽観的更新
+    const oldTagIds = selectedTagIds
+    setSelectedTagIds((prev) => prev.filter((id) => id !== tagId))
+
+    try {
+      await removeTicketTag(ticketId, tagId)
+    } catch (error) {
+      console.error('Failed to remove tag:', error)
       // エラー時は元に戻す
       setSelectedTagIds(oldTagIds)
     }
@@ -615,19 +633,20 @@ export function TicketInspector() {
                 </div>
 
                 {/* Tags */}
-                <div className="border-border/50 border-t px-6 py-4">
-                  <div className="flex items-start gap-2">
-                    <Tag className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <TagSelector
-                        selectedTagIds={selectedTagIds}
-                        onTagsChange={handleTagsChange}
-                        placeholder="Select tags..."
-                        enableCreate={true}
-                      />
-                    </div>
-                  </div>
-                </div>
+                <TicketTagsSection
+                  selectedTagIds={selectedTagIds}
+                  onAddTag={handleAddTag}
+                  onRemoveTag={handleRemoveTag}
+                  showBorderTop={true}
+                />
+
+                {/* Tag Select Dialog */}
+                <TicketTagSelectDialog
+                  isOpen={showTagDialog}
+                  onClose={() => setShowTagDialog(false)}
+                  selectedTagIds={selectedTagIds}
+                  onTagsChange={handleTagsChange}
+                />
 
                 {/* ステータス */}
                 <div className="flex flex-col gap-4 px-6 py-4">

@@ -1,14 +1,13 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FileText, Tag } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { TagSelector } from '@/features/tags/components/tag-selector'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
 import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ticket'
@@ -16,6 +15,8 @@ import { RecurrencePopover } from './RecurrencePopover'
 import { ReminderPopover } from './ReminderPopover'
 import { TicketDateTimeInput } from './TicketDateTimeInput'
 import { TicketDescriptionTextarea } from './TicketDescriptionTextarea'
+import { TicketTagSelectDialog } from './TicketTagSelectDialog'
+import { TicketTagsSection } from './TicketTagsSection'
 import { TicketTitleInput } from './TicketTitleInput'
 
 interface TicketCreatePopoverProps {
@@ -43,6 +44,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [repeatType, setRepeatType] = useState<string>('')
   const [reminderType, setReminderType] = useState<string>('')
+  const [showTagDialog, setShowTagDialog] = useState(false)
   const { createTicket } = useTicketMutations()
   const { addTicketTag } = useTicketTags()
 
@@ -171,19 +173,22 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
             </div>
 
             {/* Tags */}
-            <div className="border-border/50 border-t px-6 py-4">
-              <div className="flex items-start gap-2">
-                <Tag className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
-                <div className="min-w-0 flex-1">
-                  <TagSelector
-                    selectedTagIds={selectedTagIds}
-                    onTagsChange={setSelectedTagIds}
-                    placeholder="Select tags..."
-                    enableCreate={true}
-                  />
-                </div>
-              </div>
-            </div>
+            <TicketTagsSection
+              selectedTagIds={selectedTagIds}
+              onAddTag={() => setShowTagDialog(true)}
+              onRemoveTag={(tagId) => {
+                setSelectedTagIds((prev) => prev.filter((id) => id !== tagId))
+              }}
+              showBorderTop={true}
+            />
+
+            {/* Tag Select Dialog */}
+            <TicketTagSelectDialog
+              isOpen={showTagDialog}
+              onClose={() => setShowTagDialog(false)}
+              selectedTagIds={selectedTagIds}
+              onTagsChange={setSelectedTagIds}
+            />
 
             {/* Description欄（最下部・コンパクト表示） */}
             <div className="border-border/50 border-t px-6 py-2">

@@ -1,11 +1,10 @@
 'use client'
 
 import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface DatePickerPopoverProps {
   selectedDate: Date | undefined
@@ -20,36 +19,48 @@ export function DatePickerPopover({
   placeholder = '日付を選択',
   className,
 }: DatePickerPopoverProps) {
-  const [open, setOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [showCalendar, setShowCalendar] = useState(false)
+
+  // 外側クリックでカレンダーを閉じる
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setShowCalendar(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const handleDateSelect = (date: Date | undefined) => {
     onDateChange(date)
-    setOpen(false)
+    setShowCalendar(false)
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          className={cn(
-            'bg-card text-card-foreground inline-flex items-center justify-start rounded-md px-2 py-2 text-left text-sm font-normal',
-            'hover:bg-accent hover:text-accent-foreground transition-all',
-            'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-            !selectedDate && 'text-muted-foreground',
-            className
-          )}
-          type="button"
-          onClick={() => {
-            console.log('DatePicker button clicked, current open:', open)
-            setOpen(!open)
-          }}
-        >
-          {selectedDate ? format(selectedDate, 'yyyy年MM月dd日', { locale: ja }) : placeholder}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto overflow-hidden p-0" align="start" sideOffset={8}>
-        <Calendar mode="single" selected={selectedDate} captionLayout="dropdown" onSelect={handleDateSelect} />
-      </PopoverContent>
-    </Popover>
+    <div className="relative" ref={containerRef}>
+      <button
+        className={cn(
+          'bg-card text-card-foreground inline-flex items-center justify-start rounded-md px-2 py-2 text-left text-sm font-normal',
+          'hover:bg-accent hover:text-accent-foreground transition-all',
+          'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+          !selectedDate && 'text-muted-foreground',
+          className
+        )}
+        type="button"
+        onClick={() => setShowCalendar(!showCalendar)}
+      >
+        {selectedDate ? format(selectedDate, 'yyyy年MM月dd日', { locale: ja }) : placeholder}
+      </button>
+      {showCalendar && (
+        <div className="border-input bg-popover absolute top-10 left-0 z-[9999] rounded-md border shadow-md">
+          <Calendar mode="single" selected={selectedDate} captionLayout="dropdown" onSelect={handleDateSelect} />
+        </div>
+      )}
+    </div>
   )
 }
