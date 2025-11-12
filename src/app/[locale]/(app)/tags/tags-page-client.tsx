@@ -683,33 +683,31 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                         </span>
                       </TableCell>
                       <TableCell className="text-muted-foreground" style={{ width: `${columnWidths.description}px` }}>
-                        <span className="truncate">{tag.description || '-'}</span>
+                        <span className="truncate">{tag.description || ''}</span>
                       </TableCell>
                       <TableCell style={{ width: `${columnWidths.group}px` }}>
-                        {tag.group_id ? (
-                          (() => {
-                            const group = groups.find((g) => g.id === tag.group_id)
-                            if (!group) {
-                              return <span className="text-muted-foreground text-sm">-</span>
-                            }
-                            const groupTagCount = tags.filter(
-                              (t) => t.group_id === group.id && t.is_active && t.level === 0
-                            ).length
-                            return (
-                              <div className="flex items-center gap-1">
-                                <div
-                                  className="h-2 w-2 shrink-0 rounded-full"
-                                  style={{ backgroundColor: group.color || '#6B7280' }}
-                                />
-                                <span className="text-muted-foreground text-sm">
-                                  {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
-                                </span>
-                              </div>
-                            )
-                          })()
-                        ) : (
-                          <span className="text-muted-foreground text-sm">-</span>
-                        )}
+                        {tag.group_id
+                          ? (() => {
+                              const group = groups.find((g) => g.id === tag.group_id)
+                              if (!group) {
+                                return null
+                              }
+                              const groupTagCount = tags.filter(
+                                (t) => t.group_id === group.id && t.is_active && t.level === 0
+                              ).length
+                              return (
+                                <div className="flex items-center gap-1">
+                                  <div
+                                    className="h-2 w-2 shrink-0 rounded-full"
+                                    style={{ backgroundColor: group.color || '#6B7280' }}
+                                  />
+                                  <span className="text-muted-foreground text-sm">
+                                    {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
+                                  </span>
+                                </div>
+                              )
+                            })()
+                          : null}
                       </TableCell>
                       <TableCell
                         className="text-muted-foreground text-xs"
@@ -891,37 +889,33 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                         />
                       </TableCell>
                       <TableCell style={{ width: `${columnWidths.group}px` }}>
-                        {selectedGroupId ? (
-                          (() => {
-                            const group = groups.find((g) => g.id === selectedGroupId)
-                            if (!group) {
-                              return <span className="text-muted-foreground text-sm">-</span>
-                            }
-                            const groupTagCount = tags.filter(
-                              (t) => t.group_id === group.id && t.is_active && t.level === 0
-                            ).length
-                            return (
-                              <div className="flex items-center gap-1">
-                                <div
-                                  className="h-2 w-2 shrink-0 rounded-full"
-                                  style={{ backgroundColor: group.color || '#6B7280' }}
-                                />
-                                <span className="text-muted-foreground text-sm">
-                                  {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
-                                </span>
-                              </div>
-                            )
-                          })()
-                        ) : (
-                          <span className="text-muted-foreground text-sm">-</span>
-                        )}
+                        {selectedGroupId
+                          ? (() => {
+                              const group = groups.find((g) => g.id === selectedGroupId)
+                              if (!group) {
+                                return null
+                              }
+                              const groupTagCount = tags.filter(
+                                (t) => t.group_id === group.id && t.is_active && t.level === 0
+                              ).length
+                              return (
+                                <div className="flex items-center gap-1">
+                                  <div
+                                    className="h-2 w-2 shrink-0 rounded-full"
+                                    style={{ backgroundColor: group.color || '#6B7280' }}
+                                  />
+                                  <span className="text-muted-foreground text-sm">
+                                    {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
+                                  </span>
+                                </div>
+                              )
+                            })()
+                          : null}
                       </TableCell>
                       <TableCell
                         className="text-muted-foreground text-xs"
                         style={{ width: `${columnWidths.created_at}px` }}
-                      >
-                        -
-                      </TableCell>
+                      ></TableCell>
                       <TableCell className="text-right" style={{ width: `${columnWidths.actions}px` }}></TableCell>
                     </TableRow>
                   )}
