@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
+import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { useTags } from '@/features/tags/hooks/use-tags'
 
 interface TagDetailPageClientProps {
@@ -35,24 +36,31 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-6">
-        <div className="mb-2 flex items-center gap-3">
-          <div className="h-6 w-6 rounded-full" style={{ backgroundColor: tag.color || '#3B82F6' }} />
-          <h1 className="text-3xl font-bold">{tag.name}</h1>
-        </div>
-        <p className="text-muted-foreground">t-{tag.tag_number}</p>
-      </div>
+    <div className="flex h-full flex-col">
+      {/* ヘッダー */}
+      <TagsPageHeader title={tag.name} />
 
-      {tag.description && (
-        <div className="mb-6">
-          <h2 className="mb-2 text-lg font-semibold">説明</h2>
-          <p className="text-muted-foreground">{tag.description}</p>
-        </div>
-      )}
+      {/* コンテンツ */}
+      <div className="flex-1 overflow-auto">
+        <div className="container mx-auto p-6">
+          <div className="mb-6">
+            <div className="mb-2 flex items-center gap-3">
+              <div className="h-6 w-6 rounded-full" style={{ backgroundColor: tag.color || '#3B82F6' }} />
+              <p className="text-muted-foreground">t-{tag.tag_number}</p>
+            </div>
+          </div>
 
-      <div className="border-border rounded-lg border p-6">
-        <p className="text-muted-foreground text-center">タグの詳細ページは開発中です</p>
+          {tag.description && (
+            <div className="mb-6">
+              <h2 className="mb-2 text-lg font-semibold">説明</h2>
+              <p className="text-muted-foreground">{tag.description}</p>
+            </div>
+          )}
+
+          <div className="border-border rounded-lg border p-6">
+            <p className="text-muted-foreground text-center">タグの詳細ページは開発中です</p>
+          </div>
+        </div>
       </div>
     </div>
   )

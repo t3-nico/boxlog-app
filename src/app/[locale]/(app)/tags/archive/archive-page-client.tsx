@@ -20,7 +20,9 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
+import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
@@ -49,6 +51,7 @@ export function ArchivePageClient() {
   const { tags, setTags, setIsLoading } = useTagsPageContext()
   const router = useRouter()
   const pathname = usePathname()
+  const { t } = useI18n()
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [sortField, setSortField] = useState<SortField>('created_at')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
@@ -274,8 +277,11 @@ export function ArchivePageClient() {
 
   return (
     <div className="flex h-full flex-col">
+      {/* ヘッダー */}
+      <TagsPageHeader title={t('tags.sidebar.archive')} />
+
       {/* ツールバー */}
-      <div className="flex shrink-0 items-center justify-between gap-4 px-4 py-4 md:px-6">
+      <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 pt-2 md:px-6">
         <div className="flex flex-1 items-center gap-2">
           {/* 検索 */}
           <Input
