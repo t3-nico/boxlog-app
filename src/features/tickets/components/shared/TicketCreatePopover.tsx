@@ -15,7 +15,6 @@ import { RecurrencePopover } from './RecurrencePopover'
 import { ReminderPopover } from './ReminderPopover'
 import { TicketDateTimeInput } from './TicketDateTimeInput'
 import { TicketDescriptionTextarea } from './TicketDescriptionTextarea'
-import { TicketTagSelectDialog } from './TicketTagSelectDialog'
 import { TicketTagsSection } from './TicketTagsSection'
 import { TicketTitleInput } from './TicketTitleInput'
 
@@ -44,7 +43,6 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [repeatType, setRepeatType] = useState<string>('')
   const [reminderType, setReminderType] = useState<string>('')
-  const [showTagDialog, setShowTagDialog] = useState(false)
   const { createTicket } = useTicketMutations()
   const { addTicketTag } = useTicketTags()
 
@@ -175,19 +173,11 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
             {/* Tags */}
             <TicketTagsSection
               selectedTagIds={selectedTagIds}
-              onAddTag={() => setShowTagDialog(true)}
+              onTagsChange={setSelectedTagIds}
               onRemoveTag={(tagId) => {
                 setSelectedTagIds((prev) => prev.filter((id) => id !== tagId))
               }}
               showBorderTop={true}
-            />
-
-            {/* Tag Select Dialog */}
-            <TicketTagSelectDialog
-              isOpen={showTagDialog}
-              onClose={() => setShowTagDialog(false)}
-              selectedTagIds={selectedTagIds}
-              onTagsChange={setSelectedTagIds}
             />
 
             {/* Description欄（最下部・コンパクト表示） */}

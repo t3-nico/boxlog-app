@@ -1,21 +1,21 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import { Tag as TagType } from '@/types/unified'
 import { Plus, Tag, X } from 'lucide-react'
+import { TicketTagSelectPopover } from './TicketTagSelectPopover'
 
 interface TicketTagsSectionProps {
   selectedTagIds: string[]
-  onAddTag?: () => void
+  onTagsChange: (tagIds: string[]) => void
   onRemoveTag?: (tagId: string) => void
   showBorderTop?: boolean
 }
 
 export function TicketTagsSection({
   selectedTagIds,
-  onAddTag,
+  onTagsChange,
   onRemoveTag,
   showBorderTop = false,
 }: TicketTagsSectionProps) {
@@ -54,15 +54,11 @@ export function TicketTagsSection({
             }}
           >
             {selectedTagIds.length === 0 ? (
-              <button
-                onClick={() => {
-                  onAddTag?.()
-                }}
-                type="button"
-                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-              >
-                タグを追加...
-              </button>
+              <TicketTagSelectPopover selectedTagIds={selectedTagIds} onTagsChange={onTagsChange}>
+                <button type="button" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
+                  タグを追加...
+                </button>
+              </TicketTagSelectPopover>
             ) : (
               <>
                 {selectedTags.map((tag) => (
@@ -91,17 +87,11 @@ export function TicketTagsSection({
                     )}
                   </Badge>
                 ))}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 flex-shrink-0"
-                  onClick={() => {
-                    onAddTag?.()
-                  }}
-                  type="button"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                </Button>
+                <TicketTagSelectPopover selectedTagIds={selectedTagIds} onTagsChange={onTagsChange}>
+                  <button type="button" className="hover:bg-accent flex h-6 w-6 items-center justify-center rounded">
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </TicketTagSelectPopover>
               </>
             )}
           </div>

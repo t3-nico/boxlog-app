@@ -45,7 +45,6 @@ import { formatActivity, formatRelativeTime } from '../../utils/activityFormatte
 import { DatePickerPopover } from '../shared/DatePickerPopover'
 import { RecurrencePopover } from '../shared/RecurrencePopover'
 import { ReminderPopover } from '../shared/ReminderPopover'
-import { TicketTagSelectDialog } from '../shared/TicketTagSelectDialog'
 import { TicketTagsSection } from '../shared/TicketTagsSection'
 
 // 15分刻みの時間オプションを生成（0:00 - 23:45）
@@ -105,7 +104,6 @@ export function TicketInspector() {
   const [isHoveringSort, setIsHoveringSort] = useState(false)
   // 選択されたタグのID配列
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const [showTagDialog, setShowTagDialog] = useState(false)
   const { addTicketTag, removeTicketTag } = useTicketTags()
 
   // チケットのタグ情報を selectedTagIds に反映
@@ -121,11 +119,6 @@ export function TicketInspector() {
   // Inspectorの幅管理
   const [inspectorWidth, setInspectorWidth] = useState(540)
   const [isResizing, setIsResizing] = useState(false)
-
-  // タグ追加ハンドラー
-  const handleAddTag = () => {
-    setShowTagDialog(true)
-  }
 
   // タグ変更ハンドラー（追加の差分を検出して実行）
   const handleTagsChange = async (newTagIds: string[]) => {
@@ -645,17 +638,9 @@ export function TicketInspector() {
                 {/* Tags */}
                 <TicketTagsSection
                   selectedTagIds={selectedTagIds}
-                  onAddTag={handleAddTag}
+                  onTagsChange={handleTagsChange}
                   onRemoveTag={handleRemoveTag}
                   showBorderTop={true}
-                />
-
-                {/* Tag Select Dialog */}
-                <TicketTagSelectDialog
-                  isOpen={showTagDialog}
-                  onClose={() => setShowTagDialog(false)}
-                  selectedTagIds={selectedTagIds}
-                  onTagsChange={handleTagsChange}
                 />
 
                 {/* ステータス */}

@@ -346,12 +346,14 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
         <button
           type="button"
           onClick={handleToggleExpansion}
-          className="section-header-toggle mb-2 flex items-center rounded px-2 text-xs/6 font-medium text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700"
+          className="section-header-toggle mb-2 flex items-center gap-1 rounded px-2 text-xs/6 font-medium text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700"
         >
-          <span className="peer">Tags</span>
-          <span className="ml-1 opacity-0 transition-opacity peer-hover:opacity-100">
-            {isExpanded ? <ChevronDownIcon className="h-4 w-4" /> : <ChevronRightIcon className="h-4 w-4" />}
-          </span>
+          {isExpanded ? (
+            <ChevronDownIcon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+          ) : (
+            <ChevronRightIcon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+          )}
+          <span>Tags</span>
         </button>
 
         <button

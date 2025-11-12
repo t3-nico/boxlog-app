@@ -19,18 +19,18 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '�
   const containerRef = useRef<HTMLDivElement>(null)
   const calendarRef = useRef<HTMLDivElement>(null)
   const [showCalendar, setShowCalendar] = useState(false)
-  const [position, setPosition] = useState({ top: 0, left: 0 })
 
-  // ボタンの位置を計算
-  useEffect(() => {
-    if (showCalendar && containerRef.current) {
+  // ボタンの位置を計算して返す関数
+  const getPosition = () => {
+    if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect()
-      setPosition({
+      return {
         top: rect.bottom + window.scrollY + 8,
         left: rect.left + window.scrollX,
-      })
+      }
     }
-  }, [showCalendar])
+    return { top: 0, left: 0 }
+  }
 
   // 外側クリックでカレンダーを閉じる
   useEffect(() => {
@@ -39,14 +39,7 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '�
       const isOutsideContainer = containerRef.current && !containerRef.current.contains(event.target as Node)
       const isOutsideCalendar = calendarRef.current && !calendarRef.current.contains(event.target as Node)
 
-      console.log('[DatePickerPopover] Click detected:', {
-        isOutsideContainer,
-        isOutsideCalendar,
-        target: event.target,
-      })
-
       if (isOutsideContainer && isOutsideCalendar) {
-        console.log('[DatePickerPopover] Closing calendar')
         setShowCalendar(false)
       }
     }
@@ -71,7 +64,6 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '�
         type="button"
         onClick={(e) => {
           e.stopPropagation()
-          console.log('[DatePickerPopover] Button clicked, showCalendar:', showCalendar)
           setShowCalendar(!showCalendar)
         }}
       >
@@ -84,16 +76,10 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '�
             ref={calendarRef}
             className="border-input bg-popover text-popover-foreground fixed z-[9999] w-auto rounded-md border shadow-md"
             style={{
-              top: `${position.top}px`,
-              left: `${position.left}px`,
-              backgroundColor: 'red',
-              minWidth: '300px',
-              minHeight: '300px',
+              top: `${getPosition().top}px`,
+              left: `${getPosition().left}px`,
             }}
           >
-            <div style={{ padding: '16px', color: 'white', fontSize: '20px' }}>
-              Calendar Container - Position: {position.top}px, {position.left}px
-            </div>
             <Calendar mode="single" selected={selectedDate} onSelect={handleDateSelect} captionLayout="dropdown" />
           </div>
         </Portal.Root>
