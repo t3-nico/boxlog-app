@@ -61,8 +61,10 @@ export const TagSelector = ({
   }
 
   const allTags = flattenTags(tagsData)
-  const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
-  const availableTags = allTags.filter((tag) => !selectedTagIds.includes(tag.id))
+  // アクティブなタグのみを使用（アーカイブ済みタグを除外）
+  const activeTags = allTags.filter((tag) => tag.is_active)
+  const selectedTags = activeTags.filter((tag) => selectedTagIds.includes(tag.id))
+  const availableTags = activeTags.filter((tag) => !selectedTagIds.includes(tag.id))
 
   const filteredTags = searchQuery
     ? availableTags.filter(
