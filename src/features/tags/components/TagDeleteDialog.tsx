@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import type { TagUsage, TagWithChildren } from '@/types/tags'
 import { AlertTriangle } from 'lucide-react'
 
@@ -23,6 +24,7 @@ interface TagDeleteDialogProps {
 }
 
 export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProps) {
+  const { t } = useI18n()
   const [confirmText, setConfirmText] = useState('')
   const [usage, setUsage] = useState<TagUsage | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -74,14 +76,14 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
     <AlertDialog open={!!tag} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent className="max-w-3xl gap-0 p-6">
         <AlertDialogHeader className="mb-4">
-          <AlertDialogTitle>タグ「{tag?.name}」を完全に削除しますか？</AlertDialogTitle>
+          <AlertDialogTitle>{t('tags.delete.confirmTitleWithName', { name: tag?.name || '' })}</AlertDialogTitle>
         </AlertDialogHeader>
 
         <div className="space-y-3">
           {/* 警告 */}
           <div className="bg-destructive/10 text-destructive border-destructive/20 flex items-center gap-2 rounded-lg border p-3">
             <AlertTriangle className="h-4 w-4 shrink-0" />
-            <p className="text-sm font-medium">この操作は元に戻せません</p>
+            <p className="text-sm font-medium">{t('tags.delete.warningIrreversible')}</p>
           </div>
 
           {/* 使用状況 */}
@@ -91,23 +93,31 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
             </div>
           ) : usage ? (
             <div className="bg-muted rounded-lg p-4">
-              <p className="mb-2 text-sm font-medium">影響を受けるアイテム:</p>
+              <p className="mb-2 text-sm font-medium">{t('tags.delete.affectedItems')}:</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
-                <li>• Tickets: {usage.ticketCount}件</li>
-                <li>• Events: {usage.eventCount}件</li>
-                <li>• Tasks: {usage.taskCount}件</li>
+                <li>
+                  • {t('tags.delete.tickets')}: {t('tags.delete.itemsCount', { count: usage.ticketCount })}
+                </li>
+                <li>
+                  • {t('tags.delete.events')}: {t('tags.delete.itemsCount', { count: usage.eventCount })}
+                </li>
+                <li>
+                  • {t('tags.delete.tasks')}: {t('tags.delete.itemsCount', { count: usage.taskCount })}
+                </li>
               </ul>
-              <p className="text-muted-foreground mt-2 text-sm font-medium">合計: {usage.totalCount}件</p>
+              <p className="text-muted-foreground mt-2 text-sm font-medium">
+                {t('tags.delete.total')}: {t('tags.delete.itemsCount', { count: usage.totalCount })}
+              </p>
             </div>
           ) : null}
 
           {/* 削除後の処理 */}
           <div className="space-y-2">
-            <p className="text-sm font-medium">削除すると:</p>
+            <p className="text-sm font-medium">{t('tags.delete.afterDeletion')}:</p>
             <ul className="text-muted-foreground space-y-1 text-sm">
-              <li>✓ タグ「t-{tag?.tag_number}」は永久に削除されます</li>
-              <li>✓ 既存アイテムからこのタグが外れます</li>
-              <li>✓ 統計データからも除外されます</li>
+              <li>✓ {t('tags.delete.willBeDeleted', { number: tag?.tag_number || '' })}</li>
+              <li>✓ {t('tags.delete.willBeRemovedFromItems')}</li>
+              <li>✓ {t('tags.delete.willBeRemovedFromStats')}</li>
             </ul>
           </div>
 
@@ -115,7 +125,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
           {requiresConfirmation && (
             <div className="space-y-2">
               <Label htmlFor="confirm-input" className="text-sm font-medium">
-                確認のため、タグ名「{tag?.name}」を入力してください
+                {t('tags.delete.confirmInputLabel', { name: tag?.name || '' })}
               </Label>
               <Input
                 id="confirm-input"
@@ -129,13 +139,13 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
         </div>
 
         <AlertDialogFooter className="mt-6">
-          <AlertDialogCancel disabled={isDeleting}>キャンセル</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>{t('tags.actions.cancel')}</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={!canDelete || isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isDeleting ? '削除中...' : '完全に削除'}
+            {isDeleting ? t('tags.delete.deleting') : t('tags.delete.permanentDelete')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

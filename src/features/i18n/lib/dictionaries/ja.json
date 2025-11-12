@@ -1515,5 +1515,47 @@
       },
       "lastUpdated": "最終更新日: 2025-10-15"
     }
+  },
+  "tags": {
+    "validation": {
+      "nameRequired": "タグ名は必須です",
+      "nameEmpty": "タグ名を入力してください",
+      "nameMaxLength": "タグ名は50文字以内で入力してください",
+      "colorInvalid": "有効なカラーコード（例: #3B82F6）を入力してください",
+      "descriptionMaxLength": "説明は500文字以内で入力してください",
+      "iconMaxLength": "アイコンは10文字以内で入力してください",
+      "parentIdInvalid": "親タグIDが無効です",
+      "groupIdInvalid": "グループIDが無効です",
+      "levelInvalid": "レベルは0または1である必要があります",
+      "validationFailed": "入力内容に誤りがあります"
+    },
+    "errors": {
+      "unauthorized": "認証が必要です",
+      "tagNotFound": "タグが見つかりません",
+      "parentNotFound": "親タグが見つかりません",
+      "invalidQueryParams": "無効なクエリパラメータです",
+      "invalidAction": "無効な操作です",
+      "internalServerError": "サーバーエラーが発生しました"
+    },
+    "delete": {
+      "confirmTitleWithName": "「{{name}}」を削除しますか？",
+      "warningIrreversible": "この操作は取り消せません",
+      "affectedItems": "影響を受けるアイテム",
+      "tickets": "チケット",
+      "events": "イベント",
+      "tasks": "タスク",
+      "itemsCount": "{{count}}件",
+      "total": "合計",
+      "afterDeletion": "削除後の処理",
+      "willBeDeleted": "タグ #{{number}} が削除されます",
+      "willBeRemovedFromItems": "すべてのアイテムからタグが削除されます",
+      "willBeRemovedFromStats": "統計情報からタグが削除されます",
+      "confirmInputLabel": "削除を確定するには「{{name}}」と入力してください",
+      "deleting": "削除中...",
+      "permanentDelete": "完全に削除"
+    },
+    "actions": {
+      "cancel": "キャンセル"
+    }
   }
 }

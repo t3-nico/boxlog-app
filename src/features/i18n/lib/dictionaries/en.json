@@ -1520,5 +1520,47 @@
       },
       "lastUpdated": "Last Updated: October 15, 2025"
     }
+  },
+  "tags": {
+    "validation": {
+      "nameRequired": "Tag name is required",
+      "nameEmpty": "Please enter a tag name",
+      "nameMaxLength": "Tag name must be 50 characters or less",
+      "colorInvalid": "Please enter a valid color code (e.g., #3B82F6)",
+      "descriptionMaxLength": "Description must be 500 characters or less",
+      "iconMaxLength": "Icon must be 10 characters or less",
+      "parentIdInvalid": "Invalid parent tag ID",
+      "groupIdInvalid": "Invalid group ID",
+      "levelInvalid": "Level must be 0 or 1",
+      "validationFailed": "Validation failed"
+    },
+    "errors": {
+      "unauthorized": "Authentication required",
+      "tagNotFound": "Tag not found",
+      "parentNotFound": "Parent tag not found",
+      "invalidQueryParams": "Invalid query parameters",
+      "invalidAction": "Invalid action",
+      "internalServerError": "Internal server error"
+    },
+    "delete": {
+      "confirmTitleWithName": "Delete \"{{name}}\"?",
+      "warningIrreversible": "This action cannot be undone",
+      "affectedItems": "Affected items",
+      "tickets": "Tickets",
+      "events": "Events",
+      "tasks": "Tasks",
+      "itemsCount": "{{count}} items",
+      "total": "Total",
+      "afterDeletion": "After deletion",
+      "willBeDeleted": "Tag #{{number}} will be deleted",
+      "willBeRemovedFromItems": "Tag will be removed from all items",
+      "willBeRemovedFromStats": "Tag will be removed from statistics",
+      "confirmInputLabel": "Type \"{{name}}\" to confirm deletion",
+      "deleting": "Deleting...",
+      "permanentDelete": "Delete Permanently"
+    },
+    "actions": {
+      "cancel": "Cancel"
+    }
   }
 }
