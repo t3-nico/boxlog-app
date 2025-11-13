@@ -166,7 +166,7 @@ export function TicketTagSelectDialogEnhanced({
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent
         className="!border-border bg-card dark:bg-card flex flex-col gap-0 !border p-0"
-        style={{ width: '720px', maxWidth: '90vw', height: '50vh' }}
+        style={{ width: '720px', maxWidth: '90vw', height: '50vh', maxHeight: '80vh' }}
         align={align}
         side={side}
         sideOffset={sideOffset}
@@ -223,8 +223,11 @@ export function TicketTagSelectDialogEnhanced({
         </div>
 
         <div className="flex min-h-0 flex-1 overflow-hidden">
-          {/* 左側: Sidebar */}
-          <div className="border-border shrink-0 border-r" style={{ width: '240px', maxWidth: '240px' }}>
+          {/* 左側: Sidebar (モバイルでは非表示) */}
+          <div
+            className="border-border hidden shrink-0 border-r md:block"
+            style={{ width: '240px', maxWidth: '240px' }}
+          >
             <ScrollArea className="h-full">
               <nav className="flex flex-col gap-0 p-2" style={{ maxWidth: '240px' }}>
                 {/* すべてのタグ */}
