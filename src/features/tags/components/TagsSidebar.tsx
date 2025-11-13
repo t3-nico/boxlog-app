@@ -2,7 +2,7 @@
 
 import { DndContext, DragOverlay, closestCenter, useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { Archive, Folder, Plus, Tags } from 'lucide-react'
+import { Archive, Folder, FolderX, Plus, Tags } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -320,7 +320,7 @@ export function TagsSidebar({
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <Folder className="h-4 w-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
+            <FolderX className="h-4 w-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
             <span>{t('tags.sidebar.uncategorized')}</span>
           </div>
           <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>
