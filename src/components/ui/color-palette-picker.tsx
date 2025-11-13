@@ -63,7 +63,7 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
               <TooltipContent
                 side="bottom"
                 sideOffset={12}
-                className="bg-card text-card-foreground border-border border text-xs"
+                className="border border-neutral-200 bg-white text-xs text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100"
               >
                 <p>{colorName}</p>
               </TooltipContent>
