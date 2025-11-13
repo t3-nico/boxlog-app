@@ -28,7 +28,7 @@ const COLOR_NAMES: Record<string, string> = {
 
 export function ColorPalettePicker({ selectedColor, onColorSelect, className }: ColorPalettePickerProps) {
   return (
-    <TooltipProvider delayDuration={800}>
+    <TooltipProvider delayDuration={500}>
       <div className={cn('flex gap-2', className)}>
         {TAG_COLOR_PALETTE.map((color) => {
           const isSelected = selectedColor === color
@@ -62,6 +62,7 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
               </TooltipTrigger>
               <TooltipContent
                 side="bottom"
+                sideOffset={12}
                 className="!bg-popover !text-popover-foreground !border-border border text-xs"
               >
                 <p>{colorName}</p>
