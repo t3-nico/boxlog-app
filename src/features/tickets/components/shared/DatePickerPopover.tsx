@@ -80,10 +80,7 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = 'æ
               left: `${getPosition().left}px`,
             }}
           >
-            <div style={{ fontSize: '11px', marginBottom: '4px', opacity: 0.7 }}>TEST: Render check</div>
-            <div style={{ border: '2px solid lime', padding: '4px' }}>
-              <Calendar mode="single" selected={selectedDate} onSelect={handleDateSelect} initialFocus />
-            </div>
+            <Calendar mode="single" selected={selectedDate} onSelect={handleDateSelect} initialFocus />
           </div>
         </Portal.Root>
       )}

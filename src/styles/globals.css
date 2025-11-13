@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'react-day-picker/style.css';
 
 /* Tailwind v4 ダークモード設定 */
 @variant dark (.dark &);
@@ -737,25 +738,3 @@ aside * {
   }
 }
 
-/* Calendar - 週番号を非表示 */
-.rdp-weeks {
-  display: none;
-}
-
-.rdp-week_number_header {
-  display: none;
-}
-
-/* Calendar - 曜日ヘッダーを非表示 */
-.rdp-weekdays {
-  display: none;
-}
-
-/* Calendar - 月年表示とナビゲーションを非表示 */
-.rdp-month_caption {
-  display: none;
-}
-
-.rdp-nav {
-  display: none;
-}
