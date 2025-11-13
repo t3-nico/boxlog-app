@@ -28,18 +28,19 @@ const COLOR_NAMES: Record<string, string> = {
 
 export function ColorPalettePicker({ selectedColor, onColorSelect, className }: ColorPalettePickerProps) {
   return (
-    <TooltipProvider delayDuration={500}>
+    <TooltipProvider delayDuration={0} skipDelayDuration={0}>
       <div className={cn('flex gap-2', className)}>
         {TAG_COLOR_PALETTE.map((color) => {
           const isSelected = selectedColor === color
           const colorName = COLOR_NAMES[color] || color
 
           return (
-            <Tooltip key={color}>
+            <Tooltip key={color} delayDuration={0}>
               <TooltipTrigger asChild>
                 <button
                   type="button"
                   onClick={() => onColorSelect(color)}
+                  tabIndex={-1}
                   className={cn(
                     'group relative shrink-0 transition-all',
                     'hover:scale-110',
@@ -48,11 +49,7 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
                   )}
                   aria-label={`${colorName}を選択`}
                 >
-                  <Circle
-                    className={cn('h-6 w-6 transition-all', isSelected ? 'stroke-muted-foreground' : 'stroke-border')}
-                    fill={color}
-                    strokeWidth={2}
-                  />
+                  <Circle className="stroke-border h-6 w-6 transition-all" fill={color} strokeWidth={2} />
                   {isSelected && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <Check className="text-background h-3 w-3" strokeWidth={3} />
@@ -60,11 +57,7 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
                   )}
                 </button>
               </TooltipTrigger>
-              <TooltipContent
-                side="bottom"
-                sideOffset={12}
-                className="border border-neutral-200 bg-white text-xs text-neutral-900 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100"
-              >
+              <TooltipContent side="bottom" className="bg-card text-card-foreground border-border border text-xs">
                 <p>{colorName}</p>
               </TooltipContent>
             </Tooltip>
