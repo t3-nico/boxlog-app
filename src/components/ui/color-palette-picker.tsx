@@ -49,7 +49,7 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
                   aria-label={`${colorName}を選択`}
                 >
                   <Circle
-                    className={cn('h-6 w-6 transition-all', isSelected ? 'stroke-foreground' : 'stroke-border')}
+                    className={cn('h-6 w-6 transition-all', isSelected ? 'stroke-muted-foreground' : 'stroke-border')}
                     fill={color}
                     strokeWidth={2}
                   />
