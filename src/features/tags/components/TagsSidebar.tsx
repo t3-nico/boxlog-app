@@ -7,10 +7,10 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { TAG_COLOR_PALETTE } from '@/config/ui/colors'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
@@ -473,20 +473,7 @@ export function TagsSidebar({
                         </button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-3" align="start">
-                        <div className="grid grid-cols-5 gap-2">
-                          {TAG_COLOR_PALETTE.map((color) => (
-                            <button
-                              key={color}
-                              type="button"
-                              onClick={() => setNewGroupColor(color)}
-                              className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                                newGroupColor === color ? 'border-foreground scale-110' : 'border-transparent'
-                              }`}
-                              style={{ backgroundColor: color }}
-                              aria-label={t('tags.sidebar.colorLabel', { color })}
-                            />
-                          ))}
-                        </div>
+                        <ColorPalettePicker selectedColor={newGroupColor} onColorSelect={setNewGroupColor} />
                       </PopoverContent>
                     </Popover>
 

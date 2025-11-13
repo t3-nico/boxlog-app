@@ -17,6 +17,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -31,7 +32,6 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { TAG_COLOR_PALETTE } from '@/config/ui/colors'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
@@ -729,25 +729,15 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                   </button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-3" align="start">
-                                  <div className="grid grid-cols-5 gap-2">
-                                    {TAG_COLOR_PALETTE.map((color) => (
-                                      <button
-                                        key={color}
-                                        type="button"
-                                        onClick={() => {
-                                          updateTagMutation.mutate({
-                                            id: tag.id,
-                                            data: { color: color },
-                                          })
-                                        }}
-                                        className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                                          tag.color === color ? 'border-foreground scale-110' : 'border-transparent'
-                                        }`}
-                                        style={{ backgroundColor: color }}
-                                        aria-label={`カラー ${color}`}
-                                      />
-                                    ))}
-                                  </div>
+                                  <ColorPalettePicker
+                                    selectedColor={tag.color || '#3B82F6'}
+                                    onColorSelect={(color) => {
+                                      updateTagMutation.mutate({
+                                        id: tag.id,
+                                        data: { color },
+                                      })
+                                    }}
+                                  />
                                 </PopoverContent>
                               </Popover>
                               {editingTagId === tag.id && editingField === 'name' ? (
@@ -894,20 +884,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               </button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-3" align="start">
-                              <div className="grid grid-cols-5 gap-2">
-                                {TAG_COLOR_PALETTE.map((color) => (
-                                  <button
-                                    key={color}
-                                    type="button"
-                                    onClick={() => setNewTagColor(color)}
-                                    className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                                      newTagColor === color ? 'border-foreground scale-110' : 'border-transparent'
-                                    }`}
-                                    style={{ backgroundColor: color }}
-                                    aria-label={`カラー ${color}`}
-                                  />
-                                ))}
-                              </div>
+                              <ColorPalettePicker selectedColor={newTagColor} onColorSelect={setNewTagColor} />
                             </PopoverContent>
                           </Popover>
                           <Input
