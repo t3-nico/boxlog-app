@@ -60,7 +60,10 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
                   )}
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="bg-popover text-popover-foreground border-border border text-xs">
+              <TooltipContent
+                side="bottom"
+                className="!bg-popover !text-popover-foreground !border-border border text-xs"
+              >
                 <p>{colorName}</p>
               </TooltipContent>
             </Tooltip>
