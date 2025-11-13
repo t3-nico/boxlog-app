@@ -1,6 +1,16 @@
 'use client'
 
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, Filter, Plus } from 'lucide-react'
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  Folder,
+  Plus,
+} from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -758,10 +768,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                 ).length
                                 return (
                                   <div className="flex items-center gap-1">
-                                    <div
-                                      className="h-2 w-2 shrink-0 rounded-full"
-                                      style={{ backgroundColor: group.color || '#6B7280' }}
-                                    />
+                                    <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || '#6B7280' }} />
                                     <span className="text-sm">
                                       {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
                                     </span>
@@ -926,10 +933,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               ).length
                               return (
                                 <div className="flex items-center gap-1">
-                                  <div
-                                    className="h-2 w-2 shrink-0 rounded-full"
-                                    style={{ backgroundColor: group.color || '#6B7280' }}
-                                  />
+                                  <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || '#6B7280' }} />
                                   <span className="text-sm">
                                     {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
                                   </span>

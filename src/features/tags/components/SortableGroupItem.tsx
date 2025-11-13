@@ -136,11 +136,7 @@ export function SortableGroupItem({
                 className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
                 aria-label={t('tags.sidebar.changeColorAria', { name: group.name })}
               >
-                <Folder
-                  className="h-4 w-4"
-                  style={{ color: group.color || '#6B7280' }}
-                  fill={group.color || '#6B7280'}
-                />
+                <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || '#6B7280' }} />
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-3" align="start">
