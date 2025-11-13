@@ -157,24 +157,60 @@ export function TicketTagSelectDialogEnhanced({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="flex flex-col gap-0 p-0" style={{ width: '900px', maxWidth: '90vw', height: '80vh' }}>
-        {/* ヘッダー: 検索バー */}
-        <div className="shrink-0 border-b p-4">
-          <div className="relative">
-            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-            <Input
-              placeholder="タグを検索..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
+        {/* ヘッダー: 検索バー + 新規作成ボタン */}
+        <div className="border-border shrink-0 border-b p-4 pr-14">
+          <div className="flex items-center gap-3">
+            {/* 検索バー（flex-1で拡張） */}
+            <div className="relative flex-1">
+              <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+              <Input
+                placeholder="タグを検索..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-9 pl-9"
+              />
+            </div>
+
+            {/* 新規作成ボタン */}
+            <Button variant="default" size="sm" onClick={() => setIsCreating(!isCreating)} className="shrink-0">
+              <Plus className="mr-2 h-4 w-4" />
+              新しいタグ
+            </Button>
           </div>
+
+          {/* 作成フォーム（isCreating時のみ表示） */}
+          {isCreating && (
+            <div className="mt-3 flex gap-2">
+              <Input
+                placeholder="タグ名を入力..."
+                value={newTagName}
+                onChange={(e) => setNewTagName(e.target.value)}
+                onKeyDown={handleKeyDown}
+                autoFocus
+                className="flex-1"
+              />
+              <Button size="sm" onClick={handleCreateTag} disabled={!newTagName.trim()}>
+                作成
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  setIsCreating(false)
+                  setNewTagName('')
+                }}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="flex min-h-0 flex-1 overflow-hidden">
           {/* 左側: Sidebar */}
-          <div className="flex flex-col border-r" style={{ width: '240px' }}>
-            <ScrollArea className="flex-1">
-              <nav className="flex h-full flex-col gap-1 p-2">
+          <div className="border-border shrink-0 border-r" style={{ width: '240px', maxWidth: '240px' }}>
+            <ScrollArea className="h-full">
+              <nav className="flex flex-col gap-1 p-2" style={{ maxWidth: '240px' }}>
                 {/* すべてのタグ */}
                 <button
                   type="button"
@@ -281,10 +317,10 @@ export function TicketTagSelectDialogEnhanced({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-12"></TableHead>
-                      <TableHead className="w-8"></TableHead>
-                      <TableHead className="w-60">名前</TableHead>
-                      <TableHead>説明</TableHead>
+                      <TableHead className="w-12 text-xs"></TableHead>
+                      <TableHead className="w-8 text-xs"></TableHead>
+                      <TableHead className="w-60 text-xs">名前</TableHead>
+                      <TableHead className="text-xs">説明</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -293,7 +329,7 @@ export function TicketTagSelectDialogEnhanced({
                       return (
                         <TableRow
                           key={tag.id}
-                          className={`cursor-pointer ${!tag.is_active ? 'opacity-50' : ''}`}
+                          className={`cursor-pointer text-xs ${!tag.is_active ? 'opacity-50' : ''}`}
                           onClick={() => tag.is_active && handleToggleTag(tag.id)}
                         >
                           <TableCell onClick={(e) => e.stopPropagation()}>
@@ -334,39 +370,6 @@ export function TicketTagSelectDialogEnhanced({
                 </Table>
               )}
             </ScrollArea>
-
-            {/* フッター: 新規作成 */}
-            <div className="border-t p-4">
-              {isCreating ? (
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="タグ名を入力..."
-                    value={newTagName}
-                    onChange={(e) => setNewTagName(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    autoFocus
-                  />
-                  <Button size="sm" onClick={handleCreateTag} disabled={!newTagName.trim()}>
-                    作成
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => {
-                      setIsCreating(false)
-                      setNewTagName('')
-                    }}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <Button variant="outline" size="sm" className="w-full" onClick={() => setIsCreating(true)}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  新しいタグを作成
-                </Button>
-              )}
-            </div>
           </div>
         </div>
       </DialogContent>

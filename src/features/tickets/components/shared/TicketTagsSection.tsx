@@ -1,10 +1,13 @@
 'use client'
 
+import { useState } from 'react'
+
 import { Badge } from '@/components/ui/badge'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import { Tag as TagType } from '@/types/unified'
 import { Plus, Tag, X } from 'lucide-react'
-import { TicketTagSelectPopover } from './TicketTagSelectPopover'
+
+import { TicketTagSelectDialogEnhanced } from './TicketTagSelectDialogEnhanced'
 
 interface TicketTagsSectionProps {
   selectedTagIds: string[]
@@ -19,6 +22,8 @@ export function TicketTagsSection({
   onRemoveTag,
   showBorderTop = false,
 }: TicketTagsSectionProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
   // データベースからタグを取得
   const { data: tagsData } = useTags(true)
 
@@ -54,11 +59,13 @@ export function TicketTagsSection({
             }}
           >
             {selectedTagIds.length === 0 ? (
-              <TicketTagSelectPopover selectedTagIds={selectedTagIds} onTagsChange={onTagsChange}>
-                <button type="button" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
-                  タグを追加...
-                </button>
-              </TicketTagSelectPopover>
+              <button
+                type="button"
+                onClick={() => setIsDialogOpen(true)}
+                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+              >
+                タグを追加...
+              </button>
             ) : (
               <>
                 {selectedTags.map((tag) => (
@@ -87,16 +94,26 @@ export function TicketTagsSection({
                     )}
                   </Badge>
                 ))}
-                <TicketTagSelectPopover selectedTagIds={selectedTagIds} onTagsChange={onTagsChange}>
-                  <button type="button" className="hover:bg-accent flex h-6 w-6 items-center justify-center rounded">
-                    <Plus className="h-3.5 w-3.5" />
-                  </button>
-                </TicketTagSelectPopover>
+                <button
+                  type="button"
+                  onClick={() => setIsDialogOpen(true)}
+                  className="hover:bg-accent flex h-6 w-6 items-center justify-center rounded"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
               </>
             )}
           </div>
         </div>
       </div>
+
+      {/* タグ選択ダイアログ */}
+      <TicketTagSelectDialogEnhanced
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        selectedTagIds={selectedTagIds}
+        onTagsChange={onTagsChange}
+      />
     </div>
   )
 }
