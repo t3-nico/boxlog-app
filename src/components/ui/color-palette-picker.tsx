@@ -1,6 +1,6 @@
 'use client'
 
-import { Check } from 'lucide-react'
+import { Check, Circle } from 'lucide-react'
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { TAG_COLOR_PALETTE } from '@/config/ui/colors'
@@ -41,17 +41,21 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
                   type="button"
                   onClick={() => onColorSelect(color)}
                   className={cn(
-                    'group relative h-6 w-6 shrink-0 rounded-full border-2 transition-all',
-                    'hover:scale-110 hover:shadow-lg',
+                    'group relative shrink-0 transition-all',
+                    'hover:scale-110 hover:drop-shadow-lg',
                     'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-                    isSelected ? 'border-foreground scale-105 shadow-lg' : 'border-border hover:border-foreground/50'
+                    isSelected && 'scale-105 drop-shadow-lg'
                   )}
-                  style={{ backgroundColor: color }}
                   aria-label={`${colorName}を選択`}
                 >
+                  <Circle
+                    className={cn('h-6 w-6 transition-all', isSelected ? 'stroke-foreground' : 'stroke-border')}
+                    fill={color}
+                    strokeWidth={2}
+                  />
                   {isSelected && (
-                    <div className="bg-background/90 absolute inset-0 flex items-center justify-center rounded-full">
-                      <Check className="text-foreground h-3 w-3 drop-shadow-sm" strokeWidth={3} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Check className="text-background h-3 w-3 drop-shadow-sm" strokeWidth={3} />
                     </div>
                   )}
                 </button>
