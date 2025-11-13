@@ -159,7 +159,7 @@ export function TicketTagSelectDialogEnhanced({
       <PopoverContent
         className="!border-border bg-card dark:bg-card flex flex-col gap-0 !border p-0"
         style={{ width: '720px', maxWidth: '90vw', height: '50vh' }}
-        align="start"
+        align="end"
         side="right"
         sideOffset={8}
         avoidCollisions={false}
