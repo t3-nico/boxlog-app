@@ -42,9 +42,9 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
                   onClick={() => onColorSelect(color)}
                   className={cn(
                     'group relative shrink-0 transition-all',
-                    'hover:scale-110 hover:drop-shadow-lg',
+                    'hover:scale-110',
                     'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-                    isSelected && 'scale-105 drop-shadow-lg'
+                    isSelected && 'scale-105'
                   )}
                   aria-label={`${colorName}を選択`}
                 >
@@ -55,7 +55,7 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
                   />
                   {isSelected && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Check className="text-background h-3 w-3 drop-shadow-sm" strokeWidth={3} />
+                      <Check className="text-background h-3 w-3" strokeWidth={3} />
                     </div>
                   )}
                 </button>
