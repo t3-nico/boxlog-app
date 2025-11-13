@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
 import { api } from '@/lib/trpc'
@@ -107,7 +108,7 @@ export function TicketTagSelectDialogEnhanced({
     try {
       const createdTag = await createTagMutation.mutateAsync({
         name: newTagName.trim(),
-        color: '#3B82F6',
+        color: DEFAULT_TAG_COLOR,
         description: undefined,
         level: 0,
         group_id: selectedGroupId && selectedGroupId !== 'uncategorized' ? selectedGroupId : undefined,

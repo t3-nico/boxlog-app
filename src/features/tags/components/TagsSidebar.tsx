@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { TAG_COLOR_PALETTE } from '@/config/ui/colors'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
@@ -473,18 +474,7 @@ export function TagsSidebar({
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-3" align="start">
                         <div className="grid grid-cols-5 gap-2">
-                          {[
-                            '#3B82F6',
-                            '#10B981',
-                            '#EF4444',
-                            '#F59E0B',
-                            '#8B5CF6',
-                            '#EC4899',
-                            '#06B6D4',
-                            '#F97316',
-                            '#6B7280',
-                            '#6366F1',
-                          ].map((color) => (
+                          {TAG_COLOR_PALETTE.map((color) => (
                             <button
                               key={color}
                               type="button"
