@@ -74,13 +74,16 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = 'æ
         <Portal.Root>
           <div
             ref={calendarRef}
-            className="border-input bg-popover text-popover-foreground fixed z-[9999] w-auto rounded-md border shadow-md"
+            className="border-input bg-popover text-popover-foreground fixed z-[9999] w-fit rounded-md border p-3 shadow-lg"
             style={{
               top: `${getPosition().top}px`,
               left: `${getPosition().left}px`,
             }}
           >
-            <Calendar mode="single" selected={selectedDate} onSelect={handleDateSelect} captionLayout="dropdown" />
+            <div style={{ fontSize: '11px', marginBottom: '4px', opacity: 0.7 }}>TEST: Render check</div>
+            <div style={{ border: '2px solid lime', padding: '4px' }}>
+              <Calendar mode="single" selected={selectedDate} onSelect={handleDateSelect} initialFocus />
+            </div>
           </div>
         </Portal.Root>
       )}

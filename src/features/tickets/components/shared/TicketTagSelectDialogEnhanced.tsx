@@ -1,13 +1,13 @@
 'use client'
 
-import { Archive, Folder, FolderX, Plus, Search, Tags, X } from 'lucide-react'
+import { Archive, Folder, FolderX, Hash, Plus, Search, Tags, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
@@ -16,18 +16,17 @@ import { api } from '@/lib/trpc'
 import type { Tag as TagType } from '@/types/unified'
 
 interface TicketTagSelectDialogEnhancedProps {
-  isOpen: boolean
-  onClose: () => void
+  children: React.ReactNode
   selectedTagIds: string[]
   onTagsChange: (tagIds: string[]) => void
 }
 
 export function TicketTagSelectDialogEnhanced({
-  isOpen,
-  onClose,
+  children,
   selectedTagIds,
   onTagsChange,
 }: TicketTagSelectDialogEnhancedProps) {
+  const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [newTagName, setNewTagName] = useState('')
@@ -143,7 +142,7 @@ export function TicketTagSelectDialogEnhanced({
   // アクティブタグ数
   const activeCount = allTags.filter((tag) => tag.is_active && tag.level === 0).length
 
-  // Dialogを閉じた時に状態をリセット
+  // Popoverを閉じた時に状態をリセット
   useEffect(() => {
     if (!isOpen) {
       setSearchQuery('')
@@ -155,10 +154,18 @@ export function TicketTagSelectDialogEnhanced({
   }, [isOpen])
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="flex flex-col gap-0 p-0" style={{ width: '900px', maxWidth: '90vw', height: '80vh' }}>
+    <Popover modal={false} open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverContent
+        className="!border-border bg-card dark:bg-card flex flex-col gap-0 !border p-0"
+        style={{ width: '720px', maxWidth: '90vw', height: '50vh' }}
+        align="start"
+        side="right"
+        sideOffset={8}
+        avoidCollisions={false}
+      >
         {/* ヘッダー: 検索バー + 新規作成ボタン */}
-        <div className="border-border shrink-0 border-b p-4 pr-14">
+        <div className="border-border shrink-0 border-b p-4">
           <div className="flex items-center gap-3">
             {/* 検索バー（flex-1で拡張） */}
             <div className="relative flex-1">
@@ -210,7 +217,7 @@ export function TicketTagSelectDialogEnhanced({
           {/* 左側: Sidebar */}
           <div className="border-border shrink-0 border-r" style={{ width: '240px', maxWidth: '240px' }}>
             <ScrollArea className="h-full">
-              <nav className="flex flex-col gap-1 p-2" style={{ maxWidth: '240px' }}>
+              <nav className="flex flex-col gap-0 p-2" style={{ maxWidth: '240px' }}>
                 {/* すべてのタグ */}
                 <button
                   type="button"
@@ -341,9 +348,9 @@ export function TicketTagSelectDialogEnhanced({
                             />
                           </TableCell>
                           <TableCell className="pr-1">
-                            <div
-                              className="h-3 w-3 rounded-full"
-                              style={{ backgroundColor: tag.color || '#3B82F6' }}
+                            <Hash
+                              className="h-4 w-4"
+                              style={{ color: tag.color || '#3B82F6' }}
                               aria-label="タグカラー"
                             />
                           </TableCell>
@@ -372,7 +379,7 @@ export function TicketTagSelectDialogEnhanced({
             </ScrollArea>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </PopoverContent>
+    </Popover>
   )
 }
