@@ -41,7 +41,7 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
                   type="button"
                   onClick={() => onColorSelect(color)}
                   className={cn(
-                    'group relative h-9 w-9 shrink-0 rounded-full border-2 transition-all',
+                    'group relative h-6 w-6 shrink-0 rounded-full border-2 transition-all',
                     'hover:scale-110 hover:shadow-lg',
                     'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
                     isSelected ? 'border-foreground scale-105 shadow-lg' : 'border-border hover:border-foreground/50'
@@ -51,7 +51,7 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
                 >
                   {isSelected && (
                     <div className="bg-background/90 absolute inset-0 flex items-center justify-center rounded-full">
-                      <Check className="text-foreground h-4 w-4 drop-shadow-sm" strokeWidth={3} />
+                      <Check className="text-foreground h-3 w-3 drop-shadow-sm" strokeWidth={3} />
                     </div>
                   )}
                 </button>
