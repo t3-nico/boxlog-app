@@ -12,6 +12,10 @@ interface TicketTagsSectionProps {
   onTagsChange: (tagIds: string[]) => void
   onRemoveTag?: (tagId: string) => void
   showBorderTop?: boolean
+  popoverAlign?: 'start' | 'center' | 'end'
+  popoverSide?: 'top' | 'right' | 'bottom' | 'left'
+  popoverAlignOffset?: number
+  popoverSideOffset?: number
 }
 
 export function TicketTagsSection({
@@ -19,6 +23,10 @@ export function TicketTagsSection({
   onTagsChange,
   onRemoveTag,
   showBorderTop = false,
+  popoverAlign,
+  popoverSide,
+  popoverAlignOffset,
+  popoverSideOffset,
 }: TicketTagsSectionProps) {
   // データベースからタグを取得
   const { data: tagsData } = useTags(true)
@@ -55,7 +63,14 @@ export function TicketTagsSection({
             }}
           >
             {selectedTagIds.length === 0 ? (
-              <TicketTagSelectDialogEnhanced selectedTagIds={selectedTagIds} onTagsChange={onTagsChange}>
+              <TicketTagSelectDialogEnhanced
+                selectedTagIds={selectedTagIds}
+                onTagsChange={onTagsChange}
+                align={popoverAlign}
+                side={popoverSide}
+                alignOffset={popoverAlignOffset}
+                sideOffset={popoverSideOffset}
+              >
                 <button type="button" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
                   タグを追加...
                 </button>
@@ -88,7 +103,14 @@ export function TicketTagsSection({
                     )}
                   </Badge>
                 ))}
-                <TicketTagSelectDialogEnhanced selectedTagIds={selectedTagIds} onTagsChange={onTagsChange}>
+                <TicketTagSelectDialogEnhanced
+                  selectedTagIds={selectedTagIds}
+                  onTagsChange={onTagsChange}
+                  align={popoverAlign}
+                  side={popoverSide}
+                  alignOffset={popoverAlignOffset}
+                  sideOffset={popoverSideOffset}
+                >
                   <button type="button" className="hover:bg-accent flex h-6 w-6 items-center justify-center rounded">
                     <Plus className="h-3.5 w-3.5" />
                   </button>

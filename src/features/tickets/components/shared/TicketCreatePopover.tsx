@@ -178,6 +178,8 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                 setSelectedTagIds((prev) => prev.filter((id) => id !== tagId))
               }}
               showBorderTop={true}
+              popoverAlignOffset={400}
+              popoverSideOffset={-120}
             />
 
             {/* Description欄（最下部・コンパクト表示） */}

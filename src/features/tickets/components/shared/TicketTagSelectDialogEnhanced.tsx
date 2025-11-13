@@ -19,12 +19,20 @@ interface TicketTagSelectDialogEnhancedProps {
   children: React.ReactNode
   selectedTagIds: string[]
   onTagsChange: (tagIds: string[]) => void
+  align?: 'start' | 'center' | 'end'
+  side?: 'top' | 'right' | 'bottom' | 'left'
+  alignOffset?: number
+  sideOffset?: number
 }
 
 export function TicketTagSelectDialogEnhanced({
   children,
   selectedTagIds,
   onTagsChange,
+  align = 'start',
+  side = 'bottom',
+  alignOffset = 0,
+  sideOffset = 8,
 }: TicketTagSelectDialogEnhancedProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -159,9 +167,10 @@ export function TicketTagSelectDialogEnhanced({
       <PopoverContent
         className="!border-border bg-card dark:bg-card flex flex-col gap-0 !border p-0"
         style={{ width: '720px', maxWidth: '90vw', height: '50vh' }}
-        align="end"
-        side="right"
-        sideOffset={8}
+        align={align}
+        side={side}
+        sideOffset={sideOffset}
+        alignOffset={alignOffset}
         avoidCollisions={false}
       >
         {/* ヘッダー: 検索バー + 新規作成ボタン */}

@@ -25,6 +25,7 @@ import {
   Copy,
   Edit,
   ExternalLink,
+  FileText,
   Link,
   MoreHorizontal,
   PanelRight,
@@ -557,21 +558,6 @@ export function TicketInspector() {
                   />
                 </div>
 
-                {/* 説明 */}
-                <div className="px-6">
-                  <Textarea
-                    id="description"
-                    key={ticket.id}
-                    defaultValue={ticket.description || ''}
-                    onChange={(e) => autoSave('description', e.target.value)}
-                    className="text-muted-foreground bg-card dark:bg-card h-32 max-h-32 resize-none overflow-y-auto border-0 px-0 text-sm shadow-none focus-visible:ring-0"
-                    placeholder="Add description..."
-                    style={{
-                      scrollbarColor: 'var(--color-muted-foreground) var(--color-card)',
-                    }}
-                  />
-                </div>
-
                 {/* 日付・時間 */}
                 <div className="border-border/50 border-t px-6 pt-3">
                   <div className="flex items-center gap-3">
@@ -641,7 +627,38 @@ export function TicketInspector() {
                   onTagsChange={handleTagsChange}
                   onRemoveTag={handleRemoveTag}
                   showBorderTop={true}
+                  popoverAlign="end"
+                  popoverSide="bottom"
+                  popoverAlignOffset={-80}
                 />
+
+                {/* 説明 */}
+                <div className="border-border/50 border-t px-6 py-2">
+                  <div className="flex gap-2">
+                    <FileText className="text-muted-foreground mt-[0.5rem] h-4 w-4 flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <Textarea
+                        id="description"
+                        key={ticket.id}
+                        defaultValue={ticket.description || ''}
+                        onChange={(e) => autoSave('description', e.target.value)}
+                        onInput={(e) => {
+                          const target = e.target as HTMLTextAreaElement
+                          target.style.height = 'auto'
+                          const newHeight = Math.min(target.scrollHeight, 96) // 96px = 6rem (4行分)
+                          target.style.height = `${newHeight}px`
+                        }}
+                        className="text-muted-foreground bg-card dark:bg-card max-h-[6rem] min-h-[1.5rem] resize-none border-0 px-0 text-sm shadow-none focus-visible:ring-0"
+                        placeholder="Add description..."
+                        style={{
+                          scrollbarColor: 'var(--color-muted-foreground) var(--color-card)',
+                          height: 'auto',
+                          overflowY: 'auto',
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
 
                 {/* ステータス */}
                 <div className="flex flex-col gap-4 px-6 py-4">

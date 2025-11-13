@@ -13,10 +13,8 @@ export const TicketTitleInput = forwardRef<HTMLInputElement, TicketTitleInputPro
     <Input
       {...props}
       ref={ref}
-      className={cn(
-        'bg-card dark:bg-card border-0 px-0 text-lg font-semibold shadow-none focus-visible:ring-0',
-        className
-      )}
+      className={cn('bg-card dark:bg-card border-0 px-0 font-bold shadow-none focus-visible:ring-0', className)}
+      style={{ fontSize: 'var(--font-size-xl)' }}
     />
   )
 })
