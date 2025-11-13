@@ -117,6 +117,17 @@ export function TicketInspector() {
     }
   }, [ticketData])
 
+  // Description欄の初期高さ設定
+  const descriptionRef = useRef<HTMLTextAreaElement>(null)
+  useEffect(() => {
+    if (descriptionRef.current && ticket) {
+      const textarea = descriptionRef.current
+      textarea.style.height = 'auto'
+      const newHeight = Math.min(textarea.scrollHeight, 96) // 96px = 6rem (4行分)
+      textarea.style.height = `${newHeight}px`
+    }
+  }, [ticket?.id, ticket?.description])
+
   // Inspectorの幅管理
   const [inspectorWidth, setInspectorWidth] = useState(540)
   const [isResizing, setIsResizing] = useState(false)
@@ -638,6 +649,7 @@ export function TicketInspector() {
                     <FileText className="text-muted-foreground mt-[0.5rem] h-4 w-4 flex-shrink-0" />
                     <div className="min-w-0 flex-1">
                       <Textarea
+                        ref={descriptionRef}
                         id="description"
                         key={ticket.id}
                         defaultValue={ticket.description || ''}
