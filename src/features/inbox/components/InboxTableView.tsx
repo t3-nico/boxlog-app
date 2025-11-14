@@ -195,55 +195,53 @@ export function InboxTableView() {
       {/* テーブル */}
       <div className="flex flex-1 flex-col overflow-hidden px-4 md:px-6">
         {/* テーブル部分: 枠で囲む */}
-        <div className="border-border flex-1 overflow-hidden rounded-lg border">
-          {/* ヘッダー: 固定 */}
-          <div className="overflow-x-auto">
-            <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
-              <TableHeader>
-                <TableRow>
-                  {visibleColumns.map((column) => {
-                    if (column.id === 'selection') {
-                      return (
-                        <TableHead key={column.id} style={{ width: `${column.width}px` }}>
-                          <Checkbox
-                            checked={allSelected ? true : someSelected ? 'indeterminate' : false}
-                            onCheckedChange={handleToggleAll}
-                          />
-                        </TableHead>
-                      )
-                    }
-
-                    // アイコンを取得
-                    const Icon = columnIcons[column.id as keyof typeof columnIcons]
-
-                    // tagsはソート不可
-                    if (column.id === 'tags') {
-                      return (
-                        <ResizableTableHead key={column.id} columnId={column.id} icon={Icon}>
-                          {column.label}
-                        </ResizableTableHead>
-                      )
-                    }
-
-                    // ソート可能な列（selection, tags以外）
+        <div className="border-border flex flex-1 flex-col overflow-hidden rounded-lg border">
+          <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
+            {/* ヘッダー: 固定 */}
+            <TableHeader>
+              <TableRow>
+                {visibleColumns.map((column) => {
+                  if (column.id === 'selection') {
                     return (
-                      <ResizableTableHead
-                        key={column.id}
-                        columnId={column.id}
-                        sortField={column.id as SortField}
-                        icon={Icon}
-                      >
+                      <TableHead key={column.id} style={{ width: `${column.width}px` }}>
+                        <Checkbox
+                          checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+                          onCheckedChange={handleToggleAll}
+                        />
+                      </TableHead>
+                    )
+                  }
+
+                  // アイコンを取得
+                  const Icon = columnIcons[column.id as keyof typeof columnIcons]
+
+                  // tagsはソート不可
+                  if (column.id === 'tags') {
+                    return (
+                      <ResizableTableHead key={column.id} columnId={column.id} icon={Icon}>
                         {column.label}
                       </ResizableTableHead>
                     )
-                  })}
-                </TableRow>
-              </TableHeader>
-            </Table>
-          </div>
+                  }
+
+                  // ソート可能な列（selection, tags以外）
+                  return (
+                    <ResizableTableHead
+                      key={column.id}
+                      columnId={column.id}
+                      sortField={column.id as SortField}
+                      icon={Icon}
+                    >
+                      {column.label}
+                    </ResizableTableHead>
+                  )
+                })}
+              </TableRow>
+            </TableHeader>
+          </Table>
 
           {/* ボディ: スクロール可能 */}
-          <div className="h-full overflow-x-auto overflow-y-auto" style={{ height: 'calc(100% - 41px)' }}>
+          <div className="flex-1 overflow-y-auto">
             <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
               <TableBody>
                 {paginatedItems.length === 0 ? (
