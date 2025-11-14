@@ -585,8 +585,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           }
         />
       ) : (
-        <div className="flex h-12 shrink-0 items-center justify-between px-6">
-          <div className="flex items-center gap-2">
+        <div className="flex h-12 shrink-0 items-center justify-between px-6 py-2">
+          <div className="flex h-8 items-center gap-2">
             {/* フィルタータイプドロップダウン */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -603,10 +603,12 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <Button onClick={handleStartInlineCreation} size="sm" className="h-8">
-            <Plus className="mr-2 size-4" />
-            {t('tags.page.createTag')}
-          </Button>
+          <div className="flex h-8 items-center">
+            <Button onClick={handleStartInlineCreation} size="sm" className="h-8">
+              <Plus className="mr-2 size-4" />
+              {t('tags.page.createTag')}
+            </Button>
+          </div>
         </div>
       )}
 
