@@ -4,9 +4,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { Activity, Calendar, CalendarClock, FileText, Hash, Tag } from 'lucide-react'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useInboxData } from '../hooks/useInboxData'
-import { useInboxKeyboardShortcuts } from '../hooks/useInboxKeyboardShortcuts'
 import { useInboxColumnStore } from '../stores/useInboxColumnStore'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 import { useInboxGroupStore } from '../stores/useInboxGroupStore'
@@ -21,10 +20,10 @@ import { GroupBySelector } from './table/GroupBySelector'
 import { GroupHeader } from './table/GroupHeader'
 import { InboxTableEmptyState } from './table/InboxTableEmptyState'
 import { InboxTableRow } from './table/InboxTableRow'
+import { InboxTableRowCreate } from './table/InboxTableRowCreate'
 import { ResizableTableHead } from './table/ResizableTableHead'
 import { SavedViewsSelector } from './table/SavedViewsSelector'
 import { TablePagination } from './table/TablePagination'
-import { TableToolbar } from './table/TableToolbar'
 
 // 列IDとアイコンのマッピング
 const columnIcons = {
@@ -64,9 +63,6 @@ export function InboxTableView() {
 
   // アクティブなビューを取得
   const activeView = getActiveView()
-
-  // 検索フィールドのref（キーボードショートカット用）
-  const searchInputRef = useRef<HTMLInputElement>(null)
 
   // 表示する列を取得
   const visibleColumns = getVisibleColumns()
@@ -168,13 +164,6 @@ export function InboxTableView() {
     toggleAll(currentPageIds)
   }
 
-  // キーボードショートカットを有効化
-  useInboxKeyboardShortcuts({
-    itemIds: currentPageIds,
-    searchInputRef,
-    enabled: !isLoading && !error,
-  })
-
   // エラー表示
   if (error) {
     return (
@@ -201,22 +190,19 @@ export function InboxTableView() {
 
   return (
     <div id="inbox-table-view-panel" role="tabpanel" className="flex h-full flex-col">
-      {/* ツールバー: フィルター・検索 */}
-      <div className="flex shrink-0 items-center justify-between gap-4 px-4 py-4 md:px-6">
-        <div className="flex items-center gap-2">
-          <SavedViewsSelector
-            currentState={{
-              filters: {
-                status: filters.status,
-                search: filters.search,
-              },
-              sorting: sortField && sortDirection ? { field: sortField, direction: sortDirection } : undefined,
-              pageSize,
-            }}
-          />
-          <GroupBySelector />
-        </div>
-        <TableToolbar searchInputRef={searchInputRef} />
+      {/* ツールバー: ビュー選択・グループ化 */}
+      <div className="flex shrink-0 items-center gap-2 px-4 py-4 md:px-6">
+        <SavedViewsSelector
+          currentState={{
+            filters: {
+              status: filters.status,
+              search: filters.search,
+            },
+            sorting: sortField && sortDirection ? { field: sortField, direction: sortDirection } : undefined,
+            pageSize,
+          }}
+        />
+        <GroupBySelector />
       </div>
 
       {/* 一括操作ツールバー */}
@@ -294,7 +280,13 @@ export function InboxTableView() {
                   ])
                 ) : (
                   // 通常表示
-                  paginatedItems.map((item) => <InboxTableRow key={item.id} item={item} />)
+                  <>
+                    {paginatedItems.map((item) => (
+                      <InboxTableRow key={item.id} item={item} />
+                    ))}
+                    {/* Notionスタイル：新規作成行 */}
+                    <InboxTableRowCreate />
+                  </>
                 )}
               </TableBody>
             </Table>

@@ -63,7 +63,6 @@ export function ViewSettingsDialog({ open, onOpenChange, view, currentState }: V
       // 新規ビュー作成
       createView({
         name: name.trim(),
-        type: 'table',
         filters: currentState?.filters || {},
         sorting: currentState?.sorting,
         isDefault: false,

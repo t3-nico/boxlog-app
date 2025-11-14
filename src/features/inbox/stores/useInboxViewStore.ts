@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import type { CreateInboxViewInput, InboxView, UpdateInboxViewInput } from '../types/view'
+import type { CreateInboxViewInput, DisplayMode, InboxView, UpdateInboxViewInput } from '../types/view'
 
 /**
  * Inbox View Store State
@@ -12,6 +12,9 @@ type InboxViewState = {
 
   /** 現在アクティブなView ID */
   activeViewId: string | null
+
+  /** 現在の表示形式（Board/Table） */
+  displayMode: DisplayMode
 
   /** View作成 */
   createView: (input: CreateInboxViewInput) => InboxView
@@ -24,6 +27,9 @@ type InboxViewState = {
 
   /** アクティブなViewを設定 */
   setActiveView: (id: string) => void
+
+  /** 表示形式を設定 */
+  setDisplayMode: (mode: DisplayMode) => void
 
   /** View IDから取得 */
   getViewById: (id: string) => InboxView | undefined
@@ -40,50 +46,23 @@ type InboxViewState = {
  */
 const DEFAULT_VIEWS: InboxView[] = [
   {
-    id: 'default-board',
-    name: 'Board',
-    type: 'board',
+    id: 'default-all',
+    name: 'すべてのTicket',
     filters: {},
+    sorting: {
+      field: 'created_at',
+      direction: 'desc',
+    },
+    pageSize: 20,
     isDefault: true,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    id: 'default-all',
-    name: 'すべて',
-    type: 'table',
-    filters: {},
-    sorting: {
-      field: 'created_at',
-      direction: 'desc',
-    },
-    pageSize: 20,
-    isDefault: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 'default-active',
-    name: '作業中',
-    type: 'table',
+    id: 'default-archive',
+    name: 'アーカイブ',
     filters: {
-      status: ['active'],
-    },
-    sorting: {
-      field: 'created_at',
-      direction: 'desc',
-    },
-    pageSize: 20,
-    isDefault: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: 'default-ready',
-    name: '配置済み',
-    type: 'table',
-    filters: {
-      status: ['ready'],
+      archived: true,
     },
     sorting: {
       field: 'created_at',
@@ -103,30 +82,32 @@ const DEFAULT_VIEWS: InboxView[] = [
  *
  * @example
  * ```typescript
- * const { views, createView, setActiveView } = useInboxViewStore()
+ * const { views, createView, setActiveView, displayMode, setDisplayMode } = useInboxViewStore()
  *
  * // View作成
  * const newView = createView({
  *   name: '高優先度',
- *   type: 'board',
  *   filters: { priority: ['high', 'urgent'] }
  * })
  *
  * // View切り替え
  * setActiveView(newView.id)
+ *
+ * // 表示形式切り替え
+ * setDisplayMode('table')
  * ```
  */
 export const useInboxViewStore = create<InboxViewState>()(
   persist(
     (set, get) => ({
       views: DEFAULT_VIEWS,
-      activeViewId: 'default-board',
+      activeViewId: 'default-all',
+      displayMode: 'table',
 
       createView: (input) => {
         const newView: InboxView = {
           id: `view-${Date.now()}`,
           name: input.name,
-          type: input.type,
           filters: input.filters || {},
           sorting: input.sorting,
           isDefault: input.isDefault || false,
@@ -167,7 +148,7 @@ export const useInboxViewStore = create<InboxViewState>()(
 
         // アクティブなViewを削除する場合は、デフォルトViewに切り替え
         if (activeViewId === id) {
-          set({ activeViewId: 'default-board' })
+          set({ activeViewId: 'default-all' })
         }
 
         set((state) => ({
@@ -177,6 +158,10 @@ export const useInboxViewStore = create<InboxViewState>()(
 
       setActiveView: (id) => {
         set({ activeViewId: id })
+      },
+
+      setDisplayMode: (mode) => {
+        set({ displayMode: mode })
       },
 
       getViewById: (id) => {
@@ -198,7 +183,7 @@ export const useInboxViewStore = create<InboxViewState>()(
       },
     }),
     {
-      name: 'inbox-view-storage',
+      name: 'inbox-view-storage-v2',
     }
   )
 )
