@@ -15,6 +15,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -33,20 +34,6 @@ import type { TagWithChildren } from '@/types/tags'
 
 type SortField = 'name' | 'created_at'
 type SortDirection = 'asc' | 'desc'
-
-// プリセットカラー（10色）
-const PRESET_COLORS = [
-  { name: '青', value: '#3B82F6' },
-  { name: '緑', value: '#10B981' },
-  { name: '赤', value: '#EF4444' },
-  { name: '黄', value: '#F59E0B' },
-  { name: '紫', value: '#8B5CF6' },
-  { name: 'ピンク', value: '#EC4899' },
-  { name: 'シアン', value: '#06B6D4' },
-  { name: 'オレンジ', value: '#F97316' },
-  { name: 'グレー', value: '#6B7280' },
-  { name: 'インディゴ', value: '#6366F1' },
-]
 
 export function ArchivePageClient() {
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
@@ -376,27 +363,11 @@ export function ArchivePageClient() {
                                 aria-label="カラーを変更"
                               />
                             </PopoverTrigger>
-                            <PopoverContent className="w-64 p-3" align="start">
-                              <div className="space-y-2">
-                                <h4 className="text-sm font-semibold">カラーを選択</h4>
-                                <div className="grid grid-cols-5 gap-2">
-                                  {PRESET_COLORS.map((presetColor) => (
-                                    <button
-                                      key={presetColor.value}
-                                      type="button"
-                                      onClick={() => handleColorChange(tag.id, presetColor.value)}
-                                      className={`h-10 w-full rounded-md border-2 transition-all hover:scale-110 ${
-                                        tag.color === presetColor.value
-                                          ? 'border-foreground ring-2 ring-offset-2'
-                                          : 'border-border hover:border-foreground/50'
-                                      }`}
-                                      style={{ backgroundColor: presetColor.value }}
-                                      title={presetColor.name}
-                                      aria-label={presetColor.name}
-                                    />
-                                  ))}
-                                </div>
-                              </div>
+                            <PopoverContent className="w-auto p-3" align="start">
+                              <ColorPalettePicker
+                                selectedColor={tag.color || '#3B82F6'}
+                                onColorSelect={(color) => handleColorChange(tag.id, color)}
+                              />
                             </PopoverContent>
                           </Popover>
                         </TableCell>

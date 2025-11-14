@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   Dialog,
   DialogContent,
@@ -17,20 +18,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import type { CreateTagInput, TagGroup, TagLevel } from '@/types/tags'
-
-// プリセットカラー（10色）
-const PRESET_COLORS = [
-  { name: '青', value: '#3B82F6' },
-  { name: '緑', value: '#10B981' },
-  { name: '赤', value: '#EF4444' },
-  { name: '黄', value: '#F59E0B' },
-  { name: '紫', value: '#8B5CF6' },
-  { name: 'ピンク', value: '#EC4899' },
-  { name: 'シアン', value: '#06B6D4' },
-  { name: 'オレンジ', value: '#F97316' },
-  { name: 'グレー', value: '#6B7280' },
-  { name: 'インディゴ', value: '#6366F1' },
-]
 
 interface TagCreateModalProps {
   isOpen: boolean
@@ -125,21 +112,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
             {/* カラー */}
             <div className="grid gap-2">
               <Label htmlFor="color">カラー</Label>
-              <div className="grid grid-cols-5 gap-2">
-                {PRESET_COLORS.map((presetColor) => (
-                  <button
-                    key={presetColor.value}
-                    type="button"
-                    onClick={() => setColor(presetColor.value)}
-                    className={`h-10 w-full rounded-md border-2 transition-all ${
-                      color === presetColor.value ? 'border-foreground ring-2 ring-offset-2' : 'border-transparent'
-                    }`}
-                    style={{ backgroundColor: presetColor.value }}
-                    title={presetColor.name}
-                    aria-label={presetColor.name}
-                  />
-                ))}
-              </div>
+              <ColorPalettePicker selectedColor={color} onColorSelect={setColor} />
             </div>
 
             {/* グループ */}
