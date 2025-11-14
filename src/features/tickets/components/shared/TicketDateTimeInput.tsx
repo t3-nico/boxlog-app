@@ -19,6 +19,24 @@ const generateTimeOptions = () => {
 
 const TIME_OPTIONS = generateTimeOptions()
 
+// 現在時刻を最も近い15分単位に丸める
+const getCurrentRoundedTime = (): string => {
+  const now = new Date()
+  const minutes = now.getMinutes()
+  const roundedMinutes = Math.round(minutes / 15) * 15
+
+  let hour = now.getHours()
+  let finalMinutes = roundedMinutes
+
+  // 60分になった場合は次の時間に繰り上げ
+  if (roundedMinutes === 60) {
+    hour = (hour + 1) % 24
+    finalMinutes = 0
+  }
+
+  return `${hour.toString().padStart(2, '0')}:${finalMinutes.toString().padStart(2, '0')}`
+}
+
 interface TicketDateTimeInputProps {
   selectedDate: Date | undefined
   startTime: string
@@ -64,8 +82,21 @@ export function TicketDateTimeInput({
 
         <DatePickerPopover selectedDate={selectedDate} onDateChange={onDateChange} />
 
-        <Select value={startTime} onValueChange={onStartTimeChange}>
-          <SelectTrigger className="w-auto !border-0 !bg-transparent !shadow-none hover:!bg-transparent focus:!ring-0 [&_svg]:hidden">
+        <Select
+          value={startTime}
+          onValueChange={onStartTimeChange}
+          onOpenChange={(open) => {
+            // 開いた時、開始時間が未設定なら現在時刻（15分単位）を自動設定
+            if (open && !startTime) {
+              onStartTimeChange(getCurrentRoundedTime())
+            }
+          }}
+        >
+          <SelectTrigger
+            className={`hover:!bg-accent !border-0 !bg-transparent !shadow-none focus:!ring-0 [&_svg]:hidden ${
+              startTime ? 'w-[3.5rem]' : 'w-auto px-2'
+            }`}
+          >
             <SelectValue placeholder="開始" />
           </SelectTrigger>
           <SelectContent side="bottom" align="start" className="max-h-[240px] overflow-y-auto">
@@ -80,7 +111,11 @@ export function TicketDateTimeInput({
         <span className="text-muted-foreground">→</span>
 
         <Select value={endTime} onValueChange={onEndTimeChange} disabled={!startTime}>
-          <SelectTrigger className="w-auto !border-0 !bg-transparent !shadow-none hover:!bg-transparent focus:!ring-0 [&_svg]:hidden">
+          <SelectTrigger
+            className={`hover:!bg-accent !border-0 !bg-transparent !shadow-none focus:!ring-0 [&_svg]:hidden ${
+              endTime ? 'w-[3.5rem]' : 'w-auto px-2'
+            }`}
+          >
             <SelectValue placeholder="終了" />
           </SelectTrigger>
           <SelectContent side="bottom" align="start" className="max-h-[240px] overflow-y-auto">
@@ -94,9 +129,26 @@ export function TicketDateTimeInput({
 
               if (endMinutes <= startMinutes) return null
 
+              // 経過時間を計算
+              const diffMinutes = endMinutes - startMinutes
+              const hours = Math.floor(diffMinutes / 60)
+              const minutes = diffMinutes % 60
+
+              let durationLabel = ''
+              if (hours > 0 && minutes > 0) {
+                durationLabel = `${hours}時間${minutes}分`
+              } else if (hours > 0) {
+                durationLabel = `${hours}時間`
+              } else {
+                durationLabel = `${minutes}分`
+              }
+
               return (
                 <SelectItem key={`end-${time}`} value={time}>
-                  {time}
+                  <div className="flex items-center gap-1">
+                    <span>{time}</span>
+                    <span className="text-muted-foreground">({durationLabel})</span>
+                  </div>
                 </SelectItem>
               )
             })}
