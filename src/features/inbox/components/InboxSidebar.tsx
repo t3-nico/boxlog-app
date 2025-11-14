@@ -40,7 +40,15 @@ export function InboxSidebar({
     (viewId: string) => {
       setActiveView(viewId)
       const locale = pathname?.split('/')[1] || 'ja'
-      router.push(`/${locale}/inbox?view=${viewId}`)
+
+      // URLパスマッピング
+      const pathMap: Record<string, string> = {
+        'default-all': 'all',
+        'default-archive': 'archive',
+      }
+
+      const path = pathMap[viewId] || `view/${viewId}`
+      router.push(`/${locale}/inbox/${path}`)
     },
     [setActiveView, router, pathname]
   )

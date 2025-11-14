@@ -5,6 +5,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components
 import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { Activity, Calendar, CalendarClock, FileText, Hash, Tag } from 'lucide-react'
 import { useEffect, useMemo } from 'react'
+
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxColumnStore } from '../stores/useInboxColumnStore'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
@@ -16,13 +17,11 @@ import { useInboxSortStore } from '../stores/useInboxSortStore'
 import { useInboxViewStore } from '../stores/useInboxViewStore'
 import { groupItems } from '../utils/grouping'
 import { BulkActionsToolbar } from './table/BulkActionsToolbar'
-import { GroupBySelector } from './table/GroupBySelector'
 import { GroupHeader } from './table/GroupHeader'
 import { InboxTableEmptyState } from './table/InboxTableEmptyState'
 import { InboxTableRow } from './table/InboxTableRow'
 import { InboxTableRowCreate } from './table/InboxTableRowCreate'
 import { ResizableTableHead } from './table/ResizableTableHead'
-import { SavedViewsSelector } from './table/SavedViewsSelector'
 import { TablePagination } from './table/TablePagination'
 
 // 列IDとアイコンのマッピング
@@ -190,21 +189,6 @@ export function InboxTableView() {
 
   return (
     <div id="inbox-table-view-panel" role="tabpanel" className="flex h-full flex-col">
-      {/* ツールバー: ビュー選択・グループ化 */}
-      <div className="flex shrink-0 items-center gap-2 px-4 py-4 md:px-6">
-        <SavedViewsSelector
-          currentState={{
-            filters: {
-              status: filters.status,
-              search: filters.search,
-            },
-            sorting: sortField && sortDirection ? { field: sortField, direction: sortDirection } : undefined,
-            pageSize,
-          }}
-        />
-        <GroupBySelector />
-      </div>
-
       {/* 一括操作ツールバー */}
       <BulkActionsToolbar />
 
