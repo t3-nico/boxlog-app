@@ -6,6 +6,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { Edit, Folder, MoreHorizontal, Palette, Trash2 } from 'lucide-react'
 import { useCallback } from 'react'
 
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,19 +22,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { GroupNameWithTooltip } from '@/features/tags/components/GroupNameWithTooltip'
 import type { TagGroup } from '@/types/tags'
-
-const COLOR_PALETTE = [
-  '#3B82F6',
-  '#10B981',
-  '#EF4444',
-  '#F59E0B',
-  '#8B5CF6',
-  '#EC4899',
-  '#06B6D4',
-  '#F97316',
-  '#6B7280',
-  '#6366F1',
-]
 
 interface SortableGroupItemProps {
   group: TagGroup
@@ -136,31 +124,14 @@ export function SortableGroupItem({
                 className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
                 aria-label={t('tags.sidebar.changeColorAria', { name: group.name })}
               >
-                <Folder
-                  className="h-4 w-4"
-                  style={{ color: group.color || '#6B7280' }}
-                  fill={group.color || '#6B7280'}
-                />
+                <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || '#6B7280' }} />
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-3" align="start">
-              <div className="grid grid-cols-5 gap-2">
-                {COLOR_PALETTE.map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={async (e) => {
-                      e.stopPropagation()
-                      await onUpdateColor(group.id, color)
-                    }}
-                    className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                      group.color === color ? 'border-foreground scale-110' : 'border-transparent'
-                    }`}
-                    style={{ backgroundColor: color }}
-                    aria-label={t('tags.sidebar.colorLabel', { color })}
-                  />
-                ))}
-              </div>
+              <ColorPalettePicker
+                selectedColor={group.color || '#6B7280'}
+                onColorSelect={(color) => onUpdateColor(group.id, color)}
+              />
             </PopoverContent>
           </Popover>
 
@@ -215,24 +186,11 @@ export function SortableGroupItem({
                   <Palette className="mr-2 h-4 w-4" />
                   {t('tags.sidebar.changeColor')}
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <div className="grid grid-cols-5 gap-2 p-2">
-                    {COLOR_PALETTE.map((color) => (
-                      <button
-                        key={color}
-                        type="button"
-                        onClick={async (e) => {
-                          e.stopPropagation()
-                          await onUpdateColor(group.id, color)
-                        }}
-                        className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                          group.color === color ? 'border-foreground scale-110' : 'border-transparent'
-                        }`}
-                        style={{ backgroundColor: color }}
-                        aria-label={t('tags.sidebar.colorLabel', { color })}
-                      />
-                    ))}
-                  </div>
+                <DropdownMenuSubContent className="w-auto p-3">
+                  <ColorPalettePicker
+                    selectedColor={group.color || '#6B7280'}
+                    onColorSelect={(color) => onUpdateColor(group.id, color)}
+                  />
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
               <DropdownMenuSeparator />

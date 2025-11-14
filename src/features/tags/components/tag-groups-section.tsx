@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -247,47 +248,25 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                       </button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-3" align="start">
-                      <div className="grid grid-cols-5 gap-2">
-                        {[
-                          '#3B82F6',
-                          '#10B981',
-                          '#EF4444',
-                          '#F59E0B',
-                          '#8B5CF6',
-                          '#EC4899',
-                          '#06B6D4',
-                          '#F97316',
-                          '#6B7280',
-                          '#6366F1',
-                        ].map((color) => (
-                          <button
-                            key={color}
-                            type="button"
-                            onClick={async (e) => {
-                              e.stopPropagation()
-                              try {
-                                await updateGroupMutation.mutateAsync({
-                                  id: group.id,
-                                  data: {
-                                    name: group.name,
-                                    description: group.description,
-                                    color,
-                                  },
-                                })
-                                toast.success('カラーを変更しました')
-                              } catch (error) {
-                                console.error('Failed to update group color:', error)
-                                toast.error('カラーの変更に失敗しました')
-                              }
-                            }}
-                            className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                              group.color === color ? 'border-foreground scale-110' : 'border-transparent'
-                            }`}
-                            style={{ backgroundColor: color }}
-                            aria-label={`カラー ${color}`}
-                          />
-                        ))}
-                      </div>
+                      <ColorPalettePicker
+                        selectedColor={group.color || '#6B7280'}
+                        onColorSelect={async (color) => {
+                          try {
+                            await updateGroupMutation.mutateAsync({
+                              id: group.id,
+                              data: {
+                                name: group.name,
+                                description: group.description,
+                                color,
+                              },
+                            })
+                            toast.success('カラーを変更しました')
+                          } catch (error) {
+                            console.error('Failed to update group color:', error)
+                            toast.error('カラーの変更に失敗しました')
+                          }
+                        }}
+                      />
                     </PopoverContent>
                   </Popover>
 
@@ -390,31 +369,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                     </button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-3" align="start">
-                    <div className="grid grid-cols-5 gap-2">
-                      {[
-                        '#3B82F6',
-                        '#10B981',
-                        '#EF4444',
-                        '#F59E0B',
-                        '#8B5CF6',
-                        '#EC4899',
-                        '#06B6D4',
-                        '#F97316',
-                        '#6B7280',
-                        '#6366F1',
-                      ].map((color) => (
-                        <button
-                          key={color}
-                          type="button"
-                          onClick={() => setNewGroupColor(color)}
-                          className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                            newGroupColor === color ? 'border-foreground scale-110' : 'border-transparent'
-                          }`}
-                          style={{ backgroundColor: color }}
-                          aria-label={`カラー ${color}`}
-                        />
-                      ))}
-                    </div>
+                    <ColorPalettePicker selectedColor={newGroupColor} onColorSelect={setNewGroupColor} />
                   </PopoverContent>
                 </Popover>
 

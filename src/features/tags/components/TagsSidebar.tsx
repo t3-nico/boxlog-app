@@ -2,11 +2,12 @@
 
 import { DndContext, DragOverlay, closestCenter, useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { Archive, Folder, FolderOpen, Plus, Tags } from 'lucide-react'
+import { Archive, Folder, FolderX, Plus, Tags } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
@@ -320,7 +321,7 @@ export function TagsSidebar({
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <FolderOpen className="h-4 w-4 shrink-0" />
+            <FolderX className="h-4 w-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
             <span>{t('tags.sidebar.uncategorized')}</span>
           </div>
           <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>
@@ -447,11 +448,7 @@ export function TagsSidebar({
                   {activeGroup ? (
                     <div className="bg-accent text-accent-foreground w-full rounded-md px-3 py-2 text-left text-sm font-medium opacity-80 shadow-lg">
                       <div className="flex items-center gap-2">
-                        <Folder
-                          className="h-4 w-4"
-                          style={{ color: activeGroup.color || '#6B7280' }}
-                          fill={activeGroup.color || '#6B7280'}
-                        />
+                        <Folder className="h-4 w-4 shrink-0" style={{ color: activeGroup.color || '#6B7280' }} />
                         <span className="flex-1 truncate">{activeGroup.name}</span>
                         <span className="text-muted-foreground text-xs">{getGroupTagCount(activeGroup.id)}</span>
                       </div>
@@ -472,35 +469,11 @@ export function TagsSidebar({
                           className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
                           aria-label={t('tags.sidebar.changeColor')}
                         >
-                          <Folder className="h-4 w-4" style={{ color: newGroupColor }} fill={newGroupColor} />
+                          <Folder className="h-4 w-4 shrink-0" style={{ color: newGroupColor }} />
                         </button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-3" align="start">
-                        <div className="grid grid-cols-5 gap-2">
-                          {[
-                            '#3B82F6',
-                            '#10B981',
-                            '#EF4444',
-                            '#F59E0B',
-                            '#8B5CF6',
-                            '#EC4899',
-                            '#06B6D4',
-                            '#F97316',
-                            '#6B7280',
-                            '#6366F1',
-                          ].map((color) => (
-                            <button
-                              key={color}
-                              type="button"
-                              onClick={() => setNewGroupColor(color)}
-                              className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                                newGroupColor === color ? 'border-foreground scale-110' : 'border-transparent'
-                              }`}
-                              style={{ backgroundColor: color }}
-                              aria-label={t('tags.sidebar.colorLabel', { color })}
-                            />
-                          ))}
-                        </div>
+                        <ColorPalettePicker selectedColor={newGroupColor} onColorSelect={setNewGroupColor} />
                       </PopoverContent>
                     </Popover>
 

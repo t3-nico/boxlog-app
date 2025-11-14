@@ -1,6 +1,6 @@
 'use client'
 
-import { Archive, Eye, Folder, Pencil, Trash2 } from 'lucide-react'
+import { Archive, Eye, Folder, FolderX, Pencil, Trash2 } from 'lucide-react'
 
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 
@@ -89,12 +89,13 @@ export function TagActionMenuItems({
         items: [
           {
             key: 'no-group',
+            icon: <FolderX className="mr-2 h-4 w-4 text-neutral-600 dark:text-neutral-400" />,
             label: t('tags.page.noGroup'),
             onClick: () => onMoveToGroup(tag, null),
           },
           ...groups.map((group) => ({
             key: group.id,
-            icon: <div className="mr-2 h-3 w-3 rounded-full" style={{ backgroundColor: group.color || '#6B7280' }} />,
+            icon: <Folder className="mr-2 h-4 w-4" style={{ color: group.color || '#6B7280' }} />,
             label: group.name,
             onClick: () => onMoveToGroup(tag, group.id),
           })),

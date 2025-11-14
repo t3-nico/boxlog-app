@@ -7,6 +7,8 @@ import {
   ChevronDown as ChevronDownIcon,
   ChevronRight as ChevronRightIcon,
   MoreHorizontal as EllipsisHorizontalIcon,
+  Folder as FolderIcon,
+  FolderOpen as FolderOpenIcon,
   Pencil as PencilIcon,
   Plus as PlusIcon,
   Tag as TagIcon,
@@ -157,8 +159,14 @@ const TagItem = ({
 
           {/* タグアイコン */}
           {(() => {
-            const IconComponent =
-              tag.icon && tagIconMapping[tag.icon as TagIconName] ? tagIconMapping[tag.icon as TagIconName] : TagIcon
+            // 子タグを持つ場合はフォルダアイコン、それ以外は通常のタグアイコン
+            const IconComponent = hasChildren
+              ? isExpanded
+                ? FolderOpenIcon
+                : FolderIcon
+              : tag.icon && tagIconMapping[tag.icon as TagIconName]
+                ? tagIconMapping[tag.icon as TagIconName]
+                : TagIcon
             return (
               <div
                 className="relative"
@@ -346,12 +354,19 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
         <button
           type="button"
           onClick={handleToggleExpansion}
-          className="section-header-toggle mb-2 flex items-center rounded px-2 text-xs/6 font-medium text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700"
+          className="section-header-toggle mb-2 flex items-center gap-1 rounded px-2 text-xs/6 font-medium text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700"
         >
-          <span className="peer">Tags</span>
-          <span className="ml-1 opacity-0 transition-opacity peer-hover:opacity-100">
-            {isExpanded ? <ChevronDownIcon className="h-4 w-4" /> : <ChevronRightIcon className="h-4 w-4" />}
-          </span>
+          {isExpanded ? (
+            <ChevronDownIcon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+          ) : (
+            <ChevronRightIcon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+          )}
+          {isExpanded ? (
+            <FolderOpenIcon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+          ) : (
+            <FolderIcon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+          )}
+          <span>Tags</span>
         </button>
 
         <button

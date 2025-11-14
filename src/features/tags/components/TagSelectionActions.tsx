@@ -1,6 +1,6 @@
 'use client'
 
-import { Archive, Folder, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Archive, Folder, FolderX, MoreHorizontal, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -70,7 +70,7 @@ export function TagSelectionActions({
             </TooltipTrigger>
             <TooltipContent>{t('tags.page.moveToGroup')}</TooltipContent>
           </Tooltip>
-          <DropdownMenuContent>
+          <DropdownMenuContent className="min-w-[200px]">
             <DropdownMenuItem
               onClick={() => {
                 selectedTagIds.forEach((tagId) => {
@@ -79,6 +79,7 @@ export function TagSelectionActions({
                 })
               }}
             >
+              <FolderX className="mr-2 h-4 w-4 text-neutral-600 dark:text-neutral-400" />
               {t('tags.page.noGroup')}
             </DropdownMenuItem>
             {groups.map((group) => (
@@ -91,7 +92,7 @@ export function TagSelectionActions({
                   })
                 }}
               >
-                <div className="mr-2 h-3 w-3 rounded-full" style={{ backgroundColor: group.color || '#6B7280' }} />
+                <Folder className="mr-2 h-4 w-4" style={{ color: group.color || '#6B7280' }} />
                 {group.name}
               </DropdownMenuItem>
             ))}
@@ -188,7 +189,7 @@ export function TagSelectionActions({
                     {trigger.icon}
                     {trigger.label}
                   </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent>
+                  <DropdownMenuSubContent className="min-w-[200px]">
                     {items.map((item) => (
                       <DropdownMenuItem key={item.key} onClick={item.onClick}>
                         {item.icon}

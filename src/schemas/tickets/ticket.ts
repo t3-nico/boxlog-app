@@ -25,6 +25,7 @@ export const ticketIdSchema = z.object({
 export const ticketFilterSchema = z.object({
   status: ticketStatusSchema.optional(),
   search: z.string().optional(),
+  tagId: z.string().uuid().optional(), // タグIDでフィルタ
   // ソート
   sortBy: z.enum(['created_at', 'updated_at', 'due_date', 'title']).optional(),
   sortOrder: z.enum(['asc', 'desc']).optional(),

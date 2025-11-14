@@ -1,11 +1,23 @@
 'use client'
 
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, Filter, Plus } from 'lucide-react'
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  Folder,
+  Hash,
+  Plus,
+} from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -33,6 +45,7 @@ import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useCreateTag, useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
 import { useToast } from '@/lib/toast/use-toast'
+import { api } from '@/lib/trpc'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 
 interface TagsPageClientProps {
@@ -68,6 +81,9 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const [editValue, setEditValue] = useState('')
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
+
+  // タグごとのチケット数を取得
+  const { data: tagTicketCounts = {} } = api.tickets.getTagTicketCounts.useQuery()
 
   // アクティブなタグ数を計算
   const activeTagsCount = useMemo(() => {
@@ -415,11 +431,17 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   }
 
   // 一括選択
-  const allSelected = displayTags.length > 0 && selectedTagIds.length === displayTags.length
-  const someSelected = selectedTagIds.length > 0 && selectedTagIds.length < displayTags.length
+  const getCheckboxState = (): boolean | 'indeterminate' => {
+    if (displayTags.length === 0) return false
+    if (selectedTagIds.length === 0) return false
+    if (selectedTagIds.length === displayTags.length) return true
+    return 'indeterminate'
+  }
+
+  const checkboxState = getCheckboxState()
 
   const handleSelectAll = () => {
-    if (allSelected) {
+    if (selectedTagIds.length === displayTags.length) {
       setSelectedTagIds([])
     } else {
       setSelectedTagIds(displayTags.map((tag) => tag.id))
@@ -621,7 +643,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                   <TableRow>
                     <TableHead className="relative" style={{ width: `${columnWidths.select}px` }}>
                       <Checkbox
-                        checked={allSelected}
+                        checked={checkboxState}
                         onCheckedChange={handleSelectAll}
                         aria-label={t('tags.page.selectAll')}
                       />
@@ -630,8 +652,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                       ID
                       <ResizeHandle columnId="id" />
                     </TableHead>
-                    <TableHead className="relative" style={{ width: `${columnWidths.color}px` }}></TableHead>
-                    <TableHead className="relative" style={{ width: `${columnWidths.name}px` }}>
+                    <TableHead className="relative" style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
                       <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
                         {t('tags.page.name')}
                         {sortField === 'name' &&
@@ -694,40 +715,65 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           >
                             t-{tag.tag_number}
                           </TableCell>
-                          <TableCell className="pr-1" style={{ width: `${columnWidths.color}px` }}>
-                            <div
-                              className="h-3 w-3 rounded-full"
-                              style={{ backgroundColor: tag.color || '#3B82F6' }}
-                              aria-label="タグカラー"
-                            />
-                          </TableCell>
-                          <TableCell className="pl-1 font-medium" style={{ width: `${columnWidths.name}px` }}>
-                            {editingTagId === tag.id && editingField === 'name' ? (
-                              <Input
-                                value={editValue}
-                                onChange={(e) => setEditValue(e.target.value)}
-                                onBlur={() => saveInlineEdit(tag.id)}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    saveInlineEdit(tag.id)
-                                  } else if (e.key === 'Escape') {
-                                    cancelEditing()
-                                  }
-                                }}
-                                autoFocus
-                                className="h-7 px-2"
-                              />
-                            ) : (
-                              <span
-                                className="cursor-pointer hover:underline"
-                                onClick={() => {
-                                  const locale = pathname?.split('/')[1] || 'ja'
-                                  router.push(`/${locale}/tags/t-${tag.tag_number}`)
-                                }}
-                              >
-                                {tag.name} <span className="text-muted-foreground">(0)</span>
-                              </span>
-                            )}
+                          <TableCell
+                            className="font-medium"
+                            style={{ width: `${columnWidths.color + columnWidths.name}px` }}
+                          >
+                            <div className="flex items-center gap-2">
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <button
+                                    type="button"
+                                    className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                                    aria-label="カラーを変更"
+                                  >
+                                    <Hash
+                                      className="h-4 w-4"
+                                      style={{ color: tag.color || '#3B82F6' }}
+                                      aria-label="タグカラー"
+                                    />
+                                  </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-3" align="start">
+                                  <ColorPalettePicker
+                                    selectedColor={tag.color || '#3B82F6'}
+                                    onColorSelect={(color) => {
+                                      updateTagMutation.mutate({
+                                        id: tag.id,
+                                        data: { color },
+                                      })
+                                    }}
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                              {editingTagId === tag.id && editingField === 'name' ? (
+                                <Input
+                                  value={editValue}
+                                  onChange={(e) => setEditValue(e.target.value)}
+                                  onBlur={() => saveInlineEdit(tag.id)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      saveInlineEdit(tag.id)
+                                    } else if (e.key === 'Escape') {
+                                      cancelEditing()
+                                    }
+                                  }}
+                                  autoFocus
+                                  className="h-7 px-2"
+                                />
+                              ) : (
+                                <span
+                                  className="cursor-pointer hover:underline"
+                                  onClick={() => {
+                                    const locale = pathname?.split('/')[1] || 'ja'
+                                    router.push(`/${locale}/tags/t-${tag.tag_number}`)
+                                  }}
+                                >
+                                  {tag.name}{' '}
+                                  <span className="text-muted-foreground">({tagTicketCounts[tag.id] || 0})</span>
+                                </span>
+                              )}
+                            </div>
                           </TableCell>
                           <TableCell
                             className="text-muted-foreground"
@@ -753,10 +799,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                 ).length
                                 return (
                                   <div className="flex items-center gap-1">
-                                    <div
-                                      className="h-2 w-2 shrink-0 rounded-full"
-                                      style={{ backgroundColor: group.color || '#6B7280' }}
-                                    />
+                                    <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || '#6B7280' }} />
                                     <span className="text-sm">
                                       {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
                                     </span>
@@ -809,7 +852,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                 {trigger.icon}
                                 {trigger.label}
                               </ContextMenuSubTrigger>
-                              <ContextMenuSubContent>
+                              <ContextMenuSubContent className="min-w-[200px]">
                                 {items.map((item) => (
                                   <ContextMenuItem key={item.key} onClick={item.onClick}>
                                     {item.icon}
@@ -834,65 +877,37 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                       >
                         -
                       </TableCell>
-                      <TableCell className="pr-1" style={{ width: `${columnWidths.color}px` }}>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <button
-                              type="button"
-                              className="hover:ring-offset-background focus-visible:ring-ring transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                              aria-label="カラーを変更"
-                            >
-                              <div
-                                className="h-3 w-3 rounded-full"
-                                style={{ backgroundColor: newTagColor }}
-                                aria-label="タグカラー"
-                              />
-                            </button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-3" align="start">
-                            <div className="grid grid-cols-5 gap-2">
-                              {[
-                                '#3B82F6',
-                                '#10B981',
-                                '#EF4444',
-                                '#F59E0B',
-                                '#8B5CF6',
-                                '#EC4899',
-                                '#06B6D4',
-                                '#F97316',
-                                '#6B7280',
-                                '#6366F1',
-                              ].map((color) => (
-                                <button
-                                  key={color}
-                                  type="button"
-                                  onClick={() => setNewTagColor(color)}
-                                  className={`h-8 w-8 shrink-0 rounded border-2 transition-all ${
-                                    newTagColor === color ? 'border-foreground scale-110' : 'border-transparent'
-                                  }`}
-                                  style={{ backgroundColor: color }}
-                                  aria-label={`カラー ${color}`}
-                                />
-                              ))}
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      </TableCell>
-                      <TableCell className="pl-1" style={{ width: `${columnWidths.name}px` }}>
-                        <Input
-                          value={newTagName}
-                          onChange={(e) => setNewTagName(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleSaveInlineTag()
-                            } else if (e.key === 'Escape') {
-                              handleCancelInlineCreation()
-                            }
-                          }}
-                          placeholder={t('tags.page.name')}
-                          autoFocus
-                          className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
-                        />
+                      <TableCell style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
+                        <div className="flex items-center gap-2">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button
+                                type="button"
+                                className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                                aria-label="カラーを変更"
+                              >
+                                <Hash className="h-4 w-4" style={{ color: newTagColor }} aria-label="タグカラー" />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-3" align="start">
+                              <ColorPalettePicker selectedColor={newTagColor} onColorSelect={setNewTagColor} />
+                            </PopoverContent>
+                          </Popover>
+                          <Input
+                            value={newTagName}
+                            onChange={(e) => setNewTagName(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleSaveInlineTag()
+                              } else if (e.key === 'Escape') {
+                                handleCancelInlineCreation()
+                              }
+                            }}
+                            placeholder={t('tags.page.name')}
+                            autoFocus
+                            className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
+                          />
+                        </div>
                       </TableCell>
                       <TableCell style={{ width: `${columnWidths.description}px` }}>
                         <Input
@@ -921,10 +936,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               ).length
                               return (
                                 <div className="flex items-center gap-1">
-                                  <div
-                                    className="h-2 w-2 shrink-0 rounded-full"
-                                    style={{ backgroundColor: group.color || '#6B7280' }}
-                                  />
+                                  <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || '#6B7280' }} />
                                   <span className="text-sm">
                                     {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
                                   </span>
