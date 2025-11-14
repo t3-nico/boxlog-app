@@ -431,11 +431,17 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   }
 
   // 一括選択
-  const allSelected = displayTags.length > 0 && selectedTagIds.length === displayTags.length
-  const someSelected = selectedTagIds.length > 0 && selectedTagIds.length < displayTags.length
+  const getCheckboxState = (): boolean | 'indeterminate' => {
+    if (displayTags.length === 0) return false
+    if (selectedTagIds.length === 0) return false
+    if (selectedTagIds.length === displayTags.length) return true
+    return 'indeterminate'
+  }
+
+  const checkboxState = getCheckboxState()
 
   const handleSelectAll = () => {
-    if (allSelected) {
+    if (selectedTagIds.length === displayTags.length) {
       setSelectedTagIds([])
     } else {
       setSelectedTagIds(displayTags.map((tag) => tag.id))
@@ -637,7 +643,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                   <TableRow>
                     <TableHead className="relative" style={{ width: `${columnWidths.select}px` }}>
                       <Checkbox
-                        checked={allSelected}
+                        checked={checkboxState}
                         onCheckedChange={handleSelectAll}
                         aria-label={t('tags.page.selectAll')}
                       />

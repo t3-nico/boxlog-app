@@ -20,22 +20,19 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '�
   const calendarRef = useRef<HTMLDivElement>(null)
   const [showCalendar, setShowCalendar] = useState(false)
 
-  // ボタンの位置を計算して返す関数
   const getPosition = () => {
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect()
       return {
-        top: rect.bottom + window.scrollY + 8,
+        top: rect.bottom + window.scrollY + 4,
         left: rect.left + window.scrollX,
       }
     }
     return { top: 0, left: 0 }
   }
 
-  // 外側クリックでカレンダーを閉じる
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // コンテナとカレンダーの両方を確認
       const isOutsideContainer = containerRef.current && !containerRef.current.contains(event.target as Node)
       const isOutsideCalendar = calendarRef.current && !calendarRef.current.contains(event.target as Node)
 
@@ -44,11 +41,13 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '�
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
+    if (showCalendar) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
     }
-  }, [])
+  }, [showCalendar])
 
   const handleDateSelect = (date: Date | undefined) => {
     onDateChange(date)
@@ -74,13 +73,19 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '�
         <Portal.Root>
           <div
             ref={calendarRef}
-            className="border-input bg-popover text-popover-foreground fixed z-[9999] w-fit rounded-md border p-3 shadow-lg"
+            className="bg-popover text-popover-foreground border-border fixed z-[9999] w-auto overflow-hidden rounded-md border p-0 shadow-lg"
             style={{
               top: `${getPosition().top}px`,
               left: `${getPosition().left}px`,
             }}
           >
-            <Calendar mode="single" selected={selectedDate} onSelect={handleDateSelect} initialFocus />
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              captionLayout="dropdown"
+              onSelect={handleDateSelect}
+              initialFocus
+            />
           </div>
         </Portal.Root>
       )}

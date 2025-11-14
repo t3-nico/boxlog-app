@@ -101,6 +101,38 @@ export function TicketTagSelectDialogEnhanced({
     }
   }
 
+  // 全選択/全解除
+  const handleToggleAll = () => {
+    const activeFilteredTagIds = filteredTags.filter((tag) => tag.is_active).map((tag) => tag.id)
+
+    if (activeFilteredTagIds.length === 0) return
+
+    const allSelected = activeFilteredTagIds.every((id) => selectedTagIds.includes(id))
+
+    if (allSelected) {
+      // 全解除: フィルタされたタグを選択から除外
+      onTagsChange(selectedTagIds.filter((id) => !activeFilteredTagIds.includes(id)))
+    } else {
+      // 全選択: フィルタされたタグを選択に追加（重複除外）
+      const newSelection = [...new Set([...selectedTagIds, ...activeFilteredTagIds])]
+      onTagsChange(newSelection)
+    }
+  }
+
+  // チェックボックスの状態を計算
+  const getCheckboxState = (): boolean | 'indeterminate' => {
+    const activeFilteredTagIds = filteredTags.filter((tag) => tag.is_active).map((tag) => tag.id)
+    if (activeFilteredTagIds.length === 0) return false
+
+    const selectedCount = activeFilteredTagIds.filter((id) => selectedTagIds.includes(id)).length
+
+    if (selectedCount === 0) return false
+    if (selectedCount === activeFilteredTagIds.length) return true
+    return 'indeterminate'
+  }
+
+  const checkboxState = getCheckboxState()
+
   // タグ作成
   const handleCreateTag = async () => {
     if (!newTagName.trim()) return
@@ -337,7 +369,9 @@ export function TicketTagSelectDialogEnhanced({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-12 text-xs"></TableHead>
+                      <TableHead className="w-12 text-xs">
+                        <Checkbox checked={checkboxState} onCheckedChange={handleToggleAll} aria-label="すべて選択" />
+                      </TableHead>
                       <TableHead className="w-8 text-xs"></TableHead>
                       <TableHead className="w-60 text-xs">名前</TableHead>
                       <TableHead className="text-xs">説明</TableHead>

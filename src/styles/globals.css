@@ -738,3 +738,82 @@ aside * {
   }
 }
 
+/* ============================================
+ * react-day-picker カスタムスタイル
+ * ============================================ */
+.rdp {
+  --rdp-accent-color: var(--color-primary);
+  --rdp-background-color: var(--color-accent);
+  --rdp-accent-background-color: var(--color-primary);
+  --rdp-outline: 2px solid var(--color-ring);
+  --rdp-outline-selected: 2px solid var(--color-primary);
+}
+
+/* 選択された日付 */
+.rdp-day_button[data-selected-single='true'] {
+  background-color: var(--color-primary) !important;
+  color: var(--color-primary-foreground) !important;
+}
+
+/* 今日の日付 - コントラスト比改善 */
+.rdp-day_button[data-today='true']:not([data-selected-single='true']) {
+  background-color: transparent !important;
+  color: var(--color-primary) !important;
+  font-weight: 600;
+  border: 2px solid var(--color-primary) !important;
+}
+
+/* ホバー時 */
+.rdp-day_button:hover:not([data-selected-single='true']):not([aria-disabled='true']) {
+  background-color: var(--color-accent) !important;
+  color: var(--color-accent-foreground) !important;
+}
+
+/* 今日の日付のホバー時 */
+.rdp-day_button[data-today='true']:hover:not([data-selected-single='true']) {
+  background-color: var(--color-primary) !important;
+  color: var(--color-primary-foreground) !important;
+}
+
+/* フォーカス時 */
+.rdp-day_button:focus-visible {
+  outline: var(--rdp-outline);
+  outline-offset: 2px;
+}
+
+/* ドロップダウン（月・年選択） */
+.rdp-dropdowns select,
+.rdp-dropdown_root {
+  color: var(--color-foreground);
+  background-color: var(--color-background);
+  border-color: var(--color-input);
+}
+
+/* 月表示ラベル */
+.rdp-month_caption,
+.rdp-caption_label {
+  color: var(--color-foreground);
+}
+
+/* 曜日ヘッダー */
+.rdp-weekday {
+  color: var(--color-muted-foreground);
+}
+
+/* ナビゲーションボタン */
+.rdp-button_previous,
+.rdp-button_next {
+  color: var(--color-foreground);
+}
+
+.rdp-button_previous:hover,
+.rdp-button_next:hover {
+  background-color: var(--color-accent);
+}
+
+/* 無効な日付 */
+.rdp-day_button[aria-disabled='true'] {
+  color: var(--color-muted-foreground);
+  opacity: 0.5;
+}
+

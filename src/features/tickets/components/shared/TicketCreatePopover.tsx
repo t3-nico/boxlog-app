@@ -24,15 +24,6 @@ interface TicketCreatePopoverProps {
 }
 
 export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreatePopoverProps) {
-  // 現在時刻を15分単位に丸める
-  const getCurrentTime = () => {
-    const now = new Date()
-    const hours = now.getHours()
-    const minutes = now.getMinutes()
-    const roundedMinutes = Math.floor(minutes / 15) * 15
-    return `${hours.toString().padStart(2, '0')}:${roundedMinutes.toString().padStart(2, '0')}`
-  }
-
   const titleInputRef = useRef<HTMLInputElement>(null)
 
   const [isOpen, setIsOpen] = useState(false)
@@ -45,11 +36,6 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const [reminderType, setReminderType] = useState<string>('')
   const { createTicket } = useTicketMutations()
   const { addTicketTag } = useTicketTags()
-
-  // クライアント側でのみ現在時刻を設定（Hydration Error回避）
-  useEffect(() => {
-    setStartTime(getCurrentTime())
-  }, [])
 
   // ポップアップが開いたときにタイトル入力欄にフォーカス
   useEffect(() => {
@@ -84,7 +70,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
       onSuccess?.()
       form.reset()
       setSelectedDate(undefined)
-      setStartTime(getCurrentTime()) // リセット時に最新の時刻を設定
+      setStartTime('')
       setEndTime('')
       setSelectedTagIds([])
       setIsOpen(false)
