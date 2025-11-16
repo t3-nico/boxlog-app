@@ -18,6 +18,8 @@ import { useInboxViewStore } from '../stores/useInboxViewStore'
 import { groupItems } from '../utils/grouping'
 import { GroupBySelector } from './table/GroupBySelector'
 import { GroupHeader } from './table/GroupHeader'
+import { InboxSelectionActions } from './table/InboxSelectionActions'
+import { InboxSelectionBar } from './table/InboxSelectionBar'
 import { InboxTableEmptyState } from './table/InboxTableEmptyState'
 import { InboxTableRow } from './table/InboxTableRow'
 import { InboxTableRowCreate, type InboxTableRowCreateHandle } from './table/InboxTableRowCreate'
@@ -34,6 +36,7 @@ const columnIcons = {
   due_date: Calendar,
   duration: CalendarRange,
   created_at: Calendar,
+  updated_at: Calendar,
 } as const
 
 /**
@@ -53,7 +56,7 @@ export function InboxTableView() {
   const filters = useInboxFilterStore()
   const { sortField, sortDirection, setSort } = useInboxSortStore()
   const { currentPage, pageSize, setCurrentPage, setPageSize } = useInboxPaginationStore()
-  const { selectedIds, toggleAll } = useInboxSelectionStore()
+  const { selectedIds, toggleAll, clearSelection } = useInboxSelectionStore()
   const { getVisibleColumns } = useInboxColumnStore()
   const { getActiveView } = useInboxViewStore()
   const { groupBy, collapsedGroups } = useInboxGroupStore()
@@ -64,6 +67,20 @@ export function InboxTableView() {
 
   // 新規作成行のref
   const createRowRef = useRef<InboxTableRowCreateHandle>(null)
+
+  // 選択数
+  const selectedCount = selectedIds.size
+
+  // アクションハンドラー
+  const handleArchive = () => {
+    // TODO: アーカイブ機能実装
+    console.log('Archive:', Array.from(selectedIds))
+  }
+
+  const handleDelete = () => {
+    // TODO: 削除機能実装
+    console.log('Delete:', Array.from(selectedIds))
+  }
 
   // アクティブなビューを取得
   const activeView = getActiveView()
@@ -132,6 +149,10 @@ export function InboxTableView() {
           aValue = new Date(a.created_at).getTime()
           bValue = new Date(b.created_at).getTime()
           break
+        case 'updated_at':
+          aValue = new Date(a.updated_at).getTime()
+          bValue = new Date(b.updated_at).getTime()
+          break
       }
 
       if (aValue === null || aValue === '') return 1
@@ -160,12 +181,12 @@ export function InboxTableView() {
 
   // 全選択状態の計算（フックはreturnの前に必ず配置）
   const currentPageIds = useMemo(() => paginatedItems.map((item) => item.id), [paginatedItems])
-  const selectedCount = useMemo(
+  const selectedCountInPage = useMemo(
     () => currentPageIds.filter((id) => selectedIds.has(id)).length,
     [currentPageIds, selectedIds]
   )
-  const allSelected = selectedCount === currentPageIds.length && currentPageIds.length > 0
-  const someSelected = selectedCount > 0 && selectedCount < currentPageIds.length
+  const allSelected = selectedCountInPage === currentPageIds.length && currentPageIds.length > 0
+  const someSelected = selectedCountInPage > 0 && selectedCountInPage < currentPageIds.length
 
   // 全選択ハンドラー
   const handleToggleAll = () => {
@@ -198,11 +219,26 @@ export function InboxTableView() {
 
   return (
     <div id="inbox-table-view-panel" role="tabpanel" className="flex h-full flex-col">
-      {/* ツールバー: グループ化・フィルター (h-12 = 48px) */}
-      <div className="flex h-12 shrink-0 items-center justify-between gap-2 px-4 py-2 md:px-6">
-        <GroupBySelector />
-        <TableToolbar onCreateClick={() => createRowRef.current?.startCreate()} />
-      </div>
+      {/* ツールバー または 選択バー（Googleドライブ風） */}
+      {selectedCount > 0 ? (
+        <InboxSelectionBar
+          selectedCount={selectedCount}
+          onClearSelection={clearSelection}
+          actions={
+            <InboxSelectionActions
+              selectedCount={selectedCount}
+              onArchive={handleArchive}
+              onDelete={handleDelete}
+              onClearSelection={clearSelection}
+            />
+          }
+        />
+      ) : (
+        <div className="flex h-12 shrink-0 items-center justify-between gap-2 px-4 py-2 md:px-6">
+          <GroupBySelector />
+          <TableToolbar onCreateClick={() => createRowRef.current?.startCreate()} />
+        </div>
+      )}
 
       {/* テーブル */}
       <div

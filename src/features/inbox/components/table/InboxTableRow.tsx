@@ -13,7 +13,7 @@ import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Archive, Copy, Pencil, Trash2 } from 'lucide-react'
+import { Archive, CheckSquare, Copy, Pencil, Square, Trash2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import type { InboxItem } from '../../hooks/useInboxData'
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
@@ -188,6 +188,13 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           </TableCell>
         )
 
+      case 'updated_at':
+        return (
+          <TableCell key={columnId} className="text-muted-foreground text-sm" style={style}>
+            {format(new Date(item.updated_at), 'yyyy/MM/dd', { locale: ja })}
+          </TableCell>
+        )
+
       default:
         return null
     }
@@ -201,7 +208,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           className={cn(
             'hover:bg-muted/50 cursor-pointer transition-colors',
             selected && 'bg-primary/10 hover:bg-primary/15',
-            isFocused && 'ring-primary ring-2 ring-inset'
+            isFocused && 'outline-primary outline outline-2 -outline-offset-1'
           )}
           onClick={() => {
             openInspector(item.id)
@@ -218,6 +225,23 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
         </TableRow>
       </ContextMenuTrigger>
       <ContextMenuContent>
+        {/* 選択 */}
+        <ContextMenuItem onClick={() => toggleSelection(item.id)}>
+          {selected ? (
+            <>
+              <Square className="mr-2 size-4" />
+              選択解除
+            </>
+          ) : (
+            <>
+              <CheckSquare className="mr-2 size-4" />
+              選択
+            </>
+          )}
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+
+        {/* 編集・複製 */}
         <ContextMenuItem onClick={handleEdit}>
           <Pencil className="mr-2 size-4" />
           編集
@@ -227,6 +251,8 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           複製
         </ContextMenuItem>
         <ContextMenuSeparator />
+
+        {/* アーカイブ・削除 */}
         <ContextMenuItem onClick={handleArchive}>
           <Archive className="mr-2 size-4" />
           アーカイブ

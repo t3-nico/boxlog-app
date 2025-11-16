@@ -15,6 +15,7 @@ import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useInboxFocusStore } from '@/features/inbox/stores/useInboxFocusStore'
 import { api } from '@/lib/trpc'
 import { format } from 'date-fns'
 import {
@@ -82,6 +83,7 @@ const TIME_OPTIONS = generateTimeOptions()
  */
 export function TicketInspector() {
   const { isOpen, ticketId, closeInspector, openInspector } = useTicketInspectorStore()
+  const { setFocusedId } = useInboxFocusStore()
 
   // Ticketデータ取得（タグ情報も含む）
   const { data: ticketData, isLoading } = useTicket(ticketId!, { includeTags: true, enabled: !!ticketId })
@@ -205,13 +207,17 @@ export function TicketInspector() {
 
   const goToPrevious = () => {
     if (hasPrevious) {
-      openInspector(allTickets[currentIndex - 1]!.id)
+      const prevTicketId = allTickets[currentIndex - 1]!.id
+      openInspector(prevTicketId)
+      setFocusedId(prevTicketId)
     }
   }
 
   const goToNext = () => {
     if (hasNext) {
-      openInspector(allTickets[currentIndex + 1]!.id)
+      const nextTicketId = allTickets[currentIndex + 1]!.id
+      openInspector(nextTicketId)
+      setFocusedId(nextTicketId)
     }
   }
 
@@ -559,14 +565,26 @@ export function TicketInspector() {
               <TabsContent value="details">
                 {/* タイトル */}
                 <div className="px-6 pt-4 pb-2">
-                  <Input
-                    id="title"
-                    defaultValue={ticket.title}
-                    onChange={(e) => autoSave('title', e.target.value)}
-                    className="bg-card dark:bg-card border-0 px-0 text-[2rem] font-bold shadow-none focus-visible:ring-0"
-                    placeholder="Add a title"
-                    style={{ fontSize: 'var(--font-size-xl)' }}
-                  />
+                  <div className="flex items-baseline gap-2">
+                    <div className="min-w-0 flex-1">
+                      <Input
+                        id="title"
+                        defaultValue={ticket.title}
+                        onChange={(e) => autoSave('title', e.target.value)}
+                        className="bg-card dark:bg-card border-0 px-0 text-[2rem] font-bold shadow-none focus-visible:ring-0"
+                        placeholder="Add a title"
+                        style={{ fontSize: 'var(--font-size-xl)' }}
+                      />
+                    </div>
+                    {ticket.ticket_number && (
+                      <span
+                        className="text-muted-foreground shrink-0 text-[2rem]"
+                        style={{ fontSize: 'var(--font-size-xl)' }}
+                      >
+                        #{ticket.ticket_number}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* 日付・時間 */}

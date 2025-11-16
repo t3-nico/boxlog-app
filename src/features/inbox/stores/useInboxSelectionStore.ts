@@ -8,6 +8,7 @@ interface InboxSelectionState {
   selectedIds: Set<string>
   toggleSelection: (id: string) => void
   toggleAll: (ids: string[]) => void
+  setSelectedIds: (ids: string[]) => void
   clearSelection: () => void
   isSelected: (id: string) => boolean
   getSelectedCount: () => number
@@ -62,6 +63,8 @@ export const useInboxSelectionStore = create<InboxSelectionState>()(
           set({ selectedIds: new Set(ids) })
         }
       },
+
+      setSelectedIds: (ids) => set({ selectedIds: new Set(ids) }),
 
       clearSelection: () => set({ selectedIds: new Set() }),
 
