@@ -38,7 +38,15 @@ export interface InboxFilters {
 /**
  * TicketをInboxItemに変換
  */
-function ticketToInboxItem(ticket: Ticket): InboxItem {
+function ticketToInboxItem(
+  ticket: Ticket & { ticket_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
+): InboxItem {
+  // ticket_tags から tags を抽出
+  const tags =
+    ticket.ticket_tags
+      ?.map((tt) => tt.tags)
+      .filter((tag): tag is { id: string; name: string; color?: string } => tag !== null && tag !== undefined) || []
+
   return {
     id: ticket.id,
     type: 'ticket',
@@ -51,7 +59,7 @@ function ticketToInboxItem(ticket: Ticket): InboxItem {
     due_date: ticket.due_date,
     start_time: ticket.start_time,
     end_time: ticket.end_time,
-    tags: 'tags' in ticket ? (ticket as { tags: Array<{ id: string; name: string; color?: string }> }).tags : undefined,
+    tags: tags.length > 0 ? tags : undefined,
   }
 }
 
@@ -94,7 +102,12 @@ export function useInboxData(filters: InboxFilters = {}) {
 
   // TicketをInboxItemに変換
   // APIレスポンスは部分的な型なので、unknown経由でキャスト
-  const items: InboxItem[] = ticketsData?.map((t) => ticketToInboxItem(t as unknown as Ticket)) || []
+  const items: InboxItem[] =
+    ticketsData?.map((t) =>
+      ticketToInboxItem(
+        t as unknown as Ticket & { ticket_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
+      )
+    ) || []
 
   // 更新日時の降順でソート
   items.sort((a, b) => {

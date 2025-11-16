@@ -7,10 +7,11 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
 import { TableCell, TableRow } from '@/components/ui/table'
+import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { cn } from '@/lib/utils'
-import { formatDistanceToNow } from 'date-fns'
+import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Archive, Copy, Pencil, Trash2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
@@ -18,7 +19,8 @@ import type { InboxItem } from '../../hooks/useInboxData'
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
 import { useInboxFocusStore } from '../../stores/useInboxFocusStore'
 import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
-import { DueDateEditCell } from './DueDateEditCell'
+import { DueDateCell } from './DueDateCell'
+import { DurationRangeCell } from './DurationRangeCell'
 import { StatusEditCell } from './StatusEditCell'
 import { TagsEditCell } from './TagsEditCell'
 
@@ -43,9 +45,10 @@ interface InboxTableRowProps {
  */
 export function InboxTableRow({ item }: InboxTableRowProps) {
   const { openInspector } = useTicketInspectorStore()
-  const { isSelected, toggleSelection } = useInboxSelectionStore()
+  const { isSelected, toggleSelection, setSelectedIds } = useInboxSelectionStore()
   const { getVisibleColumns } = useInboxColumnStore()
   const { focusedId, setFocusedId } = useInboxFocusStore()
+  const { updateTicket } = useTicketMutations()
 
   const rowRef = useRef<HTMLTableRowElement>(null)
   const selected = isSelected(item.id)
@@ -63,9 +66,23 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
     console.log('Update tags:', item.id, tags)
   }
 
+  const handleStartTimeChange = (startTime: string | null) => {
+    // TODO: APIで開始日時を更新
+    console.log('Update start time:', item.id, startTime)
+  }
+
+  const handleEndTimeChange = (endTime: string | null) => {
+    // TODO: APIで終了日時を更新
+    console.log('Update end time:', item.id, endTime)
+  }
+
   const handleDueDateChange = (dueDate: string | null) => {
-    // TODO: APIで期限日を更新
-    console.log('Update due date:', item.id, dueDate)
+    updateTicket.mutate({
+      id: item.id,
+      data: {
+        due_date: dueDate ? dueDate.split('T')[0] : undefined, // ISO 8601 → YYYY-MM-DD
+      },
+    })
   }
 
   // コンテキストメニューアクション
@@ -99,7 +116,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   const renderCell = (columnId: string) => {
     // 列情報を取得して幅を適用
     const column = visibleColumns.find((col) => col.id === columnId)
-    const style = column ? { width: `${column.width}px` } : undefined
+    const style = column ? { width: `${column.width}px`, minWidth: `${column.width}px` } : undefined
 
     switch (columnId) {
       case 'selection':
@@ -109,18 +126,21 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           </TableCell>
         )
 
-      case 'ticket_number':
+      case 'id':
         return (
-          <TableCell key={columnId} className="font-mono text-xs" style={style}>
-            {item.ticket_number || '-'}
+          <TableCell key={columnId} className="font-mono text-sm" style={style}>
+            <div className="truncate">{item.ticket_number || '-'}</div>
           </TableCell>
         )
 
       case 'title':
         return (
           <TableCell key={columnId} className="font-medium" style={style}>
-            <div className="group cursor-pointer">
+            <div className="group flex cursor-pointer items-center gap-2">
               <span className="group-hover:underline">{item.title}</span>
+              {item.ticket_number && (
+                <span className="text-muted-foreground shrink-0 text-sm">#{item.ticket_number}</span>
+              )}
             </div>
           </TableCell>
         )
@@ -148,7 +168,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
 
       case 'due_date':
         return (
-          <DueDateEditCell
+          <DueDateCell
             key={columnId}
             dueDate={item.due_date}
             width={column?.width}
@@ -156,13 +176,15 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           />
         )
 
+      case 'duration':
+        return (
+          <DurationRangeCell key={columnId} startTime={item.start_time} endTime={item.end_time} width={column?.width} />
+        )
+
       case 'created_at':
         return (
           <TableCell key={columnId} className="text-muted-foreground text-sm" style={style}>
-            {formatDistanceToNow(new Date(item.created_at), {
-              addSuffix: true,
-              locale: ja,
-            })}
+            {format(new Date(item.created_at), 'yyyy/MM/dd', { locale: ja })}
           </TableCell>
         )
 
@@ -184,6 +206,12 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           onClick={() => {
             openInspector(item.id)
             setFocusedId(item.id)
+          }}
+          onContextMenu={() => {
+            // 右クリックされた行を選択（Tagsテーブルと同様）
+            if (!selected) {
+              setSelectedIds([item.id])
+            }
           }}
         >
           {visibleColumns.map((column) => renderCell(column.id))}

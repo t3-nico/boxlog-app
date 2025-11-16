@@ -3,7 +3,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { TableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { Check, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface Tag {
   id: string
@@ -41,6 +41,39 @@ interface TagsEditCellProps {
  */
 export function TagsEditCell({ tags = [], width, onTagsChange, availableTags = [] }: TagsEditCellProps) {
   const [open, setOpen] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(2)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // 列幅に応じて表示可能なタグ数を計算
+  useEffect(() => {
+    if (!width || tags.length === 0) return
+
+    // 列幅から余白を引いた利用可能幅（パディング16px * 2）
+    const availableWidth = width - 32
+
+    // タグ1つあたりの平均幅を推定（文字数 * 7px + パディング20px + gap 4px）
+    const estimateTagWidth = (tagName: string) => tagName.length * 7 + 24
+
+    // "+N" バッジの幅（約30px）
+    const moreTagWidth = 30
+
+    let currentWidth = 0
+    let count = 0
+
+    for (let i = 0; i < tags.length; i++) {
+      const tagWidth = estimateTagWidth(tags[i].name)
+      const needsMoreTag = i < tags.length - 1
+
+      if (currentWidth + tagWidth + (needsMoreTag ? moreTagWidth : 0) <= availableWidth) {
+        currentWidth += tagWidth + 4 // gap
+        count++
+      } else {
+        break
+      }
+    }
+
+    setVisibleCount(Math.max(1, count))
+  }, [width, tags])
 
   const handleTagToggle = (tag: Tag) => {
     const isSelected = tags.some((t) => t.id === tag.id)
@@ -56,7 +89,7 @@ export function TagsEditCell({ tags = [], width, onTagsChange, availableTags = [
     onTagsChange(tags.filter((t) => t.id !== tagId))
   }
 
-  const style = width ? { width: `${width}px` } : undefined
+  const style = width ? { width: `${width}px`, minWidth: `${width}px` } : undefined
 
   return (
     <TableCell
@@ -66,15 +99,15 @@ export function TagsEditCell({ tags = [], width, onTagsChange, availableTags = [
     >
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <div className="flex gap-1">
-            {tags.slice(0, 2).map((tag) => (
-              <Badge key={tag.id} variant="secondary" className="text-xs">
+          <div ref={containerRef} className="flex gap-1 overflow-hidden">
+            {tags.slice(0, visibleCount).map((tag) => (
+              <Badge key={tag.id} variant="secondary" className="shrink-0 text-xs">
                 {tag.name}
               </Badge>
             ))}
-            {tags.length > 2 && (
-              <Badge variant="secondary" className="text-xs">
-                +{tags.length - 2}
+            {tags.length > visibleCount && (
+              <Badge variant="secondary" className="shrink-0 text-xs">
+                +{tags.length - visibleCount}
               </Badge>
             )}
             {tags.length === 0 && <span className="text-muted-foreground text-xs">-</span>}
