@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/context-menu'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
+import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { cn } from '@/lib/utils'
@@ -18,11 +19,10 @@ import type { InboxItem } from '../../hooks/useInboxData'
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
 import { useInboxFocusStore } from '../../stores/useInboxFocusStore'
 import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
-import { DueDateCell } from './DueDateCell'
-import { DurationRangeCell } from './DurationRangeCell'
+import { DateTimeUnifiedCell } from './DateTimeUnifiedCell'
 import { InboxActionMenuItems } from './InboxActionMenuItems'
 import { StatusEditCell } from './StatusEditCell'
-import { TagsEditCell } from './TagsEditCell'
+import { TagsCell } from './TagsCell'
 
 interface InboxTableRowProps {
   /** 表示するInboxアイテム */
@@ -49,6 +49,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   const { getVisibleColumns } = useInboxColumnStore()
   const { focusedId, setFocusedId } = useInboxFocusStore()
   const { updateTicket } = useTicketMutations()
+  const { addTicketTag, removeTicketTag } = useTicketTags()
 
   const rowRef = useRef<HTMLTableRowElement>(null)
   const selected = isSelected(item.id)
@@ -61,9 +62,25 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
     console.log('Update status:', item.id, status)
   }
 
-  const handleTagsChange = (tags: InboxItem['tags']) => {
-    // TODO: APIでタグを更新
-    console.log('Update tags:', item.id, tags)
+  const handleTagsChange = async (tagIds: string[]) => {
+    const currentTagIds = item.tags?.map((tag) => tag.id) ?? []
+    const addedTagIds = tagIds.filter((id) => !currentTagIds.includes(id))
+    const removedTagIds = currentTagIds.filter((id) => !tagIds.includes(id))
+
+    // NOTE: 現在は個別にタグを追加・削除していますが、
+    // 将来的には一括設定API（setTicketTags）を使用して効率化する予定です。
+    // 一括設定APIは、現在のタグをすべて削除してから新しいタグを設定するため、
+    // 複数のタグ変更を1回のAPIコールで完了できます。
+
+    // タグを追加
+    for (const tagId of addedTagIds) {
+      await addTicketTag(item.id, tagId)
+    }
+
+    // タグを削除
+    for (const tagId of removedTagIds) {
+      await removeTicketTag(item.id, tagId)
+    }
   }
 
   const handleStartTimeChange = (startTime: string | null) => {
@@ -183,29 +200,34 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
         )
 
       case 'tags':
-        return (
-          <TagsEditCell
-            key={columnId}
-            tags={item.tags}
-            width={column?.width}
-            onTagsChange={handleTagsChange}
-            availableTags={[]}
-          />
-        )
-
-      case 'due_date':
-        return (
-          <DueDateCell
-            key={columnId}
-            dueDate={item.due_date}
-            width={column?.width}
-            onDueDateChange={handleDueDateChange}
-          />
-        )
+        return <TagsCell key={columnId} tags={item.tags ?? []} width={column?.width} onTagsChange={handleTagsChange} />
 
       case 'duration':
         return (
-          <DurationRangeCell key={columnId} startTime={item.start_time} endTime={item.end_time} width={column?.width} />
+          <DateTimeUnifiedCell
+            key={columnId}
+            data={{
+              date: item.start_time ? new Date(item.start_time).toISOString().split('T')[0] : null,
+              startTime: item.start_time ? format(new Date(item.start_time), 'HH:mm') : null,
+              endTime: item.end_time ? format(new Date(item.end_time), 'HH:mm') : null,
+              reminder: null,
+              recurrence: null,
+            }}
+            width={column?.width}
+            onChange={(data) => {
+              // 日付+時刻をISO 8601形式に変換
+              const startTime = data.date && data.startTime ? `${data.date}T${data.startTime}:00Z` : null
+              const endTime = data.date && data.endTime ? `${data.date}T${data.endTime}:00Z` : null
+
+              updateTicket.mutate({
+                id: item.id,
+                data: {
+                  start_time: startTime || undefined,
+                  end_time: endTime || undefined,
+                },
+              })
+            }}
+          />
         )
 
       case 'created_at':

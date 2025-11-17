@@ -34,7 +34,6 @@ const columnIcons = {
   title: FileText,
   status: Activity,
   tags: Tag,
-  due_date: Calendar,
   duration: CalendarRange,
   created_at: Calendar,
   updated_at: Calendar,
@@ -158,10 +157,6 @@ export function InboxTableView() {
           aValue = a.status
           bValue = b.status
           break
-        case 'due_date':
-          aValue = a.due_date ? new Date(a.due_date).getTime() : 0
-          bValue = b.due_date ? new Date(b.due_date).getTime() : 0
-          break
         case 'duration':
           aValue = a.start_time ? new Date(a.start_time).getTime() : 0
           bValue = b.start_time ? new Date(b.start_time).getTime() : 0
@@ -269,7 +264,7 @@ export function InboxTableView() {
 
       {/* テーブル */}
       <div
-        className="flex flex-1 flex-col overflow-hidden px-4 pt-4 pb-2 md:px-6"
+        className="flex flex-1 flex-col overflow-hidden px-4 pt-4 md:px-6"
         onClick={(e) => {
           // テーブルコンテナの直接クリック（空白部分）で選択解除（Tagsテーブルと同様）
           if (e.target === e.currentTarget) {

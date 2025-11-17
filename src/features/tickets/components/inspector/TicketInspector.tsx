@@ -421,7 +421,7 @@ export function TicketInspector() {
             <div className="flex h-10 items-center justify-between pt-2">
               <TooltipProvider>
                 <div className="flex items-center gap-1">
-                  <Tooltip delayDuration={0}>
+                  <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="ghost"
@@ -438,7 +438,7 @@ export function TicketInspector() {
                     </TooltipContent>
                   </Tooltip>
                   <div className="flex items-center">
-                    <Tooltip delayDuration={0}>
+                    <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
                           variant="ghost"
@@ -455,7 +455,7 @@ export function TicketInspector() {
                         <p>前のチケット</p>
                       </TooltipContent>
                     </Tooltip>
-                    <Tooltip delayDuration={0}>
+                    <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
                           variant="ghost"
