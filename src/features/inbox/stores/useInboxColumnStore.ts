@@ -4,7 +4,16 @@ import { devtools, persist } from 'zustand/middleware'
 /**
  * 列ID
  */
-export type ColumnId = 'selection' | 'id' | 'title' | 'status' | 'tags' | 'due_date' | 'duration' | 'created_at'
+export type ColumnId =
+  | 'selection'
+  | 'id'
+  | 'title'
+  | 'status'
+  | 'tags'
+  | 'due_date'
+  | 'duration'
+  | 'created_at'
+  | 'updated_at'
 
 /**
  * 列設定
@@ -29,6 +38,7 @@ const DEFAULT_COLUMNS: ColumnConfig[] = [
   { id: 'due_date', label: '期限', visible: true, width: 120, resizable: true },
   { id: 'duration', label: '期間', visible: true, width: 200, resizable: true },
   { id: 'created_at', label: '作成日', visible: true, width: 120, resizable: true },
+  { id: 'updated_at', label: '更新日', visible: false, width: 120, resizable: true },
 ]
 
 /**
@@ -90,9 +100,9 @@ export const useInboxColumnStore = create<InboxColumnState>()(
         getVisibleColumns: () => get().columns.filter((col) => col.visible),
       }),
       {
-        name: 'inbox-column-store-v7',
+        name: 'inbox-column-store-v8',
       }
     ),
-    { name: 'inbox-column-store-v7' }
+    { name: 'inbox-column-store-v8' }
   )
 )

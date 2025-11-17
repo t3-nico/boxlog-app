@@ -89,7 +89,10 @@ export function ResizableTableHead({
   }
 
   return (
-    <TableHead className={className} style={{ width: `${width}px`, position: 'relative', maxWidth: `${width}px` }}>
+    <TableHead
+      className={className}
+      style={{ width: `${width}px`, minWidth: `${width}px`, position: 'relative', maxWidth: `${width}px` }}
+    >
       <div className="flex items-center gap-1">
         {sortField ? (
           <button
@@ -113,8 +116,8 @@ export function ResizableTableHead({
       {resizable && (
         <div
           onMouseDown={handleMouseDown}
-          className={`hover:bg-border absolute top-0 right-0 h-full w-1 cursor-col-resize ${
-            isResizing ? 'bg-primary' : ''
+          className={`hover:bg-primary/50 absolute top-0 right-0 h-full w-1 cursor-col-resize transition-colors ${
+            isResizing ? 'bg-primary' : 'bg-transparent'
           }`}
           style={{ userSelect: 'none' }}
         />

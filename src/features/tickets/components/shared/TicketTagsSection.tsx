@@ -86,7 +86,7 @@ export function TicketTagsSection({
                       borderColor: tag.color,
                       color: tag.color,
                     }}
-                    className="group relative pr-6"
+                    className="group relative pr-6 font-normal"
                   >
                     {tag.name}
                     {onRemoveTag && (

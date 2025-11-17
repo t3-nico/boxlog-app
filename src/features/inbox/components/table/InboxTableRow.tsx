@@ -13,7 +13,6 @@ import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Archive, CheckSquare, Copy, Pencil, Square, Trash2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import type { InboxItem } from '../../hooks/useInboxData'
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
@@ -21,6 +20,7 @@ import { useInboxFocusStore } from '../../stores/useInboxFocusStore'
 import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
 import { DueDateCell } from './DueDateCell'
 import { DurationRangeCell } from './DurationRangeCell'
+import { InboxActionMenuItems } from './InboxActionMenuItems'
 import { StatusEditCell } from './StatusEditCell'
 import { TagsEditCell } from './TagsEditCell'
 
@@ -45,7 +45,7 @@ interface InboxTableRowProps {
  */
 export function InboxTableRow({ item }: InboxTableRowProps) {
   const { openInspector } = useTicketInspectorStore()
-  const { isSelected, toggleSelection, setSelectedIds } = useInboxSelectionStore()
+  const { isSelected, setSelectedIds } = useInboxSelectionStore()
   const { getVisibleColumns } = useInboxColumnStore()
   const { focusedId, setFocusedId } = useInboxFocusStore()
   const { updateTicket } = useTicketMutations()
@@ -86,21 +86,31 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   }
 
   // コンテキストメニューアクション
-  const handleEdit = () => {
+  const handleEdit = (item: InboxItem) => {
     openInspector(item.id)
   }
 
-  const handleDuplicate = () => {
+  const handleDuplicate = (item: InboxItem) => {
     // TODO: 複製機能実装
     console.log('Duplicate:', item.id)
   }
 
-  const handleArchive = () => {
+  const handleAddTags = (item: InboxItem) => {
+    // TODO: タグ追加機能実装
+    console.log('Add tags:', item.id)
+  }
+
+  const handleChangeDueDate = (item: InboxItem) => {
+    // TODO: 期限変更機能実装
+    console.log('Change due date:', item.id)
+  }
+
+  const handleArchive = (item: InboxItem) => {
     // TODO: アーカイブ機能実装
     console.log('Archive:', item.id)
   }
 
-  const handleDelete = () => {
+  const handleDelete = (item: InboxItem) => {
     // TODO: 削除機能実装
     console.log('Delete:', item.id)
   }
@@ -116,13 +126,30 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   const renderCell = (columnId: string) => {
     // 列情報を取得して幅を適用
     const column = visibleColumns.find((col) => col.id === columnId)
-    const style = column ? { width: `${column.width}px`, minWidth: `${column.width}px` } : undefined
+    const style = column
+      ? { width: `${column.width}px`, minWidth: `${column.width}px`, maxWidth: `${column.width}px` }
+      : undefined
 
     switch (columnId) {
       case 'selection':
         return (
           <TableCell key={columnId} onClick={(e) => e.stopPropagation()} style={style}>
-            <Checkbox checked={selected} onCheckedChange={() => toggleSelection(item.id)} />
+            <Checkbox
+              checked={selected}
+              onCheckedChange={() => {
+                if (selected) {
+                  // 選択解除: 選択済みIDから削除
+                  const newSelection = Array.from(useInboxSelectionStore.getState().getSelectedIds()).filter(
+                    (id) => id !== item.id
+                  )
+                  setSelectedIds(newSelection)
+                } else {
+                  // 選択: 選択済みIDに追加
+                  const newSelection = [...Array.from(useInboxSelectionStore.getState().getSelectedIds()), item.id]
+                  setSelectedIds(newSelection)
+                }
+              }}
+            />
           </TableCell>
         )
 
@@ -136,8 +163,8 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
       case 'title':
         return (
           <TableCell key={columnId} className="font-medium" style={style}>
-            <div className="group flex cursor-pointer items-center gap-2">
-              <span className="group-hover:underline">{item.title}</span>
+            <div className="group flex cursor-pointer items-center gap-2 overflow-hidden">
+              <span className="min-w-0 truncate group-hover:underline">{item.title}</span>
               {item.ticket_number && (
                 <span className="text-muted-foreground shrink-0 text-sm">#{item.ticket_number}</span>
               )}
@@ -201,14 +228,14 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   }
 
   return (
-    <ContextMenu>
+    <ContextMenu modal={false}>
       <ContextMenuTrigger asChild>
         <TableRow
           ref={rowRef}
           className={cn(
             'hover:bg-muted/50 cursor-pointer transition-colors',
             selected && 'bg-primary/10 hover:bg-primary/15',
-            isFocused && 'outline-primary outline outline-2 -outline-offset-1'
+            isFocused && 'ring-primary ring-2 ring-inset'
           )}
           onClick={() => {
             openInspector(item.id)
@@ -225,42 +252,22 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
         </TableRow>
       </ContextMenuTrigger>
       <ContextMenuContent>
-        {/* 選択 */}
-        <ContextMenuItem onClick={() => toggleSelection(item.id)}>
-          {selected ? (
-            <>
-              <Square className="mr-2 size-4" />
-              選択解除
-            </>
-          ) : (
-            <>
-              <CheckSquare className="mr-2 size-4" />
-              選択
-            </>
+        <InboxActionMenuItems
+          item={item}
+          onEdit={handleEdit}
+          onDuplicate={handleDuplicate}
+          onAddTags={handleAddTags}
+          onChangeDueDate={handleChangeDueDate}
+          onArchive={handleArchive}
+          onDelete={handleDelete}
+          renderMenuItem={({ icon, label, onClick, variant }) => (
+            <ContextMenuItem onClick={onClick} className={variant === 'destructive' ? 'text-destructive' : ''}>
+              {icon}
+              {label}
+            </ContextMenuItem>
           )}
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-
-        {/* 編集・複製 */}
-        <ContextMenuItem onClick={handleEdit}>
-          <Pencil className="mr-2 size-4" />
-          編集
-        </ContextMenuItem>
-        <ContextMenuItem onClick={handleDuplicate}>
-          <Copy className="mr-2 size-4" />
-          複製
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-
-        {/* アーカイブ・削除 */}
-        <ContextMenuItem onClick={handleArchive}>
-          <Archive className="mr-2 size-4" />
-          アーカイブ
-        </ContextMenuItem>
-        <ContextMenuItem onClick={handleDelete} className="text-destructive">
-          <Trash2 className="mr-2 size-4" />
-          削除
-        </ContextMenuItem>
+          renderSeparator={() => <ContextMenuSeparator />}
+        />
       </ContextMenuContent>
     </ContextMenu>
   )

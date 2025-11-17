@@ -8,7 +8,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
@@ -565,20 +564,19 @@ export function TicketInspector() {
               <TabsContent value="details">
                 {/* タイトル */}
                 <div className="px-6 pt-4 pb-2">
-                  <div className="flex items-baseline gap-2">
-                    <div className="min-w-0 flex-1">
-                      <Input
-                        id="title"
-                        defaultValue={ticket.title}
-                        onChange={(e) => autoSave('title', e.target.value)}
-                        className="bg-card dark:bg-card border-0 px-0 text-[2rem] font-bold shadow-none focus-visible:ring-0"
-                        placeholder="Add a title"
-                        style={{ fontSize: 'var(--font-size-xl)' }}
-                      />
-                    </div>
+                  <div className="inline">
+                    <span
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) => autoSave('title', e.currentTarget.textContent || '')}
+                      className="bg-card dark:bg-card border-0 px-0 text-[2rem] font-bold outline-none"
+                      style={{ fontSize: 'var(--font-size-xl)' }}
+                    >
+                      {ticket.title}
+                    </span>
                     {ticket.ticket_number && (
                       <span
-                        className="text-muted-foreground shrink-0 text-[2rem]"
+                        className="text-muted-foreground ml-4 text-[2rem]"
                         style={{ fontSize: 'var(--font-size-xl)' }}
                       >
                         #{ticket.ticket_number}
