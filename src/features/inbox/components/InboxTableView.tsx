@@ -63,6 +63,8 @@ export function InboxTableView() {
   const { items, isLoading, error } = useInboxData({
     status: filters.status[0] as TicketStatus | undefined,
     search: filters.search,
+    tags: filters.tags,
+    dueDate: filters.dueDate,
   })
 
   // 新規作成行のref
@@ -256,9 +258,11 @@ export function InboxTableView() {
           }
         />
       ) : (
-        <div className="flex h-12 shrink-0 items-center justify-between gap-2 px-4 py-2 md:px-6">
-          <GroupBySelector />
-          <TableToolbar onCreateClick={() => createRowRef.current?.startCreate()} />
+        <div className="flex h-12 shrink-0 items-end gap-2 px-4 pt-2 md:px-6">
+          <div className="flex h-10 w-full items-center justify-between gap-2">
+            <GroupBySelector />
+            <TableToolbar onCreateClick={() => createRowRef.current?.startCreate()} />
+          </div>
         </div>
       )}
 

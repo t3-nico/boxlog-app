@@ -3,6 +3,11 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 /**
+ * 期限フィルタータイプ
+ */
+export type DueDateFilter = 'today' | 'tomorrow' | 'this_week' | 'next_week' | 'overdue' | 'no_due_date' | 'all'
+
+/**
  * Inbox共通フィルタ状態
  * Board/Table両方で共有するフィルター
  */
@@ -11,6 +16,7 @@ interface InboxFilterState {
   tags: string[]
   search: string
   assignee: string
+  dueDate: DueDateFilter
 }
 
 /**
@@ -21,6 +27,7 @@ interface InboxFilterStore extends InboxFilterState {
   setTags: (tags: string[]) => void
   setSearch: (search: string) => void
   setAssignee: (assignee: string) => void
+  setDueDate: (dueDate: DueDateFilter) => void
   reset: () => void
 }
 
@@ -32,6 +39,7 @@ const initialState: InboxFilterState = {
   tags: [],
   search: '',
   assignee: '',
+  dueDate: 'all',
 }
 
 /**
@@ -48,6 +56,7 @@ export const useInboxFilterStore = create<InboxFilterStore>()(
       setTags: (tags) => set({ tags }),
       setSearch: (search) => set({ search }),
       setAssignee: (assignee) => set({ assignee }),
+      setDueDate: (dueDate) => set({ dueDate }),
       reset: () => set(initialState),
     }),
     {

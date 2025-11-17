@@ -5,6 +5,7 @@ import { Plus, X } from 'lucide-react'
 import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
 import { ColumnSettings } from './ColumnSettings'
 import { TableFilters } from './TableFilters'
+import { TagFilterButton } from './TagFilterButton'
 
 interface TableToolbarProps {
   /** 新規作成ボタンクリック時のコールバック */
@@ -16,22 +17,26 @@ interface TableToolbarProps {
  *
  * 検索、フィルター機能を提供
  * - 検索ボックス
- * - TableFilters（Popover版フィルター）
+ * - TableFilters（期限・ステータスフィルター）
+ * - TagFilterButton（タグフィルター専用）
  * - ColumnSettings（列設定）
  * - 新規作成ボタン（Notionスタイル：テーブルに新規行を追加）
  * - リセットボタン
  */
 export function TableToolbar({ onCreateClick }: TableToolbarProps) {
-  const { search, status, setSearch, reset } = useInboxFilterStore()
+  const { search, status, tags, dueDate, setSearch, reset } = useInboxFilterStore()
 
-  const isFiltered = search !== '' || status.length > 0
+  const isFiltered = search !== '' || status.length > 0 || tags.length > 0 || dueDate !== 'all'
 
   return (
     <div className="flex w-full items-center justify-between gap-2">
       {/* 左側: フィルター・列設定 */}
       <div className="flex items-center gap-2">
-        {/* フィルター（Popover版） */}
+        {/* 期限・ステータスフィルター */}
         <TableFilters />
+
+        {/* タグフィルター専用ボタン */}
+        <TagFilterButton />
 
         {/* フィルターリセット */}
         {isFiltered && (
