@@ -4,13 +4,13 @@ import * as useInboxDataModule from '../hooks/useInboxData'
 import * as useInboxFilterStoreModule from '../stores/useInboxFilterStore'
 import { InboxBoardView } from './InboxBoardView'
 
-// KanbanBoardとKanbanToolbarのモック
+// KanbanBoardとInboxBoardToolbarのモック
 vi.mock('@/features/board', () => ({
   KanbanBoard: () => <div data-testid="kanban-board">Kanban Board</div>,
 }))
 
-vi.mock('@/features/board/components/KanbanToolbar', () => ({
-  KanbanToolbar: () => <div data-testid="kanban-toolbar">Kanban Toolbar</div>,
+vi.mock('./board/InboxBoardToolbar', () => ({
+  InboxBoardToolbar: () => <div data-testid="inbox-board-toolbar">Inbox Board Toolbar</div>,
 }))
 
 describe('InboxBoardView', () => {
@@ -20,11 +20,13 @@ describe('InboxBoardView', () => {
     tags: [],
     search: '',
     assignee: '',
+    dueDate: 'all' as const,
     setStatus: vi.fn(),
     setPriority: vi.fn(),
     setTags: vi.fn(),
     setSearch: vi.fn(),
     setAssignee: vi.fn(),
+    setDueDate: vi.fn(),
     reset: vi.fn(),
   }
 
@@ -42,10 +44,10 @@ describe('InboxBoardView', () => {
   })
 
   describe('基本レンダリング', () => {
-    it('正常時にKanbanBoardとKanbanToolbarが表示される', () => {
+    it('正常時にKanbanBoardとInboxBoardToolbarが表示される', () => {
       render(<InboxBoardView />)
 
-      expect(screen.getByTestId('kanban-toolbar')).toBeInTheDocument()
+      expect(screen.getByTestId('inbox-board-toolbar')).toBeInTheDocument()
       expect(screen.getByTestId('kanban-board')).toBeInTheDocument()
     })
 
@@ -111,6 +113,8 @@ describe('InboxBoardView', () => {
         status: ['open' as const],
         priority: ['high' as const],
         search: 'test query',
+        tags: ['tag1'],
+        dueDate: 'today' as const,
       }
       vi.spyOn(useInboxFilterStoreModule, 'useInboxFilterStore').mockReturnValue(filters)
 
@@ -121,6 +125,8 @@ describe('InboxBoardView', () => {
       expect(dataSpy).toHaveBeenCalledWith({
         status: 'open',
         search: 'test query',
+        tags: ['tag1'],
+        dueDate: 'today',
       })
     })
 
@@ -132,6 +138,8 @@ describe('InboxBoardView', () => {
       expect(dataSpy).toHaveBeenCalledWith({
         status: undefined,
         search: '',
+        tags: [],
+        dueDate: 'all',
       })
     })
   })
