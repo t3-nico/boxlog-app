@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
+import { useTags } from '@/features/tags/hooks/use-tags'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { Filter } from 'lucide-react'
 import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
@@ -27,6 +28,7 @@ const STATUS_OPTIONS: Array<{ value: TicketStatus; label: string }> = [
  *
  * Popoverで複数選択対応のフィルターを提供
  * - ステータスフィルター（複数選択）
+ * - タグフィルター（複数選択）
  * - フィルター数のバッジ表示
  * - クリアボタン
  *
@@ -36,15 +38,22 @@ const STATUS_OPTIONS: Array<{ value: TicketStatus; label: string }> = [
  * ```
  */
 export function TableFilters() {
-  const { status, setStatus, reset } = useInboxFilterStore()
+  const { status, tags, setStatus, setTags, reset } = useInboxFilterStore()
+  const { data: allTags = [], isLoading: isLoadingTags } = useTags(false)
 
   // フィルター数をカウント
-  const filterCount = status.length
+  const filterCount = status.length + tags.length
 
   // ステータストグル
   const toggleStatus = (value: TicketStatus) => {
     const newStatus = status.includes(value) ? status.filter((s) => s !== value) : [...status, value]
     setStatus(newStatus as TicketStatus[])
+  }
+
+  // タグトグル
+  const toggleTag = (tagId: string) => {
+    const newTags = tags.includes(tagId) ? tags.filter((t) => t !== tagId) : [...tags, tagId]
+    setTags(newTags)
   }
 
   // すべてクリア
@@ -95,6 +104,43 @@ export function TableFilters() {
                   </Label>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* タグフィルター */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">タグ</Label>
+            <div className="max-h-[200px] space-y-1 overflow-y-auto">
+              {isLoadingTags ? (
+                <div className="text-muted-foreground px-2 py-1.5 text-sm">読み込み中...</div>
+              ) : allTags.length === 0 ? (
+                <div className="text-muted-foreground px-2 py-1.5 text-sm">タグがありません</div>
+              ) : (
+                allTags.map((tag) => (
+                  <div key={tag.id} className="hover:bg-accent flex items-center space-x-2 rounded-sm px-2 py-1.5">
+                    <Checkbox
+                      id={`tag-${tag.id}`}
+                      checked={tags.includes(tag.id)}
+                      onCheckedChange={() => toggleTag(tag.id)}
+                    />
+                    <Label
+                      htmlFor={`tag-${tag.id}`}
+                      className="flex flex-1 cursor-pointer items-center gap-2 text-sm font-normal"
+                    >
+                      {tag.color && (
+                        <span
+                          className="size-3 shrink-0 rounded-full"
+                          style={{ backgroundColor: tag.color }}
+                          aria-hidden="true"
+                        />
+                      )}
+                      <span className="truncate">{tag.name}</span>
+                    </Label>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
