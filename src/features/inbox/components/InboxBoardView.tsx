@@ -43,7 +43,7 @@ export function InboxBoardView() {
   return (
     <div id="inbox-view-panel" role="tabpanel" className="flex h-full flex-col">
       {/* ツールバー: フィルター・検索 */}
-      <div className="flex h-12 shrink-0 items-end px-4 pt-2 md:px-6">
+      <div className="flex shrink-0 items-center px-4 py-2 md:px-6">
         <InboxBoardToolbar />
       </div>
 
