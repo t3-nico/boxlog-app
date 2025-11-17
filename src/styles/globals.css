@@ -753,13 +753,18 @@ aside * {
 .rdp-day_button[data-selected-single='true'] {
   background-color: var(--color-primary) !important;
   color: var(--color-primary-foreground) !important;
+  font-weight: normal !important;
 }
 
 /* 今日の日付 - コントラスト比改善 */
+.rdp-today:not(.rdp-selected) {
+  background-color: transparent !important;
+}
+
 .rdp-day_button[data-today='true']:not([data-selected-single='true']) {
   background-color: transparent !important;
   color: var(--color-primary) !important;
-  font-weight: 600;
+  font-weight: normal !important;
   border: 2px solid var(--color-primary) !important;
 }
 
@@ -815,5 +820,26 @@ aside * {
 .rdp-day_button[aria-disabled='true'] {
   color: var(--color-muted-foreground);
   opacity: 0.5;
+}
+
+/* ============================================
+ * react-day-picker gap削除（時刻入力のスペース問題修正）
+ * ============================================ */
+/* .rdp-month の gap-4 を強制的に削除 */
+.rdp-month {
+  gap: 0 !important;
+}
+
+/* 時刻input内部のWebKit要素のギャップ削除 */
+input[type='time']::-webkit-datetime-edit-fields-wrapper {
+  gap: 0 !important;
+}
+
+input[type='time']::-webkit-datetime-edit-hour-field {
+  margin-right: 0 !important;
+}
+
+input[type='time']::-webkit-datetime-edit-minute-field {
+  margin-left: 0 !important;
 }
 
