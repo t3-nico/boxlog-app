@@ -6,6 +6,7 @@ import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { Activity, Calendar, CalendarRange, FileText, Hash, Tag } from 'lucide-react'
 import { useEffect, useMemo, useRef } from 'react'
 
+import type { InboxItem } from '../hooks/useInboxData'
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxColumnStore } from '../stores/useInboxColumnStore'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
@@ -80,6 +81,26 @@ export function InboxTableView() {
   const handleDelete = () => {
     // TODO: 削除機能実装
     console.log('Delete:', Array.from(selectedIds))
+  }
+
+  const handleEdit = (item: InboxItem) => {
+    // TODO: 編集機能実装（Inspectorを開く）
+    console.log('Edit:', item.id)
+  }
+
+  const handleDuplicate = (item: InboxItem) => {
+    // TODO: 複製機能実装
+    console.log('Duplicate:', item.id)
+  }
+
+  const handleAddTags = () => {
+    // TODO: タグ一括追加機能実装
+    console.log('Add tags to:', Array.from(selectedIds))
+  }
+
+  const handleChangeDueDate = () => {
+    // TODO: 期限一括変更機能実装
+    console.log('Change due date for:', Array.from(selectedIds))
   }
 
   // アクティブなビューを取得
@@ -227,8 +248,14 @@ export function InboxTableView() {
           actions={
             <InboxSelectionActions
               selectedCount={selectedCount}
+              selectedIds={Array.from(selectedIds)}
+              items={paginatedItems}
               onArchive={handleArchive}
               onDelete={handleDelete}
+              onEdit={handleEdit}
+              onDuplicate={handleDuplicate}
+              onAddTags={handleAddTags}
+              onChangeDueDate={handleChangeDueDate}
               onClearSelection={clearSelection}
             />
           }
@@ -251,7 +278,7 @@ export function InboxTableView() {
         }}
       >
         {/* テーブル部分: 枠で囲む + 横スクロール対応 */}
-        <div className="border-border flex flex-1 flex-col overflow-auto rounded-lg border">
+        <div className="border-border flex flex-1 flex-col overflow-auto rounded-lg border [&::-webkit-scrollbar-corner]:rounded-lg [&::-webkit-scrollbar-track]:rounded-lg">
           <Table className="w-full">
             {/* ヘッダー: 固定 */}
             <TableHeader className="bg-background sticky top-0 z-10">
@@ -321,6 +348,8 @@ export function InboxTableView() {
                   ))}
                   {/* Notionスタイル：新規作成行 */}
                   <InboxTableRowCreate ref={createRowRef} />
+                  {/* 下部スペーサー：スクロールバーと被らないように4px確保 */}
+                  <TableRow className="pointer-events-none h-1" />
                 </>
               )}
             </TableBody>
