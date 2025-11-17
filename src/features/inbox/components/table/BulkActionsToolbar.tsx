@@ -12,12 +12,11 @@ import {
 } from '@/components/ui/select'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
-import { Archive, Calendar, Tag, Trash2, X } from 'lucide-react'
+import { Archive, Calendar, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
 import { BulkDatePickerDialog } from './BulkDatePickerDialog'
-import { BulkTagsDialog } from './BulkTagsDialog'
 
 /**
  * 一括操作ツールバーコンポーネント
@@ -39,7 +38,6 @@ export function BulkActionsToolbar() {
   const { getSelectedCount, getSelectedIds, clearSelection } = useInboxSelectionStore()
   const { bulkUpdateTicket, bulkDeleteTicket } = useTicketMutations()
   const selectedCount = getSelectedCount()
-  const [showTagsDialog, setShowTagsDialog] = useState(false)
   const [showDateDialog, setShowDateDialog] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -66,11 +64,6 @@ export function BulkActionsToolbar() {
     } finally {
       setIsProcessing(false)
     }
-  }
-
-  // タグ編集ダイアログを開く
-  const handleOpenTagsDialog = () => {
-    setShowTagsDialog(true)
   }
 
   // 期限設定ダイアログを開く
@@ -153,12 +146,6 @@ export function BulkActionsToolbar() {
           </SelectContent>
         </Select>
 
-        {/* タグ編集 */}
-        <Button variant="outline" size="sm" onClick={handleOpenTagsDialog} disabled={isProcessing} className="h-8">
-          <Tag className="mr-1 size-4" />
-          タグ
-        </Button>
-
         {/* 期限設定 */}
         <Button variant="outline" size="sm" onClick={handleOpenDateDialog} disabled={isProcessing} className="h-8">
           <Calendar className="mr-1 size-4" />
@@ -177,17 +164,6 @@ export function BulkActionsToolbar() {
           削除
         </Button>
       </div>
-
-      {/* タグ編集ダイアログ */}
-      <BulkTagsDialog
-        open={showTagsDialog}
-        onOpenChange={setShowTagsDialog}
-        selectedIds={Array.from(getSelectedIds())}
-        onSuccess={() => {
-          clearSelection()
-          setShowTagsDialog(false)
-        }}
-      />
 
       {/* 期限設定ダイアログ */}
       <BulkDatePickerDialog

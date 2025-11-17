@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { useInboxViewStore } from '../stores/useInboxViewStore'
-import type { InboxView, InboxViewType } from '../types/view'
+import type { DisplayMode, InboxView } from '../types/view'
 
 /**
  * Inbox View Tabs Component
@@ -31,7 +31,7 @@ export function InboxViewTabs() {
   const params = useParams()
   const locale = params?.locale as string
 
-  const { views, activeViewId, setActiveView, deleteView } = useInboxViewStore()
+  const { views, activeViewId, setActiveView, deleteView, displayMode, setDisplayMode } = useInboxViewStore()
   const [editingView, setEditingView] = useState<InboxView | null>(null)
 
   const handleViewChange = (viewId: string) => {
@@ -48,8 +48,8 @@ export function InboxViewTabs() {
     }
   }
 
-  const getViewIcon = (type: InboxViewType) => {
-    switch (type) {
+  const getDisplayModeIcon = (mode: DisplayMode) => {
+    switch (mode) {
       case 'board':
         return <Columns3 className="h-4 w-4" />
       case 'table':
@@ -59,10 +59,20 @@ export function InboxViewTabs() {
     }
   }
 
+  const handleDisplayModeToggle = () => {
+    setDisplayMode(displayMode === 'board' ? 'table' : 'board')
+  }
+
   return (
     <>
-      <div role="tablist" aria-label="Inbox view selector" className="flex h-10 items-center gap-0">
-        {/* 既存のタブ */}
+      <div role="tablist" aria-label="Inbox view selector" className="flex h-10 items-center gap-2">
+        {/* Board/Table 切り替えボタン */}
+        <Button variant="ghost" size="sm" onClick={handleDisplayModeToggle} className="h-9 gap-2">
+          {getDisplayModeIcon(displayMode)}
+          <span>{displayMode === 'board' ? 'Board' : 'Table'}</span>
+        </Button>
+
+        {/* View タブ */}
         {views.map((view) => (
           <div key={view.id} className="group relative flex items-center">
             <button
@@ -76,7 +86,6 @@ export function InboxViewTabs() {
                   : 'text-muted-foreground hover:border-primary/50 hover:text-foreground border-transparent'
               }`}
             >
-              {getViewIcon(view.type)}
               <span>{view.name}</span>
             </button>
 

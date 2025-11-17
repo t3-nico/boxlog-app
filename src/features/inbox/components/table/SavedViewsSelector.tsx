@@ -7,8 +7,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Check, ChevronDown, Layers, Pencil, Plus, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { Input } from '@/components/ui/input'
+import { Check, ChevronDown, Layers, Pencil, Plus, Trash2, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { useInboxViewStore } from '../../stores/useInboxViewStore'
 import type { InboxView } from '../../types/view'
 import { ViewSettingsDialog } from './ViewSettingsDialog'
@@ -36,26 +37,70 @@ interface SavedViewsSelectorProps {
  * ```
  */
 export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
-  const { views, activeViewId, setActiveView, deleteView } = useInboxViewStore()
+  const { views, activeViewId, setActiveView, deleteView, createView, updateView } = useInboxViewStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingView, setEditingView] = useState<InboxView | undefined>(undefined)
+  const [editingViewId, setEditingViewId] = useState<string | null>(null)
+  const [editingName, setEditingName] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  // Table typeのビューのみ表示
-  const tableViews = views.filter((view) => view.type === 'table')
   const activeView = views.find((view) => view.id === activeViewId)
 
   // デフォルトビューとカスタムビューに分離
-  const defaultViews = tableViews.filter((view) => view.id.startsWith('default-'))
-  const customViews = tableViews.filter((view) => !view.id.startsWith('default-'))
+  const defaultViews = views.filter((view) => view.id.startsWith('default-'))
+  const customViews = views.filter((view) => !view.id.startsWith('default-'))
 
-  // 新規ビュー作成ダイアログを開く
+  // 入力欄がマウントされたら自動フォーカス
+  useEffect(() => {
+    if (editingViewId && inputRef.current) {
+      inputRef.current.focus()
+      inputRef.current.select()
+    }
+  }, [editingViewId])
+
+  // Notionスタイル：クリックで即座にビューを作成してタイトル入力状態にする
   const handleCreateView = () => {
-    setEditingView(undefined)
-    setDialogOpen(true)
+    const newView = createView({
+      name: '無題のビュー',
+      filters: currentState?.filters || {},
+      sorting: currentState?.sorting,
+    })
+    setEditingViewId(newView.id)
+    setEditingName(newView.name)
   }
 
-  // ビュー編集ダイアログを開く
-  const handleEditView = (view: InboxView, e: React.MouseEvent) => {
+  // インライン編集開始
+  const handleStartEdit = (view: InboxView, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setEditingViewId(view.id)
+    setEditingName(view.name)
+  }
+
+  // インライン編集確定
+  const handleSaveEdit = (viewId: string) => {
+    if (editingName.trim()) {
+      updateView(viewId, { name: editingName.trim() })
+    } else {
+      // タイトルが空の場合は削除
+      deleteView(viewId)
+    }
+    setEditingViewId(null)
+    setEditingName('')
+  }
+
+  // インライン編集キャンセル
+  const handleCancelEdit = (viewId: string) => {
+    const view = views.find((v) => v.id === viewId)
+    // 新規作成直後でタイトルが未入力の場合は削除
+    if (view?.name === '無題のビュー' && !editingName.trim()) {
+      deleteView(viewId)
+    }
+    setEditingViewId(null)
+    setEditingName('')
+  }
+
+  // ビュー設定ダイアログを開く（詳細設定用）
+  const handleOpenSettings = (view: InboxView, e: React.MouseEvent) => {
     e.stopPropagation()
     setEditingView(view)
     setDialogOpen(true)
@@ -103,28 +148,71 @@ export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
               {customViews.map((view) => (
                 <DropdownMenuItem
                   key={view.id}
-                  onClick={() => setActiveView(view.id)}
+                  onClick={() => {
+                    if (editingViewId !== view.id) {
+                      setActiveView(view.id)
+                    }
+                  }}
                   className="flex items-center justify-between gap-2"
+                  onSelect={(e) => {
+                    if (editingViewId === view.id) {
+                      e.preventDefault()
+                    }
+                  }}
                 >
-                  <span className="flex-1 truncate">{view.name}</span>
+                  {editingViewId === view.id ? (
+                    <Input
+                      ref={inputRef}
+                      value={editingName}
+                      onChange={(e) => setEditingName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSaveEdit(view.id)
+                        } else if (e.key === 'Escape') {
+                          handleCancelEdit(view.id)
+                        }
+                      }}
+                      onBlur={() => handleSaveEdit(view.id)}
+                      className="h-7 flex-1"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  ) : (
+                    <span className="flex-1 truncate">{view.name}</span>
+                  )}
                   <div className="flex items-center gap-1">
-                    {activeViewId === view.id && <Check className="size-4" />}
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      onClick={(e) => handleEditView(view, e)}
-                      className="size-6 shrink-0"
-                    >
-                      <Pencil className="size-3" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      onClick={(e) => handleDeleteView(view.id, e)}
-                      className="hover:text-destructive size-6 shrink-0"
-                    >
-                      <Trash2 className="size-3" />
-                    </Button>
+                    {activeViewId === view.id && editingViewId !== view.id && <Check className="size-4 shrink-0" />}
+                    {editingViewId === view.id ? (
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleCancelEdit(view.id)
+                        }}
+                        className="size-6 shrink-0"
+                      >
+                        <X className="size-3" />
+                      </Button>
+                    ) : (
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          onClick={(e) => handleStartEdit(view, e)}
+                          className="size-6 shrink-0"
+                        >
+                          <Pencil className="size-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          onClick={(e) => handleDeleteView(view.id, e)}
+                          className="hover:text-destructive size-6 shrink-0"
+                        >
+                          <Trash2 className="size-3" />
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </DropdownMenuItem>
               ))}

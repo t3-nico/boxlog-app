@@ -113,7 +113,22 @@ export const ticketsRouter = createTRPCRouter({
   list: protectedProcedure.input(ticketFilterSchema.optional()).query(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
-    let query = supabase.from('tickets').select('*').eq('user_id', userId)
+    let query = supabase
+      .from('tickets')
+      .select(
+        `
+        *,
+        ticket_tags (
+          tag_id,
+          tags (
+            id,
+            name,
+            color
+          )
+        )
+      `
+      )
+      .eq('user_id', userId)
 
     // タグIDでフィルタ（ticket_tags テーブルと JOIN）
     if (input?.tagId) {

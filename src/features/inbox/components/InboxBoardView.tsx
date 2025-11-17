@@ -3,6 +3,7 @@
 import { KanbanBoard } from '@/features/board'
 import { KanbanToolbar } from '@/features/board/components/KanbanToolbar'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
+
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 

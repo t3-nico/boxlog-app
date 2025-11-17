@@ -8,13 +8,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useInboxFocusStore } from '@/features/inbox/stores/useInboxFocusStore'
 import { api } from '@/lib/trpc'
 import { format } from 'date-fns'
 import {
@@ -82,6 +82,7 @@ const TIME_OPTIONS = generateTimeOptions()
  */
 export function TicketInspector() {
   const { isOpen, ticketId, closeInspector, openInspector } = useTicketInspectorStore()
+  const { setFocusedId } = useInboxFocusStore()
 
   // Ticketデータ取得（タグ情報も含む）
   const { data: ticketData, isLoading } = useTicket(ticketId!, { includeTags: true, enabled: !!ticketId })
@@ -205,13 +206,17 @@ export function TicketInspector() {
 
   const goToPrevious = () => {
     if (hasPrevious) {
-      openInspector(allTickets[currentIndex - 1]!.id)
+      const prevTicketId = allTickets[currentIndex - 1]!.id
+      openInspector(prevTicketId)
+      setFocusedId(prevTicketId)
     }
   }
 
   const goToNext = () => {
     if (hasNext) {
-      openInspector(allTickets[currentIndex + 1]!.id)
+      const nextTicketId = allTickets[currentIndex + 1]!.id
+      openInspector(nextTicketId)
+      setFocusedId(nextTicketId)
     }
   }
 
@@ -416,7 +421,7 @@ export function TicketInspector() {
             <div className="flex h-10 items-center justify-between pt-2">
               <TooltipProvider>
                 <div className="flex items-center gap-1">
-                  <Tooltip delayDuration={0}>
+                  <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="ghost"
@@ -433,7 +438,7 @@ export function TicketInspector() {
                     </TooltipContent>
                   </Tooltip>
                   <div className="flex items-center">
-                    <Tooltip delayDuration={0}>
+                    <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
                           variant="ghost"
@@ -450,7 +455,7 @@ export function TicketInspector() {
                         <p>前のチケット</p>
                       </TooltipContent>
                     </Tooltip>
-                    <Tooltip delayDuration={0}>
+                    <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
                           variant="ghost"
@@ -559,14 +564,25 @@ export function TicketInspector() {
               <TabsContent value="details">
                 {/* タイトル */}
                 <div className="px-6 pt-4 pb-2">
-                  <Input
-                    id="title"
-                    defaultValue={ticket.title}
-                    onChange={(e) => autoSave('title', e.target.value)}
-                    className="bg-card dark:bg-card border-0 px-0 text-[2rem] font-bold shadow-none focus-visible:ring-0"
-                    placeholder="Add a title"
-                    style={{ fontSize: 'var(--font-size-xl)' }}
-                  />
+                  <div className="inline">
+                    <span
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) => autoSave('title', e.currentTarget.textContent || '')}
+                      className="bg-card dark:bg-card border-0 px-0 text-[2rem] font-bold outline-none"
+                      style={{ fontSize: 'var(--font-size-xl)' }}
+                    >
+                      {ticket.title}
+                    </span>
+                    {ticket.ticket_number && (
+                      <span
+                        className="text-muted-foreground ml-4 text-[2rem]"
+                        style={{ fontSize: 'var(--font-size-xl)' }}
+                      >
+                        #{ticket.ticket_number}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* 日付・時間 */}

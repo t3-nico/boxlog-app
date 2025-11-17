@@ -144,7 +144,10 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
 
       {/* 1. タイトル */}
       <div className="pr-6">
-        <h3 className="text-foreground text-sm leading-tight font-medium">{card.title}</h3>
+        <h3 className="text-foreground flex items-baseline gap-2 text-sm leading-tight font-medium">
+          <span>{card.title}</span>
+          {card.ticketNumber && <span className="text-muted-foreground shrink-0 text-xs">#{card.ticketNumber}</span>}
+        </h3>
       </div>
 
       {/* 2. 時間 */}

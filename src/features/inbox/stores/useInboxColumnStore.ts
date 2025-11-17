@@ -4,7 +4,7 @@ import { devtools, persist } from 'zustand/middleware'
 /**
  * 列ID
  */
-export type ColumnId = 'selection' | 'ticket_number' | 'title' | 'status' | 'tags' | 'due_date' | 'created_at'
+export type ColumnId = 'selection' | 'id' | 'title' | 'status' | 'tags' | 'duration' | 'created_at' | 'updated_at'
 
 /**
  * 列設定
@@ -22,12 +22,13 @@ export interface ColumnConfig {
  */
 const DEFAULT_COLUMNS: ColumnConfig[] = [
   { id: 'selection', label: '', visible: true, width: 50, resizable: false },
-  { id: 'ticket_number', label: '番号', visible: true, width: 80, resizable: true },
+  { id: 'id', label: 'ID', visible: false, width: 100, resizable: true },
   { id: 'title', label: 'タイトル', visible: true, width: 300, resizable: true },
   { id: 'status', label: 'ステータス', visible: true, width: 120, resizable: true },
   { id: 'tags', label: 'タグ', visible: true, width: 200, resizable: true },
-  { id: 'due_date', label: '期限', visible: true, width: 140, resizable: true },
-  { id: 'created_at', label: '作成日時', visible: true, width: 140, resizable: true },
+  { id: 'duration', label: '期間', visible: true, width: 200, resizable: true },
+  { id: 'created_at', label: '作成日', visible: true, width: 120, resizable: true },
+  { id: 'updated_at', label: '更新日', visible: false, width: 120, resizable: true },
 ]
 
 /**
@@ -89,9 +90,9 @@ export const useInboxColumnStore = create<InboxColumnState>()(
         getVisibleColumns: () => get().columns.filter((col) => col.visible),
       }),
       {
-        name: 'inbox-column-store-v2',
+        name: 'inbox-column-store-v9',
       }
     ),
-    { name: 'inbox-column-store-v2' }
+    { name: 'inbox-column-store-v9' }
   )
 )

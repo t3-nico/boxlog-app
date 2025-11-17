@@ -1,6 +1,6 @@
 'use client'
 
-import { Archive, Folder, FolderX, Hash, Plus, Search, Tags, X } from 'lucide-react'
+import { Archive, Folder, FolderX, Hash, PanelLeftClose, PanelLeftOpen, Plus, Search, Tags, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
@@ -41,6 +42,7 @@ export function TicketTagSelectDialogEnhanced({
   const [newTagName, setNewTagName] = useState('')
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
   const [showArchived, setShowArchived] = useState(false)
+  const [showSidebar, setShowSidebar] = useState(true)
 
   const { data: tagsData } = useTags(true)
   const { data: groups = [] } = useTagGroups()
@@ -91,6 +93,15 @@ export function TicketTagSelectDialogEnhanced({
 
     return filtered
   }, [allTags, showArchived, selectedGroupId, searchQuery])
+
+  // 選択済み・未選択タグに分割
+  const selectedTags = useMemo(() => {
+    return filteredTags.filter((tag) => selectedTagIds.includes(tag.id))
+  }, [filteredTags, selectedTagIds])
+
+  const unselectedTags = useMemo(() => {
+    return filteredTags.filter((tag) => !selectedTagIds.includes(tag.id))
+  }, [filteredTags, selectedTagIds])
 
   // タグの選択/解除
   const handleToggleTag = (tagId: string) => {
@@ -191,6 +202,7 @@ export function TicketTagSelectDialogEnhanced({
       setNewTagName('')
       setSelectedGroupId(null)
       setShowArchived(false)
+      setShowSidebar(true)
     }
   }, [isOpen])
 
@@ -199,12 +211,13 @@ export function TicketTagSelectDialogEnhanced({
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent
         className="!border-border bg-card dark:bg-card flex flex-col gap-0 !border p-0"
-        style={{ width: '720px', maxWidth: '90vw', height: '50vh', maxHeight: '80vh' }}
+        style={{ width: '720px', maxWidth: 'calc(100vw - 160px)', height: '50vh', maxHeight: '80vh' }}
         align={align}
         side={side}
         sideOffset={sideOffset}
         alignOffset={alignOffset}
-        avoidCollisions={false}
+        avoidCollisions={true}
+        collisionPadding={{ left: 80, right: 80, top: 20, bottom: 20 }}
       >
         {/* ヘッダー: 検索バー + 新規作成ボタン */}
         <div className="border-border shrink-0 border-b p-4">
@@ -225,6 +238,25 @@ export function TicketTagSelectDialogEnhanced({
               <Plus className="mr-2 h-4 w-4" />
               新しいタグ
             </Button>
+
+            {/* サイドバー開閉ボタン */}
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowSidebar(!showSidebar)}
+                    className="hidden shrink-0 md:flex"
+                  >
+                    {showSidebar ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{showSidebar ? 'サイドバーを閉じる' : 'サイドバーを開く'}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           {/* 作成フォーム（isCreating時のみ表示） */}
@@ -257,105 +289,107 @@ export function TicketTagSelectDialogEnhanced({
 
         <div className="flex min-h-0 flex-1 overflow-hidden">
           {/* 左側: Sidebar (モバイルでは非表示) */}
-          <div
-            className="border-border hidden shrink-0 border-r md:block"
-            style={{ width: '240px', maxWidth: '240px' }}
-          >
-            <ScrollArea className="h-full">
-              <nav className="flex flex-col gap-0 p-2" style={{ maxWidth: '240px' }}>
-                {/* すべてのタグ */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedGroupId(null)
-                    setShowArchived(false)
-                  }}
-                  className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
-                    !selectedGroupId && !showArchived
-                      ? 'bg-accent text-accent-foreground'
-                      : 'hover:bg-accent hover:text-accent-foreground'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <Tags className="h-4 w-4 shrink-0" />
-                    <span className="flex-1 truncate">すべてのタグ</span>
-                    <span className="text-muted-foreground shrink-0">{activeCount}</span>
-                  </div>
-                </button>
-
-                {/* 未分類 */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedGroupId('uncategorized')
-                    setShowArchived(false)
-                  }}
-                  className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
-                    selectedGroupId === 'uncategorized' && !showArchived
-                      ? 'bg-accent text-accent-foreground'
-                      : 'hover:bg-accent hover:text-accent-foreground'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <FolderX className="h-4 w-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
-                    <span className="flex-1 truncate">未分類</span>
-                    <span className="text-muted-foreground shrink-0">{uncategorizedCount}</span>
-                  </div>
-                </button>
-
-                {/* アーカイブ */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedGroupId(null)
-                    setShowArchived(true)
-                  }}
-                  className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
-                    showArchived ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <Archive className="h-4 w-4 shrink-0" />
-                    <span className="flex-1 truncate">アーカイブ</span>
-                    <span className="text-muted-foreground shrink-0">{archivedCount}</span>
-                  </div>
-                </button>
-
-                {/* グループセクション */}
-                {groups.length > 0 && (
-                  <>
-                    <div className="text-muted-foreground mt-4 mb-2 pr-1 pl-3 text-xs font-semibold uppercase">
-                      グループ
+          {showSidebar && (
+            <div
+              className="border-border hidden shrink-0 border-r md:block"
+              style={{ width: '240px', maxWidth: '240px' }}
+            >
+              <ScrollArea className="h-full">
+                <nav className="flex flex-col gap-0 p-2" style={{ maxWidth: '240px' }}>
+                  {/* すべてのタグ */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedGroupId(null)
+                      setShowArchived(false)
+                    }}
+                    className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
+                      !selectedGroupId && !showArchived
+                        ? 'bg-accent text-accent-foreground'
+                        : 'hover:bg-accent hover:text-accent-foreground'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Tags className="h-4 w-4 shrink-0" />
+                      <span className="flex-1 truncate">すべてのタグ</span>
+                      <span className="text-muted-foreground shrink-0">{activeCount}</span>
                     </div>
-                    {groups.map((group) => {
-                      const groupTagCount = getGroupTagCount(group.id)
-                      return (
-                        <button
-                          key={group.id}
-                          type="button"
-                          onClick={() => {
-                            setSelectedGroupId(group.id)
-                            setShowArchived(false)
-                          }}
-                          className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
-                            selectedGroupId === group.id && !showArchived
-                              ? 'bg-accent text-accent-foreground'
-                              : 'hover:bg-accent hover:text-accent-foreground'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || '#6B7280' }} />
-                            <span className="flex-1 truncate">{group.name}</span>
-                            <span className="text-muted-foreground shrink-0">{groupTagCount}</span>
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </>
-                )}
-              </nav>
-            </ScrollArea>
-          </div>
+                  </button>
+
+                  {/* 未分類 */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedGroupId('uncategorized')
+                      setShowArchived(false)
+                    }}
+                    className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
+                      selectedGroupId === 'uncategorized' && !showArchived
+                        ? 'bg-accent text-accent-foreground'
+                        : 'hover:bg-accent hover:text-accent-foreground'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <FolderX className="h-4 w-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
+                      <span className="flex-1 truncate">未分類</span>
+                      <span className="text-muted-foreground shrink-0">{uncategorizedCount}</span>
+                    </div>
+                  </button>
+
+                  {/* アーカイブ */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedGroupId(null)
+                      setShowArchived(true)
+                    }}
+                    className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
+                      showArchived ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Archive className="h-4 w-4 shrink-0" />
+                      <span className="flex-1 truncate">アーカイブ</span>
+                      <span className="text-muted-foreground shrink-0">{archivedCount}</span>
+                    </div>
+                  </button>
+
+                  {/* グループセクション */}
+                  {groups.length > 0 && (
+                    <>
+                      <div className="text-muted-foreground mt-4 mb-2 pr-1 pl-3 text-xs font-semibold uppercase">
+                        グループ
+                      </div>
+                      {groups.map((group) => {
+                        const groupTagCount = getGroupTagCount(group.id)
+                        return (
+                          <button
+                            key={group.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedGroupId(group.id)
+                              setShowArchived(false)
+                            }}
+                            className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
+                              selectedGroupId === group.id && !showArchived
+                                ? 'bg-accent text-accent-foreground'
+                                : 'hover:bg-accent hover:text-accent-foreground'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || '#6B7280' }} />
+                              <span className="flex-1 truncate">{group.name}</span>
+                              <span className="text-muted-foreground shrink-0">{groupTagCount}</span>
+                            </div>
+                          </button>
+                        )
+                      })}
+                    </>
+                  )}
+                </nav>
+              </ScrollArea>
+            </div>
+          )}
 
           {/* 右側: メインコンテンツ */}
           <div className="flex flex-1 flex-col overflow-hidden">
@@ -378,48 +412,113 @@ export function TicketTagSelectDialogEnhanced({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredTags.map((tag) => {
-                      const isSelected = selectedTagIds.includes(tag.id)
-                      return (
-                        <TableRow
-                          key={tag.id}
-                          className={`cursor-pointer text-xs ${!tag.is_active ? 'opacity-50' : ''}`}
-                          onClick={() => tag.is_active && handleToggleTag(tag.id)}
-                        >
-                          <TableCell onClick={(e) => e.stopPropagation()}>
-                            <Checkbox
-                              checked={isSelected}
-                              onCheckedChange={() => tag.is_active && handleToggleTag(tag.id)}
-                              disabled={!tag.is_active}
-                              aria-label={`${tag.name}を選択`}
-                            />
-                          </TableCell>
-                          <TableCell className="pr-1">
-                            <Hash
-                              className="h-4 w-4"
-                              style={{ color: tag.color || '#3B82F6' }}
-                              aria-label="タグカラー"
-                            />
-                          </TableCell>
-                          <TableCell className="pl-1 font-medium">
-                            <div className="flex items-center gap-2">
-                              <span>
-                                {tag.name}{' '}
-                                <span className="text-muted-foreground">({tagTicketCounts[tag.id] || 0})</span>
-                              </span>
-                              {!tag.is_active && (
-                                <Badge variant="outline" className="text-xs">
-                                  アーカイブ済み
-                                </Badge>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-muted-foreground">
-                            <span className="line-clamp-2">{tag.description || '-'}</span>
+                    {/* 選択済みセクション */}
+                    {selectedTags.length > 0 && (
+                      <>
+                        <TableRow className="bg-muted/30 hover:bg-muted/30">
+                          <TableCell colSpan={4} className="py-2 text-xs font-semibold">
+                            選択中 ({selectedTags.length})
                           </TableCell>
                         </TableRow>
-                      )
-                    })}
+                        {selectedTags.map((tag) => {
+                          const isSelected = true
+                          return (
+                            <TableRow
+                              key={tag.id}
+                              className={`cursor-pointer text-xs ${!tag.is_active ? 'opacity-50' : ''} ${
+                                isSelected ? 'bg-primary/10' : ''
+                              }`}
+                              onClick={() => tag.is_active && handleToggleTag(tag.id)}
+                            >
+                              <TableCell onClick={(e) => e.stopPropagation()}>
+                                <Checkbox
+                                  checked={isSelected}
+                                  onCheckedChange={() => tag.is_active && handleToggleTag(tag.id)}
+                                  disabled={!tag.is_active}
+                                  aria-label={`${tag.name}を選択`}
+                                />
+                              </TableCell>
+                              <TableCell className="pr-1">
+                                <Hash
+                                  className="h-4 w-4"
+                                  style={{ color: tag.color || '#3B82F6' }}
+                                  aria-label="タグカラー"
+                                />
+                              </TableCell>
+                              <TableCell className="pl-1 font-medium">
+                                <div className="flex items-center gap-2">
+                                  <span>
+                                    {tag.name}{' '}
+                                    <span className="text-muted-foreground">({tagTicketCounts[tag.id] || 0})</span>
+                                  </span>
+                                  {!tag.is_active && (
+                                    <Badge variant="outline" className="text-xs">
+                                      アーカイブ済み
+                                    </Badge>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-muted-foreground">
+                                <span className="line-clamp-2">{tag.description || '-'}</span>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
+                      </>
+                    )}
+
+                    {/* 未選択セクション */}
+                    {unselectedTags.length > 0 && (
+                      <>
+                        <TableRow className="bg-muted/30 hover:bg-muted/30">
+                          <TableCell colSpan={4} className="py-2 text-xs font-semibold">
+                            その他
+                          </TableCell>
+                        </TableRow>
+                        {unselectedTags.map((tag) => {
+                          const isSelected = false
+                          return (
+                            <TableRow
+                              key={tag.id}
+                              className={`cursor-pointer text-xs ${!tag.is_active ? 'opacity-50' : ''}`}
+                              onClick={() => tag.is_active && handleToggleTag(tag.id)}
+                            >
+                              <TableCell onClick={(e) => e.stopPropagation()}>
+                                <Checkbox
+                                  checked={isSelected}
+                                  onCheckedChange={() => tag.is_active && handleToggleTag(tag.id)}
+                                  disabled={!tag.is_active}
+                                  aria-label={`${tag.name}を選択`}
+                                />
+                              </TableCell>
+                              <TableCell className="pr-1">
+                                <Hash
+                                  className="h-4 w-4"
+                                  style={{ color: tag.color || '#3B82F6' }}
+                                  aria-label="タグカラー"
+                                />
+                              </TableCell>
+                              <TableCell className="pl-1 font-medium">
+                                <div className="flex items-center gap-2">
+                                  <span>
+                                    {tag.name}{' '}
+                                    <span className="text-muted-foreground">({tagTicketCounts[tag.id] || 0})</span>
+                                  </span>
+                                  {!tag.is_active && (
+                                    <Badge variant="outline" className="text-xs">
+                                      アーカイブ済み
+                                    </Badge>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-muted-foreground">
+                                <span className="line-clamp-2">{tag.description || '-'}</span>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
+                      </>
+                    )}
                   </TableBody>
                 </Table>
               )}

@@ -5,22 +5,23 @@
  */
 
 /**
- * View Type
- * BoardビューまたはTableビュー
+ * Display Mode
+ * 表示形式（BoardビューまたはTableビュー）
+ * Viewとは独立して、ユーザーがヘッダーで切り替え可能
  */
-export type InboxViewType = 'board' | 'table'
+export type DisplayMode = 'board' | 'table'
 
 /**
  * Inbox View Configuration
  *
- * ユーザーが保存できるView設定
+ * ユーザーが保存できるView設定（フィルタ条件のみ）
+ * 表示形式（Board/Table）はdisplayModeで別途管理
  *
  * @example
  * ```typescript
  * const myView: InboxView = {
  *   id: 'view-1',
  *   name: '高優先度タスク',
- *   type: 'board',
  *   filters: {
  *     priority: ['high', 'urgent'],
  *     status: ['open', 'in_progress']
@@ -38,9 +39,6 @@ export type InboxView = {
   /** View名（ユーザーが設定） */
   name: string
 
-  /** ViewタイプBoardまたはTable） */
-  type: InboxViewType
-
   /** フィルター設定 */
   filters: {
     /** ステータスフィルター */
@@ -51,6 +49,8 @@ export type InboxView = {
     tags?: string[]
     /** 検索キーワード */
     search?: string
+    /** アーカイブ済みかどうか */
+    archived?: boolean
   }
 
   /** ソート設定（将来拡張用） */
@@ -84,7 +84,6 @@ export type InboxView = {
  */
 export type CreateInboxViewInput = {
   name: string
-  type: InboxViewType
   filters?: InboxView['filters']
   sorting?: InboxView['sorting']
   isDefault?: boolean

@@ -13,14 +13,11 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-
-import type { InboxViewType } from '../types/view'
 
 type SaveViewDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSave: (name: string, type: InboxViewType) => void
+  onSave: (name: string) => void
   currentFilters: {
     status?: string[]
     priority?: string[]
@@ -46,14 +43,12 @@ type SaveViewDialogProps = {
  */
 export function SaveViewDialog({ open, onOpenChange, onSave, currentFilters }: SaveViewDialogProps) {
   const [name, setName] = useState('')
-  const [viewType, setViewType] = useState<InboxViewType>('board')
 
   const handleSave = () => {
     if (!name.trim()) return
 
-    onSave(name.trim(), viewType)
+    onSave(name.trim())
     setName('')
-    setViewType('board')
     onOpenChange(false)
   }
 
@@ -100,25 +95,6 @@ export function SaveViewDialog({ open, onOpenChange, onSave, currentFilters }: S
                 }
               }}
             />
-          </div>
-
-          {/* Viewタイプ */}
-          <div className="grid gap-2">
-            <Label>Viewタイプ</Label>
-            <RadioGroup value={viewType} onValueChange={(value) => setViewType(value as InboxViewType)}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="board" id="type-board" />
-                <Label htmlFor="type-board" className="font-normal">
-                  Board View
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="table" id="type-table" />
-                <Label htmlFor="type-table" className="font-normal">
-                  Table View
-                </Label>
-              </div>
-            </RadioGroup>
           </div>
 
           {/* フィルタープレビュー */}

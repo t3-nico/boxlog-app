@@ -82,15 +82,15 @@ export function TableFilters() {
           {/* ステータスフィルター */}
           <div className="space-y-2">
             <Label className="text-xs font-medium">ステータス</Label>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {STATUS_OPTIONS.map((option) => (
-                <div key={option.value} className="flex items-center space-x-2">
+                <div key={option.value} className="hover:bg-accent flex items-center space-x-2 rounded-sm px-2 py-1.5">
                   <Checkbox
                     id={`status-${option.value}`}
                     checked={status.includes(option.value)}
                     onCheckedChange={() => toggleStatus(option.value)}
                   />
-                  <Label htmlFor={`status-${option.value}`} className="text-sm font-normal">
+                  <Label htmlFor={`status-${option.value}`} className="flex-1 cursor-pointer text-sm font-normal">
                     {option.label}
                   </Label>
                 </div>

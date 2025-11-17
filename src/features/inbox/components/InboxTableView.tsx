@@ -3,10 +3,11 @@
 import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
-import { Activity, Calendar, CalendarClock, FileText, Hash, Tag } from 'lucide-react'
+import { Activity, Calendar, CalendarRange, FileText, Hash, Tag } from 'lucide-react'
 import { useEffect, useMemo, useRef } from 'react'
+
+import type { InboxItem } from '../hooks/useInboxData'
 import { useInboxData } from '../hooks/useInboxData'
-import { useInboxKeyboardShortcuts } from '../hooks/useInboxKeyboardShortcuts'
 import { useInboxColumnStore } from '../stores/useInboxColumnStore'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 import { useInboxGroupStore } from '../stores/useInboxGroupStore'
@@ -16,24 +17,26 @@ import type { SortField } from '../stores/useInboxSortStore'
 import { useInboxSortStore } from '../stores/useInboxSortStore'
 import { useInboxViewStore } from '../stores/useInboxViewStore'
 import { groupItems } from '../utils/grouping'
-import { BulkActionsToolbar } from './table/BulkActionsToolbar'
 import { GroupBySelector } from './table/GroupBySelector'
 import { GroupHeader } from './table/GroupHeader'
+import { InboxSelectionActions } from './table/InboxSelectionActions'
+import { InboxSelectionBar } from './table/InboxSelectionBar'
 import { InboxTableEmptyState } from './table/InboxTableEmptyState'
 import { InboxTableRow } from './table/InboxTableRow'
+import { InboxTableRowCreate, type InboxTableRowCreateHandle } from './table/InboxTableRowCreate'
 import { ResizableTableHead } from './table/ResizableTableHead'
-import { SavedViewsSelector } from './table/SavedViewsSelector'
 import { TablePagination } from './table/TablePagination'
 import { TableToolbar } from './table/TableToolbar'
 
 // 列IDとアイコンのマッピング
 const columnIcons = {
-  ticket_number: Hash,
+  id: Hash,
   title: FileText,
   status: Activity,
   tags: Tag,
-  due_date: CalendarClock,
+  duration: CalendarRange,
   created_at: Calendar,
+  updated_at: Calendar,
 } as const
 
 /**
@@ -53,7 +56,7 @@ export function InboxTableView() {
   const filters = useInboxFilterStore()
   const { sortField, sortDirection, setSort } = useInboxSortStore()
   const { currentPage, pageSize, setCurrentPage, setPageSize } = useInboxPaginationStore()
-  const { selectedIds, toggleAll } = useInboxSelectionStore()
+  const { selectedIds, toggleAll, clearSelection } = useInboxSelectionStore()
   const { getVisibleColumns } = useInboxColumnStore()
   const { getActiveView } = useInboxViewStore()
   const { groupBy, collapsedGroups } = useInboxGroupStore()
@@ -62,11 +65,45 @@ export function InboxTableView() {
     search: filters.search,
   })
 
+  // 新規作成行のref
+  const createRowRef = useRef<InboxTableRowCreateHandle>(null)
+
+  // 選択数
+  const selectedCount = selectedIds.size
+
+  // アクションハンドラー
+  const handleArchive = () => {
+    // TODO: アーカイブ機能実装
+    console.log('Archive:', Array.from(selectedIds))
+  }
+
+  const handleDelete = () => {
+    // TODO: 削除機能実装
+    console.log('Delete:', Array.from(selectedIds))
+  }
+
+  const handleEdit = (item: InboxItem) => {
+    // TODO: 編集機能実装（Inspectorを開く）
+    console.log('Edit:', item.id)
+  }
+
+  const handleDuplicate = (item: InboxItem) => {
+    // TODO: 複製機能実装
+    console.log('Duplicate:', item.id)
+  }
+
+  const handleAddTags = () => {
+    // TODO: タグ一括追加機能実装
+    console.log('Add tags to:', Array.from(selectedIds))
+  }
+
+  const handleChangeDueDate = () => {
+    // TODO: 期限一括変更機能実装
+    console.log('Change due date for:', Array.from(selectedIds))
+  }
+
   // アクティブなビューを取得
   const activeView = getActiveView()
-
-  // 検索フィールドのref（キーボードショートカット用）
-  const searchInputRef = useRef<HTMLInputElement>(null)
 
   // 表示する列を取得
   const visibleColumns = getVisibleColumns()
@@ -108,7 +145,7 @@ export function InboxTableView() {
       let bValue: string | number | null = null
 
       switch (sortField) {
-        case 'ticket_number':
+        case 'id':
           aValue = a.ticket_number || ''
           bValue = b.ticket_number || ''
           break
@@ -120,13 +157,17 @@ export function InboxTableView() {
           aValue = a.status
           bValue = b.status
           break
-        case 'due_date':
-          aValue = a.due_date ? new Date(a.due_date).getTime() : 0
-          bValue = b.due_date ? new Date(b.due_date).getTime() : 0
+        case 'duration':
+          aValue = a.start_time ? new Date(a.start_time).getTime() : 0
+          bValue = b.start_time ? new Date(b.start_time).getTime() : 0
           break
         case 'created_at':
           aValue = new Date(a.created_at).getTime()
           bValue = new Date(b.created_at).getTime()
+          break
+        case 'updated_at':
+          aValue = new Date(a.updated_at).getTime()
+          bValue = new Date(b.updated_at).getTime()
           break
       }
 
@@ -156,24 +197,17 @@ export function InboxTableView() {
 
   // 全選択状態の計算（フックはreturnの前に必ず配置）
   const currentPageIds = useMemo(() => paginatedItems.map((item) => item.id), [paginatedItems])
-  const selectedCount = useMemo(
+  const selectedCountInPage = useMemo(
     () => currentPageIds.filter((id) => selectedIds.has(id)).length,
     [currentPageIds, selectedIds]
   )
-  const allSelected = selectedCount === currentPageIds.length && currentPageIds.length > 0
-  const someSelected = selectedCount > 0 && selectedCount < currentPageIds.length
+  const allSelected = selectedCountInPage === currentPageIds.length && currentPageIds.length > 0
+  const someSelected = selectedCountInPage > 0 && selectedCountInPage < currentPageIds.length
 
   // 全選択ハンドラー
   const handleToggleAll = () => {
     toggleAll(currentPageIds)
   }
-
-  // キーボードショートカットを有効化
-  useInboxKeyboardShortcuts({
-    itemIds: currentPageIds,
-    searchInputRef,
-    enabled: !isLoading && !error,
-  })
 
   // エラー表示
   if (error) {
@@ -201,104 +235,120 @@ export function InboxTableView() {
 
   return (
     <div id="inbox-table-view-panel" role="tabpanel" className="flex h-full flex-col">
-      {/* ツールバー: フィルター・検索 */}
-      <div className="flex shrink-0 items-center justify-between gap-4 px-4 py-4 md:px-6">
-        <div className="flex items-center gap-2">
-          <SavedViewsSelector
-            currentState={{
-              filters: {
-                status: filters.status,
-                search: filters.search,
-              },
-              sorting: sortField && sortDirection ? { field: sortField, direction: sortDirection } : undefined,
-              pageSize,
-            }}
-          />
+      {/* ツールバー または 選択バー（Googleドライブ風） */}
+      {selectedCount > 0 ? (
+        <InboxSelectionBar
+          selectedCount={selectedCount}
+          onClearSelection={clearSelection}
+          actions={
+            <InboxSelectionActions
+              selectedCount={selectedCount}
+              selectedIds={Array.from(selectedIds)}
+              items={paginatedItems}
+              onArchive={handleArchive}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+              onDuplicate={handleDuplicate}
+              onAddTags={handleAddTags}
+              onChangeDueDate={handleChangeDueDate}
+              onClearSelection={clearSelection}
+            />
+          }
+        />
+      ) : (
+        <div className="flex h-12 shrink-0 items-center justify-between gap-2 px-4 py-2 md:px-6">
           <GroupBySelector />
+          <TableToolbar onCreateClick={() => createRowRef.current?.startCreate()} />
         </div>
-        <TableToolbar searchInputRef={searchInputRef} />
-      </div>
-
-      {/* 一括操作ツールバー */}
-      <BulkActionsToolbar />
+      )}
 
       {/* テーブル */}
-      <div className="flex flex-1 flex-col overflow-hidden px-4 md:px-6">
-        {/* テーブル部分: 枠で囲む */}
-        <div className="border-border flex-1 overflow-hidden rounded-lg border">
-          {/* ヘッダー: 固定 */}
-          <div className="overflow-x-auto">
-            <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
-              <TableHeader>
-                <TableRow>
-                  {visibleColumns.map((column) => {
-                    if (column.id === 'selection') {
-                      return (
-                        <TableHead key={column.id} style={{ width: `${column.width}px` }}>
-                          <Checkbox
-                            checked={allSelected ? true : someSelected ? 'indeterminate' : false}
-                            onCheckedChange={handleToggleAll}
-                          />
-                        </TableHead>
-                      )
-                    }
-
-                    // アイコンを取得
-                    const Icon = columnIcons[column.id as keyof typeof columnIcons]
-
-                    // tagsはソート不可
-                    if (column.id === 'tags') {
-                      return (
-                        <ResizableTableHead key={column.id} columnId={column.id} icon={Icon}>
-                          {column.label}
-                        </ResizableTableHead>
-                      )
-                    }
-
-                    // ソート可能な列（selection, tags以外）
+      <div
+        className="flex flex-1 flex-col overflow-hidden px-4 pt-4 md:px-6"
+        onClick={(e) => {
+          // テーブルコンテナの直接クリック（空白部分）で選択解除（Tagsテーブルと同様）
+          if (e.target === e.currentTarget) {
+            useInboxSelectionStore.getState().clearSelection()
+          }
+        }}
+      >
+        {/* テーブル部分: 枠で囲む + 横スクロール対応 */}
+        <div className="border-border flex flex-1 flex-col overflow-auto rounded-lg border [&::-webkit-scrollbar-corner]:rounded-lg [&::-webkit-scrollbar-track]:rounded-lg">
+          <Table className="w-full">
+            {/* ヘッダー: 固定 */}
+            <TableHeader className="bg-background sticky top-0 z-10">
+              <TableRow>
+                {visibleColumns.map((column) => {
+                  if (column.id === 'selection') {
                     return (
-                      <ResizableTableHead
-                        key={column.id}
-                        columnId={column.id}
-                        sortField={column.id as SortField}
-                        icon={Icon}
-                      >
+                      <TableHead key={column.id} style={{ width: `${column.width}px`, minWidth: `${column.width}px` }}>
+                        <Checkbox
+                          checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+                          onCheckedChange={handleToggleAll}
+                        />
+                      </TableHead>
+                    )
+                  }
+
+                  // アイコンを取得
+                  const Icon = columnIcons[column.id as keyof typeof columnIcons]
+
+                  // tagsはソート不可
+                  if (column.id === 'tags') {
+                    return (
+                      <ResizableTableHead key={column.id} columnId={column.id} icon={Icon}>
                         {column.label}
                       </ResizableTableHead>
                     )
-                  })}
-                </TableRow>
-              </TableHeader>
-            </Table>
-          </div>
+                  }
 
-          {/* ボディ: スクロール可能 */}
-          <div className="h-full overflow-x-auto overflow-y-auto" style={{ height: 'calc(100% - 41px)' }}>
-            <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>
-              <TableBody>
-                {paginatedItems.length === 0 ? (
-                  <InboxTableEmptyState columnCount={visibleColumns.length} totalItems={items.length} />
-                ) : groupBy ? (
-                  // グループ化表示
-                  groupedData.map((group) => [
-                    <GroupHeader
-                      key={`header-${group.groupKey}`}
-                      groupKey={group.groupKey}
-                      groupLabel={group.groupLabel}
-                      count={group.count}
-                      columnCount={visibleColumns.length}
-                    />,
-                    ...(collapsedGroups.has(group.groupKey)
-                      ? []
-                      : group.items.map((item) => <InboxTableRow key={item.id} item={item} />)),
-                  ])
-                ) : (
-                  // 通常表示
-                  paginatedItems.map((item) => <InboxTableRow key={item.id} item={item} />)
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  // ソート可能な列（selection, tags以外）
+                  return (
+                    <ResizableTableHead
+                      key={column.id}
+                      columnId={column.id}
+                      sortField={column.id as SortField}
+                      icon={Icon}
+                    >
+                      {column.label}
+                    </ResizableTableHead>
+                  )
+                })}
+              </TableRow>
+            </TableHeader>
+
+            {/* ボディ: スクロール可能 */}
+            <TableBody>
+              {paginatedItems.length === 0 ? (
+                <InboxTableEmptyState columnCount={visibleColumns.length} totalItems={items.length} />
+              ) : groupBy ? (
+                // グループ化表示
+                groupedData.map((group) => [
+                  <GroupHeader
+                    key={`header-${group.groupKey}`}
+                    groupKey={group.groupKey}
+                    groupLabel={group.groupLabel}
+                    count={group.count}
+                    columnCount={visibleColumns.length}
+                  />,
+                  ...(collapsedGroups.has(group.groupKey)
+                    ? []
+                    : group.items.map((item) => <InboxTableRow key={item.id} item={item} />)),
+                ])
+              ) : (
+                // 通常表示
+                <>
+                  {paginatedItems.map((item) => (
+                    <InboxTableRow key={item.id} item={item} />
+                  ))}
+                  {/* Notionスタイル：新規作成行 */}
+                  <InboxTableRowCreate ref={createRowRef} />
+                  {/* 下部スペーサー：スクロールバーと被らないように4px確保 */}
+                  <TableRow className="pointer-events-none h-1" />
+                </>
+              )}
+            </TableBody>
+          </Table>
         </div>
 
         {/* フッター: テーブルの外側に配置（グループ化なしの場合のみ） */}

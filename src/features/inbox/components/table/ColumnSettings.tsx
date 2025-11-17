@@ -48,15 +48,15 @@ export function ColumnSettings() {
           <Separator />
 
           {/* 列の表示/非表示切り替え */}
-          <div className="space-y-2">
+          <div className="space-y-1">
             {configurableColumns.map((column) => (
-              <div key={column.id} className="flex items-center space-x-2">
+              <div key={column.id} className="hover:bg-accent flex items-center space-x-2 rounded-sm px-2 py-1.5">
                 <Checkbox
                   id={`column-${column.id}`}
                   checked={column.visible}
                   onCheckedChange={() => toggleColumnVisibility(column.id)}
                 />
-                <Label htmlFor={`column-${column.id}`} className="text-sm font-normal">
+                <Label htmlFor={`column-${column.id}`} className="flex-1 cursor-pointer text-sm font-normal">
                   {column.label}
                 </Label>
               </div>
