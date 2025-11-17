@@ -1,11 +1,11 @@
 'use client'
 
 import { KanbanBoard } from '@/features/board'
-import { KanbanToolbar } from '@/features/board/components/KanbanToolbar'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
 
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
+import { InboxBoardToolbar } from './board/InboxBoardToolbar'
 
 /**
  * Inbox Board View コンポーネント
@@ -24,6 +24,8 @@ export function InboxBoardView() {
   const { items, isLoading, error } = useInboxData({
     status: filters.status[0] as TicketStatus | undefined,
     search: filters.search,
+    tags: filters.tags,
+    dueDate: filters.dueDate,
   })
 
   // エラー表示
@@ -41,8 +43,8 @@ export function InboxBoardView() {
   return (
     <div id="inbox-view-panel" role="tabpanel" className="flex h-full flex-col">
       {/* ツールバー: フィルター・検索 */}
-      <div className="flex shrink-0 px-4 py-4 md:px-6">
-        <KanbanToolbar />
+      <div className="flex shrink-0 items-center px-4 py-2 md:px-6">
+        <InboxBoardToolbar />
       </div>
 
       {/* Kanbanボード: 残りのスペース */}

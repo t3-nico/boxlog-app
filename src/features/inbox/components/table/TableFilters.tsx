@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Separator } from '@/components/ui/separator'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
 import { Filter } from 'lucide-react'
-import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
+import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore'
 
 /**
  * ステータス選択肢
@@ -23,12 +24,28 @@ const STATUS_OPTIONS: Array<{ value: TicketStatus; label: string }> = [
 ]
 
 /**
+ * 期限フィルター選択肢
+ */
+const DUE_DATE_OPTIONS: Array<{ value: DueDateFilter; label: string }> = [
+  { value: 'all', label: 'すべて' },
+  { value: 'today', label: '今日期限' },
+  { value: 'tomorrow', label: '明日期限' },
+  { value: 'this_week', label: '今週中' },
+  { value: 'next_week', label: '来週' },
+  { value: 'overdue', label: '期限切れ' },
+  { value: 'no_due_date', label: '期限なし' },
+]
+
+/**
  * テーブルフィルターコンポーネント
  *
  * Popoverで複数選択対応のフィルターを提供
+ * - 期限フィルター（ラジオボタン）
  * - ステータスフィルター（複数選択）
  * - フィルター数のバッジ表示
  * - クリアボタン
+ *
+ * @note タグフィルターは TagFilterButton で別ボタン化
  *
  * @example
  * ```tsx
@@ -36,10 +53,10 @@ const STATUS_OPTIONS: Array<{ value: TicketStatus; label: string }> = [
  * ```
  */
 export function TableFilters() {
-  const { status, setStatus, reset } = useInboxFilterStore()
+  const { status, dueDate, setStatus, setDueDate } = useInboxFilterStore()
 
-  // フィルター数をカウント
-  const filterCount = status.length
+  // フィルター数をカウント（期限は'all'以外の場合のみカウント）
+  const filterCount = status.length + (dueDate !== 'all' ? 1 : 0)
 
   // ステータストグル
   const toggleStatus = (value: TicketStatus) => {
@@ -47,23 +64,27 @@ export function TableFilters() {
     setStatus(newStatus as TicketStatus[])
   }
 
-  // すべてクリア
+  // クリア（期限とステータスのみ）
   const handleClear = () => {
-    reset()
+    setStatus([])
+    setDueDate('all')
   }
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="h-9">
-          <Filter className="mr-2 size-4" />
+        <button
+          type="button"
+          className="focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-input bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-md border px-2.5 text-sm font-medium whitespace-nowrap shadow-xs transition-all outline-none focus-visible:ring-[3px] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+        >
+          <Filter />
           フィルター
           {filterCount > 0 && (
             <Badge variant="secondary" className="ml-2 px-1 text-xs">
               {filterCount}
             </Badge>
           )}
-        </Button>
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-[280px]" align="start">
         <div className="space-y-4">
@@ -75,6 +96,23 @@ export function TableFilters() {
                 クリア
               </Button>
             )}
+          </div>
+
+          <Separator />
+
+          {/* 期限フィルター */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium">期限</Label>
+            <RadioGroup value={dueDate} onValueChange={(value) => setDueDate(value as DueDateFilter)}>
+              {DUE_DATE_OPTIONS.map((option) => (
+                <div key={option.value} className="hover:bg-accent flex items-center space-x-2 rounded-sm px-2 py-1.5">
+                  <RadioGroupItem value={option.value} id={`due-date-${option.value}`} />
+                  <Label htmlFor={`due-date-${option.value}`} className="flex-1 cursor-pointer text-sm font-normal">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
           </div>
 
           <Separator />

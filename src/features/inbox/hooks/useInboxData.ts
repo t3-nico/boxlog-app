@@ -7,6 +7,7 @@
 import type { Ticket, TicketStatus } from '@/features/tickets/types/ticket'
 import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
 import { api } from '@/lib/trpc'
+import type { DueDateFilter } from '../stores/useInboxFilterStore'
 
 /**
  * Inboxアイテム（Ticket型のエイリアス）
@@ -33,6 +34,60 @@ export interface InboxItem {
 export interface InboxFilters {
   status?: TicketStatus
   search?: string
+  tags?: string[] // タグIDの配列
+  dueDate?: DueDateFilter // 期限フィルター
+}
+
+/**
+ * 期限フィルターの判定
+ */
+function matchesDueDateFilter(dueDate: string | null | undefined, filter: DueDateFilter): boolean {
+  if (filter === 'all') return true
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  // 期限なしフィルター
+  if (filter === 'no_due_date') {
+    return !dueDate
+  }
+
+  // 期限ありフィルターは期限がない場合false
+  if (!dueDate) return false
+
+  const itemDate = new Date(dueDate)
+  itemDate.setHours(0, 0, 0, 0)
+
+  switch (filter) {
+    case 'today':
+      return itemDate.getTime() === today.getTime()
+
+    case 'tomorrow': {
+      const tomorrow = new Date(today)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      return itemDate.getTime() === tomorrow.getTime()
+    }
+
+    case 'this_week': {
+      const endOfWeek = new Date(today)
+      endOfWeek.setDate(endOfWeek.getDate() + (6 - today.getDay()))
+      return itemDate >= today && itemDate <= endOfWeek
+    }
+
+    case 'next_week': {
+      const startOfNextWeek = new Date(today)
+      startOfNextWeek.setDate(startOfNextWeek.getDate() + (7 - today.getDay()))
+      const endOfNextWeek = new Date(startOfNextWeek)
+      endOfNextWeek.setDate(endOfNextWeek.getDate() + 6)
+      return itemDate >= startOfNextWeek && itemDate <= endOfNextWeek
+    }
+
+    case 'overdue':
+      return itemDate < today
+
+    default:
+      return true
+  }
 }
 
 /**
@@ -102,12 +157,27 @@ export function useInboxData(filters: InboxFilters = {}) {
 
   // TicketをInboxItemに変換
   // APIレスポンスは部分的な型なので、unknown経由でキャスト
-  const items: InboxItem[] =
+  let items: InboxItem[] =
     ticketsData?.map((t) =>
       ticketToInboxItem(
         t as unknown as Ticket & { ticket_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
       )
     ) || []
+
+  // タグフィルタリング（クライアント側）
+  if (filters.tags && filters.tags.length > 0) {
+    items = items.filter((item) => {
+      // アイテムのタグIDを抽出
+      const itemTagIds = item.tags?.map((tag) => tag.id) || []
+      // フィルタータグのいずれかに一致するかチェック（OR条件）
+      return filters.tags!.some((filterTagId) => itemTagIds.includes(filterTagId))
+    })
+  }
+
+  // 期限フィルタリング（クライアント側）
+  if (filters.dueDate && filters.dueDate !== 'all') {
+    items = items.filter((item) => matchesDueDateFilter(item.due_date, filters.dueDate!))
+  }
 
   // 更新日時の降順でソート
   items.sort((a, b) => {

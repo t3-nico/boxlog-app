@@ -60,7 +60,10 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
       )}
     >
       {/* カラムヘッダー */}
-      <div className="flex items-center justify-between px-1">
+      <div
+        className="flex items-center justify-between px-1 pt-2"
+        style={{ height: '48px', minHeight: '48px', maxHeight: '48px' }}
+      >
         <div className="flex items-center gap-2">
           <h3 className="text-foreground text-sm font-semibold">{column.title}</h3>
           {/* カード数 / WIP制限 */}

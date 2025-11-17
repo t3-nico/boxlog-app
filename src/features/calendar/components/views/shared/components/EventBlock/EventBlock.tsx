@@ -169,7 +169,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   // CSSクラスを組み立て（colors.tsのscheduledを参照）
   const eventClasses = cn(
     // 基本スタイル
-    'overflow-hidden rounded-md px-2 py-1 shadow-sm',
+    'overflow-hidden rounded-md pl-0 pr-2 py-1 shadow-sm',
     'focus:outline-none focus:ring-2 focus:ring-offset-1',
     // colors.tsのscheduledカラーを参照（ドラッグ中はactive）
     isDragging ? scheduledColors.active : scheduledColors.background,
@@ -178,7 +178,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
     isDragging ? 'cursor-grabbing' : 'cursor-pointer',
     isSelected && 'ring-2 ring-blue-500 ring-offset-1',
     // サイズ別スタイル
-    safePosition.height < 30 ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-sm',
+    safePosition.height < 30 ? 'pl-0 pr-1 py-0.5 text-xs' : 'pl-0 pr-2 py-1 text-sm',
     className
   )
 
