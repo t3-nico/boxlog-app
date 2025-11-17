@@ -4,7 +4,7 @@ import { devtools } from 'zustand/middleware'
 /**
  * ソート対象フィールド
  */
-export type SortField = 'id' | 'title' | 'status' | 'due_date' | 'duration' | 'created_at'
+export type SortField = 'id' | 'title' | 'status' | 'due_date' | 'duration' | 'created_at' | 'updated_at'
 
 /**
  * ソート方向

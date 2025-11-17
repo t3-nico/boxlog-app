@@ -1,6 +1,7 @@
 'use client'
 
 import { KanbanBoard } from '@/features/board'
+import { KanbanToolbar } from '@/features/board/components/KanbanToolbar'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
 
 import { useInboxData } from '../hooks/useInboxData'
@@ -39,7 +40,12 @@ export function InboxBoardView() {
 
   return (
     <div id="inbox-view-panel" role="tabpanel" className="flex h-full flex-col">
-      {/* Kanbanボード: 全体を使用 */}
+      {/* ツールバー: フィルター・検索 */}
+      <div className="flex shrink-0 px-4 py-4 md:px-6">
+        <KanbanToolbar />
+      </div>
+
+      {/* Kanbanボード: 残りのスペース */}
       <div className="flex-1 overflow-hidden">
         {isLoading ? (
           <div className="flex h-full items-center justify-center">

@@ -3,7 +3,6 @@
 import { Columns3, Table2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 import { useInboxViewStore } from '../stores/useInboxViewStore'
 import type { DisplayMode } from '../types/view'
@@ -22,26 +21,18 @@ export function DisplayModeSwitcher() {
   ]
 
   return (
-    <div className="bg-muted flex items-center rounded-md p-1">
+    <div className="flex items-center gap-1">
       {modes.map(({ mode, icon, label }) => (
-        <TooltipProvider key={mode}>
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger asChild>
-              <Button
-                variant={displayMode === mode ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setDisplayMode(mode)}
-                className="h-7 px-2"
-              >
-                {icon}
-                <span className="ml-1 text-xs">{label}</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" sideOffset={4}>
-              <p>{label}ビューに切り替え</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Button
+          key={mode}
+          variant={displayMode === mode ? 'secondary' : 'ghost'}
+          size="sm"
+          onClick={() => setDisplayMode(mode)}
+          className="border-border h-7 border px-2"
+        >
+          {icon}
+          <span className="ml-1 text-xs">{label}</span>
+        </Button>
       ))}
     </div>
   )

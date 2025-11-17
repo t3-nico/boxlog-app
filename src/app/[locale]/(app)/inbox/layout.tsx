@@ -1,9 +1,10 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useMemo, type ReactNode } from 'react'
 
 import { InboxSidebar } from '@/features/inbox/components/InboxSidebar'
+import { useInboxData } from '@/features/inbox/hooks/useInboxData'
 import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore'
 
 interface InboxLayoutProps {
@@ -19,6 +20,22 @@ interface InboxLayoutProps {
 export default function InboxLayout({ children }: InboxLayoutProps) {
   const pathname = usePathname()
   const { setActiveView } = useInboxViewStore()
+
+  // 全Ticketデータを取得
+  const { items } = useInboxData()
+
+  // アクティブなTicket数とアーカイブ数を計算
+  const { activeTicketsCount, archivedTicketsCount } = useMemo(() => {
+    // TODO: アーカイブフラグがある場合はそれで判定
+    // 現状はアーカイブ機能がないため、全てアクティブとして扱う
+    const active = items.length
+    const archived = 0
+
+    return {
+      activeTicketsCount: active,
+      archivedTicketsCount: archived,
+    }
+  }, [items])
 
   // URLパスからviewIdへのマッピング
   useEffect(() => {
@@ -46,7 +63,7 @@ export default function InboxLayout({ children }: InboxLayoutProps) {
     <div className="flex h-full">
       {/* 左: Sidebar */}
       <div className="border-border w-64 shrink-0 border-r">
-        <InboxSidebar activeTicketsCount={0} archivedTicketsCount={0} />
+        <InboxSidebar activeTicketsCount={activeTicketsCount} archivedTicketsCount={archivedTicketsCount} />
       </div>
 
       {/* 右: メインコンテンツ */}

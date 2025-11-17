@@ -20,7 +20,7 @@ export function InboxPageHeader() {
   return (
     <div className="bg-background flex h-12 shrink-0 items-end pt-2 pr-4 pl-4">
       {/* タイトル + ビュースイッチャー */}
-      <div className="flex h-10 items-center gap-2">
+      <div className="flex h-10 items-center gap-4">
         <h1 className="text-base font-semibold">{activeView?.name || 'Inbox'}</h1>
         <DisplayModeSwitcher />
       </div>

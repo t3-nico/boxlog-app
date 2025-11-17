@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -27,14 +26,6 @@ export function KanbanToolbar() {
   return (
     <div className="flex w-full items-center justify-between gap-4">
       <div className="flex flex-1 items-center gap-2">
-        {/* 検索 */}
-        <Input
-          placeholder="カードを検索..."
-          value={filter.search ?? ''}
-          onChange={(e) => setFilter({ search: e.target.value || undefined })}
-          className="h-9 w-[150px] lg:w-[250px]"
-        />
-
         {/* 優先度フィルター */}
         <Select
           value={filter.priority ?? 'all'}
