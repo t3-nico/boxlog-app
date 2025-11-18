@@ -25,6 +25,9 @@ export interface InboxItem {
   due_date?: string | null // 期限日（YYYY-MM-DD）
   start_time?: string | null // 開始時刻（ISO 8601）
   end_time?: string | null // 終了時刻（ISO 8601）
+  recurrence_type?: 'none' | 'daily' | 'weekly' | 'monthly' | null // 繰り返しタイプ（シンプル版）
+  recurrence_end_date?: string | null // 繰り返し終了日（YYYY-MM-DD）
+  recurrence_rule?: string | null // カスタム繰り返し（RRULE形式）
   tags?: Array<{ id: string; name: string; color?: string }> // タグ情報
 }
 
@@ -114,6 +117,9 @@ function ticketToInboxItem(
     due_date: ticket.due_date,
     start_time: ticket.start_time,
     end_time: ticket.end_time,
+    recurrence_type: ticket.recurrence_type,
+    recurrence_end_date: ticket.recurrence_end_date,
+    recurrence_rule: ticket.recurrence_rule,
     tags: tags.length > 0 ? tags : undefined,
   }
 }
