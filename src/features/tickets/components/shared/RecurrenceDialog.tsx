@@ -3,16 +3,14 @@
 import * as Portal from '@radix-ui/react-portal'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { CalendarIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 
 import type { RecurrenceConfig } from '../../types/ticket'
 import { configToRRule, ruleToConfig } from '../../utils/rrule'
@@ -107,10 +105,17 @@ export function RecurrenceDialog({
   // 外側クリックで閉じる
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const clickedTrigger = triggerRef?.current && triggerRef.current.contains(event.target as Node)
-      const clickedDialog = dialogRef.current && dialogRef.current.contains(event.target as Node)
+      const target = event.target as Node
+      const clickedTrigger = triggerRef?.current && triggerRef.current.contains(target)
+      const clickedDialog = dialogRef.current && dialogRef.current.contains(target)
 
-      if (!clickedTrigger && !clickedDialog) {
+      // Portal要素（Selectのドロップダウン、Calendarなど）をクリックした場合は閉じない
+      const isPortalElement =
+        (target as Element).closest('[role="listbox"]') || // Select dropdown
+        (target as Element).closest('[role="dialog"]') || // Dialog
+        (target as Element).closest('.react-datepicker') // Calendar (if any)
+
+      if (!clickedTrigger && !clickedDialog && !isPortalElement) {
         onOpenChange(false)
       }
     }
@@ -172,21 +177,21 @@ export function RecurrenceDialog({
                 max="365"
                 value={config.interval}
                 onChange={(e) => setConfig({ ...config, interval: Number(e.target.value) || 1 })}
-                className="w-20"
+                className="w-16"
               />
               <Select
                 value={config.frequency}
                 onValueChange={(value) =>
                   setConfig({
                     ...config,
-                    frequency: value as 'daily' | 'weekly' | 'monthly',
+                    frequency: value as 'daily' | 'weekly' | 'monthly' | 'yearly',
                     // 頻度変更時にリセット
                     byWeekday: value === 'weekly' ? config.byWeekday : undefined,
                     byMonthDay: value === 'monthly' ? config.byMonthDay || 1 : undefined,
                   })
                 }
               >
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-20">
                   <SelectValue />
                 </SelectTrigger>
                 <Portal.Root>
@@ -194,37 +199,14 @@ export function RecurrenceDialog({
                     <SelectItem value="daily">日ごと</SelectItem>
                     <SelectItem value="weekly">週間ごと</SelectItem>
                     <SelectItem value="monthly">ヶ月ごと</SelectItem>
+                    <SelectItem value="yearly">年ごと</SelectItem>
                   </SelectContent>
                 </Portal.Root>
               </Select>
             </div>
           </div>
 
-          {/* 2. 開始日 */}
-          <div className="space-y-2">
-            <Label className="text-foreground text-sm font-medium">開始日</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  <span className="text-sm">
-                    {config.startDate ? format(new Date(config.startDate), 'yyyy/MM/dd') : '選択'}
-                  </span>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={config.startDate ? new Date(config.startDate) : undefined}
-                  onSelect={(date) =>
-                    setConfig({ ...config, startDate: date ? format(date, 'yyyy-MM-dd') : undefined })
-                  }
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          {/* 3. パターン（週次のみ） */}
+          {/* 2. パターン（週次・月次のみ） */}
           {config.frequency === 'weekly' && (
             <div className="space-y-2">
               <Label className="text-foreground text-sm font-medium">パターン</Label>
@@ -249,7 +231,86 @@ export function RecurrenceDialog({
             </div>
           )}
 
-          {/* 4. 期間 */}
+          {config.frequency === 'monthly' && (
+            <div className="space-y-2">
+              <Label className="text-foreground text-sm font-medium">パターン</Label>
+              <Select
+                value={
+                  config.bySetPos !== undefined && config.byWeekday?.[0] !== undefined
+                    ? `setpos-${config.bySetPos}-${config.byWeekday[0]}`
+                    : `monthday-${config.byMonthDay || 1}`
+                }
+                onValueChange={(value) => {
+                  if (value.startsWith('setpos-')) {
+                    const [, setPos, weekday] = value.split('-')
+                    setConfig({
+                      ...config,
+                      byMonthDay: undefined,
+                      bySetPos: Number(setPos),
+                      byWeekday: [Number(weekday)],
+                    })
+                  } else {
+                    const monthDay = Number(value.split('-')[1])
+                    setConfig({
+                      ...config,
+                      byMonthDay: monthDay,
+                      bySetPos: undefined,
+                      byWeekday: undefined,
+                    })
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <Portal.Root>
+                  <SelectContent className="z-[10000]">
+                    {(() => {
+                      // 現在の日付から候補を生成
+                      const today = new Date()
+                      const day = today.getDate()
+                      const weekday = today.getDay()
+                      const weekdayNames = ['日', '月', '火', '水', '木', '金', '土']
+                      const weekdayName = weekdayNames[weekday]
+
+                      // その日が第何週か計算
+                      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+                      const weekOfMonth = Math.ceil((day + firstDayOfMonth.getDay()) / 7)
+
+                      // 最終週かどうか判定
+                      const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()
+                      const isLastWeek = day + 7 > lastDayOfMonth
+
+                      const options = [
+                        // 選択肢1: 毎月 X 日
+                        <SelectItem key={`monthday-${day}`} value={`monthday-${day}`}>
+                          毎月 {day} 日
+                        </SelectItem>,
+                        // 選択肢2: 毎月 第 N X曜日
+                        <SelectItem key={`setpos-${weekOfMonth}-${weekday}`} value={`setpos-${weekOfMonth}-${weekday}`}>
+                          毎月 第{weekOfMonth}
+                          {weekdayName}曜日
+                        </SelectItem>,
+                      ]
+
+                      // 最終週の場合は「最終X曜日」も追加
+                      if (isLastWeek) {
+                        options.push(
+                          <SelectItem key={`setpos--1-${weekday}`} value={`setpos--1-${weekday}`}>
+                            毎月 最終{weekdayName}曜日
+                          </SelectItem>
+                        )
+                      }
+
+                      return options
+                    })()}
+                  </SelectContent>
+                </Portal.Root>
+              </Select>
+            </div>
+          )}
+
+          {/* 3. 期間 */}
           <div className="space-y-2">
             <Label className="text-foreground text-sm font-medium">期間</Label>
             <RadioGroup
@@ -286,17 +347,16 @@ export function RecurrenceDialog({
                   終了日：
                 </Label>
                 <span className="text-foreground text-sm">
-                  {config.endDate ? format(new Date(config.endDate), 'M月d日(E)', { locale: ja }) : ''}
+                  {config.endDate ? format(new Date(config.endDate), 'yyyy/MM/dd', { locale: ja }) : ''}
                 </span>
               </div>
 
               {/* カレンダー表示 */}
               {showCalendar && config.endType === 'until' && (
                 <div className="mt-2 ml-6">
-                  <Calendar
-                    mode="single"
-                    selected={config.endDate ? new Date(config.endDate) : undefined}
-                    onSelect={(date) => {
+                  <MiniCalendar
+                    selectedDate={config.endDate ? new Date(config.endDate) : undefined}
+                    onDateSelect={(date) => {
                       if (date) {
                         setConfig({ ...config, endDate: format(date, 'yyyy-MM-dd') })
                         setShowCalendar(false)

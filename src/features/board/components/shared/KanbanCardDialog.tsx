@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Calendar as CalendarComponent } from '@/components/ui/calendar'
 import {
   Dialog,
   DialogContent,
@@ -15,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Calendar } from 'lucide-react'
@@ -218,13 +218,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <CalendarComponent
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                          initialFocus
-                        />
+                        <MiniCalendar selectedDate={field.value} onDateSelect={field.onChange} />
                       </PopoverContent>
                     </Popover>
                     <FormMessage />

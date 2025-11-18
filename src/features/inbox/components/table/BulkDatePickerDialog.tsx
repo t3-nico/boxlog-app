@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import {
   Dialog,
   DialogContent,
@@ -10,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -130,13 +130,7 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
 
           {/* カレンダー */}
           <div className="flex justify-center">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              locale={ja}
-              className="rounded-md border"
-            />
+            <MiniCalendar selectedDate={selectedDate} onDateSelect={setSelectedDate} className="rounded-md border" />
           </div>
 
           {/* 説明テキスト */}

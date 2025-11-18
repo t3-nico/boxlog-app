@@ -4,7 +4,6 @@ import { useRef, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -14,6 +13,7 @@ import {
 } from '@/components/ui/context-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { RecurrencePopover } from '@/features/tickets/components/shared/RecurrencePopover'
 import { TicketTagSelectDialogEnhanced } from '@/features/tickets/components/shared/TicketTagSelectDialogEnhanced'
@@ -75,9 +75,6 @@ export function TicketCard({ item }: TicketCardProps) {
   const [startTime, setStartTime] = useState(item.start_time ? format(new Date(item.start_time), 'HH:mm') : '')
   const [endTime, setEndTime] = useState(item.end_time ? format(new Date(item.end_time), 'HH:mm') : '')
   const [reminderType, setReminderType] = useState<'none' | '5min' | '15min' | '30min' | '1hour' | '1day'>('none')
-  const [recurrence, setRecurrence] = useState<'none' | 'daily' | 'weekly' | 'monthly'>(
-    item.recurrence_rule ? 'none' : item.recurrence_type || 'none'
-  )
   const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
   const recurrenceTriggerRef = useRef<HTMLDivElement>(null)
 
@@ -126,7 +123,6 @@ export function TicketCard({ item }: TicketCardProps) {
     setStartTime('')
     setEndTime('')
     setReminderType('none')
-    setRecurrence('none')
     setDateTimeOpen(false)
   }
 
@@ -253,11 +249,11 @@ export function TicketCard({ item }: TicketCardProps) {
                           title={
                             item.recurrence_rule
                               ? configToReadable(ruleToConfig(item.recurrence_rule))
-                              : recurrence === 'daily'
+                              : item.recurrence_type === 'daily'
                                 ? '毎日'
-                                : recurrence === 'weekly'
+                                : item.recurrence_type === 'weekly'
                                   ? '毎週'
-                                  : recurrence === 'monthly'
+                                  : item.recurrence_type === 'monthly'
                                     ? '毎月'
                                     : ''
                           }
@@ -305,19 +301,13 @@ export function TicketCard({ item }: TicketCardProps) {
                       <CalendarIcon className="mr-2 size-4" />
                       <span>日付</span>
                     </div>
-                    <Calendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={(date) => {
+                    <MiniCalendar
+                      selectedDate={selectedDate}
+                      onDateSelect={(date) => {
                         setSelectedDate(date)
                         handleDateTimeChange()
                       }}
-                      locale={ja}
-                      classNames={{
-                        day: '!aspect-auto',
-                        today: '!bg-transparent',
-                      }}
-                      className="w-fit border-none bg-transparent p-0 [&_.group\/day]:!aspect-auto [&_button]:!aspect-auto [&_button]:!h-8 [&_button]:!w-8 [&_button]:text-xs [&_nav]:!h-10 [&_table]:!mt-0 [&_table]:text-sm [&_td]:!aspect-auto [&_td]:!h-8 [&_td]:!w-8 [&_td]:p-0 [&_th]:!h-8 [&_th]:!w-8 [&_th]:p-0 [&_tr]:!mt-0"
+                      className="w-fit border-none bg-transparent p-0"
                     />
                   </div>
 
@@ -401,12 +391,12 @@ export function TicketCard({ item }: TicketCardProps) {
                         <span>
                           {item.recurrence_rule
                             ? configToReadable(ruleToConfig(item.recurrence_rule))
-                            : recurrence !== 'none'
-                              ? recurrence === 'daily'
+                            : item.recurrence_type && item.recurrence_type !== 'none'
+                              ? item.recurrence_type === 'daily'
                                 ? '毎日'
-                                : recurrence === 'weekly'
+                                : item.recurrence_type === 'weekly'
                                   ? '毎週'
-                                  : recurrence === 'monthly'
+                                  : item.recurrence_type === 'monthly'
                                     ? '毎月'
                                     : 'なし'
                               : 'なし'}
@@ -435,7 +425,6 @@ export function TicketCard({ item }: TicketCardProps) {
                         placement="right"
                         onRepeatTypeChange={(type) => {
                           if (type === '') {
-                            setRecurrence('none')
                             updateTicket.mutate({
                               id: item.id,
                               data: {
@@ -444,7 +433,6 @@ export function TicketCard({ item }: TicketCardProps) {
                               },
                             })
                           } else if (type === '毎日') {
-                            setRecurrence('daily')
                             updateTicket.mutate({
                               id: item.id,
                               data: {
@@ -453,7 +441,6 @@ export function TicketCard({ item }: TicketCardProps) {
                               },
                             })
                           } else if (type === '毎週') {
-                            setRecurrence('weekly')
                             updateTicket.mutate({
                               id: item.id,
                               data: {
@@ -462,7 +449,6 @@ export function TicketCard({ item }: TicketCardProps) {
                               },
                             })
                           } else if (type === '毎月') {
-                            setRecurrence('monthly')
                             updateTicket.mutate({
                               id: item.id,
                               data: {

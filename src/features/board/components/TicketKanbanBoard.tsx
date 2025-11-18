@@ -2,11 +2,11 @@
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
@@ -402,10 +402,9 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
             {/* カレンダー展開 */}
             {showCalendar && (
               <div className="border-input bg-popover absolute top-full left-0 z-50 mt-1 rounded-md border shadow-md">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => {
+                <MiniCalendar
+                  selectedDate={selectedDate}
+                  onDateSelect={(date) => {
                     setSelectedDate(date)
                     setShowCalendar(false)
                   }}

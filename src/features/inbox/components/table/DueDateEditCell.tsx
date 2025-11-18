@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell } from '@/components/ui/table'
+import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { formatDistanceToNow } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { X } from 'lucide-react'
@@ -80,13 +80,7 @@ export function DueDateEditCell({ dueDate, width, onDueDateChange }: DueDateEdit
                 </Button>
               )}
             </div>
-            <Calendar
-              mode="single"
-              selected={dueDate ? new Date(dueDate) : undefined}
-              onSelect={handleDateSelect}
-              initialFocus
-              locale={ja}
-            />
+            <MiniCalendar selectedDate={dueDate ? new Date(dueDate) : undefined} onDateSelect={handleDateSelect} />
           </div>
         </PopoverContent>
       </Popover>

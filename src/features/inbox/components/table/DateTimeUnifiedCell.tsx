@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { TableCell } from '@/components/ui/table'
+import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat, Trash2 } from 'lucide-react'
@@ -149,19 +149,13 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
                 <CalendarIcon className="mr-2 size-4" />
                 <span>日付</span>
               </div>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => {
+              <MiniCalendar
+                selectedDate={selectedDate}
+                onDateSelect={(date) => {
                   setSelectedDate(date)
                   handleChange()
                 }}
-                locale={ja}
-                classNames={{
-                  day: '!aspect-auto',
-                  today: '!bg-transparent',
-                }}
-                className="w-fit border-none bg-transparent p-0 [&_.group\/day]:!aspect-auto [&_button]:!aspect-auto [&_button]:!h-8 [&_button]:!w-8 [&_button]:text-xs [&_nav]:!h-10 [&_table]:!mt-0 [&_table]:text-sm [&_td]:!aspect-auto [&_td]:!h-8 [&_td]:!w-8 [&_td]:p-0 [&_th]:!h-8 [&_th]:!w-8 [&_th]:p-0 [&_tr]:!mt-0"
+                className="w-fit border-none bg-transparent p-0"
               />
             </div>
 
