@@ -16,7 +16,7 @@ interface CalendarNavigationAreaProps {
  * - フィルター・ソート・その他のナビゲーション要素を配置
  *
  * **デザイン**:
- * - 高さ: ボタン32px + 上下余白（SidebarのInboxNavigationと同じ）
+ * - 高さ: 48px（コンテナ40px + 上padding 8px）
  * - ボーダー: 下部のみ
  */
 export function CalendarNavigationArea({ children }: CalendarNavigationAreaProps) {
@@ -44,5 +44,5 @@ export function CalendarNavigationArea({ children }: CalendarNavigationAreaProps
     </div>
   )
 
-  return <nav className="flex shrink-0 items-center px-4 py-2">{children || defaultContent}</nav>
+  return <nav className="flex h-12 shrink-0 items-center px-4 pt-2">{children || defaultContent}</nav>
 }

@@ -1,5 +1,5 @@
 import { TableCell } from '@/components/ui/table'
-import { MiniCalendarPopover } from '@/features/calendar/components/common/MiniCalendarPopover'
+import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
@@ -66,11 +66,17 @@ export function DueDateCell({ dueDate, width, onDueDateChange }: DueDateCellProp
 
   return (
     <TableCell onClick={(e) => e.stopPropagation()} className="text-muted-foreground text-sm" style={style}>
-      <MiniCalendarPopover selectedDate={selectedDate} onDateSelect={handleDateSelect} align="start">
-        <div className="hover:bg-muted/50 cursor-pointer rounded px-2 py-1 transition-colors">
-          <span className="truncate">{displayText}</span>
-        </div>
-      </MiniCalendarPopover>
+      <MiniCalendar
+        asPopover
+        selectedDate={selectedDate}
+        onDateSelect={handleDateSelect}
+        popoverAlign="start"
+        popoverTrigger={
+          <div className="hover:bg-muted/50 cursor-pointer rounded px-2 py-1 transition-colors">
+            <span className="truncate">{displayText}</span>
+          </div>
+        }
+      />
     </TableCell>
   )
 }
