@@ -12,9 +12,31 @@
 export type TicketStatus = 'backlog' | 'ready' | 'active' | 'wait' | 'done' | 'cancel'
 
 /**
- * 繰り返しタイプ
+ * 繰り返しタイプ（シンプル版）
  */
 export type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly'
+
+/**
+ * カスタム繰り返し設定
+ */
+export interface RecurrenceConfig {
+  frequency: 'daily' | 'weekly' | 'monthly'
+  interval: number // 1-365（1 = 毎日/毎週、2 = 2日ごと/2週間ごと）
+
+  // 開始日
+  startDate?: string // YYYY-MM-DD
+
+  // 週次のみ
+  byWeekday?: number[] // 0-6（日曜-土曜）
+
+  // 月次のみ
+  byMonthDay?: number // 1-31
+
+  // 終了条件（いずれか1つ）
+  endType: 'never' | 'until' | 'count'
+  endDate?: string // YYYY-MM-DD
+  count?: number
+}
 
 /**
  * チケット基本型（データベーススキーマに対応）
@@ -31,6 +53,7 @@ export interface Ticket {
   end_time: string | null // TIMESTAMPTZ型（ISO 8601）
   recurrence_type: RecurrenceType | null
   recurrence_end_date: string | null // DATE型（YYYY-MM-DD）
+  recurrence_rule: string | null // RRULE形式（カスタム繰り返し）
   created_at: string | null
   updated_at: string | null
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FileText } from 'lucide-react'
+import { FileText, Repeat } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
 import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ticket'
+import { configToReadable, ruleToConfig } from '../../utils/rrule'
 import { RecurrencePopover } from './RecurrencePopover'
 import { ReminderPopover } from './ReminderPopover'
 import { TicketDateTimeInput } from './TicketDateTimeInput'
@@ -34,6 +35,9 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [repeatType, setRepeatType] = useState<string>('')
   const [reminderType, setReminderType] = useState<string>('')
+  const [recurrenceRule, setRecurrenceRule] = useState<string | null>(null)
+  const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
+  const recurrenceTriggerRef = useRef<HTMLButtonElement>(null)
   const { createTicket } = useTicketMutations()
   const { addTicketTag } = useTicketTags()
 
@@ -151,7 +155,41 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
             {/* リピートと通知 */}
             <div className="flex items-center gap-2 px-6 pt-0 pb-3">
               <div className="ml-4 flex items-center gap-2">
-                <RecurrencePopover repeatType={repeatType} onRepeatTypeChange={setRepeatType} />
+                <Button
+                  ref={recurrenceTriggerRef}
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground h-auto gap-1 px-0 py-0"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setRecurrencePopoverOpen(!recurrencePopoverOpen)
+                  }}
+                >
+                  <Repeat className="h-4 w-4" />
+                  <span className="text-sm">
+                    {recurrenceRule ? configToReadable(ruleToConfig(recurrenceRule)) : '繰り返し'}
+                  </span>
+                </Button>
+
+                <RecurrencePopover
+                  open={recurrencePopoverOpen}
+                  onOpenChange={setRecurrencePopoverOpen}
+                  triggerRef={recurrenceTriggerRef}
+                  recurrenceRule={recurrenceRule}
+                  onRepeatTypeChange={(type) => {
+                    setRepeatType(type)
+                    // For create, we don't need to update ticket here
+                    // Just track the state for form submission
+                    if (type === '') {
+                      setRecurrenceRule(null)
+                    }
+                  }}
+                  onRecurrenceRuleChange={(rrule) => {
+                    setRecurrenceRule(rrule)
+                  }}
+                />
+
                 <ReminderPopover reminderType={reminderType} onReminderTypeChange={setReminderType} />
               </div>
             </div>

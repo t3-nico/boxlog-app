@@ -30,6 +30,7 @@ import {
   MoreHorizontal,
   PanelRight,
   Plus,
+  Repeat,
   Save,
   Tag,
   Trash,
@@ -43,6 +44,7 @@ import { useTicketTags } from '../../hooks/useTicketTags'
 import { useTicketInspectorStore } from '../../stores/useTicketInspectorStore'
 import type { Ticket } from '../../types/ticket'
 import { formatActivity, formatRelativeTime } from '../../utils/activityFormatter'
+import { configToReadable, ruleToConfig } from '../../utils/rrule'
 import { DatePickerPopover } from '../shared/DatePickerPopover'
 import { RecurrencePopover } from '../shared/RecurrencePopover'
 import { ReminderPopover } from '../shared/ReminderPopover'
@@ -274,6 +276,15 @@ export function TicketInspector() {
   const [endTime, setEndTime] = useState('')
   const [repeatType, setRepeatType] = useState<string>('')
   const [reminderType, setReminderType] = useState<string>('')
+  const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
+  const recurrenceTriggerRef = useRef<HTMLDivElement>(null)
+
+  // Inspector が閉じられたときにポップアップも閉じる
+  useEffect(() => {
+    if (!isOpen) {
+      setRecurrencePopoverOpen(false)
+    }
+  }, [isOpen])
 
   // Ticketデータが読み込まれたら状態を初期化
   useEffect(() => {
@@ -643,7 +654,59 @@ export function TicketInspector() {
                 {/* リピートと通知 */}
                 <div className="flex items-center gap-4 px-6 pb-3">
                   <div className="ml-6 flex items-center gap-4">
-                    <RecurrencePopover repeatType={repeatType} onRepeatTypeChange={setRepeatType} />
+                    <div className="relative" ref={recurrenceTriggerRef}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-muted-foreground h-8 gap-2 px-2"
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setRecurrencePopoverOpen(!recurrencePopoverOpen)
+                        }}
+                      >
+                        <Repeat className="h-4 w-4" />
+                        <span className="text-sm">
+                          {ticket && 'recurrence_rule' in ticket && ticket.recurrence_rule
+                            ? configToReadable(ruleToConfig(ticket.recurrence_rule))
+                            : '繰り返し'}
+                        </span>
+                      </Button>
+
+                      <RecurrencePopover
+                        open={recurrencePopoverOpen}
+                        onOpenChange={setRecurrencePopoverOpen}
+                        onRepeatTypeChange={(type) => {
+                          if (!ticketId) return
+                          setRepeatType(type)
+
+                          // 型マッピング
+                          const typeMap: Record<string, 'none' | 'daily' | 'weekly' | 'monthly'> = {
+                            '': 'none',
+                            毎日: 'daily',
+                            毎週: 'weekly',
+                            毎月: 'monthly',
+                          }
+
+                          const recurrenceType = typeMap[type] || 'none'
+                          updateTicket.mutate({
+                            id: ticketId,
+                            data: { recurrence_type: recurrenceType, recurrence_rule: null },
+                          })
+                        }}
+                        triggerRef={recurrenceTriggerRef}
+                        recurrenceRule={ticket && 'recurrence_rule' in ticket ? ticket.recurrence_rule : null}
+                        onRecurrenceRuleChange={(rrule) => {
+                          if (!ticketId) return
+                          updateTicket.mutate({
+                            id: ticketId,
+                            data: { recurrence_rule: rrule },
+                          })
+                        }}
+                        placement="bottom"
+                      />
+                    </div>
+
                     <ReminderPopover reminderType={reminderType} onReminderTypeChange={setReminderType} />
                   </div>
                 </div>
