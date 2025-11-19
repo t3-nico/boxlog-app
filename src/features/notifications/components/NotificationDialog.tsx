@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { formatDistanceToNow } from 'date-fns'
-import { ja } from 'date-fns/locale'
+import { enUS, ja } from 'date-fns/locale'
 import { Loader2, Trash2 } from 'lucide-react'
 
 import { useNotificationMutations, useNotificationsList } from '../hooks/useNotificationsData'
@@ -17,6 +17,7 @@ export function NotificationDialog() {
   const pathname = usePathname()
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t } = useI18n(localeFromPath)
+  const dateLocale = localeFromPath === 'ja' ? ja : enUS
 
   const { isOpen, close } = useNotificationDialogStore()
 
@@ -40,14 +41,14 @@ export function NotificationDialog() {
   }
 
   const handleDeleteAllRead = () => {
-    if (window.confirm('既読の通知を全て削除しますか？')) {
+    if (window.confirm(t('notifications.confirm.deleteAllRead'))) {
       deleteAllRead.mutate()
     }
   }
 
   const formatTime = (timestamp: string) => {
     try {
-      return formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: ja })
+      return formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: dateLocale })
     } catch {
       return timestamp
     }
@@ -76,14 +77,16 @@ export function NotificationDialog() {
             ) : (
               <>
                 <div className="mb-4 flex items-center justify-between">
-                  <span className="text-muted-foreground text-sm">{allNotifications.length}件の通知</span>
+                  <span className="text-muted-foreground text-sm">
+                    {t('notifications.count.all', { count: allNotifications.length })}
+                  </span>
                   <div className="flex gap-2">
                     <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} disabled={markAllAsRead.isPending}>
                       {t('notifications.actions.markAllAsRead')}
                     </Button>
                     <Button variant="ghost" size="sm" onClick={handleDeleteAllRead} disabled={deleteAllRead.isPending}>
                       <Trash2 className="mr-1 h-4 w-4" />
-                      既読を削除
+                      {t('notifications.actions.deleteAllRead')}
                     </Button>
                   </div>
                 </div>
@@ -148,7 +151,9 @@ export function NotificationDialog() {
             ) : (
               <>
                 <div className="mb-4 flex items-center justify-between">
-                  <span className="text-muted-foreground text-sm">{unreadNotifications.length}件の未読通知</span>
+                  <span className="text-muted-foreground text-sm">
+                    {t('notifications.count.unread', { count: unreadNotifications.length })}
+                  </span>
                   <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} disabled={markAllAsRead.isPending}>
                     {t('notifications.actions.markAllAsRead')}
                   </Button>

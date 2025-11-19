@@ -161,7 +161,15 @@
     },
     "actions": {
       "markAllAsRead": "Mark all as read",
-      "viewAll": "View all notifications"
+      "viewAll": "View all notifications",
+      "deleteAllRead": "Delete read"
+    },
+    "count": {
+      "all": "{{count}} notifications",
+      "unread": "{{count}} unread notifications"
+    },
+    "confirm": {
+      "deleteAllRead": "Delete all read notifications?"
     },
     "errors": {
       "notSupported": "This browser does not support notifications",

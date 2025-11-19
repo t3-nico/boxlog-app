@@ -161,7 +161,15 @@
     },
     "actions": {
       "markAllAsRead": "すべて既読にする",
-      "viewAll": "すべての通知を表示"
+      "viewAll": "すべての通知を表示",
+      "deleteAllRead": "既読を削除"
+    },
+    "count": {
+      "all": "{{count}}件の通知",
+      "unread": "{{count}}件の未読通知"
+    },
+    "confirm": {
+      "deleteAllRead": "既読の通知を全て削除しますか？"
     },
     "errors": {
       "notSupported": "このブラウザは通知をサポートしていません",
