@@ -58,6 +58,123 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          default_reminder_minutes: number | null
+          enable_browser_notifications: boolean
+          enable_email_notifications: boolean
+          enable_push_notifications: boolean
+          enable_reminders: boolean
+          enable_system_notifications: boolean
+          enable_ticket_updates: boolean
+          enable_trash_warnings: boolean
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          default_reminder_minutes?: number | null
+          enable_browser_notifications?: boolean
+          enable_email_notifications?: boolean
+          enable_push_notifications?: boolean
+          enable_reminders?: boolean
+          enable_system_notifications?: boolean
+          enable_ticket_updates?: boolean
+          enable_trash_warnings?: boolean
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          default_reminder_minutes?: number | null
+          enable_browser_notifications?: boolean
+          enable_email_notifications?: boolean
+          enable_push_notifications?: boolean
+          enable_reminders?: boolean
+          enable_system_notifications?: boolean
+          enable_ticket_updates?: boolean
+          enable_trash_warnings?: boolean
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string
+          data: Json | null
+          expires_at: string | null
+          icon: string | null
+          id: string
+          is_read: boolean
+          message: string | null
+          priority: string
+          read_at: string | null
+          related_tag_id: string | null
+          related_ticket_id: string | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string
+          data?: Json | null
+          expires_at?: string | null
+          icon?: string | null
+          id?: string
+          is_read?: boolean
+          message?: string | null
+          priority?: string
+          read_at?: string | null
+          related_tag_id?: string | null
+          related_ticket_id?: string | null
+          title: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string
+          data?: Json | null
+          expires_at?: string | null
+          icon?: string | null
+          id?: string
+          is_read?: boolean
+          message?: string | null
+          priority?: string
+          read_at?: string | null
+          related_tag_id?: string | null
+          related_ticket_id?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'notifications_related_tag_id_fkey'
+            columns: ['related_tag_id']
+            isOneToOne: false
+            referencedRelation: 'tags'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'notifications_related_ticket_id_fkey'
+            columns: ['related_ticket_id']
+            isOneToOne: false
+            referencedRelation: 'tickets'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -91,12 +208,52 @@ export type Database = {
         }
         Relationships: []
       }
+      tag_groups: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          group_number: number
+          id: string
+          name: string
+          slug: string
+          sort_order: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          group_number?: number
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          group_number?: number
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       tags: {
         Row: {
           color: string | null
           created_at: string | null
           depth: number | null
           description: string | null
+          group_id: string | null
           icon: string | null
           id: string
           is_active: boolean
@@ -104,6 +261,7 @@ export type Database = {
           name: string
           parent_id: string | null
           path: string | null
+          tag_number: number
           updated_at: string | null
           user_id: string | null
         }
@@ -112,6 +270,7 @@ export type Database = {
           created_at?: string | null
           depth?: number | null
           description?: string | null
+          group_id?: string | null
           icon?: string | null
           id?: string
           is_active?: boolean
@@ -119,6 +278,7 @@ export type Database = {
           name: string
           parent_id?: string | null
           path?: string | null
+          tag_number?: number
           updated_at?: string | null
           user_id?: string | null
         }
@@ -127,6 +287,7 @@ export type Database = {
           created_at?: string | null
           depth?: number | null
           description?: string | null
+          group_id?: string | null
           icon?: string | null
           id?: string
           is_active?: boolean
@@ -134,10 +295,18 @@ export type Database = {
           name?: string
           parent_id?: string | null
           path?: string | null
+          tag_number?: number
           updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: 'tags_group_id_fkey'
+            columns: ['group_id']
+            isOneToOne: false
+            referencedRelation: 'tag_groups'
+            referencedColumns: ['id']
+          },
           {
             foreignKeyName: 'tags_parent_id_fkey'
             columns: ['parent_id']
@@ -238,7 +407,9 @@ export type Database = {
           end_time: string | null
           id: string
           recurrence_end_date: string | null
+          recurrence_rule: string | null
           recurrence_type: string | null
+          reminder_minutes: number | null
           start_time: string | null
           status: string
           ticket_number: string
@@ -253,7 +424,9 @@ export type Database = {
           end_time?: string | null
           id?: string
           recurrence_end_date?: string | null
+          recurrence_rule?: string | null
           recurrence_type?: string | null
+          reminder_minutes?: number | null
           start_time?: string | null
           status?: string
           ticket_number: string
@@ -268,7 +441,9 @@ export type Database = {
           end_time?: string | null
           id?: string
           recurrence_end_date?: string | null
+          recurrence_rule?: string | null
           recurrence_type?: string | null
+          reminder_minutes?: number | null
           start_time?: string | null
           status?: string
           ticket_number?: string
@@ -283,7 +458,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      cleanup_old_login_attempts: { Args: never; Returns: undefined }
+      cleanup_old_login_attempts: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      delete_old_notifications: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      get_next_tag_number: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

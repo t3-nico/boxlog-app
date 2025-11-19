@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -11,13 +11,8 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
-import { RecurrencePopover } from '@/features/tickets/components/shared/RecurrencePopover'
-import { ReminderSelect } from '@/features/tickets/components/shared/ReminderSelect'
 import { TicketTagSelectDialogEnhanced } from '@/features/tickets/components/shared/TicketTagSelectDialogEnhanced'
-import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 import { configToReadable, ruleToConfig } from '@/features/tickets/utils/rrule'
@@ -25,7 +20,7 @@ import { cn } from '@/lib/utils'
 import { useDraggable } from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Plus, Repeat, Tag, Trash2 } from 'lucide-react'
+import { Bell, Calendar as CalendarIcon, Plus, Repeat, Tag } from 'lucide-react'
 
 import { useBoardFocusStore } from '../../stores/useBoardFocusStore'
 import { BoardActionMenuItems } from '../BoardActionMenuItems'
@@ -51,7 +46,6 @@ export function TicketCard({ item }: TicketCardProps) {
   const { openInspector, ticketId } = useTicketInspectorStore()
   const { focusedId, setFocusedId } = useBoardFocusStore()
   const { addTicketTag, removeTicketTag } = useTicketTags()
-  const { updateTicket } = useTicketMutations()
   const isActive = ticketId === item.id
   const isFocused = focusedId === item.id
 
@@ -67,17 +61,8 @@ export function TicketCard({ item }: TicketCardProps) {
       }
     : undefined
 
-  // 日時編集用の状態
-  const [dateTimeOpen, setDateTimeOpen] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    item.due_date ? new Date(item.due_date) : undefined
-  )
-  const [startTime, setStartTime] = useState(item.start_time ? format(new Date(item.start_time), 'HH:mm') : '')
-  const [endTime, setEndTime] = useState(item.end_time ? format(new Date(item.end_time), 'HH:mm') : '')
   // 通知設定: UI文字列形式（'', '開始時刻', '10分前', ...）
   const [reminderType, setReminderType] = useState<string>('')
-  const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
-  const recurrenceTriggerRef = useRef<HTMLDivElement>(null)
 
   // タグ変更ハンドラー
   const handleTagsChange = async (tagIds: string[]) => {
@@ -94,36 +79,6 @@ export function TicketCard({ item }: TicketCardProps) {
     for (const tagId of removedTagIds) {
       await removeTicketTag(item.id, tagId)
     }
-  }
-
-  // 日時データ変更ハンドラー
-  const handleDateTimeChange = () => {
-    updateTicket.mutate({
-      id: item.id,
-      data: {
-        due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
-        start_time: selectedDate && startTime ? `${format(selectedDate, 'yyyy-MM-dd')}T${startTime}:00Z` : undefined,
-        end_time: selectedDate && endTime ? `${format(selectedDate, 'yyyy-MM-dd')}T${endTime}:00Z` : undefined,
-      },
-    })
-  }
-
-  // 日時クリアハンドラー
-  const handleDateTimeClear = () => {
-    updateTicket.mutate({
-      id: item.id,
-      data: {
-        due_date: undefined,
-        start_time: undefined,
-        end_time: undefined,
-        recurrence_type: 'none',
-      },
-    })
-    setSelectedDate(undefined)
-    setStartTime('')
-    setEndTime('')
-    setReminderType('none')
-    setDateTimeOpen(false)
   }
 
   // 表示用の日時フォーマット
@@ -222,253 +177,72 @@ export function TicketCard({ item }: TicketCardProps) {
             </div>
 
             {/* 2. 日付・時間 */}
-            <Popover open={dateTimeOpen} onOpenChange={setDateTimeOpen}>
-              <PopoverTrigger asChild>
-                <div
-                  className="text-foreground hover:bg-primary/10 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
-                  onClick={(e) => {
-                    // カードクリックイベントの伝播を防止
-                    e.stopPropagation()
-                  }}
-                >
-                  {getDisplayContent() || (
-                    <div className="text-muted-foreground flex items-center gap-1">
-                      <CalendarIcon className="size-3" />
-                      <span>日付を追加</span>
-                    </div>
-                  )}
+            <div
+              className="text-foreground hover:bg-primary/10 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
+              onClick={(e) => {
+                // カードクリックイベントの伝播を防止し、Inspectorを開く
+                e.stopPropagation()
+                openInspector(item.id)
+              }}
+            >
+              {getDisplayContent() || (
+                <div className="text-muted-foreground flex items-center gap-1">
+                  <CalendarIcon className="size-3" />
+                  <span>日付を追加</span>
+                </div>
+              )}
 
-                  {/* アイコンコンテナ（Repeat と Reminder を gap-1 でグループ化） */}
-                  {(item.recurrence_rule ||
-                    (item.recurrence_type && item.recurrence_type !== 'none') ||
-                    reminderType !== 'none') && (
-                    <div className="flex items-center gap-1">
-                      {/* 繰り返しアイコン（設定時のみ表示） */}
-                      {(item.recurrence_rule || (item.recurrence_type && item.recurrence_type !== 'none')) && (
-                        <div
-                          title={
-                            item.recurrence_rule
-                              ? configToReadable(ruleToConfig(item.recurrence_rule))
-                              : item.recurrence_type === 'daily'
-                                ? '毎日'
-                                : item.recurrence_type === 'weekly'
-                                  ? '毎週'
-                                  : item.recurrence_type === 'monthly'
-                                    ? '毎月'
+              {/* アイコンコンテナ（Repeat と Reminder を gap-1 でグループ化） */}
+              {(item.recurrence_rule ||
+                (item.recurrence_type && item.recurrence_type !== 'none') ||
+                reminderType !== 'none') && (
+                <div className="flex items-center gap-1">
+                  {/* 繰り返しアイコン（設定時のみ表示） */}
+                  {(item.recurrence_rule || (item.recurrence_type && item.recurrence_type !== 'none')) && (
+                    <div
+                      title={
+                        item.recurrence_rule
+                          ? configToReadable(ruleToConfig(item.recurrence_rule))
+                          : item.recurrence_type === 'daily'
+                            ? '毎日'
+                            : item.recurrence_type === 'weekly'
+                              ? '毎週'
+                              : item.recurrence_type === 'monthly'
+                                ? '毎月'
+                                : item.recurrence_type === 'yearly'
+                                  ? '毎年'
+                                  : item.recurrence_type === 'weekdays'
+                                    ? '平日'
                                     : ''
-                          }
-                        >
-                          <Repeat className="text-muted-foreground size-4" />
-                        </div>
-                      )}
+                      }
+                    >
+                      <Repeat className="text-muted-foreground size-4" />
+                    </div>
+                  )}
 
-                      {/* 通知アイコン（設定時のみ表示） */}
-                      {reminderType !== 'none' && (
-                        <div
-                          title={
-                            reminderType === '5min'
-                              ? '5分前'
-                              : reminderType === '15min'
-                                ? '15分前'
-                                : reminderType === '30min'
-                                  ? '30分前'
-                                  : reminderType === '1hour'
-                                    ? '1時間前'
-                                    : reminderType === '1day'
-                                      ? '1日前'
-                                      : ''
-                          }
-                        >
-                          <Bell className="text-muted-foreground size-4" />
-                        </div>
-                      )}
+                  {/* 通知アイコン（設定時のみ表示） */}
+                  {reminderType !== 'none' && (
+                    <div
+                      title={
+                        reminderType === '5min'
+                          ? '5分前'
+                          : reminderType === '15min'
+                            ? '15分前'
+                            : reminderType === '30min'
+                              ? '30分前'
+                              : reminderType === '1hour'
+                                ? '1時間前'
+                                : reminderType === '1day'
+                                  ? '1日前'
+                                  : ''
+                      }
+                    >
+                      <Bell className="text-muted-foreground size-4" />
                     </div>
                   )}
                 </div>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto p-3"
-                align="start"
-                onClick={(e) => {
-                  // Popover内のクリックイベントがカードに伝播しないようにする
-                  e.stopPropagation()
-                }}
-              >
-                <div className="space-y-4">
-                  {/* 日付選択 */}
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm font-medium">
-                      <CalendarIcon className="mr-2 size-4" />
-                      <span>日付</span>
-                    </div>
-                    <MiniCalendar
-                      selectedDate={selectedDate}
-                      onDateSelect={(date) => {
-                        setSelectedDate(date)
-                        handleDateTimeChange()
-                      }}
-                      className="w-fit border-none bg-transparent p-0"
-                    />
-                  </div>
-
-                  {/* 時刻設定 */}
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm font-medium">
-                      <Clock className="mr-2 size-4" />
-                      <span>時刻</span>
-                    </div>
-                    <div className="flex items-end gap-2">
-                      <div className="space-y-1">
-                        <label className="text-muted-foreground text-xs">開始</label>
-                        <input
-                          type="time"
-                          value={startTime}
-                          onChange={(e) => {
-                            setStartTime(e.target.value)
-                            handleDateTimeChange()
-                          }}
-                          className="border-input flex h-9 w-[88px] gap-0 rounded-md border bg-transparent px-2 py-1 text-sm [&::-webkit-datetime-edit-fields-wrapper]:!gap-0 [&::-webkit-datetime-edit-hour-field]:!mr-0 [&::-webkit-datetime-edit-minute-field]:!ml-0"
-                        />
-                      </div>
-                      <ArrowRight className="text-muted-foreground mb-2 size-4" />
-                      <div className="space-y-1">
-                        <label className="text-muted-foreground text-xs">終了</label>
-                        <input
-                          type="time"
-                          value={endTime}
-                          onChange={(e) => {
-                            setEndTime(e.target.value)
-                            handleDateTimeChange()
-                          }}
-                          className="border-input flex h-9 w-[88px] gap-0 rounded-md border bg-transparent px-2 py-1 text-sm [&::-webkit-datetime-edit-fields-wrapper]:!gap-0 [&::-webkit-datetime-edit-hour-field]:!mr-0 [&::-webkit-datetime-edit-minute-field]:!ml-0"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 通知設定 */}
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm font-medium">
-                      <Bell className="mr-2 size-4" />
-                      <span>通知</span>
-                    </div>
-                    <ReminderSelect
-                      value={reminderType}
-                      onChange={(value) => {
-                        setReminderType(value)
-                        handleDateTimeChange()
-                      }}
-                      variant="compact"
-                    />
-                  </div>
-
-                  {/* 繰り返し設定 */}
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm font-medium">
-                      <Repeat className="mr-2 size-4" />
-                      <span>繰り返し</span>
-                    </div>
-                    <div className="relative" ref={recurrenceTriggerRef}>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setRecurrencePopoverOpen(!recurrencePopoverOpen)
-                        }}
-                        className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 dark:hover:bg-input/50 flex h-9 w-fit items-center gap-1 rounded-md border bg-transparent px-2 py-0 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        <span>
-                          {item.recurrence_rule
-                            ? configToReadable(ruleToConfig(item.recurrence_rule))
-                            : item.recurrence_type && item.recurrence_type !== 'none'
-                              ? item.recurrence_type === 'daily'
-                                ? '毎日'
-                                : item.recurrence_type === 'weekly'
-                                  ? '毎週'
-                                  : item.recurrence_type === 'monthly'
-                                    ? '毎月'
-                                    : 'なし'
-                              : 'なし'}
-                        </span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="h-4 w-4 opacity-50"
-                        >
-                          <path d="m6 9 6 6 6-6" />
-                        </svg>
-                      </button>
-
-                      <RecurrencePopover
-                        open={recurrencePopoverOpen}
-                        onOpenChange={setRecurrencePopoverOpen}
-                        triggerRef={recurrenceTriggerRef}
-                        recurrenceRule={item.recurrence_rule ?? null}
-                        placement="right"
-                        onRepeatTypeChange={(type) => {
-                          if (type === '') {
-                            updateTicket.mutate({
-                              id: item.id,
-                              data: {
-                                recurrence_type: 'none',
-                                recurrence_rule: null,
-                              },
-                            })
-                          } else if (type === '毎日') {
-                            updateTicket.mutate({
-                              id: item.id,
-                              data: {
-                                recurrence_type: 'daily',
-                                recurrence_rule: null,
-                              },
-                            })
-                          } else if (type === '毎週') {
-                            updateTicket.mutate({
-                              id: item.id,
-                              data: {
-                                recurrence_type: 'weekly',
-                                recurrence_rule: null,
-                              },
-                            })
-                          } else if (type === '毎月') {
-                            updateTicket.mutate({
-                              id: item.id,
-                              data: {
-                                recurrence_type: 'monthly',
-                                recurrence_rule: null,
-                              },
-                            })
-                          }
-                        }}
-                        onRecurrenceRuleChange={(rrule) => {
-                          updateTicket.mutate({
-                            id: item.id,
-                            data: {
-                              recurrence_rule: rrule,
-                            },
-                          })
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* アクションボタン */}
-                  <div className="flex justify-end">
-                    <Button onClick={handleDateTimeClear} variant="secondary" size="sm">
-                      <Trash2 className="mr-2 size-4" />
-                      クリア
-                    </Button>
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+              )}
+            </div>
 
             {/* 3. Tags */}
             <TicketTagSelectDialogEnhanced
