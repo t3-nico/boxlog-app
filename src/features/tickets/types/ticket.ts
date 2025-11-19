@@ -20,17 +20,15 @@ export type RecurrenceType = 'none' | 'daily' | 'weekly' | 'monthly'
  * カスタム繰り返し設定
  */
 export interface RecurrenceConfig {
-  frequency: 'daily' | 'weekly' | 'monthly'
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly'
   interval: number // 1-365（1 = 毎日/毎週、2 = 2日ごと/2週間ごと）
-
-  // 開始日
-  startDate?: string // YYYY-MM-DD
 
   // 週次のみ
   byWeekday?: number[] // 0-6（日曜-土曜）
 
   // 月次のみ
-  byMonthDay?: number // 1-31
+  byMonthDay?: number // 1-31（毎月X日形式）
+  bySetPos?: number // 1-5（第1-第5週、-1=最終週）※ byWeekday と併用
 
   // 終了条件（いずれか1つ）
   endType: 'never' | 'until' | 'count'
@@ -54,6 +52,7 @@ export interface Ticket {
   recurrence_type: RecurrenceType | null
   recurrence_end_date: string | null // DATE型（YYYY-MM-DD）
   recurrence_rule: string | null // RRULE形式（カスタム繰り返し）
+  reminder_minutes: number | null // 通知タイミング（開始時刻の何分前か、null = 通知なし）
   created_at: string | null
   updated_at: string | null
 }
@@ -70,6 +69,7 @@ export interface CreateTicketInput {
   end_time?: string // ISO 8601形式
   recurrence_type?: RecurrenceType
   recurrence_end_date?: string // YYYY-MM-DD形式
+  reminder_minutes?: number // 通知タイミング（開始時刻の何分前か）
 }
 
 /**
@@ -84,6 +84,7 @@ export interface UpdateTicketInput {
   end_time?: string // ISO 8601形式
   recurrence_type?: RecurrenceType
   recurrence_end_date?: string // YYYY-MM-DD形式
+  reminder_minutes?: number // 通知タイミング（開始時刻の何分前か）
 }
 
 /**

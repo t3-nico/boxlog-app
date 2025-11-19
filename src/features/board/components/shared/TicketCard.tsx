@@ -12,10 +12,10 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { RecurrencePopover } from '@/features/tickets/components/shared/RecurrencePopover'
+import { ReminderSelect } from '@/features/tickets/components/shared/ReminderSelect'
 import { TicketTagSelectDialogEnhanced } from '@/features/tickets/components/shared/TicketTagSelectDialogEnhanced'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
@@ -74,7 +74,8 @@ export function TicketCard({ item }: TicketCardProps) {
   )
   const [startTime, setStartTime] = useState(item.start_time ? format(new Date(item.start_time), 'HH:mm') : '')
   const [endTime, setEndTime] = useState(item.end_time ? format(new Date(item.end_time), 'HH:mm') : '')
-  const [reminderType, setReminderType] = useState<'none' | '5min' | '15min' | '30min' | '1hour' | '1day'>('none')
+  // 通知設定: UI文字列形式（'', '開始時刻', '10分前', ...）
+  const [reminderType, setReminderType] = useState<string>('')
   const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
   const recurrenceTriggerRef = useRef<HTMLDivElement>(null)
 
@@ -103,7 +104,6 @@ export function TicketCard({ item }: TicketCardProps) {
         due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
         start_time: selectedDate && startTime ? `${format(selectedDate, 'yyyy-MM-dd')}T${startTime}:00Z` : undefined,
         end_time: selectedDate && endTime ? `${format(selectedDate, 'yyyy-MM-dd')}T${endTime}:00Z` : undefined,
-        recurrence_type: recurrence,
       },
     })
   }
@@ -262,7 +262,7 @@ export function TicketCard({ item }: TicketCardProps) {
                         </div>
                       )}
 
-                      {/* リマインダーアイコン（設定時のみ表示） */}
+                      {/* 通知アイコン（設定時のみ表示） */}
                       {reminderType !== 'none' && (
                         <div
                           title={
@@ -346,31 +346,20 @@ export function TicketCard({ item }: TicketCardProps) {
                     </div>
                   </div>
 
-                  {/* リマインダー設定 */}
+                  {/* 通知設定 */}
                   <div className="space-y-2">
                     <div className="flex items-center text-sm font-medium">
                       <Bell className="mr-2 size-4" />
-                      <span>リマインダー</span>
+                      <span>通知</span>
                     </div>
-                    <Select
+                    <ReminderSelect
                       value={reminderType}
-                      onValueChange={(value) => {
-                        setReminderType(value as 'none' | '5min' | '15min' | '30min' | '1hour' | '1day')
+                      onChange={(value) => {
+                        setReminderType(value)
                         handleDateTimeChange()
                       }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="リマインダーなし" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">なし</SelectItem>
-                        <SelectItem value="5min">5分前</SelectItem>
-                        <SelectItem value="15min">15分前</SelectItem>
-                        <SelectItem value="30min">30分前</SelectItem>
-                        <SelectItem value="1hour">1時間前</SelectItem>
-                        <SelectItem value="1day">1日前</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      variant="compact"
+                    />
                   </div>
 
                   {/* 繰り返し設定 */}

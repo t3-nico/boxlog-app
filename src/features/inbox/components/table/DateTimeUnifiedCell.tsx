@@ -3,6 +3,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { TableCell } from '@/components/ui/table'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
+import { ReminderSelect } from '@/features/tickets/components/shared/ReminderSelect'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat, Trash2 } from 'lucide-react'
@@ -15,7 +16,7 @@ interface DateTimeData {
   startTime: string | null
   /** 終了時刻（HH:mm） */
   endTime: string | null
-  /** リマインダー設定 */
+  /** 通知設定 */
   reminder: ReminderConfig | null
   /** 繰り返し設定 */
   recurrence: RecurrenceType | null
@@ -41,10 +42,10 @@ interface DateTimeUnifiedCellProps {
 /**
  * 統合日時セル（Notion風）
  *
- * 1つのカラムで日付・時刻・リマインダー・繰り返しを管理
+ * 1つのカラムで日付・時刻・通知・繰り返しを管理
  * - クリックでメニュー表示
  * - 日付のみ / 日付+時刻 / 日付+時刻範囲 に対応
- * - リマインダー・繰り返しのオプション設定
+ * - 通知・繰り返しのオプション設定
  *
  * @example
  * ```tsx
@@ -65,7 +66,8 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(data.date ? new Date(data.date) : undefined)
   const [startTime, setStartTime] = useState(data.startTime || '')
   const [endTime, setEndTime] = useState(data.endTime || '')
-  const [reminderType, setReminderType] = useState<ReminderConfig['type'] | 'none'>(data.reminder?.type || 'none')
+  // 通知設定: UI文字列形式（'', '開始時刻', '10分前', ...）
+  const [reminderType, setReminderType] = useState<string>('')
   const [recurrence, setRecurrence] = useState<RecurrenceType>(data.recurrence || 'none')
 
   // 表示コンテンツを生成
@@ -194,31 +196,20 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
               </div>
             </div>
 
-            {/* リマインダー設定 */}
+            {/* 通知設定 */}
             <div className="space-y-2">
               <div className="flex items-center text-sm font-medium">
                 <Bell className="mr-2 size-4" />
-                <span>リマインダー</span>
+                <span>通知</span>
               </div>
-              <Select
+              <ReminderSelect
                 value={reminderType}
-                onValueChange={(value) => {
-                  setReminderType(value as any)
+                onChange={(value) => {
+                  setReminderType(value)
                   handleChange()
                 }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="リマインダーなし" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">なし</SelectItem>
-                  <SelectItem value="5min">5分前</SelectItem>
-                  <SelectItem value="15min">15分前</SelectItem>
-                  <SelectItem value="30min">30分前</SelectItem>
-                  <SelectItem value="1hour">1時間前</SelectItem>
-                  <SelectItem value="1day">1日前</SelectItem>
-                </SelectContent>
-              </Select>
+                variant="compact"
+              />
             </div>
 
             {/* 繰り返し設定 */}

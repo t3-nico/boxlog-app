@@ -47,7 +47,7 @@ import { formatActivity, formatRelativeTime } from '../../utils/activityFormatte
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
 import { DatePickerPopover } from '../shared/DatePickerPopover'
 import { RecurrencePopover } from '../shared/RecurrencePopover'
-import { ReminderPopover } from '../shared/ReminderPopover'
+import { ReminderSelect } from '../shared/ReminderSelect'
 import { TicketTagsSection } from '../shared/TicketTagsSection'
 
 // 15分刻みの時間オプションを生成（0:00 - 23:45）
@@ -307,6 +307,22 @@ export function TicketInspector() {
         setEndTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setEndTime('')
+      }
+
+      // reminder_minutes から UI表示用の文字列に変換
+      if ('reminder_minutes' in ticket && ticket.reminder_minutes !== null) {
+        const minutes = ticket.reminder_minutes
+        const reminderMap: Record<number, string> = {
+          0: '開始時刻',
+          10: '10分前',
+          30: '30分前',
+          60: '1時間前',
+          1440: '1日前',
+          10080: '1週間前',
+        }
+        setReminderType(reminderMap[minutes] || 'カスタム')
+      } else {
+        setReminderType('')
       }
     }
   }, [ticket])
@@ -658,7 +674,15 @@ export function TicketInspector() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-muted-foreground h-8 gap-2 px-2"
+                        className={
+                          ticket &&
+                          (('recurrence_rule' in ticket && ticket.recurrence_rule) ||
+                            ('recurrence_type' in ticket &&
+                              ticket.recurrence_type &&
+                              ticket.recurrence_type !== 'none'))
+                            ? 'text-foreground h-8 gap-2 px-2'
+                            : 'text-muted-foreground h-8 gap-2 px-2'
+                        }
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
@@ -667,9 +691,27 @@ export function TicketInspector() {
                       >
                         <Repeat className="h-4 w-4" />
                         <span className="text-sm">
-                          {ticket && 'recurrence_rule' in ticket && ticket.recurrence_rule
-                            ? configToReadable(ruleToConfig(ticket.recurrence_rule))
-                            : '繰り返し'}
+                          {(() => {
+                            if (!ticket) return '繰り返し'
+
+                            // カスタムルール（RRULE）がある場合
+                            if ('recurrence_rule' in ticket && ticket.recurrence_rule) {
+                              return configToReadable(ruleToConfig(ticket.recurrence_rule))
+                            }
+
+                            // シンプルな繰り返しタイプがある場合
+                            if ('recurrence_type' in ticket && ticket.recurrence_type) {
+                              const typeMap: Record<string, string> = {
+                                daily: '毎日',
+                                weekly: '毎週',
+                                monthly: '毎月',
+                                none: '繰り返し',
+                              }
+                              return typeMap[ticket.recurrence_type] || '繰り返し'
+                            }
+
+                            return '繰り返し'
+                          })()}
                         </span>
                       </Button>
 
@@ -707,7 +749,30 @@ export function TicketInspector() {
                       />
                     </div>
 
-                    <ReminderPopover reminderType={reminderType} onReminderTypeChange={setReminderType} />
+                    <ReminderSelect
+                      value={reminderType}
+                      onChange={(type) => {
+                        if (!ticketId) return
+                        setReminderType(type)
+
+                        // UI表示文字列 → 分数に変換
+                        const reminderMap: Record<string, number | null> = {
+                          '': null,
+                          開始時刻: 0,
+                          '10分前': 10,
+                          '30分前': 30,
+                          '1時間前': 60,
+                          '1日前': 1440,
+                          '1週間前': 10080,
+                        }
+
+                        const reminderMinutes = reminderMap[type] ?? null
+                        updateTicket.mutate({
+                          id: ticketId,
+                          data: { reminder_minutes: reminderMinutes },
+                        })
+                      }}
+                    />
                   </div>
                 </div>
 

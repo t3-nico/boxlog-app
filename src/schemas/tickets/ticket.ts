@@ -15,6 +15,7 @@ export const createTicketSchema = z.object({
   recurrence_type: recurrenceTypeSchema.optional(), // 繰り返しタイプ（シンプル版）
   recurrence_end_date: z.string().optional(), // 繰り返し終了日（YYYY-MM-DD形式）
   recurrence_rule: z.string().nullable().optional(), // カスタム繰り返し（RRULE形式）
+  reminder_minutes: z.number().int().min(0).nullable().optional(), // 通知タイミング（開始時刻の何分前か）
 })
 
 export const updateTicketSchema = createTicketSchema.partial()
