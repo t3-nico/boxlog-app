@@ -1,6 +1,6 @@
 // @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 /**
- * イベントの中身（タイトル、時間等）のコンポーネント
+ * チケットカードの中身（タイトル、時間等）のコンポーネント
  */
 
 'use client'
@@ -9,19 +9,19 @@ import { memo } from 'react'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
 
-import type { TimedEvent } from '../../types/event.types'
+import type { CalendarTicket } from '../../types/event.types'
 import { formatTimeRange } from '../../utils/dateHelpers'
 
-interface EventContentProps {
-  event: TimedEvent
+interface TicketCardContentProps {
+  event: CalendarTicket
   isCompact?: boolean
   showTime?: boolean
   timeFormat?: '12h' | '24h'
   previewTime?: { start: Date; end: Date } | null // ドラッグ中のプレビュー時間
 }
 
-// Helper function: Parse event start date
-function parseEventStartDate(event: TimedEvent | Record<string, unknown>): Date | null {
+// Helper function: Parse ticket start date
+function parseTicketStartDate(event: CalendarTicket | Record<string, unknown>): Date | null {
   if (event.start instanceof Date) return event.start
   if (event.start) return new Date(event.start)
   if (event.startDate instanceof Date) return event.startDate
@@ -29,8 +29,8 @@ function parseEventStartDate(event: TimedEvent | Record<string, unknown>): Date 
   return null
 }
 
-// Helper function: Parse event end date
-function parseEventEndDate(event: TimedEvent | Record<string, unknown>): Date | null {
+// Helper function: Parse ticket end date
+function parseTicketEndDate(event: CalendarTicket | Record<string, unknown>): Date | null {
   if (event.end instanceof Date) return event.end
   if (event.end) return new Date(event.end)
   if (event.endDate instanceof Date) return event.endDate
@@ -38,14 +38,14 @@ function parseEventEndDate(event: TimedEvent | Record<string, unknown>): Date | 
   return null
 }
 
-// Helper function: Calculate event duration
-function calculateEventDuration(eventStart: Date | null, eventEnd: Date | null): number {
-  const startTime = eventStart?.getTime() || new Date().getTime()
-  const endTime = eventEnd?.getTime() || new Date(startTime + 60 * 60 * 1000).getTime()
+// Helper function: Calculate ticket duration
+function calculateTicketDuration(ticketStart: Date | null, ticketEnd: Date | null): number {
+  const startTime = ticketStart?.getTime() || new Date().getTime()
+  const endTime = ticketEnd?.getTime() || new Date(startTime + 60 * 60 * 1000).getTime()
   return Math.floor((endTime - startTime) / (1000 * 60))
 }
 
-export const EventContent = memo<EventContentProps>(function EventContent({
+export const TicketCardContent = memo<TicketCardContentProps>(function TicketCardContent({
   event,
   isCompact = false,
   showTime = true,
@@ -54,9 +54,9 @@ export const EventContent = memo<EventContentProps>(function EventContent({
 }) {
   const { t } = useI18n()
 
-  // イベントの開始・終了時刻をDateオブジェクトに変換
-  const eventStart = parseEventStartDate(event)
-  const eventEnd = parseEventEndDate(event)
+  // チケットの開始・終了時刻をDateオブジェクトに変換
+  const ticketStart = parseTicketStartDate(event)
+  const ticketEnd = parseTicketEndDate(event)
 
   // 継続時間を計算
 
@@ -79,11 +79,11 @@ export const EventContent = memo<EventContentProps>(function EventContent({
 
       {/* 時間表示（第2優先） */}
       {showTime != null && (
-        <div className="event-time flex-shrink-0 text-xs leading-tight opacity-75">
+        <div className="ticket-time flex-shrink-0 text-xs leading-tight opacity-75">
           {previewTime
             ? formatTimeRange(previewTime.start, previewTime.end, timeFormat)
-            : eventStart && eventEnd
-              ? formatTimeRange(eventStart, eventEnd, timeFormat)
+            : ticketStart && ticketEnd
+              ? formatTimeRange(ticketStart, ticketEnd, timeFormat)
               : t('calendar.event.noTimeSet')}
         </div>
       )}

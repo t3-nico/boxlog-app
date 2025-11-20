@@ -74,8 +74,8 @@ export interface RecordStats {
   unplannedTasks: number
 }
 
-// Calendar Event type (チケットから変換されたカレンダーイベント)
-export interface CalendarEvent {
+// Calendar Ticket type (チケットから変換されたカレンダーチケット)
+export interface CalendarTicket {
   id: string
   title: string
   description?: string
@@ -99,6 +99,9 @@ export interface CalendarEvent {
   isMultiDay: boolean
   isRecurring: boolean
 }
+
+// 後方互換性のためのエイリアス
+export type CalendarEvent = CalendarTicket
 
 // ========================================
 // 新しいDB設計に対応した型定義
@@ -126,7 +129,7 @@ export interface Calendar {
 // 繰り返しパターン
 export interface RecurrencePattern {
   id: string
-  eventId: string
+  ticketId: string // eventId から変更
   frequency: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
   interval: number
   weekdays?: number[] // 0=日曜, 1=月曜, ..., 6=土曜
@@ -140,21 +143,27 @@ export interface RecurrencePattern {
   timezone: string
   createdAt: Date
   updatedAt: Date
+  // 後方互換性
+  /** @deprecated Use ticketId instead */
+  eventId?: string
 }
 
-// イベントインスタンス（繰り返しイベントの個別オカレンス）
-export interface EventInstance {
+// チケットインスタンス（繰り返しチケットの個別オカレンス）
+export interface TicketInstance {
   id: string
-  eventId: string
+  ticketId: string // eventId から変更
   recurrencePatternId?: string
   instanceStart: Date
   instanceEnd: Date
   isException: boolean
   exceptionType?: 'modified' | 'cancelled' | 'moved'
-  overrides?: Partial<CalendarEvent>
+  overrides?: Partial<CalendarTicket>
   createdAt: Date
   updatedAt: Date
 }
+
+// 後方互換性のためのエイリアス
+export type EventInstance = TicketInstance
 
 // カレンダー共有
 export interface CalendarShare {
@@ -204,7 +213,7 @@ export interface UpdateCalendarInput {
   shareSettings?: Record<string, unknown>
 }
 
-export interface CreateEventInput {
+export interface CreateTicketInput {
   title: string
   description?: string
   calendarId?: string
@@ -229,12 +238,18 @@ export interface CreateEventInput {
     completed?: boolean
     duration?: number
   }>
-  recurrence?: Omit<RecurrencePattern, 'id' | 'eventId' | 'createdAt' | 'updatedAt'>
+  recurrence?: Omit<RecurrencePattern, 'id' | 'ticketId' | 'createdAt' | 'updatedAt'>
 }
 
-export interface UpdateEventInput extends Partial<CreateEventInput> {
+// 後方互換性のためのエイリアス
+export type CreateEventInput = CreateTicketInput
+
+export interface UpdateTicketInput extends Partial<CreateTicketInput> {
   id: string
 }
+
+// 後方互換性のためのエイリアス
+export type UpdateEventInput = UpdateTicketInput
 
 export interface CalendarShareInput {
   calendarId: string

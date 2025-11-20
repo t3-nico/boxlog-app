@@ -1,8 +1,8 @@
 /**
- * イベント関連の型定義
+ * チケット関連の型定義
  */
 
-export interface TimedEvent {
+export interface CalendarTicket {
   id: string
   title: string
   description?: string
@@ -41,27 +41,29 @@ export interface TimedEvent {
   isDeleted?: boolean
 }
 
-export type CalendarEvent = TimedEvent
+// 後方互換性のためのエイリアス
+export type CalendarEvent = CalendarTicket
+export type TimedEvent = CalendarTicket
 
-export interface EventBlockProps {
-  event: CalendarEvent
-  position?: EventPosition // positionをオプショナルに変更
-  onClick?: (event: CalendarEvent) => void
-  onDoubleClick?: (event: CalendarEvent) => void
-  onContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
+export interface TicketCardProps {
+  event: CalendarTicket
+  position?: TicketCardPosition
+  onClick?: (event: CalendarTicket) => void
+  onDoubleClick?: (event: CalendarTicket) => void
+  onContextMenu?: (event: CalendarTicket, e: React.MouseEvent) => void
   onDragStart?: (
-    event: CalendarEvent,
+    event: CalendarTicket,
     mouseEvent: React.MouseEvent,
     position: { top: number; left: number; width: number; height: number }
   ) => void
-  onDragEnd?: (event: CalendarEvent) => void
+  onDragEnd?: (event: CalendarTicket) => void
   onResizeStart?: (
-    event: CalendarEvent,
+    event: CalendarTicket,
     direction: 'top' | 'bottom',
     mouseEvent: React.MouseEvent,
     position: { top: number; left: number; width: number; height: number }
   ) => void
-  onResizeEnd?: (event: CalendarEvent) => void
+  onResizeEnd?: (event: CalendarTicket) => void
   isDragging?: boolean
   isSelected?: boolean
   isResizing?: boolean
@@ -70,7 +72,10 @@ export interface EventBlockProps {
   previewTime?: { start: Date; end: Date } | null
 }
 
-export interface EventPosition {
+// 後方互換性のためのエイリアス
+export type EventBlockProps = TicketCardProps
+
+export interface TicketCardPosition {
   top: number // px
   left: number // %
   width: number // %
@@ -78,24 +83,36 @@ export interface EventPosition {
   zIndex?: number
 }
 
-export interface EventGroup {
-  events: CalendarEvent[]
-  columns: EventColumn[]
+// 後方互換性のためのエイリアス
+export type EventPosition = TicketCardPosition
+
+export interface TicketGroup {
+  events: CalendarTicket[]
+  columns: TicketColumn[]
 }
 
-export interface EventColumn {
-  events: CalendarEvent[]
+// 後方互換性のためのエイリアス
+export type EventGroup = TicketGroup
+
+export interface TicketColumn {
+  events: CalendarTicket[]
   columnIndex: number
   totalColumns: number
 }
 
-export type EventInteractionHandler = {
-  onClick?: (event: CalendarEvent) => void
-  onDoubleClick?: (event: CalendarEvent) => void
-  onContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
-  onDragStart?: (event: CalendarEvent) => void
-  onDragEnd?: (event: CalendarEvent) => void
-  onDragOver?: (event: CalendarEvent, date: Date, time: Date) => void
-  onDrop?: (event: CalendarEvent, date: Date, time: Date) => void
-  onResize?: (event: CalendarEvent, newStart: Date, newEnd: Date) => void
+// 後方互換性のためのエイリアス
+export type EventColumn = TicketColumn
+
+export type TicketInteractionHandler = {
+  onClick?: (event: CalendarTicket) => void
+  onDoubleClick?: (event: CalendarTicket) => void
+  onContextMenu?: (event: CalendarTicket, e: React.MouseEvent) => void
+  onDragStart?: (event: CalendarTicket) => void
+  onDragEnd?: (event: CalendarTicket) => void
+  onDragOver?: (event: CalendarTicket, date: Date, time: Date) => void
+  onDrop?: (event: CalendarTicket, date: Date, time: Date) => void
+  onResize?: (event: CalendarTicket, newStart: Date, newEnd: Date) => void
 }
+
+// 後方互換性のためのエイリアス
+export type EventInteractionHandler = TicketInteractionHandler

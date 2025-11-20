@@ -1,6 +1,6 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
- * イベント表示ブロックコンポーネント
+ * チケット表示カードコンポーネント
  */
 
 'use client'
@@ -13,11 +13,11 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants'
-import type { EventBlockProps, TimedEvent } from '../../types/event.types'
+import type { CalendarTicket, TicketCardProps } from '../../types/event.types'
 
-import { EventContent } from './EventContent'
+import { TicketCardContent } from './TicketCardContent'
 
-export const EventBlock = memo<EventBlockProps>(function EventBlock({
+export const TicketCard = memo<TicketCardProps>(function TicketCard({
   event,
   position,
   onClick,
@@ -35,7 +35,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   const { t } = useI18n()
   const [isHovered, setIsHovered] = useState(false)
 
-  // すべてのイベントは時間指定イベント
+  // すべてのチケットは時間指定チケット
 
   // カレンダーテーマのscheduledカラーを使用
   const scheduledColors = calendarColors.event.scheduled
@@ -167,7 +167,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   // 状態に応じたスタイルを決定
 
   // CSSクラスを組み立て（colors.tsのscheduledを参照）
-  const eventClasses = cn(
+  const ticketCardClasses = cn(
     // 基本スタイル
     'overflow-hidden rounded-md pl-0 pr-2 shadow-sm',
     'focus:outline-none focus:ring-2 focus:ring-offset-1',
@@ -184,7 +184,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
 
   return (
     <div
-      className={eventClasses}
+      className={ticketCardClasses}
       style={dynamicStyle}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
@@ -197,16 +197,16 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
       draggable={false} // HTML5 draggableは使わない
       role="button"
       tabIndex={0}
-      aria-label={`Event: ${event.title}`}
+      aria-label={`Ticket: ${event.title}`}
       aria-pressed={isSelected}
     >
-      <EventContent
+      <TicketCardContent
         event={
           {
             ...event,
             start: event.startDate || new Date(),
             end: event.endDate || new Date(),
-          } as TimedEvent
+          } as CalendarTicket
         }
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
@@ -218,7 +218,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
         className="absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
         role="slider"
         tabIndex={0}
-        aria-label="Resize event duration"
+        aria-label="Resize ticket duration"
         aria-orientation="vertical"
         aria-valuenow={safePosition.height}
         aria-valuemin={20}

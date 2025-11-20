@@ -18,9 +18,9 @@ export { CurrentTimeLine as SimpleCurrentTimeLine } from '../../CurrentTimeLine'
 export { CurrentTimeLine, CurrentTimeLineForColumn } from './grid/CurrentTimeLine'
 
 // ===== UIコンポーネント =====
-// EventBlock - イベント表示
-export type * from './components/EventBlock'
-export { EventBlock, EventContent } from './components/EventBlock'
+// TicketCard - チケット表示（EventBlock から名称変更）
+export type * from './components/TicketCard'
+export { EventBlock, EventContent, TicketCard, TicketCardContent } from './components/TicketCard'
 
 // DayColumn - 日列（イベント表示エリアのみ）
 export { DayColumn } from './components/DayColumn'
