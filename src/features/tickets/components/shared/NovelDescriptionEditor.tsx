@@ -9,9 +9,8 @@ import {
   type EditorInstance,
   EditorRoot,
   handleCommandNavigation,
-  type JSONContent,
 } from 'novel'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { defaultExtensions } from './extensions'
 import { slashCommand, suggestionItems } from './slash-command'
 
@@ -34,28 +33,8 @@ export function NovelDescriptionEditor({
   onChange,
   placeholder = 'Add description...',
 }: NovelDescriptionEditorProps) {
-  const initialContent = useMemo<JSONContent>(() => {
-    if (content) {
-      // 既存コンテンツがある場合はそのまま使用
-      return {
-        type: 'doc',
-        content: [
-          {
-            type: 'paragraph',
-          },
-        ],
-      }
-    }
-    // 空の場合は空の段落を1つ作成
-    return {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-        },
-      ],
-    }
-  }, [content])
+  const editorRef = useRef<EditorInstance | null>(null)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   const extensions = useMemo(() => [...defaultExtensions, slashCommand], [])
 
@@ -72,12 +51,27 @@ export function NovelDescriptionEditor({
     [placeholder]
   )
 
+  // 初期HTMLコンテンツをエディターに設定
+  useEffect(() => {
+    if (editorRef.current && content && !isLoaded) {
+      editorRef.current.commands.setContent(content)
+      setIsLoaded(true)
+    }
+  }, [content, isLoaded])
+
   return (
     <EditorRoot>
       <EditorContent
-        initialContent={initialContent}
+        immediatelyRender={false}
         extensions={extensions}
         editorProps={editorProps}
+        onCreate={({ editor }: { editor: EditorInstance }) => {
+          editorRef.current = editor
+          // 初期コンテンツを設定
+          if (content) {
+            editor.commands.setContent(content)
+          }
+        }}
         onUpdate={({ editor }: { editor: EditorInstance }) => {
           // HTML形式で保存
           const html = editor.getHTML()

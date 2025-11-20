@@ -12,10 +12,10 @@ import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
 import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ticket'
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
+import { NovelDescriptionEditor } from './NovelDescriptionEditor'
 import { RecurrencePopover } from './RecurrencePopover'
 import { ReminderPopover } from './ReminderPopover'
 import { TicketDateTimeInput } from './TicketDateTimeInput'
-import { TicketDescriptionTextarea } from './TicketDescriptionTextarea'
 import { TicketTagsSection } from './TicketTagsSection'
 import { TicketTitleInput } from './TicketTitleInput'
 
@@ -209,7 +209,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
             {/* Description欄（最下部・コンパクト表示） */}
             <div className="border-border/50 border-t px-6 py-2">
               <div className="flex gap-2">
-                <FileText className="text-muted-foreground mt-[0.5rem] h-4 w-4 flex-shrink-0" />
+                <FileText className="text-muted-foreground mt-[0.125rem] h-4 w-4 flex-shrink-0" />
                 <div className="min-w-0 flex-1">
                   <FormField
                     control={form.control}
@@ -217,7 +217,11 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <TicketDescriptionTextarea placeholder="Add description..." isCompact={true} {...field} />
+                          <NovelDescriptionEditor
+                            content={field.value || ''}
+                            onChange={field.onChange}
+                            placeholder="Add description..."
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
