@@ -57,7 +57,7 @@ export const TicketCard = memo<TicketCardProps>(function TicketCard({
     position: 'absolute',
     top: `${safePosition.top}px`,
     left: `${safePosition.left}%`,
-    width: `${safePosition.width}%`,
+    width: `calc(${safePosition.width}% - 8px)`, // 右側に8pxの余白
     height: `${Math.max(safePosition.height, MIN_EVENT_HEIGHT)}px`,
     zIndex: isHovered || isSelected || isDragging ? Z_INDEX.DRAGGING : Z_INDEX.EVENTS,
     cursor: isDragging ? 'grabbing' : 'pointer',
