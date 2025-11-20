@@ -153,8 +153,8 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
             />
 
             {/* リピートと通知 */}
-            <div className="flex items-center gap-2 px-6 pt-0 pb-3">
-              <div className="ml-4 flex items-center gap-2">
+            <div className="flex h-[40px] items-center gap-2 px-6 pb-2">
+              <div className="ml-4 flex h-[32px] items-center gap-2">
                 <Button
                   ref={recurrenceTriggerRef}
                   variant="ghost"
@@ -207,10 +207,10 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
             />
 
             {/* Description欄（最下部・コンパクト表示） */}
-            <div className="border-border/50 border-t px-6 py-2">
-              <div className="flex gap-2">
-                <FileText className="text-muted-foreground mt-[0.125rem] h-4 w-4 flex-shrink-0" />
-                <div className="min-w-0 flex-1">
+            <div className="border-border/50 max-h-[232px] min-h-[48px] border-t px-6 py-2">
+              <div className="flex h-full items-start gap-2">
+                <FileText className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
+                <div className="min-w-0 flex-1 overflow-hidden">
                   <FormField
                     control={form.control}
                     name="description"
