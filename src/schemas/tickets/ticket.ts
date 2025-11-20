@@ -3,7 +3,7 @@ import { z } from 'zod'
 // Ticket用Zodスキーマ
 
 export const ticketStatusSchema = z.enum(['backlog', 'ready', 'active', 'wait', 'done', 'cancel'])
-export const recurrenceTypeSchema = z.enum(['none', 'daily', 'weekly', 'monthly'])
+export const recurrenceTypeSchema = z.enum(['none', 'daily', 'weekly', 'monthly', 'yearly', 'weekdays'])
 
 export const createTicketSchema = z.object({
   title: z.string().min(1, 'タイトルは必須です').max(200, 'タイトルは200文字以内です'),
@@ -12,8 +12,10 @@ export const createTicketSchema = z.object({
   due_date: z.string().optional(), // 日付（YYYY-MM-DD形式）
   start_time: z.string().datetime().optional(), // 開始日時（ISO 8601形式）
   end_time: z.string().datetime().optional(), // 終了日時（ISO 8601形式）
-  recurrence_type: recurrenceTypeSchema.optional(), // 繰り返しタイプ
+  recurrence_type: recurrenceTypeSchema.optional(), // 繰り返しタイプ（シンプル版）
   recurrence_end_date: z.string().optional(), // 繰り返し終了日（YYYY-MM-DD形式）
+  recurrence_rule: z.string().nullable().optional(), // カスタム繰り返し（RRULE形式）
+  reminder_minutes: z.number().int().min(0).nullable().optional(), // 通知タイミング（開始時刻の何分前か）
 })
 
 export const updateTicketSchema = createTicketSchema.partial()

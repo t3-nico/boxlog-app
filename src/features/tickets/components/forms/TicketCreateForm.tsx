@@ -184,10 +184,10 @@ export function TicketFormImproved({
               </div>
             </div>
 
-            {/* リマインダーと繰り返し */}
+            {/* 通知と繰り返し */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm font-medium">リマインダー</label>
+                <label className="text-sm font-medium">通知</label>
                 <Select>
                   <SelectTrigger>
                     <SelectValue placeholder="選択..." />

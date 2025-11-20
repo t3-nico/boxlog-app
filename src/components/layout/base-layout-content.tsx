@@ -1,11 +1,13 @@
 'use client'
 
 import { CookieConsentBanner } from '@/components/common/cookie-consent-banner'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
 import { NotificationDialog } from '@/features/notifications'
+import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime'
 import { SettingsDialog } from '@/features/settings/components/dialog'
 import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
@@ -36,9 +38,13 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const isMobile = useMediaQuery('(max-width: 768px)')
   const searchParams = useSearchParams()
   const { calendarProviderProps } = useCalendarProviderProps(pathname, searchParams || new URLSearchParams())
+  const user = useAuthStore((state) => state.user)
 
   // タグページかどうかを判定
   const isTagsPage = pathname?.startsWith(`/${localeFromPath}/tags`) ?? false
+
+  // Realtime通知購読（Toast表示）
+  useNotificationRealtime(user?.id, true)
 
   const content = (
     <div className="flex h-screen flex-col">

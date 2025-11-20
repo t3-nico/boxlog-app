@@ -6,8 +6,6 @@ export * from './performance'
 export { VirtualCalendarGrid } from './virtualization/VirtualCalendarGrid'
 
 // MiniCalendar component (moved from layout/Sidebar)
+// Supports both direct display and Popover mode via asPopover prop
 export { MiniCalendar } from './MiniCalendar'
 export type { MiniCalendarProps } from './MiniCalendar'
-
-// MiniCalendarPopover component (moved from components/common)
-export { MiniCalendarPopover } from './MiniCalendarPopover'

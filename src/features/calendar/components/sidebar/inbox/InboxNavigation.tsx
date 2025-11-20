@@ -42,7 +42,7 @@ export function InboxNavigation({
   onPriorityToggle,
 }: InboxNavigationProps) {
   return (
-    <div className="-mt-2 flex items-center gap-1">
+    <div className="flex items-center gap-1">
       {/* 期間フィルター */}
       <Popover>
         <PopoverTrigger asChild>

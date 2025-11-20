@@ -12,7 +12,6 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useInboxFocusStore } from '@/features/inbox/stores/useInboxFocusStore'
 import { api } from '@/lib/trpc'
@@ -30,6 +29,7 @@ import {
   MoreHorizontal,
   PanelRight,
   Plus,
+  Repeat,
   Save,
   Tag,
   Trash,
@@ -40,12 +40,15 @@ import { useTicket } from '../../hooks/useTicket'
 import { useTicketActivities } from '../../hooks/useTicketActivities'
 import { useTicketMutations } from '../../hooks/useTicketMutations'
 import { useTicketTags } from '../../hooks/useTicketTags'
+import { useTicketCacheStore } from '../../stores/useTicketCacheStore'
 import { useTicketInspectorStore } from '../../stores/useTicketInspectorStore'
 import type { Ticket } from '../../types/ticket'
 import { formatActivity, formatRelativeTime } from '../../utils/activityFormatter'
+import { configToReadable, ruleToConfig } from '../../utils/rrule'
 import { DatePickerPopover } from '../shared/DatePickerPopover'
+import { NovelDescriptionEditor } from '../shared/NovelDescriptionEditor'
 import { RecurrencePopover } from '../shared/RecurrencePopover'
-import { ReminderPopover } from '../shared/ReminderPopover'
+import { ReminderSelect } from '../shared/ReminderSelect'
 import { TicketTagsSection } from '../shared/TicketTagsSection'
 
 // 15分刻みの時間オプションを生成（0:00 - 23:45）
@@ -222,6 +225,7 @@ export function TicketInspector() {
 
   // Mutations（Toast通知・キャッシュ無効化込み）
   const { updateTicket, deleteTicket } = useTicketMutations()
+  const { getCache } = useTicketCacheStore()
 
   // 削除ハンドラー
   const handleDelete = () => {
@@ -274,6 +278,15 @@ export function TicketInspector() {
   const [endTime, setEndTime] = useState('')
   const [repeatType, setRepeatType] = useState<string>('')
   const [reminderType, setReminderType] = useState<string>('')
+  const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
+  const recurrenceTriggerRef = useRef<HTMLDivElement>(null)
+
+  // Inspector が閉じられたときにポップアップも閉じる
+  useEffect(() => {
+    if (!isOpen) {
+      setRecurrencePopoverOpen(false)
+    }
+  }, [isOpen])
 
   // Ticketデータが読み込まれたら状態を初期化
   useEffect(() => {
@@ -296,6 +309,22 @@ export function TicketInspector() {
         setEndTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setEndTime('')
+      }
+
+      // reminder_minutes から UI表示用の文字列に変換
+      if ('reminder_minutes' in ticket && ticket.reminder_minutes !== null) {
+        const minutes = ticket.reminder_minutes
+        const reminderMap: Record<number, string> = {
+          0: '開始時刻',
+          10: '10分前',
+          30: '30分前',
+          60: '1時間前',
+          1440: '1日前',
+          10080: '1週間前',
+        }
+        setReminderType(reminderMap[minutes] || 'カスタム')
+      } else {
+        setReminderType('')
       }
     }
   }, [ticket])
@@ -643,8 +672,151 @@ export function TicketInspector() {
                 {/* リピートと通知 */}
                 <div className="flex items-center gap-4 px-6 pb-3">
                   <div className="ml-6 flex items-center gap-4">
-                    <RecurrencePopover repeatType={repeatType} onRepeatTypeChange={setRepeatType} />
-                    <ReminderPopover reminderType={reminderType} onReminderTypeChange={setReminderType} />
+                    <div className="relative" ref={recurrenceTriggerRef}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={(() => {
+                          if (!ticketId) return 'text-muted-foreground h-8 gap-2 px-2'
+                          const cache = getCache(ticketId)
+                          const recurrence_rule =
+                            cache?.recurrence_rule !== undefined
+                              ? cache.recurrence_rule
+                              : ticket && 'recurrence_rule' in ticket
+                                ? ticket.recurrence_rule
+                                : null
+                          const recurrence_type =
+                            cache?.recurrence_type !== undefined
+                              ? cache.recurrence_type
+                              : ticket && 'recurrence_type' in ticket
+                                ? ticket.recurrence_type
+                                : null
+                          return recurrence_rule || (recurrence_type && recurrence_type !== 'none')
+                            ? 'text-foreground h-8 gap-2 px-2'
+                            : 'text-muted-foreground h-8 gap-2 px-2'
+                        })()}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setRecurrencePopoverOpen(!recurrencePopoverOpen)
+                        }}
+                      >
+                        <Repeat className="h-4 w-4" />
+                        <span className="text-sm">
+                          {(() => {
+                            if (!ticketId) return '繰り返し'
+                            const cache = getCache(ticketId)
+                            const recurrence_rule =
+                              cache?.recurrence_rule !== undefined
+                                ? cache.recurrence_rule
+                                : ticket && 'recurrence_rule' in ticket
+                                  ? ticket.recurrence_rule
+                                  : null
+                            const recurrence_type =
+                              cache?.recurrence_type !== undefined
+                                ? cache.recurrence_type
+                                : ticket && 'recurrence_type' in ticket
+                                  ? ticket.recurrence_type
+                                  : null
+
+                            // カスタムルール（RRULE）がある場合
+                            if (recurrence_rule) {
+                              return configToReadable(ruleToConfig(recurrence_rule))
+                            }
+
+                            // シンプルな繰り返しタイプがある場合
+                            if (recurrence_type && recurrence_type !== 'none') {
+                              const typeMap: Record<string, string> = {
+                                daily: '毎日',
+                                weekly: '毎週',
+                                monthly: '毎月',
+                                yearly: '毎年',
+                                weekdays: '平日',
+                                none: '繰り返し',
+                              }
+                              return typeMap[recurrence_type] || '繰り返し'
+                            }
+
+                            return '繰り返し'
+                          })()}
+                        </span>
+                      </Button>
+
+                      <RecurrencePopover
+                        open={recurrencePopoverOpen}
+                        onOpenChange={setRecurrencePopoverOpen}
+                        onRepeatTypeChange={(type) => {
+                          if (!ticketId) return
+                          setRepeatType(type)
+
+                          // 型マッピング
+                          const typeMap: Record<
+                            string,
+                            'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'
+                          > = {
+                            '': 'none',
+                            毎日: 'daily',
+                            毎週: 'weekly',
+                            毎月: 'monthly',
+                            毎年: 'yearly',
+                            平日: 'weekdays',
+                          }
+
+                          const recurrenceType = typeMap[type] || 'none'
+
+                          // optimistic updateがキャッシュを即座に更新
+                          updateTicket.mutate({
+                            id: ticketId,
+                            data: { recurrence_type: recurrenceType, recurrence_rule: null },
+                          })
+                        }}
+                        triggerRef={recurrenceTriggerRef}
+                        recurrenceRule={(() => {
+                          if (!ticketId) return null
+                          const cache = getCache(ticketId)
+                          return cache?.recurrence_rule !== undefined
+                            ? cache.recurrence_rule
+                            : ticket && 'recurrence_rule' in ticket
+                              ? ticket.recurrence_rule
+                              : null
+                        })()}
+                        onRecurrenceRuleChange={(rrule) => {
+                          if (!ticketId) return
+
+                          // updateTicket.mutateがZustandキャッシュを即座に更新
+                          updateTicket.mutate({
+                            id: ticketId,
+                            data: { recurrence_rule: rrule },
+                          })
+                        }}
+                        placement="bottom"
+                      />
+                    </div>
+
+                    <ReminderSelect
+                      value={reminderType}
+                      onChange={(type) => {
+                        if (!ticketId) return
+                        setReminderType(type)
+
+                        // UI表示文字列 → 分数に変換
+                        const reminderMap: Record<string, number | null> = {
+                          '': null,
+                          開始時刻: 0,
+                          '10分前': 10,
+                          '30分前': 30,
+                          '1時間前': 60,
+                          '1日前': 1440,
+                          '1週間前': 10080,
+                        }
+
+                        const reminderMinutes = reminderMap[type] ?? null
+                        updateTicket.mutate({
+                          id: ticketId,
+                          data: { reminder_minutes: reminderMinutes },
+                        })
+                      }}
+                    />
                   </div>
                 </div>
 
@@ -662,27 +834,13 @@ export function TicketInspector() {
                 {/* 説明 */}
                 <div className="border-border/50 border-t px-6 py-2">
                   <div className="flex gap-2">
-                    <FileText className="text-muted-foreground mt-[0.5rem] h-4 w-4 flex-shrink-0" />
+                    <FileText className="text-muted-foreground mt-[0.125rem] h-4 w-4 flex-shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <Textarea
-                        ref={descriptionRef}
-                        id="description"
+                      <NovelDescriptionEditor
                         key={ticket.id}
-                        defaultValue={ticket.description || ''}
-                        onChange={(e) => autoSave('description', e.target.value)}
-                        onInput={(e) => {
-                          const target = e.target as HTMLTextAreaElement
-                          target.style.height = 'auto'
-                          const newHeight = Math.min(target.scrollHeight, 96) // 96px = 6rem (4行分)
-                          target.style.height = `${newHeight}px`
-                        }}
-                        className="text-muted-foreground bg-card dark:bg-card max-h-[6rem] min-h-[1.5rem] resize-none border-0 px-0 text-sm shadow-none focus-visible:ring-0"
+                        content={ticket.description || ''}
+                        onChange={(html) => autoSave('description', html)}
                         placeholder="Add description..."
-                        style={{
-                          scrollbarColor: 'var(--color-muted-foreground) var(--color-card)',
-                          height: 'auto',
-                          overflowY: 'auto',
-                        }}
                       />
                     </div>
                   </div>

@@ -1,12 +1,14 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 
 import { ja } from 'date-fns/locale'
 import type { DateRange } from 'react-day-picker'
 
 import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { cn } from '@/lib/utils'
 
 export interface MiniCalendarProps {
   selectedDate?: Date
@@ -21,23 +23,59 @@ export interface MiniCalendarProps {
   }
   // 表示する月（メインカレンダーの日付に同期）
   month?: Date
+  // Popoverモード
+  asPopover?: boolean
+  popoverTrigger?: React.ReactNode
+  popoverClassName?: string
+  popoverAlign?: 'start' | 'center' | 'end'
+  popoverSide?: 'top' | 'right' | 'bottom' | 'left'
+  onOpenChange?: (open: boolean) => void
 }
 
 /**
  * MiniCalendar - shadcn/ui公式Calendarコンポーネントのラッパー
  *
- * 旧実装から置き換え：
+ * **機能**:
  * - ✅ shadcn/ui公式準拠
  * - ✅ 月/年のドロップダウン選択
  * - ✅ 週番号表示
  * - ✅ デザイントークン完全適用
  * - ✅ 日本語/英語対応
  * - ✅ 表示期間のハイライト（週表示など）
+ * - ✅ Popoverモード対応（asPopover=true）
+ *
+ * **使い方**:
+ * ```tsx
+ * // 直接表示（CalendarSidebar）
+ * <MiniCalendar selectedDate={date} onDateSelect={...} />
+ *
+ * // Popover版（DueDateCell）
+ * <MiniCalendar
+ *   asPopover
+ *   popoverTrigger={<Button>...</Button>}
+ *   selectedDate={date}
+ *   onDateSelect={...}
+ * />
+ * ```
  */
 export const MiniCalendar = React.memo<MiniCalendarProps>(
-  ({ selectedDate, onDateSelect, onMonthChange, className, showWeekNumbers = false, displayRange, month }) => {
+  ({
+    selectedDate,
+    onDateSelect,
+    onMonthChange,
+    className,
+    displayRange,
+    month,
+    asPopover = false,
+    popoverTrigger,
+    popoverClassName,
+    popoverAlign = 'start',
+    popoverSide = 'bottom',
+    onOpenChange,
+  }) => {
     const { locale } = useI18n()
-    const [isMounted, setIsMounted] = React.useState(false)
+    const [isMounted, setIsMounted] = useState(false)
+    const [open, setOpen] = useState(false)
 
     React.useEffect(() => {
       setIsMounted(true)
@@ -48,54 +86,92 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
       return null
     }
 
-    // displayRangeがある場合はrangeモード、ない場合はsingleモード
-    if (displayRange) {
-      const range: DateRange = {
-        from: displayRange.start,
-        to: displayRange.end,
+    const handleDateSelect = (date: Date | undefined) => {
+      if (asPopover && date) {
+        onDateSelect?.(date)
+        setOpen(false) // Popoverモードでは日付選択後に閉じる
+      } else {
+        onDateSelect?.(date)
+      }
+    }
+
+    const handleOpenChange = (newOpen: boolean) => {
+      setOpen(newOpen)
+      onOpenChange?.(newOpen)
+    }
+
+    // カレンダー本体のレンダリング
+    const renderCalendar = () => {
+      // displayRangeがある場合はrangeモード、ない場合はsingleモード
+      if (displayRange) {
+        const range: DateRange = {
+          from: displayRange.start,
+          to: displayRange.end,
+        }
+
+        return (
+          <Calendar
+            mode="range"
+            selected={range}
+            month={month}
+            onSelect={(newRange) => {
+              // rangeモードでは日付クリック時にその日に移動
+              if (newRange?.from) {
+                handleDateSelect(newRange.from)
+              }
+            }}
+            onMonthChange={onMonthChange}
+            showWeekNumber={false}
+            captionLayout="dropdown"
+            locale={locale === 'ja' ? ja : undefined}
+            weekStartsOn={1}
+            startMonth={new Date(2020, 0)}
+            endMonth={new Date(2050, 11)}
+            className={className}
+          />
+        )
       }
 
+      // singleモード（デフォルト）
       return (
         <Calendar
-          mode="range"
-          selected={range}
+          mode="single"
+          required={false}
+          selected={selectedDate}
           month={month}
-          onSelect={(newRange) => {
-            // rangeモードでは日付クリック時にその日に移動
-            if (newRange?.from) {
-              onDateSelect?.(newRange.from)
-            }
-          }}
+          onSelect={handleDateSelect}
           onMonthChange={onMonthChange}
           showWeekNumber={false}
           captionLayout="dropdown"
           locale={locale === 'ja' ? ja : undefined}
           weekStartsOn={1}
-          fromYear={2020}
-          toYear={2050}
+          startMonth={new Date(2020, 0)}
+          endMonth={new Date(2050, 11)}
           className={className}
         />
       )
     }
 
-    // singleモード（デフォルト）
-    return (
-      <Calendar
-        mode="single"
-        required={false}
-        selected={selectedDate}
-        month={month}
-        onSelect={onDateSelect}
-        onMonthChange={onMonthChange}
-        showWeekNumber={false}
-        captionLayout="dropdown"
-        locale={locale === 'ja' ? ja : undefined}
-        weekStartsOn={1}
-        fromYear={2020}
-        toYear={2050}
-        className={className}
-      />
-    )
+    // Popoverモード
+    if (asPopover) {
+      return (
+        <Popover open={open} onOpenChange={handleOpenChange}>
+          <PopoverTrigger asChild className={cn('hover:bg-accent transition-colors')}>
+            {popoverTrigger}
+          </PopoverTrigger>
+          <PopoverContent
+            className={cn('bg-muted dark:border-input w-auto border p-0', popoverClassName)}
+            align={popoverAlign}
+            side={popoverSide}
+          >
+            {renderCalendar()}
+          </PopoverContent>
+        </Popover>
+      )
+    }
+
+    // 直接表示モード
+    return renderCalendar()
   }
 )
 

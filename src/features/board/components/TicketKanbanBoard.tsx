@@ -2,43 +2,32 @@
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuTrigger,
-} from '@/components/ui/context-menu'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
+import { DateTimePopoverContent } from '@/features/tickets/components/shared/DateTimePopoverContent'
 import { TicketTagSelectDialogEnhanced } from '@/features/tickets/components/shared/TicketTagSelectDialogEnhanced'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
-import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
-import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
+import type { TicketStatus } from '@/features/tickets/types/ticket'
+import { reminderTypeToMinutes } from '@/features/tickets/utils/reminder'
 import { cn } from '@/lib/utils'
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useDroppable,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import {
-  ArrowRight,
-  Bell,
-  Calendar as CalendarIcon,
-  Check,
-  Clock,
-  MoreVertical,
-  Plus,
-  Repeat,
-  Tag,
-  Trash2,
-} from 'lucide-react'
-import { useState } from 'react'
-import { useBoardFocusStore } from '../stores/useBoardFocusStore'
-import { BoardActionMenuItems } from './BoardActionMenuItems'
+import { Bell, Calendar as CalendarIcon, MoreVertical, Plus, Repeat, Tag } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { useBoardStatusFilterStore } from '../stores/useBoardStatusFilterStore'
+import { TicketCard } from './shared/TicketCard'
 
 interface TicketKanbanBoardProps {
   items: InboxItem[]
@@ -50,6 +39,10 @@ interface TicketKanbanBoardProps {
  * InboxItemをステータスごとに3カラムに分類して表示
  */
 export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const { updateTicket } = useTicketMutations()
+  const { isStatusVisible } = useBoardStatusFilterStore()
+
   // Ticketデータをカラムごとに分類
   const columns = {
     backlog: items.filter((item) => item.status === 'backlog'),
@@ -60,50 +53,169 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
     cancel: items.filter((item) => item.status === 'cancel'),
   }
 
+  // ドラッグ中のカードを取得
+  const activeItem = activeId ? items.find((item) => item.id === activeId) : null
+
+  // ドラッグセンサー設定（ポインターでドラッグ）
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 8px移動したらドラッグ開始
+      },
+    })
+  )
+
+  // ドラッグ開始
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string)
+  }
+
+  // ドラッグ終了
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (!over) {
+      setActiveId(null)
+      return
+    }
+
+    // ドロップ先のカラムステータスを取得
+    const targetStatus = over.id as TicketStatus
+
+    // ドラッグ中のアイテムを取得
+    const draggedItem = items.find((item) => item.id === active.id)
+
+    if (draggedItem && draggedItem.status !== targetStatus) {
+      // ステータスを更新
+      updateTicket.mutate({
+        id: draggedItem.id,
+        data: {
+          status: targetStatus,
+        },
+      })
+    }
+
+    setActiveId(null)
+  }
+
   return (
-    <div className="flex h-full gap-4 overflow-x-auto p-4">
-      {/* Backlog カラム */}
-      <KanbanColumn title="Backlog" count={columns.backlog.length} variant="default" status="backlog">
-        {columns.backlog.map((item) => (
-          <TicketCard key={item.id} item={item} />
-        ))}
-      </KanbanColumn>
+    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className="flex h-full gap-4 overflow-x-auto p-4">
+        {/* Backlog カラム */}
+        {isStatusVisible('backlog') && (
+          <KanbanColumn title="Backlog" count={columns.backlog.length} variant="default" status="backlog">
+            {columns.backlog.map((item) => (
+              <TicketCard key={item.id} item={item} />
+            ))}
+          </KanbanColumn>
+        )}
 
-      {/* Ready カラム */}
-      <KanbanColumn title="Ready" count={columns.ready.length} variant="ready" status="ready">
-        {columns.ready.map((item) => (
-          <TicketCard key={item.id} item={item} />
-        ))}
-      </KanbanColumn>
+        {/* Ready カラム */}
+        {isStatusVisible('ready') && (
+          <KanbanColumn title="Ready" count={columns.ready.length} variant="ready" status="ready">
+            {columns.ready.map((item) => (
+              <TicketCard key={item.id} item={item} />
+            ))}
+          </KanbanColumn>
+        )}
 
-      {/* Active カラム */}
-      <KanbanColumn title="Active" count={columns.active.length} variant="active" status="active">
-        {columns.active.map((item) => (
-          <TicketCard key={item.id} item={item} />
-        ))}
-      </KanbanColumn>
+        {/* Active カラム */}
+        {isStatusVisible('active') && (
+          <KanbanColumn title="Active" count={columns.active.length} variant="active" status="active">
+            {columns.active.map((item) => (
+              <TicketCard key={item.id} item={item} />
+            ))}
+          </KanbanColumn>
+        )}
 
-      {/* Wait カラム */}
-      <KanbanColumn title="Wait" count={columns.wait.length} variant="wait" status="wait">
-        {columns.wait.map((item) => (
-          <TicketCard key={item.id} item={item} />
-        ))}
-      </KanbanColumn>
+        {/* Wait カラム */}
+        {isStatusVisible('wait') && (
+          <KanbanColumn title="Wait" count={columns.wait.length} variant="wait" status="wait">
+            {columns.wait.map((item) => (
+              <TicketCard key={item.id} item={item} />
+            ))}
+          </KanbanColumn>
+        )}
 
-      {/* Done カラム */}
-      <KanbanColumn title="Done" count={columns.done.length} variant="done" status="done">
-        {columns.done.map((item) => (
-          <TicketCard key={item.id} item={item} />
-        ))}
-      </KanbanColumn>
+        {/* Done カラム */}
+        {isStatusVisible('done') && (
+          <KanbanColumn title="Done" count={columns.done.length} variant="done" status="done">
+            {columns.done.map((item) => (
+              <TicketCard key={item.id} item={item} />
+            ))}
+          </KanbanColumn>
+        )}
 
-      {/* Cancel カラム */}
-      <KanbanColumn title="Cancel" count={columns.cancel.length} variant="cancel" status="cancel">
-        {columns.cancel.map((item) => (
-          <TicketCard key={item.id} item={item} />
-        ))}
-      </KanbanColumn>
-    </div>
+        {/* Cancel カラム */}
+        {isStatusVisible('cancel') && (
+          <KanbanColumn title="Cancel" count={columns.cancel.length} variant="cancel" status="cancel">
+            {columns.cancel.map((item) => (
+              <TicketCard key={item.id} item={item} />
+            ))}
+          </KanbanColumn>
+        )}
+      </div>
+
+      {/* ドラッグ中のカードプレビュー */}
+      <DragOverlay>
+        {activeItem ? (
+          <div className="bg-card border-primary rotate-3 cursor-grabbing rounded-lg border-2 p-3 opacity-90 shadow-2xl">
+            {/* 1. タイトル */}
+            <div className="flex items-center gap-2 overflow-hidden">
+              <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold">{activeItem.title}</h3>
+              {activeItem.ticket_number && (
+                <span className="text-muted-foreground shrink-0 text-sm">#{activeItem.ticket_number}</span>
+              )}
+            </div>
+
+            {/* 2. 日付・時間 */}
+            {(activeItem.due_date || activeItem.start_time || activeItem.end_time) && (
+              <div className="text-foreground mt-2 flex w-fit items-center gap-1 text-sm">
+                {activeItem.due_date && (
+                  <span>{format(new Date(activeItem.due_date), 'yyyy/MM/dd', { locale: ja })}</span>
+                )}
+                {activeItem.start_time && activeItem.end_time && (
+                  <span>
+                    {' '}
+                    {format(new Date(activeItem.start_time), 'HH:mm')} →{' '}
+                    {format(new Date(activeItem.end_time), 'HH:mm')}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* 3. Tags */}
+            {activeItem.tags && activeItem.tags.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {activeItem.tags.slice(0, 4).map((tag) => (
+                  <Badge
+                    key={tag.id}
+                    variant="outline"
+                    className="shrink-0 text-xs font-normal"
+                    style={
+                      tag.color
+                        ? {
+                            backgroundColor: `${tag.color}20`,
+                            borderColor: tag.color,
+                            color: tag.color,
+                          }
+                        : undefined
+                    }
+                  >
+                    {tag.name}
+                  </Badge>
+                ))}
+                {activeItem.tags.length > 4 && (
+                  <Badge variant="secondary" className="shrink-0 text-xs">
+                    +{activeItem.tags.length - 4}
+                  </Badge>
+                )}
+              </div>
+            )}
+          </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   )
 }
 
@@ -119,45 +231,96 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   const [isAdding, setIsAdding] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [selectedDate, setSelectedDate] = useState<Date>()
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const [tagSearchQuery, setTagSearchQuery] = useState('')
-  const [showCalendar, setShowCalendar] = useState(false)
-  const [showTags, setShowTags] = useState(false)
-  const { createTicket } = useTicketMutations()
-
-  // タグ一覧を取得（TODO: tagsテーブルのパーミッション設定後に有効化）
-  const allTags: never[] = []
-
-  // タグ検索結果をフィルタリング
-  const filteredTags = allTags.filter((tag: { name: string }) =>
-    tag.name.toLowerCase().includes(tagSearchQuery.toLowerCase())
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
+  const [reminderType, setReminderType] = useState<string>('none')
+  const [recurrenceType, setRecurrenceType] = useState<'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'>(
+    'none'
   )
+  const [recurrenceRule, setRecurrenceRule] = useState<string | null>(null)
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
+  const [dateTimeOpen, setDateTimeOpen] = useState(false)
+  const { createTicket } = useTicketMutations()
+  const formRef = useRef<HTMLDivElement>(null)
+
+  // 作成キャンセル
+  const handleCancel = () => {
+    setIsAdding(false)
+    setNewTitle('')
+    setSelectedDate(undefined)
+    setStartTime('')
+    setEndTime('')
+    setReminderType('none')
+    setRecurrenceType('none')
+    setRecurrenceRule(null)
+    setSelectedTagIds([])
+    setDateTimeOpen(false)
+  }
+
+  // フォーム外クリックでキャンセル
+  useEffect(() => {
+    if (!isAdding) return
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (formRef.current && !formRef.current.contains(event.target as Node)) {
+        handleCancel()
+      }
+    }
+
+    // マウスダウンイベントをリッスン
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isAdding])
+
+  // ドロップ可能エリアの設定
+  const { setNodeRef, isOver } = useDroppable({
+    id: status,
+  })
 
   const bgColor = {
-    default: 'bg-muted/50',
-    ready: 'bg-cyan-50 dark:bg-cyan-950/20',
-    active: 'bg-blue-50 dark:bg-blue-950/20',
-    wait: 'bg-yellow-50 dark:bg-yellow-950/20',
-    done: 'bg-green-50 dark:bg-green-950/20',
-    cancel: 'bg-red-50 dark:bg-red-950/20',
+    default: 'bg-gray-100 dark:bg-gray-800/40',
+    ready: 'bg-blue-100 dark:bg-blue-900/30',
+    active: 'bg-purple-100 dark:bg-purple-900/30',
+    wait: 'bg-orange-100 dark:bg-orange-900/30',
+    done: 'bg-green-100 dark:bg-green-900/30',
+    cancel: 'bg-red-100 dark:bg-red-900/30',
   }[variant]
 
   const handleCreate = () => {
     if (!newTitle.trim()) return
 
+    // 日付と時刻をISO 8601形式に変換
+    const baseDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd')
+    const start_time = selectedDate && startTime ? `${baseDate}T${startTime}:00` : undefined
+    const end_time = selectedDate && endTime ? `${baseDate}T${endTime}:00` : undefined
+
+    // 通知を分数に変換
+    const reminder_minutes = reminderTypeToMinutes(reminderType)
+
     createTicket.mutate({
       title: newTitle,
       status,
-      due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
+      due_date: selectedDate ? baseDate : undefined,
+      start_time,
+      end_time,
+      reminder_minutes,
+      recurrence_type: recurrenceRule ? undefined : recurrenceType !== 'none' ? recurrenceType : undefined,
+      recurrence_rule: recurrenceRule || undefined,
+      // TODO: タグの保存は作成後に別途処理が必要
     })
 
     // リセット
     setNewTitle('')
     setSelectedDate(undefined)
+    setStartTime('')
+    setEndTime('')
+    setReminderType('none')
+    setRecurrenceType('none')
+    setRecurrenceRule(null)
     setSelectedTagIds([])
-    setTagSearchQuery('')
-    setShowCalendar(false)
-    setShowTags(false)
+    setDateTimeOpen(false)
     setIsAdding(false)
   }
 
@@ -166,18 +329,12 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
       e.preventDefault()
       handleCreate()
     } else if (e.key === 'Escape') {
-      setIsAdding(false)
-      setNewTitle('')
-      setSelectedDate(undefined)
-      setSelectedTagIds([])
-      setTagSearchQuery('')
-      setShowCalendar(false)
-      setShowTags(false)
+      handleCancel()
     }
   }
 
   return (
-    <div className="flex min-w-[300px] flex-col rounded-lg">
+    <div ref={setNodeRef} className={cn('flex min-w-[300px] flex-col rounded-lg', isOver && 'ring-primary/30 ring-2')}>
       <div
         className={`${bgColor} flex items-center justify-between rounded-t-lg pt-2`}
         style={{ height: '48px', minHeight: '48px', maxHeight: '48px', paddingLeft: '16px', paddingRight: '16px' }}
@@ -226,126 +383,148 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
 
         {/* 新規作成フォーム（入力中） */}
         {isAdding && (
-          <div className="bg-card border-border relative space-y-2 rounded-lg border p-3 shadow-sm">
+          <div
+            ref={formRef}
+            className="bg-card hover:bg-muted/50 border-border group flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors"
+          >
             {/* タイトル入力 */}
-            <Input
-              autoFocus
-              placeholder="タイトルを入力..."
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="h-8 text-sm"
-            />
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onInput={(e) => setNewTitle(e.currentTarget.textContent || '')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  handleCreate()
+                } else if (e.key === 'Escape') {
+                  handleCancel()
+                }
+              }}
+              className="text-foreground empty:before:text-muted-foreground min-w-0 text-base leading-tight font-semibold outline-none empty:before:content-[attr(data-placeholder)]"
+              data-placeholder="タイトルを入力..."
+              ref={(el) => {
+                if (el && !newTitle) {
+                  el.focus()
+                }
+              }}
+            >
+              {newTitle}
+            </div>
 
-            {/* 選択されたTags表示 */}
-            {selectedTagIds.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {selectedTagIds.map((tagId) => {
-                  const tag = allTags.find((t: { id: string }) => t.id === tagId)
-                  return (
-                    <Badge key={tagId} variant="secondary" className="text-xs">
-                      {tag ? (tag as { name: string }).name : tagId.slice(0, 4)}
-                    </Badge>
-                  )
-                })}
+            {/* 日時を追加（Popover） */}
+            <Popover open={dateTimeOpen} onOpenChange={setDateTimeOpen}>
+              <PopoverTrigger asChild>
+                <div
+                  className="text-foreground hover:bg-primary/10 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {selectedDate || startTime || endTime ? (
+                    <span>
+                      {selectedDate ? format(selectedDate, 'yyyy/MM/dd', { locale: ja }) : ''}
+                      {startTime && endTime && ` ${startTime} → ${endTime}`}
+                      {startTime && !endTime && ` ${startTime}`}
+                    </span>
+                  ) : (
+                    <div className="text-muted-foreground flex items-center gap-1">
+                      <CalendarIcon className="size-3" />
+                      <span>日付を追加</span>
+                    </div>
+                  )}
+
+                  {/* アイコンコンテナ（Repeat と Reminder） */}
+                  {(recurrenceRule ||
+                    (recurrenceType && recurrenceType !== 'none') ||
+                    (reminderType && reminderType !== 'none')) && (
+                    <div className="flex items-center gap-1">
+                      {/* 繰り返しアイコン */}
+                      {(recurrenceRule || (recurrenceType && recurrenceType !== 'none')) && (
+                        <div
+                          title={
+                            recurrenceType === 'daily'
+                              ? '毎日'
+                              : recurrenceType === 'weekly'
+                                ? '毎週'
+                                : recurrenceType === 'monthly'
+                                  ? '毎月'
+                                  : recurrenceType === 'yearly'
+                                    ? '毎年'
+                                    : recurrenceType === 'weekdays'
+                                      ? '平日'
+                                      : ''
+                          }
+                        >
+                          <Repeat className="text-muted-foreground size-4" />
+                        </div>
+                      )}
+
+                      {/* 通知アイコン（設定時のみ表示） */}
+                      {reminderType && reminderType !== 'none' && (
+                        <div title={reminderType}>
+                          <Bell className="text-muted-foreground size-4" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-3" align="start" onClick={(e) => e.stopPropagation()}>
+                <DateTimePopoverContent
+                  selectedDate={selectedDate}
+                  onDateSelect={setSelectedDate}
+                  startTime={startTime}
+                  onStartTimeChange={setStartTime}
+                  endTime={endTime}
+                  onEndTimeChange={setEndTime}
+                  reminderType={reminderType}
+                  onReminderChange={setReminderType}
+                  recurrenceRule={recurrenceRule}
+                  recurrenceType={recurrenceType}
+                  onRepeatTypeChange={(type) => {
+                    if (type === '') {
+                      setRecurrenceType('none')
+                      setRecurrenceRule(null)
+                    } else if (type === '毎日') {
+                      setRecurrenceType('daily')
+                      setRecurrenceRule(null)
+                    } else if (type === '毎週') {
+                      setRecurrenceType('weekly')
+                      setRecurrenceRule(null)
+                    } else if (type === '毎月') {
+                      setRecurrenceType('monthly')
+                      setRecurrenceRule(null)
+                    } else if (type === '毎年') {
+                      setRecurrenceType('yearly')
+                      setRecurrenceRule(null)
+                    } else if (type === '平日') {
+                      setRecurrenceType('weekdays')
+                      setRecurrenceRule(null)
+                    }
+                  }}
+                  onRecurrenceRuleChange={setRecurrenceRule}
+                />
+              </PopoverContent>
+            </Popover>
+
+            {/* タグを追加（Dialog） */}
+            <TicketTagSelectDialogEnhanced
+              selectedTagIds={selectedTagIds}
+              onTagsChange={(tagIds) => setSelectedTagIds(tagIds)}
+            >
+              <div
+                className="text-muted-foreground hover:bg-primary/10 flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Tag className="size-3" />
+                <span>タグを追加</span>
               </div>
-            )}
+            </TicketTagSelectDialogEnhanced>
 
-            {/* アイコンボタン */}
-            <div className="flex items-center gap-1">
-              {/* 日付アイコン */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-7"
-                type="button"
-                title="日付を設定"
-                onClick={() => setShowCalendar(!showCalendar)}
-              >
-                <CalendarIcon className="h-3.5 w-3.5" />
-              </Button>
-
-              {/* Tagsアイコン */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-7"
-                type="button"
-                title="タグを追加"
-                onClick={() => setShowTags(!showTags)}
-              >
-                <Tag className="h-3.5 w-3.5" />
-              </Button>
-
-              {/* 作成ボタン */}
-              <Button size="sm" className="ml-auto h-7 text-xs" onClick={handleCreate}>
+            {/* 作成ボタン */}
+            <div className="flex justify-end">
+              <Button size="sm" className="h-7 text-xs" onClick={handleCreate}>
                 追加
               </Button>
             </div>
-
-            {/* カレンダー展開 */}
-            {showCalendar && (
-              <div className="border-input bg-popover absolute top-full left-0 z-50 mt-1 rounded-md border shadow-md">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => {
-                    setSelectedDate(date)
-                    setShowCalendar(false)
-                  }}
-                />
-              </div>
-            )}
-
-            {/* タグ検索ポップアップ */}
-            {showTags && (
-              <div className="border-input bg-popover absolute top-full left-0 z-50 mt-1 w-64 rounded-md border shadow-md">
-                <Command>
-                  <CommandInput placeholder="タグを検索..." value={tagSearchQuery} onValueChange={setTagSearchQuery} />
-                  <CommandList>
-                    <CommandEmpty>
-                      <div className="py-2">
-                        <p className="text-muted-foreground text-sm">タグが見つかりません</p>
-                        {tagSearchQuery && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="mt-2 w-full"
-                            onClick={() => {
-                              // TODO: タグ作成機能を実装
-                              console.log('Create tag:', tagSearchQuery)
-                              setShowTags(false)
-                            }}
-                          >
-                            「{tagSearchQuery}」を作成
-                          </Button>
-                        )}
-                      </div>
-                    </CommandEmpty>
-                    <CommandGroup>
-                      {filteredTags.map((tag: { id: string; name: string }) => (
-                        <CommandItem
-                          key={tag.id}
-                          onSelect={() => {
-                            const isSelected = selectedTagIds.includes(tag.id)
-                            if (isSelected) {
-                              setSelectedTagIds(selectedTagIds.filter((id) => id !== tag.id))
-                            } else {
-                              setSelectedTagIds([...selectedTagIds, tag.id])
-                            }
-                          }}
-                        >
-                          <div className="flex w-full items-center justify-between">
-                            <span>{tag.name}</span>
-                            {selectedTagIds.includes(tag.id) && <Check className="h-4 w-4" />}
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </div>
-            )}
           </div>
         )}
 
@@ -361,388 +540,5 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
         )}
       </div>
     </div>
-  )
-}
-
-function TicketCard({ item }: { item: InboxItem }) {
-  const { openInspector, ticketId } = useTicketInspectorStore()
-  const { focusedId, setFocusedId } = useBoardFocusStore()
-  const { addTicketTag, removeTicketTag } = useTicketTags()
-  const { updateTicket } = useTicketMutations()
-  const isActive = ticketId === item.id
-  const isFocused = focusedId === item.id
-
-  // 日時編集用の状態
-  const [dateTimeOpen, setDateTimeOpen] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    item.due_date ? new Date(item.due_date) : undefined
-  )
-  const [startTime, setStartTime] = useState(item.start_time ? format(new Date(item.start_time), 'HH:mm') : '')
-  const [endTime, setEndTime] = useState(item.end_time ? format(new Date(item.end_time), 'HH:mm') : '')
-  const [reminderType, setReminderType] = useState<'none' | '5min' | '15min' | '30min' | '1hour' | '1day'>('none')
-  const [recurrence, setRecurrence] = useState<'none' | 'daily' | 'weekly' | 'monthly'>('none')
-
-  // タグ変更ハンドラー
-  const handleTagsChange = async (tagIds: string[]) => {
-    const currentTagIds = item.tags?.map((tag) => tag.id) ?? []
-    const addedTagIds = tagIds.filter((id) => !currentTagIds.includes(id))
-    const removedTagIds = currentTagIds.filter((id) => !tagIds.includes(id))
-
-    // タグを追加
-    for (const tagId of addedTagIds) {
-      await addTicketTag(item.id, tagId)
-    }
-
-    // タグを削除
-    for (const tagId of removedTagIds) {
-      await removeTicketTag(item.id, tagId)
-    }
-  }
-
-  // 日時データ変更ハンドラー
-  const handleDateTimeChange = () => {
-    updateTicket.mutate({
-      id: item.id,
-      data: {
-        due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
-        start_time: selectedDate && startTime ? `${format(selectedDate, 'yyyy-MM-dd')}T${startTime}:00Z` : undefined,
-        end_time: selectedDate && endTime ? `${format(selectedDate, 'yyyy-MM-dd')}T${endTime}:00Z` : undefined,
-      },
-    })
-  }
-
-  // 日時クリアハンドラー
-  const handleDateTimeClear = () => {
-    updateTicket.mutate({
-      id: item.id,
-      data: {
-        due_date: undefined,
-        start_time: undefined,
-        end_time: undefined,
-      },
-    })
-    setSelectedDate(undefined)
-    setStartTime('')
-    setEndTime('')
-    setReminderType('none')
-    setRecurrence('none')
-    setDateTimeOpen(false)
-  }
-
-  // 表示用の日時フォーマット
-  const getDisplayContent = () => {
-    if (!item.due_date && !item.start_time && !item.end_time) return null
-
-    const dateStr = item.due_date ? format(new Date(item.due_date), 'yyyy/MM/dd', { locale: ja }) : ''
-    let timeStr = ''
-
-    if (item.start_time && item.end_time) {
-      timeStr = ` ${format(new Date(item.start_time), 'HH:mm')} → ${format(new Date(item.end_time), 'HH:mm')}`
-    } else if (item.start_time) {
-      timeStr = ` ${format(new Date(item.start_time), 'HH:mm')}`
-    }
-
-    return (
-      <>
-        <span>
-          {dateStr}
-          {timeStr}
-        </span>
-        {reminderType !== 'none' && <Bell className="size-4" />}
-        {recurrence !== 'none' && <Repeat className="size-4" />}
-      </>
-    )
-  }
-
-  const handleClick = () => {
-    if (item.type === 'ticket') {
-      openInspector(item.id)
-    }
-  }
-
-  // コンテキストメニューアクション
-  const handleEdit = (item: InboxItem) => {
-    openInspector(item.id)
-  }
-
-  const handleDuplicate = (item: InboxItem) => {
-    // TODO: 複製機能実装
-    console.log('Duplicate:', item.id)
-  }
-
-  const handleAddTags = (item: InboxItem) => {
-    // TODO: タグ追加機能実装
-    console.log('Add tags:', item.id)
-  }
-
-  const handleChangeDueDate = (item: InboxItem) => {
-    // TODO: 期限変更機能実装
-    console.log('Change due date:', item.id)
-  }
-
-  const handleArchive = (item: InboxItem) => {
-    // TODO: アーカイブ機能実装
-    console.log('Archive:', item.id)
-  }
-
-  const handleDelete = (item: InboxItem) => {
-    // TODO: 削除機能実装
-    console.log('Delete:', item.id)
-  }
-
-  return (
-    <ContextMenu
-      modal={false}
-      onOpenChange={(open) => {
-        if (open) {
-          // メニューを開いたときにフォーカスを設定
-          setFocusedId(item.id)
-        } else {
-          // メニューを閉じたときにフォーカスをクリア
-          setFocusedId(null)
-        }
-      }}
-    >
-      <ContextMenuTrigger asChild>
-        <div
-          onClick={handleClick}
-          className={cn(
-            'bg-card hover:bg-muted/50 border-border group flex cursor-pointer flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors',
-            isActive && 'border-primary',
-            isFocused && 'bg-primary/10 hover:bg-primary/15'
-          )}
-        >
-          {/* 1. タイトル */}
-          <div className="flex items-start gap-2 overflow-hidden">
-            <h3 className="text-foreground line-clamp-3 min-w-0 text-base leading-tight font-semibold hover:underline">
-              {item.title}
-            </h3>
-            {item.ticket_number && (
-              <span className="text-muted-foreground shrink-0 text-sm">#{item.ticket_number}</span>
-            )}
-          </div>
-
-          {/* 2. 日付・時間 */}
-          <Popover open={dateTimeOpen} onOpenChange={setDateTimeOpen}>
-            <PopoverTrigger asChild>
-              <div
-                className="text-muted-foreground hover:bg-primary/10 group/date flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors"
-                onClick={(e) => {
-                  // カードクリックイベントの伝播を防止
-                  e.stopPropagation()
-                }}
-              >
-                {getDisplayContent() || (
-                  <>
-                    <CalendarIcon className="size-3 opacity-0 transition-opacity group-hover/date:opacity-100" />
-                    <span className="opacity-0 transition-opacity group-hover/date:opacity-100">日付を追加</span>
-                  </>
-                )}
-              </div>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto" align="start">
-              <div className="space-y-4">
-                {/* 日付選択 */}
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm font-medium">
-                    <CalendarIcon className="mr-2 size-4" />
-                    <span>日付</span>
-                  </div>
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={(date) => {
-                      setSelectedDate(date)
-                      handleDateTimeChange()
-                    }}
-                    locale={ja}
-                    classNames={{
-                      day: '!aspect-auto',
-                      today: '!bg-transparent',
-                    }}
-                    className="w-fit border-none bg-transparent p-0 [&_.group\/day]:!aspect-auto [&_button]:!aspect-auto [&_button]:!h-8 [&_button]:!w-8 [&_button]:text-xs [&_nav]:!h-10 [&_table]:!mt-0 [&_table]:text-sm [&_td]:!aspect-auto [&_td]:!h-8 [&_td]:!w-8 [&_td]:p-0 [&_th]:!h-8 [&_th]:!w-8 [&_th]:p-0 [&_tr]:!mt-0"
-                  />
-                </div>
-
-                {/* 時刻設定 */}
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm font-medium">
-                    <Clock className="mr-2 size-4" />
-                    <span>時刻</span>
-                  </div>
-                  <div className="flex items-end gap-2">
-                    <div className="space-y-1">
-                      <label className="text-muted-foreground text-xs">開始</label>
-                      <input
-                        type="time"
-                        value={startTime}
-                        onChange={(e) => {
-                          setStartTime(e.target.value)
-                          handleDateTimeChange()
-                        }}
-                        className="border-input flex h-9 w-[88px] gap-0 rounded-md border bg-transparent px-2 py-1 text-sm [&::-webkit-datetime-edit-fields-wrapper]:!gap-0 [&::-webkit-datetime-edit-hour-field]:!mr-0 [&::-webkit-datetime-edit-minute-field]:!ml-0"
-                      />
-                    </div>
-                    <ArrowRight className="text-muted-foreground mb-2 size-4" />
-                    <div className="space-y-1">
-                      <label className="text-muted-foreground text-xs">終了</label>
-                      <input
-                        type="time"
-                        value={endTime}
-                        onChange={(e) => {
-                          setEndTime(e.target.value)
-                          handleDateTimeChange()
-                        }}
-                        className="border-input flex h-9 w-[88px] gap-0 rounded-md border bg-transparent px-2 py-1 text-sm [&::-webkit-datetime-edit-fields-wrapper]:!gap-0 [&::-webkit-datetime-edit-hour-field]:!mr-0 [&::-webkit-datetime-edit-minute-field]:!ml-0"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* リマインダー設定 */}
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm font-medium">
-                    <Bell className="mr-2 size-4" />
-                    <span>リマインダー</span>
-                  </div>
-                  <Select
-                    value={reminderType}
-                    onValueChange={(value) => {
-                      setReminderType(value as any)
-                      handleDateTimeChange()
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="リマインダーなし" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">なし</SelectItem>
-                      <SelectItem value="5min">5分前</SelectItem>
-                      <SelectItem value="15min">15分前</SelectItem>
-                      <SelectItem value="30min">30分前</SelectItem>
-                      <SelectItem value="1hour">1時間前</SelectItem>
-                      <SelectItem value="1day">1日前</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* 繰り返し設定 */}
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm font-medium">
-                    <Repeat className="mr-2 size-4" />
-                    <span>繰り返し</span>
-                  </div>
-                  <Select
-                    value={recurrence}
-                    onValueChange={(value) => {
-                      setRecurrence(value as any)
-                      handleDateTimeChange()
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="繰り返しなし" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">なし</SelectItem>
-                      <SelectItem value="daily">毎日</SelectItem>
-                      <SelectItem value="weekly">毎週</SelectItem>
-                      <SelectItem value="monthly">毎月</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* アクションボタン */}
-                <div className="flex justify-end">
-                  <Button onClick={handleDateTimeClear} variant="secondary" size="sm">
-                    <Trash2 className="mr-2 size-4" />
-                    クリア
-                  </Button>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          {/* 3. Tags */}
-          <TicketTagSelectDialogEnhanced
-            selectedTagIds={item.tags?.map((tag) => tag.id) ?? []}
-            onTagsChange={handleTagsChange}
-          >
-            {item.tags && item.tags.length > 0 ? (
-              <div
-                className="group/tags flex flex-wrap gap-1"
-                onClick={(e) => {
-                  // カードクリックイベントの伝播を防止
-                  e.stopPropagation()
-                }}
-              >
-                {item.tags.slice(0, 4).map((tag) => (
-                  <Badge
-                    key={tag.id}
-                    variant="outline"
-                    className="shrink-0 text-xs font-normal"
-                    style={
-                      tag.color
-                        ? {
-                            backgroundColor: `${tag.color}20`,
-                            borderColor: tag.color,
-                            color: tag.color,
-                          }
-                        : undefined
-                    }
-                  >
-                    {tag.name}
-                  </Badge>
-                ))}
-                {item.tags.length > 4 && (
-                  <Badge variant="secondary" className="shrink-0 text-xs">
-                    +{item.tags.length - 4}
-                  </Badge>
-                )}
-                {/* +アイコン（ホバー時に表示） */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="hover:bg-primary/10 h-5 w-5 shrink-0 opacity-0 transition-opacity group-hover/tags:opacity-100"
-                >
-                  <Plus className="h-3 w-3" />
-                </Button>
-              </div>
-            ) : (
-              /* タグなしの場合は「タグを追加」 */
-              <div
-                className="hover:bg-primary/10 group/tags flex w-fit cursor-pointer flex-wrap gap-1 rounded px-1 py-0.5 transition-colors"
-                onClick={(e) => {
-                  // カードクリックイベントの伝播を防止
-                  e.stopPropagation()
-                }}
-              >
-                <div className="text-muted-foreground flex items-center gap-1 text-xs opacity-0 transition-opacity group-hover/tags:opacity-100">
-                  <Plus className="h-3 w-3" />
-                  <span>タグを追加</span>
-                </div>
-              </div>
-            )}
-          </TicketTagSelectDialogEnhanced>
-        </div>
-      </ContextMenuTrigger>
-      <ContextMenuContent>
-        <BoardActionMenuItems
-          item={item}
-          onEdit={handleEdit}
-          onDuplicate={handleDuplicate}
-          onAddTags={handleAddTags}
-          onChangeDueDate={handleChangeDueDate}
-          onArchive={handleArchive}
-          onDelete={handleDelete}
-          renderMenuItem={({ icon, label, onClick, variant }) => (
-            <ContextMenuItem onClick={onClick} className={variant === 'destructive' ? 'text-destructive' : ''}>
-              {icon}
-              {label}
-            </ContextMenuItem>
-          )}
-          renderSeparator={() => <ContextMenuSeparator />}
-        />
-      </ContextMenuContent>
-    </ContextMenu>
   )
 }

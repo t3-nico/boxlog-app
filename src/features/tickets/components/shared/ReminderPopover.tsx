@@ -27,12 +27,15 @@ export function ReminderPopover({ reminderType, onReminderTypeChange }: Reminder
     }
   }, [])
 
+  // 通知が設定されているかどうか
+  const hasReminder = reminderType && reminderType !== ''
+
   return (
     <div className="relative" ref={reminderRef}>
       <Button
         variant="ghost"
         size="sm"
-        className="text-muted-foreground h-8 gap-2 px-2"
+        className={hasReminder ? 'text-foreground h-8 gap-2 px-2' : 'text-muted-foreground h-8 gap-2 px-2'}
         type="button"
         onClick={() => setShowReminder(!showReminder)}
       >
@@ -113,17 +116,6 @@ export function ReminderPopover({ reminderType, onReminderTypeChange }: Reminder
               type="button"
             >
               1週間前
-            </button>
-            <div className="border-border my-1 border-t" />
-            <button
-              className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
-              onClick={() => {
-                onReminderTypeChange('カスタム')
-                setShowReminder(false)
-              }}
-              type="button"
-            >
-              カスタム...
             </button>
           </div>
         </div>

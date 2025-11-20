@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { TableCell } from '@/components/ui/table'
+import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
+import { ReminderSelect } from '@/features/tickets/components/shared/ReminderSelect'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat, Trash2 } from 'lucide-react'
@@ -15,7 +16,7 @@ interface DateTimeData {
   startTime: string | null
   /** 終了時刻（HH:mm） */
   endTime: string | null
-  /** リマインダー設定 */
+  /** 通知設定 */
   reminder: ReminderConfig | null
   /** 繰り返し設定 */
   recurrence: RecurrenceType | null
@@ -41,10 +42,10 @@ interface DateTimeUnifiedCellProps {
 /**
  * 統合日時セル（Notion風）
  *
- * 1つのカラムで日付・時刻・リマインダー・繰り返しを管理
+ * 1つのカラムで日付・時刻・通知・繰り返しを管理
  * - クリックでメニュー表示
  * - 日付のみ / 日付+時刻 / 日付+時刻範囲 に対応
- * - リマインダー・繰り返しのオプション設定
+ * - 通知・繰り返しのオプション設定
  *
  * @example
  * ```tsx
@@ -65,7 +66,8 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(data.date ? new Date(data.date) : undefined)
   const [startTime, setStartTime] = useState(data.startTime || '')
   const [endTime, setEndTime] = useState(data.endTime || '')
-  const [reminderType, setReminderType] = useState<ReminderConfig['type'] | 'none'>(data.reminder?.type || 'none')
+  // 通知設定: UI文字列形式（'', '開始時刻', '10分前', ...）
+  const [reminderType, setReminderType] = useState<string>('')
   const [recurrence, setRecurrence] = useState<RecurrenceType>(data.recurrence || 'none')
 
   // 表示コンテンツを生成
@@ -149,19 +151,13 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
                 <CalendarIcon className="mr-2 size-4" />
                 <span>日付</span>
               </div>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => {
+              <MiniCalendar
+                selectedDate={selectedDate}
+                onDateSelect={(date) => {
                   setSelectedDate(date)
                   handleChange()
                 }}
-                locale={ja}
-                classNames={{
-                  day: '!aspect-auto',
-                  today: '!bg-transparent',
-                }}
-                className="w-fit border-none bg-transparent p-0 [&_.group\/day]:!aspect-auto [&_button]:!aspect-auto [&_button]:!h-8 [&_button]:!w-8 [&_button]:text-xs [&_nav]:!h-10 [&_table]:!mt-0 [&_table]:text-sm [&_td]:!aspect-auto [&_td]:!h-8 [&_td]:!w-8 [&_td]:p-0 [&_th]:!h-8 [&_th]:!w-8 [&_th]:p-0 [&_tr]:!mt-0"
+                className="w-fit border-none bg-transparent p-0"
               />
             </div>
 
@@ -200,31 +196,20 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
               </div>
             </div>
 
-            {/* リマインダー設定 */}
+            {/* 通知設定 */}
             <div className="space-y-2">
               <div className="flex items-center text-sm font-medium">
                 <Bell className="mr-2 size-4" />
-                <span>リマインダー</span>
+                <span>通知</span>
               </div>
-              <Select
+              <ReminderSelect
                 value={reminderType}
-                onValueChange={(value) => {
-                  setReminderType(value as any)
+                onChange={(value) => {
+                  setReminderType(value)
                   handleChange()
                 }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="リマインダーなし" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">なし</SelectItem>
-                  <SelectItem value="5min">5分前</SelectItem>
-                  <SelectItem value="15min">15分前</SelectItem>
-                  <SelectItem value="30min">30分前</SelectItem>
-                  <SelectItem value="1hour">1時間前</SelectItem>
-                  <SelectItem value="1day">1日前</SelectItem>
-                </SelectContent>
-              </Select>
+                variant="button"
+              />
             </div>
 
             {/* 繰り返し設定 */}

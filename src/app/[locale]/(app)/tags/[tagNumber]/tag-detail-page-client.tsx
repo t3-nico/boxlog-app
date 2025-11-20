@@ -26,7 +26,7 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
     { tagId: tag?.id },
     { enabled: !!tag?.id }
   )
-  const tickets = ticketsData as Ticket[]
+  const tickets = ticketsData as unknown as Ticket[]
 
   useEffect(() => {
     if (!isLoading && !tag) {
