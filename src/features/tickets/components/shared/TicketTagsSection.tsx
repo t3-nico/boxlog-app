@@ -82,12 +82,13 @@ export function TicketTagsSection({
                     key={tag.id}
                     variant="outline"
                     style={{
-                      backgroundColor: `${tag.color}20`,
                       borderColor: tag.color,
-                      color: tag.color,
                     }}
-                    className="group relative pr-6 font-normal"
+                    className="group relative gap-0.5 pr-6 text-xs font-normal"
                   >
+                    <span className="font-medium" style={{ color: tag.color }}>
+                      #
+                    </span>
                     {tag.name}
                     {onRemoveTag && (
                       <button
