@@ -71,7 +71,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
       <div
         role="button"
         tabIndex={0}
-        className="relative flex-1 cursor-pointer"
+        className="relative flex-1 cursor-pointer pr-2"
         onClick={handleTimeClick}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {

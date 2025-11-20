@@ -169,7 +169,7 @@ export const TicketCard = memo<TicketCardProps>(function TicketCard({
   // CSSクラスを組み立て（colors.tsのscheduledを参照）
   const ticketCardClasses = cn(
     // 基本スタイル
-    'overflow-hidden rounded-md shadow-sm mr-2',
+    'overflow-hidden rounded-md shadow-sm',
     'focus:outline-none focus:ring-2 focus:ring-offset-1',
     // colors.tsのscheduledカラーを参照（ドラッグ中はactive）
     isDragging ? scheduledColors.active : scheduledColors.background,
