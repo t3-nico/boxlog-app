@@ -150,7 +150,7 @@ export function InboxCardList({
 
   // カードリスト表示（TicketCardを再利用）
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto pb-4">
+    <div className="flex flex-col gap-2 overflow-y-auto pt-4 pb-4">
       {/* 既存カード */}
       {filteredAndSortedItems.map((item) => (
         <TicketCard key={item.id} item={item} />

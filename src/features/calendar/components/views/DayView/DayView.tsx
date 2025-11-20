@@ -18,7 +18,7 @@ import { useDayView } from './hooks/useDayView'
 export const DayView = ({
   dateRange: _dateRange,
   tasks: _tasks,
-  events: _events,
+  events,
   currentDate,
   showWeekends: _showWeekends = true,
   className,
@@ -74,8 +74,7 @@ export const DayView = ({
     //   })
   }, [])
 
-  // DayView専用ロジック（ストアから最新のイベントデータを使用）
-  // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
+  // DayView専用ロジック（CalendarControllerから渡されたイベントデータを使用）
   const {
     dayEvents,
     eventStyles,
@@ -83,7 +82,7 @@ export const DayView = ({
     timeSlots: _timeSlots,
   } = useDayView({
     date,
-    events: [] as CalendarEvent[], // TODO(#621): Sessions統合後に実装
+    events: events || [],
     ...(onUpdateEvent && { onEventUpdate: onUpdateEvent }),
   })
 

@@ -1,115 +1,86 @@
 // @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 import { useCallback, useEffect } from 'react'
 
-// import type { UpdateEventRequest } from '@/features/calendar/types/calendar.types'
-// import { useEventStore } from '@/features/calendar/types/calendar.types'
-
+import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
+import { logger } from '@/lib/logger'
 import type { CalendarEvent } from '../types/calendar.types'
 
 /**
  * イベント操作（CRUD）を提供するフック
  * イベントの削除、復元、更新、自動クリーンアップを管理
- * TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
  */
 export const useEventOperations = () => {
-  // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
-  // const eventStore = useEventStore()
-  // const { events } = eventStore
+  const { updateTicket, deleteTicket } = useTicketMutations()
 
   // イベント削除ハンドラー（ソフトデリート）
-  const handleEventDelete = useCallback(async (_eventId: string) => {
-    console.log('TODO: Sessions統合後に実装')
-    // try {
-    //   const eventToDelete = eventStore.events.find((e) => e.id === eventId)
-    //   if (eventToDelete) {
-    //     await eventStore.softDeleteEvent(eventId)
-    //   }
-    // } catch (error) {
-    //   logger.error('Failed to delete event:', error)
-    // }
-  }, [])
+  const handleEventDelete = useCallback(
+    async (eventId: string) => {
+      try {
+        deleteTicket.mutate({ id: eventId })
+        logger.log('✅ Ticket deleted:', eventId)
+      } catch (error) {
+        logger.error('Failed to delete ticket:', error)
+      }
+    },
+    [deleteTicket]
+  )
 
   // イベント復元ハンドラー
   const handleEventRestore = useCallback(async (_event: CalendarEvent) => {
     console.log('TODO: Sessions統合後に実装')
-    // try {
-    //   await eventStore.restoreEvent(event.id)
-    //   logger.log('✅ Event restored:', event.id, event.title)
-    // } catch (error) {
-    //   logger.error('Failed to restore event:', error)
-    // }
+    // Ticketにはソフトデリート機能がないため、復元は未実装
   }, [])
 
   // イベント更新ハンドラー（ドラッグ&ドロップ用）
   const handleUpdateEvent = useCallback(
-    async (_eventIdOrEvent: string | CalendarEvent, _updates?: { startTime: Date; endTime: Date }) => {
-      console.log('TODO: Sessions統合後に実装')
-      // try {
-      //   // ドラッグ&ドロップからの呼び出し（eventId + updates形式）
-      //   if (typeof eventIdOrEvent === 'string' && updates) {
-      //     const eventId = eventIdOrEvent
-      //     const event = events.find((e) => e.id === eventId)
-      //     if (!event) {
-      //       logger.error('❌ Event not found for update:', eventId)
-      //       return
-      //     }
+    async (eventIdOrEvent: string | CalendarEvent, updates?: { startTime: Date; endTime: Date }) => {
+      try {
+        // ドラッグ&ドロップからの呼び出し（eventId + updates形式）
+        if (typeof eventIdOrEvent === 'string' && updates) {
+          const eventId = eventIdOrEvent
 
-      //     logger.log('🔧 イベント更新:', {
-      //       eventId,
-      //       oldStartDate: event.startDate?.toISOString?.(),
-      //       newStartTime: updates.startTime.toISOString(),
-      //       newEndTime: updates.endTime.toISOString(),
-      //     })
+          logger.log('🔧 Ticket更新 (eventId + updates形式):', {
+            eventId,
+            newStartTime: updates.startTime.toISOString(),
+            newEndTime: updates.endTime.toISOString(),
+          })
 
-      //     const updateRequest: UpdateEventRequest = {
-      //       id: eventId,
-      //       title: event.title,
-      //       startDate: updates.startTime,
-      //       endDate: updates.endTime,
-      //       location: event.location,
-      //       description: event.description,
-      //       color: event.color,
-      //     }
+          updateTicket.mutate({
+            id: eventId,
+            data: {
+              start_time: updates.startTime.toISOString(),
+              end_time: updates.endTime.toISOString(),
+            },
+          })
+        }
+        // CalendarEventオブジェクト形式
+        else if (typeof eventIdOrEvent === 'object') {
+          const updatedEvent = eventIdOrEvent
 
-      //     await eventStore.updateEvent(updateRequest)
-      //   }
-      //   // 従来の呼び出し（CalendarEventオブジェクト形式）
-      //   else if (typeof eventIdOrEvent === 'object') {
-      //     const updatedEvent = eventIdOrEvent
-      //     const updateRequest: UpdateEventRequest = {
-      //       id: updatedEvent.id,
-      //       title: updatedEvent.title,
-      //       startDate: updatedEvent.startDate,
-      //       endDate: updatedEvent.endDate,
-      //       location: updatedEvent.location,
-      //       description: updatedEvent.description,
-      //       color: updatedEvent.color,
-      //     }
+          logger.log('🔧 Ticket更新 (CalendarEvent形式):', {
+            eventId: updatedEvent.id,
+            newStartDate: updatedEvent.startDate.toISOString(),
+            newEndDate: updatedEvent.endDate?.toISOString(),
+          })
 
-      //     await eventStore.updateEvent(updateRequest)
-      //   }
-      // } catch (error) {
-      //   logger.error('❌ Failed to update event:', error)
-      // }
+          updateTicket.mutate({
+            id: updatedEvent.id,
+            data: {
+              start_time: updatedEvent.startDate.toISOString(),
+              end_time: updatedEvent.endDate?.toISOString(),
+            },
+          })
+        }
+      } catch (error) {
+        logger.error('❌ Failed to update ticket:', error)
+      }
     },
-    []
+    [updateTicket]
   )
 
   // 30日経過した予定を自動削除
   useEffect(() => {
     // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
-    // const checkAndCleanup = async () => {
-    //   try {
-    //     await eventStore.clearTrash()
-    //     logger.log('✅ Old trash cleaned up automatically')
-    //   } catch (error) {
-    //     logger.error('❌ Failed to clean up old trash:', error)
-    //   }
-    // }
-    // // 1日1回チェック
-    // const interval = setInterval(checkAndCleanup, 24 * 60 * 60 * 1000)
-    // checkAndCleanup() // 初回実行
-    // return () => clearInterval(interval)
   }, [])
 
   return {
