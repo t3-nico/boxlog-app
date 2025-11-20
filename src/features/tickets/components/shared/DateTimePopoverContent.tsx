@@ -5,9 +5,9 @@ import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar
 import { RecurrencePopover } from '@/features/tickets/components/shared/RecurrencePopover'
 import { ReminderSelect } from '@/features/tickets/components/shared/ReminderSelect'
 import { TimeSelect } from '@/features/tickets/components/shared/TimeSelect'
-import { addHours, parse } from 'date-fns'
+import { useAutoAdjustEndTime } from '@/features/tickets/hooks/useAutoAdjustEndTime'
 import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 interface DateTimePopoverContentProps {
   selectedDate?: Date
@@ -44,54 +44,27 @@ export function DateTimePopoverContent({
 }: DateTimePopoverContentProps) {
   const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
   const recurrenceTriggerRef = useRef<HTMLDivElement>(null)
-  const [isEndTimeManuallySet, setIsEndTimeManuallySet] = useState(false)
-  const [previousStartTime, setPreviousStartTime] = useState(startTime)
 
   // バリデーション: 繰り返しは日付が必須、通知は日付と開始時刻が必須
   const isRecurrenceDisabled = !selectedDate
   const isReminderDisabled = !selectedDate || !startTime
 
-  // 開始時刻が変更されたら、終了時刻を自動調整
-  // - 終了時刻が既に設定されている場合: 時間幅を保持
-  // - 終了時刻が未設定の場合: +1時間
-  useEffect(() => {
-    if (startTime && startTime !== previousStartTime) {
-      try {
-        const startDate = parse(startTime, 'HH:mm', new Date())
+  // 時刻自動調整フック
+  const { handleStartTimeChange: autoStartTimeChange, handleEndTimeChange: autoEndTimeChange } = useAutoAdjustEndTime(
+    startTime,
+    endTime,
+    onEndTimeChange
+  )
 
-        if (endTime && !isEndTimeManuallySet) {
-          // 終了時刻が既に設定されている場合: 時間幅を保持
-          const prevStartDate = parse(previousStartTime || startTime, 'HH:mm', new Date())
-          const endDate = parse(endTime, 'HH:mm', new Date())
-          const durationMinutes = (endDate.getTime() - prevStartDate.getTime()) / (1000 * 60)
-
-          // 開始時刻 + 既存の時間幅
-          const newEndDate = new Date(startDate.getTime() + durationMinutes * 60 * 1000)
-          const calculatedEndTime = `${newEndDate.getHours().toString().padStart(2, '0')}:${newEndDate.getMinutes().toString().padStart(2, '0')}`
-          onEndTimeChange(calculatedEndTime)
-        } else if (!endTime && !isEndTimeManuallySet) {
-          // 終了時刻が未設定の場合: +1時間
-          const newEndDate = addHours(startDate, 1)
-          const calculatedEndTime = `${newEndDate.getHours().toString().padStart(2, '0')}:${newEndDate.getMinutes().toString().padStart(2, '0')}`
-          onEndTimeChange(calculatedEndTime)
-        }
-
-        setPreviousStartTime(startTime)
-      } catch {
-        // パースエラーの場合は何もしない
-      }
-    }
-  }, [startTime, endTime, isEndTimeManuallySet, previousStartTime, onEndTimeChange])
-
-  // 開始時刻変更ハンドラー（自動計算フラグをリセット）
+  // 開始時刻変更ハンドラー
   const handleStartTimeChange = (time: string) => {
-    setIsEndTimeManuallySet(false) // 開始時刻を変更したら自動計算を再開
+    autoStartTimeChange(time)
     onStartTimeChange(time)
   }
 
-  // 終了時刻変更ハンドラー（手動設定フラグを立てる）
+  // 終了時刻変更ハンドラー
   const handleEndTimeChange = (time: string) => {
-    setIsEndTimeManuallySet(true) // 終了時刻を手動で変更したら自動計算を停止
+    autoEndTimeChange(time)
     onEndTimeChange(time)
   }
 

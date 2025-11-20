@@ -132,15 +132,27 @@ export function TimeSelect({ value, onChange, label, disabled = false }: TimeSel
       let targetIndex = -1
 
       if (value) {
-        // 値が設定されている場合: その値を中央に表示
-        targetIndex = filteredOptions.indexOf(value)
+        // 値が設定されている場合: その値を中央に表示（全オプションから検索）
+        targetIndex = timeOptions.indexOf(value)
+
+        // 15分刻みではない時刻の場合、最も近い15分刻みの時刻を探す
+        if (targetIndex === -1) {
+          const [hours, minutes] = value.split(':').map(Number)
+          if (!isNaN(hours) && !isNaN(minutes)) {
+            // 15分刻みに丸める
+            const roundedMinutes = Math.floor(minutes / 15) * 15
+            const roundedTimeStr = `${hours.toString().padStart(2, '0')}:${roundedMinutes.toString().padStart(2, '0')}`
+            targetIndex = timeOptions.indexOf(roundedTimeStr)
+          }
+        }
       } else {
         // 値が空の場合: 現在時刻に最も近い時刻を中央に表示
         const now = new Date()
         const currentHour = now.getHours()
         const currentMinute = now.getMinutes()
-        const currentTimeStr = `${currentHour.toString().padStart(2, '0')}:${Math.floor(currentMinute / 15) * 15}`
-        targetIndex = filteredOptions.indexOf(currentTimeStr)
+        const roundedMinutes = Math.floor(currentMinute / 15) * 15
+        const currentTimeStr = `${currentHour.toString().padStart(2, '0')}:${roundedMinutes.toString().padStart(2, '0')}`
+        targetIndex = timeOptions.indexOf(currentTimeStr)
       }
 
       if (targetIndex !== -1) {

@@ -14,7 +14,7 @@ import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ti
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
 import { NovelDescriptionEditor } from './NovelDescriptionEditor'
 import { RecurrencePopover } from './RecurrencePopover'
-import { ReminderPopover } from './ReminderPopover'
+import { ReminderSelect } from './ReminderSelect'
 import { TicketDateTimeInput } from './TicketDateTimeInput'
 import { TicketTagsSection } from './TicketTagsSection'
 import { TicketTitleInput } from './TicketTitleInput'
@@ -190,7 +190,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                   }}
                 />
 
-                <ReminderPopover reminderType={reminderType} onReminderTypeChange={setReminderType} />
+                <ReminderSelect value={reminderType} onChange={setReminderType} variant="inspector" />
               </div>
             </div>
 
