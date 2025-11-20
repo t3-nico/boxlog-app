@@ -169,7 +169,7 @@ export const TicketCard = memo<TicketCardProps>(function TicketCard({
   // CSSクラスを組み立て（colors.tsのscheduledを参照）
   const ticketCardClasses = cn(
     // 基本スタイル
-    'overflow-hidden rounded-md pl-0 pr-2 shadow-sm',
+    'overflow-hidden rounded-md shadow-sm',
     'focus:outline-none focus:ring-2 focus:ring-offset-1',
     // colors.tsのscheduledカラーを参照（ドラッグ中はactive）
     isDragging ? scheduledColors.active : scheduledColors.background,
@@ -177,8 +177,8 @@ export const TicketCard = memo<TicketCardProps>(function TicketCard({
     // 状態別スタイル
     isDragging ? 'cursor-grabbing' : 'cursor-pointer',
     isSelected && 'ring-2 ring-blue-500 ring-offset-1',
-    // サイズ別スタイル（上下に4pxのpadding）
-    safePosition.height < 30 ? 'pl-0 pr-1 py-1 text-xs' : 'pl-0 pr-2 py-1 text-sm',
+    // サイズ別スタイル（上下左右に4pxのpadding = p-1）
+    safePosition.height < 30 ? 'p-1 text-xs' : 'p-1 text-sm',
     className
   )
 
