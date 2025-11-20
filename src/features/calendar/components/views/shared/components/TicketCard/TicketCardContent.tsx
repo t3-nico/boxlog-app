@@ -74,12 +74,12 @@ export const TicketCardContent = memo<TicketCardContentProps>(function TicketCar
     <div className="relative flex h-full flex-col gap-0.5 overflow-hidden">
       {/* タイトル（最優先） */}
       <div className="flex-shrink-0 text-sm leading-tight font-medium">
-        <span className="line-clamp-2">{event.title}</span>
+        <span className={isCompact ? 'line-clamp-1' : 'line-clamp-2'}>{event.title}</span>
       </div>
 
       {/* 時間表示（第2優先） */}
       {showTime != null && (
-        <div className="ticket-time flex-shrink-0 text-xs leading-tight opacity-75">
+        <div className="ticket-time pointer-events-none flex-shrink-0 text-xs leading-tight opacity-75">
           {previewTime
             ? formatTimeRange(previewTime.start, previewTime.end, timeFormat)
             : ticketStart && ticketEnd
@@ -88,9 +88,9 @@ export const TicketCardContent = memo<TicketCardContentProps>(function TicketCar
         </div>
       )}
 
-      {/* タグ表示（画面幅に応じて表示・非表示） */}
+      {/* タグ表示（残りスペースがあれば表示） */}
       {event.tags && event.tags.length > 0 ? (
-        <div className="mt-auto flex min-h-0 flex-shrink flex-wrap gap-0.5 overflow-hidden pt-0.5">
+        <div className="flex min-h-0 flex-shrink flex-wrap gap-1 overflow-hidden pt-1">
           {event.tags.slice(0, 2).map((tag) => (
             <span
               key={tag.id}

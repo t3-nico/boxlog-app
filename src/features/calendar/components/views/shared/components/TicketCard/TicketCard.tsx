@@ -177,8 +177,8 @@ export const TicketCard = memo<TicketCardProps>(function TicketCard({
     // 状態別スタイル
     isDragging ? 'cursor-grabbing' : 'cursor-pointer',
     isSelected && 'ring-2 ring-blue-500 ring-offset-1',
-    // サイズ別スタイル（上下左右に4pxのpadding = p-1）
-    safePosition.height < 30 ? 'p-1 text-xs' : 'p-1 text-sm',
+    // サイズ別スタイル（上下左右に8pxのpadding = p-2）
+    safePosition.height < 30 ? 'p-2 text-xs' : 'p-2 text-sm',
     className
   )
 

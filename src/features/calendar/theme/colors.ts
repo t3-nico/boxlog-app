@@ -40,7 +40,6 @@ export const calendarColors: CalendarColors = {
     scheduled: {
       background: 'bg-blue-50 dark:bg-blue-950',
       text: 'text-blue-800 dark:text-blue-200',
-      hover: 'hover:bg-blue-100 dark:hover:bg-blue-950/70',
       active: 'bg-blue-200 dark:bg-blue-900/40',
     },
 
