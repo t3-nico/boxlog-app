@@ -16,6 +16,7 @@ import { format } from 'date-fns'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'
+import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 import { api } from '@/lib/trpc'
 // import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
@@ -69,6 +70,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const router = useRouter()
   const calendarNavigation = useCalendarNavigation()
   const { openInspector } = useTicketInspectorStore()
+  const { createTicket } = useTicketMutations()
 
   // Context が利用可能な場合はそれを使用、そうでない場合は useCalendarLayout を使用
   const contextAvailable = calendarNavigation !== null
@@ -571,14 +573,33 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         selection.endMinute
       )
 
-      logger.log('🟨 モーダルに渡すデータ:')
-      logger.log('選択:', selection)
-      logger.log('開始時間:', startTime.toLocaleTimeString())
-      logger.log('終了時間:', endTime.toLocaleTimeString())
-      logger.log('openCreateModalに渡すデータ:', {
-        startDate: startTime,
-        endDate: endTime,
+      logger.log('📅 Calendar Drag Selection:', {
+        date: selection.date.toDateString(),
+        startTime: startTime.toLocaleTimeString(),
+        endTime: endTime.toLocaleTimeString(),
       })
+
+      // チケットを作成してからInspectorで編集
+      createTicket.mutate(
+        {
+          title: '新規チケット',
+          status: 'backlog',
+          due_date: format(selection.date, 'yyyy-MM-dd'),
+          start_time: startTime.toISOString(),
+          end_time: endTime.toISOString(),
+        },
+        {
+          onSuccess: (newTicket) => {
+            // 作成されたチケットをInspectorで開く
+            openInspector(newTicket.id)
+            logger.log('✅ Created ticket from drag selection:', {
+              ticketId: newTicket.id,
+              title: newTicket.title,
+              dueDate: newTicket.due_date,
+            })
+          },
+        }
+      )
 
       // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
       // CreateEventInspectorを開く
