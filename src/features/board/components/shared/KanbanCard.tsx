@@ -163,17 +163,20 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
           {card.tags.slice(0, 3).map((tag) => (
             <span
               key={typeof tag === 'string' ? tag : tag.id}
-              className="bg-muted text-muted-foreground border-border rounded border px-2 py-0.5 text-xs"
+              className="bg-muted text-muted-foreground border-border flex items-center gap-0.5 rounded border px-2 py-0.5 text-xs"
               style={
                 typeof tag !== 'string' && tag.color
                   ? {
-                      backgroundColor: `${tag.color}20`,
                       borderColor: tag.color,
-                      color: tag.color,
                     }
                   : undefined
               }
             >
+              {typeof tag !== 'string' && tag.color && (
+                <span className="font-medium" style={{ color: tag.color }}>
+                  #
+                </span>
+              )}
               {typeof tag === 'string' ? tag : tag.name}
             </span>
           ))}

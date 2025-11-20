@@ -24,11 +24,8 @@ export async function GET(request: NextRequest) {
       error: authError,
     } = await supabase.auth.getUser()
     if (authError || !user) {
-      console.error('Auth error:', authError)
       return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 })
     }
-
-    console.log('Fetching tags for user:', user.id)
 
     // クエリパラメータ
     const includeChildren = searchParams.get('include_children') === 'true'
@@ -45,11 +42,8 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query
 
     if (error) {
-      console.error('Supabase query error:', error)
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
     }
-
-    console.log('Tags fetched:', data?.length || 0)
 
     // 階層構造の構築
     if (includeChildren) {

@@ -223,7 +223,6 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                   e.stopPropagation()
                   const locale = pathname?.split('/')[1] || 'ja'
                   const targetUrl = `/${locale}/tags/g-${group.group_number}`
-                  console.log('Navigating to:', targetUrl, 'Group:', group)
                   router.push(targetUrl)
                   onClose?.()
                 }}

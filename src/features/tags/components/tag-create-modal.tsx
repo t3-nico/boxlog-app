@@ -90,7 +90,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
         setIsLoading(false)
       }
     },
-    [name, color, description, onSave, onClose]
+    [name, color, description, groupId, onSave, onClose]
   )
 
   return (

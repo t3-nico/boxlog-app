@@ -110,11 +110,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const initialGroup = useMemo(() => {
     if (!initialGroupNumber) return null
     const group = groups.find((g) => g.group_number === Number(initialGroupNumber))
-    console.log('[TagsPageClient] Resolving group:', {
-      initialGroupNumber,
-      groups,
-      foundGroup: group,
-    })
     return group
   }, [initialGroupNumber, groups])
 
@@ -202,10 +197,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     try {
       await createTagMutation.mutateAsync({
         name: newTagName.trim(),
-        description: newTagDescription.trim() || undefined,
+        description: newTagDescription.trim() || null,
         color: newTagColor,
         group_id: selectedGroupId,
-        level: 0,
+        level: 0 as const,
       })
       toast.success(t('tags.page.tagCreated', { name: newTagName }))
       handleCancelInlineCreation()
@@ -221,6 +216,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     createTagMutation,
     toast,
     handleCancelInlineCreation,
+    t,
   ])
 
   // クリックアウトサイド検出
@@ -378,15 +374,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       filtered = filtered.filter((tag) => !tag.group_id)
     } else if (selectedGroupId) {
       // グループフィルタ
-      console.log('[TagsPageClient] Filtering by group:', {
-        selectedGroupId,
-        baseTags: baseTags.map((t) => ({ id: t.id, name: t.name, group_id: t.group_id })),
-      })
       filtered = filtered.filter((tag) => tag.group_id === selectedGroupId)
-      console.log(
-        '[TagsPageClient] Filtered tags:',
-        filtered.map((t) => ({ id: t.id, name: t.name }))
-      )
     }
 
     return filtered

@@ -69,17 +69,17 @@ export const EventContent = memo<EventContentProps>(function EventContent({
     )
   }
 
-  // 通常表示：タイトル + 日付 + タグの順番
+  // 通常表示：タイトル + 時間 + タグの順番（優先度順）
   return (
-    <div className="relative flex h-full flex-col">
-      {/* タイトル */}
-      <div className="mb-1 flex-shrink-0 text-sm leading-tight font-medium">
+    <div className="relative flex h-full flex-col gap-0.5 overflow-hidden">
+      {/* タイトル（最優先） */}
+      <div className="flex-shrink-0 text-sm leading-tight font-medium">
         <span className="line-clamp-2">{event.title}</span>
       </div>
 
-      {/* 時間表示（日付） */}
+      {/* 時間表示（第2優先） */}
       {showTime != null && (
-        <div className="event-time mb-1 text-sm leading-tight opacity-75">
+        <div className="event-time flex-shrink-0 text-xs leading-tight opacity-75">
           {previewTime
             ? formatTimeRange(previewTime.start, previewTime.end, timeFormat)
             : eventStart && eventEnd
@@ -88,30 +88,34 @@ export const EventContent = memo<EventContentProps>(function EventContent({
         </div>
       )}
 
-      {/* 時間の長さを視覚化するストレッチ領域 */}
-      <div className="flex min-h-0 flex-1 items-end justify-between">
-        {/* タグ表示 */}
-        {event.tags && event.tags.length > 0 ? (
-          <div className="flex w-full flex-wrap gap-1">
-            {event.tags.slice(0, 3).map((tag) => (
-              <span
-                key={tag.id}
-                className="inline-flex flex-shrink-0 items-center rounded-sm bg-white/30 px-1.5 py-0.5 text-xs leading-tight text-white"
-                style={{ backgroundColor: `${tag.color}40` }}
-              >
-                {tag.icon ? <span className="mr-0.5">{tag.icon}</span> : null}
-                {tag.name}
+      {/* タグ表示（画面幅に応じて表示・非表示） */}
+      {event.tags && event.tags.length > 0 ? (
+        <div className="mt-auto flex min-h-0 flex-shrink flex-wrap gap-0.5 overflow-hidden pt-0.5">
+          {event.tags.slice(0, 2).map((tag) => (
+            <span
+              key={tag.id}
+              className="inline-flex flex-shrink-0 items-center gap-0.5 rounded-sm border px-1.5 py-0.5 text-xs leading-tight"
+              style={{
+                borderColor: tag.color,
+              }}
+              title={tag.name}
+            >
+              {tag.icon && (
+                <span className="flex-shrink-0" style={{ color: tag.color }}>
+                  {tag.icon}
+                </span>
+              )}
+              <span className="flex-shrink-0 font-medium" style={{ color: tag.color }}>
+                #
               </span>
-            ))}
-            {event.tags.length > 3 && <span className="px-1 text-xs opacity-75">+{event.tags.length - 3}</span>}
-          </div>
-        ) : null}
-
-        {/* 時間の長さを示す視覚的インジケーター */}
-        <div className="absolute top-1/2 right-1 -translate-y-1/2 transform opacity-30">
-          <div className="w-1 rounded-full bg-current" style={{ height: 'calc(100% - 16px)' }} />
+              <span className="truncate">{tag.name}</span>
+            </span>
+          ))}
+          {event.tags.length > 2 && (
+            <span className="inline-flex items-center px-1 text-xs opacity-75">+{event.tags.length - 2}</span>
+          )}
         </div>
-      </div>
+      ) : null}
     </div>
   )
 })

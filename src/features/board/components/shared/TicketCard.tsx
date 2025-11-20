@@ -19,6 +19,7 @@ import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
 import { useTicketCacheStore } from '@/features/tickets/stores/useTicketCacheStore'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
+import { toLocalISOString } from '@/features/tickets/utils/datetime'
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/tickets/utils/reminder'
 import { configToReadable, ruleToConfig } from '@/features/tickets/utils/rrule'
 import { cn } from '@/lib/utils'
@@ -113,8 +114,9 @@ export function TicketCard({ item }: TicketCardProps) {
       id: item.id,
       data: {
         due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
-        start_time: selectedDate && startTime ? `${format(selectedDate, 'yyyy-MM-dd')}T${startTime}:00Z` : undefined,
-        end_time: selectedDate && endTime ? `${format(selectedDate, 'yyyy-MM-dd')}T${endTime}:00Z` : undefined,
+        start_time:
+          selectedDate && startTime ? toLocalISOString(format(selectedDate, 'yyyy-MM-dd'), startTime) : undefined,
+        end_time: selectedDate && endTime ? toLocalISOString(format(selectedDate, 'yyyy-MM-dd'), endTime) : undefined,
         reminder_minutes: reminderTypeToMinutes(reminderType),
       },
     })
@@ -396,17 +398,18 @@ export function TicketCard({ item }: TicketCardProps) {
                     <Badge
                       key={tag.id}
                       variant="outline"
-                      className="shrink-0 text-xs font-normal"
+                      className="shrink-0 gap-0.5 text-xs font-normal"
                       style={
                         tag.color
                           ? {
-                              backgroundColor: `${tag.color}20`,
                               borderColor: tag.color,
-                              color: tag.color,
                             }
                           : undefined
                       }
                     >
+                      <span className="font-medium" style={tag.color ? { color: tag.color } : undefined}>
+                        #
+                      </span>
                       {tag.name}
                     </Badge>
                   ))}

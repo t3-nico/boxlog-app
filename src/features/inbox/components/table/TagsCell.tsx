@@ -87,17 +87,18 @@ export function TagsCell({ tags = [], width, onTagsChange }: TagsCellProps) {
             <Badge
               key={tag.id}
               variant="outline"
-              className="shrink-0 text-xs font-normal"
+              className="shrink-0 gap-0.5 text-xs font-normal"
               style={
                 tag.color
                   ? {
-                      backgroundColor: `${tag.color}20`,
                       borderColor: tag.color,
-                      color: tag.color,
                     }
                   : undefined
               }
             >
+              <span className="font-medium" style={tag.color ? { color: tag.color } : undefined}>
+                #
+              </span>
               {tag.name}
             </Badge>
           ))}

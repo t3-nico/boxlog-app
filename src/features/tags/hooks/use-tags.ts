@@ -176,6 +176,8 @@ export function useUpdateTag() {
     mutationFn: ({ id, data }: { id: string; data: UpdateTagInput }) => tagAPI.updateTag(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tagKeys.all })
+      // ticketsのキャッシュも無効化（タグ情報を含むため）
+      queryClient.invalidateQueries({ queryKey: ['tickets'] })
     },
     onError: (error) => {
       console.error('Tag update failed:', error)
@@ -191,6 +193,8 @@ export function useDeleteTag() {
     mutationFn: tagAPI.deleteTag,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tagKeys.all })
+      // ticketsのキャッシュも無効化（タグ情報を含むため）
+      queryClient.invalidateQueries({ queryKey: ['tickets'] })
     },
     onError: (error) => {
       console.error('Tag deletion failed:', error)
@@ -221,6 +225,8 @@ export function useRenameTag() {
     mutationFn: ({ id, name }: { id: string; name: string }) => tagAPI.renameTag(id, name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tagKeys.all })
+      // ticketsのキャッシュも無効化（タグ情報を含むため）
+      queryClient.invalidateQueries({ queryKey: ['tickets'] })
     },
     onError: (error) => {
       console.error('Tag rename failed:', error)
@@ -236,6 +242,8 @@ export function useUpdateTagColor() {
     mutationFn: ({ id, color }: { id: string; color: string }) => tagAPI.updateTagColor(id, color),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tagKeys.all })
+      // ticketsのキャッシュも無効化（タグ情報を含むため）
+      queryClient.invalidateQueries({ queryKey: ['tickets'] })
     },
     onError: (error) => {
       console.error('Tag color update failed:', error)
