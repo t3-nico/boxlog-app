@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-import { Copy, Edit2, Trash2 } from 'lucide-react'
+import { Calendar, Copy, Edit2, ExternalLink, Link, Tag, Trash2 } from 'lucide-react'
 
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
@@ -16,7 +16,10 @@ interface EventContextMenuProps {
   onEdit?: (event: CalendarEvent) => void
   onDelete?: (event: CalendarEvent) => void
   onDuplicate?: (event: CalendarEvent) => void
-  onViewDetails?: (event: CalendarEvent) => void
+  onOpen?: (event: CalendarEvent) => void
+  onCopyLink?: (event: CalendarEvent) => void
+  onAddTag?: (event: CalendarEvent) => void
+  onMoveToDate?: (event: CalendarEvent) => void
 }
 
 export const EventContextMenu = ({
@@ -26,6 +29,10 @@ export const EventContextMenu = ({
   onEdit,
   onDelete,
   onDuplicate,
+  onOpen,
+  onCopyLink,
+  onAddTag,
+  onMoveToDate,
 }: EventContextMenuProps) => {
   const { t } = useI18n()
   const menuRef = useRef<HTMLDivElement>(null)
@@ -86,6 +93,12 @@ export const EventContextMenu = ({
 
   const menuItems = [
     {
+      icon: ExternalLink,
+      label: t('calendar.contextMenu.open'),
+      action: () => onOpen?.(event),
+      available: !!onOpen,
+    },
+    {
       icon: Edit2,
       label: t('calendar.contextMenu.edit'),
       action: () => onEdit?.(event),
@@ -96,6 +109,24 @@ export const EventContextMenu = ({
       label: t('calendar.contextMenu.duplicate'),
       action: () => onDuplicate?.(event),
       available: !!onDuplicate,
+    },
+    {
+      icon: Link,
+      label: t('calendar.contextMenu.copyLink'),
+      action: () => onCopyLink?.(event),
+      available: !!onCopyLink,
+    },
+    {
+      icon: Tag,
+      label: t('calendar.contextMenu.addTag'),
+      action: () => onAddTag?.(event),
+      available: !!onAddTag,
+    },
+    {
+      icon: Calendar,
+      label: t('calendar.contextMenu.moveToDate'),
+      action: () => onMoveToDate?.(event),
+      available: !!onMoveToDate,
     },
     {
       icon: Trash2,
