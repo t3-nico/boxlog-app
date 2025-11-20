@@ -22,38 +22,37 @@ export interface ViewSelectorProps {
   onChange: (view: CalendarViewType) => void
 }
 
+// 古い型定義（将来削除予定 - useRecordsStoreで使用中）
 export interface Task {
   id: string
   title: string
-  planned_start: Date
-  planned_duration: number // 分
+  planned_start: Date | null
+  planned_duration: number
   status: 'pending' | 'in_progress' | 'completed'
   priority: 'low' | 'medium' | 'high'
   description?: string
   tags?: string[]
   created_at: Date
   updated_at: Date
-  // 計算で取得される値
   planned_end?: string
   memo?: string
-  record_id?: string // 対応する記録へのリンク
+  record_id?: string
 }
 
 export interface TaskRecord {
   id: string
   user_id: string
-  task_id?: string // 元の予定へのリンク（nullの場合は予定外作業）
+  task_id?: string
   title: string
   actual_start: string
   actual_end: string
-  actual_duration: number // 分
-  satisfaction?: 1 | 2 | 3 | 4 | 5 // 満足度
+  actual_duration: number
+  satisfaction?: 1 | 2 | 3 | 4 | 5
   tags?: string[]
   memo?: string
-  // 記録特有のフィールド
-  interruptions?: number // 中断回数
-  focus_level?: 1 | 2 | 3 | 4 | 5 // 集中度
-  energy_level?: 1 | 2 | 3 | 4 | 5 // エネルギーレベル
+  interruptions?: number
+  focus_level?: 1 | 2 | 3 | 4 | 5
+  energy_level?: 1 | 2 | 3 | 4 | 5
   created_at: string
   updated_at: string
 }
@@ -75,33 +74,21 @@ export interface RecordStats {
   unplannedTasks: number
 }
 
-// Calendar Event type (extends Event with display-specific properties)
+// Calendar Event type (チケットから変換されたカレンダーイベント)
 export interface CalendarEvent {
   id: string
   title: string
   description?: string
   startDate: Date
-  endDate?: Date
-  // TimedEvent互換性のため追加（TODO(#389): 型の統一が必要）
-  start?: Date
-  end?: Date
+  endDate: Date
   status: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
-  priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional'
   color: string
-  location?: string
-  url?: string
   tags?: Array<{
     id: string
     name: string
     color: string
     icon?: string
     parent_id?: string
-  }>
-  items?: Array<{
-    id: string
-    text: string
-    completed: boolean
-    duration?: number
   }>
   createdAt: Date
   updatedAt: Date
@@ -111,29 +98,6 @@ export interface CalendarEvent {
   duration: number // minutes
   isMultiDay: boolean
   isRecurring: boolean
-}
-
-// インターフェース定義
-export interface CreateTaskInput {
-  title: string
-  planned_start: Date
-  planned_duration: number
-  status: 'pending' | 'in_progress' | 'completed'
-  priority: 'low' | 'medium' | 'high'
-  description?: string
-  tags?: string[]
-}
-
-export interface CreateRecordInput {
-  title: string
-  actual_start: Date
-  actual_end: Date
-  actual_duration: number
-  satisfaction?: number
-  focus_level?: number
-  energy_level?: number
-  memo?: string
-  interruptions?: number
 }
 
 // ========================================
@@ -157,29 +121,6 @@ export interface Calendar {
   shareSettings?: Record<string, unknown>
   createdAt: Date
   updatedAt: Date
-}
-
-// 拡張されたEvent型
-export interface ExtendedEvent extends CalendarEvent {
-  calendarId?: string
-  allDay: boolean
-  reminderMinutes?: number
-  timezone: string
-  attendees: Array<{
-    email: string
-    name?: string
-    status?: 'pending' | 'accepted' | 'declined' | 'tentative'
-  }>
-  attachments: Array<{
-    id: string
-    name: string
-    url: string
-    type: string
-    size: number
-  }>
-  visibility: 'private' | 'public' | 'team'
-  externalId?: string
-  syncStatus: 'local' | 'syncing' | 'synced' | 'error'
 }
 
 // 繰り返しパターン
@@ -210,7 +151,7 @@ export interface EventInstance {
   instanceEnd: Date
   isException: boolean
   exceptionType?: 'modified' | 'cancelled' | 'moved'
-  overrides?: Partial<ExtendedEvent>
+  overrides?: Partial<CalendarEvent>
   createdAt: Date
   updatedAt: Date
 }
