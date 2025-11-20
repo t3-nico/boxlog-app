@@ -34,6 +34,7 @@ const nextConfig = {
       "https://vercel.live",
       "wss://*.supabase.co",
       "https://vitals.vercel-insights.com",
+      "https://api.pwnedpasswords.com", // Have I Been Pwned API
       ...(isDevelopment ? ["http://127.0.0.1:54321", "http://localhost:54321"] : []),
     ].join(' ');
 

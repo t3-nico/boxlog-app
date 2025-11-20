@@ -42,9 +42,16 @@ export function configToRRule(config: RecurrenceConfig): string {
     parts.push(`BYDAY=${days}`)
   }
 
-  // BYMONTHDAY（月次）
+  // BYMONTHDAY（月次：日付指定）
   if (config.frequency === 'monthly' && config.byMonthDay) {
     parts.push(`BYMONTHDAY=${config.byMonthDay}`)
+  }
+
+  // BYSETPOS（月次：第N週指定）
+  if (config.frequency === 'monthly' && config.bySetPos !== undefined && config.byWeekday?.length) {
+    const days = config.byWeekday.map((d) => WEEKDAY_MAP[d]).join(',')
+    parts.push(`BYDAY=${days}`)
+    parts.push(`BYSETPOS=${config.bySetPos}`)
   }
 
   // 終了条件
@@ -89,7 +96,7 @@ export function ruleToConfig(rrule: string): RecurrenceConfig {
 
     switch (key) {
       case 'FREQ':
-        config.frequency = value.toLowerCase() as 'daily' | 'weekly' | 'monthly'
+        config.frequency = value.toLowerCase() as 'daily' | 'weekly' | 'monthly' | 'yearly'
         break
       case 'INTERVAL':
         config.interval = Number(value)
@@ -99,6 +106,9 @@ export function ruleToConfig(rrule: string): RecurrenceConfig {
         break
       case 'BYMONTHDAY':
         config.byMonthDay = Number(value)
+        break
+      case 'BYSETPOS':
+        config.bySetPos = Number(value)
         break
       case 'UNTIL':
         config.endType = 'until'
@@ -143,6 +153,8 @@ export function configToReadable(config: RecurrenceConfig): string {
     parts.push(intervalText ? `${intervalText}週間ごと` : '毎週')
   } else if (config.frequency === 'monthly') {
     parts.push(intervalText ? `${intervalText}ヶ月ごと` : '毎月')
+  } else if (config.frequency === 'yearly') {
+    parts.push(intervalText ? `${intervalText}年ごと` : '毎年')
   }
 
   // 曜日（週次のみ）
@@ -153,8 +165,18 @@ export function configToReadable(config: RecurrenceConfig): string {
   }
 
   // 日付（月次のみ）
-  if (config.frequency === 'monthly' && config.byMonthDay) {
-    parts.push(`${config.byMonthDay}日`)
+  if (config.frequency === 'monthly') {
+    if (config.byMonthDay) {
+      parts.push(`${config.byMonthDay}日`)
+    } else if (config.bySetPos !== undefined && config.byWeekday?.length) {
+      const weekdayNames = ['日', '月', '火', '水', '木', '金', '土']
+      const weekdayName = weekdayNames[config.byWeekday[0]]
+      if (config.bySetPos === -1) {
+        parts.push(`最終${weekdayName}曜日`)
+      } else {
+        parts.push(`第${config.bySetPos}${weekdayName}曜日`)
+      }
+    }
   }
 
   // 終了条件
