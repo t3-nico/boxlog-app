@@ -18,7 +18,7 @@ export const REMINDER_OPTIONS = [
 interface ReminderSelectProps {
   value: string // UI表示文字列（'', '開始時刻', '10分前', ...）
   onChange: (value: string) => void
-  variant?: 'inspector' | 'compact' // inspectorスタイル または compactスタイル
+  variant?: 'inspector' | 'compact' | 'button' // inspectorスタイル、compactスタイル、または buttonスタイル
 }
 
 /**
@@ -27,6 +27,7 @@ interface ReminderSelectProps {
  * Inspector、Card、Tableの全てで共通して使用
  * - inspector: Inspectorで使用する横長スタイル（Bell + テキスト）
  * - compact: Card/Tableで使用するコンパクトスタイル（Bell のみ）
+ * - button: Card/Tableポップオーバー内で使用する標準ボタンスタイル（繰り返しと同じ）
  */
 export function ReminderSelect({ value, onChange, variant = 'inspector' }: ReminderSelectProps) {
   const reminderRef = useRef<HTMLDivElement>(null)
@@ -49,18 +50,52 @@ export function ReminderSelect({ value, onChange, variant = 'inspector' }: Remin
   // 通知が設定されているかどうか
   const hasReminder = value && value !== ''
 
+  // 表示ラベルを取得
+  const getDisplayLabel = () => {
+    if (!value || value === '') return 'なし'
+    const option = REMINDER_OPTIONS.find((opt) => opt.value === value)
+    return option?.label || value
+  }
+
   return (
     <div className="relative" ref={reminderRef}>
-      <Button
-        variant="ghost"
-        size="sm"
-        className={hasReminder ? 'text-foreground h-8 gap-2 px-2' : 'text-muted-foreground h-8 gap-2 px-2'}
-        type="button"
-        onClick={() => setShowPopover(!showPopover)}
-      >
-        <Bell className="h-4 w-4" />
-        {variant === 'inspector' && <span className="text-sm">{value || '通知'}</span>}
-      </Button>
+      {variant === 'button' ? (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            setShowPopover(!showPopover)
+          }}
+          className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 dark:hover:bg-input/50 flex h-9 w-fit items-center gap-1 rounded-md border bg-transparent px-2 py-0 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <span>{getDisplayLabel()}</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4 w-4 opacity-50"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+      ) : (
+        <Button
+          variant="ghost"
+          size="sm"
+          className={hasReminder ? 'text-foreground h-8 gap-2 px-2' : 'text-muted-foreground h-8 gap-2 px-2'}
+          type="button"
+          onClick={() => setShowPopover(!showPopover)}
+        >
+          <Bell className="h-4 w-4" />
+          {variant === 'inspector' && <span className="text-sm">{value || '通知'}</span>}
+        </Button>
+      )}
 
       {showPopover && (
         <div className="border-input bg-popover absolute top-10 left-0 z-50 w-56 rounded-md border shadow-md">

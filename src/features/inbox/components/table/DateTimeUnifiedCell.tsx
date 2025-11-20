@@ -208,7 +208,7 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
                   setReminderType(value)
                   handleChange()
                 }}
-                variant="compact"
+                variant="button"
               />
             </div>
 
