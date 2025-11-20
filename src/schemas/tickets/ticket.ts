@@ -3,7 +3,7 @@ import { z } from 'zod'
 // Ticket用Zodスキーマ
 
 export const ticketStatusSchema = z.enum(['backlog', 'ready', 'active', 'wait', 'done', 'cancel'])
-export const recurrenceTypeSchema = z.enum(['none', 'daily', 'weekly', 'monthly'])
+export const recurrenceTypeSchema = z.enum(['none', 'daily', 'weekly', 'monthly', 'yearly', 'weekdays'])
 
 export const createTicketSchema = z.object({
   title: z.string().min(1, 'タイトルは必須です').max(200, 'タイトルは200文字以内です'),

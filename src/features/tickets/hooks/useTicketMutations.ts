@@ -1,5 +1,6 @@
 import { api } from '@/lib/trpc'
 import { toast } from 'sonner'
+import { useTicketCacheStore } from '../stores/useTicketCacheStore'
 import { useTicketInspectorStore } from '../stores/useTicketInspectorStore'
 
 /**
@@ -8,7 +9,7 @@ import { useTicketInspectorStore } from '../stores/useTicketInspectorStore'
  * すべてのTicket操作を一元管理
  * - Toast通知
  * - キャッシュ無効化（全ビュー自動更新）
- * - 楽観的更新
+ * - Zustandキャッシュ（即座の同期）
  * - エラーハンドリング
  *
  * @example
@@ -28,6 +29,7 @@ import { useTicketInspectorStore } from '../stores/useTicketInspectorStore'
 export function useTicketMutations() {
   const utils = api.useUtils()
   const { closeInspector, openInspector } = useTicketInspectorStore()
+  const { updateCache } = useTicketCacheStore()
 
   // ✨ 作成
   const createTicket = api.tickets.create.useMutation({
@@ -54,32 +56,29 @@ export function useTicketMutations() {
   // ✨ 更新
   const updateTicket = api.tickets.update.useMutation({
     onMutate: async ({ id, data }) => {
-      // 楽観的更新の準備
-      await utils.tickets.getById.cancel({ id, include: undefined })
-
-      const previousTicket = utils.tickets.getById.getData({ id, include: undefined })
-
-      // 楽観的更新
-      if (previousTicket && typeof previousTicket === 'object' && 'id' in previousTicket) {
-        // Safe to spread because we've confirmed it's a valid ticket object
-        utils.tickets.getById.setData({ id, include: undefined }, Object.assign({}, previousTicket, data))
+      // Zustandキャッシュを即座に更新（全コンポーネントに即座に反映）
+      if (data.recurrence_type !== undefined || data.recurrence_rule !== undefined) {
+        updateCache(id, {
+          recurrence_type: data.recurrence_type,
+          recurrence_rule: data.recurrence_rule,
+        })
       }
 
-      return { previousTicket }
+      return { id }
     },
     onSuccess: (updatedTicket) => {
       toast.success('更新しました')
 
-      // すべてのビューを更新
+      // TanStack Queryキャッシュを無効化してサーバーから再取得
       utils.tickets.list.invalidate()
-      utils.tickets.getById.invalidate({ id: updatedTicket.id })
+      utils.tickets.getById.invalidate()
     },
     onError: (err, variables, context) => {
-      // エラー時は元に戻す
-      if (context?.previousTicket) {
-        utils.tickets.getById.setData({ id: variables.id, include: undefined }, context.previousTicket)
-      }
       toast.error('更新に失敗しました')
+      // エラー時はキャッシュを再取得
+      if (context?.id) {
+        utils.tickets.getById.invalidate({ id: context.id })
+      }
     },
   })
 

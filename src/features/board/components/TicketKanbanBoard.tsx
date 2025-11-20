@@ -2,14 +2,15 @@
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
+import { DateTimePopoverContent } from '@/features/tickets/components/shared/DateTimePopoverContent'
+import { TicketTagSelectDialogEnhanced } from '@/features/tickets/components/shared/TicketTagSelectDialogEnhanced'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import type { TicketStatus } from '@/features/tickets/types/ticket'
+import { reminderTypeToMinutes } from '@/features/tickets/utils/reminder'
 import { cn } from '@/lib/utils'
 import {
   DndContext,
@@ -23,8 +24,8 @@ import {
 } from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Calendar as CalendarIcon, Check, MoreVertical, Plus, Tag } from 'lucide-react'
-import { useState } from 'react'
+import { Bell, Calendar as CalendarIcon, MoreVertical, Plus, Repeat, Tag } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { useBoardStatusFilterStore } from '../stores/useBoardStatusFilterStore'
 import { TicketCard } from './shared/TicketCard'
 
@@ -230,24 +231,53 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   const [isAdding, setIsAdding] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [selectedDate, setSelectedDate] = useState<Date>()
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
+  const [reminderType, setReminderType] = useState<string>('none')
+  const [recurrenceType, setRecurrenceType] = useState<'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'>(
+    'none'
+  )
+  const [recurrenceRule, setRecurrenceRule] = useState<string | null>(null)
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const [tagSearchQuery, setTagSearchQuery] = useState('')
-  const [showCalendar, setShowCalendar] = useState(false)
-  const [showTags, setShowTags] = useState(false)
+  const [dateTimeOpen, setDateTimeOpen] = useState(false)
   const { createTicket } = useTicketMutations()
+  const formRef = useRef<HTMLDivElement>(null)
+
+  // 作成キャンセル
+  const handleCancel = () => {
+    setIsAdding(false)
+    setNewTitle('')
+    setSelectedDate(undefined)
+    setStartTime('')
+    setEndTime('')
+    setReminderType('none')
+    setRecurrenceType('none')
+    setRecurrenceRule(null)
+    setSelectedTagIds([])
+    setDateTimeOpen(false)
+  }
+
+  // フォーム外クリックでキャンセル
+  useEffect(() => {
+    if (!isAdding) return
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (formRef.current && !formRef.current.contains(event.target as Node)) {
+        handleCancel()
+      }
+    }
+
+    // マウスダウンイベントをリッスン
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isAdding])
 
   // ドロップ可能エリアの設定
   const { setNodeRef, isOver } = useDroppable({
     id: status,
   })
-
-  // タグ一覧を取得（TODO: tagsテーブルのパーミッション設定後に有効化）
-  const allTags: never[] = []
-
-  // タグ検索結果をフィルタリング
-  const filteredTags = allTags.filter((tag: { name: string }) =>
-    tag.name.toLowerCase().includes(tagSearchQuery.toLowerCase())
-  )
 
   const bgColor = {
     default: 'bg-gray-100 dark:bg-gray-800/40',
@@ -261,19 +291,36 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   const handleCreate = () => {
     if (!newTitle.trim()) return
 
+    // 日付と時刻をISO 8601形式に変換
+    const baseDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd')
+    const start_time = selectedDate && startTime ? `${baseDate}T${startTime}:00` : undefined
+    const end_time = selectedDate && endTime ? `${baseDate}T${endTime}:00` : undefined
+
+    // 通知を分数に変換
+    const reminder_minutes = reminderTypeToMinutes(reminderType)
+
     createTicket.mutate({
       title: newTitle,
       status,
-      due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
+      due_date: selectedDate ? baseDate : undefined,
+      start_time,
+      end_time,
+      reminder_minutes,
+      recurrence_type: recurrenceRule ? undefined : recurrenceType !== 'none' ? recurrenceType : undefined,
+      recurrence_rule: recurrenceRule || undefined,
+      // TODO: タグの保存は作成後に別途処理が必要
     })
 
     // リセット
     setNewTitle('')
     setSelectedDate(undefined)
+    setStartTime('')
+    setEndTime('')
+    setReminderType('none')
+    setRecurrenceType('none')
+    setRecurrenceRule(null)
     setSelectedTagIds([])
-    setTagSearchQuery('')
-    setShowCalendar(false)
-    setShowTags(false)
+    setDateTimeOpen(false)
     setIsAdding(false)
   }
 
@@ -282,13 +329,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
       e.preventDefault()
       handleCreate()
     } else if (e.key === 'Escape') {
-      setIsAdding(false)
-      setNewTitle('')
-      setSelectedDate(undefined)
-      setSelectedTagIds([])
-      setTagSearchQuery('')
-      setShowCalendar(false)
-      setShowTags(false)
+      handleCancel()
     }
   }
 
@@ -342,125 +383,148 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
 
         {/* 新規作成フォーム（入力中） */}
         {isAdding && (
-          <div className="bg-card border-border relative space-y-2 rounded-lg border p-3 shadow-sm">
+          <div
+            ref={formRef}
+            className="bg-card hover:bg-muted/50 border-border group flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors"
+          >
             {/* タイトル入力 */}
-            <Input
-              autoFocus
-              placeholder="タイトルを入力..."
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="h-8 text-sm"
-            />
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onInput={(e) => setNewTitle(e.currentTarget.textContent || '')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  handleCreate()
+                } else if (e.key === 'Escape') {
+                  handleCancel()
+                }
+              }}
+              className="text-foreground empty:before:text-muted-foreground min-w-0 text-base leading-tight font-semibold outline-none empty:before:content-[attr(data-placeholder)]"
+              data-placeholder="タイトルを入力..."
+              ref={(el) => {
+                if (el && !newTitle) {
+                  el.focus()
+                }
+              }}
+            >
+              {newTitle}
+            </div>
 
-            {/* 選択されたTags表示 */}
-            {selectedTagIds.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {selectedTagIds.map((tagId) => {
-                  const tag = allTags.find((t: { id: string }) => t.id === tagId)
-                  return (
-                    <Badge key={tagId} variant="secondary" className="text-xs">
-                      {tag ? (tag as { name: string }).name : tagId.slice(0, 4)}
-                    </Badge>
-                  )
-                })}
+            {/* 日時を追加（Popover） */}
+            <Popover open={dateTimeOpen} onOpenChange={setDateTimeOpen}>
+              <PopoverTrigger asChild>
+                <div
+                  className="text-foreground hover:bg-primary/10 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {selectedDate || startTime || endTime ? (
+                    <span>
+                      {selectedDate ? format(selectedDate, 'yyyy/MM/dd', { locale: ja }) : ''}
+                      {startTime && endTime && ` ${startTime} → ${endTime}`}
+                      {startTime && !endTime && ` ${startTime}`}
+                    </span>
+                  ) : (
+                    <div className="text-muted-foreground flex items-center gap-1">
+                      <CalendarIcon className="size-3" />
+                      <span>日付を追加</span>
+                    </div>
+                  )}
+
+                  {/* アイコンコンテナ（Repeat と Reminder） */}
+                  {(recurrenceRule ||
+                    (recurrenceType && recurrenceType !== 'none') ||
+                    (reminderType && reminderType !== 'none')) && (
+                    <div className="flex items-center gap-1">
+                      {/* 繰り返しアイコン */}
+                      {(recurrenceRule || (recurrenceType && recurrenceType !== 'none')) && (
+                        <div
+                          title={
+                            recurrenceType === 'daily'
+                              ? '毎日'
+                              : recurrenceType === 'weekly'
+                                ? '毎週'
+                                : recurrenceType === 'monthly'
+                                  ? '毎月'
+                                  : recurrenceType === 'yearly'
+                                    ? '毎年'
+                                    : recurrenceType === 'weekdays'
+                                      ? '平日'
+                                      : ''
+                          }
+                        >
+                          <Repeat className="text-muted-foreground size-4" />
+                        </div>
+                      )}
+
+                      {/* 通知アイコン（設定時のみ表示） */}
+                      {reminderType && reminderType !== 'none' && (
+                        <div title={reminderType}>
+                          <Bell className="text-muted-foreground size-4" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-3" align="start" onClick={(e) => e.stopPropagation()}>
+                <DateTimePopoverContent
+                  selectedDate={selectedDate}
+                  onDateSelect={setSelectedDate}
+                  startTime={startTime}
+                  onStartTimeChange={setStartTime}
+                  endTime={endTime}
+                  onEndTimeChange={setEndTime}
+                  reminderType={reminderType}
+                  onReminderChange={setReminderType}
+                  recurrenceRule={recurrenceRule}
+                  recurrenceType={recurrenceType}
+                  onRepeatTypeChange={(type) => {
+                    if (type === '') {
+                      setRecurrenceType('none')
+                      setRecurrenceRule(null)
+                    } else if (type === '毎日') {
+                      setRecurrenceType('daily')
+                      setRecurrenceRule(null)
+                    } else if (type === '毎週') {
+                      setRecurrenceType('weekly')
+                      setRecurrenceRule(null)
+                    } else if (type === '毎月') {
+                      setRecurrenceType('monthly')
+                      setRecurrenceRule(null)
+                    } else if (type === '毎年') {
+                      setRecurrenceType('yearly')
+                      setRecurrenceRule(null)
+                    } else if (type === '平日') {
+                      setRecurrenceType('weekdays')
+                      setRecurrenceRule(null)
+                    }
+                  }}
+                  onRecurrenceRuleChange={setRecurrenceRule}
+                />
+              </PopoverContent>
+            </Popover>
+
+            {/* タグを追加（Dialog） */}
+            <TicketTagSelectDialogEnhanced
+              selectedTagIds={selectedTagIds}
+              onTagsChange={(tagIds) => setSelectedTagIds(tagIds)}
+            >
+              <div
+                className="text-muted-foreground hover:bg-primary/10 flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Tag className="size-3" />
+                <span>タグを追加</span>
               </div>
-            )}
+            </TicketTagSelectDialogEnhanced>
 
-            {/* アイコンボタン */}
-            <div className="flex items-center gap-1">
-              {/* 日付アイコン */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-7"
-                type="button"
-                title="日付を設定"
-                onClick={() => setShowCalendar(!showCalendar)}
-              >
-                <CalendarIcon className="h-3.5 w-3.5" />
-              </Button>
-
-              {/* Tagsアイコン */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-7"
-                type="button"
-                title="タグを追加"
-                onClick={() => setShowTags(!showTags)}
-              >
-                <Tag className="h-3.5 w-3.5" />
-              </Button>
-
-              {/* 作成ボタン */}
-              <Button size="sm" className="ml-auto h-7 text-xs" onClick={handleCreate}>
+            {/* 作成ボタン */}
+            <div className="flex justify-end">
+              <Button size="sm" className="h-7 text-xs" onClick={handleCreate}>
                 追加
               </Button>
             </div>
-
-            {/* カレンダー展開 */}
-            {showCalendar && (
-              <div className="border-input bg-popover absolute top-full left-0 z-50 mt-1 rounded-md border shadow-md">
-                <MiniCalendar
-                  selectedDate={selectedDate}
-                  onDateSelect={(date) => {
-                    setSelectedDate(date)
-                    setShowCalendar(false)
-                  }}
-                />
-              </div>
-            )}
-
-            {/* タグ検索ポップアップ */}
-            {showTags && (
-              <div className="border-input bg-popover absolute top-full left-0 z-50 mt-1 w-64 rounded-md border shadow-md">
-                <Command>
-                  <CommandInput placeholder="タグを検索..." value={tagSearchQuery} onValueChange={setTagSearchQuery} />
-                  <CommandList>
-                    <CommandEmpty>
-                      <div className="py-2">
-                        <p className="text-muted-foreground text-sm">タグが見つかりません</p>
-                        {tagSearchQuery && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="mt-2 w-full"
-                            onClick={() => {
-                              // TODO: タグ作成機能を実装
-                              console.log('Create tag:', tagSearchQuery)
-                              setShowTags(false)
-                            }}
-                          >
-                            「{tagSearchQuery}」を作成
-                          </Button>
-                        )}
-                      </div>
-                    </CommandEmpty>
-                    <CommandGroup>
-                      {filteredTags.map((tag: { id: string; name: string }) => (
-                        <CommandItem
-                          key={tag.id}
-                          onSelect={() => {
-                            const isSelected = selectedTagIds.includes(tag.id)
-                            if (isSelected) {
-                              setSelectedTagIds(selectedTagIds.filter((id) => id !== tag.id))
-                            } else {
-                              setSelectedTagIds([...selectedTagIds, tag.id])
-                            }
-                          }}
-                        >
-                          <div className="flex w-full items-center justify-between">
-                            <span>{tag.name}</span>
-                            {selectedTagIds.includes(tag.id) && <Check className="h-4 w-4" />}
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </div>
-            )}
           </div>
         )}
 
