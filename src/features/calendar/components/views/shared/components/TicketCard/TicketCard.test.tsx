@@ -1,14 +1,14 @@
 // @ts-nocheck
-// TODO(#389): EventBlock.test型エラーを修正後、@ts-nocheckを削除
+// TODO(#389): TicketCard.test型エラーを修正後、@ts-nocheckを削除
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarTicket } from '@/features/calendar/types/calendar.types'
 
-import { EventBlock } from './EventBlock'
+import { TicketCard } from './TicketCard'
 
-describe('EventBlock', () => {
-  const mockEvent: CalendarEvent = {
+describe('TicketCard', () => {
+  const mockEvent: CalendarTicket = {
     id: 'event-1',
     title: 'テストイベント',
     description: 'テスト説明',
@@ -43,20 +43,20 @@ describe('EventBlock', () => {
 
   describe('基本レンダリング', () => {
     it('イベントが正しく表示される', () => {
-      render(<EventBlock event={mockEvent} position={mockPosition} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} />)
 
       expect(screen.getByRole('button', { name: /Event: テストイベント/i })).toBeInTheDocument()
     })
 
     it('デフォルトポジションが適用される', () => {
-      render(<EventBlock event={mockEvent} position={undefined} />)
+      render(<TicketCard event={mockEvent} position={undefined} />)
 
       const eventBlock = screen.getByRole('button')
       expect(eventBlock).toBeInTheDocument()
     })
 
     it('aria属性が正しく設定される', () => {
-      render(<EventBlock event={mockEvent} position={mockPosition} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       expect(eventBlock).toHaveAttribute('aria-label', 'Event: テストイベント')
@@ -68,7 +68,7 @@ describe('EventBlock', () => {
   describe('インタラクション', () => {
     it('クリックイベントが発火する', () => {
       const onClick = vi.fn()
-      render(<EventBlock event={mockEvent} position={mockPosition} onClick={onClick} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} onClick={onClick} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       fireEvent.click(eventBlock)
@@ -78,7 +78,7 @@ describe('EventBlock', () => {
 
     it('ダブルクリックイベントが発火する', () => {
       const onDoubleClick = vi.fn()
-      render(<EventBlock event={mockEvent} position={mockPosition} onDoubleClick={onDoubleClick} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} onDoubleClick={onDoubleClick} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       fireEvent.doubleClick(eventBlock)
@@ -88,7 +88,7 @@ describe('EventBlock', () => {
 
     it('右クリックでコンテキストメニューが表示される', () => {
       const onContextMenu = vi.fn()
-      render(<EventBlock event={mockEvent} position={mockPosition} onContextMenu={onContextMenu} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} onContextMenu={onContextMenu} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       fireEvent.contextMenu(eventBlock)
@@ -98,7 +98,7 @@ describe('EventBlock', () => {
 
     it('キーボード操作でクリックイベントが発火する（Enter）', () => {
       const onClick = vi.fn()
-      render(<EventBlock event={mockEvent} position={mockPosition} onClick={onClick} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} onClick={onClick} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       fireEvent.keyDown(eventBlock, { key: 'Enter' })
@@ -108,7 +108,7 @@ describe('EventBlock', () => {
 
     it('キーボード操作でクリックイベントが発火する（Space）', () => {
       const onClick = vi.fn()
-      render(<EventBlock event={mockEvent} position={mockPosition} onClick={onClick} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} onClick={onClick} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       fireEvent.keyDown(eventBlock, { key: ' ' })
@@ -120,7 +120,7 @@ describe('EventBlock', () => {
   describe('ドラッグ操作', () => {
     it('マウスダウンでドラッグ開始イベントが発火する', () => {
       const onDragStart = vi.fn()
-      render(<EventBlock event={mockEvent} position={mockPosition} onDragStart={onDragStart} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} onDragStart={onDragStart} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       fireEvent.mouseDown(eventBlock, { button: 0 })
@@ -129,14 +129,14 @@ describe('EventBlock', () => {
     })
 
     it('ドラッグ中の状態が正しく反映される', () => {
-      render(<EventBlock event={mockEvent} position={mockPosition} isDragging={true} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} isDragging={true} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       expect(eventBlock.className).toContain('cursor-grabbing')
     })
 
     it('選択状態が正しく反映される', () => {
-      render(<EventBlock event={mockEvent} position={mockPosition} isSelected={true} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} isSelected={true} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       expect(eventBlock).toHaveAttribute('aria-pressed', 'true')
@@ -146,14 +146,14 @@ describe('EventBlock', () => {
 
   describe('リサイズ操作', () => {
     it('リサイズハンドルが存在する', () => {
-      render(<EventBlock event={mockEvent} position={mockPosition} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} />)
 
       const resizeHandle = screen.getByRole('slider', { name: /Resize event duration/i })
       expect(resizeHandle).toBeInTheDocument()
     })
 
     it('リサイズハンドルのaria属性が正しく設定される', () => {
-      render(<EventBlock event={mockEvent} position={mockPosition} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} />)
 
       const resizeHandle = screen.getByRole('slider')
       expect(resizeHandle).toHaveAttribute('aria-orientation', 'vertical')
@@ -164,7 +164,7 @@ describe('EventBlock', () => {
 
     it('リサイズハンドルのマウスダウンでリサイズ開始イベントが発火する', () => {
       const onResizeStart = vi.fn()
-      render(<EventBlock event={mockEvent} position={mockPosition} onResizeStart={onResizeStart} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} onResizeStart={onResizeStart} />)
 
       const resizeHandle = screen.getByRole('slider')
       fireEvent.mouseDown(resizeHandle)
@@ -175,7 +175,7 @@ describe('EventBlock', () => {
 
   describe('スタイリング', () => {
     it('カスタムclassNameが適用される', () => {
-      render(<EventBlock event={mockEvent} position={mockPosition} className="custom-class" />)
+      render(<TicketCard event={mockEvent} position={mockPosition} className="custom-class" />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       expect(eventBlock.className).toContain('custom-class')
@@ -183,7 +183,7 @@ describe('EventBlock', () => {
 
     it('カスタムstyleが適用される', () => {
       const customStyle = { backgroundColor: 'red' }
-      render(<EventBlock event={mockEvent} position={mockPosition} style={customStyle} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} style={customStyle} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       expect(eventBlock).toHaveStyle({ backgroundColor: 'red' })
@@ -191,7 +191,7 @@ describe('EventBlock', () => {
 
     it('高さが30px未満の場合、コンパクトスタイルが適用される', () => {
       const smallPosition = { ...mockPosition, height: 25 }
-      render(<EventBlock event={mockEvent} position={smallPosition} />)
+      render(<TicketCard event={mockEvent} position={smallPosition} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       expect(eventBlock.className).toContain('text-xs')
@@ -199,7 +199,7 @@ describe('EventBlock', () => {
 
     it('最小高さが保証される', () => {
       const tinyPosition = { ...mockPosition, height: 5 }
-      render(<EventBlock event={mockEvent} position={tinyPosition} />)
+      render(<TicketCard event={mockEvent} position={tinyPosition} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
       // MIN_EVENT_HEIGHTが適用されるため、少なくとも20px以上
@@ -211,7 +211,7 @@ describe('EventBlock', () => {
 
   describe('ホバー状態', () => {
     it('マウスホバーで状態が変わる', () => {
-      render(<EventBlock event={mockEvent} position={mockPosition} />)
+      render(<TicketCard event={mockEvent} position={mockPosition} />)
 
       const eventBlock = screen.getByRole('button', { name: /Event: テストイベント/i })
 
@@ -231,7 +231,7 @@ describe('EventBlock', () => {
 
       const { container } = render(
         <div onClick={parentClick}>
-          <EventBlock event={mockEvent} position={mockPosition} onClick={onClick} />
+          <TicketCard event={mockEvent} position={mockPosition} onClick={onClick} />
         </div>
       )
 
@@ -250,7 +250,7 @@ describe('EventBlock', () => {
 
       const { container } = render(
         <div onDoubleClick={parentDoubleClick}>
-          <EventBlock event={mockEvent} position={mockPosition} onDoubleClick={onDoubleClick} />
+          <TicketCard event={mockEvent} position={mockPosition} onDoubleClick={onDoubleClick} />
         </div>
       )
 
