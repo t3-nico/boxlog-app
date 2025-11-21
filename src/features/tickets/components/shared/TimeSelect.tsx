@@ -73,6 +73,7 @@ interface TimeSelectProps {
   onChange: (time: string) => void
   label: string // "開始" または "終了"
   disabled?: boolean
+  minTime?: string // 最小時刻（この時刻以降のみ選択可能、HH:MM形式）
 }
 
 /**
@@ -80,7 +81,7 @@ interface TimeSelectProps {
  * - クリック → 15分刻みのドロップダウン
  * - 直接入力も可能（スマートパース対応）
  */
-export function TimeSelect({ value, onChange, label, disabled = false }: TimeSelectProps) {
+export function TimeSelect({ value, onChange, label, disabled = false, minTime }: TimeSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [inputValue, setInputValue] = useState(value)
   const [highlightedIndex, setHighlightedIndex] = useState(-1)
@@ -93,8 +94,19 @@ export function TimeSelect({ value, onChange, label, disabled = false }: TimeSel
 
   const timeOptions = generateTimeOptions()
 
+  // minTime でフィルタリング（開始時刻以降のみ）
+  const availableOptions = minTime
+    ? timeOptions.filter((option) => {
+        const [optionHour, optionMinute] = option.split(':').map(Number)
+        const [minHour, minMinute] = minTime.split(':').map(Number)
+        const optionMinutes = optionHour * 60 + optionMinute
+        const minMinutes = minHour * 60 + minMinute
+        return optionMinutes > minMinutes // 開始時刻より後のみ
+      })
+    : timeOptions
+
   // 入力値でフィルタリングされた時刻オプション
-  const filteredOptions = timeOptions.filter((option) => {
+  const filteredOptions = availableOptions.filter((option) => {
     if (skipFilter) return true // フォーカス直後はフィルタリングをスキップ
     if (!inputValue) return true
     const cleanInput = inputValue.replace(/[^\d:]/g, '')
@@ -185,6 +197,20 @@ export function TimeSelect({ value, onChange, label, disabled = false }: TimeSel
   const handleInputBlur = () => {
     // フォーカスが外れたら入力値をパース
     const parsed = parseTimeInput(inputValue)
+
+    // minTime バリデーション
+    if (parsed && minTime) {
+      const [parsedHour, parsedMinute] = parsed.split(':').map(Number)
+      const [minHour, minMinute] = minTime.split(':').map(Number)
+      const parsedMinutes = parsedHour * 60 + parsedMinute
+      const minMinutes = minHour * 60 + minMinute
+
+      if (parsedMinutes <= minMinutes) {
+        setError(`開始時刻（${minTime}）より後の時刻を入力してください`)
+        return
+      }
+    }
+
     if (parsed !== inputValue) {
       onChange(parsed)
     }
@@ -201,6 +227,20 @@ export function TimeSelect({ value, onChange, label, disabled = false }: TimeSel
       } else {
         // 入力値をパース
         const parsed = parseTimeInput(inputValue)
+
+        // minTime バリデーション
+        if (parsed && minTime) {
+          const [parsedHour, parsedMinute] = parsed.split(':').map(Number)
+          const [minHour, minMinute] = minTime.split(':').map(Number)
+          const parsedMinutes = parsedHour * 60 + parsedMinute
+          const minMinutes = minHour * 60 + minMinute
+
+          if (parsedMinutes <= minMinutes) {
+            setError(`開始時刻（${minTime}）より後の時刻を入力してください`)
+            return
+          }
+        }
+
         onChange(parsed)
       }
       setIsOpen(false)
@@ -288,8 +328,11 @@ export function TimeSelect({ value, onChange, label, disabled = false }: TimeSel
           placeholder="10:00"
           className={`flex h-8 w-[48px] bg-transparent px-0 py-1 text-center text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
             value ? 'text-foreground' : 'text-muted-foreground'
-          }`}
+          } ${error ? 'text-destructive' : ''}`}
         />
+        {error && (
+          <div className="text-destructive absolute top-full left-0 mt-1 text-xs whitespace-nowrap">{error}</div>
+        )}
 
         {isOpen && !disabled && filteredOptions.length > 0 && (
           <div className="border-input bg-popover absolute top-11 left-0 z-50 w-[88px] overflow-hidden rounded-md border shadow-md">

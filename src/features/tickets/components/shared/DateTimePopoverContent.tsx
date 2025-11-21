@@ -92,7 +92,7 @@ export function DateTimePopoverContent({
         <div className="flex items-end gap-2">
           <TimeSelect value={startTime} onChange={handleStartTimeChange} label="開始" />
           <ArrowRight className="text-muted-foreground mb-2 size-4" />
-          <TimeSelect value={endTime} onChange={handleEndTimeChange} label="終了" />
+          <TimeSelect value={endTime} onChange={handleEndTimeChange} label="終了" minTime={startTime} />
         </div>
       </div>
 

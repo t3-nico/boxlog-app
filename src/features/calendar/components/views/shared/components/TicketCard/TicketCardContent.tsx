@@ -5,6 +5,7 @@
 
 'use client'
 
+import { Bell, Repeat } from 'lucide-react'
 import { memo } from 'react'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
@@ -61,30 +62,42 @@ export const TicketCardContent = memo<TicketCardContentProps>(function TicketCar
   // 継続時間を計算
 
   if (isCompact) {
-    // コンパクト表示：タイトルのみ
+    // コンパクト表示：チケット番号 + タイトル
     return (
-      <div className="flex h-full items-center">
+      <div className="flex h-full items-center gap-1">
+        {event.ticket_number && (
+          <span className="text-muted-foreground flex-shrink-0 text-xs leading-tight">#{event.ticket_number}</span>
+        )}
         <span className="truncate text-xs leading-tight font-medium">{event.title}</span>
       </div>
     )
   }
 
-  // 通常表示：タイトル + 時間 + タグの順番（優先度順）
+  // 通常表示：チケット番号 + タイトル + 時間 + アイコン + タグの順番（優先度順）
   return (
     <div className="relative flex h-full flex-col gap-0.5 overflow-hidden">
       {/* タイトル（最優先） */}
       <div className="flex-shrink-0 text-sm leading-tight font-medium">
-        <span className={isCompact ? 'line-clamp-1' : 'line-clamp-2'}>{event.title}</span>
+        <span className={isCompact ? 'line-clamp-1' : 'line-clamp-2'}>
+          {event.ticket_number && <span className="text-muted-foreground mr-1">#{event.ticket_number}</span>}
+          {event.title}
+        </span>
       </div>
 
-      {/* 時間表示（第2優先） */}
+      {/* 時間表示 + アイコン（第2優先） */}
       {showTime != null && (
-        <div className="ticket-time pointer-events-none flex-shrink-0 text-xs leading-tight opacity-75">
-          {previewTime
-            ? formatTimeRange(previewTime.start, previewTime.end, timeFormat)
-            : ticketStart && ticketEnd
-              ? formatTimeRange(ticketStart, ticketEnd, timeFormat)
-              : t('calendar.event.noTimeSet')}
+        <div className="ticket-time pointer-events-none flex flex-shrink-0 items-center gap-1 text-xs leading-tight opacity-75">
+          <span>
+            {previewTime
+              ? formatTimeRange(previewTime.start, previewTime.end, timeFormat)
+              : ticketStart && ticketEnd
+                ? formatTimeRange(ticketStart, ticketEnd, timeFormat)
+                : t('calendar.event.noTimeSet')}
+          </span>
+          {/* 繰り返しアイコン */}
+          {event.isRecurring && <Repeat className="h-3 w-3 flex-shrink-0" />}
+          {/* 通知アイコン（reminder_minutesが設定されている場合） */}
+          {event.reminder_minutes != null && <Bell className="h-3 w-3 flex-shrink-0" />}
         </div>
       )}
 

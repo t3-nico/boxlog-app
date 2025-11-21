@@ -25,6 +25,8 @@ export interface CalendarTicket {
   updatedAt?: Date
   isMultiDay?: boolean
   isReadOnly?: boolean
+  ticket_number?: string // チケット番号（#123 形式）
+  reminder_minutes?: number | null // 通知タイミング（開始時刻の何分前か）
   tags?: Array<{
     id: string
     name: string

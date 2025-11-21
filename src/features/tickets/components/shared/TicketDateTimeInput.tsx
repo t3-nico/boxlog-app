@@ -74,7 +74,7 @@ export function TicketDateTimeInput({
 
         <span className="text-muted-foreground">→</span>
 
-        <TimeSelect value={endTime} onChange={handleEndTimeChange} label="" disabled={!startTime} />
+        <TimeSelect value={endTime} onChange={handleEndTimeChange} label="" disabled={!startTime} minTime={startTime} />
       </div>
 
       {elapsedTime && (
