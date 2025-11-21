@@ -2,8 +2,9 @@
 
 import React, { useCallback, useState } from 'react'
 
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
+import type { DragEndEvent, DragMoveEvent, DragStartEvent } from '@dnd-kit/core'
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { format } from 'date-fns'
 import { toast } from 'sonner'
 
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
@@ -34,6 +35,7 @@ interface DnDProviderProps {
 export const DnDProvider = ({ children }: DnDProviderProps) => {
   const { updateTicket } = useTicketMutations()
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [dragPreviewTime, setDragPreviewTime] = useState<{ date: string; time?: string } | null>(null)
 
   // ドラッグ中のTicket情報を取得（リアルタイム性最適化済み）
   const { data: tickets } = useTickets()
@@ -53,6 +55,43 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
    */
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string)
+    setDragPreviewTime(null) // リセット
+  }, [])
+
+  /**
+   * ドラッグ移動中の処理（時間表示をリアルタイム更新）
+   */
+  const handleDragMove = useCallback((event: DragMoveEvent) => {
+    const { over } = event
+
+    if (!over) {
+      setDragPreviewTime(null)
+      return
+    }
+
+    // ドロップ先のデータを取得
+    const dropData = over.data?.current
+    if (!dropData || !dropData.date) {
+      setDragPreviewTime(null)
+      return
+    }
+
+    // 日付を文字列に変換
+    let dateStr: string
+    if (dropData.date instanceof Date) {
+      const year = dropData.date.getFullYear()
+      const month = String(dropData.date.getMonth() + 1).padStart(2, '0')
+      const day = String(dropData.date.getDate()).padStart(2, '0')
+      dateStr = `${year}-${month}-${day}`
+    } else {
+      dateStr = dropData.date
+    }
+
+    // プレビュー時間を更新
+    setDragPreviewTime({
+      date: dateStr,
+      time: dropData.time, // 'HH:mm' または undefined
+    })
   }, [])
 
   /**
@@ -222,21 +261,40 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
   )
 
   return (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragMove={handleDragMove} onDragEnd={handleDragEnd}>
       {children}
 
       {/* ドラッグ中のプレビュー */}
       <DragOverlay>
         {activeTicket ? (
-          <div className="bg-card border-primary flex h-16 w-64 items-center gap-2 rounded-lg border-2 px-3 shadow-lg">
-            <div className="bg-primary h-8 w-1 rounded-full" />
-            <div className="flex-1">
-              <div className="text-foreground text-sm font-semibold">{activeTicket.title}</div>
-              {activeTicket.due_date && (
-                <div className="text-muted-foreground text-xs">
-                  {/* due_date は YYYY-MM-DD 形式の文字列なので、直接フォーマット（タイムゾーン影響を回避） */}
-                  {activeTicket.due_date.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$1/$2/$3')}
-                </div>
+          <div className="bg-card border-primary flex h-20 w-64 flex-col gap-1 rounded-lg border-2 p-3 shadow-lg">
+            <div className="flex items-center gap-2">
+              <div className="bg-primary h-8 w-1 rounded-full" />
+              <div className="text-foreground flex-1 text-sm font-semibold">{activeTicket.title}</div>
+            </div>
+            <div className="text-muted-foreground ml-3 space-y-0.5 text-xs">
+              {/* ドラッグ中の時間をリアルタイム表示 */}
+              {dragPreviewTime ? (
+                <>
+                  <div>📅 {format(new Date(dragPreviewTime.date + 'T00:00:00'), 'yyyy/MM/dd')}</div>
+                  {dragPreviewTime.time && (
+                    <div>
+                      🕐 {dragPreviewTime.time} -{' '}
+                      {(() => {
+                        // 終了時間を計算（開始時刻 + 1時間）
+                        const [hour, minute] = dragPreviewTime.time.split(':').map(Number)
+                        const endHour = String(hour + 1).padStart(2, '0')
+                        const endMinute = String(minute).padStart(2, '0')
+                        return `${endHour}:${endMinute}`
+                      })()}
+                    </div>
+                  )}
+                </>
+              ) : (
+                // ドロップ先がない場合は元の日付を表示
+                activeTicket.due_date && (
+                  <div>📅 {activeTicket.due_date.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$1/$2/$3')}</div>
+                )
               )}
             </div>
           </div>
