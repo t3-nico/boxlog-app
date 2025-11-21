@@ -78,13 +78,6 @@ export const WeekGrid = ({
             isToday={isToday(date)}
             isSelected={false}
           />
-
-          {/* イベント数インジケーター */}
-          {eventsByDate[getDateKey(date)]?.length > 0 ? (
-            <div className="mt-1 text-center">
-              <span className="bg-primary inline-block h-2 w-2 rounded-full" />
-            </div>
-          ) : null}
         </div>
       ))}
     </div>

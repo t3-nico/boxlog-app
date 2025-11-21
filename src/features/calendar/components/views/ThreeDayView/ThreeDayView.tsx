@@ -135,18 +135,10 @@ export const ThreeDayView = ({
             className="text-center"
             showDayName={true}
             showMonthYear={false}
-            dayNameFormat="short"
-            dateFormat="d"
+            dayNameFormat="d"
             isToday={isToday(date)}
             isSelected={false}
           />
-
-          {/* イベント数インジケーター */}
-          {eventsByDate[format(date, 'yyyy-MM-dd')]?.length > 0 && (
-            <div className="mt-1 text-center">
-              <span className="bg-primary inline-block h-2 w-2 rounded-full" />
-            </div>
-          )}
         </div>
       ))}
     </div>
