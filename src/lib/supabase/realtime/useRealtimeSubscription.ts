@@ -46,8 +46,16 @@ export function useRealtimeSubscription<T extends Record<string, unknown> = Reco
   }, [config])
 
   useEffect(() => {
+    const { channelName, enabled = true } = configRef.current
+
+    // enabled=false の場合は購読をスキップ
+    if (!enabled) {
+      console.debug(`[Realtime] Subscription disabled: ${channelName}`)
+      return
+    }
+
     const supabase = createClient()
-    const { channelName, table, event, filter, schema = 'public', onEvent, onError } = configRef.current
+    const { table, event, filter, schema = 'public', onEvent, onError } = configRef.current
 
     try {
       // チャンネル作成

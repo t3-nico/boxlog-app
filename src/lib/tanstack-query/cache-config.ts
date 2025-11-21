@@ -10,9 +10,12 @@
  * リアルタイム性が重要なデータ
  * - イベント（カレンダー表示）
  * - カレンダー（同期重要）
+ *
+ * Supabase Realtime購読により常に最新データを保持するため、staleTime=0に設定
+ * （Realtime経由でinvalidateされたデータは即座に再フェッチ）
  */
 export const realtimeCache = {
-  staleTime: 30 * 1000, // 30秒
+  staleTime: 0, // 常にfresh（Realtime購読により即座に更新）
   gcTime: 2 * 60 * 1000, // 2分
 }
 

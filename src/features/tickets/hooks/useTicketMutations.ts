@@ -30,7 +30,7 @@ import { useTicketInspectorStore } from '../stores/useTicketInspectorStore'
 export function useTicketMutations() {
   const utils = api.useUtils()
   const { closeInspector, openInspector } = useTicketInspectorStore()
-  const { updateCache } = useTicketCacheStore()
+  const { updateCache, setIsMutating } = useTicketCacheStore()
 
   // ✨ 作成
   const createTicket = api.tickets.create.useMutation({
@@ -57,6 +57,9 @@ export function useTicketMutations() {
   // ✨ 更新
   const updateTicket = api.tickets.update.useMutation({
     onMutate: async ({ id, data }) => {
+      // 0. mutation開始フラグを設定（Realtime二重更新防止）
+      setIsMutating(true)
+
       // 1. 進行中のクエリをキャンセル（競合回避）
       await utils.tickets.list.cancel()
       await utils.tickets.getById.cancel({ id })
@@ -111,9 +114,17 @@ export function useTicketMutations() {
       // TanStack Queryキャッシュを無効化してサーバーから再取得
       void utils.tickets.list.invalidate(undefined, { refetchType: 'active' })
       void utils.tickets.getById.invalidate(undefined, { refetchType: 'active' })
+
+      // mutation完了後、少し遅延してからフラグをリセット（Realtimeイベント後に実行）
+      setTimeout(() => {
+        setIsMutating(false)
+      }, 500)
     },
     onError: (err, variables, context) => {
       toast.error('更新に失敗しました')
+
+      // mutation完了（フラグリセット）
+      setIsMutating(false)
 
       // エラー時: 楽観的更新をロールバック
       if (context?.previousTickets) {

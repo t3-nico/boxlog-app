@@ -25,6 +25,8 @@ export interface RealtimeSubscriptionConfig<T extends Record<string, unknown> = 
   filter?: string
   /** スキーマ（デフォルト: 'public'） */
   schema?: string
+  /** 購読を有効化するか（デフォルト: true） */
+  enabled?: boolean
   /** 変更検知時のコールバック */
   onEvent: (payload: RealtimePostgresChangesPayload<T>) => void
   /** エラー時のコールバック（オプション） */

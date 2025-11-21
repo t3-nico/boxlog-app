@@ -36,6 +36,7 @@
 import { api } from '@/lib/trpc'
 
 import { useRealtimeSubscription } from '@/lib/supabase/realtime/useRealtimeSubscription'
+import { useTicketCacheStore } from '../stores/useTicketCacheStore'
 
 interface UseTicketRealtimeOptions {
   /** 購読を有効化するか（デフォルト: true） */
@@ -45,17 +46,25 @@ interface UseTicketRealtimeOptions {
 export function useTicketRealtime(userId: string | undefined, options: UseTicketRealtimeOptions = {}) {
   const { enabled = true } = options
   const utils = api.useUtils()
+  const isMutating = useTicketCacheStore((state) => state.isMutating)
 
   useRealtimeSubscription<{ id: string }>({
     channelName: `ticket-changes-${userId}`,
     table: 'tickets',
     event: '*', // INSERT, UPDATE, DELETE すべて
     filter: userId ? `user_id=eq.${userId}` : undefined,
+    enabled, // enabledオプションを渡す
     onEvent: (payload) => {
       const newRecord = payload.new as { id: string } | undefined
       const oldRecord = payload.old as { id: string } | undefined
 
       console.debug('[Ticket Realtime] Event detected:', payload.eventType, newRecord?.id)
+
+      // 自分のmutation中はRealtime経由の更新をスキップ（二重更新防止）
+      if (isMutating) {
+        console.debug('[Ticket Realtime] Skipping invalidation (mutation in progress)')
+        return
+      }
 
       // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
       void utils.tickets.list.invalidate()
