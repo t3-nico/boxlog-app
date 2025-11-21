@@ -3,9 +3,11 @@
 import { useState } from 'react'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { httpBatchLink, loggerLink } from '@trpc/client'
 import superjson from 'superjson'
 
+import { RealtimeProvider } from '@/components/providers/RealtimeProvider'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { AuthStoreInitializer } from '@/features/auth/stores/AuthStoreInitializer'
@@ -29,9 +31,11 @@ interface ProvidersProps {
  * 1. QueryClientProvider（データ層）
  * 2. tRPC Provider（API層）
  * 3. AuthStoreInitializer（認証層 - Zustand）
- * 4. ThemeProvider（UI層）
- * 5. TooltipProvider（UI層）
- * 6. GlobalSearchProvider（機能層）
+ * 4. RealtimeProvider（リアルタイム購読層 - Supabase）
+ * 5. ThemeProvider（UI層）
+ * 6. TooltipProvider（UI層）
+ * 7. GlobalSearchProvider（機能層）
+ * 8. ReactQueryDevtools（開発ツール - 本番環境では自動除外）
  *
  * @see https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#moving-client-components-down-the-tree
  */
@@ -41,9 +45,9 @@ export function Providers({ children }: ProvidersProps) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 5 * 60 * 1000, // 5分（キャッシュを長く保持）
+            staleTime: 5 * 60 * 1000, // 5分（一般的なデータのデフォルト）
             gcTime: 10 * 60 * 1000, // 10分（ガベージコレクション）
-            refetchOnWindowFocus: false,
+            refetchOnWindowFocus: true, // 業界標準：タブ切り替え時にstaleなデータのみ再フェッチ
             refetchOnReconnect: 'always',
             retry: (failureCount, error) => {
               // エラーによってリトライ戦略を変更
@@ -88,11 +92,15 @@ export function Providers({ children }: ProvidersProps) {
     <QueryClientProvider client={queryClient}>
       <api.Provider client={trpcClient} queryClient={queryClient}>
         <AuthStoreInitializer />
-        <ThemeProvider>
-          <TooltipProvider delayDuration={300} skipDelayDuration={100}>
-            <GlobalSearchProvider>{children}</GlobalSearchProvider>
-          </TooltipProvider>
-        </ThemeProvider>
+        <RealtimeProvider>
+          <ThemeProvider>
+            <TooltipProvider delayDuration={300} skipDelayDuration={100}>
+              <GlobalSearchProvider>{children}</GlobalSearchProvider>
+            </TooltipProvider>
+          </ThemeProvider>
+        </RealtimeProvider>
+        {/* React Query DevTools（開発環境のみ、本番ビルドでは自動除外） */}
+        <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
       </api.Provider>
     </QueryClientProvider>
   )
