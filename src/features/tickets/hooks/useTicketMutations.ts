@@ -44,9 +44,9 @@ export function useTicketMutations() {
         },
       })
 
-      // 2. キャッシュ無効化 → すべてのビューが自動更新
-      utils.tickets.list.invalidate()
-      utils.tickets.getById.invalidate({ id: newTicket.id })
+      // 2. キャッシュ無効化 + 即座に再フェッチ → すべてのビューが自動更新
+      void utils.tickets.list.invalidate(undefined, { refetchType: 'active' })
+      void utils.tickets.getById.invalidate({ id: newTicket.id }, { refetchType: 'active' })
     },
     onError: (error) => {
       toast.error(`作成に失敗しました: ${error.message}`)
@@ -56,12 +56,29 @@ export function useTicketMutations() {
   // ✨ 更新
   const updateTicket = api.tickets.update.useMutation({
     onMutate: async ({ id, data }) => {
-      // Zustandキャッシュを即座に更新（全コンポーネントに即座に反映）
+      // 楽観的更新: Zustandキャッシュを即座に更新（全コンポーネントに即座に反映）
+      const updateData: Record<string, unknown> = {}
+
+      // 繰り返し設定
       if (data.recurrence_type !== undefined || data.recurrence_rule !== undefined) {
-        updateCache(id, {
-          recurrence_type: data.recurrence_type,
-          recurrence_rule: data.recurrence_rule,
-        })
+        if (data.recurrence_type !== undefined) updateData.recurrence_type = data.recurrence_type
+        if (data.recurrence_rule !== undefined) updateData.recurrence_rule = data.recurrence_rule
+      }
+
+      // 日時変更（ドラッグ&ドロップ）
+      if (data.start_time !== undefined) updateData.start_time = data.start_time
+      if (data.end_time !== undefined) updateData.end_time = data.end_time
+      if (data.due_date !== undefined) updateData.due_date = data.due_date
+
+      // その他のフィールド
+      if (data.title !== undefined) updateData.title = data.title
+      if (data.status !== undefined) updateData.status = data.status
+      if (data.description !== undefined) updateData.description = data.description
+      if (data.reminder_minutes !== undefined) updateData.reminder_minutes = data.reminder_minutes
+
+      // Zustandキャッシュを更新
+      if (Object.keys(updateData).length > 0) {
+        updateCache(id, updateData)
       }
 
       return { id }
@@ -70,8 +87,8 @@ export function useTicketMutations() {
       toast.success('更新しました')
 
       // TanStack Queryキャッシュを無効化してサーバーから再取得
-      utils.tickets.list.invalidate()
-      utils.tickets.getById.invalidate()
+      void utils.tickets.list.invalidate(undefined, { refetchType: 'active' })
+      void utils.tickets.getById.invalidate(undefined, { refetchType: 'active' })
     },
     onError: (err, variables, context) => {
       toast.error('更新に失敗しました')
@@ -88,8 +105,8 @@ export function useTicketMutations() {
       toast.success('削除しました')
 
       closeInspector() // Inspectorが開いていたら閉じる
-      utils.tickets.list.invalidate()
-      utils.tickets.getById.invalidate({ id })
+      void utils.tickets.list.invalidate(undefined, { refetchType: 'active' })
+      void utils.tickets.getById.invalidate({ id }, { refetchType: 'active' })
     },
     onError: (error) => {
       toast.error(`削除に失敗しました: ${error.message}`)
@@ -100,7 +117,7 @@ export function useTicketMutations() {
   const bulkUpdateTicket = api.tickets.bulkUpdate.useMutation({
     onSuccess: (result) => {
       toast.success(`${result.count}件のチケットを更新しました`)
-      utils.tickets.list.invalidate()
+      void utils.tickets.list.invalidate(undefined, { refetchType: 'active' })
     },
     onError: (error) => {
       toast.error(`一括更新に失敗しました: ${error.message}`)
@@ -112,7 +129,7 @@ export function useTicketMutations() {
     onSuccess: (result) => {
       toast.success(`${result.count}件のチケットを削除しました`)
       closeInspector()
-      utils.tickets.list.invalidate()
+      void utils.tickets.list.invalidate(undefined, { refetchType: 'active' })
     },
     onError: (error) => {
       toast.error(`一括削除に失敗しました: ${error.message}`)
