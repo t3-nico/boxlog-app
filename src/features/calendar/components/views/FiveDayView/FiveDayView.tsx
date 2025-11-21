@@ -37,6 +37,7 @@ export const FiveDayView = ({
   onDeleteEvent: _onDeleteEvent,
   onRestoreEvent: _onRestoreEvent,
   onEmptyClick,
+  onTimeRangeSelect,
   onTaskDrag: _onTaskDrag,
   onCreateTask: _onCreateTask,
   onCreateRecord: _onCreateRecord,
