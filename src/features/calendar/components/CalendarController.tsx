@@ -17,8 +17,8 @@ import { useNotifications } from '@/features/notifications/hooks/useNotification
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
+import { useTickets } from '@/features/tickets/hooks/useTickets'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
-import { api } from '@/lib/trpc'
 // import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { logger } from '@/lib/logger'
 
@@ -224,8 +224,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     // return getTasksForDateRange(viewDateRange.start, viewDateRange.end)
   }, [viewDateRange.start, viewDateRange.end])
 
-  // Ticketsを取得
-  const { data: ticketsData } = api.tickets.list.useQuery({})
+  // Ticketsを取得（リアルタイム性最適化済み）
+  const { data: ticketsData } = useTickets({})
 
   // 表示範囲のイベントを取得してCalendarEvent型に変換（削除済みを除外）
   const filteredEvents = useMemo(() => {

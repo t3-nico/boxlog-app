@@ -12,6 +12,7 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { DateTimePopoverContent } from '@/features/tickets/components/shared/DateTimePopoverContent'
 import { TicketTagSelectDialogEnhanced } from '@/features/tickets/components/shared/TicketTagSelectDialogEnhanced'
@@ -72,10 +73,12 @@ export function TicketCard({ item }: TicketCardProps) {
   // 日時編集用の状態
   const [dateTimeOpen, setDateTimeOpen] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    item.due_date ? new Date(item.due_date) : undefined
+    item.due_date ? parseDateString(item.due_date) : undefined
   )
-  const [startTime, setStartTime] = useState(item.start_time ? format(new Date(item.start_time), 'HH:mm') : '')
-  const [endTime, setEndTime] = useState(item.end_time ? format(new Date(item.end_time), 'HH:mm') : '')
+  const [startTime, setStartTime] = useState(
+    item.start_time ? format(parseDatetimeString(item.start_time), 'HH:mm') : ''
+  )
+  const [endTime, setEndTime] = useState(item.end_time ? format(parseDatetimeString(item.end_time), 'HH:mm') : '')
   // 通知設定: UI文字列形式（'', '開始時刻', '10分前', ...）
   const [reminderType, setReminderType] = useState<string>(minutesToReminderType(item.reminder_minutes))
 
@@ -146,13 +149,13 @@ export function TicketCard({ item }: TicketCardProps) {
   const getDisplayContent = () => {
     if (!item.due_date && !item.start_time && !item.end_time) return null
 
-    const dateStr = item.due_date ? format(new Date(item.due_date), 'yyyy/MM/dd', { locale: ja }) : ''
+    const dateStr = item.due_date ? format(parseDateString(item.due_date), 'yyyy/MM/dd', { locale: ja }) : ''
     let timeStr = ''
 
     if (item.start_time && item.end_time) {
-      timeStr = ` ${format(new Date(item.start_time), 'HH:mm')} → ${format(new Date(item.end_time), 'HH:mm')}`
+      timeStr = ` ${format(parseDatetimeString(item.start_time), 'HH:mm')} → ${format(parseDatetimeString(item.end_time), 'HH:mm')}`
     } else if (item.start_time) {
-      timeStr = ` ${format(new Date(item.start_time), 'HH:mm')}`
+      timeStr = ` ${format(parseDatetimeString(item.start_time), 'HH:mm')}`
     }
 
     return (

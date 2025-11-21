@@ -62,26 +62,26 @@ export const TicketCardContent = memo<TicketCardContentProps>(function TicketCar
   // 継続時間を計算
 
   if (isCompact) {
-    // コンパクト表示：チケット番号 + タイトル
+    // コンパクト表示：タイトル #番号
     return (
       <div className="flex h-full items-center gap-1">
+        <span className="text-foreground truncate text-xs leading-tight font-medium">{event.title}</span>
         {event.ticket_number && (
-          <span className="text-muted-foreground flex-shrink-0 text-xs leading-tight">#{event.ticket_number}</span>
+          <span className="flex-shrink-0 text-xs leading-tight opacity-75">#{event.ticket_number}</span>
         )}
-        <span className="truncate text-xs leading-tight font-medium">{event.title}</span>
       </div>
     )
   }
 
-  // 通常表示：チケット番号 + タイトル + 時間 + アイコン + タグの順番（優先度順）
+  // 通常表示：タイトル #番号 + 時間 + アイコン + タグの順番（優先度順）
   return (
     <div className="relative flex h-full flex-col gap-0.5 overflow-hidden">
       {/* タイトル（最優先） */}
-      <div className="flex-shrink-0 text-sm leading-tight font-medium">
-        <span className={isCompact ? 'line-clamp-1' : 'line-clamp-2'}>
-          {event.ticket_number && <span className="text-muted-foreground mr-1">#{event.ticket_number}</span>}
-          {event.title}
-        </span>
+      <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-medium">
+        <span className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground`}>{event.title}</span>
+        {event.ticket_number && (
+          <span className="flex-shrink-0 text-sm leading-tight opacity-75">#{event.ticket_number}</span>
+        )}
       </div>
 
       {/* 時間表示 + アイコン（第2優先） */}
@@ -95,9 +95,9 @@ export const TicketCardContent = memo<TicketCardContentProps>(function TicketCar
                 : t('calendar.event.noTimeSet')}
           </span>
           {/* 繰り返しアイコン */}
-          {event.isRecurring && <Repeat className="h-3 w-3 flex-shrink-0" />}
+          {event.isRecurring && <Repeat className="h-3 w-3 flex-shrink-0 opacity-75" />}
           {/* 通知アイコン（reminder_minutesが設定されている場合） */}
-          {event.reminder_minutes != null && <Bell className="h-3 w-3 flex-shrink-0" />}
+          {event.reminder_minutes != null && <Bell className="h-3 w-3 flex-shrink-0 opacity-75" />}
         </div>
       )}
 

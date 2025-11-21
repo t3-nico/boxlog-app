@@ -7,6 +7,7 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
 import { TableCell, TableRow } from '@/components/ui/table'
+import { parseDatetimeString } from '@/features/calendar/utils/dateUtils'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
@@ -207,9 +208,9 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           <DateTimeUnifiedCell
             key={columnId}
             data={{
-              date: item.start_time ? new Date(item.start_time).toISOString().split('T')[0] : null,
-              startTime: item.start_time ? format(new Date(item.start_time), 'HH:mm') : null,
-              endTime: item.end_time ? format(new Date(item.end_time), 'HH:mm') : null,
+              date: item.start_time ? parseDatetimeString(item.start_time).toISOString().split('T')[0] : null,
+              startTime: item.start_time ? format(parseDatetimeString(item.start_time), 'HH:mm') : null,
+              endTime: item.end_time ? format(parseDatetimeString(item.end_time), 'HH:mm') : null,
               reminder: null,
               recurrence: null,
             }}

@@ -10,8 +10,8 @@ export const createTicketSchema = z.object({
   description: z.string().max(10000, '説明は10000文字以内です').optional(), // Markdown対応のため拡張
   status: ticketStatusSchema,
   due_date: z.string().optional(), // 日付（YYYY-MM-DD形式）
-  start_time: z.string().datetime().optional(), // 開始日時（ISO 8601形式）
-  end_time: z.string().datetime().optional(), // 終了日時（ISO 8601形式）
+  start_time: z.string().datetime().nullable().optional(), // 開始日時（ISO 8601形式）
+  end_time: z.string().datetime().nullable().optional(), // 終了日時（ISO 8601形式）
   recurrence_type: recurrenceTypeSchema.optional(), // 繰り返しタイプ（シンプル版）
   recurrence_end_date: z.string().optional(), // 繰り返し終了日（YYYY-MM-DD形式）
   recurrence_rule: z.string().nullable().optional(), // カスタム繰り返し（RRULE形式）

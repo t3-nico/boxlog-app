@@ -100,6 +100,7 @@ export interface TicketWithTags extends Ticket {
 export interface TicketFilters {
   status?: TicketStatus
   search?: string
+  tagId?: string // タグIDでフィルタ
   sortBy?: 'created_at' | 'updated_at' | 'due_date' | 'title'
   sortOrder?: 'asc' | 'desc'
   limit?: number

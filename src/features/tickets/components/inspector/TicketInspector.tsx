@@ -12,8 +12,8 @@ import { Label } from '@/components/ui/label'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
 import { useInboxFocusStore } from '@/features/inbox/stores/useInboxFocusStore'
-import { api } from '@/lib/trpc'
 import { format } from 'date-fns'
 import {
   CheckCircle,
@@ -37,6 +37,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTicket } from '../../hooks/useTicket'
 import { useTicketActivities } from '../../hooks/useTicketActivities'
 import { useTicketMutations } from '../../hooks/useTicketMutations'
+import { useTickets } from '../../hooks/useTickets'
 import { useTicketTags } from '../../hooks/useTicketTags'
 import { useTicketCacheStore } from '../../stores/useTicketCacheStore'
 import { useTicketInspectorStore } from '../../stores/useTicketInspectorStore'
@@ -76,8 +77,8 @@ export function TicketInspector() {
   // Type assertion: In practice ticketData is Ticket | undefined (tRPC error handling is separate)
   const ticket = (ticketData ?? null) as Ticket | null
 
-  // 全チケットリスト取得（ナビゲーション用）
-  const { data: allTickets = [] } = api.tickets.list.useQuery()
+  // 全チケットリスト取得（ナビゲーション用・リアルタイム性最適化済み）
+  const { data: allTickets = [] } = useTickets()
 
   // 現在のチケットのインデックスを計算
   const currentIndex = useMemo(() => {
@@ -280,20 +281,20 @@ export function TicketInspector() {
     // 既存チケット編集モード
     if (ticket && 'id' in ticket) {
       if (ticket.due_date) {
-        setSelectedDate(new Date(ticket.due_date))
+        setSelectedDate(parseDateString(ticket.due_date))
       } else {
         setSelectedDate(undefined)
       }
 
       if (ticket.start_time) {
-        const date = new Date(ticket.start_time)
+        const date = parseDatetimeString(ticket.start_time)
         setStartTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setStartTime('')
       }
 
       if (ticket.end_time) {
-        const date = new Date(ticket.end_time)
+        const date = parseDatetimeString(ticket.end_time)
         setEndTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setEndTime('')

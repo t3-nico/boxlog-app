@@ -6,9 +6,9 @@ import { useEffect } from 'react'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import { TicketCard } from '@/features/tickets/components/display/TicketCard'
+import { useTickets } from '@/features/tickets/hooks/useTickets'
 import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 import type { Ticket } from '@/features/tickets/types/ticket'
-import { api } from '@/lib/trpc'
 
 interface TagDetailPageClientProps {
   tagNumber: string
@@ -21,11 +21,8 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
 
   const tag = tags.find((t) => t.tag_number === Number(tagNumber))
 
-  // タグに紐づくチケットを取得
-  const { data: ticketsData = [], isLoading: isLoadingTickets } = api.tickets.list.useQuery(
-    { tagId: tag?.id },
-    { enabled: !!tag?.id }
-  )
+  // タグに紐づくチケットを取得（リアルタイム性最適化済み）
+  const { data: ticketsData = [], isLoading: isLoadingTickets } = useTickets({ tagId: tag?.id }, { enabled: !!tag?.id })
   const tickets = ticketsData as unknown as Ticket[]
 
   useEffect(() => {

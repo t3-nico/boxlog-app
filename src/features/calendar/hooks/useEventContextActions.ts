@@ -5,19 +5,12 @@
 import { useCallback } from 'react'
 
 import useCalendarToast from '@/features/calendar/lib/toast'
-// import { useCreateModalStore } from '@/features/events/stores/useCreateModalStore'
-// import { useEventStore } from '@/features/events/stores/useEventStore'
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
-// TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
-// import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
+import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 
 export function useEventContextActions() {
   const { t } = useI18n()
-  // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
-  // const { softDeleteEvent, updateEvent: _updateEvent, createEvent } = useEventStore()
-  // const { openEditModal } = useCreateModalStore()
-  // const { setInspectorOpen, setActiveContent } = useInspectorStore()
+  const { openInspector } = useTicketInspectorStore()
   const calendarToast = useCalendarToast()
 
   const handleDeleteEvent = useCallback(
@@ -60,33 +53,13 @@ export function useEventContextActions() {
     [calendarToast, t]
   )
 
-  const handleEditEvent = useCallback((_event: CalendarEvent) => {
-    // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
-    console.log('TODO: Sessions統合後に実装')
-    // CreateEventModalを編集モードで開く（直接クリックと同じ形式に統一）
-    // openEditModal(
-    //   event.id,
-    //   {
-    //     title: event.title,
-    //     description: event.description,
-    //     startDate: event.startDate,
-    //     endDate: event.endDate,
-    //     type: event.type,
-    //     status: event.status,
-    //     priority: event.priority,
-    //     color: event.color,
-    //     location: event.location,
-    //     url: event.url,
-    //     reminders: event.reminders,
-    //     tagIds: event.tags?.map((tag) => tag.id) || [],
-    //   },
-    //   {
-    //     source: 'context-menu',
-    //     date: event.startDate,
-    //     viewType: 'day',
-    //   }
-    // )
-  }, [])
+  const handleEditEvent = useCallback(
+    (event: CalendarEvent) => {
+      // TicketInspectorを開いて編集モードにする
+      openInspector(event.id)
+    },
+    [openInspector]
+  )
 
   // イベントの日付データを正規化
   const normalizeEventDates = (event: CalendarEvent) => {
@@ -227,16 +200,13 @@ export function useEventContextActions() {
     [calendarToast, showDuplicationSuccess, t]
   )
 
-  const handleViewDetails = useCallback((_event: CalendarEvent) => {
-    // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
-    console.log('TODO: Sessions統合後に実装')
-    // Inspectorを開いてイベント詳細を表示
-    // setActiveContent('calendar')
-    // setInspectorOpen(true)
-
-    // 将来的にはここでeventデータをInspectorに渡す処理を追加
-    // 例: setSelectedEvent(event) など
-  }, [])
+  const handleViewDetails = useCallback(
+    (event: CalendarEvent) => {
+      // TicketInspectorを開いて詳細を表示
+      openInspector(event.id)
+    },
+    [openInspector]
+  )
 
   return {
     handleDeleteEvent,

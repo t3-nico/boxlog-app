@@ -1,5 +1,6 @@
 import type { Ticket, TicketStatus, TicketWithTags } from '@/features/tickets/types/ticket'
 import type { CalendarEvent } from '../types/calendar.types'
+import { parseDatetimeString } from './dateUtils'
 
 /**
  * TicketStatusをCalendarEventのstatusにマッピング
@@ -59,8 +60,11 @@ function getColorForStatus(status: TicketStatus): string {
  * ```
  */
 export function ticketToCalendarEvent(ticket: Ticket | TicketWithTags): CalendarEvent {
-  const startDate = ticket.start_time ? new Date(ticket.start_time) : new Date()
-  const endDate = ticket.end_time ? new Date(ticket.end_time) : new Date(startDate.getTime() + 60 * 60 * 1000) // デフォルト1時間後
+  // タイムゾーン問題を回避: YYYY-MM-DDTHH:mm:ss 形式をローカルタイムゾーンとして解釈
+  const startDate = ticket.start_time ? parseDatetimeString(ticket.start_time) : new Date()
+  const endDate = ticket.end_time
+    ? parseDatetimeString(ticket.end_time)
+    : new Date(startDate.getTime() + 60 * 60 * 1000) // デフォルト1時間後
 
   const duration = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60)) // 分単位
 
@@ -75,6 +79,8 @@ export function ticketToCalendarEvent(ticket: Ticket | TicketWithTags): Calendar
     endDate,
     status: mapTicketStatusToCalendarStatus(ticket.status),
     color: getColorForStatus(ticket.status),
+    ticket_number: ticket.ticket_number, // チケット番号を追加
+    reminder_minutes: ticket.reminder_minutes, // 通知設定を追加
     tags, // タグ情報を追加
     createdAt: ticket.created_at ? new Date(ticket.created_at) : new Date(),
     updatedAt: ticket.updated_at ? new Date(ticket.updated_at) : new Date(),
