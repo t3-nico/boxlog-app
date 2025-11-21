@@ -86,7 +86,7 @@ export const TicketCardContent = memo<TicketCardContentProps>(function TicketCar
 
       {/* 時間表示 + アイコン（第2優先） */}
       {showTime != null && (
-        <div className="ticket-time pointer-events-none flex flex-shrink-0 items-center gap-1 text-xs leading-tight opacity-75">
+        <div className="event-time pointer-events-none flex flex-shrink-0 items-center gap-1 text-xs leading-tight opacity-75">
           <span>
             {previewTime
               ? formatTimeRange(previewTime.start, previewTime.end, timeFormat)
