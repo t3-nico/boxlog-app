@@ -1,4 +1,5 @@
 import { api } from '@/lib/trpc'
+import type { UpdateTicketInput } from '@/schemas/tickets/ticket'
 import { toast } from 'sonner'
 import { useTicketCacheStore } from '../stores/useTicketCacheStore'
 import { useTicketInspectorStore } from '../stores/useTicketInspectorStore'
@@ -56,8 +57,16 @@ export function useTicketMutations() {
   // ✨ 更新
   const updateTicket = api.tickets.update.useMutation({
     onMutate: async ({ id, data }) => {
-      // 楽観的更新: Zustandキャッシュを即座に更新（全コンポーネントに即座に反映）
-      const updateData: Record<string, unknown> = {}
+      // 1. 進行中のクエリをキャンセル（競合回避）
+      await utils.tickets.list.cancel()
+      await utils.tickets.getById.cancel({ id })
+
+      // 2. 現在のデータをスナップショット（ロールバック用）
+      const previousTickets = utils.tickets.list.getData()
+      const previousTicket = utils.tickets.getById.getData({ id })
+
+      // 3. 楽観的更新: Zustandキャッシュを即座に更新（全コンポーネントに即座に反映）
+      const updateData: UpdateTicketInput = {}
 
       // 繰り返し設定
       if (data.recurrence_type !== undefined || data.recurrence_rule !== undefined) {
@@ -81,7 +90,20 @@ export function useTicketMutations() {
         updateCache(id, updateData)
       }
 
-      return { id }
+      // 4. TanStack Queryキャッシュを楽観的に更新
+      // リストキャッシュを更新
+      utils.tickets.list.setData(undefined, (oldData) => {
+        if (!oldData) return oldData
+        return oldData.map((ticket) => (ticket.id === id ? { ...ticket, ...updateData } : ticket))
+      })
+
+      // 個別チケットキャッシュを更新
+      utils.tickets.getById.setData({ id }, (oldData) => {
+        if (!oldData) return undefined
+        return Object.assign({}, oldData, updateData)
+      })
+
+      return { id, previousTickets, previousTicket }
     },
     onSuccess: (updatedTicket) => {
       toast.success('更新しました')
@@ -92,9 +114,19 @@ export function useTicketMutations() {
     },
     onError: (err, variables, context) => {
       toast.error('更新に失敗しました')
-      // エラー時はキャッシュを再取得
+
+      // エラー時: 楽観的更新をロールバック
+      if (context?.previousTickets) {
+        utils.tickets.list.setData(undefined, context.previousTickets)
+      }
+      if (context?.previousTicket) {
+        utils.tickets.getById.setData({ id: context.id }, context.previousTicket)
+      }
+
+      // キャッシュを再取得（念のため）
       if (context?.id) {
-        utils.tickets.getById.invalidate({ id: context.id })
+        void utils.tickets.list.invalidate()
+        void utils.tickets.getById.invalidate({ id: context.id })
       }
     },
   })
