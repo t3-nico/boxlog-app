@@ -10,6 +10,7 @@ import {
   calculateEventGhostStyle,
   calculatePreviewTime,
   CalendarDragSelection,
+  type DateTimeSelection,
   EventBlock,
   useGlobalDragCursor,
   useTimeCalculation,
@@ -25,7 +26,7 @@ interface FiveDayContentProps {
   onEventContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
   onEventUpdate?: (eventId: string, updates: Partial<CalendarEvent>) => void
-  onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
+  onTimeRangeSelect?: (selection: DateTimeSelection) => void
   className?: string
   dayIndex: number // 5日間内での日付インデックス（0-4）
   displayDates?: Date[] // 5日間の全日付配列（日付間移動用）
@@ -131,7 +132,7 @@ export const FiveDayContent = ({
       <CalendarDragSelection
         date={date}
         className="absolute inset-0"
-        onTimeRangeSelect={(startTime, endTime) => onTimeRangeSelect?.(date, startTime, endTime)}
+        onTimeRangeSelect={onTimeRangeSelect}
         onSingleClick={onEmptyClick}
         disabled={dragState.isDragging || dragState.isResizing}
       >

@@ -62,6 +62,13 @@ describe('dateUtils', () => {
       expect(isNaN(result.getTime())).toBe(false)
     })
 
+    it('toISOString()形式（ミリ秒.000Z）をローカルタイムゾーンに変換', () => {
+      const result = parseDatetimeString('2025-11-20T22:15:00.000Z')
+      expect(result).toBeInstanceOf(Date)
+      expect(result.getMilliseconds()).toBe(0)
+      expect(isNaN(result.getTime())).toBe(false)
+    })
+
     it('不正な形式でエラーをスロー', () => {
       expect(() => parseDatetimeString('2025-01-22')).toThrow('Invalid datetime format')
       expect(() => parseDatetimeString('2025-01-22 14:30:00')).toThrow('Invalid datetime format')

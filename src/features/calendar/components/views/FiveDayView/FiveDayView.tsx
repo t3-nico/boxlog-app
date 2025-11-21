@@ -198,15 +198,7 @@ export const FiveDayView = ({
                   onEventContextMenu={onEventContextMenu}
                   onEmptyClick={onEmptyClick}
                   onEventUpdate={onUpdateEvent}
-                  onTimeRangeSelect={(date, startTime, endTime) => {
-                    // 時間範囲選択時の処理（必要に応じて実装）
-                    const startDate = new Date(date)
-                    const [startHour, startMinute] = startTime.split(':').map(Number)
-                    startDate.setHours(startHour, startMinute, 0, 0)
-
-                    // onCreateEventは(date: Date, time?: string)の形式なので、startTimeのみ渡す
-                    onCreateEvent?.(startDate, startTime)
-                  }}
+                  onTimeRangeSelect={onTimeRangeSelect}
                   className="h-full"
                   dayIndex={dayIndex}
                   displayDates={displayDates}
