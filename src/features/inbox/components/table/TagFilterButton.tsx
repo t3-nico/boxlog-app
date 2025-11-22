@@ -1,7 +1,7 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import { TicketTagSelectDialogEnhanced } from '@/features/tickets/components/shared/TicketTagSelectDialogEnhanced'
+import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/TicketTagSelectDialogEnhanced'
 import { Tag } from 'lucide-react'
 import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
 

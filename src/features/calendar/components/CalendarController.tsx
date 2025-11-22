@@ -14,17 +14,17 @@ import { format } from 'date-fns'
 // import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
 // import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
+import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
+import { useTickets } from '@/features/plans/hooks/useTickets'
+import { useTicketInspectorStore } from '@/features/plans/stores/useTicketInspectorStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'
-import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
-import { useTickets } from '@/features/tickets/hooks/useTickets'
-import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 // import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { logger } from '@/lib/logger'
 
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 
-import type { Ticket } from '@/features/tickets/types/ticket'
+import type { Ticket } from '@/features/plans/types/ticket'
 import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
 import { useCalendarContextMenu } from '../hooks/useCalendarContextMenu'
 import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard'
@@ -240,14 +240,14 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     // ticket_tags を tags に変換
     const ticketsWithTags = (
       ticketsData as unknown as Array<Ticket & { ticket_tags?: Array<{ tag_id: string; tags: unknown }> }>
-    ).map((ticket) => {
+    ).map((plan) => {
       const tags = ticket.ticket_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
       const { ticket_tags, ...ticketData } = ticket
       return { ...ticketData, tags } as Ticket & { tags: unknown[] }
     })
 
     // start_time/end_timeが設定されているTicketのみを抽出
-    const ticketsWithTime = ticketsWithTags.filter((ticket) => {
+    const ticketsWithTime = ticketsWithTags.filter((plan) => {
       return ticket.start_time && ticket.end_time
     })
 

@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
+import { useTicketInspectorStore } from '@/features/plans/stores/useTicketInspectorStore'
 import { FileSearch, Filter, Inbox, Plus } from 'lucide-react'
 import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
 

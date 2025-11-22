@@ -1,7 +1,7 @@
 'use client'
 
 import { KanbanBoard } from '@/features/board'
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import type { TicketStatus } from '@/features/plans/types/ticket'
 
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'

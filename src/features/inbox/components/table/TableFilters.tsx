@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Separator } from '@/components/ui/separator'
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import type { TicketStatus } from '@/features/plans/types/ticket'
 import { Filter } from 'lucide-react'
 import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore'
 

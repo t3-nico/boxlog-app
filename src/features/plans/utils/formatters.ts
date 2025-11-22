@@ -1,4 +1,4 @@
-import type { TicketStatus } from '../types/ticket'
+import type { TicketStatus } from '../types/plan'
 
 /**
  * チケット番号のフォーマット

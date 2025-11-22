@@ -8,7 +8,7 @@ import { Bell, Calendar as CalendarIcon, Plus, Repeat, Tag } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import type { TicketStatus } from '@/schemas/tickets/ticket'
+import type { TicketStatus } from '@/schemas/plans/ticket'
 import { useTicketMutations } from '../../hooks/useTicketMutations'
 import { useTicketTags } from '../../hooks/useTicketTags'
 import { reminderTypeToMinutes } from '../../utils/reminder'

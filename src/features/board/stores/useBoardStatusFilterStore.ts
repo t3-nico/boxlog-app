@@ -1,4 +1,4 @@
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import type { TicketStatus } from '@/features/plans/types/ticket'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 

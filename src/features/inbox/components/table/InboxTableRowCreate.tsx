@@ -2,7 +2,7 @@
 
 import { Input } from '@/components/ui/input'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
+import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
 import { cn } from '@/lib/utils'
 import { Plus } from 'lucide-react'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'

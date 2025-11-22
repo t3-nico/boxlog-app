@@ -4,8 +4,8 @@
  * TanStack Query統合済み
  */
 
-import { useTickets } from '@/features/tickets/hooks/useTickets'
-import type { Ticket, TicketStatus } from '@/features/tickets/types/ticket'
+import { useTickets } from '@/features/plans/hooks/useTickets'
+import type { Ticket, TicketStatus } from '@/features/plans/types/ticket'
 import type { DueDateFilter } from '../stores/useInboxFilterStore'
 
 /**

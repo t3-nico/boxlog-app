@@ -2,10 +2,10 @@
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
-import { RecurrencePopover } from '@/features/tickets/components/shared/RecurrencePopover'
-import { ReminderSelect } from '@/features/tickets/components/shared/ReminderSelect'
-import { TimeSelect } from '@/features/tickets/components/shared/TimeSelect'
-import { useAutoAdjustEndTime } from '@/features/tickets/hooks/useAutoAdjustEndTime'
+import { RecurrencePopover } from '@/features/plans/components/shared/RecurrencePopover'
+import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
+import { TimeSelect } from '@/features/plans/components/shared/TimeSelect'
+import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime'
 import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat } from 'lucide-react'
 import { useRef, useState } from 'react'
 

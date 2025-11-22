@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 import { useCallback, useEffect } from 'react'
 
-import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
+import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
 import { logger } from '@/lib/logger'
 import type { CalendarEvent } from '../types/calendar.types'
 

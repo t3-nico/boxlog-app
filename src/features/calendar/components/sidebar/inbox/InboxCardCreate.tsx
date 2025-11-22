@@ -1,4 +1,4 @@
-import { TicketQuickCreate } from '@/features/tickets/components/shared/TicketQuickCreate'
+import { TicketQuickCreate } from '@/features/plans/components/shared/TicketQuickCreate'
 
 interface InboxCardCreateProps {
   isCreating: boolean

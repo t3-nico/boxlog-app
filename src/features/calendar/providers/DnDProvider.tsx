@@ -8,9 +8,9 @@ import { format } from 'date-fns'
 import { fromZonedTime } from 'date-fns-tz'
 import { toast } from 'sonner'
 
+import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
+import { useTickets } from '@/features/plans/hooks/useTickets'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
-import { useTickets } from '@/features/tickets/hooks/useTickets'
 
 interface DnDProviderProps {
   children: React.ReactNode

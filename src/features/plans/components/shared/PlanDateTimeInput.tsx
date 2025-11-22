@@ -1,6 +1,6 @@
 'use client'
 
-import { useAutoAdjustEndTime } from '@/features/tickets/hooks/useAutoAdjustEndTime'
+import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime'
 import { Calendar } from 'lucide-react'
 import { useMemo } from 'react'
 import { DatePickerPopover } from './DatePickerPopover'

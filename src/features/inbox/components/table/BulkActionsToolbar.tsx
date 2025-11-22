@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
+import type { TicketStatus } from '@/features/plans/types/ticket'
 import { Archive, Calendar, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'

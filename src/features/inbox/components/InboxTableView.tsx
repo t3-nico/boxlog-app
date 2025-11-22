@@ -2,7 +2,7 @@
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import type { TicketStatus } from '@/features/plans/types/ticket'
 import { Activity, Calendar, CalendarRange, FileText, Hash, Tag } from 'lucide-react'
 import { useEffect, useMemo, useRef } from 'react'
 

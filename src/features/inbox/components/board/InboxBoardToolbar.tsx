@@ -16,8 +16,8 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { useBoardStatusFilterStore } from '@/features/board/stores/useBoardStatusFilterStore'
-import { TicketTagSelectDialogEnhanced } from '@/features/tickets/components/shared/TicketTagSelectDialogEnhanced'
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/TicketTagSelectDialogEnhanced'
+import type { TicketStatus } from '@/features/plans/types/ticket'
 import { Calendar, Plus, Settings2, Tag, X } from 'lucide-react'
 import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore'
 

@@ -6,11 +6,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
-import { DateTimePopoverContent } from '@/features/tickets/components/shared/DateTimePopoverContent'
-import { TicketTagSelectDialogEnhanced } from '@/features/tickets/components/shared/TicketTagSelectDialogEnhanced'
-import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
-import type { TicketStatus } from '@/features/tickets/types/ticket'
-import { reminderTypeToMinutes } from '@/features/tickets/utils/reminder'
+import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent'
+import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/TicketTagSelectDialogEnhanced'
+import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
+import type { TicketStatus } from '@/features/plans/types/ticket'
+import { reminderTypeToMinutes } from '@/features/plans/utils/reminder'
 import { cn } from '@/lib/utils'
 import {
   DndContext,

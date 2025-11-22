@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/ui/badge'
 import { TableCell } from '@/components/ui/table'
-import { TicketTagSelectDialogEnhanced } from '@/features/tickets/components/shared/TicketTagSelectDialogEnhanced'
+import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/TicketTagSelectDialogEnhanced'
 import { useEffect, useRef, useState } from 'react'
 
 interface Tag {

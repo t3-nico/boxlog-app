@@ -26,7 +26,7 @@ interface TicketCardProps {
 export function TicketCard({ ticket, onEdit, onDelete, onClick, tags = [] }: TicketCardProps) {
   const handleCardClick = () => {
     if (onClick) {
-      onClick(ticket)
+      onClick(plan)
     }
   }
 
@@ -59,12 +59,12 @@ export function TicketCard({ ticket, onEdit, onDelete, onClick, tags = [] }: Tic
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {onEdit && <DropdownMenuItem onSelect={handleMenuAction(() => onEdit(ticket))}>編集</DropdownMenuItem>}
+              {onEdit && <DropdownMenuItem onSelect={handleMenuAction(() => onEdit(plan))}>編集</DropdownMenuItem>}
               {onDelete && (
                 <>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onSelect={handleMenuAction(() => onDelete(ticket))}
+                    onSelect={handleMenuAction(() => onDelete(plan))}
                     className="text-destructive focus:text-destructive"
                   >
                     削除

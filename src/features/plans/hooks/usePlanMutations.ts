@@ -1,5 +1,5 @@
 import { api } from '@/lib/trpc'
-import type { UpdateTicketInput } from '@/schemas/tickets/ticket'
+import type { UpdateTicketInput } from '@/schemas/plans/ticket'
 import { toast } from 'sonner'
 import { useTicketCacheStore } from '../stores/useTicketCacheStore'
 import { useTicketInspectorStore } from '../stores/useTicketInspectorStore'
@@ -97,13 +97,13 @@ export function useTicketMutations() {
       // リストキャッシュを更新（フィルターなし）
       utils.tickets.list.setData(undefined, (oldData) => {
         if (!oldData) return oldData
-        return oldData.map((ticket) => (ticket.id === id ? { ...ticket, ...updateData } : ticket))
+        return oldData.map((plan) => (ticket.id === id ? { ...ticket, ...updateData } : ticket))
       })
 
       // リストキャッシュを更新（空オブジェクトフィルター）
       utils.tickets.list.setData({}, (oldData) => {
         if (!oldData) return oldData
-        return oldData.map((ticket) => (ticket.id === id ? { ...ticket, ...updateData } : ticket))
+        return oldData.map((plan) => (ticket.id === id ? { ...ticket, ...updateData } : ticket))
       })
 
       // 個別チケットキャッシュを更新

@@ -82,17 +82,25 @@ export type { PositionedEvent } from './hooks/useEventPosition'
 
 // ===== ユーティリティ関数 =====
 export * from './utils/dateHelpers'
-export * from './utils/eventGhost'
-export * from './utils/eventPositioning'
-export * from './utils/eventSorting'
 export * from './utils/gridCalculator'
+export * from './utils/planGhost'
+export * from './utils/planPositioning'
+export * from './utils/planSorting'
+
+// 後方互換性のためのエイリアス
+export * from './utils/planGhost' // eventGhost からリネーム
+export * from './utils/planPositioning' // eventPositioning からリネーム
+export * from './utils/planSorting' // eventSorting からリネーム
 
 // ===== 定数 =====
 export * from './constants/grid.constants'
 
 // ===== 型定義 =====
 export type * from './types/base.types'
-export type * from './types/event.types'
 export type * from './types/grid.types'
 export type { TimeSlot } from './types/grid.types'
+export type * from './types/plan.types'
 export type * from './types/view.types'
+
+// 後方互換性のためのエイリアス
+export type * from './types/plan.types' // event.types からリネーム

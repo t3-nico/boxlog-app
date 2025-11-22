@@ -1,4 +1,4 @@
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import type { TicketStatus } from '@/features/plans/types/ticket'
 import { isBefore, isToday, isTomorrow, isWithinInterval, startOfDay } from 'date-fns'
 import type { InboxItem } from '../hooks/useInboxData'
 import type { GroupByField, GroupedData } from '../types/group'
