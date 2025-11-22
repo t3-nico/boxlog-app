@@ -3,12 +3,12 @@
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
+import { TicketCard } from '@/features/plans/components/display/TicketCard'
+import { useTickets } from '@/features/plans/hooks/useTickets'
+import { useTicketInspectorStore } from '@/features/plans/stores/useTicketInspectorStore'
+import type { Ticket } from '@/features/plans/types/ticket'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import { TicketCard } from '@/features/tickets/components/display/TicketCard'
-import { useTickets } from '@/features/tickets/hooks/useTickets'
-import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
-import type { Ticket } from '@/features/tickets/types/ticket'
 
 interface TagDetailPageClientProps {
   tagNumber: string
@@ -82,7 +82,7 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {tickets.map((ticket) => (
+                {tickets.map((plan) => (
                   <TicketCard key={ticket.id} ticket={ticket} onClick={(t) => openInspector(t.id)} />
                 ))}
               </div>

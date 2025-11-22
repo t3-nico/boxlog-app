@@ -356,7 +356,7 @@ const ResizeBorder = ({ resizeState }: { resizeState: ResizeState }) => {
   )
 }
 
-export const EventResizeHandle = ({
+export const PlanResizeHandle = ({
   type,
   eventId: _eventId,
   currentTime,
@@ -475,3 +475,7 @@ export const EventResizeHandle = ({
     </>
   )
 }
+
+// 後方互換性のためのエイリアス
+/** @deprecated Use PlanResizeHandle instead */
+export const EventResizeHandle = PlanResizeHandle
