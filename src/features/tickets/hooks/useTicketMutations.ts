@@ -94,8 +94,14 @@ export function useTicketMutations() {
       }
 
       // 4. TanStack Queryキャッシュを楽観的に更新
-      // リストキャッシュを更新
+      // リストキャッシュを更新（フィルターなし）
       utils.tickets.list.setData(undefined, (oldData) => {
+        if (!oldData) return oldData
+        return oldData.map((ticket) => (ticket.id === id ? { ...ticket, ...updateData } : ticket))
+      })
+
+      // リストキャッシュを更新（空オブジェクトフィルター）
+      utils.tickets.list.setData({}, (oldData) => {
         if (!oldData) return oldData
         return oldData.map((ticket) => (ticket.id === id ? { ...ticket, ...updateData } : ticket))
       })
@@ -109,14 +115,22 @@ export function useTicketMutations() {
       return { id, previousTickets, previousTicket }
     },
     onSuccess: (updatedTicket) => {
+      console.log('[useTicketMutations] 更新成功:', updatedTicket)
       toast.success('更新しました')
 
       // TanStack Queryキャッシュを無効化してサーバーから再取得
-      void utils.tickets.list.invalidate(undefined, { refetchType: 'active' })
-      void utils.tickets.getById.invalidate(undefined, { refetchType: 'active' })
+      // refetchType: 'all' ですべてのクエリ（activeとinactive）を再フェッチ
+      console.log('[useTicketMutations] キャッシュ無効化開始')
+      void utils.tickets.list.invalidate(undefined, { refetchType: 'all' }).then(() => {
+        console.log('[useTicketMutations] tickets.list 無効化完了')
+      })
+      void utils.tickets.getById.invalidate(undefined, { refetchType: 'all' }).then(() => {
+        console.log('[useTicketMutations] tickets.getById 無効化完了')
+      })
 
       // mutation完了後、少し遅延してからフラグをリセット（Realtimeイベント後に実行）
       setTimeout(() => {
+        console.log('[useTicketMutations] isMutating = false')
         setIsMutating(false)
       }, 500)
     },
@@ -129,6 +143,7 @@ export function useTicketMutations() {
       // エラー時: 楽観的更新をロールバック
       if (context?.previousTickets) {
         utils.tickets.list.setData(undefined, context.previousTickets)
+        utils.tickets.list.setData({}, context.previousTickets)
       }
       if (context?.previousTicket) {
         utils.tickets.getById.setData({ id: context.id }, context.previousTicket)
@@ -136,7 +151,7 @@ export function useTicketMutations() {
 
       // キャッシュを再取得（念のため）
       if (context?.id) {
-        void utils.tickets.list.invalidate()
+        void utils.tickets.list.invalidate(undefined, { refetchType: 'all' })
         void utils.tickets.getById.invalidate({ id: context.id })
       }
     },

@@ -67,7 +67,8 @@ export function useTicketRealtime(userId: string | undefined, options: UseTicket
       }
 
       // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
-      void utils.tickets.list.invalidate()
+      // undefined を渡すことで、useTickets({}) と useTickets(undefined) の両方を無効化
+      void utils.tickets.list.invalidate(undefined, { refetchType: 'all' })
 
       // 個別チケットのキャッシュも無効化
       if (newRecord?.id) {
