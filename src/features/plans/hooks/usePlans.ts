@@ -1,10 +1,10 @@
 import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
 import { api } from '@/lib/trpc'
-import type { TicketFilters } from '../types/ticket'
+import type { PlanFilters } from '../types/plan'
 
 /**
- * チケット一覧取得フック
- * @description tRPC Query を使用してチケット一覧を取得
+ * プラン一覧取得フック
+ * @description tRPC Query を使用してプラン一覧を取得
  * @param filters - フィルター条件（status, priority, search, sortBy, sortOrder, limit, offset）
  * @param options - React Query オプション
  *
@@ -14,11 +14,11 @@ import type { TicketFilters } from '../types/ticket'
  * - refetchOnWindowFocus: true（グローバル設定で有効）→ staleなデータのみ再フェッチ
  * - gcTime: 2分 → メモリからの削除は遅らせてローディング状態を回避
  *
- * @see {@link cacheStrategies.tickets} - realtimeCache設定を使用
+ * @see {@link cacheStrategies.plans} - realtimeCache設定を使用
  */
-export function useTickets(filters?: TicketFilters, options?: { enabled?: boolean }) {
-  return api.tickets.list.useQuery(filters, {
-    ...cacheStrategies.tickets, // staleTime: 30秒, gcTime: 2分
+export function usePlans(filters?: PlanFilters, options?: { enabled?: boolean }) {
+  return api.plans.list.useQuery(filters, {
+    ...cacheStrategies.plans, // staleTime: 30秒, gcTime: 2分
     retry: 1,
     ...options,
   })
