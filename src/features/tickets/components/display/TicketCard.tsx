@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { parseDateString } from '@/features/calendar/utils/dateUtils'
 import type { Ticket } from '../../types/ticket'
 import { TicketStatusBadge } from './TicketStatusBadge'
 
@@ -85,7 +86,7 @@ export function TicketCard({ ticket, onEdit, onDelete, onClick, tags = [] }: Tic
         {ticket.due_date && (
           <div className="text-muted-foreground flex items-center gap-1 text-sm">
             <Calendar className="h-4 w-4" />
-            <span>{new Date(ticket.due_date).toLocaleDateString('ja-JP')}</span>
+            <span>{parseDateString(ticket.due_date).toLocaleDateString('ja-JP')}</span>
           </div>
         )}
 

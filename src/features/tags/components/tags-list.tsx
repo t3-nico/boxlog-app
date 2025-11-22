@@ -332,11 +332,11 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
   }, [isExpanded])
 
   const handleCreateNewTag = useCallback(() => {
-    console.log('Create new tag')
+    // タグ作成処理は親コンポーネントで実装
   }, [])
 
   const handleCreateNewTagCollapsed = useCallback(() => {
-    console.log('Create new tag')
+    // タグ作成処理は親コンポーネントで実装
   }, [])
 
   const handleCloseEditDialog = useCallback(() => {

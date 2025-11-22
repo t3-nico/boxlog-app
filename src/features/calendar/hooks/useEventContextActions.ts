@@ -5,88 +5,41 @@
 import { useCallback } from 'react'
 
 import useCalendarToast from '@/features/calendar/lib/toast'
-// import { useCreateModalStore } from '@/features/events/stores/useCreateModalStore'
-// import { useEventStore } from '@/features/events/stores/useEventStore'
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
-// TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
-// import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
+import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
+import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 
 export function useEventContextActions() {
   const { t } = useI18n()
-  // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
-  // const { softDeleteEvent, updateEvent: _updateEvent, createEvent } = useEventStore()
-  // const { openEditModal } = useCreateModalStore()
-  // const { setInspectorOpen, setActiveContent } = useInspectorStore()
+  const { openInspector } = useTicketInspectorStore()
   const calendarToast = useCalendarToast()
+  const { deleteTicket } = useTicketMutations()
 
   const handleDeleteEvent = useCallback(
-    async (_event: CalendarEvent) => {
-      // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
-      console.log('TODO: Sessions統合後に実装')
-      // try {
-      //   // イベントのバックアップを作成
-      //   const _eventBackup = { ...event }
+    async (event: CalendarEvent) => {
+      // 削除確認ダイアログ
+      if (!confirm('このチケットを削除しますか？')) {
+        return
+      }
 
-      //   // EventStoreのsoftDeleteEventが既にTrashStoreとの統合を行っている
-      //   await softDeleteEvent(event.id)
-
-      //   // Calendar Toast用のイベントデータを作成
-      //   const eventData = {
-      //     id: event.id,
-      //     title: event.title || t('calendar.event.title'),
-      //     displayStartDate: event.displayStartDate || event.startDate || new Date(),
-      //     displayEndDate: event.displayEndDate || event.endDate || new Date(),
-      //     duration: event.duration || 60,
-      //     isMultiDay: event.isMultiDay || false,
-      //     isRecurring: event.isRecurring || false,
-      //   }
-
-      //   // Calendar Toast で削除通知（アンドゥ付き）
-      //   calendarToast.eventDeleted(eventData, async () => {
-      //     try {
-      //       // アンドゥ処理（復元）
-      //       // Note: 実際の復元機能が必要な場合は restoreEvent などの実装が必要
-      //       calendarToast.success(t('calendar.event.restore'))
-      //     } catch (error) {
-      //       calendarToast.error(t('calendar.event.restoreFailed'))
-      //     }
-      //   })
-      // } catch (err) {
-      //   console.error('Failed to delete event:', err)
-      //   calendarToast.error(t('calendar.event.deleteFailed'))
-      // }
+      try {
+        // チケットを削除
+        await deleteTicket.mutateAsync({ id: event.id })
+      } catch (err) {
+        console.error('Failed to delete event:', err)
+      }
     },
-    [calendarToast, t]
+    [deleteTicket]
   )
 
-  const handleEditEvent = useCallback((_event: CalendarEvent) => {
-    // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
-    console.log('TODO: Sessions統合後に実装')
-    // CreateEventModalを編集モードで開く（直接クリックと同じ形式に統一）
-    // openEditModal(
-    //   event.id,
-    //   {
-    //     title: event.title,
-    //     description: event.description,
-    //     startDate: event.startDate,
-    //     endDate: event.endDate,
-    //     type: event.type,
-    //     status: event.status,
-    //     priority: event.priority,
-    //     color: event.color,
-    //     location: event.location,
-    //     url: event.url,
-    //     reminders: event.reminders,
-    //     tagIds: event.tags?.map((tag) => tag.id) || [],
-    //   },
-    //   {
-    //     source: 'context-menu',
-    //     date: event.startDate,
-    //     viewType: 'day',
-    //   }
-    // )
-  }, [])
+  const handleEditEvent = useCallback(
+    (event: CalendarEvent) => {
+      // TicketInspectorを開いて編集モードにする
+      openInspector(event.id)
+    },
+    [openInspector]
+  )
 
   // イベントの日付データを正規化
   const normalizeEventDates = (event: CalendarEvent) => {
@@ -209,15 +162,15 @@ export function useEventContextActions() {
       // try {
       //   const { startDate, endDate } = normalizeEventDates(event)
       //   logDuplicationStart(event, startDate, endDate)
-
+      //
       //   const newStartDate = new Date(startDate)
       //   const newEndDate = new Date(endDate)
       //   logNewEventDates(newStartDate, newEndDate)
-
+      //
       //   const duplicateData = createDuplicateEventData(event, newStartDate, newEndDate)
       //   const newEvent = await createEvent(duplicateData)
       //   logDuplicationSuccess(newEvent)
-
+      //
       //   showDuplicationSuccess(newEvent)
       // } catch (err) {
       //   console.error('❌ Failed to duplicate event:', err)
@@ -227,16 +180,13 @@ export function useEventContextActions() {
     [calendarToast, showDuplicationSuccess, t]
   )
 
-  const handleViewDetails = useCallback((_event: CalendarEvent) => {
-    // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
-    console.log('TODO: Sessions統合後に実装')
-    // Inspectorを開いてイベント詳細を表示
-    // setActiveContent('calendar')
-    // setInspectorOpen(true)
-
-    // 将来的にはここでeventデータをInspectorに渡す処理を追加
-    // 例: setSelectedEvent(event) など
-  }, [])
+  const handleViewDetails = useCallback(
+    (event: CalendarEvent) => {
+      // TicketInspectorを開いて詳細を表示
+      openInspector(event.id)
+    },
+    [openInspector]
+  )
 
   return {
     handleDeleteEvent,

@@ -52,9 +52,9 @@ export function TicketTagsSection({
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
 
   return (
-    <div className={`px-6 py-4 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
-      <div className="flex items-start gap-2">
-        <Tag className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
+    <div className={`h-[48px] px-6 py-2 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
+      <div className="flex h-[32px] items-center gap-2">
+        <Tag className="text-muted-foreground h-4 w-4 flex-shrink-0" />
         <div className="min-w-0 flex-1">
           <div
             className="bg-card dark:bg-card flex max-h-[5.25rem] flex-wrap items-center gap-2 overflow-y-auto pr-2"
@@ -62,61 +62,54 @@ export function TicketTagsSection({
               scrollbarColor: 'var(--color-muted-foreground) var(--color-card)',
             }}
           >
-            {selectedTagIds.length === 0 ? (
-              <TicketTagSelectDialogEnhanced
-                selectedTagIds={selectedTagIds}
-                onTagsChange={onTagsChange}
-                align={popoverAlign}
-                side={popoverSide}
-                alignOffset={popoverAlignOffset}
-                sideOffset={popoverSideOffset}
+            {/* 選択済みタグを表示 */}
+            {selectedTags.map((tag) => (
+              <Badge
+                key={tag.id}
+                variant="outline"
+                style={{
+                  borderColor: tag.color,
+                }}
+                className="group relative gap-0.5 pr-6 text-xs font-normal"
               >
+                <span className="font-medium" style={{ color: tag.color }}>
+                  #
+                </span>
+                {tag.name}
+                {onRemoveTag && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onRemoveTag(tag.id)
+                    }}
+                    className="hover:bg-background/20 absolute top-1/2 right-1 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+              </Badge>
+            ))}
+
+            {/* タグ選択ダイアログ - 常に同じインスタンスを使用 */}
+            <TicketTagSelectDialogEnhanced
+              selectedTagIds={selectedTagIds}
+              onTagsChange={onTagsChange}
+              align={popoverAlign}
+              side={popoverSide}
+              alignOffset={popoverAlignOffset}
+              sideOffset={popoverSideOffset}
+            >
+              {selectedTagIds.length === 0 ? (
                 <button type="button" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
                   タグを追加...
                 </button>
-              </TicketTagSelectDialogEnhanced>
-            ) : (
-              <>
-                {selectedTags.map((tag) => (
-                  <Badge
-                    key={tag.id}
-                    variant="outline"
-                    style={{
-                      backgroundColor: `${tag.color}20`,
-                      borderColor: tag.color,
-                      color: tag.color,
-                    }}
-                    className="group relative pr-6 font-normal"
-                  >
-                    {tag.name}
-                    {onRemoveTag && (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onRemoveTag(tag.id)
-                        }}
-                        className="hover:bg-background/20 absolute top-1/2 right-1 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    )}
-                  </Badge>
-                ))}
-                <TicketTagSelectDialogEnhanced
-                  selectedTagIds={selectedTagIds}
-                  onTagsChange={onTagsChange}
-                  align={popoverAlign}
-                  side={popoverSide}
-                  alignOffset={popoverAlignOffset}
-                  sideOffset={popoverSideOffset}
-                >
-                  <button type="button" className="hover:bg-accent flex h-6 w-6 items-center justify-center rounded">
-                    <Plus className="h-3.5 w-3.5" />
-                  </button>
-                </TicketTagSelectDialogEnhanced>
-              </>
-            )}
+              ) : (
+                <button type="button" className="hover:bg-accent flex h-6 w-6 items-center justify-center rounded">
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </TicketTagSelectDialogEnhanced>
           </div>
         </div>
       </div>

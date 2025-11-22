@@ -13,7 +13,7 @@ import type { DayColumnProps } from '../../types/view.types'
 import { isWeekend } from '../../utils/dateHelpers'
 import { filterEventsByDate, sortTimedEvents } from '../../utils/eventPositioning'
 import { EmptyState } from '../EmptyState'
-import { EventBlock } from '../EventBlock'
+import { TicketCard } from '../TicketCard'
 
 export const DayColumn = memo<DayColumnProps>(function DayColumn({
   date,
@@ -92,10 +92,10 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
           // positionが見つからない場合は、デフォルト位置を使用してレンダリング
 
           return (
-            <EventBlock
+            <TicketCard
               key={event.id}
               event={event}
-              position={position} // undefinedでも大丈夫（EventBlock側で対応済み）
+              position={position} // undefinedでも大丈夫（TicketCard側で対応済み）
               onClick={onEventClick}
               onDoubleClick={onEventDoubleClick}
               onContextMenu={onEventContextMenu}

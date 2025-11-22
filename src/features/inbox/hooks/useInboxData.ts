@@ -4,9 +4,8 @@
  * TanStack Query統合済み
  */
 
+import { useTickets } from '@/features/tickets/hooks/useTickets'
 import type { Ticket, TicketStatus } from '@/features/tickets/types/ticket'
-import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
-import { api } from '@/lib/trpc'
 import type { DueDateFilter } from '../stores/useInboxFilterStore'
 
 /**
@@ -149,18 +148,15 @@ function ticketToInboxItem(
  * ```
  */
 export function useInboxData(filters: InboxFilters = {}) {
-  // Ticketsの取得
+  // Ticketsの取得（リアルタイム性最適化済み）
   const {
     data: ticketsData,
     isLoading,
     error,
-  } = api.tickets.list.useQuery(
-    {
-      status: filters.status,
-      search: filters.search,
-    },
-    cacheStrategies.inbox
-  )
+  } = useTickets({
+    status: filters.status,
+    search: filters.search,
+  })
 
   // TicketをInboxItemに変換
   // APIレスポンスは部分的な型なので、unknown経由でキャスト

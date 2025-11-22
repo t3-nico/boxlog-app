@@ -9,15 +9,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
 import { useInboxFocusStore } from '@/features/inbox/stores/useInboxFocusStore'
-import { api } from '@/lib/trpc'
 import { format } from 'date-fns'
 import {
-  Calendar,
   CheckCircle,
   ChevronDown,
   ChevronUp,
@@ -39,31 +37,18 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTicket } from '../../hooks/useTicket'
 import { useTicketActivities } from '../../hooks/useTicketActivities'
 import { useTicketMutations } from '../../hooks/useTicketMutations'
+import { useTickets } from '../../hooks/useTickets'
 import { useTicketTags } from '../../hooks/useTicketTags'
 import { useTicketCacheStore } from '../../stores/useTicketCacheStore'
 import { useTicketInspectorStore } from '../../stores/useTicketInspectorStore'
 import type { Ticket } from '../../types/ticket'
 import { formatActivity, formatRelativeTime } from '../../utils/activityFormatter'
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
-import { DatePickerPopover } from '../shared/DatePickerPopover'
 import { NovelDescriptionEditor } from '../shared/NovelDescriptionEditor'
 import { RecurrencePopover } from '../shared/RecurrencePopover'
 import { ReminderSelect } from '../shared/ReminderSelect'
+import { TicketDateTimeInput } from '../shared/TicketDateTimeInput'
 import { TicketTagsSection } from '../shared/TicketTagsSection'
-
-// 15分刻みの時間オプションを生成（0:00 - 23:45）
-const generateTimeOptions = () => {
-  const options: string[] = []
-  for (let hour = 0; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 15) {
-      const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-      options.push(timeString)
-    }
-  }
-  return options
-}
-
-const TIME_OPTIONS = generateTimeOptions()
 
 /**
  * Ticket Inspector（全ページ共通Sheet）
@@ -84,7 +69,7 @@ const TIME_OPTIONS = generateTimeOptions()
  * ```
  */
 export function TicketInspector() {
-  const { isOpen, ticketId, closeInspector, openInspector } = useTicketInspectorStore()
+  const { isOpen, ticketId, initialData, closeInspector, openInspector } = useTicketInspectorStore()
   const { setFocusedId } = useInboxFocusStore()
 
   // Ticketデータ取得（タグ情報も含む）
@@ -92,8 +77,8 @@ export function TicketInspector() {
   // Type assertion: In practice ticketData is Ticket | undefined (tRPC error handling is separate)
   const ticket = (ticketData ?? null) as Ticket | null
 
-  // 全チケットリスト取得（ナビゲーション用）
-  const { data: allTickets = [] } = api.tickets.list.useQuery()
+  // 全チケットリスト取得（ナビゲーション用・リアルタイム性最適化済み）
+  const { data: allTickets = [] } = useTickets()
 
   // 現在のチケットのインデックスを計算
   const currentIndex = useMemo(() => {
@@ -120,6 +105,9 @@ export function TicketInspector() {
       setSelectedTagIds([])
     }
   }, [ticketData])
+
+  // Title欄のref（フォーカス制御用）
+  const titleRef = useRef<HTMLSpanElement>(null)
 
   // Description欄の初期高さ設定
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
@@ -290,22 +278,23 @@ export function TicketInspector() {
 
   // Ticketデータが読み込まれたら状態を初期化
   useEffect(() => {
+    // 既存チケット編集モード
     if (ticket && 'id' in ticket) {
       if (ticket.due_date) {
-        setSelectedDate(new Date(ticket.due_date))
+        setSelectedDate(parseDateString(ticket.due_date))
       } else {
         setSelectedDate(undefined)
       }
 
       if (ticket.start_time) {
-        const date = new Date(ticket.start_time)
+        const date = parseDatetimeString(ticket.start_time)
         setStartTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setStartTime('')
       }
 
       if (ticket.end_time) {
-        const date = new Date(ticket.end_time)
+        const date = parseDatetimeString(ticket.end_time)
         setEndTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setEndTime('')
@@ -327,26 +316,53 @@ export function TicketInspector() {
         setReminderType('')
       }
     }
-  }, [ticket])
+    // 新規作成モード（initialDataあり）
+    else if (!ticket && initialData) {
+      // start_time と end_time から日付と時刻を設定
+      if (initialData.start_time) {
+        const startDate = new Date(initialData.start_time)
+        setSelectedDate(startDate)
+        setStartTime(
+          `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`
+        )
+      }
 
-  // 経過時間を計算（00:00形式）
-  const elapsedTime = useMemo(() => {
-    if (!startTime || !endTime) return null
+      if (initialData.end_time) {
+        const endDate = new Date(initialData.end_time)
+        setEndTime(
+          `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`
+        )
+      }
+    }
+    // 新規作成モード（initialDataなし）
+    else if (!ticket && !initialData) {
+      // フィールドをクリア
+      setSelectedDate(undefined)
+      setStartTime('')
+      setEndTime('')
+      setReminderType('')
+    }
+  }, [ticket, initialData])
 
-    const [startHour, startMin] = startTime.split(':').map(Number)
-    const [endHour, endMin] = endTime.split(':').map(Number)
+  // Inspectorが開いたときにタイトルにフォーカス
+  useEffect(() => {
+    if (isOpen && titleRef.current) {
+      // 少し遅延させてDOMが完全にレンダリングされた後にフォーカス
+      const timer = setTimeout(() => {
+        titleRef.current?.focus()
+        // テキストを全選択（既存のタイトルを簡単に置き換えられるように）
+        const range = document.createRange()
+        const selection = window.getSelection()
+        if (selection && titleRef.current) {
+          range.selectNodeContents(titleRef.current)
+          selection.removeAllRanges()
+          selection.addRange(range)
+        }
+      }, 100)
 
-    const startMinutes = startHour * 60 + startMin
-    const endMinutes = endHour * 60 + endMin
-
-    if (endMinutes <= startMinutes) return null
-
-    const diff = endMinutes - startMinutes
-    const hours = Math.floor(diff / 60)
-    const minutes = diff % 60
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
-  }, [startTime, endTime])
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen, ticketId])
 
   // 自動保存関数（デバウンス処理付き）
   const autoSave = (field: string, value: string | undefined) => {
@@ -595,6 +611,7 @@ export function TicketInspector() {
                 <div className="px-6 pt-4 pb-2">
                   <div className="inline">
                     <span
+                      ref={titleRef}
                       contentEditable
                       suppressContentEditableWarning
                       onBlur={(e) => autoSave('title', e.currentTarget.textContent || '')}
@@ -615,63 +632,19 @@ export function TicketInspector() {
                 </div>
 
                 {/* 日付・時間 */}
-                <div className="border-border/50 border-t px-6 pt-3">
-                  <div className="flex items-center gap-3">
-                    <Calendar className="text-muted-foreground h-4 w-4 flex-shrink-0" />
-
-                    <DatePickerPopover selectedDate={selectedDate} onDateChange={handleDateChange} />
-
-                    {/* 開始時間 - Selectドロップダウン */}
-                    <Select value={startTime} onValueChange={handleStartTimeChange}>
-                      <SelectTrigger className="w-auto !border-0 !bg-transparent !shadow-none hover:!bg-transparent focus:!ring-0 [&_svg]:hidden">
-                        <SelectValue placeholder="開始" />
-                      </SelectTrigger>
-                      <SelectContent side="bottom" align="start" className="max-h-[240px] overflow-y-auto">
-                        {TIME_OPTIONS.map((time) => (
-                          <SelectItem key={`start-${time}`} value={time}>
-                            {time}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-
-                    <span className="text-muted-foreground">→</span>
-
-                    {/* 終了時間 - Selectドロップダウン */}
-                    <Select value={endTime} onValueChange={handleEndTimeChange} disabled={!startTime}>
-                      <SelectTrigger className="w-auto !border-0 !bg-transparent !shadow-none hover:!bg-transparent focus:!ring-0 [&_svg]:hidden">
-                        <SelectValue placeholder="終了" />
-                      </SelectTrigger>
-                      <SelectContent side="bottom" align="start" className="max-h-[240px] overflow-y-auto">
-                        {TIME_OPTIONS.map((time) => {
-                          if (!startTime) return null
-
-                          // 各終了時刻に対する経過時間を計算
-                          const [startHour, startMin] = startTime.split(':').map(Number)
-                          const [endHour, endMin] = time.split(':').map(Number)
-                          const startMinutes = startHour * 60 + startMin
-                          const endMinutes = endHour * 60 + endMin
-
-                          // 開始時刻以前の時刻は表示しない
-                          if (endMinutes <= startMinutes) return null
-
-                          return (
-                            <SelectItem key={`end-${time}`} value={time}>
-                              {time}
-                            </SelectItem>
-                          )
-                        })}
-                      </SelectContent>
-                    </Select>
-
-                    {/* 総経過時間を表示 */}
-                    {elapsedTime && <span className="text-muted-foreground text-sm">{elapsedTime}</span>}
-                  </div>
-                </div>
+                <TicketDateTimeInput
+                  selectedDate={selectedDate}
+                  startTime={startTime}
+                  endTime={endTime}
+                  onDateChange={handleDateChange}
+                  onStartTimeChange={handleStartTimeChange}
+                  onEndTimeChange={handleEndTimeChange}
+                  showBorderTop={true}
+                />
 
                 {/* リピートと通知 */}
-                <div className="flex items-center gap-4 px-6 pb-3">
-                  <div className="ml-6 flex items-center gap-4">
+                <div className="flex h-[40px] items-center gap-4 px-6 pb-2">
+                  <div className="ml-6 flex h-[32px] items-center gap-4">
                     <div className="relative" ref={recurrenceTriggerRef}>
                       <Button
                         variant="ghost"
@@ -832,10 +805,10 @@ export function TicketInspector() {
                 />
 
                 {/* 説明 */}
-                <div className="border-border/50 border-t px-6 py-2">
-                  <div className="flex gap-2">
-                    <FileText className="text-muted-foreground mt-[0.125rem] h-4 w-4 flex-shrink-0" />
-                    <div className="min-w-0 flex-1">
+                <div className="border-border/50 max-h-[232px] min-h-[48px] border-t px-6 py-2">
+                  <div className="flex h-full items-start gap-2">
+                    <FileText className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
+                    <div className="min-w-0 flex-1 overflow-hidden">
                       <NovelDescriptionEditor
                         key={ticket.id}
                         content={ticket.description || ''}

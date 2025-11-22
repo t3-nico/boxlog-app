@@ -276,6 +276,16 @@
       "createNewEvent": "Create new event",
       "enterEventTitle": "Enter event title"
     },
+    "contextMenu": {
+      "open": "Open",
+      "edit": "Edit",
+      "duplicate": "Duplicate",
+      "copyLink": "Copy Link",
+      "changeStatus": "Change Status",
+      "addTag": "Add Tag",
+      "moveToDate": "Change Date",
+      "delete": "Delete"
+    },
     "accessibility": {
       "standardContrast": "Standard Contrast",
       "toggleWeekend": "Toggle Weekend Display"

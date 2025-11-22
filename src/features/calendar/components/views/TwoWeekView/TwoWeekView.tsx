@@ -3,7 +3,7 @@
 
 import { useMemo } from 'react'
 
-import { format, isToday } from 'date-fns'
+import { isToday } from 'date-fns'
 
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
@@ -131,13 +131,6 @@ export const TwoWeekView = ({
             isToday={isToday(date)}
             isSelected={false}
           />
-
-          {/* イベント数インジケーター */}
-          {eventsByDate[format(date, 'yyyy-MM-dd')]?.length > 0 && (
-            <div className="mt-1 text-center">
-              <span className="bg-primary inline-block h-1.5 w-1.5 rounded-full" />
-            </div>
-          )}
         </div>
       ))}
     </div>

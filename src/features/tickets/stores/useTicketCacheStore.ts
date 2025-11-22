@@ -8,6 +8,7 @@ import { create } from 'zustand'
  * 用途:
  * - recurrence_type / recurrence_rule の即座の同期
  * - Card、Inspector、Tableが同時に開いている場合の状態管理
+ * - mutation実行中フラグ管理（Realtime二重更新防止）
  */
 
 interface TicketCache {
@@ -27,10 +28,15 @@ interface TicketCacheState {
 
   // キャッシュクリア
   clearCache: (ticketId: string) => void
+
+  // mutation実行中フラグ（Realtime二重更新防止用）
+  isMutating: boolean
+  setIsMutating: (value: boolean) => void
 }
 
 export const useTicketCacheStore = create<TicketCacheState>((set, get) => ({
   cache: {},
+  isMutating: false,
 
   updateCache: (ticketId, data) =>
     set((state) => ({
@@ -51,4 +57,6 @@ export const useTicketCacheStore = create<TicketCacheState>((set, get) => ({
       delete newCache[ticketId]
       return { cache: newCache }
     }),
+
+  setIsMutating: (value) => set({ isMutating: value }),
 }))

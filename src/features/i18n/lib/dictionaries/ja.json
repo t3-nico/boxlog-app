@@ -276,6 +276,16 @@
       "createNewEvent": "新しいイベントを作成",
       "enterEventTitle": "イベントタイトルを入力"
     },
+    "contextMenu": {
+      "open": "開く",
+      "edit": "編集",
+      "duplicate": "複製",
+      "copyLink": "リンクをコピー",
+      "changeStatus": "ステータスを変更",
+      "addTag": "タグを追加",
+      "moveToDate": "日付を変更",
+      "delete": "削除"
+    },
     "accessibility": {
       "standardContrast": "標準コントラスト",
       "toggleWeekend": "週末表示の切り替え"

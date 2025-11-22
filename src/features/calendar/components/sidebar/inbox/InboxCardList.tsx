@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 import { TicketCard } from '@/features/board/components/shared/TicketCard'
+import { parseDateString } from '@/features/calendar/utils/dateUtils'
 import { useInboxData } from '@/features/inbox/hooks/useInboxData'
 
 import type { CalendarSortType } from '../../navigation/CalendarNavigation'
@@ -58,7 +59,8 @@ export function InboxCardList({
       result = result.filter((item) => {
         if (!item.due_date) return false
 
-        const itemDate = new Date(item.due_date)
+        // タイムゾーン問題を回避: YYYY-MM-DD をローカル日付として解釈
+        const itemDate = parseDateString(item.due_date)
         itemDate.setHours(0, 0, 0, 0)
 
         if (filter === 'today') {
@@ -98,7 +100,8 @@ export function InboxCardList({
         // 期限日順（期限なしは最後）
         if (!a.due_date) return 1
         if (!b.due_date) return -1
-        return new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
+        // タイムゾーン問題を回避: YYYY-MM-DD をローカル日付として解釈
+        return parseDateString(a.due_date).getTime() - parseDateString(b.due_date).getTime()
       } else if (sort === 'priority') {
         // TODO: priority フィールド実装後に対応
         return 0
@@ -150,7 +153,7 @@ export function InboxCardList({
 
   // カードリスト表示（TicketCardを再利用）
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto pb-4">
+    <div className="flex flex-col gap-2 overflow-y-auto pt-4 pb-4">
       {/* 既存カード */}
       {filteredAndSortedItems.map((item) => (
         <TicketCard key={item.id} item={item} />

@@ -3,6 +3,9 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
+import { useDroppable } from '@dnd-kit/core'
+import { format } from 'date-fns'
+
 import { getEventColor } from '@/features/calendar/theme'
 import { calendarStyles } from '@/features/calendar/theme/styles'
 import { cn } from '@/lib/utils'
@@ -49,6 +52,17 @@ export const CalendarDragSelection = ({
   const [selectionStart, setSelectionStart] = useState<{ hour: number; minute: number } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const isDragging = useRef(false)
+  const [dropTime, setDropTime] = useState<string | null>(null)
+
+  // ドロップ可能エリアとして設定
+  // ドロップ先データ: { date: Date, time: string }
+  const { setNodeRef, isOver } = useDroppable({
+    id: `calendar-droppable-${format(date, 'yyyy-MM-dd')}`,
+    data: {
+      date, // Date型
+      time: dropTime, // 'HH:mm' または null
+    },
+  })
 
   // 状態をクリアするヘルパー関数
   const clearSelectionState = () => {
@@ -118,6 +132,34 @@ export const CalendarDragSelection = ({
     },
     [pixelsToTime, disabled]
   )
+
+  // マウスムーブ時にドロップ時刻を更新（ドラッグ中でない場合も）
+  useEffect(() => {
+    if (!containerRef.current) return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return
+
+      const rect = containerRef.current.getBoundingClientRect()
+      const y = e.clientY - rect.top
+
+      // カーソルがコンテナ内にある場合のみ時刻を計算
+      if (y >= 0 && y <= rect.height) {
+        const time = pixelsToTime(y)
+        const timeString = formatTime(time.hour, time.minute)
+        setDropTime(timeString)
+      } else {
+        setDropTime(null)
+      }
+    }
+
+    containerRef.current.addEventListener('mousemove', handleMouseMove)
+    const ref = containerRef.current
+
+    return () => {
+      ref?.removeEventListener('mousemove', handleMouseMove)
+    }
+  }, [pixelsToTime, formatTime])
 
   // グローバルマウスイベント（ドラッグ中）
   useEffect(() => {
@@ -259,8 +301,12 @@ export const CalendarDragSelection = ({
 
   return (
     <div
-      ref={containerRef}
-      className={cn('relative', className)}
+      ref={(node) => {
+        // 両方のrefを設定
+        containerRef.current = node
+        setNodeRef(node)
+      }}
+      className={cn('relative', className, isOver && 'bg-primary/5')}
       role="button"
       tabIndex={0}
       aria-label="Calendar drag selection area"

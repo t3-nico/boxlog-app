@@ -19,6 +19,7 @@ interface ReminderSelectProps {
   value: string // UI表示文字列（'', '開始時刻', '10分前', ...）
   onChange: (value: string) => void
   variant?: 'inspector' | 'compact' | 'button' // inspectorスタイル、compactスタイル、または buttonスタイル
+  disabled?: boolean // 無効化フラグ
 }
 
 /**
@@ -29,7 +30,7 @@ interface ReminderSelectProps {
  * - compact: Card/Tableで使用するコンパクトスタイル（Bell のみ）
  * - button: Card/Tableポップオーバー内で使用する標準ボタンスタイル（繰り返しと同じ）
  */
-export function ReminderSelect({ value, onChange, variant = 'inspector' }: ReminderSelectProps) {
+export function ReminderSelect({ value, onChange, variant = 'inspector', disabled = false }: ReminderSelectProps) {
   const reminderRef = useRef<HTMLDivElement>(null)
   const [showPopover, setShowPopover] = useState(false)
 
@@ -62,9 +63,12 @@ export function ReminderSelect({ value, onChange, variant = 'inspector' }: Remin
       {variant === 'button' ? (
         <button
           type="button"
+          disabled={disabled}
           onClick={(e) => {
             e.stopPropagation()
-            setShowPopover(!showPopover)
+            if (!disabled) {
+              setShowPopover(!showPopover)
+            }
           }}
           className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 dark:hover:bg-input/50 flex h-9 w-fit items-center gap-1 rounded-md border bg-transparent px-2 py-0 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
         >
@@ -90,14 +94,19 @@ export function ReminderSelect({ value, onChange, variant = 'inspector' }: Remin
           size="sm"
           className={hasReminder ? 'text-foreground h-8 gap-2 px-2' : 'text-muted-foreground h-8 gap-2 px-2'}
           type="button"
-          onClick={() => setShowPopover(!showPopover)}
+          disabled={disabled}
+          onClick={() => {
+            if (!disabled) {
+              setShowPopover(!showPopover)
+            }
+          }}
         >
           <Bell className="h-4 w-4" />
           {variant === 'inspector' && <span className="text-sm">{value || '通知'}</span>}
         </Button>
       )}
 
-      {showPopover && (
+      {showPopover && !disabled && (
         <div className="border-input bg-popover absolute top-10 left-0 z-50 w-56 rounded-md border shadow-md">
           <div className="p-1">
             {REMINDER_OPTIONS.map((option, index) => (

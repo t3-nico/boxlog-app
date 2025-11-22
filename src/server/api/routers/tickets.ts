@@ -22,6 +22,89 @@ import {
 import { createTicketActivitySchema, getTicketActivitiesSchema } from '@/schemas/tickets/activity'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 
+/**
+ * チケットの日付整合性を保証する
+ *
+ * ルール:
+ * 1. start_time と end_time の日付部分は必ず同じ
+ * 2. due_date は start_time の日付と同じ
+ * 3. end_time が start_time より前の場合、start_time と同じ日の同じ時刻に修正
+ */
+function normalizeDateTimeConsistency(data: {
+  due_date?: string
+  start_time?: string | null
+  end_time?: string | null
+}): void {
+  // start_time と end_time が両方存在する場合のみ処理
+  if (!data.start_time || !data.end_time) {
+    return
+  }
+
+  const startDate = new Date(data.start_time)
+  const endDate = new Date(data.end_time)
+
+  // 日付部分を取得（ローカルタイムゾーン基準）
+  const startYear = startDate.getFullYear()
+  const startMonth = startDate.getMonth()
+  const startDay = startDate.getDate()
+
+  const endYear = endDate.getFullYear()
+  const endMonth = endDate.getMonth()
+  const endDay = endDate.getDate()
+
+  // 期待されるdue_date
+  const expectedDueDate = `${startYear}-${String(startMonth + 1).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`
+
+  // 整合性チェック: 既に一致している場合はスキップ
+  const datesMatch = startYear === endYear && startMonth === endMonth && startDay === endDay
+  const dueDateMatches = data.due_date === expectedDueDate
+  const endAfterStart = endDate.getTime() >= startDate.getTime()
+
+  console.log('[normalizeDateTimeConsistency] チェック:', {
+    startDate: startDate.toISOString(),
+    endDate: endDate.toISOString(),
+    startLocalDate: `${startYear}-${String(startMonth + 1).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`,
+    endLocalDate: `${endYear}-${String(endMonth + 1).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`,
+    datesMatch,
+    dueDateMatches,
+    endAfterStart,
+    current_due_date: data.due_date,
+    expected_due_date: expectedDueDate,
+  })
+
+  if (datesMatch && dueDateMatches && endAfterStart) {
+    console.log('[normalizeDateTimeConsistency] 既に整合性が取れているため、スキップ')
+    return
+  }
+
+  console.log('[normalizeDateTimeConsistency] 整合性の問題を検出 - 正規化を実行')
+
+  // 1. due_date を start_time の日付に合わせる
+  data.due_date = expectedDueDate
+
+  // 2. end_time の日付を start_time と同じにする（時刻は維持）
+  if (!datesMatch) {
+    const newEndDate = new Date(endDate)
+    newEndDate.setFullYear(startYear)
+    newEndDate.setMonth(startMonth)
+    newEndDate.setDate(startDay)
+    data.end_time = newEndDate.toISOString()
+  }
+
+  // 3. end_time が start_time より前の場合、start_time と同じ時刻にする
+  const finalEndDate = new Date(data.end_time)
+  if (finalEndDate.getTime() < startDate.getTime()) {
+    const fixedEndDate = new Date(startDate)
+    data.end_time = fixedEndDate.toISOString()
+  }
+
+  console.log('[normalizeDateTimeConsistency] 正規化完了:', {
+    due_date: data.due_date,
+    start_time: data.start_time,
+    end_time: data.end_time,
+  })
+}
+
 export const ticketsRouter = createTRPCRouter({
   // ========================================
   // Tags CRUD
@@ -225,6 +308,9 @@ export const ticketsRouter = createTRPCRouter({
   create: protectedProcedure.input(createTicketSchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
+    // 日付整合性を保証
+    normalizeDateTimeConsistency(input)
+
     const { data, error } = await supabase
       .from('tickets')
       .insert({
@@ -257,6 +343,12 @@ export const ticketsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { supabase, userId } = ctx
 
+      console.log('[tickets.update] 更新リクエスト:', {
+        id: input.id,
+        data: input.data,
+        userId,
+      })
+
       // 更新前のデータを取得（変更検出用）
       const { data: oldData } = await supabase
         .from('tickets')
@@ -264,6 +356,34 @@ export const ticketsRouter = createTRPCRouter({
         .eq('id', input.id)
         .eq('user_id', userId)
         .single()
+
+      console.log('[tickets.update] 更新前データ:', oldData)
+
+      // 日付整合性を保証（日付/時刻フィールドが更新される場合のみ）
+      const hasDateTimeUpdate = !!(input.data.due_date || input.data.start_time || input.data.end_time)
+      if (hasDateTimeUpdate && oldData) {
+        // 既存データと新データをマージ
+        const mergedData = {
+          due_date: input.data.due_date ?? oldData.due_date ?? undefined,
+          start_time: input.data.start_time ?? oldData.start_time ?? undefined,
+          end_time: input.data.end_time ?? oldData.end_time ?? undefined,
+        }
+
+        // 整合性を保証
+        normalizeDateTimeConsistency(mergedData)
+
+        // 変更されたフィールドのみ input.data に反映
+        // （ユーザーが明示的に変更したフィールド + 整合性のために調整が必要なフィールド）
+        if (input.data.start_time !== undefined || input.data.end_time !== undefined) {
+          // 時刻が変更された場合、due_date も同期
+          input.data.due_date = mergedData.due_date ?? undefined
+          input.data.start_time = mergedData.start_time ?? undefined
+          input.data.end_time = mergedData.end_time ?? undefined
+        } else if (input.data.due_date !== undefined) {
+          // due_date だけ変更された場合は、due_date のみ更新
+          input.data.due_date = mergedData.due_date ?? undefined
+        }
+      }
 
       const { data, error } = await supabase
         .from('tickets')
@@ -274,11 +394,14 @@ export const ticketsRouter = createTRPCRouter({
         .single()
 
       if (error) {
+        console.error('[tickets.update] エラー:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `チケットの更新に失敗しました: ${error.message}`,
         })
       }
+
+      console.log('[tickets.update] 更新後データ:', data)
 
       // アクティビティ記録: 変更検出して記録
       if (oldData) {

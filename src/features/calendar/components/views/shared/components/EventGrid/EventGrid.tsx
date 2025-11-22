@@ -9,7 +9,7 @@ import { HOUR_HEIGHT } from '../../constants/grid.constants'
 import { useDragAndDrop } from '../../hooks/useDragAndDrop'
 import type { CalendarEvent } from '../../types/event.types'
 import { CalendarDragSelection } from '../CalendarDragSelection'
-import { EventBlock } from '../EventBlock'
+import { TicketCard } from '../TicketCard'
 
 export interface EventGridProps {
   date: Date
@@ -178,7 +178,7 @@ export const EventGrid = ({
                   }
                 }}
               >
-                <EventBlock
+                <TicketCard
                   event={event}
                   position={{
                     top: 0,

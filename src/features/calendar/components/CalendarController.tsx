@@ -16,11 +16,15 @@ import { format } from 'date-fns'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'
+import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
+import { useTickets } from '@/features/tickets/hooks/useTickets'
+import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
 // import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { logger } from '@/lib/logger'
 
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 
+import type { Ticket } from '@/features/tickets/types/ticket'
 import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
 import { useCalendarContextMenu } from '../hooks/useCalendarContextMenu'
 import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard'
@@ -30,6 +34,7 @@ import { useWeekendNavigation } from '../hooks/useWeekendNavigation'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { calculateViewDateRange } from '../lib/view-helpers'
 import { DnDProvider } from '../providers/DnDProvider'
+import { setUserTimezone, ticketsToCalendarEvents } from '../utils/ticketToCalendarEvent'
 
 import type { CalendarEvent, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
@@ -64,6 +69,8 @@ interface CalendarViewExtendedProps extends CalendarViewProps {
 export const CalendarController = ({ className, initialViewType = 'day', initialDate }: CalendarViewExtendedProps) => {
   const router = useRouter()
   const calendarNavigation = useCalendarNavigation()
+  const { openInspector } = useTicketInspectorStore()
+  const { createTicket } = useTicketMutations()
 
   // Context が利用可能な場合はそれを使用、そうでない場合は useCalendarLayout を使用
   const contextAvailable = calendarNavigation !== null
@@ -181,6 +188,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   // タイムゾーン設定の初期化（マウント時のみ）
   useEffect(() => {
+    // グローバル変数にタイムゾーンを設定
+    setUserTimezone(timezone)
+
     if (timezone === 'Asia/Tokyo') {
       // デフォルト値の場合のみ実際のタイムゾーンに更新
       const actualTimezone = getCurrentTimezone()
@@ -217,137 +227,78 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     // return getTasksForDateRange(viewDateRange.start, viewDateRange.end)
   }, [viewDateRange.start, viewDateRange.end])
 
+  // Ticketsを取得（リアルタイム性最適化済み）
+  const { data: ticketsData } = useTickets({})
+
   // 表示範囲のイベントを取得してCalendarEvent型に変換（削除済みを除外）
-  // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
   const filteredEvents = useMemo(() => {
-    // TODO(#621): Sessions統合後に実装
-    return []
+    // Ticketデータがない場合は空配列を返す
+    if (!ticketsData) {
+      return []
+    }
 
-    // サーバーサイドでは空配列を返してhydrationエラーを防ぐ
-    // if (typeof window === 'undefined') {
-    //   return []
-    // }
+    // ticket_tags を tags に変換
+    const ticketsWithTags = (
+      ticketsData as unknown as Array<Ticket & { ticket_tags?: Array<{ tag_id: string; tags: unknown }> }>
+    ).map((ticket) => {
+      const tags = ticket.ticket_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
+      const { ticket_tags, ...ticketData } = ticket
+      return { ...ticketData, tags } as Ticket & { tags: unknown[] }
+    })
 
-    // // 日付範囲を年月日のみで比較するため、時刻をリセット
-    // const startDateOnly = new Date(
-    //   viewDateRange.start.getFullYear(),
-    //   viewDateRange.start.getMonth(),
-    //   viewDateRange.start.getDate()
-    // )
-    // const endDateOnly = new Date(
-    //   viewDateRange.end.getFullYear(),
-    //   viewDateRange.end.getMonth(),
-    //   viewDateRange.end.getDate()
-    // )
+    // start_time/end_timeが設定されているTicketのみを抽出
+    const ticketsWithTime = ticketsWithTags.filter((ticket) => {
+      return ticket.start_time && ticket.end_time
+    })
 
-    // // 全ビューでデバッグログを追加
-    // logger.log(`🔧 ${viewType} FilteredEvents Debug:`, {
-    //   viewType,
-    //   totalEvents: events.length,
-    //   dateRange: { start: viewDateRange.start.toDateString(), end: viewDateRange.end.toDateString() },
-    //   startDateOnly: startDateOnly.toDateString(),
-    //   endDateOnly: endDateOnly.toDateString(),
-    // })
+    // TicketをCalendarEventに変換
+    const calendarEvents = ticketsToCalendarEvents(ticketsWithTime as Ticket[])
 
-    // const filteredByRange = events.filter((event) => {
-    //   // 削除済みイベントを除外
-    //   if (event.isDeleted) {
-    //     return false
-    //   }
+    // 表示範囲内のイベントのみをフィルタリング
+    const startDateOnly = new Date(
+      viewDateRange.start.getFullYear(),
+      viewDateRange.start.getMonth(),
+      viewDateRange.start.getDate()
+    )
+    const endDateOnly = new Date(
+      viewDateRange.end.getFullYear(),
+      viewDateRange.end.getMonth(),
+      viewDateRange.end.getDate()
+    )
 
-    //   // startDateがない場合はフィルタリングから除外
-    //   if (!event.startDate) {
-    //     return false
-    //   }
+    const filtered = calendarEvents.filter((event) => {
+      const eventStartDateOnly = new Date(
+        event.startDate.getFullYear(),
+        event.startDate.getMonth(),
+        event.startDate.getDate()
+      )
+      const eventEndDateOnly = new Date(event.endDate.getFullYear(), event.endDate.getMonth(), event.endDate.getDate())
 
-    //   // startDateをDateオブジェクトに変換（文字列の場合に対応）
-    //   const startDate = event.startDate instanceof Date ? event.startDate : new Date(event.startDate)
-    //   if (isNaN(startDate.getTime())) {
-    //     return false
-    //   }
+      return (
+        (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
+        (eventEndDateOnly >= startDateOnly && eventEndDateOnly <= endDateOnly) ||
+        (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
+      )
+    })
 
-    //   // イベントの日付も年月日のみで比較
-    //   const eventStartDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
-    //   let eventEndDateOnly = eventStartDateOnly
-    //   if (event.endDate) {
-    //     const endDate = event.endDate instanceof Date ? event.endDate : new Date(event.endDate)
-    //     if (!isNaN(endDate.getTime())) {
-    //       eventEndDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
-    //     }
-    //   }
+    logger.log(`[CalendarController] Ticketsフィルタリング:`, {
+      totalTickets: ticketsData.length,
+      ticketsWithTime: ticketsWithTime.length,
+      filteredCount: filtered.length,
+      dateRange: {
+        start: startDateOnly.toDateString(),
+        end: endDateOnly.toDateString(),
+      },
+      sampleEvents: filtered.slice(0, 3).map((e) => ({
+        title: e.title,
+        startDate: e.startDate.toISOString(),
+        endDate: e.endDate.toISOString(),
+        tags: e.tags,
+      })),
+    })
 
-    //   return (
-    //     (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
-    //     (eventEndDateOnly >= startDateOnly && eventEndDateOnly <= endDateOnly) ||
-    //     (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
-    //   )
-    // })
-
-    // // 全ビューでフィルタリング結果のログを出力
-    // logger.log(`[CalendarController] ${viewType}イベントフィルタリング:`, {
-    //   totalEvents: events.length,
-    //   filteredCount: filteredByRange.length,
-    //   dateRange: {
-    //     start: startDateOnly.toDateString(),
-    //     end: endDateOnly.toDateString(),
-    //   },
-    //   sampleEvents: filteredByRange.slice(0, 3).map((e) => ({
-    //     title: e.title,
-    //     startDate: e.startDate?.toDateString?.() || e.startDate,
-    //     originalStartDate: e.startDate instanceof Date ? e.startDate.toISOString() : e.startDate,
-    //   })),
-    // })
-
-    // // Event[]をCalendarEvent[]に変換（安全な日付処理）
-    // const calendarEvents = filteredByRange.map((event) => {
-    //   // startDate を安全にDateオブジェクトに変換
-    //   const startDate = event.startDate
-    //     ? event.startDate instanceof Date
-    //       ? event.startDate
-    //       : new Date(event.startDate)
-    //     : new Date()
-
-    //   // endDate を安全にDateオブジェクトに変換
-    //   const endDate = event.endDate
-    //     ? event.endDate instanceof Date
-    //       ? event.endDate
-    //       : new Date(event.endDate)
-    //     : new Date()
-
-    //   // 無効な日付の場合はデフォルト値を使用
-    //   const validStartDate = isNaN(startDate.getTime()) ? new Date() : startDate
-    //   const validEndDate = isNaN(endDate.getTime()) ? new Date() : endDate
-
-    //   return {
-    //     ...event,
-    //     startDate: validStartDate,
-    //     endDate: validEndDate,
-    //     displayStartDate: validStartDate,
-    //     displayEndDate: validEndDate,
-    //     duration:
-    //       event.endDate && event.startDate
-    //         ? (validEndDate.getTime() - validStartDate.getTime()) / (1000 * 60) // minutes
-    //         : 60, // default 1 hour
-    //     isMultiDay:
-    //       event.startDate && event.endDate ? validStartDate.toDateString() !== validEndDate.toDateString() : false,
-    //     isRecurring: event.isRecurring || false,
-    //     type: event.type || 'event',
-    //   }
-    // })
-
-    // if (viewType === '2week') {
-    //   logger.log('🔧 TwoWeekView Filtered Result:', {
-    //     filteredEventsCount: calendarEvents.length,
-    //     sampleEvents: calendarEvents.slice(0, 3).map((e) => ({
-    //       id: e.id,
-    //       title: e.title,
-    //       startDate: e.startDate.toISOString(),
-    //     })),
-    //   })
-    // }
-
-    // return calendarEvents
-  }, [viewDateRange.start, viewDateRange.end, viewType])
+    return filtered
+  }, [viewDateRange.start, viewDateRange.end, ticketsData])
 
   // タスククリックハンドラー
   const handleTaskClick = useCallback(() => {
@@ -355,14 +306,14 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   }, [])
 
   // イベント関連のハンドラー
-  const handleEventClick = useCallback((_event: CalendarEvent) => {
-    // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
-    // イベント詳細表示モードでInspectorを開く
-    // setSelectedEvent(event)
-    // setActiveContent('event')
-    // setInspectorOpen(true)
-    console.log('TODO: Sessions統合後に実装')
-  }, [])
+  const handleEventClick = useCallback(
+    (event: CalendarEvent) => {
+      // チケットIDでTicket Inspectorを開く
+      openInspector(event.id)
+      logger.log('📋 Opening Ticket Inspector:', { ticketId: event.id, title: event.title })
+    },
+    [openInspector]
+  )
 
   const handleCreateEvent = useCallback(
     (date?: Date, time?: string) => {
@@ -625,14 +576,33 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         selection.endMinute
       )
 
-      logger.log('🟨 モーダルに渡すデータ:')
-      logger.log('選択:', selection)
-      logger.log('開始時間:', startTime.toLocaleTimeString())
-      logger.log('終了時間:', endTime.toLocaleTimeString())
-      logger.log('openCreateModalに渡すデータ:', {
-        startDate: startTime,
-        endDate: endTime,
+      logger.log('📅 Calendar Drag Selection:', {
+        date: selection.date.toDateString(),
+        startTime: startTime.toLocaleTimeString(),
+        endTime: endTime.toLocaleTimeString(),
       })
+
+      // チケットを作成してからInspectorで編集
+      createTicket.mutate(
+        {
+          title: '新規チケット',
+          status: 'backlog',
+          due_date: format(selection.date, 'yyyy-MM-dd'),
+          start_time: startTime.toISOString(),
+          end_time: endTime.toISOString(),
+        },
+        {
+          onSuccess: (newTicket) => {
+            // 作成されたチケットをInspectorで開く
+            openInspector(newTicket.id)
+            logger.log('✅ Created ticket from drag selection:', {
+              ticketId: newTicket.id,
+              title: newTicket.title,
+              dueDate: newTicket.due_date,
+            })
+          },
+        }
+      )
 
       // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
       // CreateEventInspectorを開く

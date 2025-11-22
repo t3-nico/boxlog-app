@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { format } from 'date-fns'
 import { FileText, Repeat } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -10,11 +11,13 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
+import { toLocalISOString } from '@/features/tickets/utils/datetime'
+import { reminderTypeToMinutes } from '@/features/tickets/utils/reminder'
 import { createTicketSchema, type CreateTicketInput } from '@/schemas/tickets/ticket'
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
 import { NovelDescriptionEditor } from './NovelDescriptionEditor'
 import { RecurrencePopover } from './RecurrencePopover'
-import { ReminderPopover } from './ReminderPopover'
+import { ReminderSelect } from './ReminderSelect'
 import { TicketDateTimeInput } from './TicketDateTimeInput'
 import { TicketTagsSection } from './TicketTagsSection'
 import { TicketTitleInput } from './TicketTitleInput'
@@ -64,7 +67,30 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
   const handleSubmit = async (data: CreateTicketInput) => {
     setIsSubmitting(true)
     try {
-      const newTicket = await createTicket.mutateAsync(data)
+      // 日付・時刻・リマインダー・繰り返し情報を追加
+      const ticketData: CreateTicketInput = {
+        ...data,
+        // 日付（YYYY-MM-DD形式）
+        due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
+        // 開始時刻（ISO 8601形式）
+        start_time: selectedDate && startTime ? toLocalISOString(format(selectedDate, 'yyyy-MM-dd'), startTime) : null,
+        // 終了時刻（ISO 8601形式）
+        end_time: selectedDate && endTime ? toLocalISOString(format(selectedDate, 'yyyy-MM-dd'), endTime) : null,
+        // リマインダー（分数）
+        reminder_minutes: reminderTypeToMinutes(reminderType),
+        // 繰り返しルール
+        recurrence_rule: recurrenceRule,
+      }
+
+      // デバッグ: 送信データを確認
+      console.log('[TicketCreatePopover] Submitting ticket:', {
+        reminderType,
+        reminder_minutes: ticketData.reminder_minutes,
+        recurrenceRule,
+        recurrence_rule: ticketData.recurrence_rule,
+      })
+
+      const newTicket = await createTicket.mutateAsync(ticketData)
 
       // タグを追加
       if (selectedTagIds.length > 0 && newTicket?.id) {
@@ -77,6 +103,8 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
       setStartTime('')
       setEndTime('')
       setSelectedTagIds([])
+      setReminderType('')
+      setRecurrenceRule(null)
       setIsOpen(false)
     } catch (error) {
       console.error('Failed to create ticket:', error)
@@ -153,8 +181,8 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
             />
 
             {/* リピートと通知 */}
-            <div className="flex items-center gap-2 px-6 pt-0 pb-3">
-              <div className="ml-4 flex items-center gap-2">
+            <div className="flex h-[40px] items-center gap-2 px-6 pb-2">
+              <div className="ml-4 flex h-[32px] items-center gap-2">
                 <Button
                   ref={recurrenceTriggerRef}
                   variant="ghost"
@@ -179,10 +207,20 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                   recurrenceRule={recurrenceRule}
                   onRepeatTypeChange={(type) => {
                     setRepeatType(type)
-                    // For create, we don't need to update ticket here
-                    // Just track the state for form submission
+
+                    // UI表示文字列からRRULEに変換
                     if (type === '') {
                       setRecurrenceRule(null)
+                    } else if (type === '毎日') {
+                      setRecurrenceRule('FREQ=DAILY')
+                    } else if (type === '毎週') {
+                      setRecurrenceRule('FREQ=WEEKLY')
+                    } else if (type === '毎月') {
+                      setRecurrenceRule('FREQ=MONTHLY')
+                    } else if (type === '毎年') {
+                      setRecurrenceRule('FREQ=YEARLY')
+                    } else if (type === '平日') {
+                      setRecurrenceRule('FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR')
                     }
                   }}
                   onRecurrenceRuleChange={(rrule) => {
@@ -190,7 +228,7 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
                   }}
                 />
 
-                <ReminderPopover reminderType={reminderType} onReminderTypeChange={setReminderType} />
+                <ReminderSelect value={reminderType} onChange={setReminderType} variant="inspector" />
               </div>
             </div>
 
@@ -207,10 +245,10 @@ export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreateP
             />
 
             {/* Description欄（最下部・コンパクト表示） */}
-            <div className="border-border/50 border-t px-6 py-2">
-              <div className="flex gap-2">
-                <FileText className="text-muted-foreground mt-[0.125rem] h-4 w-4 flex-shrink-0" />
-                <div className="min-w-0 flex-1">
+            <div className="border-border/50 max-h-[232px] min-h-[48px] border-t px-6 py-2">
+              <div className="flex h-full items-start gap-2">
+                <FileText className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
+                <div className="min-w-0 flex-1 overflow-hidden">
                   <FormField
                     control={form.control}
                     name="description"

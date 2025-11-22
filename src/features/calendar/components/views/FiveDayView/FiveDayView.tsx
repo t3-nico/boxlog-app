@@ -37,6 +37,7 @@ export const FiveDayView = ({
   onDeleteEvent: _onDeleteEvent,
   onRestoreEvent: _onRestoreEvent,
   onEmptyClick,
+  onTimeRangeSelect,
   onTaskDrag: _onTaskDrag,
   onCreateTask: _onCreateTask,
   onCreateRecord: _onCreateRecord,
@@ -140,13 +141,6 @@ export const FiveDayView = ({
             isToday={isToday(date)}
             isSelected={false}
           />
-
-          {/* イベント数インジケーター */}
-          {eventsByDate[format(date, 'yyyy-MM-dd')]?.length > 0 && (
-            <div className="mt-1 text-center">
-              <span className="bg-primary inline-block h-2 w-2 rounded-full" />
-            </div>
-          )}
         </div>
       ))}
     </div>
@@ -198,15 +192,7 @@ export const FiveDayView = ({
                   onEventContextMenu={onEventContextMenu}
                   onEmptyClick={onEmptyClick}
                   onEventUpdate={onUpdateEvent}
-                  onTimeRangeSelect={(date, startTime, endTime) => {
-                    // 時間範囲選択時の処理（必要に応じて実装）
-                    const startDate = new Date(date)
-                    const [startHour, startMinute] = startTime.split(':').map(Number)
-                    startDate.setHours(startHour, startMinute, 0, 0)
-
-                    // onCreateEventは(date: Date, time?: string)の形式なので、startTimeのみ渡す
-                    onCreateEvent?.(startDate, startTime)
-                  }}
+                  onTimeRangeSelect={onTimeRangeSelect}
                   className="h-full"
                   dayIndex={dayIndex}
                   displayDates={displayDates}
