@@ -34,7 +34,7 @@ import { useWeekendNavigation } from '../hooks/useWeekendNavigation'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { calculateViewDateRange } from '../lib/view-helpers'
 import { DnDProvider } from '../providers/DnDProvider'
-import { ticketsToCalendarEvents } from '../utils/ticketToCalendarEvent'
+import { setUserTimezone, ticketsToCalendarEvents } from '../utils/ticketToCalendarEvent'
 
 import type { CalendarEvent, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
@@ -188,6 +188,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   // タイムゾーン設定の初期化（マウント時のみ）
   useEffect(() => {
+    // グローバル変数にタイムゾーンを設定
+    setUserTimezone(timezone)
+
     if (timezone === 'Asia/Tokyo') {
       // デフォルト値の場合のみ実際のタイムゾーンに更新
       const actualTimezone = getCurrentTimezone()

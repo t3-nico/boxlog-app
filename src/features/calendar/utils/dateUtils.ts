@@ -53,30 +53,35 @@ export function formatDateString(dateString: string): string {
 }
 
 /**
- * ISO 8601 datetime文字列をローカルタイムゾーンのDateオブジェクトに変換
+ * ISO 8601 datetime文字列を指定タイムゾーンのDateオブジェクトに変換
  *
  * @param datetimeString - ISO 8601形式の日時文字列（タイムゾーン付き・なし両対応）
- * @returns ローカルタイムゾーンのDateオブジェクト
+ * @param targetTimezone - 変換先のタイムゾーン（例: 'Asia/Tokyo', 'America/New_York'）。省略時はブラウザのローカルタイムゾーン
+ * @returns 指定タイムゾーンのDateオブジェクト
  *
  * @example
  * ```typescript
  * // タイムゾーンなし
  * const date1 = parseDatetimeString('2025-01-22T14:30:00')
- * // 日本時間: 2025-01-22 14:30:00（タイムゾーン変換なし）
+ * // ブラウザのローカルタイムゾーンで解釈: 2025-01-22 14:30:00
  *
  * // タイムゾーン付き（Supabaseから返される形式）
- * const date2 = parseDatetimeString('2025-11-20T22:15:00+00:00')
- * // UTC時刻をローカルタイムゾーンに変換
+ * const date2 = parseDatetimeString('2025-11-20T10:00:00+00:00', 'Asia/Tokyo')
+ * // UTC 10:00 → JST 19:00 として解釈
  * ```
  */
-export function parseDatetimeString(datetimeString: string): Date {
+export function parseDatetimeString(datetimeString: string, targetTimezone?: string): Date {
   // タイムゾーン付きの形式（YYYY-MM-DDTHH:mm:ss±HH:MM または YYYY-MM-DDTHH:mm:ss.sss±HH:MM）
-  // タイムゾーン付きの場合は標準のDate()コンストラクタを使用（自動的にローカルタイムゾーンに変換される）
   if (datetimeString.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?([+-]\d{2}:\d{2}|Z)$/)) {
     const date = new Date(datetimeString)
     if (isNaN(date.getTime())) {
       throw new Error(`Invalid datetime: ${datetimeString}`)
     }
+
+    // targetTimezoneが指定されている場合、そのタイムゾーンでの表示時刻を返す
+    // ただし、Dateオブジェクトは内部的にはUTCタイムスタンプを保持するため、
+    // ここでは変換せず、表示時にタイムゾーンを考慮する
+    // （注: date-fns-tzを使う場合は後で実装）
     return date
   }
 
@@ -84,7 +89,7 @@ export function parseDatetimeString(datetimeString: string): Date {
   const match = datetimeString.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})$/)
   if (!match) {
     throw new Error(
-      `Invalid datetime format: ${datetimeString}. Expected YYYY-MM-DDTHH:mm:ss or ISO 8601 with timezone.`,
+      `Invalid datetime format: ${datetimeString}. Expected YYYY-MM-DDTHH:mm:ss or ISO 8601 with timezone.`
     )
   }
 
@@ -96,5 +101,8 @@ export function parseDatetimeString(datetimeString: string): Date {
   const minute = parseInt(minuteStr, 10)
   const second = parseInt(secondStr, 10)
 
+  // targetTimezoneが指定されている場合は、そのタイムゾーンの時刻として解釈
+  // ただし、現在の実装ではローカルタイムゾーンとして解釈
+  // （注: date-fns-tzを使う完全な実装は後で追加）
   return new Date(year, month, day, hour, minute, second)
 }

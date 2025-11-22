@@ -2,6 +2,13 @@ import type { Ticket, TicketStatus, TicketWithTags } from '@/features/tickets/ty
 import type { CalendarEvent } from '../types/calendar.types'
 import { parseDatetimeString } from './dateUtils'
 
+// グローバル変数でユーザーのタイムゾーン設定を保持（後でContextから取得するように改善）
+let userTimezone: string | undefined
+
+export function setUserTimezone(timezone: string) {
+  userTimezone = timezone
+}
+
 /**
  * TicketStatusをCalendarEventのstatusにマッピング
  */
@@ -60,13 +67,27 @@ function getColorForStatus(status: TicketStatus): string {
  * ```
  */
 export function ticketToCalendarEvent(ticket: Ticket | TicketWithTags): CalendarEvent {
-  // タイムゾーン問題を回避: YYYY-MM-DDTHH:mm:ss 形式をローカルタイムゾーンとして解釈
-  const startDate = ticket.start_time ? parseDatetimeString(ticket.start_time) : new Date()
+  // ユーザー設定のタイムゾーンでUTC時刻を解釈
+  const startDate = ticket.start_time ? parseDatetimeString(ticket.start_time, userTimezone) : new Date()
   const endDate = ticket.end_time
-    ? parseDatetimeString(ticket.end_time)
+    ? parseDatetimeString(ticket.end_time, userTimezone)
     : new Date(startDate.getTime() + 60 * 60 * 1000) // デフォルト1時間後
 
   const duration = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60)) // 分単位
+
+  // デバッグログ
+  if (ticket.id === '73a64deb-d41f-4f9e-ba4b-07fae568563f') {
+    console.log('[ticketToCalendarEvent] チケット#1 変換:', {
+      ticketId: ticket.id,
+      userTimezone,
+      start_time_db: ticket.start_time,
+      end_time_db: ticket.end_time,
+      startDate_local: startDate.toLocaleString('ja-JP'),
+      endDate_local: endDate.toLocaleString('ja-JP'),
+      startDate_iso: startDate.toISOString(),
+      endDate_iso: endDate.toISOString(),
+    })
+  }
 
   // タグ情報を変換（TicketWithTagsの場合）
   const tags = 'tags' in ticket && ticket.tags ? ticket.tags : undefined

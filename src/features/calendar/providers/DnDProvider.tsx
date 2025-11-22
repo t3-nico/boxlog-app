@@ -5,8 +5,10 @@ import React, { useCallback, useState } from 'react'
 import type { DragEndEvent, DragMoveEvent, DragStartEvent } from '@dnd-kit/core'
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { format } from 'date-fns'
+import { fromZonedTime } from 'date-fns-tz'
 import { toast } from 'sonner'
 
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
 import { useTickets } from '@/features/tickets/hooks/useTickets'
 
@@ -34,6 +36,7 @@ interface DnDProviderProps {
  */
 export const DnDProvider = ({ children }: DnDProviderProps) => {
   const { updateTicket } = useTicketMutations()
+  const { timezone } = useCalendarSettingsStore()
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dragPreviewTime, setDragPreviewTime] = useState<{ date: string; time?: string } | null>(null)
 
@@ -154,18 +157,26 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
             throw new Error('時刻が範囲外です')
           }
 
-          // start_time: YYYY-MM-DDTHH:mm:ss 形式で直接構築
-          const hourPadded = String(hour).padStart(2, '0')
-          const minutePadded = String(minute).padStart(2, '0')
-          start_time = `${due_date}T${hourPadded}:${minutePadded}:00`
+          // ユーザーのタイムゾーンでDateオブジェクトを作成
+          const [year, month, day] = due_date.split('-').map(Number)
+          // ユーザーのタイムゾーンの時刻として作成
+          const zonedStart = new Date(year, month - 1, day, hour, minute, 0)
+          const zonedEnd = new Date(year, month - 1, day, hour + 1, minute, 0)
 
-          // end_time: 開始時刻 + 1時間（デフォルト）
-          const endHour = hour + 1
-          const endHourPadded = String(endHour).padStart(2, '0')
-          end_time = `${due_date}T${endHourPadded}:${minutePadded}:00`
+          // ユーザーのタイムゾーンの時刻をUTCに変換
+          const startDate = fromZonedTime(zonedStart, timezone)
+          const endDate = fromZonedTime(zonedEnd, timezone)
+
+          // ISO 8601形式（UTC）に変換
+          start_time = startDate.toISOString()
+          end_time = endDate.toISOString()
 
           console.log('[DnDProvider] 時間指定イベント:', {
             due_date,
+            dropTime: dropData.time,
+            timezone,
+            zonedStart: zonedStart.toLocaleString('ja-JP'),
+            zonedEnd: zonedEnd.toLocaleString('ja-JP'),
             start_time,
             end_time,
           })
@@ -206,6 +217,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
       } finally {
         // ドラッグ終了時にactiveIdをクリア
         setActiveId(null)
+        setDragPreviewTime(null)
       }
     },
     [updateTicket]
