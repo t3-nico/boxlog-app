@@ -97,7 +97,7 @@ export function CalendarSidebar() {
       value: 'view',
       label: 'View',
       content: (
-        <div className="flex w-full flex-col px-4 pt-4">
+        <div className="flex w-full flex-col items-center px-2 pt-4">
           <MiniCalendar
             selectedDate={navigation?.currentDate}
             month={navigation?.currentDate}
@@ -106,9 +106,14 @@ export function CalendarSidebar() {
                 navigation.navigateToDate(date, true)
               }
             }}
-            showWeekNumbers={true}
+            onMonthChange={(date) => {
+              if (navigation) {
+                navigation.navigateToDate(date, true)
+              }
+            }}
+            showWeekNumbers={false}
             displayRange={displayRange}
-            className="border-input w-full rounded-lg border"
+            className="w-fit border-none bg-transparent p-0"
           />
         </div>
       ),

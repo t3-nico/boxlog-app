@@ -750,43 +750,63 @@ aside * {
   --rdp-accent-background-color: var(--color-primary);
   --rdp-outline: 2px solid var(--color-ring);
   --rdp-outline-selected: 2px solid var(--color-primary);
+
+  /* セルサイズを32pxに統一 */
+  --rdp-day-height: 2rem;
+  --rdp-day-width: 2rem;
+  --rdp-day_button-height: 2rem;
+  --rdp-day_button-width: 2rem;
 }
 
-/* 選択された日付 */
-.rdp-day_button[data-selected-single='true'] {
+/* セルサイズを強制的に32pxに */
+.rdp-day {
+  width: 2rem !important;
+  height: 2rem !important;
+  min-width: 2rem !important;
+  min-height: 2rem !important;
+  max-width: 2rem !important;
+  max-height: 2rem !important;
+}
+
+.rdp-day_button {
+  width: 2rem !important;
+  height: 2rem !important;
+  min-width: 2rem !important;
+  min-height: 2rem !important;
+  max-width: 2rem !important;
+  max-height: 2rem !important;
+  font-size: 14px !important;
+  font-weight: normal !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 選択された日付（今日以外） - accent色の背景 + 角丸 */
+.rdp-day_button[data-selected-single='true']:not([data-today='true']) {
+  background-color: var(--color-accent) !important;
+  color: var(--color-accent-foreground) !important;
+  border-radius: 0.375rem !important;
+}
+
+/* 今日の日付 - primary色の背景 + 白文字 + 角丸（選択されても継続） */
+.rdp-day_button[data-today='true'] {
   background-color: var(--color-primary) !important;
-  color: var(--color-primary-foreground) !important;
-  font-weight: normal !important;
-}
-
-/* 今日の日付 - コントラスト比改善 */
-.rdp-today:not(.rdp-selected) {
-  background-color: transparent !important;
-}
-
-.rdp-day_button[data-today='true']:not([data-selected-single='true']) {
-  background-color: transparent !important;
-  color: var(--color-primary) !important;
-  font-weight: normal !important;
-  border: 2px solid var(--color-primary) !important;
+  color: oklch(1.0 0 0) !important;
+  border-radius: 0.375rem !important;
 }
 
 /* ホバー時 */
-.rdp-day_button:hover:not([data-selected-single='true']):not([aria-disabled='true']) {
+.rdp-day_button:hover:not([data-today='true']):not([aria-disabled='true']) {
   background-color: var(--color-accent) !important;
   color: var(--color-accent-foreground) !important;
+  border-radius: 0.375rem !important;
 }
 
-/* 今日の日付のホバー時 */
-.rdp-day_button[data-today='true']:hover:not([data-selected-single='true']) {
-  background-color: var(--color-primary) !important;
-  color: var(--color-primary-foreground) !important;
-}
-
-/* フォーカス時 */
+/* フォーカス時 - リングなし */
 .rdp-day_button:focus-visible {
-  outline: var(--rdp-outline);
-  outline-offset: 2px;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* ドロップダウン（月・年選択） */
@@ -811,7 +831,12 @@ aside * {
 /* ナビゲーションボタン */
 .rdp-button_previous,
 .rdp-button_next {
-  color: var(--color-foreground);
+  color: oklch(1.0 0 0);
+}
+
+.rdp-button_previous svg,
+.rdp-button_next svg {
+  color: oklch(1.0 0 0);
 }
 
 .rdp-button_previous:hover,
