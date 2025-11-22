@@ -7,8 +7,8 @@ import { useCallback } from 'react'
 import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
-import { useTicketInspectorStore } from '@/features/plans/stores/useTicketInspectorStore'
+import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useTicketInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 
 export function useEventContextActions() {
   const { t } = useI18n()

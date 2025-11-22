@@ -4,8 +4,8 @@
  */
 
 // CalendarEventの型定義（外部からも使用されるため再エクスポート）
-export type { CalendarEvent } from './event.types'
-import type { CalendarEvent } from './event.types'
+export type { CalendarEvent } from './plan.types'
+import type { CalendarEvent } from './plan.types'
 
 // 基本的なビューの共通型（他ファイルから参照のため互換性考慮）
 export type ViewDateRange = {

@@ -23,3 +23,10 @@ export function usePlans(filters?: PlanFilters, options?: { enabled?: boolean })
     ...options,
   })
 }
+
+// 互換性のためのエイリアス
+/** @deprecated Use usePlans instead */
+export const useTickets = usePlans
+
+// Backward compatibility
+export { usePlans as useTickets }

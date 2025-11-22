@@ -7,9 +7,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent'
-import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/TicketTagSelectDialogEnhanced'
-import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
-import type { TicketStatus } from '@/features/plans/types/ticket'
+import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
+import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { reminderTypeToMinutes } from '@/features/plans/utils/reminder'
 import { cn } from '@/lib/utils'
 import {
@@ -80,7 +80,7 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
     }
 
     // ドロップ先のカラムステータスを取得
-    const targetStatus = over.id as TicketStatus
+    const targetStatus = over.id as PlanStatus
 
     // ドラッグ中のアイテムを取得
     const draggedItem = items.find((item) => item.id === active.id)

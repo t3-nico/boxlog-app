@@ -19,8 +19,8 @@ export { CurrentTimeLine, CurrentTimeLineForColumn } from './grid/CurrentTimeLin
 
 // ===== UIコンポーネント =====
 // TicketCard - チケット表示（EventBlock から名称変更）
-export type * from './components/TicketCard'
-export { EventBlock, EventContent, TicketCard, TicketCardContent } from './components/TicketCard'
+export type * from './components/PlanCard'
+export { EventBlock, EventContent, TicketCard, TicketCardContent } from './components/PlanCard'
 
 // DayColumn - 日列（イベント表示エリアのみ）
 export { DayColumn } from './components/DayColumn'
@@ -47,12 +47,12 @@ export { DateDisplay, DateDisplayRow, DayDisplay } from './DateDisplay'
 export { useCurrentTime } from './hooks/useCurrentTime'
 export { useDragAndDrop } from './hooks/useDragAndDrop'
 export type { DragHandlers, DragState } from './hooks/useDragAndDrop'
-export { useEventLayoutCalculator } from './hooks/useEventLayoutCalculator'
-export type { EventLayout } from './hooks/useEventLayoutCalculator'
-export { useEventPosition, usePositionedEvents } from './hooks/useEventPosition'
-export { useEventStyles } from './hooks/useEventStyles'
 export { useGlobalDragCursor } from './hooks/useGlobalDragCursor'
 export { useIsToday } from './hooks/useIsToday'
+export { useEventLayoutCalculator } from './hooks/usePlanLayoutCalculator'
+export type { EventLayout } from './hooks/usePlanLayoutCalculator'
+export { useEventPosition, usePositionedEvents } from './hooks/usePlanPosition'
+export { useEventStyles } from './hooks/usePlanStyles'
 export { useBreakpoint, useResponsiveHourHeight } from './hooks/useResponsiveHourHeight'
 export { useScrollSync } from './hooks/useScrollSync'
 export { useTimeCalculation } from './hooks/useTimeCalculation'
@@ -60,16 +60,16 @@ export type { TimeCalculationResult, UseTimeCalculationOptions } from './hooks/u
 export { useTimeGrid } from './hooks/useTimeGrid'
 export { useTimeSlots } from './hooks/useTimeSlots'
 export { useViewDimensions } from './hooks/useViewDimensions'
-export { useViewEvents } from './hooks/useViewEvents'
-export type { EventPosition } from './hooks/useViewEvents'
+export { useViewEvents } from './hooks/useViewPlans'
+export type { EventPosition } from './hooks/useViewPlans'
 
 // Phase 3: 統合カスタムフック
 export { useCurrentPeriod } from './hooks/useCurrentPeriod'
 export type { UseCurrentPeriodOptions, UseCurrentPeriodReturn } from './hooks/useCurrentPeriod'
 export { useDateUtilities } from './hooks/useDateUtilities'
 export type { UseDateUtilitiesOptions, UseDateUtilitiesReturn } from './hooks/useDateUtilities'
-export { useEventsByDate } from './hooks/useEventsByDate'
-export type { UseEventsByDateOptions, UseEventsByDateReturn } from './hooks/useEventsByDate'
+export { useEventsByDate } from './hooks/usePlansByDate'
+export type { UseEventsByDateOptions, UseEventsByDateReturn } from './hooks/usePlansByDate'
 
 // ===== プロバイダー =====
 export { CalendarGridProvider, useCalendarGridVars } from './components/CalendarGridProvider'
@@ -78,7 +78,7 @@ export { CalendarGridProvider, useCalendarGridVars } from './components/Calendar
 export { CalendarDateHeader, ScrollableCalendarLayout } from './components/ScrollableCalendarLayout'
 
 // 型定義のエクスポート（互換性のため）
-export type { PositionedEvent } from './hooks/useEventPosition'
+export type { PositionedEvent } from './hooks/usePlanPosition'
 
 // ===== ユーティリティ関数 =====
 export * from './utils/dateHelpers'

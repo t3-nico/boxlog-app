@@ -1,5 +1,5 @@
 /**
- * TicketCard専用の型定義
+ * PlanCard専用の型定義
  */
 
 export interface TicketInteractionState {
@@ -13,7 +13,7 @@ export interface TicketInteractionState {
 export type EventInteractionState = TicketInteractionState
 
 export interface TicketDragData {
-  ticketId: string
+  planId: string
   startPosition: { x: number; y: number }
   originalStart: Date
   originalEnd: Date
@@ -23,7 +23,7 @@ export interface TicketDragData {
 export type EventDragData = TicketDragData
 
 export interface TicketResizeData {
-  ticketId: string
+  planId: string
   resizeDirection: 'top' | 'bottom'
   originalStart: Date
   originalEnd: Date

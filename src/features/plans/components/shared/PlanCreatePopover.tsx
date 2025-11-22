@@ -9,25 +9,25 @@ import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
-import { useTicketTags } from '@/features/plans/hooks/useTicketTags'
+import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useTicketTags } from '@/features/plans/hooks/usePlanTags'
 import { toLocalISOString } from '@/features/plans/utils/datetime'
 import { reminderTypeToMinutes } from '@/features/plans/utils/reminder'
-import { createTicketSchema, type CreateTicketInput } from '@/schemas/plans/ticket'
+import { createTicketSchema, type CreateTicketInput } from '@/schemas/plans/plan'
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
 import { NovelDescriptionEditor } from './NovelDescriptionEditor'
+import { TicketDateTimeInput } from './PlanDateTimeInput'
+import { TicketTagsSection } from './PlanTagsSection'
+import { TicketTitleInput } from './PlanTitleInput'
 import { RecurrencePopover } from './RecurrencePopover'
 import { ReminderSelect } from './ReminderSelect'
-import { TicketDateTimeInput } from './TicketDateTimeInput'
-import { TicketTagsSection } from './TicketTagsSection'
-import { TicketTitleInput } from './TicketTitleInput'
 
 interface TicketCreatePopoverProps {
   triggerElement: React.ReactNode
   onSuccess?: () => void
 }
 
-export function TicketCreatePopover({ triggerElement, onSuccess }: TicketCreatePopoverProps) {
+export function PlanCreatePopover({ triggerElement, onSuccess }: TicketCreatePopoverProps) {
   const titleInputRef = useRef<HTMLInputElement>(null)
 
   const [isOpen, setIsOpen] = useState(false)

@@ -1,13 +1,13 @@
 // @ts-nocheck
-// TODO(#389): TicketCard.test型エラーを修正後、@ts-nocheckを削除
+// TODO(#389): PlanCard.test型エラーを修正後、@ts-nocheckを削除
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
 import type { CalendarTicket } from '@/features/calendar/types/calendar.types'
 
-import { TicketCard } from './TicketCard'
+import { PlanCard } from './PlanCard'
 
-describe('TicketCard', () => {
+describe('PlanCard', () => {
   const mockEvent: CalendarTicket = {
     id: 'event-1',
     title: 'テストイベント',
@@ -43,20 +43,20 @@ describe('TicketCard', () => {
 
   describe('基本レンダリング', () => {
     it('イベントが正しく表示される', () => {
-      render(<TicketCard event={mockEvent} position={mockPosition} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} />)
 
       expect(screen.getByRole('button', { name: /Ticket: テストイベント/i })).toBeInTheDocument()
     })
 
     it('デフォルトポジションが適用される', () => {
-      render(<TicketCard event={mockEvent} position={undefined} />)
+      render(<PlanCard event={mockEvent} position={undefined} />)
 
       const eventBlock = screen.getByRole('button')
       expect(eventBlock).toBeInTheDocument()
     })
 
     it('aria属性が正しく設定される', () => {
-      render(<TicketCard event={mockEvent} position={mockPosition} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       expect(eventBlock).toHaveAttribute('aria-label', 'Ticket: テストイベント')
@@ -68,7 +68,7 @@ describe('TicketCard', () => {
   describe('インタラクション', () => {
     it('クリックイベントが発火する', () => {
       const onClick = vi.fn()
-      render(<TicketCard event={mockEvent} position={mockPosition} onClick={onClick} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} onClick={onClick} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       fireEvent.click(eventBlock)
@@ -78,7 +78,7 @@ describe('TicketCard', () => {
 
     it('ダブルクリックイベントが発火する', () => {
       const onDoubleClick = vi.fn()
-      render(<TicketCard event={mockEvent} position={mockPosition} onDoubleClick={onDoubleClick} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} onDoubleClick={onDoubleClick} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       fireEvent.doubleClick(eventBlock)
@@ -88,7 +88,7 @@ describe('TicketCard', () => {
 
     it('右クリックでコンテキストメニューが表示される', () => {
       const onContextMenu = vi.fn()
-      render(<TicketCard event={mockEvent} position={mockPosition} onContextMenu={onContextMenu} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} onContextMenu={onContextMenu} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       fireEvent.contextMenu(eventBlock)
@@ -98,7 +98,7 @@ describe('TicketCard', () => {
 
     it('キーボード操作でクリックイベントが発火する（Enter）', () => {
       const onClick = vi.fn()
-      render(<TicketCard event={mockEvent} position={mockPosition} onClick={onClick} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} onClick={onClick} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       fireEvent.keyDown(eventBlock, { key: 'Enter' })
@@ -108,7 +108,7 @@ describe('TicketCard', () => {
 
     it('キーボード操作でクリックイベントが発火する（Space）', () => {
       const onClick = vi.fn()
-      render(<TicketCard event={mockEvent} position={mockPosition} onClick={onClick} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} onClick={onClick} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       fireEvent.keyDown(eventBlock, { key: ' ' })
@@ -120,7 +120,7 @@ describe('TicketCard', () => {
   describe('ドラッグ操作', () => {
     it('マウスダウンでドラッグ開始イベントが発火する', () => {
       const onDragStart = vi.fn()
-      render(<TicketCard event={mockEvent} position={mockPosition} onDragStart={onDragStart} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} onDragStart={onDragStart} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       fireEvent.mouseDown(eventBlock, { button: 0 })
@@ -129,14 +129,14 @@ describe('TicketCard', () => {
     })
 
     it('ドラッグ中の状態が正しく反映される', () => {
-      render(<TicketCard event={mockEvent} position={mockPosition} isDragging={true} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} isDragging={true} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       expect(eventBlock.className).toContain('cursor-grabbing')
     })
 
     it('選択状態が正しく反映される', () => {
-      render(<TicketCard event={mockEvent} position={mockPosition} isSelected={true} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} isSelected={true} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       expect(eventBlock).toHaveAttribute('aria-pressed', 'true')
@@ -146,14 +146,14 @@ describe('TicketCard', () => {
 
   describe('リサイズ操作', () => {
     it('リサイズハンドルが存在する', () => {
-      render(<TicketCard event={mockEvent} position={mockPosition} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} />)
 
       const resizeHandle = screen.getByRole('slider', { name: /Resize ticket duration/i })
       expect(resizeHandle).toBeInTheDocument()
     })
 
     it('リサイズハンドルのaria属性が正しく設定される', () => {
-      render(<TicketCard event={mockEvent} position={mockPosition} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} />)
 
       const resizeHandle = screen.getByRole('slider')
       expect(resizeHandle).toHaveAttribute('aria-orientation', 'vertical')
@@ -164,7 +164,7 @@ describe('TicketCard', () => {
 
     it('リサイズハンドルのマウスダウンでリサイズ開始イベントが発火する', () => {
       const onResizeStart = vi.fn()
-      render(<TicketCard event={mockEvent} position={mockPosition} onResizeStart={onResizeStart} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} onResizeStart={onResizeStart} />)
 
       const resizeHandle = screen.getByRole('slider')
       fireEvent.mouseDown(resizeHandle)
@@ -175,7 +175,7 @@ describe('TicketCard', () => {
 
   describe('スタイリング', () => {
     it('カスタムclassNameが適用される', () => {
-      render(<TicketCard event={mockEvent} position={mockPosition} className="custom-class" />)
+      render(<PlanCard event={mockEvent} position={mockPosition} className="custom-class" />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       expect(eventBlock.className).toContain('custom-class')
@@ -183,7 +183,7 @@ describe('TicketCard', () => {
 
     it('カスタムstyleが適用される', () => {
       const customStyle = { backgroundColor: 'red' }
-      render(<TicketCard event={mockEvent} position={mockPosition} style={customStyle} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} style={customStyle} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       expect(eventBlock).toHaveStyle({ backgroundColor: 'red' })
@@ -191,7 +191,7 @@ describe('TicketCard', () => {
 
     it('高さが30px未満の場合、コンパクトスタイルが適用される', () => {
       const smallPosition = { ...mockPosition, height: 25 }
-      render(<TicketCard event={mockEvent} position={smallPosition} />)
+      render(<PlanCard event={mockEvent} position={smallPosition} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       expect(eventBlock.className).toContain('text-xs')
@@ -199,7 +199,7 @@ describe('TicketCard', () => {
 
     it('最小高さが保証される', () => {
       const tinyPosition = { ...mockPosition, height: 5 }
-      render(<TicketCard event={mockEvent} position={tinyPosition} />)
+      render(<PlanCard event={mockEvent} position={tinyPosition} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
       // MIN_EVENT_HEIGHTが適用されるため、少なくとも20px以上
@@ -211,7 +211,7 @@ describe('TicketCard', () => {
 
   describe('ホバー状態', () => {
     it('マウスホバーで状態が変わる', () => {
-      render(<TicketCard event={mockEvent} position={mockPosition} />)
+      render(<PlanCard event={mockEvent} position={mockPosition} />)
 
       const eventBlock = screen.getByRole('button', { name: /Ticket: テストイベント/i })
 
@@ -231,7 +231,7 @@ describe('TicketCard', () => {
 
       const { container } = render(
         <div onClick={parentClick}>
-          <TicketCard event={mockEvent} position={mockPosition} onClick={onClick} />
+          <PlanCard event={mockEvent} position={mockPosition} onClick={onClick} />
         </div>
       )
 
@@ -250,7 +250,7 @@ describe('TicketCard', () => {
 
       const { container } = render(
         <div onDoubleClick={parentDoubleClick}>
-          <TicketCard event={mockEvent} position={mockPosition} onDoubleClick={onDoubleClick} />
+          <PlanCard event={mockEvent} position={mockPosition} onDoubleClick={onDoubleClick} />
         </div>
       )
 

@@ -55,13 +55,13 @@ export function useCalendarRealtime(userId: string | undefined, options: UseCale
 
       // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
       // undefined を渡すことで、useTickets({}) と useTickets(undefined) の両方を無効化
-      void utils.tickets.list.invalidate(undefined, { refetchType: 'all' })
+      void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
 
       // 個別チケットのキャッシュも無効化（Inspector等で使用）
       if (newRecord?.id) {
-        void utils.tickets.getById.invalidate({ id: newRecord.id })
+        void utils.plans.getById.invalidate({ id: newRecord.id })
       } else if (oldRecord?.id) {
-        void utils.tickets.getById.invalidate({ id: oldRecord.id })
+        void utils.plans.getById.invalidate({ id: oldRecord.id })
       }
     },
     onError: (error) => {

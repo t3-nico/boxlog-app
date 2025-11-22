@@ -15,11 +15,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent'
-import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/TicketTagSelectDialogEnhanced'
-import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
-import { useTicketTags } from '@/features/plans/hooks/useTicketTags'
-import { useTicketCacheStore } from '@/features/plans/stores/useTicketCacheStore'
-import { useTicketInspectorStore } from '@/features/plans/stores/useTicketInspectorStore'
+import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
+import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useTicketTags } from '@/features/plans/hooks/usePlanTags'
+import { useTicketCacheStore } from '@/features/plans/stores/usePlanCacheStore'
+import { useTicketInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { toLocalISOString } from '@/features/plans/utils/datetime'
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder'
 import { configToReadable, ruleToConfig } from '@/features/plans/utils/rrule'
@@ -50,12 +50,12 @@ interface TicketCardProps {
  * - InboxCardList（Calendar Sidebar）
  */
 export function TicketCard({ item }: TicketCardProps) {
-  const { openInspector, ticketId } = useTicketInspectorStore()
+  const { openInspector, planId } = useTicketInspectorStore()
   const { focusedId, setFocusedId } = useBoardFocusStore()
   const { addTicketTag, removeTicketTag } = useTicketTags()
   const { updateTicket } = useTicketMutations()
   const { getCache } = useTicketCacheStore()
-  const isActive = ticketId === item.id
+  const isActive = planId === item.id
   const isFocused = focusedId === item.id
 
   // ドラッグ可能にする

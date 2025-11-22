@@ -21,8 +21,8 @@ import { useEffect, useState } from 'react'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useCalendarRealtime } from '@/features/calendar/hooks/useCalendarRealtime'
 import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime'
+import { useTicketRealtime } from '@/features/plans/hooks/usePlanRealtime'
 import { useTagRealtime } from '@/features/tags/hooks/useTagRealtime'
-import { useTicketRealtime } from '@/features/tickets/hooks/useTicketRealtime'
 
 interface RealtimeProviderProps {
   children: React.ReactNode

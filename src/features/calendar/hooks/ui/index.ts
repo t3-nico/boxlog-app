@@ -1,7 +1,7 @@
 // Calendar UI hooks
 export { useCalendarLayout } from './useCalendarLayout'
 // Note: useEventPosition and useTimeGrid modules not found - commented out
-// export { useEventPosition } from './useEventPosition'
+// export { useEventPosition } from './usePlanPosition'
 // export { useTimeGrid } from './useTimeGrid'
 
 // Types

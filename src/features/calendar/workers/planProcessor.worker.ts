@@ -1,49 +1,49 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
+// @ts-nocheck TODO(#621): Plans削除後の一時的な型エラー回避
 /**
- * Event Processing Web Worker
+ * Plan Processing Web Worker
  * 重い計算処理をメインスレッドから分離してUIをブロックしない
  */
 
-import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 // ワーカーメッセージの型定義
-interface ProcessEventsPayload {
-  events: CalendarEvent[]
+interface ProcessPlansPayload {
+  plans: CalendarPlan[]
   options?: Record<string, unknown>
 }
 
 interface CalculateOverlapsPayload {
-  events: CalendarEvent[]
+  plans: CalendarPlan[]
   dateRange: { start: Date; end: Date }
 }
 
 interface GenerateRecurringPayload {
-  event: CalendarEvent
+  plan: CalendarPlan
   pattern: RecurrencePattern
   dateRange: { start: Date; end: Date }
 }
 
-interface SearchEventsPayload {
-  events: CalendarEvent[]
+interface SearchPlansPayload {
+  plans: CalendarPlan[]
   query: string
   options?: Record<string, unknown>
 }
 
 interface OptimizeLayoutPayload {
-  events: CalendarEvent[]
+  plans: CalendarPlan[]
   containerWidth: number
 }
 
 type WorkerMessagePayload =
-  | ProcessEventsPayload
+  | ProcessPlansPayload
   | CalculateOverlapsPayload
   | GenerateRecurringPayload
-  | SearchEventsPayload
+  | SearchPlansPayload
   | OptimizeLayoutPayload
 
 interface WorkerMessage {
   id: string
-  type: 'PROCESS_EVENTS' | 'CALCULATE_OVERLAPS' | 'GENERATE_RECURRING' | 'SEARCH_EVENTS' | 'OPTIMIZE_LAYOUT'
+  type: 'PROCESS_PLANS' | 'CALCULATE_OVERLAPS' | 'GENERATE_RECURRING' | 'SEARCH_PLANS' | 'OPTIMIZE_LAYOUT'
   payload: WorkerMessagePayload
 }
 
@@ -68,11 +68,11 @@ interface RecurrencePattern {
   byMonthDay?: number[]
 }
 
-// イベント重複計算の結果
+// プラン重複計算の結果
 interface OverlapResult {
-  eventId: string
+  planId: string
   overlaps: {
-    eventId: string
+    planId: string
     overlapDuration: number
     overlapPercentage: number
   }[]
@@ -80,7 +80,7 @@ interface OverlapResult {
 
 // レイアウト最適化の結果
 interface LayoutOptimization {
-  eventId: string
+  planId: string
   column: number
   width: number
   left: number
@@ -95,33 +95,33 @@ self.onmessage = function (e: MessageEvent<WorkerMessage>) {
     let result: unknown
 
     switch (type) {
-      case 'PROCESS_EVENTS': {
-        const p = payload as ProcessEventsPayload
-        result = processEvents(p.events, p.options)
+      case 'PROCESS_PLANS': {
+        const p = payload as ProcessPlansPayload
+        result = processPlans(p.plans, p.options)
         break
       }
 
       case 'CALCULATE_OVERLAPS': {
         const p = payload as CalculateOverlapsPayload
-        result = calculateEventOverlaps(p.events, p.dateRange)
+        result = calculatePlanOverlaps(p.plans, p.dateRange)
         break
       }
 
       case 'GENERATE_RECURRING': {
         const p = payload as GenerateRecurringPayload
-        result = generateRecurringEvents(p.event, p.pattern, p.dateRange)
+        result = generateRecurringPlans(p.plan, p.pattern, p.dateRange)
         break
       }
 
-      case 'SEARCH_EVENTS': {
-        const p = payload as SearchEventsPayload
-        result = searchEvents(p.events, p.query, p.options)
+      case 'SEARCH_PLANS': {
+        const p = payload as SearchPlansPayload
+        result = searchPlans(p.plans, p.query, p.options)
         break
       }
 
       case 'OPTIMIZE_LAYOUT': {
         const p = payload as OptimizeLayoutPayload
-        result = optimizeEventLayout(p.events, p.containerWidth)
+        result = optimizePlanLayout(p.plans, p.containerWidth)
         break
       }
 
@@ -158,27 +158,27 @@ self.onmessage = function (e: MessageEvent<WorkerMessage>) {
 }
 
 /**
- * イベントの前処理（正規化、ソート、重複除去など）
+ * プランの前処理（正規化、ソート、重複除去など）
  */
-function processEvents(events: CalendarEvent[], options: Record<string, unknown> = {}) {
+function processPlans(plans: CalendarPlan[], options: Record<string, unknown> = {}) {
   // 大量データを効率的に処理
   const batchSize = 1000
-  const processedEvents: CalendarEvent[] = []
+  const processedPlans: CalendarPlan[] = []
 
-  for (let i = 0; i < events.length; i += batchSize) {
-    const batch = events.slice(i, i + batchSize)
+  for (let i = 0; i < plans.length; i += batchSize) {
+    const batch = plans.slice(i, i + batchSize)
 
     // バッチごとに処理
     const processed = batch
-      .filter((event) => event.startDate && event.title) // 必須フィールドチェック
-      .map((event) => normalizeEvent(event))
+      .filter((plan) => plan.startDate && plan.title) // 必須フィールドチェック
+      .map((plan) => normalizePlan(plan))
       .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime())
 
-    processedEvents.push(...processed)
+    processedPlans.push(...processed)
 
     // 進行状況の報告（オプション）
     if (options.onProgress) {
-      const progress = Math.min(100, ((i + batchSize) / events.length) * 100)
+      const progress = Math.min(100, ((i + batchSize) / plans.length) * 100)
       self.postMessage({
         id: 'progress',
         type: 'PROGRESS',
@@ -188,49 +188,49 @@ function processEvents(events: CalendarEvent[], options: Record<string, unknown>
   }
 
   // 重複除去
-  const uniqueEvents = removeDuplicateEvents(processedEvents)
+  const uniquePlans = removeDuplicatePlans(processedPlans)
 
   return {
-    events: uniqueEvents,
-    totalProcessed: events.length,
-    uniqueCount: uniqueEvents.length,
-    duplicatesRemoved: events.length - uniqueEvents.length,
+    plans: uniquePlans,
+    totalProcessed: plans.length,
+    uniqueCount: uniquePlans.length,
+    duplicatesRemoved: plans.length - uniquePlans.length,
   }
 }
 
 /**
- * イベントの正規化
+ * プランの正規化
  */
-function normalizeEvent(event: CalendarEvent): CalendarEvent {
-  const normalized: CalendarEvent = {
-    ...event,
-    title: event.title.trim(),
-    color: event.color || '#3b82f6',
-    tags: event.tags || [],
+function normalizePlan(plan: CalendarPlan): CalendarPlan {
+  const normalized: CalendarPlan = {
+    ...plan,
+    title: plan.title.trim(),
+    color: plan.color || '#3b82f6',
+    tags: plan.tags || [],
   }
 
-  if (event.startDate) {
-    normalized.startDate = new Date(event.startDate)
+  if (plan.startDate) {
+    normalized.startDate = new Date(plan.startDate)
   }
-  if (event.endDate) {
-    normalized.endDate = new Date(event.endDate)
+  if (plan.endDate) {
+    normalized.endDate = new Date(plan.endDate)
   }
 
   return normalized
 }
 
 /**
- * 重複イベントの除去
+ * 重複プランの除去
  */
-function removeDuplicateEvents(events: CalendarEvent[]): CalendarEvent[] {
+function removeDuplicatePlans(plans: CalendarPlan[]): CalendarPlan[] {
   const seen = new Set<string>()
-  const unique: CalendarEvent[] = []
+  const unique: CalendarPlan[] = []
 
-  for (const event of events) {
-    const key = `${event.title}-${event.startDate?.getTime()}-${event.endDate?.getTime()}`
+  for (const plan of plans) {
+    const key = `${plan.title}-${plan.startDate?.getTime()}-${plan.endDate?.getTime()}`
     if (!seen.has(key)) {
       seen.add(key)
-      unique.push(event)
+      unique.push(plan)
     }
   }
 
@@ -238,29 +238,29 @@ function removeDuplicateEvents(events: CalendarEvent[]): CalendarEvent[] {
 }
 
 /**
- * イベントの重複計算
+ * プランの重複計算
  */
-function calculateEventOverlaps(events: CalendarEvent[], dateRange: { start: Date; end: Date }): OverlapResult[] {
+function calculatePlanOverlaps(plans: CalendarPlan[], dateRange: { start: Date; end: Date }): OverlapResult[] {
   const results: OverlapResult[] = []
-  const relevantEvents = events.filter(
-    (event) => event.startDate && event.startDate >= dateRange.start && event.startDate <= dateRange.end
+  const relevantPlans = plans.filter(
+    (plan) => plan.startDate && plan.startDate >= dateRange.start && plan.startDate <= dateRange.end
   )
 
-  for (let i = 0; i < relevantEvents.length; i++) {
-    const event = relevantEvents[i]
-    if (!event || !event.startDate || !event.endDate) continue
+  for (let i = 0; i < relevantPlans.length; i++) {
+    const plan = relevantPlans[i]
+    if (!plan || !plan.startDate || !plan.endDate) continue
 
     const overlaps: OverlapResult['overlaps'] = []
 
-    for (let j = i + 1; j < relevantEvents.length; j++) {
-      const otherEvent = relevantEvents[j]
-      if (!otherEvent || !otherEvent.startDate || !otherEvent.endDate) continue
+    for (let j = i + 1; j < relevantPlans.length; j++) {
+      const otherPlan = relevantPlans[j]
+      if (!otherPlan || !otherPlan.startDate || !otherPlan.endDate) continue
 
-      const overlap = calculateTimeOverlap(event.startDate, event.endDate, otherEvent.startDate, otherEvent.endDate)
+      const overlap = calculateTimeOverlap(plan.startDate, plan.endDate, otherPlan.startDate, otherPlan.endDate)
 
       if (overlap.duration > 0) {
         overlaps.push({
-          eventId: otherEvent.id,
+          planId: otherPlan.id,
           overlapDuration: overlap.duration,
           overlapPercentage: overlap.percentage,
         })
@@ -269,7 +269,7 @@ function calculateEventOverlaps(events: CalendarEvent[], dateRange: { start: Dat
 
     if (overlaps.length > 0) {
       results.push({
-        eventId: event.id,
+        planId: plan.id,
         overlaps,
       })
     }
@@ -302,32 +302,32 @@ function calculateTimeOverlap(
 }
 
 /**
- * 繰り返しイベントの生成
+ * 繰り返しプランの生成
  */
-function generateRecurringEvents(
-  baseEvent: CalendarEvent,
+function generateRecurringPlans(
+  basePlan: CalendarPlan,
   pattern: RecurrencePattern,
   dateRange: { start: Date; end: Date }
-): CalendarEvent[] {
-  if (!baseEvent.startDate || !baseEvent.endDate) return []
+): CalendarPlan[] {
+  if (!basePlan.startDate || !basePlan.endDate) return []
 
-  const events: CalendarEvent[] = []
-  const eventDuration = baseEvent.endDate.getTime() - baseEvent.startDate.getTime()
+  const plans: CalendarPlan[] = []
+  const planDuration = basePlan.endDate.getTime() - basePlan.startDate.getTime()
 
-  let currentDate = new Date(baseEvent.startDate)
+  let currentDate = new Date(basePlan.startDate)
   let count = 0
   const maxCount = pattern.count || 1000 // 安全なデフォルト
 
   while (currentDate <= dateRange.end && count < maxCount) {
     if (currentDate >= dateRange.start) {
-      const newEvent: CalendarEvent = {
-        ...baseEvent,
-        id: `${baseEvent.id}_${count}`,
+      const newPlan: CalendarPlan = {
+        ...basePlan,
+        id: `${basePlan.id}_${count}`,
         startDate: new Date(currentDate),
-        endDate: new Date(currentDate.getTime() + eventDuration),
-        parentEventId: baseEvent.id,
+        endDate: new Date(currentDate.getTime() + planDuration),
+        parentPlanId: basePlan.id,
       }
-      events.push(newEvent)
+      plans.push(newPlan)
     }
 
     // 次の日付を計算
@@ -339,7 +339,7 @@ function generateRecurringEvents(
     }
   }
 
-  return events
+  return plans
 }
 
 /**
@@ -370,19 +370,19 @@ function getNextRecurrenceDate(currentDate: Date, pattern: RecurrencePattern): D
 }
 
 /**
- * イベント検索
+ * プラン検索
  */
-function searchEvents(
-  events: CalendarEvent[],
+function searchPlans(
+  plans: CalendarPlan[],
   query: string,
   options: { caseSensitive?: boolean; fields?: string[] } = {}
-): CalendarEvent[] {
+): CalendarPlan[] {
   const normalizedQuery = options.caseSensitive ? query : query.toLowerCase()
   const fields = options.fields || ['title', 'description', 'location']
 
-  return events.filter((event) => {
+  return plans.filter((plan) => {
     return fields.some((field) => {
-      const value = event[field as keyof CalendarEvent] as string
+      const value = plan[field as keyof CalendarPlan] as string
       if (!value) return false
 
       const normalizedValue = options.caseSensitive ? value : value.toLowerCase()
@@ -392,20 +392,20 @@ function searchEvents(
 }
 
 /**
- * イベントレイアウトの最適化
+ * プランレイアウトの最適化
  */
-function optimizeEventLayout(events: CalendarEvent[], containerWidth: number): LayoutOptimization[] {
-  // 同時間帯のイベントをグループ化
-  const timeGroups = groupEventsByTime(events)
+function optimizePlanLayout(plans: CalendarPlan[], containerWidth: number): LayoutOptimization[] {
+  // 同時間帯のプランをグループ化
+  const timeGroups = groupPlansByTime(plans)
   const layouts: LayoutOptimization[] = []
 
   for (const group of timeGroups) {
     const columnCount = group.length
     const columnWidth = containerWidth / columnCount
 
-    group.forEach((event, index) => {
+    group.forEach((plan, index) => {
       layouts.push({
-        eventId: event.id,
+        planId: plan.id,
         column: index,
         width: columnWidth - 4, // マージン考慮
         left: index * columnWidth + 2,
@@ -417,22 +417,22 @@ function optimizeEventLayout(events: CalendarEvent[], containerWidth: number): L
 }
 
 /**
- * 時間帯でイベントをグループ化
+ * 時間帯でプランをグループ化
  */
-function groupEventsByTime(events: CalendarEvent[]): CalendarEvent[][] {
-  const groups: CalendarEvent[][] = []
-  const sortedEvents = events
-    .filter((e) => e.startDate && e.endDate)
+function groupPlansByTime(plans: CalendarPlan[]): CalendarPlan[][] {
+  const groups: CalendarPlan[][] = []
+  const sortedPlans = plans
+    .filter((p) => p.startDate && p.endDate)
     .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime())
 
-  for (const event of sortedEvents) {
+  for (const plan of sortedPlans) {
     // 重複する既存グループを探す
-    const overlappingGroup = groups.find((group) => group.some((groupEvent) => eventsOverlap(event, groupEvent)))
+    const overlappingGroup = groups.find((group) => group.some((groupPlan) => plansOverlap(plan, groupPlan)))
 
     if (overlappingGroup) {
-      overlappingGroup.push(event)
+      overlappingGroup.push(plan)
     } else {
-      groups.push([event])
+      groups.push([plan])
     }
   }
 
@@ -440,14 +440,14 @@ function groupEventsByTime(events: CalendarEvent[]): CalendarEvent[][] {
 }
 
 /**
- * イベントの重複チェック
+ * プランの重複チェック
  */
-function eventsOverlap(event1: CalendarEvent, event2: CalendarEvent): boolean {
-  if (!event1.startDate || !event1.endDate || !event2.startDate || !event2.endDate) {
+function plansOverlap(plan1: CalendarPlan, plan2: CalendarPlan): boolean {
+  if (!plan1.startDate || !plan1.endDate || !plan2.startDate || !plan2.endDate) {
     return false
   }
 
-  return event1.startDate < event2.endDate && event2.startDate < event1.endDate
+  return plan1.startDate < plan2.endDate && plan2.startDate < plan1.endDate
 }
 
 /**

@@ -27,7 +27,7 @@ interface TicketTagSelectDialogEnhancedProps {
   sideOffset?: number
 }
 
-export function TicketTagSelectDialogEnhanced({
+export function PlanTagSelectDialogEnhanced({
   children,
   selectedTagIds,
   onTagsChange,
@@ -47,7 +47,7 @@ export function TicketTagSelectDialogEnhanced({
   const { data: tagsData } = useTags(true)
   const { data: groups = [] } = useTagGroups()
   const createTagMutation = useCreateTag()
-  const { data: tagTicketCounts = {} } = api.tickets.getTagTicketCounts.useQuery()
+  const { data: tagTicketCounts = {} } = api.plans.getTagPlanCounts.useQuery()
 
   // TagWithChildren[] を Tag[] に変換（階層を平坦化）
   const flattenTags = (tags: typeof tagsData): TagType[] => {
@@ -529,3 +529,6 @@ export function TicketTagSelectDialogEnhanced({
     </Popover>
   )
 }
+
+// Backward compatibility
+export { PlanTagSelectDialogEnhanced as TicketTagSelectDialogEnhanced }

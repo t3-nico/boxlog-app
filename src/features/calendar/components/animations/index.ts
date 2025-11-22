@@ -24,7 +24,7 @@ export {
   useViewTransition,
 } from './ViewTransition'
 
-export { AnimatedEventCard } from './AnimatedEventCard'
+export { AnimatedEventCard } from './AnimatedPlanCard'
 export {
   // tailwindAnimations, // TODO(#389): EventAnimations.tsxで定義されていない
   AnimatedEventItem,
@@ -32,4 +32,4 @@ export {
   DeletingEvent,
   PulseEffect,
   eventAnimations,
-} from './EventAnimations'
+} from './PlanAnimations'

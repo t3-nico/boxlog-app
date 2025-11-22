@@ -2,8 +2,8 @@
 // Re-export all public APIs
 
 // Types
+export * from './types/plan'
 export * from './types/tag'
-export * from './types/ticket'
 
 // Stores
 export * from './stores'

@@ -5,8 +5,8 @@
 import { useMemo } from 'react'
 
 import { HOUR_HEIGHT } from '../constants/grid.constants'
-import type { EventPosition, TimedEvent } from '../types/event.types'
-import { calculateEventPosition, calculateViewEventColumns } from '../utils/eventPositioning'
+import type { EventPosition, TimedEvent } from '../types/plan.types'
+import { calculateEventPosition, calculateViewEventColumns } from '../utils/planPositioning'
 
 export interface UseEventPositionOptions {
   hourHeight?: number

@@ -2,7 +2,7 @@
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import type { TicketStatus } from '@/features/plans/types/ticket'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { Activity, Calendar, CalendarRange, FileText, Hash, Tag } from 'lucide-react'
 import { useEffect, useMemo, useRef } from 'react'
 
@@ -61,7 +61,7 @@ export function InboxTableView() {
   const { getActiveView } = useInboxViewStore()
   const { groupBy, collapsedGroups } = useInboxGroupStore()
   const { items, isLoading, error } = useInboxData({
-    status: filters.status[0] as TicketStatus | undefined,
+    status: filters.status[0] as PlanStatus | undefined,
     search: filters.search,
     tags: filters.tags,
     dueDate: filters.dueDate,
@@ -116,7 +116,7 @@ export function InboxTableView() {
 
     // フィルター適用
     if (activeView.filters.status) {
-      filters.setStatus(activeView.filters.status as TicketStatus[])
+      filters.setStatus(activeView.filters.status as PlanStatus[])
     }
     if (activeView.filters.search) {
       filters.setSearch(activeView.filters.search)

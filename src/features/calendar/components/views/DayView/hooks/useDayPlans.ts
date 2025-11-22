@@ -1,4 +1,4 @@
-import { useViewEvents } from '../../shared/hooks/useViewEvents'
+import { useViewEvents } from '../../shared/hooks/useViewPlans'
 import type { UseDayEventsOptions, UseDayEventsReturn } from '../DayView.types'
 
 /**

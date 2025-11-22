@@ -1,14 +1,18 @@
 // Inspector Components
-export { TicketInspector } from './inspector/TicketInspector'
+export { PlanInspector } from './inspector/PlanInspector'
+/** @deprecated Use PlanInspector instead */
+export { PlanInspector as TicketInspector } from './inspector/PlanInspector'
 
 // Display Components
-export { TicketCard } from './display/TicketCard'
-export { TicketStatusBadge } from './display/TicketStatusBadge'
+export { PlanCard } from './display/PlanCard'
+export { PlanStatusBadge } from './display/PlanStatusBadge'
 
-// Filter Components (renamed to avoid conflict with TicketFilters type)
-export { TicketFilters as TicketFiltersComponent } from './filters/TicketFilters'
+// Filter Components (renamed to avoid conflict with PlanFilters type)
+export { PlanFilters as PlanFiltersComponent } from './filters/PlanFilters'
 
 // Shared Components
 export { EmptyState } from './shared/EmptyState'
 export { LoadingState } from './shared/LoadingState'
-export { TicketCreatePopover } from './shared/TicketCreatePopover'
+export { PlanCreatePopover } from './shared/PlanCreatePopover'
+/** @deprecated Use PlanCreatePopover instead */
+export { PlanCreatePopover as TicketCreatePopover } from './shared/PlanCreatePopover'

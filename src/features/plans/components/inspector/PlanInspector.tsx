@@ -34,27 +34,26 @@ import {
   Trash2,
 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useTicket } from '../../hooks/useTicket'
-import { useTicketActivities } from '../../hooks/useTicketActivities'
-import { useTicketMutations } from '../../hooks/useTicketMutations'
-import { useTickets } from '../../hooks/useTickets'
-import { useTicketTags } from '../../hooks/useTicketTags'
-import { useTicketCacheStore } from '../../stores/useTicketCacheStore'
-import { useTicketInspectorStore } from '../../stores/useTicketInspectorStore'
-import type { Ticket } from '../../types/ticket'
+import { usePlanActivities } from '../../hooks/usePlanActivities'
+import { usePlanMutations } from '../../hooks/usePlanMutations'
+import { usePlans } from '../../hooks/usePlans'
+import { usePlanTags } from '../../hooks/usePlanTags'
+import { usePlanCacheStore } from '../../stores/usePlanCacheStore'
+import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore'
+import type { Plan } from '../../types/plan'
 import { formatActivity, formatRelativeTime } from '../../utils/activityFormatter'
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
 import { NovelDescriptionEditor } from '../shared/NovelDescriptionEditor'
+import { PlanDateTimeInput } from '../shared/PlanDateTimeInput'
+import { PlanTagsSection } from '../shared/PlanTagsSection'
 import { RecurrencePopover } from '../shared/RecurrencePopover'
 import { ReminderSelect } from '../shared/ReminderSelect'
-import { TicketDateTimeInput } from '../shared/TicketDateTimeInput'
-import { TicketTagsSection } from '../shared/TicketTagsSection'
 
 /**
- * Ticket Inspector（全ページ共通Sheet）
+ * Plan Inspector（全ページ共通Sheet）
  *
  * - Kanban、Calendar、Table等、全ビューから呼び出し可能
- * - useTicketInspectorStoreでグローバル状態管理
+ * - usePlanInspectorStoreでグローバル状態管理
  * - レイアウトに配置して常にマウント
  * - 各フィールド変更時に自動保存（デバウンス処理あり）
  *
@@ -64,29 +63,29 @@ import { TicketTagsSection } from '../shared/TicketTagsSection'
  * <TicketInspector />
  *
  * // 各ビューから呼び出し
- * const { openInspector } = useTicketInspectorStore()
- * <div onClick={() => openInspector(ticket.id)}>...</div>
+ * const { openInspector } = usePlanInspectorStore()
+ * <div onClick={() => openInspector(plan.id)}>...</div>
  * ```
  */
-export function TicketInspector() {
-  const { isOpen, ticketId, initialData, closeInspector, openInspector } = useTicketInspectorStore()
+export function PlanInspector() {
+  const { isOpen, planId, initialData, closeInspector, openInspector } = usePlanInspectorStore()
   const { setFocusedId } = useInboxFocusStore()
 
   // Ticketデータ取得（タグ情報も含む）
-  const { data: ticketData, isLoading } = useTicket(ticketId!, { includeTags: true, enabled: !!ticketId })
-  // Type assertion: In practice ticketData is Ticket | undefined (tRPC error handling is separate)
-  const ticket = (ticketData ?? null) as Ticket | null
+  const { data: ticketData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId })
+  // Type assertion: In practice ticketData is Plan | undefined (tRPC error handling is separate)
+  const ticket = (ticketData ?? null) as Plan | null
 
   // 全チケットリスト取得（ナビゲーション用・リアルタイム性最適化済み）
-  const { data: allTickets = [] } = useTickets()
+  const { data: allPlans = [] } = usePlans()
 
   // 現在のチケットのインデックスを計算
   const currentIndex = useMemo(() => {
-    return allTickets.findIndex((t) => t.id === ticketId)
-  }, [allTickets, ticketId])
+    return allPlans.findIndex((t) => t.id === planId)
+  }, [allPlans, planId])
 
   const hasPrevious = currentIndex > 0
-  const hasNext = currentIndex >= 0 && currentIndex < allTickets.length - 1
+  const hasNext = currentIndex >= 0 && currentIndex < allPlans.length - 1
 
   // アクティビティの並び順状態
   const [activityOrder, setActivityOrder] = useState<'asc' | 'desc'>('desc')
@@ -94,7 +93,7 @@ export function TicketInspector() {
   const [isHoveringSort, setIsHoveringSort] = useState(false)
   // 選択されたタグのID配列
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const { addTicketTag, removeTicketTag } = useTicketTags()
+  const { addPlanTag, removePlanTag } = usePlanTags()
 
   // チケットのタグ情報を selectedTagIds に反映
   useEffect(() => {
@@ -126,7 +125,7 @@ export function TicketInspector() {
 
   // タグ変更ハンドラー（追加の差分を検出して実行）
   const handleTagsChange = async (newTagIds: string[]) => {
-    if (!ticketId) return
+    if (!planId) return
 
     const oldTagIds = selectedTagIds
     const added = newTagIds.filter((id) => !oldTagIds.includes(id))
@@ -137,7 +136,7 @@ export function TicketInspector() {
     try {
       // 追加されたタグを保存
       for (const tagId of added) {
-        await addTicketTag(ticketId, tagId)
+        await addPlanTag(planId, tagId)
       }
     } catch (error) {
       console.error('Failed to add tags:', error)
@@ -148,14 +147,14 @@ export function TicketInspector() {
 
   // タグ削除ハンドラー
   const handleRemoveTag = async (tagId: string) => {
-    if (!ticketId) return
+    if (!planId) return
 
     // 楽観的更新
     const oldTagIds = selectedTagIds
     setSelectedTagIds((prev) => prev.filter((id) => id !== tagId))
 
     try {
-      await removeTicketTag(ticketId, tagId)
+      await removePlanTag(planId, tagId)
     } catch (error) {
       console.error('Failed to remove tag:', error)
       // エラー時は元に戻す
@@ -197,7 +196,7 @@ export function TicketInspector() {
 
   const goToPrevious = () => {
     if (hasPrevious) {
-      const prevTicketId = allTickets[currentIndex - 1]!.id
+      const prevTicketId = allPlans[currentIndex - 1]!.id
       openInspector(prevTicketId)
       setFocusedId(prevTicketId)
     }
@@ -205,35 +204,35 @@ export function TicketInspector() {
 
   const goToNext = () => {
     if (hasNext) {
-      const nextTicketId = allTickets[currentIndex + 1]!.id
+      const nextTicketId = allPlans[currentIndex + 1]!.id
       openInspector(nextTicketId)
       setFocusedId(nextTicketId)
     }
   }
 
   // Mutations（Toast通知・キャッシュ無効化込み）
-  const { updateTicket, deleteTicket } = useTicketMutations()
-  const { getCache } = useTicketCacheStore()
+  const { updatePlan, deletePlan } = usePlanMutations()
+  const { getCache } = usePlanCacheStore()
 
   // 削除ハンドラー
   const handleDelete = () => {
-    if (!ticketId) return
+    if (!planId) return
     if (confirm('このチケットを削除しますか？')) {
-      deleteTicket.mutate({ id: ticketId })
+      deletePlan.mutate({ id: planId })
       closeInspector()
     }
   }
 
   // IDコピー
   const handleCopyId = () => {
-    if (!ticketId) return
-    navigator.clipboard.writeText(ticketId)
+    if (!planId) return
+    navigator.clipboard.writeText(planId)
   }
 
   // 新しいタブで開く
   const handleOpenInNewTab = () => {
-    if (!ticketId) return
-    window.open(`/tickets/${ticketId}`, '_blank')
+    if (!planId) return
+    window.open(`/tickets/${planId}`, '_blank')
   }
 
   // 複製
@@ -245,8 +244,8 @@ export function TicketInspector() {
 
   // リンクをコピー
   const handleCopyLink = () => {
-    if (!ticketId) return
-    const url = `${window.location.origin}/tickets/${ticketId}`
+    if (!planId) return
+    const url = `${window.location.origin}/tickets/${planId}`
     navigator.clipboard.writeText(url)
   }
 
@@ -280,29 +279,29 @@ export function TicketInspector() {
   useEffect(() => {
     // 既存チケット編集モード
     if (ticket && 'id' in ticket) {
-      if (ticket.due_date) {
-        setSelectedDate(parseDateString(ticket.due_date))
+      if (plan.due_date) {
+        setSelectedDate(parseDateString(plan.due_date))
       } else {
         setSelectedDate(undefined)
       }
 
-      if (ticket.start_time) {
-        const date = parseDatetimeString(ticket.start_time)
+      if (plan.start_time) {
+        const date = parseDatetimeString(plan.start_time)
         setStartTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setStartTime('')
       }
 
-      if (ticket.end_time) {
-        const date = parseDatetimeString(ticket.end_time)
+      if (plan.end_time) {
+        const date = parseDatetimeString(plan.end_time)
         setEndTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setEndTime('')
       }
 
       // reminder_minutes から UI表示用の文字列に変換
-      if ('reminder_minutes' in ticket && ticket.reminder_minutes !== null) {
-        const minutes = ticket.reminder_minutes
+      if ('reminder_minutes' in ticket && plan.reminder_minutes !== null) {
+        const minutes = plan.reminder_minutes
         const reminderMap: Record<number, string> = {
           0: '開始時刻',
           10: '10分前',
@@ -362,11 +361,11 @@ export function TicketInspector() {
 
       return () => clearTimeout(timer)
     }
-  }, [isOpen, ticketId])
+  }, [isOpen, planId])
 
   // 自動保存関数（デバウンス処理付き）
   const autoSave = (field: string, value: string | undefined) => {
-    if (!ticketId) return
+    if (!planId) return
 
     // 既存のタイマーをクリア
     if (debounceTimerRef.current) {
@@ -384,8 +383,8 @@ export function TicketInspector() {
         updateData[field] = value
       }
 
-      updateTicket.mutate({
-        id: ticketId,
+      updatePlan.mutate({
+        id: planId,
         data: updateData,
       })
     }, 500)
@@ -618,21 +617,21 @@ export function TicketInspector() {
                       className="bg-card dark:bg-card border-0 px-0 text-[2rem] font-bold outline-none"
                       style={{ fontSize: 'var(--font-size-xl)' }}
                     >
-                      {ticket.title}
+                      {plan.title}
                     </span>
-                    {ticket.ticket_number && (
+                    {plan.ticket_number && (
                       <span
                         className="text-muted-foreground ml-4 text-[2rem]"
                         style={{ fontSize: 'var(--font-size-xl)' }}
                       >
-                        #{ticket.ticket_number}
+                        #{plan.ticket_number}
                       </span>
                     )}
                   </div>
                 </div>
 
                 {/* 日付・時間 */}
-                <TicketDateTimeInput
+                <PlanDateTimeInput
                   selectedDate={selectedDate}
                   startTime={startTime}
                   endTime={endTime}
@@ -650,19 +649,19 @@ export function TicketInspector() {
                         variant="ghost"
                         size="sm"
                         className={(() => {
-                          if (!ticketId) return 'text-muted-foreground h-8 gap-2 px-2'
-                          const cache = getCache(ticketId)
+                          if (!planId) return 'text-muted-foreground h-8 gap-2 px-2'
+                          const cache = getCache(planId)
                           const recurrence_rule =
                             cache?.recurrence_rule !== undefined
                               ? cache.recurrence_rule
                               : ticket && 'recurrence_rule' in ticket
-                                ? ticket.recurrence_rule
+                                ? plan.recurrence_rule
                                 : null
                           const recurrence_type =
                             cache?.recurrence_type !== undefined
                               ? cache.recurrence_type
                               : ticket && 'recurrence_type' in ticket
-                                ? ticket.recurrence_type
+                                ? plan.recurrence_type
                                 : null
                           return recurrence_rule || (recurrence_type && recurrence_type !== 'none')
                             ? 'text-foreground h-8 gap-2 px-2'
@@ -677,19 +676,19 @@ export function TicketInspector() {
                         <Repeat className="h-4 w-4" />
                         <span className="text-sm">
                           {(() => {
-                            if (!ticketId) return '繰り返し'
-                            const cache = getCache(ticketId)
+                            if (!planId) return '繰り返し'
+                            const cache = getCache(planId)
                             const recurrence_rule =
                               cache?.recurrence_rule !== undefined
                                 ? cache.recurrence_rule
                                 : ticket && 'recurrence_rule' in ticket
-                                  ? ticket.recurrence_rule
+                                  ? plan.recurrence_rule
                                   : null
                             const recurrence_type =
                               cache?.recurrence_type !== undefined
                                 ? cache.recurrence_type
                                 : ticket && 'recurrence_type' in ticket
-                                  ? ticket.recurrence_type
+                                  ? plan.recurrence_type
                                   : null
 
                             // カスタムルール（RRULE）がある場合
@@ -719,7 +718,7 @@ export function TicketInspector() {
                         open={recurrencePopoverOpen}
                         onOpenChange={setRecurrencePopoverOpen}
                         onRepeatTypeChange={(type) => {
-                          if (!ticketId) return
+                          if (!planId) return
                           setRepeatType(type)
 
                           // 型マッピング
@@ -738,27 +737,27 @@ export function TicketInspector() {
                           const recurrenceType = typeMap[type] || 'none'
 
                           // optimistic updateがキャッシュを即座に更新
-                          updateTicket.mutate({
-                            id: ticketId,
+                          updatePlan.mutate({
+                            id: planId,
                             data: { recurrence_type: recurrenceType, recurrence_rule: null },
                           })
                         }}
                         triggerRef={recurrenceTriggerRef}
                         recurrenceRule={(() => {
-                          if (!ticketId) return null
-                          const cache = getCache(ticketId)
+                          if (!planId) return null
+                          const cache = getCache(planId)
                           return cache?.recurrence_rule !== undefined
                             ? cache.recurrence_rule
                             : ticket && 'recurrence_rule' in ticket
-                              ? ticket.recurrence_rule
+                              ? plan.recurrence_rule
                               : null
                         })()}
                         onRecurrenceRuleChange={(rrule) => {
-                          if (!ticketId) return
+                          if (!planId) return
 
-                          // updateTicket.mutateがZustandキャッシュを即座に更新
-                          updateTicket.mutate({
-                            id: ticketId,
+                          // updatePlan.mutateがZustandキャッシュを即座に更新
+                          updatePlan.mutate({
+                            id: planId,
                             data: { recurrence_rule: rrule },
                           })
                         }}
@@ -769,7 +768,7 @@ export function TicketInspector() {
                     <ReminderSelect
                       value={reminderType}
                       onChange={(type) => {
-                        if (!ticketId) return
+                        if (!planId) return
                         setReminderType(type)
 
                         // UI表示文字列 → 分数に変換
@@ -784,8 +783,8 @@ export function TicketInspector() {
                         }
 
                         const reminderMinutes = reminderMap[type] ?? null
-                        updateTicket.mutate({
-                          id: ticketId,
+                        updatePlan.mutate({
+                          id: planId,
                           data: { reminder_minutes: reminderMinutes },
                         })
                       }}
@@ -794,7 +793,7 @@ export function TicketInspector() {
                 </div>
 
                 {/* Tags */}
-                <TicketTagsSection
+                <PlanTagsSection
                   selectedTagIds={selectedTagIds}
                   onTagsChange={handleTagsChange}
                   onRemoveTag={handleRemoveTag}
@@ -810,8 +809,8 @@ export function TicketInspector() {
                     <FileText className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
                     <div className="min-w-0 flex-1 overflow-hidden">
                       <NovelDescriptionEditor
-                        key={ticket.id}
-                        content={ticket.description || ''}
+                        key={plan.id}
+                        content={plan.description || ''}
                         onChange={(html) => autoSave('description', html)}
                         placeholder="Add description..."
                       />
@@ -825,8 +824,8 @@ export function TicketInspector() {
                     <Label htmlFor="status">ステータス</Label>
                     <select
                       id="status"
-                      key={`status-${ticket.id}`}
-                      defaultValue={ticket.status}
+                      key={`status-${plan.id}`}
+                      defaultValue={plan.status}
                       onChange={(e) => autoSave('status', e.target.value)}
                       className="bg-background border-input ring-offset-background focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                     >
@@ -841,7 +840,7 @@ export function TicketInspector() {
 
               {/* アクティビティタブ */}
               <TabsContent value="activity">
-                <ActivityTab ticketId={ticketId!} order={activityOrder} onOrderChange={setActivityOrder} />
+                <ActivityTab planId={planId!} order={activityOrder} onOrderChange={setActivityOrder} />
               </TabsContent>
 
               <TabsContent value="comments">
@@ -859,15 +858,15 @@ export function TicketInspector() {
  * アクティビティタブコンポーネント
  */
 function ActivityTab({
-  ticketId,
+  planId,
   order,
   onOrderChange,
 }: {
-  ticketId: string
+  planId: string
   order: 'asc' | 'desc'
   onOrderChange: (order: 'asc' | 'desc') => void
 }) {
-  const { data: activities, isLoading } = useTicketActivities(ticketId, { order })
+  const { data: activities, isLoading } = usePlanActivities(planId, { order })
 
   if (isLoading) {
     return (

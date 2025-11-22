@@ -114,3 +114,19 @@ export interface PlanStats {
   total: number
   byStatus: Record<string, number>
 }
+
+// 互換性のためのエイリアス（段階的移行用）
+/** @deprecated Use Plan instead */
+export type Ticket = Plan
+/** @deprecated Use PlanStatus instead */
+export type TicketStatus = PlanStatus
+/** @deprecated Use CreatePlanInput instead */
+export type CreateTicketInput = CreatePlanInput
+/** @deprecated Use UpdatePlanInput instead */
+export type UpdateTicketInput = UpdatePlanInput
+/** @deprecated Use PlanWithTags instead */
+export type TicketWithTags = PlanWithTags
+/** @deprecated Use PlanFilters instead */
+export type TicketFilters = PlanFilters
+/** @deprecated Use PlanStats instead */
+export type TicketStats = PlanStats

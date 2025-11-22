@@ -36,9 +36,7 @@ export function eventToTimedEvent(event: Event): TimedEvent {
  * 複数のPlan形式プランをCalendarView形式に変換
  */
 export function plansToTimedPlans(plans: CalendarPlan[]): TimedPlan[] {
-  return plans
-    .filter((plan) => !plan.isDeleted) // 削除済みプランを除外
-    .map(planToTimedPlan)
+  return plans.map(planToTimedPlan)
 }
 
 // 後方互換性のためのエイリアス

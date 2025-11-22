@@ -13,7 +13,7 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import type { CalendarTicket } from '../../types/event.types'
 import { formatTimeRange } from '../../utils/dateHelpers'
 
-interface TicketCardContentProps {
+interface PlanCardContentProps {
   event: CalendarTicket
   isCompact?: boolean
   showTime?: boolean
@@ -46,7 +46,7 @@ function calculateTicketDuration(ticketStart: Date | null, ticketEnd: Date | nul
   return Math.floor((endTime - startTime) / (1000 * 60))
 }
 
-export const TicketCardContent = memo<TicketCardContentProps>(function TicketCardContent({
+export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardContent({
   event,
   isCompact = false,
   showTime = true,

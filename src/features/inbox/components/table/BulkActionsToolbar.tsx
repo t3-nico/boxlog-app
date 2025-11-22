@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
-import type { TicketStatus } from '@/features/plans/types/ticket'
+import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { Archive, Calendar, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -47,7 +47,7 @@ export function BulkActionsToolbar() {
   }
 
   // ステータス変更ハンドラー
-  const handleStatusChange = async (status: TicketStatus) => {
+  const handleStatusChange = async (status: PlanStatus) => {
     setIsProcessing(true)
     try {
       const selectedIds = Array.from(getSelectedIds())
@@ -129,7 +129,7 @@ export function BulkActionsToolbar() {
       {/* 右側: 一括操作ボタン */}
       <div className="flex items-center gap-2">
         {/* ステータス変更 */}
-        <Select onValueChange={(value) => handleStatusChange(value as TicketStatus)} disabled={isProcessing}>
+        <Select onValueChange={(value) => handleStatusChange(value as PlanStatus)} disabled={isProcessing}>
           <SelectTrigger className="h-8 w-[140px]">
             <SelectValue placeholder="ステータス変更" />
           </SelectTrigger>

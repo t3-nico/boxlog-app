@@ -1,10 +1,10 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import type { TicketStatus } from '../../types/ticket'
+import type { PlanStatus } from '../../types/plan'
 
-interface TicketStatusBadgeProps {
-  status: TicketStatus
+interface PlanStatusBadgeProps {
+  status: PlanStatus
   size?: 'sm' | 'md' | 'lg'
 }
 
@@ -50,7 +50,7 @@ const SIZE_CLASSES = {
   lg: 'text-base px-4 py-1.5',
 }
 
-export function TicketStatusBadge({ status, size = 'sm' }: TicketStatusBadgeProps) {
+export function PlanStatusBadge({ status, size = 'sm' }: PlanStatusBadgeProps) {
   const config = STATUS_CONFIG[status]
 
   return (
@@ -59,3 +59,6 @@ export function TicketStatusBadge({ status, size = 'sm' }: TicketStatusBadgeProp
     </Badge>
   )
 }
+
+// Backward compatibility alias
+export { PlanStatusBadge as TicketStatusBadge }

@@ -88,3 +88,6 @@ export function usePlanActivities(
 
   return query
 }
+
+// Backward compatibility
+export { usePlanActivities as useTicketActivities }

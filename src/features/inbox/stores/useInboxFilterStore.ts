@@ -1,4 +1,4 @@
-import type { TicketStatus } from '@/features/plans/types/ticket'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -12,7 +12,7 @@ export type DueDateFilter = 'today' | 'tomorrow' | 'this_week' | 'next_week' | '
  * Board/Table両方で共有するフィルター
  */
 interface InboxFilterState {
-  status: TicketStatus[]
+  status: PlanStatus[]
   tags: string[]
   search: string
   assignee: string
@@ -23,7 +23,7 @@ interface InboxFilterState {
  * Inbox共通フィルタストア
  */
 interface InboxFilterStore extends InboxFilterState {
-  setStatus: (status: TicketStatus[]) => void
+  setStatus: (status: PlanStatus[]) => void
   setTags: (tags: string[]) => void
   setSearch: (search: string) => void
   setAssignee: (assignee: string) => void

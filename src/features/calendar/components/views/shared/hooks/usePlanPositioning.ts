@@ -5,9 +5,9 @@ import { useMemo } from 'react'
 import { isSameDay, isValid } from 'date-fns'
 
 import { HOUR_HEIGHT } from '../constants/grid.constants'
-import type { CalendarEvent } from '../types/event.types'
+import type { CalendarEvent } from '../types/plan.types'
 
-import { useEventLayoutCalculator } from './useEventLayoutCalculator'
+import { useEventLayoutCalculator } from './usePlanLayoutCalculator'
 
 const EVENT_PADDING = 2 // イベント間のパディング
 const MIN_EVENT_HEIGHT = 20 // 最小イベント高さ

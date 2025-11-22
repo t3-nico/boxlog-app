@@ -3,25 +3,25 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
-import { handleActionKeys, handleArrowKeys, handleEventDetailKeys, handleNavigationKeys } from './keyboardHandlers'
+import { handleActionKeys, handleArrowKeys, handleNavigationKeys, handlePlanDetailKeys } from './keyboardHandlers'
 
 export interface NavigationState {
   selectedDate: Date
   selectedTime: string
-  selectedEventId: string | null
+  selectedPlanId: string | null
   focusedElement: string | null
-  isInEventCreationMode: boolean
-  isInEventEditMode: boolean
+  isInPlanCreationMode: boolean
+  isInPlanEditMode: boolean
 }
 
 interface KeyboardCallbacks {
-  onCreateEvent: (date: Date, time: string) => void
-  onEditEvent: (eventId: string) => void
-  onDeleteEvent: (eventId: string) => void
-  onSelectEvent: (eventId: string) => void
+  onCreatePlan: (date: Date, time: string) => void
+  onEditPlan: (planId: string) => void
+  onDeletePlan: (planId: string) => void
+  onSelectPlan: (planId: string) => void
   onNavigateDate: (date: Date) => void
   onNavigateTime: (time: string) => void
   onEscapeAction: () => void
@@ -40,15 +40,15 @@ const TIME_SLOTS = Array.from({ length: 96 }, (_, i) => {
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
 })
 
-export function useAccessibilityKeyboard(events: CalendarEvent[], currentDate: Date, callbacks: KeyboardCallbacks) {
+export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Date, callbacks: KeyboardCallbacks) {
   const { t } = useI18n()
   const [navigationState, setNavigationState] = useState<NavigationState>({
     selectedDate: new Date(currentDate),
     selectedTime: '09:00',
-    selectedEventId: null,
+    selectedPlanId: null,
     focusedElement: null,
-    isInEventCreationMode: false,
-    isInEventEditMode: false,
+    isInPlanCreationMode: false,
+    isInPlanEditMode: false,
   })
 
   const [announcements, setAnnouncements] = useState<AccessibilityAnnouncement[]>([])
@@ -125,115 +125,113 @@ export function useAccessibilityKeyboard(events: CalendarEvent[], currentDate: D
   )
 
   /**
-   * イベント間の移動
+   * プラン間の移動
    */
-  const navigateEvents = useCallback(
+  const navigatePlans = useCallback(
     (direction: 'next' | 'previous') => {
-      const currentDateEvents = events
+      const currentDatePlans = plans
         .filter(
-          (event) => event.startDate && event.startDate.toDateString() === navigationState.selectedDate.toDateString()
+          (plan) => plan.startDate && plan.startDate.toDateString() === navigationState.selectedDate.toDateString()
         )
         .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime())
 
-      if (currentDateEvents.length === 0) {
-        announce(t('calendar.event.noEventsOnThisDay'))
+      if (currentDatePlans.length === 0) {
+        announce(t('calendar.plan.noPlansOnThisDay'))
         return
       }
 
       setNavigationState((prev) => {
-        const currentIndex = prev.selectedEventId
-          ? currentDateEvents.findIndex((e) => e.id === prev.selectedEventId)
-          : -1
+        const currentIndex = prev.selectedPlanId ? currentDatePlans.findIndex((p) => p.id === prev.selectedPlanId) : -1
 
         let newIndex: number
         if (direction === 'next') {
-          newIndex = currentIndex < currentDateEvents.length - 1 ? currentIndex + 1 : 0
+          newIndex = currentIndex < currentDatePlans.length - 1 ? currentIndex + 1 : 0
         } else {
-          newIndex = currentIndex > 0 ? currentIndex - 1 : currentDateEvents.length - 1
+          newIndex = currentIndex > 0 ? currentIndex - 1 : currentDatePlans.length - 1
         }
 
-        const newEvent = currentDateEvents[newIndex]
-        if (!newEvent) return prev
+        const newPlan = currentDatePlans[newIndex]
+        if (!newPlan) return prev
 
-        const timeString = newEvent.startDate?.toLocaleTimeString('ja-JP', {
+        const timeString = newPlan.startDate?.toLocaleTimeString('ja-JP', {
           hour: '2-digit',
           minute: '2-digit',
         })
 
-        announce(`${timeString} ${newEvent.title}`)
-        callbacks.onSelectEvent(newEvent.id)
+        announce(`${timeString} ${newPlan.title}`)
+        callbacks.onSelectPlan(newPlan.id)
 
-        return { ...prev, selectedEventId: newEvent.id }
+        return { ...prev, selectedPlanId: newPlan.id }
       })
     },
-    [events, navigationState.selectedDate, announce, callbacks, t]
+    [plans, navigationState.selectedDate, announce, callbacks, t]
   )
 
   /**
-   * イベント作成
+   * プラン作成
    */
-  const createEvent = useCallback(() => {
+  const createPlan = useCallback(() => {
     setNavigationState((prev) => {
-      announce(`${prev.selectedTime}に新しいイベントを作成します`)
-      callbacks.onCreateEvent(prev.selectedDate, prev.selectedTime)
+      announce(`${prev.selectedTime}に新しいプランを作成します`)
+      callbacks.onCreatePlan(prev.selectedDate, prev.selectedTime)
 
-      return { ...prev, isInEventCreationMode: true }
+      return { ...prev, isInPlanCreationMode: true }
     })
   }, [announce, callbacks])
 
   /**
-   * イベント編集
+   * プラン編集
    */
-  const editCurrentEvent = useCallback(() => {
-    if (navigationState.selectedEventId) {
-      const event = events.find((e) => e.id === navigationState.selectedEventId)
-      if (event) {
-        announce(`${event.title}を編集します`)
-        callbacks.onEditEvent(navigationState.selectedEventId)
+  const editCurrentPlan = useCallback(() => {
+    if (navigationState.selectedPlanId) {
+      const plan = plans.find((p) => p.id === navigationState.selectedPlanId)
+      if (plan) {
+        announce(`${plan.title}を編集します`)
+        callbacks.onEditPlan(navigationState.selectedPlanId)
 
-        setNavigationState((prev) => ({ ...prev, isInEventEditMode: true }))
+        setNavigationState((prev) => ({ ...prev, isInPlanEditMode: true }))
       }
     } else {
-      announce(t('calendar.event.selectEventToEdit'))
+      announce(t('calendar.plan.selectPlanToEdit'))
     }
-  }, [navigationState.selectedEventId, events, announce, callbacks, t])
+  }, [navigationState.selectedPlanId, plans, announce, callbacks, t])
 
   /**
-   * イベント削除
+   * プラン削除
    */
-  const deleteCurrentEvent = useCallback(() => {
-    if (navigationState.selectedEventId) {
-      const event = events.find((e) => e.id === navigationState.selectedEventId)
-      if (event) {
-        announce(`${event.title}を削除します`)
-        callbacks.onDeleteEvent(navigationState.selectedEventId)
+  const deleteCurrentPlan = useCallback(() => {
+    if (navigationState.selectedPlanId) {
+      const plan = plans.find((p) => p.id === navigationState.selectedPlanId)
+      if (plan) {
+        announce(`${plan.title}を削除します`)
+        callbacks.onDeletePlan(navigationState.selectedPlanId)
 
         setNavigationState((prev) => ({
           ...prev,
-          selectedEventId: null,
+          selectedPlanId: null,
         }))
       }
     } else {
-      announce(t('calendar.event.selectEventToDelete'))
+      announce(t('calendar.plan.selectPlanToDelete'))
     }
-  }, [navigationState.selectedEventId, events, announce, callbacks, t])
+  }, [navigationState.selectedPlanId, plans, announce, callbacks, t])
 
   /**
    * エスケープアクション
    */
   const handleEscape = useCallback(() => {
     setNavigationState((prev) => {
-      if (prev.isInEventCreationMode || prev.isInEventEditMode) {
+      if (prev.isInPlanCreationMode || prev.isInPlanEditMode) {
         announce(t('calendar.actions.undone'))
         callbacks.onEscapeAction()
         return {
           ...prev,
-          isInEventCreationMode: false,
-          isInEventEditMode: false,
+          isInPlanCreationMode: false,
+          isInPlanEditMode: false,
         }
-      } else if (prev.selectedEventId) {
-        announce(t('calendar.event.deselected'))
-        return { ...prev, selectedEventId: null }
+      } else if (prev.selectedPlanId) {
+        announce(t('calendar.plan.deselected'))
+        return { ...prev, selectedPlanId: null }
       }
       return prev
     })
@@ -245,9 +243,9 @@ export function useAccessibilityKeyboard(events: CalendarEvent[], currentDate: D
   const showKeyboardHelp = useCallback(() => {
     const helpMessage = [
       'カレンダーのキーボード操作:',
-      '矢印キー: 日付・時間・イベントの移動',
-      'Enter: イベント作成・編集',
-      'Delete: イベント削除',
+      '矢印キー: 日付・時間・プランの移動',
+      'Enter: プラン作成・編集',
+      'Delete: プラン削除',
       'Escape: 操作キャンセル',
       'F1: このヘルプを表示',
       'Home/End: 時間の最初・最後に移動',
@@ -263,11 +261,7 @@ export function useAccessibilityKeyboard(events: CalendarEvent[], currentDate: D
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       // モーダルやフォームが開いている場合は処理しない
-      if (
-        navigationState.isInEventCreationMode ||
-        navigationState.isInEventEditMode ||
-        event.target !== document.body
-      ) {
+      if (navigationState.isInPlanCreationMode || navigationState.isInPlanEditMode || event.target !== document.body) {
         return
       }
 
@@ -282,36 +276,36 @@ export function useAccessibilityKeyboard(events: CalendarEvent[], currentDate: D
         navigationState,
         navigateDate,
         navigateTime,
-        navigateEvents,
-        editCurrentEvent,
-        createEvent,
-        deleteCurrentEvent,
+        navigatePlans,
+        editCurrentPlan,
+        createPlan,
+        deleteCurrentPlan,
         handleEscape,
         showKeyboardHelp,
         setNavigationState,
         announce,
-        events,
+        plans,
         TIME_SLOTS,
-        noDescriptionText: t('calendar.event.noDescription'),
+        noDescriptionText: t('calendar.plan.noDescription'),
       }
 
       // ヘルパー関数を直接呼び出し
       handleArrowKeys(handlerProps)
       handleActionKeys(handlerProps)
       handleNavigationKeys(handlerProps)
-      handleEventDetailKeys(handlerProps)
+      handlePlanDetailKeys(handlerProps)
     },
     [
       navigationState,
       navigateDate,
       navigateTime,
-      navigateEvents,
-      createEvent,
-      editCurrentEvent,
-      deleteCurrentEvent,
+      navigatePlans,
+      createPlan,
+      editCurrentPlan,
+      deleteCurrentPlan,
       handleEscape,
       showKeyboardHelp,
-      events,
+      plans,
       announce,
       t,
     ]
@@ -340,7 +334,7 @@ export function useAccessibilityKeyboard(events: CalendarEvent[], currentDate: D
    * 現在の状態の詳細説明
    */
   const getDetailedStatus = useCallback(() => {
-    const { selectedDate, selectedTime, selectedEventId } = navigationState
+    const { selectedDate, selectedTime, selectedPlanId } = navigationState
     const dateString = selectedDate.toLocaleDateString('ja-JP', {
       year: 'numeric',
       month: 'long',
@@ -348,15 +342,15 @@ export function useAccessibilityKeyboard(events: CalendarEvent[], currentDate: D
       weekday: 'long',
     })
 
-    if (selectedEventId) {
-      const event = events.find((e) => e.id === selectedEventId)
-      if (event) {
-        return `${dateString}、${event.title}が選択されています`
+    if (selectedPlanId) {
+      const plan = plans.find((p) => p.id === selectedPlanId)
+      if (plan) {
+        return `${dateString}、${plan.title}が選択されています`
       }
     }
 
     return `${dateString}、${selectedTime}が選択されています`
-  }, [navigationState, events])
+  }, [navigationState, plans])
 
   return {
     navigationState,
@@ -381,23 +375,23 @@ export function useAccessibilityKeyboard(events: CalendarEvent[], currentDate: D
       announce(`${time}に移動しました`)
     },
 
-    selectEvent: (eventId: string | null) => {
-      setNavigationState((prev) => ({ ...prev, selectedEventId: eventId }))
-      if (eventId) {
-        const event = events.find((e) => e.id === eventId)
-        if (event) {
-          announce(`${event.title}を選択しました`)
+    selectPlan: (planId: string | null) => {
+      setNavigationState((prev) => ({ ...prev, selectedPlanId: planId }))
+      if (planId) {
+        const plan = plans.find((p) => p.id === planId)
+        if (plan) {
+          announce(`${plan.title}を選択しました`)
         }
       }
     },
 
     // モード制御
-    setEventCreationMode: (isActive: boolean) => {
-      setNavigationState((prev) => ({ ...prev, isInEventCreationMode: isActive }))
+    setPlanCreationMode: (isActive: boolean) => {
+      setNavigationState((prev) => ({ ...prev, isInPlanCreationMode: isActive }))
     },
 
-    setEventEditMode: (isActive: boolean) => {
-      setNavigationState((prev) => ({ ...prev, isInEventEditMode: isActive }))
+    setPlanEditMode: (isActive: boolean) => {
+      setNavigationState((prev) => ({ ...prev, isInPlanEditMode: isActive }))
     },
 
     // アナウンス機能

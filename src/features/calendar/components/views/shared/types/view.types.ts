@@ -2,7 +2,7 @@
  * ビュー関連の型定義
  */
 
-import type { CalendarEvent, EventInteractionHandler } from './event.types'
+import type { CalendarEvent, EventInteractionHandler } from './plan.types'
 
 export type ViewType = 'day' | 'week' | 'month' | '3day' | '2week'
 

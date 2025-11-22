@@ -7,14 +7,14 @@ import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Separator } from '@/components/ui/separator'
-import type { TicketStatus } from '@/features/plans/types/ticket'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { Filter } from 'lucide-react'
 import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore'
 
 /**
  * ステータス選択肢
  */
-const STATUS_OPTIONS: Array<{ value: TicketStatus; label: string }> = [
+const STATUS_OPTIONS: Array<{ value: PlanStatus; label: string }> = [
   { value: 'backlog', label: '準備中' },
   { value: 'ready', label: '配置済み' },
   { value: 'active', label: '作業中' },
@@ -59,9 +59,9 @@ export function TableFilters() {
   const filterCount = status.length + (dueDate !== 'all' ? 1 : 0)
 
   // ステータストグル
-  const toggleStatus = (value: TicketStatus) => {
+  const toggleStatus = (value: PlanStatus) => {
     const newStatus = status.includes(value) ? status.filter((s) => s !== value) : [...status, value]
-    setStatus(newStatus as TicketStatus[])
+    setStatus(newStatus as PlanStatus[])
   }
 
   // クリア（期限とステータスのみ）

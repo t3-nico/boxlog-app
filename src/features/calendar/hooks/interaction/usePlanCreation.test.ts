@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { useEventCreation } from './useEventCreation'
+import { useEventCreation } from './usePlanCreation'
 
 describe('useEventCreation', () => {
   it('should initialize with default state', () => {

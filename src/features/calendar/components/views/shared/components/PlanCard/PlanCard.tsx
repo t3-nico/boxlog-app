@@ -13,11 +13,11 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants'
-import type { CalendarTicket, TicketCardProps } from '../../types/event.types'
+import type { CalendarTicket, PlanCardProps } from '../../types/event.types'
 
-import { TicketCardContent } from './TicketCardContent'
+import { PlanCardContent } from './PlanCardContent'
 
-export const TicketCard = memo<TicketCardProps>(function TicketCard({
+export const PlanCard = memo<PlanCardProps>(function PlanCard({
   event,
   position,
   onClick,
@@ -200,7 +200,7 @@ export const TicketCard = memo<TicketCardProps>(function TicketCard({
       aria-label={`Ticket: ${event.title}`}
       aria-pressed={isSelected}
     >
-      <TicketCardContent
+      <PlanCardContent
         event={
           {
             ...event,

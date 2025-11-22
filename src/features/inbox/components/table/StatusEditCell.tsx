@@ -1,21 +1,21 @@
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell } from '@/components/ui/table'
-import { TicketStatusBadge } from '@/features/plans/components/display/TicketStatusBadge'
-import type { TicketStatus } from '@/features/plans/types/ticket'
+import { TicketStatusBadge } from '@/features/plans/components/display/PlanStatusBadge'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { cn } from '@/lib/utils'
 import { Check } from 'lucide-react'
 import { useState } from 'react'
 
 interface StatusEditCellProps {
   /** 現在のステータス */
-  status: TicketStatus
+  status: PlanStatus
   /** 列幅 */
   width?: number
   /** ステータス変更時のコールバック */
-  onStatusChange: (status: TicketStatus) => void
+  onStatusChange: (status: PlanStatus) => void
 }
 
-const STATUS_OPTIONS: { value: TicketStatus; label: string }[] = [
+const STATUS_OPTIONS: { value: PlanStatus; label: string }[] = [
   { value: 'backlog', label: 'Backlog' },
   { value: 'ready', label: 'Ready' },
   { value: 'active', label: 'Active' },
@@ -44,7 +44,7 @@ const STATUS_OPTIONS: { value: TicketStatus; label: string }[] = [
 export function StatusEditCell({ status, width, onStatusChange }: StatusEditCellProps) {
   const [open, setOpen] = useState(false)
 
-  const handleStatusSelect = (newStatus: TicketStatus) => {
+  const handleStatusSelect = (newStatus: PlanStatus) => {
     onStatusChange(newStatus)
     setOpen(false)
   }

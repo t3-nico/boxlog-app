@@ -4,18 +4,18 @@
  * TanStack Query統合済み
  */
 
-import { useTickets } from '@/features/plans/hooks/useTickets'
-import type { Ticket, TicketStatus } from '@/features/plans/types/ticket'
+import { useTickets } from '@/features/plans/hooks/usePlans'
+import type { Plan, PlanStatus } from '@/features/plans/types/plan'
 import type { DueDateFilter } from '../stores/useInboxFilterStore'
 
 /**
- * Inboxアイテム（Ticket型のエイリアス）
+ * Inboxアイテム（Plan型のエイリアス）
  */
 export interface InboxItem {
   id: string
   type: 'ticket'
   title: string
-  status: TicketStatus
+  status: PlanStatus
   created_at: string
   updated_at: string
   ticket_number?: string
@@ -35,7 +35,7 @@ export interface InboxItem {
  * Inboxフィルター型
  */
 export interface InboxFilters {
-  status?: TicketStatus
+  status?: PlanStatus
   search?: string
   tags?: string[] // タグIDの配列
   dueDate?: DueDateFilter // 期限フィルター
@@ -94,10 +94,10 @@ function matchesDueDateFilter(dueDate: string | null | undefined, filter: DueDat
 }
 
 /**
- * TicketをInboxItemに変換
+ * PlanをInboxItemに変換
  */
 function ticketToInboxItem(
-  ticket: Ticket & { ticket_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
+  ticket: Plan & { ticket_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
 ): InboxItem {
   // ticket_tags から tags を抽出
   const tags =
@@ -158,12 +158,12 @@ export function useInboxData(filters: InboxFilters = {}) {
     search: filters.search,
   })
 
-  // TicketをInboxItemに変換
+  // PlanをInboxItemに変換
   // APIレスポンスは部分的な型なので、unknown経由でキャスト
   let items: InboxItem[] =
     ticketsData?.map((t) =>
       ticketToInboxItem(
-        t as unknown as Ticket & { ticket_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
+        t as unknown as Plan & { ticket_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
       )
     ) || []
 

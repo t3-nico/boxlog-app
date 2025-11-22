@@ -5,7 +5,7 @@ import { useTags } from '@/features/tags/hooks/use-tags'
 import { Tag as TagType } from '@/types/unified'
 import { Plus, Tag, X } from 'lucide-react'
 
-import { TicketTagSelectDialogEnhanced } from './TicketTagSelectDialogEnhanced'
+import { TicketTagSelectDialogEnhanced } from './PlanTagSelectDialogEnhanced'
 
 interface TicketTagsSectionProps {
   selectedTagIds: string[]
@@ -18,7 +18,7 @@ interface TicketTagsSectionProps {
   popoverSideOffset?: number
 }
 
-export function TicketTagsSection({
+export function PlanTagsSection({
   selectedTagIds,
   onTagsChange,
   onRemoveTag,
@@ -116,3 +116,6 @@ export function TicketTagsSection({
     </div>
   )
 }
+
+// Backward compatibility
+export { PlanTagsSection as TicketTagsSection }

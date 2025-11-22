@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { useEventSelection } from './useEventSelection'
+import { useEventSelection } from './usePlanSelection'
 
 describe('useEventSelection', () => {
   it('should initialize with default state', () => {

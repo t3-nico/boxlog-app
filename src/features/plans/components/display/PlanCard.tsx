@@ -12,21 +12,29 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { parseDateString } from '@/features/calendar/utils/dateUtils'
-import type { Ticket } from '../../types/ticket'
-import { TicketStatusBadge } from './TicketStatusBadge'
+import type { Plan } from '../../types/plan'
+import { TicketStatusBadge } from './PlanStatusBadge'
+
+// tRPC返却値の型（ticket_tags を含む）
+type PlanWithTicketTags = Plan & {
+  ticket_tags?: Array<{
+    tag_id: string
+    tags: { id: string; name: string; color: string; description?: string }
+  }>
+}
 
 interface TicketCardProps {
-  ticket: Ticket
-  onEdit?: (ticket: Ticket) => void
-  onDelete?: (ticket: Ticket) => void
-  onClick?: (ticket: Ticket) => void
+  ticket: PlanWithTicketTags
+  onEdit?: (ticket: PlanWithTicketTags) => void
+  onDelete?: (ticket: PlanWithTicketTags) => void
+  onClick?: (ticket: PlanWithTicketTags) => void
   tags?: Array<{ id: string; name: string; color: string }>
 }
 
-export function TicketCard({ ticket, onEdit, onDelete, onClick, tags = [] }: TicketCardProps) {
+export function PlanCard({ ticket, onEdit, onDelete, onClick, tags = [] }: TicketCardProps) {
   const handleCardClick = () => {
     if (onClick) {
-      onClick(plan)
+      onClick(ticket)
     }
   }
 
@@ -59,12 +67,12 @@ export function TicketCard({ ticket, onEdit, onDelete, onClick, tags = [] }: Tic
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {onEdit && <DropdownMenuItem onSelect={handleMenuAction(() => onEdit(plan))}>編集</DropdownMenuItem>}
+              {onEdit && <DropdownMenuItem onSelect={handleMenuAction(() => onEdit(ticket))}>編集</DropdownMenuItem>}
               {onDelete && (
                 <>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onSelect={handleMenuAction(() => onDelete(plan))}
+                    onSelect={handleMenuAction(() => onDelete(ticket))}
                     className="text-destructive focus:text-destructive"
                   >
                     削除
@@ -115,3 +123,6 @@ export function TicketCard({ ticket, onEdit, onDelete, onClick, tags = [] }: Tic
     </Card>
   )
 }
+
+// Backward compatibility
+export { PlanCard as TicketCard }

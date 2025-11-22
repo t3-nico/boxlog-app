@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
-import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
+import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Calendar as CalendarIcon, Loader2, X } from 'lucide-react'

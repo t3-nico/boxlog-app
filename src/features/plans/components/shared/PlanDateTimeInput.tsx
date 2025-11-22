@@ -16,7 +16,7 @@ interface TicketDateTimeInputProps {
   showBorderTop?: boolean
 }
 
-export function TicketDateTimeInput({
+export function PlanDateTimeInput({
   selectedDate,
   startTime,
   endTime,
@@ -85,3 +85,6 @@ export function TicketDateTimeInput({
     </div>
   )
 }
+
+// Backward compatibility
+export { PlanDateTimeInput as TicketDateTimeInput }

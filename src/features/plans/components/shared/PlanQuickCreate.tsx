@@ -8,16 +8,16 @@ import { Bell, Calendar as CalendarIcon, Plus, Repeat, Tag } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import type { TicketStatus } from '@/schemas/plans/ticket'
-import { useTicketMutations } from '../../hooks/useTicketMutations'
-import { useTicketTags } from '../../hooks/useTicketTags'
+import type { PlanStatus } from '@/schemas/plans/plan'
+import { useTicketMutations } from '../../hooks/usePlanMutations'
+import { useTicketTags } from '../../hooks/usePlanTags'
 import { reminderTypeToMinutes } from '../../utils/reminder'
 import { DateTimePopoverContent } from './DateTimePopoverContent'
-import { TicketTagSelectDialogEnhanced } from './TicketTagSelectDialogEnhanced'
+import { PlanTagSelectDialogEnhanced } from './PlanTagSelectDialogEnhanced'
 
 interface TicketQuickCreateProps {
   /** チケットのステータス */
-  status: TicketStatus
+  status: PlanStatus
   /** 作成中フラグ */
   isCreating: boolean
   /** 作成モード開始時のコールバック */
@@ -264,7 +264,7 @@ export function TicketQuickCreate({ status, isCreating, onStartCreate, onFinishC
           </Popover>
 
           {/* タグを追加 */}
-          <TicketTagSelectDialogEnhanced
+          <PlanTagSelectDialogEnhanced
             selectedTagIds={selectedTagIds}
             onTagsChange={(tagIds) => setSelectedTagIds(tagIds)}
           >
@@ -275,7 +275,7 @@ export function TicketQuickCreate({ status, isCreating, onStartCreate, onFinishC
               <Tag className="size-3" />
               <span>タグを追加</span>
             </div>
-          </TicketTagSelectDialogEnhanced>
+          </PlanTagSelectDialogEnhanced>
 
           {/* 作成ボタン */}
           <div className="flex justify-end">

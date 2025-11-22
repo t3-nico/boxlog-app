@@ -5,17 +5,17 @@ import { Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { TicketStatus } from '../../types/ticket'
+import type { PlanStatus } from '../../types/plan'
 
 interface TicketFiltersProps {
   searchQuery?: string
-  status?: TicketStatus
+  status?: PlanStatus
   onSearchChange?: (query: string) => void
-  onStatusChange?: (status: TicketStatus | undefined) => void
+  onStatusChange?: (status: PlanStatus | undefined) => void
   onClearFilters?: () => void
 }
 
-export function TicketFilters({
+export function PlanFilters({
   searchQuery = '',
   status,
   onSearchChange,

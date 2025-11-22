@@ -8,10 +8,10 @@ import {
 } from '@/components/ui/context-menu'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { parseDatetimeString } from '@/features/calendar/utils/dateUtils'
-import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
-import { useTicketTags } from '@/features/plans/hooks/useTicketTags'
-import { useTicketInspectorStore } from '@/features/plans/stores/useTicketInspectorStore'
-import type { TicketStatus } from '@/features/plans/types/ticket'
+import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useTicketTags } from '@/features/plans/hooks/usePlanTags'
+import { useTicketInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -58,7 +58,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   const visibleColumns = getVisibleColumns()
 
   // インライン編集ハンドラー
-  const handleStatusChange = (status: TicketStatus) => {
+  const handleStatusChange = (status: PlanStatus) => {
     // TODO: APIでステータスを更新
     console.log('Update status:', item.id, status)
   }

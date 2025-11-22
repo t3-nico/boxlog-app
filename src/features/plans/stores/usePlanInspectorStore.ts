@@ -17,17 +17,20 @@ interface TicketInitialData {
 
 interface TicketInspectorStore {
   isOpen: boolean
-  ticketId: string | null
+  planId: string | null
   initialData?: TicketInitialData
-  openInspector: (ticketId: string | null, initialData?: TicketInitialData) => void
+  openInspector: (planId: string | null, initialData?: TicketInitialData) => void
   closeInspector: () => void
 }
 
-export const useTicketInspectorStore = create<TicketInspectorStore>((set) => ({
+export const usePlanInspectorStore = create<TicketInspectorStore>((set) => ({
   isOpen: false,
-  ticketId: null,
+  planId: null,
   initialData: undefined,
-  openInspector: (ticketId, initialData) =>
-    set({ isOpen: true, ticketId, initialData: ticketId === null ? initialData : undefined }),
-  closeInspector: () => set({ isOpen: false, ticketId: null, initialData: undefined }),
+  openInspector: (planId, initialData) =>
+    set({ isOpen: true, planId, initialData: planId === null ? initialData : undefined }),
+  closeInspector: () => set({ isOpen: false, planId: null, initialData: undefined }),
 }))
+
+// Backward compatibility
+export { usePlanInspectorStore as useTicketInspectorStore }

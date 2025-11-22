@@ -8,8 +8,8 @@ import { format } from 'date-fns'
 import { fromZonedTime } from 'date-fns-tz'
 import { toast } from 'sonner'
 
-import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
-import { useTickets } from '@/features/plans/hooks/useTickets'
+import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useTickets } from '@/features/plans/hooks/usePlans'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 
 interface DnDProviderProps {
@@ -101,7 +101,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
    * Ticketドロップの共通処理
    */
   const handleTicketDrop = useCallback(
-    (ticketId: string, over: any) => {
+    (planId: string, over: any) => {
       // ドロップ先のデータ
       const dropData = over.data?.current
       if (!dropData || !dropData.date) {
@@ -112,7 +112,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
       }
 
       console.log('[DnDProvider] ドラッグ終了:', {
-        ticketId,
+        planId,
         dropData,
       })
 
@@ -203,12 +203,12 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
         }
 
         console.log('[DnDProvider] updateTicket.mutate 呼び出し:', {
-          id: ticketId,
+          id: planId,
           data: updateData,
         })
 
         updateTicket.mutate({
-          id: ticketId,
+          id: planId,
           data: updateData,
         })
       } catch (error) {
@@ -249,6 +249,9 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
       const dragData = active.data?.current
       const dragType = dragData?.type
 
+      // ドラッグするプランのIDを取得
+      let currentPlanId: string
+
       // カレンダーイベントの場合
       if (dragType === 'calendar-event') {
         const calendarEvent = dragData?.event
@@ -258,16 +261,15 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           return
         }
         // Ticketとして扱う（CalendarEventはTicketベース）
-        const ticketId = calendarEvent.id
-        console.log('[DnDProvider] カレンダーイベントをドラッグ中:', ticketId)
-        // 以降の処理でticketIdとして扱う
-        handleTicketDrop(ticketId, over)
-        return
+        currentPlanId = calendarEvent.id
+        console.log('[DnDProvider] カレンダーイベントをドラッグ中:', currentPlanId)
+      } else {
+        // 通常のTicketカードの場合
+        currentPlanId = active.id as string
       }
 
-      // 通常のTicketカードの場合
-      const ticketId = active.id as string
-      handleTicketDrop(ticketId, over)
+      // 共通処理を実行
+      handleTicketDrop(currentPlanId, over)
     },
     [handleTicketDrop]
   )

@@ -1,11 +1,11 @@
-import type { TicketActivity, TicketActivityDisplay } from '../types/activity'
+import type { PlanActivity, PlanActivityDisplay } from '../types/activity'
 
 /**
  * アクティビティを表示用フォーマットに変換
  */
-export function formatActivity(activity: TicketActivity): TicketActivityDisplay {
+export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
   let message = ''
-  let icon: TicketActivityDisplay['icon'] = 'update'
+  let icon: PlanActivityDisplay['icon'] = 'update'
 
   switch (activity.action_type) {
     case 'created':

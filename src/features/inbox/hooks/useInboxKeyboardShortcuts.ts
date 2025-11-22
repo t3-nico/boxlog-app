@@ -1,4 +1,4 @@
-import { useTicketInspectorStore } from '@/features/plans/stores/useTicketInspectorStore'
+import { useTicketInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { useEffect, useRef } from 'react'
 import { useInboxFocusStore } from '../stores/useInboxFocusStore'
 import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'

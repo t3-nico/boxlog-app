@@ -1,4 +1,4 @@
-import type { TicketStatus } from '../types/plan'
+import type { PlanStatus } from '../types/plan'
 
 /**
  * チケット番号のフォーマット
@@ -16,8 +16,8 @@ export function formatTicketNumber(ticketNumber: string): string {
 /**
  * チケットステータスの表示名
  */
-export function formatTicketStatus(status: TicketStatus): string {
-  const statusMap: Record<TicketStatus, string> = {
+export function formatTicketStatus(status: PlanStatus): string {
+  const statusMap: Record<PlanStatus, string> = {
     backlog: '準備中',
     ready: '配置済み',
     active: '作業中',

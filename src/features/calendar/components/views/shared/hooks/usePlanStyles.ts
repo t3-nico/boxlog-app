@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import { useMemo } from 'react'
 
-import type { EventPosition } from './useViewEvents'
+import type { EventPosition } from './useViewPlans'
 
 /**
  * イベント位置情報からCSSスタイルを計算するフック

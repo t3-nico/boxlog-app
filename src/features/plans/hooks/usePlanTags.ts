@@ -6,24 +6,24 @@ import { api } from '@/lib/trpc'
  * チケット・セッションとタグの関連付け管理フック
  * tRPC API統合済み
  */
-export function useTicketTags() {
+export function usePlanTags() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const utils = api.useUtils()
 
   // tRPC Mutation統合（チケットタグ）
-  const addTicketTagMutation = api.tickets.addTag.useMutation({
+  const addTicketTagMutation = api.plans.addTag.useMutation({
     onSuccess: () => {
       // チケットデータを再取得
-      utils.tickets.getById.invalidate()
-      utils.tickets.list.invalidate()
+      utils.plans.getById.invalidate()
+      utils.plans.list.invalidate()
     },
   })
-  const removeTicketTagMutation = api.tickets.removeTag.useMutation({
+  const removeTicketTagMutation = api.plans.removeTag.useMutation({
     onSuccess: () => {
       // チケットデータを再取得
-      utils.tickets.getById.invalidate()
-      utils.tickets.list.invalidate()
+      utils.plans.getById.invalidate()
+      utils.plans.list.invalidate()
     },
   })
 
@@ -31,12 +31,12 @@ export function useTicketTags() {
    * チケットにタグを追加
    */
   const addTicketTag = useCallback(
-    async (ticketId: string, tagId: string): Promise<boolean> => {
+    async (planId: string, tagId: string): Promise<boolean> => {
       try {
         setIsLoading(true)
         setError(null)
 
-        await addTicketTagMutation.mutateAsync({ ticketId, tagId })
+        await addTicketTagMutation.mutateAsync({ planId, tagId })
 
         setIsLoading(false)
         return true
@@ -54,12 +54,12 @@ export function useTicketTags() {
    * チケットからタグを削除
    */
   const removeTicketTag = useCallback(
-    async (ticketId: string, tagId: string): Promise<boolean> => {
+    async (planId: string, tagId: string): Promise<boolean> => {
       try {
         setIsLoading(true)
         setError(null)
 
-        await removeTicketTagMutation.mutateAsync({ ticketId, tagId })
+        await removeTicketTagMutation.mutateAsync({ planId, tagId })
 
         setIsLoading(false)
         return true
@@ -78,7 +78,7 @@ export function useTicketTags() {
    * 注: Phase 4以降でtRPC APIに一括設定エンドポイントを追加予定
    * 現在はaddTicketTag/removeTicketTagを使用してください
    */
-  const setTicketTags = useCallback(async (ticketId: string, tagIds: string[]): Promise<boolean> => {
+  const setTicketTags = useCallback(async (planId: string, tagIds: string[]): Promise<boolean> => {
     try {
       setIsLoading(true)
       setError(null)
@@ -108,3 +108,6 @@ export function useTicketTags() {
     setTicketTags,
   }
 }
+
+// Backward compatibility
+export { addPlanTag as addTicketTag, removePlanTag as removeTicketTag, usePlanTags as useTicketTags }

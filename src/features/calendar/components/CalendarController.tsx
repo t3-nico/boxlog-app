@@ -14,9 +14,9 @@ import { format } from 'date-fns'
 // import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
 // import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
-import { useTicketMutations } from '@/features/plans/hooks/useTicketMutations'
-import { useTickets } from '@/features/plans/hooks/useTickets'
-import { useTicketInspectorStore } from '@/features/plans/stores/useTicketInspectorStore'
+import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useTickets } from '@/features/plans/hooks/usePlans'
+import { useTicketInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'
 // import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
@@ -24,7 +24,6 @@ import { logger } from '@/lib/logger'
 
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 
-import type { Ticket } from '@/features/plans/types/ticket'
 import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
 import { useCalendarContextMenu } from '../hooks/useCalendarContextMenu'
 import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard'
@@ -310,7 +309,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     (event: CalendarEvent) => {
       // チケットIDでTicket Inspectorを開く
       openInspector(event.id)
-      logger.log('📋 Opening Ticket Inspector:', { ticketId: event.id, title: event.title })
+      logger.log('📋 Opening Ticket Inspector:', { planId: event.id, title: event.title })
     },
     [openInspector]
   )
@@ -596,7 +595,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
             // 作成されたチケットをInspectorで開く
             openInspector(newTicket.id)
             logger.log('✅ Created ticket from drag selection:', {
-              ticketId: newTicket.id,
+              planId: newTicket.id,
               title: newTicket.title,
               dueDate: newTicket.due_date,
             })

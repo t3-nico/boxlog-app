@@ -1,25 +1,25 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { describe, expect, it } from 'vitest'
 
-import type { TimedEvent } from '../types/event.types'
+import type { TimedPlan } from '../types/plan.types'
 
-import { calculateViewEventColumns, detectOverlapGroups, eventsOverlap } from './eventPositioning'
+import { calculateViewPlanColumns, detectOverlapGroups, plansOverlap } from './planPositioning'
 
-describe('eventPositioning', () => {
-  const createTimedEvent = (
+describe('planPositioning', () => {
+  const createTimedPlan = (
     id: string,
     startHour: number,
     startMinute: number,
     endHour: number,
     endMinute: number
-  ): TimedEvent => ({
+  ): TimedPlan => ({
     id,
-    title: `Event ${id}`,
+    title: `Plan ${id}`,
     start: new Date(2025, 0, 15, startHour, startMinute),
     end: new Date(2025, 0, 15, endHour, endMinute),
     startDate: new Date(2025, 0, 15, startHour, startMinute),
     endDate: new Date(2025, 0, 15, endHour, endMinute),
-    type: 'event',
+    type: 'plan',
     status: 'inbox',
     color: '#3b82f6',
     priority: 'medium',
@@ -37,59 +37,59 @@ describe('eventPositioning', () => {
     isMultiDay: false,
   })
 
-  describe('eventsOverlap', () => {
-    it('完全に重複するイベントを検出する', () => {
-      const event1 = createTimedEvent('1', 10, 0, 11, 0) // 10:00-11:00
-      const event2 = createTimedEvent('2', 10, 30, 11, 30) // 10:30-11:30
+  describe('plansOverlap', () => {
+    it('完全に重複するプランを検出する', () => {
+      const plan1 = createTimedPlan('1', 10, 0, 11, 0) // 10:00-11:00
+      const plan2 = createTimedPlan('2', 10, 30, 11, 30) // 10:30-11:30
 
-      expect(eventsOverlap(event1, event2)).toBe(true)
+      expect(plansOverlap(plan1, plan2)).toBe(true)
     })
 
-    it('部分的に重複するイベントを検出する', () => {
-      const event1 = createTimedEvent('1', 10, 0, 11, 0) // 10:00-11:00
-      const event2 = createTimedEvent('2', 10, 45, 12, 0) // 10:45-12:00
+    it('部分的に重複するプランを検出する', () => {
+      const plan1 = createTimedPlan('1', 10, 0, 11, 0) // 10:00-11:00
+      const plan2 = createTimedPlan('2', 10, 45, 12, 0) // 10:45-12:00
 
-      expect(eventsOverlap(event1, event2)).toBe(true)
+      expect(plansOverlap(plan1, plan2)).toBe(true)
     })
 
-    it('完全に含まれるイベントを検出する', () => {
-      const event1 = createTimedEvent('1', 10, 0, 12, 0) // 10:00-12:00
-      const event2 = createTimedEvent('2', 10, 30, 11, 0) // 10:30-11:00
+    it('完全に含まれるプランを検出する', () => {
+      const plan1 = createTimedPlan('1', 10, 0, 12, 0) // 10:00-12:00
+      const plan2 = createTimedPlan('2', 10, 30, 11, 0) // 10:30-11:00
 
-      expect(eventsOverlap(event1, event2)).toBe(true)
+      expect(plansOverlap(plan1, plan2)).toBe(true)
     })
 
-    it('重複しないイベントを判定する（連続）', () => {
-      const event1 = createTimedEvent('1', 10, 0, 11, 0) // 10:00-11:00
-      const event2 = createTimedEvent('2', 11, 0, 12, 0) // 11:00-12:00
+    it('重複しないプランを判定する（連続）', () => {
+      const plan1 = createTimedPlan('1', 10, 0, 11, 0) // 10:00-11:00
+      const plan2 = createTimedPlan('2', 11, 0, 12, 0) // 11:00-12:00
 
-      expect(eventsOverlap(event1, event2)).toBe(false)
+      expect(plansOverlap(plan1, plan2)).toBe(false)
     })
 
-    it('重複しないイベントを判定する（離れている）', () => {
-      const event1 = createTimedEvent('1', 10, 0, 11, 0) // 10:00-11:00
-      const event2 = createTimedEvent('2', 12, 0, 13, 0) // 12:00-13:00
+    it('重複しないプランを判定する（離れている）', () => {
+      const plan1 = createTimedPlan('1', 10, 0, 11, 0) // 10:00-11:00
+      const plan2 = createTimedPlan('2', 12, 0, 13, 0) // 12:00-13:00
 
-      expect(eventsOverlap(event1, event2)).toBe(false)
+      expect(plansOverlap(plan1, plan2)).toBe(false)
     })
 
     it('逆順でも同じ結果が得られる', () => {
-      const event1 = createTimedEvent('1', 10, 0, 11, 0)
-      const event2 = createTimedEvent('2', 10, 30, 11, 30)
+      const plan1 = createTimedPlan('1', 10, 0, 11, 0)
+      const plan2 = createTimedPlan('2', 10, 30, 11, 30)
 
-      expect(eventsOverlap(event1, event2)).toBe(eventsOverlap(event2, event1))
+      expect(plansOverlap(plan1, plan2)).toBe(plansOverlap(plan2, plan1))
     })
   })
 
   describe('detectOverlapGroups', () => {
-    it('重複しないイベントは別々のグループになる', () => {
-      const events: TimedEvent[] = [
-        createTimedEvent('1', 10, 0, 11, 0), // 10:00-11:00
-        createTimedEvent('2', 11, 0, 12, 0), // 11:00-12:00
-        createTimedEvent('3', 12, 0, 13, 0), // 12:00-13:00
+    it('重複しないプランは別々のグループになる', () => {
+      const plans: TimedPlan[] = [
+        createTimedPlan('1', 10, 0, 11, 0), // 10:00-11:00
+        createTimedPlan('2', 11, 0, 12, 0), // 11:00-12:00
+        createTimedPlan('3', 12, 0, 13, 0), // 12:00-13:00
       ]
 
-      const groups = detectOverlapGroups(events)
+      const groups = detectOverlapGroups(plans)
 
       expect(groups).toHaveLength(3)
       expect(groups[0]).toHaveLength(1)
@@ -97,34 +97,34 @@ describe('eventPositioning', () => {
       expect(groups[2]).toHaveLength(1)
     })
 
-    it('重複するイベントは同じグループになる', () => {
-      const events: TimedEvent[] = [
-        createTimedEvent('1', 10, 0, 11, 0), // 10:00-11:00
-        createTimedEvent('2', 10, 30, 11, 30), // 10:30-11:30（event1と重複）
-        createTimedEvent('3', 11, 0, 12, 0), // 11:00-12:00（event2と重複）
+    it('重複するプランは同じグループになる', () => {
+      const plans: TimedPlan[] = [
+        createTimedPlan('1', 10, 0, 11, 0), // 10:00-11:00
+        createTimedPlan('2', 10, 30, 11, 30), // 10:30-11:30（plan1と重複）
+        createTimedPlan('3', 11, 0, 12, 0), // 11:00-12:00（plan2と重複）
       ]
 
-      const groups = detectOverlapGroups(events)
+      const groups = detectOverlapGroups(plans)
 
       expect(groups).toHaveLength(1)
       expect(groups[0]).toHaveLength(3)
     })
 
     it('複数のグループが正しく検出される', () => {
-      const events: TimedEvent[] = [
-        createTimedEvent('1', 10, 0, 11, 0), // Group 1
-        createTimedEvent('2', 10, 30, 11, 30), // Group 1
-        createTimedEvent('3', 12, 0, 13, 0), // Group 2
-        createTimedEvent('4', 12, 30, 13, 30), // Group 2
-        createTimedEvent('5', 14, 0, 15, 0), // Group 3
+      const plans: TimedPlan[] = [
+        createTimedPlan('1', 10, 0, 11, 0), // Group 1
+        createTimedPlan('2', 10, 30, 11, 30), // Group 1
+        createTimedPlan('3', 12, 0, 13, 0), // Group 2
+        createTimedPlan('4', 12, 30, 13, 30), // Group 2
+        createTimedPlan('5', 14, 0, 15, 0), // Group 3
       ]
 
-      const groups = detectOverlapGroups(events)
+      const groups = detectOverlapGroups(plans)
 
       expect(groups).toHaveLength(3)
-      expect(groups[0]).toHaveLength(2) // event1, event2
-      expect(groups[1]).toHaveLength(2) // event3, event4
-      expect(groups[2]).toHaveLength(1) // event5
+      expect(groups[0]).toHaveLength(2) // plan1, plan2
+      expect(groups[1]).toHaveLength(2) // plan3, plan4
+      expect(groups[2]).toHaveLength(1) // plan5
     })
 
     it('空配列の場合は空配列を返す', () => {
@@ -132,34 +132,34 @@ describe('eventPositioning', () => {
       expect(groups).toHaveLength(0)
     })
 
-    it('単一イベントの場合は1グループを返す', () => {
-      const events: TimedEvent[] = [createTimedEvent('1', 10, 0, 11, 0)]
+    it('単一プランの場合は1グループを返す', () => {
+      const plans: TimedPlan[] = [createTimedPlan('1', 10, 0, 11, 0)]
 
-      const groups = detectOverlapGroups(events)
+      const groups = detectOverlapGroups(plans)
 
       expect(groups).toHaveLength(1)
       expect(groups[0]).toHaveLength(1)
     })
 
     it('開始時刻が異なる場合でもソートされる', () => {
-      const events: TimedEvent[] = [
-        createTimedEvent('3', 12, 0, 13, 0),
-        createTimedEvent('1', 10, 0, 11, 0),
-        createTimedEvent('2', 11, 0, 12, 0),
+      const plans: TimedPlan[] = [
+        createTimedPlan('3', 12, 0, 13, 0),
+        createTimedPlan('1', 10, 0, 11, 0),
+        createTimedPlan('2', 11, 0, 12, 0),
       ]
 
-      const groups = detectOverlapGroups(events)
+      const groups = detectOverlapGroups(plans)
 
       // ソートされていることを確認（グループ分けが正しいかチェック）
       expect(groups).toHaveLength(3)
     })
   })
 
-  describe('calculateViewEventColumns', () => {
-    it('重複しないイベントは単一列に配置される', () => {
-      const events: TimedEvent[] = [createTimedEvent('1', 10, 0, 11, 0), createTimedEvent('2', 11, 0, 12, 0)]
+  describe('calculateViewPlanColumns', () => {
+    it('重複しないプランは単一列に配置される', () => {
+      const plans: TimedPlan[] = [createTimedPlan('1', 10, 0, 11, 0), createTimedPlan('2', 11, 0, 12, 0)]
 
-      const columnMap = calculateViewEventColumns(events)
+      const columnMap = calculateViewPlanColumns(plans)
 
       expect(columnMap.get('1')?.columnIndex).toBe(0)
       expect(columnMap.get('1')?.totalColumns).toBe(1)
@@ -167,13 +167,13 @@ describe('eventPositioning', () => {
       expect(columnMap.get('2')?.totalColumns).toBe(1)
     })
 
-    it('重複するイベントは異なる列に配置される', () => {
-      const events: TimedEvent[] = [
-        createTimedEvent('1', 10, 0, 11, 0), // 10:00-11:00
-        createTimedEvent('2', 10, 30, 11, 30), // 10:30-11:30（重複）
+    it('重複するプランは異なる列に配置される', () => {
+      const plans: TimedPlan[] = [
+        createTimedPlan('1', 10, 0, 11, 0), // 10:00-11:00
+        createTimedPlan('2', 10, 30, 11, 30), // 10:30-11:30（重複）
       ]
 
-      const columnMap = calculateViewEventColumns(events)
+      const columnMap = calculateViewPlanColumns(plans)
 
       expect(columnMap.get('1')?.columnIndex).toBe(0)
       expect(columnMap.get('2')?.columnIndex).toBe(1)
@@ -181,16 +181,16 @@ describe('eventPositioning', () => {
       expect(columnMap.get('2')?.totalColumns).toBeGreaterThan(1)
     })
 
-    it('複数重複するイベントが正しく列配置される', () => {
-      const events: TimedEvent[] = [
-        createTimedEvent('1', 10, 0, 11, 0), // 10:00-11:00
-        createTimedEvent('2', 10, 15, 10, 45), // 10:15-10:45（event1と重複）
-        createTimedEvent('3', 10, 30, 11, 30), // 10:30-11:30（event1,2と重複）
+    it('複数重複するプランが正しく列配置される', () => {
+      const plans: TimedPlan[] = [
+        createTimedPlan('1', 10, 0, 11, 0), // 10:00-11:00
+        createTimedPlan('2', 10, 15, 10, 45), // 10:15-10:45（plan1と重複）
+        createTimedPlan('3', 10, 30, 11, 30), // 10:30-11:30（plan1,2と重複）
       ]
 
-      const columnMap = calculateViewEventColumns(events)
+      const columnMap = calculateViewPlanColumns(plans)
 
-      // すべてのイベントが列を持つ
+      // すべてのプランが列を持つ
       expect(columnMap.has('1')).toBe(true)
       expect(columnMap.has('2')).toBe(true)
       expect(columnMap.has('3')).toBe(true)
@@ -201,14 +201,14 @@ describe('eventPositioning', () => {
     })
 
     it('空配列の場合は空のMapを返す', () => {
-      const columnMap = calculateViewEventColumns([])
+      const columnMap = calculateViewPlanColumns([])
       expect(columnMap.size).toBe(0)
     })
 
-    it('単一イベントの場合は正しく配置される', () => {
-      const events: TimedEvent[] = [createTimedEvent('1', 10, 0, 11, 0)]
+    it('単一プランの場合は正しく配置される', () => {
+      const plans: TimedPlan[] = [createTimedPlan('1', 10, 0, 11, 0)]
 
-      const columnMap = calculateViewEventColumns(events)
+      const columnMap = calculateViewPlanColumns(plans)
 
       expect(columnMap.size).toBe(1)
       expect(columnMap.get('1')?.columnIndex).toBe(0)
@@ -216,13 +216,13 @@ describe('eventPositioning', () => {
     })
 
     it('列配置が連続している', () => {
-      const events: TimedEvent[] = [
-        createTimedEvent('1', 10, 0, 12, 0),
-        createTimedEvent('2', 10, 30, 11, 30),
-        createTimedEvent('3', 11, 0, 12, 30),
+      const plans: TimedPlan[] = [
+        createTimedPlan('1', 10, 0, 12, 0),
+        createTimedPlan('2', 10, 30, 11, 30),
+        createTimedPlan('3', 11, 0, 12, 30),
       ]
 
-      const columnMap = calculateViewEventColumns(events)
+      const columnMap = calculateViewPlanColumns(plans)
 
       const indices = [
         columnMap.get('1')?.columnIndex,

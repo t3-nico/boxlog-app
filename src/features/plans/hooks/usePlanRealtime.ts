@@ -36,7 +36,7 @@
 import { api } from '@/lib/trpc'
 
 import { useRealtimeSubscription } from '@/lib/supabase/realtime/useRealtimeSubscription'
-import { useTicketCacheStore } from '../stores/useTicketCacheStore'
+import { useTicketCacheStore } from '../stores/usePlanCacheStore'
 
 interface UseTicketRealtimeOptions {
   /** 購読を有効化するか（デフォルト: true） */
@@ -68,17 +68,17 @@ export function useTicketRealtime(userId: string | undefined, options: UseTicket
 
       // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
       // undefined を渡すことで、useTickets({}) と useTickets(undefined) の両方を無効化
-      void utils.tickets.list.invalidate(undefined, { refetchType: 'all' })
+      void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
 
       // 個別チケットのキャッシュも無効化
       if (newRecord?.id) {
-        void utils.tickets.getById.invalidate({ id: newRecord.id })
+        void utils.plans.getById.invalidate({ id: newRecord.id })
       } else if (oldRecord?.id) {
-        void utils.tickets.getById.invalidate({ id: oldRecord.id })
+        void utils.plans.getById.invalidate({ id: oldRecord.id })
       }
 
       // タグ関連のキャッシュも無効化（タグ変更時に必要）
-      void utils.tickets.invalidate()
+      void utils.plans.invalidate()
     },
     onError: (error) => {
       console.error('[Ticket Realtime] Subscription error:', error)
