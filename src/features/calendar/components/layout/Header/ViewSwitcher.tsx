@@ -73,7 +73,7 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
       <DropdownMenuTrigger className={cn(buttonVariants({ variant: 'outline' }), 'justify-start gap-0', className)}>
         {currentOption?.icon}
         <span>{currentOption?.label || 'Day'}</span>
-        <ChevronDown className="ml-2 h-4 w-4" />
+        <ChevronDown className="ml-2 h-4 w-4 !text-white dark:!text-white" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" side="bottom" sideOffset={8} className="dark:border-input min-w-[160px] border">
         {/* ビューオプション */}

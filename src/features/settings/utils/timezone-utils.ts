@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { formatInTimeZone as formatInTZ, fromZonedTime, toZonedTime } from 'date-fns-tz'
 
 // タイムゾーンリストの取得
 export function getTimeZones() {
@@ -24,11 +25,16 @@ export function getTimeZones() {
   return timezones.sort((a, b) => a.offset - b.offset)
 }
 
-// 時間表示のフォーマット
-export function formatTimeWithSettings(date: Date, timeFormat: '12h' | '24h', _timezone?: string): string {
+// 時間表示のフォーマット（タイムゾーン対応）
+export function formatTimeWithSettings(date: Date, timeFormat: '12h' | '24h', timezone?: string): string {
   const formatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a'
 
-  // 基本的なフォーマット（タイムゾーン変換は後で実装）
+  // タイムゾーンが指定されている場合は、そのタイムゾーンで表示
+  if (timezone) {
+    return formatInTZ(date, timezone, formatString)
+  }
+
+  // タイムゾーンが指定されていない場合は、ローカルタイムゾーンで表示
   return format(date, formatString)
 }
 
@@ -44,16 +50,53 @@ export function formatHour(hour: number, timeFormat: '12h' | '24h'): string {
   return `${hour - 12}:00 PM`
 }
 
-// 現在時刻をタイムゾーンでフォーマット（簡易版）
-export function formatInTimeZone(date: Date, _timezone: string, formatString: string): string {
-  // 簡易実装：基本的なフォーマットのみ
-  // 後でdate-fns-tzを導入して本格実装
-  return format(date, formatString)
+// 現在時刻をタイムゾーンでフォーマット
+export function formatInTimeZone(date: Date, timezone: string, formatString: string): string {
+  return formatInTZ(date, timezone, formatString)
 }
 
-// タスクの時間をタイムゾーンに変換（簡易版）
-export function convertTaskToTimezone<T extends Record<string, unknown>>(task: T, _timezone: string): T {
-  // 簡易実装：現在はそのまま返す
-  // 後でdate-fns-tzを導入して本格実装
-  return task
+// UTC時刻を指定タイムゾーンの時刻に変換
+export function convertToTimezone(utcDate: Date, timezone: string): Date {
+  return toZonedTime(utcDate, timezone)
+}
+
+// 指定タイムゾーンの時刻をUTCに変換
+export function convertFromTimezone(zonedDate: Date, timezone: string): Date {
+  // zonedDateは「そのタイムゾーンでの時刻」として解釈されるべきDateオブジェクト
+  // 例: 2025-11-20 16:00 (JST) → 2025-11-20 07:00 (UTC)
+  return fromZonedTime(zonedDate, timezone)
+}
+
+// タイムゾーンの略称を取得
+export function getTimezoneAbbreviation(timezone: string): string {
+  // よく使われるタイムゾーンの略称マッピング
+  const abbreviations: Record<string, string> = {
+    'Asia/Tokyo': 'JST',
+    'America/New_York': 'EST',
+    'America/Los_Angeles': 'PST',
+    'America/Chicago': 'CST',
+    'America/Denver': 'MST',
+    'Europe/London': 'GMT',
+    'Europe/Paris': 'CET',
+    'Australia/Sydney': 'AEDT',
+    'Pacific/Auckland': 'NZDT',
+  }
+
+  // マッピングにある場合はそれを返す
+  if (abbreviations[timezone]) {
+    return abbreviations[timezone]
+  }
+
+  // マッピングにない場合は、Intl.DateTimeFormatを使って略称を取得
+  try {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      timeZoneName: 'short',
+    })
+    const parts = formatter.formatToParts(new Date())
+    const timeZonePart = parts.find((part) => part.type === 'timeZoneName')
+    return timeZonePart?.value || 'UTC'
+  } catch {
+    return 'UTC'
+  }
 }

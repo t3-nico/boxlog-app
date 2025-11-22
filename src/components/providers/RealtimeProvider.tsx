@@ -40,15 +40,18 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
   const userId = useAuthStore((state) => state.user?.id)
   const [isReady, setIsReady] = useState(false)
 
+  console.log('[RealtimeProvider] userId:', userId, 'isReady:', isReady)
+
   // AuthStoreの初期化を待つ
   useEffect(() => {
     // 少し遅延させてAuthStoreの初期化を確実に待つ
     const timer = setTimeout(() => {
       setIsReady(true)
+      console.log('[RealtimeProvider] Ready. userId:', userId)
     }, 100)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, [userId])
 
   // 各機能のRealtime購読
   useCalendarRealtime(userId, { enabled: isReady && !!userId })
