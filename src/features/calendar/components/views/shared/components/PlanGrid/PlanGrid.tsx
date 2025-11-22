@@ -7,18 +7,18 @@ import { cn } from '@/lib/utils'
 
 import { HOUR_HEIGHT } from '../../constants/grid.constants'
 import { useDragAndDrop } from '../../hooks/useDragAndDrop'
-import type { CalendarEvent } from '../../types/event.types'
+import type { CalendarPlan } from '../../types/plan.types'
 import { CalendarDragSelection } from '../CalendarDragSelection'
-import { TicketCard } from '../TicketCard'
+import { PlanCard } from '../PlanCard'
 
-export interface EventGridProps {
+export interface PlanGridProps {
   date: Date
-  events: CalendarEvent[]
-  eventStyles: Record<string, React.CSSProperties>
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
+  plans: CalendarPlan[]
+  planStyles: Record<string, React.CSSProperties>
+  onPlanClick?: (plan: CalendarPlan) => void
+  onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onEventUpdate?: (event: CalendarEvent) => void
+  onPlanUpdate?: (plan: CalendarPlan) => void
   onTimeRangeSelect?: (start: Date, end: Date) => void
   className?: string
   showTimeGrid?: boolean
@@ -26,29 +26,29 @@ export interface EventGridProps {
 }
 
 /**
- * 共通のイベントグリッドコンポーネント
+ * 共通のプラングリッドコンポーネント
  * 全てのビュー（Day, Week, ThreeDay等）で利用可能
  */
-export const EventGrid = ({
+export const PlanGrid = ({
   date,
-  events,
-  eventStyles,
-  onEventClick,
-  onEventContextMenu,
+  plans,
+  planStyles,
+  onPlanClick,
+  onPlanContextMenu,
   onEmptyClick,
-  onEventUpdate,
+  onPlanUpdate,
   onTimeRangeSelect,
   className,
   showTimeGrid = true,
-}: EventGridProps) => {
+}: PlanGridProps) => {
   // ドラッグ&ドロップ機能
   const { dragState, handlers } = useDragAndDrop({
-    onEventUpdate: onEventUpdate
-      ? async (eventId, updates) => {
-          const event = events.find((e) => e.id === eventId)
-          if (event) {
-            await onEventUpdate({
-              ...event,
+    onPlanUpdate: onPlanUpdate
+      ? async (planId, updates) => {
+          const plan = plans.find((p) => p.id === planId)
+          if (plan) {
+            await onPlanUpdate({
+              ...plan,
               start: updates.startTime,
               end: updates.endTime,
             })
@@ -56,7 +56,7 @@ export const EventGrid = ({
         }
       : undefined,
     date,
-    events,
+    plans,
   })
 
   // グローバルマウスイベント処理
@@ -83,26 +83,26 @@ export const EventGrid = ({
     }
   }, [dragState.isDragging, dragState.isResizing, handlers.handleMouseMove, handlers.handleMouseUp])
 
-  // イベントクリックハンドラー
-  const handleEventClick = useCallback(
-    (event: CalendarEvent) => {
+  // プランクリックハンドラー
+  const handlePlanClick = useCallback(
+    (plan: CalendarPlan) => {
       if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
         return
       }
-      onEventClick?.(event)
+      onPlanClick?.(plan)
     },
-    [onEventClick, dragState]
+    [onPlanClick, dragState]
   )
 
-  // イベント右クリックハンドラー
-  const handleEventContextMenu = useCallback(
-    (event: CalendarEvent, mouseEvent: React.MouseEvent) => {
+  // プラン右クリックハンドラー
+  const handlePlanContextMenu = useCallback(
+    (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
       if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
         return
       }
-      onEventContextMenu?.(event, mouseEvent)
+      onPlanContextMenu?.(plan, mouseEvent)
     },
-    [onEventContextMenu, dragState]
+    [onPlanContextMenu, dragState]
   )
 
   // 時間グリッドの生成
@@ -134,14 +134,14 @@ export const EventGrid = ({
         )}
       </CalendarDragSelection>
 
-      {/* イベント表示レイヤー */}
+      {/* プラン表示レイヤー */}
       <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
-        {events.map((event) => {
-          const style = eventStyles[event.id]
+        {plans.map((plan) => {
+          const style = planStyles[plan.id]
           if (!style) return null
 
-          const isDragging = dragState.draggedEventId === event.id && dragState.isDragging
-          const isResizing = dragState.isResizing && dragState.draggedEventId === event.id
+          const isDragging = dragState.draggedPlanId === plan.id && dragState.isDragging
+          const isResizing = dragState.isResizing && dragState.draggedPlanId === plan.id
 
           // ドラッグ・リサイズ中の位置調整
           const adjustedStyle = { ...style }
@@ -155,15 +155,15 @@ export const EventGrid = ({
           }
 
           return (
-            <div key={event.id} style={adjustedStyle} className="pointer-events-none absolute">
+            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute">
               <div
                 className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
                 role="button"
                 tabIndex={0}
-                aria-label={`Drag event: ${event.title}`}
+                aria-label={`Drag plan: ${plan.title}`}
                 onMouseDown={(e) => {
                   if (e.button === 0) {
-                    handlers.handleMouseDown(event.id, e, {
+                    handlers.handleMouseDown(plan.id, e, {
                       top: parseFloat(style.top?.toString() || '0'),
                       left: 0,
                       width: 100,
@@ -178,18 +178,18 @@ export const EventGrid = ({
                   }
                 }}
               >
-                <TicketCard
-                  event={event}
+                <PlanCard
+                  plan={plan}
                   position={{
                     top: 0,
                     left: 0,
                     width: 100,
                     height: parseFloat(adjustedStyle.height?.toString() || '20'),
                   }}
-                  onClick={() => handleEventClick(event)}
-                  onContextMenu={(evt, e) => handleEventContextMenu(evt, e)}
-                  onResizeStart={(evt, direction, e) =>
-                    handlers.handleResizeStart(evt.id, direction, e, {
+                  onClick={() => handlePlanClick(plan)}
+                  onContextMenu={(plt, e) => handlePlanContextMenu(plt, e)}
+                  onResizeStart={(plt, direction, e) =>
+                    handlers.handleResizeStart(plt.id, direction, e, {
                       top: parseFloat(style.top?.toString() || '0'),
                       left: 0,
                       width: 100,
@@ -210,4 +210,4 @@ export const EventGrid = ({
   )
 }
 
-export default EventGrid
+export default PlanGrid

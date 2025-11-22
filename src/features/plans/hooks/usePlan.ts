@@ -2,9 +2,9 @@ import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
 import { api } from '@/lib/trpc'
 
 /**
- * 単一チケット取得フック
- * @description tRPC Query を使用してチケットを ID で取得
- * @param id - チケットID
+ * 単一プラン取得フック
+ * @description tRPC Query を使用してプランを ID で取得
+ * @param id - プランID
  * @param options - オプション（tags: true でタグも取得）
  *
  * @remarks
@@ -13,16 +13,16 @@ import { api } from '@/lib/trpc'
  * - refetchOnWindowFocus: true（グローバル設定で有効）→ staleなデータのみ再フェッチ
  * - gcTime: 2分 → メモリからの削除は遅らせてローディング状態を回避
  *
- * @see {@link cacheStrategies.tickets} - realtimeCache設定を使用
+ * @see {@link cacheStrategies.plans} - realtimeCache設定を使用
  */
-export function useTicket(id: string, options?: { includeTags?: boolean; enabled?: boolean }) {
-  return api.tickets.getById.useQuery(
+export function usePlan(id: string, options?: { includeTags?: boolean; enabled?: boolean }) {
+  return api.plans.getById.useQuery(
     {
       id,
       include: options?.includeTags ? { tags: true } : undefined,
     },
     {
-      ...cacheStrategies.tickets, // staleTime: 30秒, gcTime: 2分
+      ...cacheStrategies.plans, // staleTime: 30秒, gcTime: 2分
       retry: 1,
       enabled: options?.enabled ?? true,
     }

@@ -1,7 +1,7 @@
-// Ticket型定義
+// Plan型定義
 
 /**
- * チケットステータス（6段階）
+ * プランステータス（6段階）
  * - backlog: 準備中（未着手）
  * - ready: 配置済み（準備完了、開始待ち）
  * - active: 作業中
@@ -9,7 +9,7 @@
  * - done: 完了
  * - cancel: 中止
  */
-export type TicketStatus = 'backlog' | 'ready' | 'active' | 'wait' | 'done' | 'cancel'
+export type PlanStatus = 'backlog' | 'ready' | 'active' | 'wait' | 'done' | 'cancel'
 
 /**
  * 繰り返しタイプ（シンプル版）
@@ -37,15 +37,15 @@ export interface RecurrenceConfig {
 }
 
 /**
- * チケット基本型（データベーススキーマに対応）
+ * プラン基本型（データベーススキーマに対応）
  */
-export interface Ticket {
+export interface Plan {
   id: string
   user_id: string
-  ticket_number: string
+  ticket_number: string // DB互換性のため保持
   title: string
   description: string | null
-  status: TicketStatus
+  status: PlanStatus
   due_date: string | null // DATE型（YYYY-MM-DD）
   start_time: string | null // TIMESTAMPTZ型（ISO 8601）
   end_time: string | null // TIMESTAMPTZ型（ISO 8601）
@@ -58,12 +58,12 @@ export interface Ticket {
 }
 
 /**
- * チケット作成入力（schemas/tickets/ticket.ts の CreateTicketInput と一致）
+ * プラン作成入力（schemas/plans/plan.ts の CreatePlanInput と一致）
  */
-export interface CreateTicketInput {
+export interface CreatePlanInput {
   title: string
   description?: string
-  status: TicketStatus
+  status: PlanStatus
   due_date?: string // YYYY-MM-DD形式
   start_time?: string // ISO 8601形式
   end_time?: string // ISO 8601形式
@@ -73,12 +73,12 @@ export interface CreateTicketInput {
 }
 
 /**
- * チケット更新入力（schemas/tickets/ticket.ts の UpdateTicketInput と一致）
+ * プラン更新入力（schemas/plans/plan.ts の UpdatePlanInput と一致）
  */
-export interface UpdateTicketInput {
+export interface UpdatePlanInput {
   title?: string
   description?: string
-  status?: TicketStatus
+  status?: PlanStatus
   due_date?: string // YYYY-MM-DD形式
   start_time?: string // ISO 8601形式
   end_time?: string // ISO 8601形式
@@ -88,17 +88,17 @@ export interface UpdateTicketInput {
 }
 
 /**
- * タグ付きチケット（リレーション取得時）
+ * タグ付きプラン（リレーション取得時）
  */
-export interface TicketWithTags extends Ticket {
+export interface PlanWithTags extends Plan {
   tags: Array<{ id: string; name: string; color: string; description?: string }>
 }
 
 /**
  * フィルター条件
  */
-export interface TicketFilters {
-  status?: TicketStatus
+export interface PlanFilters {
+  status?: PlanStatus
   search?: string
   tagId?: string // タグIDでフィルタ
   sortBy?: 'created_at' | 'updated_at' | 'due_date' | 'title'
@@ -110,7 +110,7 @@ export interface TicketFilters {
 /**
  * 統計情報
  */
-export interface TicketStats {
+export interface PlanStats {
   total: number
   byStatus: Record<string, number>
 }

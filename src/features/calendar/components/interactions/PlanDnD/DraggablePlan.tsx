@@ -5,39 +5,40 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useDraggable } from '@dnd-kit/core'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
-export interface DraggedEventData {
-  event: CalendarEvent
+export interface DraggedPlanData {
+  plan: CalendarPlan
   dayIndex: number
   originalTop: number
   mouseOffsetY: number // マウスカーソルとカード上部のオフセット
-  width: number // イベントカードの幅
-  height: number // イベントカードの高さ
+  width: number // プランカードの幅
+  height: number // プランカードの高さ
 }
 
-interface DraggableEventProps {
-  event: CalendarEvent
+// 後方互換性のためのエイリアス
+/** @deprecated Use DraggedPlanData instead */
+export type DraggedEventData = DraggedPlanData
+
+interface DraggablePlanProps {
+  plan: CalendarPlan
   dayIndex: number
   topPosition: number
-  onEventClick?: (event: CalendarEvent) => void
+  onPlanClick?: (plan: CalendarPlan) => void
   onDragCancel?: () => void
   style: React.CSSProperties
   children: React.ReactNode
 }
 
+// 後方互換性のためのエイリアス
+/** @deprecated Use DraggablePlanProps instead */
+type DraggableEventProps = DraggablePlanProps
+
 // ドラッグ開始閾値（px）
 const DRAG_THRESHOLD = 5
 
-export const DraggableEvent = ({
-  event,
-  dayIndex,
-  topPosition,
-  onEventClick,
-  style,
-  children,
-}: DraggableEventProps) => {
+export const DraggablePlan = ({ plan, dayIndex, topPosition, onPlanClick, style, children }: DraggablePlanProps) => {
   const ref = useRef<HTMLDivElement>(null)
   const [dragStartPos, setDragStartPos] = useState<{ x: number; y: number } | null>(null)
   const [isClicking, setIsClicking] = useState(false)
@@ -45,12 +46,12 @@ export const DraggableEvent = ({
 
   // @dnd-kit/core の useDraggable
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: `calendar-event-${event.id}`,
+    id: `calendar-plan-${plan.id}`,
     data: {
-      event,
+      plan,
       dayIndex,
       originalTop: topPosition,
-      type: 'calendar-event',
+      type: 'calendar-plan',
     },
     disabled: !isDragReady,
   })
@@ -126,11 +127,11 @@ export const DraggableEvent = ({
     (e: React.MouseEvent) => {
       e.stopPropagation()
       // ドラッグ中はクリックイベントを無視
-      if (!isDragging && !isDragReady && onEventClick) {
-        onEventClick(event)
+      if (!isDragging && !isDragReady && onPlanClick) {
+        onPlanClick(plan)
       }
     },
-    [isDragging, isDragReady, onEventClick, event]
+    [isDragging, isDragReady, onPlanClick, plan]
   )
 
   // ドラッグ時のスタイル
@@ -148,11 +149,11 @@ export const DraggableEvent = ({
       }}
       {...attributes}
       {...listeners}
-      data-event="true"
-      data-event-block="true"
+      data-plan="true"
+      data-plan-block="true"
       role="button"
       tabIndex={0}
-      aria-label={`Event: ${event.title}`}
+      aria-label={`Plan: ${plan.title}`}
       className={cn(
         'absolute z-20 rounded-md border border-white/20 hover:shadow-lg',
         isDragging && 'scale-105 opacity-40',
@@ -183,3 +184,7 @@ export const DraggableEvent = ({
     </div>
   )
 }
+
+// 後方互換性のためのエイリアス
+/** @deprecated Use DraggablePlan instead */
+export const DraggableEvent = DraggablePlan

@@ -1,29 +1,29 @@
 /**
- * tRPC Router: Tickets
- * チケット・セッション・タグ管理API
+ * tRPC Router: Plans
+ * プラン・セッション・タグ管理API
  */
 
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import type { TicketActivity } from '@/features/tickets/types/activity'
+import type { PlanActivity } from '@/features/plans/types/activity'
 import {
-  bulkDeleteTicketSchema,
-  bulkUpdateTicketSchema,
+  bulkDeletePlanSchema,
+  bulkUpdatePlanSchema,
+  createPlanSchema,
   createTagSchema,
-  createTicketSchema,
-  getTicketByIdSchema,
+  getPlanByIdSchema,
+  planFilterSchema,
+  planIdSchema,
   tagIdSchema,
-  ticketFilterSchema,
-  ticketIdSchema,
+  updatePlanSchema,
   updateTagSchema,
-  updateTicketSchema,
-} from '@/schemas/tickets'
-import { createTicketActivitySchema, getTicketActivitiesSchema } from '@/schemas/tickets/activity'
+} from '@/schemas/plans'
+import { createPlanActivitySchema, getPlanActivitiesSchema } from '@/schemas/plans/activity'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 
 /**
- * チケットの日付整合性を保証する
+ * プランの日付整合性を保証する
  *
  * ルール:
  * 1. start_time と end_time の日付部分は必ず同じ
@@ -105,7 +105,7 @@ function normalizeDateTimeConsistency(data: {
   })
 }
 
-export const ticketsRouter = createTRPCRouter({
+export const plansRouter = createTRPCRouter({
   // ========================================
   // Tags CRUD
   // ========================================
@@ -191,9 +191,9 @@ export const ticketsRouter = createTRPCRouter({
   },
 
   // ========================================
-  // Tickets CRUD
+  // Plans CRUD
   // ========================================
-  list: protectedProcedure.input(ticketFilterSchema.optional()).query(async ({ ctx, input }) => {
+  list: protectedProcedure.input(planFilterSchema.optional()).query(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
     let query = supabase
@@ -215,25 +215,25 @@ export const ticketsRouter = createTRPCRouter({
 
     // タグIDでフィルタ（ticket_tags テーブルと JOIN）
     if (input?.tagId) {
-      // サブクエリで ticket_tags から該当するチケットIDを取得
-      const { data: ticketIdsData, error: ticketIdsError } = await supabase
+      // サブクエリで ticket_tags から該当するプランIDを取得
+      const { data: planIdsData, error: planIdsError } = await supabase
         .from('ticket_tags')
         .select('ticket_id')
         .eq('tag_id', input.tagId)
 
-      if (ticketIdsError) {
+      if (planIdsError) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: `タグフィルタの適用に失敗しました: ${ticketIdsError.message}`,
+          message: `タグフィルタの適用に失敗しました: ${planIdsError.message}`,
         })
       }
 
-      const ticketIds = ticketIdsData.map((row) => row.ticket_id)
-      if (ticketIds.length === 0) {
-        // タグに紐づくチケットがない場合は空配列を返す
+      const planIds = planIdsData.map((row) => row.ticket_id)
+      if (planIds.length === 0) {
+        // タグに紐づくプランがない場合は空配列を返す
         return []
       }
-      query = query.in('id', ticketIds)
+      query = query.in('id', planIds)
     }
 
     // フィルター適用
@@ -262,14 +262,14 @@ export const ticketsRouter = createTRPCRouter({
     if (error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `チケット一覧の取得に失敗しました: ${error.message}`,
+        message: `プラン一覧の取得に失敗しました: ${error.message}`,
       })
     }
 
     return data
   }),
 
-  getById: protectedProcedure.input(getTicketByIdSchema).query(async ({ ctx, input }) => {
+  getById: protectedProcedure.input(getPlanByIdSchema).query(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
     // リレーション取得の設定
@@ -288,24 +288,24 @@ export const ticketsRouter = createTRPCRouter({
     if (error) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: `チケットが見つかりません: ${error.message}`,
+        message: `プランが見つかりません: ${error.message}`,
       })
     }
 
     // タグデータの整形
     if (input.include?.tags && data) {
-      const ticketWithTags = data as unknown as {
+      const planWithTags = data as unknown as {
         ticket_tags?: Array<{ tag_id: string; tags: unknown }>
       }
-      const tags = ticketWithTags.ticket_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
-      const { ticket_tags, ...ticketData } = ticketWithTags
-      return { ...ticketData, tags } as typeof data & { tags: unknown[] }
+      const tags = planWithTags.ticket_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
+      const { ticket_tags, ...planData } = planWithTags
+      return { ...planData, tags } as typeof data & { tags: unknown[] }
     }
 
     return data
   }),
 
-  create: protectedProcedure.input(createTicketSchema).mutation(async ({ ctx, input }) => {
+  create: protectedProcedure.input(createPlanSchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
     // 日付整合性を保証
@@ -324,11 +324,11 @@ export const ticketsRouter = createTRPCRouter({
     if (error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `チケットの作成に失敗しました: ${error.message}`,
+        message: `プランの作成に失敗しました: ${error.message}`,
       })
     }
 
-    // アクティビティ記録: チケット作成
+    // アクティビティ記録: プラン作成
     await supabase.from('ticket_activities').insert({
       ticket_id: data.id,
       user_id: userId,
@@ -339,11 +339,11 @@ export const ticketsRouter = createTRPCRouter({
   }),
 
   update: protectedProcedure
-    .input(z.object({ id: z.string().uuid(), data: updateTicketSchema }))
+    .input(z.object({ id: z.string().uuid(), data: updatePlanSchema }))
     .mutation(async ({ ctx, input }) => {
       const { supabase, userId } = ctx
 
-      console.log('[tickets.update] 更新リクエスト:', {
+      console.log('[plans.update] 更新リクエスト:', {
         id: input.id,
         data: input.data,
         userId,
@@ -357,7 +357,7 @@ export const ticketsRouter = createTRPCRouter({
         .eq('user_id', userId)
         .single()
 
-      console.log('[tickets.update] 更新前データ:', oldData)
+      console.log('[plans.update] 更新前データ:', oldData)
 
       // 日付整合性を保証（日付/時刻フィールドが更新される場合のみ）
       const hasDateTimeUpdate = !!(input.data.due_date || input.data.start_time || input.data.end_time)
@@ -394,42 +394,42 @@ export const ticketsRouter = createTRPCRouter({
         .single()
 
       if (error) {
-        console.error('[tickets.update] エラー:', error)
+        console.error('[plans.update] エラー:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: `チケットの更新に失敗しました: ${error.message}`,
+          message: `プランの更新に失敗しました: ${error.message}`,
         })
       }
 
-      console.log('[tickets.update] 更新後データ:', data)
+      console.log('[plans.update] 更新後データ:', data)
 
       // アクティビティ記録: 変更検出して記録
       if (oldData) {
-        const { trackTicketChanges } = await import('@/server/utils/activity-tracker')
-        await trackTicketChanges(supabase, input.id, userId, oldData, data)
+        const { trackPlanChanges } = await import('@/server/utils/activity-tracker')
+        await trackPlanChanges(supabase, input.id, userId, oldData, data)
       }
 
       return data
     }),
 
-  delete: protectedProcedure.input(ticketIdSchema).mutation(async ({ ctx, input }) => {
+  delete: protectedProcedure.input(planIdSchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
-    // チケット情報を取得（アクティビティ記録用）
-    const { data: ticket } = await supabase
+    // プラン情報を取得（アクティビティ記録用）
+    const { data: plan } = await supabase
       .from('tickets')
       .select('title')
       .eq('id', input.id)
       .eq('user_id', userId)
       .single()
 
-    // アクティビティ記録: チケット削除（削除前に記録）
+    // アクティビティ記録: プラン削除（削除前に記録）
     await supabase.from('ticket_activities').insert({
       ticket_id: input.id,
       user_id: userId,
       action_type: 'deleted',
       field_name: 'title',
-      old_value: ticket?.title || '',
+      old_value: plan?.title || '',
     })
 
     const { error } = await supabase.from('tickets').delete().eq('id', input.id).eq('user_id', userId)
@@ -437,7 +437,7 @@ export const ticketsRouter = createTRPCRouter({
     if (error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `チケットの削除に失敗しました: ${error.message}`,
+        message: `プランの削除に失敗しました: ${error.message}`,
       })
     }
 
@@ -445,10 +445,10 @@ export const ticketsRouter = createTRPCRouter({
   }),
 
   // ========================================
-  // Ticket Tags Management
+  // Plan Tags Management
   // ========================================
   addTag: protectedProcedure
-    .input(z.object({ ticketId: z.string().uuid(), tagId: z.string().uuid() }))
+    .input(z.object({ planId: z.string().uuid(), tagId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       const { supabase, userId } = ctx
 
@@ -459,7 +459,7 @@ export const ticketsRouter = createTRPCRouter({
         .from('ticket_tags')
         .insert({
           user_id: userId,
-          ticket_id: input.ticketId,
+          ticket_id: input.planId,
           tag_id: input.tagId,
         })
         .select()
@@ -474,7 +474,7 @@ export const ticketsRouter = createTRPCRouter({
 
       // アクティビティ記録: タグ追加
       await supabase.from('ticket_activities').insert({
-        ticket_id: input.ticketId,
+        ticket_id: input.planId,
         user_id: userId,
         action_type: 'tag_added',
         field_name: 'tag',
@@ -485,7 +485,7 @@ export const ticketsRouter = createTRPCRouter({
     }),
 
   removeTag: protectedProcedure
-    .input(z.object({ ticketId: z.string().uuid(), tagId: z.string().uuid() }))
+    .input(z.object({ planId: z.string().uuid(), tagId: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {
       const { supabase, userId } = ctx
 
@@ -495,7 +495,7 @@ export const ticketsRouter = createTRPCRouter({
       const { error } = await supabase
         .from('ticket_tags')
         .delete()
-        .eq('ticket_id', input.ticketId)
+        .eq('ticket_id', input.planId)
         .eq('tag_id', input.tagId)
         .eq('user_id', userId)
 
@@ -508,7 +508,7 @@ export const ticketsRouter = createTRPCRouter({
 
       // アクティビティ記録: タグ削除
       await supabase.from('ticket_activities').insert({
-        ticket_id: input.ticketId,
+        ticket_id: input.planId,
         user_id: userId,
         action_type: 'tag_removed',
         field_name: 'tag',
@@ -518,13 +518,13 @@ export const ticketsRouter = createTRPCRouter({
       return { success: true }
     }),
 
-  getTags: protectedProcedure.input(z.object({ ticketId: z.string().uuid() })).query(async ({ ctx, input }) => {
+  getTags: protectedProcedure.input(z.object({ planId: z.string().uuid() })).query(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
     const { data, error } = await supabase
       .from('ticket_tags')
       .select('tag_id, tags(*)')
-      .eq('ticket_id', input.ticketId)
+      .eq('ticket_id', input.planId)
       .eq('user_id', userId)
 
     if (error) {
@@ -540,7 +540,7 @@ export const ticketsRouter = createTRPCRouter({
   // ========================================
   // Bulk Operations
   // ========================================
-  bulkUpdate: protectedProcedure.input(bulkUpdateTicketSchema).mutation(async ({ ctx, input }) => {
+  bulkUpdate: protectedProcedure.input(bulkUpdatePlanSchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
     const { data, error } = await supabase
@@ -553,14 +553,14 @@ export const ticketsRouter = createTRPCRouter({
     if (error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `チケットの一括更新に失敗しました: ${error.message}`,
+        message: `プランの一括更新に失敗しました: ${error.message}`,
       })
     }
 
-    return { count: data.length, tickets: data }
+    return { count: data.length, plans: data }
   }),
 
-  bulkDelete: protectedProcedure.input(bulkDeleteTicketSchema).mutation(async ({ ctx, input }) => {
+  bulkDelete: protectedProcedure.input(bulkDeletePlanSchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
     const { error, count } = await supabase.from('tickets').delete().in('id', input.ids).eq('user_id', userId)
@@ -568,7 +568,7 @@ export const ticketsRouter = createTRPCRouter({
     if (error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `チケットの一括削除に失敗しました: ${error.message}`,
+        message: `プランの一括削除に失敗しました: ${error.message}`,
       })
     }
 
@@ -581,8 +581,8 @@ export const ticketsRouter = createTRPCRouter({
   getStats: protectedProcedure.query(async ({ ctx }) => {
     const { supabase, userId } = ctx
 
-    // 全チケット取得（最適化: select で必要なフィールドのみ取得）
-    const { data: tickets, error } = await supabase.from('tickets').select('id, status').eq('user_id', userId)
+    // 全プラン取得（最適化: select で必要なフィールドのみ取得）
+    const { data: plans, error } = await supabase.from('tickets').select('id, status').eq('user_id', userId)
 
     if (error) {
       throw new TRPCError({
@@ -592,16 +592,16 @@ export const ticketsRouter = createTRPCRouter({
     }
 
     // ステータス別カウント
-    const byStatus = tickets.reduce(
-      (acc, ticket) => {
-        acc[ticket.status] = (acc[ticket.status] ?? 0) + 1
+    const byStatus = plans.reduce(
+      (acc, plan) => {
+        acc[plan.status] = (acc[plan.status] ?? 0) + 1
         return acc
       },
       {} as Record<string, number>
     )
 
     return {
-      total: tickets.length,
+      total: plans.length,
       byStatus,
     }
   }),
@@ -613,22 +613,22 @@ export const ticketsRouter = createTRPCRouter({
   /**
    * アクティビティ一覧取得
    */
-  activities: protectedProcedure.input(getTicketActivitiesSchema).query(async ({ ctx, input }) => {
+  activities: protectedProcedure.input(getPlanActivitiesSchema).query(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
     const { ticket_id, limit, offset, order } = input
 
-    // チケットの所有権確認
-    const { data: ticket, error: ticketError } = await supabase
+    // プランの所有権確認
+    const { data: plan, error: planError } = await supabase
       .from('tickets')
       .select('id')
       .eq('id', ticket_id)
       .eq('user_id', userId)
       .single()
 
-    if (ticketError || !ticket) {
+    if (planError || !plan) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'Ticket not found or access denied',
+        message: 'Plan not found or access denied',
       })
     }
 
@@ -647,28 +647,28 @@ export const ticketsRouter = createTRPCRouter({
       })
     }
 
-    // Supabaseの型を厳密なTicketActivity型にキャスト
-    return (activities ?? []) as TicketActivity[]
+    // Supabaseの型を厳密なPlanActivity型にキャスト
+    return (activities ?? []) as PlanActivity[]
   }),
 
   /**
    * アクティビティ作成
    */
-  createActivity: protectedProcedure.input(createTicketActivitySchema).mutation(async ({ ctx, input }) => {
+  createActivity: protectedProcedure.input(createPlanActivitySchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
-    // チケットの所有権確認
-    const { data: ticket, error: ticketError } = await supabase
+    // プランの所有権確認
+    const { data: plan, error: planError } = await supabase
       .from('tickets')
       .select('id')
       .eq('id', input.ticket_id)
       .eq('user_id', userId)
       .single()
 
-    if (ticketError || !ticket) {
+    if (planError || !plan) {
       throw new TRPCError({
         code: 'NOT_FOUND',
-        message: 'Ticket not found or access denied',
+        message: 'Plan not found or access denied',
       })
     }
 
@@ -694,27 +694,27 @@ export const ticketsRouter = createTRPCRouter({
       })
     }
 
-    // Supabaseの型を厳密なTicketActivity型にキャスト
-    return activity as TicketActivity
+    // Supabaseの型を厳密なPlanActivity型にキャスト
+    return activity as PlanActivity
   }),
 
-  // タグごとのチケット数を取得
-  getTagTicketCounts: protectedProcedure.query(async ({ ctx }) => {
+  // タグごとのプラン数を取得
+  getTagPlanCounts: protectedProcedure.query(async ({ ctx }) => {
     const { supabase, userId } = ctx
 
-    // ユーザーのチケットIDを取得
-    const { data: userTickets, error: ticketsError } = await supabase.from('tickets').select('id').eq('user_id', userId)
+    // ユーザーのプランIDを取得
+    const { data: userPlans, error: plansError } = await supabase.from('tickets').select('id').eq('user_id', userId)
 
-    if (ticketsError) {
+    if (plansError) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `チケットの取得に失敗しました: ${ticketsError.message}`,
+        message: `プランの取得に失敗しました: ${plansError.message}`,
       })
     }
 
-    const ticketIds = userTickets.map((t) => t.id)
+    const planIds = userPlans.map((t) => t.id)
 
-    if (ticketIds.length === 0) {
+    if (planIds.length === 0) {
       return {}
     }
 
@@ -722,7 +722,7 @@ export const ticketsRouter = createTRPCRouter({
     const { data: tagCounts, error: countsError } = await supabase
       .from('ticket_tags')
       .select('tag_id')
-      .in('ticket_id', ticketIds)
+      .in('ticket_id', planIds)
 
     if (countsError) {
       throw new TRPCError({

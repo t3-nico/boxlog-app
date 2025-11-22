@@ -74,8 +74,8 @@ export interface RecordStats {
   unplannedTasks: number
 }
 
-// Calendar Ticket type (チケットから変換されたカレンダーチケット)
-export interface CalendarTicket {
+// Calendar Plan type (プランデータ)
+export interface CalendarPlan {
   id: string
   title: string
   description?: string
@@ -83,7 +83,7 @@ export interface CalendarTicket {
   endDate: Date
   status: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
   color: string
-  ticket_number?: string // チケット番号（#123 形式）
+  plan_number?: string // プラン番号（#123 形式）
   reminder_minutes?: number | null // 通知タイミング（開始時刻の何分前か）
   tags?: Array<{
     id: string
@@ -103,7 +103,10 @@ export interface CalendarTicket {
 }
 
 // 後方互換性のためのエイリアス
-export type CalendarEvent = CalendarTicket
+/** @deprecated Use CalendarPlan instead */
+export type CalendarTicket = CalendarPlan
+/** @deprecated Use CalendarPlan instead */
+export type CalendarEvent = CalendarPlan
 
 // ========================================
 // 新しいDB設計に対応した型定義
@@ -131,7 +134,7 @@ export interface Calendar {
 // 繰り返しパターン
 export interface RecurrencePattern {
   id: string
-  ticketId: string // eventId から変更
+  planId: string // ticketId/eventId から変更
   frequency: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
   interval: number
   weekdays?: number[] // 0=日曜, 1=月曜, ..., 6=土曜
@@ -146,26 +149,31 @@ export interface RecurrencePattern {
   createdAt: Date
   updatedAt: Date
   // 後方互換性
-  /** @deprecated Use ticketId instead */
+  /** @deprecated Use planId instead */
+  ticketId?: string
+  /** @deprecated Use planId instead */
   eventId?: string
 }
 
-// チケットインスタンス（繰り返しチケットの個別オカレンス）
-export interface TicketInstance {
+// プランインスタンス（繰り返しプランの個別オカレンス）
+export interface PlanInstance {
   id: string
-  ticketId: string // eventId から変更
+  planId: string // ticketId/eventId から変更
   recurrencePatternId?: string
   instanceStart: Date
   instanceEnd: Date
   isException: boolean
   exceptionType?: 'modified' | 'cancelled' | 'moved'
-  overrides?: Partial<CalendarTicket>
+  overrides?: Partial<CalendarPlan>
   createdAt: Date
   updatedAt: Date
 }
 
 // 後方互換性のためのエイリアス
-export type EventInstance = TicketInstance
+/** @deprecated Use PlanInstance instead */
+export type TicketInstance = PlanInstance
+/** @deprecated Use PlanInstance instead */
+export type EventInstance = PlanInstance
 
 // カレンダー共有
 export interface CalendarShare {
@@ -215,7 +223,7 @@ export interface UpdateCalendarInput {
   shareSettings?: Record<string, unknown>
 }
 
-export interface CreateTicketInput {
+export interface CreatePlanInput {
   title: string
   description?: string
   calendarId?: string
@@ -240,18 +248,24 @@ export interface CreateTicketInput {
     completed?: boolean
     duration?: number
   }>
-  recurrence?: Omit<RecurrencePattern, 'id' | 'ticketId' | 'createdAt' | 'updatedAt'>
+  recurrence?: Omit<RecurrencePattern, 'id' | 'planId' | 'createdAt' | 'updatedAt'>
 }
 
 // 後方互換性のためのエイリアス
-export type CreateEventInput = CreateTicketInput
+/** @deprecated Use CreatePlanInput instead */
+export type CreateTicketInput = CreatePlanInput
+/** @deprecated Use CreatePlanInput instead */
+export type CreateEventInput = CreatePlanInput
 
-export interface UpdateTicketInput extends Partial<CreateTicketInput> {
+export interface UpdatePlanInput extends Partial<CreatePlanInput> {
   id: string
 }
 
 // 後方互換性のためのエイリアス
-export type UpdateEventInput = UpdateTicketInput
+/** @deprecated Use UpdatePlanInput instead */
+export type UpdateTicketInput = UpdatePlanInput
+/** @deprecated Use UpdatePlanInput instead */
+export type UpdateEventInput = UpdatePlanInput
 
 export interface CalendarShareInput {
   calendarId: string

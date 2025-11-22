@@ -1,14 +1,14 @@
-import type { ActivityActionType } from '@/schemas/tickets/activity'
+import type { ActivityActionType } from '@/schemas/plans/activity'
 import type { Database } from '@/types/supabase'
 
 // アクション種別を再エクスポート
 export type { ActivityActionType }
 
 /**
- * チケットアクティビティ（変更履歴）
+ * プランアクティビティ（変更履歴）
  * SupabaseのRow型をベースに、action_typeを厳密な型に上書き
  */
-export type TicketActivity = Omit<
+export type PlanActivity = Omit<
   Database['public']['Tables']['ticket_activities']['Row'],
   'action_type' | 'metadata'
 > & {
@@ -19,7 +19,7 @@ export type TicketActivity = Omit<
 /**
  * アクティビティ表示用の情報
  */
-export interface TicketActivityDisplay extends TicketActivity {
+export interface PlanActivityDisplay extends PlanActivity {
   message: string // 表示用メッセージ（例: "ステータスを「作業中」に変更"）
   icon: 'create' | 'update' | 'status' | 'tag' | 'delete' // アイコン種別
 }

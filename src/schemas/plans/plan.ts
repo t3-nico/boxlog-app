@@ -1,14 +1,14 @@
 import { z } from 'zod'
 
-// Ticket用Zodスキーマ
+// Plan用Zodスキーマ
 
-export const ticketStatusSchema = z.enum(['backlog', 'ready', 'active', 'wait', 'done', 'cancel'])
+export const planStatusSchema = z.enum(['backlog', 'ready', 'active', 'wait', 'done', 'cancel'])
 export const recurrenceTypeSchema = z.enum(['none', 'daily', 'weekly', 'monthly', 'yearly', 'weekdays'])
 
-export const createTicketSchema = z.object({
+export const createPlanSchema = z.object({
   title: z.string().min(1, 'タイトルは必須です').max(200, 'タイトルは200文字以内です'),
   description: z.string().max(10000, '説明は10000文字以内です').optional(), // Markdown対応のため拡張
-  status: ticketStatusSchema,
+  status: planStatusSchema,
   due_date: z.string().optional(), // 日付（YYYY-MM-DD形式）
   start_time: z.string().datetime().nullable().optional(), // 開始日時（ISO 8601形式）
   end_time: z.string().datetime().nullable().optional(), // 終了日時（ISO 8601形式）
@@ -18,14 +18,14 @@ export const createTicketSchema = z.object({
   reminder_minutes: z.number().int().min(0).nullable().optional(), // 通知タイミング（開始時刻の何分前か）
 })
 
-export const updateTicketSchema = createTicketSchema.partial()
+export const updatePlanSchema = createPlanSchema.partial()
 
-export const ticketIdSchema = z.object({
+export const planIdSchema = z.object({
   id: z.string().uuid('正しいIDを指定してください'),
 })
 
-export const ticketFilterSchema = z.object({
-  status: ticketStatusSchema.optional(),
+export const planFilterSchema = z.object({
+  status: planStatusSchema.optional(),
   search: z.string().optional(),
   tagId: z.string().uuid().optional(), // タグIDでフィルタ
   // ソート
@@ -37,32 +37,52 @@ export const ticketFilterSchema = z.object({
 })
 
 // リレーション取得オプション
-export const ticketIncludeSchema = z.object({
+export const planIncludeSchema = z.object({
   tags: z.boolean().optional(),
 })
 
 // getById用のスキーマ
-export const getTicketByIdSchema = z.object({
+export const getPlanByIdSchema = z.object({
   id: z.string().uuid('正しいIDを指定してください'),
-  include: ticketIncludeSchema.optional(),
+  include: planIncludeSchema.optional(),
 })
 
 // 一括操作用のスキーマ
-export const bulkUpdateTicketSchema = z.object({
+export const bulkUpdatePlanSchema = z.object({
   ids: z.array(z.string().uuid()),
-  data: updateTicketSchema,
+  data: updatePlanSchema,
 })
 
-export const bulkDeleteTicketSchema = z.object({
+export const bulkDeletePlanSchema = z.object({
   ids: z.array(z.string().uuid()),
 })
 
 // 型エクスポート
-export type CreateTicketInput = z.infer<typeof createTicketSchema>
-export type UpdateTicketInput = z.infer<typeof updateTicketSchema>
-export type TicketStatus = z.infer<typeof ticketStatusSchema>
-export type TicketFilter = z.infer<typeof ticketFilterSchema>
-export type TicketInclude = z.infer<typeof ticketIncludeSchema>
-export type GetTicketByIdInput = z.infer<typeof getTicketByIdSchema>
-export type BulkUpdateTicketInput = z.infer<typeof bulkUpdateTicketSchema>
-export type BulkDeleteTicketInput = z.infer<typeof bulkDeleteTicketSchema>
+export type CreatePlanInput = z.infer<typeof createPlanSchema>
+export type UpdatePlanInput = z.infer<typeof updatePlanSchema>
+export type PlanStatus = z.infer<typeof planStatusSchema>
+export type PlanFilter = z.infer<typeof planFilterSchema>
+export type PlanInclude = z.infer<typeof planIncludeSchema>
+export type GetPlanByIdInput = z.infer<typeof getPlanByIdSchema>
+export type BulkUpdatePlanInput = z.infer<typeof bulkUpdatePlanSchema>
+export type BulkDeletePlanInput = z.infer<typeof bulkDeletePlanSchema>
+
+// 互換性のためのエイリアス（段階的移行用）
+export const ticketStatusSchema = planStatusSchema
+export const createTicketSchema = createPlanSchema
+export const updateTicketSchema = updatePlanSchema
+export const ticketIdSchema = planIdSchema
+export const ticketFilterSchema = planFilterSchema
+export const ticketIncludeSchema = planIncludeSchema
+export const getTicketByIdSchema = getPlanByIdSchema
+export const bulkUpdateTicketSchema = bulkUpdatePlanSchema
+export const bulkDeleteTicketSchema = bulkDeletePlanSchema
+
+export type CreateTicketInput = CreatePlanInput
+export type UpdateTicketInput = UpdatePlanInput
+export type TicketStatus = PlanStatus
+export type TicketFilter = PlanFilter
+export type TicketInclude = PlanInclude
+export type GetTicketByIdInput = GetPlanByIdInput
+export type BulkUpdateTicketInput = BulkUpdatePlanInput
+export type BulkDeleteTicketInput = BulkDeletePlanInput

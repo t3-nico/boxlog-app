@@ -19,10 +19,10 @@ export const activityActionTypeSchema = z.enum([
 export type ActivityActionType = z.infer<typeof activityActionTypeSchema>
 
 /**
- * チケットアクティビティ作成スキーマ
+ * プランアクティビティ作成スキーマ
  */
-export const createTicketActivitySchema = z.object({
-  ticket_id: z.string().uuid(),
+export const createPlanActivitySchema = z.object({
+  ticket_id: z.string().uuid(), // DB互換性のため保持
   action_type: activityActionTypeSchema,
   field_name: z.string().optional(),
   old_value: z.string().optional(),
@@ -30,16 +30,22 @@ export const createTicketActivitySchema = z.object({
   metadata: z.record(z.unknown()).optional(),
 })
 
-export type CreateTicketActivityInput = z.infer<typeof createTicketActivitySchema>
+export type CreatePlanActivityInput = z.infer<typeof createPlanActivitySchema>
 
 /**
- * チケットアクティビティ取得スキーマ
+ * プランアクティビティ取得スキーマ
  */
-export const getTicketActivitiesSchema = z.object({
-  ticket_id: z.string().uuid(),
+export const getPlanActivitiesSchema = z.object({
+  ticket_id: z.string().uuid(), // DB互換性のため保持
   limit: z.number().min(1).max(100).optional().default(50),
   offset: z.number().min(0).optional().default(0),
   order: z.enum(['asc', 'desc']).optional().default('desc'), // desc=最新順, asc=古い順
 })
 
-export type GetTicketActivitiesInput = z.infer<typeof getTicketActivitiesSchema>
+export type GetPlanActivitiesInput = z.infer<typeof getPlanActivitiesSchema>
+
+// 互換性のためのエイリアス
+export const createTicketActivitySchema = createPlanActivitySchema
+export const getTicketActivitiesSchema = getPlanActivitiesSchema
+export type CreateTicketActivityInput = CreatePlanActivityInput
+export type GetTicketActivitiesInput = GetPlanActivitiesInput
