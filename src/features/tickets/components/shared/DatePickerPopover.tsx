@@ -1,8 +1,10 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import { CalendarIcon } from 'lucide-react'
 
 interface DatePickerPopoverProps {
   selectedDate: Date | undefined
@@ -24,14 +26,10 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = 'æ
     <MiniCalendar
       asPopover
       popoverTrigger={
-        <button
-          type="button"
-          className={`text-left text-sm transition-colors ${
-            selectedDate ? 'text-foreground hover:text-foreground' : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          {selectedDate ? format(selectedDate, 'yyyy/MM/dd', { locale: ja }) : placeholder}
-        </button>
+        <Button variant="ghost" size="sm" className="text-muted-foreground h-8 gap-2 px-2" type="button">
+          <CalendarIcon className="h-4 w-4" />
+          <span className="text-sm">{selectedDate ? format(selectedDate, 'M/d', { locale: ja }) : placeholder}</span>
+        </Button>
       }
       selectedDate={selectedDate}
       onDateSelect={onDateChange}
