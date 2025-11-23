@@ -9,25 +9,25 @@ import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
-import { useTicketTags } from '@/features/plans/hooks/usePlanTags'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useplanTags } from '@/features/plans/hooks/usePlanTags'
 import { toLocalISOString } from '@/features/plans/utils/datetime'
 import { reminderTypeToMinutes } from '@/features/plans/utils/reminder'
-import { createTicketSchema, type CreateTicketInput } from '@/schemas/plans/plan'
+import { createPlanSchema, type CreatePlanInput } from '@/schemas/plans/plan'
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
 import { NovelDescriptionEditor } from './NovelDescriptionEditor'
-import { TicketDateTimeInput } from './PlanDateTimeInput'
-import { TicketTagsSection } from './PlanTagsSection'
-import { TicketTitleInput } from './PlanTitleInput'
+import { PlanDateTimeInput } from './PlanDateTimeInput'
+import { PlanTagsSection } from './PlanTagsSection'
+import { PlanTitleInput } from './PlanTitleInput'
 import { RecurrencePopover } from './RecurrencePopover'
 import { ReminderSelect } from './ReminderSelect'
 
-interface TicketCreatePopoverProps {
+interface PlanCreatePopoverProps {
   triggerElement: React.ReactNode
   onSuccess?: () => void
 }
 
-export function PlanCreatePopover({ triggerElement, onSuccess }: TicketCreatePopoverProps) {
+export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopoverProps) {
   const titleInputRef = useRef<HTMLInputElement>(null)
 
   const [isOpen, setIsOpen] = useState(false)
@@ -41,8 +41,8 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: TicketCreatePop
   const [recurrenceRule, setRecurrenceRule] = useState<string | null>(null)
   const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
   const recurrenceTriggerRef = useRef<HTMLButtonElement>(null)
-  const { createTicket } = useTicketMutations()
-  const { addTicketTag } = useTicketTags()
+  const { createPlan } = usePlanMutations()
+  const { addplanTag } = useplanTags()
 
   // ポップアップが開いたときにタイトル入力欄にフォーカス
   useEffect(() => {
@@ -55,8 +55,8 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: TicketCreatePop
     }
   }, [isOpen])
 
-  const form = useForm<CreateTicketInput>({
-    resolver: zodResolver(createTicketSchema),
+  const form = useForm<CreatePlanInput>({
+    resolver: zodResolver(createPlanSchema),
     defaultValues: {
       title: '',
       description: '',
@@ -64,11 +64,11 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: TicketCreatePop
     },
   })
 
-  const handleSubmit = async (data: CreateTicketInput) => {
+  const handleSubmit = async (data: CreatePlanInput) => {
     setIsSubmitting(true)
     try {
       // 日付・時刻・リマインダー・繰り返し情報を追加
-      const ticketData: CreateTicketInput = {
+      const planData: CreatePlanInput = {
         ...data,
         // 日付（YYYY-MM-DD形式）
         due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
@@ -83,18 +83,18 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: TicketCreatePop
       }
 
       // デバッグ: 送信データを確認
-      console.log('[TicketCreatePopover] Submitting ticket:', {
+      console.log('[PlanCreatePopover] Submitting plan:', {
         reminderType,
-        reminder_minutes: ticketData.reminder_minutes,
+        reminder_minutes: planData.reminder_minutes,
         recurrenceRule,
-        recurrence_rule: ticketData.recurrence_rule,
+        recurrence_rule: planData.recurrence_rule,
       })
 
-      const newTicket = await createTicket.mutateAsync(ticketData)
+      const newplan = await createPlan.mutateAsync(planData)
 
       // タグを追加
-      if (selectedTagIds.length > 0 && newTicket?.id) {
-        await Promise.all(selectedTagIds.map((tagId) => addTicketTag(newTicket.id, tagId)))
+      if (selectedTagIds.length > 0 && newplan?.id) {
+        await Promise.all(selectedTagIds.map((tagId) => addplanTag(newplan.id, tagId)))
       }
 
       onSuccess?.()
@@ -107,8 +107,8 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: TicketCreatePop
       setRecurrenceRule(null)
       setIsOpen(false)
     } catch (error) {
-      console.error('Failed to create ticket:', error)
-      // Toast通知はuseTicketMutationsで処理される
+      console.error('Failed to create plan:', error)
+      // Toast通知はusePlanMutationsで処理される
     } finally {
       setIsSubmitting(false)
     }
@@ -150,7 +150,7 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: TicketCreatePop
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <TicketTitleInput
+                      <PlanTitleInput
                         placeholder="Add a title"
                         {...field}
                         ref={(e) => {
@@ -170,7 +170,7 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: TicketCreatePop
             </div>
 
             {/* 2行目: 日付 + 時間（常に表示） */}
-            <TicketDateTimeInput
+            <PlanDateTimeInput
               selectedDate={selectedDate}
               startTime={startTime}
               endTime={endTime}
@@ -233,7 +233,7 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: TicketCreatePop
             </div>
 
             {/* Tags */}
-            <TicketTagsSection
+            <PlanTagsSection
               selectedTagIds={selectedTagIds}
               onTagsChange={setSelectedTagIds}
               onRemoveTag={(tagId) => {

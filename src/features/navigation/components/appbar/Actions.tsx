@@ -1,7 +1,7 @@
 'use client'
 
 import { NotificationDropdown } from '@/features/notifications'
-import { TicketCreatePopover } from '@/features/plans/components'
+import { PlanCreatePopover } from '@/features/plans/components'
 import { Moon, Plus, Search, Sun } from 'lucide-react'
 import { useCallback } from 'react'
 import { Item } from './Item'
@@ -40,7 +40,7 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
   return (
     <>
       <div className="bg-sidebar flex flex-col items-center gap-1 px-2">
-        <TicketCreatePopover
+        <PlanCreatePopover
           triggerElement={
             <button className="flex flex-col items-center gap-1" type="button">
               <div className="hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring flex h-10 w-10 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none">

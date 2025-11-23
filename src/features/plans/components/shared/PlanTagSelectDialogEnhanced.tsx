@@ -17,7 +17,7 @@ import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
 import { api } from '@/lib/trpc'
 import type { Tag as TagType } from '@/types/unified'
 
-interface TicketTagSelectDialogEnhancedProps {
+interface PlanTagSelectDialogEnhancedProps {
   children: React.ReactNode
   selectedTagIds: string[]
   onTagsChange: (tagIds: string[]) => void
@@ -35,7 +35,7 @@ export function PlanTagSelectDialogEnhanced({
   side = 'bottom',
   alignOffset = 0,
   sideOffset = 8,
-}: TicketTagSelectDialogEnhancedProps) {
+}: PlanTagSelectDialogEnhancedProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [isCreating, setIsCreating] = useState(false)
@@ -47,7 +47,7 @@ export function PlanTagSelectDialogEnhanced({
   const { data: tagsData } = useTags(true)
   const { data: groups = [] } = useTagGroups()
   const createTagMutation = useCreateTag()
-  const { data: tagTicketCounts = {} } = api.plans.getTagPlanCounts.useQuery()
+  const { data: tagplanCounts = {} } = api.plans.getTagPlanCounts.useQuery()
 
   // TagWithChildren[] を Tag[] に変換（階層を平坦化）
   const flattenTags = (tags: typeof tagsData): TagType[] => {
@@ -449,7 +449,7 @@ export function PlanTagSelectDialogEnhanced({
                                 <div className="flex items-center gap-2">
                                   <span>
                                     {tag.name}{' '}
-                                    <span className="text-muted-foreground">({tagTicketCounts[tag.id] || 0})</span>
+                                    <span className="text-muted-foreground">({tagplanCounts[tag.id] || 0})</span>
                                   </span>
                                   {!tag.is_active && (
                                     <Badge variant="outline" className="text-xs">
@@ -502,7 +502,7 @@ export function PlanTagSelectDialogEnhanced({
                                 <div className="flex items-center gap-2">
                                   <span>
                                     {tag.name}{' '}
-                                    <span className="text-muted-foreground">({tagTicketCounts[tag.id] || 0})</span>
+                                    <span className="text-muted-foreground">({tagplanCounts[tag.id] || 0})</span>
                                   </span>
                                   {!tag.is_active && (
                                     <Badge variant="outline" className="text-xs">

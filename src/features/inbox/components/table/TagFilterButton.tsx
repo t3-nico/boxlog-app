@@ -1,14 +1,14 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
+import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
 import { Tag } from 'lucide-react'
 import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
 
 /**
  * タグフィルターボタン（Table専用）
  *
- * TicketTagSelectDialogEnhanced を使用してタグフィルターを提供
+ * PlanTagSelectDialogEnhanced を使用してタグフィルターを提供
  * - タグ複数選択（グループ・検索・アーカイブ対応）
  * - フィルター数のバッジ表示
  *
@@ -23,7 +23,7 @@ export function TagFilterButton() {
   const tagFilterCount = tags.length
 
   return (
-    <TicketTagSelectDialogEnhanced
+    <PlanTagSelectDialogEnhanced
       selectedTagIds={tags}
       onTagsChange={setTags}
       align="start"
@@ -42,6 +42,6 @@ export function TagFilterButton() {
           </Badge>
         )}
       </button>
-    </TicketTagSelectDialogEnhanced>
+    </PlanTagSelectDialogEnhanced>
   )
 }

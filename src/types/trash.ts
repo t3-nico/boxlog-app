@@ -1,7 +1,7 @@
 import type { SmartFolder, Tag, Task } from './unified'
 
 // 削除されたアイテムのデータ型
-// 注: Event型は削除済み（Ticketsに移行）
+// 注: Event型は削除済み（plansに移行）
 export type DeletedItemData = Task | Tag | SmartFolder
 
 export interface DeletedItem {

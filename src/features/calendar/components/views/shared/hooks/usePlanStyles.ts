@@ -1,21 +1,21 @@
 import type { CSSProperties } from 'react'
 import { useMemo } from 'react'
 
-import type { EventPosition } from './useViewPlans'
+import type { PlanPosition } from './useViewPlans'
 
 /**
- * イベント位置情報からCSSスタイルを計算するフック
+ * プラン位置情報からCSSスタイルを計算するフック
  * 全カレンダービューで共通利用可能
  *
- * @param eventPositions イベントの位置情報配列
- * @returns イベントID => CSSスタイルのマップ
+ * @param planPositions プランの位置情報配列
+ * @returns プランID => CSSスタイルのマップ
  */
-export function useEventStyles(eventPositions: EventPosition[]): Record<string, CSSProperties> {
+export function usePlanStyles(planPositions: PlanPosition[]): Record<string, CSSProperties> {
   return useMemo((): Record<string, CSSProperties> => {
     const styles: Record<string, CSSProperties> = {}
 
-    eventPositions.forEach(({ event, top, height, left, width, zIndex, opacity }) => {
-      styles[event.id] = {
+    planPositions.forEach(({ plan, top, height, left, width, zIndex, opacity }) => {
+      styles[plan.id] = {
         position: 'absolute',
         top: `${top}px`,
         height: `${height}px`,
@@ -27,5 +27,11 @@ export function useEventStyles(eventPositions: EventPosition[]): Record<string, 
     })
 
     return styles
-  }, [eventPositions])
+  }, [planPositions])
+}
+
+// 後方互換性のためのエイリアス
+/** @deprecated Use usePlanStyles instead */
+export function useEventStyles(planPositions: PlanPosition[]): Record<string, CSSProperties> {
+  return usePlanStyles(planPositions)
 }

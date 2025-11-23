@@ -26,7 +26,7 @@ interface DateTimePopoverContentProps {
 
 /**
  * 日付・時刻・通知・繰り返し設定のPopover内容コンポーネント
- * TicketCardとTicketKanbanBoardで共有
+ * planCardとplanKanbanBoardで共有
  */
 export function DateTimePopoverContent({
   selectedDate,

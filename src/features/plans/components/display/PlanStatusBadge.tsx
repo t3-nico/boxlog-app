@@ -9,7 +9,7 @@ interface PlanStatusBadgeProps {
 }
 
 const STATUS_CONFIG: Record<
-  TicketStatus,
+  PlanStatus,
   {
     label: string
     className: string
@@ -59,6 +59,3 @@ export function PlanStatusBadge({ status, size = 'sm' }: PlanStatusBadgeProps) {
     </Badge>
   )
 }
-
-// Backward compatibility alias
-export { PlanStatusBadge as TicketStatusBadge }

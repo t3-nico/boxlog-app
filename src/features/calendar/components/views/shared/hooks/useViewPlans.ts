@@ -1,24 +1,23 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { useMemo } from 'react'
 
 import { isSameDay, isValid } from 'date-fns'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 
-import { useEventLayoutCalculator } from './usePlanLayoutCalculator'
+import { useEventLayoutCalculator as usePlanLayoutCalculator } from './usePlanLayoutCalculator'
 
-const EVENT_PADDING = 2 // イベント間のパディング
-const MIN_EVENT_HEIGHT = 20 // 最小イベント高さ
+const PLAN_PADDING = 2 // プラン間のパディング
+const MIN_PLAN_HEIGHT = 20 // 最小プラン高さ
 
-interface UseViewEventsOptions {
+interface UseViewPlansOptions {
   date: Date
-  events: CalendarEvent[]
+  plans: CalendarPlan[]
 }
 
-export interface EventPosition {
-  event: CalendarEvent // CalendarEventを拡張した形式
+export interface PlanPosition {
+  plan: CalendarPlan
   top: number
   height: number
   left: number
@@ -29,88 +28,99 @@ export interface EventPosition {
   opacity?: number
 }
 
-interface UseViewEventsReturn {
-  dayEvents: CalendarEvent[]
-  eventPositions: EventPosition[]
-  maxConcurrentEvents: number
-  skippedEventsCount: number
+interface UseViewPlansReturn {
+  dayPlans: CalendarPlan[]
+  planPositions: PlanPosition[]
+  maxConcurrentPlans: number
+  skippedPlansCount: number
 }
 
 /**
- * 汎用的なビューイベント処理フック
+ * 汎用的なビュープラン処理フック
  * DayView, WeekView等で共通利用可能
  */
-export function useViewEvents({ date, events }: UseViewEventsOptions): UseViewEventsReturn {
-  // 指定日のイベントのみフィルター
-  const dayEvents = useMemo(() => {
-    return events.filter((event) => {
-      if (!event.startDate || !isValid(new Date(event.startDate))) {
+export function useViewPlans({ date, plans }: UseViewPlansOptions): UseViewPlansReturn {
+  // 指定日のプランのみフィルター
+  const dayPlans = useMemo(() => {
+    return plans.filter((plan) => {
+      if (!plan.startDate || !isValid(new Date(plan.startDate))) {
         return false
       }
 
-      const eventDate = new Date(event.startDate)
-      return isSameDay(eventDate, date)
+      const planDate = new Date(plan.startDate)
+      return isSameDay(planDate, date)
     })
-  }, [date, events])
+  }, [date, plans])
 
-  // CalendarEventをuseEventLayoutCalculatorで期待される形式に変換
-  const convertedEvents = useMemo(() => {
-    return dayEvents.map((event) => ({
-      ...event,
-      start: event.startDate!,
-      end: event.endDate || new Date(new Date(event.startDate!).getTime() + 60 * 60 * 1000),
+  // CalendarPlanをusePlanLayoutCalculatorで期待される形式に変換
+  const convertedPlans = useMemo(() => {
+    return dayPlans.map((plan) => ({
+      ...plan,
+      start: plan.startDate!,
+      end: plan.endDate || new Date(new Date(plan.startDate!).getTime() + 60 * 60 * 1000),
     }))
-  }, [dayEvents])
+  }, [dayPlans])
 
   // 新しいレイアウト計算システムを使用
-  const eventLayouts = useEventLayoutCalculator(convertedEvents, { notifyConflicts: true })
+  const planLayouts = usePlanLayoutCalculator(convertedPlans, { notifyConflicts: true })
 
-  // レイアウト情報をEventPositionに変換
-  const eventPositions = useMemo(() => {
-    return eventLayouts.map((layout, index) => {
-      const startDate = new Date(layout.event.start)
-      const endDate = new Date(layout.event.end)
+  // レイアウト情報をPlanPositionに変換
+  const planPositions = useMemo(() => {
+    return planLayouts.map(
+      (
+        layout: {
+          event: CalendarPlan & { start: Date; end: Date }
+          left: number
+          width: number
+          column: number
+          totalColumns: number
+        },
+        index: number
+      ) => {
+        const startDate = new Date(layout.event.start)
+        const endDate = new Date(layout.event.end)
 
-      const startHour = startDate.getHours() + startDate.getMinutes() / 60
-      const endHour = endDate.getHours() + endDate.getMinutes() / 60
-      const duration = Math.max(endHour - startHour, 0.25) // 最小15分
+        const startHour = startDate.getHours() + startDate.getMinutes() / 60
+        const endHour = endDate.getHours() + endDate.getMinutes() / 60
+        const duration = Math.max(endHour - startHour, 0.25) // 最小15分
 
-      // 位置計算
-      const top = startHour * HOUR_HEIGHT
-      const height = Math.max(duration * HOUR_HEIGHT - EVENT_PADDING, MIN_EVENT_HEIGHT)
+        // 位置計算
+        const top = startHour * HOUR_HEIGHT
+        const height = Math.max(duration * HOUR_HEIGHT - PLAN_PADDING, MIN_PLAN_HEIGHT)
 
-      console.log('🎨 イベント配置:', {
-        タイトル: layout.event.title,
-        カラム: layout.column,
-        総カラム数: layout.totalColumns,
-        幅: layout.width,
-        左位置: layout.left,
-        top,
-        height,
-      })
+        console.log('🎨 プラン配置:', {
+          タイトル: layout.event.title,
+          カラム: layout.column,
+          総カラム数: layout.totalColumns,
+          幅: layout.width,
+          左位置: layout.left,
+          top,
+          height,
+        })
 
-      return {
-        event: layout.event,
-        top,
-        height,
-        left: layout.left,
-        width: layout.width,
-        zIndex: 10 + index,
-        column: layout.column,
-        totalColumns: layout.totalColumns,
-        opacity: layout.totalColumns > 1 ? 0.95 : 1.0,
+        return {
+          plan: layout.event,
+          top,
+          height,
+          left: layout.left,
+          width: layout.width,
+          zIndex: 10 + index,
+          column: layout.column,
+          totalColumns: layout.totalColumns,
+          opacity: layout.totalColumns > 1 ? 0.95 : 1.0,
+        }
       }
-    })
-  }, [eventLayouts])
+    )
+  }, [planLayouts])
 
-  const maxConcurrentEvents = useMemo(() => {
-    return Math.max(1, ...eventLayouts.map((layout) => layout.totalColumns))
-  }, [eventLayouts])
+  const maxConcurrentPlans = useMemo(() => {
+    return Math.max(1, ...planLayouts.map((layout: { totalColumns: number }) => layout.totalColumns))
+  }, [planLayouts])
 
   return {
-    dayEvents,
-    eventPositions,
-    maxConcurrentEvents,
-    skippedEventsCount: 0, // 新しいシステムではスキップしない
+    dayPlans,
+    planPositions,
+    maxConcurrentPlans,
+    skippedPlansCount: 0, // 新しいシステムではスキップしない
   }
 }

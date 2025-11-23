@@ -7,8 +7,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent'
-import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
-import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
+import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { reminderTypeToMinutes } from '@/features/plans/utils/reminder'
 import { cn } from '@/lib/utils'
@@ -34,16 +34,16 @@ interface TicketKanbanBoardProps {
 }
 
 /**
- * Ticket/Session用Kanbanボード
+ * plan/Session用Kanbanボード
  *
  * InboxItemをステータスごとに3カラムに分類して表示
  */
 export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
-  const { updateTicket } = useTicketMutations()
+  const { updatePlan } = usePlanMutations()
   const { isStatusVisible } = useBoardStatusFilterStore()
 
-  // Ticketデータをカラムごとに分類
+  // planデータをカラムごとに分類
   const columns = {
     backlog: items.filter((item) => item.status === 'backlog'),
     ready: items.filter((item) => item.status === 'ready'),
@@ -87,7 +87,7 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
 
     if (draggedItem && draggedItem.status !== targetStatus) {
       // ステータスを更新
-      updateTicket.mutate({
+      updatePlan.mutate({
         id: draggedItem.id,
         data: {
           status: targetStatus,
@@ -163,8 +163,8 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
             {/* 1. タイトル */}
             <div className="flex items-center gap-2 overflow-hidden">
               <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold">{activeItem.title}</h3>
-              {activeItem.ticket_number && (
-                <span className="text-muted-foreground shrink-0 text-sm">#{activeItem.ticket_number}</span>
+              {activeItem.plan_number && (
+                <span className="text-muted-foreground shrink-0 text-sm">#{activeItem.plan_number}</span>
               )}
             </div>
 
@@ -240,7 +240,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   const [recurrenceRule, setRecurrenceRule] = useState<string | null>(null)
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [dateTimeOpen, setDateTimeOpen] = useState(false)
-  const { createTicket } = useTicketMutations()
+  const { createPlan } = usePlanMutations()
   const formRef = useRef<HTMLDivElement>(null)
 
   // 作成キャンセル
@@ -299,7 +299,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
     // 通知を分数に変換
     const reminder_minutes = reminderTypeToMinutes(reminderType)
 
-    createTicket.mutate({
+    createPlan.mutate({
       title: newTitle,
       status,
       due_date: selectedDate ? baseDate : undefined,
@@ -506,7 +506,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
             </Popover>
 
             {/* タグを追加（Dialog） */}
-            <TicketTagSelectDialogEnhanced
+            <PlanTagSelectDialogEnhanced
               selectedTagIds={selectedTagIds}
               onTagsChange={(tagIds) => setSelectedTagIds(tagIds)}
             >
@@ -517,7 +517,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
                 <Tag className="size-3" />
                 <span>タグを追加</span>
               </div>
-            </TicketTagSelectDialogEnhanced>
+            </PlanTagSelectDialogEnhanced>
 
             {/* 作成ボタン */}
             <div className="flex justify-end">

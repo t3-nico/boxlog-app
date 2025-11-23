@@ -50,13 +50,13 @@ export const ThreeDayContent = ({
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onEventUpdate) return
 
-      console.log('🔧 ThreeDayContent: イベント更新要求:', {
+      console.log('🔧 ThreeDayContent: プラン更新要求:', {
         eventId,
         startTime: updates.startTime.toISOString(),
         endTime: updates.endTime.toISOString(),
       })
 
-      // handleUpdateEvent形式で呼び出し
+      // handleUpdatePlan形式で呼び出し
       await onEventUpdate(eventId, {
         startTime: updates.startTime,
         endTime: updates.endTime,

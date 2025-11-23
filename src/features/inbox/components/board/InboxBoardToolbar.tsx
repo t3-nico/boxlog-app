@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { useBoardStatusFilterStore } from '@/features/board/stores/useBoardStatusFilterStore'
-import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
+import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { Calendar, Plus, Settings2, Tag, X } from 'lucide-react'
 import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore'
@@ -95,7 +95,7 @@ export function InboxBoardToolbar() {
         </Select>
 
         {/* タグフィルター（専用ボタン） */}
-        <TicketTagSelectDialogEnhanced
+        <PlanTagSelectDialogEnhanced
           selectedTagIds={tags}
           onTagsChange={setTags}
           align="start"
@@ -114,7 +114,7 @@ export function InboxBoardToolbar() {
               </Badge>
             )}
           </button>
-        </TicketTagSelectDialogEnhanced>
+        </PlanTagSelectDialogEnhanced>
 
         {/* フィルターリセット */}
         {isFiltered && (

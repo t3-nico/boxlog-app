@@ -1,2 +1,2 @@
 // Zustand Stores
-export { useTicketInspectorStore } from './usePlanInspectorStore'
+export { usePlanInspectorStore } from './usePlanInspectorStore'

@@ -10,7 +10,7 @@ interface MainContentWrapperProps {
  * メインコンテンツラッパー
  *
  * シンプルなmain要素ラッパー
- * TicketInspectorはSheetで表示されるため、レイアウト調整不要
+ * planInspectorはSheetで表示されるため、レイアウト調整不要
  */
 export function MainContentWrapper({ children }: MainContentWrapperProps) {
   return (

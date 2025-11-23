@@ -29,7 +29,7 @@ export function usePlanActivities(
 
   const query = api.plans.activities.useQuery(
     {
-      ticket_id: planId,
+      plan_id: planId,
       limit: options?.limit ?? 50,
       offset: options?.offset ?? 0,
       order: options?.order ?? 'desc',
@@ -47,21 +47,21 @@ export function usePlanActivities(
     if (!planId || options?.enabled === false) return
 
     const channel = supabase
-      .channel(`ticket-activities:${planId}`)
+      .channel(`plan-activities:${planId}`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'ticket_activities',
-          filter: `ticket_id=eq.${planId}`,
+          table: 'plan_activities',
+          filter: `plan_id=eq.${planId}`,
         },
-        (payload: RealtimePostgresInsertPayload<Database['public']['Tables']['ticket_activities']['Row']>) => {
+        (payload: RealtimePostgresInsertPayload<Database['public']['Tables']['plan_activities']['Row']>) => {
           // 新しいアクティビティを追加（order に応じて先頭 or 末尾）
           const queryKey = getQueryKey(
             api.plans.activities,
             {
-              ticket_id: planId,
+              plan_id: planId,
               limit: options?.limit ?? 50,
               offset: options?.offset ?? 0,
               order: options?.order ?? 'desc',
@@ -90,4 +90,4 @@ export function usePlanActivities(
 }
 
 // Backward compatibility
-export { usePlanActivities as useTicketActivities }
+export { usePlanActivities as useplanActivities }

@@ -27,8 +27,8 @@ export async function trackPlanChanges(
 
   // 各変更に対してアクティビティを記録
   for (const change of changes) {
-    await supabase.from('ticket_activities').insert({
-      ticket_id: planId,
+    await supabase.from('plan_activities').insert({
+      plan_id: planId,
       user_id: userId,
       action_type: change.action_type,
       field_name: change.field_name,
@@ -39,7 +39,7 @@ export async function trackPlanChanges(
 }
 
 // 互換性のためのエイリアス
-export const trackTicketChanges = trackPlanChanges
+export const trackplanChanges = trackPlanChanges
 
 /**
  * 変更を検出してアクティビティ種別を決定

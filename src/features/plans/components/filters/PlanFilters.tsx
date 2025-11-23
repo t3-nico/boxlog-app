@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import type { PlanStatus } from '../../types/plan'
 
-interface TicketFiltersProps {
+interface planFiltersProps {
   searchQuery?: string
   status?: PlanStatus
   onSearchChange?: (query: string) => void
@@ -21,7 +21,7 @@ export function PlanFilters({
   onSearchChange,
   onStatusChange,
   onClearFilters,
-}: TicketFiltersProps) {
+}: planFiltersProps) {
   const hasActiveFilters = searchQuery || status
 
   return (
@@ -40,7 +40,7 @@ export function PlanFilters({
       {/* ステータスフィルタ */}
       <Select
         value={status ?? 'all'}
-        onValueChange={(v) => onStatusChange?.(v === 'all' ? undefined : (v as TicketStatus))}
+        onValueChange={(v) => onStatusChange?.(v === 'all' ? undefined : (v as PlanStatus))}
       >
         <SelectTrigger className="w-full sm:w-[140px]">
           <SelectValue placeholder="ステータス" />

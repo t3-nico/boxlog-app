@@ -8,10 +8,7 @@ export type { ActivityActionType }
  * プランアクティビティ（変更履歴）
  * SupabaseのRow型をベースに、action_typeを厳密な型に上書き
  */
-export type PlanActivity = Omit<
-  Database['public']['Tables']['ticket_activities']['Row'],
-  'action_type' | 'metadata'
-> & {
+export type PlanActivity = Omit<Database['public']['Tables']['plan_activities']['Row'], 'action_type' | 'metadata'> & {
   action_type: ActivityActionType
   metadata?: Record<string, unknown> | null
 }

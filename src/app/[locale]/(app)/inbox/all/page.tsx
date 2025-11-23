@@ -8,7 +8,7 @@ import { InboxTableView } from '@/features/inbox/components/InboxTableView'
 import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore'
 
 /**
- * Inboxコンテンツ（すべてのTicket）
+ * Inboxコンテンツ（すべてのPlan）
  */
 function InboxContent() {
   const { displayMode } = useInboxViewStore()
@@ -22,7 +22,7 @@ function InboxContent() {
 }
 
 /**
- * すべてのTicket ページ
+ * すべてのPlan ページ
  */
 export default function InboxAllPage() {
   return (

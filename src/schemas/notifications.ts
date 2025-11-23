@@ -3,10 +3,10 @@ import { z } from 'zod'
 // 通知タイプ
 export const notificationTypeSchema = z.enum([
   'reminder',
-  'ticket_created',
-  'ticket_updated',
-  'ticket_deleted',
-  'ticket_completed',
+  'plan_created',
+  'plan_updated',
+  'plan_deleted',
+  'plan_completed',
   'trash_warning',
   'system',
 ])
@@ -23,7 +23,7 @@ export const createNotificationSchema = z.object({
   priority: notificationPrioritySchema.default('medium'),
   title: z.string().min(1, 'タイトルは必須です').max(200),
   message: z.string().max(1000).optional(),
-  related_ticket_id: z.string().uuid().nullable().optional(),
+  related_plan_id: z.string().uuid().nullable().optional(),
   related_tag_id: z.string().uuid().nullable().optional(),
   action_url: z.string().max(500).nullable().optional(),
   icon: notificationIconSchema.nullable().optional(),

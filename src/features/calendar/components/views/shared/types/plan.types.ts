@@ -48,7 +48,7 @@ export type TimedPlan = CalendarPlan
 
 // 後方互換性のためのエイリアス
 /** @deprecated Use CalendarPlan instead */
-export type CalendarTicket = CalendarPlan
+export type Calendarplan = CalendarPlan
 /** @deprecated Use CalendarPlan instead */
 export type CalendarEvent = CalendarPlan
 /** @deprecated Use TimedPlan instead */
@@ -83,7 +83,7 @@ export interface PlanCardProps {
 
 // 後方互換性のためのエイリアス
 /** @deprecated Use PlanCardProps instead */
-export type TicketCardProps = PlanCardProps
+export type planCardProps = PlanCardProps
 /** @deprecated Use PlanCardProps instead */
 export type EventBlockProps = PlanCardProps
 
@@ -97,7 +97,7 @@ export interface PlanCardPosition {
 
 // 後方互換性のためのエイリアス
 /** @deprecated Use PlanCardPosition instead */
-export type TicketCardPosition = PlanCardPosition
+export type planCardPosition = PlanCardPosition
 /** @deprecated Use PlanCardPosition instead */
 export type EventPosition = PlanCardPosition
 
@@ -108,7 +108,7 @@ export interface PlanGroup {
 
 // 後方互換性のためのエイリアス
 /** @deprecated Use PlanGroup instead */
-export type TicketGroup = PlanGroup
+export type planGroup = PlanGroup
 /** @deprecated Use PlanGroup instead */
 export type EventGroup = PlanGroup
 
@@ -120,7 +120,7 @@ export interface PlanColumn {
 
 // 後方互換性のためのエイリアス
 /** @deprecated Use PlanColumn instead */
-export type TicketColumn = PlanColumn
+export type planColumn = PlanColumn
 /** @deprecated Use PlanColumn instead */
 export type EventColumn = PlanColumn
 
@@ -137,6 +137,6 @@ export type PlanInteractionHandler = {
 
 // 後方互換性のためのエイリアス
 /** @deprecated Use PlanInteractionHandler instead */
-export type TicketInteractionHandler = PlanInteractionHandler
+export type planInteractionHandler = PlanInteractionHandler
 /** @deprecated Use PlanInteractionHandler instead */
 export type EventInteractionHandler = PlanInteractionHandler

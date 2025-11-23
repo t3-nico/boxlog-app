@@ -165,59 +165,55 @@ export class WorkerManager {
   }
 
   /**
-   * イベント処理の高レベルメソッド群
+   * プラン処理の高レベルメソッド群
    */
 
   /**
-   * 大量イベントの前処理
+   * 大量プランの前処理
    */
-  async processEvents(
-    events: CalendarEvent[],
+  async processPlans(
+    plans: CalendarPlan[],
     options?: Record<string, unknown>
-  ): Promise<{ events: CalendarEvent[]; totalProcessed: number; uniqueCount: number; duplicatesRemoved: number }> {
-    return this.executeTask('PROCESS_EVENTS', { events, options }, 8)
+  ): Promise<{ plans: CalendarPlan[]; totalProcessed: number; uniqueCount: number; duplicatesRemoved: number }> {
+    return this.executeTask('PROCESS_PLANS', { plans, options }, 8)
   }
 
   /**
-   * イベント重複の計算
+   * プラン重複の計算
    */
   async calculateOverlaps(
-    events: CalendarEvent[],
+    plans: CalendarPlan[],
     dateRange: { start: Date; end: Date }
-  ): Promise<Array<{ eventId: string; overlaps: string[] }>> {
-    return this.executeTask('CALCULATE_OVERLAPS', { events, dateRange }, 6)
+  ): Promise<Array<{ planId: string; overlaps: string[] }>> {
+    return this.executeTask('CALCULATE_OVERLAPS', { plans, dateRange }, 6)
   }
 
   /**
-   * 繰り返しイベントの生成
+   * 繰り返しプランの生成
    */
-  async generateRecurringEvents(
-    event: CalendarEvent,
+  async generateRecurringPlans(
+    plan: CalendarPlan,
     pattern: Record<string, unknown>,
     dateRange: { start: Date; end: Date }
-  ): Promise<CalendarEvent[]> {
-    return this.executeTask('GENERATE_RECURRING', { event, pattern, dateRange }, 7)
+  ): Promise<CalendarPlan[]> {
+    return this.executeTask('GENERATE_RECURRING', { plan, pattern, dateRange }, 7)
   }
 
   /**
-   * イベント検索
+   * プラン検索
    */
-  async searchEvents(
-    events: CalendarEvent[],
-    query: string,
-    options?: Record<string, unknown>
-  ): Promise<CalendarEvent[]> {
-    return this.executeTask('SEARCH_EVENTS', { events, query, options }, 5)
+  async searchPlans(plans: CalendarPlan[], query: string, options?: Record<string, unknown>): Promise<CalendarPlan[]> {
+    return this.executeTask('SEARCH_PLANS', { plans, query, options }, 5)
   }
 
   /**
    * レイアウト最適化
    */
   async optimizeLayout(
-    events: CalendarEvent[],
+    plans: CalendarPlan[],
     containerWidth: number
   ): Promise<{ layouts: Array<{ id: string; x: number; y: number; width: number; height: number }> }> {
-    return this.executeTask('OPTIMIZE_LAYOUT', { events, containerWidth }, 4)
+    return this.executeTask('OPTIMIZE_LAYOUT', { plans, containerWidth }, 4)
   }
 
   /**
@@ -299,17 +295,17 @@ export class WorkerManager {
   }
 
   /**
-   * メインスレッドでのイベント処理（フォールバック）
+   * メインスレッドでのプラン処理（フォールバック）
    */
-  private processEventsMainThread(events: CalendarEvent[], _options: Record<string, unknown> = {}) {
+  private processPlansMainThread(plans: CalendarPlan[], _options: Record<string, unknown> = {}) {
     // 基本的な処理のみ実装
-    const processed = events
-      .filter((event) => event.startDate && event.title)
+    const processed = plans
+      .filter((plan) => plan.startDate && plan.title)
       .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime())
 
     return {
-      events: processed,
-      totalProcessed: events.length,
+      plans: processed,
+      totalProcessed: processed.length,
       uniqueCount: processed.length,
       duplicatesRemoved: 0,
     }
@@ -318,14 +314,14 @@ export class WorkerManager {
   /**
    * メインスレッドでの検索（フォールバック）
    */
-  private searchEventsMainThread(events: CalendarEvent[], query: string, _options: Record<string, unknown> = {}) {
+  private searchPlansMainThread(plans: CalendarPlan[], query: string, _options: Record<string, unknown> = {}) {
     const normalizedQuery = query.toLowerCase()
 
-    return events.filter(
-      (event) =>
-        event.title.toLowerCase().includes(normalizedQuery) ||
-        event.description?.toLowerCase().includes(normalizedQuery) ||
-        event.location?.toLowerCase().includes(normalizedQuery)
+    return plans.filter(
+      (plan) =>
+        plan.title.toLowerCase().includes(normalizedQuery) ||
+        plan.description?.toLowerCase().includes(normalizedQuery) ||
+        plan.location?.toLowerCase().includes(normalizedQuery)
     )
   }
 }

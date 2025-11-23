@@ -1,19 +1,19 @@
-# Ticket & Session管理システム - データベース設計
+# plan & Session管理システム - データベース設計
 
 ## 📊 ER図（Entity Relationship Diagram）
 
 ```mermaid
 erDiagram
     users ||--o{ tags : "所有"
-    users ||--o{ tickets : "所有"
+    users ||--o{ plans : "所有"
     users ||--o{ sessions : "所有"
     users ||--o{ records : "所有"
 
-    tickets ||--o{ sessions : "含む"
+    plans ||--o{ sessions : "含む"
     sessions ||--o{ records : "含む"
 
-    tags ||--o{ ticket_tags : "関連付け"
-    tickets ||--o{ ticket_tags : "関連付け"
+    tags ||--o{ plan_tags : "関連付け"
+    plans ||--o{ plan_tags : "関連付け"
 
     tags ||--o{ session_tags : "関連付け"
     sessions ||--o{ session_tags : "関連付け"
@@ -34,10 +34,10 @@ erDiagram
         timestamptz updated_at
     }
 
-    tickets {
+    plans {
         uuid id PK
         uuid user_id FK
-        text ticket_number "自動採番"
+        text plan_number "自動採番"
         text title
         text description
         text status "open|in_progress|completed|cancelled"
@@ -51,7 +51,7 @@ erDiagram
     sessions {
         uuid id PK
         uuid user_id FK
-        uuid ticket_id FK
+        uuid plan_id FK
         text session_number "自動採番"
         text title
         timestamptz planned_start
@@ -76,10 +76,10 @@ erDiagram
         timestamptz updated_at
     }
 
-    ticket_tags {
+    plan_tags {
         uuid id PK
         uuid user_id FK
-        uuid ticket_id FK
+        uuid plan_id FK
         uuid tag_id FK
         timestamptz created_at
     }
@@ -111,13 +111,13 @@ erDiagram
 
 ---
 
-### 2. Tickets（チケット）
+### 2. plans（チケット）
 
 **目的**: 作業単位を管理（イベント出展の準備タスク等）
 
 **自動機能**:
 
-- **ticket_number自動採番**: `TKT-20241027-001` 形式
+- **plan_number自動採番**: `TKT-20241027-001` 形式
   - フォーマット: `TKT-YYYYMMDD-NNN`
   - ユーザーごと・日付ごとに連番
 - **actual_hours自動集計**: 配下のSessionsのduration_minutesを合計
@@ -141,7 +141,7 @@ cancelled
 
 ### 3. Sessions（セッション）
 
-**目的**: Ticketに紐づく作業セッション（ブース準備の各作業時間等）
+**目的**: planに紐づく作業セッション（ブース準備の各作業時間等）
 
 **自動機能**:
 
@@ -156,7 +156,7 @@ cancelled
 
 **トリガー連携**:
 
-- Session追加・更新・削除時に親TicketのActual_hoursを自動更新
+- Session追加・更新・削除時に親planのActual_hoursを自動更新
 
 ---
 
@@ -170,13 +170,13 @@ cancelled
 
 ---
 
-### 5. 中間テーブル（ticket_tags / session_tags）
+### 5. 中間テーブル（plan_tags / session_tags）
 
 **目的**: 多対多のタグ関連付け
 
 **制約**:
 
-- `UNIQUE(ticket_id, tag_id)`: 重複タグ付け防止
+- `UNIQUE(plan_id, tag_id)`: 重複タグ付け防止
 - `UNIQUE(session_id, tag_id)`: 重複タグ付け防止
 
 ---
@@ -219,13 +219,13 @@ CREATE POLICY "Users can delete own data" ON {table}
 
 ```sql
 -- 主要検索パターン
-CREATE INDEX idx_tickets_user_id ON tickets(user_id);        -- ユーザー単位検索
-CREATE INDEX idx_tickets_status ON tickets(status);          -- ステータスフィルター
-CREATE INDEX idx_sessions_ticket_id ON sessions(ticket_id); -- チケット配下検索
+CREATE INDEX idx_plans_user_id ON plans(user_id);        -- ユーザー単位検索
+CREATE INDEX idx_plans_status ON plans(status);          -- ステータスフィルター
+CREATE INDEX idx_sessions_plan_id ON sessions(plan_id); -- チケット配下検索
 
 -- タグ検索
-CREATE INDEX idx_ticket_tags_ticket_id ON ticket_tags(ticket_id);
-CREATE INDEX idx_ticket_tags_tag_id ON ticket_tags(tag_id);
+CREATE INDEX idx_plan_tags_plan_id ON plan_tags(plan_id);
+CREATE INDEX idx_plan_tags_tag_id ON plan_tags(tag_id);
 ```
 
 **想定クエリ**:
@@ -238,13 +238,13 @@ CREATE INDEX idx_ticket_tags_tag_id ON ticket_tags(tag_id);
 
 ## 🛠️ トリガー一覧
 
-| トリガー名                                      | 対象テーブル | 実行タイミング         | 機能                |
-| ----------------------------------------------- | ------------ | ---------------------- | ------------------- |
-| `trigger_generate_ticket_number`                | tickets      | INSERT前               | Ticket番号自動採番  |
-| `trigger_generate_session_number`               | sessions     | INSERT前               | Session番号自動採番 |
-| `trigger_calculate_session_duration`            | sessions     | INSERT/UPDATE前        | 実績時間計算        |
-| `trigger_update_ticket_hours_on_session_change` | sessions     | INSERT/UPDATE/DELETE後 | Ticket実績時間更新  |
-| `trigger_update_*_updated_at`                   | 全テーブル   | UPDATE前               | updated_at更新      |
+| トリガー名                                    | 対象テーブル | 実行タイミング         | 機能                |
+| --------------------------------------------- | ------------ | ---------------------- | ------------------- |
+| `trigger_generate_plan_number`                | plans        | INSERT前               | plan番号自動採番    |
+| `trigger_generate_session_number`             | sessions     | INSERT前               | Session番号自動採番 |
+| `trigger_calculate_session_duration`          | sessions     | INSERT/UPDATE前        | 実績時間計算        |
+| `trigger_update_plan_hours_on_session_change` | sessions     | INSERT/UPDATE/DELETE後 | plan実績時間更新    |
+| `trigger_update_*_updated_at`                 | 全テーブル   | UPDATE前               | updated_at更新      |
 
 ---
 
@@ -264,7 +264,7 @@ supabase migration up
 
 ```bash
 # マイグレーション削除
-rm supabase/migrations/20241027000000_create_tickets_sessions_tags.sql
+rm supabase/migrations/20241027000000_create_plans_sessions_tags.sql
 
 # データベースリセット
 supabase db reset
@@ -284,32 +284,32 @@ VALUES
   (auth.uid(), '本番', '#10B981', 'イベント本番作業'),
   (auth.uid(), '片付け', '#F59E0B', 'イベント後片付け');
 
--- 2. チケット作成（ticket_number自動採番確認）
-INSERT INTO tickets (user_id, title, description, status, priority, planned_hours)
+-- 2. チケット作成（plan_number自動採番確認）
+INSERT INTO plans (user_id, title, description, status, priority, planned_hours)
 VALUES
   (auth.uid(), 'コミケ準備', 'コミケ101の準備タスク', 'open', 'high', 20);
 
 -- 3. セッション作成（session_number自動採番、duration_minutes自動計算確認）
-INSERT INTO sessions (user_id, ticket_id, title, actual_start, actual_end, status)
+INSERT INTO sessions (user_id, plan_id, title, actual_start, actual_end, status)
 VALUES
   (
     auth.uid(),
-    (SELECT id FROM tickets WHERE title = 'コミケ準備' LIMIT 1),
+    (SELECT id FROM plans WHERE title = 'コミケ準備' LIMIT 1),
     'グッズ梱包作業',
     NOW() - INTERVAL '2 hours',
     NOW(),
     'completed'
   );
 
--- 4. Ticketのactual_hours自動更新確認
-SELECT id, ticket_number, title, planned_hours, actual_hours
-FROM tickets;
+-- 4. planのactual_hours自動更新確認
+SELECT id, plan_number, title, planned_hours, actual_hours
+FROM plans;
 
 -- 5. タグ関連付け
-INSERT INTO ticket_tags (user_id, ticket_id, tag_id)
+INSERT INTO plan_tags (user_id, plan_id, tag_id)
 VALUES (
   auth.uid(),
-  (SELECT id FROM tickets WHERE title = 'コミケ準備' LIMIT 1),
+  (SELECT id FROM plans WHERE title = 'コミケ準備' LIMIT 1),
   (SELECT id FROM tags WHERE name = '準備作業' LIMIT 1)
 );
 ```
@@ -329,16 +329,16 @@ VALUES (
 3. trigger_calculate_session_duration
    → duration_minutes = (actual_end - actual_start) / 60
    ↓
-4. trigger_update_ticket_hours_on_session_change
-   → 親TicketのActual_hoursを再計算
+4. trigger_update_plan_hours_on_session_change
+   → 親planのActual_hoursを再計算
 ```
 
 ---
 
 ## 📚 関連ドキュメント
 
-- [マイグレーションファイル](/supabase/migrations/20241027000000_create_tickets_sessions_tags.sql)
-- [型定義](/src/features/tickets/types/)
+- [マイグレーションファイル](/supabase/migrations/20241027000000_create_plans_sessions_tags.sql)
+- [型定義](/src/features/plans/types/)
 - [Phase 2: tRPC API実装](https://github.com/t3-nico/boxlog-app/issues/620)
 
 ---

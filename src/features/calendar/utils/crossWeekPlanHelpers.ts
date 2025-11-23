@@ -1,10 +1,10 @@
 // @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 import { addDays, endOfDay, format, isSameDay, isSaturday, isSunday, isWithinInterval, startOfDay } from 'date-fns'
 
-import { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
-export interface EventSegment extends CalendarEvent {
-  originalEvent: CalendarEvent
+export interface PlanSegment extends CalendarPlan {
+  originalPlan: CalendarPlan
   segmentStart: Date
   segmentEnd: Date
   isPartialSegment: boolean
@@ -13,66 +13,66 @@ export interface EventSegment extends CalendarEvent {
 }
 
 /**
- * 週をまたぐイベントを週末表示設定に応じて分割する
- * @param events 元のイベントリスト
+ * 週をまたぐプランを週末表示設定に応じて分割する
+ * @param plans 元のプランリスト
  * @param showWeekends 週末表示フラグ
  * @param weekStart 週の開始日
- * @returns 分割されたイベントセグメント
+ * @returns 分割されたプランセグメント
  */
-export function splitCrossWeekEvents(events: CalendarEvent[], showWeekends: boolean, weekStart: Date): EventSegment[] {
-  const segments: EventSegment[] = []
+export function splitCrossWeekPlans(plans: CalendarPlan[], showWeekends: boolean, weekStart: Date): PlanSegment[] {
+  const segments: PlanSegment[] = []
 
-  events.forEach((event) => {
-    if (!event.startDate || !event.endDate) {
-      // 単発イベントはそのまま追加
+  plans.forEach((plan) => {
+    if (!plan.startDate || !plan.endDate) {
+      // 単発プランはそのまま追加
       segments.push({
-        ...event,
-        originalEvent: event,
-        segmentStart: event.startDate || new Date(),
-        segmentEnd: event.endDate || event.startDate || new Date(),
+        ...plan,
+        originalPlan: plan,
+        segmentStart: plan.startDate || new Date(),
+        segmentEnd: plan.endDate || plan.startDate || new Date(),
         isPartialSegment: false,
         segmentType: 'full',
-        originalDuration: event.duration || 60,
+        originalDuration: plan.duration || 60,
       })
       return
     }
 
-    const eventStart = startOfDay(event.startDate)
-    const eventEnd = endOfDay(event.endDate)
+    const planStart = startOfDay(plan.startDate)
+    const planEnd = endOfDay(plan.endDate)
 
-    // 単日イベントの場合
-    if (isSameDay(eventStart, eventEnd)) {
+    // 単日プランの場合
+    if (isSameDay(planStart, planEnd)) {
       segments.push({
-        ...event,
-        originalEvent: event,
-        segmentStart: event.startDate,
-        segmentEnd: event.endDate,
+        ...plan,
+        originalPlan: plan,
+        segmentStart: plan.startDate,
+        segmentEnd: plan.endDate,
         isPartialSegment: false,
         segmentType: 'full',
-        originalDuration: event.duration || 60,
+        originalDuration: plan.duration || 60,
       })
       return
     }
 
-    // 複数日イベントを分割
-    const eventSegments = createEventSegments(event, showWeekends, weekStart)
-    segments.push(...eventSegments)
+    // 複数日プランを分割
+    const planSegments = createPlanSegments(plan, showWeekends, weekStart)
+    segments.push(...planSegments)
   })
 
   return segments
 }
 
 /**
- * 複数日イベントを日毎のセグメントに分割
+ * 複数日プランを日毎のセグメントに分割
  */
-function createEventSegments(event: CalendarEvent, showWeekends: boolean, _weekStart: Date): EventSegment[] {
-  const segments: EventSegment[] = []
+function createPlanSegments(plan: CalendarPlan, showWeekends: boolean, _weekStart: Date): PlanSegment[] {
+  const segments: PlanSegment[] = []
 
-  if (!event.startDate || !event.endDate) return segments
+  if (!plan.startDate || !plan.endDate) return segments
 
-  let currentDate = startOfDay(event.startDate)
-  const endDate = startOfDay(event.endDate)
-  const originalDuration = event.duration || 60
+  let currentDate = startOfDay(plan.startDate)
+  const endDate = startOfDay(plan.endDate)
+  const originalDuration = plan.duration || 60
 
   let segmentIndex = 0
   const totalDays = Math.ceil((endDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
@@ -89,11 +89,11 @@ function createEventSegments(event: CalendarEvent, showWeekends: boolean, _weekS
 
     // セグメントの開始・終了時刻を計算
     const segmentStart = isFirstSegment
-      ? event.startDate
+      ? plan.startDate
       : new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0)
 
     const segmentEnd = isLastSegment
-      ? event.endDate
+      ? plan.endDate
       : new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59)
 
     // セグメントタイプを決定
@@ -110,9 +110,9 @@ function createEventSegments(event: CalendarEvent, showWeekends: boolean, _weekS
 
     // セグメントを作成
     segments.push({
-      ...event,
-      id: `${event.id}-segment-${format(currentDate, 'yyyy-MM-dd')}`,
-      originalEvent: event,
+      ...plan,
+      id: `${plan.id}-segment-${format(currentDate, 'yyyy-MM-dd')}`,
+      originalPlan: plan,
       segmentStart,
       segmentEnd,
       startDate: segmentStart,
@@ -121,7 +121,7 @@ function createEventSegments(event: CalendarEvent, showWeekends: boolean, _weekS
       segmentType,
       originalDuration,
       // タイトルにセグメント情報を追加
-      title: segmentType === 'full' ? event.title : `${event.title} ${getSegmentLabel(segmentType)}`,
+      title: segmentType === 'full' ? plan.title : `${plan.title} ${getSegmentLabel(segmentType)}`,
       // 分割されたセグメントの継続時間を計算
       duration: Math.ceil((segmentEnd.getTime() - segmentStart.getTime()) / (1000 * 60)),
     })
@@ -151,28 +151,28 @@ function getSegmentLabel(segmentType: 'start' | 'middle' | 'end' | 'full'): stri
 }
 
 /**
- * 週末に含まれるイベントをフィルタリング
+ * 週末に含まれるプランをフィルタリング
  */
-export function filterWeekendEvents(events: CalendarEvent[], dateRange: { start: Date; end: Date }): CalendarEvent[] {
-  return events.filter((event) => {
-    if (!event.startDate) return false
+export function filterWeekendPlans(plans: CalendarPlan[], dateRange: { start: Date; end: Date }): CalendarPlan[] {
+  return plans.filter((plan) => {
+    if (!plan.startDate) return false
 
-    const eventDate = event.startDate
-    const isWeekend = isSaturday(eventDate) || isSunday(eventDate)
+    const planDate = plan.startDate
+    const isWeekend = isSaturday(planDate) || isSunday(planDate)
 
-    return isWeekend && isWithinInterval(eventDate, dateRange)
+    return isWeekend && isWithinInterval(planDate, dateRange)
   })
 }
 
 /**
- * 金曜から月曜にまたがるイベントを検出
+ * 金曜から月曜にまたがるプランを検出
  */
-export function detectFridayToMondayEvents(events: CalendarEvent[]): CalendarEvent[] {
-  return events.filter((event) => {
-    if (!event.startDate || !event.endDate) return false
+export function detectFridayToMondayPlans(plans: CalendarPlan[]): CalendarPlan[] {
+  return plans.filter((plan) => {
+    if (!plan.startDate || !plan.endDate) return false
 
-    const startDay = event.startDate.getDay() // 0=Sunday, 5=Friday
-    const endDay = event.endDate.getDay() // 1=Monday
+    const startDay = plan.startDate.getDay() // 0=Sunday, 5=Friday
+    const endDay = plan.endDate.getDay() // 1=Monday
 
     return startDay === 5 && endDay === 1 // Friday to Monday
   })

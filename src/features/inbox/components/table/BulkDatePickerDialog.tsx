@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
-import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Calendar as CalendarIcon, Loader2, X } from 'lucide-react'
@@ -49,7 +49,7 @@ interface BulkDatePickerDialogProps {
 export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSuccess }: BulkDatePickerDialogProps) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { bulkUpdateTicket } = useTicketMutations()
+  const { bulkUpdatePlan } = usePlanMutations()
 
   // 送信ハンドラー（期限設定）
   const handleSubmit = async () => {
@@ -60,7 +60,7 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
 
     setIsSubmitting(true)
     try {
-      await bulkUpdateTicket.mutateAsync({
+      await bulkUpdatePlan.mutateAsync({
         ids: selectedIds,
         data: {
           due_date: selectedDate.toISOString(),
@@ -81,7 +81,7 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
   const handleClear = async () => {
     setIsSubmitting(true)
     try {
-      await bulkUpdateTicket.mutateAsync({
+      await bulkUpdatePlan.mutateAsync({
         ids: selectedIds,
         data: {
           due_date: undefined, // nullではなくundefinedを使用

@@ -2,21 +2,21 @@ import type { PlanStatus } from '../types/plan'
 
 /**
  * チケット番号のフォーマット
- * @example formatTicketNumber("TKT-20241030-001") => "#TKT-001"
+ * @example formatplanNumber("TKT-20241030-001") => "#TKT-001"
  */
-export function formatTicketNumber(ticketNumber: string): string {
+export function formatplanNumber(planNumber: string): string {
   // TKT-20241030-001 → #TKT-001
-  const parts = ticketNumber.split('-')
+  const parts = planNumber.split('-')
   if (parts.length === 3) {
     return `#${parts[0]}-${parts[2]}`
   }
-  return `#${ticketNumber}`
+  return `#${planNumber}`
 }
 
 /**
  * チケットステータスの表示名
  */
-export function formatTicketStatus(status: PlanStatus): string {
+export function formatplanStatus(status: PlanStatus): string {
   const statusMap: Record<PlanStatus, string> = {
     backlog: '準備中',
     ready: '配置済み',
@@ -31,7 +31,7 @@ export function formatTicketStatus(status: PlanStatus): string {
 /**
  * 日付のフォーマット（YYYY-MM-DD → YYYY年MM月DD日）
  */
-export function formatTicketDate(dateString: string | null | undefined): string {
+export function formatplanDate(dateString: string | null | undefined): string {
   if (!dateString) return '-'
 
   try {
@@ -48,7 +48,7 @@ export function formatTicketDate(dateString: string | null | undefined): string 
 /**
  * 日時のフォーマット（ISO 8601 → YYYY/MM/DD HH:mm）
  */
-export function formatTicketDateTime(dateTimeString: string | null | undefined): string {
+export function formatplanDateTime(dateTimeString: string | null | undefined): string {
   if (!dateTimeString) return '-'
 
   try {
@@ -84,7 +84,7 @@ export function formatRelativeTime(dateString: string | null | undefined): strin
     if (diffHours < 24) return `${diffHours}時間前`
     if (diffDays < 30) return `${diffDays}日前`
 
-    return formatTicketDate(dateString)
+    return formatplanDate(dateString)
   } catch {
     return dateString
   }

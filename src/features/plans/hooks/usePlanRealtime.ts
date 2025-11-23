@@ -1,11 +1,11 @@
 /**
- * Ticket Realtime購読フック
+ * plan Realtime購読フック
  *
  * @description
  * チケットのDB変更をリアルタイムで検知し、
  * TanStack Queryのキャッシュを自動更新する。
  *
- * 対象テーブル: tickets
+ * 対象テーブル: plans
  *
  * 検知イベント:
  * - INSERT: 新規チケット作成
@@ -15,7 +15,7 @@
  * 使用箇所:
  * - Board View（ボードビュー）
  * - Table View（テーブルビュー）
- * - Ticket Inspector（チケット詳細）
+ * - plan Inspector（チケット詳細）
  *
  * @see https://supabase.com/docs/guides/realtime/postgres-changes
  *
@@ -24,7 +24,7 @@
  * // Board View内で使用
  * export function BoardView() {
  *   const { data: user } = useAuth()
- *   useTicketRealtime(user?.id)
+ *   usePlanRealtime(user?.id)
  *
  *   return <Board />
  * }
@@ -36,21 +36,21 @@
 import { api } from '@/lib/trpc'
 
 import { useRealtimeSubscription } from '@/lib/supabase/realtime/useRealtimeSubscription'
-import { useTicketCacheStore } from '../stores/usePlanCacheStore'
+import { usePlanCacheStore } from '../stores/usePlanCacheStore'
 
-interface UseTicketRealtimeOptions {
+interface UsePlanRealtimeOptions {
   /** 購読を有効化するか（デフォルト: true） */
   enabled?: boolean
 }
 
-export function useTicketRealtime(userId: string | undefined, options: UseTicketRealtimeOptions = {}) {
+export function usePlanRealtime(userId: string | undefined, options: UsePlanRealtimeOptions = {}) {
   const { enabled = true } = options
   const utils = api.useUtils()
-  const isMutating = useTicketCacheStore((state) => state.isMutating)
+  const isMutating = usePlanCacheStore((state) => state.isMutating)
 
   useRealtimeSubscription<{ id: string }>({
-    channelName: `ticket-changes-${userId}`,
-    table: 'tickets',
+    channelName: `plan-changes-${userId}`,
+    table: 'plans',
     event: '*', // INSERT, UPDATE, DELETE すべて
     filter: userId ? `user_id=eq.${userId}` : undefined,
     enabled, // enabledオプションを渡す
@@ -58,16 +58,16 @@ export function useTicketRealtime(userId: string | undefined, options: UseTicket
       const newRecord = payload.new as { id: string } | undefined
       const oldRecord = payload.old as { id: string } | undefined
 
-      console.debug('[Ticket Realtime] Event detected:', payload.eventType, newRecord?.id)
+      console.debug('[plan Realtime] Event detected:', payload.eventType, newRecord?.id)
 
       // 自分のmutation中はRealtime経由の更新をスキップ（二重更新防止）
       if (isMutating) {
-        console.debug('[Ticket Realtime] Skipping invalidation (mutation in progress)')
+        console.debug('[plan Realtime] Skipping invalidation (mutation in progress)')
         return
       }
 
       // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
-      // undefined を渡すことで、useTickets({}) と useTickets(undefined) の両方を無効化
+      // undefined を渡すことで、useplans({}) と useplans(undefined) の両方を無効化
       void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
 
       // 個別チケットのキャッシュも無効化
@@ -81,7 +81,7 @@ export function useTicketRealtime(userId: string | undefined, options: UseTicket
       void utils.plans.invalidate()
     },
     onError: (error) => {
-      console.error('[Ticket Realtime] Subscription error:', error)
+      console.error('[plan Realtime] Subscription error:', error)
     },
   })
 }

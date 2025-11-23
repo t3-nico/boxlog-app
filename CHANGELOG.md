@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Zustandベースの状態管理（useInboxViewStore）
   - フィルタリング・ソート機能（Board/Table別）
   - タブ切り替えUI（アクセシビリティ対応）
-- **Tickets & Sessions基盤**: 新データモデルの実装 (#628)
+- **plans & Sessions基盤**: 新データモデルの実装 (#628)
   - Event/Taskの段階的廃止
   - Supabase RLSポリシーの完全実装
 - **認証基盤**: Supabase認証の完全統合 (#607, #616)

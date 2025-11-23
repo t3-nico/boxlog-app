@@ -4,11 +4,11 @@ import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { forwardRef } from 'react'
 
-interface TicketTitleInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface PlanTitleInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string
 }
 
-export const TicketTitleInput = forwardRef<HTMLInputElement, TicketTitleInputProps>(({ className, ...props }, ref) => {
+export const PlanTitleInput = forwardRef<HTMLInputElement, PlanTitleInputProps>(({ className, ...props }, ref) => {
   return (
     <Input
       {...props}
@@ -19,4 +19,4 @@ export const TicketTitleInput = forwardRef<HTMLInputElement, TicketTitleInputPro
   )
 })
 
-TicketTitleInput.displayName = 'TicketTitleInput'
+PlanTitleInput.displayName = 'PlanTitleInput'

@@ -16,7 +16,7 @@ import {
   CommandSeparator,
 } from '@/components/ui/command'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
-// TODO(#621): Events/Tasks削除後、Tickets/Sessionsに移行予定
+// TODO(#621): Events/Tasks削除後、plans/Sessionsに移行予定
 // import { useEventStore } from '@/features/events'
 import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
 import { useTagStore } from '@/features/tags/stores/useTagStore'

@@ -3,7 +3,7 @@ import type { PlanStatus } from '../types/plan'
 /**
  * チケットステータス定数
  */
-export const TICKET_STATUSES = {
+export const plan_STATUSES = {
   BACKLOG: 'backlog',
   READY: 'ready',
   ACTIVE: 'active',
@@ -15,7 +15,7 @@ export const TICKET_STATUSES = {
 /**
  * ステータス表示名マップ
  */
-export const TICKET_STATUS_LABELS: Record<PlanStatus, string> = {
+export const plan_STATUS_LABELS: Record<PlanStatus, string> = {
   backlog: '準備中',
   ready: '配置済み',
   active: '作業中',
@@ -27,7 +27,7 @@ export const TICKET_STATUS_LABELS: Record<PlanStatus, string> = {
 /**
  * ステータス色マップ（Tailwind classes）
  */
-export const TICKET_STATUS_COLORS: Record<
+export const plan_STATUS_COLORS: Record<
   PlanStatus,
   {
     bg: string

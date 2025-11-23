@@ -8,8 +8,8 @@ import { format } from 'date-fns'
 import { fromZonedTime } from 'date-fns-tz'
 import { toast } from 'sonner'
 
-import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
-import { useTickets } from '@/features/plans/hooks/usePlans'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useplans } from '@/features/plans/hooks/usePlans'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 
 interface DnDProviderProps {
@@ -20,13 +20,13 @@ interface DnDProviderProps {
  * DnDProvider - dnd-kit を使用したドラッグ・アンド・ドロップコンテキスト
  *
  * **変更履歴**:
- * - react-dnd から @dnd-kit/core に移行（TicketKanbanBoardとの統一のため）
+ * - react-dnd から @dnd-kit/core に移行（planKanbanBoardとの統一のため）
  * - onDragEnd ハンドラーを追加（Calendarへのドロップ対応）
  *
  * **機能**:
- * - TicketCard（Sidebar）からCalendar グリッドへのドラッグが可能
+ * - planCard（Sidebar）からCalendar グリッドへのドラッグが可能
  * - PointerSensor: 8px移動したらドラッグ開始（誤動作防止）
- * - ドロップ位置から日付・時刻を計算してTicket更新
+ * - ドロップ位置から日付・時刻を計算してplan更新
  *
  * **エッジケース対応**:
  * - 終日イベント（時間なし）→ due_date のみ更新
@@ -35,14 +35,14 @@ interface DnDProviderProps {
  * - 重複イベント → 既存の時間幅を保持
  */
 export const DnDProvider = ({ children }: DnDProviderProps) => {
-  const { updateTicket } = useTicketMutations()
+  const { updatePlan } = usePlanMutations()
   const { timezone } = useCalendarSettingsStore()
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dragPreviewTime, setDragPreviewTime] = useState<{ date: string; time?: string } | null>(null)
 
-  // ドラッグ中のTicket情報を取得（リアルタイム性最適化済み）
-  const { data: tickets } = useTickets()
-  const activeTicket = tickets?.find((t) => t.id === activeId)
+  // ドラッグ中のplan情報を取得（リアルタイム性最適化済み）
+  const { data: plans } = useplans()
+  const activeplan = plans?.find((t) => t.id === activeId)
 
   // ドラッグセンサー設定（ポインターでドラッグ）
   const sensors = useSensors(
@@ -98,9 +98,9 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
   }, [])
 
   /**
-   * Ticketドロップの共通処理
+   * planドロップの共通処理
    */
-  const handleTicketDrop = useCallback(
+  const handleplanDrop = useCallback(
     (planId: string, over: any) => {
       // ドロップ先のデータ
       const dropData = over.data?.current
@@ -190,7 +190,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           })
         }
 
-        // 4. Ticket更新
+        // 4. plan更新
         // 注意: optional()フィールドでは undefined = 更新しない、null = NULL値に更新
         const updateData: {
           due_date: string
@@ -202,12 +202,12 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           end_time,
         }
 
-        console.log('[DnDProvider] updateTicket.mutate 呼び出し:', {
+        console.log('[DnDProvider] updatePlan.mutate 呼び出し:', {
           id: planId,
           data: updateData,
         })
 
-        updateTicket.mutate({
+        updatePlan.mutate({
           id: planId,
           data: updateData,
         })
@@ -220,7 +220,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
         setDragPreviewTime(null)
       }
     },
-    [updateTicket]
+    [updatePlan]
   )
 
   /**
@@ -231,7 +231,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
    * - over.data.current.time: string (HH:mm) | undefined
    *
    * **対応するドラッグタイプ**:
-   * - Ticketカード（Sidebar等）
+   * - planカード（Sidebar等）
    * - カレンダーイベント（calendar-event）
    */
   const handleDragEnd = useCallback(
@@ -260,18 +260,18 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           setActiveId(null)
           return
         }
-        // Ticketとして扱う（CalendarEventはTicketベース）
+        // planとして扱う（CalendarEventはplanベース）
         currentPlanId = calendarEvent.id
         console.log('[DnDProvider] カレンダーイベントをドラッグ中:', currentPlanId)
       } else {
-        // 通常のTicketカードの場合
+        // 通常のplanカードの場合
         currentPlanId = active.id as string
       }
 
       // 共通処理を実行
-      handleTicketDrop(currentPlanId, over)
+      handleplanDrop(currentPlanId, over)
     },
-    [handleTicketDrop]
+    [handleplanDrop]
   )
 
   return (
@@ -280,11 +280,11 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
 
       {/* ドラッグ中のプレビュー */}
       <DragOverlay>
-        {activeTicket ? (
+        {activeplan ? (
           <div className="bg-card border-primary flex h-20 w-64 flex-col gap-1 rounded-lg border-2 p-3 shadow-lg">
             <div className="flex items-center gap-2">
               <div className="bg-primary h-8 w-1 rounded-full" />
-              <div className="text-foreground flex-1 text-sm font-semibold">{activeTicket.title}</div>
+              <div className="text-foreground flex-1 text-sm font-semibold">{activeplan.title}</div>
             </div>
             <div className="text-muted-foreground ml-3 space-y-0.5 text-xs">
               {/* ドラッグ中の時間をリアルタイム表示 */}
@@ -306,8 +306,8 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
                 </>
               ) : (
                 // ドロップ先がない場合は元の日付を表示
-                activeTicket.due_date && (
-                  <div>📅 {activeTicket.due_date.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$1/$2/$3')}</div>
+                activeplan.due_date && (
+                  <div>📅 {activeplan.due_date.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$1/$2/$3')}</div>
                 )
               )}
             </div>

@@ -1,11 +1,11 @@
-# Tickets機能
+# plans機能
 
 チケット管理機能のモジュール。タスク・課題・作業アイテムを管理します。
 
 ## ディレクトリ構造
 
 ```
-features/tickets/
+features/plans/
 ├── components/         # UIコンポーネント
 │   ├── display/       # 表示系（Card, Badge等）
 │   ├── filters/       # フィルター
@@ -24,17 +24,17 @@ features/tickets/
 ### チケット一覧の取得
 
 ```tsx
-import { useTickets } from '@/features/tickets/hooks'
+import { useplans } from '@/features/plans/hooks'
 
-function TicketList() {
-  const { data: tickets, isLoading } = useTickets()
+function planList() {
+  const { data: plans, isLoading } = useplans()
 
   if (isLoading) return <div>Loading...</div>
 
   return (
     <div>
-      {tickets?.map((ticket) => (
-        <div key={ticket.id}>{ticket.title}</div>
+      {plans?.map((plan) => (
+        <div key={plan.id}>{plan.title}</div>
       ))}
     </div>
   )
@@ -44,10 +44,10 @@ function TicketList() {
 ### フィルター・ソート・ページネーション
 
 ```tsx
-import { useTickets } from '@/features/tickets/hooks'
+import { useplans } from '@/features/plans/hooks'
 
-function FilteredTickets() {
-  const { data: tickets } = useTickets({
+function Filteredplans() {
+  const { data: plans } = useplans({
     status: 'active',
     priority: 'high',
     search: 'バグ',
@@ -64,27 +64,27 @@ function FilteredTickets() {
 ### 単体チケットの取得
 
 ```tsx
-import { useTicket } from '@/features/tickets/hooks'
+import { useplan } from '@/features/plans/hooks'
 
-function TicketDetail({ id }: { id: string }) {
-  const { data: ticket } = useTicket(id, {
+function planDetail({ id }: { id: string }) {
+  const { data: plan } = useplan(id, {
     includeTags: true, // タグも一緒に取得
   })
 
-  return <div>{ticket?.title}</div>
+  return <div>{plan?.title}</div>
 }
 ```
 
 ### チケットの作成・更新・削除
 
 ```tsx
-import { useTicketMutations } from '@/features/tickets/hooks'
+import { useplanMutations } from '@/features/plans/hooks'
 
-function TicketActions() {
-  const { createTicket, updateTicket, deleteTicket } = useTicketMutations()
+function planActions() {
+  const { createplan, updateplan, deleteplan } = useplanMutations()
 
   const handleCreate = () => {
-    createTicket.mutate({
+    createplan.mutate({
       title: '新しいタスク',
       status: 'backlog',
       priority: 'normal',
@@ -92,7 +92,7 @@ function TicketActions() {
   }
 
   const handleUpdate = (id: string) => {
-    updateTicket.mutate({
+    updateplan.mutate({
       id,
       data: { status: 'done' },
     })
@@ -105,12 +105,12 @@ function TicketActions() {
 ### Inspectorの表示制御
 
 ```tsx
-import { useTicketInspectorStore } from '@/features/tickets/stores'
+import { useplanInspectorStore } from '@/features/plans/stores'
 
-function TicketCard({ ticket }) {
-  const { openInspector } = useTicketInspectorStore()
+function planCard({ plan }) {
+  const { openInspector } = useplanInspectorStore()
 
-  return <div onClick={() => openInspector(ticket.id)}>{ticket.title}</div>
+  return <div onClick={() => openInspector(plan.id)}>{plan.title}</div>
 }
 ```
 
@@ -137,14 +137,14 @@ function TicketCard({ ticket }) {
 ## データ構造
 
 ```typescript
-interface Ticket {
+interface plan {
   id: string
   user_id: string
-  ticket_number: string // 例: "2025-001-001"
+  plan_number: string // 例: "2025-001-001"
   title: string
   description: string | null
-  status: TicketStatus
-  priority: TicketPriority | null
+  status: planStatus
+  priority: planPriority | null
   due_date: string | null // ISO 8601形式
   start_time: string | null // 開始時刻
   end_time: string | null // 終了時刻
@@ -157,62 +157,62 @@ interface Ticket {
 
 ## 主要コンポーネント
 
-### TicketInspector
+### planInspector
 
 全ページ共通のチケット詳細表示・編集パネル（Sheet）。
 
 ```tsx
 // レイアウトに配置（常にマウント）
-import { TicketInspector } from '@/features/tickets'
-;<TicketInspector />
+import { planInspector } from '@/features/plans'
+;<planInspector />
 ```
 
-### TicketCard
+### planCard
 
 チケットのカード表示コンポーネント。
 
 ```tsx
-import { TicketCard } from '@/features/tickets/components'
-;<TicketCard
-  ticket={ticket}
+import { planCard } from '@/features/plans/components'
+;<planCard
+  plan={plan}
   onEdit={(t) => console.log('Edit:', t)}
   onDelete={(t) => console.log('Delete:', t)}
   onClick={(t) => openInspector(t.id)}
-  tags={ticketTags}
+  tags={planTags}
 />
 ```
 
-### TicketCreatePopover
+### planCreatePopover
 
 クイックチケット作成ポップオーバー。
 
 ```tsx
-import { TicketCreatePopover } from '@/features/tickets/components'
-;<TicketCreatePopover triggerElement={<Button>新規作成</Button>} onSuccess={() => console.log('Created!')} />
+import { planCreatePopover } from '@/features/plans/components'
+;<planCreatePopover triggerElement={<Button>新規作成</Button>} onSuccess={() => console.log('Created!')} />
 ```
 
 ## API（tRPC）
 
 ### Queries
 
-- `tickets.list` - チケット一覧取得（フィルター・ソート・ページネーション対応）
-- `tickets.getById` - 単体取得（include optionでリレーション取得可能）
-- `tickets.getStats` - 統計情報取得
+- `plans.list` - チケット一覧取得（フィルター・ソート・ページネーション対応）
+- `plans.getById` - 単体取得（include optionでリレーション取得可能）
+- `plans.getStats` - 統計情報取得
 
 ### Mutations
 
-- `tickets.create` - 作成
-- `tickets.update` - 更新
-- `tickets.delete` - 削除
-- `tickets.bulkUpdate` - 一括更新
-- `tickets.bulkDelete` - 一括削除
+- `plans.create` - 作成
+- `plans.update` - 更新
+- `plans.delete` - 削除
+- `plans.bulkUpdate` - 一括更新
+- `plans.bulkDelete` - 一括削除
 
 ### Tag関連
 
-- `tickets.tags.list` - タグ一覧
-- `tickets.addTag` - タグ追加
-- `tickets.removeTag` - タグ削除
-- `tickets.setTags` - タグ一括設定
+- `plans.tags.list` - タグ一覧
+- `plans.addTag` - タグ追加
+- `plans.removeTag` - タグ削除
+- `plans.setTags` - タグ一括設定
 
 ## 状態管理
 
@@ -224,7 +224,7 @@ import { TicketCreatePopover } from '@/features/tickets/components'
 
 ### Zustand
 
-- Inspector表示制御のみ（`useTicketInspectorStore`）
+- Inspector表示制御のみ（`useplanInspectorStore`）
 - グローバルなUI状態管理
 
 ## 型安全性
@@ -240,18 +240,18 @@ import { TicketCreatePopover } from '@/features/tickets/components'
 npm run typecheck
 
 # 単体テスト（将来実装予定）
-npm run test src/features/tickets
+npm run test src/features/plans
 ```
 
 ## 注意事項
 
 - Session機能は現在未実装（将来実装予定）
-- チケット番号は自動生成（`YYYY-{user_count}-{ticket_count}`形式）
+- チケット番号は自動生成（`YYYY-{user_count}-{plan_count}`形式）
 - Inspector は常にレイアウトにマウントしておく必要あり
 - タグ機能は `/src/features/tags` と連携
 
 ## 関連ドキュメント
 
-- API実装: `/src/server/api/routers/tickets.ts`
-- スキーマ定義: `/src/schemas/tickets/ticket.ts`
+- API実装: `/src/server/api/routers/plans.ts`
+- スキーマ定義: `/src/schemas/plans/plan.ts`
 - データベース: `/supabase/migrations/`

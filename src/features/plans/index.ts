@@ -1,4 +1,4 @@
-// Feature: Tickets Management
+// Feature: plans Management
 // Re-export all public APIs
 
 // Types

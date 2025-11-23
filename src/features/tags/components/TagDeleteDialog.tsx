@@ -44,14 +44,14 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
         const response = await fetch(`/api/tags/${tag.id}?usage=true`)
         if (response.ok) {
           const data = await response.json()
-          setUsage(data.usage || { ticketCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
+          setUsage(data.usage || { planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
         } else {
           // エラー時はデフォルト値
-          setUsage({ ticketCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
+          setUsage({ planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
         }
       } catch (error) {
         console.error('Failed to fetch tag usage:', error)
-        setUsage({ ticketCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
+        setUsage({ planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
       } finally {
         setIsLoading(false)
       }
@@ -96,7 +96,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
               <p className="mb-2 text-sm font-medium">{t('tags.delete.affectedItems')}:</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
                 <li>
-                  • {t('tags.delete.tickets')}: {t('tags.delete.itemsCount', { count: usage.ticketCount })}
+                  • {t('tags.delete.plans')}: {t('tags.delete.itemsCount', { count: usage.planCount })}
                 </li>
                 <li>
                   • {t('tags.delete.events')}: {t('tags.delete.itemsCount', { count: usage.eventCount })}

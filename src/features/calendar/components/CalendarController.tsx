@@ -10,13 +10,13 @@ import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
 
 // import { useEventStore } from '@/features/calendar/types/calendar.types'
-// TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
+// TODO(#621): Inspector削除後、plans/Sessions統合後に再実装
 // import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
 // import { useInspectorStore } from '@/features/inspector/stores/useInspectorStore'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
-import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
-import { useTickets } from '@/features/plans/hooks/usePlans'
-import { useTicketInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useplans } from '@/features/plans/hooks/usePlans'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'
 // import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
@@ -33,7 +33,7 @@ import { useWeekendNavigation } from '../hooks/useWeekendNavigation'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { calculateViewDateRange } from '../lib/view-helpers'
 import { DnDProvider } from '../providers/DnDProvider'
-import { setUserTimezone, ticketsToCalendarEvents } from '../utils/ticketToCalendarEvent'
+import { plansToCalendarEvents, setUserTimezone } from '../utils/planToCalendarEvent'
 
 import type { CalendarEvent, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
@@ -68,8 +68,8 @@ interface CalendarViewExtendedProps extends CalendarViewProps {
 export const CalendarController = ({ className, initialViewType = 'day', initialDate }: CalendarViewExtendedProps) => {
   const router = useRouter()
   const calendarNavigation = useCalendarNavigation()
-  const { openInspector } = useTicketInspectorStore()
-  const { createTicket } = useTicketMutations()
+  const { openInspector } = usePlanInspectorStore()
+  const { createPlan } = usePlanMutations()
 
   // Context が利用可能な場合はそれを使用、そうでない場合は useCalendarLayout を使用
   const contextAvailable = calendarNavigation !== null
@@ -125,7 +125,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   // キーボードショートカット（Cmd/Ctrl + W）
   useWeekendToggleShortcut()
-  // TODO(#621): Tasks削除後、Tickets/Sessions統合後に再実装
+  // TODO(#621): Tasks削除後、plans/Sessions統合後に再実装
   // const taskStore = useTaskStore()
   // const { getTasksForDateRange } = taskStore
 
@@ -144,12 +144,12 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   //   })),
   // })
 
-  // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
+  // TODO(#621): Inspector削除後、plans/Sessions統合後に再実装
   // const { openCreateInspector } = useCreateEventInspector()
   // const { setSelectedEvent, setActiveContent, setInspectorOpen } = useInspectorStore()
 
   // 通知機能の統合
-  // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
+  // TODO(#621): Events削除後、plans/Sessions統合後に再実装
   const {
     permission: notificationPermission,
     hasRequested: hasRequestedNotification,
@@ -220,38 +220,38 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   }, [viewType, currentDate])
 
   // 表示範囲のタスクを取得
-  // TODO(#621): Tasks削除後、Tickets/Sessions統合後に再実装
+  // TODO(#621): Tasks削除後、plans/Sessions統合後に再実装
   const filteredTasks = useMemo(() => {
     return [] // TODO(#621): Sessions統合後に実装
     // return getTasksForDateRange(viewDateRange.start, viewDateRange.end)
   }, [viewDateRange.start, viewDateRange.end])
 
-  // Ticketsを取得（リアルタイム性最適化済み）
-  const { data: ticketsData } = useTickets({})
+  // plansを取得（リアルタイム性最適化済み）
+  const { data: plansData } = useplans({})
 
   // 表示範囲のイベントを取得してCalendarEvent型に変換（削除済みを除外）
   const filteredEvents = useMemo(() => {
-    // Ticketデータがない場合は空配列を返す
-    if (!ticketsData) {
+    // planデータがない場合は空配列を返す
+    if (!plansData) {
       return []
     }
 
-    // ticket_tags を tags に変換
-    const ticketsWithTags = (
-      ticketsData as unknown as Array<Ticket & { ticket_tags?: Array<{ tag_id: string; tags: unknown }> }>
+    // plan_tags を tags に変換
+    const plansWithTags = (
+      plansData as unknown as Array<plan & { plan_tags?: Array<{ tag_id: string; tags: unknown }> }>
     ).map((plan) => {
-      const tags = ticket.ticket_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
-      const { ticket_tags, ...ticketData } = ticket
-      return { ...ticketData, tags } as Ticket & { tags: unknown[] }
+      const tags = plan.plan_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
+      const { plan_tags, ...planData } = plan
+      return { ...planData, tags } as plan & { tags: unknown[] }
     })
 
-    // start_time/end_timeが設定されているTicketのみを抽出
-    const ticketsWithTime = ticketsWithTags.filter((plan) => {
-      return ticket.start_time && ticket.end_time
+    // start_time/end_timeが設定されているplanのみを抽出
+    const plansWithTime = plansWithTags.filter((plan) => {
+      return plan.start_time && plan.end_time
     })
 
-    // TicketをCalendarEventに変換
-    const calendarEvents = ticketsToCalendarEvents(ticketsWithTime as Ticket[])
+    // planをCalendarEventに変換
+    const calendarEvents = plansToCalendarEvents(plansWithTime as plan[])
 
     // 表示範囲内のイベントのみをフィルタリング
     const startDateOnly = new Date(
@@ -280,9 +280,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       )
     })
 
-    logger.log(`[CalendarController] Ticketsフィルタリング:`, {
-      totalTickets: ticketsData.length,
-      ticketsWithTime: ticketsWithTime.length,
+    logger.log(`[CalendarController] plansフィルタリング:`, {
+      totalplans: plansData.length,
+      plansWithTime: plansWithTime.length,
       filteredCount: filtered.length,
       dateRange: {
         start: startDateOnly.toDateString(),
@@ -297,7 +297,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     })
 
     return filtered
-  }, [viewDateRange.start, viewDateRange.end, ticketsData])
+  }, [viewDateRange.start, viewDateRange.end, plansData])
 
   // タスククリックハンドラー
   const handleTaskClick = useCallback(() => {
@@ -307,9 +307,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // イベント関連のハンドラー
   const handleEventClick = useCallback(
     (event: CalendarEvent) => {
-      // チケットIDでTicket Inspectorを開く
+      // チケットIDでplan Inspectorを開く
       openInspector(event.id)
-      logger.log('📋 Opening Ticket Inspector:', { planId: event.id, title: event.title })
+      logger.log('📋 Opening plan Inspector:', { planId: event.id, title: event.title })
     },
     [openInspector]
   )
@@ -357,7 +357,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         }
       }
 
-      // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
+      // TODO(#621): Inspector削除後、plans/Sessions統合後に再実装
       // CreateEventInspectorを新規作成モードで開く
       // if (startTime && endTime && date) {
       //   openCreateInspector({
@@ -511,7 +511,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   )
 
   // タスク作成ハンドラー
-  // TODO(#621): Tasks削除後、Tickets/Sessions統合後に再実装
+  // TODO(#621): Tasks削除後、plans/Sessions統合後に再実装
   const handleCreateTask = useCallback(
     (_taskData: {
       title: string
@@ -582,7 +582,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       })
 
       // チケットを作成してからInspectorで編集
-      createTicket.mutate(
+      createPlan.mutate(
         {
           title: '新規チケット',
           status: 'backlog',
@@ -591,19 +591,19 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
           end_time: endTime.toISOString(),
         },
         {
-          onSuccess: (newTicket) => {
+          onSuccess: (newplan) => {
             // 作成されたチケットをInspectorで開く
-            openInspector(newTicket.id)
-            logger.log('✅ Created ticket from drag selection:', {
-              planId: newTicket.id,
-              title: newTicket.title,
-              dueDate: newTicket.due_date,
+            openInspector(newplan.id)
+            logger.log('✅ Created plan from drag selection:', {
+              planId: newplan.id,
+              title: newplan.title,
+              dueDate: newplan.due_date,
             })
           },
         }
       )
 
-      // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
+      // TODO(#621): Inspector削除後、plans/Sessions統合後に再実装
       // CreateEventInspectorを開く
       // openCreateInspector({
       //   initialData: {

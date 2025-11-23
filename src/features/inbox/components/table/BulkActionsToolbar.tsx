@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { Archive, Calendar, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
@@ -36,7 +36,7 @@ import { BulkDatePickerDialog } from './BulkDatePickerDialog'
  */
 export function BulkActionsToolbar() {
   const { getSelectedCount, getSelectedIds, clearSelection } = useInboxSelectionStore()
-  const { bulkUpdateTicket, bulkDeleteTicket } = useTicketMutations()
+  const { bulkUpdatePlan, bulkDeletePlan } = usePlanMutations()
   const selectedCount = getSelectedCount()
   const [showDateDialog, setShowDateDialog] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -51,7 +51,7 @@ export function BulkActionsToolbar() {
     setIsProcessing(true)
     try {
       const selectedIds = Array.from(getSelectedIds())
-      await bulkUpdateTicket.mutateAsync({
+      await bulkUpdatePlan.mutateAsync({
         ids: selectedIds,
         data: { status },
       })
@@ -76,7 +76,7 @@ export function BulkActionsToolbar() {
     setIsProcessing(true)
     try {
       const selectedIds = Array.from(getSelectedIds())
-      await bulkUpdateTicket.mutateAsync({
+      await bulkUpdatePlan.mutateAsync({
         ids: selectedIds,
         data: { status: 'done' }, // アーカイブ = 完了ステータスに変更
       })
@@ -101,7 +101,7 @@ export function BulkActionsToolbar() {
     setIsProcessing(true)
     try {
       const selectedIds = Array.from(getSelectedIds())
-      await bulkDeleteTicket.mutateAsync({
+      await bulkDeletePlan.mutateAsync({
         ids: selectedIds,
       })
 

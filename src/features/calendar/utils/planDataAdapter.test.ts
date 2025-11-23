@@ -2,21 +2,13 @@
 // TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 import { describe, expect, it } from 'vitest'
 
-import type { Event } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan as Plan } from '@/features/calendar/types/calendar.types'
 
-import {
-  eventToTimedEvent,
-  eventsToTimedEvents,
-  safeEventToTimedEvent,
-  safeEventsToTimedEvents,
-  timedEventToEventUpdate,
-} from './eventDataAdapter'
-
-describe('eventDataAdapter', () => {
+describe('planDataAdapter', () => {
   describe('eventToTimedEvent', () => {
-    it('EventStore形式をTimedEvent形式に変換する', () => {
-      const event: Event = {
-        id: 'event-1',
+    it('PlanStore形式をTimedPlan形式に変換する', () => {
+      const event: Plan = {
+        id: 'plan-1',
         title: 'ミーティング',
         description: '週次ミーティング',
         color: '#3b82f6',
@@ -30,7 +22,7 @@ describe('eventDataAdapter', () => {
 
       const result = eventToTimedEvent(event)
 
-      expect(result.id).toBe('event-1')
+      expect(result.id).toBe('plan-1')
       expect(result.title).toBe('ミーティング')
       expect(result.description).toBe('週次ミーティング')
       expect(result.color).toBe('#3b82f6')
@@ -39,9 +31,9 @@ describe('eventDataAdapter', () => {
       expect(result.isReadOnly).toBe(false)
     })
 
-    it('完了済みイベントは読み取り専用になる', () => {
-      const event: Event = {
-        id: 'event-1',
+    it('完了済みプランは読み取り専用になる', () => {
+      const event: Plan = {
+        id: 'plan-1',
         title: 'ミーティング',
         status: 'completed',
         userId: 'user-1',
@@ -55,8 +47,8 @@ describe('eventDataAdapter', () => {
     })
 
     it('キャンセル済みイベントは読み取り専用になる', () => {
-      const event: Event = {
-        id: 'event-1',
+      const event: Plan = {
+        id: 'plan-1',
         title: 'ミーティング',
         status: 'cancelled',
         userId: 'user-1',
@@ -70,8 +62,8 @@ describe('eventDataAdapter', () => {
     })
 
     it('startDateがnullの場合は現在日時を使用する', () => {
-      const event: Event = {
-        id: 'event-1',
+      const event: Plan = {
+        id: 'plan-1',
         title: 'ミーティング',
         startDate: null,
         endDate: null,
@@ -89,16 +81,16 @@ describe('eventDataAdapter', () => {
 
   describe('eventsToTimedEvents', () => {
     it('複数のイベントを変換する', () => {
-      const events: Event[] = [
+      const events: Plan[] = [
         {
-          id: 'event-1',
+          id: 'plan-1',
           title: 'ミーティング1',
           userId: 'user-1',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          id: 'event-2',
+          id: 'plan-2',
           title: 'ミーティング2',
           userId: 'user-1',
           createdAt: new Date(),
@@ -109,14 +101,14 @@ describe('eventDataAdapter', () => {
       const result = eventsToTimedEvents(events)
 
       expect(result).toHaveLength(2)
-      expect(result[0].id).toBe('event-1')
-      expect(result[1].id).toBe('event-2')
+      expect(result[0].id).toBe('plan-1')
+      expect(result[1].id).toBe('plan-2')
     })
 
     it('削除済みイベントは除外される', () => {
-      const events: Event[] = [
+      const events: Plan[] = [
         {
-          id: 'event-1',
+          id: 'plan-1',
           title: 'ミーティング1',
           isDeleted: false,
           userId: 'user-1',
@@ -124,7 +116,7 @@ describe('eventDataAdapter', () => {
           updatedAt: new Date(),
         },
         {
-          id: 'event-2',
+          id: 'plan-2',
           title: 'ミーティング2',
           isDeleted: true,
           userId: 'user-1',
@@ -136,14 +128,14 @@ describe('eventDataAdapter', () => {
       const result = eventsToTimedEvents(events)
 
       expect(result).toHaveLength(1)
-      expect(result[0].id).toBe('event-1')
+      expect(result[0].id).toBe('plan-1')
     })
   })
 
   describe('timedEventToEventUpdate', () => {
     it('TimedEvent形式をEventUpdate形式に変換する', () => {
       const timedEvent = {
-        id: 'event-1',
+        id: 'plan-1',
         title: 'ミーティング',
         description: '週次ミーティング',
         color: '#3b82f6',
@@ -154,7 +146,7 @@ describe('eventDataAdapter', () => {
 
       const result = timedEventToEventUpdate(timedEvent)
 
-      expect(result.id).toBe('event-1')
+      expect(result.id).toBe('plan-1')
       expect(result.title).toBe('ミーティング')
       expect(result.description).toBe('週次ミーティング')
       expect(result.color).toBe('#3b82f6')
@@ -165,8 +157,8 @@ describe('eventDataAdapter', () => {
 
   describe('safeEventToTimedEvent', () => {
     it('有効なイベントを変換する', () => {
-      const event: Partial<Event> = {
-        id: 'event-1',
+      const event: Partial<Plan> = {
+        id: 'plan-1',
         title: 'ミーティング',
         description: '週次ミーティング',
         color: '#3b82f6',
@@ -177,12 +169,12 @@ describe('eventDataAdapter', () => {
       const result = safeEventToTimedEvent(event)
 
       expect(result).not.toBeNull()
-      expect(result?.id).toBe('event-1')
+      expect(result?.id).toBe('plan-1')
       expect(result?.title).toBe('ミーティング')
     })
 
     it('idがない場合はnullを返す', () => {
-      const event: Partial<Event> = {
+      const event: Partial<Plan> = {
         title: 'ミーティング',
       }
 
@@ -192,8 +184,8 @@ describe('eventDataAdapter', () => {
     })
 
     it('titleがない場合はnullを返す', () => {
-      const event: Partial<Event> = {
-        id: 'event-1',
+      const event: Partial<Plan> = {
+        id: 'plan-1',
       }
 
       const result = safeEventToTimedEvent(event)
@@ -202,8 +194,8 @@ describe('eventDataAdapter', () => {
     })
 
     it('descriptionがない場合は空文字をデフォルト値にする', () => {
-      const event: Partial<Event> = {
-        id: 'event-1',
+      const event: Partial<Plan> = {
+        id: 'plan-1',
         title: 'ミーティング',
       }
 
@@ -213,8 +205,8 @@ describe('eventDataAdapter', () => {
     })
 
     it('colorがない場合は青色をデフォルト値にする', () => {
-      const event: Partial<Event> = {
-        id: 'event-1',
+      const event: Partial<Plan> = {
+        id: 'plan-1',
         title: 'ミーティング',
       }
 
@@ -224,8 +216,8 @@ describe('eventDataAdapter', () => {
     })
 
     it('startDateがない場合は現在時刻を使用する', () => {
-      const event: Partial<Event> = {
-        id: 'event-1',
+      const event: Partial<Plan> = {
+        id: 'plan-1',
         title: 'ミーティング',
       }
 
@@ -235,8 +227,8 @@ describe('eventDataAdapter', () => {
     })
 
     it('endDateがない場合は開始時刻+1時間を使用する', () => {
-      const event: Partial<Event> = {
-        id: 'event-1',
+      const event: Partial<Plan> = {
+        id: 'plan-1',
         title: 'ミーティング',
       }
 
@@ -252,18 +244,18 @@ describe('eventDataAdapter', () => {
 
   describe('safeEventsToTimedEvents', () => {
     it('有効なイベントのみ変換する', () => {
-      const events: Partial<Event>[] = [
-        { id: 'event-1', title: 'ミーティング1' },
-        { id: 'event-2' }, // titleなし
+      const events: Partial<Plan>[] = [
+        { id: 'plan-1', title: 'ミーティング1' },
+        { id: 'plan-2' }, // titleなし
         { title: 'ミーティング3' }, // idなし
-        { id: 'event-4', title: 'ミーティング4' },
+        { id: 'plan-4', title: 'ミーティング4' },
       ]
 
       const result = safeEventsToTimedEvents(events)
 
       expect(result).toHaveLength(2)
-      expect(result[0].id).toBe('event-1')
-      expect(result[1].id).toBe('event-4')
+      expect(result[0].id).toBe('plan-1')
+      expect(result[1].id).toBe('plan-4')
     })
 
     it('空配列の場合は空配列を返す', () => {
@@ -273,8 +265,8 @@ describe('eventDataAdapter', () => {
     })
 
     it('すべて無効なイベントの場合は空配列を返す', () => {
-      const events: Partial<Event>[] = [
-        { id: 'event-1' }, // titleなし
+      const events: Partial<Plan>[] = [
+        { id: 'plan-1' }, // titleなし
         { title: 'ミーティング' }, // idなし
       ]
 

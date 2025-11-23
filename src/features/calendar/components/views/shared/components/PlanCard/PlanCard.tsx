@@ -13,7 +13,7 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants'
-import type { CalendarTicket, PlanCardProps } from '../../types/event.types'
+import type { Calendarplan, PlanCardProps } from '../../types/event.types'
 
 import { PlanCardContent } from './PlanCardContent'
 
@@ -167,7 +167,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   // 状態に応じたスタイルを決定
 
   // CSSクラスを組み立て（colors.tsのscheduledを参照）
-  const ticketCardClasses = cn(
+  const planCardClasses = cn(
     // 基本スタイル
     'overflow-hidden rounded-md shadow-sm',
     'focus:outline-none focus:ring-2 focus:ring-offset-1',
@@ -184,7 +184,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 
   return (
     <div
-      className={ticketCardClasses}
+      className={planCardClasses}
       style={dynamicStyle}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
@@ -197,7 +197,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       draggable={false} // HTML5 draggableは使わない
       role="button"
       tabIndex={0}
-      aria-label={`Ticket: ${event.title}`}
+      aria-label={`plan: ${event.title}`}
       aria-pressed={isSelected}
     >
       <PlanCardContent
@@ -206,7 +206,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
             ...event,
             start: event.startDate || new Date(),
             end: event.endDate || new Date(),
-          } as CalendarTicket
+          } as Calendarplan
         }
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
@@ -218,7 +218,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         className="absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
         role="slider"
         tabIndex={0}
-        aria-label="Resize ticket duration"
+        aria-label="Resize plan duration"
         aria-orientation="vertical"
         aria-valuenow={safePosition.height}
         aria-valuemin={20}

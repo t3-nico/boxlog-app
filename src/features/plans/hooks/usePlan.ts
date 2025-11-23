@@ -30,4 +30,4 @@ export function usePlan(id: string, options?: { includeTags?: boolean; enabled?:
 }
 
 // Backward compatibility
-export { usePlan as useTicket }
+export { usePlan as useplan }

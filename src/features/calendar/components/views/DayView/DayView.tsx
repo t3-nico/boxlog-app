@@ -40,7 +40,7 @@ export const DayView = ({
   onNavigateToday,
 }: DayViewProps) => {
   const { timezone } = useCalendarSettingsStore()
-  // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
+  // TODO(#621): Events削除後、plans/Sessions統合後に再実装
   // const { updateEvent } = useEventStore()
 
   // イベントストアから最新のデータを取得
@@ -60,7 +60,7 @@ export const DayView = ({
   }
 
   // ドラッグイベント用のハンドラー
-  // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
+  // TODO(#621): Events削除後、plans/Sessions統合後に再実装
   const handleEventTimeUpdate = React.useCallback((_event: CalendarEvent) => {
     console.log('TODO: Sessions統合後に実装')
     // if (!event.startDate || !event.endDate) return

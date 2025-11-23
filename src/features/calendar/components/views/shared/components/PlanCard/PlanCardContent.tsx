@@ -10,19 +10,19 @@ import { memo } from 'react'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
 
-import type { CalendarTicket } from '../../types/event.types'
+import type { Calendarplan } from '../../types/event.types'
 import { formatTimeRange } from '../../utils/dateHelpers'
 
 interface PlanCardContentProps {
-  event: CalendarTicket
+  event: Calendarplan
   isCompact?: boolean
   showTime?: boolean
   timeFormat?: '12h' | '24h'
   previewTime?: { start: Date; end: Date } | null // ドラッグ中のプレビュー時間
 }
 
-// Helper function: Parse ticket start date
-function parseTicketStartDate(event: CalendarTicket | Record<string, unknown>): Date | null {
+// Helper function: Parse plan start date
+function parseplanStartDate(event: Calendarplan | Record<string, unknown>): Date | null {
   if (event.start instanceof Date) return event.start
   if (event.start) return new Date(event.start)
   if (event.startDate instanceof Date) return event.startDate
@@ -30,8 +30,8 @@ function parseTicketStartDate(event: CalendarTicket | Record<string, unknown>): 
   return null
 }
 
-// Helper function: Parse ticket end date
-function parseTicketEndDate(event: CalendarTicket | Record<string, unknown>): Date | null {
+// Helper function: Parse plan end date
+function parseplanEndDate(event: Calendarplan | Record<string, unknown>): Date | null {
   if (event.end instanceof Date) return event.end
   if (event.end) return new Date(event.end)
   if (event.endDate instanceof Date) return event.endDate
@@ -39,10 +39,10 @@ function parseTicketEndDate(event: CalendarTicket | Record<string, unknown>): Da
   return null
 }
 
-// Helper function: Calculate ticket duration
-function calculateTicketDuration(ticketStart: Date | null, ticketEnd: Date | null): number {
-  const startTime = ticketStart?.getTime() || new Date().getTime()
-  const endTime = ticketEnd?.getTime() || new Date(startTime + 60 * 60 * 1000).getTime()
+// Helper function: Calculate plan duration
+function calculateplanDuration(planStart: Date | null, planEnd: Date | null): number {
+  const startTime = planStart?.getTime() || new Date().getTime()
+  const endTime = planEnd?.getTime() || new Date(startTime + 60 * 60 * 1000).getTime()
   return Math.floor((endTime - startTime) / (1000 * 60))
 }
 
@@ -56,8 +56,8 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   const { t } = useI18n()
 
   // チケットの開始・終了時刻をDateオブジェクトに変換
-  const ticketStart = parseTicketStartDate(event)
-  const ticketEnd = parseTicketEndDate(event)
+  const planStart = parseplanStartDate(event)
+  const planEnd = parseplanEndDate(event)
 
   // 継続時間を計算
 
@@ -66,8 +66,8 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
     return (
       <div className="flex h-full items-center gap-1">
         <span className="text-foreground truncate text-xs leading-tight font-medium">{event.title}</span>
-        {event.ticket_number && (
-          <span className="flex-shrink-0 text-xs leading-tight opacity-75">#{event.ticket_number}</span>
+        {event.plan_number && (
+          <span className="flex-shrink-0 text-xs leading-tight opacity-75">#{event.plan_number}</span>
         )}
       </div>
     )
@@ -79,8 +79,8 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
       {/* タイトル（最優先） */}
       <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-medium">
         <span className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground`}>{event.title}</span>
-        {event.ticket_number && (
-          <span className="flex-shrink-0 text-sm leading-tight opacity-75">#{event.ticket_number}</span>
+        {event.plan_number && (
+          <span className="flex-shrink-0 text-sm leading-tight opacity-75">#{event.plan_number}</span>
         )}
       </div>
 
@@ -90,8 +90,8 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
           <span>
             {previewTime
               ? formatTimeRange(previewTime.start, previewTime.end, timeFormat)
-              : ticketStart && ticketEnd
-                ? formatTimeRange(ticketStart, ticketEnd, timeFormat)
+              : planStart && planEnd
+                ? formatTimeRange(planStart, planEnd, timeFormat)
                 : t('calendar.event.noTimeSet')}
           </span>
           {/* 繰り返しアイコン */}

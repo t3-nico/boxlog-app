@@ -15,11 +15,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent'
-import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
-import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
-import { useTicketTags } from '@/features/plans/hooks/usePlanTags'
-import { useTicketCacheStore } from '@/features/plans/stores/usePlanCacheStore'
-import { useTicketInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
+import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useplanTags } from '@/features/plans/hooks/usePlanTags'
+import { useplanCacheStore } from '@/features/plans/stores/usePlanCacheStore'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { toLocalISOString } from '@/features/plans/utils/datetime'
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder'
 import { configToReadable, ruleToConfig } from '@/features/plans/utils/rrule'
@@ -37,12 +37,12 @@ interface TicketCardProps {
 }
 
 /**
- * TicketCard - Ticket表示用カードコンポーネント
+ * TicketCard - plan表示用カードコンポーネント
  *
  * **機能**:
  * - ドラッグ可能（useDraggable）
  * - 日時編集（Popover）
- * - タグ編集（TicketTagSelectDialogEnhanced）
+ * - タグ編集（PlanTagSelectDialogEnhanced）
  * - コンテキストメニュー（編集・複製・削除等）
  *
  * **使用箇所**:
@@ -50,11 +50,11 @@ interface TicketCardProps {
  * - InboxCardList（Calendar Sidebar）
  */
 export function TicketCard({ item }: TicketCardProps) {
-  const { openInspector, planId } = useTicketInspectorStore()
+  const { openInspector, planId } = usePlanInspectorStore()
   const { focusedId, setFocusedId } = useBoardFocusStore()
-  const { addTicketTag, removeTicketTag } = useTicketTags()
-  const { updateTicket } = useTicketMutations()
-  const { getCache } = useTicketCacheStore()
+  const { addplanTag, removeplanTag } = useplanTags()
+  const { updatePlan } = usePlanMutations()
+  const { getCache } = useplanCacheStore()
   const isActive = planId === item.id
   const isFocused = focusedId === item.id
 
@@ -102,18 +102,18 @@ export function TicketCard({ item }: TicketCardProps) {
 
     // タグを追加
     for (const tagId of addedTagIds) {
-      await addTicketTag(item.id, tagId)
+      await addplanTag(item.id, tagId)
     }
 
     // タグを削除
     for (const tagId of removedTagIds) {
-      await removeTicketTag(item.id, tagId)
+      await removeplanTag(item.id, tagId)
     }
   }
 
   // 日時データ変更ハンドラー
   const handleDateTimeChange = () => {
-    updateTicket.mutate({
+    updatePlan.mutate({
       id: item.id,
       data: {
         due_date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
@@ -127,7 +127,7 @@ export function TicketCard({ item }: TicketCardProps) {
 
   // 日時クリアハンドラー
   const handleDateTimeClear = () => {
-    updateTicket.mutate({
+    updatePlan.mutate({
       id: item.id,
       data: {
         due_date: undefined,
@@ -167,7 +167,7 @@ export function TicketCard({ item }: TicketCardProps) {
   }
 
   const handleClick = () => {
-    if (item.type === 'ticket') {
+    if (item.type === 'plan') {
       openInspector(item.id)
     }
   }
@@ -235,9 +235,7 @@ export function TicketCard({ item }: TicketCardProps) {
               <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold hover:underline">
                 {item.title}
               </h3>
-              {item.ticket_number && (
-                <span className="text-muted-foreground shrink-0 text-sm">#{item.ticket_number}</span>
-              )}
+              {item.plan_number && <span className="text-muted-foreground shrink-0 text-sm">#{item.plan_number}</span>}
             </div>
 
             {/* 2. 日付・時間 */}
@@ -354,7 +352,7 @@ export function TicketCard({ item }: TicketCardProps) {
                       const recurrenceType = typeMap[type] || 'none'
 
                       // optimistic updateがキャッシュを即座に更新
-                      updateTicket.mutate({
+                      updatePlan.mutate({
                         id: item.id,
                         data: {
                           recurrence_type: recurrenceType,
@@ -364,7 +362,7 @@ export function TicketCard({ item }: TicketCardProps) {
                     }}
                     onRecurrenceRuleChange={(rrule) => {
                       // optimistic updateがキャッシュを即座に更新
-                      updateTicket.mutate({
+                      updatePlan.mutate({
                         id: item.id,
                         data: {
                           recurrence_rule: rrule,
@@ -385,7 +383,7 @@ export function TicketCard({ item }: TicketCardProps) {
             </Popover>
 
             {/* 3. Tags */}
-            <TicketTagSelectDialogEnhanced
+            <PlanTagSelectDialogEnhanced
               selectedTagIds={item.tags?.map((tag) => tag.id) ?? []}
               onTagsChange={handleTagsChange}
             >
@@ -445,7 +443,7 @@ export function TicketCard({ item }: TicketCardProps) {
                   </div>
                 </div>
               )}
-            </TicketTagSelectDialogEnhanced>
+            </PlanTagSelectDialogEnhanced>
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent>

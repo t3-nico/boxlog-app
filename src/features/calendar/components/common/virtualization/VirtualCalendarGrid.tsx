@@ -372,7 +372,7 @@ const VirtualEventCard = React.memo(function VirtualEventCard({ event, onClick }
     <div
       role="button"
       tabIndex={0}
-      aria-label={`Event: ${event.title}`}
+      aria-label={`Plan: ${plan.title}`}
       className="cursor-pointer overflow-hidden rounded-md p-1 text-xs text-white transition-shadow hover:shadow-lg"
       style={style}
       onClick={onClick}

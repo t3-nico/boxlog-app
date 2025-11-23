@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/ui/badge'
 import { TableCell } from '@/components/ui/table'
-import { TicketTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
+import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
 import { useEffect, useRef, useState } from 'react'
 
 interface Tag {
@@ -21,7 +21,7 @@ interface TagsCellProps {
 }
 
 /**
- * タグ表示セル（TicketTagSelectDialogEnhanced使用）
+ * タグ表示セル（PlanTagSelectDialogEnhanced使用）
  *
  * クリックでタグ選択ダイアログを開く
  * - 行クリックイベントの伝播を防止
@@ -81,7 +81,7 @@ export function TagsCell({ tags = [], width, onTagsChange }: TagsCellProps) {
       className="group hover:bg-muted/50 cursor-pointer transition-colors"
       style={style}
     >
-      <TicketTagSelectDialogEnhanced selectedTagIds={selectedTagIds} onTagsChange={onTagsChange}>
+      <PlanTagSelectDialogEnhanced selectedTagIds={selectedTagIds} onTagsChange={onTagsChange}>
         <div ref={containerRef} className="flex gap-1 overflow-hidden">
           {tags.slice(0, visibleCount).map((tag) => (
             <Badge
@@ -109,7 +109,7 @@ export function TagsCell({ tags = [], width, onTagsChange }: TagsCellProps) {
           )}
           {tags.length === 0 && <span className="text-muted-foreground text-xs">-</span>}
         </div>
-      </TicketTagSelectDialogEnhanced>
+      </PlanTagSelectDialogEnhanced>
     </TableCell>
   )
 }

@@ -1,41 +1,34 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 import type { CSSProperties } from 'react'
 
-import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
-import type {
-  CalendarViewType,
-  CreateRecordInput,
-  CreateTaskInput,
-  Task,
-  ViewDateRange,
-} from '../../../types/calendar.types'
+import type { CalendarViewType, CreatePlanInput, Task, ViewDateRange } from '../../../types/calendar.types'
 import type { DateTimeSelection, TimeSlot } from '../shared'
 
 // OldDayViewのPropsを統合した完全版
 export interface DayViewProps {
   dateRange: ViewDateRange
   tasks: Task[]
-  events: CalendarEvent[]
+  plans: CalendarPlan[]
   currentDate: Date
   showWeekends?: boolean // 週末の表示/非表示（デフォルト: true）
   className?: string
 
-  // Event handlers
-  onTaskClick?: (task: CalendarEvent) => void
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
-  onCreateEvent?: (date: Date, time?: string) => void
-  onUpdateEvent?: (event: CalendarEvent) => void
-  onDeleteEvent?: (eventId: string) => void
-  onRestoreEvent?: (event: CalendarEvent) => Promise<void>
+  // Plan handlers
+  onTaskClick?: (task: CalendarPlan) => void
+  onPlanClick?: (plan: CalendarPlan) => void
+  onPlanContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
+  onCreatePlan?: (date: Date, time?: string) => void
+  onUpdatePlan?: (plan: CalendarPlan) => void
+  onDeletePlan?: (planId: string) => void
+  onRestorePlan?: (plan: CalendarPlan) => Promise<void>
   onEmptyClick?: (date: Date, time: string) => void
   onTimeRangeSelect?: (selection: DateTimeSelection) => void
 
   // Task handlers
   onTaskDrag?: (taskId: string, newDate: Date) => void
-  onCreateTask?: (task: CreateTaskInput) => void
-  onCreateRecord?: (record: CreateRecordInput) => void
+  onCreateTask?: (task: CreatePlanInput) => void
+  onCreateRecord?: (record: CreatePlanInput) => void
 
   // Navigation handlers
   onViewChange?: (viewType: CalendarViewType) => void
@@ -47,53 +40,53 @@ export interface DayViewProps {
 // シンプル版のProps（後方互換性のため）
 export interface SimpleDayViewProps {
   date: Date
-  events?: CalendarEvent[]
+  plans?: CalendarPlan[]
   className?: string
-  onEventClick?: (event: CalendarEvent) => void
+  onPlanClick?: (plan: CalendarPlan) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onEventUpdate?: (event: CalendarEvent) => void
-  onEventCreate?: (date: Date, time: string) => void
-  onEventDelete?: (eventId: string) => void
+  onPlanUpdate?: (plan: CalendarPlan) => void
+  onPlanCreate?: (date: Date, time: string) => void
+  onPlanDelete?: (planId: string) => void
 }
 
 export interface DayContentProps {
   date: Date
-  events: CalendarEvent[]
-  eventStyles: Record<string, CSSProperties>
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
+  plans: CalendarPlan[]
+  planStyles: Record<string, CSSProperties>
+  onPlanClick?: (plan: CalendarPlan) => void
+  onPlanContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onEventUpdate?: (event: CalendarEvent) => void
+  onPlanUpdate?: (plan: CalendarPlan) => void
   onTimeRangeSelect?: (selection: DateTimeSelection) => void
   className?: string
 }
 
 export interface UseDayViewOptions {
   date: Date
-  events: CalendarEvent[]
-  onEventUpdate?: (event: CalendarEvent) => void
+  plans: CalendarPlan[]
+  onPlanUpdate?: (plan: CalendarPlan) => void
 }
 
 export interface UseDayViewReturn {
-  dayEvents: CalendarEvent[]
-  eventStyles: Record<string, CSSProperties>
+  dayPlans: CalendarPlan[]
+  planStyles: Record<string, CSSProperties>
   isToday: boolean
   timeSlots: TimeSlot[]
 }
 
-export interface UseDayEventsOptions {
+export interface UseDayPlansOptions {
   date: Date
-  events: CalendarEvent[]
+  plans: CalendarPlan[]
 }
 
-export interface UseDayEventsReturn {
-  dayEvents: CalendarEvent[]
-  eventPositions: EventPosition[]
-  maxConcurrentEvents: number
+export interface UseDayPlansReturn {
+  dayPlans: CalendarPlan[]
+  planPositions: PlanPosition[]
+  maxConcurrentPlans: number
 }
 
-export interface EventPosition {
-  event: CalendarEvent
+export interface PlanPosition {
+  plan: CalendarPlan
   top: number
   height: number
   left: number
@@ -109,6 +102,6 @@ export interface DayViewSettings {
   timeInterval: 15 | 30 | 60 // minutes
   showQuarterLines: boolean
   showCurrentTime: boolean
-  maxEventColumns: number
-  eventMinHeight: number
+  maxPlanColumns: number
+  planMinHeight: number
 }

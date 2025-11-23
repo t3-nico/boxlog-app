@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 /**
- * Ticket キャッシュストア
+ * plan キャッシュストア
  *
  * TanStack Queryのキャッシュを補完し、複数コンポーネント間でのリアルタイム同期を実現
  *
@@ -11,20 +11,20 @@ import { create } from 'zustand'
  * - mutation実行中フラグ管理（Realtime二重更新防止）
  */
 
-interface TicketCache {
+interface planCache {
   recurrence_type?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays' | null
   recurrence_rule?: string | null
 }
 
-interface TicketCacheState {
+interface planCacheState {
   // チケットID → キャッシュデータのマップ
-  cache: Record<string, TicketCache>
+  cache: Record<string, planCache>
 
   // キャッシュ更新
-  updateCache: (planId: string, data: TicketCache) => void
+  updateCache: (planId: string, data: planCache) => void
 
   // キャッシュ取得
-  getCache: (planId: string) => TicketCache | undefined
+  getCache: (planId: string) => planCache | undefined
 
   // キャッシュクリア
   clearCache: (planId: string) => void
@@ -34,7 +34,7 @@ interface TicketCacheState {
   setIsMutating: (value: boolean) => void
 }
 
-export const usePlanCacheStore = create<TicketCacheState>((set, get) => ({
+export const usePlanCacheStore = create<planCacheState>((set, get) => ({
   cache: {},
   isMutating: false,
 
@@ -62,4 +62,4 @@ export const usePlanCacheStore = create<TicketCacheState>((set, get) => ({
 }))
 
 // Backward compatibility
-export { usePlanCacheStore as useTicketCacheStore }
+export { usePlanCacheStore as useplanCacheStore }

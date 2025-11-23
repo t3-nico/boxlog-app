@@ -13,28 +13,28 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { parseDateString } from '@/features/calendar/utils/dateUtils'
 import type { Plan } from '../../types/plan'
-import { TicketStatusBadge } from './PlanStatusBadge'
+import { PlanStatusBadge } from './PlanStatusBadge'
 
-// tRPC返却値の型（ticket_tags を含む）
-type PlanWithTicketTags = Plan & {
-  ticket_tags?: Array<{
+// tRPC返却値の型（plan_tags を含む）
+type PlanWithplanTags = Plan & {
+  plan_tags?: Array<{
     tag_id: string
     tags: { id: string; name: string; color: string; description?: string }
   }>
 }
 
-interface TicketCardProps {
-  ticket: PlanWithTicketTags
-  onEdit?: (ticket: PlanWithTicketTags) => void
-  onDelete?: (ticket: PlanWithTicketTags) => void
-  onClick?: (ticket: PlanWithTicketTags) => void
+interface PlanCardProps {
+  plan: PlanWithplanTags
+  onEdit?: (plan: PlanWithplanTags) => void
+  onDelete?: (plan: PlanWithplanTags) => void
+  onClick?: (plan: PlanWithplanTags) => void
   tags?: Array<{ id: string; name: string; color: string }>
 }
 
-export function PlanCard({ ticket, onEdit, onDelete, onClick, tags = [] }: TicketCardProps) {
+export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCardProps) {
   const handleCardClick = () => {
     if (onClick) {
-      onClick(ticket)
+      onClick(plan)
     }
   }
 
@@ -52,8 +52,8 @@ export function PlanCard({ ticket, onEdit, onDelete, onClick, tags = [] }: Ticke
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 space-y-1">
-            <p className="text-muted-foreground font-mono text-xs">{ticket.ticket_number}</p>
-            <h3 className="text-foreground line-clamp-2 font-semibold">{ticket.title}</h3>
+            <p className="text-muted-foreground font-mono text-xs">{plan.plan_number}</p>
+            <h3 className="text-foreground line-clamp-2 font-semibold">{plan.title}</h3>
           </div>
 
           <DropdownMenu>
@@ -67,12 +67,12 @@ export function PlanCard({ ticket, onEdit, onDelete, onClick, tags = [] }: Ticke
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {onEdit && <DropdownMenuItem onSelect={handleMenuAction(() => onEdit(ticket))}>編集</DropdownMenuItem>}
+              {onEdit && <DropdownMenuItem onSelect={handleMenuAction(() => onEdit(plan))}>編集</DropdownMenuItem>}
               {onDelete && (
                 <>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onSelect={handleMenuAction(() => onDelete(ticket))}
+                    onSelect={handleMenuAction(() => onDelete(plan))}
                     className="text-destructive focus:text-destructive"
                   >
                     削除
@@ -87,14 +87,14 @@ export function PlanCard({ ticket, onEdit, onDelete, onClick, tags = [] }: Ticke
       <CardContent className="space-y-3">
         {/* ステータス */}
         <div className="flex flex-wrap gap-2">
-          <TicketStatusBadge status={ticket.status} />
+          <PlanStatusBadge status={plan.status} />
         </div>
 
         {/* 期限日 */}
-        {ticket.due_date && (
+        {plan.due_date && (
           <div className="text-muted-foreground flex items-center gap-1 text-sm">
             <Calendar className="h-4 w-4" />
-            <span>{parseDateString(ticket.due_date).toLocaleDateString('ja-JP')}</span>
+            <span>{parseDateString(plan.due_date).toLocaleDateString('ja-JP')}</span>
           </div>
         )}
 
@@ -118,11 +118,11 @@ export function PlanCard({ ticket, onEdit, onDelete, onClick, tags = [] }: Ticke
         )}
 
         {/* 説明（省略形） */}
-        {ticket.description && <p className="text-muted-foreground line-clamp-2 text-sm">{ticket.description}</p>}
+        {plan.description && <p className="text-muted-foreground line-clamp-2 text-sm">{plan.description}</p>}
       </CardContent>
     </Card>
   )
 }
 
 // Backward compatibility
-export { PlanCard as TicketCard }
+export { PlanCard as planCard }

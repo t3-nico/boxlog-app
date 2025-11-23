@@ -9,13 +9,13 @@ import { Bell, Calendar as CalendarIcon, Plus, Repeat, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import type { PlanStatus } from '@/schemas/plans/plan'
-import { useTicketMutations } from '../../hooks/usePlanMutations'
-import { useTicketTags } from '../../hooks/usePlanTags'
+import { usePlanMutations } from '../../hooks/usePlanMutations'
+import { useplanTags } from '../../hooks/usePlanTags'
 import { reminderTypeToMinutes } from '../../utils/reminder'
 import { DateTimePopoverContent } from './DateTimePopoverContent'
 import { PlanTagSelectDialogEnhanced } from './PlanTagSelectDialogEnhanced'
 
-interface TicketQuickCreateProps {
+interface PlanQuickCreateProps {
   /** チケットのステータス */
   status: PlanStatus
   /** 作成中フラグ */
@@ -27,7 +27,7 @@ interface TicketQuickCreateProps {
 }
 
 /**
- * TicketQuickCreate - インライン新規チケット作成コンポーネント
+ * PlanQuickCreate - インライン新規チケット作成コンポーネント
  *
  * **機能**:
  * - ボタンクリックで新規作成モード開始
@@ -42,7 +42,7 @@ interface TicketQuickCreateProps {
  *
  * @example
  * ```tsx
- * <TicketQuickCreate
+ * <PlanQuickCreate
  *   status="backlog"
  *   isCreating={isCreating}
  *   onStartCreate={() => setIsCreating(true)}
@@ -50,9 +50,9 @@ interface TicketQuickCreateProps {
  * />
  * ```
  */
-export function TicketQuickCreate({ status, isCreating, onStartCreate, onFinishCreate }: TicketQuickCreateProps) {
-  const { createTicket } = useTicketMutations()
-  const { addTicketTag } = useTicketTags()
+export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCreate }: PlanQuickCreateProps) {
+  const { createPlan } = usePlanMutations()
+  const { addplanTag } = useplanTags()
   const [title, setTitle] = useState('')
   const [selectedDate, setSelectedDate] = useState<Date>()
   const [startTime, setStartTime] = useState('')
@@ -117,7 +117,7 @@ export function TicketQuickCreate({ status, isCreating, onStartCreate, onFinishC
     const reminder_minutes = reminderTypeToMinutes(reminderType)
 
     try {
-      const newTicket = await createTicket.mutateAsync({
+      const newplan = await createPlan.mutateAsync({
         title: title.trim(),
         status,
         due_date: selectedDate ? baseDate : undefined,
@@ -129,14 +129,14 @@ export function TicketQuickCreate({ status, isCreating, onStartCreate, onFinishC
       })
 
       // タグを追加
-      if (selectedTagIds.length > 0 && newTicket?.id) {
-        await Promise.all(selectedTagIds.map((tagId) => addTicketTag(newTicket.id, tagId)))
+      if (selectedTagIds.length > 0 && newplan?.id) {
+        await Promise.all(selectedTagIds.map((tagId) => addplanTag(newplan.id, tagId)))
       }
 
       // リセット
       handleCancel()
     } catch (error) {
-      console.error('Failed to create ticket:', error)
+      console.error('Failed to create plan:', error)
     }
   }
 

@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 import { DatePickerPopover } from './DatePickerPopover'
 import { TimeSelect } from './TimeSelect'
 
-interface TicketDateTimeInputProps {
+interface PlanDateTimeInputProps {
   selectedDate: Date | undefined
   startTime: string
   endTime: string
@@ -24,7 +24,7 @@ export function PlanDateTimeInput({
   onStartTimeChange,
   onEndTimeChange,
   showBorderTop = false,
-}: TicketDateTimeInputProps) {
+}: PlanDateTimeInputProps) {
   // 経過時間を計算（00:00形式）
   const elapsedTime = useMemo(() => {
     if (!startTime || !endTime) return null
@@ -85,6 +85,3 @@ export function PlanDateTimeInput({
     </div>
   )
 }
-
-// Backward compatibility
-export { PlanDateTimeInput as TicketDateTimeInput }

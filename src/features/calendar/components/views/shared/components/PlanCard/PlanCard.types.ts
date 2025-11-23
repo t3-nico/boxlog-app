@@ -2,7 +2,7 @@
  * PlanCard専用の型定義
  */
 
-export interface TicketInteractionState {
+export interface planInteractionState {
   isHovered: boolean
   isSelected: boolean
   isDragging: boolean
@@ -10,9 +10,9 @@ export interface TicketInteractionState {
 }
 
 // 後方互換性のためのエイリアス
-export type EventInteractionState = TicketInteractionState
+export type EventInteractionState = planInteractionState
 
-export interface TicketDragData {
+export interface planDragData {
   planId: string
   startPosition: { x: number; y: number }
   originalStart: Date
@@ -20,9 +20,9 @@ export interface TicketDragData {
 }
 
 // 後方互換性のためのエイリアス
-export type EventDragData = TicketDragData
+export type EventDragData = planDragData
 
-export interface TicketResizeData {
+export interface planResizeData {
   planId: string
   resizeDirection: 'top' | 'bottom'
   originalStart: Date
@@ -30,4 +30,4 @@ export interface TicketResizeData {
 }
 
 // 後方互換性のためのエイリアス
-export type EventResizeData = TicketResizeData
+export type EventResizeData = planResizeData

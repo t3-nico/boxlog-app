@@ -50,13 +50,13 @@ export const FiveDayContent = ({
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onEventUpdate) return
 
-      console.log('🔧 FiveDayContent: イベント更新要求:', {
+      console.log('🔧 FiveDayContent: プラン更新要求:', {
         eventId,
         startTime: updates.startTime.toISOString(),
         endTime: updates.endTime.toISOString(),
       })
 
-      // handleUpdateEvent形式で呼び出し
+      // handleUpdatePlan形式で呼び出し
       await onEventUpdate(eventId, {
         startTime: updates.startTime,
         endTime: updates.endTime,

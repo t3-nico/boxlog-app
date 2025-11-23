@@ -28,9 +28,9 @@ interface InboxCardListProps {
  * **機能**:
  * - useInboxData でデータ取得
  * - フィルター・ソート・優先度フィルタリング
- * - TicketCard を再利用（ドラッグ可能）
+ * - planCard を再利用（ドラッグ可能）
  *
- * **Note**: TicketCard の useDraggable は既に実装済みなので、
+ * **Note**: planCard の useDraggable は既に実装済みなので、
  * DndContext 内に配置すれば自動的にドラッグ可能になる
  */
 export function InboxCardList({

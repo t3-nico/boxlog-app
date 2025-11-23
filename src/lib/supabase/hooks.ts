@@ -17,7 +17,7 @@ import { createClient } from './client'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
-// 注: Task型は削除済み（Ticketsに移行）
+// 注: Task型は削除済み（plansに移行）
 
 /**
  * 認証状態を管理するフック
@@ -210,5 +210,5 @@ export function useProfile() {
 /**
  * タスク管理フック
  */
-// 注: useTasks関数は削除済み（Tickets/Sessions機能に移行）
-// src/features/tickets/hooks/useTickets.tsを使用してください
+// 注: useTasks関数は削除済み（plans/Sessions機能に移行）
+// src/features/plans/hooks/useplans.tsを使用してください

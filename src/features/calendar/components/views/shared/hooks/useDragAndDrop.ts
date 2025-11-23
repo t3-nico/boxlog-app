@@ -830,7 +830,7 @@ export function useDragAndDrop({
 
       // eventがundefinedの場合は早期リターン
       if (!event) {
-        console.warn('Event not found for update')
+        console.warn('Plan not found for update')
         return
       }
 

@@ -2,7 +2,7 @@
 
 import { Input } from '@/components/ui/input'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { cn } from '@/lib/utils'
 import { Plus } from 'lucide-react'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
@@ -34,10 +34,10 @@ export interface InboxTableRowCreateHandle {
  */
 export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((props, ref) => {
   const { getVisibleColumns } = useInboxColumnStore()
-  const { createTicket, deleteTicket } = useTicketMutations()
+  const { createPlan, deletePlan } = usePlanMutations()
   const [isCreating, setIsCreating] = useState(false)
   const [title, setTitle] = useState('')
-  const [tempTicketId, setTempTicketId] = useState<string | null>(null)
+  const [tempplanId, setTempplanId] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const visibleColumns = getVisibleColumns()
 
@@ -60,24 +60,24 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((props,
     setIsCreating(true)
     try {
       // 空のチケットを作成（楽観的更新）
-      const newTicket = await createTicket.mutateAsync({
+      const newplan = await createPlan.mutateAsync({
         title: '無題のチケット',
         status: 'backlog',
       })
 
-      if (newTicket?.id) {
-        setTempTicketId(newTicket.id)
+      if (newplan?.id) {
+        setTempplanId(newplan.id)
         setTitle('')
       }
     } catch (error) {
-      console.error('Failed to create ticket:', error)
+      console.error('Failed to create plan:', error)
       setIsCreating(false)
     }
   }
 
   // タイトル確定
   const handleSaveTitle = async () => {
-    if (!tempTicketId) {
+    if (!tempplanId) {
       setIsCreating(false)
       return
     }
@@ -85,35 +85,35 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((props,
     try {
       if (title.trim()) {
         // タイトルを更新
-        await createTicket.mutateAsync({
+        await createPlan.mutateAsync({
           title: title.trim(),
           status: 'backlog',
         })
       } else {
         // タイトルが空の場合は削除
-        await deleteTicket.mutateAsync({ id: tempTicketId })
+        await deletePlan.mutateAsync({ id: tempplanId })
       }
     } catch (error) {
       console.error('Failed to save title:', error)
     } finally {
       setIsCreating(false)
       setTitle('')
-      setTempTicketId(null)
+      setTempplanId(null)
     }
   }
 
   // キャンセル
   const handleCancel = async () => {
-    if (tempTicketId) {
+    if (tempplanId) {
       try {
-        await deleteTicket.mutateAsync({ id: tempTicketId })
+        await deletePlan.mutateAsync({ id: tempplanId })
       } catch (error) {
-        console.error('Failed to delete temp ticket:', error)
+        console.error('Failed to delete temp plan:', error)
       }
     }
     setIsCreating(false)
     setTitle('')
-    setTempTicketId(null)
+    setTempplanId(null)
   }
 
   return (

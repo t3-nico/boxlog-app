@@ -42,7 +42,7 @@ export interface RecurrenceConfig {
 export interface Plan {
   id: string
   user_id: string
-  ticket_number: string // DB互換性のため保持
+  plan_number: string
   title: string
   description: string | null
   status: PlanStatus
@@ -117,16 +117,15 @@ export interface PlanStats {
 
 // 互換性のためのエイリアス（段階的移行用）
 /** @deprecated Use Plan instead */
-export type Ticket = Plan
+export type plan = Plan
 /** @deprecated Use PlanStatus instead */
-export type TicketStatus = PlanStatus
+export type planStatus = PlanStatus
 /** @deprecated Use CreatePlanInput instead */
-export type CreateTicketInput = CreatePlanInput
 /** @deprecated Use UpdatePlanInput instead */
-export type UpdateTicketInput = UpdatePlanInput
+export type UpdateplanInput = UpdatePlanInput
 /** @deprecated Use PlanWithTags instead */
-export type TicketWithTags = PlanWithTags
+export type planWithTags = PlanWithTags
 /** @deprecated Use PlanFilters instead */
-export type TicketFilters = PlanFilters
+export type planFilters = PlanFilters
 /** @deprecated Use PlanStats instead */
-export type TicketStats = PlanStats
+export type planStats = PlanStats

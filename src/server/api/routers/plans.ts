@@ -197,11 +197,11 @@ export const plansRouter = createTRPCRouter({
     const { supabase, userId } = ctx
 
     let query = supabase
-      .from('tickets')
+      .from('plans')
       .select(
         `
         *,
-        ticket_tags (
+        plan_tags (
           tag_id,
           tags (
             id,
@@ -213,12 +213,12 @@ export const plansRouter = createTRPCRouter({
       )
       .eq('user_id', userId)
 
-    // タグIDでフィルタ（ticket_tags テーブルと JOIN）
+    // タグIDでフィルタ（plan_tags テーブルと JOIN）
     if (input?.tagId) {
-      // サブクエリで ticket_tags から該当するプランIDを取得
+      // サブクエリで plan_tags から該当するプランIDを取得
       const { data: planIdsData, error: planIdsError } = await supabase
-        .from('ticket_tags')
-        .select('ticket_id')
+        .from('plan_tags')
+        .select('plan_id')
         .eq('tag_id', input.tagId)
 
       if (planIdsError) {
@@ -228,7 +228,7 @@ export const plansRouter = createTRPCRouter({
         })
       }
 
-      const planIds = planIdsData.map((row) => row.ticket_id)
+      const planIds = planIdsData.map((row) => row.plan_id)
       if (planIds.length === 0) {
         // タグに紐づくプランがない場合は空配列を返す
         return []
@@ -275,11 +275,11 @@ export const plansRouter = createTRPCRouter({
     // リレーション取得の設定
     let selectQuery = '*'
     if (input.include?.tags) {
-      selectQuery = '*, ticket_tags(tag_id, tags(*))'
+      selectQuery = '*, plan_tags(tag_id, tags(*))'
     }
 
     const { data, error } = await supabase
-      .from('tickets')
+      .from('plans')
       .select(selectQuery)
       .eq('id', input.id)
       .eq('user_id', userId)
@@ -295,10 +295,10 @@ export const plansRouter = createTRPCRouter({
     // タグデータの整形
     if (input.include?.tags && data) {
       const planWithTags = data as unknown as {
-        ticket_tags?: Array<{ tag_id: string; tags: unknown }>
+        plan_tags?: Array<{ tag_id: string; tags: unknown }>
       }
-      const tags = planWithTags.ticket_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
-      const { ticket_tags, ...planData } = planWithTags
+      const tags = planWithTags.plan_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
+      const { plan_tags, ...planData } = planWithTags
       return { ...planData, tags } as typeof data & { tags: unknown[] }
     }
 
@@ -312,10 +312,10 @@ export const plansRouter = createTRPCRouter({
     normalizeDateTimeConsistency(input)
 
     const { data, error } = await supabase
-      .from('tickets')
+      .from('plans')
       .insert({
         user_id: userId,
-        ticket_number: '', // トリガーで自動採番
+        plan_number: '', // トリガーで自動採番
         ...input,
       })
       .select()
@@ -329,8 +329,8 @@ export const plansRouter = createTRPCRouter({
     }
 
     // アクティビティ記録: プラン作成
-    await supabase.from('ticket_activities').insert({
-      ticket_id: data.id,
+    await supabase.from('plan_activities').insert({
+      plan_id: data.id,
       user_id: userId,
       action_type: 'created',
     })
@@ -351,7 +351,7 @@ export const plansRouter = createTRPCRouter({
 
       // 更新前のデータを取得（変更検出用）
       const { data: oldData } = await supabase
-        .from('tickets')
+        .from('plans')
         .select('*')
         .eq('id', input.id)
         .eq('user_id', userId)
@@ -386,7 +386,7 @@ export const plansRouter = createTRPCRouter({
       }
 
       const { data, error } = await supabase
-        .from('tickets')
+        .from('plans')
         .update(input.data)
         .eq('id', input.id)
         .eq('user_id', userId)
@@ -417,22 +417,22 @@ export const plansRouter = createTRPCRouter({
 
     // プラン情報を取得（アクティビティ記録用）
     const { data: plan } = await supabase
-      .from('tickets')
+      .from('plans')
       .select('title')
       .eq('id', input.id)
       .eq('user_id', userId)
       .single()
 
     // アクティビティ記録: プラン削除（削除前に記録）
-    await supabase.from('ticket_activities').insert({
-      ticket_id: input.id,
+    await supabase.from('plan_activities').insert({
+      plan_id: input.id,
       user_id: userId,
       action_type: 'deleted',
       field_name: 'title',
       old_value: plan?.title || '',
     })
 
-    const { error } = await supabase.from('tickets').delete().eq('id', input.id).eq('user_id', userId)
+    const { error } = await supabase.from('plans').delete().eq('id', input.id).eq('user_id', userId)
 
     if (error) {
       throw new TRPCError({
@@ -456,10 +456,10 @@ export const plansRouter = createTRPCRouter({
       const { data: tag } = await supabase.from('tags').select('name').eq('id', input.tagId).single()
 
       const { data, error } = await supabase
-        .from('ticket_tags')
+        .from('plan_tags')
         .insert({
           user_id: userId,
-          ticket_id: input.planId,
+          plan_id: input.planId,
           tag_id: input.tagId,
         })
         .select()
@@ -473,8 +473,8 @@ export const plansRouter = createTRPCRouter({
       }
 
       // アクティビティ記録: タグ追加
-      await supabase.from('ticket_activities').insert({
-        ticket_id: input.planId,
+      await supabase.from('plan_activities').insert({
+        plan_id: input.planId,
         user_id: userId,
         action_type: 'tag_added',
         field_name: 'tag',
@@ -493,9 +493,9 @@ export const plansRouter = createTRPCRouter({
       const { data: tag } = await supabase.from('tags').select('name').eq('id', input.tagId).single()
 
       const { error } = await supabase
-        .from('ticket_tags')
+        .from('plan_tags')
         .delete()
-        .eq('ticket_id', input.planId)
+        .eq('plan_id', input.planId)
         .eq('tag_id', input.tagId)
         .eq('user_id', userId)
 
@@ -507,8 +507,8 @@ export const plansRouter = createTRPCRouter({
       }
 
       // アクティビティ記録: タグ削除
-      await supabase.from('ticket_activities').insert({
-        ticket_id: input.planId,
+      await supabase.from('plan_activities').insert({
+        plan_id: input.planId,
         user_id: userId,
         action_type: 'tag_removed',
         field_name: 'tag',
@@ -522,9 +522,9 @@ export const plansRouter = createTRPCRouter({
     const { supabase, userId } = ctx
 
     const { data, error } = await supabase
-      .from('ticket_tags')
+      .from('plan_tags')
       .select('tag_id, tags(*)')
-      .eq('ticket_id', input.planId)
+      .eq('plan_id', input.planId)
       .eq('user_id', userId)
 
     if (error) {
@@ -544,7 +544,7 @@ export const plansRouter = createTRPCRouter({
     const { supabase, userId } = ctx
 
     const { data, error } = await supabase
-      .from('tickets')
+      .from('plans')
       .update(input.data)
       .in('id', input.ids)
       .eq('user_id', userId)
@@ -563,7 +563,7 @@ export const plansRouter = createTRPCRouter({
   bulkDelete: protectedProcedure.input(bulkDeletePlanSchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
-    const { error, count } = await supabase.from('tickets').delete().in('id', input.ids).eq('user_id', userId)
+    const { error, count } = await supabase.from('plans').delete().in('id', input.ids).eq('user_id', userId)
 
     if (error) {
       throw new TRPCError({
@@ -582,7 +582,7 @@ export const plansRouter = createTRPCRouter({
     const { supabase, userId } = ctx
 
     // 全プラン取得（最適化: select で必要なフィールドのみ取得）
-    const { data: plans, error } = await supabase.from('tickets').select('id, status').eq('user_id', userId)
+    const { data: plans, error } = await supabase.from('plans').select('id, status').eq('user_id', userId)
 
     if (error) {
       throw new TRPCError({
@@ -615,13 +615,13 @@ export const plansRouter = createTRPCRouter({
    */
   activities: protectedProcedure.input(getPlanActivitiesSchema).query(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
-    const { ticket_id, limit, offset, order } = input
+    const { plan_id, limit, offset, order } = input
 
     // プランの所有権確認
     const { data: plan, error: planError } = await supabase
-      .from('tickets')
+      .from('plans')
       .select('id')
-      .eq('id', ticket_id)
+      .eq('id', plan_id)
       .eq('user_id', userId)
       .single()
 
@@ -634,9 +634,9 @@ export const plansRouter = createTRPCRouter({
 
     // アクティビティ取得（order: desc=最新順, asc=古い順）
     const { data: activities, error } = await supabase
-      .from('ticket_activities')
+      .from('plan_activities')
       .select('*')
-      .eq('ticket_id', ticket_id)
+      .eq('plan_id', plan_id)
       .order('created_at', { ascending: order === 'asc' })
       .range(offset, offset + limit - 1)
 
@@ -659,9 +659,9 @@ export const plansRouter = createTRPCRouter({
 
     // プランの所有権確認
     const { data: plan, error: planError } = await supabase
-      .from('tickets')
+      .from('plans')
       .select('id')
-      .eq('id', input.ticket_id)
+      .eq('id', input.plan_id)
       .eq('user_id', userId)
       .single()
 
@@ -674,9 +674,9 @@ export const plansRouter = createTRPCRouter({
 
     // アクティビティ作成
     const { data: activity, error } = await supabase
-      .from('ticket_activities')
+      .from('plan_activities')
       .insert({
-        ticket_id: input.ticket_id,
+        plan_id: input.plan_id,
         user_id: userId,
         action_type: input.action_type,
         field_name: input.field_name,
@@ -703,7 +703,7 @@ export const plansRouter = createTRPCRouter({
     const { supabase, userId } = ctx
 
     // ユーザーのプランIDを取得
-    const { data: userPlans, error: plansError } = await supabase.from('tickets').select('id').eq('user_id', userId)
+    const { data: userPlans, error: plansError } = await supabase.from('plans').select('id').eq('user_id', userId)
 
     if (plansError) {
       throw new TRPCError({
@@ -718,11 +718,11 @@ export const plansRouter = createTRPCRouter({
       return {}
     }
 
-    // ticket_tags からタグごとのカウントを取得
+    // plan_tags からタグごとのカウントを取得
     const { data: tagCounts, error: countsError } = await supabase
-      .from('ticket_tags')
+      .from('plan_tags')
       .select('tag_id')
-      .in('ticket_id', planIds)
+      .in('plan_id', planIds)
 
     if (countsError) {
       throw new TRPCError({

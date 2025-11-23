@@ -5,9 +5,9 @@ import { useTags } from '@/features/tags/hooks/use-tags'
 import { Tag as TagType } from '@/types/unified'
 import { Plus, Tag, X } from 'lucide-react'
 
-import { TicketTagSelectDialogEnhanced } from './PlanTagSelectDialogEnhanced'
+import { PlanTagSelectDialogEnhanced } from './PlanTagSelectDialogEnhanced'
 
-interface TicketTagsSectionProps {
+interface PlanTagsSectionProps {
   selectedTagIds: string[]
   onTagsChange: (tagIds: string[]) => void
   onRemoveTag?: (tagId: string) => void
@@ -27,7 +27,7 @@ export function PlanTagsSection({
   popoverSide,
   popoverAlignOffset,
   popoverSideOffset,
-}: TicketTagsSectionProps) {
+}: PlanTagsSectionProps) {
   // データベースからタグを取得
   const { data: tagsData } = useTags(true)
 
@@ -92,7 +92,7 @@ export function PlanTagsSection({
             ))}
 
             {/* タグ選択ダイアログ - 常に同じインスタンスを使用 */}
-            <TicketTagSelectDialogEnhanced
+            <PlanTagSelectDialogEnhanced
               selectedTagIds={selectedTagIds}
               onTagsChange={onTagsChange}
               align={popoverAlign}
@@ -109,13 +109,10 @@ export function PlanTagsSection({
                   <Plus className="h-3.5 w-3.5" />
                 </button>
               )}
-            </TicketTagSelectDialogEnhanced>
+            </PlanTagSelectDialogEnhanced>
           </div>
         </div>
       </div>
     </div>
   )
 }
-
-// Backward compatibility
-export { PlanTagsSection as TicketTagsSection }

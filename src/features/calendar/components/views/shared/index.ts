@@ -18,9 +18,9 @@ export { CurrentTimeLine as SimpleCurrentTimeLine } from '../../CurrentTimeLine'
 export { CurrentTimeLine, CurrentTimeLineForColumn } from './grid/CurrentTimeLine'
 
 // ===== UIコンポーネント =====
-// TicketCard - チケット表示（EventBlock から名称変更）
+// planCard - チケット表示（EventBlock から名称変更）
 export type * from './components/PlanCard'
-export { EventBlock, EventContent, TicketCard, TicketCardContent } from './components/PlanCard'
+export { EventBlock, EventContent, planCard, planCardContent } from './components/PlanCard'
 
 // DayColumn - 日列（イベント表示エリアのみ）
 export { DayColumn } from './components/DayColumn'
@@ -60,8 +60,8 @@ export type { TimeCalculationResult, UseTimeCalculationOptions } from './hooks/u
 export { useTimeGrid } from './hooks/useTimeGrid'
 export { useTimeSlots } from './hooks/useTimeSlots'
 export { useViewDimensions } from './hooks/useViewDimensions'
-export { useViewEvents } from './hooks/useViewPlans'
-export type { EventPosition } from './hooks/useViewPlans'
+export { useViewPlans as useViewEvents, useViewPlans } from './hooks/useViewPlans'
+export type { PlanPosition as EventPosition, PlanPosition } from './hooks/useViewPlans'
 
 // Phase 3: 統合カスタムフック
 export { useCurrentPeriod } from './hooks/useCurrentPeriod'

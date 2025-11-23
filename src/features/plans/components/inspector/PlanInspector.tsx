@@ -61,7 +61,7 @@ import { ReminderSelect } from '../shared/ReminderSelect'
  * @example
  * ```tsx
  * // レイアウトに配置
- * <TicketInspector />
+ * <PlanInspector />
  *
  * // 各ビューから呼び出し
  * const { openInspector } = usePlanInspectorStore()
@@ -75,12 +75,12 @@ export function PlanInspector() {
   // Planデータ取得（タグ情報も含む）
   const { data: planData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId })
   // Type assertion: In practice planData is Plan | undefined (tRPC error handling is separate)
-  const plan = (planData ?? null) as Plan | null
+  const plan = (planData ?? null) as unknown as Plan | null
 
-  // 全チケットリスト取得（ナビゲーション用・リアルタイム性最適化済み）
+  // 全プランリスト取得（ナビゲーション用・リアルタイム性最適化済み）
   const { data: allPlans = [] } = usePlans()
 
-  // 現在のチケットのインデックスを計算
+  // 現在のプランのインデックスを計算
   const currentIndex = useMemo(() => {
     return allPlans.findIndex((t) => t.id === planId)
   }, [allPlans, planId])
@@ -197,17 +197,17 @@ export function PlanInspector() {
 
   const goToPrevious = () => {
     if (hasPrevious) {
-      const prevTicketId = allPlans[currentIndex - 1]!.id
-      openInspector(prevTicketId)
-      setFocusedId(prevTicketId)
+      const prevPlanId = allPlans[currentIndex - 1]!.id
+      openInspector(prevPlanId)
+      setFocusedId(prevPlanId)
     }
   }
 
   const goToNext = () => {
     if (hasNext) {
-      const nextTicketId = allPlans[currentIndex + 1]!.id
-      openInspector(nextTicketId)
-      setFocusedId(nextTicketId)
+      const nextPlanId = allPlans[currentIndex + 1]!.id
+      openInspector(nextPlanId)
+      setFocusedId(nextPlanId)
     }
   }
 
@@ -218,7 +218,7 @@ export function PlanInspector() {
   // 削除ハンドラー
   const handleDelete = () => {
     if (!planId) return
-    if (confirm('このチケットを削除しますか？')) {
+    if (confirm('このプランを削除しますか？')) {
       deletePlan.mutate({ id: planId })
       closeInspector()
     }
@@ -233,7 +233,7 @@ export function PlanInspector() {
   // 新しいタブで開く
   const handleOpenInNewTab = () => {
     if (!planId) return
-    window.open(`/tickets/${planId}`, '_blank')
+    window.open(`/plans/${planId}`, '_blank')
   }
 
   // 複製
@@ -246,7 +246,7 @@ export function PlanInspector() {
   // リンクをコピー
   const handleCopyLink = () => {
     if (!planId) return
-    const url = `${window.location.origin}/tickets/${planId}`
+    const url = `${window.location.origin}/plans/${planId}`
     navigator.clipboard.writeText(url)
   }
 
@@ -436,7 +436,7 @@ export function PlanInspector() {
     }
   }, [])
 
-  // Early return if no ticket
+  // Early return if no plan
   if (!isOpen) {
     return null
   }
@@ -491,13 +491,13 @@ export function PlanInspector() {
                           className="h-8 w-8"
                           onClick={goToPrevious}
                           disabled={!hasPrevious}
-                          aria-label="前のチケット"
+                          aria-label="前のプラン"
                         >
                           <ChevronUp className="h-6 w-6" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">
-                        <p>前のチケット</p>
+                        <p>前のプラン</p>
                       </TooltipContent>
                     </Tooltip>
                     <Tooltip>
@@ -508,13 +508,13 @@ export function PlanInspector() {
                           className="h-8 w-8"
                           onClick={goToNext}
                           disabled={!hasNext}
-                          aria-label="次のチケット"
+                          aria-label="次のプラン"
                         >
                           <ChevronDown className="h-6 w-6" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">
-                        <p>次のチケット</p>
+                        <p>次のプラン</p>
                       </TooltipContent>
                     </Tooltip>
                   </div>
@@ -620,12 +620,12 @@ export function PlanInspector() {
                     >
                       {plan.title}
                     </span>
-                    {plan.ticket_number && (
+                    {plan.plan_number && (
                       <span
                         className="text-muted-foreground ml-4 text-[2rem]"
                         style={{ fontSize: 'var(--font-size-xl)' }}
                       >
-                        #{plan.ticket_number}
+                        #{plan.plan_number}
                       </span>
                     )}
                   </div>
@@ -749,7 +749,7 @@ export function PlanInspector() {
                           const cache = getCache(planId)
                           return cache?.recurrence_rule !== undefined
                             ? cache.recurrence_rule
-                            : ticket && 'recurrence_rule' in ticket
+                            : plan && 'recurrence_rule' in plan
                               ? plan.recurrence_rule
                               : null
                         })()}

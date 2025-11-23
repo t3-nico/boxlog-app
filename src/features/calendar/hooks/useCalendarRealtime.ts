@@ -5,7 +5,7 @@
  * カレンダーイベント（チケット）のDB変更をリアルタイムで検知し、
  * TanStack Queryのキャッシュを自動更新する。
  *
- * 対象テーブル: tickets（カレンダーで表示されるチケット）
+ * 対象テーブル: plans（カレンダーで表示されるチケット）
  *
  * 検知イベント:
  * - INSERT: 新規チケット作成
@@ -43,7 +43,7 @@ export function useCalendarRealtime(userId: string | undefined, options: UseCale
 
   useRealtimeSubscription<{ id: string }>({
     channelName: `calendar-changes-${userId}`,
-    table: 'tickets',
+    table: 'plans',
     event: '*', // INSERT, UPDATE, DELETE すべて
     filter: userId ? `user_id=eq.${userId}` : undefined,
     enabled, // enabledオプションを渡す
@@ -54,7 +54,7 @@ export function useCalendarRealtime(userId: string | undefined, options: UseCale
       console.debug('[Calendar Realtime] Event detected:', payload.eventType, newRecord?.id)
 
       // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
-      // undefined を渡すことで、useTickets({}) と useTickets(undefined) の両方を無効化
+      // undefined を渡すことで、useplans({}) と useplans(undefined) の両方を無効化
       void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
 
       // 個別チケットのキャッシュも無効化（Inspector等で使用）

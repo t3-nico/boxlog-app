@@ -1,13 +1,13 @@
 import { api } from '@/lib/trpc'
-import type { UpdateTicketInput } from '@/schemas/plans/plan'
+import type { UpdatePlanInput } from '@/schemas/plans/plan'
 import { toast } from 'sonner'
-import { useTicketCacheStore } from '../stores/usePlanCacheStore'
-import { useTicketInspectorStore } from '../stores/usePlanInspectorStore'
+import { usePlanCacheStore } from '../stores/usePlanCacheStore'
+import { usePlanInspectorStore } from '../stores/usePlanInspectorStore'
 
 /**
- * Ticket Mutations Hook（作成・更新・削除）
+ * Plan Mutations Hook（作成・更新・削除）
  *
- * すべてのTicket操作を一元管理
+ * すべてのPlan操作を一元管理
  * - Toast通知
  * - キャッシュ無効化（全ビュー自動更新）
  * - Zustandキャッシュ（即座の同期）
@@ -15,39 +15,39 @@ import { useTicketInspectorStore } from '../stores/usePlanInspectorStore'
  *
  * @example
  * ```tsx
- * const { createTicket, updateTicket, deleteTicket } = useTicketMutations()
+ * const { createPlan, updatePlan, deletePlan } = usePlanMutations()
  *
  * // 作成
- * createTicket.mutate({ title: 'New Ticket', status: 'open' })
+ * createPlan.mutate({ title: 'New Plan', status: 'backlog' })
  *
  * // 更新
- * updateTicket.mutate({ id: '123', data: { title: 'Updated' } })
+ * updatePlan.mutate({ id: '123', data: { title: 'Updated' } })
  *
  * // 削除
- * deleteTicket.mutate({ id: '123' })
+ * deletePlan.mutate({ id: '123' })
  * ```
  */
 export function usePlanMutations() {
   const utils = api.useUtils()
-  const { closeInspector, openInspector } = useTicketInspectorStore()
-  const { updateCache, setIsMutating } = useTicketCacheStore()
+  const { closeInspector, openInspector } = usePlanInspectorStore()
+  const { updateCache, setIsMutating } = usePlanCacheStore()
 
   // ✨ 作成
-  const createTicket = api.plans.create.useMutation({
-    onSuccess: (newTicket) => {
+  const createPlan = api.plans.create.useMutation({
+    onSuccess: (newPlan) => {
       // 1. Toast通知
-      toast.success(`Ticket "${newTicket.title}" を作成しました`, {
+      toast.success(`Plan "${newPlan.title}" を作成しました`, {
         action: {
           label: '開く',
           onClick: () => {
-            openInspector(newTicket.id)
+            openInspector(newPlan.id)
           },
         },
       })
 
       // 2. キャッシュ無効化 + 即座に再フェッチ → すべてのビューが自動更新
       void utils.plans.list.invalidate(undefined, { refetchType: 'active' })
-      void utils.plans.getById.invalidate({ id: newTicket.id }, { refetchType: 'active' })
+      void utils.plans.getById.invalidate({ id: newPlan.id }, { refetchType: 'active' })
     },
     onError: (error) => {
       toast.error(`作成に失敗しました: ${error.message}`)
@@ -55,7 +55,7 @@ export function usePlanMutations() {
   })
 
   // ✨ 更新
-  const updateTicket = api.plans.update.useMutation({
+  const updatePlan = api.plans.update.useMutation({
     onMutate: async ({ id, data }) => {
       // 0. mutation開始フラグを設定（Realtime二重更新防止）
       setIsMutating(true)
@@ -65,11 +65,11 @@ export function usePlanMutations() {
       await utils.plans.getById.cancel({ id })
 
       // 2. 現在のデータをスナップショット（ロールバック用）
-      const previousTickets = utils.plans.list.getData()
-      const previousTicket = utils.plans.getById.getData({ id })
+      const previousPlans = utils.plans.list.getData()
+      const previousPlan = utils.plans.getById.getData({ id })
 
       // 3. 楽観的更新: Zustandキャッシュを即座に更新（全コンポーネントに即座に反映）
-      const updateData: UpdateTicketInput = {}
+      const updateData: UpdatePlanInput = {}
 
       // 繰り返し設定
       if (data.recurrence_type !== undefined || data.recurrence_rule !== undefined) {
@@ -97,40 +97,40 @@ export function usePlanMutations() {
       // リストキャッシュを更新（フィルターなし）
       utils.plans.list.setData(undefined, (oldData) => {
         if (!oldData) return oldData
-        return oldData.map((plan) => (ticket.id === id ? { ...ticket, ...updateData } : ticket))
+        return oldData.map((plan) => (plan.id === id ? { ...plan, ...updateData } : plan))
       })
 
       // リストキャッシュを更新（空オブジェクトフィルター）
       utils.plans.list.setData({}, (oldData) => {
         if (!oldData) return oldData
-        return oldData.map((plan) => (ticket.id === id ? { ...ticket, ...updateData } : ticket))
+        return oldData.map((plan) => (plan.id === id ? { ...plan, ...updateData } : plan))
       })
 
-      // 個別チケットキャッシュを更新
+      // 個別プランキャッシュを更新
       utils.plans.getById.setData({ id }, (oldData) => {
         if (!oldData) return undefined
         return Object.assign({}, oldData, updateData)
       })
 
-      return { id, previousTickets, previousTicket }
+      return { id, previousPlans, previousPlan }
     },
-    onSuccess: (updatedTicket) => {
-      console.log('[useTicketMutations] 更新成功:', updatedTicket)
+    onSuccess: (updatedPlan) => {
+      console.log('[usePlanMutations] 更新成功:', updatedPlan)
       toast.success('更新しました')
 
       // TanStack Queryキャッシュを無効化してサーバーから再取得
       // refetchType: 'all' ですべてのクエリ（activeとinactive）を再フェッチ
-      console.log('[useTicketMutations] キャッシュ無効化開始')
+      console.log('[usePlanMutations] キャッシュ無効化開始')
       void utils.plans.list.invalidate(undefined, { refetchType: 'all' }).then(() => {
-        console.log('[useTicketMutations] tickets.list 無効化完了')
+        console.log('[usePlanMutations] plans.list 無効化完了')
       })
       void utils.plans.getById.invalidate(undefined, { refetchType: 'all' }).then(() => {
-        console.log('[useTicketMutations] tickets.getById 無効化完了')
+        console.log('[usePlanMutations] plans.getById 無効化完了')
       })
 
       // mutation完了後、少し遅延してからフラグをリセット（Realtimeイベント後に実行）
       setTimeout(() => {
-        console.log('[useTicketMutations] isMutating = false')
+        console.log('[usePlanMutations] isMutating = false')
         setIsMutating(false)
       }, 500)
     },
@@ -141,12 +141,12 @@ export function usePlanMutations() {
       setIsMutating(false)
 
       // エラー時: 楽観的更新をロールバック
-      if (context?.previousTickets) {
-        utils.plans.list.setData(undefined, context.previousTickets)
-        utils.plans.list.setData({}, context.previousTickets)
+      if (context?.previousPlans) {
+        utils.plans.list.setData(undefined, context.previousPlans)
+        utils.plans.list.setData({}, context.previousPlans)
       }
-      if (context?.previousTicket) {
-        utils.plans.getById.setData({ id: context.id }, context.previousTicket)
+      if (context?.previousPlan) {
+        utils.plans.getById.setData({ id: context.id }, context.previousPlan)
       }
 
       // キャッシュを再取得（念のため）
@@ -158,7 +158,7 @@ export function usePlanMutations() {
   })
 
   // ✨ 削除
-  const deleteTicket = api.plans.delete.useMutation({
+  const deletePlan = api.plans.delete.useMutation({
     onSuccess: (_, { id }) => {
       toast.success('削除しました')
 
@@ -172,9 +172,9 @@ export function usePlanMutations() {
   })
 
   // ✨ 一括更新
-  const bulkUpdateTicket = api.plans.bulkUpdate.useMutation({
+  const bulkUpdatePlan = api.plans.bulkUpdate.useMutation({
     onSuccess: (result) => {
-      toast.success(`${result.count}件のチケットを更新しました`)
+      toast.success(`${result.count}件のプランを更新しました`)
       void utils.plans.list.invalidate(undefined, { refetchType: 'active' })
     },
     onError: (error) => {
@@ -183,9 +183,9 @@ export function usePlanMutations() {
   })
 
   // ✨ 一括削除
-  const bulkDeleteTicket = api.plans.bulkDelete.useMutation({
+  const bulkDeletePlan = api.plans.bulkDelete.useMutation({
     onSuccess: (result) => {
-      toast.success(`${result.count}件のチケットを削除しました`)
+      toast.success(`${result.count}件のプランを削除しました`)
       closeInspector()
       void utils.plans.list.invalidate(undefined, { refetchType: 'active' })
     },
@@ -195,11 +195,17 @@ export function usePlanMutations() {
   })
 
   return {
-    createTicket,
-    updateTicket,
-    deleteTicket,
-    bulkUpdateTicket,
-    bulkDeleteTicket,
+    createPlan,
+    updatePlan,
+    deletePlan,
+    bulkUpdatePlan,
+    bulkDeletePlan,
+    // Backward compatibility aliases
+    createTicket: createPlan,
+    updateTicket: updatePlan,
+    deleteTicket: deletePlan,
+    bulkUpdateTicket: bulkUpdatePlan,
+    bulkDeleteTicket: bulkDeletePlan,
   }
 }
 

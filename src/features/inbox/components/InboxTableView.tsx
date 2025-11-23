@@ -148,8 +148,8 @@ export function InboxTableView() {
 
       switch (sortField) {
         case 'id':
-          aValue = a.ticket_number || ''
-          bValue = b.ticket_number || ''
+          aValue = a.plan_number || ''
+          bValue = b.plan_number || ''
           break
         case 'title':
           aValue = a.title

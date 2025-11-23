@@ -7,14 +7,14 @@ import { useCallback } from 'react'
 import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { useTicketMutations } from '@/features/plans/hooks/usePlanMutations'
-import { useTicketInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 
 export function useEventContextActions() {
   const { t } = useI18n()
-  const { openInspector } = useTicketInspectorStore()
+  const { openInspector } = usePlanInspectorStore()
   const calendarToast = useCalendarToast()
-  const { deleteTicket } = useTicketMutations()
+  const { deletePlan } = usePlanMutations()
 
   const handleDeleteEvent = useCallback(
     async (event: CalendarEvent) => {
@@ -25,17 +25,17 @@ export function useEventContextActions() {
 
       try {
         // チケットを削除
-        await deleteTicket.mutateAsync({ id: event.id })
+        await deletePlan.mutateAsync({ id: event.id })
       } catch (err) {
         console.error('Failed to delete event:', err)
       }
     },
-    [deleteTicket]
+    [deletePlan]
   )
 
   const handleEditEvent = useCallback(
     (event: CalendarEvent) => {
-      // TicketInspectorを開いて編集モードにする
+      // planInspectorを開いて編集モードにする
       openInspector(event.id)
     },
     [openInspector]
@@ -137,7 +137,7 @@ export function useEventContextActions() {
 
   const showDuplicationSuccess = useCallback(
     (_newEvent: CalendarEvent) => {
-      // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
+      // TODO(#621): Events削除後、plans/Sessions統合後に再実装
       console.log('TODO: Sessions統合後に実装')
       // const toastEventData = createToastEventData(newEvent)
       // const editModalData = createEditModalData(newEvent)
@@ -157,7 +157,7 @@ export function useEventContextActions() {
 
   const handleDuplicateEvent = useCallback(
     async (_event: CalendarEvent) => {
-      // TODO(#621): Events削除後、Tickets/Sessions統合後に再実装
+      // TODO(#621): Events削除後、plans/Sessions統合後に再実装
       console.log('TODO: Sessions統合後に実装')
       // try {
       //   const { startDate, endDate } = normalizeEventDates(event)
@@ -182,7 +182,7 @@ export function useEventContextActions() {
 
   const handleViewDetails = useCallback(
     (event: CalendarEvent) => {
-      // TicketInspectorを開いて詳細を表示
+      // planInspectorを開いて詳細を表示
       openInspector(event.id)
     },
     [openInspector]

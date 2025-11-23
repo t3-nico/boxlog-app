@@ -1,13 +1,13 @@
 // @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 /**
- * EventDataManager - 大量のイベントデータを効率的に管理
+ * PlanDataManager - 大量のプランデータを効率的に管理
  * 正規化、インデックス化、クエリ最適化を提供
  */
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
-// 正規化されたイベントデータ
-interface NormalizedEvent {
+// 正規化されたプランデータ
+interface NormalizedPlan {
   id: string
   title: string
   startTime: number // Unix timestamp
@@ -21,26 +21,26 @@ interface NormalizedEvent {
 }
 
 // インデックス構造
-interface EventIndexes {
-  byDate: Map<string, Set<string>> // date -> event IDs
-  byMonth: Map<string, Set<string>> // YYYY-MM -> event IDs
-  byYear: Map<string, Set<string>> // YYYY -> event IDs
-  byTimeRange: Map<string, Set<string>> // hour range -> event IDs
-  byTag: Map<string, Set<string>> // tag -> event IDs
-  byRecurrence: Map<string, Set<string>> // recurrence ID -> event IDs
+interface PlanIndexes {
+  byDate: Map<string, Set<string>> // date -> plan IDs
+  byMonth: Map<string, Set<string>> // YYYY-MM -> plan IDs
+  byYear: Map<string, Set<string>> // YYYY -> plan IDs
+  byTimeRange: Map<string, Set<string>> // hour range -> plan IDs
+  byTag: Map<string, Set<string>> // tag -> plan IDs
+  byRecurrence: Map<string, Set<string>> // recurrence ID -> plan IDs
 }
 
 // クエリ結果のキャッシュ
 interface QueryCache {
   key: string
-  result: NormalizedEvent[]
+  result: NormalizedPlan[]
   timestamp: number
   expiry: number
 }
 
-export class EventDataManager {
-  private events: Map<string, NormalizedEvent> = new Map()
-  private indexes: EventIndexes = {
+export class PlanDataManager {
+  private plans: Map<string, NormalizedPlan> = new Map()
+  private indexes: PlanIndexes = {
     byDate: new Map(),
     byMonth: new Map(),
     byYear: new Map(),
@@ -57,18 +57,18 @@ export class EventDataManager {
   private readonly CHUNK_SIZE = 1000 // バッチ処理のチャンクサイズ
 
   /**
-   * イベントデータを正規化して追加
+   * プランデータを正規化して追加
    */
-  addEvents(events: CalendarEvent[]): void {
+  addPlans(plans: CalendarPlan[]): void {
     const startTime = performance.now()
 
     // バッチ処理で大量データを効率的に処理
-    for (let i = 0; i < events.length; i += this.CHUNK_SIZE) {
-      const chunk = events.slice(i, i + this.CHUNK_SIZE)
-      this.processEventChunk(chunk)
+    for (let i = 0; i < plans.length; i += this.CHUNK_SIZE) {
+      const chunk = plans.slice(i, i + this.CHUNK_SIZE)
+      this.processPlanChunk(chunk)
 
       // UI のブロッキングを防ぐため次フレームで処理
-      if (i + this.CHUNK_SIZE < events.length) {
+      if (i + this.CHUNK_SIZE < plans.length) {
         // 同期処理でも構わないが、必要に応じて非同期化可能
       }
     }
@@ -77,49 +77,49 @@ export class EventDataManager {
     this.clearExpiredCache()
 
     const endTime = performance.now()
-    console.log(`EventDataManager: Added ${events.length} events in ${endTime - startTime}ms`)
+    console.log(`PlanDataManager: Added ${plans.length} plans in ${endTime - startTime}ms`)
   }
 
   /**
-   * イベントチャンクの処理
+   * プランチャンクの処理
    */
-  private processEventChunk(events: CalendarEvent[]): void {
-    for (const event of events) {
-      if (!event.startDate) continue
+  private processPlanChunk(plans: CalendarPlan[]): void {
+    for (const plan of plans) {
+      if (!plan.startDate) continue
 
-      const normalized = this.normalizeEvent(event)
-      this.events.set(normalized.id, normalized)
+      const normalized = this.normalizePlan(plan)
+      this.plans.set(normalized.id, normalized)
       this.updateIndexes(normalized)
     }
   }
 
   /**
-   * イベントの正規化
+   * プランの正規化
    */
-  private normalizeEvent(event: CalendarEvent): NormalizedEvent {
-    const startTime = event.startDate!.getTime()
-    const endTime = event.endDate?.getTime() || startTime + 30 * 60 * 1000 // デフォルト30分
-    const dateKey = this.getDateKey(event.startDate!)
+  private normalizePlan(plan: CalendarPlan): NormalizedPlan {
+    const startTime = plan.startDate!.getTime()
+    const endTime = plan.endDate?.getTime() || startTime + 30 * 60 * 1000 // デフォルト30分
+    const dateKey = this.getDateKey(plan.startDate!)
 
     return {
-      id: event.id,
-      title: event.title,
+      id: plan.id,
+      title: plan.title,
       startTime,
       endTime,
       dateKey,
-      color: event.color,
-      location: event.location,
-      description: event.description,
-      tags: event.tags || [],
-      recurrenceId: event.recurrenceId,
+      color: plan.color,
+      location: plan.location,
+      description: plan.description,
+      tags: plan.tags || [],
+      recurrenceId: plan.recurrenceId,
     }
   }
 
   /**
    * インデックスの更新
    */
-  private updateIndexes(event: NormalizedEvent): void {
-    const { id, dateKey, startTime, tags, recurrenceId } = event
+  private updateIndexes(plan: NormalizedPlan): void {
+    const { id, dateKey, startTime, tags, recurrenceId } = plan
     const startDate = new Date(startTime)
 
     // 日付別インデックス
@@ -161,9 +161,9 @@ export class EventDataManager {
   }
 
   /**
-   * 日付範囲でイベントを取得（最適化済み）
+   * 日付範囲でプランを取得（最適化済み）
    */
-  getEventsByDateRange(startDate: Date, endDate: Date): NormalizedEvent[] {
+  getPlansByDateRange(startDate: Date, endDate: Date): NormalizedPlan[] {
     const cacheKey = `range:${startDate.toISOString()}:${endDate.toISOString()}`
 
     // キャッシュチェック
@@ -172,25 +172,25 @@ export class EventDataManager {
 
     const _startKey = this.getDateKey(startDate)
     const _endKey = this.getDateKey(endDate)
-    const eventIds = new Set<string>()
+    const planIds = new Set<string>()
 
     // 日付範囲をイテレート
     const currentDate = new Date(startDate)
     while (currentDate <= endDate) {
       const dateKey = this.getDateKey(currentDate)
-      const dayEvents = this.indexes.byDate.get(dateKey)
+      const dayPlans = this.indexes.byDate.get(dateKey)
 
-      if (dayEvents) {
-        for (const id of dayEvents) {
-          eventIds.add(id)
+      if (dayPlans) {
+        for (const id of dayPlans) {
+          planIds.add(id)
         }
       }
 
       currentDate.setDate(currentDate.getDate() + 1)
     }
 
-    const result = Array.from(eventIds)
-      .map((id) => this.events.get(id)!)
+    const result = Array.from(planIds)
+      .map((id) => this.plans.get(id)!)
       .filter(Boolean)
       .sort((a, b) => a.startTime - b.startTime)
 
@@ -199,18 +199,18 @@ export class EventDataManager {
   }
 
   /**
-   * 特定の日のイベントを取得
+   * 特定の日のプランを取得
    */
-  getEventsByDate(date: Date): NormalizedEvent[] {
+  getPlansByDate(date: Date): NormalizedPlan[] {
     const dateKey = this.getDateKey(date)
     const cacheKey = `date:${dateKey}`
 
     const cached = this.getFromCache(cacheKey)
     if (cached) return cached
 
-    const eventIds = this.indexes.byDate.get(dateKey) || new Set()
-    const result = Array.from(eventIds)
-      .map((id) => this.events.get(id)!)
+    const planIds = this.indexes.byDate.get(dateKey) || new Set()
+    const result = Array.from(planIds)
+      .map((id) => this.plans.get(id)!)
       .filter(Boolean)
       .sort((a, b) => a.startTime - b.startTime)
 
@@ -221,26 +221,26 @@ export class EventDataManager {
   /**
    * 時間範囲でフィルタ（表示最適化用）
    */
-  getEventsByTimeRange(startHour: number, endHour: number, date?: Date): NormalizedEvent[] {
+  getPlansByTimeRange(startHour: number, endHour: number, date?: Date): NormalizedPlan[] {
     const cacheKey = `time:${startHour}:${endHour}:${date?.toISOString() || 'all'}`
 
     const cached = this.getFromCache(cacheKey)
     if (cached) return cached
 
-    let events: NormalizedEvent[]
+    let plans: NormalizedPlan[]
 
     if (date) {
-      events = this.getEventsByDate(date)
+      plans = this.getPlansByDate(date)
     } else {
-      events = Array.from(this.events.values())
+      plans = Array.from(this.plans.values())
     }
 
     const _startTime = startHour * 60 * 60 * 1000 // ミリ秒
     const _endTime = endHour * 60 * 60 * 1000
 
-    const result = events.filter((event) => {
-      const eventHour = new Date(event.startTime).getHours()
-      return eventHour >= startHour && eventHour < endHour
+    const result = plans.filter((plan) => {
+      const planHour = new Date(plan.startTime).getHours()
+      return planHour >= startHour && planHour < endHour
     })
 
     this.setCache(cacheKey, result)
@@ -250,15 +250,15 @@ export class EventDataManager {
   /**
    * タグでフィルタ
    */
-  getEventsByTag(tag: string): NormalizedEvent[] {
+  getPlansByTag(tag: string): NormalizedPlan[] {
     const cacheKey = `tag:${tag}`
 
     const cached = this.getFromCache(cacheKey)
     if (cached) return cached
 
-    const eventIds = this.indexes.byTag.get(tag) || new Set()
-    const result = Array.from(eventIds)
-      .map((id) => this.events.get(id)!)
+    const planIds = this.indexes.byTag.get(tag) || new Set()
+    const result = Array.from(planIds)
+      .map((id) => this.plans.get(id)!)
       .filter(Boolean)
       .sort((a, b) => a.startTime - b.startTime)
 
@@ -269,19 +269,19 @@ export class EventDataManager {
   /**
    * 検索機能（インデックス活用）
    */
-  searchEvents(query: string): NormalizedEvent[] {
+  searchPlans(query: string): NormalizedPlan[] {
     const cacheKey = `search:${query.toLowerCase()}`
 
     const cached = this.getFromCache(cacheKey)
     if (cached) return cached
 
     const lowerQuery = query.toLowerCase()
-    const result = Array.from(this.events.values())
+    const result = Array.from(this.plans.values())
       .filter(
-        (event) =>
-          event.title.toLowerCase().includes(lowerQuery) ||
-          event.description?.toLowerCase().includes(lowerQuery) ||
-          event.location?.toLowerCase().includes(lowerQuery)
+        (plan) =>
+          plan.title.toLowerCase().includes(lowerQuery) ||
+          plan.description?.toLowerCase().includes(lowerQuery) ||
+          plan.location?.toLowerCase().includes(lowerQuery)
       )
       .sort((a, b) => a.startTime - b.startTime)
 
@@ -290,21 +290,21 @@ export class EventDataManager {
   }
 
   /**
-   * イベントの更新
+   * プランの更新
    */
-  updateEvent(event: CalendarEvent): void {
-    if (!event.startDate) return
+  updatePlan(plan: CalendarPlan): void {
+    if (!plan.startDate) return
 
-    const normalized = this.normalizeEvent(event)
-    const oldEvent = this.events.get(normalized.id)
+    const normalized = this.normalizePlan(plan)
+    const oldPlan = this.plans.get(normalized.id)
 
     // 古いインデックスエントリを削除
-    if (oldEvent) {
-      this.removeFromIndexes(oldEvent)
+    if (oldPlan) {
+      this.removeFromIndexes(oldPlan)
     }
 
     // 新しいデータで更新
-    this.events.set(normalized.id, normalized)
+    this.plans.set(normalized.id, normalized)
     this.updateIndexes(normalized)
 
     this.lastUpdate = Date.now()
@@ -312,24 +312,24 @@ export class EventDataManager {
   }
 
   /**
-   * イベントの削除
+   * プランの削除
    */
-  removeEvent(eventId: string): void {
-    const event = this.events.get(eventId)
-    if (!event) return
+  removePlan(planId: string): void {
+    const plan = this.plans.get(planId)
+    if (!plan) return
 
-    this.removeFromIndexes(event)
-    this.events.delete(eventId)
+    this.removeFromIndexes(plan)
+    this.plans.delete(planId)
 
     this.lastUpdate = Date.now()
-    this.clearRelatedCache(eventId)
+    this.clearRelatedCache(planId)
   }
 
   /**
    * インデックスからの削除
    */
-  private removeFromIndexes(event: NormalizedEvent): void {
-    const { id, dateKey, startTime, tags, recurrenceId } = event
+  private removeFromIndexes(plan: NormalizedPlan): void {
+    const { id, dateKey, startTime, tags, recurrenceId } = plan
     const startDate = new Date(startTime)
 
     this.removeFromIndex(this.indexes.byDate, dateKey, id)
@@ -364,7 +364,7 @@ export class EventDataManager {
   /**
    * キャッシュ関連メソッド
    */
-  private getFromCache(key: string): NormalizedEvent[] | null {
+  private getFromCache(key: string): NormalizedPlan[] | null {
     const cached = this.queryCache.get(key)
     if (!cached) return null
 
@@ -376,7 +376,7 @@ export class EventDataManager {
     return cached.result
   }
 
-  private setCache(key: string, result: NormalizedEvent[]): void {
+  private setCache(key: string, result: NormalizedPlan[]): void {
     if (this.queryCache.size >= this.MAX_CACHE_SIZE) {
       // LRU 的にキャッシュクリア
       const oldestKey = Array.from(this.queryCache.keys())[0]
@@ -400,7 +400,7 @@ export class EventDataManager {
     }
   }
 
-  private clearRelatedCache(_eventId: string): void {
+  private clearRelatedCache(_planId: string): void {
     // 関連するキャッシュをクリア
     this.queryCache.clear() // 簡単のため全クリア
   }
@@ -417,7 +417,7 @@ export class EventDataManager {
    */
   getStats() {
     return {
-      totalEvents: this.events.size,
+      totalPlans: this.plans.size,
       cacheSize: this.queryCache.size,
       indexSizes: {
         byDate: this.indexes.byDate.size,
@@ -437,18 +437,18 @@ export class EventDataManager {
    */
   private estimateMemoryUsage(): number {
     // 簡易的なメモリ使用量推定
-    const eventSize = this.events.size * 500 // 平均500バイト/イベント
+    const planSize = this.plans.size * 500 // 平均500バイト/プラン
     const indexSize = Object.values(this.indexes).reduce((total, index) => total + index.size * 100, 0) // 平均100バイト/インデックスエントリ
     const cacheSize = this.queryCache.size * 1000 // 平均1KB/キャッシュエントリ
 
-    return eventSize + indexSize + cacheSize
+    return planSize + indexSize + cacheSize
   }
 
   /**
    * すべてのデータをクリア
    */
   clear(): void {
-    this.events.clear()
+    this.plans.clear()
     Object.values(this.indexes).forEach((index) => index.clear())
     this.queryCache.clear()
     this.lastUpdate = Date.now()

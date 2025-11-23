@@ -68,12 +68,12 @@ export type BulkUpdatePlanInput = z.infer<typeof bulkUpdatePlanSchema>
 export type BulkDeletePlanInput = z.infer<typeof bulkDeletePlanSchema>
 
 // 互換性のためのエイリアス（段階的移行用）
-export const ticketStatusSchema = planStatusSchema
+export const TicketStatusSchema = planStatusSchema
 export const createTicketSchema = createPlanSchema
 export const updateTicketSchema = updatePlanSchema
-export const ticketIdSchema = planIdSchema
-export const ticketFilterSchema = planFilterSchema
-export const ticketIncludeSchema = planIncludeSchema
+export const TicketIdSchema = planIdSchema
+export const TicketFilterSchema = planFilterSchema
+export const TicketIncludeSchema = planIncludeSchema
 export const getTicketByIdSchema = getPlanByIdSchema
 export const bulkUpdateTicketSchema = bulkUpdatePlanSchema
 export const bulkDeleteTicketSchema = bulkDeletePlanSchema

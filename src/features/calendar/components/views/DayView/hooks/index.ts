@@ -2,5 +2,5 @@
  * DayView専用のフック
  */
 export { useDayEventLayout } from './useDayPlanLayout'
-export { useDayEvents } from './useDayPlans'
+export { useDayPlans as useDayEvents, useDayPlans } from './useDayPlans'
 export { useDayView } from './useDayView'

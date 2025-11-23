@@ -104,7 +104,7 @@ export interface CalendarPlan {
 
 // 後方互換性のためのエイリアス
 /** @deprecated Use CalendarPlan instead */
-export type CalendarTicket = CalendarPlan
+export type Calendarplan = CalendarPlan
 /** @deprecated Use CalendarPlan instead */
 export type CalendarEvent = CalendarPlan
 
@@ -134,7 +134,7 @@ export interface Calendar {
 // 繰り返しパターン
 export interface RecurrencePattern {
   id: string
-  planId: string // ticketId/eventId から変更
+  planId: string // planId/eventId から変更
   frequency: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'
   interval: number
   weekdays?: number[] // 0=日曜, 1=月曜, ..., 6=土曜
@@ -150,15 +150,13 @@ export interface RecurrencePattern {
   updatedAt: Date
   // 後方互換性
   /** @deprecated Use planId instead */
-  ticketId?: string
-  /** @deprecated Use planId instead */
   eventId?: string
 }
 
 // プランインスタンス（繰り返しプランの個別オカレンス）
 export interface PlanInstance {
   id: string
-  planId: string // ticketId/eventId から変更
+  planId: string // planId/eventId から変更
   recurrencePatternId?: string
   instanceStart: Date
   instanceEnd: Date
@@ -171,7 +169,7 @@ export interface PlanInstance {
 
 // 後方互換性のためのエイリアス
 /** @deprecated Use PlanInstance instead */
-export type TicketInstance = PlanInstance
+export type planInstance = PlanInstance
 /** @deprecated Use PlanInstance instead */
 export type EventInstance = PlanInstance
 
@@ -253,8 +251,6 @@ export interface CreatePlanInput {
 
 // 後方互換性のためのエイリアス
 /** @deprecated Use CreatePlanInput instead */
-export type CreateTicketInput = CreatePlanInput
-/** @deprecated Use CreatePlanInput instead */
 export type CreateEventInput = CreatePlanInput
 
 export interface UpdatePlanInput extends Partial<CreatePlanInput> {
@@ -263,7 +259,7 @@ export interface UpdatePlanInput extends Partial<CreatePlanInput> {
 
 // 後方互換性のためのエイリアス
 /** @deprecated Use UpdatePlanInput instead */
-export type UpdateTicketInput = UpdatePlanInput
+export type UpdateplanInput = UpdatePlanInput
 /** @deprecated Use UpdatePlanInput instead */
 export type UpdateEventInput = UpdatePlanInput
 

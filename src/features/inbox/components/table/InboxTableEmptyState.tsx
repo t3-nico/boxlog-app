@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { useTicketInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { FileSearch, Filter, Inbox, Plus } from 'lucide-react'
 import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
 
@@ -28,7 +28,7 @@ interface InboxTableEmptyStateProps {
  */
 export function InboxTableEmptyState({ columnCount, totalItems }: InboxTableEmptyStateProps) {
   const { search, status, reset } = useInboxFilterStore()
-  const { openInspector } = useTicketInspectorStore()
+  const { openInspector } = usePlanInspectorStore()
 
   // フィルター適用中かどうか
   const isFiltered = search !== '' || status.length > 0
