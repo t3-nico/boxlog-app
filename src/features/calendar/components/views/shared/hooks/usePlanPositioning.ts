@@ -7,7 +7,7 @@ import { isSameDay, isValid } from 'date-fns'
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 import type { CalendarEvent } from '../types/plan.types'
 
-import { useEventLayoutCalculator } from './usePlanLayoutCalculator'
+import { usePlanLayoutCalculator, type PlanLayout } from './usePlanLayoutCalculator'
 
 const EVENT_PADDING = 2 // イベント間のパディング
 const MIN_EVENT_HEIGHT = 20 // 最小イベント高さ
@@ -60,13 +60,13 @@ export function useEventPositioning({
   }, [filteredEvents])
 
   // 新しいレイアウト計算システムを使用
-  const eventLayouts = useEventLayoutCalculator(convertedEvents, { notifyConflicts: true })
+  const eventLayouts = usePlanLayoutCalculator(convertedEvents, { notifyConflicts: true })
 
   // レイアウト情報をEventPositionInfoに変換
   const eventPositions = useMemo(() => {
-    return eventLayouts.map((layout, index) => {
-      const startDate = new Date(layout.event.start)
-      const endDate = new Date(layout.event.end)
+    return eventLayouts.map((layout: PlanLayout, index: number) => {
+      const startDate = new Date(layout.plan.start)
+      const endDate = new Date(layout.plan.end)
 
       const startHour = startDate.getHours() + startDate.getMinutes() / 60
       const endHour = endDate.getHours() + endDate.getMinutes() / 60
@@ -77,7 +77,7 @@ export function useEventPositioning({
       const height = Math.max(duration * HOUR_HEIGHT - EVENT_PADDING, MIN_EVENT_HEIGHT)
 
       return {
-        event: layout.event,
+        event: layout.plan,
         top,
         height,
         left: layout.left,
@@ -91,7 +91,7 @@ export function useEventPositioning({
   }, [eventLayouts])
 
   const maxConcurrentEvents = useMemo(() => {
-    return Math.max(1, ...eventLayouts.map((layout) => layout.totalColumns))
+    return Math.max(1, ...eventLayouts.map((layout: PlanLayout) => layout.totalColumns))
   }, [eventLayouts])
 
   return {

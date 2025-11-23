@@ -37,7 +37,7 @@ interface TicketCardProps {
 }
 
 /**
- * TicketCard - plan表示用カードコンポーネント
+ * TicketCard - Plan表示用カードコンポーネント
  *
  * **機能**:
  * - ドラッグ可能（useDraggable）

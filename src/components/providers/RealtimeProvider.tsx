@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useCalendarRealtime } from '@/features/calendar/hooks/useCalendarRealtime'
 import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime'
-import { useplanRealtime } from '@/features/plans/hooks/usePlanRealtime'
+import { usePlanRealtime } from '@/features/plans/hooks/usePlanRealtime'
 import { useTagRealtime } from '@/features/tags/hooks/useTagRealtime'
 
 interface RealtimeProviderProps {
@@ -55,7 +55,7 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
 
   // 各機能のRealtime購読
   useCalendarRealtime(userId, { enabled: isReady && !!userId })
-  useplanRealtime(userId, { enabled: isReady && !!userId })
+  usePlanRealtime(userId, { enabled: isReady && !!userId })
   useTagRealtime(userId, { enabled: isReady && !!userId })
   useNotificationRealtime(userId, isReady && !!userId)
 

@@ -6,7 +6,7 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 
-import { useEventLayoutCalculator as usePlanLayoutCalculator } from './usePlanLayoutCalculator'
+import { usePlanLayoutCalculator, type PlanLayout } from './usePlanLayoutCalculator'
 
 const PLAN_PADDING = 2 // プラン間のパディング
 const MIN_PLAN_HEIGHT = 20 // 最小プラン高さ
@@ -65,56 +65,45 @@ export function useViewPlans({ date, plans }: UseViewPlansOptions): UseViewPlans
   const planLayouts = usePlanLayoutCalculator(convertedPlans, { notifyConflicts: true })
 
   // レイアウト情報をPlanPositionに変換
-  const planPositions = useMemo(() => {
-    return planLayouts.map(
-      (
-        layout: {
-          event: CalendarPlan & { start: Date; end: Date }
-          left: number
-          width: number
-          column: number
-          totalColumns: number
-        },
-        index: number
-      ) => {
-        const startDate = new Date(layout.event.start)
-        const endDate = new Date(layout.event.end)
+  const planPositions = useMemo((): PlanPosition[] => {
+    return planLayouts.map((layout: PlanLayout, index: number) => {
+      const startDate = new Date(layout.plan.start)
+      const endDate = new Date(layout.plan.end)
 
-        const startHour = startDate.getHours() + startDate.getMinutes() / 60
-        const endHour = endDate.getHours() + endDate.getMinutes() / 60
-        const duration = Math.max(endHour - startHour, 0.25) // 最小15分
+      const startHour = startDate.getHours() + startDate.getMinutes() / 60
+      const endHour = endDate.getHours() + endDate.getMinutes() / 60
+      const duration = Math.max(endHour - startHour, 0.25) // 最小15分
 
-        // 位置計算
-        const top = startHour * HOUR_HEIGHT
-        const height = Math.max(duration * HOUR_HEIGHT - PLAN_PADDING, MIN_PLAN_HEIGHT)
+      // 位置計算
+      const top = startHour * HOUR_HEIGHT
+      const height = Math.max(duration * HOUR_HEIGHT - PLAN_PADDING, MIN_PLAN_HEIGHT)
 
-        console.log('🎨 プラン配置:', {
-          タイトル: layout.event.title,
-          カラム: layout.column,
-          総カラム数: layout.totalColumns,
-          幅: layout.width,
-          左位置: layout.left,
-          top,
-          height,
-        })
+      console.log('🎨 プラン配置:', {
+        タイトル: layout.plan.title,
+        カラム: layout.column,
+        総カラム数: layout.totalColumns,
+        幅: layout.width,
+        左位置: layout.left,
+        top,
+        height,
+      })
 
-        return {
-          plan: layout.event,
-          top,
-          height,
-          left: layout.left,
-          width: layout.width,
-          zIndex: 10 + index,
-          column: layout.column,
-          totalColumns: layout.totalColumns,
-          opacity: layout.totalColumns > 1 ? 0.95 : 1.0,
-        }
+      return {
+        plan: layout.plan as CalendarPlan,
+        top,
+        height,
+        left: layout.left,
+        width: layout.width,
+        zIndex: 10 + index,
+        column: layout.column,
+        totalColumns: layout.totalColumns,
+        opacity: layout.totalColumns > 1 ? 0.95 : 1.0,
       }
-    )
+    })
   }, [planLayouts])
 
   const maxConcurrentPlans = useMemo(() => {
-    return Math.max(1, ...planLayouts.map((layout: { totalColumns: number }) => layout.totalColumns))
+    return Math.max(1, ...planLayouts.map((layout: PlanLayout) => layout.totalColumns))
   }, [planLayouts])
 
   return {

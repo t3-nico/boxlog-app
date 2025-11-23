@@ -34,7 +34,7 @@ interface TicketKanbanBoardProps {
 }
 
 /**
- * plan/Session用Kanbanボード
+ * Plan/Session用Kanbanボード
  *
  * InboxItemをステータスごとに3カラムに分類して表示
  */
@@ -43,7 +43,7 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
   const { updatePlan } = usePlanMutations()
   const { isStatusVisible } = useBoardStatusFilterStore()
 
-  // planデータをカラムごとに分類
+  // Planデータをカラムごとに分類
   const columns = {
     backlog: items.filter((item) => item.status === 'backlog'),
     ready: items.filter((item) => item.status === 'ready'),
@@ -372,7 +372,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top">
-                <p>新規チケットを追加</p>
+                <p>新規プランを追加</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

@@ -13,14 +13,14 @@ ALTER TABLE IF EXISTS tickets RENAME TO plans;
 -- Step 2: カラム名の変更
 -- =====================================================
 
--- ticket_number を plan_number にリネーム
+-- plan_number を plan_number にリネーム
 ALTER TABLE plans RENAME COLUMN ticket_number TO plan_number;
 
 -- =====================================================
 -- Step 3: シーケンスの名前変更
 -- =====================================================
 
--- ticket_number のシーケンスがあれば plan_number に変更
+-- plan_number のシーケンスがあれば plan_number に変更
 DO $$
 BEGIN
   IF EXISTS (
