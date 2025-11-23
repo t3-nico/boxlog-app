@@ -56,7 +56,7 @@ export function BulkActionsToolbar() {
         data: { status },
       })
 
-      toast.success(`${selectedIds.length}件のチケットのステータスを変更しました`)
+      toast.success(`${selectedIds.length}件のプランのステータスを変更しました`)
       clearSelection()
     } catch (error) {
       toast.error('ステータスの変更に失敗しました')
@@ -81,7 +81,7 @@ export function BulkActionsToolbar() {
         data: { status: 'done' }, // アーカイブ = 完了ステータスに変更
       })
 
-      toast.success(`${selectedIds.length}件のチケットをアーカイブしました`)
+      toast.success(`${selectedIds.length}件のプランをアーカイブしました`)
       clearSelection()
     } catch (error) {
       toast.error('アーカイブに失敗しました')
@@ -94,7 +94,7 @@ export function BulkActionsToolbar() {
   // 削除ハンドラー
   const handleDelete = async () => {
     // 確認ダイアログ
-    if (!window.confirm(`${selectedCount}件のチケットを削除しますか？この操作は取り消せません。`)) {
+    if (!window.confirm(`${selectedCount}件のプランを削除しますか？この操作は取り消せません。`)) {
       return
     }
 
@@ -105,7 +105,7 @@ export function BulkActionsToolbar() {
         ids: selectedIds,
       })
 
-      toast.success(`${selectedIds.length}件のチケットを削除しました`)
+      toast.success(`${selectedIds.length}件のプランを削除しました`)
       clearSelection()
     } catch (error) {
       toast.error('削除に失敗しました')

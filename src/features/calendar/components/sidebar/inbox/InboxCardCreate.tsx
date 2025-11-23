@@ -9,7 +9,7 @@ interface InboxCardCreateProps {
 /**
  * InboxCardCreate - Calendar Sidebar Inbox用の新規作成ラッパー
  *
- * PlanQuickCreateを使用してbacklogステータスのチケットを作成
+ * PlanQuickCreateを使用してbacklogステータスのプランを作成
  */
 export function InboxCardCreate({ isCreating, onStartCreate, onFinishCreate }: InboxCardCreateProps) {
   return (

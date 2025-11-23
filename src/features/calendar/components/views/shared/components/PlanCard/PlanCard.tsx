@@ -1,6 +1,6 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
- * チケット表示カードコンポーネント
+ * プラン表示カードコンポーネント
  */
 
 'use client'
@@ -35,7 +35,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   const { t } = useI18n()
   const [isHovered, setIsHovered] = useState(false)
 
-  // すべてのチケットは時間指定チケット
+  // すべてのプランは時間指定プラン
 
   // カレンダーテーマのscheduledカラーを使用
   const scheduledColors = calendarColors.event.scheduled

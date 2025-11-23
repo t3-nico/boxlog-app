@@ -18,7 +18,7 @@ export { CurrentTimeLine as SimpleCurrentTimeLine } from '../../CurrentTimeLine'
 export { CurrentTimeLine, CurrentTimeLineForColumn } from './grid/CurrentTimeLine'
 
 // ===== UIコンポーネント =====
-// planCard - チケット表示（EventBlock から名称変更）
+// planCard - プラン表示（EventBlock から名称変更）
 export type * from './components/PlanCard'
 export { EventBlock, EventContent, planCard, planCardContent } from './components/PlanCard'
 
@@ -52,7 +52,7 @@ export { useIsToday } from './hooks/useIsToday'
 export { usePlanLayoutCalculator } from './hooks/usePlanLayoutCalculator'
 export type { PlanLayout } from './hooks/usePlanLayoutCalculator'
 export { useEventPosition, usePositionedEvents } from './hooks/usePlanPosition'
-export { useEventStyles } from './hooks/usePlanStyles'
+export { usePlanStyles } from './hooks/usePlanStyles'
 export { useBreakpoint, useResponsiveHourHeight } from './hooks/useResponsiveHourHeight'
 export { useScrollSync } from './hooks/useScrollSync'
 export { useTimeCalculation } from './hooks/useTimeCalculation'

@@ -100,9 +100,3 @@ export function safeEventToTimedEvent(event: Partial<Event>): TimedEvent | null 
 export function safePlansToTimedPlans(plans: (CalendarPlan | Partial<CalendarPlan>)[]): TimedPlan[] {
   return plans.map(safePlanToTimedPlan).filter((plan): plan is TimedPlan => plan !== null)
 }
-
-// 後方互換性のためのエイリアス
-/** @deprecated Use safePlansToTimedPlans instead */
-export function safeEventsToTimedEvents(events: (Event | Partial<Event>)[]): TimedEvent[] {
-  return safePlansToTimedPlans(events)
-}

@@ -9,12 +9,12 @@ export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
 
   switch (activity.action_type) {
     case 'created':
-      message = 'チケットを作成'
+      message = 'プランを作成'
       icon = 'create'
       break
 
     case 'updated':
-      message = 'チケットを更新'
+      message = 'プランを更新'
       icon = 'update'
       break
 
@@ -74,7 +74,7 @@ export function formatActivity(activity: PlanActivity): PlanActivityDisplay {
       break
 
     case 'deleted':
-      message = 'チケットを削除'
+      message = 'プランを削除'
       icon = 'delete'
       break
 

@@ -27,8 +27,8 @@ import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
 import { useCalendarContextMenu } from '../hooks/useCalendarContextMenu'
 import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard'
-import { useEventContextActions } from '../hooks/useEventContextActions'
 import { useEventOperations } from '../hooks/useEventOperations'
+import { usePlanContextActions } from '../hooks/usePlanContextActions'
 import { useWeekendNavigation } from '../hooks/useWeekendNavigation'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { calculateViewDateRange } from '../lib/view-helpers'
@@ -115,8 +115,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const { contextMenuEvent, contextMenuPosition, handleEventContextMenu, handleCloseContextMenu } =
     useCalendarContextMenu()
 
-  // イベントコンテキストアクション
-  const { handleDeleteEvent, handleEditEvent, handleDuplicateEvent, handleViewDetails } = useEventContextActions()
+  // プランコンテキストアクション
+  const { handleDeletePlan, handleEditPlan, handleDuplicatePlan, handleViewDetails } = usePlanContextActions()
 
   // イベント操作（CRUD）をフック化
   const { handleEventDelete: deleteEvent, handleEventRestore, handleUpdateEvent } = useEventOperations()
@@ -307,7 +307,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // イベント関連のハンドラー
   const handleEventClick = useCallback(
     (event: CalendarEvent) => {
-      // チケットIDでplan Inspectorを開く
+      // プランIDでplan Inspectorを開く
       openInspector(event.id)
       logger.log('📋 Opening plan Inspector:', { planId: event.id, title: event.title })
     },
@@ -581,10 +581,10 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         endTime: endTime.toLocaleTimeString(),
       })
 
-      // チケットを作成してからInspectorで編集
+      // プランを作成してからInspectorで編集
       createPlan.mutate(
         {
-          title: '新規チケット',
+          title: '新規プラン',
           status: 'backlog',
           due_date: format(selection.date, 'yyyy-MM-dd'),
           start_time: startTime.toISOString(),
@@ -592,7 +592,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         },
         {
           onSuccess: (newplan) => {
-            // 作成されたチケットをInspectorで開く
+            // 作成されたプランをInspectorで開く
             openInspector(newplan.id)
             logger.log('✅ Created plan from drag selection:', {
               planId: newplan.id,
@@ -660,9 +660,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
           event={contextMenuEvent}
           position={contextMenuPosition}
           onClose={handleCloseContextMenu}
-          onEdit={handleEditEvent}
-          onDelete={handleDeleteEvent}
-          onDuplicate={handleDuplicateEvent}
+          onEdit={handleEditPlan}
+          onDelete={handleDeletePlan}
+          onDuplicate={handleDuplicatePlan}
           onViewDetails={handleViewDetails}
         />
       ) : null}

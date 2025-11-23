@@ -28,7 +28,7 @@ export type KanbanTag = z.infer<typeof kanbanTagSchema>
  */
 export const kanbanCardSchema = z.object({
   id: z.string().uuid(),
-  planNumber: z.string().optional(), // チケット番号（#123形式で表示）
+  planNumber: z.string().optional(), // プラン番号（#123形式で表示）
   title: z.string().min(1, 'タイトルは必須です').max(100, 'タイトルは100文字以内です'),
   description: z.string().max(1000, '説明は1000文字以内です').optional(),
   status: kanbanStatusSchema,

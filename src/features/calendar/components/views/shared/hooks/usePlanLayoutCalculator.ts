@@ -13,10 +13,6 @@ export interface PlanLayout {
   left: number // 左位置のパーセンテージ（例: 0, 50）
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use PlanLayout instead */
-export type EventLayout = PlanLayout
-
 // 重複グループの型定義
 interface OverlapGroup {
   plans: CalendarPlan[]

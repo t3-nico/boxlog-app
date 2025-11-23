@@ -12,8 +12,8 @@ import {
   calculatePreviewTime,
   CalendarDragSelection,
   EventBlock,
-  useEventStyles,
   useGlobalDragCursor,
+  usePlanStyles,
   useTimeCalculation,
 } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
@@ -113,7 +113,7 @@ export const TwoWeekContent = ({
     })
   }, [events])
 
-  const eventStyles = useEventStyles(dayEventPositions)
+  const eventStyles = usePlanStyles(dayEventPositions)
 
   // 空白クリックハンドラー
   const handleEmptyClick = useCallback(

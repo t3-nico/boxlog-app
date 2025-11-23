@@ -2,20 +2,20 @@
  * plan Realtime購読フック
  *
  * @description
- * チケットのDB変更をリアルタイムで検知し、
+ * プランのDB変更をリアルタイムで検知し、
  * TanStack Queryのキャッシュを自動更新する。
  *
  * 対象テーブル: plans
  *
  * 検知イベント:
- * - INSERT: 新規チケット作成
- * - UPDATE: チケット更新（タイトル、ステータス、タグ等）
- * - DELETE: チケット削除
+ * - INSERT: 新規プラン作成
+ * - UPDATE: プラン更新（タイトル、ステータス、タグ等）
+ * - DELETE: プラン削除
  *
  * 使用箇所:
  * - Board View（ボードビュー）
  * - Table View（テーブルビュー）
- * - plan Inspector（チケット詳細）
+ * - plan Inspector（プラン詳細）
  *
  * @see https://supabase.com/docs/guides/realtime/postgres-changes
  *
@@ -70,7 +70,7 @@ export function usePlanRealtime(userId: string | undefined, options: UsePlanReal
       // undefined を渡すことで、useplans({}) と useplans(undefined) の両方を無効化
       void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
 
-      // 個別チケットのキャッシュも無効化
+      // 個別プランのキャッシュも無効化
       if (newRecord?.id) {
         void utils.plans.getById.invalidate({ id: newRecord.id })
       } else if (oldRecord?.id) {

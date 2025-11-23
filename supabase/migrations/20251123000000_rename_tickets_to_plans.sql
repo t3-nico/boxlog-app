@@ -35,16 +35,16 @@ $$;
 -- Step 4: 関連テーブルの変更
 -- =====================================================
 
--- ticket_tags テーブルを plan_tags にリネーム
+-- plan_tags テーブルを plan_tags にリネーム
 ALTER TABLE IF EXISTS ticket_tags RENAME TO plan_tags;
 
--- ticket_tags の ticket_id カラムを plan_id にリネーム
+-- plan_tags の plan_id カラムを plan_id にリネーム
 ALTER TABLE plan_tags RENAME COLUMN ticket_id TO plan_id;
 
--- ticket_activities テーブルを plan_activities にリネーム
+-- plan_activities テーブルを plan_activities にリネーム
 ALTER TABLE IF EXISTS ticket_activities RENAME TO plan_activities;
 
--- ticket_activities の ticket_id カラムを plan_id にリネーム
+-- plan_activities の plan_id カラムを plan_id にリネーム
 ALTER TABLE plan_activities RENAME COLUMN ticket_id TO plan_id;
 
 -- =====================================================
@@ -86,7 +86,7 @@ ALTER TABLE plan_activities RENAME COLUMN ticket_id TO plan_id;
 DO $$
 BEGIN
   RAISE NOTICE 'Migration completed successfully: tickets → plans';
-  RAISE NOTICE 'Tables renamed: tickets → plans, ticket_tags → plan_tags, ticket_activities → plan_activities';
-  RAISE NOTICE 'Columns renamed: ticket_number → plan_number, ticket_id → plan_id';
+  RAISE NOTICE 'Tables renamed: tickets → plans, plan_tags → plan_tags, plan_activities → plan_activities';
+  RAISE NOTICE 'Columns renamed: plan_number → plan_number, plan_id → plan_id';
 END
 $$;

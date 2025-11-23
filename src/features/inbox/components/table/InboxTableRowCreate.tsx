@@ -17,11 +17,11 @@ export interface InboxTableRowCreateHandle {
 }
 
 /**
- * Notionスタイルの新規チケット作成行
+ * Notionスタイルの新規プラン作成行
  *
- * クリックで即座に新しいチケットを作成し、タイトル入力状態にする
+ * クリックで即座に新しいプランを作成し、タイトル入力状態にする
  * - Enterで確定（タイトルが空の場合は削除）
- * - Escapeでキャンセル（作成したチケットを削除）
+ * - Escapeでキャンセル（作成したプランを削除）
  * - フォーカスアウトで確定
  *
  * @example
@@ -53,15 +53,15 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((props,
     startCreate: handleStartCreate,
   }))
 
-  // Notionスタイル：クリックで即座にチケットを作成してタイトル入力状態にする
+  // Notionスタイル：クリックで即座にプランを作成してタイトル入力状態にする
   const handleStartCreate = async () => {
     if (isCreating) return
 
     setIsCreating(true)
     try {
-      // 空のチケットを作成（楽観的更新）
+      // 空のプランを作成（楽観的更新）
       const newplan = await createPlan.mutateAsync({
-        title: '無題のチケット',
+        title: '無題のプラン',
         status: 'backlog',
       })
 
@@ -135,14 +135,14 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((props,
               }
             }}
             onBlur={handleSaveTitle}
-            placeholder="チケットのタイトルを入力..."
+            placeholder="プランのタイトルを入力..."
             className="h-8 border-none px-0 shadow-none focus-visible:ring-0"
             onClick={(e) => e.stopPropagation()}
           />
         ) : (
           <div className="text-muted-foreground flex items-center gap-2">
             <Plus className="size-4" />
-            <span className="text-sm">新しいチケット</span>
+            <span className="text-sm">新しいプラン</span>
           </div>
         )}
       </TableCell>

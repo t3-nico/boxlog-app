@@ -2,15 +2,15 @@
  * Calendar Realtime購読フック
  *
  * @description
- * カレンダーイベント（チケット）のDB変更をリアルタイムで検知し、
+ * カレンダーイベント（プラン）のDB変更をリアルタイムで検知し、
  * TanStack Queryのキャッシュを自動更新する。
  *
- * 対象テーブル: plans（カレンダーで表示されるチケット）
+ * 対象テーブル: plans（カレンダーで表示されるプラン）
  *
  * 検知イベント:
- * - INSERT: 新規チケット作成
- * - UPDATE: チケット更新（日時変更、ステータス変更等）
- * - DELETE: チケット削除
+ * - INSERT: 新規プラン作成
+ * - UPDATE: プラン更新（日時変更、ステータス変更等）
+ * - DELETE: プラン削除
  *
  * @see https://supabase.com/docs/guides/realtime/postgres-changes
  *
@@ -57,7 +57,7 @@ export function useCalendarRealtime(userId: string | undefined, options: UseCale
       // undefined を渡すことで、useplans({}) と useplans(undefined) の両方を無効化
       void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
 
-      // 個別チケットのキャッシュも無効化（Inspector等で使用）
+      // 個別プランのキャッシュも無効化（Inspector等で使用）
       if (newRecord?.id) {
         void utils.plans.getById.invalidate({ id: newRecord.id })
       } else if (oldRecord?.id) {

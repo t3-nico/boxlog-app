@@ -1,7 +1,7 @@
 import type { PlanStatus } from '../types/plan'
 
 /**
- * チケットステータス定数
+ * プランステータス定数
  */
 export const plan_STATUSES = {
   BACKLOG: 'backlog',

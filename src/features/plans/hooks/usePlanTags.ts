@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react'
 import { api } from '@/lib/trpc'
 
 /**
- * チケット・セッションとタグの関連付け管理フック
+ * プラン・セッションとタグの関連付け管理フック
  * tRPC API統合済み
  */
 export function usePlanTags() {
@@ -11,24 +11,24 @@ export function usePlanTags() {
   const [error, setError] = useState<string | null>(null)
   const utils = api.useUtils()
 
-  // tRPC Mutation統合（チケットタグ）
+  // tRPC Mutation統合（プランタグ）
   const addplanTagMutation = api.plans.addTag.useMutation({
     onSuccess: () => {
-      // チケットデータを再取得
+      // プランデータを再取得
       utils.plans.getById.invalidate()
       utils.plans.list.invalidate()
     },
   })
   const removeplanTagMutation = api.plans.removeTag.useMutation({
     onSuccess: () => {
-      // チケットデータを再取得
+      // プランデータを再取得
       utils.plans.getById.invalidate()
       utils.plans.list.invalidate()
     },
   })
 
   /**
-   * チケットにタグを追加
+   * プランにタグを追加
    */
   const addplanTag = useCallback(
     async (planId: string, tagId: string): Promise<boolean> => {
@@ -51,7 +51,7 @@ export function usePlanTags() {
   )
 
   /**
-   * チケットからタグを削除
+   * プランからタグを削除
    */
   const removeplanTag = useCallback(
     async (planId: string, tagId: string): Promise<boolean> => {
@@ -74,7 +74,7 @@ export function usePlanTags() {
   )
 
   /**
-   * チケットのタグを一括設定
+   * プランのタグを一括設定
    * 注: Phase 4以降でtRPC APIに一括設定エンドポイントを追加予定
    * 現在はaddplanTag/removeplanTagを使用してください
    */

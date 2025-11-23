@@ -1,7 +1,7 @@
 import type { PlanStatus } from '../types/plan'
 
 /**
- * チケット番号のフォーマット
+ * プラン番号のフォーマット
  * @example formatplanNumber("TKT-20241030-001") => "#TKT-001"
  */
 export function formatplanNumber(planNumber: string): string {
@@ -14,7 +14,7 @@ export function formatplanNumber(planNumber: string): string {
 }
 
 /**
- * チケットステータスの表示名
+ * プランステータスの表示名
  */
 export function formatplanStatus(status: PlanStatus): string {
   const statusMap: Record<PlanStatus, string> = {

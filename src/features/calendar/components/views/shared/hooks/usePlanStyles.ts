@@ -29,9 +29,3 @@ export function usePlanStyles(planPositions: PlanPosition[]): Record<string, CSS
     return styles
   }, [planPositions])
 }
-
-// 後方互換性のためのエイリアス
-/** @deprecated Use usePlanStyles instead */
-export function useEventStyles(planPositions: PlanPosition[]): Record<string, CSSProperties> {
-  return usePlanStyles(planPositions)
-}

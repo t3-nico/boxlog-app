@@ -10,21 +10,21 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 
-export function useEventContextActions() {
+export function usePlanContextActions() {
   const { t } = useI18n()
   const { openInspector } = usePlanInspectorStore()
   const calendarToast = useCalendarToast()
   const { deletePlan } = usePlanMutations()
 
-  const handleDeleteEvent = useCallback(
+  const handleDeletePlan = useCallback(
     async (event: CalendarEvent) => {
       // 削除確認ダイアログ
-      if (!confirm('このチケットを削除しますか？')) {
+      if (!confirm('このプランを削除しますか？')) {
         return
       }
 
       try {
-        // チケットを削除
+        // プランを削除
         await deletePlan.mutateAsync({ id: event.id })
       } catch (err) {
         console.error('Failed to delete event:', err)
@@ -33,7 +33,7 @@ export function useEventContextActions() {
     [deletePlan]
   )
 
-  const handleEditEvent = useCallback(
+  const handleEditPlan = useCallback(
     (event: CalendarEvent) => {
       // planInspectorを開いて編集モードにする
       openInspector(event.id)
@@ -155,7 +155,7 @@ export function useEventContextActions() {
     [calendarToast, createToastEventData, createEditModalData]
   )
 
-  const handleDuplicateEvent = useCallback(
+  const handleDuplicatePlan = useCallback(
     async (_event: CalendarEvent) => {
       // TODO(#621): Events削除後、plans/Sessions統合後に再実装
       console.log('TODO: Sessions統合後に実装')
@@ -189,9 +189,9 @@ export function useEventContextActions() {
   )
 
   return {
-    handleDeleteEvent,
-    handleEditEvent,
-    handleDuplicateEvent,
+    handleDeletePlan,
+    handleEditPlan,
+    handleDuplicatePlan,
     handleViewDetails,
   }
 }

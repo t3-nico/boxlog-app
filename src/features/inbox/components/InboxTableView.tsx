@@ -42,7 +42,7 @@ const columnIcons = {
 /**
  * Inbox Table View コンポーネント
  *
- * テーブル形式でチケットを表示
+ * テーブル形式でプランを表示
  * - useInboxData でデータ取得
  * - useInboxFilterStore でフィルタ管理
  * - 行クリックで Inspector 表示

@@ -1,6 +1,6 @@
 // @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 /**
- * チケットカードの中身（タイトル、時間等）のコンポーネント
+ * プランカードの中身（タイトル、時間等）のコンポーネント
  */
 
 'use client'
@@ -55,7 +55,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
 }) {
   const { t } = useI18n()
 
-  // チケットの開始・終了時刻をDateオブジェクトに変換
+  // プランの開始・終了時刻をDateオブジェクトに変換
   const planStart = parseplanStartDate(event)
   const planEnd = parseplanEndDate(event)
 

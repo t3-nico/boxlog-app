@@ -47,7 +47,7 @@ export function InboxTableEmptyState({ columnCount, totalItems }: InboxTableEmpt
       return {
         icon: FileSearch,
         title: '検索結果が見つかりませんでした',
-        description: `"${search}" に一致するチケットがありません。別のキーワードで検索してください。`,
+        description: `"${search}" に一致するプランがありません。別のキーワードで検索してください。`,
         action: (
           <Button onClick={reset} variant="outline">
             <Filter className="mr-2 size-4" />
@@ -73,8 +73,8 @@ export function InboxTableEmptyState({ columnCount, totalItems }: InboxTableEmpt
 
     return {
       icon: Inbox,
-      title: 'まだチケットがありません',
-      description: '新しいチケットを作成して、タスク管理を始めましょう。',
+      title: 'まだプランがありません',
+      description: '新しいプランを作成して、タスク管理を始めましょう。',
       action: (
         <Button onClick={handleCreate}>
           <Plus className="mr-2 size-4" />

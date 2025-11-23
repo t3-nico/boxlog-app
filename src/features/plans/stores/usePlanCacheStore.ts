@@ -8,7 +8,7 @@ import { create } from 'zustand'
  * 用途:
  * - recurrence_type / recurrence_rule の即座の同期
  * - Card、Inspector、Tableが同時に開いている場合の状態管理
- * - mutation実行中フラグ管理（Realtime二重更新防止）
+ * - mutation実行中フラグ管理（Realtimeプラン二重更新防止）
  */
 
 interface planCache {
@@ -17,7 +17,7 @@ interface planCache {
 }
 
 interface planCacheState {
-  // チケットID → キャッシュデータのマップ
+  // プランID → キャッシュデータのマップ
   cache: Record<string, planCache>
 
   // キャッシュ更新

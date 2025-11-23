@@ -16,7 +16,7 @@ import { DateTimePopoverContent } from './DateTimePopoverContent'
 import { PlanTagSelectDialogEnhanced } from './PlanTagSelectDialogEnhanced'
 
 interface PlanQuickCreateProps {
-  /** チケットのステータス */
+  /** プランのステータス */
   status: PlanStatus
   /** 作成中フラグ */
   isCreating: boolean
@@ -27,7 +27,7 @@ interface PlanQuickCreateProps {
 }
 
 /**
- * PlanQuickCreate - インライン新規チケット作成コンポーネント
+ * PlanQuickCreate - インライン新規プラン作成コンポーネント
  *
  * **機能**:
  * - ボタンクリックで新規作成モード開始
@@ -104,7 +104,7 @@ export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCre
     onFinishCreate()
   }
 
-  // チケット作成
+  // プラン作成
   const handleCreate = async () => {
     if (!title.trim()) return
 

@@ -82,7 +82,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
 
-  // タグごとのチケット数を取得
+  // タグごとのプラン数を取得
   const { data: tagplanCounts = {} } = api.plans.getTagPlanCounts.useQuery()
 
   // アクティブなタグ数を計算
