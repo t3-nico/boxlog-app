@@ -4,16 +4,16 @@
 
 import React, { useCallback } from 'react'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 import {
-  calculateEventGhostStyle,
+  calculatePlanGhostStyle,
   calculatePreviewTime,
   CalendarDragSelection,
-  EventBlock,
-  useEventStyles,
+  PlanBlock,
   useGlobalDragCursor,
+  usePlanStyles,
   useTimeCalculation,
 } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
@@ -21,12 +21,12 @@ import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 
 interface WeekContentProps {
   date: Date
-  events: CalendarEvent[]
-  eventPositions: unknown[] // WeekEventPosition[]
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
+  plans: CalendarPlan[]
+  planPositions: unknown[] // WeekPlanPosition[]
+  onPlanClick?: (plan: CalendarPlan) => void
+  onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onEventUpdate?: (event: CalendarEvent) => void
+  onPlanUpdate?: (plan: CalendarPlan) => void
   onTimeRangeSelect?: (selection: import('../../shared').DateTimeSelection) => void
   className?: string
   dayIndex: number // 週内での日付インデックス（0-6）
@@ -35,43 +35,43 @@ interface WeekContentProps {
 
 export const WeekContent = ({
   date,
-  events,
-  eventPositions,
-  onEventClick,
-  onEventContextMenu,
+  plans,
+  planPositions,
+  onPlanClick,
+  onPlanContextMenu,
   onEmptyClick,
-  onEventUpdate,
+  onPlanUpdate,
   onTimeRangeSelect,
   className,
   dayIndex,
   displayDates,
 }: WeekContentProps) => {
-  // ドラッグ&ドロップ機能用にonEventUpdateを変換
-  const handleEventUpdate = useCallback(
-    async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
-      if (!onEventUpdate) return
+  // ドラッグ&ドロップ機能用にonPlanUpdateを変換
+  const handlePlanUpdate = useCallback(
+    async (planId: string, updates: { startTime: Date; endTime: Date }) => {
+      if (!onPlanUpdate) return
 
-      console.log('🔧 WeekContent: イベント更新要求:', {
-        eventId,
+      console.log('🔧 WeekContent: プラン更新要求:', {
+        planId,
         startTime: updates.startTime.toISOString(),
         endTime: updates.endTime.toISOString(),
       })
 
-      // handleUpdateEvent形式で呼び出し
-      await onEventUpdate(eventId, {
+      // handleUpdatePlan形式で呼び出し
+      await onPlanUpdate(planId, {
         startTime: updates.startTime,
         endTime: updates.endTime,
       })
     },
-    [onEventUpdate]
+    [onPlanUpdate]
   )
 
   // ドラッグ&ドロップ機能（日付間移動対応）
   const { dragState, handlers } = useDragAndDrop({
-    onEventUpdate: handleEventUpdate,
-    onEventClick,
+    onPlanUpdate: handlePlanUpdate,
+    onPlanClick,
     date,
-    events,
+    plans,
     displayDates,
     viewMode: 'week',
   })
@@ -82,13 +82,13 @@ export const WeekContent = ({
   // グローバルドラッグカーソー管理（共通化）
   useGlobalDragCursor(dragState, handlers)
 
-  // この日のイベント位置を統一方式で変換
-  const dayEventPositions = React.useMemo(() => {
-    // eventPositionsから該当dayIndexのイベントを抽出（統一フィルタリング済み）
-    return eventPositions
+  // この日のプラン位置を統一方式で変換
+  const dayPlanPositions = React.useMemo(() => {
+    // planPositionsから該当dayIndexのプランを抽出（統一フィルタリング済み）
+    return planPositions
       .filter((pos) => pos.dayIndex === dayIndex)
       .map((pos) => ({
-        event: pos.event,
+        plan: pos.plan,
         top: pos.top,
         height: pos.height,
         left: 2, // 列内での位置（px）
@@ -96,9 +96,9 @@ export const WeekContent = ({
         zIndex: pos.zIndex,
         opacity: 1.0,
       }))
-  }, [eventPositions, dayIndex])
+  }, [planPositions, dayIndex])
 
-  const eventStyles = useEventStyles(dayEventPositions)
+  const planStyles = usePlanStyles(dayPlanPositions)
 
   // 空白クリックハンドラー
   const _handleEmptyClick = useCallback(
@@ -111,29 +111,29 @@ export const WeekContent = ({
     [date, onEmptyClick, calculateTimeFromEvent]
   )
 
-  // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
-  const _handleEventClick = useCallback(
-    (event: CalendarEvent) => {
+  // プランクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
+  const _handlePlanClick = useCallback(
+    (plan: CalendarPlan) => {
       // ドラッグ・リサイズ操作中のクリックは無視
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
 
-      onEventClick?.(event)
+      onPlanClick?.(plan)
     },
-    [onEventClick, dragState.isDragging, dragState.isResizing]
+    [onPlanClick, dragState.isDragging, dragState.isResizing]
   )
 
-  // イベント右クリックハンドラー
-  const handleEventContextMenu = useCallback(
-    (event: CalendarEvent, mouseEvent: React.MouseEvent) => {
+  // プラン右クリックハンドラー
+  const handlePlanContextMenu = useCallback(
+    (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
-      onEventContextMenu?.(event, mouseEvent)
+      onPlanContextMenu?.(plan, mouseEvent)
     },
-    [onEventContextMenu, dragState.isDragging, dragState.isResizing]
+    [onPlanContextMenu, dragState.isDragging, dragState.isResizing]
   )
 
   // 時間グリッドの生成（DayViewと同じパターン）
@@ -171,37 +171,37 @@ export const WeekContent = ({
         </div>
       </CalendarDragSelection>
 
-      {/* イベント表示エリア */}
+      {/* プラン表示エリア */}
       <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
-        {/* 通常のイベント表示 */}
-        {events.map((event) => {
-          const style = eventStyles[event.id]
+        {/* 通常のプラン表示 */}
+        {plans.map((plan) => {
+          const style = planStyles[plan.id]
           if (!style) return null
 
-          const isDragging = dragState.draggedEventId === event.id && dragState.isDragging
+          const isDragging = dragState.draggedPlanId === plan.id && dragState.isDragging
 
-          // ドラッグ中のイベント表示制御：元のカラムで水平移動表示
+          // ドラッグ中のプラン表示制御：元のカラムで水平移動表示
           // （非表示にせず、水平位置を調整して表示継続）
-          const isResizingThis = dragState.isResizing && dragState.draggedEventId === event.id
+          const isResizingThis = dragState.isResizing && dragState.draggedPlanId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
 
           // ゴースト表示スタイル（共通化）
-          const adjustedStyle = calculateEventGhostStyle(style, event.id, dragState)
+          const adjustedStyle = calculatePlanGhostStyle(style, plan.id, dragState)
 
           return (
-            <div key={event.id} style={adjustedStyle} className="pointer-events-none absolute" data-event-block="true">
-              {/* EventBlockの内容部分のみクリック可能 */}
+            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-plan-block="true">
+              {/* PlanBlockの内容部分のみクリック可能 */}
               <div
                 className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
                 role="button"
                 tabIndex={0}
-                aria-label={`Drag event: ${event.title}`}
+                aria-label={`Drag plan: ${plan.title}`}
                 onMouseDown={(e) => {
                   // 左クリックのみドラッグ開始
                   if (e.button === 0) {
                     handlers.handleMouseDown(
-                      event.id,
+                      plan.id,
                       e,
                       {
                         top: currentTop,
@@ -220,8 +220,8 @@ export const WeekContent = ({
                   }
                 }}
               >
-                <EventBlock
-                  event={event}
+                <PlanBlock
+                  plan={plan}
                   position={{
                     top: 0,
                     left: 0,
@@ -230,9 +230,9 @@ export const WeekContent = ({
                       isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
-                  onContextMenu={(event, e) => handleEventContextMenu(event, e)}
-                  onResizeStart={(event, direction, e, _position) =>
-                    handlers.handleResizeStart(event.id, direction, e, {
+                  onContextMenu={(plan, e) => handlePlanContextMenu(plan, e)}
+                  onResizeStart={(plan, direction, e, _position) =>
+                    handlers.handleResizeStart(plan.id, direction, e, {
                       top: currentTop,
                       left: 0,
                       width: 100,
@@ -241,7 +241,7 @@ export const WeekContent = ({
                   }
                   isDragging={isDragging}
                   isResizing={isResizingThis}
-                  previewTime={calculatePreviewTime(event.id, dragState)}
+                  previewTime={calculatePreviewTime(plan.id, dragState)}
                   showTime={true}
                   showDuration={true}
                   variant="week"
@@ -252,26 +252,26 @@ export const WeekContent = ({
           )
         })}
 
-        {/* ドラッグ中のイベントを他の日付カラムで表示 */}
+        {/* ドラッグ中のプランを他の日付カラムで表示 */}
         {dragState.isDragging &&
-        dragState.draggedEventId &&
+        dragState.draggedPlanId &&
         dragState.targetDateIndex !== undefined &&
         dragState.targetDateIndex === dayIndex &&
-        !events.find((e) => e.id === dragState.draggedEventId) &&
+        !plans.find((p) => p.id === dragState.draggedPlanId) &&
         displayDates
           ? (() => {
-              // 週の全イベントからドラッグ中のイベントを探す
-              // displayDates配列を使って全日付のイベントを探索
-              const _draggedEvent: CalendarEvent | null = null
+              // 週の全プランからドラッグ中のプランを探す
+              // displayDates配列を使って全日付のプランを探索
+              const _draggedPlan: CalendarPlan | null = null
 
-              // 他のWeekContentインスタンスが保持しているイベントを探すのは困難
-              // そのため、親コンポーネントから渡されるevents配列から探す
-              // 現在はeventsには当日のイベントのみ含まれているため、
-              // WeekGridから全イベントを渡すよう修正が必要
+              // 他のWeekContentインスタンスが保持しているプランを探すのは困難
+              // そのため、親コンポーネントから渡されるplans配列から探す
+              // 現在はplansには当日のプランのみ含まれているため、
+              // WeekGridから全プランを渡すよう修正が必要
 
               // 一時的な解決策として、コンソールログで状況を確認
-              console.log('🔧 他日付カラムでのドラッグイベント表示試行:', {
-                draggedEventId: dragState.draggedEventId,
+              console.log('🔧 他日付カラムでのドラッグプラン表示試行:', {
+                draggedPlanId: dragState.draggedPlanId,
                 targetDateIndex: dragState.targetDateIndex,
                 currentDayIndex: dayIndex,
                 hasSnappedPosition: !!dragState.snappedPosition,

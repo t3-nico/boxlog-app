@@ -34,6 +34,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { usePlan } from '../../hooks/usePlan'
 import { usePlanActivities } from '../../hooks/usePlanActivities'
 import { usePlanMutations } from '../../hooks/usePlanMutations'
 import { usePlans } from '../../hooks/usePlans'
@@ -71,10 +72,10 @@ export function PlanInspector() {
   const { isOpen, planId, initialData, closeInspector, openInspector } = usePlanInspectorStore()
   const { setFocusedId } = useInboxFocusStore()
 
-  // Ticketデータ取得（タグ情報も含む）
-  const { data: ticketData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId })
-  // Type assertion: In practice ticketData is Plan | undefined (tRPC error handling is separate)
-  const ticket = (ticketData ?? null) as Plan | null
+  // Planデータ取得（タグ情報も含む）
+  const { data: planData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId })
+  // Type assertion: In practice planData is Plan | undefined (tRPC error handling is separate)
+  const plan = (planData ?? null) as Plan | null
 
   // 全チケットリスト取得（ナビゲーション用・リアルタイム性最適化済み）
   const { data: allPlans = [] } = usePlans()
@@ -95,15 +96,15 @@ export function PlanInspector() {
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const { addPlanTag, removePlanTag } = usePlanTags()
 
-  // チケットのタグ情報を selectedTagIds に反映
+  // プランのタグ情報を selectedTagIds に反映
   useEffect(() => {
-    if (ticketData && 'tags' in ticketData) {
-      const tagIds = (ticketData.tags as Array<{ id: string }>).map((tag) => tag.id)
+    if (planData && 'tags' in planData) {
+      const tagIds = (planData.tags as Array<{ id: string }>).map((tag) => tag.id)
       setSelectedTagIds(tagIds)
     } else {
       setSelectedTagIds([])
     }
-  }, [ticketData])
+  }, [planData])
 
   // Title欄のref（フォーカス制御用）
   const titleRef = useRef<HTMLSpanElement>(null)
@@ -111,13 +112,13 @@ export function PlanInspector() {
   // Description欄の初期高さ設定
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   useEffect(() => {
-    if (descriptionRef.current && ticket) {
+    if (descriptionRef.current && plan) {
       const textarea = descriptionRef.current
       textarea.style.height = 'auto'
       const newHeight = Math.min(textarea.scrollHeight, 96) // 96px = 6rem (4行分)
       textarea.style.height = `${newHeight}px`
     }
-  }, [ticket?.id, ticket?.description])
+  }, [plan?.id, plan?.description])
 
   // Inspectorの幅管理
   const [inspectorWidth, setInspectorWidth] = useState(540)
@@ -237,9 +238,9 @@ export function PlanInspector() {
 
   // 複製
   const handleDuplicate = () => {
-    if (!ticket) return
+    if (!plan) return
     // TODO: 複製ロジックを実装
-    console.log('Duplicate ticket:', ticket)
+    console.log('Duplicate plan:', plan)
   }
 
   // リンクをコピー
@@ -251,9 +252,9 @@ export function PlanInspector() {
 
   // テンプレートとして保存
   const handleSaveAsTemplate = () => {
-    if (!ticket) return
+    if (!plan) return
     // TODO: テンプレート保存ロジックを実装
-    console.log('Save as template:', ticket)
+    console.log('Save as template:', plan)
   }
 
   // デバウンスタイマー
@@ -275,10 +276,10 @@ export function PlanInspector() {
     }
   }, [isOpen])
 
-  // Ticketデータが読み込まれたら状態を初期化
+  // Planデータが読み込まれたら状態を初期化
   useEffect(() => {
-    // 既存チケット編集モード
-    if (ticket && 'id' in ticket) {
+    // 既存プラン編集モード
+    if (plan && 'id' in plan) {
       if (plan.due_date) {
         setSelectedDate(parseDateString(plan.due_date))
       } else {
@@ -300,7 +301,7 @@ export function PlanInspector() {
       }
 
       // reminder_minutes から UI表示用の文字列に変換
-      if ('reminder_minutes' in ticket && plan.reminder_minutes !== null) {
+      if ('reminder_minutes' in plan && plan.reminder_minutes !== null) {
         const minutes = plan.reminder_minutes
         const reminderMap: Record<number, string> = {
           0: '開始時刻',
@@ -316,7 +317,7 @@ export function PlanInspector() {
       }
     }
     // 新規作成モード（initialDataあり）
-    else if (!ticket && initialData) {
+    else if (!plan && initialData) {
       // start_time と end_time から日付と時刻を設定
       if (initialData.start_time) {
         const startDate = new Date(initialData.start_time)
@@ -334,14 +335,14 @@ export function PlanInspector() {
       }
     }
     // 新規作成モード（initialDataなし）
-    else if (!ticket && !initialData) {
+    else if (!plan && !initialData) {
       // フィールドをクリア
       setSelectedDate(undefined)
       setStartTime('')
       setEndTime('')
       setReminderType('')
     }
-  }, [ticket, initialData])
+  }, [plan, initialData])
 
   // Inspectorが開いたときにタイトルにフォーカス
   useEffect(() => {
@@ -455,9 +456,9 @@ export function PlanInspector() {
           <div className="flex h-full items-center justify-center">
             <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2" />
           </div>
-        ) : !ticket ? (
+        ) : !plan ? (
           <div className="flex h-full items-center justify-center">
-            <p className="text-muted-foreground">チケットが見つかりません</p>
+            <p className="text-muted-foreground">プランが見つかりません</p>
           </div>
         ) : (
           <>
@@ -654,13 +655,13 @@ export function PlanInspector() {
                           const recurrence_rule =
                             cache?.recurrence_rule !== undefined
                               ? cache.recurrence_rule
-                              : ticket && 'recurrence_rule' in ticket
+                              : plan && 'recurrence_rule' in plan
                                 ? plan.recurrence_rule
                                 : null
                           const recurrence_type =
                             cache?.recurrence_type !== undefined
                               ? cache.recurrence_type
-                              : ticket && 'recurrence_type' in ticket
+                              : plan && 'recurrence_type' in plan
                                 ? plan.recurrence_type
                                 : null
                           return recurrence_rule || (recurrence_type && recurrence_type !== 'none')
@@ -681,13 +682,13 @@ export function PlanInspector() {
                             const recurrence_rule =
                               cache?.recurrence_rule !== undefined
                                 ? cache.recurrence_rule
-                                : ticket && 'recurrence_rule' in ticket
+                                : plan && 'recurrence_rule' in plan
                                   ? plan.recurrence_rule
                                   : null
                             const recurrence_type =
                               cache?.recurrence_type !== undefined
                                 ? cache.recurrence_type
-                                : ticket && 'recurrence_type' in ticket
+                                : plan && 'recurrence_type' in plan
                                   ? plan.recurrence_type
                                   : null
 
