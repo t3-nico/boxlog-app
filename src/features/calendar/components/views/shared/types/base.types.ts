@@ -79,14 +79,14 @@ export interface BaseViewProps {
   showWeekends?: boolean
   className?: string
 
-  // Event handlers (完全に共通)
+  // Plan handlers (完全に共通)
   onTaskClick?: (task: Task) => void
-  onEventClick?: (event: CalendarPlan) => void
-  onEventContextMenu?: (event: CalendarPlan, mouseEvent: React.MouseEvent) => void
+  onEventClick?: (plan: CalendarPlan) => void
+  onEventContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
-  onUpdateEvent?: (event: CalendarPlan) => void
+  onUpdateEvent?: (plan: CalendarPlan) => void
   onDeleteEvent?: (eventId: string) => void
-  onRestoreEvent?: (event: CalendarPlan) => Promise<void>
+  onRestoreEvent?: (plan: CalendarPlan) => Promise<void>
   onEmptyClick?: (date: Date, time: string) => void
 
   // Task handlers (完全に共通)

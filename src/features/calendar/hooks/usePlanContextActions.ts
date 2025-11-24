@@ -17,7 +17,7 @@ export function usePlanContextActions() {
   const { deletePlan } = usePlanMutations()
 
   const handleDeletePlan = useCallback(
-    async (event: CalendarPlan) => {
+    async (plan: CalendarPlan) => {
       // 削除確認ダイアログ
       if (!confirm('このプランを削除しますか？')) {
         return
@@ -25,43 +25,43 @@ export function usePlanContextActions() {
 
       try {
         // プランを削除
-        await deletePlan.mutateAsync({ id: event.id })
+        await deletePlan.mutateAsync({ id: plan.id })
       } catch (err) {
-        console.error('Failed to delete event:', err)
+        console.error('Failed to delete plan:', err)
       }
     },
     [deletePlan]
   )
 
   const handleEditPlan = useCallback(
-    (event: CalendarPlan) => {
+    (plan: CalendarPlan) => {
       // planInspectorを開いて編集モードにする
-      openInspector(event.id)
+      openInspector(plan.id)
     },
     [openInspector]
   )
 
-  // イベントの日付データを正規化
-  const normalizeEventDates = (event: CalendarPlan) => {
-    const startDate = event.startDate || new Date()
-    const endDate = event.endDate || new Date()
+  // プランの日付データを正規化
+  const normalizePlanDates = (plan: CalendarPlan) => {
+    const startDate = plan.startDate || new Date()
+    const endDate = plan.endDate || new Date()
     return { startDate, endDate }
   }
 
-  // 複製イベントデータを作成
-  const createDuplicateEventData = (event: CalendarPlan, newStartDate: Date, newEndDate: Date) => ({
-    title: `${event.title} (コピー)`,
-    description: event.description,
+  // 複製プランデータを作成
+  const createDuplicatePlanData = (plan: CalendarPlan, newStartDate: Date, newEndDate: Date) => ({
+    title: `${plan.title} (コピー)`,
+    description: plan.description,
     startDate: newStartDate,
     endDate: newEndDate,
-    type: event.type || 'event',
-    status: event.status || 'planned',
-    priority: event.priority || 'necessary',
-    color: event.color,
-    location: event.location,
-    url: event.url,
-    reminders: event.reminders || [],
-    tagIds: event.tags?.map((tag) => tag.id) || [],
+    type: plan.type || 'event',
+    status: plan.status || 'planned',
+    priority: plan.priority || 'necessary',
+    color: plan.color,
+    location: plan.location,
+    url: plan.url,
+    reminders: plan.reminders || [],
+    tagIds: plan.tags?.map((tag) => tag.id) || [],
   })
 
   // Toast用のイベントデータを作成
@@ -109,44 +109,44 @@ export function usePlanContextActions() {
     []
   )
 
-  const logDuplicationStart = (event: CalendarPlan, startDate: Date, endDate: Date) => {
-    console.log('🔍 Duplicating event:', {
+  const logDuplicationStart = (plan: CalendarPlan, startDate: Date, endDate: Date) => {
+    console.log('🔍 Duplicating plan:', {
       original: {
-        title: event.title,
+        title: plan.title,
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
       },
     })
   }
 
-  const logNewEventDates = (newStartDate: Date, newEndDate: Date) => {
-    console.log('📅 New event dates:', {
+  const logNewPlanDates = (newStartDate: Date, newEndDate: Date) => {
+    console.log('📅 New plan dates:', {
       newStartDate: newStartDate.toISOString(),
       newEndDate: newEndDate.toISOString(),
     })
   }
 
-  const logDuplicationSuccess = (newEvent: CalendarPlan) => {
-    console.log('✅ Duplicated event created:', {
-      id: newEvent.id,
-      title: newEvent.title,
-      startDate: newEvent.startDate,
-      endDate: newEvent.endDate,
+  const logDuplicationSuccess = (newPlan: CalendarPlan) => {
+    console.log('✅ Duplicated plan created:', {
+      id: newPlan.id,
+      title: newPlan.title,
+      startDate: newPlan.startDate,
+      endDate: newPlan.endDate,
     })
   }
 
   const showDuplicationSuccess = useCallback(
-    (_newEvent: CalendarPlan) => {
+    (_newPlan: CalendarPlan) => {
       // TODO(#621): Events削除後、plans/Sessions統合後に再実装
       console.log('TODO: Sessions統合後に実装')
-      // const toastEventData = createToastEventData(newEvent)
-      // const editModalData = createEditModalData(newEvent)
+      // const toastEventData = createToastEventData(newPlan)
+      // const editModalData = createEditModalData(newPlan)
 
       // calendarToast.eventCreated(toastEventData, {
       //   viewAction: () => {
-      //     openEditModal(newEvent.id, editModalData, {
+      //     openEditModal(newPlan.id, editModalData, {
       //       source: 'duplicate',
-      //       date: newEvent.startDate,
+      //       date: newPlan.startDate,
       //       viewType: 'day',
       //     })
       //   },
@@ -156,34 +156,34 @@ export function usePlanContextActions() {
   )
 
   const handleDuplicatePlan = useCallback(
-    async (_event: CalendarPlan) => {
+    async (_plan: CalendarPlan) => {
       // TODO(#621): Events削除後、plans/Sessions統合後に再実装
       console.log('TODO: Sessions統合後に実装')
       // try {
-      //   const { startDate, endDate } = normalizeEventDates(event)
-      //   logDuplicationStart(event, startDate, endDate)
+      //   const { startDate, endDate } = normalizePlanDates(plan)
+      //   logDuplicationStart(plan, startDate, endDate)
       //
       //   const newStartDate = new Date(startDate)
       //   const newEndDate = new Date(endDate)
-      //   logNewEventDates(newStartDate, newEndDate)
+      //   logNewPlanDates(newStartDate, newEndDate)
       //
-      //   const duplicateData = createDuplicateEventData(event, newStartDate, newEndDate)
-      //   const newEvent = await createEvent(duplicateData)
-      //   logDuplicationSuccess(newEvent)
+      //   const duplicateData = createDuplicatePlanData(plan, newStartDate, newEndDate)
+      //   const newPlan = await createPlan(duplicateData)
+      //   logDuplicationSuccess(newPlan)
       //
-      //   showDuplicationSuccess(newEvent)
+      //   showDuplicationSuccess(newPlan)
       // } catch (err) {
-      //   console.error('❌ Failed to duplicate event:', err)
-      //   calendarToast.error(t('calendar.event.duplicateFailed'))
+      //   console.error('❌ Failed to duplicate plan:', err)
+      //   calendarToast.error(t('calendar.plan.duplicateFailed'))
       // }
     },
     [calendarToast, showDuplicationSuccess, t]
   )
 
   const handleViewDetails = useCallback(
-    (event: CalendarPlan) => {
+    (plan: CalendarPlan) => {
       // planInspectorを開いて詳細を表示
-      openInspector(event.id)
+      openInspector(plan.id)
     },
     [openInspector]
   )
