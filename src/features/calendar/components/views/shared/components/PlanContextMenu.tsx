@@ -9,21 +9,24 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
-interface EventContextMenuProps {
-  event: CalendarPlan
+interface PlanContextMenuProps {
+  plan: CalendarPlan
   position: { x: number; y: number }
   onClose: () => void
-  onEdit?: (event: CalendarPlan) => void
-  onDelete?: (event: CalendarPlan) => void
-  onDuplicate?: (event: CalendarPlan) => void
-  onOpen?: (event: CalendarPlan) => void
-  onCopyLink?: (event: CalendarPlan) => void
-  onAddTag?: (event: CalendarPlan) => void
-  onMoveToDate?: (event: CalendarPlan) => void
+  onEdit?: (plan: CalendarPlan) => void
+  onDelete?: (plan: CalendarPlan) => void
+  onDuplicate?: (plan: CalendarPlan) => void
+  onOpen?: (plan: CalendarPlan) => void
+  onCopyLink?: (plan: CalendarPlan) => void
+  onAddTag?: (plan: CalendarPlan) => void
+  onMoveToDate?: (plan: CalendarPlan) => void
 }
 
+/** @deprecated Use PlanContextMenuProps instead */
+type EventContextMenuProps = PlanContextMenuProps
+
 export const EventContextMenu = ({
-  event,
+  plan,
   position,
   onClose,
   onEdit,
@@ -33,7 +36,7 @@ export const EventContextMenu = ({
   onCopyLink,
   onAddTag,
   onMoveToDate,
-}: EventContextMenuProps) => {
+}: PlanContextMenuProps) => {
   const { t } = useI18n()
   const menuRef = useRef<HTMLDivElement>(null)
   const [adjustedPosition, setAdjustedPosition] = useState(position)
@@ -95,43 +98,43 @@ export const EventContextMenu = ({
     {
       icon: ExternalLink,
       label: t('calendar.contextMenu.open'),
-      action: () => onOpen?.(event),
+      action: () => onOpen?.(plan),
       available: !!onOpen,
     },
     {
       icon: Edit2,
       label: t('calendar.contextMenu.edit'),
-      action: () => onEdit?.(event),
+      action: () => onEdit?.(plan),
       available: !!onEdit,
     },
     {
       icon: Copy,
       label: t('calendar.contextMenu.duplicate'),
-      action: () => onDuplicate?.(event),
+      action: () => onDuplicate?.(plan),
       available: !!onDuplicate,
     },
     {
       icon: Link,
       label: t('calendar.contextMenu.copyLink'),
-      action: () => onCopyLink?.(event),
+      action: () => onCopyLink?.(plan),
       available: !!onCopyLink,
     },
     {
       icon: Tag,
       label: t('calendar.contextMenu.addTag'),
-      action: () => onAddTag?.(event),
+      action: () => onAddTag?.(plan),
       available: !!onAddTag,
     },
     {
       icon: Calendar,
       label: t('calendar.contextMenu.moveToDate'),
-      action: () => onMoveToDate?.(event),
+      action: () => onMoveToDate?.(plan),
       available: !!onMoveToDate,
     },
     {
       icon: Trash2,
       label: t('calendar.contextMenu.delete'),
-      action: () => onDelete?.(event),
+      action: () => onDelete?.(plan),
       available: !!onDelete,
       dangerous: true,
     },
