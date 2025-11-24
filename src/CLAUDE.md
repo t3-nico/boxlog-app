@@ -125,22 +125,25 @@ const handleClick = (data: HandleClickData) => {}
 ### 3. コンポーネント設計
 
 ```tsx
-// ✅ 推奨構造
-import { FC } from 'react'
-import { colors, typography } from '@/config/theme'
+// ✅ 推奨構造（名前付きエクスポート + 関数宣言）
+import { typography } from '@/config/ui/theme'
 
 interface Props {
   title: string
   onClose: () => void
 }
 
-export const MyComponent: FC<Props> = ({ title, onClose }) => {
+// ✅ 推奨：関数宣言 + 名前付きエクスポート
+export function MyComponent({ title, onClose }: Props) {
   return (
-    <div className={colors.background.base}>
+    <div className="bg-card">
       <h2 className={typography.heading.h2}>{title}</h2>
     </div>
   )
 }
+
+// ❌ 禁止：React.FC（非推奨）
+// export const MyComponent: FC<Props> = ({ title, onClose }) => { ... }
 ```
 
 ### 4. 国際化（i18n）必須対応
@@ -873,4 +876,4 @@ export function AdaptiveComponent() {
 ---
 
 **📖 参照元**: [CLAUDE.md](../CLAUDE.md)
-**最終更新**: 2025-10-22 | **v2.2 - 頻出パターン集追加**
+**最終更新**: 2025-11-24 | **v2.3 - FC→関数宣言に統一、セマンティックトークン明確化**

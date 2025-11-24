@@ -246,15 +246,14 @@ AI・高度なUIコンポーネント。
 ### 基本構造
 
 ```tsx
-import { FC } from 'react'
-
+// ✅ 推奨：関数宣言 + 名前付きエクスポート
 interface TaskCardProps {
   title: string
   status: 'todo' | 'in-progress' | 'done'
   onStatusChange: (status: string) => void
 }
 
-export const TaskCard: FC<TaskCardProps> = ({ title, status, onStatusChange }) => {
+export function TaskCard({ title, status, onStatusChange }: TaskCardProps) {
   return (
     <div className="bg-card text-card-foreground border-border rounded-lg p-4">
       <h3 className="text-lg font-semibold">{title}</h3>
@@ -291,16 +290,18 @@ interface BadButtonProps {
 ```tsx
 // ✅ Presentational/Container分離
 // TaskList.tsx（Presentational - components/内）
-export const TaskList: FC<TaskListProps> = ({ tasks, onTaskClick }) => (
-  <div>
-    {tasks.map((task) => (
-      <TaskCard key={task.id} {...task} onClick={onTaskClick} />
-    ))}
-  </div>
-)
+export function TaskList({ tasks, onTaskClick }: TaskListProps) {
+  return (
+    <div>
+      {tasks.map((task) => (
+        <TaskCard key={task.id} {...task} onClick={onTaskClick} />
+      ))}
+    </div>
+  )
+}
 
 // TaskListContainer.tsx（Container - features/内）
-export const TaskListContainer: FC = () => {
+export function TaskListContainer() {
   const { tasks, updateTask } = useTaskStore()
   return <TaskList tasks={tasks} onTaskClick={updateTask} />
 }
@@ -386,4 +387,4 @@ describe('TaskCard', () => {
 
 ---
 
-**📖 最終更新**: 2025-10-16 | **バージョン**: v4.0 - layout/ディレクトリ新設・base-layout-content.tsxリファクタリング
+**📖 最終更新**: 2025-11-24 | **バージョン**: v4.1 - FC→関数宣言に統一
