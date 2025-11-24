@@ -1,5 +1,5 @@
 // @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
-// TODO(#621): Events削除後の一時的な型エラー回避
+// TODO(#621): Plans/Sessions統合後に型エラー解消
 'use client'
 
 import { useCallback } from 'react'
@@ -64,27 +64,27 @@ export function usePlanContextActions() {
     tagIds: plan.tags?.map((tag) => tag.id) || [],
   })
 
-  // Toast用のイベントデータを作成
-  const createToastEventData = useCallback(
-    (newEvent: CalendarPlan) => {
+  // Toast用のプランデータを作成
+  const createToastPlanData = useCallback(
+    (newPlan: CalendarPlan) => {
       const duration =
-        newEvent.startDate && newEvent.endDate
-          ? Math.round((newEvent.endDate.getTime() - newEvent.startDate.getTime()) / (1000 * 60))
+        newPlan.startDate && newPlan.endDate
+          ? Math.round((newPlan.endDate.getTime() - newPlan.startDate.getTime()) / (1000 * 60))
           : 60
 
       const isMultiDay =
-        newEvent.startDate && newEvent.endDate
-          ? newEvent.startDate.toDateString() !== newEvent.endDate.toDateString()
+        newPlan.startDate && newPlan.endDate
+          ? newPlan.startDate.toDateString() !== newPlan.endDate.toDateString()
           : false
 
       return {
-        id: newEvent.id,
-        title: newEvent.title || t('calendar.event.title'),
-        displayStartDate: newEvent.startDate || new Date(),
-        displayEndDate: newEvent.endDate || new Date(),
+        id: newPlan.id,
+        title: newPlan.title || t('calendar.plan.title'),
+        displayStartDate: newPlan.startDate || new Date(),
+        displayEndDate: newPlan.endDate || new Date(),
         duration,
         isMultiDay,
-        isRecurring: newEvent.isRecurring || false,
+        isRecurring: newPlan.isRecurring || false,
       }
     },
     [t]
@@ -92,19 +92,19 @@ export function usePlanContextActions() {
 
   // 編集モーダル用のデータを作成
   const createEditModalData = useCallback(
-    (newEvent: CalendarPlan) => ({
-      title: newEvent.title,
-      description: newEvent.description,
-      startDate: newEvent.startDate,
-      endDate: newEvent.endDate,
-      type: newEvent.type,
-      status: newEvent.status,
-      priority: newEvent.priority,
-      color: newEvent.color,
-      location: newEvent.location,
-      url: newEvent.url,
-      reminders: newEvent.reminders,
-      tagIds: newEvent.tags?.map((tag) => tag.id) || [],
+    (newPlan: CalendarPlan) => ({
+      title: newPlan.title,
+      description: newPlan.description,
+      startDate: newPlan.startDate,
+      endDate: newPlan.endDate,
+      type: newPlan.type,
+      status: newPlan.status,
+      priority: newPlan.priority,
+      color: newPlan.color,
+      location: newPlan.location,
+      url: newPlan.url,
+      reminders: newPlan.reminders,
+      tagIds: newPlan.tags?.map((tag) => tag.id) || [],
     }),
     []
   )
@@ -137,12 +137,12 @@ export function usePlanContextActions() {
 
   const showDuplicationSuccess = useCallback(
     (_newPlan: CalendarPlan) => {
-      // TODO(#621): Events削除後、plans/Sessions統合後に再実装
+      // TODO(#621): Plans/Sessions統合後に再実装
       console.log('TODO: Sessions統合後に実装')
-      // const toastEventData = createToastEventData(newPlan)
+      // const toastPlanData = createToastPlanData(newPlan)
       // const editModalData = createEditModalData(newPlan)
 
-      // calendarToast.eventCreated(toastEventData, {
+      // calendarToast.planCreated(toastPlanData, {
       //   viewAction: () => {
       //     openEditModal(newPlan.id, editModalData, {
       //       source: 'duplicate',
@@ -152,12 +152,12 @@ export function usePlanContextActions() {
       //   },
       // })
     },
-    [calendarToast, createToastEventData, createEditModalData]
+    [calendarToast, createToastPlanData, createEditModalData]
   )
 
   const handleDuplicatePlan = useCallback(
     async (_plan: CalendarPlan) => {
-      // TODO(#621): Events削除後、plans/Sessions統合後に再実装
+      // TODO(#621): Plans/Sessions統合後に再実装
       console.log('TODO: Sessions統合後に実装')
       // try {
       //   const { startDate, endDate } = normalizePlanDates(plan)
