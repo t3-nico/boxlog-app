@@ -218,30 +218,30 @@ export function useUndoManager() {
 
 // 具体的なアクション生成ヘルパー
 export const createUndoActions = {
-  eventCreated: (event: CalendarPlan): Omit<UndoAction, 'id' | 'timestamp'> => ({
+  eventCreated: (plan: CalendarPlan): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'create',
-    description: `Created "${event.title}"`,
-    data: { event },
+    description: `Created "${plan.title}"`,
+    data: { event: plan },
   }),
 
-  eventDeleted: (event: CalendarPlan): Omit<UndoAction, 'id' | 'timestamp'> => ({
+  eventDeleted: (plan: CalendarPlan): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'delete',
-    description: `Deleted "${event.title}"`,
-    data: { event },
+    description: `Deleted "${plan.title}"`,
+    data: { event: plan },
   }),
 
   eventMoved: (
-    event: CalendarPlan,
+    plan: CalendarPlan,
     oldData: { startDate: Date; endDate?: Date }
   ): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'move',
-    description: `Moved "${event.title}"`,
-    data: { event, oldData },
+    description: `Moved "${plan.title}"`,
+    data: { event: plan, oldData },
   }),
 
-  eventEdited: (event: CalendarPlan, oldData: Partial<CalendarPlan>): Omit<UndoAction, 'id' | 'timestamp'> => ({
+  eventEdited: (plan: CalendarPlan, oldData: Partial<CalendarPlan>): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'edit',
-    description: `Edited "${event.title}"`,
-    data: { event, oldData },
+    description: `Edited "${plan.title}"`,
+    data: { event: plan, oldData },
   }),
 }
