@@ -1,6 +1,6 @@
 // @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 /**
- * イベントとの相互作用機能のカスタムフック
+ * プランとの相互作用機能のカスタムフック
  */
 
 'use client'
@@ -102,7 +102,7 @@ export function useEventInteraction(options: UseEventInteractionOptions) {
   // シングルクリック処理
   const handleSingleClick = useCallback(
     (time: string) => {
-      // 30分のイベントを作成
+      // 30分のプランを作成
       const [hours = 0, minutes = 0] = time.split(':').map(Number)
       let endHours = hours
       let endMinutes = minutes + 30
@@ -130,7 +130,7 @@ export function useEventInteraction(options: UseEventInteractionOptions) {
       setClickState(null)
       setTimeRange(null)
 
-      // イベント詳細モーダルを表示
+      // プラン詳細モーダルを表示
       const time = getTimeFromY(e.clientY)
       console.log('ダブルクリック: 詳細モーダル表示', { date, time })
     },
@@ -140,7 +140,7 @@ export function useEventInteraction(options: UseEventInteractionOptions) {
   // マウスダウンハンドラー
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      // イベントブロック上のクリックは無視
+      // プランブロック上のクリックは無視
       if ((e.target as HTMLElement).closest('[data-event-block]')) {
         return
       }
@@ -232,7 +232,7 @@ export function useEventInteraction(options: UseEventInteractionOptions) {
       if (!clickState?.isClicking) return
 
       if (clickState.isDragging && timeRange) {
-        // ドラッグで範囲選択したイベント作成
+        // ドラッグで範囲選択したプラン作成
         onCreateQuickEvent?.(date, timeRange.startTime, timeRange.endTime)
       }
 
@@ -249,10 +249,10 @@ export function useEventInteraction(options: UseEventInteractionOptions) {
 
       const eventElement = (e.target as HTMLElement).closest('[data-event-block]')
       if (eventElement) {
-        // イベント上での右クリック
+        // プラン上での右クリック
         const eventId = eventElement.getAttribute('data-event-id')
         if (eventId && onShowContextMenu) {
-          console.log('イベント右クリック:', { eventId, x: e.clientX, y: e.clientY })
+          console.log('プラン右クリック:', { eventId, x: e.clientX, y: e.clientY })
         }
       } else {
         // 空き時間での右クリック
