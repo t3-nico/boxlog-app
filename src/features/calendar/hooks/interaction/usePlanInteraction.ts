@@ -28,9 +28,9 @@ interface ClickState {
 export interface UseEventInteractionOptions {
   date: Date
   onCreateEvent?: (date: Date, time: string, endTime?: string) => void
-  onEventClick?: (event: CalendarPlan) => void
-  onEventDoubleClick?: (event: CalendarPlan) => void
-  onShowContextMenu?: (event: CalendarPlan, x: number, y: number) => void
+  onEventClick?: (plan: CalendarPlan) => void
+  onEventDoubleClick?: (plan: CalendarPlan) => void
+  onShowContextMenu?: (plan: CalendarPlan, x: number, y: number) => void
   onCreateQuickEvent?: (date: Date, startTime: string, endTime: string) => void
   hourHeight?: number
   clickThreshold?: number

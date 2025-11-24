@@ -60,7 +60,7 @@ export interface DragHandlers {
 
 interface UseDragAndDropProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
-  onEventClick?: (event: CalendarPlan) => void // クリック処理用
+  onEventClick?: (plan: CalendarPlan) => void // クリック処理用
   date: Date // DayViewでは単一日付、他のビューでは基準日付
   events: CalendarPlan[] // イベントデータを受け取る
   displayDates?: Date[] // WeekView/TwoWeekView/ThreeDayView用の日付配列
@@ -761,10 +761,10 @@ export function useDragAndDrop({
 
   // Toast通知を処理する
   const handleEventUpdateToast = useCallback(
-    async (promise: Promise<void>, event: CalendarPlan, newStartTime: Date, durationMs: number) => {
-      if (!event) return
+    async (promise: Promise<void>, plan: CalendarPlan, newStartTime: Date, durationMs: number) => {
+      if (!plan) return
 
-      const previousStartTime = event.startDate || date
+      const previousStartTime = plan.startDate || date
       // 時間が実際に変更されたかチェック
       const timeChanged = Math.abs(newStartTime.getTime() - previousStartTime.getTime()) > 1000 // 1秒以上の差
 
@@ -778,8 +778,8 @@ export function useDragAndDrop({
       }
 
       const eventData = {
-        id: event.id,
-        title: event.title || t('calendar.event.title'),
+        id: plan.id,
+        title: plan.title || t('calendar.event.title'),
         displayStartDate: newStartTime,
         displayEndDate: new Date(newStartTime.getTime() + durationMs),
         duration: Math.round(durationMs / (1000 * 60)), // 分単位

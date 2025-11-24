@@ -7,10 +7,10 @@ export interface KeyboardShortcutCallbacks {
   onEscape?: () => void
   onSelectPrevious?: () => void
   onSelectNext?: () => void
-  onDeleteEvent?: (event: CalendarPlan) => void
-  onEditEvent?: (event: CalendarPlan) => void
-  onDuplicateEvent?: (event: CalendarPlan) => void
-  onCopy?: (event: CalendarPlan) => void
+  onDeleteEvent?: (plan: CalendarPlan) => void
+  onEditEvent?: (plan: CalendarPlan) => void
+  onDuplicateEvent?: (plan: CalendarPlan) => void
+  onCopy?: (plan: CalendarPlan) => void
   onUndo?: () => void
   onRedo?: () => void
   onPaste?: (date: Date, time: string) => void
