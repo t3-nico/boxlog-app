@@ -65,7 +65,7 @@ export const DayContent = ({
 
   // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
   const handleEventClick = useCallback(
-    (event: CalendarPlan) => {
+    (plan: CalendarPlan) => {
       // ドラッグ・リサイズ操作中のクリックは無視
       if (dragState.isDragging || dragState.isResizing) {
         return
@@ -78,7 +78,7 @@ export const DayContent = ({
 
   // イベント右クリックハンドラー
   const handleEventContextMenu = useCallback(
-    (event: CalendarPlan, mouseEvent: React.MouseEvent) => {
+    (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing) {
         return

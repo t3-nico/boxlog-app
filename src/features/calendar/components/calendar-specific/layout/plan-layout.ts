@@ -41,7 +41,7 @@ export interface LayoutedEvent extends CalendarPlan {
  * イベント位置情報（内部用）
  */
 interface EventPosition {
-  event: CalendarPlan
+  plan: CalendarPlan
   start: number // 分単位
   end: number // 分単位
   column?: number
@@ -188,10 +188,10 @@ export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
   const sortedEvents = [...group.events].sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
 
   // 各イベントの位置情報を作成
-  const positions: EventPosition[] = sortedEvents.map((event) => ({
-    event,
-    start: timeToMinutes(event.startDate),
-    end: timeToMinutes(event.endDate || event.startDate),
+  const positions: EventPosition[] = sortedEvents.map((plan) => ({
+    plan,
+    start: timeToMinutes(plan.startDate),
+    end: timeToMinutes(plan.endDate || plan.startDate),
     column: undefined,
     columns: undefined,
   }))
@@ -269,7 +269,7 @@ export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
     }
 
     return {
-      eventId: pos.event.id,
+      eventId: pos.plan.id,
       column,
       totalColumns,
       width,

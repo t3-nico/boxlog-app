@@ -29,7 +29,7 @@ export interface UseTwoWeekViewReturn {
 
 // 2週間ビューでのイベント位置情報
 export interface TwoWeekEventPosition {
-  event: CalendarPlan
+  plan: CalendarPlan
   dayIndex: number
   top: number
   height: number
@@ -94,7 +94,7 @@ export interface TwoWeekGridProps {
   todayIndex: number
   currentWeekIndex: number
   onEventClick?: (plan: CalendarPlan) => void
-  onEventContextMenu?: (event: CalendarPlan, mouseEvent: React.MouseEvent) => void
+  onEventContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
   onEventUpdate?: (plan: CalendarPlan) => void
   className?: string

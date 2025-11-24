@@ -46,9 +46,9 @@ export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdatePr
   )
 
   const createEventData = useCallback(
-    (event: CalendarPlan, newStartTime: Date, durationMs: number) => ({
-      id: event.id,
-      title: event.title || t('calendar.event.title'),
+    (plan: CalendarPlan, newStartTime: Date, durationMs: number) => ({
+      id: plan.id,
+      title: plan.title || t('calendar.event.title'),
       displayStartDate: newStartTime,
       displayEndDate: new Date(newStartTime.getTime() + durationMs),
       duration: Math.round(durationMs / (1000 * 60)), // 分単位
@@ -61,12 +61,12 @@ export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdatePr
   const handleEventUpdateToast = useCallback(
     async (
       promise: Promise<void> | void,
-      event: CalendarPlan,
+      plan: CalendarPlan,
       newStartTime: Date,
       durationMs: number,
       previousStartTime: Date
     ) => {
-      if (!event) return
+      if (!plan) return
 
       // 時間が実際に変更されたかチェック
       const timeChanged = Math.abs(newStartTime.getTime() - previousStartTime.getTime()) > 1000
@@ -76,7 +76,7 @@ export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdatePr
         return
       }
 
-      const eventData = createEventData(event, newStartTime, durationMs)
+      const eventData = createEventData(plan, newStartTime, durationMs)
 
       // Promiseが返される場合
       if (promise && typeof promise === 'object' && 'then' in promise) {
@@ -86,7 +86,7 @@ export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdatePr
               undoAction: async () => {
                 try {
                   const originalEndTime = new Date(previousStartTime.getTime() + durationMs)
-                  await onEventUpdate?.(event.id, {
+                  await onEventUpdate?.(plan.id, {
                     startTime: previousStartTime,
                     endTime: originalEndTime,
                   })

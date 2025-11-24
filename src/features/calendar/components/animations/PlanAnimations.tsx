@@ -48,7 +48,7 @@ export const eventAnimations = {
 
 // アニメーション付きイベントコンポーネント
 interface AnimatedEventItemProps {
-  event: CalendarPlan
+  plan: CalendarPlan
   children: React.ReactNode
   isSelected?: boolean
   isHovered?: boolean
@@ -220,7 +220,7 @@ export const CreatingEventPreview = ({
 
 // 削除アニメーション用のコンポーネント
 interface DeletingEventProps {
-  event: CalendarPlan
+  plan: CalendarPlan
   onAnimationComplete: () => void
   children: React.ReactNode
 }

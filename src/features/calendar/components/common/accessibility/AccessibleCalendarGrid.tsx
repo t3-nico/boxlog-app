@@ -96,7 +96,7 @@ export const AccessibleCalendarGrid = ({
   }, [])
 
   // イベントの詳細説明
-  const getEventDescription = useCallback((event: CalendarPlan) => {
+  const getEventDescription = useCallback((plan: CalendarPlan) => {
     const startTime = event.startDate?.toLocaleTimeString('ja-JP', {
       hour: '2-digit',
       minute: '2-digit',
@@ -161,7 +161,7 @@ export const AccessibleCalendarGrid = ({
 
   // イベントのARIA属性
   const getEventAriaProps = useCallback(
-    (event: CalendarPlan) => {
+    (plan: CalendarPlan) => {
       const isSelected = navigationState.selectedEventId === event.id
       const description = getEventDescription(event)
 

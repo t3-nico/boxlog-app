@@ -26,7 +26,7 @@ export interface UseThreeDayViewReturn {
 
 // 3日ビューでのイベント位置情報
 export interface ThreeDayEventPosition {
-  event: CalendarPlan
+  plan: CalendarPlan
   dayIndex: number
   top: number
   height: number
@@ -91,7 +91,7 @@ export interface ThreeDayGridProps {
   centerIndex: number
   todayIndex: number
   onEventClick?: (plan: CalendarPlan) => void
-  onEventContextMenu?: (event: CalendarPlan, mouseEvent: React.MouseEvent) => void
+  onEventContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
   onEventUpdate?: (plan: CalendarPlan) => void
   className?: string

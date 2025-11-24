@@ -9,7 +9,7 @@ import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 
 interface AnimatedEventCardProps {
-  event: CalendarPlan
+  plan: CalendarPlan
   style: React.CSSProperties
   isSelected?: boolean
   isNew?: boolean

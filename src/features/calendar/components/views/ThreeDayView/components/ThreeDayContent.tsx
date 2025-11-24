@@ -8,10 +8,10 @@ import React, { useCallback } from 'react'
 import { cn } from '@/lib/utils'
 
 import {
-  calculateEventGhostStyle,
+  calculatePlanGhostStyle,
   calculatePreviewTime,
   CalendarDragSelection,
-  EventBlock,
+  PlanBlock,
   useGlobalDragCursor,
   useTimeCalculation,
 } from '../../shared'
@@ -20,8 +20,8 @@ import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 
 interface ThreeDayContentProps {
   date: Date
-  events: CalendarPlan[]
-  eventStyles: Record<string, React.CSSProperties>
+  plans: CalendarPlan[]
+  planStyles: Record<string, React.CSSProperties>
   onPlanClick?: (plan: CalendarPlan) => void
   onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
@@ -34,8 +34,8 @@ interface ThreeDayContentProps {
 
 export const ThreeDayContent = ({
   date,
-  events,
-  eventStyles,
+  plans,
+  planStyles,
   onPlanClick,
   onPlanContextMenu,
   onEmptyClick,
@@ -67,10 +67,10 @@ export const ThreeDayContent = ({
 
   // ドラッグ&ドロップ機能（日付間移動対応）
   const { dragState, handlers } = useDragAndDrop({
-    onEventUpdate: handlePlanUpdate,
-    onEventClick: onPlanClick,
+    onPlanUpdate: handlePlanUpdate,
+    onPlanClick,
     date,
-    events,
+    plans,
     displayDates,
     viewMode: '3day',
   })
@@ -144,21 +144,21 @@ export const ThreeDayContent = ({
 
       {/* プラン表示エリア */}
       <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
-        {events.map((plan) => {
-          const style = eventStyles[plan.id]
+        {plans.map((plan) => {
+          const style = planStyles[plan.id]
           if (!style) return null
 
-          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
-          const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id
+          const isDragging = dragState.draggedPlanId === plan.id && dragState.isDragging
+          const isResizingThis = dragState.isResizing && dragState.draggedPlanId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
 
           // ゴースト表示スタイル（共通化）
-          const adjustedStyle = calculateEventGhostStyle(style, plan.id, dragState)
+          const adjustedStyle = calculatePlanGhostStyle(style, plan.id, dragState)
 
           return (
-            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-event-block="true">
-              {/* EventBlockの内容部分のみクリック可能 */}
+            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-plan-block="true">
+              {/* PlanBlockの内容部分のみクリック可能 */}
               <div
                 className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
                 role="button"
@@ -187,8 +187,8 @@ export const ThreeDayContent = ({
                   }
                 }}
               >
-                <EventBlock
-                  event={plan}
+                <PlanBlock
+                  plan={plan}
                   position={{
                     top: 0,
                     left: 0,

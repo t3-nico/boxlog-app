@@ -13,7 +13,7 @@ interface VirtualCalendarGridProps {
   startHour?: number
   endHour?: number
   overscan?: number // レンダリングバッファ（時間単位）
-  onEventClick?: (event: CalendarPlan) => void
+  onEventClick?: (plan: CalendarPlan) => void
   onCreateEvent?: (date: Date, time: string) => void
   className?: string
 }
@@ -233,7 +233,7 @@ interface VirtualTimeSlotProps {
   height: number
   dates: Date[]
   events: CalendarPlan[]
-  onEventClick?: (event: CalendarPlan) => void
+  onEventClick?: (plan: CalendarPlan) => void
   onCreateEvent?: (date: Date, time: string) => void
   observer?: IntersectionObserver | null
 }
@@ -297,7 +297,7 @@ interface VirtualDayColumnProps {
   date: Date
   hour: number
   events: CalendarPlan[]
-  onEventClick?: (event: CalendarPlan) => void
+  onEventClick?: (plan: CalendarPlan) => void
   onCreateEvent?: (date: Date, time: string) => void
 }
 
@@ -340,7 +340,7 @@ const VirtualDayColumn = React.memo(function VirtualDayColumn({
 
 // 仮想化されたイベントカード
 interface VirtualEventCardProps {
-  event: CalendarPlan
+  plan: CalendarPlan
   onClick: () => void
 }
 
