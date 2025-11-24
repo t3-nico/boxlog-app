@@ -29,10 +29,10 @@ interface DnDProviderProps {
  * - ドロップ位置から日付・時刻を計算してplan更新
  *
  * **エッジケース対応**:
- * - 終日イベント（時間なし）→ due_date のみ更新
- * - 時間指定イベント → due_date + start_time + end_time を更新
+ * - 終日プラン（時間なし）→ due_date のみ更新
+ * - 時間指定プラン → due_date + start_time + end_time を更新
  * - 無効なドロップ先 → エラーメッセージ表示
- * - 重複イベント → 既存の時間幅を保持
+ * - 重複プラン → 既存の時間幅を保持
  */
 export const DnDProvider = ({ children }: DnDProviderProps) => {
   const { updatePlan } = usePlanMutations()
@@ -171,7 +171,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           start_time = startDate.toISOString()
           end_time = endDate.toISOString()
 
-          console.log('[DnDProvider] 時間指定イベント:', {
+          console.log('[DnDProvider] 時間指定プラン:', {
             due_date,
             dropTime: dropData.time,
             timezone,
@@ -181,11 +181,11 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
             end_time,
           })
         } else {
-          // 時間指定なし（終日イベント）
+          // 時間指定なし（終日プラン）
           start_time = null
           end_time = null
 
-          console.log('[DnDProvider] 終日イベント:', {
+          console.log('[DnDProvider] 終日プラン:', {
             due_date,
           })
         }
@@ -232,7 +232,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
    *
    * **対応するドラッグタイプ**:
    * - planカード（Sidebar等）
-   * - カレンダーイベント（calendar-event）
+   * - カレンダープラン（calendar-event）
    */
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
@@ -252,17 +252,17 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
       // ドラッグするプランのIDを取得
       let currentPlanId: string
 
-      // カレンダーイベントの場合
+      // カレンダープランの場合
       if (dragType === 'calendar-event') {
         const calendarEvent = dragData?.event
         if (!calendarEvent?.id) {
-          console.warn('[DnDProvider] カレンダーイベントIDが取得できません')
+          console.warn('[DnDProvider] カレンダープランIDが取得できません')
           setActiveId(null)
           return
         }
         // planとして扱う（CalendarPlanはplanベース）
         currentPlanId = calendarEvent.id
-        console.log('[DnDProvider] カレンダーイベントをドラッグ中:', currentPlanId)
+        console.log('[DnDProvider] カレンダープランをドラッグ中:', currentPlanId)
       } else {
         // 通常のplanカードの場合
         currentPlanId = active.id as string
