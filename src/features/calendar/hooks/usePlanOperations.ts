@@ -6,47 +6,47 @@ import { logger } from '@/lib/logger'
 import type { CalendarPlan } from '../types/calendar.types'
 
 /**
- * イベント操作（CRUD）を提供するフック
- * イベントの削除、復元、更新、自動クリーンアップを管理
+ * プラン操作（CRUD）を提供するフック
+ * プランの削除、復元、更新、自動クリーンアップを管理
  */
-export const useEventOperations = () => {
+export const usePlanOperations = () => {
   const { updatePlan, deletePlan } = usePlanMutations()
 
-  // イベント削除ハンドラー（ソフトデリート）
-  const handleEventDelete = useCallback(
-    async (eventId: string) => {
+  // プラン削除ハンドラー（ソフトデリート）
+  const handlePlanDelete = useCallback(
+    async (planId: string) => {
       try {
-        deletePlan.mutate({ id: eventId })
-        logger.log('✅ plan deleted:', eventId)
+        deletePlan.mutate({ id: planId })
+        logger.log('✅ プラン削除:', planId)
       } catch (error) {
-        logger.error('Failed to delete plan:', error)
+        logger.error('プラン削除に失敗:', error)
       }
     },
     [deletePlan]
   )
 
-  // イベント復元ハンドラー
-  const handleEventRestore = useCallback(async (_plan: CalendarPlan) => {
+  // プラン復元ハンドラー
+  const handlePlanRestore = useCallback(async (_plan: CalendarPlan) => {
     console.log('TODO: Sessions統合後に実装')
     // planにはソフトデリート機能がないため、復元は未実装
   }, [])
 
-  // イベント更新ハンドラー（ドラッグ&ドロップ用）
-  const handleUpdateEvent = useCallback(
-    async (eventIdOrEvent: string | CalendarPlan, updates?: { startTime: Date; endTime: Date }) => {
+  // プラン更新ハンドラー（ドラッグ&ドロップ用）
+  const handleUpdatePlan = useCallback(
+    async (planIdOrPlan: string | CalendarPlan, updates?: { startTime: Date; endTime: Date }) => {
       try {
-        // ドラッグ&ドロップからの呼び出し（eventId + updates形式）
-        if (typeof eventIdOrEvent === 'string' && updates) {
-          const eventId = eventIdOrEvent
+        // ドラッグ&ドロップからの呼び出し（planId + updates形式）
+        if (typeof planIdOrPlan === 'string' && updates) {
+          const planId = planIdOrPlan
 
-          logger.log('🔧 plan更新 (eventId + updates形式):', {
-            eventId,
+          logger.log('🔧 プラン更新 (planId + updates形式):', {
+            planId,
             newStartTime: updates.startTime.toISOString(),
             newEndTime: updates.endTime.toISOString(),
           })
 
           updatePlan.mutate({
-            id: eventId,
+            id: planId,
             data: {
               start_time: updates.startTime.toISOString(),
               end_time: updates.endTime.toISOString(),
@@ -54,38 +54,38 @@ export const useEventOperations = () => {
           })
         }
         // CalendarPlanオブジェクト形式
-        else if (typeof eventIdOrEvent === 'object') {
-          const updatedEvent = eventIdOrEvent
+        else if (typeof planIdOrPlan === 'object') {
+          const updatedPlan = planIdOrPlan
 
-          logger.log('🔧 plan更新 (CalendarPlan形式):', {
-            eventId: updatedEvent.id,
-            newStartDate: updatedEvent.startDate.toISOString(),
-            newEndDate: updatedEvent.endDate?.toISOString(),
+          logger.log('🔧 プラン更新 (CalendarPlan形式):', {
+            planId: updatedPlan.id,
+            newStartDate: updatedPlan.startDate.toISOString(),
+            newEndDate: updatedPlan.endDate?.toISOString(),
           })
 
           updatePlan.mutate({
-            id: updatedEvent.id,
+            id: updatedPlan.id,
             data: {
-              start_time: updatedEvent.startDate.toISOString(),
-              end_time: updatedEvent.endDate?.toISOString(),
+              start_time: updatedPlan.startDate.toISOString(),
+              end_time: updatedPlan.endDate?.toISOString(),
             },
           })
         }
       } catch (error) {
-        logger.error('❌ Failed to update plan:', error)
+        logger.error('❌ プラン更新に失敗:', error)
       }
     },
     [updatePlan]
   )
 
-  // 30日経過した予定を自動削除
+  // 30日経過したプランを自動削除
   useEffect(() => {
     // TODO(#621): Events削除後、plans/Sessions統合後に再実装
   }, [])
 
   return {
-    handleEventDelete,
-    handleEventRestore,
-    handleUpdateEvent,
+    handlePlanDelete,
+    handlePlanRestore,
+    handleUpdatePlan,
   }
 }
