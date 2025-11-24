@@ -1,6 +1,6 @@
 # plans機能
 
-チケット管理機能のモジュール。タスク・課題・作業アイテムを管理します。
+プラン管理機能のモジュール。タスク・課題・作業アイテムを管理します。
 
 ## ディレクトリ構造
 
@@ -21,7 +21,7 @@ features/plans/
 
 ## 基本的な使い方
 
-### チケット一覧の取得
+### プラン一覧の取得
 
 ```tsx
 import { useplans } from '@/features/plans/hooks'
@@ -61,7 +61,7 @@ function Filteredplans() {
 }
 ```
 
-### 単体チケットの取得
+### 単体プランの取得
 
 ```tsx
 import { useplan } from '@/features/plans/hooks'
@@ -75,7 +75,7 @@ function planDetail({ id }: { id: string }) {
 }
 ```
 
-### チケットの作成・更新・削除
+### プランの作成・更新・削除
 
 ```tsx
 import { useplanMutations } from '@/features/plans/hooks'
@@ -114,7 +114,7 @@ function planCard({ plan }) {
 }
 ```
 
-## チケットステータス（6段階）
+## プランステータス（6段階）
 
 | Status    | 日本語   | 説明               |
 | --------- | -------- | ------------------ |
@@ -159,7 +159,7 @@ interface plan {
 
 ### planInspector
 
-全ページ共通のチケット詳細表示・編集パネル（Sheet）。
+全ページ共通のプラン詳細表示・編集パネル（Sheet）。
 
 ```tsx
 // レイアウトに配置（常にマウント）
@@ -169,7 +169,7 @@ import { planInspector } from '@/features/plans'
 
 ### planCard
 
-チケットのカード表示コンポーネント。
+プランのカード表示コンポーネント。
 
 ```tsx
 import { planCard } from '@/features/plans/components'
@@ -184,7 +184,7 @@ import { planCard } from '@/features/plans/components'
 
 ### planCreatePopover
 
-クイックチケット作成ポップオーバー。
+クイックプラン作成ポップオーバー。
 
 ```tsx
 import { planCreatePopover } from '@/features/plans/components'
@@ -195,7 +195,7 @@ import { planCreatePopover } from '@/features/plans/components'
 
 ### Queries
 
-- `plans.list` - チケット一覧取得（フィルター・ソート・ページネーション対応）
+- `plans.list` - プラン一覧取得（フィルター・ソート・ページネーション対応）
 - `plans.getById` - 単体取得（include optionでリレーション取得可能）
 - `plans.getStats` - 統計情報取得
 
@@ -246,7 +246,7 @@ npm run test src/features/plans
 ## 注意事項
 
 - Session機能は現在未実装（将来実装予定）
-- チケット番号は自動生成（`YYYY-{user_count}-{plan_count}`形式）
+- プラン番号は自動生成（`YYYY-{user_count}-{plan_count}`形式）
 - Inspector は常にレイアウトにマウントしておく必要あり
 - タグ機能は `/src/features/tags` と連携
 

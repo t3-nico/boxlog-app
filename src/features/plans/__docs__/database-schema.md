@@ -97,7 +97,7 @@ erDiagram
 
 ### 1. Tags（タグ）
 
-**目的**: チケットとセッションを分類・整理するためのラベル
+**目的**: プランとセッションを分類・整理するためのラベル
 
 **特徴**:
 
@@ -111,7 +111,7 @@ erDiagram
 
 ---
 
-### 2. plans（チケット）
+### 2. plans（プラン）
 
 **目的**: 作業単位を管理（イベント出展の準備タスク等）
 
@@ -221,7 +221,7 @@ CREATE POLICY "Users can delete own data" ON {table}
 -- 主要検索パターン
 CREATE INDEX idx_plans_user_id ON plans(user_id);        -- ユーザー単位検索
 CREATE INDEX idx_plans_status ON plans(status);          -- ステータスフィルター
-CREATE INDEX idx_sessions_plan_id ON sessions(plan_id); -- チケット配下検索
+CREATE INDEX idx_sessions_plan_id ON sessions(plan_id); -- プラン配下検索
 
 -- タグ検索
 CREATE INDEX idx_plan_tags_plan_id ON plan_tags(plan_id);
@@ -230,9 +230,9 @@ CREATE INDEX idx_plan_tags_tag_id ON plan_tags(tag_id);
 
 **想定クエリ**:
 
-- 「自分のチケット一覧（ステータス別）」
-- 「特定チケットの全セッション」
-- 「特定タグの付いたチケット一覧」
+- 「自分のプラン一覧（ステータス別）」
+- 「特定プランの全セッション」
+- 「特定タグの付いたプラン一覧」
 
 ---
 
@@ -284,7 +284,7 @@ VALUES
   (auth.uid(), '本番', '#10B981', 'イベント本番作業'),
   (auth.uid(), '片付け', '#F59E0B', 'イベント後片付け');
 
--- 2. チケット作成（plan_number自動採番確認）
+-- 2. プラン作成（plan_number自動採番確認）
 INSERT INTO plans (user_id, title, description, status, priority, planned_hours)
 VALUES
   (auth.uid(), 'コミケ準備', 'コミケ101の準備タスク', 'open', 'high', 20);

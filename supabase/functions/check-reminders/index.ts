@@ -1,5 +1,5 @@
 // check-reminders Edge Function
-// 毎分実行され、reminder_atが近いチケットをチェックして通知を生成
+// 毎分実行され、reminder_atが近いプランをチェックして通知を生成
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 import { corsHeaders } from '../_shared/cors.ts'
@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // 現在時刻の1分後までにリマインダーが設定されているチケットを取得
+    // 現在時刻の1分後までにリマインダーが設定されているプランを取得
     const now = new Date()
     const oneMinuteLater = new Date(now.getTime() + 60 * 1000)
 
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
       })
     }
 
-    // 各チケットに対して通知を作成
+    // 各プランに対して通知を作成
     const notificationsCreated = []
     const plansUpdated = []
 
@@ -70,12 +70,12 @@ Deno.serve(async (req) => {
 
       if (notificationError) {
         console.error('Error creating notification:', notificationError)
-        continue // エラーが発生しても他のチケットの処理は続行
+        continue // エラーが発生しても他のプランの処理は続行
       }
 
       notificationsCreated.push(notification)
 
-      // チケットのreminder_sentをtrueに更新
+      // プランのreminder_sentをtrueに更新
       const { error: updateError } = await supabase.from('plans').update({ reminder_sent: true }).eq('id', plan.id)
 
       if (updateError) {

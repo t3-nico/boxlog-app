@@ -39,13 +39,13 @@ fi
 echo "✅ ユーザー作成成功: $USER_ID"
 
 # ========================================
-# 2. サンプルチケットの作成
+# 2. サンプルプランの作成
 # ========================================
-echo "📝 サンプルチケットを作成中..."
+echo "📝 サンプルプランを作成中..."
 
 # SQLファイルの作成（user_idを動的に設定）
 cat > /tmp/seed_plans.sql <<EOF
--- サンプルチケット1
+-- サンプルプラン1
 INSERT INTO public.plans (
   user_id, plan_number, title, description, status, priority,
   due_date, start_time, end_time, recurrence_type
@@ -62,7 +62,7 @@ INSERT INTO public.plans (
   'none'
 );
 
--- サンプルチケット2
+-- サンプルプラン2
 INSERT INTO public.plans (
   user_id, plan_number, title, status, priority, due_date, recurrence_type
 ) VALUES (
@@ -75,7 +75,7 @@ INSERT INTO public.plans (
   'none'
 );
 
--- サンプルチケット3（繰り返しタスク）
+-- サンプルプラン3（繰り返しタスク）
 INSERT INTO public.plans (
   user_id, plan_number, title, description, status, priority,
   due_date, start_time, end_time, recurrence_type, recurrence_end_date
@@ -116,7 +116,7 @@ echo "📋 作成されたデータ"
 echo "===================="
 echo "ユーザー: dev@example.com"
 echo "パスワード: password123"
-echo "チケット: 3件"
+echo "プラン: 3件"
 echo "タグ: 4件"
 echo ""
 echo "🎉 開発を開始できます！"
