@@ -63,29 +63,29 @@ export const useCalendarToast = () => {
 
   // 便利なショートカット関数
   const eventCreated = useCallback(
-    (event: CalendarPlan, options?: CalendarToastOptions) => {
-      return showCalendarToast('created', { event, ...options })
+    (plan: CalendarPlan, options?: CalendarToastOptions) => {
+      return showCalendarToast('created', { event: plan, ...options })
     },
     [showCalendarToast]
   )
 
   const eventUpdated = useCallback(
-    (event: CalendarPlan, options?: CalendarToastOptions) => {
-      return showCalendarToast('updated', { event, ...options })
+    (plan: CalendarPlan, options?: CalendarToastOptions) => {
+      return showCalendarToast('updated', { event: plan, ...options })
     },
     [showCalendarToast]
   )
 
   const eventDeleted = useCallback(
-    (event: CalendarPlan, undoAction?: () => void) => {
-      return showCalendarToast('deleted', { event, undoAction })
+    (plan: CalendarPlan, undoAction?: () => void) => {
+      return showCalendarToast('deleted', { event: plan, undoAction })
     },
     [showCalendarToast]
   )
 
   const eventMoved = useCallback(
-    (event: CalendarPlan, toDate: Date, options?: CalendarToastOptions) => {
-      return showCalendarToast('moved', { event, toDate, ...options })
+    (plan: CalendarPlan, toDate: Date, options?: CalendarToastOptions) => {
+      return showCalendarToast('moved', { event: plan, toDate, ...options })
     },
     [showCalendarToast]
   )
