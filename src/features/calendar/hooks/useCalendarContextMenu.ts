@@ -3,13 +3,13 @@ import { useCallback, useState } from 'react'
 import type { CalendarPlan } from '../types/calendar.types'
 
 /**
- * カレンダーイベントのコンテキストメニュー状態を管理するフック
+ * カレンダープランのコンテキストメニュー状態を管理するフック
  */
 export const useCalendarContextMenu = () => {
   const [contextMenuEvent, setContextMenuEvent] = useState<CalendarPlan | null>(null)
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null)
 
-  // イベントの右クリックハンドラー
+  // プランの右クリックハンドラー
   const handleEventContextMenu = useCallback((plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
     setContextMenuEvent(plan)
     setContextMenuPosition({ x: mouseEvent.clientX, y: mouseEvent.clientY })

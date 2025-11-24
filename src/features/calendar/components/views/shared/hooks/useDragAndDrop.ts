@@ -10,7 +10,7 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 import { formatTimeRange } from '../utils/dateHelpers'
 
-// イベントデータの型定義
+// プランデータの型定義
 interface CalendarPlan {
   id: string
   title: string
@@ -62,7 +62,7 @@ interface UseDragAndDropProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
   onEventClick?: (plan: CalendarPlan) => void // クリック処理用
   date: Date // DayViewでは単一日付、他のビューでは基準日付
-  events: CalendarPlan[] // イベントデータを受け取る
+  events: CalendarPlan[] // プランデータを受け取る
   displayDates?: Date[] // WeekView/TwoWeekView/ThreeDayView用の日付配列
   viewMode?: 'day' | 'week' | '2week' | '3day' // ビューモード
 }
@@ -161,7 +161,7 @@ export function useDragAndDrop({
 
       const startPosition = { x: e.clientX, y: e.clientY }
 
-      // 元のイベント要素を取得
+      // 元のプラン要素を取得
       const originalElement = (e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement
 
       // カラム幅を計算（日付間移動用）
@@ -626,7 +626,7 @@ export function useDragAndDrop({
     const newDurationMs = (dragState.snappedPosition.height / HOUR_HEIGHT) * 60 * 60 * 1000
     const newEndTime = new Date(event.startDate.getTime() + newDurationMs)
 
-    // Calendar Toast用のイベントデータを準備
+    // Calendar Toast用のプランデータを準備
     const eventData = {
       id: event.id,
       title: event.title || t('calendar.event.title'),
@@ -637,7 +637,7 @@ export function useDragAndDrop({
       isRecurring: false,
     }
 
-    // イベント更新を実行
+    // プラン更新を実行
     try {
       const promise = onEventUpdate(dragDataRef.current.eventId, {
         startTime: event.startDate,
@@ -742,7 +742,7 @@ export function useDragAndDrop({
     [calculateTargetDate]
   )
 
-  // イベント期間を計算する
+  // プラン期間を計算する
   const calculateEventDuration = useCallback(
     (eventId: string) => {
       const event = events.find((e) => e.id === eventId)
@@ -819,7 +819,7 @@ export function useDragAndDrop({
     [date, calendarToast, onEventUpdate, t]
   )
 
-  // イベント更新処理を実行する
+  // プラン更新処理を実行する
   const executeEventUpdate = useCallback(
     async (newStartTime: Date) => {
       if (!onEventUpdate || !dragDataRef.current?.eventId || !dragDataRef.current?.hasMoved) {
@@ -842,7 +842,7 @@ export function useDragAndDrop({
       }
 
       try {
-        console.log('🚀 イベント更新実行:', {
+        console.log('🚀 プラン更新実行:', {
           eventId: dragDataRef.current.eventId,
           newStartTime: newStartTime.toISOString(),
           newEndTime: newEndTime.toISOString(),
@@ -924,7 +924,7 @@ export function useDragAndDrop({
     // 新しい時刻を計算
     const newStartTime = calculateNewTime(newTop, targetDateIndex)
 
-    // イベント更新を実行
+    // プラン更新を実行
     await executeEventUpdate(newStartTime)
 
     // 実際にドラッグが発生した場合のみrecentlyDraggedを設定
@@ -943,11 +943,11 @@ export function useDragAndDrop({
     cleanupDragElements,
   ])
 
-  // イベントドロップのヘルパー
+  // プランドロップのヘルパー
   const handleEventDrop = useCallback(
     (eventId: string, newStartTime: Date) => {
       if (onEventUpdate) {
-        // イベントの元の期間を取得して新しい終了時刻を計算
+        // プランの元の期間を取得して新しい終了時刻を計算
         const event = events.find((e) => e.id === eventId)
         let durationMs = 60 * 60 * 1000 // デフォルト1時間
 
