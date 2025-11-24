@@ -10,11 +10,11 @@ import { memo } from 'react'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
 
-import type { Calendarplan } from '../../types/event.types'
+import type { CalendarPlan } from '../../types/event.types'
 import { formatTimeRange } from '../../utils/dateHelpers'
 
 interface PlanCardContentProps {
-  event: Calendarplan
+  event: CalendarPlan
   isCompact?: boolean
   showTime?: boolean
   timeFormat?: '12h' | '24h'
@@ -22,7 +22,7 @@ interface PlanCardContentProps {
 }
 
 // Helper function: Parse plan start date
-function parseplanStartDate(event: Calendarplan | Record<string, unknown>): Date | null {
+function parseplanStartDate(event: CalendarPlan | Record<string, unknown>): Date | null {
   if (event.start instanceof Date) return event.start
   if (event.start) return new Date(event.start)
   if (event.startDate instanceof Date) return event.startDate
@@ -31,7 +31,7 @@ function parseplanStartDate(event: Calendarplan | Record<string, unknown>): Date
 }
 
 // Helper function: Parse plan end date
-function parseplanEndDate(event: Calendarplan | Record<string, unknown>): Date | null {
+function parseplanEndDate(event: CalendarPlan | Record<string, unknown>): Date | null {
   if (event.end instanceof Date) return event.end
   if (event.end) return new Date(event.end)
   if (event.endDate instanceof Date) return event.endDate

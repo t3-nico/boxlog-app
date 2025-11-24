@@ -5,21 +5,21 @@ import { useEffect, useRef, useState } from 'react'
 
 import { Calendar, Copy, Edit2, ExternalLink, Link, Tag, Trash2 } from 'lucide-react'
 
-import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 interface EventContextMenuProps {
-  event: CalendarEvent
+  event: CalendarPlan
   position: { x: number; y: number }
   onClose: () => void
-  onEdit?: (event: CalendarEvent) => void
-  onDelete?: (event: CalendarEvent) => void
-  onDuplicate?: (event: CalendarEvent) => void
-  onOpen?: (event: CalendarEvent) => void
-  onCopyLink?: (event: CalendarEvent) => void
-  onAddTag?: (event: CalendarEvent) => void
-  onMoveToDate?: (event: CalendarEvent) => void
+  onEdit?: (event: CalendarPlan) => void
+  onDelete?: (event: CalendarPlan) => void
+  onDuplicate?: (event: CalendarPlan) => void
+  onOpen?: (event: CalendarPlan) => void
+  onCopyLink?: (event: CalendarPlan) => void
+  onAddTag?: (event: CalendarPlan) => void
+  onMoveToDate?: (event: CalendarPlan) => void
 }
 
 export const EventContextMenu = ({

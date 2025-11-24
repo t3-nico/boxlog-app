@@ -13,7 +13,7 @@ import { useDragElement } from './drag-operations/useDragElement'
 import { useDragState } from './drag-operations/useDragState'
 import { useEventUpdate } from './drag-operations/useEventUpdate'
 
-interface CalendarEvent {
+interface CalendarPlan {
   id: string
   title: string
   startDate?: Date
@@ -23,9 +23,9 @@ interface CalendarEvent {
 
 interface UseDragAndDropRefactoredProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
-  onEventClick?: (event: CalendarEvent) => void
+  onEventClick?: (event: CalendarPlan) => void
   date: Date
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   displayDates?: Date[]
   viewMode?: 'day' | 'week' | '2week' | '3day'
 }

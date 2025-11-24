@@ -4,7 +4,7 @@
 
 import React, { useCallback } from 'react'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 import {
@@ -21,11 +21,11 @@ import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 
 interface TwoWeekContentProps {
   date: Date
-  events: CalendarEvent[]
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
+  events: CalendarPlan[]
+  onEventClick?: (event: CalendarPlan) => void
+  onEventContextMenu?: (event: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onEventUpdate?: (event: CalendarEvent) => void
+  onEventUpdate?: (event: CalendarPlan) => void
   onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
   onCreateEvent?: (startDate: Date, endDate: Date) => void
   className?: string
@@ -128,7 +128,7 @@ export const TwoWeekContent = ({
 
   // イベントクリックハンドラー（ドラッグ・リサイズ後のクリックは無視）
   const handleEventClick = useCallback(
-    (event: CalendarEvent) => {
+    (event: CalendarPlan) => {
       // ドラッグ・リサイズ操作中またはドラッグ・リサイズ直後のクリックは無視
       if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
         return
@@ -141,7 +141,7 @@ export const TwoWeekContent = ({
 
   // イベント右クリックハンドラー
   const handleEventContextMenu = useCallback(
-    (event: CalendarEvent, mouseEvent: React.MouseEvent) => {
+    (event: CalendarPlan, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
         return

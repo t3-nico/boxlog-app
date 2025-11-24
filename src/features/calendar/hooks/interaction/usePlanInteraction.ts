@@ -7,7 +7,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 interface TimeRange {
   startTime: string
@@ -28,9 +28,9 @@ interface ClickState {
 export interface UseEventInteractionOptions {
   date: Date
   onCreateEvent?: (date: Date, time: string, endTime?: string) => void
-  onEventClick?: (event: CalendarEvent) => void
-  onEventDoubleClick?: (event: CalendarEvent) => void
-  onShowContextMenu?: (event: CalendarEvent, x: number, y: number) => void
+  onEventClick?: (event: CalendarPlan) => void
+  onEventDoubleClick?: (event: CalendarPlan) => void
+  onShowContextMenu?: (event: CalendarPlan, x: number, y: number) => void
   onCreateQuickEvent?: (date: Date, startTime: string, endTime: string) => void
   hourHeight?: number
   clickThreshold?: number

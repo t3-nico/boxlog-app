@@ -181,7 +181,7 @@ export const ThreeDayView = ({
                 )}
                 style={{ width: `${100 / displayDates.length}%` }}
               >
-                {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある */}
+                {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
                 <ThreeDayContent
                   date={date}
                   events={dayEvents}

@@ -1,11 +1,11 @@
-import type { CalendarEvent } from '../../../types/calendar.types'
+import type { CalendarPlan } from '../../../types/calendar.types'
 
 /**
  * イベントグループ - 重なり合うイベントの集合
  */
 export interface EventGroup {
   id: string
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   startTime: Date
   endTime: Date
   maxColumns: number
@@ -25,7 +25,7 @@ export interface ColumnAssignment {
 /**
  * レイアウト適用後のイベント
  */
-export interface LayoutedEvent extends CalendarEvent {
+export interface LayoutedEvent extends CalendarPlan {
   layout: {
     column: number
     totalColumns: number
@@ -41,7 +41,7 @@ export interface LayoutedEvent extends CalendarEvent {
  * イベント位置情報（内部用）
  */
 interface EventPosition {
-  event: CalendarEvent
+  event: CalendarPlan
   start: number // 分単位
   end: number // 分単位
   column?: number
@@ -60,7 +60,7 @@ const EVENT_MARGIN = 2
 /**
  * 2つのイベントが時間的に重なっているかを判定
  */
-function eventsOverlap(event1: CalendarEvent, event2: CalendarEvent): boolean {
+function eventsOverlap(event1: CalendarPlan, event2: CalendarPlan): boolean {
   const start1 = event1.startDate.getTime()
   const end1 = event1.endDate?.getTime() || event1.startDate.getTime()
   const start2 = event2.startDate.getTime()
@@ -92,11 +92,11 @@ function _isSameDay(date1: Date, date2: Date): boolean {
  * @param events カレンダーイベントの配列
  * @returns イベントグループの配列
  */
-export function detectOverlappingEvents(events: CalendarEvent[]): EventGroup[] {
+export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
   if (events.length === 0) return []
 
   // 日付ごとにイベントを分類
-  const eventsByDay = new Map<string, CalendarEvent[]>()
+  const eventsByDay = new Map<string, CalendarPlan[]>()
 
   events.forEach((event) => {
     const dayKey = `${event.startDate.getFullYear()}-${event.startDate.getMonth()}-${event.startDate.getDate()}`
@@ -113,7 +113,7 @@ export function detectOverlappingEvents(events: CalendarEvent[]): EventGroup[] {
     const sortedEvents = [...dayEvents].sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
 
     // 重なるイベントをグループ化
-    const dayGroups: CalendarEvent[][] = []
+    const dayGroups: CalendarPlan[][] = []
 
     sortedEvents.forEach((event) => {
       let addedToGroup = false
@@ -134,7 +134,7 @@ export function detectOverlappingEvents(events: CalendarEvent[]): EventGroup[] {
     })
 
     // 隣接するグループをマージ（より正確なグループ化）
-    const mergedGroups: CalendarEvent[][] = []
+    const mergedGroups: CalendarPlan[][] = []
 
     dayGroups.forEach((group) => {
       let merged = false
@@ -292,7 +292,7 @@ export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
  * @returns レイアウト適用後のイベント配列
  */
 export function applyEventLayout(
-  events: CalendarEvent[],
+  events: CalendarPlan[],
   dayStartHour: number = 0,
   dayEndHour: number = 24,
   hourHeight: number = 60
@@ -367,7 +367,7 @@ export function applyEventLayout(
  * 画面幅に応じて列数を調整
  */
 export function applyResponsiveEventLayout(
-  events: CalendarEvent[],
+  events: CalendarPlan[],
   containerWidth: number,
   dayStartHour: number = 0,
   dayEndHour: number = 24,

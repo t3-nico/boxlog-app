@@ -2,7 +2,7 @@
 import { renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 import { CacheManager, useMemoizedEvents } from './useMemoizedEvents'
 
@@ -14,7 +14,7 @@ describe('useMemoizedEvents', () => {
 
   describe('基本的なフィルタリング', () => {
     it('日付範囲内のイベントのみ返す', () => {
-      const events: CalendarEvent[] = [
+      const events: CalendarPlan[] = [
         {
           id: 'event-1',
           title: 'イベント1',
@@ -76,7 +76,7 @@ describe('useMemoizedEvents', () => {
     })
 
     it('startDateがundefinedのイベントは除外される', () => {
-      const events: CalendarEvent[] = [
+      const events: CalendarPlan[] = [
         {
           id: 'event-1',
           title: 'イベント1',
@@ -107,7 +107,7 @@ describe('useMemoizedEvents', () => {
           isRecurring: false,
           createdAt: new Date(),
           updatedAt: new Date(),
-        } as CalendarEvent,
+        } as CalendarPlan,
       ]
 
       const startDate = new Date('2024-06-14')
@@ -122,7 +122,7 @@ describe('useMemoizedEvents', () => {
 
   describe('イベントのグルーピング', () => {
     it('日付別にイベントをグルーピングする', () => {
-      const events: CalendarEvent[] = [
+      const events: CalendarPlan[] = [
         {
           id: 'event-1',
           title: 'イベント1',
@@ -184,7 +184,7 @@ describe('useMemoizedEvents', () => {
     })
 
     it('時間別にイベントをグルーピングする', () => {
-      const events: CalendarEvent[] = [
+      const events: CalendarPlan[] = [
         {
           id: 'event-1',
           title: 'イベント1',
@@ -248,7 +248,7 @@ describe('useMemoizedEvents', () => {
 
   describe('合計時間の計算', () => {
     it('イベントの合計時間を計算する', () => {
-      const events: CalendarEvent[] = [
+      const events: CalendarPlan[] = [
         {
           id: 'event-1',
           title: 'イベント1',
@@ -295,7 +295,7 @@ describe('useMemoizedEvents', () => {
 
   describe('重複イベントの検出', () => {
     it('重複するイベントを検出する', () => {
-      const events: CalendarEvent[] = [
+      const events: CalendarPlan[] = [
         {
           id: 'event-1',
           title: 'イベント1',
@@ -360,7 +360,7 @@ describe('useMemoizedEvents', () => {
 
   describe('フィルター機能', () => {
     it('タグでフィルタリングできる', () => {
-      const events: CalendarEvent[] = [
+      const events: CalendarPlan[] = [
         {
           id: 'event-1',
           title: 'イベント1',
@@ -411,7 +411,7 @@ describe('useMemoizedEvents', () => {
     })
 
     it('検索クエリでフィルタリングできる', () => {
-      const events: CalendarEvent[] = [
+      const events: CalendarPlan[] = [
         {
           id: 'event-1',
           title: 'ミーティング',
@@ -459,7 +459,7 @@ describe('useMemoizedEvents', () => {
 
   describe('キャッシュ機能', () => {
     it('同じ入力で2回目はキャッシュから返す', () => {
-      const events: CalendarEvent[] = [
+      const events: CalendarPlan[] = [
         {
           id: 'event-1',
           title: 'イベント1',
@@ -491,7 +491,7 @@ describe('useMemoizedEvents', () => {
     })
 
     it('CacheManagerでキャッシュをクリアできる', () => {
-      const events: CalendarEvent[] = [
+      const events: CalendarPlan[] = [
         {
           id: 'event-1',
           title: 'イベント1',

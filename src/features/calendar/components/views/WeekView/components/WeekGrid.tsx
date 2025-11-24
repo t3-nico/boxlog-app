@@ -123,7 +123,7 @@ export const WeekGrid = ({
               )}
               style={{ width: `${100 / 7}%` }}
             >
-              {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある */}
+              {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
               <WeekContent
                 date={date}
                 events={dayEvents}

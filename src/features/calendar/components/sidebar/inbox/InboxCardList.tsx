@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 
-import { TicketCard } from '@/features/board/components/shared/TicketCard'
+import { PlanCard } from '@/features/board/components/shared/PlanCard'
 import { parseDateString } from '@/features/calendar/utils/dateUtils'
 import { useInboxData } from '@/features/inbox/hooks/useInboxData'
 
@@ -156,7 +156,7 @@ export function InboxCardList({
     <div className="flex flex-col gap-2 overflow-y-auto pt-4 pb-4">
       {/* 既存カード */}
       {filteredAndSortedItems.map((item) => (
-        <TicketCard key={item.id} item={item} />
+        <PlanCard key={item.id} item={item} />
       ))}
 
       {/* 新規作成カード（最後） */}

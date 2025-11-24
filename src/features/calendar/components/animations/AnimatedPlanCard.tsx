@@ -5,11 +5,11 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import { format } from 'date-fns'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 interface AnimatedEventCardProps {
-  event: CalendarEvent
+  event: CalendarPlan
   style: React.CSSProperties
   isSelected?: boolean
   isNew?: boolean

@@ -11,7 +11,7 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { HOUR_HEIGHT } from '../../constants/grid.constants'
 
-interface CalendarEvent {
+interface CalendarPlan {
   id: string
   title: string
   startDate?: Date
@@ -21,7 +21,7 @@ interface CalendarEvent {
 
 interface UseEventUpdateProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   date: Date
 }
 
@@ -46,7 +46,7 @@ export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdatePr
   )
 
   const createEventData = useCallback(
-    (event: CalendarEvent, newStartTime: Date, durationMs: number) => ({
+    (event: CalendarPlan, newStartTime: Date, durationMs: number) => ({
       id: event.id,
       title: event.title || t('calendar.event.title'),
       displayStartDate: newStartTime,
@@ -61,7 +61,7 @@ export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdatePr
   const handleEventUpdateToast = useCallback(
     async (
       promise: Promise<void> | void,
-      event: CalendarEvent,
+      event: CalendarPlan,
       newStartTime: Date,
       durationMs: number,
       previousStartTime: Date

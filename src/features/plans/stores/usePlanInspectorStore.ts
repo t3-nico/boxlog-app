@@ -31,8 +31,3 @@ export const usePlanInspectorStore = create<PlanInspectorStore>((set) => ({
     set({ isOpen: true, planId, initialData: planId === null ? initialData : undefined }),
   closeInspector: () => set({ isOpen: false, planId: null, initialData: undefined }),
 }))
-
-// Backward compatibility
-export { usePlanInspectorStore as useTicketInspectorStore }
-export type TicketInitialData = PlanInitialData
-export type TicketInspectorStore = PlanInspectorStore

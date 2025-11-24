@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 
-import type { BaseViewProps, CalendarEvent, DateTimeSelection } from '../shared'
+import type { BaseViewProps, CalendarPlan, DateTimeSelection } from '../shared'
 
 // FiveDayViewの固有Props（BaseViewPropsを継承）
 export interface FiveDayViewProps extends BaseViewProps {
@@ -11,14 +11,14 @@ export interface FiveDayViewProps extends BaseViewProps {
 // useFiveDayViewフックのオプション
 export interface UseFiveDayViewOptions {
   centerDate: Date
-  events: CalendarEvent[]
-  onEventUpdate?: (event: CalendarEvent) => void
+  events: CalendarPlan[]
+  onEventUpdate?: (event: CalendarPlan) => void
 }
 
 // useFiveDayViewフックの返却値
 export interface UseFiveDayViewReturn {
   fiveDayDates: Date[] // [day-2, day-1, today, day+1, day+2]
-  eventsByDate: Record<string, CalendarEvent[]>
+  eventsByDate: Record<string, CalendarPlan[]>
   centerIndex: number // 中央の日付のインデックス（通常は2）
   todayIndex: number // 今日のインデックス（-1 if not in range）
   scrollToNow: () => void
@@ -27,7 +27,7 @@ export interface UseFiveDayViewReturn {
 
 // 5日ビューでのイベント位置情報
 export interface FiveDayEventPosition {
-  event: CalendarEvent
+  event: CalendarPlan
   dayIndex: number
   top: number
   height: number
@@ -70,7 +70,7 @@ export interface FiveDayDateDisplay {
   isCenter: boolean // 中央の日付かどうか
   isPast: boolean
   isFuture: boolean
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   eventCount: number
 }
 
@@ -86,13 +86,13 @@ export interface FiveDayEventStyle {
 // FiveDay Grid コンポーネントのProps
 export interface FiveDayGridProps {
   fiveDayDates: Date[]
-  events: CalendarEvent[]
-  eventsByDate: Record<string, CalendarEvent[]>
+  events: CalendarPlan[]
+  eventsByDate: Record<string, CalendarPlan[]>
   centerIndex: number
   todayIndex: number
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
+  onEventClick?: (event: CalendarPlan) => void
+  onEventContextMenu?: (event: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onEventUpdate?: (event: CalendarEvent) => void
+  onEventUpdate?: (event: CalendarPlan) => void
   className?: string
 }

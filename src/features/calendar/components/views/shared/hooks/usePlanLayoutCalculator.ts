@@ -2,11 +2,11 @@ import { useMemo } from 'react'
 
 import { useCalendarToast } from '@/features/calendar/hooks/use-calendar-toast'
 
-import type { CalendarPlan } from '../types/plan.types'
+import type { TimedPlan } from '../types/plan.types'
 
 // レイアウト情報の型定義
 export interface PlanLayout {
-  plan: CalendarPlan
+  plan: TimedPlan
   column: number // 左から何番目のカラム（0始まり）
   totalColumns: number // その時間帯の総カラム数
   width: number // 幅のパーセンテージ（例: 50, 33.33）
@@ -15,7 +15,7 @@ export interface PlanLayout {
 
 // 重複グループの型定義
 interface OverlapGroup {
-  plans: CalendarPlan[]
+  plans: TimedPlan[]
   startTime: Date
   endTime: Date
 }
@@ -24,7 +24,7 @@ interface OverlapGroup {
  * プランの重複レイアウト計算フック
  * Googleカレンダー風の横並び配置を実現
  */
-export function usePlanLayoutCalculator(plans: CalendarPlan[], options?: { notifyConflicts?: boolean }): PlanLayout[] {
+export function usePlanLayoutCalculator(plans: TimedPlan[], options?: { notifyConflicts?: boolean }): PlanLayout[] {
   const { eventConflict } = useCalendarToast()
   return useMemo(() => {
     if (plans.length === 0) return []
@@ -81,9 +81,9 @@ export function usePlanLayoutCalculator(plans: CalendarPlan[], options?: { notif
 /**
  * 重複するプラングループを検出
  */
-function findOverlapGroups(plans: CalendarPlan[]): OverlapGroup[] {
+function findOverlapGroups(plans: TimedPlan[]): OverlapGroup[] {
   const groups: OverlapGroup[] = []
-  let currentGroup: CalendarPlan[] = []
+  let currentGroup: TimedPlan[] = []
   let groupEndTime: Date | null = null
 
   plans.forEach((plan) => {
@@ -127,7 +127,7 @@ function findOverlapGroups(plans: CalendarPlan[]): OverlapGroup[] {
 /**
  * グループ内のレイアウトを計算（Googleカレンダー準拠）
  */
-function calculateGroupLayout(plans: CalendarPlan[]): PlanLayout[] {
+function calculateGroupLayout(plans: TimedPlan[]): PlanLayout[] {
   const layouts: PlanLayout[] = []
 
   // 各プランの「競合リスト」を作成
@@ -189,7 +189,7 @@ function calculateGroupLayout(plans: CalendarPlan[]): PlanLayout[] {
 /**
  * 2つのプランが重複しているかを判定
  */
-function isOverlapping(plan1: CalendarPlan, plan2: CalendarPlan): boolean {
+function isOverlapping(plan1: TimedPlan, plan2: TimedPlan): boolean {
   // start, end を使用
   const start1 = new Date(plan1.start)
   const end1 = new Date(plan1.end)
@@ -204,7 +204,7 @@ function isOverlapping(plan1: CalendarPlan, plan2: CalendarPlan): boolean {
 /**
  * 最大同時重複数を計算
  */
-function calculateMaxConcurrent(plans: CalendarPlan[]): number {
+function calculateMaxConcurrent(plans: TimedPlan[]): number {
   const timePoints: { time: Date; type: 'start' | 'end'; planId: string }[] = []
 
   plans.forEach((plan) => {

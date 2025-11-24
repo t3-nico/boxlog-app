@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { getTranslation } from './get-translation'
 import { toastTemplates } from './templates'
 import { CALENDAR_TOAST_KEYS } from './translation-keys'
-import type { CalendarAction, CalendarEvent, CalendarToastOptions } from './types'
+import type { CalendarAction, CalendarPlan, CalendarToastOptions } from './types'
 
 export const useCalendarToast = () => {
   // 汎用的なtoast表示関数
@@ -63,28 +63,28 @@ export const useCalendarToast = () => {
 
   // 便利なショートカット関数
   const eventCreated = useCallback(
-    (event: CalendarEvent, options?: CalendarToastOptions) => {
+    (event: CalendarPlan, options?: CalendarToastOptions) => {
       return showCalendarToast('created', { event, ...options })
     },
     [showCalendarToast]
   )
 
   const eventUpdated = useCallback(
-    (event: CalendarEvent, options?: CalendarToastOptions) => {
+    (event: CalendarPlan, options?: CalendarToastOptions) => {
       return showCalendarToast('updated', { event, ...options })
     },
     [showCalendarToast]
   )
 
   const eventDeleted = useCallback(
-    (event: CalendarEvent, undoAction?: () => void) => {
+    (event: CalendarPlan, undoAction?: () => void) => {
       return showCalendarToast('deleted', { event, undoAction })
     },
     [showCalendarToast]
   )
 
   const eventMoved = useCallback(
-    (event: CalendarEvent, toDate: Date, options?: CalendarToastOptions) => {
+    (event: CalendarPlan, toDate: Date, options?: CalendarToastOptions) => {
       return showCalendarToast('moved', { event, toDate, ...options })
     },
     [showCalendarToast]

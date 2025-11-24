@@ -3,17 +3,17 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 interface VirtualCalendarGridProps {
   dates: Date[]
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   hourHeight?: number
   startHour?: number
   endHour?: number
   overscan?: number // レンダリングバッファ（時間単位）
-  onEventClick?: (event: CalendarEvent) => void
+  onEventClick?: (event: CalendarPlan) => void
   onCreateEvent?: (date: Date, time: string) => void
   className?: string
 }
@@ -232,8 +232,8 @@ interface VirtualTimeSlotProps {
   top: number
   height: number
   dates: Date[]
-  events: CalendarEvent[]
-  onEventClick?: (event: CalendarEvent) => void
+  events: CalendarPlan[]
+  onEventClick?: (event: CalendarPlan) => void
   onCreateEvent?: (date: Date, time: string) => void
   observer?: IntersectionObserver | null
 }
@@ -296,8 +296,8 @@ const VirtualTimeSlot = React.memo(function VirtualTimeSlot({
 interface VirtualDayColumnProps {
   date: Date
   hour: number
-  events: CalendarEvent[]
-  onEventClick?: (event: CalendarEvent) => void
+  events: CalendarPlan[]
+  onEventClick?: (event: CalendarPlan) => void
   onCreateEvent?: (date: Date, time: string) => void
 }
 
@@ -340,7 +340,7 @@ const VirtualDayColumn = React.memo(function VirtualDayColumn({
 
 // 仮想化されたイベントカード
 interface VirtualEventCardProps {
-  event: CalendarEvent
+  event: CalendarPlan
   onClick: () => void
 }
 

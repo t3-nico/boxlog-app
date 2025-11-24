@@ -1,19 +1,19 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { useMemo } from 'react'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 import { useEventPositioning } from '../../shared/hooks/useEventPositioning'
 import type { EventPosition } from '../DayView.types'
 
 interface UseDayEventLayoutOptions {
   date: Date
-  events: CalendarEvent[]
+  events: CalendarPlan[]
 }
 
 interface UseDayEventLayoutReturn {
   eventPositions: EventPosition[]
-  dayEvents: CalendarEvent[]
+  dayEvents: CalendarPlan[]
   maxConcurrentEvents: number
 }
 
@@ -32,14 +32,14 @@ export function useDayEventLayout({
     maxConcurrentEvents,
   } = useEventPositioning({
     date,
-    events: events as any, // TODO(#389): CalendarEvent型の統一が必要
+    events: events as any, // TODO(#389): CalendarPlan型の統一が必要
     viewType: 'day',
   })
 
   // DayView固有のEventPosition形式に変換
   const eventPositions = useMemo(() => {
     return positionsInfo.map((info) => ({
-      event: info.event as any, // TODO(#389): CalendarEvent型の統一が必要
+      event: info.event as any, // TODO(#389): CalendarPlan型の統一が必要
       top: info.top,
       height: info.height,
       left: info.left,
@@ -53,7 +53,7 @@ export function useDayEventLayout({
 
   return {
     eventPositions,
-    dayEvents: dayEvents as CalendarEvent[],
+    dayEvents: dayEvents as CalendarPlan[],
     maxConcurrentEvents,
   }
 }

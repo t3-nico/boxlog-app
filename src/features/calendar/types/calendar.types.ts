@@ -102,12 +102,6 @@ export interface CalendarPlan {
   isRecurring: boolean
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use CalendarPlan instead */
-export type Calendarplan = CalendarPlan
-/** @deprecated Use CalendarPlan instead */
-export type CalendarEvent = CalendarPlan
-
 // ========================================
 // 新しいDB設計に対応した型定義
 // ========================================

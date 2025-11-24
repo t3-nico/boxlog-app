@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 
 import { isSameDay } from 'date-fns'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 import { getDateKey, isValidEvent, sortEventsByDateKeys } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
@@ -21,7 +21,7 @@ const DAY_COLUMN_WIDTH = 100 / 7 // 各日の列幅（%）
 export function useWeekEvents({ weekDates, events = [] }: UseWeekEventsOptions): UseWeekEventsReturn {
   // イベントを日付ごとにグループ化
   const eventsByDate = useMemo(() => {
-    const grouped: Record<string, CalendarEvent[]> = {}
+    const grouped: Record<string, CalendarPlan[]> = {}
 
     // 各日付のキーを初期化
     weekDates.forEach((date) => {
@@ -147,7 +147,7 @@ export function useWeekEvents({ weekDates, events = [] }: UseWeekEventsOptions):
 /**
  * イベントの重なりを検出して列配置を計算
  */
-function calculateEventColumns(events: CalendarEvent[]): Array<{ column: number; totalColumns: number }> {
+function calculateEventColumns(events: CalendarPlan[]): Array<{ column: number; totalColumns: number }> {
   if (events.length === 0) return []
 
   // 時間順にソート済みと仮定

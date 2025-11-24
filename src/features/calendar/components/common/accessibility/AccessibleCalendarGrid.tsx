@@ -3,14 +3,14 @@
 
 import { useCallback, useMemo, useRef } from 'react'
 
-import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 import { AccessibilityLiveRegion, useAccessibilityKeyboard } from '../../../hooks/useAccessibilityKeyboard'
 
 interface AccessibleCalendarGridProps {
   dates: Date[]
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   currentDate: Date
   selectedDate?: Date
   selectedTime?: string
@@ -96,7 +96,7 @@ export const AccessibleCalendarGrid = ({
   }, [])
 
   // イベントの詳細説明
-  const getEventDescription = useCallback((event: CalendarEvent) => {
+  const getEventDescription = useCallback((event: CalendarPlan) => {
     const startTime = event.startDate?.toLocaleTimeString('ja-JP', {
       hour: '2-digit',
       minute: '2-digit',
@@ -161,7 +161,7 @@ export const AccessibleCalendarGrid = ({
 
   // イベントのARIA属性
   const getEventAriaProps = useCallback(
-    (event: CalendarEvent) => {
+    (event: CalendarPlan) => {
       const isSelected = navigationState.selectedEventId === event.id
       const description = getEventDescription(event)
 

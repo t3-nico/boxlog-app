@@ -2,55 +2,20 @@
  * プラン関連の型定義
  */
 
-export interface CalendarPlan {
-  id: string
-  title: string
-  description?: string
-  color?: string
-  start: Date
-  end: Date
-  // Aliases for backward compatibility
-  startDate?: Date
-  endDate?: Date
-  // Extended properties to match CalendarPlan
-  displayStartDate?: Date
-  displayEndDate?: Date
-  duration?: number
-  isRecurring?: boolean
-  status?: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
-  priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional'
-  location?: string
-  url?: string
-  createdAt?: Date
-  updatedAt?: Date
-  isMultiDay?: boolean
-  isReadOnly?: boolean
-  plan_number?: string // プラン番号（#123 形式）
-  reminder_minutes?: number | null // 通知タイミング（開始時刻の何分前か）
-  tags?: Array<{
-    id: string
-    name: string
-    color: string
-    icon?: string
-    parent_id?: string
-  }>
-  items?: Array<{
-    id: string
-    text: string
-    completed: boolean
-    duration?: number
-  }>
-  isDeleted?: boolean
-}
+import type { CalendarPlan as BaseCalendarPlan } from '@/features/calendar/types/calendar.types'
+
+// CalendarPlanを再エクスポート
+export type CalendarPlan = BaseCalendarPlan
 
 // 時間指定プラン（start/endを持つプラン）
-export type TimedPlan = CalendarPlan
+// CalendarPlanの startDate/endDate を start/end に変換した型
+export type TimedPlan = CalendarPlan & {
+  start: Date // startDateのエイリアス
+  end: Date // endDateのエイリアス
+  isReadOnly?: boolean
+}
 
 // 後方互換性のためのエイリアス
-/** @deprecated Use CalendarPlan instead */
-export type Calendarplan = CalendarPlan
-/** @deprecated Use CalendarPlan instead */
-export type CalendarEvent = CalendarPlan
 /** @deprecated Use TimedPlan instead */
 export type TimedEvent = TimedPlan
 

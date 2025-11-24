@@ -3,7 +3,7 @@
  */
 
 import { MAX_EVENT_COLUMNS } from '../constants/grid.constants'
-import type { CalendarPlan, PlanColumn, TimedPlan } from '../types/plan.types'
+import type { PlanColumn, TimedPlan } from '../types/plan.types'
 
 // 後方互換性のためのエイリアス
 type TimedEvent = TimedPlan
@@ -224,7 +224,7 @@ export function sortTimedEvents(events: TimedEvent[]): TimedEvent[] {
 /**
  * 特定の日のプランをフィルタリング
  */
-export function filterPlansByDate(plans: CalendarPlan[], date: Date): CalendarPlan[] {
+export function filterPlansByDate(plans: TimedPlan[], date: Date): TimedPlan[] {
   const dayStart = new Date(date)
   dayStart.setHours(0, 0, 0, 0)
 
@@ -239,6 +239,6 @@ export function filterPlansByDate(plans: CalendarPlan[], date: Date): CalendarPl
 
 // 後方互換性のためのエイリアス
 /** @deprecated Use filterPlansByDate instead */
-export function filterEventsByDate(events: CalendarPlan[], date: Date): CalendarPlan[] {
+export function filterEventsByDate(events: TimedPlan[], date: Date): TimedPlan[] {
   return filterPlansByDate(events, date)
 }

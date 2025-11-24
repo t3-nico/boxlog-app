@@ -4,7 +4,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import { timeToMinutes } from '@/features/calendar/lib/time-grid-helpers'
-// import { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 // アニメーション設定
 export const eventAnimations = {
@@ -48,7 +48,7 @@ export const eventAnimations = {
 
 // アニメーション付きイベントコンポーネント
 interface AnimatedEventItemProps {
-  event: CalendarEvent
+  event: CalendarPlan
   children: React.ReactNode
   isSelected?: boolean
   isHovered?: boolean
@@ -220,7 +220,7 @@ export const CreatingEventPreview = ({
 
 // 削除アニメーション用のコンポーネント
 interface DeletingEventProps {
-  event: CalendarEvent
+  event: CalendarPlan
   onAnimationComplete: () => void
   children: React.ReactNode
 }

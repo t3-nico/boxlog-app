@@ -27,9 +27,9 @@ import { ja } from 'date-fns/locale'
 import { Bell, Calendar as CalendarIcon, MoreVertical, Plus, Repeat, Tag } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useBoardStatusFilterStore } from '../stores/useBoardStatusFilterStore'
-import { TicketCard } from './shared/TicketCard'
+import { PlanCard } from './shared/PlanCard'
 
-interface TicketKanbanBoardProps {
+interface PlanKanbanBoardProps {
   items: InboxItem[]
 }
 
@@ -38,7 +38,7 @@ interface TicketKanbanBoardProps {
  *
  * InboxItemをステータスごとに3カラムに分類して表示
  */
-export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
+export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const { updatePlan } = usePlanMutations()
   const { isStatusVisible } = useBoardStatusFilterStore()
@@ -105,7 +105,7 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
         {isStatusVisible('backlog') && (
           <KanbanColumn title="Backlog" count={columns.backlog.length} variant="default" status="backlog">
             {columns.backlog.map((item) => (
-              <TicketCard key={item.id} item={item} />
+              <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
         )}
@@ -114,7 +114,7 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
         {isStatusVisible('ready') && (
           <KanbanColumn title="Ready" count={columns.ready.length} variant="ready" status="ready">
             {columns.ready.map((item) => (
-              <TicketCard key={item.id} item={item} />
+              <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
         )}
@@ -123,7 +123,7 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
         {isStatusVisible('active') && (
           <KanbanColumn title="Active" count={columns.active.length} variant="active" status="active">
             {columns.active.map((item) => (
-              <TicketCard key={item.id} item={item} />
+              <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
         )}
@@ -132,7 +132,7 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
         {isStatusVisible('wait') && (
           <KanbanColumn title="Wait" count={columns.wait.length} variant="wait" status="wait">
             {columns.wait.map((item) => (
-              <TicketCard key={item.id} item={item} />
+              <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
         )}
@@ -141,7 +141,7 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
         {isStatusVisible('done') && (
           <KanbanColumn title="Done" count={columns.done.length} variant="done" status="done">
             {columns.done.map((item) => (
-              <TicketCard key={item.id} item={item} />
+              <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
         )}
@@ -150,7 +150,7 @@ export function TicketKanbanBoard({ items }: TicketKanbanBoardProps) {
         {isStatusVisible('cancel') && (
           <KanbanColumn title="Cancel" count={columns.cancel.length} variant="cancel" status="cancel">
             {columns.cancel.map((item) => (
-              <TicketCard key={item.id} item={item} />
+              <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
         )}

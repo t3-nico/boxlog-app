@@ -9,7 +9,7 @@ import { CalendarDragSelection, EventBlock, calculateEventGhostStyle, calculateP
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor'
 import { useTimeCalculation } from '../../shared/hooks/useTimeCalculation'
-import type { CalendarEvent } from '../../shared/types/event.types'
+import type { CalendarPlan } from '../../shared/types/event.types'
 import type { DayContentProps } from '../DayView.types'
 import { useDragAndDrop } from '../hooks/useDragAndDrop'
 
@@ -39,7 +39,7 @@ export const DayContent = ({
   )
 
   // ドラッグ&ドロップ機能
-  // @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある
+  // @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある
   const { dragState, handlers } = useDragAndDrop({
     onEventUpdate: handleEventUpdate,
     onEventClick,
@@ -65,12 +65,12 @@ export const DayContent = ({
 
   // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
   const handleEventClick = useCallback(
-    (event: CalendarEvent) => {
+    (event: CalendarPlan) => {
       // ドラッグ・リサイズ操作中のクリックは無視
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
-      // @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある
+      // @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある
       onEventClick?.(event)
     },
     [onEventClick, dragState.isDragging, dragState.isResizing]
@@ -78,12 +78,12 @@ export const DayContent = ({
 
   // イベント右クリックハンドラー
   const handleEventContextMenu = useCallback(
-    (event: CalendarEvent, mouseEvent: React.MouseEvent) => {
+    (event: CalendarPlan, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
-      // @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある
+      // @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある
       onEventContextMenu?.(event, mouseEvent)
     },
     [onEventContextMenu, dragState.isDragging, dragState.isResizing]

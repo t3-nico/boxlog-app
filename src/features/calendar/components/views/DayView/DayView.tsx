@@ -3,7 +3,7 @@
 
 import React, { useMemo } from 'react'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 // import { eventSelectors, useEventStore } from '@/features/events/stores/useEventStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
@@ -61,7 +61,7 @@ export const DayView = ({
 
   // ドラッグイベント用のハンドラー
   // TODO(#621): Events削除後、plans/Sessions統合後に再実装
-  const handleEventTimeUpdate = React.useCallback((_event: CalendarEvent) => {
+  const handleEventTimeUpdate = React.useCallback((_event: CalendarPlan) => {
     console.log('TODO: Sessions統合後に実装')
     // if (!event.startDate || !event.endDate) return
 

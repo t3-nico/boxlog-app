@@ -3,12 +3,12 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import type { Calendarplan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 import { PlanCard } from './PlanCard'
 
 describe('PlanCard', () => {
-  const mockEvent: Calendarplan = {
+  const mockEvent: CalendarPlan = {
     id: 'event-1',
     title: 'テストイベント',
     description: 'テスト説明',

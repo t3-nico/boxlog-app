@@ -3,7 +3,7 @@
  * WorkerManager - Web Worker の管理とタスクスケジューリング
  */
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 interface WorkerTask {
   id: string

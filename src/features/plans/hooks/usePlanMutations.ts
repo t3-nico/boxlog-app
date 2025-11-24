@@ -200,14 +200,5 @@ export function usePlanMutations() {
     deletePlan,
     bulkUpdatePlan,
     bulkDeletePlan,
-    // Backward compatibility aliases
-    createTicket: createPlan,
-    updateTicket: updatePlan,
-    deleteTicket: deletePlan,
-    bulkUpdateTicket: bulkUpdatePlan,
-    bulkDeleteTicket: bulkDeletePlan,
   }
 }
-
-// Backward compatibility
-export { usePlanMutations as useTicketMutations }

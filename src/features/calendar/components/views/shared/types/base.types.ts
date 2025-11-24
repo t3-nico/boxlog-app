@@ -3,9 +3,9 @@
  * 全カレンダービューで共通するプロパティ
  */
 
-// CalendarEventの型定義（外部からも使用されるため再エクスポート）
-export type { CalendarEvent } from './plan.types'
-import type { CalendarEvent } from './plan.types'
+// CalendarPlanの型定義（外部からも使用されるため再エクスポート）
+export type { CalendarPlan } from './plan.types'
+import type { CalendarPlan } from './plan.types'
 
 // 基本的なビューの共通型（他ファイルから参照のため互換性考慮）
 export type ViewDateRange = {
@@ -72,7 +72,7 @@ export interface BaseViewProps {
   // Core data
   dateRange: ViewDateRange
   tasks: Task[]
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   currentDate: Date
 
   // Display options
@@ -81,12 +81,12 @@ export interface BaseViewProps {
 
   // Event handlers (完全に共通)
   onTaskClick?: (task: Task) => void
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
+  onEventClick?: (event: CalendarPlan) => void
+  onEventContextMenu?: (event: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
-  onUpdateEvent?: (event: CalendarEvent) => void
+  onUpdateEvent?: (event: CalendarPlan) => void
   onDeleteEvent?: (eventId: string) => void
-  onRestoreEvent?: (event: CalendarEvent) => Promise<void>
+  onRestoreEvent?: (event: CalendarPlan) => Promise<void>
   onEmptyClick?: (date: Date, time: string) => void
 
   // Task handlers (完全に共通)
@@ -106,7 +106,7 @@ export interface BaseViewProps {
  * 4箇所で重複していた EventPosition を統一
  */
 export interface BaseEventPosition {
-  event: CalendarEvent
+  event: CalendarPlan
   top: number
   height: number
   left: number

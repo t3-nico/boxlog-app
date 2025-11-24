@@ -5,7 +5,7 @@
 import { useCallback } from 'react'
 
 import useCalendarToast from '@/features/calendar/lib/toast'
-import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
@@ -17,7 +17,7 @@ export function usePlanContextActions() {
   const { deletePlan } = usePlanMutations()
 
   const handleDeletePlan = useCallback(
-    async (event: CalendarEvent) => {
+    async (event: CalendarPlan) => {
       // 削除確認ダイアログ
       if (!confirm('このプランを削除しますか？')) {
         return
@@ -34,7 +34,7 @@ export function usePlanContextActions() {
   )
 
   const handleEditPlan = useCallback(
-    (event: CalendarEvent) => {
+    (event: CalendarPlan) => {
       // planInspectorを開いて編集モードにする
       openInspector(event.id)
     },
@@ -42,14 +42,14 @@ export function usePlanContextActions() {
   )
 
   // イベントの日付データを正規化
-  const normalizeEventDates = (event: CalendarEvent) => {
+  const normalizeEventDates = (event: CalendarPlan) => {
     const startDate = event.startDate || new Date()
     const endDate = event.endDate || new Date()
     return { startDate, endDate }
   }
 
   // 複製イベントデータを作成
-  const createDuplicateEventData = (event: CalendarEvent, newStartDate: Date, newEndDate: Date) => ({
+  const createDuplicateEventData = (event: CalendarPlan, newStartDate: Date, newEndDate: Date) => ({
     title: `${event.title} (コピー)`,
     description: event.description,
     startDate: newStartDate,
@@ -66,7 +66,7 @@ export function usePlanContextActions() {
 
   // Toast用のイベントデータを作成
   const createToastEventData = useCallback(
-    (newEvent: CalendarEvent) => {
+    (newEvent: CalendarPlan) => {
       const duration =
         newEvent.startDate && newEvent.endDate
           ? Math.round((newEvent.endDate.getTime() - newEvent.startDate.getTime()) / (1000 * 60))
@@ -92,7 +92,7 @@ export function usePlanContextActions() {
 
   // 編集モーダル用のデータを作成
   const createEditModalData = useCallback(
-    (newEvent: CalendarEvent) => ({
+    (newEvent: CalendarPlan) => ({
       title: newEvent.title,
       description: newEvent.description,
       startDate: newEvent.startDate,
@@ -109,7 +109,7 @@ export function usePlanContextActions() {
     []
   )
 
-  const logDuplicationStart = (event: CalendarEvent, startDate: Date, endDate: Date) => {
+  const logDuplicationStart = (event: CalendarPlan, startDate: Date, endDate: Date) => {
     console.log('🔍 Duplicating event:', {
       original: {
         title: event.title,
@@ -126,7 +126,7 @@ export function usePlanContextActions() {
     })
   }
 
-  const logDuplicationSuccess = (newEvent: CalendarEvent) => {
+  const logDuplicationSuccess = (newEvent: CalendarPlan) => {
     console.log('✅ Duplicated event created:', {
       id: newEvent.id,
       title: newEvent.title,
@@ -136,7 +136,7 @@ export function usePlanContextActions() {
   }
 
   const showDuplicationSuccess = useCallback(
-    (_newEvent: CalendarEvent) => {
+    (_newEvent: CalendarPlan) => {
       // TODO(#621): Events削除後、plans/Sessions統合後に再実装
       console.log('TODO: Sessions統合後に実装')
       // const toastEventData = createToastEventData(newEvent)
@@ -156,7 +156,7 @@ export function usePlanContextActions() {
   )
 
   const handleDuplicatePlan = useCallback(
-    async (_event: CalendarEvent) => {
+    async (_event: CalendarPlan) => {
       // TODO(#621): Events削除後、plans/Sessions統合後に再実装
       console.log('TODO: Sessions統合後に実装')
       // try {
@@ -181,7 +181,7 @@ export function usePlanContextActions() {
   )
 
   const handleViewDetails = useCallback(
-    (event: CalendarEvent) => {
+    (event: CalendarPlan) => {
       // planInspectorを開いて詳細を表示
       openInspector(event.id)
     },

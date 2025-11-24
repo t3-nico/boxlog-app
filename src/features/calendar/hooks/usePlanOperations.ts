@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react'
 
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { logger } from '@/lib/logger'
-import type { CalendarEvent } from '../types/calendar.types'
+import type { CalendarPlan } from '../types/calendar.types'
 
 /**
  * イベント操作（CRUD）を提供するフック
@@ -26,14 +26,14 @@ export const useEventOperations = () => {
   )
 
   // イベント復元ハンドラー
-  const handleEventRestore = useCallback(async (_event: CalendarEvent) => {
+  const handleEventRestore = useCallback(async (_event: CalendarPlan) => {
     console.log('TODO: Sessions統合後に実装')
     // planにはソフトデリート機能がないため、復元は未実装
   }, [])
 
   // イベント更新ハンドラー（ドラッグ&ドロップ用）
   const handleUpdateEvent = useCallback(
-    async (eventIdOrEvent: string | CalendarEvent, updates?: { startTime: Date; endTime: Date }) => {
+    async (eventIdOrEvent: string | CalendarPlan, updates?: { startTime: Date; endTime: Date }) => {
       try {
         // ドラッグ&ドロップからの呼び出し（eventId + updates形式）
         if (typeof eventIdOrEvent === 'string' && updates) {
@@ -53,11 +53,11 @@ export const useEventOperations = () => {
             },
           })
         }
-        // CalendarEventオブジェクト形式
+        // CalendarPlanオブジェクト形式
         else if (typeof eventIdOrEvent === 'object') {
           const updatedEvent = eventIdOrEvent
 
-          logger.log('🔧 plan更新 (CalendarEvent形式):', {
+          logger.log('🔧 plan更新 (CalendarPlan形式):', {
             eventId: updatedEvent.id,
             newStartDate: updatedEvent.startDate.toISOString(),
             newEndDate: updatedEvent.endDate?.toISOString(),

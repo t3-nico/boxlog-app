@@ -8,18 +8,18 @@ import { useMemo } from 'react'
 
 import { isSameDay } from 'date-fns'
 
-import type { CalendarEvent } from '../types/base.types'
+import type { CalendarPlan } from '../types/base.types'
 import { getDateKey, isValidEvent } from '../utils/dateHelpers'
 import { sortAgendaEventsByDateKeys, sortEventsByDateKeys } from '../utils/eventSorting'
 
 export interface UseEventsByDateOptions {
   dates: Date[]
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   sortType?: 'standard' | 'agenda' // agenda = 終日イベント優先
 }
 
 export interface UseEventsByDateReturn {
-  eventsByDate: Record<string, CalendarEvent[]>
+  eventsByDate: Record<string, CalendarPlan[]>
   totalEvents: number
   hasEvents: boolean
 }
@@ -40,7 +40,7 @@ export function useEventsByDate({
   sortType = 'standard',
 }: UseEventsByDateOptions): UseEventsByDateReturn {
   const eventsByDate = useMemo(() => {
-    const grouped: Record<string, CalendarEvent[]> = {}
+    const grouped: Record<string, CalendarPlan[]> = {}
 
     console.log('🔧 useEventsByDate: グループ化開始:', {
       datesCount: dates.length,

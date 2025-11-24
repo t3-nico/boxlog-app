@@ -33,9 +33,9 @@ import { useWeekendNavigation } from '../hooks/useWeekendNavigation'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { calculateViewDateRange } from '../lib/view-helpers'
 import { DnDProvider } from '../providers/DnDProvider'
-import { plansToCalendarEvents, setUserTimezone } from '../utils/planToCalendarEvent'
+import { plansToCalendarPlans, setUserTimezone } from '../utils/planToCalendarPlan'
 
-import type { CalendarEvent, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
+import type { CalendarPlan, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
 import { CalendarLayout } from './layout/CalendarLayout'
 import { EventContextMenu } from './views/shared/components'
@@ -229,7 +229,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // plansを取得（リアルタイム性最適化済み）
   const { data: plansData } = useplans({})
 
-  // 表示範囲のイベントを取得してCalendarEvent型に変換（削除済みを除外）
+  // 表示範囲のイベントを取得してCalendarPlan型に変換（削除済みを除外）
   const filteredEvents = useMemo(() => {
     // planデータがない場合は空配列を返す
     if (!plansData) {
@@ -250,8 +250,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       return plan.start_time && plan.end_time
     })
 
-    // planをCalendarEventに変換
-    const calendarEvents = plansToCalendarEvents(plansWithTime as plan[])
+    // planをCalendarPlanに変換
+    const calendarEvents = plansToCalendarPlans(plansWithTime as plan[])
 
     // 表示範囲内のイベントのみをフィルタリング
     const startDateOnly = new Date(
@@ -306,7 +306,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   // イベント関連のハンドラー
   const handleEventClick = useCallback(
-    (event: CalendarEvent) => {
+    (event: CalendarPlan) => {
       // プランIDでplan Inspectorを開く
       openInspector(event.id)
       logger.log('📋 Opening plan Inspector:', { planId: event.id, title: event.title })
@@ -458,7 +458,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const renderView = () => {
     // TODO(#389): Task/Event型の統一が必要
     // 現在は複数の型定義が存在し、型互換性がない問題がある
-    // @ts-expect-error - Task型とCalendarEvent型の統一が必要
+    // @ts-expect-error - Task型とCalendarPlan型の統一が必要
     const commonProps = {
       dateRange: viewDateRange,
       tasks: filteredTasks,

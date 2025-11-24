@@ -13,7 +13,7 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants'
-import type { Calendarplan, PlanCardProps } from '../../types/event.types'
+import type { CalendarPlan, PlanCardProps } from '../../types/event.types'
 
 import { PlanCardContent } from './PlanCardContent'
 
@@ -206,7 +206,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
             ...event,
             start: event.startDate || new Date(),
             end: event.endDate || new Date(),
-          } as Calendarplan
+          } as CalendarPlan
         }
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}

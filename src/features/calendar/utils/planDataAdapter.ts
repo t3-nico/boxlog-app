@@ -16,10 +16,7 @@ type TimedEvent = TimedPlan
  */
 export function planToTimedPlan(plan: CalendarPlan): TimedPlan {
   return {
-    id: plan.id,
-    title: plan.title,
-    description: plan.description,
-    color: plan.color,
+    ...plan,
     start: plan.startDate || new Date(),
     end: plan.endDate || new Date(),
     isReadOnly: plan.status === 'completed' || plan.status === 'cancelled',
@@ -78,6 +75,7 @@ export function safePlanToTimedPlan(plan: Partial<CalendarPlan>): TimedPlan | nu
   const defaultEnd = new Date(now.getTime() + 60 * 60 * 1000) // 1時間後
 
   return {
+    ...plan,
     id: plan.id,
     title: plan.title,
     description: plan.description || '',
@@ -85,7 +83,7 @@ export function safePlanToTimedPlan(plan: Partial<CalendarPlan>): TimedPlan | nu
     start: plan.startDate || now,
     end: plan.endDate || defaultEnd,
     isReadOnly: plan.status === 'completed' || plan.status === 'cancelled',
-  }
+  } as TimedPlan
 }
 
 // 後方互換性のためのエイリアス

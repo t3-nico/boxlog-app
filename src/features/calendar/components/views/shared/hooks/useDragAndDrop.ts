@@ -11,7 +11,7 @@ import { HOUR_HEIGHT } from '../constants/grid.constants'
 import { formatTimeRange } from '../utils/dateHelpers'
 
 // イベントデータの型定義
-interface CalendarEvent {
+interface CalendarPlan {
   id: string
   title: string
   startTime: Date
@@ -60,9 +60,9 @@ export interface DragHandlers {
 
 interface UseDragAndDropProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
-  onEventClick?: (event: CalendarEvent) => void // クリック処理用
+  onEventClick?: (event: CalendarPlan) => void // クリック処理用
   date: Date // DayViewでは単一日付、他のビューでは基準日付
-  events: CalendarEvent[] // イベントデータを受け取る
+  events: CalendarPlan[] // イベントデータを受け取る
   displayDates?: Date[] // WeekView/TwoWeekView/ThreeDayView用の日付配列
   viewMode?: 'day' | 'week' | '2week' | '3day' // ビューモード
 }
@@ -761,7 +761,7 @@ export function useDragAndDrop({
 
   // Toast通知を処理する
   const handleEventUpdateToast = useCallback(
-    async (promise: Promise<void>, event: CalendarEvent, newStartTime: Date, durationMs: number) => {
+    async (promise: Promise<void>, event: CalendarPlan, newStartTime: Date, durationMs: number) => {
       if (!event) return
 
       const previousStartTime = event.startDate || date

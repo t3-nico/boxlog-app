@@ -8,7 +8,7 @@ import { X } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
@@ -21,13 +21,13 @@ import { TimeColumn } from '../shared/grid/TimeColumn'
 interface WeekCalendarLayoutProps {
   dates: Date[]
   tasks: Task[]
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   dateRange: ViewDateRange
-  onEventClick?: (event: CalendarEvent) => void
+  onEventClick?: (event: CalendarPlan) => void
   onCreateEvent?: (date: Date, time?: string) => void
-  onUpdateEvent?: (event: CalendarEvent) => void
+  onUpdateEvent?: (event: CalendarPlan) => void
   onDeleteEvent?: (eventId: string) => void
-  onRestoreEvent?: (event: CalendarEvent) => Promise<void>
+  onRestoreEvent?: (event: CalendarPlan) => Promise<void>
 }
 
 // 現在時刻線コンポーネント（シンプル版）
@@ -163,7 +163,7 @@ export const WeekCalendarLayout = ({
   )
 
   // イベントの位置計算
-  const calculateEventPosition = useCallback((event: CalendarEvent) => {
+  const calculateEventPosition = useCallback((event: CalendarPlan) => {
     if (!event.startDate) {
       return { top: 0, height: HOUR_HEIGHT }
     }
@@ -205,7 +205,7 @@ export const WeekCalendarLayout = ({
 
   // jsx-no-bind optimization: Event click handler creator
   const createEventClickHandler = useCallback(
-    (event: CalendarEvent) => {
+    (event: CalendarPlan) => {
       return (e: React.MouseEvent) => {
         e.stopPropagation()
         setSelectedEventId(event.id)
@@ -217,7 +217,7 @@ export const WeekCalendarLayout = ({
 
   // jsx-no-bind optimization: Event keyboard handler creator
   const createEventKeyDownHandler = useCallback(
-    (event: CalendarEvent) => {
+    (event: CalendarPlan) => {
       return (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()

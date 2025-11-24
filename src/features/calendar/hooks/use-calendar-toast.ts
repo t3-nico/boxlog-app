@@ -6,19 +6,19 @@ import { toast } from 'sonner'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
 
-import type { CalendarEvent } from '../types/calendar.types'
+import type { CalendarPlan } from '../types/calendar.types'
 
 export function useCalendarToast() {
   const { t } = useI18n()
 
-  const eventCreated = (event: CalendarEvent) => {
+  const eventCreated = (event: CalendarPlan) => {
     toast.success(t('calendar.toast.created'), {
       description: `${format(event.displayStartDate, 'MM/dd HH:mm', { locale: ja })} ${event.title}`,
       duration: 3000,
     })
   }
 
-  const eventUpdated = (event: CalendarEvent) => {
+  const eventUpdated = (event: CalendarPlan) => {
     toast.success(t('calendar.toast.updated'), {
       description: event.title,
       duration: 2000,
@@ -49,14 +49,14 @@ export function useCalendarToast() {
     return toast.loading(t('calendar.toast.saving'))
   }
 
-  const eventMoved = (event: CalendarEvent) => {
+  const eventMoved = (event: CalendarPlan) => {
     toast.success(t('calendar.toast.moved'), {
       description: `${format(event.displayStartDate, 'MM/dd HH:mm', { locale: ja })} に変更`,
       duration: 2000,
     })
   }
 
-  const eventResized = (event: CalendarEvent) => {
+  const eventResized = (event: CalendarPlan) => {
     const durationHours = Math.floor(event.duration / 60)
     const durationMinutes = event.duration % 60
     const durationText =
@@ -110,7 +110,7 @@ export function useCalendarToast() {
     })
   }
 
-  const reminderSet = (event: CalendarEvent, minutes: number) => {
+  const reminderSet = (event: CalendarPlan, minutes: number) => {
     const reminderText =
       minutes >= 60
         ? `${Math.floor(minutes / 60)}${t('calendar.toast.hoursBefore')}`

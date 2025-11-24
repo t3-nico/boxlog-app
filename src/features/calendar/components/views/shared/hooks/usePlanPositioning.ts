@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import { isSameDay, isValid } from 'date-fns'
 
 import { HOUR_HEIGHT } from '../constants/grid.constants'
-import type { CalendarEvent } from '../types/plan.types'
+import type { CalendarPlan, TimedPlan } from '../types/plan.types'
 
 import { usePlanLayoutCalculator, type PlanLayout } from './usePlanLayoutCalculator'
 
@@ -13,7 +13,7 @@ const EVENT_PADDING = 2 // イベント間のパディング
 const MIN_EVENT_HEIGHT = 20 // 最小イベント高さ
 
 export interface EventPositionInfo {
-  event: CalendarEvent
+  event: TimedPlan
   top: number // px
   height: number // px
   left: number // %
@@ -26,7 +26,7 @@ export interface EventPositionInfo {
 
 interface UseEventPositioningOptions {
   date: Date
-  events: CalendarEvent[] // CalendarEvent型を拡張したイベント配列
+  events: CalendarPlan[] // CalendarPlan型（startDate/endDateを持つ）
   viewType?: 'day' | 'week' | 'month'
 }
 
@@ -50,7 +50,7 @@ export function useEventPositioning({
     })
   }, [date, events])
 
-  // CalendarEventをuseEventLayoutCalculatorで期待される形式に変換
+  // CalendarPlanをuseEventLayoutCalculatorで期待される形式に変換
   const convertedEvents = useMemo(() => {
     return filteredEvents.map((event) => ({
       ...event,

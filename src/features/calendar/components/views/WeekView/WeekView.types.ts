@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 
-import type { BaseEventPosition, BaseViewProps, CalendarEvent, DateTimeSelection } from '../shared'
+import type { BaseEventPosition, BaseViewProps, CalendarPlan, DateTimeSelection } from '../shared'
 
 // WeekViewの固有Props（BaseViewPropsを継承して95%削減）
 export interface WeekViewProps extends BaseViewProps {
@@ -11,14 +11,14 @@ export interface WeekViewProps extends BaseViewProps {
 // WeekGridコンポーネントのProps
 export interface WeekGridProps {
   weekDates: Date[]
-  events: CalendarEvent[]
-  eventsByDate: Record<string, CalendarEvent[]>
+  events: CalendarPlan[]
+  eventsByDate: Record<string, CalendarPlan[]>
   todayIndex: number
   timezone: string
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
+  onEventClick?: (event: CalendarPlan) => void
+  onEventContextMenu?: (event: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onEventUpdate?: (event: CalendarEvent) => void
+  onEventUpdate?: (event: CalendarPlan) => void
   onTimeRangeSelect?: (selection: DateTimeSelection) => void
   className?: string
 }
@@ -26,15 +26,15 @@ export interface WeekGridProps {
 // useWeekViewフックのオプション
 export interface UseWeekViewOptions {
   startDate: Date
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   weekStartsOn?: 0 | 1
-  onEventUpdate?: (event: CalendarEvent) => void
+  onEventUpdate?: (event: CalendarPlan) => void
 }
 
 // useWeekViewフックの返却値
 export interface UseWeekViewReturn {
   weekDates: Date[]
-  eventsByDate: Record<string, CalendarEvent[]>
+  eventsByDate: Record<string, CalendarPlan[]>
   todayIndex: number
   scrollToNow: () => void
   isCurrentWeek: boolean
@@ -43,12 +43,12 @@ export interface UseWeekViewReturn {
 // useWeekEventsフックのオプション
 export interface UseWeekEventsOptions {
   weekDates: Date[]
-  events: CalendarEvent[]
+  events: CalendarPlan[]
 }
 
 // useWeekEventsフックの返却値
 export interface UseWeekEventsReturn {
-  eventsByDate: Record<string, CalendarEvent[]>
+  eventsByDate: Record<string, CalendarPlan[]>
   eventPositions: WeekEventPosition[]
   maxConcurrentEvents: number
 }
@@ -91,7 +91,7 @@ export interface WeekDateDisplay {
   dayNumber: number
   isToday: boolean
   isWeekend: boolean
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   eventCount: number
 }
 

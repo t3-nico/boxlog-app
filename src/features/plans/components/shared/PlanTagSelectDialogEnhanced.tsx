@@ -529,6 +529,3 @@ export function PlanTagSelectDialogEnhanced({
     </Popover>
   )
 }
-
-// Backward compatibility
-export { PlanTagSelectDialogEnhanced as TicketTagSelectDialogEnhanced }

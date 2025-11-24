@@ -183,7 +183,7 @@ export const FiveDayView = ({
                 )}
                 style={{ width: `${100 / displayDates.length}%` }}
               >
-                {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある */}
+                {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
                 <FiveDayContent
                   date={date}
                   events={dayEvents}

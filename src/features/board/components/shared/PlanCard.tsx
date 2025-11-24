@@ -32,12 +32,12 @@ import { Bell, Calendar as CalendarIcon, Plus, Repeat, Tag, Trash2 } from 'lucid
 import { useBoardFocusStore } from '../../stores/useBoardFocusStore'
 import { BoardActionMenuItems } from '../BoardActionMenuItems'
 
-interface TicketCardProps {
+interface PlanCardProps {
   item: InboxItem
 }
 
 /**
- * TicketCard - Plan表示用カードコンポーネント
+ * PlanCard - Plan表示用カードコンポーネント
  *
  * **機能**:
  * - ドラッグ可能（useDraggable）
@@ -46,10 +46,10 @@ interface TicketCardProps {
  * - コンテキストメニュー（編集・複製・削除等）
  *
  * **使用箇所**:
- * - TicketKanbanBoard（Kanbanボード）
+ * - PlanKanbanBoard（Kanbanボード）
  * - InboxCardList（Calendar Sidebar）
  */
-export function TicketCard({ item }: TicketCardProps) {
+export function PlanCard({ item }: PlanCardProps) {
   const { openInspector, planId } = usePlanInspectorStore()
   const { focusedId, setFocusedId } = useBoardFocusStore()
   const { addplanTag, removeplanTag } = useplanTags()

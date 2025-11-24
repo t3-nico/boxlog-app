@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { RotateCcw, Undo2, X } from 'lucide-react'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
@@ -14,7 +14,7 @@ interface UndoAction {
   type: 'create' | 'delete' | 'edit' | 'move'
   description: string
   data:
-    | CalendarEvent
+    | CalendarPlan
     | {
         eventId: string
         oldPosition?: { startTime: Date; endTime: Date }
@@ -218,20 +218,20 @@ export function useUndoManager() {
 
 // 具体的なアクション生成ヘルパー
 export const createUndoActions = {
-  eventCreated: (event: CalendarEvent): Omit<UndoAction, 'id' | 'timestamp'> => ({
+  eventCreated: (event: CalendarPlan): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'create',
     description: `Created "${event.title}"`,
     data: { event },
   }),
 
-  eventDeleted: (event: CalendarEvent): Omit<UndoAction, 'id' | 'timestamp'> => ({
+  eventDeleted: (event: CalendarPlan): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'delete',
     description: `Deleted "${event.title}"`,
     data: { event },
   }),
 
   eventMoved: (
-    event: CalendarEvent,
+    event: CalendarPlan,
     oldData: { startDate: Date; endDate?: Date }
   ): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'move',
@@ -239,7 +239,7 @@ export const createUndoActions = {
     data: { event, oldData },
   }),
 
-  eventEdited: (event: CalendarEvent, oldData: Partial<CalendarEvent>): Omit<UndoAction, 'id' | 'timestamp'> => ({
+  eventEdited: (event: CalendarPlan, oldData: Partial<CalendarPlan>): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'edit',
     description: `Edited "${event.title}"`,
     data: { event, oldData },

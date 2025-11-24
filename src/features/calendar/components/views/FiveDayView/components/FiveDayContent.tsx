@@ -20,12 +20,12 @@ import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 
 interface FiveDayContentProps {
   date: Date
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   eventStyles: Record<string, React.CSSProperties>
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
+  onEventClick?: (event: CalendarPlan) => void
+  onEventContextMenu?: (event: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onEventUpdate?: (eventId: string, updates: Partial<CalendarEvent>) => void
+  onEventUpdate?: (eventId: string, updates: Partial<CalendarPlan>) => void
   onTimeRangeSelect?: (selection: DateTimeSelection) => void
   className?: string
   dayIndex: number // 5日間内での日付インデックス（0-4）
@@ -94,7 +94,7 @@ export const FiveDayContent = ({
 
   // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
   const handleEventClick = useCallback(
-    (event: CalendarEvent) => {
+    (event: CalendarPlan) => {
       // ドラッグ・リサイズ操作中のクリックは無視
       if (dragState.isDragging || dragState.isResizing) {
         return
@@ -107,7 +107,7 @@ export const FiveDayContent = ({
 
   // イベント右クリックハンドラー
   const handleEventContextMenu = useCallback(
-    (event: CalendarEvent, mouseEvent: React.MouseEvent) => {
+    (event: CalendarPlan, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing) {
         return

@@ -260,7 +260,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           setActiveId(null)
           return
         }
-        // planとして扱う（CalendarEventはplanベース）
+        // planとして扱う（CalendarPlanはplanベース）
         currentPlanId = calendarEvent.id
         console.log('[DnDProvider] カレンダーイベントをドラッグ中:', currentPlanId)
       } else {
