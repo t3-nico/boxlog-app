@@ -116,73 +116,80 @@ export const DayContent = ({
 
       {/* イベント表示エリア */}
       <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
-        {events.map((event) => {
-          const style = eventStyles[event.id]
-          if (!style) return null
+        {events &&
+          Array.isArray(events) &&
+          events.map((event) => {
+            const style = eventStyles[event.id]
+            if (!style) return null
 
-          const isDragging = dragState.draggedEventId === event.id && dragState.isDragging
-          const isResizingThis = dragState.isResizing && dragState.draggedEventId === event.id
-          const currentTop = parseFloat(style.top?.toString() || '0')
-          const currentHeight = parseFloat(style.height?.toString() || '20')
+            const isDragging = dragState.draggedEventId === event.id && dragState.isDragging
+            const isResizingThis = dragState.isResizing && dragState.draggedEventId === event.id
+            const currentTop = parseFloat(style.top?.toString() || '0')
+            const currentHeight = parseFloat(style.height?.toString() || '20')
 
-          // ゴースト表示スタイル（共通化）
-          const adjustedStyle = calculateEventGhostStyle(style, event.id, dragState)
+            // ゴースト表示スタイル（共通化）
+            const adjustedStyle = calculateEventGhostStyle(style, event.id, dragState)
 
-          return (
-            <div key={event.id} style={adjustedStyle} className="pointer-events-none absolute" data-event-block="true">
-              {/* EventBlockの内容部分のみクリック可能 */}
+            return (
               <div
-                className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
-                role="button"
-                tabIndex={0}
-                aria-label={`Drag event: ${event.title}`}
-                onMouseDown={(e) => {
-                  // 左クリックのみドラッグ開始
-                  if (e.button === 0) {
-                    handlers.handleMouseDown(event.id, e, {
-                      top: currentTop,
-                      left: 0,
-                      width: 100,
-                      height: currentHeight,
-                    })
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    // キーボードでドラッグ操作を開始する代替手段
-                    // ここでは単純にフォーカスを維持
-                  }
-                }}
+                key={event.id}
+                style={adjustedStyle}
+                className="pointer-events-none absolute"
+                data-event-block="true"
               >
-                <EventBlock
-                  event={event}
-                  position={{
-                    top: 0,
-                    left: 0,
-                    width: 100,
-                    height:
-                      isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
+                {/* EventBlockの内容部分のみクリック可能 */}
+                <div
+                  className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Drag event: ${event.title}`}
+                  onMouseDown={(e) => {
+                    // 左クリックのみドラッグ開始
+                    if (e.button === 0) {
+                      handlers.handleMouseDown(event.id, e, {
+                        top: currentTop,
+                        left: 0,
+                        width: 100,
+                        height: currentHeight,
+                      })
+                    }
                   }}
-                  // クリックは useDragAndDrop で処理されるため削除
-                  onContextMenu={(event, e) => handleEventContextMenu(event, e)}
-                  onResizeStart={(event, direction, e, _position) =>
-                    handlers.handleResizeStart(event.id, direction, e, {
-                      top: currentTop,
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      // キーボードでドラッグ操作を開始する代替手段
+                      // ここでは単純にフォーカスを維持
+                    }
+                  }}
+                >
+                  <EventBlock
+                    event={event}
+                    position={{
+                      top: 0,
                       left: 0,
                       width: 100,
-                      height: currentHeight,
-                    })
-                  }
-                  isDragging={isDragging}
-                  isResizing={isResizingThis}
-                  previewTime={calculatePreviewTime(event.id, dragState)}
-                  className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-                />
+                      height:
+                        isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
+                    }}
+                    // クリックは useDragAndDrop で処理されるため削除
+                    onContextMenu={(event, e) => handleEventContextMenu(event, e)}
+                    onResizeStart={(event, direction, e, _position) =>
+                      handlers.handleResizeStart(event.id, direction, e, {
+                        top: currentTop,
+                        left: 0,
+                        width: 100,
+                        height: currentHeight,
+                      })
+                    }
+                    isDragging={isDragging}
+                    isResizing={isResizingThis}
+                    previewTime={calculatePreviewTime(event.id, dragState)}
+                    className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                  />
+                </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })}
       </div>
     </div>
   )
