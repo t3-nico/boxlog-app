@@ -69,3 +69,6 @@ export function usePositionedEvents(events: TimedEvent[], options: UseEventPosit
     }))
   }, [events, positions])
 }
+
+// 後方互換性のためのエイリアス
+export { useEventPosition as usePlanPosition }

@@ -24,16 +24,17 @@ import { logger } from '@/lib/logger'
 
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 
+import { setUserTimezone } from '@/features/settings/utils/timezone'
 import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
 import { useCalendarContextMenu } from '../hooks/useCalendarContextMenu'
 import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard'
-import { useEventOperations } from '../hooks/useEventOperations'
 import { usePlanContextActions } from '../hooks/usePlanContextActions'
+import { usePlanOperations } from '../hooks/usePlanOperations'
 import { useWeekendNavigation } from '../hooks/useWeekendNavigation'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { calculateViewDateRange } from '../lib/view-helpers'
 import { DnDProvider } from '../providers/DnDProvider'
-import { plansToCalendarPlans, setUserTimezone } from '../utils/planToCalendarPlan'
+import { plansToCalendarPlans } from '../utils/planDataAdapter'
 
 import type { CalendarPlan, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
@@ -118,8 +119,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // プランコンテキストアクション
   const { handleDeletePlan, handleEditPlan, handleDuplicatePlan, handleViewDetails } = usePlanContextActions()
 
-  // イベント操作（CRUD）をフック化
-  const { handleEventDelete: deleteEvent, handleEventRestore, handleUpdateEvent } = useEventOperations()
+  // プラン操作（CRUD）をフック化
+  const { handlePlanDelete: deletePlan, handlePlanRestore, handleUpdatePlan } = usePlanOperations()
 
   const { timezone, showWeekends, updateSettings } = useCalendarSettingsStore()
 
@@ -470,9 +471,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       onEventClick: handleEventClick,
       onEventContextMenu: handleEventContextMenu,
       onCreateEvent: handleCreateEvent,
-      onUpdateEvent: handleUpdateEvent,
-      onDeleteEvent: deleteEvent,
-      onRestoreEvent: handleEventRestore,
+      onUpdateEvent: handleUpdatePlan,
+      onDeleteEvent: deletePlan,
+      onRestoreEvent: handlePlanRestore,
       onEmptyClick: handleEmptyClick,
       onTimeRangeSelect: handleDateTimeRangeSelect,
       onViewChange: handleViewChange,

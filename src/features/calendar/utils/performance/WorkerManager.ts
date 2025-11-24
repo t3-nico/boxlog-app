@@ -52,7 +52,7 @@ export class WorkerManager {
 
     for (let i = 0; i < workerCount; i++) {
       try {
-        const worker = new Worker(new URL('../../workers/eventProcessor.worker.ts', import.meta.url), {
+        const worker = new Worker(new URL('../../workers/planProcessor.worker.ts', import.meta.url), {
           type: 'module',
         })
 

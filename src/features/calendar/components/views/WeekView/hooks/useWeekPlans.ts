@@ -194,3 +194,6 @@ function calculateEventColumns(events: CalendarPlan[]): Array<{ column: number; 
     totalColumns: maxColumns,
   }))
 }
+
+// 後方互換性のためのエイリアス
+export { useWeekEvents as useWeekPlans }

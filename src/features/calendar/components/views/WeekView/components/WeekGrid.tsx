@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 
 import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout, getDateKey } from '../../shared'
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight'
-import { useWeekEvents } from '../hooks/useWeekEvents'
+import { useWeekPlans } from '../hooks/useWeekPlans'
 
 import type { WeekGridProps } from '../WeekView.types'
 
@@ -45,8 +45,8 @@ export const WeekGrid = ({
     desktop: 72,
   })
 
-  // イベント位置計算
-  const { eventPositions } = useWeekEvents({
+  // プラン位置計算
+  const { eventPositions } = useWeekPlans({
     weekDates,
     events,
   })

@@ -10,7 +10,7 @@ import { isSameDay } from 'date-fns'
 
 import type { CalendarPlan } from '../types/base.types'
 import { getDateKey, isValidEvent } from '../utils/dateHelpers'
-import { sortAgendaEventsByDateKeys, sortEventsByDateKeys } from '../utils/eventSorting'
+import { sortAgendaEventsByDateKeys, sortEventsByDateKeys } from '../utils/planSorting'
 
 export interface UseEventsByDateOptions {
   dates: Date[]

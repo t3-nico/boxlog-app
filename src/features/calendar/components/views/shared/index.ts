@@ -20,7 +20,7 @@ export { CurrentTimeLine, CurrentTimeLineForColumn } from './grid/CurrentTimeLin
 // ===== UIコンポーネント =====
 // planCard - プラン表示（EventBlock から名称変更）
 export type * from './components/PlanCard'
-export { EventBlock, EventContent, planCard, planCardContent } from './components/PlanCard'
+export { EventBlock, EventContent, PlanBlock, planCard, planCardContent } from './components/PlanCard'
 
 // DayColumn - 日列（イベント表示エリアのみ）
 export { DayColumn } from './components/DayColumn'

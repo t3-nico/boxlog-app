@@ -8,10 +8,10 @@ import React, { useCallback } from 'react'
 import { cn } from '@/lib/utils'
 
 import {
-  calculateEventGhostStyle,
+  calculatePlanGhostStyle,
   calculatePreviewTime,
   CalendarDragSelection,
-  EventBlock,
+  PlanBlock,
   useGlobalDragCursor,
   usePlanStyles,
   useTimeCalculation,
@@ -21,7 +21,7 @@ import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 
 interface TwoWeekContentProps {
   date: Date
-  events: CalendarPlan[]
+  plans: CalendarPlan[]
   onPlanClick?: (plan: CalendarPlan) => void
   onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
@@ -35,7 +35,7 @@ interface TwoWeekContentProps {
 
 export const TwoWeekContent = ({
   date,
-  events,
+  plans,
   onPlanClick,
   onPlanContextMenu,
   onEmptyClick,
@@ -68,10 +68,10 @@ export const TwoWeekContent = ({
 
   // ドラッグ&ドロップ機能（日付間移動対応）
   const { dragState, handlers } = useDragAndDrop({
-    onEventUpdate: handlePlanUpdate,
-    onEventClick: onPlanClick,
+    onPlanUpdate: handlePlanUpdate,
+    onPlanClick,
     date,
-    events,
+    plans,
     displayDates,
     viewMode: '2week',
   })
@@ -84,8 +84,8 @@ export const TwoWeekContent = ({
 
   // この日のプラン位置を統一方式で変換
   const dayPlanPositions = React.useMemo(() => {
-    // 渡されたeventsは既にdisplayDatesでフィルタリング済みのため、直接変換
-    return events.map((plan) => {
+    // 渡されたplansは既にdisplayDatesでフィルタリング済みのため、直接変換
+    return plans.map((plan) => {
       // startDate/endDateを使用した統一的なプラン位置計算
       const startDate = plan.startDate || new Date()
       const startHour = startDate.getHours()
@@ -102,7 +102,7 @@ export const TwoWeekContent = ({
       }
 
       return {
-        event: plan,
+        plan,
         top,
         height,
         left: 2, // 列内での位置（px）
@@ -111,7 +111,7 @@ export const TwoWeekContent = ({
         opacity: 1.0,
       }
     })
-  }, [events])
+  }, [plans])
 
   const planStyles = usePlanStyles(dayPlanPositions)
 
@@ -180,21 +180,21 @@ export const TwoWeekContent = ({
 
       {/* プラン表示エリア */}
       <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
-        {events.map((plan) => {
+        {plans.map((plan) => {
           const style = planStyles[plan.id]
           if (!style) return null
 
-          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
-          const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id
+          const isDragging = dragState.draggedPlanId === plan.id && dragState.isDragging
+          const isResizingThis = dragState.isResizing && dragState.draggedPlanId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
 
           // ゴースト表示スタイル（共通化）
-          const adjustedStyle = calculateEventGhostStyle(style, plan.id, dragState)
+          const adjustedStyle = calculatePlanGhostStyle(style, plan.id, dragState)
 
           return (
-            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-event-block="true">
-              {/* EventBlockの内容部分のみクリック可能 */}
+            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-plan-block="true">
+              {/* PlanBlockの内容部分のみクリック可能 */}
               <div
                 className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
                 role="button"
@@ -223,8 +223,8 @@ export const TwoWeekContent = ({
                   }
                 }}
               >
-                <EventBlock
-                  event={plan}
+                <PlanBlock
+                  plan={plan}
                   position={{
                     top: 0,
                     left: 0,

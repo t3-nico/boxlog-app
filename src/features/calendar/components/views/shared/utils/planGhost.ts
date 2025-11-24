@@ -4,15 +4,15 @@ import type { CSSProperties } from 'react'
 import type { DragState } from '../hooks/useDragAndDrop'
 
 /**
- * ドラッグ中イベントのゴースト表示用スタイル計算
+ * ドラッグ中プランのゴースト表示用スタイル計算
  * 全カレンダービューで共通利用
  *
- * @param originalStyle 元のイベントスタイル
- * @param eventId イベントID
+ * @param originalStyle 元のプランスタイル
+ * @param eventId プランID
  * @param dragState ドラッグ状態
  * @returns ゴースト表示を考慮した調整済みスタイル
  */
-export function calculateEventGhostStyle(
+export function calculatePlanGhostStyle(
   originalStyle: CSSProperties,
   eventId: string,
   dragState: DragState
@@ -41,11 +41,15 @@ export function calculateEventGhostStyle(
   return adjustedStyle
 }
 
+// 後方互換性のためのエイリアス
+/** @deprecated Use calculatePlanGhostStyle instead */
+export const calculateEventGhostStyle = calculatePlanGhostStyle
+
 /**
  * リサイズ中のプレビュー時間計算
  * 全カレンダービューで共通利用
  *
- * @param eventId イベントID
+ * @param eventId プランID
  * @param dragState ドラッグ状態
  * @returns プレビュー時間（リサイズ中のみ）
  */
