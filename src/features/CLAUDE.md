@@ -105,16 +105,15 @@ export const useTaskFilter = () => {
 
 ```tsx
 // features/tasks/components/TaskList.tsx
-import { FC } from 'react'
-import { colors, spacing } from '@/config/theme'
 import { useTaskFilter } from '../hooks/useTaskFilter'
 import { TaskCard } from './TaskCard'
 
-export const TaskList: FC = () => {
+// ✅ 推奨：関数宣言 + globals.cssのセマンティックトークン
+export function TaskList() {
   const { filteredTasks } = useTaskFilter()
 
   return (
-    <div className={`${colors.background.base} ${spacing.component.lg}`}>
+    <div className="bg-background p-6">
       {filteredTasks.map((task) => (
         <TaskCard key={task.id} task={task} />
       ))}
@@ -178,15 +177,17 @@ try {
 ### 3. スタイリング
 
 ```tsx
-// ✅ 必須：themeシステム
-import { colors, typography, spacing } from '@/config/theme'
+// ✅ 必須：globals.cssのセマンティックトークン
+import { typography } from '@/config/ui/theme'
 
-<div className={colors.background.card}>
+<div className="bg-card text-card-foreground">
   <h2 className={typography.heading.h2}>タイトル</h2>
 </div>
 
-// ❌ 禁止：直接指定
+// ❌ 禁止：ハードコード値
 <div className="bg-white p-4">
+// ❌ 禁止：廃止されたtheme.ts colors
+<div className={colors.background.card}>
 ```
 
 ---
@@ -270,4 +271,4 @@ import { SomeComponent } from '@/features/other-feature/components'
 
 ---
 
-**📖 最終更新**: 2025-09-30
+**📖 最終更新**: 2025-11-24 | **バージョン**: v2.1 - セマンティックトークン・関数宣言に統一
