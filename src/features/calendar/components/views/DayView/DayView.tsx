@@ -61,7 +61,7 @@ export const DayView = ({
 
   // ドラッグイベント用のハンドラー
   // TODO(#621): Events削除後、plans/Sessions統合後に再実装
-  const handleEventTimeUpdate = React.useCallback((_event: CalendarPlan) => {
+  const handleEventTimeUpdate = React.useCallback((_plan: CalendarPlan) => {
     console.log('TODO: Sessions統合後に実装')
     // if (!event.startDate || !event.endDate) return
 

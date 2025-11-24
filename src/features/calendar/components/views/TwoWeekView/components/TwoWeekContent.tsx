@@ -22,12 +22,12 @@ import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 interface TwoWeekContentProps {
   date: Date
   events: CalendarPlan[]
-  onEventClick?: (event: CalendarPlan) => void
-  onEventContextMenu?: (event: CalendarPlan, e: React.MouseEvent) => void
+  onPlanClick?: (plan: CalendarPlan) => void
+  onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onEventUpdate?: (event: CalendarPlan) => void
+  onPlanUpdate?: (plan: CalendarPlan) => void
   onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
-  onCreateEvent?: (startDate: Date, endDate: Date) => void
+  onCreatePlan?: (startDate: Date, endDate: Date) => void
   className?: string
   dayIndex: number // 2週間内での日付インデックス（0-13）
   displayDates?: Date[] // 2週間の全日付配列（日付間移動用）
@@ -36,40 +36,40 @@ interface TwoWeekContentProps {
 export const TwoWeekContent = ({
   date,
   events,
-  onEventClick,
-  onEventContextMenu,
+  onPlanClick,
+  onPlanContextMenu,
   onEmptyClick,
-  onEventUpdate,
+  onPlanUpdate,
   onTimeRangeSelect: _onTimeRangeSelect,
-  onCreateEvent,
+  onCreatePlan,
   className,
   dayIndex,
   displayDates,
 }: TwoWeekContentProps) => {
-  // ドラッグ&ドロップ機能用にonEventUpdateを変換
-  const handleEventUpdate = useCallback(
-    async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
-      if (!onEventUpdate) return
+  // ドラッグ&ドロップ機能用にonPlanUpdateを変換
+  const handlePlanUpdate = useCallback(
+    async (planId: string, updates: { startTime: Date; endTime: Date }) => {
+      if (!onPlanUpdate) return
 
       console.log('🔧 TwoWeekContent: プラン更新要求:', {
-        eventId,
+        planId,
         startTime: updates.startTime.toISOString(),
         endTime: updates.endTime.toISOString(),
       })
 
       // handleUpdatePlan形式で呼び出し
-      await onEventUpdate(eventId, {
+      await onPlanUpdate(planId, {
         startTime: updates.startTime,
         endTime: updates.endTime,
       })
     },
-    [onEventUpdate]
+    [onPlanUpdate]
   )
 
   // ドラッグ&ドロップ機能（日付間移動対応）
   const { dragState, handlers } = useDragAndDrop({
-    onEventUpdate: handleEventUpdate,
-    onEventClick,
+    onEventUpdate: handlePlanUpdate,
+    onEventClick: onPlanClick,
     date,
     events,
     displayDates,
@@ -82,27 +82,27 @@ export const TwoWeekContent = ({
   // グローバルドラッグカーソー管理（共通化）
   useGlobalDragCursor(dragState, handlers)
 
-  // この日のイベント位置を統一方式で変換
-  const dayEventPositions = React.useMemo(() => {
+  // この日のプラン位置を統一方式で変換
+  const dayPlanPositions = React.useMemo(() => {
     // 渡されたeventsは既にdisplayDatesでフィルタリング済みのため、直接変換
-    return events.map((event) => {
-      // startDate/endDateを使用した統一的なイベント位置計算
-      const startDate = event.startDate || new Date()
+    return events.map((plan) => {
+      // startDate/endDateを使用した統一的なプラン位置計算
+      const startDate = plan.startDate || new Date()
       const startHour = startDate.getHours()
       const startMinute = startDate.getMinutes()
       const top = (startHour + startMinute / 60) * HOUR_HEIGHT
 
       // 高さ計算（統一）
       let height = HOUR_HEIGHT // デフォルト1時間
-      if (event.endDate) {
-        const endHour = event.endDate.getHours()
-        const endMinute = event.endDate.getMinutes()
+      if (plan.endDate) {
+        const endHour = plan.endDate.getHours()
+        const endMinute = plan.endDate.getMinutes()
         const duration = endHour + endMinute / 60 - (startHour + startMinute / 60)
         height = Math.max(20, duration * HOUR_HEIGHT) // 最小20px
       }
 
       return {
-        event,
+        event: plan,
         top,
         height,
         left: 2, // 列内での位置（px）
@@ -113,7 +113,7 @@ export const TwoWeekContent = ({
     })
   }, [events])
 
-  const eventStyles = usePlanStyles(dayEventPositions)
+  const planStyles = usePlanStyles(dayPlanPositions)
 
   // 空白クリックハンドラー
   const handleEmptyClick = useCallback(
@@ -126,29 +126,29 @@ export const TwoWeekContent = ({
     [date, onEmptyClick, calculateTimeFromEvent]
   )
 
-  // イベントクリックハンドラー（ドラッグ・リサイズ後のクリックは無視）
-  const handleEventClick = useCallback(
-    (event: CalendarPlan) => {
+  // プランクリックハンドラー（ドラッグ・リサイズ後のクリックは無視）
+  const handlePlanClick = useCallback(
+    (plan: CalendarPlan) => {
       // ドラッグ・リサイズ操作中またはドラッグ・リサイズ直後のクリックは無視
       if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
         return
       }
 
-      onEventClick?.(event)
+      onPlanClick?.(plan)
     },
-    [onEventClick, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged]
+    [onPlanClick, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged]
   )
 
-  // イベント右クリックハンドラー
-  const handleEventContextMenu = useCallback(
-    (event: CalendarPlan, mouseEvent: React.MouseEvent) => {
+  // プラン右クリックハンドラー
+  const handlePlanContextMenu = useCallback(
+    (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
         return
       }
-      onEventContextMenu?.(event, mouseEvent)
+      onPlanContextMenu?.(plan, mouseEvent)
     },
-    [onEventContextMenu, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged]
+    [onPlanContextMenu, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged]
   )
 
   return (
@@ -167,7 +167,7 @@ export const TwoWeekContent = ({
           const [endHour, endMinute] = endTime.split(':').map(Number)
           endDate.setHours(endHour, endMinute, 0, 0)
 
-          onCreateEvent?.(startDate, endDate)
+          onCreatePlan?.(startDate, endDate)
         }}
         onSingleClick={onEmptyClick}
         disabled={
@@ -178,33 +178,33 @@ export const TwoWeekContent = ({
         <div className="absolute inset-0 cursor-cell" style={{ height: 24 * HOUR_HEIGHT }} />
       </CalendarDragSelection>
 
-      {/* イベント表示エリア */}
+      {/* プラン表示エリア */}
       <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
-        {events.map((event) => {
-          const style = eventStyles[event.id]
+        {events.map((plan) => {
+          const style = planStyles[plan.id]
           if (!style) return null
 
-          const isDragging = dragState.draggedEventId === event.id && dragState.isDragging
-          const isResizingThis = dragState.isResizing && dragState.draggedEventId === event.id
+          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
+          const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
 
           // ゴースト表示スタイル（共通化）
-          const adjustedStyle = calculateEventGhostStyle(style, event.id, dragState)
+          const adjustedStyle = calculateEventGhostStyle(style, plan.id, dragState)
 
           return (
-            <div key={event.id} style={adjustedStyle} className="pointer-events-none absolute" data-event-block="true">
+            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-event-block="true">
               {/* EventBlockの内容部分のみクリック可能 */}
               <div
                 className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
                 role="button"
                 tabIndex={0}
-                aria-label={`Drag event: ${event.title}`}
+                aria-label={`Drag plan: ${plan.title}`}
                 onMouseDown={(e) => {
                   // 左クリックのみドラッグ開始
                   if (e.button === 0) {
                     handlers.handleMouseDown(
-                      event.id,
+                      plan.id,
                       e,
                       {
                         top: currentTop,
@@ -224,7 +224,7 @@ export const TwoWeekContent = ({
                 }}
               >
                 <EventBlock
-                  event={event}
+                  event={plan}
                   position={{
                     top: 0,
                     left: 0,
@@ -233,9 +233,9 @@ export const TwoWeekContent = ({
                       isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
-                  onContextMenu={(event, e) => handleEventContextMenu(event, e)}
-                  onResizeStart={(event, direction, e, _position) =>
-                    handlers.handleResizeStart(event.id, direction, e, {
+                  onContextMenu={(plan, e) => handlePlanContextMenu(plan, e)}
+                  onResizeStart={(plan, direction, e, _position) =>
+                    handlers.handleResizeStart(plan.id, direction, e, {
                       top: currentTop,
                       left: 0,
                       width: 100,
@@ -244,7 +244,7 @@ export const TwoWeekContent = ({
                   }
                   isDragging={isDragging}
                   isResizing={isResizingThis}
-                  previewTime={calculatePreviewTime(event.id, dragState)}
+                  previewTime={calculatePreviewTime(plan.id, dragState)}
                   compact={true}
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />

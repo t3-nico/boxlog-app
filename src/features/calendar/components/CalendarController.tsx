@@ -306,7 +306,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   // イベント関連のハンドラー
   const handleEventClick = useCallback(
-    (event: CalendarPlan) => {
+    (plan: CalendarPlan) => {
       // プランIDでplan Inspectorを開く
       openInspector(event.id)
       logger.log('📋 Opening plan Inspector:', { planId: event.id, title: event.title })

@@ -9,7 +9,7 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 interface TrashViewProps {
   events: CalendarPlan[]
-  onRestore?: (event: CalendarPlan) => void
+  onRestore?: (plan: CalendarPlan) => void
   onPermanentDelete?: (eventId: string) => void
 }
 

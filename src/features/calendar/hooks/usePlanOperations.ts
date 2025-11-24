@@ -26,7 +26,7 @@ export const useEventOperations = () => {
   )
 
   // イベント復元ハンドラー
-  const handleEventRestore = useCallback(async (_event: CalendarPlan) => {
+  const handleEventRestore = useCallback(async (_plan: CalendarPlan) => {
     console.log('TODO: Sessions統合後に実装')
     // planにはソフトデリート機能がないため、復元は未実装
   }, [])

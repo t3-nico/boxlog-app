@@ -23,7 +23,7 @@ interface CalendarPlan {
 
 interface UseDragAndDropRefactoredProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
-  onEventClick?: (event: CalendarPlan) => void
+  onEventClick?: (plan: CalendarPlan) => void
   date: Date
   events: CalendarPlan[]
   displayDates?: Date[]

@@ -10,8 +10,8 @@ export const useCalendarContextMenu = () => {
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null)
 
   // イベントの右クリックハンドラー
-  const handleEventContextMenu = useCallback((event: CalendarPlan, mouseEvent: React.MouseEvent) => {
-    setContextMenuEvent(event)
+  const handleEventContextMenu = useCallback((plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
+    setContextMenuEvent(plan)
     setContextMenuPosition({ x: mouseEvent.clientX, y: mouseEvent.clientY })
   }, [])
 

@@ -23,11 +23,11 @@ interface WeekCalendarLayoutProps {
   tasks: Task[]
   events: CalendarPlan[]
   dateRange: ViewDateRange
-  onEventClick?: (event: CalendarPlan) => void
-  onCreateEvent?: (date: Date, time?: string) => void
-  onUpdateEvent?: (event: CalendarPlan) => void
-  onDeleteEvent?: (eventId: string) => void
-  onRestoreEvent?: (event: CalendarPlan) => Promise<void>
+  onPlanClick?: (plan: CalendarPlan) => void
+  onCreatePlan?: (date: Date, time?: string) => void
+  onUpdatePlan?: (plan: CalendarPlan) => void
+  onDeletePlan?: (planId: string) => void
+  onRestorePlan?: (plan: CalendarPlan) => Promise<void>
 }
 
 // 現在時刻線コンポーネント（シンプル版）
@@ -54,18 +54,18 @@ export const WeekCalendarLayout = ({
   tasks: _tasks,
   events = [],
   dateRange,
-  onEventClick,
-  onCreateEvent,
-  onUpdateEvent: _onUpdateEvent,
-  onDeleteEvent,
-  onRestoreEvent,
+  onPlanClick,
+  onCreatePlan,
+  onUpdatePlan: _onUpdatePlan,
+  onDeletePlan,
+  onRestorePlan,
 }: WeekCalendarLayoutProps) => {
   const { t } = useI18n()
   const { openEventPopup } = useAddPopup()
   const { planRecordMode } = useCalendarSettingsStore()
   const { records: _records, fetchRecords } = useRecordsStore()
   const containerRef = useRef<HTMLDivElement>(null)
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
 
   // ドラッグ機能は一時的に無効化
   const _enableDragToCreate = false
@@ -78,59 +78,59 @@ export const WeekCalendarLayout = ({
   }, [planRecordMode, dateRange, fetchRecords])
 
   // 削除処理関数（トースト機能付き）
-  const handleDeleteEvent = useCallback(
-    (eventId: string, e?: React.MouseEvent) => {
+  const handleDeletePlan = useCallback(
+    (planId: string, e?: React.MouseEvent) => {
       if (e) {
         e.stopPropagation()
         e.preventDefault()
       }
 
-      // 削除対象のイベントを見つける
-      const eventToDelete = events.find((event) => event.id === eventId)
-      if (!eventToDelete) return
+      // 削除対象のプランを見つける
+      const planToDelete = events.find((plan) => plan.id === planId)
+      if (!planToDelete) return
 
       // 確認なしで即座に削除（トーストで元に戻せるため）
-      onDeleteEvent?.(eventId)
+      onDeletePlan?.(planId)
 
       // Sonner toastで削除通知（Undo機能付き）
       toast.info(t('calendar.toast.deleted'), {
-        description: eventToDelete.title,
+        description: planToDelete.title,
         duration: 5000,
-        action: onRestoreEvent
+        action: onRestorePlan
           ? {
               label: t('calendar.actions.undo'),
               onClick: async () => {
-                await onRestoreEvent(eventToDelete)
+                await onRestorePlan(planToDelete)
               },
             }
           : undefined,
       })
 
       // 選択状態をクリア
-      if (selectedEventId === eventId) {
-        setSelectedEventId(null)
+      if (selectedPlanId === planId) {
+        setSelectedPlanId(null)
       }
     },
-    [onDeleteEvent, onRestoreEvent, selectedEventId, events, t]
+    [onDeletePlan, onRestorePlan, selectedPlanId, events, t]
   )
 
   // キーボードショートカット（Delete/Backspace）
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (selectedEventId && (e.key === 'Delete' || e.key === 'Backspace')) {
+      if (selectedPlanId && (e.key === 'Delete' || e.key === 'Backspace')) {
         e.preventDefault()
-        handleDeleteEvent(selectedEventId)
+        handleDeletePlan(selectedPlanId)
       }
     }
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [selectedEventId, handleDeleteEvent])
+  }, [selectedPlanId, handleDeletePlan])
 
   // 空き時間クリックハンドラー
   const handleEmptySlotClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>, date: Date) => {
-      // イベントブロック上のクリックは無視
+      // プランブロック上のクリックは無視
       if ((e.target as HTMLElement).closest('[data-event-block]')) {
         return
       }
@@ -155,25 +155,25 @@ export const WeekCalendarLayout = ({
       })
 
       // デフォルト値を設定（AddPopupが使用）
-      if (onCreateEvent) {
-        onCreateEvent(date, timeString)
+      if (onCreatePlan) {
+        onCreatePlan(date, timeString)
       }
     },
-    [openEventPopup, onCreateEvent]
+    [openEventPopup, onCreatePlan]
   )
 
-  // イベントの位置計算
-  const calculateEventPosition = useCallback((event: CalendarPlan) => {
-    if (!event.startDate) {
+  // プランの位置計算
+  const calculatePlanPosition = useCallback((plan: CalendarPlan) => {
+    if (!plan.startDate) {
       return { top: 0, height: HOUR_HEIGHT }
     }
 
-    const hours = event.startDate.getHours()
-    const minutes = event.startDate.getMinutes()
+    const hours = plan.startDate.getHours()
+    const minutes = plan.startDate.getMinutes()
     const top = (hours + minutes / 60) * HOUR_HEIGHT
 
-    const endHours = event.endDate ? event.endDate.getHours() : hours + 1
-    const endMinutes = event.endDate ? event.endDate.getMinutes() : 0
+    const endHours = plan.endDate ? plan.endDate.getHours() : hours + 1
+    const endMinutes = plan.endDate ? plan.endDate.getMinutes() : 0
     const height = Math.max(
       20, // 最小高さ
       (endHours + endMinutes / 60 - (hours + minutes / 60)) * HOUR_HEIGHT
@@ -203,39 +203,39 @@ export const WeekCalendarLayout = ({
     [handleEmptySlotClick]
   )
 
-  // jsx-no-bind optimization: Event click handler creator
-  const createEventClickHandler = useCallback(
-    (event: CalendarPlan) => {
+  // jsx-no-bind optimization: Plan click handler creator
+  const createPlanClickHandler = useCallback(
+    (plan: CalendarPlan) => {
       return (e: React.MouseEvent) => {
         e.stopPropagation()
-        setSelectedEventId(event.id)
-        onEventClick?.(event)
+        setSelectedPlanId(plan.id)
+        onPlanClick?.(plan)
       }
     },
-    [setSelectedEventId, onEventClick]
+    [setSelectedPlanId, onPlanClick]
   )
 
-  // jsx-no-bind optimization: Event keyboard handler creator
-  const createEventKeyDownHandler = useCallback(
-    (event: CalendarPlan) => {
+  // jsx-no-bind optimization: Plan keyboard handler creator
+  const createPlanKeyDownHandler = useCallback(
+    (plan: CalendarPlan) => {
       return (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
           e.stopPropagation()
-          setSelectedEventId(event.id)
-          onEventClick?.(event)
+          setSelectedPlanId(plan.id)
+          onPlanClick?.(plan)
         }
       }
     },
-    [setSelectedEventId, onEventClick]
+    [setSelectedPlanId, onPlanClick]
   )
 
-  // jsx-no-bind optimization: Delete event handler creator
-  const createDeleteEventHandler = useCallback(
-    (eventId: string) => {
-      return (e: React.MouseEvent) => handleDeleteEvent(eventId, e)
+  // jsx-no-bind optimization: Delete plan handler creator
+  const createDeletePlanHandler = useCallback(
+    (planId: string) => {
+      return (e: React.MouseEvent) => handleDeletePlan(planId, e)
     },
-    [handleDeleteEvent]
+    [handleDeletePlan]
   )
 
   return (
@@ -252,11 +252,11 @@ export const WeekCalendarLayout = ({
         {/* カレンダーグリッド */}
         <div className="bg-background relative flex flex-1" style={{ height: `${24 * HOUR_HEIGHT}px` }}>
           {dates.map((day, _dayIndex) => {
-            // その日のイベントをフィルタリング
-            const dayEvents = events
-              .filter((event) => {
-                if (!event.startDate) return false
-                return isSameDay(event.startDate, day)
+            // その日のプランをフィルタリング
+            const dayPlans = events
+              .filter((plan) => {
+                if (!plan.startDate) return false
+                return isSameDay(plan.startDate, day)
               })
               .sort((a, b) => {
                 const aTime = a.startDate ? a.startDate.getTime() : 0
@@ -299,13 +299,13 @@ export const WeekCalendarLayout = ({
                 {/* 現在時刻線 */}
                 <CurrentTimeLine day={day} />
 
-                {/* イベント表示 */}
+                {/* プラン表示 */}
                 {(planRecordMode === 'plan' || planRecordMode === 'both') &&
-                  dayEvents.map((event) => {
-                    if (!event.startDate) return null
+                  dayPlans.map((plan) => {
+                    if (!plan.startDate) return null
 
-                    const { top, height } = calculateEventPosition(event)
-                    const eventColor = event.color || '#3b82f6'
+                    const { top, height } = calculatePlanPosition(plan)
+                    const planColor = plan.color || '#3b82f6'
 
                     // bothモードでは左半分、planモードでは全幅
                     const leftPosition = planRecordMode === 'both' ? '2px' : '4px'
@@ -313,26 +313,26 @@ export const WeekCalendarLayout = ({
 
                     return (
                       <div
-                        key={event.id}
+                        key={plan.id}
                         data-event-block
                         role="button"
                         tabIndex={0}
-                        className={`group absolute z-20 cursor-pointer rounded-md border border-white/20 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${selectedEventId === event.id ? 'ring-2 ring-blue-400 ring-offset-2' : ''}`}
+                        className={`group absolute z-20 cursor-pointer rounded-md border border-white/20 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${selectedPlanId === plan.id ? 'ring-2 ring-blue-400 ring-offset-2' : ''}`}
                         style={{
                           left: leftPosition,
                           width: widthValue,
                           top: `${top}px`,
                           height: `${height}px`,
-                          backgroundColor: eventColor,
+                          backgroundColor: planColor,
                         }}
-                        onClick={createEventClickHandler(event)}
-                        onKeyDown={createEventKeyDownHandler(event)}
-                        aria-label={`イベント: ${event.title}${event.startDate ? ` (${format(event.startDate, 'HH:mm')}開始)` : ''}`}
+                        onClick={createPlanClickHandler(plan)}
+                        onKeyDown={createPlanKeyDownHandler(plan)}
+                        aria-label={`プラン: ${plan.title}${plan.startDate ? ` (${format(plan.startDate, 'HH:mm')}開始)` : ''}`}
                       >
                         {/* ホバー時の削除ボタン */}
                         <button
                           type="button"
-                          onClick={createDeleteEventHandler(event.id)}
+                          onClick={createDeletePlanHandler(plan.id)}
                           className="absolute top-1 right-1 z-30 rounded bg-white/90 p-0.5 opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700"
                           title={t('calendar.event.delete')}
                         >
@@ -342,17 +342,17 @@ export const WeekCalendarLayout = ({
                         <div className="h-full overflow-hidden p-1 text-white sm:p-2">
                           <div className="flex h-full flex-col">
                             <div className="min-h-0 flex-1">
-                              <div className="mb-0.5 line-clamp-2 text-xs leading-tight font-medium">{event.title}</div>
+                              <div className="mb-0.5 line-clamp-2 text-xs leading-tight font-medium">{plan.title}</div>
                               {height > 30 ? (
                                 <div className="text-xs leading-tight opacity-90">
-                                  {format(event.startDate, 'HH:mm')}
-                                  {event.endDate ? ` - ${format(event.endDate, 'HH:mm')}` : null}
+                                  {format(plan.startDate, 'HH:mm')}
+                                  {plan.endDate ? ` - ${format(plan.endDate, 'HH:mm')}` : null}
                                 </div>
                               ) : null}
                             </div>
-                            {event.location && height > 60 ? (
+                            {plan.location && height > 60 ? (
                               <div className="mt-1 line-clamp-1 text-xs leading-tight opacity-80">
-                                📍 {event.location}
+                                📍 {plan.location}
                               </div>
                             ) : null}
                           </div>

@@ -16,7 +16,7 @@ export interface WeekGridProps {
   todayIndex: number
   timezone: string
   onEventClick?: (plan: CalendarPlan) => void
-  onEventContextMenu?: (event: CalendarPlan, mouseEvent: React.MouseEvent) => void
+  onEventContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
   onEventUpdate?: (plan: CalendarPlan) => void
   onTimeRangeSelect?: (selection: DateTimeSelection) => void

@@ -23,7 +23,7 @@ export interface DayColumnProps {
   onTimeClick?: (date: Date, hour: number, minute: number) => void
   onEventClick?: (plan: CalendarPlan) => void
   onEventDoubleClick?: (plan: CalendarPlan) => void
-  onEventContextMenu?: (event: CalendarPlan, e: React.MouseEvent) => void
+  onEventContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   className?: string
 }
 
