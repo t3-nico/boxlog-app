@@ -12,7 +12,7 @@ export interface FiveDayViewProps extends BaseViewProps {
 export interface UseFiveDayViewOptions {
   centerDate: Date
   events: CalendarPlan[]
-  onEventUpdate?: (event: CalendarPlan) => void
+  onEventUpdate?: (plan: CalendarPlan) => void
 }
 
 // useFiveDayViewフックの返却値
@@ -90,9 +90,9 @@ export interface FiveDayGridProps {
   eventsByDate: Record<string, CalendarPlan[]>
   centerIndex: number
   todayIndex: number
-  onEventClick?: (event: CalendarPlan) => void
+  onEventClick?: (plan: CalendarPlan) => void
   onEventContextMenu?: (event: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onEventUpdate?: (event: CalendarPlan) => void
+  onEventUpdate?: (plan: CalendarPlan) => void
   className?: string
 }

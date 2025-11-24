@@ -11,7 +11,7 @@ export interface ThreeDayViewProps extends BaseViewProps {
 export interface UseThreeDayViewOptions {
   centerDate: Date
   events: CalendarPlan[]
-  onEventUpdate?: (event: CalendarPlan) => void
+  onEventUpdate?: (plan: CalendarPlan) => void
 }
 
 // useThreeDayViewフックの返却値
@@ -90,9 +90,9 @@ export interface ThreeDayGridProps {
   eventsByDate: Record<string, CalendarPlan[]>
   centerIndex: number
   todayIndex: number
-  onEventClick?: (event: CalendarPlan) => void
+  onEventClick?: (plan: CalendarPlan) => void
   onEventContextMenu?: (event: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onEventUpdate?: (event: CalendarPlan) => void
+  onEventUpdate?: (plan: CalendarPlan) => void
   className?: string
 }

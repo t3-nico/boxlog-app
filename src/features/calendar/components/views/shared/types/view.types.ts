@@ -21,8 +21,8 @@ export interface DayColumnProps {
   isToday?: boolean
   isWeekend?: boolean
   onTimeClick?: (date: Date, hour: number, minute: number) => void
-  onEventClick?: (event: CalendarPlan) => void
-  onEventDoubleClick?: (event: CalendarPlan) => void
+  onEventClick?: (plan: CalendarPlan) => void
+  onEventDoubleClick?: (plan: CalendarPlan) => void
   onEventContextMenu?: (event: CalendarPlan, e: React.MouseEvent) => void
   className?: string
 }

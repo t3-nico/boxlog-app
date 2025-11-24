@@ -15,10 +15,10 @@ export interface WeekGridProps {
   eventsByDate: Record<string, CalendarPlan[]>
   todayIndex: number
   timezone: string
-  onEventClick?: (event: CalendarPlan) => void
+  onEventClick?: (plan: CalendarPlan) => void
   onEventContextMenu?: (event: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onEventUpdate?: (event: CalendarPlan) => void
+  onEventUpdate?: (plan: CalendarPlan) => void
   onTimeRangeSelect?: (selection: DateTimeSelection) => void
   className?: string
 }
@@ -28,7 +28,7 @@ export interface UseWeekViewOptions {
   startDate: Date
   events: CalendarPlan[]
   weekStartsOn?: 0 | 1
-  onEventUpdate?: (event: CalendarPlan) => void
+  onEventUpdate?: (plan: CalendarPlan) => void
 }
 
 // useWeekViewフックの返却値

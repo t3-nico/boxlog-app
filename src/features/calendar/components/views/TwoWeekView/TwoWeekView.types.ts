@@ -13,7 +13,7 @@ export interface UseTwoWeekViewOptions {
   startDate: Date
   events: CalendarPlan[]
   weekStartsOn?: 0 | 1 // 週の開始日（0: 日曜始まり, 1: 月曜始まり）
-  onEventUpdate?: (event: CalendarPlan) => void
+  onEventUpdate?: (plan: CalendarPlan) => void
 }
 
 // useTwoWeekViewフックの返却値
@@ -93,10 +93,10 @@ export interface TwoWeekGridProps {
   eventsByDate: Record<string, CalendarPlan[]>
   todayIndex: number
   currentWeekIndex: number
-  onEventClick?: (event: CalendarPlan) => void
+  onEventClick?: (plan: CalendarPlan) => void
   onEventContextMenu?: (event: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onEventUpdate?: (event: CalendarPlan) => void
+  onEventUpdate?: (plan: CalendarPlan) => void
   className?: string
 }
 
