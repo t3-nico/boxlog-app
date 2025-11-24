@@ -39,9 +39,12 @@ interface UseViewPlansReturn {
  * 汎用的なビュープラン処理フック
  * DayView, WeekView等で共通利用可能
  */
-export function useViewPlans({ date, plans }: UseViewPlansOptions): UseViewPlansReturn {
+export function useViewPlans({ date, plans = [] }: UseViewPlansOptions): UseViewPlansReturn {
   // 指定日のプランのみフィルター
   const dayPlans = useMemo(() => {
+    if (!plans || !Array.isArray(plans)) {
+      return []
+    }
     return plans.filter((plan) => {
       if (!plan.startDate || !isValid(new Date(plan.startDate))) {
         return false
