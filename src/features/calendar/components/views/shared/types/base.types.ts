@@ -102,11 +102,11 @@ export interface BaseViewProps {
 }
 
 /**
- * イベント位置情報の基本型
- * 4箇所で重複していた EventPosition を統一
+ * プラン位置情報の基本型
+ * 4箇所で重複していた PlanPosition を統一
  */
-export interface BaseEventPosition {
-  event: CalendarPlan
+export interface BasePlanPosition {
+  plan: CalendarPlan
   top: number
   height: number
   left: number
@@ -126,6 +126,6 @@ export interface BaseViewSettings {
   timeInterval: 15 | 30 | 60
   showQuarterLines: boolean
   showCurrentTime: boolean
-  maxEventColumns: number
-  eventMinHeight: number
+  maxPlanColumns: number
+  planMinHeight: number
 }

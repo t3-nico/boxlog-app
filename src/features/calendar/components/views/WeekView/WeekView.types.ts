@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 
-import type { BaseEventPosition, BaseViewProps, CalendarPlan, DateTimeSelection } from '../shared'
+import type { BasePlanPosition, BaseViewProps, CalendarPlan, DateTimeSelection } from '../shared'
 
 // WeekViewの固有Props（BaseViewPropsを継承して95%削減）
 export interface WeekViewProps extends BaseViewProps {
@@ -53,11 +53,15 @@ export interface UseWeekEventsReturn {
   maxConcurrentEvents: number
 }
 
-// 週ビューでのイベント位置情報
-// WeekEventPositionはBaseEventPositionにdayIndexを追加
-export interface WeekEventPosition extends BaseEventPosition {
+// 週ビューでのプラン位置情報
+// WeekPlanPositionはBasePlanPositionにdayIndexを追加
+export interface WeekPlanPosition extends BasePlanPosition {
   dayIndex: number
 }
+
+// 後方互換性のためのエイリアス
+/** @deprecated Use WeekPlanPosition instead */
+export type WeekEventPosition = WeekPlanPosition
 
 // 時間スロット情報
 export interface WeekTimeSlot {
