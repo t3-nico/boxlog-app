@@ -1,7 +1,7 @@
 import type { CalendarPlan } from '../../../types/calendar.types'
 
 /**
- * イベントグループ - 重なり合うイベントの集合
+ * プラングループ - 重なり合うプランの集合
  */
 export interface EventGroup {
   id: string
@@ -23,7 +23,7 @@ export interface ColumnAssignment {
 }
 
 /**
- * レイアウト適用後のイベント
+ * レイアウト適用後のプラン
  */
 export interface LayoutedEvent extends CalendarPlan {
   layout: {
@@ -38,7 +38,7 @@ export interface LayoutedEvent extends CalendarPlan {
 }
 
 /**
- * イベント位置情報（内部用）
+ * プラン位置情報（内部用）
  */
 interface EventPosition {
   plan: CalendarPlan
@@ -51,14 +51,14 @@ interface EventPosition {
 // 最大列数制限
 const MAX_COLUMNS = 2
 
-// 最小イベント幅（パーセンテージ）
+// 最小プラン幅（パーセンテージ）
 const MIN_EVENT_WIDTH = 45 // 2列の場合は各列45%程度
 
-// イベント間マージン（パーセンテージ）
+// プラン間マージン（パーセンテージ）
 const EVENT_MARGIN = 2
 
 /**
- * 2つのイベントが時間的に重なっているかを判定
+ * 2つのプランが時間的に重なっているかを判定
  */
 function eventsOverlap(event1: CalendarPlan, event2: CalendarPlan): boolean {
   const start1 = event1.startDate.getTime()
@@ -77,7 +77,7 @@ function timeToMinutes(date: Date): number {
 }
 
 /**
- * 同じ日のイベントかどうかを判定
+ * 同じ日のプランかどうかを判定
  */
 function _isSameDay(date1: Date, date2: Date): boolean {
   return (
@@ -88,14 +88,14 @@ function _isSameDay(date1: Date, date2: Date): boolean {
 }
 
 /**
- * 重なり合うイベントをグループ化
- * @param events カレンダーイベントの配列
- * @returns イベントグループの配列
+ * 重なり合うプランをグループ化
+ * @param events カレンダープランの配列
+ * @returns プラングループの配列
  */
 export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
   if (events.length === 0) return []
 
-  // 日付ごとにイベントを分類
+  // 日付ごとにプランを分類
   const eventsByDay = new Map<string, CalendarPlan[]>()
 
   events.forEach((event) => {
@@ -107,12 +107,12 @@ export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
 
   const groups: EventGroup[] = []
 
-  // 各日のイベントをグループ化
+  // 各日のプランをグループ化
   eventsByDay.forEach((dayEvents, dayKey) => {
     // 開始時刻でソート
     const sortedEvents = [...dayEvents].sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
 
-    // 重なるイベントをグループ化
+    // 重なるプランをグループ化
     const dayGroups: CalendarPlan[][] = []
 
     sortedEvents.forEach((event) => {
@@ -177,17 +177,17 @@ export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
 }
 
 /**
- * イベントグループ内での列配置を計算
- * @param group イベントグループ
+ * プラングループ内での列配置を計算
+ * @param group プラングループ
  * @returns 列割り当て情報の配列
  */
 export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
   if (group.events.length === 0) return []
 
-  // イベントを開始時刻でソート
+  // プランを開始時刻でソート
   const sortedEvents = [...group.events].sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
 
-  // 各イベントの位置情報を作成
+  // 各プランの位置情報を作成
   const positions: EventPosition[] = sortedEvents.map((plan) => ({
     plan,
     start: timeToMinutes(plan.startDate),
@@ -199,7 +199,7 @@ export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
   // 使用中の列を追跡（列番号 -> 終了時刻）
   const columnsInUse: Map<number, number> = new Map()
 
-  // 各イベントに列を割り当て（最大2列まで）
+  // 各プランに列を割り当て（最大2列まで）
   positions.forEach((pos) => {
     // 利用可能な最小の列番号を見つける（最大MAX_COLUMNS列まで）
     let column = 0
@@ -224,13 +224,13 @@ export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
   // 最大列数を計算（MAX_COLUMNS以下に制限）
   const maxColumns = Math.min(Math.max(...positions.map((p) => p.column!)) + 1, MAX_COLUMNS)
 
-  // 各イベントが実際に占有できる列数を計算
+  // 各プランが実際に占有できる列数を計算
   positions.forEach((pos) => {
     const { start } = pos
     const { end } = pos
     const myColumn = pos.column!
 
-    // 同じ時間帯に存在する他のイベントの最大列番号を見つける
+    // 同じ時間帯に存在する他のプランの最大列番号を見つける
     let maxColumnInTimeRange = myColumn
 
     positions.forEach((other) => {
@@ -284,12 +284,12 @@ export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
 }
 
 /**
- * カレンダーイベントにレイアウト情報を適用
- * @param events カレンダーイベントの配列
+ * カレンダープランにレイアウト情報を適用
+ * @param events カレンダープランの配列
  * @param dayStartHour 表示開始時刻（デフォルト: 0）
  * @param dayEndHour 表示終了時刻（デフォルト: 24）
  * @param hourHeight 1時間あたりの高さ（ピクセル、デフォルト: 60）
- * @returns レイアウト適用後のイベント配列
+ * @returns レイアウト適用後のプラン配列
  */
 export function applyEventLayout(
   events: CalendarPlan[],
