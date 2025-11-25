@@ -23,19 +23,19 @@ interface PlanCardContentProps {
 
 // Helper function: Parse plan start date
 function parseplanStartDate(plan: CalendarPlan | Record<string, unknown>): Date | null {
-  if (event.start instanceof Date) return event.start
-  if (event.start) return new Date(event.start)
-  if (event.startDate instanceof Date) return event.startDate
-  if (event.startDate) return new Date(event.startDate)
+  if (plan.start instanceof Date) return plan.start
+  if (plan.start) return new Date(plan.start)
+  if (plan.startDate instanceof Date) return plan.startDate
+  if (plan.startDate) return new Date(plan.startDate)
   return null
 }
 
 // Helper function: Parse plan end date
 function parseplanEndDate(plan: CalendarPlan | Record<string, unknown>): Date | null {
-  if (event.end instanceof Date) return event.end
-  if (event.end) return new Date(event.end)
-  if (event.endDate instanceof Date) return event.endDate
-  if (event.endDate) return new Date(event.endDate)
+  if (plan.end instanceof Date) return plan.end
+  if (plan.end) return new Date(plan.end)
+  if (plan.endDate instanceof Date) return plan.endDate
+  if (plan.endDate) return new Date(plan.endDate)
   return null
 }
 

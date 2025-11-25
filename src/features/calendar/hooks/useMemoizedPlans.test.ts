@@ -4,9 +4,9 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 // import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
-import { CacheManager, useMemoizedEvents } from './useMemoizedEvents'
+import { CacheManager, useMemoizedPlans } from './useMemoizedPlans'
 
-describe('useMemoizedEvents', () => {
+describe('useMemoizedPlans', () => {
   beforeEach(() => {
     // 各テスト前にキャッシュをクリア
     CacheManager.clearAllCaches()
@@ -68,7 +68,7 @@ describe('useMemoizedEvents', () => {
       const startDate = new Date('2024-06-14')
       const endDate = new Date('2024-06-21')
 
-      const { result } = renderHook(() => useMemoizedEvents(events, startDate, endDate))
+      const { result } = renderHook(() => useMemoizedPlans(events, startDate, endDate))
 
       expect(result.current.processedEvents).toHaveLength(2)
       expect(result.current.processedEvents[0]!.id).toBe('event-1')
@@ -113,7 +113,7 @@ describe('useMemoizedEvents', () => {
       const startDate = new Date('2024-06-14')
       const endDate = new Date('2024-06-21')
 
-      const { result } = renderHook(() => useMemoizedEvents(events, startDate, endDate))
+      const { result } = renderHook(() => useMemoizedPlans(events, startDate, endDate))
 
       expect(result.current.processedEvents).toHaveLength(1)
       expect(result.current.processedEvents[0]!.id).toBe('event-1')
@@ -176,7 +176,7 @@ describe('useMemoizedEvents', () => {
       const startDate = new Date('2024-06-14')
       const endDate = new Date('2024-06-17')
 
-      const { result } = renderHook(() => useMemoizedEvents(events, startDate, endDate))
+      const { result } = renderHook(() => useMemoizedPlans(events, startDate, endDate))
 
       expect(result.current.eventsByDate.size).toBe(2)
       expect(result.current.eventsByDate.get('2024-06-15')).toHaveLength(2)
@@ -238,7 +238,7 @@ describe('useMemoizedEvents', () => {
       const startDate = new Date('2024-06-14')
       const endDate = new Date('2024-06-16')
 
-      const { result } = renderHook(() => useMemoizedEvents(events, startDate, endDate))
+      const { result } = renderHook(() => useMemoizedPlans(events, startDate, endDate))
 
       expect(result.current.eventsByHour.size).toBe(2)
       expect(result.current.eventsByHour.get(10)).toHaveLength(2)
@@ -286,7 +286,7 @@ describe('useMemoizedEvents', () => {
       const startDate = new Date('2024-06-14')
       const endDate = new Date('2024-06-16')
 
-      const { result } = renderHook(() => useMemoizedEvents(events, startDate, endDate))
+      const { result } = renderHook(() => useMemoizedPlans(events, startDate, endDate))
 
       // 合計2.5時間 = 9000000ミリ秒
       expect(result.current.totalDuration).toBe(9000000)
@@ -349,7 +349,7 @@ describe('useMemoizedEvents', () => {
       const startDate = new Date('2024-06-14')
       const endDate = new Date('2024-06-16')
 
-      const { result } = renderHook(() => useMemoizedEvents(events, startDate, endDate))
+      const { result } = renderHook(() => useMemoizedPlans(events, startDate, endDate))
 
       expect(result.current.overlappingEvents).toHaveLength(1)
       expect(result.current.overlappingEvents[0]).toHaveLength(2)
@@ -404,7 +404,7 @@ describe('useMemoizedEvents', () => {
       const endDate = new Date('2024-06-16')
       const filters = { tags: ['tag1'] }
 
-      const { result } = renderHook(() => useMemoizedEvents(events, startDate, endDate, filters))
+      const { result } = renderHook(() => useMemoizedPlans(events, startDate, endDate, filters))
 
       expect(result.current.processedEvents).toHaveLength(1)
       expect(result.current.processedEvents[0]!.id).toBe('event-1')
@@ -450,7 +450,7 @@ describe('useMemoizedEvents', () => {
       const endDate = new Date('2024-06-16')
       const filters = { searchQuery: 'ミーティング' }
 
-      const { result } = renderHook(() => useMemoizedEvents(events, startDate, endDate, filters))
+      const { result } = renderHook(() => useMemoizedPlans(events, startDate, endDate, filters))
 
       expect(result.current.processedEvents).toHaveLength(1)
       expect(result.current.processedEvents[0]!.id).toBe('event-1')
@@ -482,10 +482,10 @@ describe('useMemoizedEvents', () => {
       const endDate = new Date('2024-06-16')
 
       // 1回目
-      const { result: result1 } = renderHook(() => useMemoizedEvents(events, startDate, endDate))
+      const { result: result1 } = renderHook(() => useMemoizedPlans(events, startDate, endDate))
 
       // 2回目（キャッシュから取得されるはず）
-      const { result: result2 } = renderHook(() => useMemoizedEvents(events, startDate, endDate))
+      const { result: result2 } = renderHook(() => useMemoizedPlans(events, startDate, endDate))
 
       expect(result1.current.processedEvents).toEqual(result2.current.processedEvents)
     })
@@ -513,7 +513,7 @@ describe('useMemoizedEvents', () => {
       const startDate = new Date('2024-06-14')
       const endDate = new Date('2024-06-16')
 
-      renderHook(() => useMemoizedEvents(events, startDate, endDate))
+      renderHook(() => useMemoizedPlans(events, startDate, endDate))
 
       const statsBefore = CacheManager.getCacheStats()
       expect(statsBefore.eventCacheSize).toBeGreaterThan(0)

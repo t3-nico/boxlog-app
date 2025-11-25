@@ -101,7 +101,7 @@ function generateMemoKey(
   return fastHash(JSON.stringify(key))
 }
 
-export function useMemoizedEvents(
+export function useMemoizedPlans(
   events: CalendarPlan[],
   startDate: Date,
   endDate: Date,
@@ -280,6 +280,10 @@ function findOverlappingEvents(events: CalendarPlan[]): CalendarPlan[][] {
 
   return overlappingGroups
 }
+
+// 後方互換性のためのエイリアス
+/** @deprecated Use useMemoizedPlans instead */
+export const useMemoizedEvents = useMemoizedPlans
 
 // 計算結果のメモ化用フック
 export function useMemoizedComputation<T>(computeFunction: () => T, dependencies: unknown[], cacheKey?: string): T {

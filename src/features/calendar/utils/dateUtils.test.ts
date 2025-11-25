@@ -42,8 +42,8 @@ describe('dateUtils', () => {
       const result = parseDatetimeString('2025-11-20T22:15:00+00:00')
       expect(result.getFullYear()).toBe(2025)
       expect(result.getMonth()).toBe(10) // 10 = November
-      expect(result.getDate()).toBe(20)
-      // UTC 22:15 は日本時間（UTC+9）では翌日の 7:15
+      // UTC 22:15 は日本時間（UTC+9）では翌日の 7:15 になるため、日付は20または21
+      expect([20, 21]).toContain(result.getDate())
       // テスト環境のタイムゾーンに依存するため、時刻の値はテストしない
       expect(result).toBeInstanceOf(Date)
       expect(isNaN(result.getTime())).toBe(false)
