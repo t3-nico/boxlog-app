@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import { TicketCard } from '@/features/tickets/components/display/TicketCard'
@@ -57,7 +58,7 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
         <div className="container mx-auto p-6">
           <div className="mb-6">
             <div className="mb-2 flex items-center gap-3">
-              <div className="h-6 w-6 rounded-full" style={{ backgroundColor: tag.color || '#3B82F6' }} />
+              <div className="h-6 w-6 rounded-full" style={{ backgroundColor: tag.color || DEFAULT_TAG_COLOR }} />
               <p className="text-muted-foreground">t-{tag.tag_number}</p>
             </div>
           </div>

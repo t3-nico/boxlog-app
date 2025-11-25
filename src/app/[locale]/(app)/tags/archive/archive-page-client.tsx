@@ -16,6 +16,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -359,13 +360,13 @@ export function ArchivePageClient() {
                             <PopoverTrigger asChild>
                               <button
                                 className="hover:ring-offset-background focus-visible:ring-ring h-3 w-3 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-offset-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                                style={{ backgroundColor: tag.color || '#3B82F6' }}
+                                style={{ backgroundColor: tag.color || DEFAULT_TAG_COLOR }}
                                 aria-label="カラーを変更"
                               />
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-3" align="start">
                               <ColorPalettePicker
-                                selectedColor={tag.color || '#3B82F6'}
+                                selectedColor={tag.color || DEFAULT_TAG_COLOR}
                                 onColorSelect={(color) => handleColorChange(tag.id, color)}
                               />
                             </PopoverContent>
