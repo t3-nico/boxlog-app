@@ -175,6 +175,11 @@ export const WeekContent = ({
       <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
         {/* 通常のプラン表示 */}
         {plans.map((plan) => {
+          // planがundefinedの場合はスキップ
+          if (!plan || !plan.id) {
+            console.warn('WeekContent: Invalid plan detected', plan)
+            return null
+          }
           const style = planStyles[plan.id]
           if (!style) return null
 

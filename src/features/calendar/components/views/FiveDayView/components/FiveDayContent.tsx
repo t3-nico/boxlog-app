@@ -145,6 +145,12 @@ export const FiveDayContent = ({
       {/* プラン表示エリア */}
       <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
         {plans.map((plan) => {
+          // planがundefinedの場合はスキップ
+          if (!plan || !plan.id) {
+            console.warn('FiveDayContent: Invalid plan detected', plan)
+            return null
+          }
+
           const style = planStyles[plan.id]
           if (!style) return null
 
