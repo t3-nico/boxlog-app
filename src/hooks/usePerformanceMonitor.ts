@@ -1,5 +1,15 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { useEffect, useRef } from 'react'
+
+// Chrome固有のperformance.memory API用の型定義
+interface PerformanceMemory {
+  usedJSHeapSize: number
+  totalJSHeapSize: number
+  jsHeapSizeLimit: number
+}
+
+interface PerformanceWithMemory extends Performance {
+  memory?: PerformanceMemory
+}
 
 export const usePerformanceMonitor = (componentName: string, enabled = false) => {
   const renderStartTime = useRef<number>()
@@ -45,12 +55,12 @@ export const useMemoryMonitor = (componentName: string, enabled = false) => {
   useEffect(() => {
     if (!enabled || !('memory' in performance)) return
 
-    const { memory } = performance as unknown
-    if (memory) {
+    const perfWithMemory = performance as PerformanceWithMemory
+    if (perfWithMemory.memory) {
       console.log(`💾 ${componentName} memory usage:`, {
-        used: `${(memory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB`,
-        total: `${(memory.totalJSHeapSize / 1024 / 1024).toFixed(2)}MB`,
-        limit: `${(memory.jsHeapSizeLimit / 1024 / 1024).toFixed(2)}MB`,
+        used: `${(perfWithMemory.memory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB`,
+        total: `${(perfWithMemory.memory.totalJSHeapSize / 1024 / 1024).toFixed(2)}MB`,
+        limit: `${(perfWithMemory.memory.jsHeapSizeLimit / 1024 / 1024).toFixed(2)}MB`,
       })
     }
   })
