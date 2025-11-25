@@ -114,7 +114,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                     onClick={() => setColor(presetColor)}
                     className={`h-8 w-8 rounded-md border-2 transition-all ${
                       color === presetColor
-                        ? 'scale-110 border-gray-400'
+                        ? 'scale-110 border-border'
                         : 'border-border hover:scale-105'
                     }`}
                     style={{ backgroundColor: presetColor }}

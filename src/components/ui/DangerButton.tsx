@@ -60,7 +60,7 @@ export const DangerButton = ({
     >
       {loading ? (
         <div className="flex items-center gap-2">
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-transparent" />
           処理中...
         </div>
       ) : (

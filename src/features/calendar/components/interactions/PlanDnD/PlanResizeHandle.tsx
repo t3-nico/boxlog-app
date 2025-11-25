@@ -322,7 +322,7 @@ const ResizeTooltip = ({
       className={cn(
         'pointer-events-none fixed z-[9999] rounded-md px-3 py-2 text-sm font-medium',
         '-translate-x-1/2 transform border shadow-lg',
-        resizeState.isInvalid ? 'border-red-600 bg-red-500 text-white' : 'border-gray-700 bg-gray-900 text-white'
+        resizeState.isInvalid ? 'border-red-600 bg-red-500 text-white' : 'border-border bg-gray-900 text-white'
       )}
       style={{
         left: '50%',

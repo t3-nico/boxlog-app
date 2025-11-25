@@ -39,7 +39,7 @@ const TagFilterItem = ({ tag, level, isSelected, onToggle }: TagFilterItemProps)
           type="checkbox"
           checked={isSelected}
           onChange={handleToggle}
-          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          className="rounded border-border text-blue-600 focus:ring-blue-500"
         />
         <TagIcon className="h-4 w-4 flex-shrink-0" style={{ color: tag.color }} />
         <span className="flex-1 truncate">{tag.name}</span>
@@ -114,7 +114,7 @@ export const TagFilter = ({
         className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors ${
           hasTagFilters
             ? 'border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-600 dark:bg-blue-900/20 dark:text-blue-300'
-            : 'border-border bg-white text-gray-700 hover:border-gray-400 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-gray-500'
+            : 'border-border bg-white text-gray-700 hover:border-border dark:bg-gray-900 dark:text-gray-300'
         }`}
       >
         <FunnelIcon className="h-4 w-4" />

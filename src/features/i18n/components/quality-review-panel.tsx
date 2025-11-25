@@ -512,7 +512,7 @@ export function QualityReviewPanel({
                     className="flex items-center gap-2"
                   >
                     {loading ? (
-                      <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
+                      <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-border"></div>
                     ) : (
                       <ThumbsUp className="h-4 w-4" />
                     )}
