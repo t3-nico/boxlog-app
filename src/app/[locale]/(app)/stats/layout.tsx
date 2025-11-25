@@ -9,7 +9,11 @@ interface StatsLayoutProps {
 /**
  * 統計ページ専用レイアウト
  *
- * PC・モバイル共通: タブ切り替え式
+ * 構成:
+ * - 共通ツールバー（期間選択・フィルタ・エクスポート）
+ * - スクロール可能なメインコンテンツ
+ *
+ * サイドバーナビゲーションは上位レイアウト（DesktopLayout/MobileLayout）で管理
  */
 export default function StatsLayout({ children }: StatsLayoutProps) {
   return (
