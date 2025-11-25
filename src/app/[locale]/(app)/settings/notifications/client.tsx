@@ -9,7 +9,7 @@ interface Props {
   }
 }
 
-export default function NotificationsPageClient({ translations }: Props) {
+export function NotificationsPageClient({ translations }: Props) {
   return (
     <SettingsLayout title={translations.title} description={translations.description}>
       <NotificationSettings />

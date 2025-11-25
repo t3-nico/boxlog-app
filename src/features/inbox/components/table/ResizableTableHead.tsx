@@ -1,3 +1,5 @@
+'use client'
+
 import { TableHead } from '@/components/ui/table'
 import { ArrowDown, ArrowUp, ArrowUpDown, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'

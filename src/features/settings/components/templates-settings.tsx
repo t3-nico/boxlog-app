@@ -1,6 +1,6 @@
 'use client'
 
-const TemplatesSettings = () => {
+export function TemplatesSettings() {
   return (
     <div className="space-y-6">
       <div>
@@ -14,4 +14,3 @@ const TemplatesSettings = () => {
   )
 }
 
-export default TemplatesSettings

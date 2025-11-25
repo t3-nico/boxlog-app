@@ -153,4 +153,3 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
   )
 }
 
-export default LanguageSwitcher

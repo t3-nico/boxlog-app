@@ -36,7 +36,7 @@ interface SecuritySettings {
   twoFactorEnabled: boolean
 }
 
-const AccountSettings = () => {
+export function AccountSettings() {
   const user = useAuthStore((state) => state.user)
   const { t } = useI18n()
   const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null)
@@ -886,4 +886,3 @@ const AccountSettings = () => {
   )
 }
 
-export default AccountSettings

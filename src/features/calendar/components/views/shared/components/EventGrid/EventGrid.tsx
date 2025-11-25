@@ -210,4 +210,3 @@ export const EventGrid = ({
   )
 }
 
-export default EventGrid

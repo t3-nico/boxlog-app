@@ -1,7 +1,7 @@
 'use client'
 
 import { SettingsLayout } from '@/features/settings/components'
-import PlanBillingSettings from '@/features/settings/components/plan-billing-settings'
+import { PlanBillingSettings } from '@/features/settings/components/plan-billing-settings'
 
 interface Props {
   translations: {
@@ -10,7 +10,7 @@ interface Props {
   }
 }
 
-export default function PlanBillingPageClient({ translations }: Props) {
+export function PlanBillingPageClient({ translations }: Props) {
   return (
     <SettingsLayout title={translations.title} description={translations.description}>
       <PlanBillingSettings />

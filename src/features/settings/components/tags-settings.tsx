@@ -22,7 +22,7 @@ const TagTreeView = dynamic(
   { ssr: false }
 )
 
-const TagsSettings = () => {
+export function TagsSettings() {
   const [isMounted, setIsMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -147,4 +147,3 @@ const TagsSettings = () => {
   )
 }
 
-export default TagsSettings

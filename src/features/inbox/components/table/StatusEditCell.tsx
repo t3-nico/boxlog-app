@@ -1,3 +1,5 @@
+'use client'
+
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell } from '@/components/ui/table'
 import { TicketStatusBadge } from '@/features/tickets/components/display/TicketStatusBadge'

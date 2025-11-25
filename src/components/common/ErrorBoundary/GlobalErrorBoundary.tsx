@@ -345,6 +345,3 @@ export class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, Glo
   }
 }
 
-// === デフォルトエクスポート ===
-
-export default GlobalErrorBoundary

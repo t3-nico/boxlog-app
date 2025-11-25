@@ -330,7 +330,7 @@ export const PresetLoadings = {
   ),
 }
 
-const LoadingStates = {
+export const LoadingStates = {
   Spinner: LoadingSpinner,
   Overlay: LoadingOverlay,
   Card: LoadingCard,
@@ -341,5 +341,3 @@ const LoadingStates = {
   DataLoading,
   PresetLoadings,
 }
-
-export default LoadingStates

@@ -30,7 +30,7 @@ interface CalendarAutoSaveSettings {
   }
 }
 
-const CalendarSettings = () => {
+export function CalendarSettings() {
   const settings = useCalendarSettingsStore()
   const { t } = useI18n()
 
@@ -351,4 +351,3 @@ const CalendarSettings = () => {
   )
 }
 
-export default CalendarSettings

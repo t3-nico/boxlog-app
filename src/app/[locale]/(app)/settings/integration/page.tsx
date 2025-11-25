@@ -2,7 +2,7 @@
 import { createTranslation, getDictionary } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 
-import IntegrationPageClient from './client'
+import { IntegrationPageClient } from './client'
 
 interface PageProps {
   params: { locale?: Locale }

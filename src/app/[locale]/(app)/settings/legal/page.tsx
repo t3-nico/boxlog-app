@@ -2,7 +2,7 @@
 
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { SettingsLayout } from '@/features/settings/components'
-import AboutLegalSettings from '@/features/settings/components/about-legal-settings'
+import { AboutLegalSettings } from '@/features/settings/components/about-legal-settings'
 
 const LegalPage = () => {
   const { t } = useI18n()

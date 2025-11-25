@@ -21,7 +21,7 @@ interface NotificationAutoSaveSettings {
   systemNotifications: boolean
 }
 
-const NotificationSettings = () => {
+export function NotificationSettings() {
   const { t } = useI18n()
 
   // 通知設定の自動保存
@@ -155,4 +155,3 @@ const NotificationSettings = () => {
   )
 }
 
-export default NotificationSettings
