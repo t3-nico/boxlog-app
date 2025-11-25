@@ -3,12 +3,12 @@
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
-import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
-import { useTags } from '@/features/tags/hooks/use-tags'
 import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import type { Plan } from '@/features/plans/types/plan'
+import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
+import { useTags } from '@/features/tags/hooks/use-tags'
 
 interface TagDetailPageClientProps {
   tagNumber: string

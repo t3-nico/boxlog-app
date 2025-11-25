@@ -20,6 +20,7 @@ npm run test:coverage
 ## 📋 テストコマンド一覧
 
 ### 基本コマンド
+
 ```bash
 # 全テスト実行
 npm run test
@@ -35,6 +36,7 @@ npm run test:ui
 ```
 
 ### カバレッジ
+
 ```bash
 # カバレッジレポート生成
 npm run test:coverage
@@ -44,6 +46,7 @@ open coverage/index.html
 ```
 
 ### デバッグ
+
 ```bash
 # デバッグモード
 npm run test:debug
@@ -59,6 +62,7 @@ npm run test:debug TaskList.test.tsx
 BoxLogでは**80%以上のカバレッジ**を必須としています。
 
 ### カバレッジ閾値
+
 ```javascript
 // vitest.config.ts
 coverage: {
@@ -70,6 +74,7 @@ coverage: {
 ```
 
 ### カバレッジレポートの見方
+
 ```bash
 # レポート生成
 npm run test:coverage
@@ -89,6 +94,7 @@ All files                  |   85.32 |    78.45 |   90.12 |   85.32 |
 ## 🧪 テスト構造
 
 ### コロケーション方式
+
 テストファイルは対象コードと同じディレクトリに配置。
 
 ```
@@ -105,6 +111,7 @@ src/features/tasks/
 ```
 
 ### E2Eテスト（将来対応予定）
+
 ```
 tests/e2e/
 ├── auth.spec.ts
@@ -129,6 +136,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=test-key
 ## 🐛 トラブルシューティング
 
 ### テストが失敗する
+
 ```bash
 # キャッシュクリア
 npm run test -- --clearCache
@@ -138,6 +146,7 @@ npm run test -- --run
 ```
 
 ### カバレッジが表示されない
+
 ```bash
 # coverage/ディレクトリを削除して再実行
 rm -rf coverage
@@ -145,6 +154,7 @@ npm run test:coverage
 ```
 
 ### 監視モードが動作しない
+
 ```bash
 # Vitest再起動
 # Ctrl+C で終了 → 再度実行
@@ -158,6 +168,7 @@ npm run test:watch
 詳細なテスト作成ルールは [`CLAUDE.md`](./CLAUDE.md) を参照してください。
 
 ### 基本的なテストの書き方
+
 ```tsx
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'

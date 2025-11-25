@@ -129,10 +129,7 @@ async function generateNpmAudit(): Promise<string> {
   }
 
   const totalVulnerabilities =
-    vulnerabilityCount.critical +
-    vulnerabilityCount.high +
-    vulnerabilityCount.moderate +
-    vulnerabilityCount.low
+    vulnerabilityCount.critical + vulnerabilityCount.high + vulnerabilityCount.moderate + vulnerabilityCount.low
 
   const status =
     vulnerabilityCount.critical > 0 || vulnerabilityCount.high > 0

@@ -50,8 +50,8 @@ src/
 // src/server/api/routers/tasks.ts
 export const tasksRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(createTaskInputSchema)  // Zod自動バリデーション
-    .output(taskOutputSchema)      // 出力型保証
+    .input(createTaskInputSchema) // Zod自動バリデーション
+    .output(taskOutputSchema) // 出力型保証
     .mutation(async ({ input, ctx }) => {
       // ビジネスルール自動適用済み
       const task = await createTask(input)
@@ -67,9 +67,7 @@ export const tasksRouter = createTRPCRouter({
 export const createTaskInputSchema = taskBaseSchema
   .omit({ status: true })
   .extend({
-    dueDate: z.date()
-      .min(new Date(), '期限は現在時刻以降を指定してください')
-      .optional(),
+    dueDate: z.date().min(new Date(), '期限は現在時刻以降を指定してください').optional(),
   })
   .refine(
     (data) => {
@@ -122,17 +120,14 @@ function TaskForm() {
 const validatedSchema = createTaskValidationSchema(createTaskInputSchema)
 
 // カスタムバリデーション追加
-const customSchema = createComplexValidation(
-  baseSchema,
-  (data) => {
-    // 複雑な条件チェック
-    return {
-      isValid: data.priority === 'high' || data.dueDate != null,
-      message: '高優先度タスクまたは期限設定が必要です',
-      path: ['priority', 'dueDate']
-    }
+const customSchema = createComplexValidation(baseSchema, (data) => {
+  // 複雑な条件チェック
+  return {
+    isValid: data.priority === 'high' || data.dueDate != null,
+    message: '高優先度タスクまたは期限設定が必要です',
+    path: ['priority', 'dueDate'],
   }
-)
+})
 ```
 
 ### エラーハンドリング
@@ -149,7 +144,7 @@ function MyComponent() {
         const translated = handleTRPCError(error)
         toast.error(translated.userMessage)
       }
-    }
+    },
   })
 }
 ```
@@ -169,9 +164,7 @@ const updateTask = trpc.tasks.update.useMutation({
     utils.tasks.list.setData(previousTasks, (old) => {
       return {
         ...old,
-        tasks: old.tasks.map((task) =>
-          task.id === updateData.id ? { ...task, ...updateData } : task
-        ),
+        tasks: old.tasks.map((task) => (task.id === updateData.id ? { ...task, ...updateData } : task)),
       }
     })
 
@@ -192,7 +185,7 @@ const updateTask = trpc.tasks.update.useMutation({
 
 ```typescript
 export const taskBaseSchema = z.object({
-  title: titleSchema,                    // 共通スキーマ使用
+  title: titleSchema, // 共通スキーマ使用
   description: descriptionSchema,
   priority: prioritySchema,
   status: statusSchema,
@@ -205,11 +198,9 @@ export const taskBaseSchema = z.object({
 
 ```typescript
 // 作成用（一部フィールド除外・追加バリデーション）
-export const createTaskInputSchema = taskBaseSchema
-  .omit({ status: true })
-  .extend({
-    dueDate: z.date().min(new Date()).optional(),
-  })
+export const createTaskInputSchema = taskBaseSchema.omit({ status: true }).extend({
+  dueDate: z.date().min(new Date()).optional(),
+})
 
 // 更新用（全フィールド任意・条件バリデーション）
 export const updateTaskInputSchema = taskBaseSchema
@@ -229,7 +220,7 @@ export const updateTaskInputSchema = taskBaseSchema
 export const taskOutputSchema = taskBaseSchema.extend({
   id: idSchema,
   completed: z.boolean(),
-  ...metadataSchema.shape,  // 作成日時、更新日時等
+  ...metadataSchema.shape, // 作成日時、更新日時等
 })
 ```
 
@@ -243,11 +234,8 @@ z.string()
   .min(1, 'タイトルは必須です')
   .max(200, 'タイトルは200文字以内で入力してください')
 
-// 業務ロジックに応じたメッセージ
-.refine(
-  (title) => !title.includes('禁止ワード'),
-  'タイトルに禁止されている単語が含まれています'
-)
+  // 業務ロジックに応じたメッセージ
+  .refine((title) => !title.includes('禁止ワード'), 'タイトルに禁止されている単語が含まれています')
 ```
 
 ### 2. 型の再利用
@@ -330,10 +318,16 @@ describe('tRPC API統合テスト', () => {
 
 ```typescript
 // ❌ 問題のあるコード
-const schema = z.string().transform(val => val.trim()).min(1)
+const schema = z
+  .string()
+  .transform((val) => val.trim())
+  .min(1)
 
 // ✅ 正しいコード
-const schema = z.string().min(1).transform(val => val.trim())
+const schema = z
+  .string()
+  .min(1)
+  .transform((val) => val.trim())
 ```
 
 #### 2. UUIDバリデーションエラー
@@ -363,8 +357,8 @@ import { futureDateSchema } from '@/schemas/api/common'
 ```typescript
 // 適切なstaleTime設定
 const query = trpc.tasks.list.useQuery(input, {
-  staleTime: 2 * 60 * 1000,  // 2分間新鮮
-  cacheTime: 5 * 60 * 1000,  // 5分間保持
+  staleTime: 2 * 60 * 1000, // 2分間新鮮
+  cacheTime: 5 * 60 * 1000, // 5分間保持
 })
 ```
 
@@ -376,7 +370,7 @@ const bulkUpdate = trpc.tasks.bulkUpdate.useMutation({
   onSuccess: () => {
     // 一度だけキャッシュ更新
     utils.tasks.list.invalidate()
-  }
+  },
 })
 ```
 

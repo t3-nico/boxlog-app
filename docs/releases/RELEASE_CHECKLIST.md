@@ -158,6 +158,7 @@
 ### 1.2 CI/CDチェック
 
 - [ ] **全てのCI/CDチェックが通過**
+
   ```bash
   gh pr checks {PR番号}
   # 結果: ✅ 全て pass

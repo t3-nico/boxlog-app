@@ -1,17 +1,13 @@
 {
   "BoxLog Button Primary": {
     "prefix": "bl-btn-primary",
-    "body": [
-      "<Button className=\"$1\">$2</Button>"
-    ],
-    "description": "BoxLog プライマリボタン"
+    "body": ["<Button className=\"$1\">$2</Button>"],
+    "description": "BoxLog プライマリボタン",
   },
   "BoxLog Button Secondary": {
     "prefix": "bl-btn-secondary",
-    "body": [
-      "<Button variant=\"secondary\" className=\"$1\">$2</Button>"
-    ],
-    "description": "BoxLog セカンダリボタン"
+    "body": ["<Button variant=\"secondary\" className=\"$1\">$2</Button>"],
+    "description": "BoxLog セカンダリボタン",
   },
   "BoxLog Danger Button": {
     "prefix": "bl-btn-danger",
@@ -23,46 +19,34 @@
       "  onClick={$3}",
       ">",
       "  $4",
-      "</DangerButton>"
+      "</DangerButton>",
     ],
-    "description": "BoxLog 危険操作ボタン"
+    "description": "BoxLog 危険操作ボタン",
   },
   "BoxLog Card Layout": {
     "prefix": "bl-card",
-    "body": [
-      "<div className=\"bg-card text-card-foreground rounded-lg border shadow-sm p-6\">",
-      "  $1",
-      "</div>"
-    ],
-    "description": "BoxLog カードレイアウト"
+    "body": ["<div className=\"bg-card text-card-foreground rounded-lg border shadow-sm p-6\">", "  $1", "</div>"],
+    "description": "BoxLog カードレイアウト",
   },
   "BoxLog Fade In Animation": {
     "prefix": "bl-anim-fade",
-    "body": [
-      "className=\"animate-page-fade-in $1\""
-    ],
-    "description": "BoxLog フェードインアニメーション"
+    "body": ["className=\"animate-page-fade-in $1\""],
+    "description": "BoxLog フェードインアニメーション",
   },
   "BoxLog Micro Interaction": {
     "prefix": "bl-anim-micro",
-    "body": [
-      "className=\"hover:animate-micro-heartbeat $1\""
-    ],
-    "description": "BoxLog マイクロインタラクション"
+    "body": ["className=\"hover:animate-micro-heartbeat $1\""],
+    "description": "BoxLog マイクロインタラクション",
   },
   "BoxLog Neutral Colors": {
     "prefix": "bl-color-neutral",
-    "body": [
-      "className=\"bg-neutral-$1 text-neutral-$2 $3\""
-    ],
-    "description": "BoxLog Compass Neutralカラー"
+    "body": ["className=\"bg-neutral-$1 text-neutral-$2 $3\""],
+    "description": "BoxLog Compass Neutralカラー",
   },
   "BoxLog 8px Grid Spacing": {
     "prefix": "bl-spacing",
-    "body": [
-      "className=\"p-$1 m-$2 gap-$3 $4\""
-    ],
-    "description": "BoxLog 8pxグリッドスペーシング"
+    "body": ["className=\"p-$1 m-$2 gap-$3 $4\""],
+    "description": "BoxLog 8pxグリッドスペーシング",
   },
 
   "BoxLog AI Component": {
@@ -121,9 +105,9 @@
       "  )",
       "}",
       "",
-      "export default ${1:ComponentName}"
+      "export default ${1:ComponentName}",
     ],
-    "description": "BoxLog AI Component - テーマシステム＋エラーハンドリング完備"
+    "description": "BoxLog AI Component - テーマシステム＋エラーハンドリング完備",
   },
 
   "BoxLog AI Hook": {
@@ -168,9 +152,9 @@
       "  return { data, loading, error, ${2:execute} }",
       "}",
       "",
-      "export default use${1:HookName}"
+      "export default use${1:HookName}",
     ],
-    "description": "BoxLog AI Hook - エラーハンドリング＋ローディング状態管理"
+    "description": "BoxLog AI Hook - エラーハンドリング＋ローディング状態管理",
   },
 
   "BoxLog AI API Route": {
@@ -233,9 +217,9 @@
       "async function process${1:Request}(data: z.infer<typeof ${1:Request}Schema>) {",
       "  ${7:// 処理実装}",
       "  return { processed: true, id: data.${2:id} }",
-      "}"
+      "}",
     ],
-    "description": "BoxLog AI API Route - Zodバリデーション＋エラーハンドリング完備"
+    "description": "BoxLog AI API Route - Zodバリデーション＋エラーハンドリング完備",
   },
 
   "BoxLog AI Store": {
@@ -303,8 +287,8 @@
       "  }",
       "}))",
       "",
-      "export default use${1:Item}Store"
+      "export default use${1:Item}Store",
     ],
-    "description": "BoxLog AI Store - Zustand楽観的更新＋エラーハンドリング"
-  }
+    "description": "BoxLog AI Store - Zustand楽観的更新＋エラーハンドリング",
+  },
 }

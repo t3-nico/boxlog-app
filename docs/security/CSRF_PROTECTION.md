@@ -22,11 +22,12 @@ CSRF（クロスサイトリクエストフォージェリ）は、ユーザー�
 response.cookies.set(LOCALE_COOKIE, locale, {
   path: '/',
   maxAge: 31536000,
-  sameSite: 'lax',  // ✅ CSRF基本対策
+  sameSite: 'lax', // ✅ CSRF基本対策
 })
 ```
 
 **設定値**:
+
 - `lax`: GETリクエストのみクロスサイトで送信
 - POST/PUT/DELETEは同一サイトのみ
 
@@ -54,6 +55,7 @@ export async function createTask(formData: FormData) {
 ```
 
 **検証項目**:
+
 - ✅ Origin header: リクエスト元の検証
 - ✅ Referer header: リファラーの検証
 - ✅ 内部トークン: Next.js内部トークンの検証
@@ -73,10 +75,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   // Origin検証
   const origin = req.headers.origin
-  const allowedOrigins = [
-    process.env.NEXT_PUBLIC_APP_URL,
-    'http://localhost:3000',
-  ]
+  const allowedOrigins = [process.env.NEXT_PUBLIC_APP_URL, 'http://localhost:3000']
 
   if (origin && !allowedOrigins.includes(origin)) {
     throw new Error('CORS policy violation')
@@ -87,6 +86,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 ```
 
 **保護対象**:
+
 - ✅ すべてのtRPCエンドポイント
 - ✅ Mutation（データ変更）操作
 
@@ -110,6 +110,7 @@ const { data, error } = await supabase.auth.signInWithPassword({
 ```
 
 **PKCE対応**:
+
 - ✅ 認可コード横取り攻撃の防止
 - ✅ OAuth 2.0 ベストプラクティス準拠
 
@@ -173,8 +174,8 @@ describe('CSRF Protection', () => {
     // 不正なOriginを設定
     const mockRequest = {
       headers: new Headers({
-        'origin': 'https://evil.com'
-      })
+        origin: 'https://evil.com',
+      }),
     }
 
     await expect(createTask(formData)).rejects.toThrow()
@@ -189,7 +190,7 @@ describe('CSRF Protection', () => {
 ```html
 <!-- evil.html（攻撃者のサイト） -->
 <form action="https://boxlog-app.vercel.app/api/tasks" method="POST">
-  <input name="title" value="malicious task">
+  <input name="title" value="malicious task" />
   <button>Submit</button>
 </form>
 
@@ -200,12 +201,12 @@ describe('CSRF Protection', () => {
 
 ## 📚 OWASP CSRF対策レベル
 
-| レベル | 対策 | BoxLog実装 |
-|--------|------|-----------|
-| **Level 1** | SameSite Cookie | ✅ 実装済み |
-| **Level 2** | CSRFトークン | ✅ Server Actions自動実装 |
-| **Level 3** | カスタムヘッダー | ✅ tRPC CORS |
-| **Level 4** | Double Submit Cookie | ⚠️ 必要に応じて |
+| レベル      | 対策                 | BoxLog実装                |
+| ----------- | -------------------- | ------------------------- |
+| **Level 1** | SameSite Cookie      | ✅ 実装済み               |
+| **Level 2** | CSRFトークン         | ✅ Server Actions自動実装 |
+| **Level 3** | カスタムヘッダー     | ✅ tRPC CORS              |
+| **Level 4** | Double Submit Cookie | ⚠️ 必要に応じて           |
 
 **BoxLogのレベル**: **Level 3（高レベル）**
 
@@ -218,12 +219,13 @@ describe('CSRF Protection', () => {
 **問題**: SameSite未対応
 
 **対策**:
+
 ```typescript
 // 古いブラウザ用のフォールバック（必要に応じて）
 if (isOldBrowser(userAgent)) {
   // Double Submit Cookie パターンを追加
   response.cookies.set('csrf-token', token, {
-    httpOnly: false,  // JSから読み取り可能
+    httpOnly: false, // JSから読み取り可能
     sameSite: 'none',
     secure: true,
   })
@@ -235,12 +237,13 @@ if (isOldBrowser(userAgent)) {
 **設定**: 現在は `sameSite: lax`
 
 **必要に応じて**:
+
 ```typescript
 // サブドメイン間でCookie共有が必要な場合
 response.cookies.set(COOKIE_NAME, value, {
-  sameSite: 'none',  // クロスサイト許可
-  secure: true,      // 必須
-  domain: '.boxlog.app',  // サブドメイン共有
+  sameSite: 'none', // クロスサイト許可
+  secure: true, // 必須
+  domain: '.boxlog.app', // サブドメイン共有
 })
 ```
 
@@ -251,6 +254,7 @@ response.cookies.set(COOKIE_NAME, value, {
 ### Phase 3で検討
 
 1. **CSRFトークンの明示的実装**
+
    ```typescript
    // カスタムCSRFトークン生成（必要に応じて）
    import { randomBytes } from 'crypto'
@@ -261,6 +265,7 @@ response.cookies.set(COOKIE_NAME, value, {
    ```
 
 2. **レート制限との統合**
+
    ```typescript
    // CSRF攻撃試行の検出
    if (csrfViolationCount > 3) {
@@ -282,14 +287,17 @@ response.cookies.set(COOKIE_NAME, value, {
 ## 📖 参考資料
 
 ### OWASP
+
 - [OWASP CSRF Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)
 - [OWASP Top 10 2021 - A01:2021 Broken Access Control](https://owasp.org/Top10/A01_2021-Broken_Access_Control/)
 
 ### Next.js
+
 - [Next.js Server Actions Security](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations#security)
 - [Next.js Cookies](https://nextjs.org/docs/app/api-reference/functions/cookies)
 
 ### Standards
+
 - [RFC 6265 - SameSite Cookie](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-rfc6265bis-03#section-5.3.7)
 - [MDN - SameSite cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite)
 

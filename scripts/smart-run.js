@@ -32,7 +32,7 @@ class SmartRunner {
     try {
       const result = execSync(command, {
         stdio: 'inherit',
-        env: { ...process.env, NODE_ENV: process.env.NODE_ENV || 'development' }
+        env: { ...process.env, NODE_ENV: process.env.NODE_ENV || 'development' },
       })
 
       return result
@@ -81,7 +81,7 @@ NEXT_PUBLIC_ENABLE_AI_CHAT=false
       'dev:secure': 'dev',
       'build:secure': 'build',
       'test:secure': 'test',
-      'db:migrate:secure': 'db:migrate'
+      'db:migrate:secure': 'db:migrate',
     }
 
     return scriptMap[scriptName] || scriptName
@@ -129,7 +129,7 @@ Available scripts:
   }
 
   const runner = new SmartRunner()
-  runner.smartRun(scriptName, scriptArgs).catch(error => {
+  runner.smartRun(scriptName, scriptArgs).catch((error) => {
     console.error('❌ Execution failed:', error.message)
     process.exit(1)
   })
