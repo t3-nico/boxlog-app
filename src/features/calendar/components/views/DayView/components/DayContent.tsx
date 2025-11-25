@@ -119,6 +119,12 @@ export const DayContent = ({
         {plans &&
           Array.isArray(plans) &&
           plans.map((plan) => {
+            // planがundefinedの場合はスキップ
+            if (!plan || !plan.id) {
+              console.warn('DayContent: Invalid plan detected', plan)
+              return null
+            }
+
             const style = planStyles[plan.id]
             if (!style) return null
 
