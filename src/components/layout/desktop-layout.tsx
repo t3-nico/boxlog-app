@@ -7,6 +7,7 @@ import { CalendarSidebar } from '@/features/calendar/components/sidebar/Calendar
 import { AppBar } from '@/features/navigation/components/appbar'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
+import { StatsSidebar } from '@/features/stats'
 import { TagsSidebarWrapper } from '@/features/tags/components/TagsSidebarWrapper'
 
 import { MainContentWrapper } from './main-content-wrapper'
@@ -32,6 +33,15 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   const isCalendarPage = pathname?.startsWith(`/${locale}/calendar`) ?? false
   const isInboxPage = pathname?.startsWith(`/${locale}/inbox`) ?? false
   const isTagsPage = pathname?.startsWith(`/${locale}/tags`) ?? false
+  const isStatsPage = pathname?.startsWith(`/${locale}/stats`) ?? false
+
+  // サイドバーコンポーネントを決定
+  const renderSidebar = () => {
+    if (isCalendarPage) return <CalendarSidebar />
+    if (isTagsPage) return <TagsSidebarWrapper />
+    if (isStatsPage) return <StatsSidebar />
+    return <AppSidebar />
+  }
 
   return (
     <div className="flex h-full">
@@ -47,7 +57,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         {isOpen && !isInboxPage && (
           <>
             <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
-              {isCalendarPage ? <CalendarSidebar /> : isTagsPage ? <TagsSidebarWrapper /> : <AppSidebar />}
+              {renderSidebar()}
             </ResizablePanel>
             <ResizableHandle className="border-border hover:bg-accent/50 w-1 border-r transition-colors" />
           </>
