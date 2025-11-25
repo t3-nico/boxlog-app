@@ -306,5 +306,3 @@ export function AnalyticsDebugPanel() {
     </div>
   )
 }
-
-export default AnalyticsProvider

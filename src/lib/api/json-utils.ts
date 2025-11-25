@@ -5,11 +5,16 @@
  * APIエラーを防ぐためのJSON処理ユーティリティ
  */
 
+/** JSON互換の値を表す型 */
+type JsonValue = string | number | boolean | null | JsonObject | JsonArray
+type JsonObject = { [key: string]: JsonValue }
+type JsonArray = JsonValue[]
+
 /**
  * 🛡️ 安全なJSON文字列化
  * 無効なUnicode文字（高サロゲート文字等）を除去/置換してJSONを生成
  */
-export function safeJsonStringify(obj: any, space?: string | number): string {
+export function safeJsonStringify(obj: JsonValue, space?: string | number): string {
   // 常に文字列を清浄化してからJSON化
   // （一部のJavaScriptエンジンやAPIエンドポイントは無効な文字を受け付けない）
   const cleanedObj = sanitizeObject(obj)
@@ -20,7 +25,7 @@ export function safeJsonStringify(obj: any, space?: string | number): string {
  * 🧹 オブジェクトの文字列清浄化
  * 無効なUnicode文字を含む文字列を清浄化
  */
-function sanitizeObject(obj: any): any {
+function sanitizeObject(obj: JsonValue): JsonValue {
   if (typeof obj === 'string') {
     return sanitizeString(obj)
   }
@@ -30,7 +35,7 @@ function sanitizeObject(obj: any): any {
   }
 
   if (obj !== null && typeof obj === 'object') {
-    const sanitized: any = {}
+    const sanitized: JsonObject = {}
     for (const [key, value] of Object.entries(obj)) {
       const cleanKey = sanitizeString(key)
       sanitized[cleanKey] = sanitizeObject(value)

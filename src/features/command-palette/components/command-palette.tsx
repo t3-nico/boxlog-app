@@ -20,7 +20,7 @@ import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFol
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 // TODO(#621): Tasks削除後、plans/Sessionsに移行予定
 // import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
-import { useDebounce } from '@/hooks/use-debounce'
+import { useDebounce } from '@/hooks/useDebounce'
 import { Task } from '@/types/unified'
 
 import { SearchResult } from '../config/command-palette'

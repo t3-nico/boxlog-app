@@ -44,5 +44,3 @@ export const DayDateHeader = ({ date, timezone, className }: DayDateHeaderProps)
     </div>
   )
 }
-
-export default DayDateHeader

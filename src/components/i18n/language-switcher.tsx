@@ -152,5 +152,3 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
     </div>
   )
 }
-
-export default LanguageSwitcher

@@ -1,4 +1,6 @@
 // @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
+'use client'
+
 import React, { useCallback, useMemo } from 'react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'

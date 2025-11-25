@@ -19,7 +19,7 @@ interface PreferencesSettingsData {
   developerMode: boolean
 }
 
-const PreferencesSettings = () => {
+export function PreferencesSettings() {
   const { t } = useI18n()
   // 設定の自動保存
   const preferences = useAutoSaveSettings<PreferencesSettingsData>({
@@ -149,5 +149,3 @@ const PreferencesSettings = () => {
     </div>
   )
 }
-
-export default PreferencesSettings

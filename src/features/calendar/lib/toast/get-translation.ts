@@ -5,8 +5,10 @@
  * 直接辞書から翻訳テキストを取得する
  */
 
-// 翻訳辞書の型（簡易版）
-type Dictionary = Record<string, any>
+// 翻訳辞書の型
+interface Dictionary {
+  [key: string]: string | Dictionary
+}
 
 // 翻訳キーから値を取得するヘルパー
 export function getTranslation(key: string, locale: 'ja' | 'en' = 'ja'): string {
@@ -158,7 +160,7 @@ export function getTranslation(key: string, locale: 'ja' | 'en' = 'ja'): string 
   }
 
   // キーパスに従って値を取得
-  let result: any = translations[locale]
+  let result: string | Dictionary = translations[locale]
   for (const k of keys) {
     if (result && typeof result === 'object' && k in result) {
       result = result[k]

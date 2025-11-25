@@ -1,3 +1,5 @@
+'use client'
+
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell } from '@/components/ui/table'
 import { PlanStatusBadge } from '@/features/plans/components/display/PlanStatusBadge'

@@ -21,7 +21,7 @@ interface PrivacySettings {
   allowNotifications: boolean
 }
 
-const AccountSettingsAutoSave = () => {
+export function AccountSettingsAutoSave() {
   const { t } = useI18n()
   // プロフィール設定（自動保存）
   const profile = useAutoSaveSettings<ProfileSettings>({
@@ -177,5 +177,3 @@ const AccountSettingsAutoSave = () => {
     </SettingsLayout>
   )
 }
-
-export default AccountSettingsAutoSave

@@ -2,7 +2,7 @@
 
 import { memo } from 'react'
 
-const IntegrationSettings = memo(() => {
+export const IntegrationSettings = memo(function IntegrationSettings() {
   return (
     <div className="space-y-6">
       <div>
@@ -15,7 +15,3 @@ const IntegrationSettings = memo(() => {
     </div>
   )
 })
-
-IntegrationSettings.displayName = 'IntegrationSettings'
-
-export default IntegrationSettings

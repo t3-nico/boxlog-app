@@ -77,19 +77,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 })
     }
 
+    // タググループ作成データ
+    const insertData: {
+      user_id: string
+      name: string
+      slug: string
+      description: string | null
+      color: string | null
+      sort_order: number
+    } = {
+      user_id: user.id,
+      name: body.name,
+      slug: body.slug || '', // 空文字列を許可
+      description: body.description || null,
+      color: body.color || null,
+      sort_order: body.sort_order ?? 0,
+    }
+
     // タググループ作成
-    const { data, error } = await supabase
-      .from('tag_groups')
-      .insert({
-        user_id: user.id,
-        name: body.name,
-        slug: body.slug || '', // 空文字列を許可
-        description: body.description || null,
-        color: body.color || null,
-        sort_order: body.sort_order ?? 0,
-      } as any)
-      .select()
-      .single()
+    // @ts-expect-error - Supabase型定義の制限
+    const { data, error } = await supabase.from('tag_groups').insert(insertData).select().single()
 
     if (error) {
       console.error('[tag-groups POST] Supabase error:', error)

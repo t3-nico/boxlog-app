@@ -231,11 +231,11 @@ export class SentryErrorHandler {
   }
 }
 
-export function handleReactError(error: Error, errorInfo?: any): void {
+export function handleReactError(error: Error, errorInfo?: { componentStack?: string }): void {
   SentryErrorHandler.handleError(error, { errorInfo, type: 'react' })
 }
 
-export function handleApiError(error: Error, context?: Record<string, any>): void {
+export function handleApiError(error: Error, context?: Record<string, unknown>): void {
   SentryErrorHandler.handleError(error, { ...context, type: 'api' })
 }
 

@@ -2,7 +2,7 @@
 
 import { memo } from 'react'
 
-const PlanBillingSettings = memo(() => {
+export const PlanBillingSettings = memo(function PlanBillingSettings() {
   return (
     <div className="space-y-6">
       <div>
@@ -15,7 +15,3 @@ const PlanBillingSettings = memo(() => {
     </div>
   )
 })
-
-PlanBillingSettings.displayName = 'PlanBillingSettings'
-
-export default PlanBillingSettings

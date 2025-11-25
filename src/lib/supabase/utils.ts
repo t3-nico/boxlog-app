@@ -43,8 +43,15 @@ export function getPagination(page: number, size: number = 20) {
 /**
  * Supabase クエリビルダーのタイプガード
  */
-export function isSupabaseError(error: any): error is PostgrestError {
-  return error && typeof error.code === 'string' && typeof error.message === 'string'
+export function isSupabaseError(error: unknown): error is PostgrestError {
+  return (
+    error !== null &&
+    typeof error === 'object' &&
+    'code' in error &&
+    'message' in error &&
+    typeof (error as PostgrestError).code === 'string' &&
+    typeof (error as PostgrestError).message === 'string'
+  )
 }
 
 /**
@@ -109,8 +116,15 @@ export function normalizeTags(tags: string[] | null): string[] {
 /**
  * リアルタイム購読の設定
  */
-export function createRealtimeConfig(table: string, userId?: string) {
-  const config: any = {
+interface RealtimeConfig {
+  event: '*' | 'INSERT' | 'UPDATE' | 'DELETE'
+  schema: string
+  table: string
+  filter?: string
+}
+
+export function createRealtimeConfig(table: string, userId?: string): RealtimeConfig {
+  const config: RealtimeConfig = {
     event: '*',
     schema: 'public',
     table,

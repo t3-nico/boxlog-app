@@ -16,7 +16,7 @@ interface Props {
   }
 }
 
-export default function TrashPageClient({ translations }: Props) {
+export function TrashPageClient({ translations }: Props) {
   const { emptyTrash, getStats } = useTrashStore()
   const stats = getStats()
 

@@ -18,6 +18,7 @@ import { type UserMessage, getUserMessage, SEVERITY_STYLES } from './messages'
 
 import {
   type CircuitBreakerConfig,
+  type CircuitBreakerMetrics,
   type FallbackStrategy,
   type RecoveryStrategy,
   type RetryStrategy,
@@ -327,12 +328,10 @@ export class ErrorPatternDictionary {
    * カテゴリ別統計を取得
    */
   getCategoryStats(): Record<ErrorCategory, number> {
-    const categoryStats: Record<ErrorCategory, number> = {} as any
-
-    // 初期化
-    Object.values(ERROR_CATEGORIES).forEach((category) => {
-      categoryStats[category] = 0
-    })
+    // 全カテゴリを0で初期化
+    const categoryStats = Object.fromEntries(
+      Object.values(ERROR_CATEGORIES).map((category) => [category, 0])
+    ) as Record<ErrorCategory, number>
 
     // 集計
     this.errorStats.forEach((count, errorCode) => {
@@ -346,8 +345,8 @@ export class ErrorPatternDictionary {
   /**
    * サーキットブレーカーの状態を取得
    */
-  getCircuitBreakerStatus(): Record<string, any> {
-    const status: Record<string, any> = {}
+  getCircuitBreakerStatus(): Record<string, CircuitBreakerMetrics> {
+    const status: Record<string, CircuitBreakerMetrics> = {}
 
     this.circuitBreakers.forEach((breaker, key) => {
       status[key] = breaker.getMetrics()

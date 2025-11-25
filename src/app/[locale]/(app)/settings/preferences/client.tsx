@@ -9,7 +9,7 @@ interface Props {
   }
 }
 
-export default function PreferencesSettingsClient({ translations }: Props) {
+export function PreferencesSettingsClient({ translations }: Props) {
   return (
     <SettingsLayout title={translations.title} description={translations.description}>
       <PreferencesSettings />

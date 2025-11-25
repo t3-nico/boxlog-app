@@ -4,7 +4,7 @@ import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
 import { createTranslation, getDictionary } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 
-import CalendarViewClient from './client'
+import { CalendarViewClient } from './client'
 
 interface CalendarViewPageProps {
   params: {

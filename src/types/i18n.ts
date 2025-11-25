@@ -120,18 +120,26 @@ export interface TranslationResources {
   settings: SettingsTranslations
 }
 
+// 翻訳オプションの型
+export interface TranslationOptions {
+  count?: number
+  context?: string
+  defaultValue?: string
+  [key: string]: string | number | boolean | undefined
+}
+
 // 翻訳キーパスの型（ドット記法）
 export type TranslationKey<T = TranslationResources> =
-  T extends Record<string, any>
+  T extends Record<string, unknown>
     ? {
-        [K in keyof T]: T[K] extends Record<string, any> ? `${K & string}.${TranslationKey<T[K]>}` : K & string
+        [K in keyof T]: T[K] extends Record<string, unknown> ? `${K & string}.${TranslationKey<T[K]>}` : K & string
       }[keyof T]
     : never
 
 // 型安全な翻訳関数の型
 export interface TFunction {
-  <K extends TranslationKey>(key: K, options?: any): string
-  (key: string, options?: any): string
+  <K extends TranslationKey>(key: K, options?: TranslationOptions): string
+  (key: string, options?: TranslationOptions): string
 }
 
 // 言語切り替え用のコンテキスト型

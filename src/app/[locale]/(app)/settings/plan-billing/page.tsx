@@ -2,7 +2,7 @@
 
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { SettingsLayout } from '@/features/settings/components'
-import PlanBillingSettings from '@/features/settings/components/plan-billing-settings'
+import { PlanBillingSettings } from '@/features/settings/components/plan-billing-settings'
 
 const PlanBillingPage = () => {
   const { t } = useI18n()

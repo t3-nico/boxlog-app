@@ -36,6 +36,37 @@ interface CrowdinDownloadResponse {
   status: 'building' | 'finished' | 'failed'
 }
 
+/** Crowdin API language progress response item */
+interface CrowdinLanguageProgressItem {
+  data: {
+    languageId: string
+    translationProgress: number
+    approvalProgress: number
+    phrases: number
+  }
+}
+
+/** Crowdin API translation item */
+interface CrowdinTranslationItem {
+  data: {
+    key: string
+    text: string
+    translation: string
+    language: string
+    isApproved: boolean
+    updatedAt: string
+  }
+}
+
+/** Crowdin webhook event */
+interface CrowdinWebhookEvent {
+  event: string
+  project: { id: string; name: string }
+  file?: { id: string; name: string }
+  language?: string
+  translation?: { text: string; approved: boolean }
+}
+
 /**
  * Crowdin API統合クラス
  * 翻訳データの同期、レビューワークフロー管理を提供
@@ -150,7 +181,7 @@ export class CrowdinIntegration {
       })
 
       const data = await response.json()
-      return data.data.map((lang: any) => ({
+      return data.data.map((lang: CrowdinLanguageProgressItem) => ({
         language: lang.data.languageId,
         translated: lang.data.translationProgress,
         approved: lang.data.approvalProgress,
@@ -179,7 +210,7 @@ export class CrowdinIntegration {
       )
 
       const data = await response.json()
-      return data.data.map((item: any) => ({
+      return data.data.map((item: CrowdinTranslationItem) => ({
         key: item.data.key,
         sourceText: item.data.text,
         targetText: item.data.translation,
@@ -223,17 +254,17 @@ export class CrowdinIntegration {
    * Webhookイベント処理
    * Crowdinから通知されるイベント（翻訳完了、レビュー承認等）を処理
    */
-  async handleWebhookEvent(event: any): Promise<void> {
+  async handleWebhookEvent(event: CrowdinWebhookEvent): Promise<void> {
     try {
       switch (event.event) {
         case 'translation.updated':
-          await this.onTranslationUpdated(event.data)
+          await this.onTranslationUpdated(event)
           break
         case 'file.approved':
-          await this.onFileApproved(event.data)
+          await this.onFileApproved(event)
           break
         case 'project.built':
-          await this.onProjectBuilt(event.data)
+          await this.onProjectBuilt(event)
           break
         default:
           console.log('Unhandled Crowdin webhook event:', event.event)
@@ -269,19 +300,19 @@ export class CrowdinIntegration {
     throw new Error('Build completion timeout')
   }
 
-  private async onTranslationUpdated(data: any): Promise<void> {
+  private async onTranslationUpdated(event: CrowdinWebhookEvent): Promise<void> {
     // 翻訳更新時の処理
-    console.log('Translation updated:', data)
+    console.log('Translation updated:', event)
   }
 
-  private async onFileApproved(data: any): Promise<void> {
+  private async onFileApproved(event: CrowdinWebhookEvent): Promise<void> {
     // ファイル承認時の処理
-    console.log('File approved:', data)
+    console.log('File approved:', event)
   }
 
-  private async onProjectBuilt(data: any): Promise<void> {
+  private async onProjectBuilt(event: CrowdinWebhookEvent): Promise<void> {
     // プロジェクトビルド完了時の処理
-    console.log('Project built:', data)
+    console.log('Project built:', event)
   }
 }
 

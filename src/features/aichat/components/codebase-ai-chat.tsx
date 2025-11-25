@@ -273,8 +273,8 @@ const CodebaseChatInput = ({
         <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
           <div className="flex gap-1">
             <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400"></div>
-            <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400" style={{ animationDelay: '0.2s' }}></div>
-            <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400" style={{ animationDelay: '0.4s' }}></div>
+            <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400 [animation-delay:0.2s]"></div>
+            <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400 [animation-delay:0.4s]"></div>
           </div>
           <span>Checking support info...</span>
         </div>
@@ -371,14 +371,7 @@ What would you like to know about BoxLog?`,
   if (!isOpen) return null
 
   return (
-    <div
-      className="bg-background border-border fixed right-0 z-50 flex flex-col border-l"
-      style={{
-        top: '64px',
-        bottom: '0',
-        width: '320px',
-      }}
-    >
+    <div className="bg-background border-border fixed top-16 right-0 bottom-0 z-50 flex w-80 flex-col border-l">
       {/* Header */}
       <div className="bg-background h-16 flex-shrink-0">
         <div className="flex h-full items-center justify-between px-4">

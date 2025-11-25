@@ -1,7 +1,7 @@
 'use client'
 
 import { SettingsLayout } from '@/features/settings/components'
-import TemplatesSettings from '@/features/settings/components/templates-settings'
+import { TemplatesSettings } from '@/features/settings/components/templates-settings'
 
 interface Props {
   translations: {
@@ -10,7 +10,7 @@ interface Props {
   }
 }
 
-export default function TemplatesPageClient({ translations }: Props) {
+export function TemplatesPageClient({ translations }: Props) {
   return (
     <SettingsLayout title={translations.title} description={translations.description}>
       <TemplatesSettings />
