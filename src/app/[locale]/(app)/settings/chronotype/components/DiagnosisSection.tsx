@@ -67,7 +67,7 @@ export const DiagnosisSection = memo(
             <button
               type="button"
               onClick={onResetDiagnosis}
-              className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
+              className="border-border bg-card text-muted-foreground hover:bg-muted rounded-md border px-4 py-2 text-sm font-medium transition-colors"
             >
               もう一度診断
             </button>
@@ -116,7 +116,7 @@ export const DiagnosisSection = memo(
                 onClick={onAnswerClick}
                 data-question-id={question?.id || ''}
                 data-option-value={option.value}
-                className="w-full rounded-lg border border-neutral-200 p-4 text-left transition-all hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:border-neutral-600 dark:hover:bg-neutral-800"
+                className="border-border hover:bg-muted w-full rounded-lg border p-4 text-left transition-all"
               >
                 {option.text}
               </button>

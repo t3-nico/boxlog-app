@@ -16,9 +16,9 @@ export const EVENT_VERTICAL_PADDING = 2 // イベントの上下パディング(
 export const TIME_COLUMN_WIDTH = 48 // 時間列の幅(px)
 export const TIME_LABEL_HEIGHT = HOUR_HEIGHT // 時間ラベルの高さ(px)
 
-// グリッド線のスタイル（Tailwind準拠）
-export const HOUR_LINE_COLOR = 'border-neutral-900/10 dark:border-neutral-100/10'
-export const HALF_HOUR_LINE_COLOR = 'border-neutral-900/10 dark:border-neutral-100/10' // より薄い線用
+// グリッド線のスタイル（セマンティックトークン）
+export const HOUR_LINE_COLOR = 'border-border'
+export const HALF_HOUR_LINE_COLOR = 'border-border/50' // より薄い線用
 
 // 現在時刻線
 export const CURRENT_TIME_LINE_COLOR = 'bg-blue-500'
@@ -35,9 +35,9 @@ export const TRANSITION_DURATION = 150 // トランジション時間(ms)
 export const SCROLL_TO_HOUR = 8 // 初期表示時にスクロールする時間（8時）
 export const SCROLL_BEHAVIOR = 'smooth' as const
 
-// カラー（Tailwind準拠）
-export const GRID_BACKGROUND = 'bg-white dark:bg-neutral-900'
-export const GRID_BORDER = 'border-neutral-900/10 dark:border-neutral-100/10'
+// カラー（セマンティックトークン）
+export const GRID_BACKGROUND = 'bg-background'
+export const GRID_BORDER = 'border-border'
 
 // Z-index層
 export const Z_INDEX = {

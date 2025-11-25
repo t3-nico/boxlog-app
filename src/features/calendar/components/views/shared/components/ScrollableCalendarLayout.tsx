@@ -369,7 +369,7 @@ export const ScrollableCalendarLayout = ({
               {/* 点 - 今日の列の左端 */}
               <div
                 className={cn(
-                  'pointer-events-none absolute z-40 h-2 w-2 rounded-full border border-white bg-blue-600 shadow-md dark:border-gray-800 dark:bg-blue-500'
+                  'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border bg-blue-600 shadow-md dark:bg-blue-500'
                 )}
                 style={{
                   top: `${currentTimePosition - 4}px`,

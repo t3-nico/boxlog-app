@@ -10,7 +10,7 @@ interface ChronotypeInfoSectionProps {
 
 export function ChronotypeInfoSection({ onStartDiagnosis }: ChronotypeInfoSectionProps) {
   return (
-    <div className="mt-8 rounded-lg border border-neutral-300 bg-white p-6 dark:border-neutral-600 dark:bg-neutral-800">
+    <div className="border-border bg-card mt-8 rounded-lg border p-6">
       <h2 className="mb-4 text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
         クロノタイプとは？
       </h2>
@@ -27,7 +27,7 @@ export function ChronotypeInfoSection({ onStartDiagnosis }: ChronotypeInfoSectio
           <h3 className="mb-6 text-lg font-bold text-neutral-900 dark:text-neutral-100">📊 4つのクロノタイプ</h3>
 
           <div className="my-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="rounded-lg border border-neutral-300 bg-yellow-50 p-4 dark:border-neutral-600 dark:bg-yellow-950">
+            <div className="border-border rounded-lg border bg-yellow-50 p-4 dark:bg-yellow-950">
               <h4 className="mb-2 font-semibold text-yellow-600 dark:text-yellow-400">🦁 Lion (ライオン型・超朝型)</h4>
               <ul className="space-y-1 text-sm text-yellow-600 dark:text-yellow-400">
                 <li>• 人口の約 15%</li>
@@ -37,7 +37,7 @@ export function ChronotypeInfoSection({ onStartDiagnosis }: ChronotypeInfoSectio
               </ul>
             </div>
 
-            <div className="rounded-lg border border-neutral-300 bg-blue-50 p-4 dark:border-neutral-600 dark:bg-blue-950">
+            <div className="border-border rounded-lg border bg-blue-50 p-4 dark:bg-blue-950">
               <h4 className="mb-2 font-semibold text-blue-600 dark:text-blue-400">🐻 Bear (クマ型・標準型)</h4>
               <ul className="space-y-1 text-sm text-blue-600 dark:text-blue-400">
                 <li>• 人口の約 55%</li>
@@ -47,7 +47,7 @@ export function ChronotypeInfoSection({ onStartDiagnosis }: ChronotypeInfoSectio
               </ul>
             </div>
 
-            <div className="rounded-lg border border-neutral-300 bg-neutral-100 p-4 dark:border-neutral-600 dark:bg-neutral-700">
+            <div className="border-border bg-muted rounded-lg border p-4">
               <h4 className="mb-2 font-semibold text-neutral-900 dark:text-neutral-100">🐺 Wolf (オオカミ型・夜型)</h4>
               <ul className="space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
                 <li>• 人口の約 20%</li>
@@ -57,7 +57,7 @@ export function ChronotypeInfoSection({ onStartDiagnosis }: ChronotypeInfoSectio
               </ul>
             </div>
 
-            <div className="rounded-lg border border-neutral-300 bg-green-50 p-4 dark:border-neutral-600 dark:bg-green-950">
+            <div className="border-border rounded-lg border bg-green-50 p-4 dark:bg-green-950">
               <h4 className="mb-2 font-semibold text-green-600 dark:text-green-400">🐬 Dolphin (イルカ型・不規則型)</h4>
               <ul className="space-y-1 text-sm text-green-600 dark:text-green-400">
                 <li>• 人口の約 10%</li>
@@ -140,7 +140,7 @@ export function ChronotypeInfoSection({ onStartDiagnosis }: ChronotypeInfoSectio
           </div>
 
           {/* 診断ボタン */}
-          <div className="mt-6 border-t border-neutral-200 pt-6 text-center dark:border-neutral-700">
+          <div className="border-border mt-6 border-t pt-6 text-center">
             <p className="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
               自分のクロノタイプが分からない方は、診断をお試しください
             </p>

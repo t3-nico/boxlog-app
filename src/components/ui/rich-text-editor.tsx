@@ -63,7 +63,7 @@ export const RichTextEditor = ({
           '[&_li]:mb-1',
           '[&_strong]:font-bold',
           '[&_em]:italic',
-          '[&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:mb-2'
+          '[&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:mb-2'
         ),
       },
     },

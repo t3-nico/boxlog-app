@@ -113,9 +113,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                     type="button"
                     onClick={() => setColor(presetColor)}
                     className={`h-8 w-8 rounded-md border-2 transition-all ${
-                      color === presetColor
-                        ? 'scale-110 border-gray-400'
-                        : 'border-gray-200 hover:scale-105 dark:border-gray-600'
+                      color === presetColor ? 'border-border scale-110' : 'border-border hover:scale-105'
                     }`}
                     style={{ backgroundColor: presetColor }}
                     title={presetColor}
@@ -132,7 +130,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
 
               {/* 現在選択されているアイコンのプレビュー */}
               <div
-                className="mb-3 flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-800"
+                className="border-border mb-3 flex items-center gap-3 rounded-lg border bg-gray-50 p-3 dark:bg-gray-800"
                 style={{ '--tag-color': color } as React.CSSProperties}
               >
                 {(() => {
@@ -148,12 +146,9 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
               </div>
 
               {/* アイコン選択 */}
-              <div
-                className="max-h-64 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-600"
-                aria-labelledby="icon-label"
-              >
+              <div className="border-border max-h-64 overflow-y-auto rounded-lg border" aria-labelledby="icon-label">
                 {Object.entries(tagIconCategories).map(([category, icons]) => (
-                  <div key={category} className="border-b border-gray-100 p-3 last:border-b-0 dark:border-gray-700">
+                  <div key={category} className="border-border border-b p-3 last:border-b-0">
                     <p className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">{category}</p>
                     <div className="grid grid-cols-6 gap-2">
                       {icons.map((iconName) => {
@@ -166,7 +161,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                             className={`rounded-md p-2 transition-all ${
                               icon === iconName
                                 ? 'border-2 border-blue-300 bg-blue-100 dark:border-blue-600 dark:bg-blue-900/30'
-                                : 'border border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600'
+                                : 'border-border border bg-white hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600'
                             }`}
                             title={iconName}
                           >

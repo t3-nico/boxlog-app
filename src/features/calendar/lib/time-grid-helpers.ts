@@ -166,10 +166,10 @@ export function getTimeSlotBgClass(hour: number): string {
 export function getGridLineClass(minutes: number, __interval: number): string {
   if (minutes === 0) {
     // 正時
-    return 'border-t border-gray-300 dark:border-gray-600'
+    return 'border-t border-border'
   } else {
     // 間隔線
-    return 'border-t border-dashed border-gray-200 dark:border-gray-700'
+    return 'border-t border-dashed border-border/50'
   }
 }
 

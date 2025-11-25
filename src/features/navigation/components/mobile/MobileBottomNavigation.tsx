@@ -72,7 +72,7 @@ export const MobileBottomNavigation = () => {
         'flex items-center',
         'h-16', // 64px height
         'bg-white dark:bg-neutral-800',
-        'border-neutral-200 dark:border-neutral-800',
+        'border-border',
         'border-t'
       )}
     >

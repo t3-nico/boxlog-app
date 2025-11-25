@@ -150,7 +150,7 @@ export function FeatureErrorBoundary({
       }}
       fallback={
         fallback || (
-          <div className="rounded border border-neutral-300 bg-neutral-200 p-4 dark:border-neutral-600 dark:bg-neutral-700">
+          <div className="border-border bg-muted rounded border p-4">
             <p className="text-center text-neutral-800 dark:text-neutral-200">
               {featureName}機能でエラーが発生しました
             </p>
