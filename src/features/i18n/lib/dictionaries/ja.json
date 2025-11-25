@@ -733,6 +733,58 @@
     "act": {
       "try": "試してみる",
       "next": "次のアクション"
+    },
+    "sidebar": {
+      "dashboard": "ダッシュボード",
+      "overview": "概要",
+      "analytics": "統計分析",
+      "tasks": "タスク統計",
+      "time": "時間分析",
+      "categories": "カテゴリ別",
+      "tagAnalysis": "タグ分析",
+      "trends": "トレンド",
+      "selfAnalysis": "自己分析",
+      "reflect": "振り返り",
+      "reflectToday": "今日",
+      "reflectWeek": "今週",
+      "reflectMonth": "今月",
+      "reflectAll": "全て",
+      "actions": "アクション",
+      "actionTry": "試してみる",
+      "actionNext": "次のアクション"
+    },
+    "overview": {
+      "subtitle": "あなたの活動状況を一目で確認",
+      "completedTasks": "完了タスク",
+      "workHours": "作業時間",
+      "achievementRate": "達成率",
+      "comparedToLastWeek": "先週より",
+      "weeklyTrend": "週間トレンド",
+      "weeklyTrendDescription": "過去6ヶ月の推移",
+      "viewDetails": "詳細を見る",
+      "quickAccess": "クイックアクセス",
+      "tasksDescription": "タスクの完了状況と推移を分析",
+      "timeDescription": "時間帯別の作業傾向を確認",
+      "categoriesDescription": "カテゴリごとの割合を表示",
+      "tagAnalysisDescription": "タグの使用傾向を分析",
+      "trendsDescription": "長期的なトレンドを確認",
+      "goalsDescription": "目標の達成状況を追跡"
+    },
+    "toolbar": {
+      "today": "今日",
+      "thisWeek": "今週",
+      "thisMonth": "今月",
+      "thisYear": "今年",
+      "previous": "前の期間",
+      "next": "次の期間",
+      "current": "現在に戻る",
+      "compare": "比較",
+      "compareTooltip": "前の期間と比較",
+      "noCompare": "比較しない",
+      "previousPeriod": "前期間",
+      "lastYear": "前年同期",
+      "export": "エクスポート",
+      "exportTooltip": "データをエクスポート"
     }
   },
   "auth": {

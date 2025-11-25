@@ -28,7 +28,7 @@ const chartConfig = {
 
 export function AreaChartInteractive() {
   return (
-    <Card>
+    <Card className="bg-background">
       <CardHeader>
         <CardTitle>週間タスク推移</CardTitle>
         <CardDescription>過去7日間のタスク完了・未完了数</CardDescription>

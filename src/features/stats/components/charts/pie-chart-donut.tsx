@@ -36,7 +36,7 @@ const chartConfig = {
 
 export function PieChartDonut() {
   return (
-    <Card>
+    <Card className="bg-background">
       <CardHeader>
         <CardTitle>カテゴリ別タスク分布</CardTitle>
         <CardDescription>プロジェクト・カテゴリごとの集計</CardDescription>
