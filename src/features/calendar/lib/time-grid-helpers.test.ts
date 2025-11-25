@@ -105,11 +105,11 @@ describe('time-grid-helpers', () => {
 
   describe('getGridLineClass', () => {
     it('正時の場合は実線を返す', () => {
-      expect(getGridLineClass(0, 15)).toBe('border-t border-gray-300 dark:border-gray-600')
+      expect(getGridLineClass(0, 15)).toBe('border-t border-border')
     })
 
     it('間隔線の場合は破線を返す', () => {
-      expect(getGridLineClass(15, 15)).toBe('border-t border-dashed border-gray-200 dark:border-gray-700')
+      expect(getGridLineClass(15, 15)).toBe('border-t border-dashed border-border/50')
     })
   })
 
