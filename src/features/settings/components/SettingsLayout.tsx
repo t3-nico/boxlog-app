@@ -18,10 +18,8 @@ export const SettingsLayout = ({ children, title, description, actions }: Settin
       <div className="flex-shrink-0 p-6 pb-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">{title}</h2>
-            {description != null && (
-              <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{description}</p>
-            )}
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">{title}</h2>
+            {description != null && <p className="mt-1 text-base text-muted-foreground">{description}</p>}
           </div>
           {actions != null && <div className="flex items-center gap-2">{actions}</div>}
         </div>
