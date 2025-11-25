@@ -2,28 +2,32 @@
 
 BoxLogカスタムReact Hooks実装ガイドライン。
 
-## 📁 現在のフック一覧（10個）
+## 📁 現在のフック一覧（8個）
 
 ### 保持されている共通フック
 
 ```
 src/hooks/
-├── use-debounce.ts              # デバウンス処理（2箇所で使用）
-├── use-naming.ts                # 命名規則管理
-├── useActiveState.ts            # アクティブ状態管理（5箇所で使用）
-├── useAddPopup.ts               # ポップアップ追加（5箇所で使用）
-├── useAutoRetry.ts              # 自動リトライ（6箇所で使用）
-├── useDelete.ts                 # 削除処理（14箇所で使用）
-├── useMediaQuery.ts             # レスポンシブ対応（9箇所で使用）
-├── useOfflineSync.tsx           # オフライン同期（2箇所で使用）
-└── usePerformanceMonitor.ts     # パフォーマンス監視（9箇所で使用）
+├── useActiveState.ts            # アクティブ状態管理
+├── useAddPopup.ts               # ポップアップ追加
+├── useAutoRetry.ts              # 自動リトライ
+├── useDebounce.ts               # デバウンス処理
+├── useDelete.ts                 # 削除処理
+├── useMediaQuery.ts             # レスポンシブ対応
+├── useOfflineSync.tsx           # オフライン同期
+└── usePerformanceMonitor.ts     # パフォーマンス監視
 ```
+
+**命名規則**: すべてcamelCase（useXxx.ts）で統一
 
 **削除済み（使用箇所0または重複）**:
 
+- ❌ use-debounce.ts（useDebounce.tsに統一）
+- ❌ use-media-query.ts（useMediaQuery.tsに統一）
+- ❌ use-naming.ts（未使用）
 - ❌ useToggle, use-analytics, use-error-handler, use-filter-url-sync
 - ❌ use-keyboard-shortcuts, useApiQuery, useDevTools, useOptimization
-- ❌ useSidebarMenu, api/use-tasks.ts, useDebounce.ts（重複）
+- ❌ useSidebarMenu, api/use-tasks.ts
 
 ---
 
