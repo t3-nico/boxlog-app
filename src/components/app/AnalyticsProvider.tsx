@@ -208,7 +208,7 @@ export function CookieConsentBanner({
 
   return (
     <div
-      className={`fixed right-0 left-0 z-50 border-t border-gray-200 bg-white p-4 shadow-lg ${positionClasses} ${className}`}
+      className={`fixed right-0 left-0 z-50 border-t border-border bg-card p-4 shadow-lg ${positionClasses} ${className}`}
     >
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
         <div className="flex-1">
@@ -227,7 +227,7 @@ export function CookieConsentBanner({
         <div className="flex gap-3">
           <button
             onClick={handleDecline}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-800"
+            className="rounded-md border border-border px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted"
           >
             {declineText}
           </button>
@@ -293,7 +293,7 @@ export function AnalyticsDebugPanel() {
           <p className="text-gray-400">No events tracked yet</p>
         ) : (
           events.slice(-10).map((event, index) => (
-            <div key={index} className="mb-1 border-b border-gray-700 pb-1">
+            <div key={index} className="mb-1 border-b border-border pb-1">
               <div className="font-mono text-yellow-400">{event.name}</div>
               <div className="text-xs text-gray-400">{new Date(event.timestamp).toLocaleTimeString()}</div>
               {Object.keys(event.properties).length > 0 && (

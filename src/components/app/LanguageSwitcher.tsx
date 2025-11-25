@@ -92,7 +92,7 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
         className={cn(
           'absolute top-full right-0 z-20 mt-2 min-w-48 overflow-hidden',
           'bg-white dark:bg-neutral-800',
-          'rounded-lg border border-neutral-200 shadow-lg dark:border-neutral-700',
+          'rounded-lg border border-border shadow-lg',
           'focus:outline-none'
         )}
       >

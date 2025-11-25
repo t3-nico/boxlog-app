@@ -291,7 +291,7 @@ export function QualityReviewPanel({
 
   if (loading && !assessment) {
     return (
-      <div className="rounded-lg border border-neutral-200 bg-neutral-100 p-6 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="rounded-lg border border-border bg-muted p-6">
         <div className="flex items-center justify-center">
           <div className="mr-3 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
           <span className="text-neutral-800 dark:text-neutral-200">品質評価を実行中...</span>

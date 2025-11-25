@@ -264,7 +264,7 @@ const VirtualTimeSlot = React.memo(function VirtualTimeSlot({
   return (
     <div
       ref={slotRef}
-      className="absolute inset-x-0 border-t border-gray-200"
+      className="absolute inset-x-0 border-t border-border"
       style={{
         top,
         height,
@@ -318,7 +318,7 @@ const VirtualDayColumn = React.memo(function VirtualDayColumn({
       role="button"
       tabIndex={0}
       aria-label={`Time slot for ${format(date, 'MMM d')} at ${hour}:00`}
-      className="relative flex-1 cursor-pointer border-r border-gray-200 hover:bg-gray-50/50"
+      className="relative flex-1 cursor-pointer border-r border-border hover:bg-muted/50"
       onClick={handleClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {

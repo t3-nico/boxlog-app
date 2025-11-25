@@ -71,7 +71,7 @@ export const WeekendDropConfirmDialog = ({
             className={cn(
               'rounded-lg border p-4',
               'bg-neutral-100 dark:bg-neutral-800',
-              'border-neutral-200 dark:border-neutral-700'
+              'border-border'
             )}
           >
             <div className="flex items-start gap-3">

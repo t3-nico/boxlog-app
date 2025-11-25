@@ -4,7 +4,7 @@ export const HelpSkeleton = () => {
   return (
     <div className="flex h-full flex-col">
       {/* Header skeleton */}
-      <div className="flex-shrink-0 border-b border-neutral-200 p-6 dark:border-neutral-800">
+      <div className="flex-shrink-0 border-b border-border p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 animate-pulse rounded-full bg-neutral-200 dark:bg-neutral-700"></div>
@@ -50,7 +50,7 @@ export const HelpSkeleton = () => {
       </div>
 
       {/* Input area skeleton */}
-      <div className="flex-shrink-0 border-t border-neutral-200 p-6 dark:border-neutral-800">
+      <div className="flex-shrink-0 border-t border-border p-6">
         <div className="space-y-3">
           {/* Loading indicator skeleton */}
           <div className="flex items-center gap-2">

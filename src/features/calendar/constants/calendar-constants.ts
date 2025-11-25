@@ -12,8 +12,8 @@ export const HEADER_HEIGHT = 56 // 日付ヘッダーの高さ（ピクセル）
 
 // カラー定義
 export const GRID_COLORS = {
-  border: 'border-gray-200 dark:border-gray-700',
-  borderLight: 'border-gray-100 dark:border-gray-800',
+  border: 'border-border',
+  borderLight: 'border-border/50',
   weekend: 'bg-gray-50/50 dark:bg-gray-800/20',
   businessHours: 'bg-white dark:bg-gray-900',
   nonBusinessHours: 'bg-gray-50/30 dark:bg-gray-800/30',
@@ -67,7 +67,7 @@ export const CALENDAR_CLASSES = {
 
   // 色・背景
   currentTimeColor: 'bg-red-500',
-  gridBorder: 'border-neutral-200 dark:border-neutral-700',
+  gridBorder: 'border-border',
   weekendBg: 'bg-neutral-50 dark:bg-neutral-800/20',
   businessHoursBg: 'bg-white dark:bg-neutral-950',
   nonBusinessHoursBg: 'bg-neutral-50/50 dark:bg-neutral-800/30',

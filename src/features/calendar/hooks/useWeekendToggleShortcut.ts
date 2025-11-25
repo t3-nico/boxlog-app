@@ -70,7 +70,7 @@ function showToggleFeedback(newState: boolean) {
   notification.className = `
     fixed top-4 right-4 z-[9999]
     bg-white dark:bg-gray-800
-    border border-gray-200 dark:border-gray-700
+    border border-border
     rounded-lg shadow-lg
     px-4 py-3
     flex items-center gap-3

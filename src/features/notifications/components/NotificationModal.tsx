@@ -87,7 +87,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         className={cn(
           'relative mx-4 w-full max-w-md',
           'bg-white dark:bg-neutral-800',
-          'border border-neutral-200 dark:border-neutral-800',
+          'border border-border',
           'shadow-lg ring-1',
           'rounded-lg',
           'transition-all duration-200'
@@ -97,7 +97,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         <div
           className={cn(
             'flex items-center justify-between',
-            'border-b border-neutral-200 dark:border-neutral-800',
+            'border-b border-border',
             'p-4'
           )}
         >
@@ -247,7 +247,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
 
         {/* Footer */}
         {filteredNotifications.length > 0 && (
-          <div className={cn('border-t px-4 py-3', 'border-neutral-200 dark:border-neutral-800')}>
+          <div className={cn('border-t px-4 py-3', 'border-border')}>
             <button
               type="button"
               className={cn(

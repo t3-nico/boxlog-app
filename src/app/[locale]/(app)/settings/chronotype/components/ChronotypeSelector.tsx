@@ -51,7 +51,7 @@ export function ChronotypeSelector({ selectedType, onSelect }: ChronotypeSelecto
   return (
     <>
       {/* クロノタイプ選択 */}
-      <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800">
+      <div className="rounded-lg border border-border bg-card p-6">
         <div className="mb-4">
           <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
             クロノタイプを選択
@@ -70,7 +70,7 @@ export function ChronotypeSelector({ selectedType, onSelect }: ChronotypeSelecto
               className={`rounded-lg border-2 p-4 text-left transition-all ${
                 selectedType === profile.id
                   ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-950'
-                  : 'border-neutral-300 hover:border-neutral-400 dark:border-neutral-600 dark:hover:border-neutral-500'
+                  : 'border-border hover:border-border/80'
               }`}
             >
               <div className="mb-2 flex items-center gap-2">
@@ -89,7 +89,7 @@ export function ChronotypeSelector({ selectedType, onSelect }: ChronotypeSelecto
 
       {/* 選択されたプロファイルのスケジュール表示 */}
       {currentProfile && (
-        <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800">
+        <div className="rounded-lg border border-border bg-card p-6">
           <h2 className="mb-4 text-xl font-bold text-neutral-900 dark:text-neutral-100">
             {currentProfile.name} のスケジュール
           </h2>

@@ -459,7 +459,7 @@ export const TaskHoverTooltip = ({ show, children, position }: TaskHoverTooltipP
         transform: 'translate(-50%, -100%)',
       }}
     >
-      <div className="max-w-xs rounded-lg border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+      <div className="max-w-xs rounded-lg border border-border bg-popover p-3 shadow-lg">
         {children}
       </div>
     </div>

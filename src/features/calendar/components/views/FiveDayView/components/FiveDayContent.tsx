@@ -121,7 +121,7 @@ export const FiveDayContent = ({
   const timeGrid = Array.from({ length: 24 }, (_, hour) => (
     <div
       key={hour}
-      className={`relative ${hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : ''}`}
+      className={`relative ${hour < 23 ? 'border-b border-border' : ''}`}
       style={{ height: HOUR_HEIGHT }}
     />
   ))

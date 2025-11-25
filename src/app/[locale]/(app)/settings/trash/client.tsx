@@ -41,7 +41,7 @@ export function TrashPageClient({ translations }: Props) {
     >
       <ErrorBoundary
         fallback={
-          <div className="rounded-xl border border-neutral-200/50 bg-white p-8 dark:border-neutral-700/50 dark:bg-neutral-800">
+          <div className="rounded-xl border border-border bg-card p-8">
             <div className="text-center">
               <div className="mb-4 text-6xl text-red-600 dark:text-red-400">🗑️</div>
               <h3 className="mb-2 text-lg font-semibold text-red-600 dark:text-red-400">{translations.errorTitle}</h3>
