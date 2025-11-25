@@ -12,7 +12,7 @@ import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout, usePlanStyles } from '../shared'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 
-import type { EventPosition } from '../DayView/DayView.types'
+import type { PlanPosition } from '../DayView/DayView.types'
 
 import { ThreeDayContent } from './components'
 import { useThreeDayView } from './hooks/useThreeDayView'
@@ -73,11 +73,11 @@ export const ThreeDayView = ({
     return threeDayDates
   }, [threeDayDates])
 
-  // イベント位置計算（統一された日付配列ベース）
+  // プラン位置計算（統一された日付配列ベース）
   const eventPositions = useMemo(() => {
-    const positions: EventPosition[] = []
+    const positions: PlanPosition[] = []
 
-    // displayDates（統一フィルタリング済み）を基準にイベントを配置
+    // displayDates（統一フィルタリング済み）を基準にプランを配置
     displayDates.forEach((displayDate, _dayIndex) => {
       const dateKey = format(displayDate, 'yyyy-MM-dd')
 
@@ -103,13 +103,14 @@ export const ThreeDayView = ({
         }
 
         positions.push({
-          event,
+          plan: event,
           top,
           height,
           left: 1, // 各カラム内での位置（%）
           width: 98, // カラム幅の98%を使用
           zIndex: 20,
-          opacity: 1.0,
+          column: 0,
+          totalColumns: 1,
         })
       })
     })
