@@ -8,7 +8,7 @@ import { Calendar, CheckSquare, Folder, Search, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-// TODO(#621): Events/Tasks削除後、Tickets/Sessionsに移行予定
+// TODO(#621): Events/Tasks削除後、plans/Sessionsに移行予定
 // import { useEventStore } from '@/features/events'
 import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
 import { useTagStore } from '@/features/tags/stores/useTagStore'

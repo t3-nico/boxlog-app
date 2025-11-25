@@ -618,7 +618,7 @@
     },
     "stats": {
       "totalRevenue": "Total revenue",
-      "ticketsSold": "Tickets sold",
+      "plansSold": "plans sold",
       "pageviews": "Pageviews"
     },
     "sections": {
@@ -1028,7 +1028,8 @@
       "confirmTitleWithName": "Delete \"{{name}}\"?",
       "warningIrreversible": "This action cannot be undone",
       "affectedItems": "Affected items",
-      "tickets": "Tickets",
+      "plans": "Plans",
+      "plans": "Plans",
       "events": "Events",
       "tasks": "Tasks",
       "itemsCount": "{{count}} items",

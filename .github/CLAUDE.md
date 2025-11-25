@@ -13,6 +13,7 @@ BoxLogプロジェクトのGitHub関連設定（一人開発最適化版）
 ## 🔧 Pre-commit Hook
 
 ### 実行内容
+
 ```bash
 # .husky/pre-commit
 npx lint-staged
@@ -23,6 +24,7 @@ npx lint-staged
 ```
 
 ### 対象ファイル
+
 ```json
 "lint-staged": {
   "*.{ts,tsx,js,jsx}": [
@@ -37,6 +39,7 @@ npx lint-staged
 ## 🚨 Conventional Commits（推奨）
 
 ### コミットメッセージ型
+
 ```bash
 feat: 新機能追加
 fix: バグ修正
@@ -52,6 +55,7 @@ chore: 設定変更
 ## 📊 GitHub Actions
 
 ### ワークフロー構成
+
 ```
 .github/workflows/
 ├── ci.yml              # lint + typecheck + test + build
@@ -59,6 +63,7 @@ chore: 設定変更
 ```
 
 ### ci.yml実行内容
+
 ```yaml
 Phase 1: Quick Checks (並列)
   - ESLint + Prettier
@@ -83,6 +88,7 @@ Note: カバレッジはCodecovで計測・可視化。fail_ci_if_error: false
 ## 🚀 デプロイフロー
 
 ### Vercel自動デプロイ
+
 ```bash
 # GitHub統合により自動実行
 - main ブランチへのpush → 本番デプロイ
@@ -90,6 +96,7 @@ Note: カバレッジはCodecovで計測・可視化。fail_ci_if_error: false
 ```
 
 ### 手動デプロイコマンド
+
 ```bash
 npm run deploy:full  # 完全デプロイフロー
 ```
@@ -99,6 +106,7 @@ npm run deploy:full  # 完全デプロイフロー
 ## 🔐 環境変数管理
 
 ### 構成
+
 ```bash
 # ローカル開発
 .env.local に直接記載

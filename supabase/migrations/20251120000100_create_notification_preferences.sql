@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS notification_preferences (
 
   -- タイプ別有効/無効
   enable_reminders BOOLEAN NOT NULL DEFAULT true,
-  enable_ticket_updates BOOLEAN NOT NULL DEFAULT true,
+  enable_plan_updates BOOLEAN NOT NULL DEFAULT true,
   enable_trash_warnings BOOLEAN NOT NULL DEFAULT true,
   enable_system_notifications BOOLEAN NOT NULL DEFAULT true,
 

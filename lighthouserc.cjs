@@ -61,7 +61,7 @@ module.exports = {
 
         // TTI: Time to Interactive
         // .github要求: < 3.8s
-        'interactive': ['warn', { maxNumericValue: 3800 }],
+        interactive: ['warn', { maxNumericValue: 3800 }],
 
         // ========================================
         // その他の重要指標

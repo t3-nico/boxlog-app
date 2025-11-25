@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 
-import type { BaseViewProps, CalendarEvent } from '../shared'
+import type { BaseViewProps, CalendarPlan } from '../shared'
 
 // ThreeDayViewの固有Props（BaseViewPropsを継承して95%削減）
 export interface ThreeDayViewProps extends BaseViewProps {
@@ -10,14 +10,14 @@ export interface ThreeDayViewProps extends BaseViewProps {
 // useThreeDayViewフックのオプション
 export interface UseThreeDayViewOptions {
   centerDate: Date
-  events: CalendarEvent[]
-  onEventUpdate?: (event: CalendarEvent) => void
+  events: CalendarPlan[]
+  onEventUpdate?: (plan: CalendarPlan) => void
 }
 
 // useThreeDayViewフックの返却値
 export interface UseThreeDayViewReturn {
   threeDayDates: Date[] // [yesterday, today, tomorrow]
-  eventsByDate: Record<string, CalendarEvent[]>
+  eventsByDate: Record<string, CalendarPlan[]>
   centerIndex: number // 中央の日付のインデックス（通常は1）
   todayIndex: number // 今日のインデックス（-1 if not in range）
   scrollToNow: () => void
@@ -26,7 +26,7 @@ export interface UseThreeDayViewReturn {
 
 // 3日ビューでのイベント位置情報
 export interface ThreeDayEventPosition {
-  event: CalendarEvent
+  plan: CalendarPlan
   dayIndex: number
   top: number
   height: number
@@ -69,7 +69,7 @@ export interface ThreeDayDateDisplay {
   isCenter: boolean // 中央の日付かどうか
   isPast: boolean
   isFuture: boolean
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   eventCount: number
   label: 'yesterday' | 'today' | 'tomorrow' | 'other'
 }
@@ -86,13 +86,13 @@ export interface ThreeDayEventStyle {
 // ThreeDay Grid コンポーネントのProps
 export interface ThreeDayGridProps {
   threeDayDates: Date[]
-  events: CalendarEvent[]
-  eventsByDate: Record<string, CalendarEvent[]>
+  events: CalendarPlan[]
+  eventsByDate: Record<string, CalendarPlan[]>
   centerIndex: number
   todayIndex: number
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
+  onEventClick?: (plan: CalendarPlan) => void
+  onEventContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onEventUpdate?: (event: CalendarEvent) => void
+  onEventUpdate?: (plan: CalendarPlan) => void
   className?: string
 }

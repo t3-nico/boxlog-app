@@ -5,7 +5,7 @@ export { cleanupImageObserver, LazyIcon, LazyImage, useImagePerformance } from '
 export { VirtualCalendarGrid } from '../virtualization/VirtualCalendarGrid'
 
 // データ最適化
-export { EventDataManager } from '../../../utils/data-optimization/EventDataManager'
+export { PlanDataManager } from '../../../utils/data-optimization/PlanDataManager'
 
 // Web Worker管理
 export { cleanupWorkerManager, getWorkerManager, WorkerManager } from '../../../utils/performance/WorkerManager'
@@ -17,7 +17,7 @@ export {
   useMemoizedCalendarData,
   useMemoizedComputation,
   useMemoizedEvents,
-} from '../../../hooks/useMemoizedEvents'
+} from '../../../hooks/useMemoizedPlans'
 
 // パフォーマンス監視
 export {

@@ -2,7 +2,7 @@
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { Activity, Calendar, CalendarRange, FileText, Hash, Tag } from 'lucide-react'
 import { useEffect, useMemo, useRef } from 'react'
 
@@ -42,7 +42,7 @@ const columnIcons = {
 /**
  * Inbox Table View コンポーネント
  *
- * テーブル形式でチケットを表示
+ * テーブル形式でプランを表示
  * - useInboxData でデータ取得
  * - useInboxFilterStore でフィルタ管理
  * - 行クリックで Inspector 表示
@@ -61,7 +61,7 @@ export function InboxTableView() {
   const { getActiveView } = useInboxViewStore()
   const { groupBy, collapsedGroups } = useInboxGroupStore()
   const { items, isLoading, error } = useInboxData({
-    status: filters.status[0] as TicketStatus | undefined,
+    status: filters.status[0] as PlanStatus | undefined,
     search: filters.search,
     tags: filters.tags,
     dueDate: filters.dueDate,
@@ -116,7 +116,7 @@ export function InboxTableView() {
 
     // フィルター適用
     if (activeView.filters.status) {
-      filters.setStatus(activeView.filters.status as TicketStatus[])
+      filters.setStatus(activeView.filters.status as PlanStatus[])
     }
     if (activeView.filters.search) {
       filters.setSearch(activeView.filters.search)
@@ -148,8 +148,8 @@ export function InboxTableView() {
 
       switch (sortField) {
         case 'id':
-          aValue = a.ticket_number || ''
-          bValue = b.ticket_number || ''
+          aValue = a.plan_number || ''
+          bValue = b.plan_number || ''
           break
         case 'title':
           aValue = a.title

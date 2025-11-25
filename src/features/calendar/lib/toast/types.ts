@@ -1,4 +1,4 @@
-import type { CalendarEvent } from '@/features/calendar/types'
+import type { CalendarPlan } from '@/features/calendar/types'
 
 // Calendar操作の種類
 export type CalendarAction =
@@ -14,8 +14,8 @@ export type CalendarAction =
 
 // Calendar Toast用の拡張型
 export interface CalendarToastOptions {
-  event?: CalendarEvent
-  events?: CalendarEvent[]
+  event?: CalendarPlan
+  events?: CalendarPlan[]
   count?: number
   undoAction?: () => void | Promise<void>
   viewAction?: () => void

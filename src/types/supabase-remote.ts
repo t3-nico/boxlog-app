@@ -269,7 +269,7 @@ export type Database = {
           },
         ]
       }
-      ticket_activities: {
+      plan_activities: {
         Row: {
           action_type: string
           created_at: string
@@ -278,7 +278,7 @@ export type Database = {
           metadata: Json | null
           new_value: string | null
           old_value: string | null
-          ticket_id: string | null
+          plan_id: string | null
           user_id: string
         }
         Insert: {
@@ -289,7 +289,7 @@ export type Database = {
           metadata?: Json | null
           new_value?: string | null
           old_value?: string | null
-          ticket_id?: string | null
+          plan_id?: string | null
           user_id: string
         }
         Update: {
@@ -300,59 +300,59 @@ export type Database = {
           metadata?: Json | null
           new_value?: string | null
           old_value?: string | null
-          ticket_id?: string | null
+          plan_id?: string | null
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: 'ticket_activities_ticket_id_fkey'
-            columns: ['ticket_id']
+            foreignKeyName: 'plan_activities_plan_id_fkey'
+            columns: ['plan_id']
             isOneToOne: false
-            referencedRelation: 'tickets'
+            referencedRelation: 'plans'
             referencedColumns: ['id']
           },
         ]
       }
-      ticket_tags: {
+      plan_tags: {
         Row: {
           created_at: string | null
           id: string
           tag_id: string
-          ticket_id: string
+          plan_id: string
           user_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
           tag_id: string
-          ticket_id: string
+          plan_id: string
           user_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
           tag_id?: string
-          ticket_id?: string
+          plan_id?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: 'ticket_tags_tag_id_fkey'
+            foreignKeyName: 'plan_tags_tag_id_fkey'
             columns: ['tag_id']
             isOneToOne: false
             referencedRelation: 'tags'
             referencedColumns: ['id']
           },
           {
-            foreignKeyName: 'ticket_tags_ticket_id_fkey'
-            columns: ['ticket_id']
+            foreignKeyName: 'plan_tags_plan_id_fkey'
+            columns: ['plan_id']
             isOneToOne: false
-            referencedRelation: 'tickets'
+            referencedRelation: 'plans'
             referencedColumns: ['id']
           },
         ]
       }
-      tickets: {
+      plans: {
         Row: {
           created_at: string | null
           description: string | null
@@ -364,7 +364,7 @@ export type Database = {
           recurrence_type: string | null
           start_time: string | null
           status: string
-          ticket_number: string
+          plan_number: string
           title: string
           updated_at: string | null
           user_id: string
@@ -380,7 +380,7 @@ export type Database = {
           recurrence_type?: string | null
           start_time?: string | null
           status?: string
-          ticket_number: string
+          plan_number: string
           title: string
           updated_at?: string | null
           user_id: string
@@ -396,7 +396,7 @@ export type Database = {
           recurrence_type?: string | null
           start_time?: string | null
           status?: string
-          ticket_number?: string
+          plan_number?: string
           title?: string
           updated_at?: string | null
           user_id?: string

@@ -1,10 +1,10 @@
 // check-reminders Edge Function
-// 毎分実行され、reminder_atが近いチケットをチェックして通知を生成
+// 毎分実行され、reminder_atが近いプランをチェックして通知を生成
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 import { corsHeaders } from '../_shared/cors.ts'
 
-interface Ticket {
+interface plan {
   id: string
   user_id: string
   title: string
@@ -24,45 +24,45 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // 現在時刻の1分後までにリマインダーが設定されているチケットを取得
+    // 現在時刻の1分後までにリマインダーが設定されているプランを取得
     const now = new Date()
     const oneMinuteLater = new Date(now.getTime() + 60 * 1000)
 
-    const { data: tickets, error: ticketsError } = await supabase
-      .from('tickets')
+    const { data: plans, error: plansError } = await supabase
+      .from('plans')
       .select('id, user_id, title, reminder_at, reminder_sent')
       .not('reminder_at', 'is', null)
       .eq('reminder_sent', false)
       .lte('reminder_at', oneMinuteLater.toISOString())
-      .returns<Ticket[]>()
+      .returns<plan[]>()
 
-    if (ticketsError) {
-      console.error('Error fetching tickets:', ticketsError)
-      throw ticketsError
+    if (plansError) {
+      console.error('Error fetching plans:', plansError)
+      throw plansError
     }
 
-    if (!tickets || tickets.length === 0) {
+    if (!plans || plans.length === 0) {
       return new Response(JSON.stringify({ message: 'No reminders to send', count: 0 }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })
     }
 
-    // 各チケットに対して通知を作成
+    // 各プランに対して通知を作成
     const notificationsCreated = []
-    const ticketsUpdated = []
+    const plansUpdated = []
 
-    for (const ticket of tickets) {
+    for (const plan of plans) {
       // 通知を作成
       const { data: notification, error: notificationError } = await supabase
         .from('notifications')
         .insert({
-          user_id: ticket.user_id,
+          user_id: plan.user_id,
           type: 'reminder',
           priority: 'high',
           title: 'リマインダー',
-          message: `「${ticket.title}」のリマインダー時刻になりました`,
-          related_ticket_id: ticket.id,
+          message: `「${plan.title}」のリマインダー時刻になりました`,
+          related_plan_id: plan.id,
           is_read: false,
         })
         .select()
@@ -70,28 +70,28 @@ Deno.serve(async (req) => {
 
       if (notificationError) {
         console.error('Error creating notification:', notificationError)
-        continue // エラーが発生しても他のチケットの処理は続行
+        continue // エラーが発生しても他のプランの処理は続行
       }
 
       notificationsCreated.push(notification)
 
-      // チケットのreminder_sentをtrueに更新
-      const { error: updateError } = await supabase.from('tickets').update({ reminder_sent: true }).eq('id', ticket.id)
+      // プランのreminder_sentをtrueに更新
+      const { error: updateError } = await supabase.from('plans').update({ reminder_sent: true }).eq('id', plan.id)
 
       if (updateError) {
-        console.error('Error updating ticket:', updateError)
+        console.error('Error updating plan:', updateError)
         continue
       }
 
-      ticketsUpdated.push(ticket.id)
+      plansUpdated.push(plan.id)
     }
 
     return new Response(
       JSON.stringify({
         message: 'Reminders processed successfully',
         notificationsCreated: notificationsCreated.length,
-        ticketsUpdated: ticketsUpdated.length,
-        ticketIds: ticketsUpdated,
+        plansUpdated: plansUpdated.length,
+        planIds: plansUpdated,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     )

@@ -165,7 +165,6 @@ class DocsConsistencyChecker {
     })
   }
 
-
   // package.json記載内容とドキュメントの整合性
   async checkPackageJsonConsistency() {
     log.title('package.jsonとドキュメントの整合性')

@@ -21,17 +21,20 @@
 ## 🔗 アクセス方法
 
 ファイルは`/`からの相対パスでアクセス可能：
+
 - `public/favicon.ico` → `http://localhost:3001/favicon.ico`
 - `public/images/logo.png` → `http://localhost:3001/images/logo.png`
 
 ## 📋 ファイル配置ルール
 
 ### DO ✓
+
 - 画像、アイコン、フォントなどの静的ファイル
 - robots.txt、sitemap.xml、manifest.jsonなどのメタファイル
 - 直接URLでアクセスしたいファイル
 
 ### DON'T ✗
+
 - コンポーネントやTypeScriptファイル
 - 設定ファイル（Next.js管理外）
 - 機密情報を含むファイル

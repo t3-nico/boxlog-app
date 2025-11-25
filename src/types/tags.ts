@@ -95,7 +95,7 @@ export interface UpdateTagGroupInput {
 
 // タグ使用状況
 export interface TagUsage {
-  ticketCount: number
+  planCount: number
   eventCount: number
   taskCount: number
   totalCount: number
@@ -174,7 +174,7 @@ export interface TagSortOptions {
 // グループに所属するタグを含むグループ型
 export interface TagGroupWithTags extends TagGroup {
   tags: Tag[]
-  totalTickets?: number
+  totalPlans?: number
 }
 
 // API レスポンス型

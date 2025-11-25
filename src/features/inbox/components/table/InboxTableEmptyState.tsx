@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { FileSearch, Filter, Inbox, Plus } from 'lucide-react'
 import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
 
@@ -28,7 +28,7 @@ interface InboxTableEmptyStateProps {
  */
 export function InboxTableEmptyState({ columnCount, totalItems }: InboxTableEmptyStateProps) {
   const { search, status, reset } = useInboxFilterStore()
-  const { openInspector } = useTicketInspectorStore()
+  const { openInspector } = usePlanInspectorStore()
 
   // フィルター適用中かどうか
   const isFiltered = search !== '' || status.length > 0
@@ -47,7 +47,7 @@ export function InboxTableEmptyState({ columnCount, totalItems }: InboxTableEmpt
       return {
         icon: FileSearch,
         title: '検索結果が見つかりませんでした',
-        description: `"${search}" に一致するチケットがありません。別のキーワードで検索してください。`,
+        description: `"${search}" に一致するプランがありません。別のキーワードで検索してください。`,
         action: (
           <Button onClick={reset} variant="outline">
             <Filter className="mr-2 size-4" />
@@ -73,8 +73,8 @@ export function InboxTableEmptyState({ columnCount, totalItems }: InboxTableEmpt
 
     return {
       icon: Inbox,
-      title: 'まだチケットがありません',
-      description: '新しいチケットを作成して、タスク管理を始めましょう。',
+      title: 'まだプランがありません',
+      description: '新しいプランを作成して、タスク管理を始めましょう。',
       action: (
         <Button onClick={handleCreate}>
           <Plus className="mr-2 size-4" />

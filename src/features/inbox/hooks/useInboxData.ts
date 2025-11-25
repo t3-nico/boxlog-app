@@ -4,21 +4,21 @@
  * TanStack Query統合済み
  */
 
-import { useTickets } from '@/features/tickets/hooks/useTickets'
-import type { Ticket, TicketStatus } from '@/features/tickets/types/ticket'
+import { useplans } from '@/features/plans/hooks/usePlans'
+import type { Plan, PlanStatus } from '@/features/plans/types/plan'
 import type { DueDateFilter } from '../stores/useInboxFilterStore'
 
 /**
- * Inboxアイテム（Ticket型のエイリアス）
+ * Inboxアイテム（Plan型のエイリアス）
  */
 export interface InboxItem {
   id: string
-  type: 'ticket'
+  type: 'plan'
   title: string
-  status: TicketStatus
+  status: PlanStatus
   created_at: string
   updated_at: string
-  ticket_number?: string
+  plan_number?: string
   planned_hours?: number
   description?: string
   due_date?: string | null // 期限日（YYYY-MM-DD）
@@ -35,7 +35,7 @@ export interface InboxItem {
  * Inboxフィルター型
  */
 export interface InboxFilters {
-  status?: TicketStatus
+  status?: PlanStatus
   search?: string
   tags?: string[] // タグIDの配列
   dueDate?: DueDateFilter // 期限フィルター
@@ -94,32 +94,32 @@ function matchesDueDateFilter(dueDate: string | null | undefined, filter: DueDat
 }
 
 /**
- * TicketをInboxItemに変換
+ * PlanをInboxItemに変換
  */
-function ticketToInboxItem(
-  ticket: Ticket & { ticket_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
+function planToInboxItem(
+  plan: Plan & { plan_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
 ): InboxItem {
-  // ticket_tags から tags を抽出
+  // plan_tags から tags を抽出
   const tags =
-    ticket.ticket_tags
+    plan.plan_tags
       ?.map((tt) => tt.tags)
       .filter((tag): tag is { id: string; name: string; color?: string } => tag !== null && tag !== undefined) || []
 
   return {
-    id: ticket.id,
-    type: 'ticket',
-    title: ticket.title,
-    status: ticket.status,
-    created_at: ticket.created_at ?? new Date().toISOString(),
-    updated_at: ticket.updated_at ?? new Date().toISOString(),
-    ticket_number: ticket.ticket_number,
-    description: ticket.description ?? undefined,
-    due_date: ticket.due_date,
-    start_time: ticket.start_time,
-    end_time: ticket.end_time,
-    recurrence_type: ticket.recurrence_type,
-    recurrence_end_date: ticket.recurrence_end_date,
-    recurrence_rule: ticket.recurrence_rule,
+    id: plan.id,
+    type: 'plan',
+    title: plan.title,
+    status: plan.status,
+    created_at: plan.created_at ?? new Date().toISOString(),
+    updated_at: plan.updated_at ?? new Date().toISOString(),
+    plan_number: plan.plan_number,
+    description: plan.description ?? undefined,
+    due_date: plan.due_date,
+    start_time: plan.start_time,
+    end_time: plan.end_time,
+    recurrence_type: plan.recurrence_type,
+    recurrence_end_date: plan.recurrence_end_date,
+    recurrence_rule: plan.recurrence_rule,
     tags: tags.length > 0 ? tags : undefined,
   }
 }
@@ -148,22 +148,22 @@ function ticketToInboxItem(
  * ```
  */
 export function useInboxData(filters: InboxFilters = {}) {
-  // Ticketsの取得（リアルタイム性最適化済み）
+  // plansの取得（リアルタイム性最適化済み）
   const {
-    data: ticketsData,
+    data: plansData,
     isLoading,
     error,
-  } = useTickets({
+  } = useplans({
     status: filters.status,
     search: filters.search,
   })
 
-  // TicketをInboxItemに変換
+  // PlanをInboxItemに変換
   // APIレスポンスは部分的な型なので、unknown経由でキャスト
   let items: InboxItem[] =
-    ticketsData?.map((t) =>
-      ticketToInboxItem(
-        t as unknown as Ticket & { ticket_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
+    plansData?.map((t) =>
+      planToInboxItem(
+        t as unknown as Plan & { plan_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
       )
     ) || []
 
@@ -189,19 +189,19 @@ export function useInboxData(filters: InboxFilters = {}) {
 
   return {
     items,
-    tickets: ticketsData || [],
+    plans: plansData || [],
     isLoading,
     error,
   }
 }
 
 /**
- * Tickets専用データ取得フック
+ * plans専用データ取得フック
  * useInboxDataのエイリアス
  *
  * @param filters - フィルター条件
- * @returns Ticketsデータ
+ * @returns plansデータ
  */
-export function useInboxTickets(filters: InboxFilters = {}) {
+export function useInboxplans(filters: InboxFilters = {}) {
   return useInboxData(filters)
 }

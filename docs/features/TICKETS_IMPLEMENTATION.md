@@ -1,12 +1,12 @@
-# Tickets & Sessions 機能実装ドキュメント
+# Plans & Sessions 機能実装ドキュメント
 
 ## 📋 概要
 
-このドキュメントは、`feature/tickets-database-foundation` ブランチで実装した Tickets & Sessions 機能の詳細をまとめたものです。
+このドキュメントは、`feature/plans-database-foundation` ブランチで実装した Plans & Sessions 機能の詳細をまとめたものです。
 
 ## 🎯 実装目的
 
-Event/Task の負債コードを削除し、クリーンな Ticket ベースのタスク管理システムを構築する。
+Event/Task の負債コードを削除し、クリーンな Plan ベースのタスク管理システムを構築する。
 
 ## 📦 実装内容
 
@@ -14,26 +14,26 @@ Event/Task の負債コードを削除し、クリーンな Ticket ベースの�
 
 **Supabase テーブル設計:**
 
-- `tickets` テーブル：チケット情報（タイトル、説明、ステータス、優先度等）
-- `sessions` テーブル：作業セッション（チケットに紐づく作業時間記録）
-- `ticket_tags` / `session_tags` テーブル：タグ管理
+- `plans` テーブル：プラン情報（タイトル、説明、ステータス、優先度等）
+- `sessions` テーブル：作業セッション（プランに紐づく作業時間記録）
+- `plan_tags` / `session_tags` テーブル：タグ管理
 
 **型定義:**
 
-- `src/features/tickets/types/ticket.ts`
-- `src/features/tickets/types/session.ts`
+- `src/features/plans/types/plan.ts`
+- `src/features/plans/types/session.ts`
 
 ### Phase 2: tRPC API（完了）
 
 **API エンドポイント:**
 
 ```typescript
-// Tickets
-api.tickets.list // チケット一覧取得（フィルタ対応）
-api.tickets.getById // チケット詳細取得
-api.tickets.create // チケット作成
-api.tickets.update // チケット更新
-api.tickets.delete // チケット削除
+// plans
+api.plans.list // プラン一覧取得（フィルタ対応）
+api.plans.getById // プラン詳細取得
+api.plans.create // プラン作成
+api.plans.update // プラン更新
+api.plans.delete // プラン削除
 
 // Sessions
 api.sessions.list // セッション一覧取得
@@ -47,34 +47,34 @@ api.sessions.endSession // セッション終了
 
 **Zodバリデーション:**
 
-- `src/schemas/tickets/ticket.ts`
-- `src/schemas/tickets/session.ts`
+- `src/schemas/plans/plan.ts`
+- `src/schemas/plans/session.ts`
 
 ### Phase 3: Zustand Store + フック（完了）
 
 **状態管理:**
 
-- `src/features/tickets/stores/useTicketStore.ts` - チケット状態管理
-- `src/features/tickets/stores/useSessionStore.ts` - セッション状態管理
+- `src/features/plans/stores/useplanStore.ts` - プラン状態管理
+- `src/features/plans/stores/useSessionStore.ts` - セッション状態管理
 
 **カスタムフック:**
 
-- `src/features/tickets/hooks/useTickets.ts` - チケットCRUD操作
-- `src/features/tickets/hooks/useSessions.ts` - セッションCRUD操作
+- `src/features/plans/hooks/useplans.ts` - プランCRUD操作
+- `src/features/plans/hooks/useSessions.ts` - セッションCRUD操作
 
 ### Phase 4: UIコンポーネント（部分完了）
 
 **実装済みコンポーネント:**
 
-- `TicketForm` - チケット作成/編集フォーム
+- `planForm` - プラン作成/編集フォーム
 - `SessionForm` - セッション作成/編集フォーム
-- `TicketList` - チケット一覧表示
+- `planList` - プラン一覧表示
 - `SessionList` - セッション一覧表示
 
 **ページ:**
 
-- `/tickets/new` - 新規チケット作成ページ
-- `/tickets/[id]` - チケット詳細ページ
+- `/plans/new` - 新規プラン作成ページ
+- `/plans/[id]` - プラン詳細ページ
 
 ### 負債コード削除（完了）
 
@@ -91,7 +91,7 @@ api.sessions.endSession // セッション終了
 - ディレクトリ構造を `.gitkeep` で維持
 - 全てのインポートをコメントアウト（`TODO(#621)`）
 - CLAUDE.md ドキュメントを保持
-- 将来的に Ticket/Session ベースで再実装予定
+- 将来的に plan/Session ベースで再実装予定
 
 ### tRPC統合（完了）
 
@@ -125,30 +125,30 @@ api.sessions.endSession // セッション終了
 
 ```
 Supabase DB
-  ├── tickets テーブル
-  │    └── sessions テーブル（ticketに紐づく）
+  ├── plans テーブル
+  │    └── sessions テーブル（Planに紐づく）
   ↓
 tRPC API
-  ├── api.tickets.*
+  ├── api.plans.*
   └── api.sessions.*
   ↓
 Zustand Store
-  ├── useTicketStore
+  ├── usePlanStore
   └── useSessionStore
   ↓
 カスタムフック
-  ├── useTickets
+  ├── usePlans
   └── useSessions
   ↓
 UIコンポーネント
-  ├── TicketForm, TicketList
+  ├── PlanForm, PlanList
   └── SessionForm, SessionList
 ```
 
 ### 将来的な統合（Phase 5 以降）
 
 ```
-Tickets データ（Supabase DB）
+plans データ（Supabase DB）
   ↓
 複数のビューで表示
   ├── Board ビュー（カンバン形式）
@@ -157,14 +157,14 @@ Tickets データ（Supabase DB）
   └── Stats ビュー（統計）
 ```
 
-現状は Board が `useKanbanStore`（localStorage）で一時的に動作していますが、将来的に Tickets データに統合予定です。
+現状は Board が `useKanbanStore`（localStorage）で一時的に動作していますが、将来的に plans データに統合予定です。
 
 ## 📝 未実装（Phase 5 以降）
 
 ### Phase 5: ページ統合
 
-- Board/Table/Calendar/Stats を Tickets データに統合
-- `/tickets` 一覧ページ
+- Board/Table/Calendar/Stats を plans データに統合
+- `/plans` 一覧ページ
 - ビュー間のナビゲーション
 
 ### Phase 6: テスト + ドキュメント
@@ -195,20 +195,20 @@ Tickets データ（Supabase DB）
 
 - ✅ Board ビュー正常表示
 - ✅ Table ビュー正常表示（クリーンアップ済み）
-- ✅ `/tickets/new` ページ動作
+- ✅ `/plans/new` ページ動作
 - ✅ tRPC API 統合完了
 - ✅ 型エラーなし（`npm run typecheck`）
 - ✅ Lint エラーなし（`npm run lint`）
 
 ## 🚀 次のステップ
 
-1. **Phase 5実装**: Board/Table/Calendar を Tickets データに統合
+1. **Phase 5実装**: Board/Table/Calendar を Plans データに統合
 2. **Phase 6実装**: テスト + ドキュメント完成
-3. **Inspector再実装**: Ticket/Session ベースで Inspector を再実装
+3. **Inspector再実装**: Plan/Session ベースで Inspector を再実装
 
 ## 📚 関連ドキュメント
 
-- [Tickets CLAUDE.md](../../src/features/tickets/CLAUDE.md)
+- [plans CLAUDE.md](../../src/features/plans/CLAUDE.md)
 - [CLAUDE.md](../../CLAUDE.md) - 開発ワークフロー改善
 - [Issue #623](https://github.com/t3-nico/boxlog-app/issues/623) - Phase 5
 - [Issue #624](https://github.com/t3-nico/boxlog-app/issues/624) - Phase 6

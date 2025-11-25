@@ -17,10 +17,10 @@
  *   1: Violations found (non-blocking warning)
  */
 
+import { glob } from 'glob'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { glob } from 'glob'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -158,8 +158,7 @@ function detectDirectColors(content, filePath) {
 
   lines.forEach((line, index) => {
     // Skip if line contains semantic tokens
-    if (line.includes('bg-card') || line.includes('text-foreground') || line.includes('border-border'))
-      return
+    if (line.includes('bg-card') || line.includes('text-foreground') || line.includes('border-border')) return
 
     colorPatterns.forEach((pattern) => {
       if (pattern.test(line)) {
@@ -196,14 +195,11 @@ function validateFile(filePath) {
  * Format violations as JSON for GitHub Actions
  */
 function formatViolationsJSON(violations) {
-  const grouped = violations.reduce(
-    (acc, v) => {
-      acc[v.type] = acc[v.type] || []
-      acc[v.type].push(v)
-      return acc
-    },
-    {}
-  )
+  const grouped = violations.reduce((acc, v) => {
+    acc[v.type] = acc[v.type] || []
+    acc[v.type].push(v)
+    return acc
+  }, {})
 
   return JSON.stringify(grouped, null, 2)
 }
@@ -242,9 +238,7 @@ async function main() {
       const relativePath = path.relative(ROOT_DIR, v.file)
       console.log(`  ${relativePath}:${v.line}`)
       console.log(`    ${colors.yellow}${v.content}${colors.reset}`)
-      console.log(
-        `    ${colors.red}Rule: ${v.type === 'any-type' ? 'No `any` type allowed' : v.type}${colors.reset}\n`
-      )
+      console.log(`    ${colors.red}Rule: ${v.type === 'any-type' ? 'No `any` type allowed' : v.type}${colors.reset}\n`)
     })
   }
 
@@ -260,9 +254,7 @@ async function main() {
 
   if (infos.length > 0) {
     console.log(`${colors.blue}ℹ️  Info (${infos.length}):${colors.reset}`)
-    console.log(
-      `  ${infos.length} instances of direct color classes found (consider using semantic tokens)\n`
-    )
+    console.log(`  ${infos.length} instances of direct color classes found (consider using semantic tokens)\n`)
   }
 
   // Write violations to file for GitHub Actions

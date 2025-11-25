@@ -37,7 +37,7 @@ describe('InboxBoardView', () => {
     vi.spyOn(useInboxFilterStoreModule, 'useInboxFilterStore').mockReturnValue(mockFilters)
     vi.spyOn(useInboxDataModule, 'useInboxData').mockReturnValue({
       items: [],
-      tickets: [],
+      plans: [],
       isLoading: false,
       error: null,
     })
@@ -63,7 +63,7 @@ describe('InboxBoardView', () => {
     it('ローディング中はスピナーが表示される', () => {
       vi.spyOn(useInboxDataModule, 'useInboxData').mockReturnValue({
         items: [],
-        tickets: [],
+        plans: [],
         isLoading: true,
         error: null,
       })
@@ -85,7 +85,7 @@ describe('InboxBoardView', () => {
       }
       vi.spyOn(useInboxDataModule, 'useInboxData').mockReturnValue({
         items: [],
-        tickets: [],
+        plans: [],
         isLoading: false,
         error: mockError as any,
       })

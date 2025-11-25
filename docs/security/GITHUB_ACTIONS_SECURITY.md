@@ -21,11 +21,13 @@
 ```
 
 **現在の設定確認**:
+
 ```bash
 gh api repos/t3-nico/boxlog-app/actions/permissions
 ```
 
 **効果**:
+
 - GITHUB_TOKENのデフォルト権限が`read`に
 - 悪意のあるコード実行による改ざん防止
 - OWASP A01:2021（Access Control）対応
@@ -54,6 +56,7 @@ gh api repos/t3-nico/boxlog-app/actions/permissions
 ```
 
 **効果**:
+
 - Supply Chain攻撃防止
 - 未検証のアクション実行を禁止
 - 組織全体のセキュリティポリシー適用
@@ -68,31 +71,32 @@ gh api repos/t3-nico/boxlog-app/actions/permissions
 version: 2
 updates:
   # 既存: npm依存関係
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: 'weekly'
+      day: 'monday'
     labels:
-      - "dependencies"
-      - "security"
+      - 'dependencies'
+      - 'security'
 
   # 追加: GitHub Actions監視
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: 'weekly'
+      day: 'monday'
     labels:
-      - "dependencies"
-      - "github-actions"
-      - "security"
+      - 'dependencies'
+      - 'github-actions'
+      - 'security'
     commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
+      prefix: 'chore(deps)'
+      include: 'scope'
 ```
 
 **効果**:
+
 - Actionsの脆弱性を自動検出
 - セキュリティパッチ適用漏れ防止
 - SHA固定でも自動更新PR作成
@@ -104,6 +108,7 @@ updates:
 ### 4. 各ワークフローにpermissions追加
 
 **対象ファイル**:
+
 - `.github/workflows/ci.yml`
 - `.github/workflows/security-audit.yml`
 - `.github/workflows/security-scan.yml`
@@ -124,10 +129,10 @@ on:
 
 # ← 追加: 明示的な権限設定
 permissions:
-  contents: read          # リポジトリ読み取り
-  pull-requests: write    # PR コメント書き込み（Quality Gate用）
-  checks: write           # チェック結果書き込み
-  statuses: write         # ステータス更新
+  contents: read # リポジトリ読み取り
+  pull-requests: write # PR コメント書き込み（Quality Gate用）
+  checks: write # チェック結果書き込み
+  statuses: write # ステータス更新
 
 jobs:
   lint:
@@ -135,21 +140,21 @@ jobs:
     runs-on: ubuntu-latest
     # ジョブレベルでさらに制限も可能
     permissions:
-      contents: read      # このジョブはread-onlyで十分
+      contents: read # このジョブはread-onlyで十分
     steps:
       # ...
 ```
 
 **権限の種類**:
 
-| 権限 | 用途 | 必要なワークフロー |
-|------|------|-------------------|
-| `contents: read` | コード読み取り | 全て（必須） |
-| `contents: write` | コミット・タグ作成 | リリースワークフローのみ |
-| `pull-requests: write` | PRコメント | Quality Gate、セキュリティレポート |
-| `issues: write` | Issue作成 | セキュリティアラート |
-| `checks: write` | チェック結果 | テスト結果レポート |
-| `statuses: write` | ステータス更新 | CI/CD |
+| 権限                   | 用途               | 必要なワークフロー                 |
+| ---------------------- | ------------------ | ---------------------------------- |
+| `contents: read`       | コード読み取り     | 全て（必須）                       |
+| `contents: write`      | コミット・タグ作成 | リリースワークフローのみ           |
+| `pull-requests: write` | PRコメント         | Quality Gate、セキュリティレポート |
+| `issues: write`        | Issue作成          | セキュリティアラート               |
+| `checks: write`        | チェック結果       | テスト結果レポート                 |
+| `statuses: write`      | ステータス更新     | CI/CD                              |
 
 **参考**: [Permissions for GITHUB_TOKEN](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token)
 
@@ -158,13 +163,15 @@ jobs:
 ### 5. ActionsのSHA固定（Supply Chain攻撃防止）
 
 **現状**:
+
 ```yaml
-uses: actions/checkout@v4  # ❌ タグ参照（書き換え可能）
+uses: actions/checkout@v4 # ❌ タグ参照（書き換え可能）
 ```
 
 **推奨**:
+
 ```yaml
-uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 # ↑ SHA固定 + バージョンコメント
 ```
 
@@ -204,6 +211,7 @@ zaproxy/action-full-scan@v0.10.0
 **一括変換方法**:
 
 **方法1: 自動変換ツール（推奨）**
+
 ```bash
 # pin-github-actionをグローバルインストール
 npm install -g pin-github-action
@@ -216,6 +224,7 @@ git diff .github/workflows/
 ```
 
 **方法2: 手動変換**
+
 ```bash
 # 各Actionのリリースページで最新のコミットSHAを確認
 # 例: https://github.com/actions/checkout/releases/tag/v4.1.1
@@ -228,11 +237,13 @@ git diff .github/workflows/
 ```
 
 **Dependabotが自動更新**:
+
 - SHA固定でもDependabotがPR作成
 - 新バージョンのSHAに自動更新
 - セキュリティパッチも自動検出
 
 **メリット**:
+
 - アクションの改ざん検知
 - バックドア挿入防止
 - 予期しない動作変更回避
@@ -247,11 +258,13 @@ git diff .github/workflows/
 **設定手順**:
 
 1. **Environment作成**: `Settings` → `Environments` → `New environment`
+
    ```
    Name: production
    ```
 
 2. **保護ルール設定**:
+
    ```
    ✅ Required reviewers: @t3-nico
    ✅ Wait timer: 0 minutes
@@ -271,7 +284,7 @@ git diff .github/workflows/
 jobs:
   deploy-production:
     runs-on: ubuntu-latest
-    environment: production  # ← Environment指定
+    environment: production # ← Environment指定
     permissions:
       contents: read
       deployments: write
@@ -287,6 +300,7 @@ jobs:
 ```
 
 **効果**:
+
 - 本番デプロイに手動承認必須
 - 環境ごとにSecretsを分離
 - 誤デプロイ防止
@@ -314,12 +328,12 @@ steps:
 
 **7-2. Secretsのローテーション**
 
-| Secret | ローテーション頻度 | 担当 |
-|--------|-------------------|------|
-| CODECOV_TOKEN | 90日 | 自動 |
-| SENTRY_AUTH_TOKEN | 90日 | 手動 |
-| VERCEL_TOKEN | 180日 | 手動 |
-| DATABASE_URL | 変更時のみ | 手動 |
+| Secret            | ローテーション頻度 | 担当 |
+| ----------------- | ------------------ | ---- |
+| CODECOV_TOKEN     | 90日               | 自動 |
+| SENTRY_AUTH_TOKEN | 90日               | 手動 |
+| VERCEL_TOKEN      | 180日              | 手動 |
+| DATABASE_URL      | 変更時のみ         | 手動 |
 
 **7-3. Secrets監査**
 
@@ -343,21 +357,25 @@ gh api repos/t3-nico/boxlog-app/actions/secrets | jq '.secrets[].name'
 **実施日**: YYYY-MM-DD
 
 ### ワークフロー
+
 - [ ] 全ワークフローに`permissions`設定あり
 - [ ] 不要な`write`権限がない
 - [ ] `secrets`の使用が適切
 
 ### アクション
+
 - [ ] SHA固定されている
 - [ ] 未検証のアクションがない
 - [ ] Dependabot更新PRを確認
 
 ### Secrets
+
 - [ ] 未使用Secretsがない
 - [ ] ローテーション期限を確認
 - [ ] 環境分離されている
 
 ### 実行履歴
+
 - [ ] 異常な実行がない
 - [ ] 失敗の原因を確認
 - [ ] リソース使用量を確認
@@ -398,24 +416,24 @@ echo "✅ Audit complete"
 
 ### 現在のBoxLogスコア
 
-| カテゴリ | スコア | 評価 |
-|---------|--------|------|
-| **Token Permissions** | 0/10 | ❌ 未設定 |
-| **Action Pinning** | 3/10 | 🟡 タグ参照のみ |
-| **Secrets Management** | 7/10 | 🟢 基本的に良好 |
-| **Dependency Updates** | 5/10 | 🟡 npmのみ対応 |
-| **Environment Protection** | 0/10 | ❌ 未設定 |
+| カテゴリ                   | スコア | 評価            |
+| -------------------------- | ------ | --------------- |
+| **Token Permissions**      | 0/10   | ❌ 未設定       |
+| **Action Pinning**         | 3/10   | 🟡 タグ参照のみ |
+| **Secrets Management**     | 7/10   | 🟢 基本的に良好 |
+| **Dependency Updates**     | 5/10   | 🟡 npmのみ対応  |
+| **Environment Protection** | 0/10   | ❌ 未設定       |
 
 **総合スコア**: **30/50** 🟡 要改善
 
 ### 目標スコア（Phase 1完了後）
 
-| カテゴリ | 目標 |
-|---------|------|
-| Token Permissions | 10/10 ✅ |
-| Action Pinning | 10/10 ✅ |
-| Secrets Management | 10/10 ✅ |
-| Dependency Updates | 10/10 ✅ |
+| カテゴリ               | 目標     |
+| ---------------------- | -------- |
+| Token Permissions      | 10/10 ✅ |
+| Action Pinning         | 10/10 ✅ |
+| Secrets Management     | 10/10 ✅ |
+| Dependency Updates     | 10/10 ✅ |
 | Environment Protection | 10/10 ✅ |
 
 **目標総合スコア**: **50/50** 🎯 完璧
@@ -433,6 +451,7 @@ echo "✅ Audit complete"
 ```
 
 **理由**:
+
 - Crypto Mining攻撃の防止
 - Secrets漏洩防止（fork PRはSecretsアクセス不可）
 - 悪意のある外部コントリビューター対策
@@ -447,48 +466,48 @@ echo "✅ Audit complete"
 
 ```yaml
 permissions:
-  contents: read          # コード読み取り
-  pull-requests: write    # PRコメント投稿（Quality Gate）
-  checks: write           # チェック結果の更新
-  statuses: write         # ステータス更新
-  issues: read            # Issue参照（関連Issue）
+  contents: read # コード読み取り
+  pull-requests: write # PRコメント投稿（Quality Gate）
+  checks: write # チェック結果の更新
+  statuses: write # ステータス更新
+  issues: read # Issue参照（関連Issue）
 ```
 
 #### **e2e.yml** - E2Eテスト
 
 ```yaml
 permissions:
-  contents: read          # コード読み取り
-  pull-requests: write    # テスト結果コメント
-  actions: read           # Artifact読み取り
-  checks: write           # テスト結果レポート
+  contents: read # コード読み取り
+  pull-requests: write # テスト結果コメント
+  actions: read # Artifact読み取り
+  checks: write # テスト結果レポート
 ```
 
 #### **security-scan.yml** - セキュリティスキャン
 
 ```yaml
 permissions:
-  contents: read              # コード読み取り
-  security-events: write      # セキュリティアラート作成
-  pull-requests: write        # 脆弱性レポート投稿
-  issues: write               # Critical脆弱性検出時にIssue作成
+  contents: read # コード読み取り
+  security-events: write # セキュリティアラート作成
+  pull-requests: write # 脆弱性レポート投稿
+  issues: write # Critical脆弱性検出時にIssue作成
 ```
 
 #### **security-report.yml** - セキュリティレポート
 
 ```yaml
 permissions:
-  contents: read          # コード読み取り
-  issues: write           # 週次レポートをIssue化
-  pull-requests: read     # PR関連情報の取得
+  contents: read # コード読み取り
+  issues: write # 週次レポートをIssue化
+  pull-requests: read # PR関連情報の取得
 ```
 
 #### **bundle-check.yml** - バンドルサイズチェック
 
 ```yaml
 permissions:
-  contents: read          # コード読み取り
-  pull-requests: write    # バンドルサイズレポート投稿
+  contents: read # コード読み取り
+  pull-requests: write # バンドルサイズレポート投稿
 ```
 
 ---
@@ -498,17 +517,20 @@ permissions:
 **ファイル**: `scripts/audit-github-actions.js`
 
 **検証項目**:
+
 1. permissions設定の有無
 2. ActionsのSHA固定
 3. Secrets直接参照
 4. 脆弱な権限設定（contents: write等）
 
 **実行方法**:
+
 ```bash
 npm run security:audit:actions
 ```
 
 **package.json追加**:
+
 ```json
 {
   "scripts": {
@@ -518,6 +540,7 @@ npm run security:audit:actions
 ```
 
 **出力例**:
+
 ```
 🔒 GitHub Actions Security Audit
 ==================================================
@@ -561,7 +584,7 @@ Issues found:
 
 ```yaml
 permissions:
-  id-token: write    # OIDC認証用
+  id-token: write # OIDC認証用
   contents: read
 
 steps:
@@ -602,6 +625,7 @@ steps:
 ```
 
 **メリット**:
+
 - Secretsが不要（短命トークンを自動発行）
 - トークンローテーション不要
 - 漏洩リスクの最小化
@@ -612,13 +636,13 @@ steps:
 
 **セキュリティメトリクス**:
 
-| 指標 | 現在 | 目標 | 測定方法 |
-|------|------|------|----------|
-| SHA固定率 | 0% | 100% | `npm run security:audit:actions` |
-| 最小権限適用率 | 0% | 100% | permissions設定済みワークフロー数/全ワークフロー |
-| Actions更新頻度 | 手動 | 週次自動 | Dependabot PR数/週 |
-| セキュリティアラート | - | 0件 | GitHub Security Tab |
-| 監査頻度 | なし | 月次 | カレンダー |
+| 指標                 | 現在 | 目標     | 測定方法                                         |
+| -------------------- | ---- | -------- | ------------------------------------------------ |
+| SHA固定率            | 0%   | 100%     | `npm run security:audit:actions`                 |
+| 最小権限適用率       | 0%   | 100%     | permissions設定済みワークフロー数/全ワークフロー |
+| Actions更新頻度      | 手動 | 週次自動 | Dependabot PR数/週                               |
+| セキュリティアラート | -    | 0件      | GitHub Security Tab                              |
+| 監査頻度             | なし | 月次     | カレンダー                                       |
 
 **月次チェックリスト**:
 
@@ -628,18 +652,21 @@ steps:
 **実施日**: YYYY-MM-DD
 
 ### 自動検証
+
 - [ ] `npm run security:audit:actions` 実行
 - [ ] 全ワークフローにpermissions設定あり
 - [ ] 全ActionsがSHA固定
 - [ ] 脆弱な権限設定なし
 
 ### 手動検証
+
 - [ ] Dependabot更新PRを全て確認・マージ
 - [ ] 未使用Secretsの削除（`gh secret list`）
 - [ ] ワークフロー実行履歴の異常確認（`gh run list --limit 50`）
 - [ ] セキュリティアラートの確認（GitHub Security Tab）
 
 ### ドキュメント
+
 - [ ] 新規ワークフロー追加時にドキュメント更新
 - [ ] ベストプラクティスの見直し
 ```
@@ -649,17 +676,20 @@ steps:
 ## 🔗 参考リンク
 
 ### GitHub公式
+
 - [Security Hardening for GitHub Actions](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions)
 - [Automatic token authentication](https://docs.github.com/en/actions/security-guides/automatic-token-authentication)
 - [Using environments for deployment](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment)
 - [Encrypted secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
 
 ### 業界標準
+
 - [OWASP CI/CD Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/CI_CD_Security_Cheat_Sheet.html)
 - [StepSecurity - GitHub Actions Security](https://www.stepsecurity.io/blog/github-actions-security-best-practices)
 - [GitGuardian - Actions Security Cheat Sheet](https://blog.gitguardian.com/github-actions-security-cheat-sheet/)
 
 ### ツール
+
 - [pin-github-action](https://github.com/mheap/pin-github-action) - SHA固定ツール
 - [actionlint](https://github.com/rhysd/actionlint) - ワークフロー検証
 - [GitHub Security Advisories](https://github.com/advisories) - 脆弱性データベース

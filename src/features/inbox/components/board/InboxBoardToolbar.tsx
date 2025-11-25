@@ -16,8 +16,8 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { useBoardStatusFilterStore } from '@/features/board/stores/useBoardStatusFilterStore'
-import { TicketTagSelectDialogEnhanced } from '@/features/tickets/components/shared/TicketTagSelectDialogEnhanced'
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { Calendar, Plus, Settings2, Tag, X } from 'lucide-react'
 import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore'
 
@@ -37,7 +37,7 @@ const DUE_DATE_OPTIONS: Array<{ value: DueDateFilter; label: string }> = [
 /**
  * ステータスラベル
  */
-const STATUS_LABELS: Record<TicketStatus, string> = {
+const STATUS_LABELS: Record<PlanStatus, string> = {
   backlog: 'Backlog',
   ready: 'Ready',
   active: 'Active',
@@ -46,7 +46,7 @@ const STATUS_LABELS: Record<TicketStatus, string> = {
   cancel: 'Cancel',
 }
 
-const STATUS_LIST: TicketStatus[] = ['backlog', 'ready', 'active', 'wait', 'done', 'cancel']
+const STATUS_LIST: PlanStatus[] = ['backlog', 'ready', 'active', 'wait', 'done', 'cancel']
 
 /**
  * Inbox Board用ツールバー
@@ -95,7 +95,7 @@ export function InboxBoardToolbar() {
         </Select>
 
         {/* タグフィルター（専用ボタン） */}
-        <TicketTagSelectDialogEnhanced
+        <PlanTagSelectDialogEnhanced
           selectedTagIds={tags}
           onTagsChange={setTags}
           align="start"
@@ -114,7 +114,7 @@ export function InboxBoardToolbar() {
               </Badge>
             )}
           </button>
-        </TicketTagSelectDialogEnhanced>
+        </PlanTagSelectDialogEnhanced>
 
         {/* フィルターリセット */}
         {isFiltered && (

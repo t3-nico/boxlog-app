@@ -1,10 +1,10 @@
 -- ========================================
--- Ticketステータスを6段階に更新
+-- planステータスを6段階に更新
 -- 作成日: 2024-10-30
 -- ========================================
 
 -- 既存のステータスを新しいステータスにマッピング
-UPDATE tickets
+UPDATE plans
 SET status = CASE
   WHEN status = 'open' THEN 'backlog'
   WHEN status = 'in_progress' THEN 'active'
@@ -14,10 +14,10 @@ SET status = CASE
 END;
 
 -- ステータスのCHECK制約を削除
-ALTER TABLE tickets DROP CONSTRAINT IF EXISTS tickets_status_check;
+ALTER TABLE plans DROP CONSTRAINT IF EXISTS plans_status_check;
 
 -- 新しいステータスでCHECK制約を再作成
-ALTER TABLE tickets ADD CONSTRAINT tickets_status_check
+ALTER TABLE plans ADD CONSTRAINT plans_status_check
   CHECK (status IN ('backlog', 'ready', 'active', 'wait', 'done', 'cancel'));
 
 -- ステータス説明
