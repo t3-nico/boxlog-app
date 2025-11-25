@@ -30,7 +30,7 @@ import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
-import { useToast } from '@/lib/toast/use-toast'
+import { toast } from 'sonner'
 import type { TagWithChildren } from '@/types/tags'
 
 type SortField = 'name' | 'created_at'
@@ -55,7 +55,6 @@ export function ArchivePageClient() {
   const { handleDeleteTag, handleEditTag } = useTagOperations(tags)
 
   const updateTagMutation = useUpdateTag()
-  const toast = useToast()
 
   // タグデータをContextに同期
   useEffect(() => {

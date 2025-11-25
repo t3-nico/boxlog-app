@@ -23,7 +23,7 @@ import {
   useUpdateTagGroup,
 } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import { useToast } from '@/lib/toast/use-toast'
+import { toast } from 'sonner'
 import type { TagGroup } from '@/types/tags'
 
 interface TagGroupsSectionProps {
@@ -48,7 +48,6 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
     const createGroupMutation = useCreateTagGroup()
     const updateGroupMutation = useUpdateTagGroup()
     const deleteGroupMutation = useDeleteTagGroup()
-    const toast = useToast()
     const router = useRouter()
     const pathname = usePathname()
 

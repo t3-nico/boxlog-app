@@ -24,7 +24,7 @@ import {
 } from '@/features/tags/hooks/use-tag-groups'
 import { useTagGroupsDnd } from '@/features/tags/hooks/use-tag-groups-dnd'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import { useToast } from '@/lib/toast/use-toast'
+import { toast } from 'sonner'
 import type { TagGroup } from '@/types/tags'
 
 interface TagsSidebarProps {
@@ -56,7 +56,6 @@ export function TagsSidebar({
   const createGroupMutation = useCreateTagGroup()
   const updateGroupMutation = useUpdateTagGroup()
   const deleteGroupMutation = useDeleteTagGroup()
-  const toast = useToast()
 
   // ドラッグアンドドロップ機能
   const { sensors, activeGroup, handleDragStart, handleDragEnd, handleDragCancel, reorderedGroups } =
