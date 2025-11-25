@@ -11,6 +11,16 @@ import { ERROR_CODES, getErrorCategory } from '@/constants/errorCodes'
 
 // === 型定義 ===
 
+/** HTTPステータスコード付きエラー */
+interface ErrorWithStatus extends Error {
+  status?: number
+}
+
+/** エラーからステータスコードを安全に取得 */
+function getErrorStatus(error: Error): number {
+  return (error as ErrorWithStatus).status ?? 0
+}
+
 interface RetryConfig {
   /** 最大リトライ回数（デフォルト: 3） */
   maxRetries?: number
@@ -253,7 +263,7 @@ export function useApiRetry<T>(
       config.shouldRetry ||
       ((error: Error, retryCount: number) => {
         const errorMessage = error.message.toLowerCase()
-        const statusCode = (error as any).status || 0
+        const statusCode = getErrorStatus(error)
 
         // API固有のリトライ判定
         const retryableStatuses = [429, 500, 502, 503, 504]

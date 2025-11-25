@@ -18,6 +18,11 @@ import type { Database } from '@/types/supabase'
 
 type BrowserSupabaseClient = ReturnType<typeof createClient>
 
+/** login_attemptsテーブルのクエリ結果 */
+interface LoginAttemptRecord {
+  attempt_time: string
+}
+
 /**
  * ロックアウトステータス
  */
@@ -120,7 +125,7 @@ async function getLastFailedAttemptTime(supabase: BrowserSupabaseClient, email: 
       return null
     }
 
-    return new Date((data as any).attempt_time)
+    return new Date((data as LoginAttemptRecord).attempt_time)
   } catch (err) {
     console.error('Exception fetching last failed attempt:', err)
     return null

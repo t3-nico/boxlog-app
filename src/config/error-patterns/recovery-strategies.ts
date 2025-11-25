@@ -346,6 +346,17 @@ export async function executeWithRetry<T>(
 export type CircuitBreakerState = 'CLOSED' | 'OPEN' | 'HALF_OPEN'
 
 /**
+ * サーキットブレーカーのメトリクス
+ */
+export interface CircuitBreakerMetrics {
+  state: CircuitBreakerState
+  failureCount: number
+  successCount: number
+  lastFailureTime: number
+  nextAttemptTime: number
+}
+
+/**
  * サーキットブレーカー実装
  */
 export class CircuitBreaker {
@@ -406,7 +417,7 @@ export class CircuitBreaker {
     return this.state
   }
 
-  getMetrics() {
+  getMetrics(): CircuitBreakerMetrics {
     return {
       state: this.state,
       failureCount: this.failureCount,
