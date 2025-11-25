@@ -126,12 +126,12 @@ export const WeekGrid = ({
               {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
               <WeekContent
                 date={date}
-                events={dayEvents}
-                eventPositions={eventPositions}
-                onEventClick={onEventClick}
-                onEventContextMenu={onEventContextMenu}
+                plans={dayEvents}
+                planPositions={eventPositions}
+                onPlanClick={onEventClick}
+                onPlanContextMenu={onEventContextMenu}
                 onEmptyClick={onEmptyClick}
-                onEventUpdate={onEventUpdate}
+                onPlanUpdate={onEventUpdate}
                 onTimeRangeSelect={(selection) => {
                   // 時間範囲選択時の処理: そのまま渡す（DayViewと同じ方式）
                   console.log('🔧 WeekGrid: 直接渡し:', {

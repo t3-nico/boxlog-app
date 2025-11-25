@@ -186,12 +186,12 @@ export const FiveDayView = ({
                 {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
                 <FiveDayContent
                   date={date}
-                  events={dayEvents}
-                  eventStyles={eventStyles}
-                  onEventClick={onEventClick}
-                  onEventContextMenu={onEventContextMenu}
+                  plans={dayEvents}
+                  planStyles={eventStyles}
+                  onPlanClick={onEventClick}
+                  onPlanContextMenu={onEventContextMenu}
                   onEmptyClick={onEmptyClick}
-                  onEventUpdate={onUpdateEvent}
+                  onPlanUpdate={onUpdateEvent}
                   onTimeRangeSelect={onTimeRangeSelect}
                   className="h-full"
                   dayIndex={dayIndex}

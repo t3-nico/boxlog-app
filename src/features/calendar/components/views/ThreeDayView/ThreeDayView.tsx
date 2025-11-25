@@ -184,12 +184,12 @@ export const ThreeDayView = ({
                 {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
                 <ThreeDayContent
                   date={date}
-                  events={dayEvents}
-                  eventStyles={eventStyles}
-                  onEventClick={onEventClick}
-                  onEventContextMenu={onEventContextMenu}
+                  plans={dayEvents}
+                  planStyles={eventStyles}
+                  onPlanClick={onEventClick}
+                  onPlanContextMenu={onEventContextMenu}
                   onEmptyClick={onEmptyClick}
-                  onEventUpdate={onUpdateEvent}
+                  onPlanUpdate={onUpdateEvent}
                   onTimeRangeSelect={(date, startTime, endTime) => {
                     // 時間範囲選択時の処理（必要に応じて実装）
                     const startDate = new Date(date)
