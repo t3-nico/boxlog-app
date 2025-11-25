@@ -109,27 +109,6 @@ export function useViewPlans({ date, plans = [] }: UseViewPlansOptions): UseView
     return Math.max(1, ...planLayouts.map((layout: PlanLayout) => layout.totalColumns))
   }, [planLayouts])
 
-  // デバッグログ
-  console.log('🔍 useViewPlans Debug:', {
-    plansInput: plans.length,
-    dayPlansFiltered: dayPlans.length,
-    planLayoutsCount: planLayouts.length,
-    planPositionsCount: planPositions.length,
-    dayPlans: dayPlans.slice(0, 2),
-    planPositions: planPositions.slice(0, 2),
-  })
-
-  // planPositions内のundefinedを検出
-  planPositions.forEach((pos, index) => {
-    if (!pos.plan || !pos.plan.id) {
-      console.error('❌ useViewPlans: Invalid plan in planPositions', {
-        index,
-        position: pos,
-        planLayout: planLayouts[index],
-      })
-    }
-  })
-
   return {
     dayPlans,
     planPositions,

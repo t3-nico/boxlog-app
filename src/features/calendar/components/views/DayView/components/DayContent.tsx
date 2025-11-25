@@ -24,15 +24,6 @@ export const DayContent = ({
   onTimeRangeSelect,
   className,
 }: DayContentProps) => {
-  // デバッグログ
-  console.log('🔍 DayContent Debug:', {
-    date: date.toISOString(),
-    plansCount: plans?.length || 0,
-    planStylesCount: Object.keys(planStyles).length,
-    plans: plans?.slice(0, 3),
-    planStyleKeys: Object.keys(planStyles).slice(0, 3),
-  })
-
   // ドラッグ&ドロップ機能用にonPlanUpdateをそのまま使用
   const handlePlanUpdate = useCallback(
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
@@ -170,7 +161,7 @@ export const DayContent = ({
                   }}
                 >
                   <EventBlock
-                    event={plan}
+                    plan={plan}
                     position={{
                       top: 0,
                       left: 0,
