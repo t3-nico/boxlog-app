@@ -54,7 +54,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         return NextResponse.json({ error: handleSupabaseError(tagsError) }, { status: 500 })
       }
 
-      return NextResponse.json({ data: { ...(data as any), tags } })
+      return NextResponse.json({ data: { ...data, tags } })
     }
 
     return NextResponse.json({ data })
@@ -85,14 +85,15 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     const body = (await request.json()) as UpdateTagGroupInput
 
-    // 更新
-    const updateData: any = {}
+    // 更新データ構築
+    const updateData: Partial<Pick<UpdateTagGroupInput, 'name' | 'description' | 'color' | 'sort_order'>> = {}
     if (body.name !== undefined) updateData.name = body.name
     if (body.description !== undefined) updateData.description = body.description
     if (body.color !== undefined) updateData.color = body.color
     if (body.sort_order !== undefined) updateData.sort_order = body.sort_order
 
-    const { data, error } = await (supabase.from('tag_groups') as any)
+    const { data, error } = await supabase
+      .from('tag_groups')
       .update(updateData)
       .eq('id', id)
       .eq('user_id', user.id)
