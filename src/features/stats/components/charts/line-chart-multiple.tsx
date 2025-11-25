@@ -27,7 +27,7 @@ const chartConfig = {
 
 export function LineChartMultiple() {
   return (
-    <Card>
+    <Card className="bg-background">
       <CardHeader>
         <CardTitle>月次トレンド</CardTitle>
         <CardDescription>過去6ヶ月のタスク推移</CardDescription>
