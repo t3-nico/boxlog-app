@@ -25,7 +25,7 @@ const AIChatPage = () => {
     <FeatureErrorBoundary
       featureName="ai-chat"
       fallback={
-        <div className="rounded border border-neutral-300 bg-neutral-200 p-4 dark:border-neutral-600 dark:bg-neutral-700">
+        <div className="rounded border border-border bg-muted p-4">
           <p className="text-center text-neutral-800 dark:text-neutral-200">{t('aiChat.errors.loadingFailed')}</p>
         </div>
       }

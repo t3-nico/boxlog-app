@@ -137,7 +137,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         </div>
 
         {/* Tabs */}
-        <div className={cn('flex border-b border-neutral-200 dark:border-neutral-800')}>
+        <div className={cn('flex border-b border-border')}>
           <button
             type="button"
             onClick={() => setActiveTab('all')}

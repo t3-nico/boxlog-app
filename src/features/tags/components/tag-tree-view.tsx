@@ -198,7 +198,7 @@ const TagTreeNode = ({
 
               {/* コンテキストメニュー */}
               {showMenu != null && (
-                <div className="absolute top-full right-0 z-10 mt-1 min-w-[120px] rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                <div className="absolute top-full right-0 z-10 mt-1 min-w-[120px] rounded-lg border border-border bg-popover text-popover-foreground shadow-lg">
                   <button
                     type="button"
                     onClick={handleEditTag}
@@ -312,7 +312,7 @@ export const TagTreeView = ({
   return (
     <div className="space-y-1">
       {/* ヘッダー */}
-      <div className="flex items-center justify-between border-b border-gray-200 px-3 py-2 dark:border-gray-700">
+      <div className="flex items-center justify-between border-b border-border px-3 py-2">
         <h3 className="text-sm font-medium text-gray-900 dark:text-white">
           {t('tags.messages.tagList')} ({tags.length})
         </h3>

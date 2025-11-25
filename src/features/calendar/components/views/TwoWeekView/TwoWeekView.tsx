@@ -176,7 +176,7 @@ export const TwoWeekView = ({
               return (
                 <div
                   key={date.toISOString()}
-                  className="relative flex-1 border-r border-neutral-900/20 last:border-r-0 dark:border-neutral-100/20"
+                  className="relative flex-1 border-r border-border last:border-r-0"
                   style={{ width: `${100 / displayDates.length}%` }}
                 >
                   {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}

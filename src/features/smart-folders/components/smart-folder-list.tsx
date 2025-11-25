@@ -441,7 +441,7 @@ export const SmartFolderList = ({
 
           {/* 区切り線 */}
           {systemFolders.length > 0 && userFolders.length > 0 && (
-            <div className="my-2 border-t border-gray-200 dark:border-gray-700" />
+            <div className="my-2 border-t border-border" />
           )}
 
           {/* ユーザーフォルダ（ドラッグ可能） */}

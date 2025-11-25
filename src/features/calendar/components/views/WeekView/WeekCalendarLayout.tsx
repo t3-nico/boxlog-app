@@ -267,7 +267,7 @@ export const WeekCalendarLayout = ({
             return (
               <div
                 key={day.toISOString()}
-                className="relative flex-1 border-r border-neutral-900/20 last:border-r-0 dark:border-neutral-100/20"
+                className="relative flex-1 border-r border-border last:border-r-0"
               >
                 {/* クリック可能な背景エリア */}
                 <div
@@ -288,7 +288,7 @@ export const WeekCalendarLayout = ({
                     {Array.from({ length: 24 }, (_, hour) => (
                       <div
                         key={hour}
-                        className="border-b border-neutral-900/20 transition-colors last:border-b-0 hover:bg-blue-50/30 dark:border-neutral-100/20 dark:hover:bg-blue-900/10"
+                        className="border-b border-border transition-colors last:border-b-0 hover:bg-blue-50/30 dark:hover:bg-blue-900/10"
                         style={{ height: `${HOUR_HEIGHT}px` }}
                         title={`${hour}:00 - ${hour + 1}:00`}
                       />

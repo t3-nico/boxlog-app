@@ -208,7 +208,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
             const value = options.find((opt) => String(opt.value) === e.target.value)?.value
             updateRule(index, { ...rule, value })
           }}
-          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+          className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
         >
           <option value="">Select...</option>
           {options.map((option) => (
@@ -227,7 +227,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
           value={String(rule.value)}
           onChange={(e) => updateRule(index, { ...rule, value: e.target.value })}
           placeholder="e.g., 2024-01-15 or 7days"
-          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+          className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
         />
       )
     }
@@ -238,7 +238,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
         value={String(rule.value)}
         onChange={(e) => updateRule(index, { ...rule, value: e.target.value })}
         placeholder="Enter value..."
-        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+        className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
       />
     )
   }
@@ -256,7 +256,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                   key={index}
                   id={index.toString()}
                 >
-                  <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
+                  <div className="flex items-center gap-3 rounded-lg border border-border bg-gray-50 p-4 dark:bg-gray-800">
                     {/* ドラッグハンドル */}
                     <div className="cursor-move text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                       <Bars3Icon className="h-4 w-4" data-slot="icon" />
@@ -267,7 +267,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                       <select
                         value={rule.logic}
                         onChange={(e) => updateRule(index, { ...rule, logic: e.target.value as 'AND' | 'OR' })}
-                        className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                        className="rounded-md border border-border bg-white px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                       >
                         <option value="AND">AND</option>
                         <option value="OR">OR</option>
@@ -288,7 +288,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                             }
                             updateRule(index, newRule)
                           }}
-                          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                          className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
                         >
                           {FIELD_OPTIONS.map((field) => (
                             <option key={field.value} value={field.value} title={field.description}>
@@ -306,7 +306,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                             const newRule = { ...rule, operator: e.target.value as SmartFolderRuleOperator, value: '' }
                             updateRule(index, newRule)
                           }}
-                          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                          className="w-full rounded-md border border-border bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
                         >
                           {OPERATOR_OPTIONS[rule.field].map((operator) => (
                             <option key={operator.value} value={operator.value}>
@@ -338,7 +338,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
 
       {/* 空の状態 */}
       {rules.length === 0 && (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 px-4 py-8 text-center dark:border-gray-600">
+        <div className="rounded-lg border-2 border-dashed border-border px-4 py-8 text-center">
           <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
             No filter rules yet. Add your first rule to get started.
           </p>
@@ -349,7 +349,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
       <button
         type="button"
         onClick={addRule}
-        className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed border-gray-300 py-3 text-gray-700 transition-colors hover:border-blue-500 hover:text-blue-600 dark:border-gray-600 dark:text-gray-300 dark:hover:text-blue-400"
+        className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed border-border py-3 text-gray-700 transition-colors hover:border-blue-500 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"
       >
         <PlusIcon className="h-4 w-4" data-slot="icon" />
         Add Filter Rule
