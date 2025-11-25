@@ -5,11 +5,11 @@
 
 'use client'
 
-import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 interface TrashViewProps {
-  events: CalendarEvent[]
-  onRestore?: (event: CalendarEvent) => void
+  events: CalendarPlan[]
+  onRestore?: (plan: CalendarPlan) => void
   onPermanentDelete?: (eventId: string) => void
 }
 

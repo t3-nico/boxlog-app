@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
-import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Calendar as CalendarIcon, Loader2, X } from 'lucide-react'
@@ -22,7 +22,7 @@ interface BulkDatePickerDialogProps {
   open: boolean
   /** 開閉状態を変更するコールバック */
   onOpenChange: (open: boolean) => void
-  /** 選択されたチケットIDの配列 */
+  /** 選択されたプランIDの配列 */
   selectedIds: string[]
   /** 成功時のコールバック */
   onSuccess?: () => void
@@ -31,7 +31,7 @@ interface BulkDatePickerDialogProps {
 /**
  * 期限一括設定ダイアログ
  *
- * 選択された複数のチケットに対して期限を一括で設定
+ * 選択された複数のプランに対して期限を一括で設定
  * - カレンダーUI
  * - 期限クリア機能
  * - 日付プレビュー
@@ -49,7 +49,7 @@ interface BulkDatePickerDialogProps {
 export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSuccess }: BulkDatePickerDialogProps) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { bulkUpdateTicket } = useTicketMutations()
+  const { bulkUpdatePlan } = usePlanMutations()
 
   // 送信ハンドラー（期限設定）
   const handleSubmit = async () => {
@@ -60,14 +60,14 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
 
     setIsSubmitting(true)
     try {
-      await bulkUpdateTicket.mutateAsync({
+      await bulkUpdatePlan.mutateAsync({
         ids: selectedIds,
         data: {
           due_date: selectedDate.toISOString(),
         },
       })
 
-      toast.success(`${selectedIds.length}件のチケットの期限を設定しました`)
+      toast.success(`${selectedIds.length}件のプランの期限を設定しました`)
       onSuccess?.()
     } catch (error) {
       toast.error('期限の設定に失敗しました')
@@ -81,14 +81,14 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
   const handleClear = async () => {
     setIsSubmitting(true)
     try {
-      await bulkUpdateTicket.mutateAsync({
+      await bulkUpdatePlan.mutateAsync({
         ids: selectedIds,
         data: {
           due_date: undefined, // nullではなくundefinedを使用
         },
       })
 
-      toast.success(`${selectedIds.length}件のチケットの期限をクリアしました`)
+      toast.success(`${selectedIds.length}件のプランの期限をクリアしました`)
       onSuccess?.()
     } catch (error) {
       toast.error('期限のクリアに失敗しました')
@@ -109,7 +109,7 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
           <DialogTitle>期限一括設定</DialogTitle>
-          <DialogDescription>{selectedIds.length}件のチケットに期限を設定します</DialogDescription>
+          <DialogDescription>{selectedIds.length}件のプランに期限を設定します</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -136,7 +136,7 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
           {/* 説明テキスト */}
           <div className="text-muted-foreground text-sm">
             {selectedDate ? (
-              <p>選択した日付をチケットの期限として設定します</p>
+              <p>選択した日付をプランの期限として設定します</p>
             ) : (
               <p>カレンダーから日付を選択してください</p>
             )}

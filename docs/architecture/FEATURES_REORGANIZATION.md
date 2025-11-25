@@ -25,7 +25,7 @@ src/features/
 ├── table/            🔄 統合対象
 ├── tags/             ✅ そのまま維持
 ├── tasks/            ⚠️ 削除予定（sessionsに統合）
-├── tickets/          🆕 新規実装済み（Phase 3完了）
+├── plans/          🆕 新規実装済み（Phase 3完了）
 └── trash/            ✅ そのまま維持
 ```
 
@@ -37,7 +37,7 @@ src/features/
 
 ```
 ┌─────────────────────────────────────────┐
-│         Ticket（親：作業単位）            │
+│         plan（親：作業単位）            │
 │  - ID, タイトル, 説明                    │
 │  - ステータス, 優先度                    │
 │  - 予定時間 vs 実績時間（自動集計）       │
@@ -62,7 +62,7 @@ src/features/
 ```
 ┌─────────────────────────────────────────┐
 │            Sessions Data                │
-│  (Ticketとの関連情報を含む)              │
+│  (planとの関連情報を含む)              │
 └──────────────┬──────────────────────────┘
                │
       ┌────────┼────────┐
@@ -102,10 +102,10 @@ Task {
 **移行後の`sessions`**:
 
 ```typescript
-// src/features/tickets/stores/useSessionStore.ts
+// src/features/plans/stores/useSessionStore.ts
 Session {
   id: string
-  ticket_id: string        // ← Ticketへの参照（必須）
+  plan_id: string        // ← planへの参照（必須）
   session_number: string   // 自動採番
   title: string
   planned_start?: string
@@ -125,11 +125,11 @@ Session {
 2. ✅ `useSessions`フック実装済み（Phase 3完了）
 3. ⏳ データマイグレーション関数作成
    ```typescript
-   // src/features/tickets/utils/migrateTasksToSessions.ts
+   // src/features/plans/utils/migrateTasksToSessions.ts
    function migrateTaskToSession(task: Task): Session {
      return {
        id: generateUUID(),
-       ticket_id: createDefaultTicket(task).id, // 既存taskは新規Ticketを自動作成
+       plan_id: createDefaultplan(task).id, // 既存taskは新規planを自動作成
        session_number: generateSessionNumber(),
        title: task.title,
        planned_start: task.planned_start.toISOString(),
@@ -151,7 +151,7 @@ Session {
 | ------------------ | ------------------ | -------------------- |
 | **用途**           | カレンダーイベント | 作業セッション       |
 | **例**             | 会議、締切、予定   | 実装作業、レビュー   |
-| **親エンティティ** | なし（単独）       | Ticket（必須）       |
+| **親エンティティ** | なし（単独）       | plan（必須）         |
 | **時間管理**       | 開始・終了時刻     | 実績時間トラッキング |
 | **繰り返し**       | ✅ サポート        | ❌ サポートなし      |
 | **チェックリスト** | ✅ サポート        | ❌ サポートなし      |
@@ -194,7 +194,7 @@ export function useCalendarData() {
       end: s.actual_end || s.planned_end,
       color: getSessionColor(s.status),
       source: s,
-      ticketInfo: getTicketById(s.ticket_id), // Ticket情報も含める
+      planInfo: getplanById(s.plan_id), // plan情報も含める
     }))
 
     return [...eventItems, ...sessionItems]
@@ -204,55 +204,55 @@ export function useCalendarData() {
 }
 ```
 
-#### 2. **Board** - Ticket単位で表示（Session情報含む）
+#### 2. **Board** - plan単位で表示（Session情報含む）
 
 ```typescript
-// src/features/board/components/TicketCard.tsx
-export function TicketCard({ ticket }: { ticket: Ticket }) {
+// src/features/board/components/planCard.tsx
+export function planCard({ plan }: { plan: plan }) {
   const { sessions } = useSessions()
-  const ticketSessions = sessions.filter(s => s.ticket_id === ticket.id)
+  const planSessions = sessions.filter(s => s.plan_id === plan.id)
 
-  const completedSessions = ticketSessions.filter(s => s.status === 'completed')
+  const completedSessions = planSessions.filter(s => s.status === 'completed')
   const totalMinutes = completedSessions.reduce((sum, s) => sum + (s.duration_minutes || 0), 0)
 
   return (
     <Card>
-      <h3>{ticket.title}</h3>
-      <Badge>{ticket.status}</Badge>
+      <h3>{plan.title}</h3>
+      <Badge>{plan.status}</Badge>
 
       {/* 進捗表示 */}
       <Progress
-        value={ticket.actual_hours}
-        max={ticket.planned_hours}
-        label={`${ticket.actual_hours}h / ${ticket.planned_hours}h`}
+        value={plan.actual_hours}
+        max={plan.planned_hours}
+        label={`${plan.actual_hours}h / ${plan.planned_hours}h`}
       />
 
       {/* Session情報 */}
       <div>
-        <p>📋 {ticketSessions.length} sessions</p>
+        <p>📋 {planSessions.length} sessions</p>
         <p>✓ {completedSessions.length} 完了</p>
-        <p>⏳ {ticketSessions.length - completedSessions.length} 予定</p>
+        <p>⏳ {planSessions.length - completedSessions.length} 予定</p>
       </div>
 
       {/* ミニカレンダー: 今週のSession */}
-      <SessionTimeline sessions={ticketSessions} />
+      <SessionTimeline sessions={planSessions} />
     </Card>
   )
 }
 ```
 
-#### 3. **Table** - Session一覧表示（Ticket情報含む）
+#### 3. **Table** - Session一覧表示（plan情報含む）
 
 ```typescript
 // src/features/table/components/SessionTable.tsx
 export function SessionTable() {
   const { sessions } = useSessions()
-  const { getTicketById } = useTickets()
+  const { getplanById } = useplans()
 
   const columns = [
     { key: 'session_number', label: 'Session No.' },
-    { key: 'ticket_number', label: 'Ticket',
-      render: (s) => getTicketById(s.ticket_id)?.ticket_number
+    { key: 'plan_number', label: 'plan',
+      render: (s) => getplanById(s.plan_id)?.plan_number
     },
     { key: 'title', label: 'Title' },
     { key: 'actual_start', label: 'Start' },
@@ -272,23 +272,23 @@ export function SessionTable() {
 
 ```
 src/features/
-├── tickets/           # コアドメイン
+├── plans/           # コアドメイン
 │   ├── stores/
-│   │   ├── useTicketStore.ts      ✅ 実装済み
+│   │   ├── useplanStore.ts      ✅ 実装済み
 │   │   └── useSessionStore.ts     ✅ 実装済み
 │   ├── hooks/
-│   │   ├── useTickets.ts          ✅ 実装済み
+│   │   ├── useplans.ts          ✅ 実装済み
 │   │   ├── useSessions.ts         ✅ 実装済み
-│   │   └── useTicketTags.ts       ✅ 実装済み
+│   │   └── useplanTags.ts       ✅ 実装済み
 │   ├── types/
-│   │   ├── ticket.ts              ✅ 実装済み
+│   │   ├── plan.ts              ✅ 実装済み
 │   │   └── session.ts             ✅ 実装済み
 │   ├── utils/
 │   │   └── migrateTasksToSessions.ts  ⏳ TODO
 │   └── components/                ⏳ Phase 4で実装
-│       ├── TicketForm.tsx
+│       ├── planForm.tsx
 │       ├── SessionForm.tsx
-│       └── TicketDetail.tsx
+│       └── planDetail.tsx
 │
 ├── calendar/          # ビュー（Events + Sessions統合表示）
 │   ├── hooks/
@@ -296,11 +296,11 @@ src/features/
 │   └── components/
 │       └── CalendarView.tsx       🔄 修正必要
 │
-├── board/             # ビュー（Ticket単位表示）
+├── board/             # ビュー（plan単位表示）
 │   ├── stores/
-│   │   └── useKanbanStore.ts      🔄 修正必要（Ticketベースに）
+│   │   └── useKanbanStore.ts      🔄 修正必要（planベースに）
 │   └── components/
-│       └── TicketCard.tsx         🔄 修正必要
+│       └── planCard.tsx         🔄 修正必要
 │
 ├── table/             # ビュー（Session一覧表示）
 │   └── components/
@@ -326,17 +326,17 @@ src/features/
   - `useCalendarData`にSessions追加
   - EventとSessionの見分け方（色・アイコン）
 - [ ] Boardビュー統合
-  - Ticketベースのカード表示
+  - planベースのカード表示
   - Session進捗情報の表示
 
 ### 優先度：中（Phase 5）
 
 - [ ] Tableビュー統合
   - Session一覧表示
-  - Ticket情報との紐付け
+  - plan情報との紐付け
 - [ ] UIコンポーネント実装
-  - TicketForm, SessionForm
-  - TicketDetail（Session一覧含む）
+  - planForm, SessionForm
+  - planDetail（Session一覧含む）
 
 ### 優先度：低（Phase 6以降）
 

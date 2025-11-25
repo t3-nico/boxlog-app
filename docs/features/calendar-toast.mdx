@@ -12,13 +12,13 @@ Calendar Toast は既存の Toast システムを拡張し、カレンダー操�
 ### セットアップ
 
 ```typescript
-import useCalendarToast from '@/features/calendar/lib/toast';
+import useCalendarToast from '@/features/calendar/lib/toast'
 
 function MyComponent() {
-  const toast = useCalendarToast();
-  
+  const toast = useCalendarToast()
+
   // 使用例
-  toast.eventCreated(event);
+  toast.eventCreated(event)
 }
 ```
 
@@ -26,16 +26,16 @@ function MyComponent() {
 
 ```typescript
 // 予定作成
-toast.eventCreated(event);
+toast.eventCreated(event)
 
 // 予定削除（アンドゥ付き）
-toast.eventDeleted(event, () => restoreEvent(event.id));
+toast.eventDeleted(event, () => restoreEvent(event.id))
 
 // 予定移動
-toast.eventMoved(event, newDate);
+toast.eventMoved(event, newDate)
 
 // 一括削除
-toast.bulkDeleted(5, () => restoreAllEvents());
+toast.bulkDeleted(5, () => restoreAllEvents())
 ```
 
 ## API リファレンス
@@ -51,14 +51,16 @@ toast.eventCreated(event: CalendarEvent, options?: CalendarToastOptions)
 ```
 
 **パラメータ:**
+
 - `event`: 作成されたイベント
 - `options`: 追加オプション（viewAction など）
 
 **例:**
+
 ```typescript
 toast.eventCreated(event, {
-  viewAction: () => router.push(`/event/${event.id}`)
-});
+  viewAction: () => router.push(`/event/${event.id}`),
+})
 ```
 
 #### `eventDeleted`
@@ -70,15 +72,17 @@ toast.eventDeleted(event: CalendarEvent, undoAction?: () => void | Promise<void>
 ```
 
 **パラメータ:**
+
 - `event`: 削除されたイベント
 - `undoAction`: アンドゥ実行関数
 
 **例:**
+
 ```typescript
 toast.eventDeleted(event, async () => {
-  await restoreEvent(event);
-  toast.success('予定を復元しました');
-});
+  await restoreEvent(event)
+  toast.success('予定を復元しました')
+})
 ```
 
 #### `eventMoved`
@@ -90,6 +94,7 @@ toast.eventMoved(event: CalendarEvent, toDate: Date, options?: CalendarToastOpti
 ```
 
 **パラメータ:**
+
 - `event`: 移動されたイベント
 - `toDate`: 移動先の日付
 - `options`: 追加オプション（undoAction など）
@@ -99,17 +104,15 @@ toast.eventMoved(event: CalendarEvent, toDate: Date, options?: CalendarToastOpti
 非同期処理の状態を自動的に通知します。
 
 ```typescript
-const result = await toast.promise(
-  createEvent(data),
-  {
-    loading: '作成中...',
-    success: (event) => `「${event.title}」を作成しました`,
-    error: (err) => `エラー: ${err.message}`
-  }
-);
+const result = await toast.promise(createEvent(data), {
+  loading: '作成中...',
+  success: (event) => `「${event.title}」を作成しました`,
+  error: (err) => `エラー: ${err.message}`,
+})
 ```
 
 **パラメータ:**
+
 - `promise`: 実行するPromise
 - `messages`: 各状態のメッセージ設定
 
@@ -120,24 +123,25 @@ toast.bulkDeleted(count: number, undoAction?: () => void | Promise<void>)
 ```
 
 **例:**
+
 ```typescript
 toast.bulkDeleted(5, async () => {
   // 5件の予定を復元
-  await restoreEvents(deletedIds);
-});
+  await restoreEvents(deletedIds)
+})
 ```
 
 ### 同期操作
 
 ```typescript
 // 同期開始
-const syncId = toast.syncStart();
+const syncId = toast.syncStart()
 
 // 同期完了
-toast.syncComplete();
+toast.syncComplete()
 
 // 同期失敗（再試行付き）
-toast.syncFailed(() => retrySync());
+toast.syncFailed(() => retrySync())
 ```
 
 ## 高度な使用法
@@ -145,43 +149,37 @@ toast.syncFailed(() => retrySync());
 ### エラーハンドリング
 
 ```typescript
-import { useNetworkErrorHandler } from '@/features/calendar/lib/toast';
+import { useNetworkErrorHandler } from '@/features/calendar/lib/toast'
 
-const { handleError } = useNetworkErrorHandler();
+const { handleError } = useNetworkErrorHandler()
 
 try {
-  await updateEvent(event);
-  toast.eventUpdated(event);
+  await updateEvent(event)
+  toast.eventUpdated(event)
 } catch (error) {
-  handleError(error, () => updateEvent(event)); // 再試行付き
+  handleError(error, () => updateEvent(event)) // 再試行付き
 }
 ```
 
 ### 楽観的更新
 
 ```typescript
-import { useOptimisticUpdate } from '@/features/calendar/lib/toast';
+import { useOptimisticUpdate } from '@/features/calendar/lib/toast'
 
-const { moveEvent } = useOptimisticUpdate();
+const { moveEvent } = useOptimisticUpdate()
 
-await moveEvent(
-  eventId, 
-  { startDate: newDate }, 
-  { startDate: oldDate },
-  api.updateEvent,
-  updateEventInUI
-);
+await moveEvent(eventId, { startDate: newDate }, { startDate: oldDate }, api.updateEvent, updateEventInUI)
 ```
 
 ### デバウンス付きToast
 
 ```typescript
-import { useDebouncedToast } from '@/features/calendar/lib/toast';
+import { useDebouncedToast } from '@/features/calendar/lib/toast'
 
-const { debouncedSuccess, dragOperationToast } = useDebouncedToast();
+const { debouncedSuccess, dragOperationToast } = useDebouncedToast()
 
 // 連続操作でも1秒後に1回だけ通知
-dragOperationToast(event.title, 'move');
+dragOperationToast(event.title, 'move')
 ```
 
 ## カスタマイズ
@@ -194,12 +192,12 @@ dragOperationToast(event.title, 'move');
 export const toastTemplates = {
   created: {
     title: 'イベントを追加しました', // カスタムメッセージ
-    description: (opts) => opts.event ? 
-      `「${opts.event.title}」${format(opts.event.displayStartDate, 'M月d日')}` : '',
+    description: (opts) =>
+      opts.event ? `「${opts.event.title}」${format(opts.event.displayStartDate, 'M月d日')}` : '',
     type: 'success',
     duration: 3000,
-  }
-};
+  },
+}
 ```
 
 ### スタイリング
@@ -213,8 +211,8 @@ export const semantic = {
     light: 'bg-green-50 dark:bg-green-900/20',
     text: 'text-green-700 dark:text-green-300',
     // ...
-  }
-};
+  },
+}
 ```
 
 ## ベストプラクティス
@@ -223,15 +221,15 @@ export const semantic = {
 
 ```typescript
 // UIを即座に更新
-updateUI(newData);
+updateUI(newData)
 
 // その後APIコール
 try {
-  await api.update(newData);
-  toast.success('更新完了');
+  await api.update(newData)
+  toast.success('更新完了')
 } catch {
-  rollbackUI(oldData);
-  toast.error('更新失敗');
+  rollbackUI(oldData)
+  toast.error('更新失敗')
 }
 ```
 
@@ -245,13 +243,13 @@ try {
 
 ```typescript
 // ❌ 一般的すぎる
-toast.error('エラーが発生しました');
+toast.error('エラーが発生しました')
 
 // ✅ 具体的で行動につながる
 toast.error('ネットワークエラー', {
   description: '再接続してください',
-  retryAction: () => retry()
-});
+  retryAction: () => retry(),
+})
 ```
 
 ### 4. 適切な通知レベルの選択
@@ -284,18 +282,19 @@ toast.error('ネットワークエラー', {
 ## テスト
 
 ### 手動テスト
+
 UI操作との統合が重要なため、主要な動作は手動でテストすることを推奨します：
 
 ```typescript
 // 基本操作のテスト例
-const toast = useCalendarToast();
+const toast = useCalendarToast()
 
 // 1. 予定作成のテスト
-toast.eventCreated(mockEvent);
+toast.eventCreated(mockEvent)
 // 確認: 成功メッセージが表示されること
 
 // 2. 削除のアンドゥテスト
-toast.eventDeleted(mockEvent, () => console.log('Undo executed'));
+toast.eventDeleted(mockEvent, () => console.log('Undo executed'))
 // 確認: アンドゥボタンが表示され、クリックで動作すること
 ```
 

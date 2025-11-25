@@ -23,9 +23,9 @@
       "    </div>",
       "  )",
       "}",
-      ""
+      "",
     ],
-    "description": "BoxLog標準Reactコンポーネント（テーマシステム使用）"
+    "description": "BoxLog標準Reactコンポーネント（テーマシステム使用）",
   },
   "BoxLog Async Function": {
     "prefix": "blasync",
@@ -38,9 +38,9 @@
       "    throw error",
       "  }",
       "}",
-      ""
+      "",
     ],
-    "description": "BoxLog標準非同期関数（エラーハンドリング込み）"
+    "description": "BoxLog標準非同期関数（エラーハンドリング込み）",
   },
   "BoxLog API Fetch": {
     "prefix": "blfetch",
@@ -57,29 +57,19 @@
       "    throw error",
       "  }",
       "}",
-      ""
+      "",
     ],
-    "description": "BoxLog標準API fetch関数"
+    "description": "BoxLog標準API fetch関数",
   },
   "BoxLog TypeScript Interface": {
     "prefix": "bltype",
-    "body": [
-      "interface ${1:TypeName} {",
-      "  id: string",
-      "  ${2:name}: string",
-      "  ${3:createdAt}: string",
-      "}",
-      ""
-    ],
-    "description": "BoxLog標準TypeScriptインターフェース"
+    "body": ["interface ${1:TypeName} {", "  id: string", "  ${2:name}: string", "  ${3:createdAt}: string", "}", ""],
+    "description": "BoxLog標準TypeScriptインターフェース",
   },
   "BoxLog useState Hook": {
     "prefix": "blstate",
-    "body": [
-      "const [${1:state}, set${1/(.*)/${1:/capitalize}/}] = useState<${2:string}>(${3:''})",
-      ""
-    ],
-    "description": "BoxLog標準useState（型安全）"
+    "body": ["const [${1:state}, set${1/(.*)/${1:/capitalize}/}] = useState<${2:string}>(${3:''})", ""],
+    "description": "BoxLog標準useState（型安全）",
   },
   "BoxLog useEffect Hook": {
     "prefix": "bleffect",
@@ -91,9 +81,9 @@
       "    ${2:// クリーンアップ}",
       "  }",
       "}, [${3:deps}])",
-      ""
+      "",
     ],
-    "description": "BoxLog標準useEffect（クリーンアップ込み）"
+    "description": "BoxLog標準useEffect（クリーンアップ込み）",
   },
   "BoxLog Form Component": {
     "prefix": "blform",
@@ -129,9 +119,9 @@
       "    </form>",
       "  )",
       "}",
-      ""
+      "",
     ],
-    "description": "BoxLog標準フォームコンポーネント"
+    "description": "BoxLog標準フォームコンポーネント",
   },
   "BoxLog Error Boundary": {
     "prefix": "blerror",
@@ -143,9 +133,9 @@
       "  ${3:// エラーハンドリング}",
       "  throw error",
       "}",
-      ""
+      "",
     ],
-    "description": "BoxLog標準エラーハンドリング"
+    "description": "BoxLog標準エラーハンドリング",
   },
   "BoxLog Memoized Component": {
     "prefix": "blmemo",
@@ -164,9 +154,9 @@
       "    </div>",
       "  )",
       "})",
-      ""
+      "",
     ],
-    "description": "BoxLog標準メモ化コンポーネント（パフォーマンス最適化）"
+    "description": "BoxLog標準メモ化コンポーネント（パフォーマンス最適化）",
   },
   "BoxLog useMemo Hook": {
     "prefix": "blusememo",
@@ -175,8 +165,8 @@
       "  () => ${2:computeExpensiveValue}(${3:input}),",
       "  [${3:input}]",
       ")",
-      ""
+      "",
     ],
-    "description": "BoxLog標準useMemo（重い計算の最適化）"
-  }
+    "description": "BoxLog標準useMemo（重い計算の最適化）",
+  },
 }

@@ -163,7 +163,6 @@ class EnvInfo {
     }
   }
 
-
   // トラブルシューティング情報を表示
   showTroubleshooting() {
     console.log(`${colors.blue}${colors.bold}🔧 トラブルシューティング${colors.reset}`)

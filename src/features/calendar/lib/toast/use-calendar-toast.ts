@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { getTranslation } from './get-translation'
 import { toastTemplates } from './templates'
 import { CALENDAR_TOAST_KEYS } from './translation-keys'
-import type { CalendarAction, CalendarEvent, CalendarToastOptions } from './types'
+import type { CalendarAction, CalendarPlan, CalendarToastOptions } from './types'
 
 export const useCalendarToast = () => {
   // 汎用的なtoast表示関数
@@ -63,29 +63,29 @@ export const useCalendarToast = () => {
 
   // 便利なショートカット関数
   const eventCreated = useCallback(
-    (event: CalendarEvent, options?: CalendarToastOptions) => {
-      return showCalendarToast('created', { event, ...options })
+    (plan: CalendarPlan, options?: CalendarToastOptions) => {
+      return showCalendarToast('created', { event: plan, ...options })
     },
     [showCalendarToast]
   )
 
   const eventUpdated = useCallback(
-    (event: CalendarEvent, options?: CalendarToastOptions) => {
-      return showCalendarToast('updated', { event, ...options })
+    (plan: CalendarPlan, options?: CalendarToastOptions) => {
+      return showCalendarToast('updated', { event: plan, ...options })
     },
     [showCalendarToast]
   )
 
   const eventDeleted = useCallback(
-    (event: CalendarEvent, undoAction?: () => void) => {
-      return showCalendarToast('deleted', { event, undoAction })
+    (plan: CalendarPlan, undoAction?: () => void) => {
+      return showCalendarToast('deleted', { event: plan, undoAction })
     },
     [showCalendarToast]
   )
 
   const eventMoved = useCallback(
-    (event: CalendarEvent, toDate: Date, options?: CalendarToastOptions) => {
-      return showCalendarToast('moved', { event, toDate, ...options })
+    (plan: CalendarPlan, toDate: Date, options?: CalendarToastOptions) => {
+      return showCalendarToast('moved', { event: plan, toDate, ...options })
     },
     [showCalendarToast]
   )

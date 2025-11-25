@@ -7,11 +7,11 @@ import React, { useCallback } from 'react'
 import { cn } from '@/lib/utils'
 
 import {
-  calculateEventGhostStyle,
+  calculatePlanGhostStyle,
   calculatePreviewTime,
   CalendarDragSelection,
   type DateTimeSelection,
-  EventBlock,
+  PlanBlock,
   useGlobalDragCursor,
   useTimeCalculation,
 } from '../../shared'
@@ -20,12 +20,12 @@ import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 
 interface FiveDayContentProps {
   date: Date
-  events: CalendarEvent[]
-  eventStyles: Record<string, React.CSSProperties>
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
+  plans: CalendarPlan[]
+  planStyles: Record<string, React.CSSProperties>
+  onPlanClick?: (plan: CalendarPlan) => void
+  onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onEventUpdate?: (eventId: string, updates: Partial<CalendarEvent>) => void
+  onPlanUpdate?: (planId: string, updates: Partial<CalendarPlan>) => void
   onTimeRangeSelect?: (selection: DateTimeSelection) => void
   className?: string
   dayIndex: number // 5日間内での日付インデックス（0-4）
@@ -34,43 +34,43 @@ interface FiveDayContentProps {
 
 export const FiveDayContent = ({
   date,
-  events,
-  eventStyles,
-  onEventClick,
-  onEventContextMenu,
+  plans,
+  planStyles,
+  onPlanClick,
+  onPlanContextMenu,
   onEmptyClick,
-  onEventUpdate,
+  onPlanUpdate,
   onTimeRangeSelect,
   className,
   dayIndex,
   displayDates,
 }: FiveDayContentProps) => {
-  // ドラッグ&ドロップ機能用にonEventUpdateを変換
-  const handleEventUpdate = useCallback(
-    async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
-      if (!onEventUpdate) return
+  // ドラッグ&ドロップ機能用にonPlanUpdateを変換
+  const handlePlanUpdate = useCallback(
+    async (planId: string, updates: { startTime: Date; endTime: Date }) => {
+      if (!onPlanUpdate) return
 
-      console.log('🔧 FiveDayContent: イベント更新要求:', {
-        eventId,
+      console.log('🔧 FiveDayContent: プラン更新要求:', {
+        planId,
         startTime: updates.startTime.toISOString(),
         endTime: updates.endTime.toISOString(),
       })
 
-      // handleUpdateEvent形式で呼び出し
-      await onEventUpdate(eventId, {
+      // handleUpdatePlan形式で呼び出し
+      await onPlanUpdate(planId, {
         startTime: updates.startTime,
         endTime: updates.endTime,
       })
     },
-    [onEventUpdate]
+    [onPlanUpdate]
   )
 
   // ドラッグ&ドロップ機能（日付間移動対応）
   const { dragState, handlers } = useDragAndDrop({
-    onEventUpdate: handleEventUpdate,
-    onEventClick,
+    onPlanUpdate: handlePlanUpdate,
+    onPlanClick,
     date,
-    events,
+    plans,
     displayDates,
     viewMode: '5day',
   })
@@ -92,29 +92,29 @@ export const FiveDayContent = ({
     [date, onEmptyClick, calculateTimeFromEvent]
   )
 
-  // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
-  const handleEventClick = useCallback(
-    (event: CalendarEvent) => {
+  // プランクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
+  const handlePlanClick = useCallback(
+    (plan: CalendarPlan) => {
       // ドラッグ・リサイズ操作中のクリックは無視
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
 
-      onEventClick?.(event)
+      onPlanClick?.(plan)
     },
-    [onEventClick, dragState.isDragging, dragState.isResizing]
+    [onPlanClick, dragState.isDragging, dragState.isResizing]
   )
 
-  // イベント右クリックハンドラー
-  const handleEventContextMenu = useCallback(
-    (event: CalendarEvent, mouseEvent: React.MouseEvent) => {
+  // プラン右クリックハンドラー
+  const handlePlanContextMenu = useCallback(
+    (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
-      onEventContextMenu?.(event, mouseEvent)
+      onPlanContextMenu?.(plan, mouseEvent)
     },
-    [onEventContextMenu, dragState.isDragging, dragState.isResizing]
+    [onPlanContextMenu, dragState.isDragging, dragState.isResizing]
   )
 
   // 時間グリッドの生成（DayViewと同じパターン）
@@ -142,33 +142,33 @@ export const FiveDayContent = ({
         </div>
       </CalendarDragSelection>
 
-      {/* イベント表示エリア */}
+      {/* プラン表示エリア */}
       <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
-        {events.map((event) => {
-          const style = eventStyles[event.id]
+        {plans.map((plan) => {
+          const style = planStyles[plan.id]
           if (!style) return null
 
-          const isDragging = dragState.draggedEventId === event.id && dragState.isDragging
-          const isResizingThis = dragState.isResizing && dragState.draggedEventId === event.id
+          const isDragging = dragState.draggedPlanId === plan.id && dragState.isDragging
+          const isResizingThis = dragState.isResizing && dragState.draggedPlanId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
 
           // ゴースト表示スタイル（共通化）
-          const adjustedStyle = calculateEventGhostStyle(style, event.id, dragState)
+          const adjustedStyle = calculatePlanGhostStyle(style, plan.id, dragState)
 
           return (
-            <div key={event.id} style={adjustedStyle} className="pointer-events-none absolute" data-event-block="true">
-              {/* EventBlockの内容部分のみクリック可能 */}
+            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-plan-block="true">
+              {/* PlanBlockの内容部分のみクリック可能 */}
               <div
                 className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
                 role="button"
                 tabIndex={0}
-                aria-label={`Drag event: ${event.title}`}
+                aria-label={`Drag plan: ${plan.title}`}
                 onMouseDown={(e) => {
                   // 左クリックのみドラッグ開始
                   if (e.button === 0) {
                     handlers.handleMouseDown(
-                      event.id,
+                      plan.id,
                       e,
                       {
                         top: currentTop,
@@ -187,8 +187,8 @@ export const FiveDayContent = ({
                   }
                 }}
               >
-                <EventBlock
-                  event={event}
+                <PlanBlock
+                  plan={plan}
                   position={{
                     top: 0,
                     left: 0,
@@ -197,9 +197,9 @@ export const FiveDayContent = ({
                       isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
-                  onContextMenu={(event, e) => handleEventContextMenu(event, e)}
-                  onResizeStart={(event, direction, e, _position) =>
-                    handlers.handleResizeStart(event.id, direction, e, {
+                  onContextMenu={(plan, e) => handlePlanContextMenu(plan, e)}
+                  onResizeStart={(plan, direction, e, _position) =>
+                    handlers.handleResizeStart(plan.id, direction, e, {
                       top: currentTop,
                       left: 0,
                       width: 100,
@@ -208,7 +208,7 @@ export const FiveDayContent = ({
                   }
                   isDragging={isDragging}
                   isResizing={isResizingThis}
-                  previewTime={calculatePreviewTime(event.id, dragState)}
+                  previewTime={calculatePreviewTime(plan.id, dragState)}
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>

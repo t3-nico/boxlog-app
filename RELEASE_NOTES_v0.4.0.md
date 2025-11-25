@@ -60,7 +60,7 @@ v0.4.0では、Tags機能の完全実装とGoogleドライブ風のUI/UX改善�
 - カスタムView作成機能
 - 高度なテーブル機能統合
 
-### 3. Ticket Inspector
+### 3. plan Inspector
 
 - UI/UX大幅改善
 - 統合的なインスペクター機能

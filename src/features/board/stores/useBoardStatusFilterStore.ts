@@ -1,15 +1,15 @@
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 interface BoardStatusFilterState {
-  visibleStatuses: Set<TicketStatus>
-  toggleStatus: (status: TicketStatus) => void
-  isStatusVisible: (status: TicketStatus) => boolean
+  visibleStatuses: Set<PlanStatus>
+  toggleStatus: (status: PlanStatus) => void
+  isStatusVisible: (status: PlanStatus) => boolean
   resetFilters: () => void
 }
 
-const defaultStatuses: TicketStatus[] = ['backlog', 'ready', 'active', 'wait', 'done', 'cancel']
+const defaultStatuses: PlanStatus[] = ['backlog', 'ready', 'active', 'wait', 'done', 'cancel']
 
 /**
  * Boardのステータスフィルター管理用Store
@@ -47,7 +47,7 @@ export const useBoardStatusFilterStore = create<BoardStatusFilterState>()(
         visibleStatuses: Array.from(state.visibleStatuses),
       }),
       merge: (persistedState, currentState) => {
-        const persisted = persistedState as { visibleStatuses?: TicketStatus[] }
+        const persisted = persistedState as { visibleStatuses?: PlanStatus[] }
         return {
           ...currentState,
           visibleStatuses: new Set(persisted.visibleStatuses || defaultStatuses),

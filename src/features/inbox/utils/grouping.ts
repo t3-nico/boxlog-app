@@ -1,4 +1,4 @@
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { isBefore, isToday, isTomorrow, isWithinInterval, startOfDay } from 'date-fns'
 import type { InboxItem } from '../hooks/useInboxData'
 import type { GroupByField, GroupedData } from '../types/group'
@@ -6,7 +6,7 @@ import type { GroupByField, GroupedData } from '../types/group'
 /**
  * ステータスラベルマップ
  */
-const STATUS_LABELS: Record<TicketStatus, string> = {
+const STATUS_LABELS: Record<PlanStatus, string> = {
   backlog: '準備中',
   ready: '配置済み',
   active: '作業中',
@@ -64,8 +64,8 @@ export function groupItems(items: InboxItem[], groupBy: GroupByField): GroupedDa
     .sort((a, b) => {
       // グループの並び順を定義
       if (groupBy === 'status') {
-        const statusOrder: TicketStatus[] = ['active', 'ready', 'backlog', 'wait', 'done', 'cancel']
-        return statusOrder.indexOf(a.groupKey as TicketStatus) - statusOrder.indexOf(b.groupKey as TicketStatus)
+        const statusOrder: PlanStatus[] = ['active', 'ready', 'backlog', 'wait', 'done', 'cancel']
+        return statusOrder.indexOf(a.groupKey as PlanStatus) - statusOrder.indexOf(b.groupKey as PlanStatus)
       }
 
       if (groupBy === 'due_date') {
@@ -105,7 +105,7 @@ function getGroupKey(item: InboxItem, groupBy: GroupByField): string {
 function getGroupLabel(groupKey: string, groupBy: GroupByField): string {
   switch (groupBy) {
     case 'status':
-      return STATUS_LABELS[groupKey as TicketStatus] || groupKey
+      return STATUS_LABELS[groupKey as PlanStatus] || groupKey
 
     case 'due_date':
       return getDueDateLabel(groupKey)

@@ -461,7 +461,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
  */
 async function restoreItemByType(item: TrashItem): Promise<void> {
   switch (item.type) {
-    // TODO(#621): Events/Tasks削除後、Tickets/Sessionsに移行予定
+    // TODO(#621): Events/Tasks削除後、plans/Sessionsに移行予定
     case 'event': {
       // Dynamically import to avoid circular dependencies
       // const { useEventStore } = await import('@/features/events/stores/useEventStore')

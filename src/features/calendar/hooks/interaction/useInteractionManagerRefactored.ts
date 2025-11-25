@@ -8,9 +8,9 @@
 import { useCallback } from 'react'
 
 import { useDragInteraction, type DragResult } from './useDragInteraction'
-import { useEventCreation, type CreatingEvent } from './useEventCreation'
-import { useEventSelection } from './useEventSelection'
 import { useKeyboardShortcuts } from './useKeyboardShortcuts'
+import { useEventCreation, type CreatingEvent } from './usePlanCreation'
+import { useEventSelection } from './usePlanSelection'
 
 export interface UseInteractionManagerRefactoredOptions {
   onEscape?: () => void

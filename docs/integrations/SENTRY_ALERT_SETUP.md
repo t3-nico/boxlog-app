@@ -15,6 +15,7 @@ Sentryダッシュボードでアラート・通知を設定する手順書
 ## 前提条件
 
 ### 必要なもの
+
 - ✅ Sentryアカウント（Owner または Admin権限）
 - ✅ BoxLogプロジェクトが作成済み
 - ✅ `.env.local` に `NEXT_PUBLIC_SENTRY_DSN` 設定済み
@@ -58,11 +59,13 @@ THEN [アクション]
 ```
 
 **条件例**:
+
 - `The issue is first seen` - 新規エラー
 - `The issue changes state` - エラーの状態変化
 - `Number of events in an issue is above X` - エラー回数閾値超過
 
 **アクション例**:
+
 - Send a notification to **Email**
 - Send a notification to **Slack**
 - Send a notification via **Webhook**
@@ -86,6 +89,7 @@ THEN [アクション]
 4. **Channel**: 通知先チャンネル（例: `#alerts-production`）
 
 **推奨チャンネル構成**:
+
 ```
 #alerts-critical     - 緊急アラート（即対応必要）
 #alerts-production   - 本番エラー全般
@@ -117,6 +121,7 @@ THEN [アクション]
 6. **Save Rule**
 
 #### 期待される動作
+
 - 本番環境で初めて発生したエラーを即座に通知
 - 開発環境のノイズは除外
 
@@ -149,6 +154,7 @@ THEN [アクション]
 7. **Save Rule**
 
 #### 期待される動作
+
 - 急激なエラー増加（例: デプロイ失敗、障害発生）を即座に検知
 - 緊急対応が必要なケースを見逃さない
 
@@ -182,6 +188,7 @@ THEN [アクション]
 7. **Save Rule**
 
 #### Google 2025基準（参考）
+
 - **LCP**: ≤ 2.5s (Good), > 4.0s (Poor)
 - **INP**: ≤ 200ms (Good), > 500ms (Poor)
 - **CLS**: < 0.1 (Good), > 0.25 (Poor)
@@ -215,7 +222,9 @@ THEN [アクション]
 6. **Save Rule**
 
 #### カテゴリ（BoxLog実装）
+
 `src/config/error-patterns.ts` で定義:
+
 - `DB` - データベースエラー
 - `SECURITY` - セキュリティエラー
 - `API` - API呼び出しエラー
@@ -245,6 +254,7 @@ THEN [アクション]
 6. **Save Rule**
 
 #### 期待される動作
+
 - 局所的なエラー（1人のユーザーのみ）は無視
 - 広範囲に影響があるエラーのみ通知（緊急度高）
 
@@ -312,11 +322,13 @@ Sentryダッシュボード → **Alerts** → **History** タブ
 ### Slack通知が届かない
 
 **確認項目**:
+
 1. Slack統合が有効か（Settings → Integrations → Slack）
 2. チャンネル名が正しいか（`#`なしで入力）
 3. Sentryボットがチャンネルに招待されているか
 
 **解決方法**:
+
 ```
 Slackチャンネルで:
 /invite @Sentry
@@ -325,11 +337,13 @@ Slackチャンネルで:
 ### アラートが発火しない
 
 **確認項目**:
+
 1. 条件式が正しいか（Test Ruleで確認）
 2. Environmentフィルタが正しいか
 3. 実際にエラーが発生しているか（Issues タブで確認）
 
 **デバッグ方法**:
+
 ```bash
 # テストイベント送信
 curl http://localhost:3000/api/test/sentry?type=error
@@ -341,6 +355,7 @@ curl http://localhost:3000/api/test/sentry?type=error
 ### 誤検知が多い
 
 **対策**:
+
 1. 閾値を緩める（例: 50件 → 100件）
 2. 時間窓を広げる（例: 1時間 → 6時間）
 3. Environmentフィルタを厳しく（`production` のみ）
@@ -353,6 +368,7 @@ curl http://localhost:3000/api/test/sentry?type=error
 ### 1. アラートルールの作成
 
 上記の推奨アラート5件を設定:
+
 - [ ] 新規エラー検知
 - [ ] エラー率急増
 - [ ] パフォーマンス劣化（LCP/INP）

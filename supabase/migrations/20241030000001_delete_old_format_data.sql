@@ -5,11 +5,11 @@
 -- ========================================
 
 -- 古い形式のチケットを削除
-DELETE FROM tickets WHERE ticket_number LIKE 'TKT-%';
+DELETE FROM plans WHERE plan_number LIKE 'TKT-%';
 
 -- 古い形式のセッションを削除
 DELETE FROM sessions WHERE session_number LIKE 'SES-%';
 
 -- 確認用: 残っているデータ件数を表示（コメントアウト）
--- SELECT 'Remaining tickets:', COUNT(*) FROM tickets;
+-- SELECT 'Remaining plans:', COUNT(*) FROM plans;
 -- SELECT 'Remaining sessions:', COUNT(*) FROM sessions;

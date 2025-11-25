@@ -1,8 +1,8 @@
-import bundleAnalyzer from '@next/bundle-analyzer';
+import bundleAnalyzer from '@next/bundle-analyzer'
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
-});
+})
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -27,16 +27,16 @@ const nextConfig = {
   // セキュリティヘッダー設定
   async headers() {
     // 開発環境ではローカルSupabaseへの接続を許可
-    const isDevelopment = process.env.NODE_ENV === 'development';
+    const isDevelopment = process.env.NODE_ENV === 'development'
     const connectSrc = [
       "'self'",
-      "https://*.supabase.co",
-      "https://vercel.live",
-      "wss://*.supabase.co",
-      "https://vitals.vercel-insights.com",
-      "https://api.pwnedpasswords.com", // Have I Been Pwned API
-      ...(isDevelopment ? ["http://127.0.0.1:54321", "http://localhost:54321"] : []),
-    ].join(' ');
+      'https://*.supabase.co',
+      'https://vercel.live',
+      'wss://*.supabase.co',
+      'https://vitals.vercel-insights.com',
+      'https://api.pwnedpasswords.com', // Have I Been Pwned API
+      ...(isDevelopment ? ['http://127.0.0.1:54321', 'http://localhost:54321'] : []),
+    ].join(' ')
 
     return [
       {
@@ -62,8 +62,8 @@ const nextConfig = {
               "base-uri 'self'",
               "form-action 'self'",
               "frame-ancestors 'none'",
-              "upgrade-insecure-requests",
-              "report-uri /api/csp-report",
+              'upgrade-insecure-requests',
+              'report-uri /api/csp-report',
             ].join('; '),
           },
           // Clickjacking対策
@@ -147,8 +147,9 @@ const nextConfig = {
   // ビルド最適化
   swcMinify: true,
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' &&
-                   (process.env.VERCEL_GIT_COMMIT_REF === 'main' || process.env.VERCEL_GIT_COMMIT_REF === undefined),
+    removeConsole:
+      process.env.NODE_ENV === 'production' &&
+      (process.env.VERCEL_GIT_COMMIT_REF === 'main' || process.env.VERCEL_GIT_COMMIT_REF === undefined),
   },
 }
 

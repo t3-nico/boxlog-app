@@ -8,12 +8,12 @@
 import React, { memo, useMemo } from 'react'
 
 import { GRID_BACKGROUND, HOUR_HEIGHT } from '../../constants/grid.constants'
-import { useEventPosition } from '../../hooks/useEventPosition'
+import { usePlanPosition } from '../../hooks/usePlanPosition'
 import type { DayColumnProps } from '../../types/view.types'
 import { isWeekend } from '../../utils/dateHelpers'
-import { filterEventsByDate, sortTimedEvents } from '../../utils/eventPositioning'
+import { filterEventsByDate, sortTimedEvents } from '../../utils/planPositioning'
 import { EmptyState } from '../EmptyState'
-import { TicketCard } from '../TicketCard'
+import { PlanCard } from '../PlanCard/PlanCard'
 
 export const DayColumn = memo<DayColumnProps>(function DayColumn({
   date,
@@ -36,8 +36,8 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
     return sortTimedEvents(filtered)
   }, [events, date])
 
-  // イベントの位置を計算
-  const eventPositions = useEventPosition(dayEvents, { hourHeight })
+  // プランの位置を計算
+  const eventPositions = usePlanPosition(dayEvents, { hourHeight })
 
   // 時間クリックハンドラー
   const handleTimeClick = (e: React.MouseEvent) => {
@@ -92,10 +92,10 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
           // positionが見つからない場合は、デフォルト位置を使用してレンダリング
 
           return (
-            <TicketCard
+            <PlanCard
               key={event.id}
               event={event}
-              position={position} // undefinedでも大丈夫（TicketCard側で対応済み）
+              position={position} // undefinedでも大丈夫（PlanCard側で対応済み）
               onClick={onEventClick}
               onDoubleClick={onEventDoubleClick}
               onContextMenu={onEventContextMenu}

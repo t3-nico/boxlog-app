@@ -16,6 +16,7 @@ BoxLogでは以下のCI/CDパイプラインを使用しています：
 GitHub Repository → Settings → Secrets and variables → Actions から以下を設定：
 
 #### Supabase
+
 ```
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -24,6 +25,7 @@ SUPABASE_JWT_SECRET
 ```
 
 #### PostgreSQL
+
 ```
 POSTGRES_URL
 POSTGRES_USER
@@ -33,6 +35,7 @@ POSTGRES_DATABASE
 ```
 
 #### Sentry
+
 ```
 SENTRY_DSN
 SENTRY_ORG
@@ -41,6 +44,7 @@ SENTRY_AUTH_TOKEN
 ```
 
 #### Vercel (オプション)
+
 ```
 VERCEL_TOKEN
 VERCEL_ORG_ID

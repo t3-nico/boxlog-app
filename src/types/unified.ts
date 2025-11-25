@@ -65,7 +65,7 @@ export type { CreateTagInput, Tag, TagLevel, TagWithChildren, UpdateTagInput } f
 // smart-folders.tsから最新の定義を再エクスポート
 export type { CreateSmartFolderInput, SmartFolder, SmartFolderRule } from './smart-folders'
 
-// TODO(#621): Events削除後、Tickets/Sessionsに移行予定
+// TODO(#621): Events削除後、plans/Sessionsに移行予定
 // events型定義を直接インポート（循環依存を避けるため）
 // export type {
 //   CalendarEvent,

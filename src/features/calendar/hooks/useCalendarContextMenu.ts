@@ -1,17 +1,17 @@
 import { useCallback, useState } from 'react'
 
-import type { CalendarEvent } from '../types/calendar.types'
+import type { CalendarPlan } from '../types/calendar.types'
 
 /**
- * カレンダーイベントのコンテキストメニュー状態を管理するフック
+ * カレンダープランのコンテキストメニュー状態を管理するフック
  */
 export const useCalendarContextMenu = () => {
-  const [contextMenuEvent, setContextMenuEvent] = useState<CalendarEvent | null>(null)
+  const [contextMenuEvent, setContextMenuEvent] = useState<CalendarPlan | null>(null)
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null)
 
-  // イベントの右クリックハンドラー
-  const handleEventContextMenu = useCallback((event: CalendarEvent, mouseEvent: React.MouseEvent) => {
-    setContextMenuEvent(event)
+  // プランの右クリックハンドラー
+  const handleEventContextMenu = useCallback((plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
+    setContextMenuEvent(plan)
     setContextMenuPosition({ x: mouseEvent.clientX, y: mouseEvent.clientY })
   }, [])
 

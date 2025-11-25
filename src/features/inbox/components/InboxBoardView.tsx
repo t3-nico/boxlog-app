@@ -1,7 +1,7 @@
 'use client'
 
 import { KanbanBoard } from '@/features/board'
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import type { PlanStatus } from '@/features/plans/types/plan'
 
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
@@ -22,7 +22,7 @@ import { InboxBoardToolbar } from './board/InboxBoardToolbar'
 export function InboxBoardView() {
   const filters = useInboxFilterStore()
   const { items, isLoading, error } = useInboxData({
-    status: filters.status[0] as TicketStatus | undefined,
+    status: filters.status[0] as PlanStatus | undefined,
     search: filters.search,
     tags: filters.tags,
     dueDate: filters.dueDate,

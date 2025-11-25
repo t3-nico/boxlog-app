@@ -618,7 +618,7 @@
     },
     "stats": {
       "totalRevenue": "総売上",
-      "ticketsSold": "チケット販売数",
+      "plansSold": "チケット販売数",
       "pageviews": "ページビュー数"
     },
     "sections": {
@@ -971,7 +971,8 @@
       "confirmTitleWithName": "「{{name}}」を削除しますか？",
       "warningIrreversible": "この操作は取り消せません",
       "affectedItems": "影響を受けるアイテム",
-      "tickets": "チケット",
+      "plans": "プラン",
+      "plans": "プラン",
       "events": "イベント",
       "tasks": "タスク",
       "itemsCount": "{{count}}件",

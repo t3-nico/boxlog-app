@@ -7,7 +7,7 @@ export const HOUR_HEIGHT = 48 // 1時間の高さ（ピクセル）
 export const MINUTE_HEIGHT = HOUR_HEIGHT / 60
 export const GRID_GAP = 1 // グリッド間のギャップ
 export const TIME_LABEL_WIDTH = 64 // 時間ラベルの幅（ピクセル）
-export const ALL_DAY_ROW_HEIGHT = 24 // 全日イベント1行の高さ（ピクセル）
+export const ALL_DAY_ROW_HEIGHT = 24 // 全日プラン1行の高さ（ピクセル）
 export const HEADER_HEIGHT = 56 // 日付ヘッダーの高さ（ピクセル）
 
 // カラー定義
@@ -72,11 +72,11 @@ export const CALENDAR_CLASSES = {
   businessHoursBg: 'bg-white dark:bg-neutral-950',
   nonBusinessHoursBg: 'bg-neutral-50/50 dark:bg-neutral-800/30',
 
-  // イベントブロック
-  eventShadow: 'shadow-sm hover:shadow-md',
-  eventBorder: 'border-l-4',
-  eventRounding: 'rounded-md',
-  eventPadding: 'px-2 py-1',
+  // プランブロック
+  planShadow: 'shadow-sm hover:shadow-md',
+  planBorder: 'border-l-4',
+  planRounding: 'rounded-md',
+  planPadding: 'px-2 py-1',
 
   // アニメーション
   transition: 'transition-all duration-200',

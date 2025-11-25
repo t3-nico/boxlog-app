@@ -6,21 +6,21 @@ import { toast } from 'sonner'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
 
-import type { CalendarEvent } from '../types/calendar.types'
+import type { CalendarPlan } from '../types/calendar.types'
 
 export function useCalendarToast() {
   const { t } = useI18n()
 
-  const eventCreated = (event: CalendarEvent) => {
+  const eventCreated = (plan: CalendarPlan) => {
     toast.success(t('calendar.toast.created'), {
-      description: `${format(event.displayStartDate, 'MM/dd HH:mm', { locale: ja })} ${event.title}`,
+      description: `${format(plan.displayStartDate, 'MM/dd HH:mm', { locale: ja })} ${plan.title}`,
       duration: 3000,
     })
   }
 
-  const eventUpdated = (event: CalendarEvent) => {
+  const eventUpdated = (plan: CalendarPlan) => {
     toast.success(t('calendar.toast.updated'), {
-      description: event.title,
+      description: plan.title,
       duration: 2000,
     })
   }
@@ -49,16 +49,16 @@ export function useCalendarToast() {
     return toast.loading(t('calendar.toast.saving'))
   }
 
-  const eventMoved = (event: CalendarEvent) => {
+  const eventMoved = (plan: CalendarPlan) => {
     toast.success(t('calendar.toast.moved'), {
-      description: `${format(event.displayStartDate, 'MM/dd HH:mm', { locale: ja })} に変更`,
+      description: `${format(plan.displayStartDate, 'MM/dd HH:mm', { locale: ja })} に変更`,
       duration: 2000,
     })
   }
 
-  const eventResized = (event: CalendarEvent) => {
-    const durationHours = Math.floor(event.duration / 60)
-    const durationMinutes = event.duration % 60
+  const eventResized = (plan: CalendarPlan) => {
+    const durationHours = Math.floor(plan.duration / 60)
+    const durationMinutes = plan.duration % 60
     const durationText =
       durationHours > 0
         ? `${durationHours}時間${durationMinutes > 0 ? `${durationMinutes}分` : ''}`
@@ -110,14 +110,14 @@ export function useCalendarToast() {
     })
   }
 
-  const reminderSet = (event: CalendarEvent, minutes: number) => {
+  const reminderSet = (plan: CalendarPlan, minutes: number) => {
     const reminderText =
       minutes >= 60
         ? `${Math.floor(minutes / 60)}${t('calendar.toast.hoursBefore')}`
         : `${minutes}${t('calendar.toast.minutesBefore')}`
 
     toast.success(t('calendar.toast.reminderSet'), {
-      description: `${event.title} - ${reminderText}`,
+      description: `${plan.title} - ${reminderText}`,
       duration: 2000,
     })
   }

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 
-import { TicketCard } from '@/features/board/components/shared/TicketCard'
+import { PlanCard } from '@/features/board/components/shared/PlanCard'
 import { parseDateString } from '@/features/calendar/utils/dateUtils'
 import { useInboxData } from '@/features/inbox/hooks/useInboxData'
 
@@ -28,9 +28,9 @@ interface InboxCardListProps {
  * **機能**:
  * - useInboxData でデータ取得
  * - フィルター・ソート・優先度フィルタリング
- * - TicketCard を再利用（ドラッグ可能）
+ * - PlanCard を再利用（ドラッグ可能）
  *
- * **Note**: TicketCard の useDraggable は既に実装済みなので、
+ * **Note**: PlanCard の useDraggable は既に実装済みなので、
  * DndContext 内に配置すれば自動的にドラッグ可能になる
  */
 export function InboxCardList({
@@ -151,12 +151,12 @@ export function InboxCardList({
     )
   }
 
-  // カードリスト表示（TicketCardを再利用）
+  // カードリスト表示（PlanCardを再利用）
   return (
     <div className="flex flex-col gap-2 overflow-y-auto pt-4 pb-4">
       {/* 既存カード */}
       {filteredAndSortedItems.map((item) => (
-        <TicketCard key={item.id} item={item} />
+        <PlanCard key={item.id} item={item} />
       ))}
 
       {/* 新規作成カード（最後） */}

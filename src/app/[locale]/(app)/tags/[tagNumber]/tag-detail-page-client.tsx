@@ -4,12 +4,12 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
+import { PlanCard } from '@/features/plans/components/display/PlanCard'
+import { usePlans } from '@/features/plans/hooks/usePlans'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
+import type { Plan } from '@/features/plans/types/plan'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import { TicketCard } from '@/features/tickets/components/display/TicketCard'
-import { useTickets } from '@/features/tickets/hooks/useTickets'
-import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
-import type { Ticket } from '@/features/tickets/types/ticket'
 
 interface TagDetailPageClientProps {
   tagNumber: string
@@ -18,13 +18,13 @@ interface TagDetailPageClientProps {
 export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
   const { data: tags = [], isLoading } = useTags(true)
   const router = useRouter()
-  const { openInspector } = useTicketInspectorStore()
+  const { openInspector } = usePlanInspectorStore()
 
   const tag = tags.find((t) => t.tag_number === Number(tagNumber))
 
-  // タグに紐づくチケットを取得（リアルタイム性最適化済み）
-  const { data: ticketsData = [], isLoading: isLoadingTickets } = useTickets({ tagId: tag?.id }, { enabled: !!tag?.id })
-  const tickets = ticketsData as unknown as Ticket[]
+  // タグに紐づくプランを取得（リアルタイム性最適化済み）
+  const { data: plansData = [], isLoading: isLoadingPlans } = usePlans({ tagId: tag?.id }, { enabled: !!tag?.id })
+  const plans = plansData as unknown as Plan[]
 
   useEffect(() => {
     if (!isLoading && !tag) {
@@ -70,21 +70,21 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
             </div>
           )}
 
-          {/* チケット一覧 */}
+          {/* プラン一覧 */}
           <div>
-            <h2 className="mb-4 text-lg font-semibold">紐づいたチケット ({tickets.length})</h2>
-            {isLoadingTickets ? (
+            <h2 className="mb-4 text-lg font-semibold">紐づいたプラン ({plans.length})</h2>
+            {isLoadingPlans ? (
               <div className="flex h-32 items-center justify-center">
                 <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
               </div>
-            ) : tickets.length === 0 ? (
+            ) : plans.length === 0 ? (
               <div className="border-border rounded-lg border p-6">
-                <p className="text-muted-foreground text-center">このタグに紐づくチケットはありません</p>
+                <p className="text-muted-foreground text-center">このタグに紐づくプランはありません</p>
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {tickets.map((ticket) => (
-                  <TicketCard key={ticket.id} ticket={ticket} onClick={(t) => openInspector(t.id)} />
+                {plans.map((plan) => (
+                  <PlanCard key={plan.id} plan={plan} onClick={(p) => openInspector(p.id)} />
                 ))}
               </div>
             )}

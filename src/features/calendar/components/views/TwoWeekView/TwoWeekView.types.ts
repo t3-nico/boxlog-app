@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 
-import type { BaseViewProps, CalendarEvent } from '../shared'
+import type { BaseViewProps, CalendarPlan } from '../shared'
 
 // TwoWeekViewの固有Props（BaseViewPropsを継承して95%削減）
 export interface TwoWeekViewProps extends BaseViewProps {
@@ -11,15 +11,15 @@ export interface TwoWeekViewProps extends BaseViewProps {
 // useTwoWeekViewフックのオプション
 export interface UseTwoWeekViewOptions {
   startDate: Date
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   weekStartsOn?: 0 | 1 // 週の開始日（0: 日曜始まり, 1: 月曜始まり）
-  onEventUpdate?: (event: CalendarEvent) => void
+  onEventUpdate?: (plan: CalendarPlan) => void
 }
 
 // useTwoWeekViewフックの返却値
 export interface UseTwoWeekViewReturn {
   twoWeekDates: Date[] // 14日分の日付
-  eventsByDate: Record<string, CalendarEvent[]>
+  eventsByDate: Record<string, CalendarPlan[]>
   todayIndex: number // 今日のインデックス（-1 if not in range）
   scrollToToday: () => void
   scrollToNow: () => void
@@ -29,7 +29,7 @@ export interface UseTwoWeekViewReturn {
 
 // 2週間ビューでのイベント位置情報
 export interface TwoWeekEventPosition {
-  event: CalendarEvent
+  plan: CalendarPlan
   dayIndex: number
   top: number
   height: number
@@ -73,7 +73,7 @@ export interface TwoWeekDateDisplay {
   isToday: boolean
   isWeekend: boolean
   weekIndex: 0 | 1 // 第1週か第2週か
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   eventCount: number
 }
 
@@ -89,14 +89,14 @@ export interface TwoWeekEventStyle {
 // TwoWeek Grid コンポーネントのProps
 export interface TwoWeekGridProps {
   twoWeekDates: Date[]
-  events: CalendarEvent[]
-  eventsByDate: Record<string, CalendarEvent[]>
+  events: CalendarPlan[]
+  eventsByDate: Record<string, CalendarPlan[]>
   todayIndex: number
   currentWeekIndex: number
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
+  onEventClick?: (plan: CalendarPlan) => void
+  onEventContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onEventUpdate?: (event: CalendarEvent) => void
+  onEventUpdate?: (plan: CalendarPlan) => void
   className?: string
 }
 

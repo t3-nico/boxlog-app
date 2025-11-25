@@ -18,7 +18,7 @@ import {
 
 import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
-// TODO(#621): Tasks削除後、Tickets/Sessionsに移行予定
+// TODO(#621): Tasks削除後、plans/Sessionsに移行予定
 // import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { useDebounce } from '@/hooks/useDebounce'
 import { Task } from '@/types/unified'

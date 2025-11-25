@@ -67,7 +67,7 @@ export type Database = {
           enable_push_notifications: boolean
           enable_reminders: boolean
           enable_system_notifications: boolean
-          enable_ticket_updates: boolean
+          enable_plan_updates: boolean
           enable_trash_warnings: boolean
           id: string
           updated_at: string
@@ -81,7 +81,7 @@ export type Database = {
           enable_push_notifications?: boolean
           enable_reminders?: boolean
           enable_system_notifications?: boolean
-          enable_ticket_updates?: boolean
+          enable_plan_updates?: boolean
           enable_trash_warnings?: boolean
           id?: string
           updated_at?: string
@@ -95,7 +95,7 @@ export type Database = {
           enable_push_notifications?: boolean
           enable_reminders?: boolean
           enable_system_notifications?: boolean
-          enable_ticket_updates?: boolean
+          enable_plan_updates?: boolean
           enable_trash_warnings?: boolean
           id?: string
           updated_at?: string
@@ -116,7 +116,7 @@ export type Database = {
           priority: string
           read_at: string | null
           related_tag_id: string | null
-          related_ticket_id: string | null
+          related_plan_id: string | null
           title: string
           type: string
           updated_at: string
@@ -134,7 +134,7 @@ export type Database = {
           priority?: string
           read_at?: string | null
           related_tag_id?: string | null
-          related_ticket_id?: string | null
+          related_plan_id?: string | null
           title: string
           type: string
           updated_at?: string
@@ -152,7 +152,7 @@ export type Database = {
           priority?: string
           read_at?: string | null
           related_tag_id?: string | null
-          related_ticket_id?: string | null
+          related_plan_id?: string | null
           title?: string
           type?: string
           updated_at?: string
@@ -167,13 +167,156 @@ export type Database = {
             referencedColumns: ['id']
           },
           {
-            foreignKeyName: 'notifications_related_ticket_id_fkey'
-            columns: ['related_ticket_id']
+            foreignKeyName: 'notifications_related_plan_id_fkey'
+            columns: ['related_plan_id']
             isOneToOne: false
-            referencedRelation: 'tickets'
+            referencedRelation: 'plans'
             referencedColumns: ['id']
           },
         ]
+      }
+      plan_activities: {
+        Row: {
+          action_type: string
+          created_at: string
+          field_name: string | null
+          id: string
+          metadata: Json | null
+          new_value: string | null
+          old_value: string | null
+          plan_id: string | null
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          field_name?: string | null
+          id?: string
+          metadata?: Json | null
+          new_value?: string | null
+          old_value?: string | null
+          plan_id?: string | null
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          field_name?: string | null
+          id?: string
+          metadata?: Json | null
+          new_value?: string | null
+          old_value?: string | null
+          plan_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'plan_activities_plan_id_fkey'
+            columns: ['plan_id']
+            isOneToOne: false
+            referencedRelation: 'plans'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      plan_tags: {
+        Row: {
+          created_at: string | null
+          id: string
+          plan_id: string
+          tag_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          plan_id: string
+          tag_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          plan_id?: string
+          tag_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'plan_tags_tag_id_fkey'
+            columns: ['tag_id']
+            isOneToOne: false
+            referencedRelation: 'tags'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'plan_tags_plan_id_fkey'
+            columns: ['plan_id']
+            isOneToOne: false
+            referencedRelation: 'plans'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      plans: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          due_date: string | null
+          end_time: string | null
+          id: string
+          plan_number: string
+          recurrence_end_date: string | null
+          recurrence_rule: string | null
+          recurrence_type: string | null
+          reminder_at: string | null
+          reminder_minutes: number | null
+          reminder_sent: boolean
+          start_time: string | null
+          status: string
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          end_time?: string | null
+          id?: string
+          plan_number: string
+          recurrence_end_date?: string | null
+          recurrence_rule?: string | null
+          recurrence_type?: string | null
+          reminder_at?: string | null
+          reminder_minutes?: number | null
+          reminder_sent?: boolean
+          start_time?: string | null
+          status?: string
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          end_time?: string | null
+          id?: string
+          plan_number?: string
+          recurrence_end_date?: string | null
+          recurrence_rule?: string | null
+          recurrence_type?: string | null
+          reminder_at?: string | null
+          reminder_minutes?: number | null
+          reminder_sent?: boolean
+          start_time?: string | null
+          status?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -316,160 +459,14 @@ export type Database = {
           },
         ]
       }
-      ticket_activities: {
-        Row: {
-          action_type: string
-          created_at: string
-          field_name: string | null
-          id: string
-          metadata: Json | null
-          new_value: string | null
-          old_value: string | null
-          ticket_id: string | null
-          user_id: string
-        }
-        Insert: {
-          action_type: string
-          created_at?: string
-          field_name?: string | null
-          id?: string
-          metadata?: Json | null
-          new_value?: string | null
-          old_value?: string | null
-          ticket_id?: string | null
-          user_id: string
-        }
-        Update: {
-          action_type?: string
-          created_at?: string
-          field_name?: string | null
-          id?: string
-          metadata?: Json | null
-          new_value?: string | null
-          old_value?: string | null
-          ticket_id?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'ticket_activities_ticket_id_fkey'
-            columns: ['ticket_id']
-            isOneToOne: false
-            referencedRelation: 'tickets'
-            referencedColumns: ['id']
-          },
-        ]
-      }
-      ticket_tags: {
-        Row: {
-          created_at: string | null
-          id: string
-          tag_id: string
-          ticket_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          tag_id: string
-          ticket_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          tag_id?: string
-          ticket_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'ticket_tags_tag_id_fkey'
-            columns: ['tag_id']
-            isOneToOne: false
-            referencedRelation: 'tags'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'ticket_tags_ticket_id_fkey'
-            columns: ['ticket_id']
-            isOneToOne: false
-            referencedRelation: 'tickets'
-            referencedColumns: ['id']
-          },
-        ]
-      }
-      tickets: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          due_date: string | null
-          end_time: string | null
-          id: string
-          recurrence_end_date: string | null
-          recurrence_rule: string | null
-          recurrence_type: string | null
-          reminder_minutes: number | null
-          start_time: string | null
-          status: string
-          ticket_number: string
-          title: string
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          due_date?: string | null
-          end_time?: string | null
-          id?: string
-          recurrence_end_date?: string | null
-          recurrence_rule?: string | null
-          recurrence_type?: string | null
-          reminder_minutes?: number | null
-          start_time?: string | null
-          status?: string
-          ticket_number: string
-          title: string
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          due_date?: string | null
-          end_time?: string | null
-          id?: string
-          recurrence_end_date?: string | null
-          recurrence_rule?: string | null
-          recurrence_type?: string | null
-          reminder_minutes?: number | null
-          start_time?: string | null
-          status?: string
-          ticket_number?: string
-          title?: string
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      cleanup_old_login_attempts: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      delete_old_notifications: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      get_next_tag_number: {
-        Args: { p_user_id: string }
-        Returns: number
-      }
+      cleanup_old_login_attempts: { Args: never; Returns: undefined }
+      delete_old_notifications: { Args: never; Returns: undefined }
+      get_next_tag_number: { Args: { p_user_id: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never

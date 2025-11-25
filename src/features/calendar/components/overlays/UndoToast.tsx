@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { RotateCcw, Undo2, X } from 'lucide-react'
 
-// import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
@@ -14,7 +14,7 @@ interface UndoAction {
   type: 'create' | 'delete' | 'edit' | 'move'
   description: string
   data:
-    | CalendarEvent
+    | CalendarPlan
     | {
         eventId: string
         oldPosition?: { startTime: Date; endTime: Date }
@@ -218,30 +218,30 @@ export function useUndoManager() {
 
 // 具体的なアクション生成ヘルパー
 export const createUndoActions = {
-  eventCreated: (event: CalendarEvent): Omit<UndoAction, 'id' | 'timestamp'> => ({
+  eventCreated: (plan: CalendarPlan): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'create',
-    description: `Created "${event.title}"`,
-    data: { event },
+    description: `Created "${plan.title}"`,
+    data: { event: plan },
   }),
 
-  eventDeleted: (event: CalendarEvent): Omit<UndoAction, 'id' | 'timestamp'> => ({
+  eventDeleted: (plan: CalendarPlan): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'delete',
-    description: `Deleted "${event.title}"`,
-    data: { event },
+    description: `Deleted "${plan.title}"`,
+    data: { event: plan },
   }),
 
   eventMoved: (
-    event: CalendarEvent,
+    plan: CalendarPlan,
     oldData: { startDate: Date; endDate?: Date }
   ): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'move',
-    description: `Moved "${event.title}"`,
-    data: { event, oldData },
+    description: `Moved "${plan.title}"`,
+    data: { event: plan, oldData },
   }),
 
-  eventEdited: (event: CalendarEvent, oldData: Partial<CalendarEvent>): Omit<UndoAction, 'id' | 'timestamp'> => ({
+  eventEdited: (plan: CalendarPlan, oldData: Partial<CalendarPlan>): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'edit',
-    description: `Edited "${event.title}"`,
-    data: { event, oldData },
+    description: `Edited "${plan.title}"`,
+    data: { event: plan, oldData },
   }),
 }

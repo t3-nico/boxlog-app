@@ -151,7 +151,7 @@ if (isMaintenanceMode && !isMaintenancePage) {
     alt="placeholder image"
     width={960}
     height={540}
-    className="aspect-video w-240 rounded-xl object-cover dark:invert"
+    className="w-240 aspect-video rounded-xl object-cover dark:invert"
   />
 
   {/* エラー情報 */}

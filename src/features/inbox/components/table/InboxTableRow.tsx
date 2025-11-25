@@ -10,10 +10,10 @@ import {
 } from '@/components/ui/context-menu'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { parseDatetimeString } from '@/features/calendar/utils/dateUtils'
-import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
-import { useTicketTags } from '@/features/tickets/hooks/useTicketTags'
-import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useplanTags } from '@/features/plans/hooks/usePlanTags'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -47,12 +47,12 @@ interface InboxTableRowProps {
  * ```
  */
 export function InboxTableRow({ item }: InboxTableRowProps) {
-  const { openInspector } = useTicketInspectorStore()
+  const { openInspector } = usePlanInspectorStore()
   const { isSelected, setSelectedIds } = useInboxSelectionStore()
   const { getVisibleColumns } = useInboxColumnStore()
   const { focusedId, setFocusedId } = useInboxFocusStore()
-  const { updateTicket } = useTicketMutations()
-  const { addTicketTag, removeTicketTag } = useTicketTags()
+  const { updatePlan } = usePlanMutations()
+  const { addplanTag, removeplanTag } = useplanTags()
 
   const rowRef = useRef<HTMLTableRowElement>(null)
   const selected = isSelected(item.id)
@@ -60,7 +60,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   const visibleColumns = getVisibleColumns()
 
   // インライン編集ハンドラー
-  const handleStatusChange = (status: TicketStatus) => {
+  const handleStatusChange = (status: PlanStatus) => {
     // TODO: APIでステータスを更新
     console.log('Update status:', item.id, status)
   }
@@ -71,18 +71,18 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
     const removedTagIds = currentTagIds.filter((id) => !tagIds.includes(id))
 
     // NOTE: 現在は個別にタグを追加・削除していますが、
-    // 将来的には一括設定API（setTicketTags）を使用して効率化する予定です。
+    // 将来的には一括設定API（setplanTags）を使用して効率化する予定です。
     // 一括設定APIは、現在のタグをすべて削除してから新しいタグを設定するため、
     // 複数のタグ変更を1回のAPIコールで完了できます。
 
     // タグを追加
     for (const tagId of addedTagIds) {
-      await addTicketTag(item.id, tagId)
+      await addplanTag(item.id, tagId)
     }
 
     // タグを削除
     for (const tagId of removedTagIds) {
-      await removeTicketTag(item.id, tagId)
+      await removeplanTag(item.id, tagId)
     }
   }
 
@@ -97,7 +97,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   }
 
   const handleDueDateChange = (dueDate: string | null) => {
-    updateTicket.mutate({
+    updatePlan.mutate({
       id: item.id,
       data: {
         due_date: dueDate ? dueDate.split('T')[0] : undefined, // ISO 8601 → YYYY-MM-DD
@@ -176,7 +176,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
       case 'id':
         return (
           <TableCell key={columnId} className="font-mono text-sm" style={style}>
-            <div className="truncate">{item.ticket_number || '-'}</div>
+            <div className="truncate">{item.plan_number || '-'}</div>
           </TableCell>
         )
 
@@ -185,9 +185,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           <TableCell key={columnId} className="font-medium" style={style}>
             <div className="group flex cursor-pointer items-center gap-2 overflow-hidden">
               <span className="min-w-0 truncate group-hover:underline">{item.title}</span>
-              {item.ticket_number && (
-                <span className="text-muted-foreground shrink-0 text-sm">#{item.ticket_number}</span>
-              )}
+              {item.plan_number && <span className="text-muted-foreground shrink-0 text-sm">#{item.plan_number}</span>}
             </div>
           </TableCell>
         )
@@ -222,7 +220,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
               const startTime = data.date && data.startTime ? `${data.date}T${data.startTime}:00Z` : null
               const endTime = data.date && data.endTime ? `${data.date}T${data.endTime}:00Z` : null
 
-              updateTicket.mutate({
+              updatePlan.mutate({
                 id: item.id,
                 data: {
                   start_time: startTime || undefined,
