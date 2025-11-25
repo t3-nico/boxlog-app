@@ -20,16 +20,16 @@ npm run dev
 
 ## ⚙️ 主要技術
 
-| カテゴリ | 技術 |
-|---------|------|
-| **フレームワーク** | Next.js 14 (App Router), React 18, TypeScript 5 |
-| **UIライブラリ** | shadcn/ui (Radix UI), HeadlessUI, kiboUI |
-| **スタイリング** | Tailwind CSS v4, セマンティックトークン (globals.css) |
-| **状態管理** | Zustand (グローバル), TanStack Query (サーバー状態) |
-| **API** | tRPC 11 (型安全なAPI) |
-| **データベース** | Supabase (PostgreSQL + Auth + Realtime) |
-| **バリデーション** | Zod |
-| **テスト** | Vitest, Playwright |
+| カテゴリ           | 技術                                                  |
+| ------------------ | ----------------------------------------------------- |
+| **フレームワーク** | Next.js 14 (App Router), React 18, TypeScript 5       |
+| **UIライブラリ**   | shadcn/ui (Radix UI), HeadlessUI, kiboUI              |
+| **スタイリング**   | Tailwind CSS v4, セマンティックトークン (globals.css) |
+| **状態管理**       | Zustand (グローバル), TanStack Query (サーバー状態)   |
+| **API**            | tRPC 11 (型安全なAPI)                                 |
+| **データベース**   | Supabase (PostgreSQL + Auth + Realtime)               |
+| **バリデーション** | Zod                                                   |
+| **テスト**         | Vitest, Playwright                                    |
 
 ## 📋 開発時の重要ルール
 
@@ -65,30 +65,30 @@ export const MyComponent: FC<Props> = ...  // React.FC非推奨
 
 ### 開発者向け
 
-| ドキュメント | 内容 |
-|-------------|------|
-| [`CLAUDE.md`](./CLAUDE.md) | AI意思決定プロトコル・コーディング規約 |
-| [`src/CLAUDE.md`](./src/CLAUDE.md) | 実装リファレンス・コード例 |
-| [`docs/README.md`](./docs/README.md) | プロジェクト全体概要 |
-| [`docs/development/COMMANDS.md`](./docs/development/COMMANDS.md) | 全コマンド一覧 |
+| ドキュメント                                                     | 内容                                   |
+| ---------------------------------------------------------------- | -------------------------------------- |
+| [`CLAUDE.md`](./CLAUDE.md)                                       | AI意思決定プロトコル・コーディング規約 |
+| [`src/CLAUDE.md`](./src/CLAUDE.md)                               | 実装リファレンス・コード例             |
+| [`docs/README.md`](./docs/README.md)                             | プロジェクト全体概要                   |
+| [`docs/development/COMMANDS.md`](./docs/development/COMMANDS.md) | 全コマンド一覧                         |
 
 ### 設計・アーキテクチャ
 
-| ドキュメント | 内容 |
-|-------------|------|
-| [`docs/design-system/STYLE_GUIDE.md`](./docs/design-system/STYLE_GUIDE.md) | スタイルガイド（8pxグリッド、カラー） |
-| [`docs/design-system/README.md`](./docs/design-system/README.md) | デザインシステム概要 |
-| [`docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md`](./docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md) | 状態管理の判断基準 |
-| [`docs/architecture/ERROR_HANDLING.md`](./docs/architecture/ERROR_HANDLING.md) | エラーハンドリング |
+| ドキュメント                                                                                                     | 内容                                  |
+| ---------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| [`docs/design-system/STYLE_GUIDE.md`](./docs/design-system/STYLE_GUIDE.md)                                       | スタイルガイド（8pxグリッド、カラー） |
+| [`docs/design-system/README.md`](./docs/design-system/README.md)                                                 | デザインシステム概要                  |
+| [`docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md`](./docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md) | 状態管理の判断基準                    |
+| [`docs/architecture/ERROR_HANDLING.md`](./docs/architecture/ERROR_HANDLING.md)                                   | エラーハンドリング                    |
 
 ### 品質・テスト
 
-| ドキュメント | 内容 |
-|-------------|------|
-| [`docs/testing/README.md`](./docs/testing/README.md) | テスト戦略 |
-| [`docs/performance/BUNDLE_MONITORING.md`](./docs/performance/BUNDLE_MONITORING.md) | Bundle監視システム |
+| ドキュメント                                                                                           | 内容                   |
+| ------------------------------------------------------------------------------------------------------ | ---------------------- |
+| [`docs/testing/README.md`](./docs/testing/README.md)                                                   | テスト戦略             |
+| [`docs/performance/BUNDLE_MONITORING.md`](./docs/performance/BUNDLE_MONITORING.md)                     | Bundle監視システム     |
 | [`docs/performance/ACCESSIBILITY_TESTING_GUIDE.md`](./docs/performance/ACCESSIBILITY_TESTING_GUIDE.md) | アクセシビリティテスト |
-| [`docs/development/ESLINT_HYBRID_APPROACH.md`](./docs/development/ESLINT_HYBRID_APPROACH.md) | ESLint設定 |
+| [`docs/development/ESLINT_HYBRID_APPROACH.md`](./docs/development/ESLINT_HYBRID_APPROACH.md)           | ESLint設定             |
 
 ## 🛡️ コード品質管理
 
