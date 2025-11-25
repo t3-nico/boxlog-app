@@ -19,7 +19,7 @@ export function SettingsSidebar() {
   const { activeCategory, setActiveCategory } = useSettingsDialogStore()
 
   return (
-    <aside className="bg-sidebar border-border flex w-60 flex-shrink-0 flex-col border-r">
+    <aside className="bg-muted border-border flex w-60 flex-shrink-0 flex-col border-r">
       {/* ヘッダー（48px - SidebarHeaderと同じ） */}
       <SidebarHeader title={t('settings.dialog.title')} />
 
