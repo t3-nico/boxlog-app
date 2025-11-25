@@ -392,6 +392,11 @@ export function useDragAndDrop({
       previewStartTime.setHours(hour, minute, 0, 0)
       const previewEndTime = new Date(previewStartTime.getTime() + durationMs)
 
+      // 終了時刻を15分単位にスナップ
+      const endMinutes = previewEndTime.getMinutes()
+      const snappedEndMinutes = Math.round(endMinutes / 15) * 15
+      previewEndTime.setMinutes(snappedEndMinutes, 0, 0)
+
       return { previewStartTime, previewEndTime }
     },
     [plans, date, viewMode, displayDates]
