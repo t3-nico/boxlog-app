@@ -51,7 +51,7 @@ export function ChronotypeSelector({ selectedType, onSelect }: ChronotypeSelecto
   return (
     <>
       {/* クロノタイプ選択 */}
-      <div className="rounded-lg border border-border bg-card p-6">
+      <div className="border-border bg-card rounded-lg border p-6">
         <div className="mb-4">
           <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
             クロノタイプを選択
@@ -89,7 +89,7 @@ export function ChronotypeSelector({ selectedType, onSelect }: ChronotypeSelecto
 
       {/* 選択されたプロファイルのスケジュール表示 */}
       {currentProfile && (
-        <div className="rounded-lg border border-border bg-card p-6">
+        <div className="border-border bg-card rounded-lg border p-6">
           <h2 className="mb-4 text-xl font-bold text-neutral-900 dark:text-neutral-100">
             {currentProfile.name} のスケジュール
           </h2>

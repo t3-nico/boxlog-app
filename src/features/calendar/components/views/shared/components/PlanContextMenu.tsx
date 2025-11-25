@@ -143,7 +143,7 @@ export const EventContextMenu = ({
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 min-w-[180px] rounded-md border border-border bg-popover p-2 text-sm text-popover-foreground shadow-md"
+      className="border-border bg-popover text-popover-foreground fixed z-50 min-w-[180px] rounded-md border p-2 text-sm shadow-md"
       style={{
         left: adjustedPosition.x,
         top: adjustedPosition.y,

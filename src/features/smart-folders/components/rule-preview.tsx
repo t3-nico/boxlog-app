@@ -130,7 +130,7 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
   return (
     <div className="flex h-full flex-col">
       {/* ヘッダー */}
-      <div className="border-b border-border p-4">
+      <div className="border-border border-b p-4">
         <div className="mb-2 flex items-center gap-2">
           <FunnelIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" data-slot="icon" />
           <h3 className="text-sm font-medium text-gray-900 dark:text-white">Preview</h3>
@@ -145,7 +145,7 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
       </div>
 
       {/* 統計情報 */}
-      <div className="border-b border-border p-4">
+      <div className="border-border border-b p-4">
         <div className="mb-3 flex items-center gap-2">
           <ChartBarIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" data-slot="icon" />
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Statistics</span>
@@ -180,7 +180,7 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
 
       {/* ルール一覧 */}
       {rules.length > 0 && (
-        <div className="border-b border-border p-4">
+        <div className="border-border border-b p-4">
           <h4 className="mb-3 text-xs font-medium text-gray-700 dark:text-gray-300">Active Rules ({rules.length})</h4>
           <div className="space-y-2">
             {rules.map((rule, index) => (

@@ -178,7 +178,7 @@ export const LazyImage = ({
             </div>
           ) : state.isLoading ? (
             <div className="text-gray-400">
-              <div className="mx-auto mb-2 h-6 w-6 animate-spin rounded-full border-2 border-border border-t-foreground"></div>
+              <div className="border-border border-t-foreground mx-auto mb-2 h-6 w-6 animate-spin rounded-full border-2"></div>
               <span className="text-xs">読み込み中...</span>
             </div>
           ) : placeholder ? (

@@ -218,7 +218,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
                       checked={selectedTheme === theme.key}
                       onChange={() => handleThemeChange(theme.key)}
                       className={cn(
-                        'h-4 w-4 border-border text-primary focus:ring-primary',
+                        'border-border text-primary focus:ring-primary h-4 w-4',
                         getContrastClassName('', 'contrast-accent')
                       )}
                     />
@@ -407,7 +407,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
               type="button"
               onClick={onClose}
               className={cn(
-                'rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground',
+                'border-border bg-background text-foreground rounded-md border px-4 py-2 text-sm font-medium',
                 'hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none',
                 getContrastClassName(
                   'border-border bg-background text-foreground hover:bg-muted',

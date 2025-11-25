@@ -25,7 +25,7 @@ export function HelpPageClient({ translations }: Props) {
     <FeatureErrorBoundary
       featureName="help"
       fallback={
-        <div className="rounded border border-border bg-muted p-4">
+        <div className="border-border bg-muted rounded border p-4">
           <p className="text-center text-neutral-800 dark:text-neutral-200">{translations.errorMessage}</p>
         </div>
       }

@@ -265,10 +265,7 @@ export const WeekCalendarLayout = ({
               })
 
             return (
-              <div
-                key={day.toISOString()}
-                className="relative flex-1 border-r border-border last:border-r-0"
-              >
+              <div key={day.toISOString()} className="border-border relative flex-1 border-r last:border-r-0">
                 {/* クリック可能な背景エリア */}
                 <div
                   role="button"
@@ -288,7 +285,7 @@ export const WeekCalendarLayout = ({
                     {Array.from({ length: 24 }, (_, hour) => (
                       <div
                         key={hour}
-                        className="border-b border-border transition-colors last:border-b-0 hover:bg-blue-50/30 dark:hover:bg-blue-900/10"
+                        className="border-border border-b transition-colors last:border-b-0 hover:bg-blue-50/30 dark:hover:bg-blue-900/10"
                         style={{ height: `${HOUR_HEIGHT}px` }}
                         title={`${hour}:00 - ${hour + 1}:00`}
                       />
@@ -317,7 +314,7 @@ export const WeekCalendarLayout = ({
                         data-event-block
                         role="button"
                         tabIndex={0}
-                        className={`group absolute z-20 cursor-pointer rounded-md border border-border/20 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${selectedPlanId === plan.id ? 'ring-2 ring-blue-400 ring-offset-2' : ''}`}
+                        className={`group border-border/20 absolute z-20 cursor-pointer rounded-md border transition-all duration-200 hover:scale-[1.02] hover:shadow-lg ${selectedPlanId === plan.id ? 'ring-2 ring-blue-400 ring-offset-2' : ''}`}
                         style={{
                           left: leftPosition,
                           width: widthValue,

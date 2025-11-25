@@ -96,7 +96,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
       {/* Modal */}
       <div className="fixed top-1/2 left-1/2 z-50 w-80 -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-white shadow-xl dark:bg-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border p-4">
+        <div className="border-border flex items-center justify-between border-b p-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Create New Tag</h2>
           <button
             type="button"
@@ -119,7 +119,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
               value={tagName}
               onChange={handleTagNameChange}
               placeholder="Enter tag name..."
-              className="w-full rounded-lg border border-border bg-card px-3 py-2 text-foreground focus:border-transparent focus:ring-2 focus:ring-primary"
+              className="border-border bg-card text-foreground focus:ring-primary w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2"
               onKeyDown={handleKeyDown}
             />
           </div>
@@ -155,7 +155,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 border-t border-border p-4">
+        <div className="border-border flex justify-end gap-2 border-t p-4">
           <button
             type="button"
             onClick={handleClose}

@@ -93,7 +93,7 @@ export const DayContent = ({
   const timeGrid = Array.from({ length: 24 }, (_, hour) => (
     <div
       key={hour}
-      className={`relative ${hour < 23 ? 'border-b border-border' : ''}`}
+      className={`relative ${hour < 23 ? 'border-border border-b' : ''}`}
       style={{ height: HOUR_HEIGHT }}
     />
   ))

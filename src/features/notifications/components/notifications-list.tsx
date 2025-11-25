@@ -88,7 +88,7 @@ export function NotificationsList({ notifications }: NotificationsListProps) {
         {notificationList.map((notification) => (
           <div
             key={notification.id}
-            className={`rounded-lg border border-border bg-card p-6 shadow-sm ${
+            className={`border-border bg-card rounded-lg border p-6 shadow-sm ${
               !notification.isRead ? 'border-l-4 border-l-blue-500' : ''
             }`}
           >

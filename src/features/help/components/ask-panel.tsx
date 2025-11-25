@@ -127,7 +127,7 @@ const PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help')
               key={item.id}
               onClick={() => onSelectTab(item.id)}
               className={cn(
-                'group flex w-full items-center gap-4 rounded-lg border border-border p-3 text-left transition-colors hover:bg-muted'
+                'group border-border hover:bg-muted flex w-full items-center gap-4 rounded-lg border p-3 text-left transition-colors'
               )}
             >
               <div

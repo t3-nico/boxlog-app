@@ -96,16 +96,16 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string; locale?: L
         <Subheading>{t('table.details.summary')}</Subheading>
         <Separator className="mt-4" />
         <dl className="grid grid-cols-1 text-base sm:grid-cols-[min(50%,theme(spacing.80))_auto] sm:text-sm">
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 first:border-none sm:py-3  dark:text-neutral-200">
+          <dt className="border-border col-start-1 border-t pt-3 text-neutral-800 first:border-none sm:py-3 dark:text-neutral-200">
             {t('table.details.customer')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 dark:text-neutral-100">
             {review.customer.name}
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:py-3  dark:text-neutral-200">
+          <dt className="border-border col-start-1 border-t pt-3 text-neutral-800 sm:py-3 dark:text-neutral-200">
             {t('table.details.event')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 dark:text-neutral-100">
             <NextLink href={review.event.url} className="flex items-center gap-2">
               <Avatar className="size-6">
                 <AvatarImage src={review.event.thumbUrl} alt={review.event.name} />
@@ -114,28 +114,28 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string; locale?: L
               <span>{review.event.name}</span>
             </NextLink>
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:py-3  dark:text-neutral-200">
+          <dt className="border-border col-start-1 border-t pt-3 text-neutral-800 sm:py-3 dark:text-neutral-200">
             {t('table.details.amount')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 dark:text-neutral-100">
             US{review.amount.usd}
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:py-3  dark:text-neutral-200">
+          <dt className="border-border col-start-1 border-t pt-3 text-neutral-800 sm:py-3 dark:text-neutral-200">
             {t('table.details.amountAfterExchange')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 dark:text-neutral-100">
             US{review.amount.usd} &rarr; CA{review.amount.cad}
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:py-3  dark:text-neutral-200">
+          <dt className="border-border col-start-1 border-t pt-3 text-neutral-800 sm:py-3 dark:text-neutral-200">
             {t('table.details.fee')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 dark:text-neutral-100">
             CA{review.amount.fee}
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:py-3  dark:text-neutral-200">
+          <dt className="border-border col-start-1 border-t pt-3 text-neutral-800 sm:py-3 dark:text-neutral-200">
             {t('table.details.net')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 dark:text-neutral-100">
             CA{review.amount.net}
           </dd>
         </dl>
@@ -144,52 +144,52 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string; locale?: L
         <Subheading>{t('table.details.paymentMethod')}</Subheading>
         <Separator className="mt-4" />
         <dl className="grid grid-cols-1 text-base sm:grid-cols-[min(50%,theme(spacing.80))_auto] sm:text-sm">
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 first:border-none sm:border-t sm:border-border sm:py-3  dark:text-neutral-200 sm:">
+          <dt className="border-border sm:border-border sm: col-start-1 border-t pt-3 text-neutral-800 first:border-none sm:border-t sm:py-3 dark:text-neutral-200">
             {t('table.details.transactionId')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 sm:nth-2:border-none dark:text-neutral-100">
             {review.payment.transactionId}
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:border-t sm:border-border sm:py-3  dark:text-neutral-200 sm:">
+          <dt className="border-border sm:border-border sm: col-start-1 border-t pt-3 text-neutral-800 sm:border-t sm:py-3 dark:text-neutral-200">
             {t('table.details.cardNumber')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 sm:nth-2:border-none dark:text-neutral-100">
             •••• {review.payment.card.number}
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:border-t sm:border-border sm:py-3  dark:text-neutral-200 sm:">
+          <dt className="border-border sm:border-border sm: col-start-1 border-t pt-3 text-neutral-800 sm:border-t sm:py-3 dark:text-neutral-200">
             {t('table.details.cardType')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 sm:nth-2:border-none dark:text-neutral-100">
             {review.payment.card.type}
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:border-t sm:border-border sm:py-3  dark:text-neutral-200 sm:">
+          <dt className="border-border sm:border-border sm: col-start-1 border-t pt-3 text-neutral-800 sm:border-t sm:py-3 dark:text-neutral-200">
             {t('table.details.cardExpiry')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 sm:nth-2:border-none dark:text-neutral-100">
             {review.payment.card.expiry}
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:border-t sm:border-border sm:py-3  dark:text-neutral-200 sm:">
+          <dt className="border-border sm:border-border sm: col-start-1 border-t pt-3 text-neutral-800 sm:border-t sm:py-3 dark:text-neutral-200">
             {t('table.details.owner')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 sm:nth-2:border-none dark:text-neutral-100">
             {review.customer.name}
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:border-t sm:border-border sm:py-3  dark:text-neutral-200 sm:">
+          <dt className="border-border sm:border-border sm: col-start-1 border-t pt-3 text-neutral-800 sm:border-t sm:py-3 dark:text-neutral-200">
             {t('table.details.emailAddress')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 sm:nth-2:border-none dark:text-neutral-100">
             {review.customer.email}
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:border-t sm:border-border sm:py-3  dark:text-neutral-200 sm:">
+          <dt className="border-border sm:border-border sm: col-start-1 border-t pt-3 text-neutral-800 sm:border-t sm:py-3 dark:text-neutral-200">
             {t('table.details.address')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 sm:nth-2:border-none dark:text-neutral-100">
             {review.customer.address}
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:border-t sm:border-border sm:py-3  dark:text-neutral-200 sm:">
+          <dt className="border-border sm:border-border sm: col-start-1 border-t pt-3 text-neutral-800 sm:border-t sm:py-3 dark:text-neutral-200">
             {t('table.details.country')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 sm:nth-2:border-none dark:text-neutral-100">
             <span className="inline-flex gap-3">
               <Image
                 src={review.customer.countryFlagUrl}
@@ -201,10 +201,10 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string; locale?: L
               {review.customer.country}
             </span>
           </dd>
-          <dt className="col-start-1 border-t border-border pt-3 text-neutral-800 sm:border-t sm:border-border sm:py-3  dark:text-neutral-200 sm:">
+          <dt className="border-border sm:border-border sm: col-start-1 border-t pt-3 text-neutral-800 sm:border-t sm:py-3 dark:text-neutral-200">
             {t('table.details.cvc')}
           </dt>
-          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-border sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:">
+          <dd className="sm:border-border sm: pt-1 pb-3 text-neutral-900 sm:border-t sm:py-3 sm:nth-2:border-none dark:text-neutral-100">
             <Badge color="lime">{t('table.details.cvcStatus')}</Badge>
           </dd>
         </dl>

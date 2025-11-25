@@ -15,7 +15,7 @@ interface ScheduleDisplayProps {
 
 export const ScheduleDisplay = memo(({ profileName, schedules, typeColors, getTypeIcon }: ScheduleDisplayProps) => {
   return (
-    <div className="rounded-lg border border-border bg-card p-6">
+    <div className="border-border bg-card rounded-lg border p-6">
       <h2 className="mb-4 text-xl font-semibold text-neutral-900 dark:text-neutral-100">
         {profileName} のスケジュール
       </h2>

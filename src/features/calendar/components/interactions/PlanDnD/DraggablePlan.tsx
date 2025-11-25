@@ -155,7 +155,7 @@ export const DraggablePlan = ({ plan, dayIndex, topPosition, onPlanClick, style,
       tabIndex={0}
       aria-label={`Plan: ${plan.title}`}
       className={cn(
-        'absolute z-20 rounded-md border border-border/20 hover:shadow-lg',
+        'border-border/20 absolute z-20 rounded-md border hover:shadow-lg',
         isDragging && 'scale-105 opacity-40',
         !isDragging && 'transition-all duration-200',
         isDragReady ? 'cursor-grabbing' : 'cursor-pointer hover:cursor-grab active:cursor-grabbing'

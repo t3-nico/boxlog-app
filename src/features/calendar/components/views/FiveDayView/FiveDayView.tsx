@@ -177,10 +177,7 @@ export const FiveDayView = ({
             return (
               <div
                 key={date.toISOString()}
-                className={cn(
-                  'relative flex-1',
-                  dayIndex < displayDates.length - 1 ? 'border-r border-border' : ''
-                )}
+                className={cn('relative flex-1', dayIndex < displayDates.length - 1 ? 'border-border border-r' : '')}
                 style={{ width: `${100 / displayDates.length}%` }}
               >
                 {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}

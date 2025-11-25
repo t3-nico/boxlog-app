@@ -87,7 +87,7 @@ export const ChatInput = () => {
             onCompositionEnd={handleCompositionEnd}
             placeholder="Ask Claude..."
             className={cn(
-              'scrollbar-hide max-h-32 min-h-[44px] w-full resize-none rounded-lg border border-border bg-card p-3 pr-12 text-sm placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary'
+              'scrollbar-hide border-border bg-card placeholder:text-muted-foreground focus:border-primary focus:ring-primary max-h-32 min-h-[44px] w-full resize-none rounded-lg border p-3 pr-12 text-sm focus:ring-2'
             )}
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             disabled={isTyping}

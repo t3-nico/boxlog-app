@@ -48,7 +48,7 @@ export function DiagnosisModal({ onComplete, onCancel }: DiagnosisModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border border-border bg-card p-6">
+      <div className="border-border bg-card max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border p-6">
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
@@ -76,7 +76,7 @@ export function DiagnosisModal({ onComplete, onCancel }: DiagnosisModalProps) {
                 onClick={handleAnswerClick}
                 data-question-id={currentQ.id}
                 data-option-value={option.value}
-                className="w-full rounded-lg border border-border p-4 text-left transition-all hover:bg-muted"
+                className="border-border hover:bg-muted w-full rounded-lg border p-4 text-left transition-all"
               >
                 {option.text}
               </button>
@@ -87,7 +87,7 @@ export function DiagnosisModal({ onComplete, onCancel }: DiagnosisModalProps) {
         <button
           type="button"
           onClick={onCancel}
-          className="w-full rounded-lg border border-border px-4 py-2 text-muted-foreground transition-colors hover:bg-muted"
+          className="border-border text-muted-foreground hover:bg-muted w-full rounded-lg border px-4 py-2 transition-colors"
         >
           キャンセル
         </button>

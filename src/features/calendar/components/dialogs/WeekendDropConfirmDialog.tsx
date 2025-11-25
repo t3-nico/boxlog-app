@@ -67,13 +67,7 @@ export const WeekendDropConfirmDialog = ({
 
         <div className="space-y-4">
           {/* イベント情報 */}
-          <div
-            className={cn(
-              'rounded-lg border p-4',
-              'bg-neutral-100 dark:bg-neutral-800',
-              'border-border'
-            )}
-          >
+          <div className={cn('rounded-lg border p-4', 'bg-neutral-100 dark:bg-neutral-800', 'border-border')}>
             <div className="flex items-start gap-3">
               <Calendar className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-500" />
               <div className="min-w-0 flex-1">

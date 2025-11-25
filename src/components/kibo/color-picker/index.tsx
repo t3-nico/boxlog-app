@@ -173,7 +173,7 @@ export const ColorPickerSelection = memo(({ className, ...props }: ColorPickerSe
       {...props}
     >
       <div
-        className="pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-border"
+        className="border-border pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2"
         style={{
           left: `${positionX * 100}%`,
           top: `${positionY * 100}%`,

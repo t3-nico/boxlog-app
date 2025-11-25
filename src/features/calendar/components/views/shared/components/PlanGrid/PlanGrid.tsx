@@ -110,7 +110,7 @@ export const PlanGrid = ({
     ? Array.from({ length: 24 }, (_, hour) => (
         <div
           key={hour}
-          className={cn('relative', hour < 23 && 'border-b border-border')}
+          className={cn('relative', hour < 23 && 'border-border border-b')}
           style={{ height: HOUR_HEIGHT }}
         />
       ))

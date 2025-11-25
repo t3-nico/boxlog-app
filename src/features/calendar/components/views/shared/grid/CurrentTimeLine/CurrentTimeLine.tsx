@@ -115,7 +115,7 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
       {/* 時間列のドット */}
       {showDot != null && (
         <div
-          className="absolute rounded-full border-2 border-background bg-red-500"
+          className="border-background absolute rounded-full border-2 bg-red-500"
           style={{
             left: `-6px`,
             top: `-4px`,
@@ -176,7 +176,7 @@ export const CurrentTimeLineForColumn = memo<{
       {/* ドット（列の左端） */}
       {showDot != null && (
         <div
-          className="absolute rounded-full border-2 border-background bg-red-500"
+          className="border-background absolute rounded-full border-2 bg-red-500"
           style={{
             left: `-4px`,
             top: `-4px`,

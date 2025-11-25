@@ -99,11 +99,11 @@ export const SmartFolderContextMenu = ({
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 min-w-48 rounded-md border border-border bg-popover py-1 text-popover-foreground shadow-lg"
+      className="border-border bg-popover text-popover-foreground fixed z-50 min-w-48 rounded-md border py-1 shadow-lg"
       style={{ left: adjustedPosition.x, top: adjustedPosition.y }}
     >
       {/* フォルダ情報ヘッダー */}
-      <div className="border-b border-border px-3 py-2">
+      <div className="border-border border-b px-3 py-2">
         <div className="flex items-center gap-2">
           {folder.icon ? (
             <span className="text-sm">{folder.icon}</span>
@@ -125,7 +125,7 @@ export const SmartFolderContextMenu = ({
             <div
               // eslint-disable-next-line react/no-array-index-key
               key={`divider-${index}`}
-              className="my-1 border-t border-border"
+              className="border-border my-1 border-t"
             />
           )
         }
@@ -152,7 +152,7 @@ export const SmartFolderContextMenu = ({
 
       {/* フォルダが無効な場合の警告 */}
       {!folder.isActive && (
-        <div className="border-t border-border px-3 py-2">
+        <div className="border-border border-t px-3 py-2">
           <div className="flex items-center gap-2 text-xs text-yellow-600 dark:text-yellow-400">
             <EyeSlashIcon className="h-4 w-4" />
             This folder is currently disabled
@@ -162,7 +162,7 @@ export const SmartFolderContextMenu = ({
 
       {/* システムフォルダの説明 */}
       {folder.isSystem === true && (
-        <div className="border-t border-border px-3 py-2">
+        <div className="border-border border-t px-3 py-2">
           <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400">
             <StarIcon className="h-4 w-4" />
             System folder (cannot be deleted)
