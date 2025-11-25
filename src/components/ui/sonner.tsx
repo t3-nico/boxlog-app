@@ -36,8 +36,10 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps['theme']}
       position="bottom-right"
       richColors
-      duration={5000}
+      expand
+      duration={6000}
       closeButton
+      containerAriaLabel="通知"
       className="toaster group"
       toastOptions={{
         classNames: {
