@@ -259,6 +259,12 @@ export function useDragAndDrop({
       if (event?.startDate) {
         const newDurationMs = (finalHeight / HOUR_HEIGHT) * 60 * 60 * 1000
         const previewEndTime = new Date(event.startDate.getTime() + newDurationMs)
+
+        // 終了時刻を15分単位にスナップ
+        const minutes = previewEndTime.getMinutes()
+        const snappedMinutes = Math.round(minutes / 15) * 15
+        previewEndTime.setMinutes(snappedMinutes, 0, 0)
+
         previewTime = { start: event.startDate, end: previewEndTime }
       }
 
@@ -822,7 +828,18 @@ export function useDragAndDrop({
   // プラン更新処理を実行する
   const executeEventUpdate = useCallback(
     async (newStartTime: Date) => {
+      console.log('🔍 executeEventUpdate 開始:', {
+        hasOnPlanUpdate: !!onPlanUpdate,
+        eventId: dragDataRef.current?.eventId,
+        hasMoved: dragDataRef.current?.hasMoved,
+      })
+
       if (!onPlanUpdate || !dragDataRef.current?.eventId || !dragDataRef.current?.hasMoved) {
+        console.log('⚠️ プラン更新スキップ:', {
+          hasOnPlanUpdate: !!onPlanUpdate,
+          eventId: dragDataRef.current?.eventId,
+          hasMoved: dragDataRef.current?.hasMoved,
+        })
         return
       }
 
