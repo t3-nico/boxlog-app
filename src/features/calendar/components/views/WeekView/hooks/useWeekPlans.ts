@@ -91,7 +91,7 @@ export function useWeekEvents({ weekDates, events = [] }: UseWeekEventsOptions):
         const width = columnWidth * 0.95 // 少し余白を作る
 
         positions.push({
-          event,
+          plan: event,
           dayIndex,
           top,
           height,
