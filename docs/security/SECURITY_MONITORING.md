@@ -15,6 +15,7 @@ OWASP準拠のセキュリティ監視とレポート生成システム
 **スケジュール**: 毎週月曜日 0:00 UTC（日本時間 9:00）
 
 **生成内容**:
+
 1. 依存関係の脆弱性スキャン（npm audit）
 2. セキュリティヘッダー検証
 3. OWASP Top 10チェックリスト
@@ -40,6 +41,7 @@ gh workflow run security-report.yml
 ```
 
 **レポート保存先**:
+
 - Artifacts: 90日間保存
 - GitHub Issue: 自動的にサマリーをIssue化
 
@@ -50,6 +52,7 @@ gh workflow run security-report.yml
 ### 記録されるイベント
 
 #### 認証関連
+
 - `LOGIN_SUCCESS` - ログイン成功
 - `LOGIN_FAILURE` - ログイン失敗
 - `LOGOUT` - ログアウト
@@ -60,16 +63,19 @@ gh workflow run security-report.yml
 - `MFA_DISABLED` - MFA無効化
 
 #### 権限・アクセス制御
+
 - `PERMISSION_ESCALATION` - 権限昇格
 - `UNAUTHORIZED_ACCESS_ATTEMPT` - 不正アクセス試行
 - `ROLE_CHANGE` - ロール変更
 
 #### データアクセス
+
 - `SENSITIVE_DATA_ACCESS` - 機密データアクセス
 - `BULK_DATA_EXPORT` - 一括データエクスポート
 - `DATA_DELETION` - データ削除
 
 #### セキュリティイベント
+
 - `RATE_LIMIT_EXCEEDED` - レート制限超過
 - `SUSPICIOUS_ACTIVITY` - 不審なアクティビティ
 - `CSP_VIOLATION` - CSP違反
@@ -91,18 +97,10 @@ import {
 await logLoginSuccess(user.id, request.headers.get('x-forwarded-for'))
 
 // ログイン失敗
-await logLoginFailure(
-  email,
-  'Invalid password',
-  request.headers.get('x-forwarded-for')
-)
+await logLoginFailure(email, 'Invalid password', request.headers.get('x-forwarded-for'))
 
 // 不正アクセス試行
-await logUnauthorizedAccess(
-  '/api/admin',
-  userId,
-  request.headers.get('x-forwarded-for')
-)
+await logUnauthorizedAccess('/api/admin', userId, request.headers.get('x-forwarded-for'))
 
 // カスタムイベント
 await logAuditEvent(AuditEventType.SENSITIVE_DATA_ACCESS, AuditSeverity.INFO, {
@@ -136,6 +134,7 @@ CREATE TABLE audit_logs (
 ```
 
 **インデックス**:
+
 - `idx_audit_logs_timestamp` - タイムスタンプ降順
 - `idx_audit_logs_user_id` - ユーザーID
 - `idx_audit_logs_event_type` - イベント種別
@@ -162,12 +161,14 @@ CREATE TABLE audit_logs (
    - Type: Regional
 
 3. **環境変数設定**
+
    ```env
    UPSTASH_REDIS_REST_URL=https://xxx.upstash.io
    UPSTASH_REDIS_REST_TOKEN=AXXXxxx
    ```
 
 4. **パッケージインストール**
+
    ```bash
    npm install @upstash/ratelimit @upstash/redis
    ```
@@ -177,6 +178,7 @@ CREATE TABLE audit_logs (
    - 既存のインメモリ実装を置換
 
 **コスト見積もり**:
+
 - 無料枠: 10,000リクエスト/日
 - BoxLog想定: 3,000,000リクエスト/月
 - 月額コスト: **約$6**
@@ -194,6 +196,7 @@ CREATE TABLE audit_logs (
 **モニタリング期間**: 2週間
 
 **次のステップ**:
+
 1. CSP違反ログを確認
 2. 正当な違反に対してポリシーを調整
 3. 強制モード（enforcement）に移行
@@ -221,18 +224,21 @@ LIMIT 20;
 ### 成功基準（KPI）
 
 #### Phase 1: 基盤整備（完了）
+
 - [x] HSTS適用率: 100%
 - [x] CSP Report-Only有効化: 100%
 - [x] Dependabot有効化: 完了
 - [x] 週次npm audit: 自動化
 
 #### Phase 2: 強化（完了）
+
 - [x] CSRF保護レベル: Enterprise Grade
 - [x] セッション管理: OWASP準拠
 - [x] エラーハンドリング: 情報漏洩ゼロ
 - [x] OWASP ZAP統合: 完了
 
 #### Phase 3: 運用監視（進行中）
+
 - [ ] Upstash Redisデプロイ: 待機中
 - [x] 監査ログ実装: 完了
 - [x] セキュリティレポート自動化: 完了
@@ -241,11 +247,13 @@ LIMIT 20;
 ### ダッシュボード
 
 **現在利用可能**:
+
 - GitHub Actions Security Audit（週次）
 - npm audit結果（CI/CD統合）
 - OWASP ZAP スキャン結果
 
 **Phase 3完了後**:
+
 - Upstash Redis Analytics
 - Supabase監査ログダッシュボード
 - 週次セキュリティレポートIssue

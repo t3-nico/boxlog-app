@@ -11,7 +11,7 @@ const results = {
   fileExistence: {},
   exports: {},
   consistency: {},
-  errors: []
+  errors: [],
 }
 
 console.log('🧪 命名辞書システム動作テスト開始...')
@@ -26,12 +26,12 @@ const requiredFiles = [
   'src/hooks/use-naming.ts',
   'src/components/examples/NamingSystemUsageExample.tsx',
   '.eslint/rules/naming-system.js',
-  'docs/features/NAMING_SYSTEM_GUIDE.md'
+  'docs/features/NAMING_SYSTEM_GUIDE.md',
 ]
 
 console.log('\n📁 ファイル存在確認...')
 
-requiredFiles.forEach(file => {
+requiredFiles.forEach((file) => {
   const filePath = path.join(__dirname, '..', file)
   const exists = fs.existsSync(filePath)
   results.fileExistence[file] = exists
@@ -102,7 +102,6 @@ try {
       console.log('❌ TypeScript型定義が不完全です')
       results.errors.push('Incomplete TypeScript type definitions')
     }
-
   } else {
     console.log('❌ naming.tsファイルが見つかりません')
     results.errors.push('naming.ts file not found')
@@ -129,11 +128,11 @@ try {
       'navigateToScreen',
       'getPageClassName',
       'isValidScreen',
-      'validateNamingConsistency'
+      'validateNamingConsistency',
     ]
 
     const foundFunctions = []
-    requiredFunctions.forEach(func => {
+    requiredFunctions.forEach((func) => {
       if (content.includes(`export function ${func}`)) {
         foundFunctions.push(func)
         console.log(`✅ ${func}`)
@@ -167,11 +166,11 @@ try {
       'useNamingNavigation',
       'useNamingStyles',
       'useNamingValidation',
-      'useNaming'
+      'useNaming',
     ]
 
     const foundHooks = []
-    requiredHooks.forEach(hook => {
+    requiredHooks.forEach((hook) => {
       if (content.includes(`export function ${hook}`)) {
         foundHooks.push(hook)
         console.log(`✅ ${hook}`)
@@ -204,11 +203,11 @@ try {
       'enforce-analytics-naming',
       'enforce-route-constants',
       'enforce-css-naming',
-      'enforce-screen-constants'
+      'enforce-screen-constants',
     ]
 
     const foundRules = []
-    requiredRules.forEach(rule => {
+    requiredRules.forEach((rule) => {
       if (content.includes(`'${rule}':`)) {
         foundRules.push(rule)
         console.log(`✅ ${rule}`)
@@ -248,11 +247,11 @@ try {
       '## 🎯 解決する問題',
       '## 🏗️ システム構成',
       '## 🚀 使用方法',
-      '## 🔧 ESLint強制ルール'
+      '## 🔧 ESLint強制ルール',
     ]
 
     const foundSections = []
-    importantSections.forEach(section => {
+    importantSections.forEach((section) => {
       if (content.includes(section)) {
         foundSections.push(section)
       }
@@ -274,7 +273,7 @@ console.log('\n📊 テスト結果サマリー')
 console.log('='.repeat(50))
 
 const allFiles = Object.values(results.fileExistence)
-const existingFiles = allFiles.filter(exists => exists).length
+const existingFiles = allFiles.filter((exists) => exists).length
 const totalFiles = allFiles.length
 
 console.log(`📁 ファイル: ${existingFiles}/${totalFiles} 存在`)
@@ -331,9 +330,9 @@ const report = {
     success: results.errors.length === 0,
     errorCount: results.errors.length,
     fileExistenceRate: `${existingFiles}/${totalFiles}`,
-    completionRate: `${Math.round((existingFiles / totalFiles) * 100)}%`
+    completionRate: `${Math.round((existingFiles / totalFiles) * 100)}%`,
   },
-  details: results
+  details: results,
 }
 
 fs.writeFileSync(reportPath, JSON.stringify(report, null, 2), 'utf8')

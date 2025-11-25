@@ -131,9 +131,7 @@ function checkSHAPinning(filename, content) {
   }
 
   if (unpinnedActions.length > 0) {
-    const actionList = unpinnedActions
-      .map((a) => `  - ${a.action}@${a.ref} (line ${a.line})`)
-      .join('\n')
+    const actionList = unpinnedActions.map((a) => `  - ${a.action}@${a.ref} (line ${a.line})`).join('\n')
 
     issues.push({
       file: filename,
@@ -150,9 +148,7 @@ function checkSHAPinning(filename, content) {
  */
 function checkSecretsUsage(filename, content, workflow) {
   const hasSecrets = content.includes('${{ secrets.')
-  const hasEnvironment = workflow.jobs
-    ? Object.values(workflow.jobs).some((job) => job.environment)
-    : false
+  const hasEnvironment = workflow.jobs ? Object.values(workflow.jobs).some((job) => job.environment) : false
 
   if (hasSecrets && !hasEnvironment) {
     issues.push({
@@ -235,19 +231,11 @@ function generateReport(totalFiles) {
   // 詳細出力
   console.log('Issues found:')
   console.log('')
-
   ;['HIGH', 'MEDIUM', 'LOW', 'INFO'].forEach((severity) => {
     if (bySeverity[severity].length === 0) return
 
     bySeverity[severity].forEach(({ file, issue, fix, example }) => {
-      const emoji =
-        severity === 'HIGH'
-          ? '🔴'
-          : severity === 'MEDIUM'
-            ? '🟡'
-            : severity === 'LOW'
-              ? '🟢'
-              : 'ℹ️ '
+      const emoji = severity === 'HIGH' ? '🔴' : severity === 'MEDIUM' ? '🟡' : severity === 'LOW' ? '🟢' : 'ℹ️ '
 
       console.log(`${emoji} [${severity}] ${file}`)
       console.log(`   Issue: ${issue}`)

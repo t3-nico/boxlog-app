@@ -7,6 +7,7 @@ Issue #338「技術がわからない自分でも、技術的な失敗をしな�
 ## 📊 Before vs After
 
 ### Before（旧アプローチ）
+
 ```yaml
 思想: 間違いを全部見つけて怒る（警察官）
 実装:
@@ -18,6 +19,7 @@ Issue #338「技術がわからない自分でも、技術的な失敗をしな�
 ```
 
 ### After（公式準拠アプローチ）
+
 ```yaml
 思想: 公式ドキュメント = BoxLogの標準（学習コスト0）
 実装:
@@ -39,13 +41,14 @@ export default [
   ...compat.config({
     extends: ['next/core-web-vitals'],
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',  // インラインdisable対応
+      '@typescript-eslint/no-explicit-any': 'off', // インラインdisable対応
     },
   }),
 ]
 ```
 
 **特徴**:
+
 - **実行時間**: 3.6秒
 - **カスタムルール数**: 0個（すべて公式管理）
 - **メンテナンス**: Next.jsチームが自動更新
@@ -55,53 +58,57 @@ export default [
 AI（Claude、GitHub Copilot等）がコード生成時に参照するガイドライン：
 
 **Next.js公式**:
+
 - Server Component優先
 - 'use client'は必要最小限
 - next/image使用（<img>禁止）
 - Loading UI/Error Boundary
 
 **React公式**:
+
 - Hooksはトップレベルのみ
 - イベントハンドラーに括弧不要
 - 状態は親に持ち上げる
 - パフォーマンス最適化（memo, useMemo, useCallback）
 
 **TypeScript公式**:
+
 - any型禁止
 - 型推論の活用
 - interface優先
 
 **BoxLog固有ルール（1つのみ）**:
+
 - テーマシステム使用（直接指定禁止）
 
 ### 3. `.vscode/boxlog.code-snippets` - 予防システム
 
 10個のスニペットで正しいコードを最初から生成：
 
-| プレフィックス | 説明 |
-|-------------|------|
-| `blcomp` | BoxLog標準Reactコンポーネント |
-| `blasync` | エラーハンドリング付き非同期関数 |
-| `blfetch` | API fetch標準実装 |
-| `bltype` | TypeScriptインターフェース |
-| `blstate` | useState（型安全） |
-| `bleffect` | useEffect（クリーンアップ込み） |
-| `blform` | フォームコンポーネント |
-| `blerror` | エラーハンドリング |
-| `blmemo` | メモ化コンポーネント |
-| `blusememo` | useMemo最適化 |
+| プレフィックス | 説明                             |
+| -------------- | -------------------------------- |
+| `blcomp`       | BoxLog標準Reactコンポーネント    |
+| `blasync`      | エラーハンドリング付き非同期関数 |
+| `blfetch`      | API fetch標準実装                |
+| `bltype`       | TypeScriptインターフェース       |
+| `blstate`      | useState（型安全）               |
+| `bleffect`     | useEffect（クリーンアップ込み）  |
+| `blform`       | フォームコンポーネント           |
+| `blerror`      | エラーハンドリング               |
+| `blmemo`       | メモ化コンポーネント             |
+| `blusememo`    | useMemo最適化                    |
 
 ## 📈 効果測定
 
 ### 定量的効果
 
-| 指標 | Before（カスタムルール50個） | After（公式設定のみ） | 改善 |
-|------|--------|-------|--------|
-| ESLint実行時間 | 30秒 | 3.6秒 | **88%削減** |
-| カスタムルール数 | 50個 | 0個 | **100%削減** |
-| 設定ファイル | 50個 | 1個 | **98%削減** |
-| メンテ時間 | 月10時間 | 月0時間 | **100%削減** |
-| 学習コスト | 独自ルール50個暗記 | 公式ドキュメント参照のみ | **実質0** |
+| 指標             | Before（カスタムルール50個） | After（公式設定のみ）    | 改善         |
+| ---------------- | ---------------------------- | ------------------------ | ------------ |
+| ESLint実行時間   | 30秒                         | 3.6秒                    | **88%削減**  |
+| カスタムルール数 | 50個                         | 0個                      | **100%削減** |
+| 設定ファイル     | 50個                         | 1個                      | **98%削減**  |
+| メンテ時間       | 月10時間                     | 月0時間                  | **100%削減** |
+| 学習コスト       | 独自ルール50個暗記           | 公式ドキュメント参照のみ | **実質0**    |
 
 ### 定性的効果
 

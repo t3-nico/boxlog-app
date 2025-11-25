@@ -7,12 +7,14 @@ GitHub ActionsからVercel手動デプロイを、**Vercel GitHubインテグレ
 ## 🎯 メリット
 
 ### 現在（GitHub Actions経由）
+
 - ❌ ワークフロー実行時間が長い
 - ❌ GitHub Actionsの実行時間を消費
 - ❌ シークレット管理が複雑
 - ❌ デプロイ失敗時の再試行が手動
 
 ### 移行後（Vercel自動デプロイ）
+
 - ✅ GitHub Actionsの実行時間を節約
 - ✅ Vercelが自動的にビルド・デプロイ
 - ✅ プレビューデプロイ自動生成（PR毎）
@@ -47,6 +49,7 @@ Development Branch: dev (optional)
 Vercel Dashboard → **Settings** → **Environment Variables**
 
 #### Production環境
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=<本番URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<本番KEY>
@@ -54,6 +57,7 @@ NEXT_PUBLIC_APP_URL=<本番URL>
 ```
 
 #### Preview環境（optional）
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=<開発URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<開発KEY>
@@ -73,6 +77,7 @@ NEXT_PUBLIC_APP_URL=<プレビューURL>
 ## 📊 main.yml の変更点
 
 ### Before（現在）
+
 ```yaml
 deploy:
   name: 🚀 Deploy
@@ -88,6 +93,7 @@ deploy:
 ```
 
 ### After（Vercel自動デプロイ）
+
 ```yaml
 # deploy ジョブは削除
 # Vercel GitHubインテグレーションが自動的にデプロイ
@@ -96,14 +102,17 @@ deploy:
 ## 🔧 トラブルシューティング
 
 ### デプロイが実行されない
+
 - Vercel Dashboard で GitHub Integration が有効か確認
 - Production Branch 設定を確認（`main` になっているか）
 
 ### 環境変数が反映されない
+
 - Vercel Dashboard → Environment Variables で設定確認
 - Production/Preview/Development の適用環境を確認
 
 ### ビルドエラー
+
 - Vercel Dashboard → Deployments → ログ確認
 - `npm run build` がローカルで成功するか確認
 
@@ -118,5 +127,6 @@ deploy:
 - #388 - CI/CDフローの最適化（Phase 4）
 
 ---
+
 **最終更新**: 2025-10-01
 **担当**: Claude Code

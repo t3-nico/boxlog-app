@@ -23,21 +23,21 @@ class QualityReporter {
       codeQuality: {
         eslint: { errors: 0, warnings: 0, details: [] },
         typescript: { errors: 0, details: [] },
-        prettier: { unformatted: 0 }
+        prettier: { unformatted: 0 },
       },
 
       // テスト
       testing: {
         coverage: { lines: 0, branches: 0, functions: 0, statements: 0 },
         testCount: 0,
-        passRate: 0
+        passRate: 0,
       },
 
       // パフォーマンス
       performance: {
         bundleSize: { main: 0, total: 0, breakdown: [] },
         buildTime: 0,
-        coreWebVitals: { lcp: 0, fid: 0, cls: 0 }
+        coreWebVitals: { lcp: 0, fid: 0, cls: 0 },
       },
 
       // 技術的負債
@@ -46,29 +46,25 @@ class QualityReporter {
         deprecatedUsage: 0,
         complexityScore: 0,
         duplicateCode: 0,
-        details: []
+        details: [],
       },
 
       // エラー分析
       errors: {
         last7Days: 0,
         topErrors: [],
-        errorRate: 0
+        errorRate: 0,
       },
 
       // 改善提案
-      recommendations: []
+      recommendations: [],
     }
   }
 
   ensureDirectories() {
-    const dirs = [
-      this.reportsDir,
-      path.join(this.reportsDir, 'history'),
-      path.join(this.reportsDir, 'charts')
-    ]
+    const dirs = [this.reportsDir, path.join(this.reportsDir, 'history'), path.join(this.reportsDir, 'charts')]
 
-    dirs.forEach(dir => {
+    dirs.forEach((dir) => {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true })
       }
@@ -83,7 +79,7 @@ class QualityReporter {
       console.log('🔍 ESLint分析中...')
       const result = execSync('npx eslint . --format json', {
         encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'ignore']
+        stdio: ['pipe', 'pipe', 'ignore'],
       })
 
       const data = JSON.parse(result)
@@ -91,7 +87,7 @@ class QualityReporter {
       let warnings = 0
       const details = []
 
-      data.forEach(file => {
+      data.forEach((file) => {
         errors += file.errorCount
         warnings += file.warningCount
 
@@ -100,13 +96,13 @@ class QualityReporter {
             filePath: file.filePath,
             errorCount: file.errorCount,
             warningCount: file.warningCount,
-            messages: file.messages.map(msg => ({
+            messages: file.messages.map((msg) => ({
               ruleId: msg.ruleId,
               severity: msg.severity,
               message: msg.message,
               line: msg.line,
-              column: msg.column
-            }))
+              column: msg.column,
+            })),
           })
         }
       })
@@ -123,7 +119,7 @@ class QualityReporter {
           message: `ESLintエラーが${diff}件増加しています`,
           action: 'npm run lint:fix を実行してください',
           effort: 'medium',
-          impact: 'high'
+          impact: 'high',
         })
       }
 
@@ -141,13 +137,13 @@ class QualityReporter {
       console.log('🔍 TypeScript分析中...')
       const result = execSync('npx tsc --noEmit --pretty false 2>&1', {
         encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['pipe', 'pipe', 'pipe'],
       })
 
       const errors = this.parseTypeScriptErrors(result)
       this.metrics.codeQuality.typescript = {
         errors: errors.length,
-        details: errors
+        details: errors,
       }
 
       if (errors.length > 10) {
@@ -157,7 +153,7 @@ class QualityReporter {
           message: `TypeScriptエラーが${errors.length}件あります`,
           action: '型定義の修正が必要です',
           effort: 'high',
-          impact: 'high'
+          impact: 'high',
         })
       }
 
@@ -168,7 +164,7 @@ class QualityReporter {
       const errors = this.parseTypeScriptErrors(output)
       this.metrics.codeQuality.typescript = {
         errors: errors.length,
-        details: errors
+        details: errors,
       }
       console.log(`  TypeScript: ${errors.length}エラー`)
     }
@@ -184,7 +180,7 @@ class QualityReporter {
       // Vitestでカバレッジ生成を試行
       try {
         execSync('npm run test:coverage', {
-          stdio: 'ignore'
+          stdio: 'ignore',
         })
       } catch {
         // テストが存在しない場合は無視
@@ -199,7 +195,7 @@ class QualityReporter {
           lines: coverage.total.lines.pct || 0,
           branches: coverage.total.branches.pct || 0,
           functions: coverage.total.functions.pct || 0,
-          statements: coverage.total.statements.pct || 0
+          statements: coverage.total.statements.pct || 0,
         }
 
         if (coverage.total.lines.pct < 80) {
@@ -209,7 +205,7 @@ class QualityReporter {
             message: `テストカバレッジが${coverage.total.lines.pct}%です（目標: 80%）`,
             action: 'テストを追加してください',
             effort: 'medium',
-            impact: 'medium'
+            impact: 'medium',
           })
         }
 
@@ -231,7 +227,7 @@ class QualityReporter {
       const buildStart = Date.now()
       try {
         execSync('npm run build', {
-          stdio: 'ignore'
+          stdio: 'ignore',
         })
         this.metrics.performance.buildTime = Date.now() - buildStart
       } catch (error) {
@@ -245,14 +241,15 @@ class QualityReporter {
         const bundleInfo = this.analyzeBundleFiles(staticPath)
         this.metrics.performance.bundleSize = bundleInfo
 
-        if (bundleInfo.total > 5 * 1024 * 1024) { // 5MB
+        if (bundleInfo.total > 5 * 1024 * 1024) {
+          // 5MB
           this.metrics.recommendations.push({
             type: 'high',
             category: 'performance',
             message: `バンドルサイズが${(bundleInfo.total / 1024 / 1024).toFixed(1)}MBです`,
             action: 'コード分割や遅延読み込みを検討してください',
             effort: 'high',
-            impact: 'high'
+            impact: 'high',
           })
         }
 
@@ -274,11 +271,11 @@ class QualityReporter {
 
       // TODO/FIXME カウント
       const todoResult = execSync('grep -rn "TODO\\|FIXME" src/ || true', {
-        encoding: 'utf8'
+        encoding: 'utf8',
       })
 
       const todoLines = todoResult.split('\n').filter(Boolean)
-      todoLines.forEach(line => {
+      todoLines.forEach((line) => {
         const match = line.match(/^([^:]+):(\d+):(.*)$/)
         if (match) {
           details.push({
@@ -286,7 +283,7 @@ class QualityReporter {
             file: match[1],
             line: parseInt(match[2]),
             message: match[3].trim(),
-            severity: line.includes('FIXME') ? 'high' : 'medium'
+            severity: line.includes('FIXME') ? 'high' : 'medium',
           })
         }
       })
@@ -296,12 +293,12 @@ class QualityReporter {
       try {
         const complexityResult = execSync('npx eslint . --rule "complexity: [error, 10]" --format json', {
           encoding: 'utf8',
-          stdio: ['pipe', 'pipe', 'ignore']
+          stdio: ['pipe', 'pipe', 'ignore'],
         })
 
         const complexityData = JSON.parse(complexityResult)
-        complexityData.forEach(file => {
-          complexityScore += file.messages.filter(m => m.ruleId === 'complexity').length
+        complexityData.forEach((file) => {
+          complexityScore += file.messages.filter((m) => m.ruleId === 'complexity').length
         })
       } catch {
         // 複雑度分析エラーは無視
@@ -312,7 +309,7 @@ class QualityReporter {
         deprecatedUsage: 0, // 将来実装
         complexityScore,
         duplicateCode: 0, // 将来実装
-        details
+        details,
       }
 
       if (todoLines.length > 20) {
@@ -322,7 +319,7 @@ class QualityReporter {
           message: `TODOコメントが${todoLines.length}個あります`,
           action: 'GitHub Issueに移行してください',
           effort: 'low',
-          impact: 'low'
+          impact: 'low',
         })
       }
 
@@ -348,8 +345,8 @@ class QualityReporter {
         score,
         grade: gradeInfo.grade,
         status: gradeInfo.status,
-        trend: this.calculateTrend()
-      }
+        trend: this.calculateTrend(),
+      },
     }
 
     // JSON保存
@@ -364,15 +361,22 @@ class QualityReporter {
 
     // 履歴保存
     const historyPath = path.join(this.reportsDir, 'history', `${timestamp}.json`)
-    fs.writeFileSync(historyPath, JSON.stringify({
-      timestamp: report.timestamp,
-      score: report.score,
-      grade: report.grade,
-      codeQuality: report.codeQuality,
-      testing: report.testing,
-      performance: report.performance,
-      technicalDebt: report.technicalDebt
-    }, null, 2))
+    fs.writeFileSync(
+      historyPath,
+      JSON.stringify(
+        {
+          timestamp: report.timestamp,
+          score: report.score,
+          grade: report.grade,
+          codeQuality: report.codeQuality,
+          testing: report.testing,
+          performance: report.performance,
+          technicalDebt: report.technicalDebt,
+        },
+        null,
+        2
+      )
+    )
 
     console.log(`📄 レポート保存完了:`)
     console.log(`  JSON: ${jsonPath}`)
@@ -459,15 +463,20 @@ class QualityReporter {
 
 ## 💡 改善提案
 
-${report.recommendations.length > 0
-  ? report.recommendations.map(r => `### ${r.type.toUpperCase()}: ${r.message}
+${
+  report.recommendations.length > 0
+    ? report.recommendations
+        .map(
+          (r) => `### ${r.type.toUpperCase()}: ${r.message}
 
 **カテゴリ**: ${r.category}
 **対策**: ${r.action}
 **工数**: ${r.effort} | **影響度**: ${r.impact}
 
-`).join('\n')
-  : '現在、特に改善が必要な項目はありません。 🎉'
+`
+        )
+        .join('\n')
+    : '現在、特に改善が必要な項目はありません。 🎉'
 }
 
 ## 📅 次回アクション
@@ -489,8 +498,8 @@ ${this.generateTrendAnalysis()}
   generateActionItems(report) {
     const actions = []
 
-    const critical = report.recommendations.filter(r => r.type === 'critical')
-    const high = report.recommendations.filter(r => r.type === 'high')
+    const critical = report.recommendations.filter((r) => r.type === 'critical')
+    const high = report.recommendations.filter((r) => r.type === 'high')
 
     if (critical.length > 0) {
       actions.push('1. **最優先**: criticalレベルの問題を解決')
@@ -542,7 +551,7 @@ ${this.generateTrendAnalysis()}
     const errors = []
     const lines = output.split('\n')
 
-    lines.forEach(line => {
+    lines.forEach((line) => {
       const match = line.match(/^(.+)\((\d+),(\d+)\): error TS(\d+): (.+)$/)
       if (match) {
         errors.push({
@@ -550,7 +559,7 @@ ${this.generateTrendAnalysis()}
           line: parseInt(match[2]),
           column: parseInt(match[3]),
           code: parseInt(match[4]),
-          message: match[5]
+          message: match[5],
         })
       }
     })
@@ -569,7 +578,7 @@ ${this.generateTrendAnalysis()}
     const walkDir = (dir) => {
       try {
         const files = fs.readdirSync(dir)
-        files.forEach(file => {
+        files.forEach((file) => {
           const filePath = path.join(dir, file)
           const stat = fs.statSync(filePath)
 
@@ -586,7 +595,7 @@ ${this.generateTrendAnalysis()}
             breakdown.push({
               name: file,
               size,
-              gzipSize: Math.round(size * 0.3) // 概算
+              gzipSize: Math.round(size * 0.3), // 概算
             })
           }
         })
@@ -607,8 +616,9 @@ ${this.generateTrendAnalysis()}
       const historyDir = path.join(this.reportsDir, 'history')
       if (!fs.existsSync(historyDir)) return null
 
-      const files = fs.readdirSync(historyDir)
-        .filter(f => f.endsWith('.json'))
+      const files = fs
+        .readdirSync(historyDir)
+        .filter((f) => f.endsWith('.json'))
         .sort()
         .reverse()
 

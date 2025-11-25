@@ -18,36 +18,44 @@ Phase 3a: GitLeaks統合Secret検出システムは、GitLeaksライクな機能
 ### クラウドサービス認証
 
 #### AWS (Amazon Web Services)
+
 - ✅ AWS Access Key ID: `AKIA[0-9A-Z]{16}`
 - ✅ AWS Secret Access Key: `[A-Za-z0-9/+=]{40}`
 - ✅ AWS Session Token: `AQoEXAMPLE...`
 
 #### Google Cloud Platform
+
 - ✅ Google API Key: `AIza[0-9A-Za-z\\-_]{35}`
 - ✅ Google Service Account JSON: `"type": "service_account"`
 
 #### GitHub
+
 - ✅ GitHub Personal Access Token: `ghp_[a-zA-Z0-9]{36}`
 - ✅ GitHub OAuth Token: `gho_[a-zA-Z0-9]{36}`
 
 ### データベース接続文字列
+
 - ✅ MongoDB URI: `mongodb://...` / `mongodb+srv://...`
 - ✅ PostgreSQL URI: `postgresql://...` / `postgres://...`
 
 ### 暗号鍵・トークン
+
 - ✅ JWT Token: `eyJ[A-Za-z0-9_-]*...`
 - ✅ RSA Private Key: `-----BEGIN RSA PRIVATE KEY-----`
 - ✅ OpenSSH Private Key: `-----BEGIN OPENSSH PRIVATE KEY-----`
 
 ### API キー
+
 - ✅ Generic API Key: `sk-[a-zA-Z0-9]{32,}` / `pk_[a-zA-Z0-9]{24,}`
 - ✅ Stripe API Key: `sk_live_...` / `pk_live_...`
 
 ### BoxLog専用検出
+
 - ✅ Supabase Anonymous Key
 - ✅ Supabase Service Role Key
 
 ### その他
+
 - ✅ URL内パスワード: `://user:password@host`
 - ✅ Docker Secrets: `DOCKER_*=...`
 - ✅ 高エントロピー文字列（汎用秘密情報検出）
@@ -85,12 +93,14 @@ node scripts/gitleaks-secret-detector.js --verbose
 ### スマート検出機能
 
 #### 変更ファイル自動検出
+
 - Staged files (`git diff --cached --name-only`)
 - Modified files (`git diff --name-only`)
 - Untracked files (`git ls-files --others --exclude-standard`)
 - 変更がない場合は全ファイルスキャンモード
 
 #### エントロピー分析
+
 ```javascript
 // 高エントロピー文字列の複雑さを測定
 function calculateEntropy(str) {
@@ -100,24 +110,28 @@ function calculateEntropy(str) {
 ```
 
 #### ファイルサイズ制限
+
 - **制限**: 1MB以上のファイルはスキップ
 - **理由**: 大容量ファイル（ログ、バイナリ）での誤検出防止
 
 ### 除外システム
 
 #### 自動除外パターン
+
 - **環境変数**: `process.env.SECRET_NAME`
 - **コメント内**: `/* */`, `//`, `#`, `<!-- -->`
 - **テスト用データ**: example, test, dummy, fake, sample
 - **正規表現リテラル**: スクリプト自体の除外
 
 #### 除外ファイル
+
 - `node_modules/**`, `dist/**`, `build/**`, `.next/**`
 - `**/*.min.js`, `**/*.bundle.js`
 - `.git/**`, `yarn.lock`, `package-lock.json`
 - キャッシュファイル、テストファイル
 
 ### 対象ファイル
+
 - **JavaScript/TypeScript**: `*.js`, `*.ts`, `*.tsx`, `*.jsx`
 - **設定ファイル**: `*.json`, `*.env*`, `*.yaml`, `*.yml`
 - **ドキュメント**: `*.md`, `*.txt`
@@ -194,11 +208,11 @@ npm run quality:full         # 完全品質チェック
 ```javascript
 const CONFIG = {
   thresholds: {
-    maxFileSize: 1024 * 1024,  // 1MB
-    maxMatches: 50,            // 1ファイル50件以上はスキップ
-    minEntropyScore: 4.5       // エントロピー閾値
-  }
-};
+    maxFileSize: 1024 * 1024, // 1MB
+    maxMatches: 50, // 1ファイル50件以上はスキップ
+    minEntropyScore: 4.5, // エントロピー閾値
+  },
+}
 ```
 
 ### カスタム検出パターン追加
@@ -211,10 +225,10 @@ const CONFIG = {
       pattern: /custom-api-[a-zA-Z0-9]{24}/gi,
       description: 'Custom API Key',
       severity: 'high',
-      category: 'api'
-    }
-  }
-};
+      category: 'api',
+    },
+  },
+}
 ```
 
 ### 除外パターン追加
@@ -222,21 +236,21 @@ const CONFIG = {
 ```javascript
 const CONFIG = {
   exclusions: {
-    customExclusion: /your-custom-pattern/gi
-  }
-};
+    customExclusion: /your-custom-pattern/gi,
+  },
+}
 ```
 
 ## 🛡️ セキュリティレベル
 
 ### 重要度分類
 
-| レベル | 説明 | 対応 |
-|--------|------|------|
-| **🔴 CRITICAL** | AWS Keys, Private Keys, DB接続文字列 | **即座に修正** |
-| **🟡 HIGH** | JWT Token, Generic API Key | **優先修正** |
-| **🟠 MEDIUM** | Supabase Keys, Docker Secrets | **計画的修正** |
-| **🟢 LOW** | 高エントロピー文字列 | **レビュー推奨** |
+| レベル          | 説明                                 | 対応             |
+| --------------- | ------------------------------------ | ---------------- |
+| **🔴 CRITICAL** | AWS Keys, Private Keys, DB接続文字列 | **即座に修正**   |
+| **🟡 HIGH**     | JWT Token, Generic API Key           | **優先修正**     |
+| **🟠 MEDIUM**   | Supabase Keys, Docker Secrets        | **計画的修正**   |
+| **🟢 LOW**      | 高エントロピー文字列                 | **レビュー推奨** |
 
 ### 企業コンプライアンス
 
@@ -270,6 +284,7 @@ const CONFIG = {
 ```
 
 **解決方法:**
+
 - Git リポジトリ内で実行されているか確認
 - Git の初期化状態を確認: `git status`
 
@@ -280,6 +295,7 @@ const CONFIG = {
 ```
 
 **解決方法:**
+
 1. 除外パターンの追加
 2. ファイル種別の除外設定
 3. エントロピー閾値の調整
@@ -291,6 +307,7 @@ const CONFIG = {
 ```
 
 **対応:**
+
 - 自動スキップされます（正常動作）
 - 必要に応じて `CONFIG.thresholds.maxFileSize` を調整
 
@@ -300,20 +317,20 @@ const CONFIG = {
 
 ```javascript
 // より厳密な検出
-CONFIG.thresholds.minEntropyScore = 5.0;
+CONFIG.thresholds.minEntropyScore = 5.0
 
 // より寛容な検出
-CONFIG.thresholds.minEntropyScore = 4.0;
+CONFIG.thresholds.minEntropyScore = 4.0
 ```
 
 #### パフォーマンス調整
 
 ```javascript
 // 高速化（精度低下）
-CONFIG.thresholds.maxFileSize = 512 * 1024; // 512KB
+CONFIG.thresholds.maxFileSize = 512 * 1024 // 512KB
 
 // 高精度（速度低下）
-CONFIG.thresholds.maxFileSize = 5 * 1024 * 1024; // 5MB
+CONFIG.thresholds.maxFileSize = 5 * 1024 * 1024 // 5MB
 ```
 
 ## 📊 統計・メトリクス
@@ -357,13 +374,16 @@ CONFIG.thresholds.maxFileSize = 5 * 1024 * 1024; // 5MB
 ## 📚 関連ドキュメント
 
 **Phase 2（前提システム）:**
+
 - [License Verification](./LICENSE_VERIFICATION.md) - ライセンス検証システム
 - [Performance Regression Testing](./PERFORMANCE_REGRESSION_TESTING.md) - パフォーマンス回帰テスト
 
 **セキュリティ関連:**
+
 - [ESLint Security Rules](../compliance/eslint-rules.md) - ESLintセキュリティルール
 
 **品質管理:**
+
 - [Bundle Monitoring](../performance/BUNDLE_MONITORING.md) - バンドルサイズ監視
 - [ESLint Setup](./ESLINT_HYBRID_APPROACH.md) - ESLint設定
 
@@ -374,6 +394,7 @@ CONFIG.thresholds.maxFileSize = 5 * 1024 * 1024; // 5MB
 ---
 
 **📊 Phase 3a成果:**
+
 - **検出パターン**: 25種類以上の秘密情報パターン
 - **精度向上**: エントロピー分析による誤検出削減
 - **パフォーマンス**: 平均50ms以下の高速検出
