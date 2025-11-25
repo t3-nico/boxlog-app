@@ -6,6 +6,7 @@ import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
+import { StatsSidebar } from '@/features/stats'
 
 import { MainContentWrapper } from './main-content-wrapper'
 
@@ -25,13 +26,21 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
 
   // ページごとにSidebarを切り替え
   const isCalendarPage = pathname?.startsWith(`/${locale}/calendar`) ?? false
+  const isStatsPage = pathname?.startsWith(`/${locale}/stats`) ?? false
+
+  // サイドバーコンポーネントを決定
+  const renderSidebar = () => {
+    if (isCalendarPage) return <CalendarSidebar />
+    if (isStatsPage) return <StatsSidebar />
+    return <AppSidebar />
+  }
 
   return (
     <>
       {/* モバイル: Sheet（オーバーレイ）でSidebarを表示 */}
       <Sheet open={isOpen} onOpenChange={toggle}>
         <SheetContent side="left" className="w-64 p-0" showCloseButton={false}>
-          {isCalendarPage ? <CalendarSidebar /> : <AppSidebar />}
+          {renderSidebar()}
         </SheetContent>
       </Sheet>
 
