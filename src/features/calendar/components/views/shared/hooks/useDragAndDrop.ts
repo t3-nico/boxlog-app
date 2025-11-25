@@ -272,7 +272,7 @@ export function useDragAndDrop({
         previewTime,
       }))
     },
-    [snapToQuarterHour, events]
+    [snapToQuarterHour, plans]
   )
 
   // ヘルパー関数: 位置スナッピング処理
@@ -388,7 +388,7 @@ export function useDragAndDrop({
 
       return { previewStartTime, previewEndTime }
     },
-    [events, date, viewMode, displayDates]
+    [plans, date, viewMode, displayDates]
   )
 
   // ヘルパー関数: 時間表示更新
@@ -662,7 +662,7 @@ export function useDragAndDrop({
       console.error('Failed to resize event:', error)
       calendarToast.error(t('calendar.event.resizeFailed'))
     }
-  }, [events, onPlanUpdate, dragState.snappedPosition, calendarToast, t])
+  }, [plans, onPlanUpdate, dragState.snappedPosition, calendarToast, t])
 
   // リサイズ完了処理
   const handleResizeComplete = useCallback(() => {
@@ -756,7 +756,7 @@ export function useDragAndDrop({
 
       return { event, durationMs }
     },
-    [events]
+    [plans]
   )
 
   // Toast通知を処理する
@@ -959,7 +959,7 @@ export function useDragAndDrop({
         onPlanUpdate(eventId, { startTime: newStartTime, endTime: newEndTime })
       }
     },
-    [onPlanUpdate, events]
+    [onPlanUpdate, plans]
   )
 
   // リサイズ開始
