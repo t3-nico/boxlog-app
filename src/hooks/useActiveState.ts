@@ -1,4 +1,4 @@
-// TODO(#621): Tasks削除後、Tickets/Sessionsに移行予定
+// TODO(#621): Tasks削除後、plans/Sessionsに移行予定
 'use client'
 // import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { usePathname } from 'next/navigation'

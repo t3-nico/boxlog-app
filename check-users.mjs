@@ -60,7 +60,6 @@ try {
   } else {
     console.log('❌ No notification preferences found')
   }
-
 } catch (err) {
   console.error('❌ Error:', err.message)
 } finally {

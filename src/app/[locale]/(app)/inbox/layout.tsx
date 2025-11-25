@@ -21,19 +21,19 @@ export default function InboxLayout({ children }: InboxLayoutProps) {
   const pathname = usePathname()
   const { setActiveView } = useInboxViewStore()
 
-  // 全Ticketデータを取得
+  // 全Planデータを取得
   const { items } = useInboxData()
 
-  // アクティブなTicket数とアーカイブ数を計算
-  const { activeTicketsCount, archivedTicketsCount } = useMemo(() => {
+  // アクティブなPlan数とアーカイブ数を計算
+  const { activePlansCount, archivedPlansCount } = useMemo(() => {
     // TODO: アーカイブフラグがある場合はそれで判定
     // 現状はアーカイブ機能がないため、全てアクティブとして扱う
     const active = items.length
     const archived = 0
 
     return {
-      activeTicketsCount: active,
-      archivedTicketsCount: archived,
+      activePlansCount: active,
+      archivedPlansCount: archived,
     }
   }, [items])
 
@@ -63,7 +63,7 @@ export default function InboxLayout({ children }: InboxLayoutProps) {
     <div className="flex h-full">
       {/* 左: Sidebar */}
       <div className="border-border w-64 shrink-0 border-r">
-        <InboxSidebar activeTicketsCount={activeTicketsCount} archivedTicketsCount={archivedTicketsCount} />
+        <InboxSidebar activeplansCount={activePlansCount} archivedplansCount={archivedPlansCount} />
       </div>
 
       {/* 右: メインコンテンツ */}

@@ -1,12 +1,12 @@
 /**
  * アクティビティトラッキング用ユーティリティ
- * チケットの変更を検出して、適切なアクティビティを記録する
+ * プランの変更を検出して、適切なアクティビティを記録する
  */
 
-import type { ActivityActionType } from '@/schemas/tickets/activity'
+import type { ActivityActionType } from '@/schemas/plans/activity'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
-interface TicketChanges {
+interface PlanChanges {
   field_name: string
   old_value: string
   new_value: string
@@ -14,11 +14,11 @@ interface TicketChanges {
 }
 
 /**
- * チケットの変更を検出してアクティビティを作成
+ * プランの変更を検出してアクティビティを作成
  */
-export async function trackTicketChanges(
+export async function trackPlanChanges(
   supabase: SupabaseClient,
-  ticketId: string,
+  planId: string,
   userId: string,
   oldData: Record<string, any>,
   newData: Record<string, any>
@@ -27,8 +27,8 @@ export async function trackTicketChanges(
 
   // 各変更に対してアクティビティを記録
   for (const change of changes) {
-    await supabase.from('ticket_activities').insert({
-      ticket_id: ticketId,
+    await supabase.from('plan_activities').insert({
+      plan_id: planId,
       user_id: userId,
       action_type: change.action_type,
       field_name: change.field_name,
@@ -38,11 +38,14 @@ export async function trackTicketChanges(
   }
 }
 
+// 互換性のためのエイリアス
+export const trackplanChanges = trackPlanChanges
+
 /**
  * 変更を検出してアクティビティ種別を決定
  */
-function detectChanges(oldData: Record<string, any>, newData: Record<string, any>): TicketChanges[] {
-  const changes: TicketChanges[] = []
+function detectChanges(oldData: Record<string, any>, newData: Record<string, any>): PlanChanges[] {
+  const changes: PlanChanges[] = []
 
   // ステータス変更
   if (oldData.status !== newData.status) {

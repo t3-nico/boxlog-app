@@ -19,6 +19,7 @@
 ## 🗑️ 削除したコンポーネント（5個）
 
 ### 1. Text/Strong/Code (Issue #413)
+
 - **置き換え**: ネイティブ `<p>` タグ + Tailwind CSS
 - **影響ファイル**: 1ファイル
 - **コミット**: `691a695`
@@ -34,6 +35,7 @@
 ```
 
 ### 2. GoogleIcon/AppleIcon (Issue #414)
+
 - **置き換え**: インラインSVG定義
 - **影響ファイル**: 1ファイル (`LoginForm.tsx`)
 - **コミット**: `ebde8a9`
@@ -51,6 +53,7 @@ const GoogleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
 ```
 
 ### 3. Listbox (Issue #415)
+
 - **置き換え**: shadcn/ui `Select` コンポーネント
 - **影響ファイル**: 1ファイル (`settings/address.tsx`)
 - **コミット**: `301ee65`
@@ -73,6 +76,7 @@ const GoogleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
 ```
 
 ### 4. DescriptionList (Issue #417)
+
 - **置き換え**: ネイティブ `<dl>`, `<dt>`, `<dd>` + Tailwind CSS
 - **影響ファイル**: 1ファイル (`stats/[id]/page.tsx`)
 - **コミット**: `de8ef66`
@@ -96,6 +100,7 @@ const GoogleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
 ```
 
 ### 5. Link (Issue #419)
+
 - **置き換え**: Next.js `next/link`
 - **影響ファイル**: 2ファイル
 - **コミット**: `b63ec3d`
@@ -103,11 +108,11 @@ const GoogleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
 ```tsx
 // Before
 import { Link } from '@/components/custom'
-<Link href="/review">Reviews</Link>
+;<Link href="/review">Reviews</Link>
 
 // After
 import NextLink from 'next/link'
-<NextLink href="/review">Reviews</NextLink>
+;<NextLink href="/review">Reviews</NextLink>
 ```
 
 ---
@@ -117,6 +122,7 @@ import NextLink from 'next/link'
 以下のコンポーネントは有用なため削除せず、`src/components/ui` に移動しました。
 
 ### 1. heading.tsx
+
 **理由**: レベル別の一貫したタイポグラフィを提供する有用な抽象化
 
 - `Heading` - h1〜h6タグの統一されたスタイリング
@@ -129,22 +135,22 @@ export const Heading = ({ className, level = 1, ...props }: HeadingProps) => {
 
   const getHeadingClass = (level: number) => {
     switch (level) {
-      case 1: return 'text-4xl font-bold tracking-tight'
-      case 2: return 'text-3xl font-bold tracking-tight'
+      case 1:
+        return 'text-4xl font-bold tracking-tight'
+      case 2:
+        return 'text-3xl font-bold tracking-tight'
       // ...
     }
   }
 
   return (
-    <Element
-      {...props}
-      className={cn(className, getHeadingClass(level), 'text-neutral-900 dark:text-neutral-100')}
-    />
+    <Element {...props} className={cn(className, getHeadingClass(level), 'text-neutral-900 dark:text-neutral-100')} />
   )
 }
 ```
 
 ### 2. fieldset.tsx
+
 **理由**: HeadlessUIベースのアクセシブルなフォームコンポーネント
 
 - `Fieldset`, `Field`, `FieldGroup`, `Label`, `Description`, `ErrorMessage`, `Legend`
@@ -158,7 +164,7 @@ export const Field = ({ className, ...props }: Omit<Headless.FieldProps, 'as' | 
       {...props}
       className={clsx(
         className,
-        '[&>[data-slot=label]+[data-slot=control]]:mt-3',
+        '[&>[data-slot=label]+[data-slot=control]]:mt-3'
         // ...
       )}
     />
@@ -174,6 +180,7 @@ export const Field = ({ className, ...props }: Omit<Headless.FieldProps, 'as' | 
 **変更内容**: `@/components/custom` → `@/components/ui`
 
 一括置換コマンド:
+
 ```bash
 find src -type f \( -name "*.tsx" -o -name "*.ts" \) -exec sed -i '' "s|from '@/components/custom'|from '@/components/ui'|g" {} \;
 ```
@@ -183,13 +190,17 @@ find src -type f \( -name "*.tsx" -o -name "*.ts" \) -exec sed -i '' "s|from '@/
 ## ❌ スキップしたIssue（理由付き）
 
 ### Issue #416: Heading → HTML+Tailwind
+
 **判断**: Headingは有用なコンポーネントであり削除不要
+
 - 20ファイルで使用中
 - 一貫したタイポグラフィを提供
 - ダークモード対応
 
 ### Issue #418: Fieldset 整理
+
 **判断**: Fieldsetは有用なコンポーネントであり削除不要
+
 - HeadlessUIベースのアクセシブルなフォームコンポーネント
 - ARIA属性の自動処理
 
@@ -197,16 +208,16 @@ find src -type f \( -name "*.tsx" -o -name "*.ts" \) -exec sed -i '' "s|from '@/
 
 ## 📊 最終結果
 
-| 項目 | 詳細 |
-|------|------|
-| **削除したファイル** | 5個 (text.tsx, icons.tsx, listbox.tsx, description-list.tsx, link.tsx) |
-| **移動したファイル** | 2個 (heading.tsx, fieldset.tsx) |
-| **影響を受けたファイル** | 20ファイル（インポートパス更新） |
-| **作成したIssue** | 9個 (#412-#420) |
-| **クローズしたIssue** | 9個 |
-| **コミット数** | 7個 |
-| **lint結果** | ✅ エラーなし（警告20件は既存） |
-| **typecheck結果** | ✅ カスタムコンポーネント関連エラーなし |
+| 項目                     | 詳細                                                                   |
+| ------------------------ | ---------------------------------------------------------------------- |
+| **削除したファイル**     | 5個 (text.tsx, icons.tsx, listbox.tsx, description-list.tsx, link.tsx) |
+| **移動したファイル**     | 2個 (heading.tsx, fieldset.tsx)                                        |
+| **影響を受けたファイル** | 20ファイル（インポートパス更新）                                       |
+| **作成したIssue**        | 9個 (#412-#420)                                                        |
+| **クローズしたIssue**    | 9個                                                                    |
+| **コミット数**           | 7個                                                                    |
+| **lint結果**             | ✅ エラーなし（警告20件は既存）                                        |
+| **typecheck結果**        | ✅ カスタムコンポーネント関連エラーなし                                |
 
 ---
 
@@ -225,15 +236,18 @@ find src -type f \( -name "*.tsx" -o -name "*.ts" \) -exec sed -i '' "s|from '@/
 ## 📚 学んだこと
 
 ### 1. コンポーネント評価基準
+
 - **削除すべき**: 単なるラッパーで実質的な価値がないもの
 - **保持すべき**: 一貫性、アクセシビリティ、DX向上をもたらすもの
 
 ### 2. リファクタリング戦略
+
 - 小さな単位でIssue化し、段階的に進める
 - 各段階でlint/typecheckを実行して品質を担保
 - コミットメッセージにIssue番号を含める
 
 ### 3. shadcn/ui活用
+
 - `Select`: HeadlessUI Listboxの代替
 - ネイティブHTML + Tailwind: シンプルなコンポーネントの代替
 

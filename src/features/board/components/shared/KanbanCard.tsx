@@ -146,7 +146,7 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
       <div className="pr-6">
         <h3 className="text-foreground flex items-baseline gap-2 text-sm leading-tight font-medium">
           <span>{card.title}</span>
-          {card.ticketNumber && <span className="text-muted-foreground shrink-0 text-xs">#{card.ticketNumber}</span>}
+          {card.planNumber && <span className="text-muted-foreground shrink-0 text-xs">#{card.planNumber}</span>}
         </h3>
       </div>
 

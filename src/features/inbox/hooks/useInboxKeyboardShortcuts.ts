@@ -1,4 +1,4 @@
-import { useTicketInspectorStore } from '@/features/tickets/stores/useTicketInspectorStore'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { useEffect, useRef } from 'react'
 import { useInboxFocusStore } from '../stores/useInboxFocusStore'
 import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'
@@ -42,7 +42,7 @@ export function useInboxKeyboardShortcuts({
 }: UseInboxKeyboardShortcutsOptions) {
   const { focusedId, focusNext, focusPrevious, clearFocus } = useInboxFocusStore()
   const { toggleSelection } = useInboxSelectionStore()
-  const { openInspector, closeInspector, isOpen } = useTicketInspectorStore()
+  const { openInspector, closeInspector, isOpen } = usePlanInspectorStore()
 
   // イベントハンドラが常に最新の値を参照できるようにrefで保持
   const itemIdsRef = useRef(itemIds)

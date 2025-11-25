@@ -1,4 +1,4 @@
-import { TicketQuickCreate } from '@/features/tickets/components/shared/TicketQuickCreate'
+import { PlanQuickCreate } from '@/features/plans/components/shared/PlanQuickCreate'
 
 interface InboxCardCreateProps {
   isCreating: boolean
@@ -9,11 +9,11 @@ interface InboxCardCreateProps {
 /**
  * InboxCardCreate - Calendar Sidebar Inbox用の新規作成ラッパー
  *
- * TicketQuickCreateを使用してbacklogステータスのチケットを作成
+ * PlanQuickCreateを使用してbacklogステータスのプランを作成
  */
 export function InboxCardCreate({ isCreating, onStartCreate, onFinishCreate }: InboxCardCreateProps) {
   return (
-    <TicketQuickCreate
+    <PlanQuickCreate
       status="backlog"
       isCreating={isCreating}
       onStartCreate={onStartCreate}

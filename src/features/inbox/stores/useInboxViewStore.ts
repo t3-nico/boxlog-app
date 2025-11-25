@@ -47,7 +47,7 @@ type InboxViewState = {
 const DEFAULT_VIEWS: InboxView[] = [
   {
     id: 'default-all',
-    name: 'すべてのTicket',
+    name: 'すべてのplan',
     filters: {},
     sorting: {
       field: 'created_at',

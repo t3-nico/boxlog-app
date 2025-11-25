@@ -39,15 +39,15 @@ fi
 echo "✅ ユーザー作成成功: $USER_ID"
 
 # ========================================
-# 2. サンプルチケットの作成
+# 2. サンプルプランの作成
 # ========================================
-echo "📝 サンプルチケットを作成中..."
+echo "📝 サンプルプランを作成中..."
 
 # SQLファイルの作成（user_idを動的に設定）
-cat > /tmp/seed_tickets.sql <<EOF
--- サンプルチケット1
-INSERT INTO public.tickets (
-  user_id, ticket_number, title, description, status, priority,
+cat > /tmp/seed_plans.sql <<EOF
+-- サンプルプラン1
+INSERT INTO public.plans (
+  user_id, plan_number, title, description, status, priority,
   due_date, start_time, end_time, recurrence_type
 ) VALUES (
   '${USER_ID}',
@@ -62,9 +62,9 @@ INSERT INTO public.tickets (
   'none'
 );
 
--- サンプルチケット2
-INSERT INTO public.tickets (
-  user_id, ticket_number, title, status, priority, due_date, recurrence_type
+-- サンプルプラン2
+INSERT INTO public.plans (
+  user_id, plan_number, title, status, priority, due_date, recurrence_type
 ) VALUES (
   '${USER_ID}',
   '2',
@@ -75,9 +75,9 @@ INSERT INTO public.tickets (
   'none'
 );
 
--- サンプルチケット3（繰り返しタスク）
-INSERT INTO public.tickets (
-  user_id, ticket_number, title, description, status, priority,
+-- サンプルプラン3（繰り返しタスク）
+INSERT INTO public.plans (
+  user_id, plan_number, title, description, status, priority,
   due_date, start_time, end_time, recurrence_type, recurrence_end_date
 ) VALUES (
   '${USER_ID}',
@@ -102,11 +102,11 @@ INSERT INTO public.tags (user_id, name, color) VALUES
 EOF
 
 # Docker経由でPostgreSQLに接続してSQL実行
-docker exec supabase_db_boxlog-app psql -U postgres -d postgres -f /tmp/seed_tickets.sql 2>/dev/null || {
+docker exec supabase_db_boxlog-app psql -U postgres -d postgres -f /tmp/seed_plans.sql 2>/dev/null || {
   echo "⚠️  Docker経由での実行に失敗しました。supabase CLIで試します..."
 
   # 代替方法: supabase db execute
-  supabase db execute --file /tmp/seed_tickets.sql --local
+  supabase db execute --file /tmp/seed_plans.sql --local
 }
 
 echo "✅ サンプルデータ投入完了"
@@ -116,7 +116,7 @@ echo "📋 作成されたデータ"
 echo "===================="
 echo "ユーザー: dev@example.com"
 echo "パスワード: password123"
-echo "チケット: 3件"
+echo "プラン: 3件"
 echo "タグ: 4件"
 echo ""
 echo "🎉 開発を開始できます！"

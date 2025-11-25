@@ -1,16 +1,16 @@
 // @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 // キーボードショートカットハンドラーの分離
 
-import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 export interface KeyboardShortcutCallbacks {
   onEscape?: () => void
   onSelectPrevious?: () => void
   onSelectNext?: () => void
-  onDeleteEvent?: (event: CalendarEvent) => void
-  onEditEvent?: (event: CalendarEvent) => void
-  onDuplicateEvent?: (event: CalendarEvent) => void
-  onCopy?: (event: CalendarEvent) => void
+  onDeleteEvent?: (plan: CalendarPlan) => void
+  onEditEvent?: (plan: CalendarPlan) => void
+  onDuplicateEvent?: (plan: CalendarPlan) => void
+  onCopy?: (plan: CalendarPlan) => void
   onUndo?: () => void
   onRedo?: () => void
   onPaste?: (date: Date, time: string) => void
@@ -20,7 +20,7 @@ export interface KeyboardShortcutCallbacks {
 
 export interface KeyboardEventContext {
   event: KeyboardEvent
-  selectedEvent: CalendarEvent | null
+  selectedEvent: CalendarPlan | null
   debounceAction: (action: () => void, delay?: number) => void
   callbacks: KeyboardShortcutCallbacks
 }

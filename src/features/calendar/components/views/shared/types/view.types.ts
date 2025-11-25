@@ -2,13 +2,13 @@
  * ビュー関連の型定義
  */
 
-import type { CalendarEvent, EventInteractionHandler } from './event.types'
+import type { CalendarPlan, EventInteractionHandler } from './plan.types'
 
 export type ViewType = 'day' | 'week' | 'month' | '3day' | '2week'
 
 export interface ViewProps {
   dates: Date[]
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   currentDate: Date
   viewType: ViewType
   className?: string
@@ -16,14 +16,14 @@ export interface ViewProps {
 
 export interface DayColumnProps {
   date: Date
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   hourHeight?: number
   isToday?: boolean
   isWeekend?: boolean
   onTimeClick?: (date: Date, hour: number, minute: number) => void
-  onEventClick?: (event: CalendarEvent) => void
-  onEventDoubleClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
+  onEventClick?: (plan: CalendarPlan) => void
+  onEventDoubleClick?: (plan: CalendarPlan) => void
+  onEventContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   className?: string
 }
 
@@ -90,7 +90,7 @@ export interface ViewConfiguration {
 
 export interface ViewContextValue extends ViewConfiguration, EventInteractionHandler {
   dates: Date[]
-  events: CalendarEvent[]
+  events: CalendarPlan[]
   currentDate: Date
   viewType: ViewType
 }

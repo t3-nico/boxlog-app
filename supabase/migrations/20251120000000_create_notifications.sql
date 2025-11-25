@@ -9,10 +9,10 @@ CREATE TABLE IF NOT EXISTS notifications (
   -- 通知の分類
   type TEXT NOT NULL CHECK (type IN (
     'reminder',           -- リマインダー（チケット開始前）
-    'ticket_created',     -- チケット作成
-    'ticket_updated',     -- チケット更新
-    'ticket_deleted',     -- チケット削除
-    'ticket_completed',   -- チケット完了
+    'plan_created',     -- チケット作成
+    'plan_updated',     -- チケット更新
+    'plan_deleted',     -- チケット削除
+    'plan_completed',   -- チケット完了
     'trash_warning',      -- ゴミ箱自動削除警告
     'system'              -- システム通知
   )),
@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS notifications (
   title TEXT NOT NULL,
   message TEXT,
 
-  -- 関連データ（ticketsテーブルへの参照）
-  related_ticket_id UUID REFERENCES tickets(id) ON DELETE SET NULL,
+  -- 関連データ（plansテーブルへの参照）
+  related_plan_id UUID REFERENCES plans(id) ON DELETE SET NULL,
   related_tag_id UUID REFERENCES tags(id) ON DELETE SET NULL,
   action_url TEXT,  -- クリック時の遷移先（例: /inbox?id=xxx）
 
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_unread ON notifications(user_id, is_read) WHERE is_read = false;
 CREATE INDEX IF NOT EXISTS idx_notifications_created_at ON notifications(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_notifications_related_ticket ON notifications(related_ticket_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_related_plan ON notifications(related_plan_id);
 
 -- Row Level Security (RLS) 有効化
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
@@ -97,9 +97,9 @@ END;
 $$;
 
 COMMENT ON TABLE notifications IS '通知テーブル - リマインダー、チケット変更、システムメッセージを管理';
-COMMENT ON COLUMN notifications.type IS '通知タイプ（reminder, ticket_created, ticket_updated, etc）';
+COMMENT ON COLUMN notifications.type IS '通知タイプ（reminder, plan_created, plan_updated, etc）';
 COMMENT ON COLUMN notifications.priority IS '優先度（urgent, high, medium, low）';
-COMMENT ON COLUMN notifications.related_ticket_id IS '関連チケットID（ticketsテーブル参照）';
+COMMENT ON COLUMN notifications.related_plan_id IS '関連チケットID（plansテーブル参照）';
 COMMENT ON COLUMN notifications.action_url IS 'クリック時の遷移先URL';
 COMMENT ON COLUMN notifications.data IS '拡張用JSONBデータ';
 COMMENT ON COLUMN notifications.expires_at IS '通知の有効期限（オプション）';

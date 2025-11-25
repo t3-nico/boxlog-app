@@ -26,8 +26,9 @@ class ImprovementSuggester {
         throw new Error('品質レポートが見つかりません。先に npm run quality:report を実行してください。')
       }
 
-      const files = fs.readdirSync(this.reportsDir)
-        .filter(f => f.startsWith('quality-report-') && f.endsWith('.json'))
+      const files = fs
+        .readdirSync(this.reportsDir)
+        .filter((f) => f.startsWith('quality-report-') && f.endsWith('.json'))
         .sort()
         .reverse()
 
@@ -56,9 +57,7 @@ class ImprovementSuggester {
   async createImprovementIssues(report) {
     console.log('\n🎯 改善提案Issue作成中...')
 
-    const highPriorityRecommendations = report.recommendations.filter(
-      r => r.type === 'critical' || r.type === 'high'
-    )
+    const highPriorityRecommendations = report.recommendations.filter((r) => r.type === 'critical' || r.type === 'high')
 
     if (highPriorityRecommendations.length === 0) {
       console.log('✅ 高優先度の改善提案はありません')
@@ -72,10 +71,15 @@ class ImprovementSuggester {
 
         // GitHub CLI でIssue作成
         const command = [
-          'gh', 'issue', 'create',
-          '--title', `"${issueTitle}"`,
-          '--body', `"${issueBody}"`,
-          '--label', `"quality-improvement,${recommendation.type}"`
+          'gh',
+          'issue',
+          'create',
+          '--title',
+          `"${issueTitle}"`,
+          '--body',
+          `"${issueBody}"`,
+          '--label',
+          `"quality-improvement,${recommendation.type}"`,
         ].join(' ')
 
         const result = execSync(command, { encoding: 'utf8' })
@@ -85,7 +89,7 @@ class ImprovementSuggester {
           title: issueTitle,
           url: issueUrl,
           type: recommendation.type,
-          category: recommendation.category
+          category: recommendation.category,
         })
 
         console.log(`✅ Issue作成: ${issueUrl}`)
@@ -137,8 +141,8 @@ ${recommendation.action}
    * Slack通知生成
    */
   generateSlackNotification(report) {
-    const criticalIssues = this.issuesCreated.filter(i => i.type === 'critical')
-    const highIssues = this.issuesCreated.filter(i => i.type === 'high')
+    const criticalIssues = this.issuesCreated.filter((i) => i.type === 'critical')
+    const highIssues = this.issuesCreated.filter((i) => i.type === 'high')
 
     const notification = {
       text: `📊 BoxLog品質レポート - ${new Date().toLocaleDateString('ja-JP')}`,
@@ -147,31 +151,31 @@ ${recommendation.action}
           type: 'header',
           text: {
             type: 'plain_text',
-            text: '📊 BoxLog 品質レポート'
-          }
+            text: '📊 BoxLog 品質レポート',
+          },
         },
         {
           type: 'section',
           fields: [
             {
               type: 'mrkdwn',
-              text: `*スコア:* ${report.score}/100 (${report.grade})`
+              text: `*スコア:* ${report.score}/100 (${report.grade})`,
             },
             {
               type: 'mrkdwn',
-              text: `*状態:* ${report.status}`
+              text: `*状態:* ${report.status}`,
             },
             {
               type: 'mrkdwn',
-              text: `*ESLintエラー:* ${report.codeQuality.eslint.errors}件`
+              text: `*ESLintエラー:* ${report.codeQuality.eslint.errors}件`,
             },
             {
               type: 'mrkdwn',
-              text: `*TypeScriptエラー:* ${report.codeQuality.typescript.errors}件`
-            }
-          ]
-        }
-      ]
+              text: `*TypeScriptエラー:* ${report.codeQuality.typescript.errors}件`,
+            },
+          ],
+        },
+      ],
     }
 
     // 緊急度別の通知セクション
@@ -180,8 +184,8 @@ ${recommendation.action}
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `🚨 *緊急対応必要* (${criticalIssues.length}件)\n${criticalIssues.map(i => `• <${i.url}|${i.title}>`).join('\n')}`
-        }
+          text: `🚨 *緊急対応必要* (${criticalIssues.length}件)\n${criticalIssues.map((i) => `• <${i.url}|${i.title}>`).join('\n')}`,
+        },
       })
     }
 
@@ -190,28 +194,28 @@ ${recommendation.action}
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `⚠️ *高優先度* (${highIssues.length}件)\n${highIssues.map(i => `• <${i.url}|${i.title}>`).join('\n')}`
-        }
+          text: `⚠️ *高優先度* (${highIssues.length}件)\n${highIssues.map((i) => `• <${i.url}|${i.title}>`).join('\n')}`,
+        },
       })
     }
 
     // 改善提案サマリー
     if (report.recommendations.length > 0) {
-      const categories = [...new Set(report.recommendations.map(r => r.category))]
+      const categories = [...new Set(report.recommendations.map((r) => r.category))]
       notification.blocks.push({
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `📈 *改善分野:* ${categories.join(', ')}`
-        }
+          text: `📈 *改善分野:* ${categories.join(', ')}`,
+        },
       })
     } else {
       notification.blocks.push({
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: '🎉 *現在、特に改善が必要な項目はありません*'
-        }
+          text: '🎉 *現在、特に改善が必要な項目はありません*',
+        },
       })
     }
 
@@ -227,7 +231,10 @@ ${recommendation.action}
     const notification = this.generateSlackNotification(report)
 
     // 通知データをファイルに保存（実際の送信の代わり）
-    const notificationPath = path.join(this.reportsDir, `slack-notification-${new Date().toISOString().split('T')[0]}.json`)
+    const notificationPath = path.join(
+      this.reportsDir,
+      `slack-notification-${new Date().toISOString().split('T')[0]}.json`
+    )
     fs.writeFileSync(notificationPath, JSON.stringify(notification, null, 2))
 
     console.log(`📲 Slack通知データ生成完了: ${notificationPath}`)
@@ -266,19 +273,18 @@ ${recommendation.action}
     try {
       // 品質改善ラベルが付いたIssue一覧取得
       const result = execSync('gh issue list --label "quality-improvement" --json number,title,state,createdAt', {
-        encoding: 'utf8'
+        encoding: 'utf8',
       })
 
       const issues = JSON.parse(result)
 
       const progressSummary = {
         total: issues.length,
-        open: issues.filter(i => i.state === 'OPEN').length,
-        closed: issues.filter(i => i.state === 'CLOSED').length,
-        recentlyClosed: issues.filter(i =>
-          i.state === 'CLOSED' &&
-          new Date(i.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-        ).length
+        open: issues.filter((i) => i.state === 'OPEN').length,
+        closed: issues.filter((i) => i.state === 'CLOSED').length,
+        recentlyClosed: issues.filter(
+          (i) => i.state === 'CLOSED' && new Date(i.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+        ).length,
       }
 
       console.log(`📊 改善Issue状況:`)
@@ -306,7 +312,7 @@ ${recommendation.action}
       issuesCreated: this.issuesCreated.length,
       issues: this.issuesCreated,
       progress: progress,
-      nextActions: this.generateNextActions(report)
+      nextActions: this.generateNextActions(report),
     }
 
     // サマリーレポート保存
@@ -378,7 +384,7 @@ const args = process.argv.slice(2)
 const options = {
   skipIssueCreation: args.includes('--skip-issues'),
   skipSlackNotification: args.includes('--skip-slack'),
-  trackOnly: args.includes('--track-only')
+  trackOnly: args.includes('--track-only'),
 }
 
 // 実行

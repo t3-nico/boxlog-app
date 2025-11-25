@@ -9,7 +9,7 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { cn } from '@/lib/utils'
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout, useEventStyles } from '../shared'
+import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout, usePlanStyles } from '../shared'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 
 import type { EventPosition } from '../DayView/DayView.types'
@@ -119,7 +119,7 @@ export const FiveDayView = ({
   }, [events, displayDates, HOUR_HEIGHT])
 
   // 共通フック使用してスタイル計算
-  const eventStyles = useEventStyles(eventPositions)
+  const eventStyles = usePlanStyles(eventPositions)
 
   // TimeGrid が空き時間クリック処理を担当するため、この関数は不要
 
@@ -183,7 +183,7 @@ export const FiveDayView = ({
                 )}
                 style={{ width: `${100 / displayDates.length}%` }}
               >
-                {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある */}
+                {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
                 <FiveDayContent
                   date={date}
                   events={dayEvents}

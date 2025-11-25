@@ -61,15 +61,18 @@ try {
 #### 2. 必要な情報の取得
 
 **DSN の取得**
+
 1. プロジェクトを選択
 2. **Settings** → **Client Keys (DSN)**
 3. DSN をコピー（`https://xxx@sentry.io/xxx` 形式）
 
 **Organization と Project の確認**
+
 - **Organization Slug**: URLに表示される組織名（例: `my-org`）
 - **Project Slug**: プロジェクト名（例: `boxlog-app`）
 
 **Auth Token の生成**
+
 1. **Settings** → **Auth Tokens**
 2. **Create New Token**
 3. **Scopes** を選択:
@@ -111,6 +114,7 @@ curl http://localhost:3000/api/test/sentry?type=error
 ```
 
 **確認ポイント**:
+
 - [ ] エラーイベントが Sentry に送信される
 - [ ] スタックトレースが正確に表示される
 - [ ] ユーザーコンテキストが記録される
@@ -130,13 +134,13 @@ curl http://localhost:3000/api/test/sentry?type=error
 
 すべての環境（Production, Preview, Development）に追加：
 
-| 変数名 | 値 | 説明 |
-|--------|-----|------|
-| `NEXT_PUBLIC_SENTRY_DSN` | `https://your-dsn@sentry.io/project-id` | クライアント用DSN |
-| `SENTRY_ORG` | `your-organization-slug` | Organization Slug |
-| `SENTRY_PROJECT` | `boxlog-app` | プロジェクト名 |
-| `SENTRY_AUTH_TOKEN` | `your-auth-token` | 認証トークン |
-| `NEXT_PUBLIC_APP_VERSION` | `1.0.0` | アプリバージョン |
+| 変数名                    | 値                                      | 説明              |
+| ------------------------- | --------------------------------------- | ----------------- |
+| `NEXT_PUBLIC_SENTRY_DSN`  | `https://your-dsn@sentry.io/project-id` | クライアント用DSN |
+| `SENTRY_ORG`              | `your-organization-slug`                | Organization Slug |
+| `SENTRY_PROJECT`          | `boxlog-app`                            | プロジェクト名    |
+| `SENTRY_AUTH_TOKEN`       | `your-auth-token`                       | 認証トークン      |
+| `NEXT_PUBLIC_APP_VERSION` | `1.0.0`                                 | アプリバージョン  |
 
 #### 3. デプロイと確認
 
@@ -150,6 +154,7 @@ curl https://your-app.vercel.app/test-sentry
 ```
 
 **確認ポイント**:
+
 - [ ] プロジェクトが正常にデプロイされている
 - [ ] 本番環境でエラーが記録される
 - [ ] パフォーマンスデータが収集される
@@ -200,13 +205,13 @@ const CATEGORY_TAGS = {
     domain: 'authentication',
     priority: 'high',
     team: 'security',
-    alerting: 'immediate'
+    alerting: 'immediate',
   },
   DB: {
     domain: 'database',
     priority: 'critical',
     team: 'backend',
-    alerting: 'immediate'
+    alerting: 'immediate',
   },
   // ... 他のカテゴリ
 }
@@ -227,11 +232,7 @@ import { AppError } from '@/config/error-patterns'
 try {
   await fetchUserData(userId)
 } catch (error) {
-  const appError = new AppError(
-    'ユーザーデータの取得に失敗',
-    'DATA_NOT_FOUND_404',
-    { userId, originalError: error }
-  )
+  const appError = new AppError('ユーザーデータの取得に失敗', 'DATA_NOT_FOUND_404', { userId, originalError: error })
   reportToSentry(appError)
   throw appError
 }
@@ -261,7 +262,7 @@ export async function GET(request: Request) {
   } catch (error) {
     handleApiError(error as Error, {
       endpoint: '/api/data',
-      method: 'GET'
+      method: 'GET',
     })
     return Response.json({ error: 'Internal Server Error' }, { status: 500 })
   }
@@ -289,6 +290,7 @@ export default function RootLayout({ children }) {
 ```
 
 **計測される指標（Google 2025基準）**:
+
 - **LCP** (Largest Contentful Paint): ≤ 2.5s (Good), > 4.0s (Poor)
 - **INP** (Interaction to Next Paint): ≤ 200ms (Good), > 500ms (Poor) 🆕
 - **CLS** (Cumulative Layout Shift): < 0.1 (Good), > 0.25 (Poor)
@@ -313,12 +315,16 @@ const user = await traceDbQuery('users.findUnique', async () => {
 })
 
 // 汎用トレース
-const { result, duration } = await withTrace('complex-calculation', async () => {
-  return await heavyComputation()
-}, {
-  op: 'function',
-  tags: { complexity: 'high' }
-})
+const { result, duration } = await withTrace(
+  'complex-calculation',
+  async () => {
+    return await heavyComputation()
+  },
+  {
+    op: 'function',
+    tags: { complexity: 'high' },
+  }
+)
 ```
 
 #### 旧形式（非推奨）
@@ -329,7 +335,7 @@ import * as Sentry from '@sentry/nextjs'
 
 const transaction = Sentry.startTransaction({
   name: 'Custom Operation',
-  op: 'custom'
+  op: 'custom',
 })
 
 try {
@@ -356,7 +362,7 @@ Sentry.addBreadcrumb({
   message: 'User performed action',
   category: 'user-action',
   level: 'info',
-  data: { action: 'click', target: 'button' }
+  data: { action: 'click', target: 'button' },
 })
 ```
 
@@ -367,16 +373,19 @@ Sentry.addBreadcrumb({
 ### ダッシュボード確認
 
 #### Issues タブ
+
 - 発生したエラーの一覧
 - エラーの頻度・影響ユーザー数
 - スタックトレース・ユーザーコンテキスト
 
 #### Performance タブ
+
 - ページロード時間
 - API応答時間
 - Core Web Vitals 2025 (LCP, INP, CLS, FCP, TTFB)
 
 #### Releases タブ
+
 - デプロイバージョン別のエラー追跡
 - リグレッション検出
 
@@ -407,10 +416,12 @@ Sentry.addBreadcrumb({
 ### チームコラボレーション
 
 #### Issue割り当て
+
 - カテゴリ別タグ（`team:security`, `team:backend`）で自動割り当て
 - 優先度タグ（`priority:critical`, `priority:high`）で優先順位付け
 
 #### コメント・ディスカッション
+
 - Issueに対するコメント・解決方法の共有
 - GitHubとの連携でコミット・PRとのリンク
 
@@ -423,6 +434,7 @@ Sentry.addBreadcrumb({
 **症状**: `[Sentry] Cannot initialize SDK with the given DSN`
 
 **解決方法**:
+
 1. DSN の形式を確認（`https://xxx@sentry.io/xxx`）
 2. `.env.local` の変数名を確認（`NEXT_PUBLIC_SENTRY_DSN`）
 3. 開発サーバーを再起動
@@ -440,6 +452,7 @@ npm run sentry:test
 **症状**: `[Sentry] Unauthorized`
 
 **解決方法**:
+
 1. Auth Token のスコープを確認
    - `project:releases` ✅
    - `project:write` ✅
@@ -452,6 +465,7 @@ npm run sentry:test
 **症状**: Sentryダッシュボードで元のTypeScriptコードが表示されない
 
 **解決方法**:
+
 1. `.sentryclirc` ファイルの設定を確認
 2. ビルド時にソースマップがアップロードされているか確認
 
@@ -468,6 +482,7 @@ npx @sentry/cli releases files <version> upload-sourcemaps ./build
 **症状**: Performance タブにデータが表示されない
 
 **解決方法**:
+
 1. Sentryプロジェクトで **Performance** が有効か確認
 2. `tracesSampleRate` の設定を確認（`sentry.server.config.ts`）
 3. `web-vitals` パッケージがインストールされているか確認
@@ -481,6 +496,7 @@ npm install web-vitals
 **症状**: 開発中に不要なエラーが大量に送信される
 
 **解決方法**:
+
 1. 開発環境でのフィルタリング設定を確認（`src/lib/sentry/integration.ts`）
 2. 環境変数で開発環境を無効化
 
@@ -496,6 +512,7 @@ NEXT_PUBLIC_SENTRY_ENABLED=false  # 開発環境で無効化
 ### Q1. Sentryの料金は？
 
 BoxLogは無料プランで十分です：
+
 - 月5,000エラー
 - 月10,000トランザクション
 - 30日間のデータ保持
@@ -509,6 +526,7 @@ BoxLogは無料プランで十分です：
 ### Q3. パフォーマンス目標値は？
 
 Core Web Vitals目標：
+
 - **LCP** (Largest Contentful Paint): < 2.5秒
 - **FID** (First Input Delay): < 100ms
 - **CLS** (Cumulative Layout Shift): < 0.1
@@ -520,6 +538,7 @@ Core Web Vitals目標：
 ### Q5. ユーザーのプライバシーは保護される？
 
 はい。以下の対応を実施：
+
 - 個人情報（メールアドレス、パスワード等）はマスキング
 - IPアドレスは匿名化オプション有効
 - GDPRコンプライアンス対応
@@ -527,6 +546,7 @@ Core Web Vitals目標：
 ### Q6. エラーが発生しても通知が来ない
 
 **アラートルール**を設定してください：
+
 1. Sentry Dashboard → **Alerts** → **Create Alert**
 2. 条件・通知先（Slack/Email）を設定
 
@@ -549,15 +569,18 @@ beforeSend: (event) => {
 ## 参考リンク
 
 ### 公式ドキュメント
+
 - [Sentry Next.js Guide](https://docs.sentry.io/platforms/javascript/guides/nextjs/)
 - [Sentry Performance Monitoring](https://docs.sentry.io/product/performance/)
 - [Sentry Error Monitoring](https://docs.sentry.io/product/issues/)
 
 ### BoxLog関連
+
 - **エラーパターンガイド**: [`../architecture/ERROR_PATTERNS_GUIDE.md`](../architecture/ERROR_PATTERNS_GUIDE.md)
 - **エラーハンドリング**: [`../architecture/ERROR_HANDLING.md`](../architecture/ERROR_HANDLING.md)
 
 ### ヘルパースクリプト
+
 - **接続テスト**: `node scripts/sentry/connection-test.js`
 - **DSNガイド**: `node scripts/sentry/dsn-guide.js`
 

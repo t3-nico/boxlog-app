@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 
 import { ArrowRight, Calendar } from 'lucide-react'
 
-// import type { Event } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour, PRODUCTIVITY_COLORS } from '@/types/chronotype'
 
@@ -17,7 +17,7 @@ interface CurrentScheduleCardProps {
 
 export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardProps) => {
   const [currentTime, setCurrentTime] = useState(new Date())
-  const [currentEvent, setCurrentEvent] = useState<Event | null>(null)
+  const [currentEvent, setCurrentEvent] = useState<CalendarPlan | null>(null)
   const router = useRouter()
 
   // ストアから実際のイベントデータを取得
@@ -60,7 +60,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   )
 
   // 今日のイベントを独立してフェッチ
-  const [todayEvents, _setTodayEvents] = useState<Event[]>([])
+  const [todayEvents, _setTodayEvents] = useState<CalendarPlan[]>([])
 
   useEffect(() => {
     console.log('🔍 [DISABLED] Would fetch today events - disabled for debugging')

@@ -38,14 +38,14 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
         const response = await fetch(`/api/tags/${tag.id}?usage=true`)
         if (response.ok) {
           const data = await response.json()
-          setUsage(data.usage || { ticketCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
+          setUsage(data.usage || { planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
         } else {
           // エラー時はデフォルト値
-          setUsage({ ticketCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
+          setUsage({ planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
         }
       } catch (error) {
         console.error('Failed to fetch tag usage:', error)
-        setUsage({ ticketCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
+        setUsage({ planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
       } finally {
         setIsLoading(false)
       }
@@ -86,7 +86,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
             <div className="bg-muted rounded-lg p-4">
               <p className="mb-2 text-sm font-medium">現在の使用状況:</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
-                <li>• Tickets: {usage.ticketCount}件</li>
+                <li>• Plans: {usage.planCount}件</li>
                 <li>• Events: {usage.eventCount}件</li>
                 <li>• Tasks: {usage.taskCount}件</li>
               </ul>

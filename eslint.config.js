@@ -2,8 +2,8 @@
 // Next.js公式推奨設定を使用（学習コスト0、メンテ0）
 
 import { FlatCompat } from '@eslint/eslintrc'
-import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -15,13 +15,7 @@ const compat = new FlatCompat({
 const config = [
   // Ignore patterns
   {
-    ignores: [
-      '**/node_modules/**',
-      '**/.next/**',
-      '**/dist/**',
-      '**/build/**',
-      '**/coverage/**',
-    ],
+    ignores: ['**/node_modules/**', '**/.next/**', '**/dist/**', '**/build/**', '**/coverage/**'],
   },
 
   // Next.js公式推奨設定（React, TypeScript, アクセシビリティ含む）

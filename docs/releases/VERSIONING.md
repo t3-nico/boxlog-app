@@ -1,6 +1,7 @@
 # バージョニング管理ガイド
 
 ## 📋 目次
+
 - [概要](#概要)
 - [Semantic Versioning](#semantic-versioning)
 - [バージョンアップ手順](#バージョンアップ手順)
@@ -8,11 +9,13 @@
 - [バージョニング計画](#バージョニング計画)
 
 ## 概要
+
 BoxLogは [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html) に準拠したバージョン管理を行います。
 
 ## Semantic Versioning
 
 ### バージョン形式
+
 ```
 X.Y.Z
 ```
@@ -24,6 +27,7 @@ X.Y.Z
 ### バージョンアップの判断基準
 
 #### MAJOR (X) - 破壊的変更
+
 - API の破壊的変更
 - データベーススキーマの非互換変更
 - 設定ファイル形式の変更
@@ -32,6 +36,7 @@ X.Y.Z
 **例**: `1.0.0` → `2.0.0`
 
 #### MINOR (Y) - 新機能
+
 - 新しい機能の追加
 - 既存機能の拡張
 - パフォーマンス改善
@@ -40,6 +45,7 @@ X.Y.Z
 **例**: `1.0.0` → `1.1.0`
 
 #### PATCH (Z) - バグ修正
+
 - バグ修正
 - セキュリティパッチ
 - ドキュメント修正
@@ -102,6 +108,7 @@ gh release create vX.Y.Z \
 ## リリースフロー
 
 ### 開発フロー
+
 ```
 1. 機能開発 (feature/xxx ブランチ)
    ↓
@@ -142,16 +149,17 @@ npm version prerelease --preid=rc
 
 ### ロードマップ
 
-| バージョン | 目標 | 主な内容 |
-|-----------|------|---------|
-| **v0.0.1** | 初回リリース | 基本機能実装 |
-| **v0.0.x** | バグ修正 | 初期不具合対応 |
-| **v0.1.0** | TypeScript厳格化 | strict mode完了 |
-| **v0.2.0** | テスト強化 | カバレッジ60%達成 |
-| **v0.3.0** | E2Eテスト | Playwright導入 |
-| **v1.0.0** | 正式リリース | 本番運用開始 |
+| バージョン | 目標             | 主な内容          |
+| ---------- | ---------------- | ----------------- |
+| **v0.0.1** | 初回リリース     | 基本機能実装      |
+| **v0.0.x** | バグ修正         | 初期不具合対応    |
+| **v0.1.0** | TypeScript厳格化 | strict mode完了   |
+| **v0.2.0** | テスト強化       | カバレッジ60%達成 |
+| **v0.3.0** | E2Eテスト        | Playwright導入    |
+| **v1.0.0** | 正式リリース     | 本番運用開始      |
 
 ### v1.0.0 までの条件
+
 - [ ] TypeScript strict mode完全対応
 - [ ] テストカバレッジ80%以上
 - [ ] E2Eテスト導入
@@ -163,17 +171,20 @@ npm version prerelease --preid=rc
 ## ベストプラクティス
 
 ### ✅ 推奨
+
 - リリース前に必ず `npm run lint` と `npm run typecheck` を実行
 - CHANGELOG.md は必ず更新
 - 破壊的変更は BREAKING CHANGE として明記
 - バージョンタグは必ず `v` プレフィックスを付ける（例: `v0.0.1`）
 
 ### ❌ 非推奨
+
 - リリース後のバージョン番号の変更
 - タグの削除・付け替え
 - CHANGELOG の過去バージョン編集（誤字修正を除く）
 
 ## 参考リンク
+
 - [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
 - [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - [npm version](https://docs.npmjs.com/cli/v8/commands/npm-version)

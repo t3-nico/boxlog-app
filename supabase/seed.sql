@@ -9,11 +9,11 @@
 -- ========================================
 -- テスト用アクティビティデータ（開発用）
 -- ========================================
--- 既存のチケットに対してアクティビティを追加する場合、
+-- 既存のプランに対してアクティビティを追加する場合、
 -- 以下のSQLを手動で実行してください：
 --
 -- Supabase SQL Editorで実行:
--- INSERT INTO ticket_activities (ticket_id, user_id, action_type, field_name, old_value, new_value)
+-- INSERT INTO plan_activities (plan_id, user_id, action_type, field_name, old_value, new_value)
 -- SELECT
 --   t.id,
 --   t.user_id,
@@ -21,13 +21,13 @@
 --   NULL,
 --   NULL,
 --   NULL
--- FROM tickets t
+-- FROM plans t
 -- WHERE t.user_id = auth.uid()
 -- LIMIT 1;
 --
 -- その他のアクティビティ例：
--- INSERT INTO ticket_activities (ticket_id, user_id, action_type, field_name, old_value, new_value)
+-- INSERT INTO plan_activities (plan_id, user_id, action_type, field_name, old_value, new_value)
 -- VALUES
---   ((SELECT id FROM tickets WHERE user_id = auth.uid() LIMIT 1), auth.uid(), 'status_changed', 'status', 'backlog', 'active'),
---   ((SELECT id FROM tickets WHERE user_id = auth.uid() LIMIT 1), auth.uid(), 'priority_changed', 'priority', 'normal', 'high'),
---   ((SELECT id FROM tickets WHERE user_id = auth.uid() LIMIT 1), auth.uid(), 'title_changed', 'title', '旧タイトル', '新タイトル');
+--   ((SELECT id FROM plans WHERE user_id = auth.uid() LIMIT 1), auth.uid(), 'status_changed', 'status', 'backlog', 'active'),
+--   ((SELECT id FROM plans WHERE user_id = auth.uid() LIMIT 1), auth.uid(), 'priority_changed', 'priority', 'normal', 'high'),
+--   ((SELECT id FROM plans WHERE user_id = auth.uid() LIMIT 1), auth.uid(), 'title_changed', 'title', '旧タイトル', '新タイトル');

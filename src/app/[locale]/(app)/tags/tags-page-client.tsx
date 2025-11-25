@@ -82,8 +82,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
 
-  // タグごとのチケット数を取得
-  const { data: tagTicketCounts = {} } = api.tickets.getTagTicketCounts.useQuery()
+  // タグごとのプラン数を取得
+  const { data: tagplanCounts = {} } = api.plans.getTagPlanCounts.useQuery()
 
   // アクティブなタグ数を計算
   const activeTagsCount = useMemo(() => {
@@ -760,7 +760,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                   }}
                                 >
                                   {tag.name}{' '}
-                                  <span className="text-muted-foreground">({tagTicketCounts[tag.id] || 0})</span>
+                                  <span className="text-muted-foreground">({tagplanCounts[tag.id] || 0})</span>
                                 </span>
                               )}
                             </div>

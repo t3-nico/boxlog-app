@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useTicketMutations } from '@/features/tickets/hooks/useTicketMutations'
-import type { TicketStatus } from '@/features/tickets/types/ticket'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
+import type { PlanStatus } from '@/features/plans/types/plan'
 import { Archive, Calendar, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -36,7 +36,7 @@ import { BulkDatePickerDialog } from './BulkDatePickerDialog'
  */
 export function BulkActionsToolbar() {
   const { getSelectedCount, getSelectedIds, clearSelection } = useInboxSelectionStore()
-  const { bulkUpdateTicket, bulkDeleteTicket } = useTicketMutations()
+  const { bulkUpdatePlan, bulkDeletePlan } = usePlanMutations()
   const selectedCount = getSelectedCount()
   const [showDateDialog, setShowDateDialog] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -47,16 +47,16 @@ export function BulkActionsToolbar() {
   }
 
   // ステータス変更ハンドラー
-  const handleStatusChange = async (status: TicketStatus) => {
+  const handleStatusChange = async (status: PlanStatus) => {
     setIsProcessing(true)
     try {
       const selectedIds = Array.from(getSelectedIds())
-      await bulkUpdateTicket.mutateAsync({
+      await bulkUpdatePlan.mutateAsync({
         ids: selectedIds,
         data: { status },
       })
 
-      toast.success(`${selectedIds.length}件のチケットのステータスを変更しました`)
+      toast.success(`${selectedIds.length}件のプランのステータスを変更しました`)
       clearSelection()
     } catch (error) {
       toast.error('ステータスの変更に失敗しました')
@@ -76,12 +76,12 @@ export function BulkActionsToolbar() {
     setIsProcessing(true)
     try {
       const selectedIds = Array.from(getSelectedIds())
-      await bulkUpdateTicket.mutateAsync({
+      await bulkUpdatePlan.mutateAsync({
         ids: selectedIds,
         data: { status: 'done' }, // アーカイブ = 完了ステータスに変更
       })
 
-      toast.success(`${selectedIds.length}件のチケットをアーカイブしました`)
+      toast.success(`${selectedIds.length}件のプランをアーカイブしました`)
       clearSelection()
     } catch (error) {
       toast.error('アーカイブに失敗しました')
@@ -94,18 +94,18 @@ export function BulkActionsToolbar() {
   // 削除ハンドラー
   const handleDelete = async () => {
     // 確認ダイアログ
-    if (!window.confirm(`${selectedCount}件のチケットを削除しますか？この操作は取り消せません。`)) {
+    if (!window.confirm(`${selectedCount}件のプランを削除しますか？この操作は取り消せません。`)) {
       return
     }
 
     setIsProcessing(true)
     try {
       const selectedIds = Array.from(getSelectedIds())
-      await bulkDeleteTicket.mutateAsync({
+      await bulkDeletePlan.mutateAsync({
         ids: selectedIds,
       })
 
-      toast.success(`${selectedIds.length}件のチケットを削除しました`)
+      toast.success(`${selectedIds.length}件のプランを削除しました`)
       clearSelection()
     } catch (error) {
       toast.error('削除に失敗しました')
@@ -129,7 +129,7 @@ export function BulkActionsToolbar() {
       {/* 右側: 一括操作ボタン */}
       <div className="flex items-center gap-2">
         {/* ステータス変更 */}
-        <Select onValueChange={(value) => handleStatusChange(value as TicketStatus)} disabled={isProcessing}>
+        <Select onValueChange={(value) => handleStatusChange(value as PlanStatus)} disabled={isProcessing}>
           <SelectTrigger className="h-8 w-[140px]">
             <SelectValue placeholder="ステータス変更" />
           </SelectTrigger>

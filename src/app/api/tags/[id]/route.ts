@@ -43,20 +43,20 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       // TODO: 実際のテーブル名に置き換える必要があります
       // 現在は仮の実装として0を返します
       const usage = {
-        ticketCount: 0,
+        planCount: 0,
         eventCount: 0,
         taskCount: 0,
         totalCount: 0,
       }
 
-      // ticket_tagsテーブルが存在する場合
+      // plan_tagsテーブルが存在する場合
       try {
-        const { count: ticketCount } = await supabase
-          .from('ticket_tags')
+        const { count: planCount } = await supabase
+          .from('plan_tags')
           .select('*', { count: 'exact', head: true })
           .eq('tag_id', id)
 
-        usage.ticketCount = ticketCount || 0
+        usage.planCount = planCount || 0
       } catch {
         // テーブルが存在しない場合は0のまま
       }
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         // テーブルが存在しない場合は0のまま
       }
 
-      usage.totalCount = usage.ticketCount + usage.eventCount + usage.taskCount
+      usage.totalCount = usage.planCount + usage.eventCount + usage.taskCount
 
       return NextResponse.json({ data, usage })
     }

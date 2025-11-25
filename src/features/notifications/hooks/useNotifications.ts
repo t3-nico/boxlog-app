@@ -2,11 +2,11 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
-import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 interface UseNotificationsOptions {
-  events: CalendarEvent[]
-  onReminderTriggered?: (event: CalendarEvent) => void
+  events: CalendarPlan[]
+  onReminderTriggered?: (event: CalendarPlan) => void
 }
 
 interface UseNotificationsReturn {

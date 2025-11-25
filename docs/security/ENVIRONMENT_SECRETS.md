@@ -23,16 +23,19 @@ GitHub ActionsのEnvironment機能を使用して、環境ごとにSecretsを分
 ## 🏗️ Environment構成
 
 ### 1. Development（開発環境）
+
 - **用途**: PR、devブランチのテスト
 - **承認**: 不要
 - **ブランチ制限**: なし
 
 ### 2. Staging（ステージング環境）
+
 - **用途**: mainブランチのテスト
 - **承認**: 不要
 - **ブランチ制限**: main, dev
 
 ### 3. Production（本番環境）
+
 - **用途**: 本番デプロイ（将来）
 - **承認**: **必須**（@t3-nico）
 - **ブランチ制限**: main のみ
@@ -44,6 +47,7 @@ GitHub ActionsのEnvironment機能を使用して、環境ごとにSecretsを分
 ### BoxLogのデプロイ方式
 
 **現在**: Vercel GitHubインテグレーション（自動デプロイ）
+
 - main ブランチ → 本番デプロイ
 - PR → プレビューデプロイ
 
@@ -51,13 +55,13 @@ GitHub ActionsのEnvironment機能を使用して、環境ごとにSecretsを分
 
 ### Secrets使用状況
 
-| Secret | 用途 | Environment |
-|--------|------|-------------|
-| `CODECOV_TOKEN` | カバレッジレポート | CI専用（環境不要） |
-| `NEXT_PUBLIC_SUPABASE_URL` | ビルド時環境変数 | Development |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ビルド時環境変数 | Development |
-| `LHCI_GITHUB_APP_TOKEN` | Lighthouse CI | CI専用 |
-| `SENTRY_DSN` | Sentry検証（オプション） | Development |
+| Secret                          | 用途                     | Environment        |
+| ------------------------------- | ------------------------ | ------------------ |
+| `CODECOV_TOKEN`                 | カバレッジレポート       | CI専用（環境不要） |
+| `NEXT_PUBLIC_SUPABASE_URL`      | ビルド時環境変数         | Development        |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ビルド時環境変数         | Development        |
+| `LHCI_GITHUB_APP_TOKEN`         | Lighthouse CI            | CI専用             |
+| `SENTRY_DSN`                    | Sentry検証（オプション） | Development        |
 
 ---
 
@@ -76,18 +80,20 @@ GitHub ActionsのEnvironment Secretsは**CI/CDビルド検証用**として活�
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: development  # ← 追加
+    environment: development # ← 追加
     steps:
       # ... ビルドステップ
 ```
 
 **効果**:
+
 - Secretsの環境分離（開発用Supabase等）
 - ビルド検証時のSecrets使用を明示化
 
 #### 2. **Low severity警告の解消**
 
 監査スクリプトの警告:
+
 ```
 🟢 [LOW] ci.yml
    Issue: Direct secret access without environment protection
@@ -156,7 +162,7 @@ jobs:
   build:
     name: 🏗️ Build
     runs-on: ubuntu-latest
-    environment: development  # ← 追加
+    environment: development # ← 追加
     needs: [lint, typecheck, unit-tests]
 
     steps:
@@ -175,7 +181,7 @@ jobs:
   e2e-tests:
     name: 🌐 E2E Tests
     runs-on: ubuntu-latest
-    environment: development  # ← 追加
+    environment: development # ← 追加
 
     steps:
       - name: 🧪 Run Playwright tests
@@ -190,6 +196,7 @@ jobs:
 ## 🔒 セキュリティ効果
 
 ### Before（Phase 2まで）
+
 ```yaml
 # リポジトリレベルのSecrets使用
 env:
@@ -198,11 +205,12 @@ env:
 ```
 
 ### After（Phase 3）
+
 ```yaml
 # Environment Secretsに変更
 jobs:
   deploy:
-    environment: production  # ← 承認必須
+    environment: production # ← 承認必須
     steps:
       - env:
           TOKEN: ${{ secrets.API_TOKEN }}

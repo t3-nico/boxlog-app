@@ -1,5 +1,5 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
-// TODO(#621): Events削除後、Tickets/Sessionsに移行予定
+// TODO(#621): Events削除後、plans/Sessionsに移行予定
 // import type { Event } from '@/features/events'
 import type { SmartFolder, Tag, Task } from '@/types/common'
 

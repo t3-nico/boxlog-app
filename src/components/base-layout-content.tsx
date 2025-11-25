@@ -36,7 +36,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const pathname = usePathname() || '/'
   const searchParams = useSearchParams()
 
-  // TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装
+  // TODO(#621): Inspector削除後、plans/Sessions統合後に再実装
   // jsx-no-bind optimization: Create event handler
   const handleCreateEventClick = useCallback(() => {
     // openCreateInspector({
@@ -84,7 +84,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
                   </main>
                 </div>
 
-                {/* TODO(#621): Inspector削除後、Tickets/Sessions統合後に再実装 */}
+                {/* TODO(#621): Inspector削除後、plans/Sessions統合後に再実装 */}
                 {/* <Inspector /> */}
               </div>
             </div>

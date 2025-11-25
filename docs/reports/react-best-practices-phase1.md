@@ -13,13 +13,13 @@ BoxLogアプリのReact実装は**全体的に非常に高品質**です。基�
 
 ### 総合評価: A+ (95/100)
 
-| 項目 | スコア | 評価 |
-|------|--------|------|
-| Hooks使用パターン | 98/100 | 優秀 |
-| イベントハンドラー | 100/100 | 完璧 |
-| useEffect依存配列 | 92/100 | 良好 |
-| メモ化（memo/useMemo/useCallback） | 97/100 | 優秀 |
-| 状態管理設計 | 90/100 | 良好 |
+| 項目                               | スコア  | 評価 |
+| ---------------------------------- | ------- | ---- |
+| Hooks使用パターン                  | 98/100  | 優秀 |
+| イベントハンドラー                 | 100/100 | 完璧 |
+| useEffect依存配列                  | 92/100  | 良好 |
+| メモ化（memo/useMemo/useCallback） | 97/100  | 優秀 |
+| 状態管理設計                       | 90/100  | 良好 |
 
 ---
 
@@ -42,16 +42,17 @@ BoxLogアプリのReact実装は**全体的に非常に高品質**です。基�
 
 ```tsx
 // 問題: 変数名の不一致
-const [_isConflictModalOpen, _setIsConflictModalOpen] = useState(false)  // 行50
+const [_isConflictModalOpen, _setIsConflictModalOpen] = useState(false) // 行50
 
 // エラー箇所
-setIsConflictModalOpen(true)   // 行167: アンダースコアなし → エラー
-setIsConflictModalOpen(false)  // 行173: アンダースコアなし → エラー
+setIsConflictModalOpen(true) // 行167: アンダースコアなし → エラー
+setIsConflictModalOpen(false) // 行173: アンダースコアなし → エラー
 ```
 
 **影響**: TypeScriptビルドエラー、実行時エラーを引き起こす
 
 **修正方法**:
+
 ```tsx
 // 修正案1: アンダースコアを削除
 const [isConflictModalOpen, setIsConflictModalOpen] = useState(false)
@@ -107,6 +108,7 @@ BoxLogアプリのイベントハンドラー実装は**業界トップクラス
 ### 優れた実装パターン
 
 #### パターン1: 関数参照（最も推奨）
+
 ```tsx
 // TagInput.tsx:366
 onClick={createSuggestionClickHandler(suggestion.name)}
@@ -116,6 +118,7 @@ onClick={onClose}
 ```
 
 #### パターン2: アロー関数（引数が必要な場合）
+
 ```tsx
 // DateNavigator.tsx:45
 onClick={() => onNavigate('today')}
@@ -125,6 +128,7 @@ onClick={() => handleProviderSignIn('google')}
 ```
 
 #### パターン3: useCallbackによる最適化
+
 ```tsx
 // TagInput.tsx:172-177
 const createTagAddHandler = useCallback(
@@ -140,7 +144,7 @@ const createTagAddHandler = useCallback(
 ### 📈 コード品質の高さの要因
 
 1. **useCallbackの積極的活用**: 683箇所で使用
-2. **create*Handlerパターン**: 23箇所で明示的なハンドラー生成関数を使用
+2. **create\*Handlerパターン**: 23箇所で明示的なハンドラー生成関数を使用
 3. **一貫した命名規則**: `createTagAddHandler`, `createSuggestionClickHandler`等
 
 ---
@@ -169,13 +173,14 @@ useEffect(() => {
       setAssessment(initialWorkflow.assessment)
     }
   } else {
-    performAutomaticAssessment()  // ← 依存配列に含まれていない
+    performAutomaticAssessment() // ← 依存配列に含まれていない
   }
 }, [translationKey, language, originalText, translatedText])
 // ← initialWorkflow, performAutomaticAssessmentが不足
 ```
 
 **修正案**:
+
 ```tsx
 }, [translationKey, language, originalText, translatedText, initialWorkflow, performAutomaticAssessment])
 ```
@@ -187,14 +192,15 @@ useEffect(() => {
 **ファイル**: `/src/hooks/useAutoRetry.ts:76`
 
 ```tsx
-const finalConfig = { ...DEFAULT_CONFIG, ...config }  // 毎回新しいオブジェクト
+const finalConfig = { ...DEFAULT_CONFIG, ...config } // 毎回新しいオブジェクト
 
 const executeWithRetry = useCallback(async (): Promise<T> => {
   // finalConfigを使用
-}, [asyncFunction, finalConfig, calculateDelay])  // ← finalConfigが毎回変わる
+}, [asyncFunction, finalConfig, calculateDelay]) // ← finalConfigが毎回変わる
 ```
 
 **修正案**:
+
 ```tsx
 const finalConfig = useMemo(() => ({ ...DEFAULT_CONFIG, ...config }), [config])
 ```
@@ -221,12 +227,13 @@ useEffect(() => {
 ```
 
 **修正案**:
+
 ```tsx
 useEffect(() => {
-  const startTime = sessionStart.current  // ローカル変数にコピー
+  const startTime = sessionStart.current // ローカル変数にコピー
 
   return () => {
-    const sessionDuration = Date.now() - startTime  // コピーした値を使用
+    const sessionDuration = Date.now() - startTime // コピーした値を使用
   }
 }, [])
 ```
@@ -239,7 +246,7 @@ useEffect(() => {
 // use-analytics.ts:90 - マウント時のみ実行
 useEffect(() => {
   analytics.initialize()
-}, [])  // ✅ 初期化は1回のみで良いので空配列が適切
+}, []) // ✅ 初期化は1回のみで良いので空配列が適切
 
 // useMediaQuery.ts:8 - 適切な依存配列
 useEffect(() => {
@@ -252,16 +259,16 @@ useEffect(() => {
 
   mediaQueryList.addEventListener('change', handleChange)
   return () => mediaQueryList.removeEventListener('change', handleChange)
-}, [query])  // ✅ queryが変わったら再実行
+}, [query]) // ✅ queryが変わったら再実行
 ```
 
 ### 修正優先度
 
-| 優先度 | 件数 | 内容 |
-|--------|------|------|
-| 🔴 高 | 3件 | 無限ループリスク、重要な依存不足 |
-| 🟡 中 | 6件 | イベントハンドラの依存不足 |
-| 🟢 低 | 4件 | 依存配列の過不足（影響小） |
+| 優先度 | 件数 | 内容                             |
+| ------ | ---- | -------------------------------- |
+| 🔴 高  | 3件  | 無限ループリスク、重要な依存不足 |
+| 🟡 中  | 6件  | イベントハンドラの依存不足       |
+| 🟢 低  | 4件  | 依存配列の過不足（影響小）       |
 
 ---
 
@@ -300,16 +307,19 @@ function generateMemoKey(
   filters: Record<string, unknown>,
   viewType: string
 ): string {
-  return fastHash(JSON.stringify({
-    events: generateEventHash(events),
-    dateRange: `${startDate.getTime()}-${endDate.getTime()}`,
-    filters: JSON.stringify(filters),
-    viewType,
-  }))
+  return fastHash(
+    JSON.stringify({
+      events: generateEventHash(events),
+      dateRange: `${startDate.getTime()}-${endDate.getTime()}`,
+      filters: JSON.stringify(filters),
+      viewType,
+    })
+  )
 }
 ```
 
 **特徴**:
+
 - LRUキャッシュによるメモリ管理
 - パフォーマンス監視（16ms閾値）
 - キャッシュヒット/ミスのログ出力
@@ -328,19 +338,25 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   // ... 多数のprops
 }) {
   // positionとeventの変更時のみ再レンダリング
-  const dynamicStyle = useMemo(() => ({
-    position: 'absolute',
-    top: `${safePosition.top}px`,
-    left: `${safePosition.left}%`,
-    width: `${safePosition.width}%`,
-    height: `${Math.max(safePosition.height, MIN_EVENT_HEIGHT)}px`,
-  }), [safePosition])
+  const dynamicStyle = useMemo(
+    () => ({
+      position: 'absolute',
+      top: `${safePosition.top}px`,
+      left: `${safePosition.left}%`,
+      width: `${safePosition.width}%`,
+      height: `${Math.max(safePosition.height, MIN_EVENT_HEIGHT)}px`,
+    }),
+    [safePosition]
+  )
 
   // useCallbackで全イベントハンドラーをメモ化
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-    onClick?.(event)
-  }, [onClick, event])
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      onClick?.(event)
+    },
+    [onClick, event]
+  )
 })
 ```
 
@@ -355,8 +371,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
 const virtualItems = useMemo(() => {
   const items: VirtualizedItem[] = []
   for (let hour = startHour; hour < endHour; hour++) {
-    const isVisible = hour >= viewport.visibleStart - overscan &&
-                     hour <= viewport.visibleEnd + overscan
+    const isVisible = hour >= viewport.visibleStart - overscan && hour <= viewport.visibleEnd + overscan
     items.push({ index, hour, top, height, isVisible })
   }
   return items
@@ -405,11 +420,11 @@ return useMemo(() => {
 
 ### 統計サマリー
 
-| メモ化手法 | 使用箇所 | 適切な使用 | 過剰最適化 | 不足 |
-|------------|----------|------------|------------|------|
-| useMemo | 188件 | ~185件 | ~3件 | - |
-| useCallback | 1,081件 | ~1,070件 | ~11件 | - |
-| React.memo | 21件 | 21件 | 0件 | ~5-10件推奨 |
+| メモ化手法  | 使用箇所 | 適切な使用 | 過剰最適化 | 不足        |
+| ----------- | -------- | ---------- | ---------- | ----------- |
+| useMemo     | 188件    | ~185件     | ~3件       | -           |
+| useCallback | 1,081件  | ~1,070件   | ~11件      | -           |
+| React.memo  | 21件     | 21件       | 0件        | ~5-10件推奨 |
 
 ---
 
@@ -440,6 +455,7 @@ BoxLogは極めて高度な状態管理システムを実装しています：
 ```
 
 **特徴**:
+
 - グローバルストアレジストリによる一元管理
 - 自動的な永続化・リアルタイム同期の統合
 - デバッグツール（StoreDebugger）完備
@@ -465,17 +481,15 @@ Contextが適切に責務ごとに分割されています：
 
 ```tsx
 // ✅ 優れた実装例
-setState(prev => ({
+setState((prev) => ({
   ...prev,
-  messages: prev.messages.map(msg =>
-    msg.id === id ? { ...msg, content: newContent } : msg
-  )
+  messages: prev.messages.map((msg) => (msg.id === id ? { ...msg, content: newContent } : msg)),
 }))
 
 // ✅ 配列の不変更新
-setState(prev => ({
+setState((prev) => ({
   ...prev,
-  messages: [...prev.messages, newMessage]
+  messages: [...prev.messages, newMessage],
 }))
 ```
 
@@ -486,11 +500,13 @@ setState(prev => ({
 #### 1. Zustandストアの実運用が限定的
 
 **問題**:
+
 - 高度なストアファクトリーシステムが実装されているが、実際の機能での使用例が少ない
 - `/src/stores/task-store.ts`は主にデモ・サンプル用
 - 実際の機能はContextやuseStateに依存
 
 **推奨**:
+
 ```typescript
 // 現状: 各機能でContextを個別実装
 const ChatContext = createContext<ChatContextValue>()
@@ -499,11 +515,13 @@ const ChatContext = createContext<ChatContextValue>()
 export const useChatStore = StoreFactory.createPersisted<ChatState>({
   type: 'persisted',
   name: 'chat-store',
-  initialState: { /* ... */ },
+  initialState: {
+    /* ... */
+  },
   persist: {
     name: 'boxlog-chat',
-    storage: 'localStorage'
-  }
+    storage: 'localStorage',
+  },
 })
 ```
 
@@ -538,12 +556,14 @@ const { data: tasks, isLoading } = trpc.tasks.list.useQuery()
 ### 総合評価
 
 **強み**:
+
 - ✅ 高度なストアファクトリーシステムを実装済み
 - ✅ Contextの適切な分割と責務分離
 - ✅ Immutableパターンの徹底
 - ✅ カスタムフックによる状態管理の抽象化
 
 **弱み**:
+
 - ⚠️ ストアファクトリーの実運用が少ない
 - ⚠️ propsバケツリレーが一部存在
 - ⚠️ グローバル状態とローカル状態の境界が不明確
@@ -601,12 +621,14 @@ const { data: tasks, isLoading } = trpc.tasks.list.useQuery()
 ## 📚 参考資料
 
 ### React公式ドキュメント
+
 - [Hooks Rules](https://react.dev/reference/rules/rules-of-hooks)
 - [useEffect Dependencies](https://react.dev/reference/react/useEffect#my-effect-runs-twice-when-the-component-mounts)
 - [React.memo](https://react.dev/reference/react/memo)
 - [State Management](https://react.dev/learn/managing-state)
 
 ### BoxLog内部ドキュメント
+
 - [AI品質基準（公式準拠版）](../../.claude/code-standards.md)
 - [CLAUDE.md](../../CLAUDE.md) - React公式準拠の記載あり
 - [Hooks使用ガイドライン](../../src/hooks/CLAUDE.md)

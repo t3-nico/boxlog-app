@@ -4,9 +4,9 @@
  */
 
 import { notificationsRouter } from './routers/notifications'
+import { plansRouter } from './routers/plans'
 import { profileRouter } from './routers/profile'
 import { tasksRouter } from './routers/tasks'
-import { ticketsRouter } from './routers/tickets'
 import { createTRPCRouter } from './trpc'
 
 /**
@@ -15,7 +15,7 @@ import { createTRPCRouter } from './trpc'
 export const appRouter = createTRPCRouter({
   tasks: tasksRouter,
   profile: profileRouter,
-  tickets: ticketsRouter,
+  plans: plansRouter,
   notifications: notificationsRouter,
   // 他のルーターをここに追加
   // auth: authRouter,

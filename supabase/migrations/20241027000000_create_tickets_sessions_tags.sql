@@ -1,5 +1,5 @@
 -- ========================================
--- Ticket & Session Management System
+-- plan & Session Management System
 -- 作成日: 2024-10-27
 -- Phase 1: Database Foundation
 -- ========================================
@@ -30,12 +30,12 @@ CREATE POLICY "Users can update own tags" ON tags FOR UPDATE USING (auth.uid() =
 CREATE POLICY "Users can delete own tags" ON tags FOR DELETE USING (auth.uid() = user_id);
 
 -- ========================================
--- 2. Tickets テーブル
+-- 2. plans テーブル
 -- ========================================
-CREATE TABLE tickets (
+CREATE TABLE plans (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  ticket_number TEXT NOT NULL,  -- 自動採番（TKT-20241027-001）
+  plan_number TEXT NOT NULL,  -- 自動採番（TKT-20241027-001）
   title TEXT NOT NULL,
   description TEXT,
   status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'in_progress', 'completed', 'cancelled')),
@@ -45,12 +45,12 @@ CREATE TABLE tickets (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
 
-  UNIQUE(user_id, ticket_number)
+  UNIQUE(user_id, plan_number)
 );
 
-CREATE INDEX idx_tickets_user_id ON tickets(user_id);
-CREATE INDEX idx_tickets_status ON tickets(status);
-CREATE INDEX idx_tickets_ticket_number ON tickets(ticket_number);
+CREATE INDEX idx_plans_user_id ON plans(user_id);
+CREATE INDEX idx_plans_status ON plans(status);
+CREATE INDEX idx_plans_plan_number ON plans(plan_number);
 
 -- ========================================
 -- 3. Sessions テーブル
@@ -58,7 +58,7 @@ CREATE INDEX idx_tickets_ticket_number ON tickets(ticket_number);
 CREATE TABLE sessions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  ticket_id UUID NOT NULL REFERENCES tickets(id) ON DELETE CASCADE,
+  plan_id UUID NOT NULL REFERENCES plans(id) ON DELETE CASCADE,
   session_number TEXT NOT NULL,  -- 自動採番（SES-20241027-001）
   title TEXT NOT NULL,
   planned_start TIMESTAMPTZ,
@@ -75,7 +75,7 @@ CREATE TABLE sessions (
 );
 
 CREATE INDEX idx_sessions_user_id ON sessions(user_id);
-CREATE INDEX idx_sessions_ticket_id ON sessions(ticket_id);
+CREATE INDEX idx_sessions_plan_id ON sessions(plan_id);
 CREATE INDEX idx_sessions_status ON sessions(status);
 
 -- ========================================
@@ -98,14 +98,14 @@ CREATE INDEX idx_records_session_id ON records(session_id);
 -- ========================================
 -- 5. タグ関連付けテーブル
 -- ========================================
-CREATE TABLE ticket_tags (
+CREATE TABLE plan_tags (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  ticket_id UUID NOT NULL REFERENCES tickets(id) ON DELETE CASCADE,
+  plan_id UUID NOT NULL REFERENCES plans(id) ON DELETE CASCADE,
   tag_id UUID NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
 
-  UNIQUE(ticket_id, tag_id)
+  UNIQUE(plan_id, tag_id)
 );
 
 CREATE TABLE session_tags (
@@ -118,15 +118,15 @@ CREATE TABLE session_tags (
   UNIQUE(session_id, tag_id)
 );
 
-CREATE INDEX idx_ticket_tags_ticket_id ON ticket_tags(ticket_id);
-CREATE INDEX idx_ticket_tags_tag_id ON ticket_tags(tag_id);
+CREATE INDEX idx_plan_tags_plan_id ON plan_tags(plan_id);
+CREATE INDEX idx_plan_tags_tag_id ON plan_tags(tag_id);
 CREATE INDEX idx_session_tags_session_id ON session_tags(session_id);
 CREATE INDEX idx_session_tags_tag_id ON session_tags(tag_id);
 
 -- ========================================
 -- 6. 自動採番関数
 -- ========================================
-CREATE OR REPLACE FUNCTION generate_ticket_number()
+CREATE OR REPLACE FUNCTION generate_plan_number()
 RETURNS TRIGGER AS $$
 DECLARE
   date_str TEXT;
@@ -136,14 +136,14 @@ BEGIN
   date_str := TO_CHAR(NOW(), 'YYYYMMDD');
 
   SELECT COALESCE(MAX(
-    CAST(SUBSTRING(ticket_number FROM 'TKT-[0-9]{8}-([0-9]+)') AS INTEGER)
+    CAST(SUBSTRING(plan_number FROM 'TKT-[0-9]{8}-([0-9]+)') AS INTEGER)
   ), 0) + 1 INTO seq_num
-  FROM tickets
-  WHERE ticket_number LIKE 'TKT-' || date_str || '-%'
+  FROM plans
+  WHERE plan_number LIKE 'TKT-' || date_str || '-%'
   AND user_id = NEW.user_id;
 
   new_number := 'TKT-' || date_str || '-' || LPAD(seq_num::TEXT, 3, '0');
-  NEW.ticket_number := new_number;
+  NEW.plan_number := new_number;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -173,17 +173,17 @@ $$ LANGUAGE plpgsql;
 -- ========================================
 -- 7. 実績時間自動集計関数
 -- ========================================
-CREATE OR REPLACE FUNCTION update_ticket_actual_hours()
+CREATE OR REPLACE FUNCTION update_plan_actual_hours()
 RETURNS TRIGGER AS $$
 BEGIN
-  UPDATE tickets
+  UPDATE plans
   SET actual_hours = (
     SELECT COALESCE(SUM(duration_minutes) / 60.0, 0)
     FROM sessions
-    WHERE ticket_id = COALESCE(NEW.ticket_id, OLD.ticket_id)
+    WHERE plan_id = COALESCE(NEW.plan_id, OLD.plan_id)
     AND duration_minutes IS NOT NULL
   )
-  WHERE id = COALESCE(NEW.ticket_id, OLD.ticket_id);
+  WHERE id = COALESCE(NEW.plan_id, OLD.plan_id);
   RETURN COALESCE(NEW, OLD);
 END;
 $$ LANGUAGE plpgsql;
@@ -213,11 +213,11 @@ $$ LANGUAGE plpgsql;
 -- 9. トリガー設定
 -- ========================================
 -- 採番トリガー
-CREATE TRIGGER trigger_generate_ticket_number
-  BEFORE INSERT ON tickets
+CREATE TRIGGER trigger_generate_plan_number
+  BEFORE INSERT ON plans
   FOR EACH ROW
-  WHEN (NEW.ticket_number IS NULL OR NEW.ticket_number = '')
-  EXECUTE FUNCTION generate_ticket_number();
+  WHEN (NEW.plan_number IS NULL OR NEW.plan_number = '')
+  EXECUTE FUNCTION generate_plan_number();
 
 CREATE TRIGGER trigger_generate_session_number
   BEFORE INSERT ON sessions
@@ -226,10 +226,10 @@ CREATE TRIGGER trigger_generate_session_number
   EXECUTE FUNCTION generate_session_number();
 
 -- 実績時間集計トリガー
-CREATE TRIGGER trigger_update_ticket_hours_on_session_change
+CREATE TRIGGER trigger_update_plan_hours_on_session_change
   AFTER INSERT OR UPDATE OR DELETE ON sessions
   FOR EACH ROW
-  EXECUTE FUNCTION update_ticket_actual_hours();
+  EXECUTE FUNCTION update_plan_actual_hours();
 
 CREATE TRIGGER trigger_calculate_session_duration
   BEFORE INSERT OR UPDATE ON sessions
@@ -240,8 +240,8 @@ CREATE TRIGGER trigger_calculate_session_duration
 CREATE TRIGGER trigger_update_tags_updated_at
   BEFORE UPDATE ON tags FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
-CREATE TRIGGER trigger_update_tickets_updated_at
-  BEFORE UPDATE ON tickets FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER trigger_update_plans_updated_at
+  BEFORE UPDATE ON plans FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 CREATE TRIGGER trigger_update_sessions_updated_at
   BEFORE UPDATE ON sessions FOR EACH ROW EXECUTE FUNCTION update_updated_at();
@@ -253,19 +253,19 @@ CREATE TRIGGER trigger_update_records_updated_at
 -- 10. RLS (Row Level Security)
 -- ========================================
 -- Tagsは既にRLS有効化済みのため、ポリシーのみ追加
-ALTER TABLE tickets ENABLE ROW LEVEL SECURITY;
+ALTER TABLE plans ENABLE ROW LEVEL SECURITY;
 ALTER TABLE sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE records ENABLE ROW LEVEL SECURITY;
-ALTER TABLE ticket_tags ENABLE ROW LEVEL SECURITY;
+ALTER TABLE plan_tags ENABLE ROW LEVEL SECURITY;
 ALTER TABLE session_tags ENABLE ROW LEVEL SECURITY;
 
 -- Tags RLS（既存ポリシー削除済み、ファイル上部で作成済み）
 
--- Tickets RLS
-CREATE POLICY "Users can view own tickets" ON tickets FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own tickets" ON tickets FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update own tickets" ON tickets FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Users can delete own tickets" ON tickets FOR DELETE USING (auth.uid() = user_id);
+-- plans RLS
+CREATE POLICY "Users can view own plans" ON plans FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own plans" ON plans FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own plans" ON plans FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own plans" ON plans FOR DELETE USING (auth.uid() = user_id);
 
 -- Sessions RLS
 CREATE POLICY "Users can view own sessions" ON sessions FOR SELECT USING (auth.uid() = user_id);
@@ -279,10 +279,10 @@ CREATE POLICY "Users can insert own records" ON records FOR INSERT WITH CHECK (a
 CREATE POLICY "Users can update own records" ON records FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own records" ON records FOR DELETE USING (auth.uid() = user_id);
 
--- Ticket Tags RLS
-CREATE POLICY "Users can view own ticket_tags" ON ticket_tags FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own ticket_tags" ON ticket_tags FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can delete own ticket_tags" ON ticket_tags FOR DELETE USING (auth.uid() = user_id);
+-- plan Tags RLS
+CREATE POLICY "Users can view own plan_tags" ON plan_tags FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own plan_tags" ON plan_tags FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can delete own plan_tags" ON plan_tags FOR DELETE USING (auth.uid() = user_id);
 
 -- Session Tags RLS
 CREATE POLICY "Users can view own session_tags" ON session_tags FOR SELECT USING (auth.uid() = user_id);

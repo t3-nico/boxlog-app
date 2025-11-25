@@ -48,7 +48,7 @@ export const handleArrowKeys = ({
 
     case 'ArrowUp':
       event.preventDefault()
-      if (navigationState.selectedEventId) {
+      if (navigationState.selectedPlanId) {
         navigateEvents('previous')
       } else {
         navigateTime('previous')
@@ -57,7 +57,7 @@ export const handleArrowKeys = ({
 
     case 'ArrowDown':
       event.preventDefault()
-      if (navigationState.selectedEventId) {
+      if (navigationState.selectedPlanId) {
         navigateEvents('next')
       } else {
         navigateTime('next')
@@ -96,7 +96,7 @@ export const handleActionKeys = ({
 
     case 'Enter':
       event.preventDefault()
-      if (navigationState.selectedEventId) {
+      if (navigationState.selectedPlanId) {
         editCurrentEvent()
       } else {
         createEvent()
@@ -159,7 +159,7 @@ export const handleNavigationKeys = ({
   }
 }
 
-export const handleEventDetailKeys = ({
+export const handlePlanDetailKeys = ({
   event,
   navigationState,
   events,
@@ -171,8 +171,8 @@ export const handleEventDetailKeys = ({
   if (key === ' ') {
     // スペースキー
     event.preventDefault()
-    if (navigationState.selectedEventId) {
-      const selectedEvent = events.find((e) => e.id === navigationState.selectedEventId)
+    if (navigationState.selectedPlanId) {
+      const selectedEvent = events.find((e) => e.id === navigationState.selectedPlanId)
       if (selectedEvent) {
         const timeString = selectedEvent.startDate?.toLocaleTimeString('ja-JP', {
           hour: '2-digit',
@@ -189,3 +189,7 @@ export const handleEventDetailKeys = ({
     }
   }
 }
+
+// 互換性のためのエイリアス
+/** @deprecated Use handlePlanDetailKeys instead */
+export const handleEventDetailKeys = handlePlanDetailKeys

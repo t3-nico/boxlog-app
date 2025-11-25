@@ -13,20 +13,16 @@ import { useInboxViewStore } from '../stores/useInboxViewStore'
 
 interface InboxSidebarProps {
   isLoading?: boolean
-  activeTicketsCount?: number
-  archivedTicketsCount?: number
+  activeplansCount?: number
+  archivedplansCount?: number
 }
 
 /**
  * Inbox用サイドバー
  *
- * すべてのTicketとアーカイブ、保存済みビューを提供
+ * すべてのPlanとアーカイブ、保存済みビューを提供
  */
-export function InboxSidebar({
-  isLoading = false,
-  activeTicketsCount = 0,
-  archivedTicketsCount = 0,
-}: InboxSidebarProps) {
+export function InboxSidebar({ isLoading = false, activeplansCount = 0, archivedplansCount = 0 }: InboxSidebarProps) {
   const { t } = useI18n()
   const router = useRouter()
   const pathname = usePathname()
@@ -103,7 +99,7 @@ export function InboxSidebar({
                   <span>{view.name}</span>
                 </div>
                 <span className="text-muted-foreground text-xs">
-                  {view.id === 'default-all' ? activeTicketsCount : archivedTicketsCount}
+                  {view.id === 'default-all' ? activeplansCount : archivedplansCount}
                 </span>
               </div>
             </button>

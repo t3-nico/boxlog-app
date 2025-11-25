@@ -29,7 +29,7 @@ function toCamelCase(str) {
   return str
     .replace(/[^a-zA-Z0-9]/g, ' ')
     .split(' ')
-    .filter(word => word.length > 0)
+    .filter((word) => word.length > 0)
     .map((word, index) => {
       if (index === 0) {
         return word.toLowerCase()
@@ -43,8 +43,8 @@ function _toPascalCase(str) {
   return str
     .replace(/[^a-zA-Z0-9]/g, ' ')
     .split(' ')
-    .filter(word => word.length > 0)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .filter((word) => word.length > 0)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join('')
 }
 
@@ -95,7 +95,7 @@ class NamingMigrationAnalyzer {
           original: componentName,
           suggested: suggestion,
           line: this.getLineNumber(content, match.index),
-          reason: 'ドメイン用語による推奨命名'
+          reason: 'ドメイン用語による推奨命名',
         })
       }
     }
@@ -111,7 +111,7 @@ class NamingMigrationAnalyzer {
           original: hookName,
           suggested: suggestion,
           line: this.getLineNumber(content, match.index),
-          reason: 'ドメイン用語による推奨命名'
+          reason: 'ドメイン用語による推奨命名',
         })
       }
     }
@@ -127,7 +127,7 @@ class NamingMigrationAnalyzer {
           original: varName,
           suggested: suggestion,
           line: this.getLineNumber(content, match.index),
-          reason: 'ドメイン用語による推奨命名'
+          reason: 'ドメイン用語による推奨命名',
         })
       }
     }
@@ -205,7 +205,7 @@ class NamingMigrationAnalyzer {
     const suggestions = []
     const forbiddenTerms = dictionary.forbiddenTerms || []
 
-    forbiddenTerms.forEach(forbidden => {
+    forbiddenTerms.forEach((forbidden) => {
       const regex = new RegExp(`\\b${forbidden.term}\\b`, 'gi')
       let match
       while ((match = regex.exec(content)) !== null) {
@@ -214,7 +214,7 @@ class NamingMigrationAnalyzer {
           original: match[0],
           suggested: forbidden.alternatives[0] || '適切な用語に変更',
           line: this.getLineNumber(content, match.index),
-          reason: forbidden.reason
+          reason: forbidden.reason,
         })
       }
     })
@@ -249,8 +249,8 @@ class NamingMigrationAnalyzer {
       .replace(/([a-z])([A-Z])/g, '$1 $2')
       .replace(/[^a-zA-Z]/g, ' ')
       .split(' ')
-      .filter(word => word.length > 0)
-      .map(word => word.toLowerCase())
+      .filter((word) => word.length > 0)
+      .map((word) => word.toLowerCase())
   }
 
   /**
@@ -258,22 +258,22 @@ class NamingMigrationAnalyzer {
    */
   translateCommonTerm(term) {
     const commonTranslations = {
-      'data': 'information',
-      'info': 'information',
-      'btn': 'button',
-      'img': 'image',
-      'txt': 'text',
-      'val': 'value',
-      'obj': 'object',
-      'arr': 'array',
-      'str': 'string',
-      'num': 'number',
-      'bool': 'boolean',
-      'func': 'function',
-      'util': 'utility',
-      'mgr': 'manager',
-      'temp': 'temporary',
-      'calc': 'calculate'
+      data: 'information',
+      info: 'information',
+      btn: 'button',
+      img: 'image',
+      txt: 'text',
+      val: 'value',
+      obj: 'object',
+      arr: 'array',
+      str: 'string',
+      num: 'number',
+      bool: 'boolean',
+      func: 'function',
+      util: 'utility',
+      mgr: 'manager',
+      temp: 'temporary',
+      calc: 'calculate',
     }
 
     return commonTranslations[term.toLowerCase()] || null
@@ -361,7 +361,7 @@ class NamingMigration {
         if (suggestions.length > 0) {
           results.push({
             file,
-            suggestions
+            suggestions,
           })
           totalSuggestions += suggestions.length
         }
@@ -391,11 +391,11 @@ class NamingMigration {
       '!node_modules/**',
       '!.next/**',
       '!dist/**',
-      '!build/**'
+      '!build/**',
     ]
 
     let files = []
-    patterns.forEach(pattern => {
+    patterns.forEach((pattern) => {
       if (pattern.startsWith('!')) {
         // 除外パターン（現在のglobライブラリでは複雑な除外処理）
         return
@@ -404,14 +404,16 @@ class NamingMigration {
     })
 
     // 手動で除外パターンを適用
-    return files.filter(file => {
-      return !file.includes('node_modules') &&
-             !file.includes('.next') &&
-             !file.includes('dist') &&
-             !file.includes('build') &&
-             !file.includes('.test.') &&
-             !file.includes('.spec.') &&
-             !file.endsWith('.d.ts')
+    return files.filter((file) => {
+      return (
+        !file.includes('node_modules') &&
+        !file.includes('.next') &&
+        !file.includes('dist') &&
+        !file.includes('build') &&
+        !file.includes('.test.') &&
+        !file.includes('.spec.') &&
+        !file.endsWith('.d.ts')
+      )
     })
   }
 
@@ -433,8 +435,8 @@ class NamingMigration {
 
     // カテゴリ別統計
     const categoryStats = {}
-    results.forEach(result => {
-      result.suggestions.forEach(suggestion => {
+    results.forEach((result) => {
+      result.suggestions.forEach((suggestion) => {
         categoryStats[suggestion.type] = (categoryStats[suggestion.type] || 0) + 1
       })
     })
@@ -448,9 +450,9 @@ class NamingMigration {
     console.log('\n' + '-'.repeat(80))
 
     // 詳細結果表示
-    results.forEach(result => {
+    results.forEach((result) => {
       console.log(`\n📄 ${result.file}`)
-      result.suggestions.forEach(suggestion => {
+      result.suggestions.forEach((suggestion) => {
         const icon = this.getSeverityIcon(suggestion.type)
         console.log(`   ${icon} L${suggestion.line}: ${suggestion.original} → ${suggestion.suggested}`)
         console.log(`      理由: ${suggestion.reason}`)
@@ -465,12 +467,12 @@ class NamingMigration {
 
   getCategoryIcon(category) {
     const icons = {
-      'component': '🧩',
-      'hook': '🪝',
-      'variable': '📦',
-      'function': '⚡',
-      'forbidden': '🚫',
-      'type': '📝'
+      component: '🧩',
+      hook: '🪝',
+      variable: '📦',
+      function: '⚡',
+      forbidden: '🚫',
+      type: '📝',
     }
     return icons[category] || '📌'
   }
@@ -487,9 +489,9 @@ class NamingMigration {
       timestamp: new Date().toISOString(),
       summary: {
         totalFiles: results.length,
-        totalSuggestions: results.reduce((sum, r) => sum + r.suggestions.length, 0)
+        totalSuggestions: results.reduce((sum, r) => sum + r.suggestions.length, 0),
       },
-      results
+      results,
     }
 
     const reportPath = path.resolve(__dirname, '../reports/naming-migration-analysis.json')
@@ -514,7 +516,7 @@ async function main() {
 
   const options = {
     dryRun: !args.includes('--apply'),
-    verbose: args.includes('--verbose') || args.includes('-v')
+    verbose: args.includes('--verbose') || args.includes('-v'),
   }
 
   if (args.includes('--help') || args.includes('-h')) {
