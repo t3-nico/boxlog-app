@@ -774,6 +774,22 @@
       "tagAnalysisDescription": "Analyze tag usage trends",
       "trendsDescription": "View long-term trends",
       "goalsDescription": "Track goal achievement"
+    },
+    "toolbar": {
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "thisYear": "This Year",
+      "previous": "Previous period",
+      "next": "Next period",
+      "current": "Back to current",
+      "compare": "Compare",
+      "compareTooltip": "Compare with previous period",
+      "noCompare": "No comparison",
+      "previousPeriod": "Previous period",
+      "lastYear": "Same period last year",
+      "export": "Export",
+      "exportTooltip": "Export data"
     }
   },
   "auth": {
