@@ -76,14 +76,14 @@ export const DayView = ({
 
   // DayView専用ロジック（CalendarControllerから渡されたイベントデータを使用）
   const {
-    dayEvents,
-    eventStyles,
+    dayPlans,
+    planStyles,
     isToday,
     timeSlots: _timeSlots,
   } = useDayView({
     date,
-    events: events || [],
-    ...(onUpdateEvent && { onEventUpdate: onUpdateEvent }),
+    plans: events || [],
+    ...(onUpdateEvent && { onPlanUpdate: onUpdateEvent }),
   })
 
   // 空き時間クリックハンドラー
@@ -137,12 +137,12 @@ export const DayView = ({
           {/* 日のコンテンツ */}
           <DayContent
             date={date}
-            events={dayEvents}
-            eventStyles={eventStyles}
-            {...(onEventClick && { onEventClick })}
-            {...(onEventContextMenu && { onEventContextMenu })}
+            plans={dayPlans}
+            planStyles={planStyles}
+            {...(onEventClick && { onPlanClick: onEventClick })}
+            {...(onEventContextMenu && { onPlanContextMenu: onEventContextMenu })}
             {...(onEmptyClick && { onEmptyClick })}
-            {...(handleEventTimeUpdate && { onEventUpdate: handleEventTimeUpdate })}
+            {...(handleEventTimeUpdate && { onPlanUpdate: handleEventTimeUpdate })}
             {...(onTimeRangeSelect && { onTimeRangeSelect })}
             className="absolute inset-y-0 right-0 left-0"
           />

@@ -6,9 +6,10 @@ import type { CalendarPlan } from '../../shared/types/event.types'
 export type { DragHandlers, DragState } from '../../shared/hooks/useDragAndDrop'
 
 interface UseDragAndDropProps {
-  onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
+  onPlanUpdate?: (planId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
+  onPlanClick?: (plan: CalendarPlan) => void
   date: Date
-  events: CalendarPlan[]
+  plans: CalendarPlan[]
 }
 
 /**

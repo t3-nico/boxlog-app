@@ -56,7 +56,7 @@ export interface DayContentProps {
   onPlanClick?: (plan: CalendarPlan) => void
   onPlanContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onPlanUpdate?: (plan: CalendarPlan) => void
+  onPlanUpdate?: (planId: string, updates: { startTime: Date; endTime: Date }) => void
   onTimeRangeSelect?: (selection: DateTimeSelection) => void
   className?: string
 }

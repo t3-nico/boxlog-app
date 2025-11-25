@@ -15,36 +15,36 @@ import { useDragAndDrop } from '../hooks/useDragAndDrop'
 
 export const DayContent = ({
   date,
-  events,
-  eventStyles,
-  onEventClick,
-  onEventContextMenu,
+  plans,
+  planStyles,
+  onPlanClick,
+  onPlanContextMenu,
   onEmptyClick,
-  onEventUpdate,
+  onPlanUpdate,
   onTimeRangeSelect,
   className,
 }: DayContentProps) => {
-  // ドラッグ&ドロップ機能用にonEventUpdateを変換
-  const handleEventUpdate = useCallback(
-    async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
-      if (!onEventUpdate) return
+  // ドラッグ&ドロップ機能用にonPlanUpdateを変換
+  const handlePlanUpdate = useCallback(
+    async (planId: string, updates: { startTime: Date; endTime: Date }) => {
+      if (!onPlanUpdate) return
 
       // handleUpdatePlan形式で呼び出し
-      await onEventUpdate(eventId, {
+      await onPlanUpdate(planId, {
         startTime: updates.startTime,
         endTime: updates.endTime,
       })
     },
-    [onEventUpdate]
+    [onPlanUpdate]
   )
 
   // ドラッグ&ドロップ機能
   // @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある
   const { dragState, handlers } = useDragAndDrop({
-    onEventUpdate: handleEventUpdate,
-    onEventClick,
+    onPlanUpdate: handlePlanUpdate,
+    onPlanClick,
     date,
-    events,
+    plans,
   })
 
   // 時間計算機能
@@ -63,30 +63,30 @@ export const DayContent = ({
     [date, onEmptyClick, calculateTimeFromEvent]
   )
 
-  // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
-  const handleEventClick = useCallback(
+  // プランクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
+  const handlePlanClick = useCallback(
     (plan: CalendarPlan) => {
       // ドラッグ・リサイズ操作中のクリックは無視
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
       // @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある
-      onEventClick?.(event)
+      onPlanClick?.(plan)
     },
-    [onEventClick, dragState.isDragging, dragState.isResizing]
+    [onPlanClick, dragState.isDragging, dragState.isResizing]
   )
 
-  // イベント右クリックハンドラー
-  const handleEventContextMenu = useCallback(
+  // プラン右クリックハンドラー
+  const handlePlanContextMenu = useCallback(
     (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
       // @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある
-      onEventContextMenu?.(event, mouseEvent)
+      onPlanContextMenu?.(plan, mouseEvent)
     },
-    [onEventContextMenu, dragState.isDragging, dragState.isResizing]
+    [onPlanContextMenu, dragState.isDragging, dragState.isResizing]
   )
 
   // 時間グリッドの生成（1時間単位、23時は下線なし）
@@ -114,39 +114,34 @@ export const DayContent = ({
         </div>
       </CalendarDragSelection>
 
-      {/* イベント表示エリア */}
+      {/* プラン表示エリア */}
       <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
-        {events &&
-          Array.isArray(events) &&
-          events.map((event) => {
-            const style = eventStyles[event.id]
+        {plans &&
+          Array.isArray(plans) &&
+          plans.map((plan) => {
+            const style = planStyles[plan.id]
             if (!style) return null
 
-            const isDragging = dragState.draggedEventId === event.id && dragState.isDragging
-            const isResizingThis = dragState.isResizing && dragState.draggedEventId === event.id
+            const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
+            const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id
             const currentTop = parseFloat(style.top?.toString() || '0')
             const currentHeight = parseFloat(style.height?.toString() || '20')
 
             // ゴースト表示スタイル（共通化）
-            const adjustedStyle = calculateEventGhostStyle(style, event.id, dragState)
+            const adjustedStyle = calculateEventGhostStyle(style, plan.id, dragState)
 
             return (
-              <div
-                key={event.id}
-                style={adjustedStyle}
-                className="pointer-events-none absolute"
-                data-event-block="true"
-              >
+              <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-event-block="true">
                 {/* EventBlockの内容部分のみクリック可能 */}
                 <div
                   className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
                   role="button"
                   tabIndex={0}
-                  aria-label={`Drag event: ${event.title}`}
+                  aria-label={`Drag plan: ${plan.title}`}
                   onMouseDown={(e) => {
                     // 左クリックのみドラッグ開始
                     if (e.button === 0) {
-                      handlers.handleMouseDown(event.id, e, {
+                      handlers.handleMouseDown(plan.id, e, {
                         top: currentTop,
                         left: 0,
                         width: 100,
@@ -163,7 +158,7 @@ export const DayContent = ({
                   }}
                 >
                   <EventBlock
-                    event={event}
+                    event={plan}
                     position={{
                       top: 0,
                       left: 0,
@@ -172,9 +167,9 @@ export const DayContent = ({
                         isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
                     }}
                     // クリックは useDragAndDrop で処理されるため削除
-                    onContextMenu={(event, e) => handleEventContextMenu(event, e)}
-                    onResizeStart={(event, direction, e, _position) =>
-                      handlers.handleResizeStart(event.id, direction, e, {
+                    onContextMenu={(plan, e) => handlePlanContextMenu(plan, e)}
+                    onResizeStart={(plan, direction, e, _position) =>
+                      handlers.handleResizeStart(plan.id, direction, e, {
                         top: currentTop,
                         left: 0,
                         width: 100,
@@ -183,7 +178,7 @@ export const DayContent = ({
                     }
                     isDragging={isDragging}
                     isResizing={isResizingThis}
-                    previewTime={calculatePreviewTime(event.id, dragState)}
+                    previewTime={calculatePreviewTime(plan.id, dragState)}
                     className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                   />
                 </div>

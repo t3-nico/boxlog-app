@@ -190,7 +190,7 @@ export const WeekContent = ({
           const adjustedStyle = calculatePlanGhostStyle(style, plan.id, dragState)
 
           return (
-            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-plan-block="true">
+            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-event-block="true">
               {/* PlanBlockの内容部分のみクリック可能 */}
               <div
                 className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
