@@ -9,7 +9,6 @@ import {
   startOfMonth,
   startOfWeek,
   startOfYear,
-  subDays,
   subMonths,
   subWeeks,
   subYears,
@@ -56,10 +55,7 @@ interface StatsPeriodState {
 /**
  * 期間タイプに基づいて日付範囲を計算
  */
-function calculateDateRange(
-  type: PeriodType,
-  baseDate: Date = new Date()
-): { start: Date; end: Date } {
+function calculateDateRange(type: PeriodType, baseDate: Date = new Date()): { start: Date; end: Date } {
   const today = new Date(baseDate)
   today.setHours(0, 0, 0, 0)
 
@@ -90,11 +86,7 @@ function calculateDateRange(
 /**
  * 期間を移動（前/次）
  */
-function shiftPeriod(
-  type: PeriodType,
-  currentStart: Date,
-  direction: 'prev' | 'next'
-): { start: Date; end: Date } {
+function shiftPeriod(type: PeriodType, currentStart: Date, direction: 'prev' | 'next'): { start: Date; end: Date } {
   const shift = direction === 'prev' ? -1 : 1
 
   switch (type) {
@@ -110,8 +102,7 @@ function shiftPeriod(
       }
     }
     case 'month': {
-      const newStart =
-        direction === 'prev' ? subMonths(currentStart, 1) : addMonths(currentStart, 1)
+      const newStart = direction === 'prev' ? subMonths(currentStart, 1) : addMonths(currentStart, 1)
       return {
         start: startOfMonth(newStart),
         end: endOfMonth(newStart),
@@ -125,9 +116,7 @@ function shiftPeriod(
       }
     }
     case 'custom': {
-      const days = Math.ceil(
-        (currentStart.getTime() - currentStart.getTime()) / (1000 * 60 * 60 * 24)
-      )
+      const days = Math.ceil((currentStart.getTime() - currentStart.getTime()) / (1000 * 60 * 60 * 24))
       const newStart = addDays(currentStart, shift * (days + 1))
       const newEnd = addDays(currentStart, shift * (days + 1))
       return { start: newStart, end: newEnd }

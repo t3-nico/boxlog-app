@@ -199,7 +199,7 @@ export function StatsSidebar() {
         <div className="space-y-4">
           {navSections.map((section) => (
             <Collapsible key={section.title} defaultOpen={section.defaultOpen}>
-              <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex w-full items-center justify-between px-2 py-1 text-xs font-medium uppercase tracking-wider">
+              <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex w-full items-center justify-between px-2 py-1 text-xs font-medium tracking-wider uppercase">
                 {section.title}
                 <ChevronDown className="size-3 transition-transform duration-200 [[data-state=open]>svg]:rotate-180" />
               </CollapsibleTrigger>

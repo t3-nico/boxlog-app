@@ -2,34 +2,16 @@
 
 import { format, isSameDay } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import {
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  GitCompareArrows,
-  RotateCcw,
-} from 'lucide-react'
+import { Calendar, ChevronLeft, ChevronRight, Download, GitCompareArrows, RotateCcw } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { useStatsPeriodStore } from '@/features/stats/stores'
 import type { ComparePeriod, PeriodType } from '@/features/stats/stores'
+import { useStatsPeriodStore } from '@/features/stats/stores'
 import { cn } from '@/lib/utils'
 
 /**
@@ -87,12 +69,7 @@ export function StatsToolbar() {
         <div className="flex items-center gap-1">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-8"
-                onClick={goToPrevious}
-              >
+              <Button variant="ghost" size="icon" className="size-8" onClick={goToPrevious}>
                 <ChevronLeft className="size-4" />
                 <span className="sr-only">{t('stats.toolbar.previous')}</span>
               </Button>
@@ -102,12 +79,7 @@ export function StatsToolbar() {
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-8"
-                onClick={goToNext}
-              >
+              <Button variant="ghost" size="icon" className="size-8" onClick={goToNext}>
                 <ChevronRight className="size-4" />
                 <span className="sr-only">{t('stats.toolbar.next')}</span>
               </Button>
@@ -117,12 +89,7 @@ export function StatsToolbar() {
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-8"
-                onClick={goToCurrent}
-              >
+              <Button variant="ghost" size="icon" className="size-8" onClick={goToCurrent}>
                 <RotateCcw className="size-4" />
                 <span className="sr-only">{t('stats.toolbar.current')}</span>
               </Button>
@@ -138,10 +105,7 @@ export function StatsToolbar() {
         </div>
 
         {/* 期間タイプ選択 */}
-        <Select
-          value={periodType}
-          onValueChange={(value) => setPeriodType(value as PeriodType)}
-        >
+        <Select value={periodType} onValueChange={(value) => setPeriodType(value as PeriodType)}>
           <SelectTrigger className="h-8 w-[100px]">
             <SelectValue />
           </SelectTrigger>
@@ -174,10 +138,7 @@ export function StatsToolbar() {
 
         {/* 比較期間選択（比較有効時のみ表示） */}
         {compareEnabled && (
-          <Select
-            value={comparePeriod}
-            onValueChange={(value) => setComparePeriod(value as ComparePeriod)}
-          >
+          <Select value={comparePeriod} onValueChange={(value) => setComparePeriod(value as ComparePeriod)}>
             <SelectTrigger className="h-8 w-[120px]">
               <SelectValue />
             </SelectTrigger>

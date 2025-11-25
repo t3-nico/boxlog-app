@@ -3,15 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import {
-  ArrowRight,
-  CheckCircle2,
-  Clock,
-  FolderKanban,
-  Tag,
-  Target,
-  TrendingUp,
-} from 'lucide-react'
+import { ArrowRight, CheckCircle2, Clock, FolderKanban, Tag, Target, TrendingUp } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
