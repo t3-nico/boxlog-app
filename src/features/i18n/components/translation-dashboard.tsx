@@ -75,7 +75,7 @@ interface TranslationHealth {
 /**
  * 翻訳進捗ダッシュボードコンポーネント
  */
-export default function TranslationDashboard() {
+export function TranslationDashboard() {
   const [report, setReport] = useState<TranslationReport | null>(null)
   const [health, setHealth] = useState<TranslationHealth | null>(null)
   const [loading, setLoading] = useState(true)

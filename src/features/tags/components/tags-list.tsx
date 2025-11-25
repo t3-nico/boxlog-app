@@ -15,6 +15,7 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react'
 
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { useActiveState } from '@/hooks/useActiveState'
 import { Tag } from '@/types/tags'
@@ -146,7 +147,7 @@ const TagItem = ({
                 type="button"
                 onClick={handleToggleExpanded}
                 className="tag-toggle-button z-10 rounded p-1 transition-colors"
-                style={{ '--tag-color': tag.color || 'DEFAULT_TAG_COLOR' } as React.CSSProperties}
+                style={{ '--tag-color': tag.color || DEFAULT_TAG_COLOR } as React.CSSProperties}
               >
                 {isExpanded ? (
                   <ChevronDownIcon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
@@ -170,14 +171,14 @@ const TagItem = ({
             return (
               <div
                 className="relative"
-                style={{ '--tag-color': tag.color || 'DEFAULT_TAG_COLOR' } as React.CSSProperties}
+                style={{ '--tag-color': tag.color || DEFAULT_TAG_COLOR } as React.CSSProperties}
               >
                 <IconComponent
                   className="tag-icon h-4 w-4 flex-shrink-0"
                   style={
                     {
-                      color: tag.color || 'DEFAULT_TAG_COLOR',
-                      '--tag-color': tag.color || 'DEFAULT_TAG_COLOR',
+                      color: tag.color || DEFAULT_TAG_COLOR,
+                      '--tag-color': tag.color || DEFAULT_TAG_COLOR,
                     } as React.CSSProperties
                   }
                 />
@@ -206,7 +207,7 @@ const TagItem = ({
               className={`tag-menu-button rounded p-2 transition-all ${
                 isHovered || showMenu ? 'opacity-100' : 'opacity-0'
               }`}
-              style={{ '--tag-color': tag.color || 'DEFAULT_TAG_COLOR' } as React.CSSProperties}
+              style={{ '--tag-color': tag.color || DEFAULT_TAG_COLOR } as React.CSSProperties}
             >
               <EllipsisHorizontalIcon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
             </button>

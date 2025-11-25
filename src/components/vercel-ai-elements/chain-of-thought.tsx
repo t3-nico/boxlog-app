@@ -106,7 +106,7 @@ export const ChainOfThoughtStep = memo(
       >
         <div className="relative mt-0.5">
           <Icon className="size-4" />
-          <div className="bg-border absolute top-7 bottom-0 left-1/2 -mx-px w-px" />
+          <div className="bg-border absolute top-6 bottom-0 left-1/2 -mx-px w-px" />
         </div>
         <div className="flex-1 space-y-2">
           <div>{label}</div>

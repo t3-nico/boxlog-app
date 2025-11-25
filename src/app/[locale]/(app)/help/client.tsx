@@ -20,7 +20,7 @@ interface Props {
   }
 }
 
-export default function HelpPageClient({ translations }: Props) {
+export function HelpPageClient({ translations }: Props) {
   return (
     <FeatureErrorBoundary
       featureName="help"

@@ -9,7 +9,7 @@ interface Props {
   }
 }
 
-export default function CalendarSettingsClient({ translations }: Props) {
+export function CalendarSettingsClient({ translations }: Props) {
   return (
     <SettingsLayout title={translations.title} description={translations.description}>
       <CalendarSettings />

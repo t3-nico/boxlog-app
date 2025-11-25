@@ -25,7 +25,7 @@ interface CalendarViewClientProps {
   }
 }
 
-export default function CalendarViewClient({ view, initialDate, translations }: CalendarViewClientProps) {
+export function CalendarViewClient({ view, initialDate, translations }: CalendarViewClientProps) {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <FeatureErrorBoundary

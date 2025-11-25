@@ -4,7 +4,7 @@ export {
   LoadingCard,
   LoadingOverlay,
   LoadingSpinner,
-  default as LoadingStates,
+  LoadingStates,
   PresetLoadings,
   RefreshSpinner,
   Skeleton,

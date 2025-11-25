@@ -3,16 +3,16 @@
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 
-import LegalSettings from '../about-legal-settings'
-import AccountSettings from '../account-settings'
-import CalendarSettings from '../calendar-settings'
-import DataExportSettings from '../data-export-settings'
-import IntegrationSettings from '../integration-settings'
-import NotificationSettings from '../notification-settings'
-import PlanBillingSettings from '../plan-billing-settings'
-import PreferencesSettings from '../preferences-settings'
+import { AboutLegalSettings as LegalSettings } from '../about-legal-settings'
+import { AccountSettings } from '../account-settings'
+import { CalendarSettings } from '../calendar-settings'
+import { DataExportSettings } from '../data-export-settings'
+import { IntegrationSettings } from '../integration-settings'
+import { NotificationSettings } from '../notification-settings'
+import { PlanBillingSettings } from '../plan-billing-settings'
+import { PreferencesSettings } from '../preferences-settings'
 import { SettingsLayout } from '../SettingsLayout'
-import TagsSettings from '../tags-settings'
+import { TagsSettings } from '../tags-settings'
 
 /**
  * 設定ダイアログのコンテンツ領域

@@ -187,8 +187,8 @@ const MainSupportChatInput = ({
         <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
           <div className="flex gap-1">
             <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400"></div>
-            <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400" style={{ animationDelay: '0.2s' }}></div>
-            <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400" style={{ animationDelay: '0.4s' }}></div>
+            <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400 [animation-delay:0.2s]"></div>
+            <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400 [animation-delay:0.4s]"></div>
           </div>
           <span>{t('help.status.checking')}</span>
         </div>
@@ -308,7 +308,7 @@ ${t('help.mainSupportChat.greeting')}`,
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full">
-              <BotMessageSquare className="text-foreground h-5 w-5" />
+              <BotMessageSquare className="text-foreground h-6 w-6" />
             </div>
             <div>
               <h3 className="text-foreground text-lg font-semibold">{t('help.title')}</h3>

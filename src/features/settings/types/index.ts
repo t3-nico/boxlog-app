@@ -38,7 +38,7 @@ export interface SettingsMenuItem {
 // Individual Settings Types
 // ========================================
 
-export interface CalendarSettings {
+export interface CalendarSettingsData {
   timezone: string
   weekStartDay: number
   timeFormat: '12h' | '24h'
@@ -47,21 +47,21 @@ export interface CalendarSettings {
   showAllDayEvents: boolean
 }
 
-export interface NotificationSettings {
+export interface NotificationSettingsData {
   emailNotifications: boolean
   pushNotifications: boolean
   reminderMinutes: number[]
   weeklyDigest: boolean
 }
 
-export interface PreferencesSettings {
+export interface PreferencesSettingsData {
   theme: 'light' | 'dark' | 'system'
   language: string
   chronotype: 'morning' | 'evening' | 'intermediate'
   dateFormat: string
 }
 
-export interface IntegrationSettings {
+export interface IntegrationSettingsData {
   googleCalendar: boolean
   outlook: boolean
   slack: boolean

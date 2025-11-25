@@ -120,7 +120,7 @@ const ISSUE_TYPE_LABELS = {
 /**
  * 翻訳品質レビューパネル
  */
-export default function QualityReviewPanel({
+export function QualityReviewPanel({
   translationKey,
   language,
   originalText,

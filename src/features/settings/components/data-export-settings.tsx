@@ -2,7 +2,7 @@
 
 import { memo } from 'react'
 
-const DataExportSettings = memo(() => {
+export const DataExportSettings = memo(function DataExportSettings() {
   return (
     <div className="space-y-6">
       <div>
@@ -15,7 +15,3 @@ const DataExportSettings = memo(() => {
     </div>
   )
 })
-
-DataExportSettings.displayName = 'DataExportSettings'
-
-export default DataExportSettings

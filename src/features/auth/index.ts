@@ -6,7 +6,7 @@ export { AuthLayout } from './components/AuthLayout'
 export { AuthPageLayout } from './components/AuthPageLayout'
 export { LoginForm } from './components/LoginForm'
 export { PasswordResetForm } from './components/PasswordResetForm'
-export { default as ProtectedRoute } from './components/ProtectedRoute'
+export { ProtectedRoute } from './components/ProtectedRoute'
 export { SignupForm } from './components/SignupForm'
 
 // State management - Zustand store (Context APIから移行)

@@ -1,7 +1,7 @@
 'use client'
 
 import { SettingsLayout } from '@/features/settings/components'
-import IntegrationSettings from '@/features/settings/components/integration-settings'
+import { IntegrationSettings } from '@/features/settings/components/integration-settings'
 
 interface Props {
   translations: {
@@ -10,7 +10,7 @@ interface Props {
   }
 }
 
-export default function IntegrationPageClient({ translations }: Props) {
+export function IntegrationPageClient({ translations }: Props) {
   return (
     <SettingsLayout title={translations.title} description={translations.description}>
       <IntegrationSettings />

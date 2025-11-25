@@ -24,7 +24,7 @@ import Link from 'next/link'
  * - Cookie設定の状況が一目で分かる
  * - 主要な法的文書に素早くアクセス可能
  */
-export default function AboutLegalSettings() {
+export function AboutLegalSettings() {
   const { t, locale } = useI18n()
   const [cookieConsent, setCookieConsent] = useState<CookieConsent | null>(null)
   const [isClient, setIsClient] = useState(false)

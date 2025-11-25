@@ -2,7 +2,7 @@
 
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { SettingsLayout } from '@/features/settings/components'
-import DataExportSettings from '@/features/settings/components/data-export-settings'
+import { DataExportSettings } from '@/features/settings/components/data-export-settings'
 
 const DataExportPage = () => {
   const { t } = useI18n()

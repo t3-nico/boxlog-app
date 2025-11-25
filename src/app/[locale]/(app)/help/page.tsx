@@ -1,7 +1,7 @@
 import { createTranslation, getDictionary } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 
-import HelpPageClient from './client'
+import { HelpPageClient } from './client'
 
 interface PageProps {
   params: { locale?: Locale }
