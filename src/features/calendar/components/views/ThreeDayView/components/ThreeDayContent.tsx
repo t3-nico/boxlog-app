@@ -25,7 +25,7 @@ interface ThreeDayContentProps {
   onPlanClick?: (plan: CalendarPlan) => void
   onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onPlanUpdate?: (planId: string, updates: Partial<CalendarPlan>) => void
+  onPlanUpdate?: (planIdOrPlan: string | CalendarPlan, updates?: { startTime: Date; endTime: Date }) => void
   onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
   className?: string
   dayIndex: number // 3日間内での日付インデックス（0-2）
@@ -45,7 +45,7 @@ export const ThreeDayContent = ({
   dayIndex,
   displayDates,
 }: ThreeDayContentProps) => {
-  // ドラッグ&ドロップ機能用にonPlanUpdateを変換
+  // ドラッグ&ドロップ機能用にonPlanUpdateをそのまま使用
   const handlePlanUpdate = useCallback(
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onPlanUpdate) return
@@ -56,11 +56,8 @@ export const ThreeDayContent = ({
         endTime: updates.endTime.toISOString(),
       })
 
-      // handleUpdatePlan形式で呼び出し
-      await onPlanUpdate(planId, {
-        startTime: updates.startTime,
-        endTime: updates.endTime,
-      })
+      // handleUpdatePlanは両方の形式に対応（planId + updates形式で呼び出し）
+      await onPlanUpdate(planId, updates)
     },
     [onPlanUpdate]
   )

@@ -26,7 +26,7 @@ interface WeekContentProps {
   onPlanClick?: (plan: CalendarPlan) => void
   onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onPlanUpdate?: (plan: CalendarPlan) => void
+  onPlanUpdate?: (planIdOrPlan: string | CalendarPlan, updates?: { startTime: Date; endTime: Date }) => void
   onTimeRangeSelect?: (selection: import('../../shared').DateTimeSelection) => void
   className?: string
   dayIndex: number // 週内での日付インデックス（0-6）
@@ -46,7 +46,7 @@ export const WeekContent = ({
   dayIndex,
   displayDates,
 }: WeekContentProps) => {
-  // ドラッグ&ドロップ機能用にonPlanUpdateを変換
+  // ドラッグ&ドロップ機能用にonPlanUpdateをそのまま使用
   const handlePlanUpdate = useCallback(
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onPlanUpdate) return
@@ -57,11 +57,8 @@ export const WeekContent = ({
         endTime: updates.endTime.toISOString(),
       })
 
-      // handleUpdatePlan形式で呼び出し
-      await onPlanUpdate(planId, {
-        startTime: updates.startTime,
-        endTime: updates.endTime,
-      })
+      // handleUpdatePlanは両方の形式に対応（planId + updates形式で呼び出し）
+      await onPlanUpdate(planId, updates)
     },
     [onPlanUpdate]
   )

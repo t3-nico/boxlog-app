@@ -25,7 +25,7 @@ interface TwoWeekContentProps {
   onPlanClick?: (plan: CalendarPlan) => void
   onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onPlanUpdate?: (plan: CalendarPlan) => void
+  onPlanUpdate?: (planIdOrPlan: string | CalendarPlan, updates?: { startTime: Date; endTime: Date }) => void
   onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
   onCreatePlan?: (startDate: Date, endDate: Date) => void
   className?: string
@@ -46,7 +46,7 @@ export const TwoWeekContent = ({
   dayIndex,
   displayDates,
 }: TwoWeekContentProps) => {
-  // ドラッグ&ドロップ機能用にonPlanUpdateを変換
+  // ドラッグ&ドロップ機能用にonPlanUpdateをそのまま使用
   const handlePlanUpdate = useCallback(
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onPlanUpdate) return
@@ -57,11 +57,8 @@ export const TwoWeekContent = ({
         endTime: updates.endTime.toISOString(),
       })
 
-      // handleUpdatePlan形式で呼び出し
-      await onPlanUpdate(planId, {
-        startTime: updates.startTime,
-        endTime: updates.endTime,
-      })
+      // handleUpdatePlanは両方の形式に対応（planId + updates形式で呼び出し）
+      await onPlanUpdate(planId, updates)
     },
     [onPlanUpdate]
   )

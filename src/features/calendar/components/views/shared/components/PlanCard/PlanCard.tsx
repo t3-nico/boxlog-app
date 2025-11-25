@@ -182,6 +182,12 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     className
   )
 
+  // planがundefinedの場合は何も表示しない（全hooks実行後）
+  if (!plan || !plan.id) {
+    console.error('PlanCard: plan is undefined or missing id', { plan, position })
+    return null
+  }
+
   return (
     <div
       className={planCardClasses}
