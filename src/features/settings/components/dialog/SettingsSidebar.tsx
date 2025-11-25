@@ -2,6 +2,7 @@
 
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { SETTINGS_CATEGORIES } from '@/features/settings/constants'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { cn } from '@/lib/utils'
@@ -9,15 +10,21 @@ import { cn } from '@/lib/utils'
 /**
  * 設定ダイアログのサイドバー
  *
- * カテゴリメニューを表示し、選択されたカテゴリをハイライト
+ * CalendarSidebarと同じ構造：
+ * - ヘッダー: 48px（h-12）
+ * - カテゴリメニュー: スクロール可能
  */
 export function SettingsSidebar() {
   const { t } = useI18n()
   const { activeCategory, setActiveCategory } = useSettingsDialogStore()
 
   return (
-    <aside className="bg-sidebar border-border w-60 flex-shrink-0 border-r">
-      <ScrollArea className="h-full">
+    <aside className="bg-sidebar border-border flex w-60 flex-shrink-0 flex-col border-r">
+      {/* ヘッダー（48px - SidebarHeaderと同じ） */}
+      <SidebarHeader title={t('settings.dialog.title')} />
+
+      {/* カテゴリメニュー */}
+      <ScrollArea className="flex-1">
         <nav className="space-y-0 p-4">
           {SETTINGS_CATEGORIES.map((category) => {
             const Icon = category.icon
