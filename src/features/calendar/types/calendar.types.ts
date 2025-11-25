@@ -102,6 +102,9 @@ export interface CalendarPlan {
   isRecurring: boolean
 }
 
+// 後方互換性のためのエイリアス
+export type CalendarTicket = CalendarPlan
+export type CalendarEvent = CalendarPlan
 // ========================================
 // 新しいDB設計に対応した型定義
 // ========================================
@@ -144,6 +147,8 @@ export interface RecurrencePattern {
   updatedAt: Date
   // 後方互換性
   /** @deprecated Use planId instead */
+  ticketId?: string
+  /** @deprecated Use planId instead */
   eventId?: string
 }
 
@@ -162,10 +167,10 @@ export interface PlanInstance {
 }
 
 // 後方互換性のためのエイリアス
+export type TicketInstance = PlanInstance
+export type EventInstance = PlanInstance
 /** @deprecated Use PlanInstance instead */
 export type planInstance = PlanInstance
-/** @deprecated Use PlanInstance instead */
-export type EventInstance = PlanInstance
 
 // カレンダー共有
 export interface CalendarShare {
@@ -244,7 +249,7 @@ export interface CreatePlanInput {
 }
 
 // 後方互換性のためのエイリアス
-/** @deprecated Use CreatePlanInput instead */
+export type CreateTicketInput = CreatePlanInput
 export type CreateEventInput = CreatePlanInput
 
 export interface UpdatePlanInput extends Partial<CreatePlanInput> {
@@ -252,10 +257,10 @@ export interface UpdatePlanInput extends Partial<CreatePlanInput> {
 }
 
 // 後方互換性のためのエイリアス
+export type UpdateTicketInput = UpdatePlanInput
+export type UpdateEventInput = UpdatePlanInput
 /** @deprecated Use UpdatePlanInput instead */
 export type UpdateplanInput = UpdatePlanInput
-/** @deprecated Use UpdatePlanInput instead */
-export type UpdateEventInput = UpdatePlanInput
 
 export interface CalendarShareInput {
   calendarId: string

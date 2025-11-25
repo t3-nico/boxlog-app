@@ -15,7 +15,7 @@
  * 使用箇所:
  * - Tag Manager（タグ管理画面）
  * - Tag Select（タグ選択ダイアログ）
- * - plan Inspector（プラン詳細のタグ選択）
+ * - Ticket Inspector（チケット詳細のタグ選択）
  *
  * @see https://supabase.com/docs/guides/realtime/postgres-changes
  *

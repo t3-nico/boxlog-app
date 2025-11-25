@@ -2,15 +2,15 @@
  * Calendar Realtime購読フック
  *
  * @description
- * カレンダーイベント（プラン）のDB変更をリアルタイムで検知し、
+ * カレンダーイベント（チケット）のDB変更をリアルタイムで検知し、
  * TanStack Queryのキャッシュを自動更新する。
  *
- * 対象テーブル: plans（カレンダーで表示されるプラン）
+ * 対象テーブル: tickets（カレンダーで表示されるチケット）
  *
  * 検知イベント:
- * - INSERT: 新規プラン作成
- * - UPDATE: プラン更新（日時変更、ステータス変更等）
- * - DELETE: プラン削除
+ * - INSERT: 新規チケット作成
+ * - UPDATE: チケット更新（日時変更、ステータス変更等）
+ * - DELETE: チケット削除
  *
  * @see https://supabase.com/docs/guides/realtime/postgres-changes
  *
@@ -43,7 +43,7 @@ export function useCalendarRealtime(userId: string | undefined, options: UseCale
 
   useRealtimeSubscription<{ id: string }>({
     channelName: `calendar-changes-${userId}`,
-    table: 'plans',
+    table: 'tickets',
     event: '*', // INSERT, UPDATE, DELETE すべて
     filter: userId ? `user_id=eq.${userId}` : undefined,
     enabled, // enabledオプションを渡す
@@ -54,14 +54,14 @@ export function useCalendarRealtime(userId: string | undefined, options: UseCale
       console.debug('[Calendar Realtime] Event detected:', payload.eventType, newRecord?.id)
 
       // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
-      // undefined を渡すことで、useplans({}) と useplans(undefined) の両方を無効化
-      void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
+      // undefined を渡すことで、useTickets({}) と useTickets(undefined) の両方を無効化
+      void utils.tickets.list.invalidate(undefined, { refetchType: 'all' })
 
-      // 個別プランのキャッシュも無効化（Inspector等で使用）
+      // 個別チケットのキャッシュも無効化（Inspector等で使用）
       if (newRecord?.id) {
-        void utils.plans.getById.invalidate({ id: newRecord.id })
+        void utils.tickets.getById.invalidate({ id: newRecord.id })
       } else if (oldRecord?.id) {
-        void utils.plans.getById.invalidate({ id: oldRecord.id })
+        void utils.tickets.getById.invalidate({ id: oldRecord.id })
       }
     },
     onError: (error) => {
