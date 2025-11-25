@@ -119,6 +119,17 @@ export function useViewPlans({ date, plans = [] }: UseViewPlansOptions): UseView
     planPositions: planPositions.slice(0, 2),
   })
 
+  // planPositions内のundefinedを検出
+  planPositions.forEach((pos, index) => {
+    if (!pos.plan || !pos.plan.id) {
+      console.error('❌ useViewPlans: Invalid plan in planPositions', {
+        index,
+        position: pos,
+        planLayout: planLayouts[index],
+      })
+    }
+  })
+
   return {
     dayPlans,
     planPositions,
