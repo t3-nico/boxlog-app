@@ -107,17 +107,13 @@ export function NavUser({
             <UserCircle />
             {t('navUser.account')}
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href={`/${locale}/settings/plan-billing`}>
-              <Sparkles />
-              {t('navUser.upgradePlan')}
-            </Link>
+          <DropdownMenuItem onClick={() => openSettings('plan-billing')}>
+            <Sparkles />
+            {t('navUser.upgradePlan')}
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href={`/${locale}/settings/personalize`}>
-              <Palette />
-              {t('navUser.personalize')}
-            </Link>
+          <DropdownMenuItem onClick={() => openSettings('preferences')}>
+            <Palette />
+            {t('navUser.personalize')}
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
