@@ -18,7 +18,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
-import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -33,6 +32,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
@@ -105,7 +105,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const inlineFormRef = useRef<HTMLTableRowElement>(null)
   const [newTagName, setNewTagName] = useState('')
   const [newTagDescription, setNewTagDescription] = useState('')
-  const [newTagColor, setNewTagColor] = useState(DEFAULT_TAG_COLOR)
+  const [newTagColor, setNewTagColor] = useState<string>(DEFAULT_TAG_COLOR)
 
   // initialGroupNumber からグループIDを解決
   const initialGroup = useMemo(() => {
@@ -790,7 +790,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                 ).length
                                 return (
                                   <div className="flex items-center gap-1">
-                                    <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
+                                    <Folder
+                                      className="h-4 w-4 shrink-0"
+                                      style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+                                    />
                                     <span className="text-sm">
                                       {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
                                     </span>
@@ -927,7 +930,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               ).length
                               return (
                                 <div className="flex items-center gap-1">
-                                  <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
+                                  <Folder
+                                    className="h-4 w-4 shrink-0"
+                                    style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+                                  />
                                   <span className="text-sm">
                                     {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
                                   </span>

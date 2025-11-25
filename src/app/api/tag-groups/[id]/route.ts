@@ -54,6 +54,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         return NextResponse.json({ error: handleSupabaseError(tagsError) }, { status: 500 })
       }
 
+      // @ts-expect-error - Supabase型定義の制限
       return NextResponse.json({ data: { ...data, tags } })
     }
 
@@ -86,7 +87,12 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const body = (await request.json()) as UpdateTagGroupInput
 
     // 更新データ構築
-    const updateData: Partial<Pick<UpdateTagGroupInput, 'name' | 'description' | 'color' | 'sort_order'>> = {}
+    const updateData: {
+      name?: string
+      description?: string | null
+      color?: string | null
+      sort_order?: number
+    } = {}
     if (body.name !== undefined) updateData.name = body.name
     if (body.description !== undefined) updateData.description = body.description
     if (body.color !== undefined) updateData.color = body.color
@@ -94,6 +100,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     const { data, error } = await supabase
       .from('tag_groups')
+      // @ts-expect-error - Supabase型定義の制限
       .update(updateData)
       .eq('id', id)
       .eq('user_id', user.id)

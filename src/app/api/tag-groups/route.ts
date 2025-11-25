@@ -78,7 +78,14 @@ export async function POST(request: NextRequest) {
     }
 
     // タググループ作成データ
-    const insertData = {
+    const insertData: {
+      user_id: string
+      name: string
+      slug: string
+      description: string | null
+      color: string | null
+      sort_order: number
+    } = {
       user_id: user.id,
       name: body.name,
       slug: body.slug || '', // 空文字列を許可
@@ -88,6 +95,7 @@ export async function POST(request: NextRequest) {
     }
 
     // タググループ作成
+    // @ts-expect-error - Supabase型定義の制限
     const { data, error } = await supabase.from('tag_groups').insert(insertData).select().single()
 
     if (error) {
