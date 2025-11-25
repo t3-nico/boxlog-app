@@ -18,29 +18,77 @@ npm run dev
 
 開発サーバーが起動したら [http://localhost:3000](http://localhost:3000) にアクセスしてください。
 
-## 📚 詳細ドキュメント
-
-技術詳細・開発ガイドラインは以下を参照してください：
-
-- **📋 プロジェクト全体概要**: [`docs/README.md`](./docs/README.md)
-- **🎨 デザインシステム**: [`docs/DESIGN_SYSTEM_README.md`](./docs/DESIGN_SYSTEM_README.md)
-- **⚡ Bundle監視システム**: [`docs/BUNDLE_MONITORING.md`](./docs/BUNDLE_MONITORING.md)
-- **🔧 ESLint企業級設定**: [`docs/ESLINT_SETUP_COMPLETE.md`](./docs/ESLINT_SETUP_COMPLETE.md)
-- **♿ アクセシビリティ**: [`docs/ACCESSIBILITY_TESTING_GUIDE.md`](./docs/ACCESSIBILITY_TESTING_GUIDE.md)
-
 ## ⚙️ 主要技術
 
-- **フロントエンド**: Next.js 14, React 18, TypeScript
-- **UIライブラリ**: shadcn/ui, kiboUI
-- **データベース**: Supabase (PostgreSQL)
-- **スタイリング**: Tailwind CSS v4
+| カテゴリ           | 技術                                                  |
+| ------------------ | ----------------------------------------------------- |
+| **フレームワーク** | Next.js 14 (App Router), React 18, TypeScript 5       |
+| **UIライブラリ**   | shadcn/ui (Radix UI), HeadlessUI, kiboUI              |
+| **スタイリング**   | Tailwind CSS v4, セマンティックトークン (globals.css) |
+| **状態管理**       | Zustand (グローバル), TanStack Query (サーバー状態)   |
+| **API**            | tRPC 11 (型安全なAPI)                                 |
+| **データベース**   | Supabase (PostgreSQL + Auth + Realtime)               |
+| **バリデーション** | Zod                                                   |
+| **テスト**         | Vitest, Playwright                                    |
 
 ## 📋 開発時の重要ルール
 
-1. **コミット前**: `npm run lint` 必須実行
-2. **コンポーネント選択**: shadcn/ui → kiboUI → カスタム実装
-3. **スタイリング**: `/src/config/theme` 必須使用
-4. **詳細ガイドライン**: [`CLAUDE.md`](./CLAUDE.md) を参照
+### 必須コマンド
+
+```bash
+npm run typecheck   # 型チェック（コード変更後）
+npm run lint        # コード品質チェック（コミット前）
+npm run dev         # 開発サーバー起動
+```
+
+### コーディング規約
+
+1. **コンポーネント**: 関数宣言 + 名前付きエクスポート（`React.FC`禁止）
+2. **スタイリング**: `globals.css`のセマンティックトークン使用（`bg-card`, `text-foreground`等）
+3. **型定義**: `any`型禁止、厳密な型定義必須
+4. **UIコンポーネント選択**: shadcn/ui → HeadlessUI → kiboUI → カスタム実装
+
+```tsx
+// ✅ 推奨
+export function MyComponent({ title }: Props) {
+  return <div className="bg-card text-card-foreground p-4">{title}</div>
+}
+
+// ❌ 禁止
+export const MyComponent: FC<Props> = ...  // React.FC非推奨
+<div className="bg-white p-[13px]">        // ハードコード値禁止
+```
+
+**詳細ガイドライン**: [`CLAUDE.md`](./CLAUDE.md)
+
+## 📚 ドキュメント
+
+### 開発者向け
+
+| ドキュメント                                                     | 内容                                   |
+| ---------------------------------------------------------------- | -------------------------------------- |
+| [`CLAUDE.md`](./CLAUDE.md)                                       | AI意思決定プロトコル・コーディング規約 |
+| [`src/CLAUDE.md`](./src/CLAUDE.md)                               | 実装リファレンス・コード例             |
+| [`docs/README.md`](./docs/README.md)                             | プロジェクト全体概要                   |
+| [`docs/development/COMMANDS.md`](./docs/development/COMMANDS.md) | 全コマンド一覧                         |
+
+### 設計・アーキテクチャ
+
+| ドキュメント                                                                                                     | 内容                                  |
+| ---------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| [`docs/design-system/STYLE_GUIDE.md`](./docs/design-system/STYLE_GUIDE.md)                                       | スタイルガイド（8pxグリッド、カラー） |
+| [`docs/design-system/README.md`](./docs/design-system/README.md)                                                 | デザインシステム概要                  |
+| [`docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md`](./docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md) | 状態管理の判断基準                    |
+| [`docs/architecture/ERROR_HANDLING.md`](./docs/architecture/ERROR_HANDLING.md)                                   | エラーハンドリング                    |
+
+### 品質・テスト
+
+| ドキュメント                                                                                           | 内容                   |
+| ------------------------------------------------------------------------------------------------------ | ---------------------- |
+| [`docs/testing/README.md`](./docs/testing/README.md)                                                   | テスト戦略             |
+| [`docs/performance/BUNDLE_MONITORING.md`](./docs/performance/BUNDLE_MONITORING.md)                     | Bundle監視システム     |
+| [`docs/performance/ACCESSIBILITY_TESTING_GUIDE.md`](./docs/performance/ACCESSIBILITY_TESTING_GUIDE.md) | アクセシビリティテスト |
+| [`docs/development/ESLINT_HYBRID_APPROACH.md`](./docs/development/ESLINT_HYBRID_APPROACH.md)           | ESLint設定             |
 
 ## 🛡️ コード品質管理
 
@@ -65,14 +113,15 @@ npm run lint        # 全品質チェック
 npm run lint:fix    # 自動修正可能な問題を修正
 npm run typecheck   # TypeScript型チェック
 
+# テスト
+npm run test:run    # ユニットテスト
+npm run test:e2e    # E2Eテスト
+
 # コミット時（自動実行）
 # 1. ESLint全ルール適用
 # 2. Prettier自動フォーマット
 # 3. TypeScript型チェック
 # 4. セキュリティ監査
-
-# プッシュ時（自動実行）
-# ブランチ名検証
 ```
 
 ## 🙏 Acknowledgments
@@ -96,3 +145,7 @@ BoxLogは以下のオープンソースプロジェクトを利用していま�
 - **[Supabase](https://supabase.com/)** - Open source Firebase alternative (Apache-2.0 License)
 
 詳細なライセンス情報は [`docs/CREDITS.md`](./docs/CREDITS.md) をご覧ください。
+
+---
+
+**バージョン**: 0.4.0 | **最終更新**: 2025-11-24
