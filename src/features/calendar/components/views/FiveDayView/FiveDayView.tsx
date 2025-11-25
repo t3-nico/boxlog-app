@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { format, isToday } from 'date-fns'
 
@@ -121,6 +121,17 @@ export const FiveDayView = ({
 
   // 共通フック使用してスタイル計算
   const eventStyles = usePlanStyles(eventPositions)
+
+  // デバッグ用ログ
+  useEffect(() => {
+    console.log('🔍 FiveDayView Debug:', {
+      eventsCount: events.length,
+      positionsCount: eventPositions.length,
+      stylesCount: Object.keys(eventStyles).length,
+      positions: eventPositions.slice(0, 3),
+      styles: Object.entries(eventStyles).slice(0, 3),
+    })
+  }, [events, eventPositions, eventStyles])
 
   // TimeGrid が空き時間クリック処理を担当するため、この関数は不要
 
