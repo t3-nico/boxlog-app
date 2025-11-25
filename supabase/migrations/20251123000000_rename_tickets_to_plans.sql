@@ -13,8 +13,17 @@ ALTER TABLE IF EXISTS tickets RENAME TO plans;
 -- Step 2: カラム名の変更
 -- =====================================================
 
--- plan_number を plan_number にリネーム
-ALTER TABLE plans RENAME COLUMN ticket_number TO plan_number;
+-- plan_number は既に存在するため、存在確認してからリネーム
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'plans' AND column_name = 'ticket_number'
+  ) THEN
+    ALTER TABLE plans RENAME COLUMN ticket_number TO plan_number;
+  END IF;
+END
+$$;
 
 -- =====================================================
 -- Step 3: シーケンスの名前変更
@@ -35,17 +44,53 @@ $$;
 -- Step 4: 関連テーブルの変更
 -- =====================================================
 
--- plan_tags テーブルを plan_tags にリネーム
-ALTER TABLE IF EXISTS ticket_tags RENAME TO plan_tags;
+-- plan_tags テーブルを plan_tags にリネーム（存在確認）
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_name = 'ticket_tags'
+  ) THEN
+    ALTER TABLE ticket_tags RENAME TO plan_tags;
+  END IF;
+END
+$$;
 
--- plan_tags の plan_id カラムを plan_id にリネーム
-ALTER TABLE plan_tags RENAME COLUMN ticket_id TO plan_id;
+-- plan_tags の plan_id カラムを plan_id にリネーム（存在確認）
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'plan_tags' AND column_name = 'ticket_id'
+  ) THEN
+    ALTER TABLE plan_tags RENAME COLUMN ticket_id TO plan_id;
+  END IF;
+END
+$$;
 
--- plan_activities テーブルを plan_activities にリネーム
-ALTER TABLE IF EXISTS ticket_activities RENAME TO plan_activities;
+-- plan_activities テーブルを plan_activities にリネーム（存在確認）
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_name = 'ticket_activities'
+  ) THEN
+    ALTER TABLE ticket_activities RENAME TO plan_activities;
+  END IF;
+END
+$$;
 
--- plan_activities の plan_id カラムを plan_id にリネーム
-ALTER TABLE plan_activities RENAME COLUMN ticket_id TO plan_id;
+-- plan_activities の plan_id カラムを plan_id にリネーム（存在確認）
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'plan_activities' AND column_name = 'ticket_id'
+  ) THEN
+    ALTER TABLE plan_activities RENAME COLUMN ticket_id TO plan_id;
+  END IF;
+END
+$$;
 
 -- =====================================================
 -- Step 5: インデックスの再作成（自動でリネームされるが念のため確認）
