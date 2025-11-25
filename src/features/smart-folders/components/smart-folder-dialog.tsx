@@ -114,7 +114,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <DialogPanel className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900">
           {/* ヘッダー */}
-          <div className="flex items-center justify-between border-b border-gray-200 p-6 dark:border-gray-700">
+          <div className="border-border flex items-center justify-between border-b p-6">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900">
                 <FolderIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -133,7 +133,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
               <button
                 type="button"
                 onClick={() => setShowPreview(!showPreview)}
-                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                className="border-border flex items-center gap-2 rounded-md border bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               >
                 <EyeIcon className="h-4 w-4" />
                 {showPreview ? 'Hide Preview' : 'Show Preview'}
@@ -168,7 +168,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
                         value={formData.name}
                         onChange={(e) => updateField('name', e.target.value)}
                         placeholder="Enter folder name..."
-                        className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                        className="border-border mt-1 block w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
                       />
                       {errors.name ? (
                         <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p>
@@ -188,7 +188,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
                         onChange={(e) => updateField('description', e.target.value)}
                         placeholder="Optional description..."
                         rows={2}
-                        className="mt-1 block w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                        className="border-border mt-1 block w-full resize-none rounded-md border bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
                       />
                     </Field>
 
@@ -203,7 +203,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
                           value={formData.icon}
                           onChange={(e) => updateField('icon', e.target.value)}
                           placeholder="📁"
-                          className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                          className="border-border mt-1 block w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
                         />
                       </Field>
 
@@ -217,13 +217,13 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
                             type="color"
                             value={formData.color}
                             onChange={(e) => updateField('color', e.target.value)}
-                            className="h-8 w-8 rounded border border-gray-300 dark:border-gray-600"
+                            className="border-border h-8 w-8 rounded border"
                           />
                           <Input
                             value={formData.color}
                             onChange={(e) => updateField('color', e.target.value)}
                             placeholder="#3B82F6"
-                            className="flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                            className="border-border flex-1 rounded-md border bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
                           />
                         </div>
                       </Field>
@@ -261,12 +261,12 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
           </div>
 
           {/* フッター */}
-          <div className="flex items-center justify-end gap-3 border-t border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-800/50">
+          <div className="border-border flex items-center justify-end gap-3 border-t bg-gray-50 p-6 dark:bg-gray-800/50">
             <button
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              className="border-border rounded-md border bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               Cancel
             </button>
@@ -279,7 +279,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
             >
               {isLoading ? (
                 <>
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <div className="border-border h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
                   Saving...
                 </>
               ) : (

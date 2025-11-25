@@ -107,7 +107,7 @@ export function TagsSettings() {
             placeholder="タグを検索..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-800"
+            className="border-border bg-card flex-1 rounded-lg border px-4 py-2 text-sm"
           />
           <button
             type="button"
@@ -119,7 +119,7 @@ export function TagsSettings() {
         </div>
 
         {/* タグツリービュー */}
-        <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800">
+        <div className="border-border bg-card rounded-lg border p-6">
           {isLoading ? (
             <p className="text-muted-foreground text-sm">読み込み中...</p>
           ) : (

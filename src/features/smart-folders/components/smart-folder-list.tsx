@@ -440,9 +440,7 @@ export const SmartFolderList = ({
           })}
 
           {/* 区切り線 */}
-          {systemFolders.length > 0 && userFolders.length > 0 && (
-            <div className="my-2 border-t border-gray-200 dark:border-gray-700" />
-          )}
+          {systemFolders.length > 0 && userFolders.length > 0 && <div className="border-border my-2 border-t" />}
 
           {/* ユーザーフォルダ（ドラッグ可能） */}
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

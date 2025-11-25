@@ -35,7 +35,7 @@ export const getStatusColor = (
 
 // 共通Tailwindクラスを取得するヘルパー
 export const getTextMuted = (): string => 'text-neutral-600 dark:text-neutral-400'
-export const getBorderDefault = (): string => 'border-neutral-200 dark:border-neutral-800'
+export const getBorderDefault = (): string => 'border-border'
 export const getSelectionBg = (): string => 'bg-blue-50 dark:bg-blue-950'
 export const getSurfaceBg = (): string => 'bg-neutral-50 dark:bg-neutral-900'
 export const getErrorBorder = (): string => 'border-red-500 dark:border-red-400'

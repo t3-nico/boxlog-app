@@ -82,7 +82,7 @@ export const DeleteToast = ({
         isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-4 scale-95 opacity-0'
       )}
     >
-      <div className="max-w-[450px] min-w-[320px] rounded-lg border border-gray-700 bg-gray-800 p-4 text-white shadow-lg dark:bg-gray-900">
+      <div className="border-border bg-popover text-popover-foreground max-w-[450px] min-w-[320px] rounded-lg border p-4 shadow-lg">
         <div className="flex items-start gap-3">
           {/* 成功アイコン */}
           <div className="mt-0.5 flex-shrink-0">

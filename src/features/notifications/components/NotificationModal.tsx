@@ -87,20 +87,14 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         className={cn(
           'relative mx-4 w-full max-w-md',
           'bg-white dark:bg-neutral-800',
-          'border border-neutral-200 dark:border-neutral-800',
+          'border-border border',
           'shadow-lg ring-1',
           'rounded-lg',
           'transition-all duration-200'
         )}
       >
         {/* Header */}
-        <div
-          className={cn(
-            'flex items-center justify-between',
-            'border-b border-neutral-200 dark:border-neutral-800',
-            'p-4'
-          )}
-        >
+        <div className={cn('flex items-center justify-between', 'border-border border-b', 'p-4')}>
           <div className="flex items-center gap-2">
             <Bell className={cn('h-5 w-5', 'text-neutral-900 dark:text-neutral-100')} />
             <h1 className={cn('text-3xl font-bold tracking-tight', 'text-neutral-900 dark:text-neutral-100')}>
@@ -137,7 +131,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         </div>
 
         {/* Tabs */}
-        <div className={cn('flex border-b border-neutral-200 dark:border-neutral-800')}>
+        <div className={cn('border-border flex border-b')}>
           <button
             type="button"
             onClick={() => setActiveTab('all')}
@@ -247,7 +241,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
 
         {/* Footer */}
         {filteredNotifications.length > 0 && (
-          <div className={cn('border-t px-4 py-3', 'border-neutral-200 dark:border-neutral-800')}>
+          <div className={cn('border-t px-4 py-3', 'border-border')}>
             <button
               type="button"
               className={cn(

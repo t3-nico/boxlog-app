@@ -120,7 +120,7 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
           <div
             className={cn(
               'absolute right-0 z-20 mt-2 w-48 rounded-md border py-2 shadow-lg',
-              'border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800',
+              'border-border bg-popover',
               'transition-all duration-200'
             )}
             role="listbox"

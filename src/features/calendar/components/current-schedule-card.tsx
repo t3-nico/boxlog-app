@@ -258,7 +258,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
       onKeyDown={handleKeyDown}
     >
       <div className="flex items-center" style={{ gap: '4px' }}>
-        <div className="rounded border border-gray-300 px-2 py-1 text-xs font-medium tracking-wide text-gray-600 uppercase dark:border-gray-600 dark:text-gray-400">
+        <div className="border-border rounded border px-2 py-1 text-xs font-medium tracking-wide text-gray-600 uppercase dark:text-gray-400">
           Live
         </div>
         <div className="flex items-center text-sm font-semibold text-gray-600 tabular-nums dark:text-gray-400">

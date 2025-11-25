@@ -135,7 +135,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           onClick={() => handleSocialLogin('google')}
           disabled={isLoading}
           className={cn(
-            'flex w-full items-center justify-center gap-3 rounded-md border border-neutral-200 dark:border-neutral-800',
+            'border-border flex w-full items-center justify-center gap-3 rounded-md border',
             'bg-white px-4 py-2 text-sm font-medium text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400',
             'shadow-sm hover:bg-neutral-50 dark:hover:bg-neutral-800',
             'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none',
@@ -168,7 +168,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           onClick={() => handleSocialLogin('apple')}
           disabled={isLoading}
           className={cn(
-            'flex w-full items-center justify-center gap-3 rounded-md border border-neutral-800',
+            'border-border flex w-full items-center justify-center gap-3 rounded-md border',
             'bg-neutral-950 px-4 py-2 text-sm font-medium text-white',
             'shadow-sm hover:bg-gray-900',
             'focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none',
@@ -184,7 +184,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-neutral-200 dark:border-neutral-800" />
+          <div className="border-border w-full border-t" />
         </div>
         <div className="relative flex justify-center text-sm">
           <span className="bg-white px-2 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400">

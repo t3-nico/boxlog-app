@@ -24,7 +24,7 @@ const AccessibilityHeader = ({
   <div
     className={cn(
       'flex items-center justify-between border-b p-6',
-      getContrastClassName('border-gray-200', 'contrast-border')
+      getContrastClassName('border-border', 'contrast-border')
     )}
   >
     <div>
@@ -207,7 +207,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
                             'border-blue-500 bg-blue-50',
                             'contrast-selected contrast-border border-2'
                           )
-                        : getContrastClassName('border-gray-200', 'contrast-border'),
+                        : getContrastClassName('border-border', 'contrast-border'),
                       getContrastClassName('hover:bg-gray-50', 'hover:contrast-selected')
                     )}
                   >
@@ -218,7 +218,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
                       checked={selectedTheme === theme.key}
                       onChange={() => handleThemeChange(theme.key)}
                       className={cn(
-                        'h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500',
+                        'border-border text-primary focus:ring-primary h-4 w-4',
                         getContrastClassName('', 'contrast-accent')
                       )}
                     />
@@ -399,7 +399,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
         <div
           className={cn(
             'border-t bg-gray-50 px-6 py-4',
-            getContrastClassName('border-gray-200 bg-gray-50', 'contrast-border contrast-bg')
+            getContrastClassName('border-border bg-muted', 'contrast-border contrast-bg')
           )}
         >
           <div className="flex justify-end space-x-3">
@@ -407,10 +407,10 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
               type="button"
               onClick={onClose}
               className={cn(
-                'rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700',
+                'border-border bg-background text-foreground rounded-md border px-4 py-2 text-sm font-medium',
                 'hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none',
                 getContrastClassName(
-                  'border-gray-300 bg-white text-gray-700 hover:bg-gray-50',
+                  'border-border bg-background text-foreground hover:bg-muted',
                   'contrast-text contrast-bg contrast-border hover:contrast-selected focus:contrast-focus'
                 )
               )}

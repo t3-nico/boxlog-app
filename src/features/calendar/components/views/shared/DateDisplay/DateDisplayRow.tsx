@@ -25,7 +25,7 @@ export const DateDisplayRow = ({
           className={cn(
             'flex-1',
             // 最後の日付以外は右ボーダーを表示
-            index < dates.length - 1 && 'border-r border-neutral-900/20 dark:border-neutral-100/20'
+            index < dates.length - 1 && 'border-border border-r'
           )}
           isSelected={selectedDate ? date.toDateString() === selectedDate.toDateString() : false}
           showDayName={showDayNames}

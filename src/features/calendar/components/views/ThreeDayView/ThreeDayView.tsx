@@ -175,10 +175,7 @@ export const ThreeDayView = ({
             return (
               <div
                 key={date.toISOString()}
-                className={cn(
-                  'relative flex-1',
-                  dayIndex < displayDates.length - 1 ? 'border-r border-neutral-900/20 dark:border-neutral-100/20' : ''
-                )}
+                className={cn('relative flex-1', dayIndex < displayDates.length - 1 ? 'border-border border-r' : '')}
                 style={{ width: `${100 / displayDates.length}%` }}
               >
                 {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}

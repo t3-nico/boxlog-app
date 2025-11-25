@@ -58,7 +58,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
   const columnClasses = [
     'relative flex-1 min-w-0',
     GRID_BACKGROUND,
-    'border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0',
+    'border-r border-border last:border-r-0',
     isWeekendActual ? 'bg-gray-50 dark:bg-gray-800/50' : '',
     className,
   ]

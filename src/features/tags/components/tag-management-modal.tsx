@@ -208,7 +208,7 @@ export const TagManagementModal = ({
       {/* Modal */}
       <div className="fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-96 -translate-x-1/2 -translate-y-1/2 transform overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
+        <div className="border-border flex items-center justify-between border-b p-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Tag Management</h2>
           <button
             type="button"
@@ -221,7 +221,7 @@ export const TagManagementModal = ({
 
         <div className="max-h-[calc(80vh-120px)] overflow-y-auto">
           {/* Create New Tag */}
-          <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+          <div className="border-border border-b p-4">
             <h3 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">Create New Tag</h3>
 
             <div className="space-y-3">
@@ -238,7 +238,7 @@ export const TagManagementModal = ({
                   value={newTagName}
                   onChange={handleNewTagNameChange}
                   placeholder="Enter tag name..."
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="border-border w-full rounded-lg border bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   onKeyDown={handleNewTagNameKeyDown}
                 />
               </div>
@@ -254,7 +254,7 @@ export const TagManagementModal = ({
                   id="new-tag-parent"
                   value={newTagParentId || ''}
                   onChange={handleNewTagParentChange}
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="border-border w-full rounded-lg border bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                 >
                   <option value="">None (Root Level)</option>
                   {getAvailableParentTags().map((tag) => (
@@ -315,7 +315,7 @@ export const TagManagementModal = ({
                 {tags.map((tag) => (
                   <div
                     key={tag.id}
-                    className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-700"
+                    className="border-border flex items-center gap-3 rounded-lg border bg-gray-50 p-3 dark:bg-gray-700"
                   >
                     {editingTag === tag.id ? (
                       <>
@@ -325,14 +325,14 @@ export const TagManagementModal = ({
                             type="text"
                             value={editName}
                             onChange={handleEditNameChange}
-                            className="w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                            className="border-border w-full rounded border bg-white px-2 py-1 text-sm text-gray-900 dark:bg-gray-800 dark:text-white"
                             onKeyDown={handleEditNameKeyDown}
                           />
 
                           <select
                             value={editParentId || ''}
                             onChange={handleEditParentChange}
-                            className="w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                            className="border-border w-full rounded border bg-white px-2 py-1 text-sm text-gray-900 dark:bg-gray-800 dark:text-white"
                           >
                             <option value="">None (Root Level)</option>
                             {getAvailableParentTags(editingTag!).map((parentTag) => (
@@ -417,7 +417,7 @@ export const TagManagementModal = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 border-t border-gray-200 p-4 dark:border-gray-700">
+        <div className="border-border flex justify-end gap-2 border-t p-4">
           <button
             type="button"
             onClick={onClose}
