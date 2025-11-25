@@ -109,6 +109,16 @@ export function useViewPlans({ date, plans = [] }: UseViewPlansOptions): UseView
     return Math.max(1, ...planLayouts.map((layout: PlanLayout) => layout.totalColumns))
   }, [planLayouts])
 
+  // デバッグログ
+  console.log('🔍 useViewPlans Debug:', {
+    plansInput: plans.length,
+    dayPlansFiltered: dayPlans.length,
+    planLayoutsCount: planLayouts.length,
+    planPositionsCount: planPositions.length,
+    dayPlans: dayPlans.slice(0, 2),
+    planPositions: planPositions.slice(0, 2),
+  })
+
   return {
     dayPlans,
     planPositions,

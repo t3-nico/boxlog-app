@@ -86,6 +86,19 @@ export const DayView = ({
     ...(onUpdateEvent && { onPlanUpdate: onUpdateEvent }),
   })
 
+  // デバッグ用ログ
+  React.useEffect(() => {
+    console.log('🔍 DayView Debug:', {
+      date: date.toISOString(),
+      eventsCount: events?.length || 0,
+      dayPlansCount: dayPlans.length,
+      planStylesCount: Object.keys(planStyles).length,
+      events: events?.slice(0, 3),
+      dayPlans: dayPlans.slice(0, 3),
+      planStyles: Object.entries(planStyles).slice(0, 3),
+    })
+  }, [date, events, dayPlans, planStyles])
+
   // 空き時間クリックハンドラー
   const handleEmptySlotClick = React.useCallback(
     (hour: number, minute: number) => {
