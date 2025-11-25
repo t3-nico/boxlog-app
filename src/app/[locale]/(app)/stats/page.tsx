@@ -79,9 +79,9 @@ export default function StatsPage() {
         <p className="text-muted-foreground text-sm">{t('stats.overview.subtitle')}</p>
       </div>
 
-      {/* サマリーカード */}
+      {/* サマリーカード（情報表示系: 背景なし、ボーダーのみ） */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card>
+        <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{t('stats.overview.completedTasks')}</CardTitle>
             <CheckCircle2 className="text-muted-foreground size-4" />
@@ -94,7 +94,7 @@ export default function StatsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{t('stats.overview.workHours')}</CardTitle>
             <Clock className="text-muted-foreground size-4" />
@@ -107,7 +107,7 @@ export default function StatsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{t('stats.overview.achievementRate')}</CardTitle>
             <TrendingUp className="text-muted-foreground size-4" />
@@ -119,8 +119,8 @@ export default function StatsPage() {
         </Card>
       </div>
 
-      {/* 週間トレンド（コンパクト表示） */}
-      <Card>
+      {/* 週間トレンド（情報表示系: 背景なし、ボーダーのみ） */}
+      <Card className="bg-background">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -141,7 +141,7 @@ export default function StatsPage() {
         </CardContent>
       </Card>
 
-      {/* クイックアクセス */}
+      {/* クイックアクセス（クリック可能: カード背景あり） */}
       <div>
         <h2 className="mb-4 text-lg font-semibold">{t('stats.overview.quickAccess')}</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
