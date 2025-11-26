@@ -1,4 +1,4 @@
-// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
+// @ts-nocheck
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import type { Task } from '@/types/unified'

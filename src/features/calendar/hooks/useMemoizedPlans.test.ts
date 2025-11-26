@@ -1,4 +1,4 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
+// @ts-nocheck
 import { renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 

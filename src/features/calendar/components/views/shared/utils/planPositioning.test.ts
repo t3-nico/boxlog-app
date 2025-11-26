@@ -1,4 +1,4 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
+// @ts-nocheck
 import { describe, expect, it } from 'vitest'
 
 import type { TimedPlan } from '../types/plan.types'
