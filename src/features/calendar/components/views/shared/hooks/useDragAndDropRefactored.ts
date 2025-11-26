@@ -10,7 +10,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { useDragCalculations } from './drag-operations/useDragCalculations'
 import { useDragElement } from './drag-operations/useDragElement'
 import { useDragState } from './drag-operations/useDragState'
-import { useEventUpdate } from './drag-operations/useEventUpdate'
+import { useEventUpdate } from './drag-operations/usePlanUpdate'
 
 interface CalendarPlan {
   id: string

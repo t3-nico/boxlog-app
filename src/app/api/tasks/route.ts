@@ -5,12 +5,13 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError, isValidTaskStatus, isValidUUID } from '@/lib/supabase/utils'
 
 // タスクの取得 (GET)
 export async function GET(request: NextRequest) {
   try {
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
     const status = searchParams.get('status')
@@ -53,6 +54,7 @@ export async function GET(request: NextRequest) {
 // タスクの作成 (POST)
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient()
     const body = await request.json()
     const { user_id, title, planned_start, planned_duration, status = 'backlog', tags = [], memo } = body
 
@@ -123,7 +125,7 @@ function buildUpdateData(data: {
   memo?: string
   status?: string
 }) {
-  const updateData: Record<string, string | number | Date | null | boolean> = {}
+  const updateData: Record<string, string | number | Date | null | boolean | string[]> = {}
 
   if (data.title !== undefined) updateData.title = data.title.trim()
   if (data.planned_start !== undefined) updateData.planned_start = data.planned_start
@@ -142,6 +144,7 @@ function buildUpdateData(data: {
 // タスクの更新 (PUT)
 export async function PUT(request: NextRequest) {
   try {
+    const supabase = await createClient()
     const body = await request.json()
     const { id, title, planned_start, planned_duration, actual_start, actual_end, satisfaction, status, tags, memo } =
       body
@@ -184,6 +187,7 @@ export async function PUT(request: NextRequest) {
 // タスクの削除 (DELETE)
 export async function DELETE(request: NextRequest) {
   try {
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 

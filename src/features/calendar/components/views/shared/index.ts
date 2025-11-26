@@ -99,8 +99,23 @@ export * from './constants/grid.constants'
 export type * from './types/base.types'
 export type * from './types/grid.types'
 export type { TimeSlot } from './types/grid.types'
-export type * from './types/plan.types'
+// plan.types から EventGroup を除外（calendar-specific/layout/plan-layout.ts と競合するため）
+export type {
+  CalendarPlan,
+  TimedPlan,
+  TimedEvent,
+  PlanCardProps,
+  planCardProps,
+  EventBlockProps,
+  PlanCardPosition,
+  planCardPosition,
+  PlanGroup,
+  planGroup,
+  PlanColumn,
+  planColumn,
+  EventColumn,
+  PlanInteractionHandler,
+  planInteractionHandler,
+  EventInteractionHandler,
+} from './types/plan.types'
 export type * from './types/view.types'
-
-// 後方互換性のためのエイリアス
-export type * from './types/plan.types' // event.types からリネーム

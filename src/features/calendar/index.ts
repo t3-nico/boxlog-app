@@ -4,8 +4,33 @@ export { CalendarController } from './components/CalendarController'
 // Calendar Components
 export * from './components'
 
-// Calendar Types
-export * from './types/calendar.types'
+// Calendar Types (only export types not already exported from components)
+export type {
+  CalendarViewProps,
+  CalendarHeaderProps,
+  ViewSelectorProps,
+  RecordAdjustments,
+  RecordStats,
+  Calendar,
+  RecurrencePattern,
+  PlanInstance,
+  TicketInstance,
+  EventInstance,
+  CalendarShare,
+  CalendarViewState,
+  CreateCalendarInput,
+  UpdateCalendarInput,
+  CreatePlanInput,
+  CreateTicketInput,
+  CreateEventInput,
+  UpdatePlanInput,
+  UpdateTicketInput,
+  UpdateEventInput,
+  CalendarShareInput,
+  CalendarFilter,
+  CalendarTicket,
+  CalendarEvent,
+} from './types/calendar.types'
 
 // Calendar Constants
 export {
