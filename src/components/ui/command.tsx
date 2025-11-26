@@ -51,7 +51,7 @@ const CommandDialog = ({
 
 const CommandInput = ({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) => {
   return (
-    <div data-slot="command-input-wrapper" className="flex h-10 items-center gap-2 border-b border-b-border px-3">
+    <div data-slot="command-input-wrapper" className="border-b-border flex h-10 items-center gap-2 border-b px-3">
       <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         data-slot="command-input"
