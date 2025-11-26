@@ -1,4 +1,4 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
+// @ts-nocheck
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'

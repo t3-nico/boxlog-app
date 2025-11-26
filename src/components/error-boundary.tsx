@@ -1,4 +1,4 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
+// @ts-nocheck
 /**
  * Sentry統合React Error Boundary
  * UIエラーの自動捕捉・分類・ユーザーセッション記録
