@@ -1,6 +1,5 @@
 'use client'
 
-import { Plus } from 'lucide-react'
 import { CookieConsentBanner } from '@/components/common/cookie-consent-banner'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
@@ -13,6 +12,7 @@ import { useNotificationRealtime } from '@/features/notifications/hooks/useNotif
 import { SettingsDialog } from '@/features/settings/components/dialog'
 import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { Plus } from 'lucide-react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React from 'react'
 import { DesktopLayout } from './desktop-layout'

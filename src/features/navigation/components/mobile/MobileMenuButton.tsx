@@ -23,13 +23,7 @@ export function MobileMenuButton({ className }: { className?: string }) {
   const { toggle } = useSidebarStore()
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={toggle}
-      aria-label="メニューを開く"
-      className={className}
-    >
+    <Button variant="ghost" size="icon" onClick={toggle} aria-label="メニューを開く" className={className}>
       <Menu className="size-5" />
     </Button>
   )
