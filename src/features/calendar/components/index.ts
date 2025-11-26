@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 // Main Calendar Controller Component
 export { CalendarController } from './CalendarController'
 
@@ -21,4 +20,5 @@ export * from './overlays'
 export * from './common'
 
 // Views (avoid naming conflicts)
+// @ts-ignore - EventGroup is exported from multiple modules
 export * from './views'

@@ -131,6 +131,7 @@ export const FiveDayContent = ({
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
         onSingleClick={onEmptyClick}
+        onDoubleClick={onEmptyClick} // ダブルクリックでもイベント作成
         disabled={dragState.isDragging || dragState.isResizing}
       >
         {/* 背景グリッド（DayViewと同じパターン） */}

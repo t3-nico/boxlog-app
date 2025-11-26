@@ -103,6 +103,7 @@ export const DayContent = ({
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
         onSingleClick={onEmptyClick}
+        onDoubleClick={onEmptyClick} // ダブルクリックでもイベント作成
         disabled={dragState.isDragging || dragState.isResizing} // ドラッグ・リサイズ中は背景クリックを無効化
       >
         {/* 背景グリッド（CalendarDragSelectionが全イベントを処理） */}

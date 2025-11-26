@@ -124,6 +124,7 @@ export const PlanGrid = ({
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
         onSingleClick={onEmptyClick}
+        onDoubleClick={onEmptyClick} // ダブルクリックでもイベント作成
         disabled={dragState.isDragging || dragState.isResizing}
       >
         {/* 時間グリッド */}

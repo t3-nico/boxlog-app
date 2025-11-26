@@ -135,6 +135,7 @@ export const ThreeDayContent = ({
           onTimeRangeSelect?.(date, startTime, endTime)
         }}
         onSingleClick={onEmptyClick}
+        onDoubleClick={onEmptyClick} // ダブルクリックでもイベント作成
         disabled={dragState.isDragging || dragState.isResizing}
       >
         {/* 背景グリッド（DayViewと同じパターン） */}

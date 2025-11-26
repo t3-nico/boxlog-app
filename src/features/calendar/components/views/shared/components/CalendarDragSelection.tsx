@@ -28,6 +28,7 @@ interface CalendarDragSelectionProps {
   className?: string
   onTimeRangeSelect?: (selection: DateTimeSelection) => void
   onSingleClick?: (date: Date, timeString: string) => void // 単一クリック処理
+  onDoubleClick?: (date: Date, timeString: string) => void // ダブルクリック処理
   children?: React.ReactNode
   disabled?: boolean // ドラッグ選択を無効にする
 }
@@ -43,6 +44,7 @@ export const CalendarDragSelection = ({
   className,
   onTimeRangeSelect,
   onSingleClick,
+  onDoubleClick,
   children,
   disabled = false,
 }: CalendarDragSelectionProps) => {
@@ -53,6 +55,8 @@ export const CalendarDragSelection = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const isDragging = useRef(false)
   const [dropTime, setDropTime] = useState<string | null>(null)
+  const lastClickTimeRef = useRef<number>(0)
+  const lastClickPositionRef = useRef<{ hour: number; minute: number } | null>(null)
 
   // ドロップ可能エリアとして設定
   // ドロップ先データ: { date: Date, time: string }
@@ -231,11 +235,34 @@ export const CalendarDragSelection = ({
           }
 
           onTimeRangeSelect(dateTimeSelection)
-        } else if (!isDragging.current && onSingleClick && selectionStart) {
-          // ドラッグしなかった場合：単一クリック
+        } else if (!isDragging.current && selectionStart) {
+          // ドラッグしなかった場合：クリック処理
           const timeString = formatTime(selectionStart.hour, selectionStart.minute)
+          const now = Date.now()
+          const timeSinceLastClick = now - lastClickTimeRef.current
+          const DOUBLE_CLICK_THRESHOLD = 300 // 300ms以内でダブルクリック判定
 
-          onSingleClick(date, timeString)
+          // 同じ位置（15分単位）でのクリックかチェック
+          const isSamePosition =
+            lastClickPositionRef.current &&
+            lastClickPositionRef.current.hour === selectionStart.hour &&
+            lastClickPositionRef.current.minute === selectionStart.minute
+
+          if (timeSinceLastClick < DOUBLE_CLICK_THRESHOLD && isSamePosition && onDoubleClick) {
+            // ダブルクリック
+            onDoubleClick(date, timeString)
+            // リセット
+            lastClickTimeRef.current = 0
+            lastClickPositionRef.current = null
+          } else {
+            // 単一クリック
+            if (onSingleClick) {
+              onSingleClick(date, timeString)
+            }
+            // 次のクリックのために記録
+            lastClickTimeRef.current = now
+            lastClickPositionRef.current = { hour: selectionStart.hour, minute: selectionStart.minute }
+          }
         }
       }
 

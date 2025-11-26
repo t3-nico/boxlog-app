@@ -167,6 +167,7 @@ export const TwoWeekContent = ({
           onCreatePlan?.(startDate, endDate)
         }}
         onSingleClick={onEmptyClick}
+        onDoubleClick={onEmptyClick} // ダブルクリックでもイベント作成
         disabled={
           dragState.isDragging || dragState.isResizing || dragState.recentlyDragged || dragState.recentlyResized
         }
