@@ -14,8 +14,8 @@ interface SettingsLayoutProps {
 export const SettingsLayout = ({ children, title, description, actions }: SettingsLayoutProps) => {
   return (
     <div className="flex h-full flex-1 flex-col">
-      {/* ヘッダー部分（bg-muted、8pxグリッド準拠） */}
-      <div className="bg-muted flex-shrink-0 px-6 py-4">
+      {/* ヘッダー部分（bg-background統一、8pxグリッド準拠） */}
+      <div className="flex-shrink-0 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-foreground">{title}</h2>
