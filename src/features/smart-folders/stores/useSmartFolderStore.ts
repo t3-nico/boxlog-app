@@ -1,8 +1,18 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
-import { SmartFolder, SmartFolderRule } from '@/types/smart-folders'
+import { SmartFolder, SmartFolderRule, SmartFolderRuleLogic } from '@/types/smart-folders'
 import { Task } from '@/types/unified'
+
+// Internal type aliases
+type FilterLogic = 'and' | 'or'
+
+interface FolderCondition {
+  field: string
+  operator: string
+  value: unknown
+  logic?: FilterLogic
+}
 
 interface SmartFolderStore {
   smartFolders: SmartFolder[]

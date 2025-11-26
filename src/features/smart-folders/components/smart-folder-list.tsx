@@ -54,7 +54,7 @@ interface SmartFolderListProps {
 // ソート可能なフォルダアイテム
 const SortableSmartFolderItem = ({
   folder,
-  _isSelected,
+  isSelected: _isSelected,
   isCollapsed,
   onClick,
   onContextMenu,
@@ -176,7 +176,7 @@ const SortableSmartFolderItem = ({
 
 export const SmartFolderList = ({
   collapsed = false,
-  _currentPath = '',
+  currentPath: _currentPath = '',
   selectedFolderId = '',
   onSelectFolder,
   previewItems = [],
