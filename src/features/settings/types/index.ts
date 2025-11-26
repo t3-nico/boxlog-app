@@ -9,19 +9,21 @@ import type { TranslatedString } from '@/types/i18n-branded'
 // ========================================
 
 /**
- * 設定カテゴリの識別子
+ * 設定カテゴリの識別子（ChatGPT風7カテゴリ）
+ *
+ * 設計思想:
+ * - 頻度が高いものを上に配置
+ * - 関連する設定をグループ化
+ * - カテゴリ数は7（認知負荷を軽減）
  */
 export type SettingsCategory =
-  | 'general'
-  | 'account'
-  | 'notifications'
-  | 'calendar'
-  | 'tags'
-  | 'preferences'
-  | 'plan-billing'
-  | 'integration'
-  | 'data-export'
-  | 'legal'
+  | 'general' // 言語、テーマ、起動画面
+  | 'personalization' // カレンダー、タグ
+  | 'notifications' // 通知設定
+  | 'data-controls' // エクスポート、連携
+  | 'account' // プロフィール、セキュリティ
+  | 'subscription' // プラン、課金
+  | 'about' // 法的情報、バージョン
 
 /**
  * 設定メニュー項目

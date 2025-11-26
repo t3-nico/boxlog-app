@@ -1,13 +1,10 @@
 import {
   Bell,
-  Calendar,
   CreditCard,
-  FileText,
-  Plug,
+  Database,
+  Info,
   Settings as SettingsIcon,
   Sliders,
-  Tags,
-  Upload,
   User,
   type LucideIcon,
 } from 'lucide-react'
@@ -26,10 +23,14 @@ export interface SettingsCategoryMeta {
 }
 
 /**
- * 設定カテゴリの定義
+ * 設定カテゴリの定義（ChatGPT風7カテゴリ）
+ *
+ * 設計思想:
+ * - 頻度が高いものを上に配置
+ * - 関連する設定をグループ化
+ * - カテゴリ数は7（認知負荷を軽減）
  *
  * @example
- * // コンポーネントで使用
  * const { t } = useI18n()
  * const menuItems = SETTINGS_CATEGORIES.map(cat => ({
  *   ...cat,
@@ -45,10 +46,10 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     descKey: 'settings.dialog.categories.generalDesc',
   },
   {
-    id: 'account',
-    icon: User,
-    labelKey: 'settings.dialog.categories.account',
-    descKey: 'settings.dialog.categories.accountDesc',
+    id: 'personalization',
+    icon: Sliders,
+    labelKey: 'settings.dialog.categories.personalization',
+    descKey: 'settings.dialog.categories.personalizationDesc',
   },
   {
     id: 'notifications',
@@ -57,45 +58,27 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     descKey: 'settings.dialog.categories.notificationsDesc',
   },
   {
-    id: 'calendar',
-    icon: Calendar,
-    labelKey: 'settings.dialog.categories.calendar',
-    descKey: 'settings.dialog.categories.calendarDesc',
+    id: 'data-controls',
+    icon: Database,
+    labelKey: 'settings.dialog.categories.dataControls',
+    descKey: 'settings.dialog.categories.dataControlsDesc',
   },
   {
-    id: 'tags',
-    icon: Tags,
-    labelKey: 'settings.dialog.categories.tags',
-    descKey: 'settings.dialog.categories.tagsDesc',
+    id: 'account',
+    icon: User,
+    labelKey: 'settings.dialog.categories.account',
+    descKey: 'settings.dialog.categories.accountDesc',
   },
   {
-    id: 'preferences',
-    icon: Sliders,
-    labelKey: 'settings.dialog.categories.preferences',
-    descKey: 'settings.dialog.categories.preferencesDesc',
-  },
-  {
-    id: 'plan-billing',
+    id: 'subscription',
     icon: CreditCard,
-    labelKey: 'settings.dialog.categories.planBilling',
-    descKey: 'settings.dialog.categories.planBillingDesc',
+    labelKey: 'settings.dialog.categories.subscription',
+    descKey: 'settings.dialog.categories.subscriptionDesc',
   },
   {
-    id: 'integration',
-    icon: Plug,
-    labelKey: 'settings.dialog.categories.integration',
-    descKey: 'settings.dialog.categories.integrationDesc',
-  },
-  {
-    id: 'data-export',
-    icon: Upload,
-    labelKey: 'settings.dialog.categories.dataExport',
-    descKey: 'settings.dialog.categories.dataExportDesc',
-  },
-  {
-    id: 'legal',
-    icon: FileText,
-    labelKey: 'settings.dialog.categories.legal',
-    descKey: 'settings.dialog.categories.legalDesc',
+    id: 'about',
+    icon: Info,
+    labelKey: 'settings.dialog.categories.about',
+    descKey: 'settings.dialog.categories.aboutDesc',
   },
 ] as const
