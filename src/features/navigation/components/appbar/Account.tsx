@@ -87,11 +87,11 @@ export function Account({ userData, locale }: AccountProps) {
               <UserCircle />
               {t('navUser.account')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => openSettings('plan-billing')}>
+            <DropdownMenuItem onClick={() => openSettings('subscription')}>
               <Sparkles />
               {t('navUser.upgradePlan')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => openSettings('preferences')}>
+            <DropdownMenuItem onClick={() => openSettings('personalization')}>
               <Palette />
               {t('navUser.personalize')}
             </DropdownMenuItem>
