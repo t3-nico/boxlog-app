@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import TranslationQualityAssurance from '@/features/i18n/lib/quality-assurance'
+import TranslationQualityAssurance, { type QualityAssessment } from '@/features/i18n/lib/quality-assurance'
 
 /**
  * 翻訳品質保証API
@@ -70,7 +70,7 @@ async function handleSubmitReviewAction(body: Record<string, unknown>) {
   const reviewedWorkflow = await qa.addReview(
     translationKey as string,
     language as string,
-    assessment as unknown,
+    assessment as QualityAssessment,
     reviewer as string,
     (comments as string) || ''
   )
@@ -120,8 +120,18 @@ async function handleGetWorkflowAction(translationKey: string | null, language: 
 }
 
 async function handleGetMetricsAction(language: string | null) {
-  const metrics = await qa.getQualityMetrics(language || undefined)
-  return NextResponse.json(metrics)
+  // TODO: Implement getQualityMetrics method in TranslationQualityAssurance
+  // For now, generate a report for the last 30 days to get metrics
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+  const now = new Date()
+  const report = await qa.generateQualityReport(thirtyDaysAgo, now, language || undefined)
+  return NextResponse.json({
+    averageScore: report.summary.averageScore,
+    totalTranslations: report.summary.totalTranslations,
+    reviewedTranslations: report.summary.reviewedTranslations,
+    qualityDistribution: report.summary.qualityDistribution,
+    languageBreakdown: report.languageBreakdown,
+  })
 }
 
 async function handleHealthAction() {

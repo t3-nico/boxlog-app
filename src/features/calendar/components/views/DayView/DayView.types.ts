@@ -2,8 +2,9 @@ import type { CSSProperties } from 'react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
-import type { CalendarViewType, CreatePlanInput, Task, ViewDateRange } from '../../../types/calendar.types'
+import type { CalendarViewType, Task, ViewDateRange } from '../../../types/calendar.types'
 import type { DateTimeSelection, TimeSlot } from '../shared'
+import type { CreateRecordInput, CreateTaskInput } from '../shared/types/base.types'
 
 // OldDayViewのPropsを統合した完全版
 export interface DayViewProps {
@@ -27,8 +28,8 @@ export interface DayViewProps {
 
   // Task handlers
   onTaskDrag?: (taskId: string, newDate: Date) => void
-  onCreateTask?: (task: CreatePlanInput) => void
-  onCreateRecord?: (record: CreatePlanInput) => void
+  onCreateTask?: (task: CreateTaskInput) => void
+  onCreateRecord?: (record: CreateRecordInput) => void
 
   // Navigation handlers
   onViewChange?: (viewType: CalendarViewType) => void

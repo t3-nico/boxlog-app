@@ -171,12 +171,12 @@ export function useFormTracking(formName: string) {
 export function useFeatureTracking(featureName: string, category?: string) {
   const trackFeatureUse = useCallback(
     (action: string, properties?: EventProperties) => {
-      const featureEventName =
-        `feature_${featureName.toLowerCase().replace(/\s+/g, '_')}_${action}` as AnalyticsEventName
+      const featureEventName = `feature_${featureName.toLowerCase().replace(/\s+/g, '_')}_${action}`
 
       // 事前定義されたイベント名にフォールバックする仕組み
-      const eventName = Object.values(ANALYTICS_EVENTS.FEATURE).includes(featureEventName)
-        ? featureEventName
+      const allFeatureEvents = Object.values(ANALYTICS_EVENTS.FEATURE) as string[]
+      const eventName = allFeatureEvents.includes(featureEventName)
+        ? (featureEventName as AnalyticsEventName)
         : ANALYTICS_EVENTS.FEATURE.DASHBOARD_WIDGET_INTERACT
 
       trackEvent(eventName, {

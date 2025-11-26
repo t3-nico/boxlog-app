@@ -37,6 +37,7 @@ import { plansToCalendarPlans } from '../utils/planDataAdapter'
 import type { Plan } from '@/features/plans/types/plan'
 
 import type { CalendarPlan, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
+import type { CreateRecordInput, CreateTaskInput } from './views/shared/types/base.types'
 
 import { CalendarLayout } from './layout/CalendarLayout'
 import { EventContextMenu } from './views/shared/components'
@@ -524,40 +525,16 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   // タスク作成ハンドラー
   // TODO(#621): Tasks削除後、plans/Sessions統合後に再実装
-  const handleCreateTask = useCallback(
-    (_taskData: {
-      title: string
-      planned_start: Date
-      planned_duration: number
-      status: 'pending' | 'in_progress' | 'completed'
-      priority: 'low' | 'medium' | 'high'
-      description?: string
-      tags?: string[]
-    }) => {
-      console.log('TODO: Sessions統合後に実装')
-      // taskStore.createTask(taskData)
-    },
-    []
-  )
+  const handleCreateTask = useCallback((_task: CreateTaskInput) => {
+    console.log('TODO: Sessions統合後に実装')
+    // taskStore.createTask(taskData)
+  }, [])
 
   // 記録作成ハンドラー
-  const handleCreateRecord = useCallback(
-    (_recordData: {
-      title: string
-      actual_start: Date
-      actual_end: Date
-      actual_duration: number
-      satisfaction?: number
-      focus_level?: number
-      energy_level?: number
-      memo?: string
-      interruptions?: number
-    }) => {
-      // Record creation tracked in Issue #89
-      // ここで Supabase やローカルストレージに記録を保存
-    },
-    []
-  )
+  const handleCreateRecord = useCallback((_recordData: CreateRecordInput) => {
+    // Record creation tracked in Issue #89
+    // ここで Supabase やローカルストレージに記録を保存
+  }, [])
 
   // 空き時間クリック用のハンドラー
   const handleEmptyClick = useCallback(
@@ -649,13 +626,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         // Calendar integration props
         selectedDate={currentDate}
         onDateSelect={handleDateSelect}
-        onCreatePlan={handleCreateEvent}
-        onGoToToday={handleNavigateToday}
-        // Display options
-        showMiniCalendar={true}
-        showCalendarList={false} // まだカレンダーリストはないので無効
-        showTagFilter={false} // まだタグフィルターはないので無効
-        showQuickActions={true}
         // Display range for mini calendar highlight
         displayRange={{
           start: viewDateRange.start,
@@ -669,13 +639,13 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       {/* イベントコンテキストメニュー */}
       {contextMenuEvent && contextMenuPosition ? (
         <EventContextMenu
-          event={contextMenuEvent}
+          plan={contextMenuEvent}
           position={contextMenuPosition}
           onClose={handleCloseContextMenu}
           onEdit={handleEditPlan}
           onDelete={handleDeletePlan}
           onDuplicate={handleDuplicatePlan}
-          onViewDetails={handleViewDetails}
+          onOpen={handleViewDetails}
         />
       ) : null}
     </DnDProvider>

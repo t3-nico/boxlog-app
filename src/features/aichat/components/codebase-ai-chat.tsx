@@ -6,7 +6,7 @@ import { useChat } from '@ai-sdk/react'
 
 import { BotMessageSquare, Copy, MoreVertical, RefreshCw, Trash2, X } from 'lucide-react'
 
-import { Avatar } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Conversation,
   ConversationContent,
@@ -203,7 +203,12 @@ const UserAvatar = () => {
     return <div className="bg-muted flex size-8 items-center justify-center rounded-full text-xl">{profileIcon}</div>
   }
 
-  return <Avatar src={avatarUrl} initials={initials} className="size-8" />
+  return (
+    <Avatar className="size-8">
+      {avatarUrl && <AvatarImage src={avatarUrl} alt="User avatar" />}
+      <AvatarFallback>{initials}</AvatarFallback>
+    </Avatar>
+  )
 }
 
 // アシスタントアイコン
@@ -255,7 +260,7 @@ const CodebaseChatInput = ({
 }: {
   input: string
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void
-  handleSubmit: (_message: unknown, e: React.FormEvent<HTMLFormElement>) => void
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   isLoading: boolean
 }) => {
   const [_isComposing, _setIsComposing] = useState(false)
@@ -279,7 +284,7 @@ const CodebaseChatInput = ({
         </div>
       )}
 
-      <PromptInput onSubmit={handleSubmit}>
+      <PromptInput onSubmit={(_message, event) => handleSubmit(event)}>
         <PromptInputTextarea
           value={input}
           onChange={handleInputChange}
@@ -399,8 +404,8 @@ export const CodebaseAIChat = ({ isOpen, onClose }: CodebaseAIChatProps) => {
                     onClick={() => {
                       const exportMessages = messages.map((msg) => ({
                         role: msg.role,
-                        content: msg.content,
-                        timestamp: msg.createdAt,
+                        content: (msg as unknown as ExtendedMessage).content,
+                        timestamp: (msg as unknown as ExtendedMessage).createdAt,
                       }))
                       navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
                       setShowMenu(false)
@@ -472,7 +477,9 @@ export const CodebaseAIChat = ({ isOpen, onClose }: CodebaseAIChatProps) => {
               </MessageContent>
             </Message>
           ) : (
-            messages.map((message) => <MessageBubble key={message.id} message={message as ExtendedMessage} />)
+            messages.map((message) => (
+              <MessageBubble key={message.id} message={message as unknown as ExtendedMessage} />
+            ))
           )}
         </ConversationContent>
         <ConversationScrollButton />

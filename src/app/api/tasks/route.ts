@@ -81,7 +81,8 @@ export async function POST(request: NextRequest) {
       memo: memo || null,
     }
 
-    const { data, error } = await supabase.from('tasks').insert([taskData]).select().single()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase.from('tasks') as any).insert([taskData]).select().single()
 
     if (error) {
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
@@ -169,7 +170,8 @@ export async function PUT(request: NextRequest) {
     })
 
     // データベース更新
-    const { data, error } = await supabase.from('tasks').update(updateData).eq('id', id).select().single()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase.from('tasks') as any).update(updateData).eq('id', id).select().single()
 
     if (error) {
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })

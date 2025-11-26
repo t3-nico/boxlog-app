@@ -72,7 +72,7 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
     res,
     userId,
     sessionId,
-    supabase,
+    supabase: supabase as unknown as SupabaseClient<Database>,
   }
 }
 

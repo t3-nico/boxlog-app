@@ -254,7 +254,7 @@ export class AnalyticsTracker {
    */
   private sendToVercel(events: Array<{ name: string; properties: EventProperties; timestamp: number }>): void {
     events.forEach((event) => {
-      vercelTrack(event.name, event.properties)
+      vercelTrack(event.name, event.properties as Record<string, string | number | boolean | null>)
     })
     this.debug('Events sent to Vercel Analytics', { count: events.length })
   }

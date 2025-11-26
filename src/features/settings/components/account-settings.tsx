@@ -80,8 +80,8 @@ export function AccountSettings() {
       }
 
       // Supabase直接でプロフィール更新
-      const { error: profileError } = await supabase
-        .from('profiles')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: profileError } = await (supabase.from('profiles') as any)
         .update({
           username: values.username,
           avatar_url: values.uploadedAvatar,
