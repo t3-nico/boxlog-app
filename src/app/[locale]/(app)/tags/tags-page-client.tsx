@@ -45,9 +45,9 @@ import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useCreateTag, useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
-import { useToast } from '@/lib/toast/use-toast'
 import { api } from '@/lib/trpc'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
+import { toast } from 'sonner'
 
 interface TagsPageClientProps {
   initialGroupNumber?: string
@@ -138,7 +138,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   const updateTagMutation = useUpdateTag()
   const createTagMutation = useCreateTag()
-  const toast = useToast()
 
   // 選択されたグループ情報を取得
   const selectedGroup = useMemo(() => {
