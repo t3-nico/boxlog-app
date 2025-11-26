@@ -24,6 +24,7 @@ import { useTheme } from '@/contexts/theme-context'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
+import type { SettingsCategory } from '@/features/settings/types'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -182,7 +183,7 @@ function MoreSheet({
   }
 
   const handleOpenSettings = (tab?: string) => {
-    openSettings(tab as 'general' | 'account' | 'appearance' | 'notifications' | 'privacy' | undefined)
+    openSettings(tab as SettingsCategory | undefined)
     onOpenChange(false)
   }
 
