@@ -309,7 +309,7 @@ describe('time-grid-helpers', () => {
 
       const dayStart = new Date('2024-06-15T00:00:00')
 
-      const position = calculateTaskPosition(task, dayStart, 15, 0, 2)
+      const position = calculateTaskPosition(task, dayStart, 0, 2)
 
       expect(position.left).toBe('0%')
       expect(position.width).toBe('50%')

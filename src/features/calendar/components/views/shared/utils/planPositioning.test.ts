@@ -21,7 +21,7 @@ describe('planPositioning', () => {
     type: 'plan',
     status: 'inbox',
     color: '#3b82f6',
-    priority: 'medium',
+    priority: 'important',
     isRecurring: false,
     items: [],
     reminders: [],

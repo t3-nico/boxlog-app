@@ -261,7 +261,7 @@ export const tasksRouter = createTRPCRouter({
   list: protectedProcedure
     .input(getTasksInputSchema)
     .output(tasksListOutputSchema)
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       try {
         const { page, limit } = input
 

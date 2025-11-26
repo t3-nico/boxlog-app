@@ -10,7 +10,7 @@ describe('useCalendarData', () => {
   const mockTask: Task = {
     id: 'task-1',
     title: 'テストタスク',
-    type: 'task',
+    type: 'feature',
     status: 'backlog',
     priority: 'medium',
     planned_start: '2025-01-15T10:00:00.000Z',
@@ -52,7 +52,7 @@ describe('useCalendarData', () => {
     it('planned_startがないタスクは除外される', () => {
       const tasks: Task[] = [
         { ...mockTask, id: 'task-1', planned_start: '2025-01-15T10:00:00.000Z' },
-        { ...mockTask, id: 'task-2', planned_start: undefined },
+        { ...mockTask, id: 'task-2', planned_start: '' },
       ]
 
       const { result } = renderHook(() =>

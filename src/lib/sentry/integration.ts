@@ -100,7 +100,6 @@ export class SentryIntegration {
       release: this.options.release || process.env.NEXT_PUBLIC_APP_VERSION,
       sampleRate: this.options.sampleRate,
       tracesSampleRate: this.options.tracesSampleRate,
-      autoSessionTracking: this.options.enableAutoSessionTracking,
 
       beforeSend: (event, hint) => {
         const filteredEvent = this.filterEvent(event, hint)
