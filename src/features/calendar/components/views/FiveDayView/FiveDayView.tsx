@@ -183,12 +183,21 @@ export const FiveDayView = ({
               >
                 <FiveDayContent
                   date={date}
-                  events={dayEvents}
-                  eventStyles={eventStyles}
-                  onEventClick={onEventClick}
-                  onEventContextMenu={onEventContextMenu}
+                  plans={dayEvents}
+                  planStyles={eventStyles}
+                  onPlanClick={onEventClick}
+                  onPlanContextMenu={onEventContextMenu}
                   onEmptyClick={onEmptyClick}
-                  onEventUpdate={onUpdateEvent}
+                  onPlanUpdate={
+                    onUpdateEvent
+                      ? (planId, updates) => {
+                          const plan = events.find((e) => e.id === planId)
+                          if (plan) {
+                            onUpdateEvent({ ...plan, ...updates })
+                          }
+                        }
+                      : undefined
+                  }
                   onTimeRangeSelect={onTimeRangeSelect}
                   className="h-full"
                   dayIndex={dayIndex}

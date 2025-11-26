@@ -136,7 +136,7 @@ export const ThreeDayView = ({
             className="text-center"
             showDayName={true}
             showMonthYear={false}
-            dayNameFormat="d"
+            dayNameFormat="short"
             isToday={isToday(date)}
             isSelected={false}
           />
@@ -181,15 +181,24 @@ export const ThreeDayView = ({
               >
                 <ThreeDayContent
                   date={date}
-                  events={dayEvents}
-                  eventStyles={eventStyles}
-                  onEventClick={onEventClick}
-                  onEventContextMenu={onEventContextMenu}
+                  plans={dayEvents}
+                  planStyles={eventStyles}
+                  onPlanClick={onEventClick}
+                  onPlanContextMenu={onEventContextMenu}
                   onEmptyClick={onEmptyClick}
-                  onEventUpdate={onUpdateEvent}
-                  onTimeRangeSelect={(date, startTime, endTime) => {
+                  onPlanUpdate={
+                    onUpdateEvent
+                      ? (planId, updates) => {
+                          const plan = events.find((e) => e.id === planId)
+                          if (plan) {
+                            onUpdateEvent({ ...plan, ...updates })
+                          }
+                        }
+                      : undefined
+                  }
+                  onTimeRangeSelect={(selectedDate, startTime, _endTime) => {
                     // 時間範囲選択時の処理（必要に応じて実装）
-                    const startDate = new Date(date)
+                    const startDate = new Date(selectedDate)
                     const [startHour, startMinute] = startTime.split(':').map(Number)
                     startDate.setHours(startHour, startMinute, 0, 0)
 

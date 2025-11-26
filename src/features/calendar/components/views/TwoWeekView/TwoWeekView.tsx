@@ -184,7 +184,16 @@ export const TwoWeekView = ({
                     onPlanClick={onEventClick}
                     onPlanContextMenu={onEventContextMenu}
                     onEmptyClick={onEmptyClick}
-                    onPlanUpdate={onUpdateEvent}
+                    onPlanUpdate={
+                      onUpdateEvent
+                        ? (planId, updates) => {
+                            const plan = events.find((e) => e.id === planId)
+                            if (plan) {
+                              onUpdateEvent({ ...plan, ...updates })
+                            }
+                          }
+                        : undefined
+                    }
                     onTimeRangeSelect={(date, startTime, endTime) => {
                       // 時間範囲選択時の処理（従来と同じ）
                       const startDate = new Date(date)

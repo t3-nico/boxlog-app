@@ -42,7 +42,7 @@ export const DayContent = ({
     onEventUpdate: handleEventUpdate,
     onEventClick: onPlanClick,
     date,
-    events,
+    events: events ?? [],
   })
 
   // 時間計算機能
@@ -115,7 +115,7 @@ export const DayContent = ({
         {events &&
           Array.isArray(events) &&
           events.map((event) => {
-            const style = eventStyles[event.id]
+            const style = eventStyles?.[event.id]
             if (!style) return null
 
             const isDragging = dragState.draggedEventId === event.id && dragState.isDragging
@@ -159,7 +159,7 @@ export const DayContent = ({
                   }}
                 >
                   <EventBlock
-                    event={event}
+                    plan={event}
                     position={{
                       top: 0,
                       left: 0,
