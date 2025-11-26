@@ -25,25 +25,14 @@ const PLANS: Plan[] = [
     name: 'Free',
     price: 0,
     period: 'month',
-    features: [
-      '基本的なタスク管理',
-      '最大100タスク',
-      '3つのタグ',
-      'カレンダー表示',
-    ],
+    features: ['基本的なタスク管理', '最大100タスク', '3つのタグ', 'カレンダー表示'],
   },
   {
     id: 'pro',
     name: 'Pro',
     price: 980,
     period: 'month',
-    features: [
-      '無制限のタスク',
-      '無制限のタグ',
-      '外部サービス連携',
-      '優先サポート',
-      '高度な分析',
-    ],
+    features: ['無制限のタスク', '無制限のタグ', '外部サービス連携', '優先サポート', '高度な分析'],
     recommended: true,
   },
   {
@@ -51,13 +40,7 @@ const PLANS: Plan[] = [
     name: 'Team',
     price: 2980,
     period: 'month',
-    features: [
-      'Proの全機能',
-      'チーム共有',
-      '管理者ダッシュボード',
-      'SSO対応',
-      '専用サポート',
-    ],
+    features: ['Proの全機能', 'チーム共有', '管理者ダッシュボード', 'SSO対応', '専用サポート'],
   },
 ]
 
@@ -77,10 +60,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
   return (
     <div className="space-y-6">
       {/* 現在のプラン */}
-      <SettingsCard
-        title="現在のプラン"
-        description="ご利用中のサブスクリプション情報"
-      >
+      <SettingsCard title="現在のプラン" description="ご利用中のサブスクリプション情報">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
@@ -116,7 +96,9 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
               onClick={() => handlePeriodChange('year')}
             >
               年払い
-              <Badge variant="secondary" className="ml-2">20% OFF</Badge>
+              <Badge variant="secondary" className="ml-2">
+                20% OFF
+              </Badge>
             </Button>
           </div>
         }
@@ -174,10 +156,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
       </SettingsCard>
 
       {/* 支払い方法 */}
-      <SettingsCard
-        title="支払い方法"
-        description="請求先のクレジットカードを管理します"
-      >
+      <SettingsCard title="支払い方法" description="請求先のクレジットカードを管理します">
         <div className="space-y-4">
           <div className="border-border flex items-center justify-between rounded-lg border p-4">
             <div className="flex items-center gap-4">
@@ -192,17 +171,12 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
               カードを追加
             </Button>
           </div>
-          <p className="text-muted-foreground text-xs">
-            ※ 支払い機能は現在準備中です
-          </p>
+          <p className="text-muted-foreground text-xs">※ 支払い機能は現在準備中です</p>
         </div>
       </SettingsCard>
 
       {/* 請求履歴 */}
-      <SettingsCard
-        title="請求履歴"
-        description="過去の請求書と支払い履歴"
-      >
+      <SettingsCard title="請求履歴" description="過去の請求書と支払い履歴">
         <div className="space-y-4">
           <div className="flex h-[120px] flex-col items-center justify-center">
             <Receipt className="text-muted-foreground mb-2 h-8 w-8" />

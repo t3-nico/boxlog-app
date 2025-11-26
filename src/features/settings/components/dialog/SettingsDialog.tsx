@@ -1,8 +1,8 @@
 'use client'
 
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
 import { SettingsContent } from './SettingsContent'
 import { SettingsSidebar } from './SettingsSidebar'

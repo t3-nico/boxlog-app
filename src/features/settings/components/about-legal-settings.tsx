@@ -45,19 +45,25 @@ export function AboutLegalSettings() {
     }
   }, [])
 
-  const handleAnalyticsChange = useCallback((checked: boolean) => {
-    saveCookieConsent({
-      analytics: checked,
-      marketing: cookieConsent?.marketing ?? false,
-    })
-  }, [cookieConsent?.marketing])
+  const handleAnalyticsChange = useCallback(
+    (checked: boolean) => {
+      saveCookieConsent({
+        analytics: checked,
+        marketing: cookieConsent?.marketing ?? false,
+      })
+    },
+    [cookieConsent?.marketing]
+  )
 
-  const handleMarketingChange = useCallback((checked: boolean) => {
-    saveCookieConsent({
-      analytics: cookieConsent?.analytics ?? false,
-      marketing: checked,
-    })
-  }, [cookieConsent?.analytics])
+  const handleMarketingChange = useCallback(
+    (checked: boolean) => {
+      saveCookieConsent({
+        analytics: cookieConsent?.analytics ?? false,
+        marketing: checked,
+      })
+    },
+    [cookieConsent?.analytics]
+  )
 
   if (!isClient) {
     return null
@@ -74,10 +80,7 @@ export function AboutLegalSettings() {
   return (
     <div className="space-y-6">
       {/* アプリ情報 */}
-      <SettingsCard
-        title="BoxLog について"
-        description="アプリのバージョン情報"
-      >
+      <SettingsCard title="BoxLog について" description="アプリのバージョン情報">
         <div className="flex items-center gap-4">
           <div className="bg-primary/10 flex h-16 w-16 items-center justify-center rounded-xl">
             <Box className="text-primary h-8 w-8" />
@@ -94,10 +97,7 @@ export function AboutLegalSettings() {
       </SettingsCard>
 
       {/* Cookie設定 */}
-      <SettingsCard
-        title={t('settings.legal.cookies.title')}
-        description={t('settings.legal.cookies.description')}
-      >
+      <SettingsCard title={t('settings.legal.cookies.title')} description={t('settings.legal.cookies.description')}>
         <div className="space-y-4">
           {/* 必須Cookie */}
           <div className="border-border flex items-center justify-between rounded-lg border p-3">
@@ -145,10 +145,7 @@ export function AboutLegalSettings() {
       </SettingsCard>
 
       {/* 法的文書 */}
-      <SettingsCard
-        title={t('settings.legal.links.title')}
-        description={t('settings.legal.links.description')}
-      >
+      <SettingsCard title={t('settings.legal.links.title')} description={t('settings.legal.links.description')}>
         <div className="divide-border -mx-4 -mb-4 divide-y">
           {legalLinks.map((link) => {
             const Icon = link.icon
@@ -170,10 +167,7 @@ export function AboutLegalSettings() {
       </SettingsCard>
 
       {/* フィードバック */}
-      <SettingsCard
-        title="フィードバック"
-        description="ご意見・ご要望をお聞かせください"
-      >
+      <SettingsCard title="フィードバック" description="ご意見・ご要望をお聞かせください">
         <div className="flex gap-3">
           <Button variant="outline" asChild>
             <Link href="https://github.com/t3-nico/boxlog-app/issues" target="_blank" rel="noopener noreferrer">
@@ -182,9 +176,7 @@ export function AboutLegalSettings() {
             </Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="mailto:support@boxlog.app">
-              機能をリクエスト
-            </Link>
+            <Link href="mailto:support@boxlog.app">機能をリクエスト</Link>
           </Button>
         </div>
       </SettingsCard>

@@ -5,8 +5,8 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { Plus, Search } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
 import { ErrorBoundary } from '@/components/error-boundary'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
@@ -95,12 +95,7 @@ export function TagsSettings() {
             <p className="text-sm text-red-600 dark:text-red-400">
               エラー: {error instanceof Error ? error.message : String(error)}
             </p>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => window.location.reload()}
-              className="mt-4"
-            >
+            <Button variant="destructive" size="sm" onClick={() => window.location.reload()} className="mt-4">
               再読み込み
             </Button>
           </div>
@@ -126,7 +121,7 @@ export function TagsSettings() {
           {/* 検索 */}
           <div className="mb-4">
             <div className="relative">
-              <Search className="text-muted-foreground absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+              <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
               <Input
                 type="text"
                 placeholder="タグを検索..."

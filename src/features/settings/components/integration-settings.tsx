@@ -43,21 +43,13 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
   const handleConnect = useCallback((integrationId: string) => {
     // TODO: 実際のOAuth連携を実装
     setIntegrations((prev) =>
-      prev.map((int) =>
-        int.id === integrationId
-          ? { ...int, connected: true, status: 'active' as const }
-          : int
-      )
+      prev.map((int) => (int.id === integrationId ? { ...int, connected: true, status: 'active' as const } : int))
     )
   }, [])
 
   const handleDisconnect = useCallback((integrationId: string) => {
     setIntegrations((prev) =>
-      prev.map((int) =>
-        int.id === integrationId
-          ? { ...int, connected: false, status: undefined }
-          : int
-      )
+      prev.map((int) => (int.id === integrationId ? { ...int, connected: false, status: undefined } : int))
     )
   }, [])
 
@@ -68,20 +60,12 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
   return (
     <div className="space-y-6">
       {/* 連携サービス一覧 */}
-      <SettingsCard
-        title="連携サービス"
-        description="外部サービスと接続してBoxLogの機能を拡張できます"
-      >
+      <SettingsCard title="連携サービス" description="外部サービスと接続してBoxLogの機能を拡張できます">
         <div className="space-y-4">
           {integrations.map((integration) => (
-            <div
-              key={integration.id}
-              className="border-border flex items-center justify-between rounded-lg border p-4"
-            >
+            <div key={integration.id} className="border-border flex items-center justify-between rounded-lg border p-4">
               <div className="flex items-center gap-4">
-                <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg">
-                  {integration.icon}
-                </div>
+                <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg">{integration.icon}</div>
                 <div>
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-medium">{integration.name}</h4>
@@ -97,20 +81,12 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
               </div>
               <div>
                 {integration.connected ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDisconnect(integration.id)}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => handleDisconnect(integration.id)}>
                     <Unplug className="mr-2 h-4 w-4" />
                     解除
                   </Button>
                 ) : (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleConnect(integration.id)}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => handleConnect(integration.id)}>
                     <ExternalLink className="mr-2 h-4 w-4" />
                     接続
                   </Button>
@@ -122,15 +98,9 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       </SettingsCard>
 
       {/* 同期設定 */}
-      <SettingsCard
-        title="同期設定"
-        description="連携サービスとのデータ同期を管理します"
-      >
+      <SettingsCard title="同期設定" description="連携サービスとのデータ同期を管理します">
         <div className="space-y-4">
-          <SettingField
-            label="自動同期を有効にする"
-            description="連携サービスのデータを自動的に同期します"
-          >
+          <SettingField label="自動同期を有効にする" description="連携サービスのデータを自動的に同期します">
             <Switch checked={syncEnabled} onCheckedChange={handleSyncChange} />
           </SettingField>
 
@@ -145,15 +115,10 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       </SettingsCard>
 
       {/* API連携 */}
-      <SettingsCard
-        title="API連携"
-        description="開発者向けのAPI連携オプション"
-      >
+      <SettingsCard title="API連携" description="開発者向けのAPI連携オプション">
         <div className="space-y-4">
           <div className="bg-muted/50 rounded-lg p-4">
-            <p className="text-muted-foreground text-sm">
-              APIキーの発行やWebhookの設定は開発者ポータルから行えます。
-            </p>
+            <p className="text-muted-foreground text-sm">APIキーの発行やWebhookの設定は開発者ポータルから行えます。</p>
           </div>
           <Button variant="outline" disabled>
             <ExternalLink className="mr-2 h-4 w-4" />
