@@ -116,7 +116,7 @@ export class WorkerManager {
         id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         type,
         payload,
-        resolve,
+        resolve: resolve as (result: unknown) => void,
         reject,
         priority,
         timestamp: Date.now(),

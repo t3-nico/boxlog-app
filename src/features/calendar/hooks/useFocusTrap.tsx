@@ -105,7 +105,7 @@ function getFocusableElements(container: HTMLElement): FocusableElement[] {
 }
 
 export function useFocusTrap(options: FocusTrapOptions) {
-  const containerRef = useRef<HTMLElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const previouslyFocusedElement = useRef<HTMLElement | null>(null)
   const isActive = useRef(false)
 

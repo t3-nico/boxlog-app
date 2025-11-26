@@ -59,7 +59,9 @@ export function useDragAndDrop<TData = unknown, TTarget = unknown>(
       dragPosition: null,
     })
     dragDataRef.current = null
-    onDragEnd?.(data)
+    if (data) {
+      onDragEnd?.(data)
+    }
   }, [onDragEnd])
 
   const handleDrop = useCallback(
