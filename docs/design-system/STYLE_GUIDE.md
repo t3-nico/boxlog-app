@@ -86,6 +86,94 @@ p-[15px]
 
 ---
 
+## 🖱️ ホバー状態（Material Design 3準拠）
+
+### State Layer方式
+
+Material Design 3のState Layer方式を採用。背景色を変えるのではなく、**コンテンツ色の半透明オーバーレイ**を重ねます。
+
+### Opacity値（globals.css定義済み）
+
+| 状態 | CSS変数 | 値 | 用途 |
+|------|---------|-----|------|
+| **Hover** | `--state-hover` | 8% | マウスオーバー |
+| **Focus** | `--state-focus` | 12% | キーボードフォーカス |
+| **Pressed** | `--state-pressed` | 12% | クリック/タップ中 |
+| **Dragged** | `--state-dragged` | 16% | ドラッグ中 |
+
+### 実装パターン
+
+#### パターン1: 塗り潰しボタン（Primary/Destructive）
+
+背景色のOpacityを下げる（100% - 8% = 92%）
+
+```tsx
+// ✅ 推奨
+className="bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88"
+
+// ❌ 非推奨（バラバラなOpacity値）
+className="bg-primary hover:bg-primary/90"
+className="bg-primary hover:bg-primary/80"
+```
+
+#### パターン2: Ghost/Outline/リスト項目
+
+コンテンツ色（foreground）でオーバーレイ
+
+```tsx
+// ✅ 推奨
+className="hover:bg-foreground/8 focus-visible:bg-foreground/12 active:bg-foreground/12"
+
+// テキスト色も変える場合
+className="text-muted-foreground hover:text-foreground hover:bg-foreground/8"
+```
+
+#### パターン3: テーブル行/リスト
+
+muted-foregroundでオーバーレイ
+
+```tsx
+// ✅ 推奨
+className="hover:bg-muted-foreground/8 transition-colors"
+```
+
+#### パターン4: リンク
+
+underline追加またはテキスト色変化
+
+```tsx
+// ✅ 推奨
+className="text-primary hover:underline"
+className="text-muted-foreground hover:text-foreground transition-colors"
+```
+
+### Transition設定
+
+| 変化タイプ | クラス | 用途 |
+|-----------|--------|------|
+| 色のみ | `transition-colors` | 背景・テキスト色変化 |
+| 複合 | `transition-all` | 色 + サイズ + 位置 |
+| 透明度 | `transition-opacity` | フェードイン/アウト |
+
+デフォルト持続時間: **150ms**（Tailwindデフォルト）
+
+### ❌ 禁止事項
+
+```tsx
+// ❌ Hardcodedカラー
+className="bg-green-600 hover:bg-green-700"
+className="text-red-500 hover:text-red-400"
+
+// ❌ バラバラなOpacity値
+className="hover:bg-primary/90"  // 別の場所で /80 を使っている
+className="hover:bg-accent/50"   // 別の場所で /30 を使っている
+
+// ❌ brightness調整（古い方式）
+className="hover:brightness-75"
+```
+
+---
+
 ## 🎨 カラーシステム
 
 ### セマンティックトークン（globals.css）

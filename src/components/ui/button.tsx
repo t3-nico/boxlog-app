@@ -9,13 +9,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        // M3 State Layer: 塗り潰しボタンは背景色のOpacityを下げる（100%-8%=92%, 100%-12%=88%）
+        default: 'bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88',
         destructive:
-          'bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
+          'bg-destructive text-white hover:bg-destructive/92 active:bg-destructive/88 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
+        // M3 State Layer: Ghost/Outlineはforeground色でオーバーレイ（8%/12%）
         outline:
-          'border border-border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
+          'border border-border bg-background shadow-xs hover:bg-foreground/8 active:bg-foreground/12 dark:bg-input/30 dark:border-input',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/92 active:bg-secondary/88',
+        ghost: 'hover:bg-foreground/8 active:bg-foreground/12',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {

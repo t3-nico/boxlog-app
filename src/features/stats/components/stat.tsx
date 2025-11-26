@@ -10,11 +10,16 @@ export const Stat = ({ title, value, change }: { title: string; value: string; c
       <div className="mt-3 text-3xl font-semibold">{value}</div>
       <div className="mt-3 text-sm">
         <Badge
-          className={cn(change.startsWith('+') ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700')}
+          className={cn(
+            // M3 State Layer: セマンティックカラー使用（+はprimary、-はdestructive）
+            change.startsWith('+')
+              ? 'bg-primary text-primary-foreground hover:bg-primary/92'
+              : 'bg-destructive text-destructive-foreground hover:bg-destructive/92'
+          )}
         >
           {change}
         </Badge>{' '}
-        <span className="text-neutral-600 dark:text-neutral-400">from last week</span>
+        <span className="text-muted-foreground">from last week</span>
       </div>
     </div>
   )
