@@ -120,7 +120,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
       }}
       aria-label="Time grid - click to create event"
     >
-{/* スクロールバーはglobals.cssのグローバルスタイルを使用 */}
+      {/* スクロールバーはglobals.cssのグローバルスタイルを使用 */}
       {/* 時間列（固定） */}
       <TimeColumn startHour={startHour} endHour={endHour} hourHeight={hourHeight} />
 
