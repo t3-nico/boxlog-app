@@ -175,7 +175,7 @@ describe('planDataAdapter', () => {
         isReadOnly: false,
       }
 
-      const result = timedEventToEventUpdate(timedEvent)
+      const result = timedEventToEventUpdate(timedEvent as unknown as Parameters<typeof timedEventToEventUpdate>[0])
 
       expect(result.id).toBe('plan-1')
       expect(result.title).toBe('ミーティング')

@@ -23,7 +23,6 @@ describe('planPositioning', () => {
     color: '#3b82f6',
     priority: 'important',
     isRecurring: false,
-    items: [],
     reminders: [],
     tags: [],
     createdAt: new Date(),

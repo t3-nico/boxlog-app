@@ -17,7 +17,7 @@ describe('useCalendarData', () => {
     planned_duration: 60,
     created_at: '2025-01-01T00:00:00.000Z',
     updated_at: '2025-01-01T00:00:00.000Z',
-    userId: 'user-1',
+    user_id: 'user-1',
   }
 
   const mockDateRange: ViewDateRange = {
