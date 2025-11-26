@@ -210,21 +210,8 @@ export const ROUTES = {
   passwordChange: () => '/auth/password',
 
   // === 設定ルート ===
-  settings: () => '/settings',
-  settingsGeneral: () => '/settings/general',
-  settingsAccount: () => '/settings/account',
-  settingsPreferences: () => '/settings/preferences',
-  settingsNotifications: () => '/settings/notifications',
-  settingsCalendar: () => '/settings/calendar',
-  settingsTags: () => '/settings/tags',
-  settingsTemplates: () => '/settings/templates',
-  settingsIntegration: () => '/settings/integration',
-  settingsDataExport: () => '/settings/data-export',
-  settingsPlanBilling: () => '/settings/plan-billing',
-  settingsTrash: () => '/settings/trash',
-  settingsLegal: () => '/settings/legal',
-  settingsTestAutosave: () => '/settings/test-autosave',
-  settingsChronotype: () => '/settings/chronotype',
+  // 設定はダイアログ形式に統一されたため、ページルートは削除
+  // 設定ダイアログは useSettingsDialogStore.openSettings() で開く
 
   // === 統計ルート ===
   statsLifeVision: () => '/stats/life-vision',

@@ -335,11 +335,11 @@ ${t('help.mainSupportChat.greeting')}`,
               </button>
 
               {showMenu != null && (
-                <div className="bg-card border-border absolute top-full right-0 z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
+                <div className="bg-popover text-popover-foreground border-border absolute top-full right-0 z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                   <button
                     type="button"
                     onClick={handleClearMessages}
-                    className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                    className="hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
                     {t('help.actions.clearConversation')}
@@ -347,7 +347,7 @@ ${t('help.mainSupportChat.greeting')}`,
                   <button
                     type="button"
                     onClick={handleExportMessages}
-                    className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                    className="hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <Copy className="h-4 w-4" />
                     {t('help.actions.exportConversation')}
