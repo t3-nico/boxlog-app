@@ -182,7 +182,7 @@ export function navigateToScreen(screen: ScreenName): string {
     stats_act_try: ROUTES.statsActTry,
     stats_act_next: ROUTES.statsActNext,
     help_chat_history: ROUTES.helpChatHistory,
-    error: ROUTES.error,
+    error: () => '/', // エラーはerror.tsxで処理、URLルートは不要
     test_sentry: ROUTES.testSentry,
   }
 
