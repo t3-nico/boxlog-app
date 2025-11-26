@@ -34,6 +34,7 @@ import {
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export function NavUser({
   user,
@@ -58,10 +59,12 @@ export function NavUser({
     try {
       const supabase = createClient()
       await supabase.auth.signOut()
+      toast.success('ログアウトしました')
       router.push('/auth/login')
       router.refresh()
     } catch (error) {
       console.error('Logout error:', error)
+      toast.error('ログアウトに失敗しました')
     } finally {
       setIsLoggingOut(false)
     }
@@ -176,7 +179,7 @@ export function NavUser({
         <DropdownMenuSeparator />
 
         {/* ログアウト */}
-        <DropdownMenuItem onClick={handleLogout} disabled={isLoggingOut}>
+        <DropdownMenuItem variant="destructive" onClick={handleLogout} disabled={isLoggingOut}>
           <LogOut />
           {isLoggingOut ? t('navUser.loggingOut') : t('navUser.logout')}
         </DropdownMenuItem>
