@@ -24,8 +24,8 @@ import {
 } from '@/features/tags/hooks/use-tag-groups'
 import { useTagGroupsDnd } from '@/features/tags/hooks/use-tag-groups-dnd'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import { toast } from 'sonner'
 import type { TagGroup } from '@/types/tags'
+import { toast } from 'sonner'
 
 interface TagsSidebarProps {
   onAllTagsClick: () => void

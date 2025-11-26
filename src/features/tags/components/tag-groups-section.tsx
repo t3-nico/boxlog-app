@@ -23,8 +23,8 @@ import {
   useUpdateTagGroup,
 } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import { toast } from 'sonner'
 import type { TagGroup } from '@/types/tags'
+import { toast } from 'sonner'
 
 interface TagGroupsSectionProps {
   onSelectGroup?: (groupId: string | null) => void

@@ -8,8 +8,8 @@
 import { useEffect, useRef } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
-import { toast } from 'sonner'
 import { trpc } from '@/lib/trpc/client'
+import { toast } from 'sonner'
 
 import { useNotificationDialogStore } from '../stores/useNotificationDialogStore'
 
