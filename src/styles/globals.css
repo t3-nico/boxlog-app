@@ -848,7 +848,6 @@ html.dark {
 .rdp-dropdowns select,
 .rdp-dropdown_root {
   color: var(--color-foreground);
-  background-color: var(--color-background);
   border-color: var(--color-input);
 }
 

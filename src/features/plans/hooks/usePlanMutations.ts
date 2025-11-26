@@ -121,7 +121,18 @@ export function usePlanMutations() {
         })
       })
 
-      toast.success('更新しました')
+      // 重要な更新のみtoast表示（status変更、タグ変更など）
+      if (variables.data.status) {
+        const statusMap: Record<string, string> = {
+          open: 'Open',
+          in_progress: 'In Progress',
+          completed: 'Completed',
+          cancelled: 'Cancelled',
+        }
+        const statusLabel = statusMap[variables.data.status] || variables.data.status
+        toast.success(`ステータスを${statusLabel}に変更しました`)
+      }
+      // その他の自動保存（title、description、日時など）はtoast非表示
     },
     onError: (_err, _variables, context) => {
       toast.error('更新に失敗しました')

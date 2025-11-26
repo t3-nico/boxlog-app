@@ -56,7 +56,7 @@ export function PlanTagsSection({
       <div className="flex h-[32px] items-center gap-2">
         <Tag className="text-muted-foreground h-4 w-4 flex-shrink-0" />
         <div className="min-w-0 flex-1">
-          <div className="bg-card dark:bg-card flex max-h-[5.25rem] flex-wrap items-center gap-2 overflow-y-auto pr-2">
+          <div className="bg-popover dark:bg-popover flex max-h-[5.25rem] flex-wrap items-center gap-2 overflow-y-auto pr-2">
             {/* 選択済みタグを表示 */}
             {selectedTags.map((tag) => (
               <Badge
