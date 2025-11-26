@@ -1,11 +1,18 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+
+import { Plus, Search } from 'lucide-react'
 
 import { ErrorBoundary } from '@/components/error-boundary'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags } from '@/features/tags/hooks/use-tags'
+
+import { SettingsCard } from './SettingsCard'
 
 const TagCreateModal = dynamic(
   () => import('@/features/tags/components/tag-create-modal').then((mod) => ({ default: mod.TagCreateModal })),
@@ -23,6 +30,7 @@ const TagTreeView = dynamic(
 )
 
 export function TagsSettings() {
+  const { t } = useI18n()
   const [isMounted, setIsMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -39,7 +47,6 @@ export function TagsSettings() {
     showCreateModal,
     showEditModal,
     selectedTag,
-    createParentTag,
     handleCreateTag,
     handleSaveNewTag,
     handleEditTag,
@@ -62,6 +69,15 @@ export function TagsSettings() {
     return true
   })
 
+  // ハンドラー
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+  }, [])
+
+  const handleCreateClick = useCallback(() => {
+    handleCreateTag()
+  }, [handleCreateTag])
+
   // SSR時は何も表示しない（Hydrationエラー回避）
   if (!isMounted) {
     return null
@@ -71,22 +87,19 @@ export function TagsSettings() {
   if (error) {
     return (
       <div className="space-y-6">
-        <div>
-          <h2 className="text-lg font-medium">タグ設定</h2>
-          <p className="text-muted-foreground text-sm">タグを管理します</p>
-        </div>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950">
-          <p className="text-sm text-red-600 dark:text-red-400">
-            エラー: {error instanceof Error ? error.message : String(error)}
-          </p>
-          <button
-            type="button"
-            onClick={() => window.location.reload()}
-            className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700"
-          >
-            再読み込み
-          </button>
-        </div>
+        <SettingsCard
+          title={t('settings.dialog.categories.tags') || 'タグ'}
+          description={t('settings.dialog.categories.tagsDesc') || 'タグを管理します'}
+        >
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950">
+            <p className="text-sm text-red-600 dark:text-red-400">
+              エラー: {error instanceof Error ? error.message : String(error)}
+            </p>
+            <Button variant="destructive" size="sm" onClick={() => window.location.reload()} className="mt-4">
+              再読み込み
+            </Button>
+          </div>
+        </SettingsCard>
       </div>
     )
   }
@@ -94,51 +107,73 @@ export function TagsSettings() {
   return (
     <ErrorBoundary>
       <div className="space-y-6">
-        {/* ヘッダー */}
-        <div>
-          <h2 className="text-lg font-medium">タグ設定</h2>
-          <p className="text-muted-foreground text-sm">タグを作成・管理します</p>
-        </div>
+        {/* タグ管理カード */}
+        <SettingsCard
+          title="タグ管理"
+          description="タスクやイベントを整理するためのタグを作成・編集できます"
+          actions={
+            <Button size="sm" onClick={handleCreateClick}>
+              <Plus className="mr-2 h-4 w-4" />
+              新規タグ
+            </Button>
+          }
+        >
+          {/* 検索 */}
+          <div className="mb-4">
+            <div className="relative">
+              <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+              <Input
+                type="text"
+                placeholder="タグを検索..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="pl-9"
+              />
+            </div>
+          </div>
 
-        {/* ツールバー */}
-        <div className="flex items-center gap-4">
-          <input
-            type="text"
-            placeholder="タグを検索..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="border-border bg-card flex-1 rounded-lg border px-4 py-2 text-sm"
-          />
-          <button
-            type="button"
-            onClick={() => handleCreateTag()}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            新規タグ
-          </button>
-        </div>
+          {/* タグツリービュー */}
+          <div className="min-h-[200px]">
+            {isLoading ? (
+              <div className="flex h-[200px] items-center justify-center">
+                <p className="text-muted-foreground text-sm">読み込み中...</p>
+              </div>
+            ) : filteredTags.length === 0 ? (
+              <div className="flex h-[200px] flex-col items-center justify-center gap-3">
+                <p className="text-muted-foreground text-sm">
+                  {searchQuery ? '該当するタグが見つかりません' : 'タグがありません'}
+                </p>
+                {!searchQuery && (
+                  <Button variant="outline" size="sm" onClick={handleCreateClick}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    最初のタグを作成
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <TagTreeView
+                tags={filteredTags}
+                onCreateTag={handleCreateTag}
+                onEditTag={handleEditTag}
+                onDeleteTag={handleDeleteTag}
+                onRenameTag={handleRenameTag}
+                isLoading={isLoading}
+              />
+            )}
+          </div>
+        </SettingsCard>
 
-        {/* タグツリービュー */}
-        <div className="border-border bg-card rounded-lg border p-6">
-          {isLoading ? (
-            <p className="text-muted-foreground text-sm">読み込み中...</p>
-          ) : (
-            <TagTreeView
-              tags={filteredTags}
-              onCreateTag={handleCreateTag}
-              onEditTag={handleEditTag}
-              onDeleteTag={handleDeleteTag}
-              onRenameTag={handleRenameTag}
-              isLoading={isLoading}
-            />
-          )}
+        {/* ヒント */}
+        <div className="bg-muted/50 rounded-lg p-4">
+          <p className="text-muted-foreground text-sm">
+            💡 タグは最大3階層まで作成できます。親タグを右クリックして子タグを追加できます。
+          </p>
         </div>
 
         {/* モーダル */}
         {isMounted && (
           <>
             <TagCreateModal isOpen={showCreateModal} onClose={handleCloseModals} onSave={handleSaveNewTag} />
-
             <TagEditModal isOpen={showEditModal} tag={selectedTag} onClose={handleCloseModals} onSave={handleSaveTag} />
           </>
         )}

@@ -18,10 +18,10 @@ import { checkPasswordPwned } from '@/lib/auth/pwned-password'
 import { createClient } from '@/lib/supabase/client'
 import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage'
 
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
 import { AccountDeletionDialog } from './account-deletion-dialog'
-import { DataExport } from './data-export'
 import { EmailChangeDialog } from './email-change-dialog'
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
@@ -865,14 +865,6 @@ export function AccountSettings() {
             </div>
           )}
         </div>
-      </SettingsCard>
-
-      {/* Data Export & Privacy Section */}
-      <SettingsCard
-        title={t('settings.account.dataExport.title')}
-        description={t('settings.account.dataExport.description')}
-      >
-        <DataExport />
       </SettingsCard>
 
       {/* Danger Zone */}
