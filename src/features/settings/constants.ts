@@ -7,7 +7,6 @@ import {
   Settings as SettingsIcon,
   Sliders,
   Tags,
-  Trash2,
   Upload,
   User,
   type LucideIcon,
@@ -98,11 +97,5 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     icon: FileText,
     labelKey: 'settings.dialog.categories.legal',
     descKey: 'settings.dialog.categories.legalDesc',
-  },
-  {
-    id: 'trash',
-    icon: Trash2,
-    labelKey: 'settings.dialog.categories.trash',
-    descKey: 'settings.dialog.categories.trashDesc',
   },
 ] as const

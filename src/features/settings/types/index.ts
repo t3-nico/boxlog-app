@@ -22,7 +22,6 @@ export type SettingsCategory =
   | 'integration'
   | 'data-export'
   | 'legal'
-  | 'trash'
 
 /**
  * 設定メニュー項目

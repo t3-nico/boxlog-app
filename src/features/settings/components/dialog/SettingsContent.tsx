@@ -80,11 +80,6 @@ export function SettingsContent() {
           title: t('settings.dialog.categories.legal'),
           description: t('settings.dialog.categories.legalDesc'),
         }
-      case 'trash':
-        return {
-          title: t('settings.dialog.categories.trash'),
-          description: t('settings.dialog.categories.trashDesc'),
-        }
       default:
         return { title: '', description: '' }
     }
@@ -112,7 +107,6 @@ export function SettingsContent() {
         {activeCategory === 'integration' && <IntegrationSettings />}
         {activeCategory === 'data-export' && <DataExportSettings />}
         {activeCategory === 'legal' && <LegalSettings />}
-        {activeCategory === 'trash' && <div>Trash Settings (Coming Soon)</div>}
       </SettingsLayout>
     </main>
   )
