@@ -109,6 +109,7 @@ export function useDragAndDrop({
     columnWidth?: number // カラムの幅（日付間移動用）
     dragElement?: HTMLElement | null // position: fixed ドラッグ要素
     initialRect?: DOMRect | null // 初期位置情報
+    initialScrollTop?: number // ドラッグ開始時のスクロール位置
   } | null>(null)
 
   // ドラッグ要素作成（position: fixed で自由移動）
@@ -194,6 +195,11 @@ export function useDragAndDrop({
         originalElement.style.opacity = '0.3'
       }
 
+      // 現在のスクロール位置を記録
+      const scrollArea = document.querySelector('[data-calendar-scroll]')
+      const scrollContainer = scrollArea?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement
+      const initialScrollTop = scrollContainer?.scrollTop || 0
+
       // ドラッグデータを設定
       dragDataRef.current = {
         eventId,
@@ -207,6 +213,7 @@ export function useDragAndDrop({
         columnWidth,
         dragElement,
         initialRect,
+        initialScrollTop,
       }
 
       setDragState({
@@ -589,10 +596,9 @@ export function useDragAndDrop({
 
       const dragData = dragDataRef.current
 
-      // 自動スクロール処理（deltaY計算の前に実行）
+      // 自動スクロール処理
       const scrollArea = document.querySelector('[data-calendar-scroll]')
       const scrollContainer = scrollArea?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement
-      let scrollDelta = 0
       if (scrollContainer) {
         const scrollRect = scrollContainer.getBoundingClientRect()
         const scrollThreshold = 80 // スクロール開始の閾値（px）
@@ -601,19 +607,22 @@ export function useDragAndDrop({
         // 上端に近い場合は上にスクロール
         if (e.clientY - scrollRect.top < scrollThreshold) {
           scrollContainer.scrollTop -= scrollSpeed
-          scrollDelta = -scrollSpeed
         }
         // 下端に近い場合は下にスクロール
         else if (scrollRect.bottom - e.clientY < scrollThreshold) {
           scrollContainer.scrollTop += scrollSpeed
-          scrollDelta = scrollSpeed
         }
       }
 
+      // 累積スクロール量を計算
+      const currentScrollTop = scrollContainer?.scrollTop || 0
+      const initialScrollTop = dragData.initialScrollTop || 0
+      const totalScrollDelta = currentScrollTop - initialScrollTop
+
       const { constrainedX, constrainedY } = getConstrainedPosition(e.clientX, e.clientY)
       const deltaX = constrainedX - dragData.startX
-      // スクロール量を考慮してdeltaYを調整
-      const deltaY = constrainedY - dragData.startY + (scrollDelta !== 0 ? scrollDelta : 0)
+      // 累積スクロール量を考慮してdeltaYを調整
+      const deltaY = constrainedY - dragData.startY + totalScrollDelta
 
       if (Math.abs(deltaY) > 5 || Math.abs(deltaX) > 5) {
         dragData.hasMoved = true
