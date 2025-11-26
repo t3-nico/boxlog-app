@@ -104,9 +104,8 @@ export const calendarStyles: CalendarStyles = {
 
   // 統合：calendar-layout.cssからの移行（重複を避けてレイアウト専用に）
   layout: {
-    // カスタムスクロールバー（Tailwindクラス組み合わせ）
-    scrollbar:
-      'scrollbar-thin scrollbar-thumb-gray-400/50 scrollbar-track-white dark:scrollbar-track-gray-900/30 dark:scrollbar-thumb-gray-500/40',
+    // カスタムスクロールバー（globals.cssのセマンティックスタイルを使用）
+    scrollbar: 'scrollbar-thin',
 
     // タッチデバイス最適化
     touchOptimized: 'touch-pan-y overflow-auto',
@@ -159,40 +158,23 @@ export const calendarCustomCSS = `
 }
 
 .calendar-custom-scrollbar::-webkit-scrollbar-track {
-  background: #ffffff;
+  background: transparent;
   border-radius: 4px;
 }
 
 .calendar-custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(115, 115, 115, 0.5);
+  background: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent);
   border-radius: 4px;
 }
 
 .calendar-custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(115, 115, 115, 0.7);
-}
-
-/* Dark mode scrollbar */
-[data-theme="dark"] .calendar-custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(23, 23, 23, 0.3);
-}
-
-[data-theme="dark"] .calendar-custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(82, 82, 82, 0.4);
-}
-
-[data-theme="dark"] .calendar-custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(82, 82, 82, 0.6);
+  background: color-mix(in oklch, var(--color-muted-foreground) 50%, transparent);
 }
 
 /* Firefox support */
 .calendar-custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(115, 115, 115, 0.5) #ffffff;
-}
-
-[data-theme="dark"] .calendar-custom-scrollbar {
-  scrollbar-color: rgba(82, 82, 82, 0.4) rgba(23, 23, 23, 0.3);
+  scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent;
 }
 
 /* Print styles */
