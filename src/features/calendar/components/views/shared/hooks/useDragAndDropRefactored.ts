@@ -7,18 +7,12 @@
 
 import { useCallback, useEffect, useRef } from 'react'
 
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+
 import { useDragCalculations } from './drag-operations/useDragCalculations'
 import { useDragElement } from './drag-operations/useDragElement'
 import { useDragState } from './drag-operations/useDragState'
 import { useEventUpdate } from './drag-operations/usePlanUpdate'
-
-interface CalendarPlan {
-  id: string
-  title: string
-  startDate?: Date
-  endDate?: Date
-  [key: string]: unknown
-}
 
 interface UseDragAndDropRefactoredProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void

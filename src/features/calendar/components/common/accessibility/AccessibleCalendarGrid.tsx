@@ -298,7 +298,7 @@ export const AccessibleCalendarGrid = ({
                       }}
                       onClick={(e) => {
                         e.stopPropagation()
-                        onSelectEvent(event.id)
+                        onSelectPlan(event.id)
                       }}
                     >
                       <div className="truncate font-medium">{event.title}</div>
