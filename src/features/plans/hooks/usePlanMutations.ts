@@ -57,8 +57,6 @@ export function usePlanMutations() {
   // ✨ 更新
   const updatePlan = api.plans.update.useMutation({
     onMutate: async ({ id, data }) => {
-      console.log('[usePlanMutations] onMutate開始:', { id, data })
-
       // 0. mutation開始フラグを設定（Realtime二重更新防止）
       setIsMutating(true)
 
@@ -69,11 +67,6 @@ export function usePlanMutations() {
       // 2. 現在のデータをスナップショット（ロールバック用）
       const previousPlans = utils.plans.list.getData()
       const previousPlan = utils.plans.getById.getData({ id })
-
-      console.log('[usePlanMutations] 現在のキャッシュ:', {
-        previousPlansCount: previousPlans?.length,
-        hasPreviousPlan: !!previousPlan,
-      })
 
       // 3. 楽観的更新: Zustandキャッシュを即座に更新（全コンポーネントに即座に反映）
       const updateData: UpdatePlanInput = {}
@@ -98,34 +91,12 @@ export function usePlanMutations() {
       // Zustandキャッシュを更新
       if (Object.keys(updateData).length > 0) {
         updateCache(id, updateData)
-        console.log('[usePlanMutations] Zustandキャッシュ更新:', { id, updateData })
       }
 
       // 4. TanStack Queryキャッシュを楽観的に更新
-      // 重要: TanStack Query v5では setData は新しい参照を返さないと再レンダリングされない
-      // oldData全体を新しい配列として返す必要がある
       utils.plans.list.setData(undefined, (oldData) => {
-        if (!oldData) {
-          console.log('[usePlanMutations] oldData is undefined, skipping list cache update')
-          return oldData
-        }
-        // 重要: map() で新しい配列を作成し、さらに spread で新しいオブジェクトを作成
-        const updated = oldData.map((plan) => {
-          if (plan.id === id) {
-            // 更新対象: 新しいオブジェクトとして返す
-            return { ...plan, ...updateData }
-          }
-          // 更新対象外: そのまま返す（参照を維持）
-          return plan
-        })
-        console.log('[usePlanMutations] TanStack Query list cache 楽観的更新:', {
-          id,
-          updateData,
-          updatedPlan: updated.find((p) => p.id === id),
-          isSameReference: updated === oldData,
-          updatedPlanSameRef: updated.find((p) => p.id === id) === oldData.find((p) => p.id === id),
-        })
-        return updated
+        if (!oldData) return oldData
+        return oldData.map((plan) => (plan.id === id ? { ...plan, ...updateData } : plan))
       })
 
       // 個別プランキャッシュを更新
@@ -137,8 +108,6 @@ export function usePlanMutations() {
       return { id, previousPlans, previousPlan }
     },
     onSuccess: (updatedPlan, variables) => {
-      console.log('[usePlanMutations] 更新成功:', updatedPlan)
-
       // サーバーから返ってきた最新データでキャッシュを更新
       // plan_tags などのリレーションデータは保持する
       utils.plans.list.setData(undefined, (oldData) => {
@@ -152,7 +121,6 @@ export function usePlanMutations() {
         })
       })
 
-      console.log('[usePlanMutations] サーバーデータでキャッシュ更新完了')
       toast.success('更新しました')
     },
     onError: (_err, _variables, context) => {
