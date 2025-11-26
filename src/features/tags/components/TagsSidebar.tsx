@@ -227,13 +227,11 @@ export function TagsSidebar({
             color,
           },
         })
-        toast.success(t('tags.toast.colorChanged'))
       } catch (error) {
         console.error('Failed to update group color:', error)
-        toast.error(t('tags.toast.colorChangeFailed'))
       }
     },
-    [reorderedGroups, updateGroupMutation, toast, t]
+    [reorderedGroups, updateGroupMutation]
   )
 
   // グループごとのタグ数をカウント

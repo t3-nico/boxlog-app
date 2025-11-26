@@ -258,10 +258,8 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                                 color,
                               },
                             })
-                            toast.success('カラーを変更しました')
                           } catch (error) {
                             console.error('Failed to update group color:', error)
-                            toast.error('カラーの変更に失敗しました')
                           }
                         }}
                       />
