@@ -23,9 +23,9 @@ export function SettingsSidebar() {
       {/* ヘッダー（48px - SidebarHeaderと同じ） */}
       <SidebarHeader title={t('settings.dialog.title')} />
 
-      {/* カテゴリメニュー */}
+      {/* カテゴリメニュー（8pxグリッド準拠） */}
       <ScrollArea className="flex-1">
-        <nav className="space-y-0 p-4">
+        <nav className="space-y-1 p-4">
           {SETTINGS_CATEGORIES.map((category) => {
             const Icon = category.icon
             const isActive = activeCategory === category.id
@@ -35,7 +35,7 @@ export function SettingsSidebar() {
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
                 className={cn(
-                  'flex w-full items-center gap-1 rounded-lg px-4 py-2 text-left text-sm font-medium transition-colors',
+                  'flex w-full items-center gap-2 rounded-lg px-4 py-2 text-left text-sm font-medium transition-colors',
                   isActive
                     ? 'bg-accent text-accent-foreground'
                     : 'text-sidebar-foreground hover:bg-accent/50 hover:text-foreground'
