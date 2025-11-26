@@ -1,5 +1,8 @@
 'use client'
 
+import { X } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 
@@ -21,7 +24,7 @@ import { TagsSettings } from '../tags-settings'
  * 既存のページ構造（SettingsLayout）を維持
  */
 export function SettingsContent() {
-  const { activeCategory } = useSettingsDialogStore()
+  const { activeCategory, closeSettings } = useSettingsDialogStore()
   const { t } = useI18n()
 
   // カテゴリごとのtitle/descriptionを取得
@@ -89,9 +92,16 @@ export function SettingsContent() {
 
   const { title, description } = getCategoryInfo()
 
+  const closeButton = (
+    <Button variant="ghost" size="icon" onClick={closeSettings} className="h-8 w-8">
+      <X className="h-4 w-4" />
+      <span className="sr-only">Close</span>
+    </Button>
+  )
+
   return (
     <main className="flex flex-1 flex-col overflow-hidden">
-      <SettingsLayout title={title} description={description}>
+      <SettingsLayout title={title} description={description} actions={closeButton}>
         {activeCategory === 'general' && <div>General Settings (Coming Soon)</div>}
         {activeCategory === 'account' && <AccountSettings />}
         {activeCategory === 'notifications' && <NotificationSettings />}

@@ -22,7 +22,7 @@ export function SettingsDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeSettings()}>
-      <DialogContent className="!flex h-[80vh] !max-w-4xl !flex-col !gap-0 !p-0">
+      <DialogContent className="!flex h-[80vh] !max-w-4xl !flex-col !gap-0 !p-0" showCloseButton={false}>
         {/* アクセシビリティ用の非表示タイトル */}
         <VisuallyHidden>
           <DialogTitle>Settings</DialogTitle>
