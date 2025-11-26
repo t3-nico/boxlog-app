@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * 統一されたスクロール可能カレンダーレイアウト
  */
@@ -27,7 +26,7 @@ interface ScrollableCalendarLayoutProps {
   timeColumnWidth?: number
   onTimeClick?: (hour: number, minute: number) => void
   displayDates?: Date[]
-  viewMode?: 'day' | '3day' | 'week' | '2week'
+  viewMode?: 'day' | '3day' | '5day' | 'week' | '2week'
 
   // スクロール機能の追加
   enableKeyboardNavigation?: boolean

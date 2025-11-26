@@ -1,10 +1,8 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
 import React, { useCallback } from 'react'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 import {
@@ -25,7 +23,7 @@ interface TwoWeekContentProps {
   onPlanClick?: (plan: CalendarPlan) => void
   onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onPlanUpdate?: (plan: CalendarPlan) => void
+  onPlanUpdate?: (planId: string, updates: Partial<CalendarPlan>) => void
   onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
   onCreatePlan?: (startDate: Date, endDate: Date) => void
   className?: string
@@ -59,8 +57,8 @@ export const TwoWeekContent = ({
 
       // handleUpdatePlan形式で呼び出し
       await onPlanUpdate(planId, {
-        startTime: updates.startTime,
-        endTime: updates.endTime,
+        startDate: updates.startTime,
+        endDate: updates.endTime,
       })
     },
     [onPlanUpdate]
@@ -71,7 +69,7 @@ export const TwoWeekContent = ({
     onPlanUpdate: handlePlanUpdate,
     onPlanClick,
     date,
-    plans,
+    events: plans,
     displayDates,
     viewMode: '2week',
   })
@@ -108,6 +106,8 @@ export const TwoWeekContent = ({
         left: 2, // 列内での位置（px）
         width: 96, // 列幅の96%使用
         zIndex: 20,
+        column: 0,
+        totalColumns: 1,
         opacity: 1.0,
       }
     })
@@ -157,15 +157,20 @@ export const TwoWeekContent = ({
       <CalendarDragSelection
         date={date}
         className="absolute inset-0 z-10"
-        onTimeRangeSelect={(startTime, endTime) => {
+        onTimeRangeSelect={(selection) => {
           // 時間範囲選択時の処理
+          const startTime = `${String(selection.startHour).padStart(2, '0')}:${String(selection.startMinute).padStart(2, '0')}`
+          const endTime = `${String(selection.endHour).padStart(2, '0')}:${String(selection.endMinute).padStart(2, '0')}`
+
+          if (_onTimeRangeSelect) {
+            _onTimeRangeSelect(date, startTime, endTime)
+          }
+
           const startDate = new Date(date)
-          const [startHour, startMinute] = startTime.split(':').map(Number)
-          startDate.setHours(startHour, startMinute, 0, 0)
+          startDate.setHours(selection.startHour, selection.startMinute, 0, 0)
 
           const endDate = new Date(date)
-          const [endHour, endMinute] = endTime.split(':').map(Number)
-          endDate.setHours(endHour, endMinute, 0, 0)
+          endDate.setHours(selection.endHour, selection.endMinute, 0, 0)
 
           onCreatePlan?.(startDate, endDate)
         }}
@@ -184,8 +189,8 @@ export const TwoWeekContent = ({
           const style = planStyles[plan.id]
           if (!style) return null
 
-          const isDragging = dragState.draggedPlanId === plan.id && dragState.isDragging
-          const isResizingThis = dragState.isResizing && dragState.draggedPlanId === plan.id
+          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
+          const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
 
@@ -230,11 +235,18 @@ export const TwoWeekContent = ({
                     left: 0,
                     width: 100,
                     height:
-                      isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
+                      isResizingThis && dragState.snappedPosition
+                        ? dragState.snappedPosition.height ?? currentHeight
+                        : currentHeight,
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
-                  onContextMenu={(plan, e) => handlePlanContextMenu(plan, e)}
-                  onResizeStart={(plan, direction, e, _position) =>
+                  onContextMenu={(plan: CalendarPlan, e: React.MouseEvent) => handlePlanContextMenu(plan, e)}
+                  onResizeStart={(
+                    plan: CalendarPlan,
+                    direction: 'top' | 'bottom',
+                    e: React.MouseEvent,
+                    _position: { top: number; left: number; width: number; height: number }
+                  ) =>
                     handlers.handleResizeStart(plan.id, direction, e, {
                       top: currentTop,
                       left: 0,
@@ -245,7 +257,6 @@ export const TwoWeekContent = ({
                   isDragging={isDragging}
                   isResizing={isResizingThis}
                   previewTime={calculatePreviewTime(plan.id, dragState)}
-                  compact={true}
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>

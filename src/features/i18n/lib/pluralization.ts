@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * 高度な複数形処理システム
  * ICU Message Format準拠
@@ -105,8 +104,8 @@ export const pluralizeWithVariables = (
   const allVariables = { count, ...variables }
 
   // {{variable}} 形式の変数を置換
-  result = result.replace(/\{\{(\w+)\}\}/g, (match, key) => {
-    return allVariables[key]?.toString() || match
+  result = result.replace(/\{\{(\w+)\}\}/g, (match: string, key: string) => {
+    return allVariables[key as keyof typeof allVariables]?.toString() || match
   })
 
   return result

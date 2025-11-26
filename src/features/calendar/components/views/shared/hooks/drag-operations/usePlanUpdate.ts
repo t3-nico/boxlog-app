@@ -7,17 +7,10 @@
 import { useCallback } from 'react'
 
 import useCalendarToast from '@/features/calendar/lib/toast'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { HOUR_HEIGHT } from '../../constants/grid.constants'
-
-interface CalendarPlan {
-  id: string
-  title: string
-  startDate?: Date
-  endDate?: Date
-  [key: string]: unknown
-}
 
 interface UseEventUpdateProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
@@ -46,14 +39,31 @@ export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdatePr
   )
 
   const createEventData = useCallback(
-    (plan: CalendarPlan, newStartTime: Date, durationMs: number) => ({
+    (plan: CalendarPlan, newStartTime: Date, durationMs: number): CalendarPlan => ({
       id: plan.id,
       title: plan.title || t('calendar.event.title'),
+      description: plan.description,
+      startDate: newStartTime,
+      endDate: new Date(newStartTime.getTime() + durationMs),
+      status: plan.status,
+      color: plan.color,
+      plan_number: plan.plan_number,
+      reminder_minutes: plan.reminder_minutes,
+      tags: plan.tags,
+      createdAt: plan.createdAt,
+      updatedAt: new Date(),
       displayStartDate: newStartTime,
       displayEndDate: new Date(newStartTime.getTime() + durationMs),
       duration: Math.round(durationMs / (1000 * 60)), // 分単位
       isMultiDay: false,
       isRecurring: false,
+      type: plan.type,
+      userId: plan.userId,
+      location: plan.location,
+      url: plan.url,
+      allDay: plan.allDay,
+      priority: plan.priority,
+      calendarId: plan.calendarId,
     }),
     [t]
   )

@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { ConflictData } from '@/types/common'
 import type { ConflictResolution, OfflineAction, OfflineManagerStatus, SyncResult } from '../types'
 

@@ -1,9 +1,8 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 /**
  * WorkerManager - Web Worker の管理とタスクスケジューリング
  */
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 interface WorkerTask {
   id: string
@@ -155,7 +154,7 @@ export class WorkerManager {
     this.activeTasks.set(task.id, task)
 
     // 最も負荷の少ないワーカーを選択（簡易実装）
-    const worker = this.workers[(this.activeTasks.size % this.workers.length) as keyof typeof workers]
+    const worker = this.workers[this.activeTasks.size % this.workers.length]
 
     worker.postMessage({
       id: task.id,

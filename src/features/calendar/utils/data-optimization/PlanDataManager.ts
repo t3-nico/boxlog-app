@@ -1,10 +1,9 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 /**
  * PlanDataManager - 大量のプランデータを効率的に管理
  * 正規化、インデックス化、クエリ最適化を提供
  */
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 // 正規化されたプランデータ
 interface NormalizedPlan {

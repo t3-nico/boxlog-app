@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 // Notification system types
 
 import type { CalendarEvent } from '@/features/events/types/events'

@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 // スマートフォルダ ルール評価エンジン（拡張版）
 
 import { RuleEvaluationContext, SmartFolderRule, SmartFolderRuleField } from '@/types/smart-folders'
@@ -156,14 +155,15 @@ export class AdvancedRuleEngine {
   private static evaluateTagCondition(fieldValue: FieldValue, rule: SmartFolderRule): boolean {
     const tags = Array.isArray(fieldValue) ? fieldValue : []
     const ruleValue = rule.value
+    const ruleValueAsString = ruleValue != null ? String(ruleValue) : ''
 
     switch (rule.operator) {
       case 'contains':
-        return tags.includes(ruleValue)
+        return tags.includes(ruleValueAsString)
       case 'not_contains':
-        return !tags.includes(ruleValue)
+        return !tags.includes(ruleValueAsString)
       case 'equals':
-        return JSON.stringify(tags.sort()) === JSON.stringify([ruleValue].sort())
+        return JSON.stringify(tags.sort()) === JSON.stringify([ruleValueAsString].sort())
       case 'is_empty':
         return tags.length === 0
       case 'is_not_empty':

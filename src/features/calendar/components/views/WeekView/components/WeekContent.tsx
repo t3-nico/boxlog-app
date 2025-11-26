@@ -1,10 +1,8 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
 import React, { useCallback } from 'react'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 import {
@@ -18,15 +16,16 @@ import {
 } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
+import type { WeekPlanPosition } from '../WeekView.types'
 
 interface WeekContentProps {
   date: Date
   plans: CalendarPlan[]
-  planPositions: unknown[] // WeekPlanPosition[]
+  planPositions: WeekPlanPosition[]
   onPlanClick?: (plan: CalendarPlan) => void
   onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onPlanUpdate?: (plan: CalendarPlan) => void
+  onPlanUpdate?: (planId: string, updates: Partial<CalendarPlan>) => void
   onTimeRangeSelect?: (selection: import('../../shared').DateTimeSelection) => void
   className?: string
   dayIndex: number // 週内での日付インデックス（0-6）
@@ -59,8 +58,8 @@ export const WeekContent = ({
 
       // handleUpdatePlan形式で呼び出し
       await onPlanUpdate(planId, {
-        startTime: updates.startTime,
-        endTime: updates.endTime,
+        startDate: updates.startTime,
+        endDate: updates.endTime,
       })
     },
     [onPlanUpdate]
@@ -71,7 +70,7 @@ export const WeekContent = ({
     onPlanUpdate: handlePlanUpdate,
     onPlanClick,
     date,
-    plans,
+    events: plans,
     displayDates,
     viewMode: 'week',
   })
@@ -94,6 +93,8 @@ export const WeekContent = ({
         left: 2, // 列内での位置（px）
         width: 96, // 列幅の96%使用
         zIndex: pos.zIndex,
+        column: pos.column,
+        totalColumns: pos.totalColumns,
         opacity: 1.0,
       }))
   }, [planPositions, dayIndex])
@@ -178,11 +179,11 @@ export const WeekContent = ({
           const style = planStyles[plan.id]
           if (!style) return null
 
-          const isDragging = dragState.draggedPlanId === plan.id && dragState.isDragging
+          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
 
           // ドラッグ中のプラン表示制御：元のカラムで水平移動表示
           // （非表示にせず、水平位置を調整して表示継続）
-          const isResizingThis = dragState.isResizing && dragState.draggedPlanId === plan.id
+          const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
 
@@ -227,11 +228,18 @@ export const WeekContent = ({
                     left: 0,
                     width: 100,
                     height:
-                      isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
+                      isResizingThis && dragState.snappedPosition
+                        ? dragState.snappedPosition.height ?? currentHeight
+                        : currentHeight,
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
-                  onContextMenu={(plan, e) => handlePlanContextMenu(plan, e)}
-                  onResizeStart={(plan, direction, e, _position) =>
+                  onContextMenu={(plan: CalendarPlan, e: React.MouseEvent) => handlePlanContextMenu(plan, e)}
+                  onResizeStart={(
+                    plan: CalendarPlan,
+                    direction: 'top' | 'bottom',
+                    e: React.MouseEvent,
+                    _position: { top: number; left: number; width: number; height: number }
+                  ) =>
                     handlers.handleResizeStart(plan.id, direction, e, {
                       top: currentTop,
                       left: 0,
@@ -242,9 +250,6 @@ export const WeekContent = ({
                   isDragging={isDragging}
                   isResizing={isResizingThis}
                   previewTime={calculatePreviewTime(plan.id, dragState)}
-                  showTime={true}
-                  showDuration={true}
-                  variant="week"
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>
@@ -254,10 +259,10 @@ export const WeekContent = ({
 
         {/* ドラッグ中のプランを他の日付カラムで表示 */}
         {dragState.isDragging &&
-        dragState.draggedPlanId &&
+        dragState.draggedEventId &&
         dragState.targetDateIndex !== undefined &&
         dragState.targetDateIndex === dayIndex &&
-        !plans.find((p) => p.id === dragState.draggedPlanId) &&
+        !plans.find((p) => p.id === dragState.draggedEventId) &&
         displayDates
           ? (() => {
               // 週の全プランからドラッグ中のプランを探す
@@ -271,7 +276,7 @@ export const WeekContent = ({
 
               // 一時的な解決策として、コンソールログで状況を確認
               console.log('🔧 他日付カラムでのドラッグプラン表示試行:', {
-                draggedPlanId: dragState.draggedPlanId,
+                draggedEventId: dragState.draggedEventId,
                 targetDateIndex: dragState.targetDateIndex,
                 currentDayIndex: dayIndex,
                 hasSnappedPosition: !!dragState.snappedPosition,

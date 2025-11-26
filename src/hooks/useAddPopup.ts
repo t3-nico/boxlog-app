@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 // TODO(#621): Events削除後、plans/Sessionsに移行予定
 'use client'
 

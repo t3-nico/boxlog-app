@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 'use client'
 
 import React, { useEffect, useState } from 'react'

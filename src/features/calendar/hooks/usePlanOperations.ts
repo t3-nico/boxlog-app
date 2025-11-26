@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 import { useCallback, useEffect } from 'react'
 
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'

@@ -1,9 +1,8 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 'use client'
 
 import React, { useMemo } from 'react'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 // import { eventSelectors, useEventStore } from '@/features/events/stores/useEventStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'

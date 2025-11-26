@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 /**
  * 命名辞書システム - ユーティリティ関数
  * Issue #353: URL/ファイル名/分析イベントの統一命名管理
@@ -137,53 +136,51 @@ export function createPerformanceEvent(
 export function navigateToScreen(screen: ScreenName): string {
   // ルートマッピング
   const routeMap: Record<ScreenName, () => string> = {
-    dashboard: ROUTES.dashboard,
-    calendar: ROUTES.calendar,
-    calendar_view: () => ROUTES.calendarView('month'), // デフォルトビュー
-    board: ROUTES.board,
-    table: ROUTES.table,
-    table_detail: () => ROUTES.tableDetail(''), // パラメータが必要
-    ai_chat: ROUTES.aiChat,
-    stats: ROUTES.stats,
-    stats_detail: () => ROUTES.statsDetail(''), // パラメータが必要
-    help: ROUTES.help,
-    auth: ROUTES.auth,
-    login: ROUTES.login,
-    signup: ROUTES.signup,
-    password_reset: ROUTES.passwordReset,
-    password_change: ROUTES.passwordChange,
-    settings: ROUTES.settings,
-    settings_general: ROUTES.settingsGeneral,
-    settings_account: ROUTES.settingsAccount,
-    settings_preferences: ROUTES.settingsPreferences,
-    settings_notifications: ROUTES.settingsNotifications,
-    settings_calendar: ROUTES.settingsCalendar,
-    settings_tags: ROUTES.settingsTags,
-    settings_templates: ROUTES.settingsTemplates,
-    settings_integration: ROUTES.settingsIntegration,
-    settings_data_export: ROUTES.settingsDataExport,
-    settings_plan_billing: ROUTES.settingsPlanBilling,
-    settings_trash: ROUTES.settingsTrash,
-    settings_legal: ROUTES.settingsLegal,
-    settings_test_autosave: ROUTES.settingsTestAutosave,
-    settings_chronotype: ROUTES.settingsChronotype,
-    stats_life_vision: ROUTES.statsLifeVision,
-    stats_identity: ROUTES.statsIdentity,
-    stats_goals: ROUTES.statsGoals,
-    stats_value: ROUTES.statsValue,
-    stats_antivalues: ROUTES.statsAntivalues,
-    stats_purpose: ROUTES.statsPurpose,
-    stats_principles: ROUTES.statsPrinciples,
-    stats_connpass: ROUTES.statsConnpass,
-    stats_reflect_all: ROUTES.statsReflectAll,
-    stats_reflect_today: ROUTES.statsReflectToday,
-    stats_reflect_week: ROUTES.statsReflectWeek,
-    stats_reflect_month: ROUTES.statsReflectMonth,
-    stats_act_try: ROUTES.statsActTry,
-    stats_act_next: ROUTES.statsActNext,
-    help_chat_history: ROUTES.helpChatHistory,
-    error: ROUTES.error,
-    test_sentry: ROUTES.testSentry,
+    DASHBOARD: ROUTES.dashboard,
+    CALENDAR: ROUTES.calendar,
+    CALENDAR_VIEW: () => ROUTES.calendarView('month'), // デフォルトビュー
+    INBOX: ROUTES.inbox,
+    AI_CHAT: ROUTES.aiChat,
+    STATS: ROUTES.stats,
+    STATS_DETAIL: () => ROUTES.statsDetail(''), // パラメータが必要
+    HELP: ROUTES.help,
+    AUTH: ROUTES.auth,
+    LOGIN: ROUTES.login,
+    SIGNUP: ROUTES.signup,
+    PASSWORD_RESET: ROUTES.passwordReset,
+    PASSWORD_CHANGE: ROUTES.passwordChange,
+    SETTINGS: ROUTES.settings,
+    SETTINGS_GENERAL: ROUTES.settingsGeneral,
+    SETTINGS_ACCOUNT: ROUTES.settingsAccount,
+    SETTINGS_PREFERENCES: ROUTES.settingsPreferences,
+    SETTINGS_NOTIFICATIONS: ROUTES.settingsNotifications,
+    SETTINGS_CALENDAR: ROUTES.settingsCalendar,
+    SETTINGS_TAGS: ROUTES.settingsTags,
+    SETTINGS_TEMPLATES: ROUTES.settingsTemplates,
+    SETTINGS_INTEGRATION: ROUTES.settingsIntegration,
+    SETTINGS_DATA_EXPORT: ROUTES.settingsDataExport,
+    SETTINGS_PLAN_BILLING: ROUTES.settingsPlanBilling,
+    SETTINGS_TRASH: ROUTES.settingsTrash,
+    SETTINGS_LEGAL: ROUTES.settingsLegal,
+    SETTINGS_TEST_AUTOSAVE: ROUTES.settingsTestAutosave,
+    SETTINGS_CHRONOTYPE: ROUTES.settingsChronotype,
+    STATS_LIFE_VISION: ROUTES.statsLifeVision,
+    STATS_IDENTITY: ROUTES.statsIdentity,
+    STATS_GOALS: ROUTES.statsGoals,
+    STATS_VALUE: ROUTES.statsValue,
+    STATS_ANTIVALUES: ROUTES.statsAntivalues,
+    STATS_PURPOSE: ROUTES.statsPurpose,
+    STATS_PRINCIPLES: ROUTES.statsPrinciples,
+    STATS_CONNPASS: ROUTES.statsConnpass,
+    STATS_REFLECT_ALL: ROUTES.statsReflectAll,
+    STATS_REFLECT_TODAY: ROUTES.statsReflectToday,
+    STATS_REFLECT_WEEK: ROUTES.statsReflectWeek,
+    STATS_REFLECT_MONTH: ROUTES.statsReflectMonth,
+    STATS_ACT_TRY: ROUTES.statsActTry,
+    STATS_ACT_NEXT: ROUTES.statsActNext,
+    HELP_CHAT_HISTORY: ROUTES.helpChatHistory,
+    ERROR: ROUTES.error,
+    TEST_SENTRY: ROUTES.testSentry,
   }
 
   const routeFunction = routeMap[screen]
@@ -195,11 +192,9 @@ export function navigateToScreen(screen: ScreenName): string {
  */
 export function getParameterizedRoute(screen: ScreenName, parameter: string): string {
   switch (screen) {
-    case 'calendar_view':
+    case 'CALENDAR_VIEW':
       return ROUTES.calendarView(parameter)
-    case 'table_detail':
-      return ROUTES.tableDetail(parameter)
-    case 'stats_detail':
+    case 'STATS_DETAIL':
       return ROUTES.statsDetail(parameter)
     default:
       return navigateToScreen(screen)

@@ -1,9 +1,9 @@
-// @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
 import { useCallback, useEffect, useRef } from 'react'
 
 import type { CalendarAction, CalendarToastOptions } from './types'
 
 import { getTranslation } from './get-translation'
+import { toExternalToast } from './types'
 import { CALENDAR_TOAST_KEYS } from './translation-keys'
 import { useCalendarToast } from './use-calendar-toast'
 
@@ -20,7 +20,7 @@ interface DebounceState {
   timeoutId?: NodeJS.Timeout
   lastCallTime?: number
   lastInvokeTime?: number
-  result?: string
+  result?: string | number
 }
 
 // グループ化設定
@@ -54,8 +54,8 @@ export const useDebouncedToast = () => {
 
   // デバウンス実行関数
   const createDebouncedFunction = useCallback(
-    <Args extends unknown[]>(fn: (...args: Args) => string, config: DebounceConfig, key: string = 'default') => {
-      return (...args: Args): string | undefined => {
+    <Args extends unknown[]>(fn: (...args: Args) => string | number, config: DebounceConfig, key: string = 'default') => {
+      return (...args: Args): string | number | undefined => {
         const now = Date.now()
         const state = debounceStates.current.get(key) || {}
 
@@ -103,7 +103,7 @@ export const useDebouncedToast = () => {
   const debouncedSuccess = useCallback(
     (message: string, options?: CalendarToastOptions, config: DebounceConfig = { delay: 500 }) => {
       const key = `success-${message}`
-      const debouncedFn = createDebouncedFunction(() => toast.success(message, options), config, key)
+      const debouncedFn = createDebouncedFunction(() => toast.success(message, toExternalToast(options)), config, key)
       return debouncedFn()
     },
     [createDebouncedFunction, toast]
@@ -112,7 +112,7 @@ export const useDebouncedToast = () => {
   const debouncedError = useCallback(
     (message: string, options?: CalendarToastOptions, config: DebounceConfig = { delay: 300 }) => {
       const key = `error-${message}`
-      const debouncedFn = createDebouncedFunction(() => toast.error(message, options), config, key)
+      const debouncedFn = createDebouncedFunction(() => toast.error(message, toExternalToast(options)), config, key)
       return debouncedFn()
     },
     [createDebouncedFunction, toast]
@@ -121,7 +121,7 @@ export const useDebouncedToast = () => {
   const debouncedWarning = useCallback(
     (message: string, options?: CalendarToastOptions, config: DebounceConfig = { delay: 400 }) => {
       const key = `warning-${message}`
-      const debouncedFn = createDebouncedFunction(() => toast.warning(message, options), config, key)
+      const debouncedFn = createDebouncedFunction(() => toast.warning(message, toExternalToast(options)), config, key)
       return debouncedFn()
     },
     [createDebouncedFunction, toast]
@@ -140,23 +140,23 @@ export const useDebouncedToast = () => {
   // グループ化Toast（同じ種類の操作をまとめる）
   const groupedToast = useCallback(
     (groupConfig: ToastGroupConfig, message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
-      const group = groupedToasts.current.get(groupConfig.key) || { count: 0, lastMessage: '' }
+      const group = groupedToasts.current.get(groupConfig.key) || { count: 0, lastMessage: '', toastId: undefined }
 
       group.count++
       group.lastMessage = message
 
       // 既存のToastを削除
       if (group.toastId) {
-        toast.clear()
+        toast.dismiss(group.toastId)
       }
 
       // 新しいToastを表示
       if (group.count <= groupConfig.maxCount) {
         // 個別メッセージを表示
-        group.toastId = toast[type](message)
+        group.toastId = String(toast[type](message))
       } else {
         // 省略メッセージを表示
-        group.toastId = toast[type](groupConfig.collapseMessage(group.count))
+        group.toastId = String(toast[type](groupConfig.collapseMessage(group.count)))
       }
 
       groupedToasts.current.set(groupConfig.key, group)
@@ -186,7 +186,7 @@ export const useDebouncedToast = () => {
     ) => {
       const key = `drag-${operationType}-${eventTitle}`
       const debouncedFn = createDebouncedFunction(
-        () => {
+        (): string | number => {
           const message =
             operationType === 'move'
               ? getTranslation(CALENDAR_TOAST_KEYS.EVENT_MOVED)

@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
 import { useMemo } from 'react'
@@ -12,7 +11,7 @@ import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout, usePlanStyles } from '../shared'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 
-import type { EventPosition } from '../DayView/DayView.types'
+import type { PlanPosition } from '../shared/hooks/useViewPlans'
 
 import { ThreeDayContent } from './components'
 import { useThreeDayView } from './hooks/useThreeDayView'
@@ -75,7 +74,7 @@ export const ThreeDayView = ({
 
   // イベント位置計算（統一された日付配列ベース）
   const eventPositions = useMemo(() => {
-    const positions: EventPosition[] = []
+    const positions: PlanPosition[] = []
 
     // displayDates（統一フィルタリング済み）を基準にイベントを配置
     displayDates.forEach((displayDate, _dayIndex) => {
@@ -103,12 +102,14 @@ export const ThreeDayView = ({
         }
 
         positions.push({
-          event,
+          plan: event,
           top,
           height,
           left: 1, // 各カラム内での位置（%）
           width: 98, // カラム幅の98%を使用
           zIndex: 20,
+          column: 0, // 単独カラム
+          totalColumns: 1, // 単独カラム
           opacity: 1.0,
         })
       })
@@ -178,7 +179,6 @@ export const ThreeDayView = ({
                 className={cn('relative flex-1', dayIndex < displayDates.length - 1 ? 'border-border border-r' : '')}
                 style={{ width: `${100 / displayDates.length}%` }}
               >
-                {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
                 <ThreeDayContent
                   date={date}
                   events={dayEvents}

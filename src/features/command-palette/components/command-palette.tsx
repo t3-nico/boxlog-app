@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
@@ -82,7 +81,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
           priority: task.priority,
           type: task.type,
           tags: task.tags ? [] : [], // Convert tag IDs to Tag objects if needed
-          dueDate: task.due_date,
+          dueDate: task.planned_start,
           createdAt: task.created_at,
           updatedAt: task.updated_at,
           selected: false, // Task type implementation tracked in Issue #84

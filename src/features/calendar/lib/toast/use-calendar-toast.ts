@@ -1,12 +1,13 @@
-// @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
 import { useCallback } from 'react'
 
 import { toast } from 'sonner'
 
+import type { CalendarPlan } from '@/features/calendar/types'
+
 import { getTranslation } from './get-translation'
 import { toastTemplates } from './templates'
 import { CALENDAR_TOAST_KEYS } from './translation-keys'
-import type { CalendarAction, CalendarPlan, CalendarToastOptions } from './types'
+import type { CalendarAction, CalendarToastOptions } from './types'
 
 export const useCalendarToast = () => {
   // 汎用的なtoast表示関数
@@ -14,8 +15,8 @@ export const useCalendarToast = () => {
     const template = toastTemplates[action]
     const description = template.description?.(options)
 
-    // duration を動的に計算
-    const duration = typeof template.duration === 'function' ? template.duration(options) : template.duration
+    // durationを取得（numberまたはundefined）
+    const duration = template.duration
 
     // アクションボタンの構築
     const actions: Array<{ label: string; onClick: () => void }> = []
@@ -136,9 +137,10 @@ export const useCalendarToast = () => {
         return result
       } catch (error) {
         toast.dismiss(id)
+        const errorObject = error instanceof Error ? error : new Error(String(error))
         toast.error(
           typeof messages.error === 'function'
-            ? messages.error(error)
+            ? messages.error(errorObject)
             : messages.error || getTranslation(CALENDAR_TOAST_KEYS.TOAST_ERROR_OCCURRED)
         )
         throw error
@@ -168,6 +170,6 @@ export const useCalendarToast = () => {
     warning: toast.warning,
     info: toast.info,
     loading: toast.loading,
-    clear: toast.clear,
+    dismiss: toast.dismiss,
   }
 }

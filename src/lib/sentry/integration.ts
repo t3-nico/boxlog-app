@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * Sentry連携システム
  * エラーパターン辞書との統合による自動分類・構造化レポーティング
@@ -231,7 +230,7 @@ export class SentryErrorHandler {
   }
 }
 
-export function handleReactError(error: Error, errorInfo?: { componentStack?: string }): void {
+export function handleReactError(error: Error, errorInfo?: { componentStack?: string | null }): void {
   SentryErrorHandler.handleError(error, { errorInfo, type: 'react' })
 }
 

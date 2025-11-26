@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
 import { useMemo } from 'react'
@@ -179,14 +178,13 @@ export const TwoWeekView = ({
                   className="border-border relative flex-1 border-r last:border-r-0"
                   style={{ width: `${100 / displayDates.length}%` }}
                 >
-                  {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
                   <TwoWeekContent
                     date={date}
-                    events={dayEvents}
-                    onEventClick={onEventClick}
-                    onEventContextMenu={onEventContextMenu}
+                    plans={dayEvents}
+                    onPlanClick={onEventClick}
+                    onPlanContextMenu={onEventContextMenu}
                     onEmptyClick={onEmptyClick}
-                    onEventUpdate={onUpdateEvent}
+                    onPlanUpdate={onUpdateEvent}
                     onTimeRangeSelect={(date, startTime, endTime) => {
                       // 時間範囲選択時の処理（従来と同じ）
                       const startDate = new Date(date)

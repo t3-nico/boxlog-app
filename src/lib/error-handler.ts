@@ -1,5 +1,3 @@
-// @ts-nocheck
-// TODO(#389): ERROR_CODESとerror-patternsの型エラーを修正後、@ts-nocheckを削除
 /**
  * エラーハンドラーライブラリ
  * 統一エラー処理・自動復旧・ユーザー通知の中央管理システム
@@ -227,11 +225,11 @@ export class ErrorHandler {
         originalError: error.message,
         stack: error.stack,
       },
-      ...options,
+      ..._options,
     }
 
-    const appError = createAppError(error.message, errorCode, metadata, error)
-    await this.handleError(appError, undefined, options)
+    const appError = createAppError(error.message, errorCode, metadata)
+    await this.handleError(appError, undefined, _options)
 
     return appError
   }
@@ -265,7 +263,7 @@ export class ErrorHandler {
       ...options,
     }
 
-    const appError = createAppError(error.message, errorCode, metadata, error)
+    const appError = createAppError(error.message, errorCode, metadata)
     await this.handleError(appError, undefined, options)
 
     return appError
@@ -288,7 +286,7 @@ export class ErrorHandler {
       requestId: options.requestId,
     }
 
-    return createAppError(error.message, finalErrorCode, metadata, error)
+    return createAppError(error.message, finalErrorCode, metadata)
   }
 
   /**

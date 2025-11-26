@@ -1,9 +1,8 @@
-// @ts-nocheck TODO(#389): 型エラー5件を段階的に修正する
 import { useMemo } from 'react'
 
 import { isSameDay } from 'date-fns'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 import { getDateKey, isValidEvent, sortEventsByDateKeys } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
@@ -91,7 +90,7 @@ export function useWeekEvents({ weekDates, events = [] }: UseWeekEventsOptions):
         const width = columnWidth * 0.95 // 少し余白を作る
 
         positions.push({
-          event,
+          plan: event,
           dayIndex,
           top,
           height,

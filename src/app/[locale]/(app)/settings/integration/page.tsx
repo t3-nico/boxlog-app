@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { createTranslation, getDictionary } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 

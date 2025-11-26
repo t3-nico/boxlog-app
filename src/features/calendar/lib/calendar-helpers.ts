@@ -4,7 +4,7 @@ import type { CalendarViewType } from '../types/calendar.types'
  * 有効なビュータイプかどうかを判定
  */
 export function isValidViewType(view: string): view is CalendarViewType {
-  const validTypes: CalendarViewType[] = ['day', '3day', '5day', 'week']
+  const validTypes: CalendarViewType[] = ['day', '3day', '5day', 'week', '2week', 'month']
 
   return validTypes.includes(view as CalendarViewType)
 }
@@ -18,6 +18,8 @@ export function getViewDisplayName(viewType: CalendarViewType): string {
     '3day': '3 Days',
     '5day': '5 Days',
     week: 'Week',
+    '2week': '2 Weeks',
+    month: 'Month',
   }
 
   return Object.prototype.hasOwnProperty.call(displayNames, viewType) ? displayNames[viewType] : viewType
@@ -34,7 +36,7 @@ export function getDefaultViewType(): CalendarViewType {
  * 次のビュータイプを取得
  */
 export function getNextViewType(currentView: CalendarViewType): CalendarViewType {
-  const viewOrder: CalendarViewType[] = ['day', '3day', '5day', 'week']
+  const viewOrder: CalendarViewType[] = ['day', '3day', '5day', 'week', '2week', 'month']
 
   const currentIndex = viewOrder.indexOf(currentView)
   const nextIndex = (currentIndex + 1) % viewOrder.length

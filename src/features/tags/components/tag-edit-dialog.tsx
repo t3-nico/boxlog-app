@@ -6,22 +6,14 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { Tag } from '@/types/tags'
 import { tagIconCategories, tagIconMapping, TagIconName } from '../constants/icons'
-
-interface Tag {
-  id: string
-  name: string
-  color?: string
-  icon?: string
-  count: number
-  parentId?: string | null
-}
 
 interface TagEditDialogProps {
   tag: Tag | null
   open: boolean
   onClose: () => void
-  onSave: (tag: Tag) => void
+  onSave: (tag: Partial<Tag>) => void
 }
 
 export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps) => {

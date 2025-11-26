@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー5件を段階的に修正する
 // スマートフォルダアナリティクスシステム
 
 import { SmartFolder, SmartFolderRule } from '@/types/smart-folders'
@@ -181,7 +180,13 @@ export class SmartFolderAnalytics {
     expectedImpact: string
     implementation: string
   }[] {
-    const suggestions: string[] = []
+    const suggestions: {
+      type: 'efficiency' | 'performance' | 'usability'
+      priority: 'low' | 'medium' | 'high'
+      suggestion: string
+      expectedImpact: string
+      implementation: string
+    }[] = []
     const stats = this.generateFolderUsageStats().find((s) => s.folderId === folder.id)
     const ruleAnalysis = this.analyzeRuleEfficiency(folder)
 

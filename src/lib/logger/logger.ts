@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
 /**
  * 📊 BoxLog Logger Core
  *
@@ -257,7 +256,7 @@ export class Logger {
    */
   async flush(): Promise<void> {
     await Promise.all(
-      this.outputs.filter((output) => output.flush).map((output) => output.flush!().catch(console.error))
+      this.outputs.filter((output) => output.flush).map((output) => Promise.resolve(output.flush!()).catch(console.error))
     )
   }
 
@@ -267,7 +266,7 @@ export class Logger {
   async close(): Promise<void> {
     await this.flush()
     await Promise.all(
-      this.outputs.filter((output) => output.close).map((output) => output.close!().catch(console.error))
+      this.outputs.filter((output) => output.close).map((output) => Promise.resolve(output.close!()).catch(console.error))
     )
   }
 

@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
 import { useCallback, useState } from 'react'
@@ -47,6 +46,7 @@ export const MobileHeader = ({
   const viewLabels = {
     day: t('calendar.mobile.header.viewLabels.day'),
     '3day': t('calendar.mobile.header.viewLabels.3day'),
+    '5day': t('calendar.mobile.header.viewLabels.5day'),
     'week-no-weekend': t('calendar.mobile.header.viewLabels.weekNoWeekend'),
     week: t('calendar.mobile.header.viewLabels.week'),
     '2week': t('calendar.mobile.header.viewLabels.2week'),

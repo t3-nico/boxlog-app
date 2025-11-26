@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * tRPCサーバー設定
  * プロシージャ定義とコンテキスト管理
@@ -149,7 +148,7 @@ export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
     throw new TRPCError({
       code: 'FORBIDDEN',
       message: '管理者権限が必要です',
-      cause: createAppError('管理者権限が必要です', ERROR_CODES.PERMISSION_DENIED, {
+      cause: createAppError('管理者権限が必要です', ERROR_CODES.NO_PERMISSION, {
         source: 'trpc_middleware',
         userId: ctx.userId,
       }),

@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { calendarColors } from '@/features/calendar/theme'
 
 import { HOUR_HEIGHT } from '../constants/grid.constants'

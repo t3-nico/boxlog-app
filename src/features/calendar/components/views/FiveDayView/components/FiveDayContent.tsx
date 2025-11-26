@@ -1,9 +1,8 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
 import React, { useCallback } from 'react'
 
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 import {
@@ -58,8 +57,8 @@ export const FiveDayContent = ({
 
       // handleUpdatePlan形式で呼び出し
       await onPlanUpdate(planId, {
-        startTime: updates.startTime,
-        endTime: updates.endTime,
+        startDate: updates.startTime,
+        endDate: updates.endTime,
       })
     },
     [onPlanUpdate]
@@ -70,7 +69,7 @@ export const FiveDayContent = ({
     onPlanUpdate: handlePlanUpdate,
     onPlanClick,
     date,
-    plans,
+    events: plans,
     displayDates,
     viewMode: '5day',
   })
@@ -148,8 +147,8 @@ export const FiveDayContent = ({
           const style = planStyles[plan.id]
           if (!style) return null
 
-          const isDragging = dragState.draggedPlanId === plan.id && dragState.isDragging
-          const isResizingThis = dragState.isResizing && dragState.draggedPlanId === plan.id
+          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
+          const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
 
@@ -197,8 +196,13 @@ export const FiveDayContent = ({
                       isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
-                  onContextMenu={(plan, e) => handlePlanContextMenu(plan, e)}
-                  onResizeStart={(plan, direction, e, _position) =>
+                  onContextMenu={(plan: CalendarPlan, e: React.MouseEvent) => handlePlanContextMenu(plan, e)}
+                  onResizeStart={(
+                    plan: CalendarPlan,
+                    direction: 'top' | 'bottom',
+                    e: React.MouseEvent,
+                    _position: { top: number; left: number; width: number; height: number }
+                  ) =>
                     handlers.handleResizeStart(plan.id, direction, e, {
                       top: currentTop,
                       left: 0,

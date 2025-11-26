@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
 import { useCallback } from 'react'
@@ -205,7 +204,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
         <select
           value={String(rule.value)}
           onChange={(e) => {
-            const value = options.find((opt) => String(opt.value) === e.target.value)?.value
+            const value = options.find((opt) => String(opt.value) === e.target.value)?.value ?? null
             updateRule(index, { ...rule, value })
           }}
           className="border-border w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"

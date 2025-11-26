@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 /**
  * リファクタリング後のドラッグ&ドロップフック
  * 複雑度を大幅に削減し、責任を分離
@@ -27,7 +26,7 @@ interface UseDragAndDropRefactoredProps {
   date: Date
   events: CalendarPlan[]
   displayDates?: Date[]
-  viewMode?: 'day' | 'week' | '2week' | '3day'
+  viewMode?: 'day' | 'week' | '2week' | '3day' | '5day'
 }
 
 export function useDragAndDropRefactored({

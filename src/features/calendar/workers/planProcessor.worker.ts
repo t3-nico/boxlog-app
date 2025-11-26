@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#621): Plans削除後の一時的な型エラー回避
 /**
  * Plan Processing Web Worker
  * 重い計算処理をメインスレッドから分離してUIをブロックしない

@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 // Smart Folders システムのコアロジック
 
 import {
@@ -123,7 +122,7 @@ export class SmartFolderRuleEngine {
    * アイテムからフィールド値を取得
    */
   private static getFieldValue(item: Record<string, unknown>, field: SmartFolderRuleField): unknown {
-    const fieldMapper = this.FIELD_MAPPING[field as keyof typeof FIELD_MAPPING]
+    const fieldMapper = this.FIELD_MAPPING[field]
     if (fieldMapper) {
       return fieldMapper(item)
     }

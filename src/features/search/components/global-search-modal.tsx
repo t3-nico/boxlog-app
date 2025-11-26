@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#621): Events/Tasks削除後の一時的な型エラー回避
 'use client'
 
 import { useRouter } from 'next/navigation'
@@ -39,8 +38,13 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const tags = useTagStore((state) => state.tags)
   const smartFolders = useSmartFolderStore((state) => state.smartFolders)
   // const events = useEventStore((state) => state.events)
-  const tasks: never[] = [] // TODO: Sessions統合後に実装
-  const events: never[] = [] // TODO: Sessions統合後に実装
+
+  // TODO: Sessions統合後に実装
+  type TaskItem = { id: string; title: string; description?: string; tags?: string[] }
+  type EventItem = { id: string; title: string; description?: string; location?: string }
+
+  const tasks: TaskItem[] = []
+  const events: EventItem[] = []
 
   // Handle result selection
   const handleSelect = useCallback(

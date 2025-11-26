@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 /**
  * Speed Insights & Core Web Vitals 測定システム
  * パフォーマンス監視・最適化・レポート生成
@@ -404,7 +403,7 @@ export function measurePageLoad(): void {
     const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
 
     if (perfData) {
-      const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart
+      const pageLoadTime = perfData.loadEventEnd - perfData.startTime
 
       trackPerformance({
         name: 'page_load_time',

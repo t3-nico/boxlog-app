@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -145,13 +144,14 @@ export const DirectDragSelection = ({
       }
 
       let startHour = selectionStart.hour
-      const startMinute = selectionStart.minute
+      let startMinute = selectionStart.minute
       let endHour = result.hour
       let endMinute = result.minute
 
       // 上向きドラッグの場合は開始・終了を入れ替え
       if (endHour < startHour || (endHour === startHour && endMinute < startMinute)) {
-        ;[startHour, endHour] = [endHour, startHour][(startMinute, endMinute)] = [endMinute, startMinute]
+        ;[startHour, endHour] = [endHour, startHour]
+        ;[startMinute, endMinute] = [endMinute, startMinute]
       }
 
       // 最低15分の選択を保証

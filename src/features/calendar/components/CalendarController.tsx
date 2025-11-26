@@ -1,5 +1,3 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 // TODO(#621): Events/Tasks削除後の一時的な型エラー回避
 'use client'
 
@@ -35,6 +33,8 @@ import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { calculateViewDateRange } from '../lib/view-helpers'
 import { DnDProvider } from '../providers/DnDProvider'
 import { plansToCalendarPlans } from '../utils/planDataAdapter'
+
+import type { Plan } from '@/features/plans/types/plan'
 
 import type { CalendarPlan, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
@@ -239,11 +239,11 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
     // plan_tags を tags に変換
     const plansWithTags = (
-      plansData as unknown as Array<plan & { plan_tags?: Array<{ tag_id: string; tags: unknown }> }>
-    ).map((plan) => {
-      const tags = plan.plan_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
-      const { plan_tags, ...planData } = plan
-      return { ...planData, tags } as plan & { tags: unknown[] }
+      plansData as unknown as Array<Plan & { plan_tags?: Array<{ tag_id: string; tags: unknown }> }>
+    ).map((planItem) => {
+      const tags = planItem.plan_tags?.map((tt: { tag_id: string; tags: unknown }) => tt.tags).filter(Boolean) ?? []
+      const { plan_tags, ...planData } = planItem
+      return { ...planData, tags } as Plan & { tags: unknown[] }
     })
 
     // start_time/end_timeが設定されているplanのみを抽出
@@ -252,7 +252,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     })
 
     // planをCalendarPlanに変換
-    const calendarEvents = plansToCalendarPlans(plansWithTime as plan[])
+    const calendarEvents = plansToCalendarPlans(plansWithTime as Plan[])
 
     // 表示範囲内のイベントのみをフィルタリング
     const startDateOnly = new Date(
@@ -267,6 +267,11 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     )
 
     const filtered = calendarEvents.filter((event) => {
+      // startDate または endDate が null の場合はスキップ
+      if (!event.startDate || !event.endDate) {
+        return false
+      }
+
       const eventStartDateOnly = new Date(
         event.startDate.getFullYear(),
         event.startDate.getMonth(),
@@ -291,8 +296,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       },
       sampleEvents: filtered.slice(0, 3).map((e) => ({
         title: e.title,
-        startDate: e.startDate.toISOString(),
-        endDate: e.endDate.toISOString(),
+        startDate: e.startDate?.toISOString() ?? '',
+        endDate: e.endDate?.toISOString() ?? '',
         tags: e.tags,
       })),
     })
@@ -309,8 +314,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const handleEventClick = useCallback(
     (plan: CalendarPlan) => {
       // プランIDでplan Inspectorを開く
-      openInspector(event.id)
-      logger.log('📋 Opening plan Inspector:', { planId: event.id, title: event.title })
+      openInspector(plan.id)
+      logger.log('📋 Opening plan Inspector:', { planId: plan.id, title: plan.title })
     },
     [openInspector]
   )
@@ -459,21 +464,27 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const renderView = () => {
     // TODO(#389): Task/Event型の統一が必要
     // 現在は複数の型定義が存在し、型互換性がない問題がある
-    // @ts-expect-error - Task型とCalendarPlan型の統一が必要
     const commonProps = {
       dateRange: viewDateRange,
       tasks: filteredTasks,
       events: filteredEvents,
+      plans: filteredEvents, // DayView/ThreeDayViewは `plans` プロパティを期待
       currentDate,
       onCreateTask: handleCreateTask,
       onCreateRecord: handleCreateRecord,
       onTaskClick: handleTaskClick,
       onEventClick: handleEventClick,
+      onPlanClick: handleEventClick, // DayView/ThreeDayViewは `onPlanClick` を期待
       onEventContextMenu: handleEventContextMenu,
+      onPlanContextMenu: handleEventContextMenu, // DayView/ThreeDayViewは `onPlanContextMenu` を期待
       onCreateEvent: handleCreateEvent,
+      onCreatePlan: handleCreateEvent, // DayView/ThreeDayViewは `onCreatePlan` を期待
       onUpdateEvent: handleUpdatePlan,
+      onUpdatePlan: handleUpdatePlan, // DayView/ThreeDayViewは `onUpdatePlan` を期待
       onDeleteEvent: deletePlan,
+      onDeletePlan: deletePlan, // DayView/ThreeDayViewは `onDeletePlan` を期待
       onRestoreEvent: handlePlanRestore,
+      onRestorePlan: handlePlanRestore, // DayView/ThreeDayViewは `onRestorePlan` を期待
       onEmptyClick: handleEmptyClick,
       onTimeRangeSelect: handleDateTimeRangeSelect,
       onViewChange: handleViewChange,

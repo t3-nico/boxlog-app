@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -8,7 +7,7 @@ import { X } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'

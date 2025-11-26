@@ -1,11 +1,10 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
 
 import { format } from 'date-fns'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 interface AnimatedEventCardProps {
@@ -22,7 +21,7 @@ interface AnimatedEventCardProps {
 }
 
 export const AnimatedEventCard = ({
-  event,
+  plan,
   style,
   isSelected = false,
   isNew = false,
@@ -89,12 +88,12 @@ export const AnimatedEventCard = ({
 
   // イベントの色調整
   const getEventColor = () => {
-    if (!event.color) return '#3b82f6'
+    if (!plan.color) return '#3b82f6'
 
     // ホバー時は明度を上げる
     if (isHovered && !isSelected) {
       // 色を10%明るくする
-      const { color } = event
+      const { color } = plan
       if (color.startsWith('#')) {
         const r = parseInt(color.slice(1, 3), 16)
         const g = parseInt(color.slice(3, 5), 16)
@@ -106,7 +105,7 @@ export const AnimatedEventCard = ({
       }
     }
 
-    return event.color
+    return plan.color
   }
 
   // クリック処理（100ms以下の反応速度）
@@ -157,7 +156,7 @@ export const AnimatedEventCard = ({
     if (e.key === 'Delete' || e.key === 'Backspace') {
       e.preventDefault()
       // 削除イベントを発火
-      console.log('キーボードで削除:', event.id)
+      console.log('キーボードで削除:', plan.id)
     }
   }
 
@@ -165,7 +164,7 @@ export const AnimatedEventCard = ({
     <div
       ref={cardRef}
       data-event-block
-      data-event-id={event.id}
+      data-event-id={plan.id}
       className={cn(
         'absolute cursor-pointer overflow-hidden rounded-md',
         'focus:ring-primary/50 focus:ring-2 focus:outline-none',
@@ -186,27 +185,27 @@ export const AnimatedEventCard = ({
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      aria-label={`Event: ${event.title}`}
+      aria-label={`Event: ${plan.title}`}
     >
       {children || (
         <div className="h-full overflow-hidden p-2 text-white">
           <div className="flex h-full flex-col">
             <div className="min-h-0 flex-1">
               {/* タイトル */}
-              <div className="mb-1 line-clamp-2 text-sm leading-tight font-medium">{event.title}</div>
+              <div className="mb-1 line-clamp-2 text-sm leading-tight font-medium">{plan.title}</div>
 
               {/* 時間（高さが十分な場合のみ） */}
-              {(style.height as number) > 40 && event.startDate ? (
+              {(style.height as number) > 40 && plan.startDate ? (
                 <div className="text-xs leading-tight opacity-90">
-                  {format(event.startDate, 'HH:mm')}
-                  {event.endDate ? ` - ${format(event.endDate, 'HH:mm')}` : null}
+                  {format(plan.startDate, 'HH:mm')}
+                  {plan.endDate ? ` - ${format(plan.endDate, 'HH:mm')}` : null}
                 </div>
               ) : null}
             </div>
 
             {/* 場所（高さが十分な場合のみ） */}
-            {event.location != null && (style.height as number) > 70 ? (
-              <div className="mt-1 line-clamp-1 text-xs leading-tight opacity-80">📍 {event.location}</div>
+            {plan.location != null && (style.height as number) > 70 ? (
+              <div className="mt-1 line-clamp-1 text-xs leading-tight opacity-80">📍 {plan.location}</div>
             ) : null}
           </div>
         </div>

@@ -1,25 +1,14 @@
-// @ts-nocheck TODO(#389): 型エラー9件を段階的に修正する
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import useCalendarToast from '@/features/calendar/lib/toast'
 import { calendarColors } from '@/features/calendar/theme'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 import { formatTimeRange } from '../utils/dateHelpers'
-
-// プランデータの型定義
-interface CalendarPlan {
-  id: string
-  title: string
-  startTime: Date
-  endTime: Date
-  startDate?: Date
-  endDate?: Date
-  [key: string]: unknown
-}
 
 // 分離されたヘルパー関数をインポート
 
@@ -60,11 +49,13 @@ export interface DragHandlers {
 
 interface UseDragAndDropProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
+  onPlanUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void // onEventUpdateのエイリアス（下位互換性のため）
   onEventClick?: (plan: CalendarPlan) => void // クリック処理用
+  onPlanClick?: (plan: CalendarPlan) => void // onEventClickのエイリアス（下位互換性のため）
   date: Date // DayViewでは単一日付、他のビューでは基準日付
   events: CalendarPlan[] // プランデータを受け取る
   displayDates?: Date[] // WeekView/TwoWeekView/ThreeDayView用の日付配列
-  viewMode?: 'day' | 'week' | '2week' | '3day' // ビューモード
+  viewMode?: 'day' | 'week' | '2week' | '3day' | '5day' // ビューモード
 }
 
 /**
@@ -74,7 +65,9 @@ interface UseDragAndDropProps {
  */
 export function useDragAndDrop({
   onEventUpdate,
+  onPlanUpdate,
   onEventClick,
+  onPlanClick,
   date,
   events,
   displayDates,
@@ -82,6 +75,10 @@ export function useDragAndDrop({
 }: UseDragAndDropProps) {
   const { t } = useI18n()
   const calendarToast = useCalendarToast()
+
+  // onEventUpdate と onPlanUpdate のいずれかを使用（下位互換性のため）
+  const eventUpdateHandler = onEventUpdate || onPlanUpdate
+  const eventClickHandler = onEventClick || onPlanClick
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
     isResizing: false,
@@ -553,18 +550,18 @@ export function useDragAndDrop({
 
   // クリック処理
   const handleEventClick = useCallback(() => {
-    if (!dragDataRef.current || dragDataRef.current.hasMoved || !onEventClick) {
+    if (!dragDataRef.current || dragDataRef.current.hasMoved || !eventClickHandler) {
       return false
     }
 
     const eventToClick = events.find((e) => e.id === dragDataRef.current!.eventId)
     if (eventToClick) {
       resetDragState()
-      onEventClick(eventToClick)
+      eventClickHandler(eventToClick)
       return true
     }
     return false
-  }, [events, onEventClick, resetDragState])
+  }, [events, eventClickHandler, resetDragState])
 
   // マウス移動処理
   const handleMouseMove = useCallback(
@@ -614,11 +611,11 @@ export function useDragAndDrop({
     })
 
     // 実際にリサイズが発生した場合のみ更新
-    if (!onEventUpdate || !dragDataRef.current.hasMoved) {
+    if (!eventUpdateHandler || !dragDataRef.current?.hasMoved) {
       return
     }
 
-    const event = events.find((e) => e.id === dragDataRef.current.eventId)
+    const event = events.find((e) => e.id === dragDataRef.current?.eventId)
     if (!event?.startDate) {
       return
     }
@@ -627,19 +624,36 @@ export function useDragAndDrop({
     const newEndTime = new Date(event.startDate.getTime() + newDurationMs)
 
     // Calendar Toast用のプランデータを準備
-    const eventData = {
+    const eventData: CalendarPlan = {
       id: event.id,
       title: event.title || t('calendar.event.title'),
+      description: event.description,
+      startDate: event.startDate,
+      endDate: newEndTime,
+      status: event.status,
+      color: event.color,
+      plan_number: event.plan_number,
+      reminder_minutes: event.reminder_minutes,
+      tags: event.tags,
+      createdAt: event.createdAt,
+      updatedAt: new Date(),
       displayStartDate: event.startDate,
       displayEndDate: newEndTime,
       duration: Math.round(newDurationMs / (1000 * 60)), // 分単位
       isMultiDay: event.startDate.toDateString() !== newEndTime.toDateString(),
       isRecurring: false,
+      type: event.type,
+      userId: event.userId,
+      location: event.location,
+      url: event.url,
+      allDay: event.allDay,
+      priority: event.priority,
+      calendarId: event.calendarId,
     }
 
     // プラン更新を実行
     try {
-      const promise = onEventUpdate(dragDataRef.current.eventId, {
+      const promise = eventUpdateHandler(dragDataRef.current.eventId, {
         startTime: event.startDate,
         endTime: newEndTime,
       })
@@ -662,13 +676,13 @@ export function useDragAndDrop({
       console.error('Failed to resize event:', error)
       calendarToast.error(t('calendar.event.resizeFailed'))
     }
-  }, [events, onEventUpdate, dragState.snappedPosition, calendarToast, t])
+  }, [events, eventUpdateHandler, dragState.snappedPosition, calendarToast, t])
 
   // リサイズ完了処理
   const handleResizeComplete = useCallback(() => {
     handleResize()
 
-    const actuallyResized = dragDataRef.current.hasMoved
+    const actuallyResized = dragDataRef.current?.hasMoved ?? false
 
     setDragState({
       isDragging: false,
@@ -704,8 +718,8 @@ export function useDragAndDrop({
         console.log('🎯 ドロップ時のターゲット日付決定（非連続対応）:', {
           targetDateIndex,
           targetDate: targetDate.toDateString(),
-          originalDateIndex: dragDataRef.current.originalDateIndex,
-          originalDate: displayDates[dragDataRef.current.originalDateIndex]?.toDateString?.(),
+          originalDateIndex: dragDataRef.current?.originalDateIndex,
+          originalDate: dragDataRef.current?.originalDateIndex !== undefined ? displayDates[dragDataRef.current.originalDateIndex]?.toDateString?.() : undefined,
           displayDatesLength: displayDates.length,
           isNonConsecutive: displayDates.length < 7,
           allDisplayDates: displayDates.map((d) => d.toDateString()),
@@ -777,14 +791,31 @@ export function useDragAndDrop({
         return
       }
 
-      const eventData = {
+      const eventData: CalendarPlan = {
         id: plan.id,
         title: plan.title || t('calendar.event.title'),
+        description: plan.description,
+        startDate: newStartTime,
+        endDate: new Date(newStartTime.getTime() + durationMs),
+        status: plan.status,
+        color: plan.color,
+        plan_number: plan.plan_number,
+        reminder_minutes: plan.reminder_minutes,
+        tags: plan.tags,
+        createdAt: plan.createdAt,
+        updatedAt: new Date(),
         displayStartDate: newStartTime,
         displayEndDate: new Date(newStartTime.getTime() + durationMs),
         duration: Math.round(durationMs / (1000 * 60)), // 分単位
         isMultiDay: false,
         isRecurring: false,
+        type: plan.type,
+        userId: plan.userId,
+        location: plan.location,
+        url: plan.url,
+        allDay: plan.allDay,
+        priority: plan.priority,
+        calendarId: plan.calendarId,
       }
 
       // Promiseが返される場合
@@ -796,7 +827,7 @@ export function useDragAndDrop({
               undoAction: async () => {
                 try {
                   const originalEndTime = new Date(previousStartTime.getTime() + durationMs)
-                  await onEventUpdate!(dragDataRef.current!.eventId, {
+                  await eventUpdateHandler!(dragDataRef.current!.eventId, {
                     startTime: previousStartTime,
                     endTime: originalEndTime,
                   })
@@ -816,13 +847,13 @@ export function useDragAndDrop({
         calendarToast.eventMoved(eventData, newStartTime)
       }
     },
-    [date, calendarToast, onEventUpdate, t]
+    [date, calendarToast, eventUpdateHandler, t]
   )
 
   // プラン更新処理を実行する
   const executeEventUpdate = useCallback(
     async (newStartTime: Date) => {
-      if (!onEventUpdate || !dragDataRef.current?.eventId || !dragDataRef.current?.hasMoved) {
+      if (!eventUpdateHandler || !dragDataRef.current?.eventId || !dragDataRef.current?.hasMoved) {
         return
       }
 
@@ -848,7 +879,7 @@ export function useDragAndDrop({
           newEndTime: newEndTime.toISOString(),
         })
 
-        const result = onEventUpdate(dragDataRef.current.eventId, {
+        const result = eventUpdateHandler(dragDataRef.current.eventId, {
           startTime: newStartTime,
           endTime: newEndTime,
         })
@@ -860,7 +891,7 @@ export function useDragAndDrop({
         calendarToast.error(t('calendar.event.moveFailed'))
       }
     },
-    [onEventUpdate, calculateEventDuration, handleEventUpdateToast, calendarToast, t]
+    [eventUpdateHandler, calculateEventDuration, handleEventUpdateToast, calendarToast, t]
   )
 
   // ドラッグ完了後の状態リセット
@@ -946,7 +977,7 @@ export function useDragAndDrop({
   // プランドロップのヘルパー
   const handleEventDrop = useCallback(
     (eventId: string, newStartTime: Date) => {
-      if (onEventUpdate) {
+      if (eventUpdateHandler) {
         // プランの元の期間を取得して新しい終了時刻を計算
         const event = events.find((e) => e.id === eventId)
         let durationMs = 60 * 60 * 1000 // デフォルト1時間
@@ -956,10 +987,10 @@ export function useDragAndDrop({
         }
 
         const newEndTime = new Date(newStartTime.getTime() + durationMs)
-        onEventUpdate(eventId, { startTime: newStartTime, endTime: newEndTime })
+        eventUpdateHandler(eventId, { startTime: newStartTime, endTime: newEndTime })
       }
     },
-    [onEventUpdate, events]
+    [eventUpdateHandler, events]
   )
 
   // リサイズ開始

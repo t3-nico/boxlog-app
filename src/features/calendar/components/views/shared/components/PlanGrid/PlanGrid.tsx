@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
 import React, { useCallback, useEffect } from 'react'
@@ -44,7 +43,7 @@ export const PlanGrid = ({
   // ドラッグ&ドロップ機能
   const { dragState, handlers } = useDragAndDrop({
     onPlanUpdate: onPlanUpdate
-      ? async (planId, updates) => {
+      ? async (planId: string, updates: { startTime: Date; endTime: Date }) => {
           const plan = plans.find((p) => p.id === planId)
           if (plan) {
             await onPlanUpdate({
@@ -56,7 +55,7 @@ export const PlanGrid = ({
         }
       : undefined,
     date,
-    plans,
+    events: plans,
   })
 
   // グローバルマウスイベント処理
@@ -140,8 +139,8 @@ export const PlanGrid = ({
           const style = planStyles[plan.id]
           if (!style) return null
 
-          const isDragging = dragState.draggedPlanId === plan.id && dragState.isDragging
-          const isResizing = dragState.isResizing && dragState.draggedPlanId === plan.id
+          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
+          const isResizing = dragState.isResizing && dragState.draggedEventId === plan.id
 
           // ドラッグ・リサイズ中の位置調整
           const adjustedStyle = { ...style }
@@ -187,8 +186,12 @@ export const PlanGrid = ({
                     height: parseFloat(adjustedStyle.height?.toString() || '20'),
                   }}
                   onClick={() => handlePlanClick(plan)}
-                  onContextMenu={(plt, e) => handlePlanContextMenu(plt, e)}
-                  onResizeStart={(plt, direction, e) =>
+                  onContextMenu={(plt: CalendarPlan, e: React.MouseEvent) => handlePlanContextMenu(plt, e)}
+                  onResizeStart={(
+                    plt: CalendarPlan,
+                    direction: 'top' | 'bottom',
+                    e: React.MouseEvent
+                  ) =>
                     handlers.handleResizeStart(plt.id, direction, e, {
                       top: parseFloat(style.top?.toString() || '0'),
                       left: 0,

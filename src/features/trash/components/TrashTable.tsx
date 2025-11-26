@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
 import React, { useCallback, useMemo } from 'react'
@@ -193,6 +192,7 @@ interface TrashItemRowProps {
 }
 
 function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanentDelete }: TrashItemRowProps) {
+  const { t } = useI18n()
   const handleToggleSelect = useCallback(() => onToggleSelect(item.id), [onToggleSelect, item.id])
   const handleRestore = useCallback(() => onRestore(item.id), [onRestore, item.id])
   const handlePermanentDelete = useCallback(() => onPermanentDelete(item.id), [onPermanentDelete, item.id])

@@ -1,11 +1,10 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useDraggable } from '@dnd-kit/core'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 export interface DraggedPlanData {

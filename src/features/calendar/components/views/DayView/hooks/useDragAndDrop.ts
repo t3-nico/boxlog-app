@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { useDragAndDrop as useSharedDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 
 import type { CalendarPlan } from '../../shared/types/event.types'

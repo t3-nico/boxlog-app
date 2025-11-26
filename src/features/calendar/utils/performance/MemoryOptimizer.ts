@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー8件を段階的に修正する
 /**
  * MemoryOptimizer - メモリ使用量を100MB以下に最適化
  * ガベージコレクション、メモリリーク検出、自動クリーンアップを提供
@@ -109,7 +108,7 @@ export class MemoryOptimizer {
     // トレンド判定
     let trend: MemoryStats['trend'] = 'stable'
     if (this.memoryHistory.length > 0) {
-      const previous = this.memoryHistory[(this.memoryHistory.length - 1) as keyof typeof memoryHistory]
+      const previous = this.memoryHistory[this.memoryHistory.length - 1]
       const change = (used - previous.used) / previous.used
 
       if (change > 0.05) trend = 'increasing'

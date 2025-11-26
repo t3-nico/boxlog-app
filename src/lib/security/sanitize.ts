@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー8件を段階的に修正する
 /**
  * HTML Sanitization Utilities
  *
@@ -7,12 +6,13 @@
  */
 
 import DOMPurify from 'dompurify'
+import type { Config } from 'dompurify'
 
 /**
  * 基本的なHTMLサニタイゼーション設定
  * 最小限の安全なタグのみ許可
  */
-const BASIC_CONFIG: DOMPurify.Config = {
+const BASIC_CONFIG: Config = {
   ALLOWED_TAGS: ['b', 'i', 'u', 'strong', 'em', 'p', 'br', 'span'],
   ALLOWED_ATTR: ['class'],
   FORBID_ATTR: ['style', 'onclick', 'onload', 'onerror'],
@@ -23,7 +23,7 @@ const BASIC_CONFIG: DOMPurify.Config = {
  * リッチテキスト用設定
  * エディタで使用される一般的なHTMLタグを許可
  */
-const RICH_TEXT_CONFIG: DOMPurify.Config = {
+const RICH_TEXT_CONFIG: Config = {
   ALLOWED_TAGS: [
     'p',
     'br',
@@ -56,7 +56,7 @@ const RICH_TEXT_CONFIG: DOMPurify.Config = {
  * コードブロック用設定
  * シンタックスハイライト用のclassを許可
  */
-const CODE_BLOCK_CONFIG: DOMPurify.Config = {
+const CODE_BLOCK_CONFIG: Config = {
   ALLOWED_TAGS: ['pre', 'code', 'span', 'div'],
   ALLOWED_ATTR: ['class', 'data-language'],
   FORBID_ATTR: ['style', 'onclick', 'onload', 'onerror'],
@@ -73,7 +73,7 @@ export function sanitizeBasicHTML(html: string): string {
     return ''
   }
 
-  return DOMPurify.sanitize(html, BASIC_CONFIG)
+  return String(DOMPurify.sanitize(html, BASIC_CONFIG))
 }
 
 /**
@@ -85,7 +85,7 @@ export function sanitizeRichText(html: string): string {
     return ''
   }
 
-  return DOMPurify.sanitize(html, RICH_TEXT_CONFIG)
+  return String(DOMPurify.sanitize(html, RICH_TEXT_CONFIG))
 }
 
 /**
@@ -97,19 +97,19 @@ export function sanitizeCodeBlock(html: string): string {
     return ''
   }
 
-  return DOMPurify.sanitize(html, CODE_BLOCK_CONFIG)
+  return String(DOMPurify.sanitize(html, CODE_BLOCK_CONFIG))
 }
 
 /**
  * カスタム設定でHTMLをサニタイズ
  * 特殊なケース用のカスタマイズ可能な関数
  */
-export function sanitizeCustomHTML(html: string, config: DOMPurify.Config): string {
+export function sanitizeCustomHTML(html: string, config: Config): string {
   if (!html || typeof html !== 'string') {
     return ''
   }
 
-  return DOMPurify.sanitize(html, config)
+  return String(DOMPurify.sanitize(html, config))
 }
 
 /**

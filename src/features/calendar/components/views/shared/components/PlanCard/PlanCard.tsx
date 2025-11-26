@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * プラン表示カードコンポーネント
  */
@@ -13,12 +12,12 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants'
-import type { CalendarPlan, PlanCardProps } from '../../types/event.types'
+import type { CalendarPlan, PlanCardProps } from '../../types/plan.types'
 
 import { PlanCardContent } from './PlanCardContent'
 
 export const PlanCard = memo<PlanCardProps>(function PlanCard({
-  event,
+  plan,
   position,
   onClick,
   onDoubleClick,
@@ -68,43 +67,48 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation()
-      onClick?.(event)
+      onClick?.(plan)
     },
-    [onClick, event]
+    [onClick, plan]
   )
 
   const handleDoubleClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation()
-      onDoubleClick?.(event)
+      onDoubleClick?.(plan)
     },
-    [onDoubleClick, event]
+    [onDoubleClick, plan]
   )
 
   const handleContextMenu = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault()
       e.stopPropagation()
-      onContextMenu?.(event, e)
+      onContextMenu?.(plan, e)
     },
-    [onContextMenu, event]
+    [onContextMenu, plan]
   )
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (e.button === 0) {
         // 左クリックのみ
-        onDragStart?.(event)
+        onDragStart?.(plan, e, {
+          top: safePosition.top,
+          left: safePosition.left,
+          width: safePosition.width,
+          height: safePosition.height,
+        })
       }
     },
-    [onDragStart, event]
+    [onDragStart, plan, safePosition]
   )
 
   const handleMouseUp = useCallback(() => {
     if (isDragging) {
-      onDragEnd?.(event)
+      onDragEnd?.(plan)
     }
-  }, [isDragging, onDragEnd, event])
+  }, [isDragging, onDragEnd, plan])
 
   // ホバー状態制御
   const handleMouseEnter = useCallback(() => {
@@ -120,11 +124,11 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault()
-        // キーボードイベントの場合はeventオブジェクトを直接渡す
-        onClick?.(event)
+        // キーボードイベントの場合はplanオブジェクトを直接渡す
+        onClick?.(plan)
       }
     },
-    [onClick, event]
+    [onClick, plan]
   )
 
   // リサイズハンドラー
@@ -132,14 +136,14 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     (e: React.MouseEvent) => {
       e.stopPropagation()
       e.preventDefault()
-      onResizeStart?.(event, 'bottom', e, {
+      onResizeStart?.(plan, 'bottom', e, {
         top: safePosition.top,
         left: safePosition.left,
         width: safePosition.width,
         height: safePosition.height,
       })
     },
-    [onResizeStart, event, safePosition]
+    [onResizeStart, plan, safePosition]
   )
 
   const handleResizeKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -156,13 +160,13 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         // ドラッグ状態をリセット（親コンポーネントに委ねる）
-        onDragEnd?.(event)
+        onDragEnd?.(plan)
       }
     }
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isDragging, onDragEnd, event])
+  }, [isDragging, onDragEnd, plan])
 
   // 状態に応じたスタイルを決定
 
@@ -197,17 +201,11 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       draggable={false} // HTML5 draggableは使わない
       role="button"
       tabIndex={0}
-      aria-label={`plan: ${event.title}`}
+      aria-label={`plan: ${plan.title}`}
       aria-pressed={isSelected}
     >
       <PlanCardContent
-        event={
-          {
-            ...event,
-            start: event.startDate || new Date(),
-            end: event.endDate || new Date(),
-          } as CalendarPlan
-        }
+        plan={plan}
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}

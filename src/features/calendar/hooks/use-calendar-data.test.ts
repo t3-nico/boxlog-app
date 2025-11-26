@@ -1,5 +1,3 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -25,6 +23,7 @@ describe('useCalendarData', () => {
   const mockDateRange: ViewDateRange = {
     start: new Date('2025-01-10T00:00:00.000Z'),
     end: new Date('2025-01-20T23:59:59.999Z'),
+    days: Array.from({ length: 11 }, (_, i) => new Date(2025, 0, 10 + i)),
   }
 
   beforeEach(() => {

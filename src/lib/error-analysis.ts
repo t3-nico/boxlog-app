@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 /**
  * エラー分析ユーティリティ
  * GlobalErrorBoundaryで使用するエラー分析ロジック
