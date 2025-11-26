@@ -26,7 +26,7 @@ interface MobileLayoutProps {
  *
  * **ドロワー仕様**:
  * - モーダル動作（オーバーレイシェードで親要素を覆う）
- * - 閉じるボタンで閉じる
+ * - オーバーレイまたはハンバーガーメニューで開閉
  * - エレベーション付き
  */
 export function MobileLayout({ children, locale }: MobileLayoutProps) {
@@ -52,7 +52,7 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
     <>
       {/* モバイル: Sheet（左オーバーレイ）でSidebarを表示 */}
       <Sheet open={isOpen} onOpenChange={toggle}>
-        <SheetContent side="left" className="w-64 p-0" showCloseButton={true}>
+        <SheetContent side="left" className="w-64 p-0" showCloseButton={false}>
           {renderSidebar()}
         </SheetContent>
       </Sheet>
