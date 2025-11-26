@@ -229,7 +229,7 @@ html.dark {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-background);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -240,21 +240,9 @@ html.dark {
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) var(--color-background);
+  scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent;
 }
 
-/* ============================================
- * サイドバー専用スクロールバースタイル
- * ============================================ */
-/* Webkit系（Chrome, Safari, Edge） */
-aside ::-webkit-scrollbar-track {
-  background: var(--color-sidebar);
-}
-
-/* Firefox */
-aside * {
-  scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) var(--color-sidebar);
-}
 /* ============================================
  * カスタムユーティリティクラス
  * ============================================ */
@@ -960,11 +948,11 @@ input[type='time']::-webkit-datetime-edit-minute-field {
 
 /* Novel EditorCommand スクロールバースタイル */
 .novel-command-menu::-webkit-scrollbar-track {
-  background: var(--color-card) !important;
+  background: transparent !important;
 }
 
 .novel-command-menu {
-  scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) var(--color-card) !important;
+  scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent !important;
 }
 
 /* Prose styling for Novel editor */

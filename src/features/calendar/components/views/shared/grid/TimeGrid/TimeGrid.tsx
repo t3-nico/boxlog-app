@@ -125,7 +125,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
           width: 8px;
         }
         div::-webkit-scrollbar-track {
-          background-color: rgb(229 229 229); /* neutral-200 - surface light */
+          background-color: transparent;
         }
         div::-webkit-scrollbar-thumb {
           background-color: rgb(163 163 163); /* neutral-400 for visibility */
@@ -136,7 +136,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
         }
         @media (prefers-color-scheme: dark) {
           div::-webkit-scrollbar-track {
-            background-color: rgb(38 38 38); /* neutral-800 - surface dark */
+            background-color: transparent;
           }
           div::-webkit-scrollbar-thumb {
             background-color: rgb(115 115 115); /* neutral-500 */

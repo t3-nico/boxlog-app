@@ -106,7 +106,7 @@ export const calendarStyles: CalendarStyles = {
   layout: {
     // カスタムスクロールバー（Tailwindクラス組み合わせ）
     scrollbar:
-      'scrollbar-thin scrollbar-thumb-gray-400/50 scrollbar-track-white dark:scrollbar-track-gray-900/30 dark:scrollbar-thumb-gray-500/40',
+      'scrollbar-thin scrollbar-thumb-gray-400/50 scrollbar-track-transparent dark:scrollbar-thumb-gray-500/40',
 
     // タッチデバイス最適化
     touchOptimized: 'touch-pan-y overflow-auto',
@@ -159,7 +159,7 @@ export const calendarCustomCSS = `
 }
 
 .calendar-custom-scrollbar::-webkit-scrollbar-track {
-  background: #ffffff;
+  background: transparent;
   border-radius: 4px;
 }
 
@@ -174,7 +174,7 @@ export const calendarCustomCSS = `
 
 /* Dark mode scrollbar */
 [data-theme="dark"] .calendar-custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(23, 23, 23, 0.3);
+  background: transparent;
 }
 
 [data-theme="dark"] .calendar-custom-scrollbar::-webkit-scrollbar-thumb {
