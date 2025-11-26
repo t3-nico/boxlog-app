@@ -160,7 +160,7 @@ export function Account({ userData, locale }: AccountProps) {
           <DropdownMenuSeparator />
 
           {/* ログアウト */}
-          <DropdownMenuItem onClick={handleLogout} disabled={isLoggingOut}>
+          <DropdownMenuItem variant="destructive" onClick={handleLogout} disabled={isLoggingOut}>
             <LogOut />
             {isLoggingOut ? t('navUser.loggingOut') : t('navUser.logout')}
           </DropdownMenuItem>

@@ -226,7 +226,7 @@ console.log(health.criticalErrors)
 
 ```typescript
 import { executeWithAutoRecovery } from '@/config'
-import { toast } from '@/components/ui/toast'
+import { toast } from 'sonner'
 
 async function updateTask(taskId: string, data: TaskData) {
   const result = await executeWithAutoRecovery(

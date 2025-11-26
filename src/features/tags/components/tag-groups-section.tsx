@@ -23,8 +23,8 @@ import {
   useUpdateTagGroup,
 } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import { useToast } from '@/lib/toast/use-toast'
 import type { TagGroup } from '@/types/tags'
+import { toast } from 'sonner'
 
 interface TagGroupsSectionProps {
   onSelectGroup?: (groupId: string | null) => void
@@ -48,7 +48,6 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
     const createGroupMutation = useCreateTagGroup()
     const updateGroupMutation = useUpdateTagGroup()
     const deleteGroupMutation = useDeleteTagGroup()
-    const toast = useToast()
     const router = useRouter()
     const pathname = usePathname()
 
@@ -259,10 +258,8 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                                 color,
                               },
                             })
-                            toast.success('カラーを変更しました')
                           } catch (error) {
                             console.error('Failed to update group color:', error)
-                            toast.error('カラーの変更に失敗しました')
                           }
                         }}
                       />
