@@ -50,12 +50,22 @@ function shouldRedirectToLocale(pathname: string): boolean {
     return false
   }
 
+  // メンテナンスページは言語プレフィックスなし
+  if (pathname === '/maintenance') {
+    return false
+  }
+
   return true
 }
 
 async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const locale = getLocaleFromRequest(request)
+
+  // 言語プレフィックス付きメンテナンスページへのアクセスをリダイレクト
+  if (locales.some((locale) => pathname === `/${locale}/maintenance`)) {
+    return NextResponse.redirect(new URL('/maintenance', request.url))
+  }
 
   // メンテナンスモードチェック
   const isMaintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
