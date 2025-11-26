@@ -57,6 +57,7 @@ export const CalendarDragSelection = ({
   const [dropTime, setDropTime] = useState<string | null>(null)
   const lastClickTimeRef = useRef<number>(0)
   const lastClickPositionRef = useRef<{ hour: number; minute: number } | null>(null)
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // ドロップ可能エリアとして設定
   // ドロップ先データ: { date: Date, time: string }
@@ -75,6 +76,15 @@ export const CalendarDragSelection = ({
     setSelectionStart(null)
     isDragging.current = false
   }
+
+  // コンポーネントアンマウント時にタイマークリア
+  useEffect(() => {
+    return () => {
+      if (clickTimeoutRef.current) {
+        clearTimeout(clickTimeoutRef.current)
+      }
+    }
+  }, [])
 
   // 時間をフォーマットするヘルパー関数
   const formatTime = (hour: number, minute: number): string => {
@@ -249,19 +259,33 @@ export const CalendarDragSelection = ({
             lastClickPositionRef.current.minute === selectionStart.minute
 
           if (timeSinceLastClick < DOUBLE_CLICK_THRESHOLD && isSamePosition && onDoubleClick) {
-            // ダブルクリック
+            // ダブルクリック検出
+            // シングルクリックのタイマーをキャンセル
+            if (clickTimeoutRef.current) {
+              clearTimeout(clickTimeoutRef.current)
+              clickTimeoutRef.current = null
+            }
+            // ダブルクリックを実行
             onDoubleClick(date, timeString)
             // リセット
             lastClickTimeRef.current = 0
             lastClickPositionRef.current = null
           } else {
-            // 単一クリック
-            if (onSingleClick) {
-              onSingleClick(date, timeString)
+            // 単一クリックの可能性 - 遅延実行
+            // 既存のタイマーをクリア
+            if (clickTimeoutRef.current) {
+              clearTimeout(clickTimeoutRef.current)
             }
             // 次のクリックのために記録
             lastClickTimeRef.current = now
             lastClickPositionRef.current = { hour: selectionStart.hour, minute: selectionStart.minute }
+            // ダブルクリック判定時間後にシングルクリックを実行
+            clickTimeoutRef.current = setTimeout(() => {
+              if (onSingleClick) {
+                onSingleClick(date, timeString)
+              }
+              clickTimeoutRef.current = null
+            }, DOUBLE_CLICK_THRESHOLD)
           }
         }
       }

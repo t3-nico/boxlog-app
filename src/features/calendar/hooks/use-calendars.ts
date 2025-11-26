@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 import { useState } from 'react'
 
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -32,9 +31,9 @@ export const calendarKeys = {
 
 export function useCalendars(userId: string) {
   // Calendar management tracked in Issue #87
-  return useQuery({
+  return useQuery<Calendar[]>({
     queryKey: calendarKeys.list(userId),
-    queryFn: () => Promise.resolve([]), // Temporary stub
+    queryFn: () => Promise.resolve([] as Calendar[]), // Temporary stub
     enabled: !!userId,
   })
 }
@@ -130,7 +129,7 @@ export function useCreatePublicShareLink() {
 // ========================================
 
 export function useCalendarViewState(userId: string) {
-  return useQuery({
+  return useQuery<CalendarViewState | null>({
     queryKey: calendarKeys.viewState(userId),
     queryFn: () => Promise.resolve(null), // Temporary stub
     enabled: !!userId,
