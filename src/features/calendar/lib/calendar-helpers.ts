@@ -18,6 +18,7 @@ export function getViewDisplayName(viewType: CalendarViewType): string {
     '3day': '3 Days',
     '5day': '5 Days',
     week: 'Week',
+    '2week': '2 Weeks',
   }
 
   return Object.prototype.hasOwnProperty.call(displayNames, viewType) ? displayNames[viewType] : viewType

@@ -615,7 +615,7 @@ export function PlanInspector() {
                       contentEditable
                       suppressContentEditableWarning
                       onBlur={(e) => autoSave('title', e.currentTarget.textContent || '')}
-                      className="bg-card dark:bg-card border-0 px-0 text-[2rem] font-bold outline-none"
+                      className="bg-popover border-0 px-0 text-[2rem] font-bold outline-none"
                       style={{ fontSize: 'var(--font-size-xl)' }}
                     >
                       {plan.title}

@@ -57,9 +57,9 @@ export function PlanTagsSection({
         <Tag className="text-muted-foreground h-4 w-4 flex-shrink-0" />
         <div className="min-w-0 flex-1">
           <div
-            className="bg-card dark:bg-card flex max-h-[5.25rem] flex-wrap items-center gap-2 overflow-y-auto pr-2"
+            className="bg-popover flex max-h-[5.25rem] flex-wrap items-center gap-2 overflow-y-auto pr-2"
             style={{
-              scrollbarColor: 'var(--color-muted-foreground) var(--color-card)',
+              scrollbarColor: 'var(--color-muted-foreground) var(--color-popover)',
             }}
           >
             {/* 選択済みタグを表示 */}
