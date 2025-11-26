@@ -57,7 +57,7 @@ export const CalendarDateHeader = ({
     <div className="flex shrink-0 flex-col">
       <div className="flex px-4">
         {/* UTC/タイムゾーン表示エリア（ヘッダー左端） */}
-        {showTimeColumn && showTimezone ? (
+        {showTimeColumn && showTimezone && timezone ? (
           <div className="flex shrink-0 items-end justify-start" style={{ width: timeColumnWidth }}>
             <TimezoneOffset timezone={timezone} className="text-xs" />
           </div>

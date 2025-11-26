@@ -94,7 +94,7 @@ export function useDragAndDropRefactored({
 
       // ドラッグ要素作成
       let dragElement: HTMLElement | null = null
-      let initialRect: DOMRect | null = null
+      let initialRect: DOMRect | undefined = undefined
       if (originalElement) {
         const result = createDragElement(originalElement)
         dragElement = result.dragElement
@@ -142,7 +142,7 @@ export function useDragAndDropRefactored({
         dragData.hasMoved,
         dragData.columnWidth,
         displayDates || [],
-        dragData.originalElement,
+        dragData.originalElement ?? undefined,
         viewMode
       )
 
