@@ -4,7 +4,7 @@ import { RuleEvaluationContext, SmartFolderRule, SmartFolderRuleField } from '@/
 import { Task } from '@/types/unified'
 
 // ルールエンジンで評価可能なアイテムの型
-type EvaluableItem = Task | Record<string, unknown>
+export type EvaluableItem = Task | Record<string, unknown>
 
 // フィールド値の型
 type FieldValue = string | number | boolean | Date | string[] | null | undefined
@@ -349,7 +349,7 @@ export class AdvancedRuleEngine {
 
     for (const key of possibleKeys) {
       if (key in item) {
-        return item[key as keyof typeof item]
+        return item[key as keyof typeof item] as FieldValue
       }
     }
 

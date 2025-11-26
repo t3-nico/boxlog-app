@@ -71,7 +71,7 @@ export const CalendarHeader = ({
             viewType={viewType}
             showWeekNumber={true}
             clickable={showMiniCalendar}
-            onDateSelect={onDateSelect}
+            onDateSelect={onDateSelect ? (date) => date && onDateSelect(date) : undefined}
             displayRange={displayRange}
           />
         </div>
@@ -79,7 +79,7 @@ export const CalendarHeader = ({
         {/* 右側: ビュー切り替えとアクション */}
         <div className="flex items-center gap-0">
           {/* ビュー切り替え */}
-          <ViewSwitcher options={viewOptions} currentView={viewType} onChange={onViewChange} />
+          <ViewSwitcher options={viewOptions} currentView={viewType} onChange={(view) => onViewChange(view as CalendarViewType)} />
 
           {/* アクションボタン */}
           {showActions != null && <HeaderActions onSettings={onSettings} onExport={onExport} onImport={onImport} />}

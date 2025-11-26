@@ -309,9 +309,9 @@ export const SmartFolderList = ({
 
   // フォルダ作成
   const handleCreateFolder = useCallback(
-    async (data: CreateSmartFolderInput) => {
+    async (data: CreateSmartFolderInput | UpdateSmartFolderInput) => {
       try {
-        await createMutation.mutateAsync(data)
+        await createMutation.mutateAsync(data as CreateSmartFolderInput)
         setShowCreateDialog(false)
       } catch (error) {
         console.error('Failed to create folder:', error)
@@ -323,13 +323,13 @@ export const SmartFolderList = ({
 
   // フォルダ更新
   const handleUpdateFolder = useCallback(
-    async (data: UpdateSmartFolderInput) => {
+    async (data: CreateSmartFolderInput | UpdateSmartFolderInput) => {
       if (!editingFolder) return
 
       try {
         await updateMutation.mutateAsync({
           id: editingFolder.id,
-          ...data,
+          ...(data as UpdateSmartFolderInput),
         })
         setShowEditDialog(false)
         setEditingFolder(undefined)

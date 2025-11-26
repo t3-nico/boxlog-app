@@ -109,8 +109,7 @@ export class PlanDataManager {
       color: plan.color,
       location: plan.location,
       description: plan.description,
-      tags: plan.tags || [],
-      recurrenceId: plan.recurrenceId,
+      tags: plan.tags?.map((tag) => tag.name) || [],
     }
   }
 
@@ -118,7 +117,7 @@ export class PlanDataManager {
    * インデックスの更新
    */
   private updateIndexes(plan: NormalizedPlan): void {
-    const { id, dateKey, startTime, tags, recurrenceId } = plan
+    const { id, dateKey, startTime, tags } = plan
     const startDate = new Date(startTime)
 
     // 日付別インデックス
@@ -141,11 +140,6 @@ export class PlanDataManager {
       for (const tag of tags) {
         this.addToIndex(this.indexes.byTag, tag, id)
       }
-    }
-
-    // 繰り返し別インデックス
-    if (recurrenceId) {
-      this.addToIndex(this.indexes.byRecurrence, recurrenceId, id)
     }
   }
 

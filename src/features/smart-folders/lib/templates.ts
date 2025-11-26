@@ -1,6 +1,6 @@
 // スマートフォルダテンプレートシステム
 
-import { CreateSmartFolderInput, SmartFolderRule } from '@/types/smart-folders'
+import { CreateSmartFolderInput, SmartFolderRule, SmartFolderRuleValue } from '@/types/smart-folders'
 
 // テンプレートカテゴリ
 export enum TemplateCategory {
@@ -501,14 +501,14 @@ export class TemplateApplicator {
   static parameterizeRules(rules: SmartFolderRule[], parameters: Record<string, unknown>): SmartFolderRule[] {
     return rules.map((rule) => ({
       ...rule,
-      value: this.replaceParameters(rule.value, parameters),
+      value: this.replaceParameters(rule.value, parameters) as SmartFolderRuleValue,
     }))
   }
 
   /**
    * パラメータ置換
    */
-  private static replaceParameters(value: unknown, parameters: Record<string, unknown>): unknown {
+  private static replaceParameters(value: SmartFolderRuleValue, parameters: Record<string, unknown>): SmartFolderRuleValue {
     if (typeof value !== 'string') return value
 
     // ${parameter} 形式のパラメータを置換

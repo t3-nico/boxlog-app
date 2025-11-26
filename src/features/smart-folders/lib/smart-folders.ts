@@ -6,6 +6,7 @@ import {
   SmartFolderRule,
   SmartFolderRuleField,
   SmartFolderRuleOperator,
+  SmartFolderRuleValue,
 } from '@/types/smart-folders'
 
 // ルール評価エンジン
@@ -345,7 +346,7 @@ export class RuleBuilder {
     return this
   }
 
-  value(value: unknown): RuleBuilder {
+  value(value: SmartFolderRuleValue): RuleBuilder {
     this.currentRule.value = value
     return this
   }
