@@ -14,7 +14,7 @@ interface SettingsDialogStore {
   setActiveCategory: (category: SettingsCategory) => void
 }
 
-const DEFAULT_CATEGORY: SettingsCategory = 'account'
+const DEFAULT_CATEGORY: SettingsCategory = 'general'
 
 export const useSettingsDialogStore = create<SettingsDialogStore>()(
   persist(
