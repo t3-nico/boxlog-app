@@ -9,7 +9,12 @@
     "tasks": "Tasks",
     "calendar": "Calendar",
     "settings": "Settings",
-    "profile": "Profile"
+    "profile": "Profile",
+    "more": "More"
+  },
+  "theme": {
+    "light": "Light Mode",
+    "dark": "Dark Mode"
   },
   "appbar": {
     "navigation": {
@@ -526,27 +531,19 @@
       "title": "Settings",
       "categories": {
         "general": "General",
-        "generalDesc": "Basic application settings",
-        "account": "Account",
-        "accountDesc": "Profile and account information",
+        "generalDesc": "Language, theme, and startup settings",
+        "personalization": "Personalization",
+        "personalizationDesc": "Calendar and tag customization",
         "notifications": "Notifications",
         "notificationsDesc": "Notification and reminder settings",
-        "calendar": "Calendar",
-        "calendarDesc": "Calendar display and timezone",
-        "tags": "Tags",
-        "tagsDesc": "Tag creation and management",
-        "preferences": "Preferences",
-        "preferencesDesc": "Theme and display options",
-        "planBilling": "Plan & Billing",
-        "planBillingDesc": "Subscription and payment",
-        "integration": "Integrations",
-        "integrationDesc": "External service connections",
-        "dataExport": "Data Export",
-        "dataExportDesc": "Data export and backup",
-        "legal": "Legal",
-        "legalDesc": "Terms and Privacy Policy",
-        "trash": "Trash",
-        "trashDesc": "Deleted items management"
+        "dataControls": "Data Controls",
+        "dataControlsDesc": "Export and external service connections",
+        "account": "Account",
+        "accountDesc": "Profile and security",
+        "subscription": "Subscription",
+        "subscriptionDesc": "Plan and billing management",
+        "about": "About",
+        "aboutDesc": "Legal information and version"
       }
     },
     "legal": {

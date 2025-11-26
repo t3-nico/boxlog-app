@@ -1,28 +1,29 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+
+import { Box, ChevronRight, Cookie, ExternalLink, FileText, Info, Shield } from 'lucide-react'
+import Link from 'next/link'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field'
 import { Switch } from '@/components/ui/switch'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { getCookieConsent, setCookieConsent as saveCookieConsent, type CookieConsent } from '@/lib/cookie-consent'
-import { ExternalLink } from 'lucide-react'
-import Link from 'next/link'
+
+import { SettingField } from './fields/SettingField'
+import { SettingsCard } from './SettingsCard'
+
+// アプリバージョン（package.jsonから取得する場合は環境変数経由で）
+const APP_VERSION = '0.4.0'
 
 /**
- * Legal設定ページコンポーネント
+ * About & Legal設定ページコンポーネント
  *
  * 機能：
+ * - アプリ情報とバージョン表示
  * - Cookie設定の現在の状況表示
- * - /legal/cookiesへのリンク（詳細設定）
  * - 法的文書リンク集
- *
- * UX:
- * - ログイン後のユーザーが設定を見つけやすい
- * - Cookie設定の状況が一目で分かる
- * - 主要な法的文書に素早くアクセス可能
  */
 export function AboutLegalSettings() {
   const { t, locale } = useI18n()
@@ -30,11 +31,9 @@ export function AboutLegalSettings() {
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    // クライアントサイドでのみ実行
     setIsClient(true)
     setCookieConsent(getCookieConsent())
 
-    // Cookie設定変更イベントをリッスン
     const handleCookieConsentChange = (event: CustomEvent<CookieConsent | null>) => {
       setCookieConsent(event.detail)
     }
@@ -46,66 +45,94 @@ export function AboutLegalSettings() {
     }
   }, [])
 
-  // Cookie設定変更ハンドラー（localStorageに保存 + CustomEvent発火）
-  const handleAnalyticsChange = (checked: boolean) => {
-    saveCookieConsent({
-      analytics: checked,
-      marketing: cookieConsent?.marketing ?? false,
-    })
-  }
+  const handleAnalyticsChange = useCallback(
+    (checked: boolean) => {
+      saveCookieConsent({
+        analytics: checked,
+        marketing: cookieConsent?.marketing ?? false,
+      })
+    },
+    [cookieConsent?.marketing]
+  )
 
-  const handleMarketingChange = (checked: boolean) => {
-    saveCookieConsent({
-      analytics: cookieConsent?.analytics ?? false,
-      marketing: checked,
-    })
-  }
+  const handleMarketingChange = useCallback(
+    (checked: boolean) => {
+      saveCookieConsent({
+        analytics: cookieConsent?.analytics ?? false,
+        marketing: checked,
+      })
+    },
+    [cookieConsent?.analytics]
+  )
 
-  // SSR時は何も表示しない
   if (!isClient) {
     return null
   }
 
+  const legalLinks = [
+    { href: `/${locale}/legal/privacy`, label: t('settings.legal.links.privacy'), icon: Shield },
+    { href: `/${locale}/legal/terms`, label: t('settings.legal.links.terms'), icon: FileText },
+    { href: `/${locale}/legal/security`, label: t('settings.legal.links.security'), icon: Shield },
+    { href: `/${locale}/legal/cookies`, label: t('settings.legal.links.cookies'), icon: Cookie },
+    { href: `/${locale}/legal/oss-credits`, label: t('settings.legal.links.ossCredits'), icon: Box },
+  ]
+
   return (
-    <FieldSet>
-      {/* Cookie設定セクション */}
-      <FieldGroup>
-        <FieldLegend>{t('settings.legal.cookies.title')}</FieldLegend>
-        <FieldDescription>{t('settings.legal.cookies.description')}</FieldDescription>
+    <div className="space-y-6">
+      {/* アプリ情報 */}
+      <SettingsCard title="BoxLog について" description="アプリのバージョン情報">
+        <div className="flex items-center gap-4">
+          <div className="bg-primary/10 flex h-16 w-16 items-center justify-center rounded-xl">
+            <Box className="text-primary h-8 w-8" />
+          </div>
+          <div>
+            <h4 className="text-lg font-semibold">BoxLog</h4>
+            <p className="text-muted-foreground text-sm">タスク管理 & カレンダーアプリ</p>
+            <div className="mt-1 flex items-center gap-2">
+              <Badge variant="secondary">v{APP_VERSION}</Badge>
+              <span className="text-muted-foreground text-xs">最新版</span>
+            </div>
+          </div>
+        </div>
+      </SettingsCard>
 
-        {/* 現在の設定状況 */}
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium">{t('settings.legal.cookies.current.title')}</h4>
-
+      {/* Cookie設定 */}
+      <SettingsCard title={t('settings.legal.cookies.title')} description={t('settings.legal.cookies.description')}>
+        <div className="space-y-4">
           {/* 必須Cookie */}
-          <Field orientation="horizontal">
-            <FieldLabel>{t('settings.legal.cookies.current.necessary')}</FieldLabel>
+          <div className="border-border flex items-center justify-between rounded-lg border p-3">
+            <div className="flex items-center gap-3">
+              <Info className="text-muted-foreground h-4 w-4" />
+              <span className="text-sm">{t('settings.legal.cookies.current.necessary')}</span>
+            </div>
             <Badge variant="outline" className="bg-primary/10 text-primary">
               {t('settings.legal.cookies.current.necessaryStatus')}
             </Badge>
-          </Field>
+          </div>
 
           {/* 分析Cookie */}
-          <Field orientation="horizontal">
-            <FieldLabel htmlFor="analytics-switch">{t('settings.legal.cookies.current.analytics')}</FieldLabel>
+          <SettingField
+            label={t('settings.legal.cookies.current.analytics')}
+            description="サービス改善のための匿名データ収集"
+          >
             <Switch
               id="analytics-switch"
               checked={cookieConsent?.analytics ?? false}
               onCheckedChange={handleAnalyticsChange}
-              aria-label={t('settings.legal.cookies.current.analytics')}
             />
-          </Field>
+          </SettingField>
 
           {/* マーケティングCookie */}
-          <Field orientation="horizontal">
-            <FieldLabel htmlFor="marketing-switch">{t('settings.legal.cookies.current.marketing')}</FieldLabel>
+          <SettingField
+            label={t('settings.legal.cookies.current.marketing')}
+            description="パーソナライズされた広告表示"
+          >
             <Switch
               id="marketing-switch"
               checked={cookieConsent?.marketing ?? false}
               onCheckedChange={handleMarketingChange}
-              aria-label={t('settings.legal.cookies.current.marketing')}
             />
-          </Field>
+          </SettingField>
 
           {/* 最終更新日時 */}
           {cookieConsent?.timestamp && (
@@ -115,113 +142,44 @@ export function AboutLegalSettings() {
             </p>
           )}
         </div>
+      </SettingsCard>
 
-        {/* Cookie設定ページへのリンク */}
-        <Button asChild variant="outline" className="w-full">
-          <Link href={`/${locale}/legal/cookies`}>
-            {t('settings.legal.cookies.manage')}
-            <ExternalLink className="ml-2 size-4" />
-          </Link>
-        </Button>
-      </FieldGroup>
-
-      {/* 法的文書リンク集 */}
-      <FieldGroup>
-        <FieldLegend>{t('settings.legal.links.title')}</FieldLegend>
-        <FieldDescription>{t('settings.legal.links.description')}</FieldDescription>
-
-        <div className="space-y-3">
-          {/* プライバシーポリシー */}
-          <Field orientation="horizontal">
-            <FieldLabel>
+      {/* 法的文書 */}
+      <SettingsCard title={t('settings.legal.links.title')} description={t('settings.legal.links.description')}>
+        <div className="divide-border -mx-4 -mb-4 divide-y">
+          {legalLinks.map((link) => {
+            const Icon = link.icon
+            return (
               <Link
-                href={`/${locale}/legal/privacy`}
-                className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
+                key={link.href}
+                href={link.href}
+                className="hover:bg-muted/50 flex items-center justify-between px-4 py-3 transition-colors"
               >
-                {t('settings.legal.links.privacy')}
+                <div className="flex items-center gap-3">
+                  <Icon className="text-muted-foreground h-4 w-4" />
+                  <span className="text-sm">{link.label}</span>
+                </div>
+                <ChevronRight className="text-muted-foreground h-4 w-4" />
               </Link>
-            </FieldLabel>
-            <Link
-              href={`/${locale}/legal/privacy`}
-              className="text-muted-foreground hover:text-primary transition-colors"
-            >
-              <ExternalLink className="size-4" />
-            </Link>
-          </Field>
-
-          {/* 利用規約 */}
-          <Field orientation="horizontal">
-            <FieldLabel>
-              <Link
-                href={`/${locale}/legal/terms`}
-                className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
-              >
-                {t('settings.legal.links.terms')}
-              </Link>
-            </FieldLabel>
-            <Link
-              href={`/${locale}/legal/terms`}
-              className="text-muted-foreground hover:text-primary transition-colors"
-            >
-              <ExternalLink className="size-4" />
-            </Link>
-          </Field>
-
-          {/* セキュリティポリシー */}
-          <Field orientation="horizontal">
-            <FieldLabel>
-              <Link
-                href={`/${locale}/legal/security`}
-                className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
-              >
-                {t('settings.legal.links.security')}
-              </Link>
-            </FieldLabel>
-            <Link
-              href={`/${locale}/legal/security`}
-              className="text-muted-foreground hover:text-primary transition-colors"
-            >
-              <ExternalLink className="size-4" />
-            </Link>
-          </Field>
-
-          {/* Cookie設定 */}
-          <Field orientation="horizontal">
-            <FieldLabel>
-              <Link
-                href={`/${locale}/legal/cookies`}
-                className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
-              >
-                {t('settings.legal.links.cookies')}
-              </Link>
-            </FieldLabel>
-            <Link
-              href={`/${locale}/legal/cookies`}
-              className="text-muted-foreground hover:text-primary transition-colors"
-            >
-              <ExternalLink className="size-4" />
-            </Link>
-          </Field>
-
-          {/* オープンソースライセンス */}
-          <Field orientation="horizontal">
-            <FieldLabel>
-              <Link
-                href={`/${locale}/legal/oss-credits`}
-                className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
-              >
-                {t('settings.legal.links.ossCredits')}
-              </Link>
-            </FieldLabel>
-            <Link
-              href={`/${locale}/legal/oss-credits`}
-              className="text-muted-foreground hover:text-primary transition-colors"
-            >
-              <ExternalLink className="size-4" />
-            </Link>
-          </Field>
+            )
+          })}
         </div>
-      </FieldGroup>
-    </FieldSet>
+      </SettingsCard>
+
+      {/* フィードバック */}
+      <SettingsCard title="フィードバック" description="ご意見・ご要望をお聞かせください">
+        <div className="flex gap-3">
+          <Button variant="outline" asChild>
+            <Link href="https://github.com/t3-nico/boxlog-app/issues" target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="mr-2 h-4 w-4" />
+              バグを報告
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="mailto:support@boxlog.app">機能をリクエスト</Link>
+          </Button>
+        </div>
+      </SettingsCard>
+    </div>
   )
 }
