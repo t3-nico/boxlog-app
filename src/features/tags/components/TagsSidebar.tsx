@@ -388,7 +388,7 @@ export function TagsSidebar({
           </button>
 
           {/* グループセクション */}
-          <div className="text-muted-foreground mt-4 mb-2 flex items-center justify-between pr-1 pl-3">
+          <div className="text-muted-foreground mt-4 mb-1 flex items-center justify-between px-3 py-2">
             <span className="text-xs font-semibold uppercase">{t('tags.sidebar.groups')}</span>
             <TooltipProvider>
               <Tooltip delayDuration={0}>
