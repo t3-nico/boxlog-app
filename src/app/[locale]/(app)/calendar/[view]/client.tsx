@@ -1,10 +1,17 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { usePathname } from 'next/navigation'
 
+import { Bell, Search } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
 import { FeatureErrorBoundary } from '@/components/error-boundary'
 import { CalendarSkeleton } from '@/features/calendar/components/CalendarSkeleton'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
+import { useI18n } from '@/features/i18n/lib/hooks'
+import { useMobileHeader } from '@/features/navigation/hooks/useMobileHeader'
+import { useNotificationDialogStore } from '@/features/notifications/stores/useNotificationDialogStore'
 
 // Calendar機能を動的インポート（Bundle size最適化）
 const CalendarController = dynamic(
@@ -26,6 +33,32 @@ interface CalendarViewClientProps {
 }
 
 export function CalendarViewClient({ view, initialDate, translations }: CalendarViewClientProps) {
+  const pathname = usePathname()
+  const locale = (pathname?.split('/')[1] ?? 'ja') as 'ja' | 'en'
+  const { t } = useI18n(locale)
+  const { open: openNotifications } = useNotificationDialogStore()
+
+  // モバイルヘッダー設定
+  useMobileHeader({
+    title: t('navigation.calendar'),
+    actions: (
+      <>
+        <Button variant="ghost" size="icon" className="size-10" aria-label={t('common.search')}>
+          <Search className="size-5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-10"
+          onClick={openNotifications}
+          aria-label={t('notifications.title')}
+        >
+          <Bell className="size-5" />
+        </Button>
+      </>
+    ),
+  })
+
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <FeatureErrorBoundary
