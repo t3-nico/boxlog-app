@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { useBoardStatusFilterStore } from '@/features/board/stores/useBoardStatusFilterStore'
+import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton'
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { Calendar, Plus, Settings2, Tag, X } from 'lucide-react'
@@ -75,6 +76,9 @@ export function InboxBoardToolbar() {
 
   return (
     <div className="flex w-full items-center justify-between gap-4">
+      {/* モバイル: ハンバーガーメニュー */}
+      <MobileMenuButton className="md:hidden" />
+
       <div className="flex flex-1 items-center gap-2">
         {/* 期限フィルター */}
         <Select value={dueDate} onValueChange={(value) => setDueDate(value as DueDateFilter)}>

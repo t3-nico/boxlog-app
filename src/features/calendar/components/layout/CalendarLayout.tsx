@@ -2,6 +2,7 @@
 
 import { memo } from 'react'
 
+import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton'
 import { cn } from '@/lib/utils'
 
 import type { CalendarViewType } from '../../types/calendar.types'
@@ -77,6 +78,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           onExport={onExport}
           onImport={onImport}
           showActions={showHeaderActions}
+          leftSlot={<MobileMenuButton className="md:hidden" />}
           onDateSelect={onDateSelect}
           showMiniCalendar={true}
           displayRange={displayRange}

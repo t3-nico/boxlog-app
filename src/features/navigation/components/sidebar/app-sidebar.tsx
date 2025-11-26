@@ -70,12 +70,12 @@ export function AppSidebar() {
       <SidebarHeader title={pageTitle} />
 
       {/* User Menu */}
-      <div className="mb-2 px-2">
+      <div className="px-2 py-2">
         <NavUser user={userData} />
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col gap-2 overflow-y-auto bg-transparent px-2">
+      <div className="flex flex-1 flex-col gap-2 overflow-y-auto bg-transparent px-2 py-2">
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </div>
     </aside>

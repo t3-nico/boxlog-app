@@ -9,7 +9,12 @@
     "tasks": "Tasks",
     "calendar": "Calendar",
     "settings": "Settings",
-    "profile": "Profile"
+    "profile": "Profile",
+    "more": "More"
+  },
+  "theme": {
+    "light": "Light Mode",
+    "dark": "Dark Mode"
   },
   "appbar": {
     "navigation": {

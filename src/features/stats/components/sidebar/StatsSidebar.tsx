@@ -199,22 +199,22 @@ export function StatsSidebar() {
         <div className="space-y-4">
           {navSections.map((section) => (
             <Collapsible key={section.title} defaultOpen={section.defaultOpen}>
-              <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex w-full items-center justify-between px-2 py-1 text-xs font-medium tracking-wider uppercase">
+              <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex w-full items-center justify-between px-3 py-2 text-xs font-semibold uppercase">
                 {section.title}
                 <ChevronDown className="size-3 transition-transform duration-200 [[data-state=open]>svg]:rotate-180" />
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <ul className="mt-1 space-y-0.5">
+                <ul className="mt-1 space-y-1">
                   {section.items.map((item) => (
                     <li key={item.href}>
                       <Link
                         href={item.href}
                         prefetch={true}
                         className={cn(
-                          'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
+                          'flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors',
                           isActive(item.href)
-                            ? 'bg-accent text-accent-foreground font-medium'
-                            : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+                            ? 'bg-accent text-accent-foreground'
+                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                         )}
                       >
                         {item.icon}
