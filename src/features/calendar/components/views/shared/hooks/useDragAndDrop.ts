@@ -370,6 +370,11 @@ export function useDragAndDrop({
         durationMs = (dragData.eventDuration / HOUR_HEIGHT) * 60 * 60 * 1000
       }
 
+      // 期間を15分単位に丸める
+      const durationMinutes = Math.round(durationMs / (60 * 1000))
+      const snappedDurationMinutes = Math.round(durationMinutes / 15) * 15
+      durationMs = snappedDurationMinutes * 60 * 1000
+
       let targetDate = date
       if (viewMode !== 'day' && displayDates && targetDateIndex in displayDates && displayDates[targetDateIndex]) {
         targetDate = displayDates[targetDateIndex]
@@ -593,6 +598,24 @@ export function useDragAndDrop({
 
       if (Math.abs(deltaX) > 30) {
         console.log('🔧 水平移動検出:', { deltaX, columnWidth: dragData.columnWidth })
+      }
+
+      // 自動スクロール処理
+      const scrollArea = document.querySelector('[data-calendar-scroll]')
+      const scrollContainer = scrollArea?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement
+      if (scrollContainer) {
+        const scrollRect = scrollContainer.getBoundingClientRect()
+        const scrollThreshold = 80 // スクロール開始の閾値（px）
+        const scrollSpeed = 10 // スクロール速度（px）
+
+        // 上端に近い場合は上にスクロール
+        if (e.clientY - scrollRect.top < scrollThreshold) {
+          scrollContainer.scrollTop -= scrollSpeed
+        }
+        // 下端に近い場合は下にスクロール
+        else if (scrollRect.bottom - e.clientY < scrollThreshold) {
+          scrollContainer.scrollTop += scrollSpeed
+        }
       }
 
       const targetDateIndex = calculateTargetDateIndex(constrainedX, dragData, deltaX)

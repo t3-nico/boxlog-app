@@ -330,7 +330,7 @@ export const ScrollableCalendarLayout = ({
   )
 
   return (
-    <ScrollArea className={cn('relative min-h-0 flex-1', className)}>
+    <ScrollArea className={cn('relative min-h-0 flex-1', className)} data-calendar-scroll>
       <div
         ref={scrollContainerRef}
         className="relative flex w-full px-4"
