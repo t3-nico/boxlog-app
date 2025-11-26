@@ -101,6 +101,9 @@ Material Design 3のState Layer方式を採用。背景色を変えるのでは�
 | **Pressed** | `--state-pressed` | 12% | クリック/タップ中 |
 | **Dragged** | `--state-dragged` | 16% | ドラッグ中 |
 | **Selected** | `--state-selected` | 12% | 選択状態 |
+| **Activated** | `--state-activated` | 12% | アクティブ状態（入力中等） |
+| **Disabled** | `--state-disabled-content` | 38% | 無効状態（コンテンツ） |
+| | `--state-disabled-container` | 12% | 無効状態（背景） |
 
 ### 実装パターン
 
@@ -159,6 +162,28 @@ className="aria-selected:bg-primary/12"
 
 // hover + selected の組み合わせ
 className="hover:bg-foreground/8 data-[state=selected]:bg-primary/12"
+```
+
+#### パターン6: 無効状態（Disabled）
+
+コンテンツを38%、背景を12%のopacityで表現
+
+```tsx
+// ✅ 推奨（ボタン等）
+className="disabled:pointer-events-none disabled:opacity-[0.38]"
+
+// 背景も薄くする場合
+className="disabled:opacity-[0.38] disabled:bg-foreground/12"
+```
+
+#### パターン7: アクティブ状態（Activated）
+
+入力中・ピッカー表示中など、持続的なアクティブ状態
+
+```tsx
+// ✅ 推奨
+className="data-[state=open]:ring-2 data-[state=open]:ring-primary"
+className="data-[state=active]:bg-primary/12"
 ```
 
 ### Transition設定

@@ -132,6 +132,9 @@
   --state-pressed: 12%;
   --state-dragged: 16%;
   --state-selected: 12%;
+  --state-activated: 12%;
+  --state-disabled-content: 38%;
+  --state-disabled-container: 12%;
 
   /* ============================================
    * スペーシング（8pxグリッド）
