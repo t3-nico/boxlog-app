@@ -192,7 +192,7 @@ export function useDragAndDrop({
         initialRect = result.initialRect
 
         // 元の要素を半透明に
-        originalElement.style.opacity = '0.3'
+        originalElement.style.opacity = '0.5'
       }
 
       // 現在のスクロール位置を記録

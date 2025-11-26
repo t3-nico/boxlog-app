@@ -7,6 +7,7 @@
 
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { calendarColors } from '@/features/calendar/theme'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
@@ -164,8 +165,29 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isDragging, onDragEnd, plan])
 
-  // 状態に応じたスタイルを決定
+  // ツールチップコンテンツの作成（早期リターン前に実行）
+  const tooltipContent = useMemo(() => {
+    if (!plan || !plan.id) return null
+    const start = plan.startDate ? new Date(plan.startDate) : null
+    const end = plan.endDate ? new Date(plan.endDate) : null
 
+    const formatTime = (date: Date | null) => {
+      if (!date) return ''
+      return date.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+    }
+
+    const timeRange = start && end ? `${formatTime(start)} - ${formatTime(end)}` : ''
+
+    return (
+      <div className="space-y-1">
+        <div className="font-semibold">{plan.title}</div>
+        {timeRange && <div className="text-xs opacity-90">{timeRange}</div>}
+        {plan.description && <div className="line-clamp-2 text-xs opacity-75">{plan.description}</div>}
+      </div>
+    )
+  }, [plan])
+
+  // 状態に応じたスタイルを決定
   // CSSクラスを組み立て（colors.tsのscheduledを参照）
   const planCardClasses = cn(
     // 基本スタイル
@@ -189,54 +211,63 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   }
 
   return (
-    <div
-      className={planCardClasses}
-      style={dynamicStyle}
-      onClick={handleClick}
-      onDoubleClick={handleDoubleClick}
-      onContextMenu={handleContextMenu}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onKeyDown={handleKeyDown}
-      draggable={false} // HTML5 draggableは使わない
-      role="button"
-      tabIndex={0}
-      aria-label={`plan: ${plan.title}`}
-      aria-pressed={isSelected}
-    >
-      <PlanCardContent
-        event={
-          {
-            ...plan,
-            start: plan.startDate || new Date(),
-            end: plan.endDate || new Date(),
-          } as CalendarPlan
-        }
-        isCompact={safePosition.height < 40}
-        showTime={safePosition.height >= 30}
-        previewTime={previewTime}
-      />
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            className={planCardClasses}
+            style={dynamicStyle}
+            onClick={handleClick}
+            onDoubleClick={handleDoubleClick}
+            onContextMenu={handleContextMenu}
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onKeyDown={handleKeyDown}
+            draggable={false} // HTML5 draggableは使わない
+            role="button"
+            tabIndex={0}
+            aria-label={`plan: ${plan.title}`}
+            aria-pressed={isSelected}
+          >
+            <PlanCardContent
+              event={
+                {
+                  ...plan,
+                  start: plan.startDate || new Date(),
+                  end: plan.endDate || new Date(),
+                } as CalendarPlan
+              }
+              isCompact={safePosition.height < 40}
+              showTime={safePosition.height >= 30}
+              previewTime={previewTime}
+            />
 
-      {/* 下部リサイズハンドル */}
-      <div
-        className="absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
-        role="slider"
-        tabIndex={0}
-        aria-label="Resize plan duration"
-        aria-orientation="vertical"
-        aria-valuenow={safePosition.height}
-        aria-valuemin={20}
-        aria-valuemax={480}
-        onMouseDown={handleResizeMouseDown}
-        onKeyDown={handleResizeKeyDown}
-        style={{
-          height: '8px',
-          zIndex: 10,
-        }}
-        title={t('calendar.event.adjustEndTime')}
-      />
-    </div>
+            {/* 下部リサイズハンドル */}
+            <div
+              className="absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
+              role="slider"
+              tabIndex={0}
+              aria-label="Resize plan duration"
+              aria-orientation="vertical"
+              aria-valuenow={safePosition.height}
+              aria-valuemin={20}
+              aria-valuemax={480}
+              onMouseDown={handleResizeMouseDown}
+              onKeyDown={handleResizeKeyDown}
+              style={{
+                height: '8px',
+                zIndex: 10,
+              }}
+              title={t('calendar.event.adjustEndTime')}
+            />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-xs">
+          {tooltipContent}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 })
