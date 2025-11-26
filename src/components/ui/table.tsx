@@ -39,8 +39,8 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
     <tr
       ref={ref}
       className={cn(
-        // M3 State Layer: foreground色で8%オーバーレイ
-        'hover:bg-foreground/8 data-[state=selected]:bg-muted border-b-input border-b transition-colors',
+        // M3 State Layer: hover=8%, selected=12%
+        'hover:bg-foreground/8 data-[state=selected]:bg-primary/12 border-b-input border-b transition-colors',
         className
       )}
       {...props}

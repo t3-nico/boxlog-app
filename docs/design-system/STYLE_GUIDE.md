@@ -100,6 +100,7 @@ Material Design 3のState Layer方式を採用。背景色を変えるのでは�
 | **Focus** | `--state-focus` | 12% | キーボードフォーカス |
 | **Pressed** | `--state-pressed` | 12% | クリック/タップ中 |
 | **Dragged** | `--state-dragged` | 16% | ドラッグ中 |
+| **Selected** | `--state-selected` | 12% | 選択状態 |
 
 ### 実装パターン
 
@@ -145,6 +146,19 @@ underline追加またはテキスト色変化
 // ✅ 推奨
 className="text-primary hover:underline"
 className="text-muted-foreground hover:text-foreground transition-colors"
+```
+
+#### パターン5: 選択状態（Selected）
+
+primary色で12%オーバーレイ（持続的な状態なので強めの視覚表現）
+
+```tsx
+// ✅ 推奨
+className="data-[state=selected]:bg-primary/12"
+className="aria-selected:bg-primary/12"
+
+// hover + selected の組み合わせ
+className="hover:bg-foreground/8 data-[state=selected]:bg-primary/12"
 ```
 
 ### Transition設定

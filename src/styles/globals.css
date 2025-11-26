@@ -125,12 +125,13 @@
   /* ============================================
    * State Layer Opacity（Material Design 3準拠）
    * コンテンツ色でオーバーレイする際のOpacity値
-   * 使用例: hover:bg-foreground/[--state-hover]
+   * 使用例: hover:bg-foreground/8
    * ============================================ */
   --state-hover: 8%;
   --state-focus: 12%;
   --state-pressed: 12%;
   --state-dragged: 16%;
+  --state-selected: 12%;
 
   /* ============================================
    * スペーシング（8pxグリッド）
