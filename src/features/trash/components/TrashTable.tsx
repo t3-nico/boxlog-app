@@ -186,9 +186,9 @@ export function TrashTable({ items, className }: TrashTableProps) {
 interface TrashItemRowProps {
   item: TrashItem
   isSelected: boolean
-  onToggleSelect: () => void
-  onRestore: () => void
-  onPermanentDelete: () => void
+  onToggleSelect: (id: string) => void
+  onRestore: (id: string) => void
+  onPermanentDelete: (id: string) => void
 }
 
 function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanentDelete }: TrashItemRowProps) {

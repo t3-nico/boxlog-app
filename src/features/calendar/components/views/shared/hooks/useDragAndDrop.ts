@@ -364,13 +364,17 @@ export function useDragAndDrop({
       let targetDate = date
       if (viewMode !== 'day' && displayDates && targetDateIndex in displayDates && displayDates[targetDateIndex]) {
         targetDate = displayDates[targetDateIndex]
+        const originalDateIndex = dragData.originalDateIndex
 
-        if (targetDateIndex !== dragData.originalDateIndex) {
+        if (targetDateIndex !== originalDateIndex) {
           console.log('🎯 プレビュー日付計算（非連続対応）:', {
             targetDateIndex,
-            originalDateIndex: dragData.originalDateIndex,
+            originalDateIndex,
             targetDate: targetDate.toDateString(),
-            originalDate: displayDates[dragData.originalDateIndex]?.toDateString?.(),
+            originalDate:
+              originalDateIndex !== undefined && displayDates[originalDateIndex]
+                ? displayDates[originalDateIndex]?.toDateString()
+                : undefined,
           })
         }
       }

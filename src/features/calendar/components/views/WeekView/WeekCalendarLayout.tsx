@@ -150,7 +150,6 @@ export const WeekCalendarLayout = ({
       // AddPopupを開く
       openEventPopup({
         dueDate: date,
-        status: 'Todo',
       })
 
       // デフォルト値を設定（AddPopupが使用）
@@ -184,7 +183,7 @@ export const WeekCalendarLayout = ({
   // jsx-no-bind optimization: Empty slot click handler creator
   const createEmptySlotClickHandler = useCallback(
     (day: Date) => {
-      return (e: React.MouseEvent | unknown) => handleEmptySlotClick(e, day)
+      return (e: React.MouseEvent<HTMLDivElement>) => handleEmptySlotClick(e, day)
     },
     [handleEmptySlotClick]
   )
@@ -195,7 +194,7 @@ export const WeekCalendarLayout = ({
       return (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
-          handleEmptySlotClick(e as unknown, day)
+          handleEmptySlotClick(e as unknown as React.MouseEvent<HTMLDivElement>, day)
         }
       }
     },

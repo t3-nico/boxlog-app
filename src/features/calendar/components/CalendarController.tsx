@@ -649,7 +649,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         // Calendar integration props
         selectedDate={currentDate}
         onDateSelect={handleDateSelect}
-        onCreateEvent={handleCreateEvent}
+        onCreatePlan={handleCreateEvent}
         onGoToToday={handleNavigateToday}
         // Display options
         showMiniCalendar={true}

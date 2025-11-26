@@ -34,6 +34,20 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
   const [isVisible, setIsVisible] = useState(false)
   const [progress, setProgress] = useState(100)
 
+  const handleUndo = useCallback(() => {
+    if (action) {
+      onUndo(action)
+      setIsVisible(false)
+    }
+  }, [action, onUndo])
+
+  const handleDismiss = useCallback(() => {
+    setIsVisible(false)
+    setTimeout(() => {
+      onDismiss()
+    }, 200) // アニメーション完了を待つ
+  }, [onDismiss])
+
   useEffect(() => {
     if (action) {
       setIsVisible(true)
@@ -60,20 +74,6 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
       setIsVisible(false)
     }
   }, [action, autoHideDelay, handleDismiss])
-
-  const handleUndo = useCallback(() => {
-    if (action) {
-      onUndo(action)
-      setIsVisible(false)
-    }
-  }, [action, onUndo])
-
-  const handleDismiss = useCallback(() => {
-    setIsVisible(false)
-    setTimeout(() => {
-      onDismiss()
-    }, 200) // アニメーション完了を待つ
-  }, [onDismiss])
 
   // キーボードショートカット
   useEffect(() => {

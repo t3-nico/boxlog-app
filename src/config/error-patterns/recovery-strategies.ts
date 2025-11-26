@@ -441,12 +441,12 @@ export async function executeWithFallback<T>(primary: () => Promise<T>, fallback
     console.log('Primary operation failed, executing fallback')
 
     if (fallback.timeout) {
-      return await Promise.race([
+      return (await Promise.race([
         fallback.handler(),
         new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Fallback timeout')), fallback.timeout)),
-      ])
+      ])) as T
     }
 
-    return await fallback.handler()
+    return (await fallback.handler()) as T
   }
 }

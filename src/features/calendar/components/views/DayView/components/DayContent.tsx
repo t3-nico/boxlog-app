@@ -16,8 +16,8 @@ export const DayContent = ({
   date,
   events,
   eventStyles,
-  onEventClick,
-  onEventContextMenu,
+  onPlanClick,
+  onPlanContextMenu,
   onEmptyClick,
   onEventUpdate,
   onTimeRangeSelect,
@@ -40,7 +40,7 @@ export const DayContent = ({
   // ドラッグ&ドロップ機能
   const { dragState, handlers } = useDragAndDrop({
     onEventUpdate: handleEventUpdate,
-    onEventClick,
+    onEventClick: onPlanClick,
     date,
     events,
   })
@@ -61,28 +61,28 @@ export const DayContent = ({
     [date, onEmptyClick, calculateTimeFromEvent]
   )
 
-  // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
-  const handleEventClick = useCallback(
+  // プランクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
+  const handlePlanClick = useCallback(
     (plan: CalendarPlan) => {
       // ドラッグ・リサイズ操作中のクリックは無視
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
-      onEventClick?.(event)
+      onPlanClick?.(plan)
     },
-    [onEventClick, dragState.isDragging, dragState.isResizing]
+    [onPlanClick, dragState.isDragging, dragState.isResizing]
   )
 
-  // イベント右クリックハンドラー
-  const handleEventContextMenu = useCallback(
+  // プラン右クリックハンドラー
+  const handlePlanContextMenu = useCallback(
     (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
-      onEventContextMenu?.(event, mouseEvent)
+      onPlanContextMenu?.(plan, mouseEvent)
     },
-    [onEventContextMenu, dragState.isDragging, dragState.isResizing]
+    [onPlanContextMenu, dragState.isDragging, dragState.isResizing]
   )
 
   // 時間グリッドの生成（1時間単位、23時は下線なし）
@@ -165,10 +165,12 @@ export const DayContent = ({
                       left: 0,
                       width: 100,
                       height:
-                        isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
+                        isResizingThis && dragState.snappedPosition
+                          ? dragState.snappedPosition.height ?? currentHeight
+                          : currentHeight,
                     }}
                     // クリックは useDragAndDrop で処理されるため削除
-                    onContextMenu={(event: CalendarPlan, e: React.MouseEvent) => handleEventContextMenu(event, e)}
+                    onContextMenu={(event: CalendarPlan, e: React.MouseEvent) => handlePlanContextMenu(event, e)}
                     onResizeStart={(
                       event: CalendarPlan,
                       direction: 'top' | 'bottom',

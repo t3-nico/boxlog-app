@@ -112,7 +112,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
               clientX: rect.left + rect.width / 2,
               clientY: rect.top + rect.height / 2,
               stopPropagation: () => {},
-            } as React.MouseEvent
+            } as unknown as React.MouseEvent
             handleGridClick(mockEvent)
           }
         }

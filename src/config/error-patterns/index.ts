@@ -106,6 +106,7 @@ export class AppError extends Error {
   public readonly userMessage: UserMessage
   public readonly metadata: ErrorMetadata
   public readonly pattern: ErrorPattern
+  public readonly cause?: Error
 
   constructor(message: string, code: ErrorCode, metadata: Partial<ErrorMetadata> = {}, cause?: Error) {
     super(message)

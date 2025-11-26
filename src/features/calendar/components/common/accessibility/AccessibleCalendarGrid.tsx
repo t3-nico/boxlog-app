@@ -14,10 +14,10 @@ interface AccessibleCalendarGridProps {
   selectedDate?: Date
   selectedTime?: string
   selectedEventId?: string | null
-  onCreateEvent: (date: Date, time: string) => void
-  onEditEvent: (eventId: string) => void
-  onDeleteEvent: (eventId: string) => void
-  onSelectEvent: (eventId: string) => void
+  onCreatePlan: (date: Date, time: string) => void
+  onEditPlan: (eventId: string) => void
+  onDeletePlan: (eventId: string) => void
+  onSelectPlan: (eventId: string) => void
   onNavigateDate: (date: Date) => void
   onNavigateTime: (time: string) => void
   onEscapeAction: () => void
@@ -46,10 +46,10 @@ export const AccessibleCalendarGrid = ({
   dates,
   events,
   currentDate,
-  onCreateEvent,
-  onEditEvent,
-  onDeleteEvent,
-  onSelectEvent,
+  onCreatePlan,
+  onEditPlan,
+  onDeletePlan,
+  onSelectPlan,
   onNavigateDate,
   onNavigateTime,
   onEscapeAction,
@@ -65,10 +65,10 @@ export const AccessibleCalendarGrid = ({
     events,
     currentDate,
     {
-      onCreateEvent,
-      onEditEvent,
-      onDeleteEvent,
-      onSelectEvent,
+      onCreatePlan,
+      onEditPlan,
+      onDeletePlan,
+      onSelectPlan,
       onNavigateDate,
       onNavigateTime,
       onEscapeAction,

@@ -192,7 +192,9 @@ export const ThreeDayContent = ({
                     left: 0,
                     width: 100,
                     height:
-                      isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
+                      isResizingThis && dragState.snappedPosition
+                        ? dragState.snappedPosition.height ?? currentHeight
+                        : currentHeight,
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
                   onContextMenu={(plan: CalendarPlan, e: React.MouseEvent) => handlePlanContextMenu(plan, e)}

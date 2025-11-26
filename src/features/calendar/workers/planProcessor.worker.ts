@@ -324,7 +324,6 @@ function generateRecurringPlans(
         id: `${basePlan.id}_${count}`,
         startDate: new Date(currentDate),
         endDate: new Date(currentDate.getTime() + planDuration),
-        parentPlanId: basePlan.id,
       }
       plans.push(newPlan)
     }

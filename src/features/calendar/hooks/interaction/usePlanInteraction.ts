@@ -276,11 +276,11 @@ export function useEventInteraction(options: UseEventInteractionOptions) {
     if (!clickState?.isClicking) return
 
     const handleGlobalMouseMove = (e: MouseEvent) => {
-      handleMouseMove(e as unknown)
+      handleMouseMove(e as unknown as React.MouseEvent)
     }
 
     const handleGlobalMouseUp = (e: MouseEvent) => {
-      handleMouseUp(e as unknown)
+      handleMouseUp(e as unknown as React.MouseEvent)
     }
 
     document.addEventListener('mousemove', handleGlobalMouseMove)

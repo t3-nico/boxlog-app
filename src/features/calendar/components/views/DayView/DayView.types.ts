@@ -51,12 +51,15 @@ export interface SimpleDayViewProps {
 
 export interface DayContentProps {
   date: Date
-  plans: CalendarPlan[]
-  planStyles: Record<string, CSSProperties>
+  plans?: CalendarPlan[]
+  events?: CalendarPlan[] // eventsはplansのエイリアス（後方互換性のため）
+  planStyles?: Record<string, CSSProperties>
+  eventStyles?: Record<string, CSSProperties> // eventStylesはplanStylesのエイリアス（後方互換性のため）
   onPlanClick?: (plan: CalendarPlan) => void
   onPlanContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
   onPlanUpdate?: (plan: CalendarPlan) => void
+  onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> // D&D用
   onTimeRangeSelect?: (selection: DateTimeSelection) => void
   className?: string
 }

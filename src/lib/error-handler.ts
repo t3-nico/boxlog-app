@@ -3,6 +3,7 @@
  * 統一エラー処理・自動復旧・ユーザー通知の中央管理システム
  */
 
+// 値のインポート
 import {
   AppError,
   createAppError,
@@ -10,10 +11,10 @@ import {
   errorPatternDictionary,
   executeWithAutoRecovery,
   getErrorCategory,
-  type ErrorCode,
-  type ErrorHandlingResult,
-  type ErrorMetadata,
-} from '@/config/error-patterns'
+} from '@/config/error-patterns/index'
+
+// 型のインポート
+import type { ErrorCode, ErrorHandlingResult, ErrorMetadata } from '@/config/error-patterns/index'
 
 /**
  * エラーハンドリングオプション
@@ -105,7 +106,7 @@ export class ErrorHandler {
       return result
     } catch (error) {
       // 復旧失敗時の処理
-      const appError = this.normalizeError(error, errorCode, options)
+      const appError = this.normalizeError(error as Error, errorCode, options)
       await this.handleError(appError, undefined, options)
 
       return {
@@ -331,8 +332,9 @@ export class ErrorHandler {
       persistent: error.severity === 'critical',
     }
 
-    // ユーザーメッセージを取得（AppErrorのuserMessageはstring型なので直接使用）
-    const message = error.userMessage || error.message
+    // ユーザーメッセージを取得
+    const userMsg = error.userMessage
+    const message = userMsg ? `${userMsg.title}${userMsg.description ? `: ${userMsg.description}` : ''}` : error.message
 
     // 登録された通知ハンドラーを実行
     this.notificationHandlers.forEach((handler) => {

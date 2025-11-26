@@ -227,10 +227,9 @@
           "day": "Day",
           "3day": "3-Day",
           "5day": "5-Day",
-          "weekNoWeekend": "Weekday",
           "week": "Week",
           "2week": "2-Week",
-          "schedule": "List"
+          "month": "Month"
         },
         "viewSuffix": "View",
         "back": "Back",

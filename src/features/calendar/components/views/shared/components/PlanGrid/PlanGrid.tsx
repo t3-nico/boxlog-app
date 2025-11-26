@@ -48,8 +48,8 @@ export const PlanGrid = ({
           if (plan) {
             await onPlanUpdate({
               ...plan,
-              start: updates.startTime,
-              end: updates.endTime,
+              startDate: updates.startTime,
+              endDate: updates.endTime,
             })
           }
         }

@@ -56,6 +56,12 @@ export const usePlanOperations = () => {
         else if (typeof planIdOrPlan === 'object') {
           const updatedPlan = planIdOrPlan
 
+          // startDateがnullの場合は早期リターン
+          if (!updatedPlan.startDate) {
+            logger.error('❌ startDateがnullのため更新できません:', updatedPlan.id)
+            return
+          }
+
           logger.log('🔧 プラン更新 (CalendarPlan形式):', {
             planId: updatedPlan.id,
             newStartDate: updatedPlan.startDate.toISOString(),

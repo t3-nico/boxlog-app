@@ -179,8 +179,10 @@ export class SmartFolderRuleEngine {
       if (typeof ruleValue === 'string' && ruleValue.endsWith('days')) {
         const days = parseInt(ruleValue.replace('days', ''))
         compareDate = new Date(context.now.getTime() - days * 24 * 60 * 60 * 1000)
-      } else {
+      } else if (typeof ruleValue === 'string' || typeof ruleValue === 'number' || ruleValue instanceof Date) {
         compareDate = new Date(ruleValue)
+      } else {
+        return 0
       }
 
       return fieldDate.getTime() - compareDate.getTime()

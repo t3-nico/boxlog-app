@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { offlineManager, type OfflineAction } from '@/features/offline/services/offline-manager'
+import { offlineManager } from '@/features/offline/services/offline-manager'
+import type { OfflineAction } from '@/features/offline/types'
 // import { ConflictResolutionModal } from '@/components/ConflictResolutionModal'
 // import { toast } from '@/components/ui/use-toast'
 interface ToastOptions {

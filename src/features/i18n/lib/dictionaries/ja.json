@@ -227,10 +227,9 @@
           "day": "日",
           "3day": "3日",
           "5day": "5日",
-          "weekNoWeekend": "平日",
           "week": "週",
           "2week": "2週",
-          "schedule": "リスト"
+          "month": "月"
         },
         "viewSuffix": "表示",
         "back": "戻る",

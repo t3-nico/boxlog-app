@@ -115,7 +115,7 @@ async function handleGetWorkflowAction(translationKey: string | null, language: 
     return NextResponse.json({ error: 'translationKeyとlanguageは必須です' }, { status: 400 })
   }
 
-  const workflow = await qa.getReviewWorkflow(translationKey, language)
+  const workflow = await qa.startReviewWorkflow(translationKey, language)
   return NextResponse.json(workflow)
 }
 

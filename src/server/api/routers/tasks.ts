@@ -216,7 +216,7 @@ export const tasksRouter = createTRPCRouter({
           throw new TRPCError({
             code: 'PRECONDITION_FAILED',
             message: 'サブタスクがあるため削除できません。強制削除するか、先にサブタスクを削除してください。',
-            cause: createAppError('削除条件不足', ERROR_CODES.VALIDATION_ERROR, {
+            cause: createAppError('削除条件不足', ERROR_CODES.DATA_VALIDATION_ERROR, {
               source: 'tasks_router',
               userId: ctx.userId,
               taskId: id,

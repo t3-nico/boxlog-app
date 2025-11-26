@@ -18,7 +18,6 @@ export const trpc = createTRPCReact<AppRouter>()
  * Vanilla tRPCクライアント（React外での使用）
  */
 export const vanillaTrpc = createTRPCProxyClient<AppRouter>({
-  transformer: superjson,
   links: [
     loggerLink({
       enabled: (opts) =>
@@ -26,6 +25,7 @@ export const vanillaTrpc = createTRPCProxyClient<AppRouter>({
     }),
     httpBatchLink({
       url: '/api/trpc',
+      transformer: superjson,
       headers() {
         return {}
       },

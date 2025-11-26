@@ -264,8 +264,9 @@ export class AnalyticsTracker {
    */
   private sendToGoogleAnalytics(events: Array<{ name: string; properties: EventProperties; timestamp: number }>): void {
     if (typeof window !== 'undefined' && window.gtag) {
+      const gtag = window.gtag
       events.forEach((event) => {
-        window.gtag('event', event.name, {
+        gtag('event', event.name, {
           event_category: getEventCategory(event.name as any),
           event_timestamp: event.timestamp,
           ...event.properties,

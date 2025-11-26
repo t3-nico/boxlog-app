@@ -188,7 +188,7 @@ export function getDateKey(date: Date): string {
 /**
  * イベントの妥当性をチェック
  */
-export function isValidEvent(event: { startDate?: Date | string; [key: string]: unknown }): boolean {
+export function isValidEvent<T extends { startDate?: Date | string | null }>(event: T): boolean {
   if (!event.startDate) return false
 
   const eventStart = event.startDate instanceof Date ? event.startDate : new Date(event.startDate)
@@ -199,7 +199,7 @@ export function isValidEvent(event: { startDate?: Date | string; [key: string]: 
 /**
  * イベントの日付を正規化（DateまたはstringをDateに変換）
  */
-export function normalizeEventDate(eventDate: Date | string): Date | null {
+export function normalizeEventDate(eventDate: Date | string | null | undefined): Date | null {
   if (!eventDate) return null
 
   const date = eventDate instanceof Date ? eventDate : new Date(eventDate)

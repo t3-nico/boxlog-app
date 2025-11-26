@@ -166,7 +166,7 @@ export class VercelAnalytics {
     hadDescription: boolean
   }): void {
     this.trackEvent(BOXLOG_EVENTS.TASK_COMPLETED, {
-      time_to_complete: taskData.timeToComplete,
+      time_to_complete: taskData.timeToComplete ?? 0,
       priority: taskData.priority || 'medium',
       had_description: taskData.hadDescription,
     })
@@ -203,9 +203,9 @@ export class VercelAnalytics {
     wasRecovered: boolean
   }): void {
     this.trackEvent(BOXLOG_EVENTS.ERROR_OCCURRED, {
-      error_code: errorData.errorCode,
-      error_category: errorData.errorCategory,
-      severity: errorData.severity,
+      error_code: errorData.errorCode ?? 0,
+      error_category: errorData.errorCategory ?? 'unknown',
+      severity: errorData.severity ?? 'medium',
       was_recovered: errorData.wasRecovered,
     })
   }
@@ -222,7 +222,7 @@ export class VercelAnalytics {
     this.trackEvent('performance_metric', {
       metric_name: metric.name,
       metric_value: metric.value,
-      threshold: metric.threshold,
+      threshold: metric.threshold ?? 0,
     })
   }
 

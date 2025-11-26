@@ -33,6 +33,11 @@ export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
 // ============================================
 
 /**
+ * タスクの種別（開発管理用の詳細タイプ）
+ */
+export type TaskType = 'feature' | 'bug' | 'improvement' | 'maintenance' | 'documentation'
+
+/**
  * タスク（BoxLog統一型）
  * TypeScript公式: interface優先（拡張可能性）
  */
@@ -42,6 +47,7 @@ export interface Task {
   description?: string
   status: TaskStatus
   priority: TaskPriority
+  type?: TaskType // タスク種別（オプショナル）
   planned_start: string // ISO 8601
   planned_duration: number // 分単位
   tags?: string[]

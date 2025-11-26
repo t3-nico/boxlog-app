@@ -6,6 +6,7 @@ export type { DragHandlers, DragState } from '../../shared/hooks/useDragAndDrop'
 
 interface UseDragAndDropProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
+  onEventClick?: (plan: CalendarPlan) => void
   date: Date
   events: CalendarPlan[]
 }

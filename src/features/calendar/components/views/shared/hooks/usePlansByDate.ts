@@ -70,6 +70,12 @@ export function useEventsByDate({
         return
       }
 
+      // startDateがnullまたはundefinedの場合はスキップ
+      if (!event.startDate) {
+        skippedCount++
+        return
+      }
+
       // より柔軟な日付正規化
       const eventStart = event.startDate instanceof Date ? event.startDate : new Date(event.startDate)
 

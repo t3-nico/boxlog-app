@@ -224,7 +224,8 @@ function applyFilters(events: CalendarPlan[], filters: Record<string, unknown>):
     if (filters.timeRange) {
       if (!event.startDate) return false
       const hour = event.startDate.getHours()
-      if (hour < filters.timeRange.start || hour > filters.timeRange.end) {
+      const timeRange = filters.timeRange as { start: number; end: number }
+      if (hour < timeRange.start || hour > timeRange.end) {
         return false
       }
     }

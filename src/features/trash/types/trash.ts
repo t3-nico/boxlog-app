@@ -138,7 +138,7 @@ export interface TrashActions {
 
   // 復元処理
   restoreItem: (id: string) => Promise<void>
-  restoreItems: (ids: string[]) => Promise<void>
+  restoreItems: (ids: string[]) => Promise<RestoreResult | undefined>
 
   // 完全削除
   permanentlyDelete: (id: string) => Promise<void>

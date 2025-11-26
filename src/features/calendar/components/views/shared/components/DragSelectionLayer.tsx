@@ -212,7 +212,7 @@ export const DragSelectionLayer = ({ className, onTimeRangeSelect, children }: D
               target: containerRef.current,
               preventDefault: () => {},
               stopPropagation: () => {},
-            } as React.MouseEvent
+            } as unknown as React.MouseEvent
             handleMouseDown(mockEvent)
           }
         }

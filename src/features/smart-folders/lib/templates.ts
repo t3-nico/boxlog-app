@@ -513,7 +513,8 @@ export class TemplateApplicator {
 
     // ${parameter} 形式のパラメータを置換
     return value.replace(/\$\{(\w+)\}/g, (match, paramName) => {
-      return parameters[paramName] !== undefined ? parameters[paramName] : match
+      const replacement = parameters[paramName]
+      return replacement !== undefined ? String(replacement) : match
     })
   }
 

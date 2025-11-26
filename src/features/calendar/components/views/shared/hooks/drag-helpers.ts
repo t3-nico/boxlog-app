@@ -140,11 +140,15 @@ export const calculateTargetDate = (
 
   if (viewMode !== 'day' && displayDates && displayDates[targetDateIndex]) {
     targetDate = displayDates[targetDateIndex]
+    const originalDateIndex = dragDataRef?.current?.originalDateIndex
     console.log('🎯 ドロップ時のターゲット日付決定（非連続対応）:', {
       targetDateIndex,
       targetDate: targetDate.toDateString(),
-      originalDateIndex: dragDataRef?.current?.originalDateIndex,
-      originalDate: displayDates[dragDataRef?.current?.originalDateIndex]?.toDateString?.(),
+      originalDateIndex,
+      originalDate:
+        originalDateIndex !== undefined && displayDates[originalDateIndex]
+          ? displayDates[originalDateIndex]?.toDateString()
+          : undefined,
       displayDatesLength: displayDates.length,
       isNonConsecutive: displayDates.length < 7,
       allDisplayDates: displayDates.map((d) => d.toDateString()),

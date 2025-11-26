@@ -34,6 +34,9 @@ export function useWeekEvents({ weekDates, events = [] }: UseWeekEventsOptions):
     events.forEach((event) => {
       if (!isValidEvent(event)) return
 
+      // startDateがnullまたはundefinedの場合はスキップ
+      if (!event.startDate) return
+
       const eventStart = event.startDate instanceof Date ? event.startDate : new Date(event.startDate)
 
       // 無効な日付は除外

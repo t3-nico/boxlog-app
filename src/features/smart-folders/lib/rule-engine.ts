@@ -183,7 +183,7 @@ export class AdvancedRuleEngine {
   ): boolean {
     if (!fieldValue) return rule.operator === 'is_empty'
 
-    const fieldDate = new Date(fieldValue)
+    const fieldDate = new Date(fieldValue as string | number | Date)
     if (isNaN(fieldDate.getTime())) return false
 
     let compareDate: Date
@@ -191,8 +191,10 @@ export class AdvancedRuleEngine {
     // 相対日付の処理（例: "7days", "1month"）
     if (typeof rule.value === 'string' && /^\d+\w+$/.test(rule.value)) {
       compareDate = this.parseRelativeDate(rule.value, context.now)
+    } else if (typeof rule.value === 'string' || typeof rule.value === 'number' || rule.value instanceof Date) {
+      compareDate = new Date(rule.value)
     } else {
-      compareDate = new Date(rule.value as string)
+      return false
     }
 
     switch (rule.operator) {

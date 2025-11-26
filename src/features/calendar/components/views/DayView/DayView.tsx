@@ -17,17 +17,17 @@ import { useDayView } from './hooks/useDayView'
 export const DayView = ({
   dateRange: _dateRange,
   tasks: _tasks,
-  events,
+  plans,
   currentDate,
   showWeekends: _showWeekends = true,
   className,
   onTaskClick: _onTaskClick,
-  onEventClick,
-  onEventContextMenu,
-  onCreateEvent: _onCreateEvent,
-  onUpdateEvent,
-  onDeleteEvent: _onDeleteEvent,
-  onRestoreEvent: _onRestoreEvent,
+  onPlanClick,
+  onPlanContextMenu,
+  onCreatePlan: _onCreatePlan,
+  onUpdatePlan,
+  onDeletePlan: _onDeletePlan,
+  onRestorePlan: _onRestorePlan,
   onEmptyClick,
   onTimeRangeSelect,
   onTaskDrag: _onTaskDrag,
@@ -60,29 +60,32 @@ export const DayView = ({
 
   // ドラッグイベント用のハンドラー
   // TODO(#621): Events削除後、plans/Sessions統合後に再実装
-  const handleEventTimeUpdate = React.useCallback((_plan: CalendarPlan) => {
-    console.log('TODO: Sessions統合後に実装')
-    // if (!event.startDate || !event.endDate) return
+  const handleEventTimeUpdate = React.useCallback(
+    async (_eventId: string, _updates: { startTime: Date; endTime: Date }) => {
+      console.log('TODO: Sessions統合後に実装')
+      // if (!event.startDate || !event.endDate) return
 
-    // void updateEvent({ ...event, startDate: event.startDate, endDate: event.endDate })
-    //   .then(() => {
-    //     console.log('Event time updated via drag & drop:', event.id)
-    //   })
-    //   .catch((error) => {
-    //     console.error('Failed to update event time:', error)
-    //   })
-  }, [])
+      // void updateEvent({ ...event, startDate: event.startDate, endDate: event.endDate })
+      //   .then(() => {
+      //     console.log('Event time updated via drag & drop:', event.id)
+      //   })
+      //   .catch((error) => {
+      //     console.error('Failed to update event time:', error)
+      //   })
+    },
+    []
+  )
 
-  // DayView専用ロジック（CalendarControllerから渡されたイベントデータを使用）
+  // DayView専用ロジック（CalendarControllerから渡されたプランデータを使用）
   const {
-    dayEvents,
-    eventStyles,
+    dayPlans: dayEvents,
+    planStyles: eventStyles,
     isToday,
     timeSlots: _timeSlots,
   } = useDayView({
     date,
-    events: events || [],
-    ...(onUpdateEvent && { onEventUpdate: onUpdateEvent }),
+    plans: plans || [],
+    ...(onUpdatePlan && { onPlanUpdate: onUpdatePlan }),
   })
 
   // 空き時間クリックハンドラー
@@ -138,8 +141,8 @@ export const DayView = ({
             date={date}
             events={dayEvents}
             eventStyles={eventStyles}
-            {...(onEventClick && { onEventClick })}
-            {...(onEventContextMenu && { onEventContextMenu })}
+            {...(onPlanClick && { onPlanClick })}
+            {...(onPlanContextMenu && { onPlanContextMenu })}
             {...(onEmptyClick && { onEmptyClick })}
             {...(handleEventTimeUpdate && { onEventUpdate: handleEventTimeUpdate })}
             {...(onTimeRangeSelect && { onTimeRangeSelect })}

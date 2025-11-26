@@ -39,12 +39,12 @@ export class MemoryOptimizer {
   private config: MemoryConfig
   private listeners: Set<EventListener> = new Set()
   private timers: Set<NodeJS.Timeout> = new Set()
-  private intervals: Set<NodeJS.Timer> = new Set()
+  private intervals: Set<NodeJS.Timeout> = new Set()
   private observers: Set<MutationObserver | IntersectionObserver | ResizeObserver> = new Set()
   private weakRefs: Set<WeakRef<object>> = new Set()
   private memoryHistory: MemoryStats[] = []
   private cleanupCallbacks: Map<string, () => void> = new Map()
-  private monitoringInterval: NodeJS.Timer | null = null
+  private monitoringInterval: NodeJS.Timeout | null = null
   private detectedLeaks: MemoryLeak[] = []
 
   constructor(config?: Partial<MemoryConfig>) {
@@ -153,8 +153,9 @@ export class MemoryOptimizer {
     this.cleanupWeakReferences()
 
     // 手動でのメモリ解放を促進
-    if ((window as Window & { gc?: () => void }).gc) {
-      ;(window as Window & { gc?: () => void }).gc()
+    const windowWithGc = window as Window & { gc?: () => void }
+    if (windowWithGc.gc) {
+      windowWithGc.gc()
     }
 
     // 大きなオブジェクトの削除を促進
@@ -200,7 +201,7 @@ export class MemoryOptimizer {
   /**
    * インターバルの追跡登録
    */
-  trackInterval(callback: () => void, delay: number): NodeJS.Timer {
+  trackInterval(callback: () => void, delay: number): NodeJS.Timeout {
     const interval = setInterval(callback, delay)
     this.intervals.add(interval)
 
