@@ -118,7 +118,7 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopov
     <Popover modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>{triggerElement}</PopoverTrigger>
       <PopoverContent
-        className="!border-border bg-card dark:bg-card w-[560px] !border p-0"
+        className="!border-border bg-popover w-[560px] !border p-0"
         align="end"
         side="right"
         sideOffset={8}
