@@ -7,8 +7,8 @@ import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SettingsCardProps {
-  title?: string
-  description?: string
+  title?: React.ReactNode
+  description?: React.ReactNode
   children: React.ReactNode
   className?: string
   actions?: React.ReactNode
