@@ -38,7 +38,7 @@ export function SettingsSidebar() {
                   'flex w-full items-center gap-2 rounded-lg px-4 py-2 text-left text-sm font-medium transition-colors',
                   isActive
                     ? 'bg-accent text-accent-foreground'
-                    : 'text-sidebar-foreground hover:bg-accent/50 hover:text-foreground'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                 )}
               >
                 <Icon className="h-4 w-4 flex-shrink-0" />

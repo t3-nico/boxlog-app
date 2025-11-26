@@ -1,6 +1,7 @@
 'use client'
 
 import { CookieConsentBanner } from '@/components/common/cookie-consent-banner'
+import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
@@ -11,6 +12,7 @@ import { useNotificationRealtime } from '@/features/notifications/hooks/useNotif
 import { SettingsDialog } from '@/features/settings/components/dialog'
 import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { Plus } from 'lucide-react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React from 'react'
 import { DesktopLayout } from './desktop-layout'
@@ -71,6 +73,21 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
       {/* Cookie Consent Banner */}
       <CookieConsentBanner />
+
+      {/* Mobile FAB - BottomNavigationの上に配置 */}
+      {isMobile ? (
+        <Button
+          size="icon"
+          aria-label={t('common.createNewEvent')}
+          className="fixed right-4 bottom-20 z-50 size-14 rounded-2xl shadow-lg"
+          onClick={() => {
+            // TODO: PlanInspectorを開く
+            console.log('Create new plan')
+          }}
+        >
+          <Plus className="size-6" />
+        </Button>
+      ) : null}
 
       {/* Mobile Bottom Navigation */}
       {isMobile ? <MobileBottomNavigation /> : null}
