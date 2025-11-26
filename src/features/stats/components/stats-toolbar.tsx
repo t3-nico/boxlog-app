@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton'
 import type { ComparePeriod, PeriodType } from '@/features/stats/stores'
 import { useStatsPeriodStore } from '@/features/stats/stores'
 import { cn } from '@/lib/utils'
@@ -65,6 +66,9 @@ export function StatsToolbar() {
   return (
     <TooltipProvider>
       <div className="flex h-12 shrink-0 items-center gap-2 px-4 pt-2">
+        {/* モバイル: ハンバーガーメニュー */}
+        <MobileMenuButton className="md:hidden" />
+
         {/* 期間ナビゲーション */}
         <div className="flex items-center gap-1">
           <Tooltip>

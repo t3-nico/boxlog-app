@@ -3,14 +3,9 @@
 import { usePathname } from 'next/navigation'
 import { useEffect, useMemo, type ReactNode } from 'react'
 
-import { Search } from 'lucide-react'
-
-import { Button } from '@/components/ui/button'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { InboxSidebar } from '@/features/inbox/components/InboxSidebar'
 import { useInboxData } from '@/features/inbox/hooks/useInboxData'
 import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore'
-import { useMobileHeader } from '@/features/navigation/hooks/useMobileHeader'
 
 interface InboxLayoutProps {
   children: ReactNode
@@ -21,22 +16,13 @@ interface InboxLayoutProps {
  *
  * Sidebar + メインコンテンツの2カラムレイアウト
  * URLパスからactiveViewIdを同期
+ *
+ * モバイルではSidebarはMobileLayoutのSheetで表示されるため、
+ * ここではデスクトップのみ表示
  */
 export default function InboxLayout({ children }: InboxLayoutProps) {
   const pathname = usePathname()
-  const locale = (pathname?.split('/')[1] ?? 'ja') as 'ja' | 'en'
-  const { t } = useI18n(locale)
   const { setActiveView } = useInboxViewStore()
-
-  // モバイルヘッダー設定
-  useMobileHeader({
-    title: t('navigation.inbox'),
-    actions: (
-      <Button variant="ghost" size="icon" className="size-10" aria-label={t('common.search')}>
-        <Search className="size-5" />
-      </Button>
-    ),
-  })
 
   // 全Planデータを取得
   const { items } = useInboxData()
@@ -78,8 +64,8 @@ export default function InboxLayout({ children }: InboxLayoutProps) {
 
   return (
     <div className="flex h-full">
-      {/* 左: Sidebar */}
-      <div className="border-border w-64 shrink-0 border-r">
+      {/* 左: Sidebar（デスクトップのみ表示） */}
+      <div className="border-border hidden w-64 shrink-0 border-r md:block">
         <InboxSidebar activeplansCount={activePlansCount} archivedplansCount={archivedPlansCount} />
       </div>
 
