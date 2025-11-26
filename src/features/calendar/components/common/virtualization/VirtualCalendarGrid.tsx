@@ -185,11 +185,7 @@ export const VirtualCalendarGrid = ({
   return (
     <div
       ref={containerRef}
-      className={cn(
-        'relative overflow-auto will-change-scroll',
-        'scrollbar-thin',
-        className
-      )}
+      className={cn('relative overflow-auto will-change-scroll', 'scrollbar-thin', className)}
       onScroll={handleScroll}
       style={{
         height: '100%',
