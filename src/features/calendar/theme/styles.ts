@@ -188,11 +188,11 @@ export const calendarCustomCSS = `
 /* Firefox support */
 .calendar-custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(115, 115, 115, 0.5) #ffffff;
+  scrollbar-color: rgba(115, 115, 115, 0.5) transparent;
 }
 
 [data-theme="dark"] .calendar-custom-scrollbar {
-  scrollbar-color: rgba(82, 82, 82, 0.4) rgba(23, 23, 23, 0.3);
+  scrollbar-color: rgba(82, 82, 82, 0.4) transparent;
 }
 
 /* Print styles */
