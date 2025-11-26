@@ -24,8 +24,8 @@ import {
 } from '@/features/tags/hooks/use-tag-groups'
 import { useTagGroupsDnd } from '@/features/tags/hooks/use-tag-groups-dnd'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import { useToast } from '@/lib/toast/use-toast'
 import type { TagGroup } from '@/types/tags'
+import { toast } from 'sonner'
 
 interface TagsSidebarProps {
   onAllTagsClick: () => void
@@ -56,7 +56,6 @@ export function TagsSidebar({
   const createGroupMutation = useCreateTagGroup()
   const updateGroupMutation = useUpdateTagGroup()
   const deleteGroupMutation = useDeleteTagGroup()
-  const toast = useToast()
 
   // ドラッグアンドドロップ機能
   const { sensors, activeGroup, handleDragStart, handleDragEnd, handleDragCancel, reorderedGroups } =
@@ -228,13 +227,11 @@ export function TagsSidebar({
             color,
           },
         })
-        toast.success(t('tags.toast.colorChanged'))
       } catch (error) {
         console.error('Failed to update group color:', error)
-        toast.error(t('tags.toast.colorChangeFailed'))
       }
     },
-    [reorderedGroups, updateGroupMutation, toast, t]
+    [reorderedGroups, updateGroupMutation]
   )
 
   // グループごとのタグ数をカウント

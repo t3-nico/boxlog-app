@@ -8,8 +8,8 @@
 import { useEffect, useRef } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
-import { useToast } from '@/lib/toast/use-toast'
 import { trpc } from '@/lib/trpc/client'
+import { toast } from 'sonner'
 
 import { useNotificationDialogStore } from '../stores/useNotificationDialogStore'
 
@@ -24,7 +24,6 @@ interface NotificationPayload {
 }
 
 export function useNotificationRealtime(userId: string | undefined, enabled = true) {
-  const toast = useToast()
   const { open } = useNotificationDialogStore()
   const utils = trpc.useUtils()
   const channelRef = useRef<ReturnType<ReturnType<typeof createClient>['channel']> | null>(null)
@@ -68,5 +67,5 @@ export function useNotificationRealtime(userId: string | undefined, enabled = tr
         supabase.removeChannel(channelRef.current)
       }
     }
-  }, [userId, enabled, toast, open, utils])
+  }, [userId, enabled, open, utils])
 }

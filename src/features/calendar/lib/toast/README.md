@@ -277,7 +277,7 @@ export const toastTemplates = {
 既存Toastシステムを使用しているため：
 
 - `@/config/theme/colors` でカラー調整
-- Toast UI は `@/lib/toast` で管理
+- Toast UI は `sonner` ライブラリを使用（shadcn/ui公式推奨）
 
 ### 新しい操作の追加
 
