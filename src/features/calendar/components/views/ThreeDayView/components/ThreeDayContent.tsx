@@ -130,7 +130,11 @@ export const ThreeDayContent = ({
       <CalendarDragSelection
         date={date}
         className="absolute inset-0"
-        onTimeRangeSelect={(startTime: string, endTime: string) => onTimeRangeSelect?.(date, startTime, endTime)}
+        onTimeRangeSelect={(selection) => {
+          const startTime = `${String(selection.startHour).padStart(2, '0')}:${String(selection.startMinute).padStart(2, '0')}`
+          const endTime = `${String(selection.endHour).padStart(2, '0')}:${String(selection.endMinute).padStart(2, '0')}`
+          onTimeRangeSelect?.(date, startTime, endTime)
+        }}
         onSingleClick={onEmptyClick}
         disabled={dragState.isDragging || dragState.isResizing}
       >

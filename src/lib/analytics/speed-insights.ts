@@ -3,9 +3,8 @@
  * パフォーマンス監視・最適化・レポート生成
  */
 
-// TODO(#389): web-vitalsパッケージの名前付きエクスポートが見つからない
-// import { getCLS, getFCP, getFID, getLCP, getTTFB } from 'web-vitals'
-import { onCLS, onFCP, onFID, onLCP, onTTFB } from 'web-vitals'
+// TODO(#389): web-vitals v4 changed to onINP instead of onFID
+import { onCLS, onFCP, onINP, onLCP, onTTFB } from 'web-vitals'
 
 import { trackPerformance } from './vercel-analytics'
 
@@ -133,10 +132,10 @@ export class SpeedInsightsManager {
       })
     })
 
-    // First Input Delay
-    onFID((metric: any) => {
+    // Interaction to Next Paint (replaced FID in web-vitals v4)
+    onINP((metric: any) => {
       this.recordMetric({
-        name: 'FID',
+        name: 'FID', // Keep name as FID for backward compatibility
         value: metric.value,
         rating: this.getRating('FID', metric.value),
         delta: metric.delta,

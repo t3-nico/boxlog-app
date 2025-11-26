@@ -218,9 +218,10 @@ export class QualityMetricsCollector {
       }
 
       console.log(`  TypeScript: ${errors.length}エラー`)
-    } catch (error) {
+    } catch (error: unknown) {
       // TypeScriptエラーがある場合
-      const output = error.stdout?.toString() || error.message
+      const err = error as { stdout?: Buffer; message?: string }
+      const output = err.stdout?.toString() || err.message || ''
       const errors = this.parseTypeScriptErrors(output)
       this.metrics.codeQuality.typescript = {
         errors: errors.length,

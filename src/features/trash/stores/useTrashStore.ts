@@ -259,13 +259,6 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
 
     get().removeItems(ids)
     console.log('🗑️ Items permanently deleted:', itemsToDelete.length, 'items')
-
-    const result: DeleteResult = {
-      deletedCount: itemsToDelete.length,
-      errors: [],
-    }
-
-    return result
   },
 
   // ゴミ箱を空にする

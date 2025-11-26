@@ -18,18 +18,18 @@ interface DeletableItem {
 }
 
 export const useDelete = () => {
-  const { moveToTrash } = useTrashStore()
+  const addItem = useTrashStore((state) => state.addItem)
 
   const deleteWithTrash = async (item: DeletableItem, type: DeletedItem['type'], originalPath?: string) => {
     try {
-      // 1. アイテムにパス情報を追加
-      const itemWithPath = {
-        ...item,
-        originalPath: originalPath || item.path || item.folder || undefined,
-      }
-
-      // 2. ゴミ箱に移動
-      await moveToTrash(itemWithPath, type)
+      // 1. ゴミ箱に追加
+      await addItem({
+        id: item.id,
+        type,
+        title: item.name || item.title || 'Untitled',
+        originalData: item,
+        originalPath: originalPath || item.path || item.folder,
+      })
 
       // 3. 元の場所から削除処理は各呼び出し元で実装
       // これはstoreごとに異なる削除処理が必要なため

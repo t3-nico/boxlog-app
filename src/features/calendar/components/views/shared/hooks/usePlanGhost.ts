@@ -47,7 +47,10 @@ export function useEventGhost(originalStyle: CSSProperties, eventId: string, dra
  * @param dragState ドラッグ状態
  * @returns プレビュー時間（リサイズ中のみ）
  */
-export function useEventPreviewTime(eventId: string, dragState: DragState): string | null {
+export function useEventPreviewTime(
+  eventId: string,
+  dragState: DragState
+): { start: Date; end: Date } | null {
   return useMemo(() => {
     const isDragging = dragState.draggedEventId === eventId && dragState.isDragging
     const isResizingThis = dragState.isResizing && dragState.draggedEventId === eventId

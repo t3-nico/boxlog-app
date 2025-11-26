@@ -237,14 +237,14 @@ export interface DeleteResult {
  * TrashItemのタイプガード関数
  */
 export const isTrashItem = (item: unknown): item is TrashItem => {
+  if (typeof item !== 'object' || item === null) return false
+  const obj = item as Record<string, unknown>
   return (
-    typeof item === 'object' &&
-    item !== null &&
-    typeof item.id === 'string' &&
-    typeof item.type === 'string' &&
-    typeof item.title === 'string' &&
-    item.deletedAt instanceof Date &&
-    typeof item.originalData === 'object'
+    typeof obj.id === 'string' &&
+    typeof obj.type === 'string' &&
+    typeof obj.title === 'string' &&
+    obj.deletedAt instanceof Date &&
+    typeof obj.originalData === 'object'
   )
 }
 

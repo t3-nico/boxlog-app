@@ -42,7 +42,7 @@ export class BatteryOptimizer {
   private batteryInfo: BatteryInfo | null = null
   private powerOptimizations: PowerOptimizationSettings
   private animationFrameId: number | null = null
-  private backgroundTasks: Set<number> = new Set()
+  private backgroundTasks: Set<ReturnType<typeof setInterval>> = new Set()
   private networkRequestQueue: Map<string, () => void> = new Map()
   private frameRateLimit = 60
   private lastFrameTime = 0
@@ -288,7 +288,7 @@ export class BatteryOptimizer {
   /**
    * バッテリー効率的なタイマー
    */
-  createEfficientTimer(callback: () => void, interval: number): number {
+  createEfficientTimer(callback: () => void, interval: number): ReturnType<typeof setInterval> {
     const adaptedInterval = this.isInPowerSaveMode ? Math.max(interval * 2, interval) : interval
 
     const timer = setInterval(() => {

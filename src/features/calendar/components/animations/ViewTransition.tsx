@@ -817,9 +817,9 @@ export const OptimizedListAnimation = ({
           {visibleChildren.map((child, index) => (
             <motion.div
               key={`list-item-${startIndex + index}-${Date.now()}`}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? false : { opacity: 0, y: -20 }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -20 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
               style={{
                 position: 'absolute',

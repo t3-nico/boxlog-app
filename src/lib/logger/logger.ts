@@ -375,7 +375,8 @@ export class Logger {
       this.stats.errors.total++
 
       if ('error' in entry && entry.error) {
-        const errorType = entry.error.name || 'Unknown'
+        const err = entry.error as Error | { name?: string }
+        const errorType = ('name' in err && err.name) || 'Unknown'
         this.stats.errors.byType[errorType] = (this.stats.errors.byType[errorType] || 0) + 1
 
         this.stats.errors.recent.push(entry as ErrorLogEntry)

@@ -4,8 +4,8 @@ import { devtools, persist } from 'zustand/middleware'
 import { SmartFolder, SmartFolderRule, SmartFolderRuleLogic } from '@/types/smart-folders'
 import { Task } from '@/types/unified'
 
-// Internal type aliases
-type FilterLogic = 'and' | 'or'
+// Internal type aliases (uppercase to match SmartFolderRuleLogic)
+type FilterLogic = 'AND' | 'OR'
 
 interface FolderCondition {
   field: string
@@ -180,16 +180,16 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
           if (conditions.length === 0) return true
 
           let result = true
-          let currentLogic: FilterLogic = 'and'
+          let currentLogic: FilterLogic = 'AND'
 
           for (let i = 0; i < conditions.length; i++) {
-            const condition = conditions[i]
+            const condition = conditions[i] as FolderCondition
             const conditionResult = evaluateCondition(task, condition)
 
             if (i === 0) {
               result = conditionResult
             } else {
-              if (currentLogic === 'and') {
+              if (currentLogic === 'AND') {
                 result = result && conditionResult
               } else {
                 result = result || conditionResult
@@ -198,7 +198,7 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
 
             // Set logic for next iteration
             if (condition) {
-              currentLogic = condition.logic || 'and'
+              currentLogic = condition.logic || 'AND'
             }
           }
 

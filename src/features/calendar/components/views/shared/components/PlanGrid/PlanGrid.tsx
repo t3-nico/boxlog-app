@@ -121,7 +121,13 @@ export const PlanGrid = ({
       <CalendarDragSelection
         date={date}
         className="absolute inset-0"
-        onTimeRangeSelect={onTimeRangeSelect}
+        onTimeRangeSelect={onTimeRangeSelect ? (selection) => {
+          const startDate = new Date(selection.date)
+          startDate.setHours(selection.startHour, selection.startMinute, 0, 0)
+          const endDate = new Date(selection.date)
+          endDate.setHours(selection.endHour, selection.endMinute, 0, 0)
+          onTimeRangeSelect(startDate, endDate)
+        } : undefined}
         onSingleClick={onEmptyClick}
         disabled={dragState.isDragging || dragState.isResizing}
       >

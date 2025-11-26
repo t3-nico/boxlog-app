@@ -203,7 +203,11 @@ export const TwoWeekView = ({
                       // onCreateEventは(date: Date, time?: string)の形式なので、startTimeのみ渡す
                       onCreateEvent?.(startDate, startTime)
                     }}
-                    onCreateEvent={onCreateEvent}
+                    onCreatePlan={(startDate, endDate) => {
+                      // onCreateEventの形式に変換
+                      const startTime = `${String(startDate.getHours()).padStart(2, '0')}:${String(startDate.getMinutes()).padStart(2, '0')}`
+                      onCreateEvent?.(startDate, startTime)
+                    }}
                     className="h-full"
                     dayIndex={dayIndex}
                     displayDates={displayDates}

@@ -244,7 +244,7 @@ export const WeekCalendarLayout = ({
           className="bg-background sticky left-0 z-10 flex-shrink-0 shadow-sm"
           style={{ height: `${24 * HOUR_HEIGHT}px` }}
         >
-          <TimeColumn startHour={0} endHour={24} interval={60} className="w-16" />
+          <TimeColumn startHour={0} endHour={24} className="w-16" />
         </div>
 
         {/* カレンダーグリッド */}
