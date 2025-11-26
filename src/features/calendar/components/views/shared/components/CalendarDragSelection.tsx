@@ -28,7 +28,6 @@ interface CalendarDragSelectionProps {
   className?: string
   onTimeRangeSelect?: (selection: DateTimeSelection) => void
   onSingleClick?: (date: Date, timeString: string) => void // 単一クリック処理
-  onDoubleClick?: (date: Date, timeString: string) => void // ダブルクリック処理
   children?: React.ReactNode
   disabled?: boolean // ドラッグ選択を無効にする
 }
@@ -44,7 +43,6 @@ export const CalendarDragSelection = ({
   className,
   onTimeRangeSelect,
   onSingleClick,
-  onDoubleClick,
   children,
   disabled = false,
 }: CalendarDragSelectionProps) => {
@@ -55,9 +53,6 @@ export const CalendarDragSelection = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const isDragging = useRef(false)
   const [dropTime, setDropTime] = useState<string | null>(null)
-  const lastClickTimeRef = useRef<number>(0)
-  const lastClickPositionRef = useRef<{ hour: number; minute: number } | null>(null)
-  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // ドロップ可能エリアとして設定
   // ドロップ先データ: { date: Date, time: string }
@@ -76,15 +71,6 @@ export const CalendarDragSelection = ({
     setSelectionStart(null)
     isDragging.current = false
   }
-
-  // コンポーネントアンマウント時にタイマークリア
-  useEffect(() => {
-    return () => {
-      if (clickTimeoutRef.current) {
-        clearTimeout(clickTimeoutRef.current)
-      }
-    }
-  }, [])
 
   // 時間をフォーマットするヘルパー関数
   const formatTime = (hour: number, minute: number): string => {
@@ -245,48 +231,10 @@ export const CalendarDragSelection = ({
           }
 
           onTimeRangeSelect(dateTimeSelection)
-        } else if (!isDragging.current && selectionStart) {
-          // ドラッグしなかった場合：クリック処理
+        } else if (!isDragging.current && selectionStart && onSingleClick) {
+          // ドラッグしなかった場合：シングルクリック処理
           const timeString = formatTime(selectionStart.hour, selectionStart.minute)
-          const now = Date.now()
-          const timeSinceLastClick = now - lastClickTimeRef.current
-          const DOUBLE_CLICK_THRESHOLD = 300 // 300ms以内でダブルクリック判定
-
-          // 同じ位置（15分単位）でのクリックかチェック
-          const isSamePosition =
-            lastClickPositionRef.current &&
-            lastClickPositionRef.current.hour === selectionStart.hour &&
-            lastClickPositionRef.current.minute === selectionStart.minute
-
-          if (timeSinceLastClick < DOUBLE_CLICK_THRESHOLD && isSamePosition && onDoubleClick) {
-            // ダブルクリック検出
-            // シングルクリックのタイマーをキャンセル
-            if (clickTimeoutRef.current) {
-              clearTimeout(clickTimeoutRef.current)
-              clickTimeoutRef.current = null
-            }
-            // ダブルクリックを実行
-            onDoubleClick(date, timeString)
-            // リセット
-            lastClickTimeRef.current = 0
-            lastClickPositionRef.current = null
-          } else {
-            // 単一クリックの可能性 - 遅延実行
-            // 既存のタイマーをクリア
-            if (clickTimeoutRef.current) {
-              clearTimeout(clickTimeoutRef.current)
-            }
-            // 次のクリックのために記録
-            lastClickTimeRef.current = now
-            lastClickPositionRef.current = { hour: selectionStart.hour, minute: selectionStart.minute }
-            // ダブルクリック判定時間後にシングルクリックを実行
-            clickTimeoutRef.current = setTimeout(() => {
-              if (onSingleClick) {
-                onSingleClick(date, timeString)
-              }
-              clickTimeoutRef.current = null
-            }, DOUBLE_CLICK_THRESHOLD)
-          }
+          onSingleClick(date, timeString)
         }
       }
 
