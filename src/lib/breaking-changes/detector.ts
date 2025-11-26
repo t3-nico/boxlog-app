@@ -61,7 +61,7 @@ export class BreakingChangeDetector {
           cwd: process.cwd(),
         })
 
-        const detection = await this.analyzeFileDiff(file.path, fileDiff, file.status)
+        const detection = await this.analyzeFileDiff(file.path, fileDiff, file.status as 'A' | 'M' | 'D' | 'R')
         if (detection) {
           detectedChanges.push(detection)
         }
@@ -121,7 +121,7 @@ export class BreakingChangeDetector {
         isBreaking = true
         confidence = Math.max(confidence, apiAnalysis.confidence)
         reasons.push(...apiAnalysis.reasons)
-        suggestedGroups = [...new Set([...suggestedGroups, 'api_consumers'])]
+        suggestedGroups = [...new Set<AffectedGroup>([...suggestedGroups, 'api_consumers'])]
       }
     }
 

@@ -105,9 +105,9 @@ export class SentryIntegration {
       beforeSend: (event, hint) => {
         const filteredEvent = this.filterEvent(event, hint)
         if (this.options.beforeSend && filteredEvent) {
-          return this.options.beforeSend(filteredEvent)
+          return this.options.beforeSend(filteredEvent) as Sentry.ErrorEvent | null
         }
-        return filteredEvent
+        return filteredEvent as Sentry.ErrorEvent | null
       },
     })
 

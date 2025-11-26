@@ -288,13 +288,13 @@ export class ApiMiddleware {
       method: request.method,
       path: url.pathname,
       query: Object.fromEntries(url.searchParams),
-      headers: this.config.logging.includeHeaders ? Object.fromEntries(request.headers) : undefined,
+      ...(this.config.logging.includeHeaders ? { headers: Object.fromEntries(request.headers) } : {}),
       timestamp: new Date().toISOString(),
-      ip: request.headers.get('x-forwarded-for') || request.ip,
+      ip: request.headers.get('x-forwarded-for') || request.ip || null,
       userAgent: request.headers.get('user-agent'),
     }
 
-    console.log('[API Request]', safeJsonStringify(logData, 2))
+    console.log('[API Request]', safeJsonStringify(logData as Parameters<typeof safeJsonStringify>[0], 2))
   }
 
   /**

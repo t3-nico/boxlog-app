@@ -263,10 +263,10 @@ export class APIErrorHandler {
       return {
         success: false,
         error: {
-          code: appError.code,
+          code: String(appError.code),
           message: appError.message,
           userMessage: appError.userMessage || 'エラーが発生しました',
-          details: appError.context,
+          details: appError.metadata,
           timestamp,
           requestId,
         },
@@ -353,8 +353,8 @@ export function useErrorHandler() {
       safeJsonStringify(
         {
           ...errorResponse.error,
-          context,
-        },
+          ...(context ? { context } : {}),
+        } as Parameters<typeof safeJsonStringify>[0],
         2
       )
     )
