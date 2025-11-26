@@ -588,21 +588,11 @@ export function useDragAndDrop({
       if ((!dragState.isDragging && !dragState.isResizing) || !dragDataRef.current) return
 
       const dragData = dragDataRef.current
-      const { constrainedX, constrainedY } = getConstrainedPosition(e.clientX, e.clientY)
-      const deltaX = constrainedX - dragData.startX
-      const deltaY = constrainedY - dragData.startY
 
-      if (Math.abs(deltaY) > 5 || Math.abs(deltaX) > 5) {
-        dragData.hasMoved = true
-      }
-
-      if (Math.abs(deltaX) > 30) {
-        console.log('🔧 水平移動検出:', { deltaX, columnWidth: dragData.columnWidth })
-      }
-
-      // 自動スクロール処理
+      // 自動スクロール処理（deltaY計算の前に実行）
       const scrollArea = document.querySelector('[data-calendar-scroll]')
       const scrollContainer = scrollArea?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement
+      let scrollDelta = 0
       if (scrollContainer) {
         const scrollRect = scrollContainer.getBoundingClientRect()
         const scrollThreshold = 80 // スクロール開始の閾値（px）
@@ -611,11 +601,26 @@ export function useDragAndDrop({
         // 上端に近い場合は上にスクロール
         if (e.clientY - scrollRect.top < scrollThreshold) {
           scrollContainer.scrollTop -= scrollSpeed
+          scrollDelta = -scrollSpeed
         }
         // 下端に近い場合は下にスクロール
         else if (scrollRect.bottom - e.clientY < scrollThreshold) {
           scrollContainer.scrollTop += scrollSpeed
+          scrollDelta = scrollSpeed
         }
+      }
+
+      const { constrainedX, constrainedY } = getConstrainedPosition(e.clientX, e.clientY)
+      const deltaX = constrainedX - dragData.startX
+      // スクロール量を考慮してdeltaYを調整
+      const deltaY = constrainedY - dragData.startY + (scrollDelta !== 0 ? scrollDelta : 0)
+
+      if (Math.abs(deltaY) > 5 || Math.abs(deltaX) > 5) {
+        dragData.hasMoved = true
+      }
+
+      if (Math.abs(deltaX) > 30) {
+        console.log('🔧 水平移動検出:', { deltaX, columnWidth: dragData.columnWidth })
       }
 
       const targetDateIndex = calculateTargetDateIndex(constrainedX, dragData, deltaX)
