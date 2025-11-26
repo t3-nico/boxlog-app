@@ -142,7 +142,7 @@ export const DayView = ({
             {...(onEventClick && { onPlanClick: onEventClick })}
             {...(onEventContextMenu && { onPlanContextMenu: onEventContextMenu })}
             {...(onEmptyClick && { onEmptyClick })}
-            {...(handleEventTimeUpdate && { onPlanUpdate: handleEventTimeUpdate })}
+            {...(onUpdateEvent && { onPlanUpdate: onUpdateEvent })}
             {...(onTimeRangeSelect && { onTimeRangeSelect })}
             className="absolute inset-y-0 right-0 left-0"
           />

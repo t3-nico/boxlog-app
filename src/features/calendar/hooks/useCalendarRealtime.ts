@@ -30,6 +30,7 @@
 
 import { api } from '@/lib/trpc'
 
+import { usePlanCacheStore } from '@/features/plans/stores/usePlanCacheStore'
 import { useRealtimeSubscription } from '@/lib/supabase/realtime/useRealtimeSubscription'
 
 interface UseCalendarRealtimeOptions {
@@ -40,6 +41,7 @@ interface UseCalendarRealtimeOptions {
 export function useCalendarRealtime(userId: string | undefined, options: UseCalendarRealtimeOptions = {}) {
   const { enabled = true } = options
   const utils = api.useUtils()
+  const isMutating = usePlanCacheStore((state) => state.isMutating)
 
   useRealtimeSubscription<{ id: string }>({
     channelName: `calendar-changes-${userId}`,
@@ -52,6 +54,12 @@ export function useCalendarRealtime(userId: string | undefined, options: UseCale
       const oldRecord = payload.old as { id: string } | undefined
 
       console.debug('[Calendar Realtime] Event detected:', payload.eventType, newRecord?.id)
+
+      // 自分のmutation中はRealtime経由の更新をスキップ（二重更新防止）
+      if (isMutating) {
+        console.debug('[Calendar Realtime] Skipping invalidation (mutation in progress)')
+        return
+      }
 
       // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
       // undefined を渡すことで、usePlans({}) と usePlans(undefined) の両方を無効化

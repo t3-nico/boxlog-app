@@ -53,6 +53,7 @@ export function useTagRealtime(userId: string | undefined, options: UseTagRealti
     table: 'tags',
     event: '*', // INSERT, UPDATE, DELETE すべて
     filter: userId ? `user_id=eq.${userId}` : undefined,
+    enabled, // enabledオプションを渡す
     onEvent: (payload) => {
       const newRecord = payload.new as { id: string } | undefined
       const oldRecord = payload.old as { id: string } | undefined

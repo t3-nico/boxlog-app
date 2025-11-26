@@ -57,6 +57,8 @@ export function usePlanMutations() {
   // ✨ 更新
   const updatePlan = api.plans.update.useMutation({
     onMutate: async ({ id, data }) => {
+      console.log('[usePlanMutations] onMutate開始:', { id, data })
+
       // 0. mutation開始フラグを設定（Realtime二重更新防止）
       setIsMutating(true)
 
@@ -67,6 +69,11 @@ export function usePlanMutations() {
       // 2. 現在のデータをスナップショット（ロールバック用）
       const previousPlans = utils.plans.list.getData()
       const previousPlan = utils.plans.getById.getData({ id })
+
+      console.log('[usePlanMutations] 現在のキャッシュ:', {
+        previousPlansCount: previousPlans?.length,
+        hasPreviousPlan: !!previousPlan,
+      })
 
       // 3. 楽観的更新: Zustandキャッシュを即座に更新（全コンポーネントに即座に反映）
       const updateData: UpdatePlanInput = {}
@@ -91,19 +98,34 @@ export function usePlanMutations() {
       // Zustandキャッシュを更新
       if (Object.keys(updateData).length > 0) {
         updateCache(id, updateData)
+        console.log('[usePlanMutations] Zustandキャッシュ更新:', { id, updateData })
       }
 
       // 4. TanStack Queryキャッシュを楽観的に更新
-      // リストキャッシュを更新（フィルターなし）
+      // 重要: TanStack Query v5では setData は新しい参照を返さないと再レンダリングされない
+      // oldData全体を新しい配列として返す必要がある
       utils.plans.list.setData(undefined, (oldData) => {
-        if (!oldData) return oldData
-        return oldData.map((plan) => (plan.id === id ? { ...plan, ...updateData } : plan))
-      })
-
-      // リストキャッシュを更新（空オブジェクトフィルター）
-      utils.plans.list.setData({}, (oldData) => {
-        if (!oldData) return oldData
-        return oldData.map((plan) => (plan.id === id ? { ...plan, ...updateData } : plan))
+        if (!oldData) {
+          console.log('[usePlanMutations] oldData is undefined, skipping list cache update')
+          return oldData
+        }
+        // 重要: map() で新しい配列を作成し、さらに spread で新しいオブジェクトを作成
+        const updated = oldData.map((plan) => {
+          if (plan.id === id) {
+            // 更新対象: 新しいオブジェクトとして返す
+            return { ...plan, ...updateData }
+          }
+          // 更新対象外: そのまま返す（参照を維持）
+          return plan
+        })
+        console.log('[usePlanMutations] TanStack Query list cache 楽観的更新:', {
+          id,
+          updateData,
+          updatedPlan: updated.find((p) => p.id === id),
+          isSameReference: updated === oldData,
+          updatedPlanSameRef: updated.find((p) => p.id === id) === oldData.find((p) => p.id === id),
+        })
+        return updated
       })
 
       // 個別プランキャッシュを更新
@@ -114,46 +136,40 @@ export function usePlanMutations() {
 
       return { id, previousPlans, previousPlan }
     },
-    onSuccess: (updatedPlan) => {
+    onSuccess: (updatedPlan, variables) => {
       console.log('[usePlanMutations] 更新成功:', updatedPlan)
+
+      // サーバーから返ってきた最新データでキャッシュを更新
+      // plan_tags などのリレーションデータは保持する
+      utils.plans.list.setData(undefined, (oldData) => {
+        if (!oldData) return oldData
+        return oldData.map((plan) => {
+          if (plan.id === variables.id) {
+            // 既存のplan_tagsを保持しつつ、サーバーデータで更新
+            return { ...updatedPlan, plan_tags: plan.plan_tags }
+          }
+          return plan
+        })
+      })
+
+      console.log('[usePlanMutations] サーバーデータでキャッシュ更新完了')
       toast.success('更新しました')
-
-      // TanStack Queryキャッシュを無効化してサーバーから再取得
-      // refetchType: 'all' ですべてのクエリ（activeとinactive）を再フェッチ
-      console.log('[usePlanMutations] キャッシュ無効化開始')
-      void utils.plans.list.invalidate(undefined, { refetchType: 'all' }).then(() => {
-        console.log('[usePlanMutations] plans.list 無効化完了')
-      })
-      void utils.plans.getById.invalidate(undefined, { refetchType: 'all' }).then(() => {
-        console.log('[usePlanMutations] plans.getById 無効化完了')
-      })
-
-      // mutation完了後、少し遅延してからフラグをリセット（Realtimeイベント後に実行）
-      setTimeout(() => {
-        console.log('[usePlanMutations] isMutating = false')
-        setIsMutating(false)
-      }, 500)
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       toast.error('更新に失敗しました')
-
-      // mutation完了（フラグリセット）
-      setIsMutating(false)
 
       // エラー時: 楽観的更新をロールバック
       if (context?.previousPlans) {
         utils.plans.list.setData(undefined, context.previousPlans)
-        utils.plans.list.setData({}, context.previousPlans)
       }
       if (context?.previousPlan) {
         utils.plans.getById.setData({ id: context.id }, context.previousPlan)
       }
-
-      // キャッシュを再取得（念のため）
-      if (context?.id) {
-        void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
-        void utils.plans.getById.invalidate({ id: context.id })
-      }
+    },
+    onSettled: async () => {
+      // mutation完了後にフラグをリセット
+      console.log('[usePlanMutations] onSettled: isMutating = false')
+      setIsMutating(false)
     },
   })
 

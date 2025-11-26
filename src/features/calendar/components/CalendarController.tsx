@@ -227,8 +227,22 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     // return getTasksForDateRange(viewDateRange.start, viewDateRange.end)
   }, [viewDateRange.start, viewDateRange.end])
 
-  // plansを取得（リアルタイム性最適化済み）
-  const { data: plansData } = useplans({})
+  // plansを取得（リアルタイム性最優化済み）
+  const { data: plansData } = useplans()
+
+  // デバッグ: plansDataの更新を検知
+  useEffect(() => {
+    console.log('[CalendarController] plansData 更新検知:', {
+      count: plansData?.length,
+      firstPlan: plansData?.[0]
+        ? {
+            id: plansData[0].id,
+            start_time: plansData[0].start_time,
+            end_time: plansData[0].end_time,
+          }
+        : null,
+    })
+  }, [plansData])
 
   // 表示範囲のイベントを取得してCalendarPlan型に変換（削除済みを除外）
   const filteredEvents = useMemo(() => {
