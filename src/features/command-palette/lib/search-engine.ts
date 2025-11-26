@@ -89,7 +89,7 @@ export class SearchEngine {
       metadata: {
         status: task.status,
         priority: task.priority,
-        dueDate: task.due_date,
+        dueDate: task.planned_start,
         tags: task.tags || [],
       },
     }))
