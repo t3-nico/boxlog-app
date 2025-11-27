@@ -89,9 +89,9 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
         onClick={handleToggleDropdown}
         className={cn(
           'flex items-center gap-2 rounded-md px-3 py-2 transition-colors duration-200',
-          'bg-neutral-200 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-100',
-          'hover:bg-neutral-300 hover:dark:bg-neutral-600',
-          'focus:ring-primary-500 focus:ring-2 focus:ring-offset-2 focus:outline-none'
+          'bg-secondary text-secondary-foreground',
+          'hover:bg-secondary/92 active:bg-secondary/88',
+          'focus:ring-primary focus:ring-2 focus:ring-offset-2 focus:outline-none'
         )}
         aria-label={typedDictionary?.language?.switch || 'Switch Language'}
         aria-expanded={isOpen}
@@ -135,8 +135,8 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
                   'flex w-full items-center gap-3 px-4 py-2 text-left transition-colors duration-150',
                   'focus:outline-none',
                   language.code === currentLocale
-                    ? 'bg-blue-500 text-white'
-                    : 'text-neutral-900 hover:bg-neutral-200 focus:bg-neutral-200 dark:text-neutral-100 hover:dark:bg-neutral-700 focus:dark:bg-neutral-700'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-foreground hover:bg-foreground/8 focus:bg-foreground/12'
                 )}
                 role="option"
                 aria-selected={language.code === currentLocale}

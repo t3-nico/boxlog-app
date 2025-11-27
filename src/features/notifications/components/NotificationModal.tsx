@@ -107,12 +107,12 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               type="button"
               className={cn(
                 'flex h-8 w-8 items-center justify-center',
-                'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+                'hover:bg-foreground/8 active:bg-foreground/12',
                 'rounded-sm',
                 'transition-all duration-200'
               )}
             >
-              <Settings className={cn('h-4 w-4', 'text-neutral-600 dark:text-neutral-400')} />
+              <Settings className={cn('h-4 w-4', 'text-muted-foreground')} />
             </button>
 
             <button
@@ -120,12 +120,12 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               onClick={onClose}
               className={cn(
                 'flex h-8 w-8 items-center justify-center',
-                'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+                'hover:bg-foreground/8 active:bg-foreground/12',
                 'rounded-sm',
                 'transition-all duration-200'
               )}
             >
-              <X className={cn('h-4 w-4', 'text-neutral-600 dark:text-neutral-400')} />
+              <X className={cn('h-4 w-4', 'text-muted-foreground')} />
             </button>
           </div>
         </div>
@@ -193,8 +193,8 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                   key={notification.id}
                   className={cn(
                     'flex gap-3 px-4 py-3',
-                    !notification.read && 'bg-blue-50/5',
-                    'hover:bg-neutral-100 dark:hover:bg-neutral-800',
+                    !notification.read && 'bg-primary/5',
+                    'hover:bg-foreground/8 active:bg-foreground/12',
                     'transition-all duration-200',
                     'cursor-pointer'
                   )}
@@ -246,8 +246,8 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               type="button"
               className={cn(
                 'w-full py-2 text-sm',
-                'text-neutral-900 dark:text-neutral-100',
-                'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+                'text-foreground',
+                'hover:bg-foreground/8 active:bg-foreground/12',
                 'rounded-md',
                 'transition-all duration-200'
               )}

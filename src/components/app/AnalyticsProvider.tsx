@@ -227,13 +227,13 @@ export function CookieConsentBanner({
         <div className="flex gap-3">
           <button
             onClick={handleDecline}
-            className="border-border text-muted-foreground hover:bg-muted rounded-md border px-4 py-2 text-sm transition-colors"
+            className="border-border text-muted-foreground hover:bg-foreground/8 active:bg-foreground/12 rounded-md border px-4 py-2 text-sm transition-colors"
           >
             {declineText}
           </button>
           <button
             onClick={handleAccept}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-700"
+            className="bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88 rounded-md px-4 py-2 text-sm transition-colors"
           >
             {acceptText}
           </button>

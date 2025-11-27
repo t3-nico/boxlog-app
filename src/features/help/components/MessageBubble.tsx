@@ -83,14 +83,14 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
                   <button
                     type="button"
                     onClick={handleSave}
-                    className="rounded-sm p-1 transition-colors hover:bg-blue-500"
+                    className="hover:bg-white/20 active:bg-white/30 rounded-sm p-1 transition-colors"
                   >
                     <Check className="h-4 w-4" />
                   </button>
                   <button
                     type="button"
                     onClick={handleCancel}
-                    className="rounded-sm p-1 transition-colors hover:bg-blue-500"
+                    className="hover:bg-white/20 active:bg-white/30 rounded-sm p-1 transition-colors"
                   >
                     <X className="h-4 w-4" />
                   </button>

@@ -74,8 +74,8 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
       <Menu.Button
         className={cn(
           'flex items-center gap-2 rounded-lg p-2 transition-colors',
-          'hover:bg-neutral-200 dark:hover:bg-neutral-700',
-          'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none'
+          'hover:bg-foreground/8 active:bg-foreground/12',
+          'focus:ring-primary focus:ring-2 focus:ring-offset-2 focus:outline-none'
         )}
         aria-label={a11yLabels.languageSwitch}
       >
@@ -104,8 +104,8 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
                 onClick={() => handleLanguageChange(option.code)}
                 className={cn(
                   'flex w-full items-center justify-between px-4 py-3 text-left transition-colors',
-                  active && 'bg-neutral-100 dark:bg-neutral-700',
-                  option.code === currentLocale && 'bg-blue-50 dark:bg-blue-900/30'
+                  active && 'bg-foreground/8',
+                  option.code === currentLocale && 'bg-primary/12'
                 )}
               >
                 <div className="flex items-center gap-3">

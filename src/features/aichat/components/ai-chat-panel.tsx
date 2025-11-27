@@ -88,14 +88,14 @@ export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
               ])
               setInputValue('') // 入力欄もクリア
             }}
-            className="hover:bg-accent/50 rounded-md p-2 transition-colors"
+            className="hover:bg-foreground/8 active:bg-foreground/12 rounded-md p-2 transition-colors"
             title={t('aiChat.newChat')}
           >
             <Plus className="text-muted-foreground h-4 w-4" />
           </button>
           <button
             type="button"
-            className="hover:bg-accent/50 rounded-md p-2 transition-colors"
+            className="hover:bg-foreground/8 active:bg-foreground/12 rounded-md p-2 transition-colors"
             title={t('aiChat.detailOptions')}
           >
             <MoreVertical className="text-muted-foreground h-4 w-4" />
@@ -103,7 +103,7 @@ export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
           <button
             type="button"
             onClick={onClose}
-            className="hover:bg-accent/50 rounded-md p-2 transition-colors"
+            className="hover:bg-foreground/8 active:bg-foreground/12 rounded-md p-2 transition-colors"
             title={t('aiChat.close')}
           >
             <X className="text-muted-foreground h-4 w-4" />
@@ -143,7 +143,7 @@ export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
             type="button"
             onClick={handleSendMessage}
             disabled={!inputValue.trim()}
-            className="self-end rounded-md bg-blue-600 p-2 text-white transition-colors hover:bg-blue-700 disabled:bg-gray-400"
+            className="bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88 disabled:opacity-[0.38] self-end rounded-md p-2 transition-colors"
           >
             <Send className="h-4 w-4" />
           </button>

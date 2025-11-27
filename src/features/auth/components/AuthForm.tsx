@@ -136,10 +136,10 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           disabled={isLoading}
           className={cn(
             'border-border flex w-full items-center justify-center gap-3 rounded-md border',
-            'bg-white px-4 py-2 text-sm font-medium text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400',
-            'shadow-sm hover:bg-neutral-50 dark:hover:bg-neutral-800',
+            'bg-card text-foreground px-4 py-2 text-sm font-medium',
+            'shadow-sm hover:bg-foreground/8 active:bg-foreground/12',
             'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none',
-            'disabled:cursor-not-allowed disabled:opacity-50'
+            'disabled:cursor-not-allowed disabled:opacity-[0.38]'
           )}
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -170,9 +170,9 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           className={cn(
             'border-border flex w-full items-center justify-center gap-3 rounded-md border',
             'bg-neutral-950 px-4 py-2 text-sm font-medium text-white',
-            'shadow-sm hover:bg-gray-900',
+            'shadow-sm hover:bg-neutral-950/92 active:bg-neutral-950/88',
             'focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none',
-            'disabled:cursor-not-allowed disabled:opacity-50'
+            'disabled:cursor-not-allowed disabled:opacity-[0.38]'
           )}
         >
           <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -232,7 +232,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         <button
           type="submit"
           disabled={isLoading}
-          className="text-primary-foreground bg-primary hover:bg-primary/90 focus:ring-ring flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium shadow-sm focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88 focus:ring-ring flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium shadow-sm focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-[0.38]"
         >
           {isLoading ? 'Loading...' : mode === 'login' ? 'Sign in' : 'Create account'}
         </button>
