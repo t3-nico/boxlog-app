@@ -63,7 +63,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
             <div>
               <label
                 htmlFor="tag-name-input"
-                className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="text-foreground mb-2 block text-sm font-medium"
               >
                 {t('tags.form.tagName')}
               </label>
@@ -76,7 +76,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
               />
             </div>
             <div>
-              <div id="color-label" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <div id="color-label" className="text-foreground mb-2 block text-sm font-medium">
                 {t('tags.form.color')}
               </div>
 
@@ -116,13 +116,13 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
             </div>
 
             <div>
-              <div id="icon-label" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <div id="icon-label" className="text-foreground mb-2 block text-sm font-medium">
                 {t('tags.labels.icon')}
               </div>
 
               {/* 現在選択されているアイコンのプレビュー */}
               <div
-                className="border-border mb-3 flex items-center gap-3 rounded-xl border bg-gray-50 p-3 dark:bg-gray-800"
+                className="border-border bg-muted mb-3 flex items-center gap-3 rounded-lg border p-3"
                 style={{ '--tag-color': color } as React.CSSProperties}
               >
                 {(() => {
@@ -134,14 +134,14 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                     />
                   )
                 })()}
-                <span className="text-sm font-medium text-gray-900 dark:text-white">{icon}</span>
+                <span className="text-foreground text-sm font-medium">{icon}</span>
               </div>
 
               {/* アイコン選択 */}
-              <div className="border-border max-h-64 overflow-y-auto rounded-xl border" aria-labelledby="icon-label">
+              <div className="border-border max-h-64 overflow-y-auto rounded-lg border" aria-labelledby="icon-label">
                 {Object.entries(tagIconCategories).map(([category, icons]) => (
                   <div key={category} className="border-border border-b p-3 last:border-b-0">
-                    <p className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">{category}</p>
+                    <p className="text-muted-foreground mb-2 text-xs font-medium">{category}</p>
                     <div className="grid grid-cols-6 gap-2">
                       {icons.map((iconName) => {
                         const IconComponent = tagIconMapping[iconName as TagIconName]
@@ -152,12 +152,12 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                             onClick={() => setIcon(iconName as TagIconName)}
                             className={`rounded-md p-2 transition-all ${
                               icon === iconName
-                                ? 'border-2 border-blue-300 bg-blue-100 dark:border-blue-600 dark:bg-blue-900/30'
-                                : 'border-border border bg-white hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600'
+                                ? 'border-primary bg-primary/12 border-2'
+                                : 'border-border bg-card hover:bg-foreground/8 border'
                             }`}
                             title={iconName}
                           >
-                            <IconComponent className="tag-icon mx-auto h-5 w-5 text-gray-600 dark:text-gray-400" />
+                            <IconComponent className="text-muted-foreground tag-icon mx-auto h-5 w-5" />
                           </button>
                         )
                       })}

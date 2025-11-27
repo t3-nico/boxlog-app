@@ -206,29 +206,29 @@ export const TagManagementModal = ({
       />
 
       {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-96 -translate-x-1/2 -translate-y-1/2 transform overflow-hidden rounded-xl bg-white shadow-xl dark:bg-gray-800">
+      <div className="bg-popover text-popover-foreground fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-96 -translate-x-1/2 -translate-y-1/2 transform overflow-hidden rounded-lg shadow-xl">
         {/* Header */}
         <div className="border-border flex items-center justify-between border-b p-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Tag Management</h2>
+          <h2 className="text-foreground text-lg font-semibold">Tag Management</h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl p-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="hover:bg-foreground/8 rounded-lg p-1 transition-colors"
           >
-            <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+            <X className="text-muted-foreground h-4 w-4" />
           </button>
         </div>
 
         <div className="max-h-[calc(80vh-120px)] overflow-y-auto">
           {/* Create New Tag */}
           <div className="border-border border-b p-4">
-            <h3 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">Create New Tag</h3>
+            <h3 className="text-foreground mb-3 text-sm font-medium">Create New Tag</h3>
 
             <div className="space-y-3">
               <div>
                 <label
                   htmlFor="new-tag-name"
-                  className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
+                  className="text-muted-foreground mb-1 block text-xs font-medium"
                 >
                   Name
                 </label>
@@ -238,7 +238,7 @@ export const TagManagementModal = ({
                   value={newTagName}
                   onChange={handleNewTagNameChange}
                   placeholder="Enter tag name..."
-                  className="border-border w-full rounded-xl border bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  className="border-border bg-card text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm focus:border-transparent focus:ring-2"
                   onKeyDown={handleNewTagNameKeyDown}
                 />
               </div>
@@ -246,7 +246,7 @@ export const TagManagementModal = ({
               <div>
                 <label
                   htmlFor="new-tag-parent"
-                  className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
+                  className="text-muted-foreground mb-1 block text-xs font-medium"
                 >
                   Parent Tag (Optional)
                 </label>
@@ -254,7 +254,7 @@ export const TagManagementModal = ({
                   id="new-tag-parent"
                   value={newTagParentId || ''}
                   onChange={handleNewTagParentChange}
-                  className="border-border w-full rounded-xl border bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  className="border-border bg-card text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm focus:border-transparent focus:ring-2"
                 >
                   <option value="">None (Root Level)</option>
                   {getAvailableParentTags().map((tag) => (
@@ -267,7 +267,7 @@ export const TagManagementModal = ({
 
               <div>
                 <div
-                  className="mb-2 block text-xs font-medium text-gray-600 dark:text-gray-400"
+                  className="text-muted-foreground mb-2 block text-xs font-medium"
                   id="new-tag-color-label"
                 >
                   Color
@@ -279,7 +279,7 @@ export const TagManagementModal = ({
                       key={color}
                       onClick={handleNewTagColorSelect}
                       data-color={color}
-                      className={`h-8 w-8 rounded-xl transition-all hover:scale-110 ${
+                      className={`h-8 w-8 rounded-lg transition-all hover:scale-110 ${
                         newTagColor === color ? 'ring-2 ring-gray-400 ring-offset-2' : ''
                       }`}
                       style={{ backgroundColor: color }}
@@ -293,7 +293,7 @@ export const TagManagementModal = ({
                 type="button"
                 onClick={handleCreateTag}
                 disabled={!newTagName.trim()}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-500 px-3 py-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-gray-600"
+                className="bg-primary text-primary-foreground hover:bg-primary/92 disabled:bg-muted disabled:text-muted-foreground flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 transition-colors disabled:cursor-not-allowed"
               >
                 <Plus className="h-4 w-4" />
                 Create Tag
@@ -303,10 +303,10 @@ export const TagManagementModal = ({
 
           {/* Existing Tags */}
           <div className="p-4">
-            <h3 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">Existing Tags ({tags.length})</h3>
+            <h3 className="text-foreground mb-3 text-sm font-medium">Existing Tags ({tags.length})</h3>
 
             {tags.length === 0 ? (
-              <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+              <div className="text-muted-foreground py-8 text-center">
                 <div className="text-sm">No tags created yet</div>
                 <div className="mt-1 text-xs">Create your first tag above</div>
               </div>
@@ -315,7 +315,7 @@ export const TagManagementModal = ({
                 {tags.map((tag) => (
                   <div
                     key={tag.id}
-                    className="border-border flex items-center gap-3 rounded-xl border bg-gray-50 p-3 dark:bg-gray-700"
+                    className="border-border bg-muted flex items-center gap-3 rounded-lg border p-3"
                   >
                     {editingTag === tag.id ? (
                       <>
@@ -325,14 +325,14 @@ export const TagManagementModal = ({
                             type="text"
                             value={editName}
                             onChange={handleEditNameChange}
-                            className="border-border w-full rounded border bg-white px-2 py-1 text-sm text-gray-900 dark:bg-gray-800 dark:text-white"
+                            className="border-border bg-card text-foreground w-full rounded border px-2 py-1 text-sm"
                             onKeyDown={handleEditNameKeyDown}
                           />
 
                           <select
                             value={editParentId || ''}
                             onChange={handleEditParentChange}
-                            className="border-border w-full rounded border bg-white px-2 py-1 text-sm text-gray-900 dark:bg-gray-800 dark:text-white"
+                            className="border-border bg-card text-foreground w-full rounded border px-2 py-1 text-sm"
                           >
                             <option value="">None (Root Level)</option>
                             {getAvailableParentTags(editingTag!).map((parentTag) => (
@@ -361,14 +361,14 @@ export const TagManagementModal = ({
                           <button
                             type="button"
                             onClick={handleSaveEdit}
-                            className="rounded p-1 text-green-600 transition-colors hover:bg-green-100 dark:hover:bg-green-900"
+                            className="text-primary hover:bg-primary/8 rounded p-1 transition-colors"
                           >
                             <Check className="h-4 w-4" />
                           </button>
                           <button
                             type="button"
                             onClick={handleCancelEdit}
-                            className="rounded p-1 text-gray-500 transition-colors hover:bg-gray-100 dark:hover:bg-gray-600"
+                            className="text-muted-foreground hover:bg-foreground/8 rounded p-1 transition-colors"
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -379,9 +379,9 @@ export const TagManagementModal = ({
                         {/* Display Mode */}
                         <div className="h-4 w-4 flex-shrink-0 rounded-full" style={{ backgroundColor: tag.color }} />
                         <div className="flex-1">
-                          <span className="text-sm text-gray-900 dark:text-white">{tag.name}</span>
+                          <span className="text-foreground text-sm">{tag.name}</span>
                           {tag.parentId != null && (
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                            <div className="text-muted-foreground text-xs">
                               Parent: {tags.find((t) => t.id === tag.parentId)?.name || 'Unknown'}
                             </div>
                           )}
@@ -391,7 +391,7 @@ export const TagManagementModal = ({
                             type="button"
                             onClick={handleEditClick}
                             data-tag-id={tag.id}
-                            className="rounded p-1 text-blue-600 transition-colors hover:bg-blue-100 dark:hover:bg-blue-900"
+                            className="text-primary hover:bg-primary/8 rounded p-1 transition-colors"
                             title="Edit tag"
                           >
                             <Edit2 className="h-3 w-3" />
@@ -401,7 +401,7 @@ export const TagManagementModal = ({
                             onClick={handleDeleteClick}
                             data-tag-id={tag.id}
                             data-tag-name={tag.name}
-                            className="rounded p-1 text-red-600 transition-colors hover:bg-red-100 dark:hover:bg-red-900"
+                            className="text-destructive hover:bg-destructive/8 rounded p-1 transition-colors"
                             title="Delete tag"
                           >
                             <Trash2 className="h-3 w-3" />
@@ -421,7 +421,7 @@ export const TagManagementModal = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl px-4 py-2 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+            className="text-muted-foreground hover:bg-foreground/8 rounded-lg px-4 py-2 transition-colors"
           >
             Done
           </button>

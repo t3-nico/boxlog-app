@@ -124,21 +124,21 @@ const TagTreeNode = ({
     <div className="relative">
       {/* タグノード */}
       <div
-        className={`group flex items-center gap-2 rounded-xl px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${indentClass}`}
+        className={`hover:bg-foreground/8 group flex items-center gap-2 rounded-lg px-3 py-2 transition-colors ${indentClass}`}
         style={{ paddingLeft: `${level * 20 + 12}px` }}
       >
         {/* 展開/折りたたみアイコン */}
         <button
           type="button"
           onClick={handleToggleExpanded}
-          className={`flex-shrink-0 rounded p-1 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700 ${
+          className={`hover:bg-foreground/8 flex-shrink-0 rounded p-1 transition-colors ${
             hasChildren ? 'visible' : 'invisible'
           }`}
         >
           {hasChildren && isExpanded ? (
-            <ChevronDownIcon className="h-4 w-4 text-gray-500" data-slot="icon" />
+            <ChevronDownIcon className="text-muted-foreground h-4 w-4" data-slot="icon" />
           ) : (
-            <ChevronRightIcon className="h-4 w-4 text-gray-500" data-slot="icon" />
+            <ChevronRightIcon className="text-muted-foreground h-4 w-4" data-slot="icon" />
           )}
         </button>
 
@@ -156,13 +156,13 @@ const TagTreeNode = ({
               onChange={handleEditNameChange}
               onBlur={handleSaveEdit}
               onKeyDown={handleKeyDown}
-              className="w-full rounded border border-blue-500 bg-white px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-700"
+              className="border-primary bg-card focus:ring-ring w-full rounded border px-2 py-1 text-sm focus:ring-1 focus:outline-none"
             />
           ) : (
             <button
               type="button"
               onClick={handleStartEdit}
-              className="w-full truncate text-left text-sm font-medium text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400"
+              className="text-foreground hover:text-primary w-full truncate text-left text-sm font-medium"
               title={tag.name}
             >
               {tag.name}
@@ -171,7 +171,7 @@ const TagTreeNode = ({
         </div>
 
         {/* パス表示 */}
-        <div className="flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">{tag.path}</div>
+        <div className="text-muted-foreground flex-shrink-0 text-xs">{tag.path}</div>
 
         {/* アクションボタン */}
         <div className="flex flex-shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
@@ -180,7 +180,7 @@ const TagTreeNode = ({
             <button
               type="button"
               onClick={handleCreateChildTag}
-              className="rounded p-1 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-400"
+              className="text-muted-foreground hover:bg-primary/8 hover:text-primary rounded p-1 transition-colors"
               title="タグを追加"
             >
               <PlusIcon className="h-4 w-4" data-slot="icon" />
@@ -191,18 +191,18 @@ const TagTreeNode = ({
               <button
                 type="button"
                 onClick={handleToggleMenu}
-                className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                className="text-muted-foreground hover:bg-foreground/8 hover:text-foreground rounded p-1 transition-colors"
               >
                 <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
               </button>
 
               {/* コンテキストメニュー */}
               {showMenu != null && (
-                <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-10 mt-1 min-w-[120px] rounded-xl border shadow-lg">
+                <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-10 mt-1 min-w-[120px] rounded-lg border shadow-lg">
                   <button
                     type="button"
                     onClick={handleEditTag}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                    className="text-foreground hover:bg-foreground/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <PencilIcon className="h-4 w-4" data-slot="icon" />
                     {t('tags.actions.edit')}
@@ -210,7 +210,7 @@ const TagTreeNode = ({
                   <button
                     type="button"
                     onClick={handleStartEdit}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                    className="text-foreground hover:bg-foreground/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <PencilIcon className="h-4 w-4" data-slot="icon" />
                     {t('tags.actions.rename')}
@@ -218,7 +218,7 @@ const TagTreeNode = ({
                   <button
                     type="button"
                     onClick={handleDeleteTag}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                    className="text-destructive hover:bg-destructive/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <TrashIcon className="h-4 w-4" data-slot="icon" />
                     {t('tags.actions.delete')}
@@ -287,7 +287,7 @@ export const TagTreeView = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+        <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
       </div>
     )
   }
@@ -295,12 +295,12 @@ export const TagTreeView = ({
   if (!tags || tags.length === 0) {
     return (
       <div className="py-8 text-center">
-        <TagIcon className="mx-auto mb-4 h-12 w-12 text-gray-400" data-slot="icon" />
-        <p className="mb-4 text-gray-500 dark:text-gray-400">{t('tags.messages.noTagsYet')}</p>
+        <TagIcon className="text-muted-foreground mx-auto mb-4 h-12 w-12" data-slot="icon" />
+        <p className="text-muted-foreground mb-4">{t('tags.messages.noTagsYet')}</p>
         <button
           type="button"
           onClick={handleCreateRootTag}
-          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+          className="bg-primary text-primary-foreground hover:bg-primary/92 inline-flex items-center gap-2 rounded-lg px-4 py-2 transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
           {t('tags.actions.createFirst')}
@@ -313,13 +313,13 @@ export const TagTreeView = ({
     <div className="space-y-1">
       {/* ヘッダー */}
       <div className="border-border flex items-center justify-between border-b px-3 py-2">
-        <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+        <h3 className="text-foreground text-sm font-medium">
           {t('tags.messages.tagList')} ({tags.length})
         </h3>
         <button
           type="button"
           onClick={handleCreateRootTag}
-          className="inline-flex items-center gap-1 rounded px-2 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
+          className="text-primary hover:bg-primary/8 inline-flex items-center gap-1 rounded px-2 py-1 text-sm transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
           {t('tags.messages.newTag')}
