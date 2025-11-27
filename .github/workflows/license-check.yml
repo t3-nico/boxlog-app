@@ -88,50 +88,36 @@ jobs:
             const fs = require('fs');
             const logContent = fs.readFileSync('/tmp/license-check.log', 'utf8');
 
-            const comment = \`## License Compliance Check Failed ❌
-
-### ⚠️ Action Required
-
-This PR introduces dependencies with **restricted licenses** that are not approved for use in this project.
-
-### 📋 Restricted License Policy
-
-**Prohibited Licenses:**
-- GPL-2.0, GPL-3.0 (Strong copyleft - requires source code disclosure)
-- AGPL-3.0 (Network copyleft - requires SaaS source disclosure)
-- LGPL-2.1, LGPL-3.0 (Weak copyleft - linking restrictions)
-- EUPL-1.1, EUPL-1.2 (European copyleft)
-- CDDL-1.0, EPL-1.0, EPL-2.0 (File-level copyleft)
-
-**Approved Licenses:**
-- MIT, BSD-2-Clause, BSD-3-Clause
-- Apache-2.0, ISC, CC0-1.0
-- MPL-2.0 (with review)
-
-### 🔧 How to Fix
-
-1. **Find Alternative Packages**: Search for packages with MIT/Apache-2.0 licenses
-2. **Remove Restricted Packages**: \`npm uninstall <package-name>\`
-3. **Request Exception**: Contact legal team if the package is critical
-
-### 📝 Detailed Error Log
-
-<details>
-<summary>Click to expand error log</summary>
-
-\`\`\`
-${logContent.split('\n').slice(-30).join('\n')}
-\`\`\`
-
-</details>
-
-### 🔗 Resources
-
-- [LICENSE_COMPLIANCE_PLAN.md](https://github.com/\${context.repo.owner}/\${context.repo.repo}/blob/main/docs/legal/LICENSE_COMPLIANCE_PLAN.md)
-- [Approved Licenses](.licensrc.json)
-
----
-<sub>🤖 Automated by License Compliance Check</sub>\`;
+            const comment = '## License Compliance Check Failed ❌\n\n' +
+              '### ⚠️ Action Required\n\n' +
+              'This PR introduces dependencies with **restricted licenses** that are not approved for use in this project.\n\n' +
+              '### 📋 Restricted License Policy\n\n' +
+              '**Prohibited Licenses:**\n' +
+              '- GPL-2.0, GPL-3.0 (Strong copyleft - requires source code disclosure)\n' +
+              '- AGPL-3.0 (Network copyleft - requires SaaS source disclosure)\n' +
+              '- LGPL-2.1, LGPL-3.0 (Weak copyleft - linking restrictions)\n' +
+              '- EUPL-1.1, EUPL-1.2 (European copyleft)\n' +
+              '- CDDL-1.0, EPL-1.0, EPL-2.0 (File-level copyleft)\n\n' +
+              '**Approved Licenses:**\n' +
+              '- MIT, BSD-2-Clause, BSD-3-Clause\n' +
+              '- Apache-2.0, ISC, CC0-1.0\n' +
+              '- MPL-2.0 (with review)\n\n' +
+              '### 🔧 How to Fix\n\n' +
+              '1. **Find Alternative Packages**: Search for packages with MIT/Apache-2.0 licenses\n' +
+              '2. **Remove Restricted Packages**: `npm uninstall <package-name>`\n' +
+              '3. **Request Exception**: Contact legal team if the package is critical\n\n' +
+              '### 📝 Detailed Error Log\n\n' +
+              '<details>\n' +
+              '<summary>Click to expand error log</summary>\n\n' +
+              '```\n' +
+              logContent.split('\n').slice(-30).join('\n') + '\n' +
+              '```\n\n' +
+              '</details>\n\n' +
+              '### 🔗 Resources\n\n' +
+              '- [LICENSE_COMPLIANCE_PLAN.md](https://github.com/' + context.repo.owner + '/' + context.repo.repo + '/blob/main/docs/legal/LICENSE_COMPLIANCE_PLAN.md)\n' +
+              '- [Approved Licenses](.licensrc.json)\n\n' +
+              '---\n' +
+              '<sub>🤖 Automated by License Compliance Check</sub>';
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
@@ -145,16 +131,13 @@ ${logContent.split('\n').slice(-30).join('\n')}
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
         with:
           script: |
-            const comment = \`## License Compliance Check Passed ✅
-
-All dependencies use approved licenses. This PR is safe to merge from a licensing perspective.
-
-### Compliance Status
-- No restricted licenses detected
-- All packages comply with project license policy
-
----
-<sub>🤖 Automated by License Compliance Check</sub>\`;
+            const comment = '## License Compliance Check Passed ✅\n\n' +
+              'All dependencies use approved licenses. This PR is safe to merge from a licensing perspective.\n\n' +
+              '### Compliance Status\n' +
+              '- No restricted licenses detected\n' +
+              '- All packages comply with project license policy\n\n' +
+              '---\n' +
+              '<sub>🤖 Automated by License Compliance Check</sub>';
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
