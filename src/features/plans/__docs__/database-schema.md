@@ -1,4 +1,4 @@
-# plan & Session管理システム - データベース設計
+# Plan管理システム - データベース設計
 
 ## 📊 ER図（Entity Relationship Diagram）
 
@@ -6,17 +6,9 @@
 erDiagram
     users ||--o{ tags : "所有"
     users ||--o{ plans : "所有"
-    users ||--o{ sessions : "所有"
-    users ||--o{ records : "所有"
-
-    plans ||--o{ sessions : "含む"
-    sessions ||--o{ records : "含む"
 
     tags ||--o{ plan_tags : "関連付け"
     plans ||--o{ plan_tags : "関連付け"
-
-    tags ||--o{ session_tags : "関連付け"
-    sessions ||--o{ session_tags : "関連付け"
 
     users {
         uuid id PK
@@ -40,38 +32,13 @@ erDiagram
         text plan_number "自動採番"
         text title
         text description
-        text status "open|in_progress|completed|cancelled"
+        text status "backlog|ready|active|wait|done|cancel"
         text priority "urgent|high|normal|low"
-        decimal planned_hours
-        decimal actual_hours "自動集計"
-        timestamptz created_at
-        timestamptz updated_at
-    }
-
-    sessions {
-        uuid id PK
-        uuid user_id FK
-        uuid plan_id FK
-        text session_number "自動採番"
-        text title
-        timestamptz planned_start
-        timestamptz planned_end
-        timestamptz actual_start
-        timestamptz actual_end
-        text status "planned|in_progress|completed|cancelled"
-        integer duration_minutes "自動計算"
-        text notes
-        timestamptz created_at
-        timestamptz updated_at
-    }
-
-    records {
-        uuid id PK
-        uuid user_id FK
-        uuid session_id FK
-        text record_type
-        text content
-        jsonb metadata
+        timestamptz due_date
+        timestamptz start_time
+        timestamptz end_time
+        text recurrence_type
+        timestamptz recurrence_end_date
         timestamptz created_at
         timestamptz updated_at
     }
@@ -83,21 +50,13 @@ erDiagram
         uuid tag_id FK
         timestamptz created_at
     }
-
-    session_tags {
-        uuid id PK
-        uuid user_id FK
-        uuid session_id FK
-        uuid tag_id FK
-        timestamptz created_at
-    }
 ```
 
 ## 🎯 テーブル設計の意図
 
 ### 1. Tags（タグ）
 
-**目的**: プランとセッションを分類・整理するためのラベル
+**目的**: プランを分類・整理するためのラベル
 
 **特徴**:
 
@@ -111,23 +70,22 @@ erDiagram
 
 ---
 
-### 2. plans（プラン）
+### 2. Plans（プラン）
 
-**目的**: 作業単位を管理（イベント出展の準備タスク等）
+**目的**: 作業単位を管理（タスク、予定、イベント等）
 
 **自動機能**:
 
 - **plan_number自動採番**: `TKT-20241027-001` 形式
   - フォーマット: `TKT-YYYYMMDD-NNN`
   - ユーザーごと・日付ごとに連番
-- **actual_hours自動集計**: 配下のSessionsのduration_minutesを合計
 
 **ステータス遷移**:
 
 ```
-open → in_progress → completed
-  ↓
-cancelled
+backlog → ready → active → done
+           ↓       ↓
+         wait    cancel
 ```
 
 **優先度**:
@@ -139,45 +97,13 @@ cancelled
 
 ---
 
-### 3. Sessions（セッション）
-
-**目的**: planに紐づく作業セッション（ブース準備の各作業時間等）
-
-**自動機能**:
-
-- **session_number自動採番**: `SES-20241027-001` 形式
-- **duration_minutes自動計算**: `actual_end - actual_start` を分単位で計算
-
-**時間管理**:
-
-- `planned_start/end`: 予定時刻
-- `actual_start/end`: 実績時刻
-- `duration_minutes`: 実績時間（分）
-
-**トリガー連携**:
-
-- Session追加・更新・削除時に親planのActual_hoursを自動更新
-
----
-
-### 4. Records（記録）
-
-**目的**: 将来的な拡張用（メモ、チェックリスト、添付ファイル等）
-
-**メタデータ**:
-
-- `metadata (JSONB)`: 柔軟な構造化データ保存
-
----
-
-### 5. 中間テーブル（plan_tags / session_tags）
+### 3. 中間テーブル（plan_tags）
 
 **目的**: 多対多のタグ関連付け
 
 **制約**:
 
 - `UNIQUE(plan_id, tag_id)`: 重複タグ付け防止
-- `UNIQUE(session_id, tag_id)`: 重複タグ付け防止
 
 ---
 
@@ -221,7 +147,7 @@ CREATE POLICY "Users can delete own data" ON {table}
 -- 主要検索パターン
 CREATE INDEX idx_plans_user_id ON plans(user_id);        -- ユーザー単位検索
 CREATE INDEX idx_plans_status ON plans(status);          -- ステータスフィルター
-CREATE INDEX idx_sessions_plan_id ON sessions(plan_id); -- プラン配下検索
+CREATE INDEX idx_plans_due_date ON plans(due_date);      -- 期限フィルター
 
 -- タグ検索
 CREATE INDEX idx_plan_tags_plan_id ON plan_tags(plan_id);
@@ -231,20 +157,17 @@ CREATE INDEX idx_plan_tags_tag_id ON plan_tags(tag_id);
 **想定クエリ**:
 
 - 「自分のプラン一覧（ステータス別）」
-- 「特定プランの全セッション」
+- 「期限が近いプラン一覧」
 - 「特定タグの付いたプラン一覧」
 
 ---
 
 ## 🛠️ トリガー一覧
 
-| トリガー名                                    | 対象テーブル | 実行タイミング         | 機能                |
-| --------------------------------------------- | ------------ | ---------------------- | ------------------- |
-| `trigger_generate_plan_number`                | plans        | INSERT前               | plan番号自動採番    |
-| `trigger_generate_session_number`             | sessions     | INSERT前               | Session番号自動採番 |
-| `trigger_calculate_session_duration`          | sessions     | INSERT/UPDATE前        | 実績時間計算        |
-| `trigger_update_plan_hours_on_session_change` | sessions     | INSERT/UPDATE/DELETE後 | plan実績時間更新    |
-| `trigger_update_*_updated_at`                 | 全テーブル   | UPDATE前               | updated_at更新      |
+| トリガー名                       | 対象テーブル | 実行タイミング | 機能               |
+| -------------------------------- | ------------ | -------------- | ------------------ |
+| `trigger_generate_plan_number`   | plans        | INSERT前       | plan番号自動採番   |
+| `trigger_update_*_updated_at`    | 全テーブル   | UPDATE前       | updated_at更新     |
 
 ---
 
@@ -285,27 +208,15 @@ VALUES
   (auth.uid(), '片付け', '#F59E0B', 'イベント後片付け');
 
 -- 2. プラン作成（plan_number自動採番確認）
-INSERT INTO plans (user_id, title, description, status, priority, planned_hours)
+INSERT INTO plans (user_id, title, description, status, priority, due_date)
 VALUES
-  (auth.uid(), 'コミケ準備', 'コミケ101の準備タスク', 'open', 'high', 20);
+  (auth.uid(), 'コミケ準備', 'コミケ101の準備タスク', 'backlog', 'high', '2025-12-30');
 
--- 3. セッション作成（session_number自動採番、duration_minutes自動計算確認）
-INSERT INTO sessions (user_id, plan_id, title, actual_start, actual_end, status)
-VALUES
-  (
-    auth.uid(),
-    (SELECT id FROM plans WHERE title = 'コミケ準備' LIMIT 1),
-    'グッズ梱包作業',
-    NOW() - INTERVAL '2 hours',
-    NOW(),
-    'completed'
-  );
-
--- 4. planのactual_hours自動更新確認
-SELECT id, plan_number, title, planned_hours, actual_hours
+-- 3. plan_number自動採番確認
+SELECT id, plan_number, title, status, priority
 FROM plans;
 
--- 5. タグ関連付け
+-- 4. タグ関連付け
 INSERT INTO plan_tags (user_id, plan_id, tag_id)
 VALUES (
   auth.uid(),
@@ -318,19 +229,16 @@ VALUES (
 
 ## 🔄 データフロー
 
-### Session作成時の自動処理
+### Plan作成時の自動処理
 
 ```
-1. User が Session作成
+1. User が Plan作成
    ↓
-2. trigger_generate_session_number
-   → session_number = "SES-20241027-001"
+2. trigger_generate_plan_number
+   → plan_number = "TKT-20241027-001"
    ↓
-3. trigger_calculate_session_duration
-   → duration_minutes = (actual_end - actual_start) / 60
-   ↓
-4. trigger_update_plan_hours_on_session_change
-   → 親planのActual_hoursを再計算
+3. RLSポリシー適用
+   → user_id = auth.uid() の検証
 ```
 
 ---

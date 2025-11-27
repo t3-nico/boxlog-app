@@ -210,5 +210,5 @@ export function useProfile() {
 /**
  * タスク管理フック
  */
-// 注: useTasks関数は削除済み（plans/Sessions機能に移行）
-// src/features/plans/hooks/useplans.tsを使用してください
+// 注: useTasks関数は削除済み（plans機能に移行）
+// src/features/plans/hooks/usePlans.tsを使用してください
