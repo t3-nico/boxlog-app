@@ -119,7 +119,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
       <Button
         variant="ghost"
         size="sm"
-        className="text-muted-foreground hover:bg-background hover:text-foreground w-full justify-start gap-2"
+        className="text-muted-foreground hover:bg-background w-full justify-start gap-2"
         onClick={() => onAddCard?.(column.id)}
       >
         <Plus className="size-4" />

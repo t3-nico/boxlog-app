@@ -62,8 +62,7 @@ export const DateNavigator = ({
             className={cn(
               'rounded-full p-2 transition-colors',
               'hover:bg-foreground/8',
-              'text-muted-foreground',
-              'hover:text-foreground'
+              'text-muted-foreground'
             )}
             title="Previous period"
             aria-label="Previous"
@@ -76,8 +75,7 @@ export const DateNavigator = ({
             className={cn(
               'rounded-full p-2 transition-colors',
               'hover:bg-foreground/8',
-              'text-muted-foreground',
-              'hover:text-foreground'
+              'text-muted-foreground'
             )}
             title="Next period"
             aria-label="Next"

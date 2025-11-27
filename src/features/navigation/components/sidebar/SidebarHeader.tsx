@@ -39,7 +39,7 @@ export function SidebarHeader({ title }: SidebarHeaderProps) {
         size="icon"
         variant="ghost"
         aria-label="サイドバーを閉じる"
-        className={cn('text-muted-foreground hover:text-foreground size-10 shrink-0 md:hidden')}
+        className={cn('text-muted-foreground size-10 shrink-0 md:hidden')}
       >
         <PanelLeftClose className="size-5" />
       </Button>
