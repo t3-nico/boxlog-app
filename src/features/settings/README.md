@@ -149,7 +149,7 @@ function SettingsComponent() {
 import { background, text, border, typography, spacing } from '@/config/theme'
 
 // 設定カードの例
-;<div className={cn('rounded-lg border p-6', background.surface, border.subtle, spacing.component.lg)}>
+;<div className={cn('rounded-xl border p-6', background.surface, border.subtle, spacing.component.lg)}>
   <h3 className={cn(typography.heading.h6, text.primary)}>設定タイトル</h3>
   <p className={cn(typography.body.small, text.muted)}>設定の説明</p>
 </div>
