@@ -165,7 +165,7 @@ export function SortableGroupItem({
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="hover:bg-accent-foreground/10 flex h-6 w-6 shrink-0 items-center justify-center rounded p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                className="hover:bg-foreground/8 flex h-6 w-6 shrink-0 items-center justify-center rounded p-0 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={(e) => {
                   e.stopPropagation()
                 }}

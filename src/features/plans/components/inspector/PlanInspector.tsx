@@ -581,7 +581,7 @@ export function PlanInspector() {
                       }}
                       onMouseEnter={() => setIsHoveringSort(true)}
                       onMouseLeave={() => setIsHoveringSort(false)}
-                      className="hover:bg-accent rounded p-0.5 transition-colors"
+                      className="hover:bg-foreground/8 rounded p-0.5 transition-colors"
                       aria-label={activityOrder === 'desc' ? '古い順に変更' : '最新順に変更'}
                     >
                       {activityOrder === 'desc' ? (

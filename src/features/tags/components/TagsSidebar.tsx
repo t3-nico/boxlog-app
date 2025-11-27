@@ -401,7 +401,7 @@ export function TagsSidebar({
                     variant="ghost"
                     size="sm"
                     onClick={handleStartCreating}
-                    className="hover:bg-accent h-5 w-5 p-0"
+                    className="hover:bg-foreground/8 h-5 w-5 p-0"
                   >
                     <Plus className="h-3 w-3" />
                   </Button>

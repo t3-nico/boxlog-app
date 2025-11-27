@@ -532,7 +532,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
         {!isAdding && (
           <button
             onClick={() => setIsAdding(true)}
-            className="text-muted-foreground hover:text-foreground hover:bg-accent flex w-full items-center gap-2 rounded-lg p-3 text-sm transition-colors"
+            className="text-muted-foreground hover:text-foreground hover:bg-foreground/8 flex w-full items-center gap-2 rounded-lg p-3 text-sm transition-colors"
           >
             <Plus className="h-4 w-4" />
             <span>新規追加</span>
