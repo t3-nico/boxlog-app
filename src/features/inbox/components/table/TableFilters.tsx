@@ -105,7 +105,10 @@ export function TableFilters() {
             <Label className="text-xs font-medium">期限</Label>
             <RadioGroup value={dueDate} onValueChange={(value) => setDueDate(value as DueDateFilter)}>
               {DUE_DATE_OPTIONS.map((option) => (
-                <div key={option.value} className="hover:bg-foreground/8 flex items-center space-x-2 rounded-sm px-2 py-1.5">
+                <div
+                  key={option.value}
+                  className="hover:bg-foreground/8 flex items-center space-x-2 rounded-sm px-2 py-1.5"
+                >
                   <RadioGroupItem value={option.value} id={`due-date-${option.value}`} />
                   <Label htmlFor={`due-date-${option.value}`} className="flex-1 cursor-pointer text-sm font-normal">
                     {option.label}
@@ -122,7 +125,10 @@ export function TableFilters() {
             <Label className="text-xs font-medium">ステータス</Label>
             <div className="space-y-1">
               {STATUS_OPTIONS.map((option) => (
-                <div key={option.value} className="hover:bg-foreground/8 flex items-center space-x-2 rounded-sm px-2 py-1.5">
+                <div
+                  key={option.value}
+                  className="hover:bg-foreground/8 flex items-center space-x-2 rounded-sm px-2 py-1.5"
+                >
                   <Checkbox
                     id={`status-${option.value}`}
                     checked={status.includes(option.value)}

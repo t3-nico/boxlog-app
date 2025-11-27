@@ -304,9 +304,7 @@ export function PlanTagSelectDialogEnhanced({
                       setShowArchived(false)
                     }}
                     className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
-                      !selectedGroupId && !showArchived
-                        ? 'bg-primary/12 text-foreground'
-                        : 'hover:bg-foreground/8'
+                      !selectedGroupId && !showArchived ? 'bg-primary/12 text-foreground' : 'hover:bg-foreground/8'
                     }`}
                   >
                     <div className="flex items-center gap-2">

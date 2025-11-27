@@ -105,9 +105,7 @@ export function SortableGroupItem({
       type="button"
       onClick={() => onGroupClick(group.group_number)}
       className={`group w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-        isActive
-          ? 'bg-primary/12 text-foreground'
-          : 'text-muted-foreground hover:bg-foreground/8'
+        isActive ? 'bg-primary/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
       }`}
       style={style}
       {...attributes}

@@ -154,7 +154,10 @@ export function InboxBoardToolbar() {
               {/* 列の表示/非表示切り替え */}
               <div className="space-y-1">
                 {STATUS_LIST.map((status) => (
-                  <div key={status} className="hover:bg-foreground/8 flex items-center space-x-2 rounded-sm px-2 py-1.5">
+                  <div
+                    key={status}
+                    className="hover:bg-foreground/8 flex items-center space-x-2 rounded-sm px-2 py-1.5"
+                  >
                     <Checkbox
                       id={`status-${status}`}
                       checked={isStatusVisible(status)}

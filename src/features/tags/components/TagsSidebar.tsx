@@ -309,9 +309,7 @@ export function TagsSidebar({
         type="button"
         onClick={handleUncategorizedClick}
         className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-          isUncategorizedPage
-            ? 'bg-primary/12 text-foreground'
-            : 'text-muted-foreground hover:bg-foreground/8'
+          isUncategorizedPage ? 'bg-primary/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
         }`}
         style={{
           backgroundColor: isOver ? 'rgba(59, 130, 246, 0.1)' : undefined,
@@ -377,9 +375,7 @@ export function TagsSidebar({
             type="button"
             onClick={handleArchiveClick}
             className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-              isArchivePage
-                ? 'bg-primary/12 text-foreground'
-                : 'text-muted-foreground hover:bg-foreground/8'
+              isArchivePage ? 'bg-primary/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
             }`}
           >
             <div className="flex items-center justify-between gap-2">
