@@ -87,7 +87,7 @@ describe('InboxBoardView', () => {
         items: [],
         plans: [],
         isLoading: false,
-        error: mockError as any,
+        error: mockError as unknown as Error,
       })
 
       render(<InboxBoardView />)

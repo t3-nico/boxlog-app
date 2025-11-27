@@ -56,26 +56,39 @@ export function validateConfig(
 /**
  * ⚠️ 警告の生成
  */
+// 型安全なプロパティアクセスヘルパー
+function getNestedProperty(obj: unknown, ...keys: string[]): unknown {
+  let current: unknown = obj
+  for (const key of keys) {
+    if (current && typeof current === 'object' && key in current) {
+      current = (current as Record<string, unknown>)[key]
+    } else {
+      return undefined
+    }
+  }
+  return current
+}
+
 export function generateWarnings(config: Record<string, unknown>, _strict: boolean, environment: string): string[] {
   const warnings: string[] = []
 
   // 本番環境でのデバッグモード警告
-  if (environment === 'production' && (config.app as any)?.debug === true) {
+  if (environment === 'production' && getNestedProperty(config, 'app', 'debug') === true) {
     warnings.push('Debug mode is enabled in production environment')
   }
 
   // SSL無効化警告
-  if (environment !== 'development' && (config.database as any)?.ssl === false) {
+  if (environment !== 'development' && getNestedProperty(config, 'database', 'ssl') === false) {
     warnings.push('Database SSL is disabled in non-development environment')
   }
 
   // 機能フラグ警告
-  if ((config.features as any)?.debugMode === true && environment === 'production') {
+  if (getNestedProperty(config, 'features', 'debugMode') === true && environment === 'production') {
     warnings.push('Debug mode feature flag is enabled in production')
   }
 
   // セッションセキュリティ警告
-  if ((config.server as any)?.session?.secure === false && environment === 'production') {
+  if (getNestedProperty(config, 'server', 'session', 'secure') === false && environment === 'production') {
     warnings.push('Session secure flag is disabled in production')
   }
 
