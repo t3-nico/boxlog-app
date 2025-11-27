@@ -43,7 +43,7 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
         <PlanCreatePopover
           triggerElement={
             <button className="flex flex-col items-center gap-1" type="button">
-              <div className="hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring flex h-10 w-10 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none">
+              <div className="hover:bg-foreground/8 focus-visible:ring-ring flex h-10 w-10 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none">
                 <Plus className="h-5 w-5 shrink-0" aria-hidden="true" />
               </div>
               <span className="text-center text-[11px] leading-tight">{t('actions.create')}</span>
