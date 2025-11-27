@@ -124,14 +124,14 @@ const TagTreeNode = ({
     <div className="relative">
       {/* タグノード */}
       <div
-        className={`group flex items-center gap-2 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${indentClass}`}
+        className={`group flex items-center gap-2 rounded-lg px-3 py-2 transition-colors hover:bg-foreground/8 ${indentClass}`}
         style={{ paddingLeft: `${level * 20 + 12}px` }}
       >
         {/* 展開/折りたたみアイコン */}
         <button
           type="button"
           onClick={handleToggleExpanded}
-          className={`flex-shrink-0 rounded p-1 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700 ${
+          className={`flex-shrink-0 rounded p-1 transition-colors hover:bg-foreground/8 active:bg-foreground/12 ${
             hasChildren ? 'visible' : 'invisible'
           }`}
         >
@@ -180,7 +180,7 @@ const TagTreeNode = ({
             <button
               type="button"
               onClick={handleCreateChildTag}
-              className="rounded p-1 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-400"
+              className="text-primary/70 hover:bg-primary/8 hover:text-primary rounded p-1 transition-colors"
               title="タグを追加"
             >
               <PlusIcon className="h-4 w-4" data-slot="icon" />
@@ -191,7 +191,7 @@ const TagTreeNode = ({
               <button
                 type="button"
                 onClick={handleToggleMenu}
-                className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                className="text-muted-foreground hover:bg-foreground/8 hover:text-foreground rounded p-1 transition-colors"
               >
                 <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
               </button>
@@ -202,7 +202,7 @@ const TagTreeNode = ({
                   <button
                     type="button"
                     onClick={handleEditTag}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                    className="text-foreground hover:bg-foreground/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <PencilIcon className="h-4 w-4" data-slot="icon" />
                     {t('tags.actions.edit')}
@@ -210,7 +210,7 @@ const TagTreeNode = ({
                   <button
                     type="button"
                     onClick={handleStartEdit}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
+                    className="text-foreground hover:bg-foreground/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <PencilIcon className="h-4 w-4" data-slot="icon" />
                     {t('tags.actions.rename')}
@@ -300,7 +300,7 @@ export const TagTreeView = ({
         <button
           type="button"
           onClick={handleCreateRootTag}
-          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+          className="bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88 inline-flex items-center gap-2 rounded-lg px-4 py-2 transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
           {t('tags.actions.createFirst')}
@@ -319,7 +319,7 @@ export const TagTreeView = ({
         <button
           type="button"
           onClick={handleCreateRootTag}
-          className="inline-flex items-center gap-1 rounded px-2 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
+          className="text-primary hover:bg-primary/8 active:bg-primary/12 inline-flex items-center gap-1 rounded px-2 py-1 text-sm transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
           {t('tags.messages.newTag')}

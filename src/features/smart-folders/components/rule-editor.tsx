@@ -267,7 +267,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                       <select
                         value={rule.logic}
                         onChange={(e) => updateRule(index, { ...rule, logic: e.target.value as 'AND' | 'OR' })}
-                        className="border-border rounded-md border bg-white px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                        className="border-border bg-card text-foreground hover:bg-foreground/8 rounded-md border px-3 py-1 text-xs font-medium"
                       >
                         <option value="AND">AND</option>
                         <option value="OR">OR</option>
