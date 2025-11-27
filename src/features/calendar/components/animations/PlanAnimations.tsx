@@ -201,14 +201,14 @@ export const CreatingEventPreview = ({
           <button
             type="button"
             onClick={handleConfirm}
-            className="rounded bg-blue-500 px-2 py-1 text-xs text-white transition-colors hover:bg-blue-600"
+            className="bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88 rounded px-2 py-1 text-xs transition-colors"
           >
             Save
           </button>
           <button
             type="button"
             onClick={handleCancel}
-            className="rounded bg-gray-500 px-2 py-1 text-xs text-white transition-colors hover:bg-gray-600"
+            className="bg-secondary text-secondary-foreground hover:bg-secondary/92 active:bg-secondary/88 rounded px-2 py-1 text-xs transition-colors"
           >
             Cancel
           </button>

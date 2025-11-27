@@ -267,10 +267,10 @@ export const AccessibleCalendarGrid = ({
                   {...getCellAriaProps(date, slot.time, dateIndex + 2)}
                   className={cn(
                     'border-border relative flex-1 border-r p-1',
-                    'hover:bg-gray-50 focus:bg-blue-50 focus:outline-none',
+                    'hover:bg-foreground/8 focus:bg-primary/12 focus:outline-none',
                     navigationState.selectedDate.toDateString() === date.toDateString() &&
                       navigationState.selectedTime === slot.time &&
-                      'bg-blue-100 ring-2 ring-blue-500 ring-inset'
+                      'bg-primary/12 ring-primary ring-2 ring-inset'
                   )}
                   onClick={() => {
                     onNavigateDate(date)

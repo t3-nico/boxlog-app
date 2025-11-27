@@ -46,10 +46,10 @@ const AccessibilityHeader = ({
       type="button"
       onClick={onClose}
       className={cn(
-        'rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600',
+        'hover:bg-foreground/8 active:bg-foreground/12 text-muted-foreground hover:text-foreground rounded-md p-2',
         'focus:ring-2 focus:ring-blue-500 focus:outline-none',
         getContrastClassName(
-          'text-gray-400 hover:bg-gray-100 hover:text-gray-600',
+          'text-muted-foreground hover:text-foreground',
           'contrast-text hover:contrast-selected focus:contrast-focus'
         )
       )}
@@ -201,14 +201,14 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
                     key={theme.key}
                     className={cn(
                       'relative flex cursor-pointer items-center rounded-lg border p-4',
-                      'focus-within:ring-2 focus-within:ring-blue-500 hover:bg-gray-50',
+                      'hover:bg-foreground/8 focus-within:ring-2 focus-within:ring-blue-500',
                       selectedTheme === theme.key
                         ? getContrastClassName(
-                            'border-blue-500 bg-blue-50',
+                            'border-primary bg-primary/12',
                             'contrast-selected contrast-border border-2'
                           )
                         : getContrastClassName('border-border', 'contrast-border'),
-                      getContrastClassName('hover:bg-gray-50', 'hover:contrast-selected')
+                      getContrastClassName('hover:bg-foreground/8', 'hover:contrast-selected')
                     )}
                   >
                     <input
@@ -408,9 +408,9 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
               onClick={onClose}
               className={cn(
                 'border-border bg-background text-foreground rounded-md border px-4 py-2 text-sm font-medium',
-                'hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none',
+                'hover:bg-foreground/8 active:bg-foreground/12 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none',
                 getContrastClassName(
-                  'border-border bg-background text-foreground hover:bg-muted',
+                  'border-border bg-background text-foreground',
                   'contrast-text contrast-bg contrast-border hover:contrast-selected focus:contrast-focus'
                 )
               )}
