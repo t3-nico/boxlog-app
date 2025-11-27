@@ -81,7 +81,7 @@ export default function StatsPage() {
           <CardContent>
             <div className="text-2xl font-bold">245</div>
             <p className="text-muted-foreground text-xs">
-              <Badge className="bg-green-600 hover:bg-green-700">+12%</Badge> {t('stats.overview.comparedToLastWeek')}
+              <Badge className="bg-success text-success-foreground hover:bg-success/92">+12%</Badge> {t('stats.overview.comparedToLastWeek')}
             </p>
           </CardContent>
         </Card>
@@ -94,7 +94,7 @@ export default function StatsPage() {
           <CardContent>
             <div className="text-2xl font-bold">32.5h</div>
             <p className="text-muted-foreground text-xs">
-              <Badge className="bg-green-600 hover:bg-green-700">+5%</Badge> {t('stats.overview.comparedToLastWeek')}
+              <Badge className="bg-success text-success-foreground hover:bg-success/92">+5%</Badge> {t('stats.overview.comparedToLastWeek')}
             </p>
           </CardContent>
         </Card>
