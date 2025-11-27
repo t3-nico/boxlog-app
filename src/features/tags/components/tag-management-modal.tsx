@@ -213,7 +213,7 @@ export const TagManagementModal = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="rounded-lg p-1 transition-colors hover:bg-foreground/8"
           >
             <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
           </button>
@@ -293,7 +293,7 @@ export const TagManagementModal = ({
                 type="button"
                 onClick={handleCreateTag}
                 disabled={!newTagName.trim()}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-gray-600"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-primary-foreground transition-colors hover:bg-primary/92 active:bg-primary/88 disabled:cursor-not-allowed disabled:opacity-[0.38]"
               >
                 <Plus className="h-4 w-4" />
                 Create Tag
@@ -361,14 +361,14 @@ export const TagManagementModal = ({
                           <button
                             type="button"
                             onClick={handleSaveEdit}
-                            className="rounded p-1 text-green-600 transition-colors hover:bg-green-100 dark:hover:bg-green-900"
+                            className="rounded p-1 text-success transition-colors hover:bg-success/8"
                           >
                             <Check className="h-4 w-4" />
                           </button>
                           <button
                             type="button"
                             onClick={handleCancelEdit}
-                            className="rounded p-1 text-gray-500 transition-colors hover:bg-gray-100 dark:hover:bg-gray-600"
+                            className="rounded p-1 text-muted-foreground transition-colors hover:bg-foreground/8"
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -391,7 +391,7 @@ export const TagManagementModal = ({
                             type="button"
                             onClick={handleEditClick}
                             data-tag-id={tag.id}
-                            className="rounded p-1 text-blue-600 transition-colors hover:bg-blue-100 dark:hover:bg-blue-900"
+                            className="rounded p-1 text-primary transition-colors hover:bg-primary/8"
                             title="Edit tag"
                           >
                             <Edit2 className="h-3 w-3" />
@@ -421,7 +421,7 @@ export const TagManagementModal = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-4 py-2 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+            className="rounded-lg px-4 py-2 text-foreground transition-colors hover:bg-foreground/8"
           >
             Done
           </button>

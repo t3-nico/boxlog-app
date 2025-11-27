@@ -401,7 +401,7 @@ export const SmartFolderList = ({
         <button
           type="button"
           onClick={toggleExpanded}
-          className="section-header-toggle mb-2 flex items-center rounded px-2 text-xs/6 font-medium text-zinc-500 transition-colors hover:bg-zinc-950/5 dark:text-zinc-400 dark:hover:bg-white/5"
+          className="section-header-toggle mb-2 flex items-center rounded px-2 text-xs/6 font-medium text-muted-foreground transition-colors hover:bg-foreground/8"
         >
           <span className="peer">Smart Folders</span>
           <span className="ml-1 opacity-0 transition-opacity peer-hover:opacity-100">
