@@ -2,7 +2,7 @@
 
 import React, { ReactNode, createContext, useContext, useEffect, useRef, useState } from 'react'
 
-import { AnimatePresence, LayoutGroup, motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion'
+import { AnimatePresence, LayoutGroup, motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react'
 
 import { cn } from '@/lib/utils'
 
@@ -544,7 +544,7 @@ export const StaggeredAnimation = ({ children, staggerDelay = 0.05, className }:
       opacity: 1,
       transition: {
         duration: prefersReducedMotion ? 0.1 : 0.3,
-        ease: [0.4, 0.0, 0.2, 1],
+        ease: [0.4, 0.0, 0.2, 1] as [number, number, number, number],
       },
     },
   }

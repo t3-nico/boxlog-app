@@ -49,7 +49,7 @@ export function useOfflineSync() {
 
   const [currentConflict, setCurrentConflict] = useState<ConflictContext | null>(null)
   const [isConflictModalOpen, setIsConflictModalOpen] = useState(false)
-  const updateTimeoutRef = useRef<NodeJS.Timeout>()
+  const updateTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
 
   // 状態の更新
   const updateState = useCallback(async () => {

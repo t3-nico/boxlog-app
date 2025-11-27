@@ -9,7 +9,7 @@ interface RecurrencePopoverProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onRepeatTypeChange: (type: string) => void
-  triggerRef: React.RefObject<HTMLElement>
+  triggerRef: React.RefObject<HTMLElement | null>
   recurrenceRule: string | null // RRULE文字列
   onRecurrenceRuleChange: (rrule: string | null) => void
   placement?: 'bottom' | 'right' | 'left' // ポップアップの表示位置

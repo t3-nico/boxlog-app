@@ -20,7 +20,7 @@ interface RecurrenceDialogProps {
   onChange: (rrule: string | null) => void
   open: boolean
   onOpenChange: (open: boolean) => void
-  triggerRef?: React.RefObject<HTMLElement>
+  triggerRef?: React.RefObject<HTMLElement | null>
   placement?: 'bottom' | 'right' | 'left' // ポップアップの表示位置
 }
 
