@@ -19,7 +19,6 @@
 import { useEffect, useState } from 'react'
 
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { logger } from '@/lib/logger'
 import { useCalendarRealtime } from '@/features/calendar/hooks/useCalendarRealtime'
 import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime'
 import { usePlanRealtime } from '@/features/plans/hooks/usePlanRealtime'
@@ -41,14 +40,14 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
   const userId = useAuthStore((state) => state.user?.id)
   const [isReady, setIsReady] = useState(false)
 
-  logger.debug('[RealtimeProvider] userId:', userId, 'isReady:', isReady)
+  console.debug('[RealtimeProvider] userId:', userId, 'isReady:', isReady)
 
   // AuthStoreの初期化を待つ
   useEffect(() => {
     // 少し遅延させてAuthStoreの初期化を確実に待つ
     const timer = setTimeout(() => {
       setIsReady(true)
-      logger.debug('[RealtimeProvider] Ready. userId:', userId)
+      console.debug('[RealtimeProvider] Ready. userId:', userId)
     }, 100)
 
     return () => clearTimeout(timer)

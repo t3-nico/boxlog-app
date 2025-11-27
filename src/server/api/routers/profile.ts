@@ -6,7 +6,6 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 import type { Database } from '@/types/supabase'
@@ -45,7 +44,7 @@ export const profileRouter = createTRPCRouter({
       const { data, error } = await supabase.from('profiles').update(updateData).eq('id', userId).select().single()
 
       if (error) {
-        logger.error('Profile update error:', error)
+        console.error('Profile update error:', error)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `プロフィールの更新に失敗しました: ${error.message}`,
@@ -61,7 +60,7 @@ export const profileRouter = createTRPCRouter({
       })
 
       if (authError) {
-        logger.error('Auth metadata update error:', authError)
+        console.error('Auth metadata update error:', authError)
         // user_metadataの更新失敗はエラーにしない（profilesが更新されていればOK）
       }
 
@@ -89,7 +88,7 @@ export const profileRouter = createTRPCRouter({
     const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single()
 
     if (error) {
-      logger.error('Profile fetch error:', error)
+      console.error('Profile fetch error:', error)
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: `プロフィールの取得に失敗しました: ${error.message}`,

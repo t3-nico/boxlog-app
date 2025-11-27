@@ -2,7 +2,6 @@
 'use client'
 
 // import { Event } from '@/features/events/types/events'
-import { logger } from '@/lib/logger'
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
 import { TrashItemType } from '@/features/trash/types/trash'
 import { SmartFolder } from '@/types/smart-folders'
@@ -36,11 +35,11 @@ export const useDelete = () => {
       // これはstoreごとに異なる削除処理が必要なため
 
       // 4. 成功ログ（将来的にtoast通知に変更）
-      logger.debug(`"${item.name || item.title}" moved to trash`)
+      console.debug(`"${item.name || item.title}" moved to trash`)
 
       return true
     } catch (error) {
-      logger.error('Failed to delete item:', error)
+      console.error('Failed to delete item:', error)
       throw error
     }
   }

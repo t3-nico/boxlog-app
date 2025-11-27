@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
-import { logger } from '@/lib/logger'
 import { CreateTagInput, Tag, UpdateTagInput } from '@/types/tags'
 import { Task } from '@/types/unified'
 
@@ -172,7 +171,7 @@ export const useTagStore = create<TagStore>()(
             set({ tags: [...tags, newTag] })
             return true
           } catch (error) {
-            logger.error('Failed to add tag:', error)
+            console.error('Failed to add tag:', error)
             return false
           }
         },
@@ -191,7 +190,7 @@ export const useTagStore = create<TagStore>()(
             }))
             return true
           } catch (error) {
-            logger.error('Failed to update tag:', error)
+            console.error('Failed to update tag:', error)
             return false
           }
         },
@@ -210,7 +209,7 @@ export const useTagStore = create<TagStore>()(
             }))
             return true
           } catch (error) {
-            logger.error('Failed to delete tag:', error)
+            console.error('Failed to delete tag:', error)
             return false
           }
         },

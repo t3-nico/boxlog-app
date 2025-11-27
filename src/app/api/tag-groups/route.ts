@@ -6,7 +6,6 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError } from '@/lib/supabase/utils'
 import type { CreateTagGroupInput } from '@/types/tags'
@@ -25,7 +24,7 @@ export async function GET() {
       error: authError,
     } = await supabase.auth.getUser()
     if (authError || !user) {
-      logger.error('[tag-groups GET] Auth error:', authError)
+      console.error('[tag-groups GET] Auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -38,14 +37,14 @@ export async function GET() {
       .order('created_at', { ascending: true })
 
     if (error) {
-      logger.error('[tag-groups GET] Supabase error:', error)
+      console.error('[tag-groups GET] Supabase error:', error)
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
     }
 
-    logger.debug('[tag-groups GET] Success - returning data:', JSON.stringify(data, null, 2))
+    console.debug('[tag-groups GET] Success - returning data:', JSON.stringify(data, null, 2))
     return NextResponse.json({ data })
   } catch (error) {
-    logger.error('[tag-groups GET] Unexpected error:', error)
+    console.error('[tag-groups GET] Unexpected error:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }
@@ -66,7 +65,7 @@ export async function POST(request: NextRequest) {
       error: authError,
     } = await supabase.auth.getUser()
     if (authError || !user) {
-      logger.error('[tag-groups POST] Auth error:', authError)
+      console.error('[tag-groups POST] Auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -74,7 +73,7 @@ export async function POST(request: NextRequest) {
 
     // バリデーション
     if (!body.name) {
-      logger.error('[tag-groups POST] Validation error: missing name')
+      console.error('[tag-groups POST] Validation error: missing name')
       return NextResponse.json({ error: 'Name is required' }, { status: 400 })
     }
 
@@ -100,13 +99,13 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabase.from('tag_groups').insert(insertData).select().single()
 
     if (error) {
-      logger.error('[tag-groups POST] Supabase error:', error)
+      console.error('[tag-groups POST] Supabase error:', error)
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
     }
 
     return NextResponse.json({ data }, { status: 201 })
   } catch (error) {
-    logger.error('[tag-groups POST] Unexpected error:', error)
+    console.error('[tag-groups POST] Unexpected error:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }

@@ -6,7 +6,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
-import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError } from '@/lib/supabase/utils'
 
@@ -31,7 +30,7 @@ export async function PATCH(request: NextRequest) {
       error: authError,
     } = await supabase.auth.getUser()
     if (authError || !user) {
-      logger.error('[tag-groups/reorder PATCH] Auth error:', authError)
+      console.error('[tag-groups/reorder PATCH] Auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -40,7 +39,7 @@ export async function PATCH(request: NextRequest) {
     const validation = reorderSchema.safeParse(body)
 
     if (!validation.success) {
-      logger.error('[tag-groups/reorder PATCH] Validation error:', validation.error)
+      console.error('[tag-groups/reorder PATCH] Validation error:', validation.error)
       return NextResponse.json({ error: validation.error.errors[0]?.message || 'Invalid request' }, { status: 400 })
     }
 
@@ -63,17 +62,17 @@ export async function PATCH(request: NextRequest) {
     // エラーチェック
     const errors = results.filter((result) => result.error)
     if (errors.length > 0) {
-      logger.error('[tag-groups/reorder PATCH] Update errors:', errors)
+      console.error('[tag-groups/reorder PATCH] Update errors:', errors)
       return NextResponse.json({ error: handleSupabaseError(errors[0]!.error!) }, { status: 500 })
     }
 
     // 更新されたグループを返却
     const updatedGroups = results.map((result) => result.data).filter(Boolean)
 
-    logger.debug('[tag-groups/reorder PATCH] Success - updated groups:', updatedGroups.length)
+    console.debug('[tag-groups/reorder PATCH] Success - updated groups:', updatedGroups.length)
     return NextResponse.json({ data: updatedGroups })
   } catch (error) {
-    logger.error('[tag-groups/reorder PATCH] Unexpected error:', error)
+    console.error('[tag-groups/reorder PATCH] Unexpected error:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }

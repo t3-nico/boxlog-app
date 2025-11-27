@@ -16,7 +16,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { logger } from '@/lib/logger'
 import { toast } from 'sonner'
 
 /**
@@ -50,7 +49,7 @@ export function AccountDeletionDialog() {
     setIsDeleting(true)
 
     try {
-      logger.info('Account deletion initiated', {
+      console.info('Account deletion initiated', {
         component: 'account-deletion-dialog',
       })
 
@@ -76,7 +75,7 @@ export function AccountDeletionDialog() {
         return
       }
 
-      logger.info('Account deletion scheduled', {
+      console.info('Account deletion scheduled', {
         component: 'account-deletion-dialog',
         scheduledDate: data.scheduledDeletionDate,
       })
@@ -89,7 +88,7 @@ export function AccountDeletionDialog() {
         window.location.href = '/auth/signout'
       }, 5000)
     } catch (error) {
-      logger.error('Account deletion failed', error as Error, {
+      console.error('Account deletion failed', error as Error, {
         component: 'account-deletion-dialog',
       })
 

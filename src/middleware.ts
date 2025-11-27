@@ -1,7 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
 import { defaultLocale, LOCALE_COOKIE, locales } from '@/features/i18n/lib'
-import { logger } from '@/lib/logger'
 import { updateSession } from '@/lib/supabase/middleware'
 import type { Locale } from '@/types/i18n'
 
@@ -135,7 +134,7 @@ async function middleware(request: NextRequest) {
 
     // 未認証でprotectedPathにアクセスした場合
     if (!user && isProtectedPath) {
-      logger.log('[Middleware] Redirecting to login:', request.nextUrl.pathname)
+      console.log('[Middleware] Redirecting to login:', request.nextUrl.pathname)
       // ログインページにリダイレクト（元のURLを保持）
       const loginUrl = new URL(`/${currentLocale}/auth/login`, request.url)
       loginUrl.searchParams.set('redirect', pathWithoutLocale)
@@ -147,13 +146,13 @@ async function middleware(request: NextRequest) {
     const isMFAVerifyPath = pathWithoutLocale === '/auth/mfa-verify'
 
     if (user && isAuthPath && !isMFAVerifyPath) {
-      logger.log('[Middleware] Redirecting to calendar:', request.nextUrl.pathname)
+      console.log('[Middleware] Redirecting to calendar:', request.nextUrl.pathname)
       return NextResponse.redirect(new URL(`/${currentLocale}/calendar`, request.url))
     }
 
     return response
   } catch (error) {
-    logger.error('Middleware error:', error)
+    console.error('Middleware error:', error)
 
     // エラーが発生した場合は、静的ページ以外はログインにリダイレクト
     const isStaticPath =
