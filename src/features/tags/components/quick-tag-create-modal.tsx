@@ -101,9 +101,9 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg p-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="hover:bg-foreground/8 active:bg-foreground/12 rounded-lg p-1 transition-colors"
           >
-            <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+            <X className="text-muted-foreground h-4 w-4" />
           </button>
         </div>
 
@@ -159,7 +159,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg px-4 py-2 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+            className="text-muted-foreground hover:bg-foreground/8 active:bg-foreground/12 rounded-lg px-4 py-2 transition-colors"
           >
             Cancel
           </button>
@@ -167,7 +167,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
             type="button"
             onClick={handleCreateTag}
             disabled={!tagName.trim()}
-            className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-gray-600"
+            className="bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88 disabled:opacity-[0.38] flex items-center gap-2 rounded-lg px-4 py-2 transition-colors disabled:cursor-not-allowed"
           >
             <Plus className="h-4 w-4" />
             Create Tag

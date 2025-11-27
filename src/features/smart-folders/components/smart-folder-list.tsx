@@ -113,7 +113,7 @@ const SortableSmartFolderItem = ({
         'group flex cursor-pointer items-center justify-between rounded-md px-2 py-2 transition-colors duration-150',
         {
           'smart-folder-item-active': isActive,
-          'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800': !isActive,
+          'text-foreground hover:bg-foreground/8': !isActive,
           'opacity-50': !folder.isActive,
         }
       )}
@@ -128,7 +128,7 @@ const SortableSmartFolderItem = ({
           <div
             {...attributes}
             {...listeners}
-            className="cursor-move text-gray-400 opacity-0 transition-opacity group-hover:opacity-100 hover:text-gray-600 dark:hover:text-gray-300"
+            className="text-muted-foreground hover:text-foreground cursor-move opacity-0 transition-opacity group-hover:opacity-100"
           >
             <Bars3Icon className="h-4 w-4" data-slot="icon" />
           </div>
@@ -164,7 +164,7 @@ const SortableSmartFolderItem = ({
             <button
               type="button"
               onClick={handleMenuButtonClick}
-              className="rounded p-2 opacity-0 transition-all group-hover:opacity-100 hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="hover:bg-foreground/8 active:bg-foreground/12 rounded p-2 opacity-0 transition-all group-hover:opacity-100"
             >
               <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
             </button>
@@ -415,9 +415,9 @@ export const SmartFolderList = ({
         <button
           type="button"
           onClick={openCreateDialog}
-          className="section-header-button rounded p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
+          className="section-header-button hover:bg-foreground/8 active:bg-foreground/12 rounded p-2 transition-colors"
         >
-          <PlusIcon className="h-4 w-4 text-gray-400" data-slot="icon" />
+          <PlusIcon className="text-muted-foreground h-4 w-4" data-slot="icon" />
         </button>
       </div>
 

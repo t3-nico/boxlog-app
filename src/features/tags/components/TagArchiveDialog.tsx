@@ -111,7 +111,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isArchiving}
-            className="bg-yellow-600 text-white hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600"
+            className="bg-warning text-warning-foreground hover:bg-warning/92 active:bg-warning/88"
           >
             {isArchiving ? 'アーカイブ中...' : 'アーカイブ'}
           </AlertDialogAction>

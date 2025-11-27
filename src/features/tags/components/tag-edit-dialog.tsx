@@ -160,8 +160,8 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                             onClick={() => setIcon(iconName as TagIconName)}
                             className={`rounded-md p-2 transition-all ${
                               icon === iconName
-                                ? 'border-2 border-blue-300 bg-blue-100 dark:border-blue-600 dark:bg-blue-900/30'
-                                : 'border-border border bg-white hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600'
+                                ? 'border-2 border-primary bg-primary/12'
+                                : 'border-border hover:bg-foreground/8 active:bg-foreground/12 border bg-card'
                             }`}
                             title={iconName}
                           >

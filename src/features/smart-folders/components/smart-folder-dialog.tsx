@@ -133,7 +133,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
               <button
                 type="button"
                 onClick={() => setShowPreview(!showPreview)}
-                className="border-border flex items-center gap-2 rounded-md border bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                className="border-border bg-card text-foreground hover:bg-foreground/8 active:bg-foreground/12 flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors"
               >
                 <EyeIcon className="h-4 w-4" />
                 {showPreview ? 'Hide Preview' : 'Show Preview'}
@@ -142,7 +142,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-md p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                className="text-muted-foreground hover:bg-foreground/8 hover:text-foreground rounded-md p-2 transition-colors"
               >
                 <XMarkIcon className="h-5 w-5" />
               </button>
@@ -266,7 +266,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="border-border rounded-md border bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              className="border-border bg-card text-foreground hover:bg-foreground/8 active:bg-foreground/12 disabled:opacity-[0.38] rounded-md border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed"
             >
               Cancel
             </button>
@@ -275,7 +275,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
               type="submit"
               onClick={handleSubmit}
               disabled={isLoading || !formData.name.trim()}
-              className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88 disabled:opacity-[0.38] flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>

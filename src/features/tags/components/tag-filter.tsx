@@ -32,7 +32,7 @@ const TagFilterItem = ({ tag, level, isSelected, onToggle }: TagFilterItemProps)
   return (
     <div>
       <label
-        className={`flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-gray-50 dark:hover:bg-gray-700`}
+        className={`hover:bg-foreground/8 active:bg-foreground/12 flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors`}
         style={{ paddingLeft: `${paddingLeft}px` }}
       >
         <input
@@ -140,7 +140,7 @@ export const TagFilter = ({
               <button
                 type="button"
                 onClick={createRemoveTagHandler(tag.id)}
-                className="ml-1 text-blue-500 hover:text-blue-700 dark:hover:text-blue-200"
+                className="text-primary/70 hover:text-primary ml-1 transition-colors"
                 aria-label={`Remove ${tag.name} filter`}
               >
                 <XMarkIcon className="h-4 w-4" />
@@ -172,7 +172,7 @@ export const TagFilter = ({
                 <button
                   type="button"
                   onClick={clearTags}
-                  className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
+                  className="text-primary hover:text-primary/80 text-xs transition-colors"
                 >
                   Clear all
                 </button>
@@ -241,8 +241,8 @@ export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
       onClick={handleToggle}
       className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
         isSelected
-          ? 'border border-blue-300 bg-blue-100 text-blue-700 dark:border-blue-600 dark:bg-blue-900/30 dark:text-blue-300'
-          : 'border-border border bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+          ? 'border-primary bg-primary/12 text-primary border'
+          : 'border-border bg-muted text-foreground hover:bg-foreground/8 active:bg-foreground/12 border'
       }`}
     >
       <TagIcon className="h-4 w-4" style={{ color: tag.color }} />

@@ -324,7 +324,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                     <button
                       type="button"
                       onClick={() => removeRule(index)}
-                      className="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600 dark:hover:bg-gray-700 dark:hover:text-red-400"
+                      className="text-muted-foreground hover:bg-destructive/8 hover:text-destructive rounded p-2 transition-colors"
                     >
                       <TrashIcon className="h-4 w-4" data-slot="icon" />
                     </button>
@@ -349,7 +349,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
       <button
         type="button"
         onClick={addRule}
-        className="border-border flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed py-3 text-gray-700 transition-colors hover:border-blue-500 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"
+        className="border-border text-muted-foreground hover:border-primary hover:text-primary flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed py-3 transition-colors"
       >
         <PlusIcon className="h-4 w-4" data-slot="icon" />
         Add Filter Rule
