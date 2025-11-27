@@ -93,7 +93,9 @@ export const usePerformanceStats = (componentName: string, enabled = false) => {
 
     // 5回に1回統計を出力
     if (times.length % 5 === 0) {
-      console.debug(`${componentName} Performance Stats - Average: ${average.toFixed(2)}ms, Max: ${max.toFixed(2)}ms, Min: ${min.toFixed(2)}ms, Recent: ${times.map((t) => t.toFixed(1)).join(', ')}ms`)
+      console.debug(
+        `${componentName} Performance Stats - Average: ${average.toFixed(2)}ms, Max: ${max.toFixed(2)}ms, Min: ${min.toFixed(2)}ms, Recent: ${times.map((t) => t.toFixed(1)).join(', ')}ms`
+      )
     }
   })
 
