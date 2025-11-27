@@ -76,17 +76,17 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
 
       {/* コンテンツ */}
       <nav className="flex-1 overflow-y-auto px-2 py-2">
-        <div>
+        <div className="space-y-1">
           {/* デフォルトビュー */}
           {defaultViews.map((view) => (
             <button
               key={view.id}
               type="button"
               onClick={() => handleViewClick(view.id)}
-              className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
+              className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
                 currentViewId === view.id
                   ? 'bg-accent text-accent-foreground'
-                  : 'hover:bg-accent hover:text-accent-foreground'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               }`}
             >
               <div className="flex items-center justify-between gap-2">
@@ -108,7 +108,7 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
           {/* 保存済みビューセクション */}
           {savedViews.length > 0 && (
             <>
-              <div className="text-muted-foreground mt-4 mb-2 flex items-center justify-between pr-1 pl-3">
+              <div className="text-muted-foreground mt-4 mb-1 flex items-center justify-between px-3 py-2">
                 <span className="text-xs font-semibold uppercase">保存済みビュー</span>
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
@@ -134,10 +134,10 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
                   key={view.id}
                   type="button"
                   onClick={() => handleViewClick(view.id)}
-                  className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
+                  className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
                     currentViewId === view.id
                       ? 'bg-accent text-accent-foreground'
-                      : 'hover:bg-accent hover:text-accent-foreground'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">

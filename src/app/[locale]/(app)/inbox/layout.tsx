@@ -16,6 +16,9 @@ interface InboxLayoutProps {
  *
  * Sidebar + メインコンテンツの2カラムレイアウト
  * URLパスからactiveViewIdを同期
+ *
+ * モバイルではSidebarはMobileLayoutのSheetで表示されるため、
+ * ここではデスクトップのみ表示
  */
 export default function InboxLayout({ children }: InboxLayoutProps) {
   const pathname = usePathname()
@@ -61,8 +64,8 @@ export default function InboxLayout({ children }: InboxLayoutProps) {
 
   return (
     <div className="flex h-full">
-      {/* 左: Sidebar */}
-      <div className="border-border w-64 shrink-0 border-r">
+      {/* 左: Sidebar（デスクトップのみ表示） */}
+      <div className="border-border hidden w-64 shrink-0 border-r md:block">
         <InboxSidebar activeplansCount={activePlansCount} archivedplansCount={archivedPlansCount} />
       </div>
 

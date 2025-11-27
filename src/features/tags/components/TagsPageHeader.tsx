@@ -2,6 +2,8 @@
 
 import type { ReactNode } from 'react'
 
+import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton'
+
 interface TagsPageHeaderProps {
   title: string
   count?: number
@@ -27,6 +29,9 @@ interface TagsPageHeaderProps {
 export function TagsPageHeader({ title, count, actions }: TagsPageHeaderProps) {
   return (
     <div className="bg-background flex h-12 shrink-0 items-end px-4 pt-2">
+      {/* モバイル: ハンバーガーメニュー */}
+      <MobileMenuButton className="mr-2 md:hidden" />
+
       {/* タイトルコンテナ（40px） */}
       <div className="flex h-10 flex-1 items-center gap-1 overflow-hidden">
         <h1 className="truncate text-base font-semibold">{title}</h1>

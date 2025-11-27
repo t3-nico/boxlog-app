@@ -67,7 +67,7 @@ export function CalendarSidebar() {
       content: (
         <>
           {/* ナビゲーションコンテナ: コンテナ40px + 上padding 8px = 合計48px */}
-          <div className="flex h-12 shrink-0 items-center px-4 pt-2">
+          <div className="flex h-12 shrink-0 items-center px-2 pt-2">
             <CalendarNavigation
               sort={calendarSort}
               onSortChange={setCalendarSort}
@@ -77,7 +77,7 @@ export function CalendarSidebar() {
             />
           </div>
           {/* カードリストコンテナ */}
-          <div className="flex-1 overflow-hidden px-4">
+          <div className="flex-1 overflow-hidden px-2">
             <InboxCardList
               filter={filter}
               sort={sort}
@@ -97,7 +97,7 @@ export function CalendarSidebar() {
       value: 'view',
       label: 'View',
       content: (
-        <div className="flex w-full flex-col items-center px-2 pt-4">
+        <div className="flex w-full flex-col items-center px-2 pt-2">
           <MiniCalendar
             selectedDate={navigation?.currentDate}
             month={navigation?.currentDate}

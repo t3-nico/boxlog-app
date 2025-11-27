@@ -12,7 +12,7 @@
     "dev": "NODE_OPTIONS='--max-old-space-size=12288' next dev",
     "dev:safe": "./scripts/dev-server-guard.sh",
     "dev:kill": "lsof -ti:3000 | xargs kill -9 2>/dev/null || echo 'No server running'",
-    "prebuild": "tsx scripts/generate-licenses.ts",
+    "prebuild": "if [ \"$VERCEL_ENV\" = \"production\" ] || [ -z \"$VERCEL\" ]; then tsx scripts/generate-licenses.ts; else echo 'Skipping license generation for preview deployment'; fi",
     "build": "NODE_OPTIONS='--max-old-space-size=12288' next build",
     "start": "next start",
     "lint": "eslint . --max-warnings 30",
