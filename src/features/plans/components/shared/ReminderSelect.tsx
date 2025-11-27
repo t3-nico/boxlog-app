@@ -114,7 +114,7 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
                 {index === 1 && <div key="separator" className="border-border my-1 border-t" />}
                 <button
                   key={option.value}
-                  className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                  className="hover:bg-foreground/8 w-full rounded-sm px-2 py-1.5 text-left text-sm"
                   onClick={() => {
                     onChange(option.value)
                     setShowPopover(false)

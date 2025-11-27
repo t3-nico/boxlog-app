@@ -91,7 +91,7 @@ export function RecurrencePopover({
           >
             <div className="p-1">
               <button
-                className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-foreground/8 w-full rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   onRepeatTypeChange('')
                   onOpenChange(false)
@@ -102,7 +102,7 @@ export function RecurrencePopover({
               </button>
               <div className="border-border my-1 border-t" />
               <button
-                className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-foreground/8 w-full rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   onRepeatTypeChange('毎日')
                   onOpenChange(false)
@@ -112,7 +112,7 @@ export function RecurrencePopover({
                 毎日
               </button>
               <button
-                className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-foreground/8 w-full rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   onRepeatTypeChange('毎週')
                   onOpenChange(false)
@@ -122,7 +122,7 @@ export function RecurrencePopover({
                 毎週
               </button>
               <button
-                className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-foreground/8 w-full rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   onRepeatTypeChange('毎月')
                   onOpenChange(false)
@@ -132,7 +132,7 @@ export function RecurrencePopover({
                 毎月
               </button>
               <button
-                className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-foreground/8 w-full rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   onRepeatTypeChange('毎年')
                   onOpenChange(false)
@@ -142,7 +142,7 @@ export function RecurrencePopover({
                 毎年
               </button>
               <button
-                className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-foreground/8 w-full rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   onRepeatTypeChange('平日')
                   onOpenChange(false)
@@ -153,7 +153,7 @@ export function RecurrencePopover({
               </button>
               <div className="border-border my-1 border-t" />
               <button
-                className="hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-foreground/8 w-full rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   setShowCustomDialog(true)
                 }}

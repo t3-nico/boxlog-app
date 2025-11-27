@@ -197,10 +197,8 @@ export const ROUTES = {
   calendar: () => '/calendar',
   calendarView: (view: string) => `/calendar/${view}`,
   inbox: () => '/inbox',
-  aiChat: () => '/ai-chat',
   stats: () => '/stats',
   statsDetail: (id: string) => `/stats/${id}`,
-  help: () => '/help',
 
   // === 認証ルート ===
   auth: () => '/auth',
@@ -232,9 +230,6 @@ export const ROUTES = {
   // === アクション計画ルート ===
   statsActTry: () => '/stats/act/try',
   statsActNext: () => '/stats/act/next',
-
-  // === ヘルプルート ===
-  helpChatHistory: () => '/help/chat-history',
 
   // === システムルート ===
   maintenance: () => '/maintenance',

@@ -130,15 +130,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 
-  // ヘルプページ
-  const helpPages: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/help`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-  ]
-
-  return [...staticPages, ...appPages, ...settingsPages, ...statsPages, ...apiPages, ...helpPages]
+  return [...staticPages, ...appPages, ...settingsPages, ...statsPages, ...apiPages]
 }

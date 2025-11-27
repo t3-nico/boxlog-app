@@ -92,7 +92,7 @@ export function NovelDescriptionEditor({
                 <EditorCommandItem
                   key={item.title}
                   onCommand={(val) => item.command?.(val)}
-                  className="hover:bg-accent aria-selected:bg-accent flex w-full cursor-pointer items-center space-x-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors"
+                  className="hover:bg-foreground/8 aria-selected:bg-foreground/12 flex w-full cursor-pointer items-center space-x-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors"
                 >
                   <div className="border-border bg-card flex h-10 w-10 items-center justify-center rounded-md border">
                     {item.icon}

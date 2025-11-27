@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  BookOpen,
   FileText,
   HelpCircle,
   LogOut,
@@ -58,7 +57,7 @@ export function Account({ userData, locale }: AccountProps) {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="hover:bg-accent data-[state=open]:bg-accent flex h-10 w-10 items-center justify-center rounded-lg outline-hidden"
+            className="hover:bg-foreground/8 data-[state=open]:bg-foreground/12 flex h-10 w-10 items-center justify-center rounded-lg outline-hidden"
           >
             <Avatar className="h-8 w-8 rounded-lg">
               {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}
@@ -111,12 +110,6 @@ export function Account({ userData, locale }: AccountProps) {
                 {t('navUser.help')}
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="border-input">
-                <DropdownMenuItem asChild>
-                  <Link href={`/${locale}/help`}>
-                    <BookOpen />
-                    {t('navUser.helpSubmenu.helpCenter')}
-                  </Link>
-                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="https://github.com/t3-nico/boxlog-app/releases" target="_blank" rel="noopener noreferrer">
                     <Megaphone />

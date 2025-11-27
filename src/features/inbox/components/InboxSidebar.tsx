@@ -85,8 +85,8 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
               onClick={() => handleViewClick(view.id)}
               className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
                 currentViewId === view.id
-                  ? 'bg-accent text-accent-foreground'
-                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  ? 'bg-primary/12 text-foreground'
+                  : 'text-muted-foreground hover:bg-foreground/8'
               }`}
             >
               <div className="flex items-center justify-between gap-2">
@@ -117,7 +117,7 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
                         variant="ghost"
                         size="sm"
                         onClick={handleCreateView}
-                        className="hover:bg-accent h-5 w-5 p-0"
+                        className="hover:bg-foreground/8 h-5 w-5 p-0"
                       >
                         <Plus className="h-3 w-3" />
                       </Button>
@@ -136,8 +136,8 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
                   onClick={() => handleViewClick(view.id)}
                   className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
                     currentViewId === view.id
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                      ? 'bg-primary/12 text-foreground'
+                      : 'text-muted-foreground hover:bg-foreground/8'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">

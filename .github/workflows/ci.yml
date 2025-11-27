@@ -227,8 +227,8 @@ jobs:
     name: ⚡ Performance (Lighthouse CI)
     runs-on: ubuntu-latest
     environment: development # Environment Secrets保護
-    needs: [build]
-    timeout-minutes: 15
+    needs: [lint, typecheck, unit-tests]
+    timeout-minutes: 10
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -242,18 +242,14 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
-      - name: 🏗️ Build for Lighthouse
-        run: npm run build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDUxOTI4MDAsImV4cCI6MTk2MDc2ODgwMH0.placeholder' }}
-          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }}
-
       - name: ⚡ Run Lighthouse CI
         run: npm run perf:lighthouse
         continue-on-error: true
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          LHCI_BUILD_CONTEXT__CURRENT_BRANCH: ${{ github.head_ref || github.ref_name }}
+          # mainブランチは3回（精度重視）、PRは1回（高速化）
+          LHCI_NUMBER_OF_RUNS: ${{ github.ref == 'refs/heads/main' && '3' || '1' }}
 
       - name: 📊 Upload Lighthouse reports
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

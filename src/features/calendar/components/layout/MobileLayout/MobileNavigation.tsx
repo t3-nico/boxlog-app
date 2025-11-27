@@ -99,7 +99,7 @@ export const MobileNavigation = ({
               'disabled:cursor-not-allowed disabled:opacity-50',
               activeItem === item.id
                 ? 'text-primary bg-primary/10'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                : 'text-muted-foreground hover:text-foreground hover:bg-foreground/8'
             )}
           >
             {/* アイコン */}
