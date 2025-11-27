@@ -36,14 +36,14 @@ export const TrashView = ({ events, onRestore, onPermanentDelete }: TrashViewPro
                 <button
                   type="button"
                   onClick={() => onRestore?.(event)}
-                  className="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
+                  className="bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88 rounded px-3 py-1 text-sm transition-colors"
                 >
                   復元
                 </button>
                 <button
                   type="button"
                   onClick={() => onPermanentDelete?.(event.id)}
-                  className="rounded bg-red-500 px-3 py-1 text-sm text-white hover:bg-red-600"
+                  className="bg-destructive hover:bg-destructive/92 active:bg-destructive/88 rounded px-3 py-1 text-sm text-white transition-colors"
                 >
                   完全削除
                 </button>

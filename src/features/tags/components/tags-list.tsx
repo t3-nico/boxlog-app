@@ -226,7 +226,7 @@ const TagItem = ({
                 <button
                   type="button"
                   onClick={handleDeleteTag}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
+                  className="text-destructive hover:bg-destructive/8 active:bg-destructive/12 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                 >
                   <TrashIcon className="h-4 w-4" />
                   削除

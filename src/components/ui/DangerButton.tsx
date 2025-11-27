@@ -11,13 +11,18 @@ import { cva } from 'class-variance-authority'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
+// M3 State Layer: 塗り潰しボタンは背景色のOpacityを下げる（100%-8%=92%, 100%-12%=88%）
+// M3 Disabled: コンテンツ38% opacity
 const dangerButtonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*="size-"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-red-500 focus-visible:ring-red-500/20 focus-visible:ring-[3px] bg-red-600 text-white shadow-sm hover:bg-red-700 focus-visible:ring-red-500/20',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-[0.38] [&_svg]:pointer-events-none [&_svg:not([class*="size-"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-[3px]',
   {
     variants: {
       intent: {
-        delete: 'bg-red-600 hover:bg-red-700 focus-visible:ring-red-500/20',
-        warning: 'bg-orange-600 hover:bg-orange-700 focus-visible:ring-orange-500/20',
+        // M3準拠: destructiveセマンティックトークン + State Layer
+        delete:
+          'bg-destructive text-white shadow-sm hover:bg-destructive/92 active:bg-destructive/88 focus-visible:ring-destructive/20 dark:bg-destructive/60',
+        warning:
+          'bg-warning text-warning-foreground shadow-sm hover:bg-warning/92 active:bg-warning/88 focus-visible:ring-warning/20',
       },
     },
     defaultVariants: {

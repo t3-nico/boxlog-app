@@ -38,7 +38,7 @@ export const TagBadge = ({ tag, size = 'sm', showIcon = true, showPath = false, 
             e.stopPropagation()
             onRemove()
           }}
-          className="ml-1 flex h-4 w-4 items-center justify-center rounded-full text-xs hover:bg-red-100 hover:text-red-600"
+          className="text-destructive/70 hover:bg-destructive/8 hover:text-destructive ml-1 flex h-4 w-4 items-center justify-center rounded-full text-xs transition-colors"
         >
           ×
         </button>

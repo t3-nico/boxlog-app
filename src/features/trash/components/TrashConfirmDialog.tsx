@@ -37,8 +37,8 @@ export function TrashConfirmDialog({ dialog, onClose }: TrashConfirmDialogProps)
             }}
             className={`rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200 ${
               dialog.action === 'restore'
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-red-600 text-white hover:bg-red-700'
+                ? 'bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88'
+                : 'bg-destructive text-white hover:bg-destructive/92 active:bg-destructive/88'
             }`}
           >
             {dialog.action === 'restore' ? t('trash.actions.restore') : t('trash.actions.delete')}

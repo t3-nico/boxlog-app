@@ -401,7 +401,7 @@ export const TagManagementModal = ({
                             onClick={handleDeleteClick}
                             data-tag-id={tag.id}
                             data-tag-name={tag.name}
-                            className="rounded p-1 text-red-600 transition-colors hover:bg-red-100 dark:hover:bg-red-900"
+                            className="text-destructive hover:bg-destructive/8 active:bg-destructive/12 rounded p-1 transition-colors"
                             title="Delete tag"
                           >
                             <Trash2 className="h-3 w-3" />

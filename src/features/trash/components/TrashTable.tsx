@@ -291,7 +291,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
             <button
               type="button"
               onClick={handleRestore}
-              className="rounded-sm px-3 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/30"
+              className="text-primary hover:bg-primary/8 active:bg-primary/12 rounded-sm px-3 py-1 text-sm transition-colors"
               title={t('trash.actions.restore')}
             >
               {t('trash.actions.restore')}
@@ -299,7 +299,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
             <button
               type="button"
               onClick={handlePermanentDelete}
-              className="rounded-sm px-3 py-1 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
+              className="text-destructive hover:bg-destructive/8 active:bg-destructive/12 rounded-sm px-3 py-1 text-sm transition-colors"
               title={t('trash.actions.permanentDelete')}
             >
               {t('trash.actions.delete')}
