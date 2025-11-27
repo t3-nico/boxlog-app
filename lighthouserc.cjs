@@ -26,8 +26,34 @@ module.exports = {
     collect: {
       // 本番ビルドでテスト
       startServerCommand: 'npm run start',
+      startServerReadyPattern: 'Ready in', // Next.js起動完了の検出パターン
+      startServerReadyTimeout: 30000, // サーバー起動タイムアウト（30秒）
       url: ['http://localhost:3000'],
       numberOfRuns, // PR: 1回（高速化）、main: 3回（精度重視）
+      maxWaitForLoad: 45000, // ページ読み込みタイムアウト（45秒）
+      // CI環境用Chromeフラグ（安定性向上）
+      settings: {
+        chromeFlags: [
+          '--no-sandbox', // CI環境では必須
+          '--disable-gpu', // ヘッドレス環境の安定性向上
+          '--disable-dev-shm-usage', // メモリ不足防止
+          '--disable-storage-reset', // ストレージリセット無効化
+        ],
+        // モバイルエミュレーション（Lighthouseデフォルト）
+        formFactor: 'mobile',
+        throttling: {
+          // Lighthouseデフォルトのモバイルスロットリング
+          rttMs: 150,
+          throughputKbps: 1638.4,
+          cpuSlowdownMultiplier: 4,
+        },
+        screenEmulation: {
+          mobile: true,
+          width: 412,
+          height: 823,
+          deviceScaleFactor: 1.75,
+        },
+      },
     },
     assert: {
       // パフォーマンスバジェット設定
