@@ -133,7 +133,6 @@ export const PlanGrid = ({
             : undefined
         }
         onSingleClick={onEmptyClick}
-        onDoubleClick={onEmptyClick} // ダブルクリックでもイベント作成
         disabled={dragState.isDragging || dragState.isResizing}
       >
         {/* 時間グリッド */}

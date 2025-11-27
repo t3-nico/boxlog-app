@@ -94,14 +94,6 @@ export const calendarStyles: CalendarStyles = {
     resize: 'transition-all duration-200 ease-in-out',
   },
 
-  // スクロールバースタイル
-  scrollbar: {
-    custom:
-      'scrollbar-thin scrollbar-thumb-gray-400/50 scrollbar-track-white dark:scrollbar-track-gray-900/30 dark:scrollbar-thumb-gray-500/40',
-    touchOptimized: 'touch-pan-y overflow-auto',
-    performance: 'transform-gpu will-change-scroll backface-visibility-hidden',
-  },
-
   // 統合：calendar-layout.cssからの移行（重複を避けてレイアウト専用に）
   layout: {
     // カスタムスクロールバー（globals.cssのセマンティックスタイルを使用）
