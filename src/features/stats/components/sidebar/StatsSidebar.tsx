@@ -213,8 +213,8 @@ export function StatsSidebar() {
                         className={cn(
                           'flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors',
                           isActive(item.href)
-                            ? 'bg-accent text-accent-foreground'
-                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                            ? 'bg-primary/12 text-foreground'
+                            : 'text-muted-foreground hover:bg-foreground/8'
                         )}
                       >
                         {item.icon}

@@ -75,7 +75,7 @@ export function TableFilters() {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-input bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-md border px-2.5 text-sm font-medium whitespace-nowrap shadow-xs transition-all outline-none focus-visible:ring-[3px] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+          className="focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-input bg-background hover:bg-foreground/8 active:bg-foreground/12 dark:bg-input/30 dark:border-input dark:hover:bg-input/50 inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-md border px-2.5 text-sm font-medium whitespace-nowrap shadow-xs transition-all outline-none focus-visible:ring-[3px] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
         >
           <Filter />
           フィルター
@@ -105,7 +105,10 @@ export function TableFilters() {
             <Label className="text-xs font-medium">期限</Label>
             <RadioGroup value={dueDate} onValueChange={(value) => setDueDate(value as DueDateFilter)}>
               {DUE_DATE_OPTIONS.map((option) => (
-                <div key={option.value} className="hover:bg-accent flex items-center space-x-2 rounded-sm px-2 py-1.5">
+                <div
+                  key={option.value}
+                  className="hover:bg-foreground/8 flex items-center space-x-2 rounded-sm px-2 py-1.5"
+                >
                   <RadioGroupItem value={option.value} id={`due-date-${option.value}`} />
                   <Label htmlFor={`due-date-${option.value}`} className="flex-1 cursor-pointer text-sm font-normal">
                     {option.label}
@@ -122,7 +125,10 @@ export function TableFilters() {
             <Label className="text-xs font-medium">ステータス</Label>
             <div className="space-y-1">
               {STATUS_OPTIONS.map((option) => (
-                <div key={option.value} className="hover:bg-accent flex items-center space-x-2 rounded-sm px-2 py-1.5">
+                <div
+                  key={option.value}
+                  className="hover:bg-foreground/8 flex items-center space-x-2 rounded-sm px-2 py-1.5"
+                >
                   <Checkbox
                     id={`status-${option.value}`}
                     checked={status.includes(option.value)}

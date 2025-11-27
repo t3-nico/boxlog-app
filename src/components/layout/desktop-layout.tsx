@@ -59,7 +59,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
             <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
               {renderSidebar()}
             </ResizablePanel>
-            <ResizableHandle className="border-border hover:bg-accent/50 w-1 border-r transition-colors" />
+            <ResizableHandle className="border-border hover:bg-foreground/8 w-1 border-r transition-colors" />
           </>
         )}
 
