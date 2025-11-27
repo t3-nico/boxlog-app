@@ -145,21 +145,23 @@ export class SearchEngine {
       originalFolder: folder,
     }))
 
-    const folderResults = FuzzySearch.search(searchableFolders, query).map((result: { originalFolder: SmartFolder }) => {
-      const folder = result.originalFolder
-      return {
-        id: `smart-folder:${folder.id}`,
-        title: folder.name,
-        description: folder.description || 'Smart folder',
-        category: 'navigation',
-        icon: 'folder',
-        type: 'smart-folder' as const,
-        action: () => {
-          // Navigation implementation tracked in Issue #86
-          console.log('Navigate to smart folder:', folder.id)
-        },
+    const folderResults = FuzzySearch.search(searchableFolders, query).map(
+      (result: { originalFolder: SmartFolder }) => {
+        const folder = result.originalFolder
+        return {
+          id: `smart-folder:${folder.id}`,
+          title: folder.name,
+          description: folder.description || 'Smart folder',
+          category: 'navigation',
+          icon: 'folder',
+          type: 'smart-folder' as const,
+          action: () => {
+            // Navigation implementation tracked in Issue #86
+            console.log('Navigate to smart folder:', folder.id)
+          },
+        }
       }
-    })
+    )
 
     return folderResults
   }

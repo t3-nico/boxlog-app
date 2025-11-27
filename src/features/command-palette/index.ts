@@ -14,9 +14,4 @@ export * from './lib/command-registry'
 export * from './lib/search-engine'
 
 // Types (only unique types not in config)
-export type {
-  CommandCategory,
-  CommandPaletteConfig,
-  CommandPaletteContextType,
-  CompassDoc,
-} from './types'
+export type { CommandCategory, CommandPaletteConfig, CommandPaletteContextType, CompassDoc } from './types'

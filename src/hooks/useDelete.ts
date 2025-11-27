@@ -2,8 +2,8 @@
 'use client'
 
 // import { Event } from '@/features/events/types/events'
-import { TrashItemType } from '@/features/trash/types/trash'
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
+import { TrashItemType } from '@/features/trash/types/trash'
 import { SmartFolder } from '@/types/smart-folders'
 import { Task } from '@/types/unified'
 

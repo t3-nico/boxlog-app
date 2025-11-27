@@ -156,7 +156,9 @@ export function useOfflineSync() {
       conflicts: unknown[]
       conflictId: string
     }) => {
-      const firstConflict = conflictData.conflicts[0] as { serverData?: unknown; serverTimestamp?: string | number } | undefined
+      const firstConflict = conflictData.conflicts[0] as
+        | { serverData?: unknown; serverTimestamp?: string | number }
+        | undefined
       setCurrentConflict({
         actionId: conflictData.action.id,
         entity: conflictData.action.entity,

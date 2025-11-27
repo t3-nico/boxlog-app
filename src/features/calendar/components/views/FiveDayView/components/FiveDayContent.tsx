@@ -194,7 +194,7 @@ export const FiveDayContent = ({
                     width: 100,
                     height:
                       isResizingThis && dragState.snappedPosition
-                        ? dragState.snappedPosition.height ?? currentHeight
+                        ? (dragState.snappedPosition.height ?? currentHeight)
                         : currentHeight,
                   }}
                   // クリックは useDragAndDrop で処理されるため削除

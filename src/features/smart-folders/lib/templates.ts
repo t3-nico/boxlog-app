@@ -508,7 +508,10 @@ export class TemplateApplicator {
   /**
    * パラメータ置換
    */
-  private static replaceParameters(value: SmartFolderRuleValue, parameters: Record<string, unknown>): SmartFolderRuleValue {
+  private static replaceParameters(
+    value: SmartFolderRuleValue,
+    parameters: Record<string, unknown>
+  ): SmartFolderRuleValue {
     if (typeof value !== 'string') return value
 
     // ${parameter} 形式のパラメータを置換

@@ -5,8 +5,8 @@
  * 企業級セキュリティベストプラクティス準拠
  */
 
-import DOMPurify from 'dompurify'
 import type { Config } from 'dompurify'
+import DOMPurify from 'dompurify'
 
 /**
  * 基本的なHTMLサニタイゼーション設定

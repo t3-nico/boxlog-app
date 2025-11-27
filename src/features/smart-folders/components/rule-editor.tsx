@@ -2,7 +2,15 @@
 
 import { useCallback } from 'react'
 
-import { closestCenter, DndContext, DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Input } from '@headlessui/react'
 import { Menu as Bars3Icon, Plus as PlusIcon, Trash2 as TrashIcon } from 'lucide-react'

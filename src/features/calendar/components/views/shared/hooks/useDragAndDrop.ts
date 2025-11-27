@@ -2,9 +2,9 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import useCalendarToast from '@/features/calendar/lib/toast'
 import { calendarColors } from '@/features/calendar/theme'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { HOUR_HEIGHT } from '../constants/grid.constants'
@@ -723,7 +723,10 @@ export function useDragAndDrop({
           targetDateIndex,
           targetDate: targetDate.toDateString(),
           originalDateIndex: dragDataRef.current?.originalDateIndex,
-          originalDate: dragDataRef.current?.originalDateIndex !== undefined ? displayDates[dragDataRef.current.originalDateIndex]?.toDateString?.() : undefined,
+          originalDate:
+            dragDataRef.current?.originalDateIndex !== undefined
+              ? displayDates[dragDataRef.current.originalDateIndex]?.toDateString?.()
+              : undefined,
           displayDatesLength: displayDates.length,
           isNonConsecutive: displayDates.length < 7,
           allDisplayDates: displayDates.map((d) => d.toDateString()),

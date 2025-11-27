@@ -7,7 +7,16 @@ import { AnimatePresence, LayoutGroup, motion, useMotionValue, useReducedMotion,
 import { cn } from '@/lib/utils'
 
 // ビュータイプの定義
-export type CalendarView = 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
+export type CalendarView =
+  | 'day'
+  | 'split-day'
+  | '3day'
+  | '5day'
+  | 'week'
+  | 'week-no-weekend'
+  | '2week'
+  | 'schedule'
+  | 'month'
 
 // 方向の定義
 export type SlideDirection = 'left' | 'right' | 'up' | 'down'

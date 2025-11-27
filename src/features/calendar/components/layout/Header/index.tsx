@@ -79,7 +79,11 @@ export const CalendarHeader = ({
         {/* 右側: ビュー切り替えとアクション */}
         <div className="flex items-center gap-0">
           {/* ビュー切り替え */}
-          <ViewSwitcher options={viewOptions} currentView={viewType} onChange={(view) => onViewChange(view as CalendarViewType)} />
+          <ViewSwitcher
+            options={viewOptions}
+            currentView={viewType}
+            onChange={(view) => onViewChange(view as CalendarViewType)}
+          />
 
           {/* アクションボタン */}
           {showActions != null && <HeaderActions onSettings={onSettings} onExport={onExport} onImport={onImport} />}

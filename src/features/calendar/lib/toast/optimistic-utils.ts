@@ -70,9 +70,7 @@ export const useOptimisticUpdate = () => {
           } else {
             // ネットワークエラーハンドリングを使用
             const errorObj =
-              error instanceof Error
-                ? error
-                : new Error(typeof error === 'string' ? error : String(error))
+              error instanceof Error ? error : new Error(typeof error === 'string' ? error : String(error))
             handleError(
               errorObj as Error & { code?: string; response?: { status: number }; statusCode?: number },
               enableRetry
@@ -210,8 +208,7 @@ export const useBatchOperations = () => {
           if (rollback) rollback()
         })
 
-        const errorObj =
-          error instanceof Error ? error : new Error(typeof error === 'string' ? error : String(error))
+        const errorObj = error instanceof Error ? error : new Error(typeof error === 'string' ? error : String(error))
         handleError(errorObj as Error & { code?: string; response?: { status: number }; statusCode?: number })
 
         return {

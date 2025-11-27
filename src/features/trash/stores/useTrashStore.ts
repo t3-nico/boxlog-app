@@ -3,7 +3,6 @@ import { create } from 'zustand'
 import { getTranslation } from '@/features/calendar/lib/toast/get-translation'
 
 import {
-  DeleteResult,
   RestoreResult,
   TRASH_RETENTION_DAYS,
   TrashFilters,

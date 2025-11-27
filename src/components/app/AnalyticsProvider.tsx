@@ -10,7 +10,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 
 import type { AnalyticsProvider } from '@/lib/analytics'
-import { analytics, updateConfig, setUserConsent, setUserId } from '@/lib/analytics'
+import { analytics, setUserConsent, setUserId, updateConfig } from '@/lib/analytics'
 
 /**
  * 🎯 Analytics Context の型定義

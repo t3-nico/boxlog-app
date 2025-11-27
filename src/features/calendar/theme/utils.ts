@@ -12,9 +12,8 @@ export const getEventColor = (
   property: 'background' | 'text' | 'hover' = 'background'
 ): string => {
   const colors = calendarColors.event[status as keyof typeof calendarColors.event]
-  const colorValue = colors && Object.prototype.hasOwnProperty.call(colors, property)
-    ? colors[property as keyof typeof colors]
-    : null
+  const colorValue =
+    colors && Object.prototype.hasOwnProperty.call(colors, property) ? colors[property as keyof typeof colors] : null
   return (colorValue ?? calendarColors.event.scheduled[property as keyof typeof calendarColors.event.scheduled]) || ''
 }
 

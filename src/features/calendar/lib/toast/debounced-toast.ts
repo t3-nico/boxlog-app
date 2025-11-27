@@ -3,8 +3,8 @@ import { useCallback, useEffect, useRef } from 'react'
 import type { CalendarAction, CalendarToastOptions } from './types'
 
 import { getTranslation } from './get-translation'
-import { toExternalToast } from './types'
 import { CALENDAR_TOAST_KEYS } from './translation-keys'
+import { toExternalToast } from './types'
 import { useCalendarToast } from './use-calendar-toast'
 
 // デバウンス設定
@@ -54,7 +54,11 @@ export const useDebouncedToast = () => {
 
   // デバウンス実行関数
   const createDebouncedFunction = useCallback(
-    <Args extends unknown[]>(fn: (...args: Args) => string | number, config: DebounceConfig, key: string = 'default') => {
+    <Args extends unknown[]>(
+      fn: (...args: Args) => string | number,
+      config: DebounceConfig,
+      key: string = 'default'
+    ) => {
       return (...args: Args): string | number | undefined => {
         const now = Date.now()
         const state = debounceStates.current.get(key) || {}

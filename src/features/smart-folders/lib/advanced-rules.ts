@@ -1,11 +1,6 @@
 // 高度なスマートフォルダルール機能
 
-import {
-  SmartFolderRule,
-  SmartFolderRuleField,
-  SmartFolderRuleOperator,
-  SmartFolderRuleLogic,
-} from '@/types/smart-folders'
+import { SmartFolderRule, SmartFolderRuleField, SmartFolderRuleOperator } from '@/types/smart-folders'
 
 // 拡張演算子
 export enum AdvancedRuleOperator {
@@ -214,11 +209,7 @@ export class AdvancedRuleEngine {
    */
   private static evaluateTimeRange(value: unknown, rule: AdvancedSmartFolderRule): boolean {
     // 型ガード: value が Date コンストラクタに渡せる型かチェック
-    if (
-      typeof value !== 'string' &&
-      typeof value !== 'number' &&
-      !(value instanceof Date)
-    ) {
+    if (typeof value !== 'string' && typeof value !== 'number' && !(value instanceof Date)) {
       return false
     }
 

@@ -172,9 +172,7 @@ export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
 
     // EventGroup オブジェクトを作成
     mergedGroups.forEach((group, index) => {
-      const startTime = new Date(
-        Math.min(...group.map((e) => e.startDate?.getTime() ?? Date.now()))
-      )
+      const startTime = new Date(Math.min(...group.map((e) => e.startDate?.getTime() ?? Date.now())))
       const endTime = new Date(
         Math.max(...group.map((e) => e.endDate?.getTime() || e.startDate?.getTime() || Date.now()))
       )

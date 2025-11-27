@@ -22,7 +22,15 @@ export type {
 export { getAllEventNames, getEventCategory, getEventStats, validateEventName } from './events'
 
 // Tracker exports
-export { analytics, AnalyticsTracker, flushEvents, setUserConsent, setUserId, trackEvent, updateConfig } from './tracker'
+export {
+  analytics,
+  AnalyticsTracker,
+  flushEvents,
+  setUserConsent,
+  setUserId,
+  trackEvent,
+  updateConfig,
+} from './tracker'
 export type { AnalyticsProvider } from './tracker'
 
 // Hooks exports

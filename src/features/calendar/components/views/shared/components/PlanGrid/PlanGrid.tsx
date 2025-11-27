@@ -121,13 +121,17 @@ export const PlanGrid = ({
       <CalendarDragSelection
         date={date}
         className="absolute inset-0"
-        onTimeRangeSelect={onTimeRangeSelect ? (selection) => {
-          const startDate = new Date(selection.date)
-          startDate.setHours(selection.startHour, selection.startMinute, 0, 0)
-          const endDate = new Date(selection.date)
-          endDate.setHours(selection.endHour, selection.endMinute, 0, 0)
-          onTimeRangeSelect(startDate, endDate)
-        } : undefined}
+        onTimeRangeSelect={
+          onTimeRangeSelect
+            ? (selection) => {
+                const startDate = new Date(selection.date)
+                startDate.setHours(selection.startHour, selection.startMinute, 0, 0)
+                const endDate = new Date(selection.date)
+                endDate.setHours(selection.endHour, selection.endMinute, 0, 0)
+                onTimeRangeSelect(startDate, endDate)
+              }
+            : undefined
+        }
         onSingleClick={onEmptyClick}
         disabled={dragState.isDragging || dragState.isResizing}
       >
@@ -193,11 +197,7 @@ export const PlanGrid = ({
                   }}
                   onClick={() => handlePlanClick(plan)}
                   onContextMenu={(plt: CalendarPlan, e: React.MouseEvent) => handlePlanContextMenu(plt, e)}
-                  onResizeStart={(
-                    plt: CalendarPlan,
-                    direction: 'top' | 'bottom',
-                    e: React.MouseEvent
-                  ) =>
+                  onResizeStart={(plt: CalendarPlan, direction: 'top' | 'bottom', e: React.MouseEvent) =>
                     handlers.handleResizeStart(plt.id, direction, e, {
                       top: parseFloat(style.top?.toString() || '0'),
                       left: 0,
