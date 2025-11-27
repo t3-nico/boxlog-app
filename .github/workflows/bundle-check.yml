@@ -2,7 +2,7 @@ name: 📦 Bundle Size Check
 
 on:
   pull_request:
-    branches: [main, dev]
+    branches: [main]
   workflow_dispatch:
 
 env:

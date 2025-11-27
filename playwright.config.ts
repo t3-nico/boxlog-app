@@ -15,8 +15,14 @@ export default defineConfig({
   // テスト失敗時のリトライ
   retries: process.env.CI ? 2 : 0,
 
-  // 並列ワーカー数
-  ...(process.env.CI ? { workers: 1 } : {}),
+  // 並列ワーカー数（GitHub Actions ubuntu-latest: 2 vCPU）
+  workers: process.env.CI ? 2 : undefined,
+
+  // タイムアウト設定
+  timeout: 30 * 1000, // テスト全体: 30秒
+  expect: {
+    timeout: 5000, // アサーション: 5秒
+  },
 
   // レポーター設定
   reporter: [
@@ -29,6 +35,9 @@ export default defineConfig({
   use: {
     // ベースURL
     baseURL: 'http://localhost:3000',
+
+    // アクションタイムアウト（クリック、入力等）
+    actionTimeout: 10 * 1000,
 
     // トレース設定（失敗時のみ）
     trace: 'on-first-retry',
