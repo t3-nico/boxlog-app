@@ -115,7 +115,7 @@ export const MobileHeader = ({
           <button
             type="button"
             onClick={onBack}
-            className="hover:bg-accent/50 -ml-2 rounded-full p-2 transition-colors"
+            className="hover:bg-foreground/8 -ml-2 rounded-full p-2 transition-colors"
             aria-label={t('calendar.mobile.header.back')}
           >
             <ChevronLeft className="h-6 w-6" />
@@ -124,7 +124,7 @@ export const MobileHeader = ({
           <button
             type="button"
             onClick={onMenuToggle}
-            className="hover:bg-accent/50 -ml-2 rounded-full p-2 transition-colors"
+            className="hover:bg-foreground/8 -ml-2 rounded-full p-2 transition-colors"
             aria-label={t('calendar.mobile.header.openMenu')}
           >
             <Menu className="h-5 w-5" />
@@ -144,7 +144,7 @@ export const MobileHeader = ({
             <button
               type="button"
               onClick={handleViewMenuOpen}
-              className="text-muted-foreground hover:bg-accent/50 rounded px-2 py-0.5 text-xs transition-colors"
+              className="text-muted-foreground hover:bg-foreground/8 rounded px-2 py-0.5 text-xs transition-colors"
             >
               {viewLabels[viewType] || viewType}
               {t('calendar.mobile.header.viewSuffix')}
@@ -158,7 +158,7 @@ export const MobileHeader = ({
         <button
           type="button"
           onClick={handleNavigatePrev}
-          className="hover:bg-accent/50 rounded-full p-2 transition-colors"
+          className="hover:bg-foreground/8 rounded-full p-2 transition-colors"
           aria-label={t('calendar.mobile.header.prevPeriod')}
         >
           <ChevronLeft className="h-5 w-5" />
@@ -166,7 +166,7 @@ export const MobileHeader = ({
         <button
           type="button"
           onClick={handleNavigateNext}
-          className="hover:bg-accent/50 rounded-full p-2 transition-colors"
+          className="hover:bg-foreground/8 rounded-full p-2 transition-colors"
           aria-label={t('calendar.mobile.header.nextPeriod')}
         >
           <ChevronRight className="h-5 w-5" />
@@ -195,8 +195,8 @@ export const MobileHeader = ({
                   key={value}
                   onClick={createViewChangeHandler(value as CalendarViewType)}
                   className={cn(
-                    'hover:bg-accent/50 w-full px-4 py-3 text-left text-sm transition-colors',
-                    viewType === value && 'bg-accent text-accent-foreground font-medium'
+                    'hover:bg-foreground/8 w-full px-4 py-3 text-left text-sm transition-colors',
+                    viewType === value && 'bg-foreground/12 text-foreground font-medium'
                   )}
                 >
                   {label}

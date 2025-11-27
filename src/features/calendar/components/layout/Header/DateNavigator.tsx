@@ -61,7 +61,7 @@ export const DateNavigator = ({
             onClick={() => onNavigate('prev')}
             className={cn(
               'rounded-full p-2 transition-colors',
-              'hover:bg-accent',
+              'hover:bg-foreground/8',
               'text-muted-foreground',
               'hover:text-foreground'
             )}
@@ -75,7 +75,7 @@ export const DateNavigator = ({
             onClick={() => onNavigate('next')}
             className={cn(
               'rounded-full p-2 transition-colors',
-              'hover:bg-accent',
+              'hover:bg-foreground/8',
               'text-muted-foreground',
               'hover:text-foreground'
             )}

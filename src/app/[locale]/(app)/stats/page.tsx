@@ -139,7 +139,7 @@ export default function StatsPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {quickAccessCards.map((card) => (
             <Link key={card.href} href={card.href} prefetch={true}>
-              <Card className="hover:bg-accent/50 h-full transition-colors">
+              <Card className="hover:bg-foreground/8 h-full transition-colors">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <div className="text-muted-foreground">{card.icon}</div>

@@ -100,7 +100,7 @@ export function PlanTagsSection({
                   タグを追加...
                 </button>
               ) : (
-                <button type="button" className="hover:bg-accent flex h-6 w-6 items-center justify-center rounded">
+                <button type="button" className="hover:bg-foreground/8 flex h-6 w-6 items-center justify-center rounded">
                   <Plus className="h-3.5 w-3.5" />
                 </button>
               )}

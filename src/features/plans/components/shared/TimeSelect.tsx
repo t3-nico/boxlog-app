@@ -351,8 +351,8 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
                   role="option"
                   aria-selected={option === value}
                   type="button"
-                  className={`hover:bg-accent w-full rounded-sm px-2 py-1.5 text-left text-sm ${
-                    index === highlightedIndex ? 'bg-accent/80' : option === value ? 'bg-accent/50' : ''
+                  className={`hover:bg-foreground/8 w-full rounded-sm px-2 py-1.5 text-left text-sm ${
+                    index === highlightedIndex ? 'bg-foreground/12' : option === value ? 'bg-foreground/8' : ''
                   }`}
                   onClick={() => handleOptionClick(option)}
                   onMouseEnter={() => setHighlightedIndex(index)}
