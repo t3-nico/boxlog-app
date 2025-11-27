@@ -30,11 +30,11 @@ import {
 
 // Re-export from categories
 export {
-  getErrorCategory,
-  ERROR_CATEGORIES,
-  ERROR_CODES,
   CATEGORY_RETRYABLE,
   CATEGORY_SEVERITY,
+  ERROR_CATEGORIES,
+  ERROR_CODES,
+  getErrorCategory,
   type ErrorCategory,
   type ErrorCode,
   type SeverityLevel,

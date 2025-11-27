@@ -81,7 +81,6 @@ export async function POST(request: NextRequest) {
       memo: memo || null,
     }
 
-    // @ts-expect-error - Supabase型定義の制約により一時的にanyを使用
     const { data, error } = await (supabase.from('tasks') as any).insert([taskData]).select().single()
 
     if (error) {
@@ -170,7 +169,6 @@ export async function PUT(request: NextRequest) {
     })
 
     // データベース更新
-    // @ts-expect-error - Supabase型定義の制約により一時的にanyを使用
     const { data, error } = await (supabase.from('tasks') as any).update(updateData).eq('id', id).select().single()
 
     if (error) {
