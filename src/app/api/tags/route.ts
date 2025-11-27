@@ -129,7 +129,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'tags.errors.parentNotFound' }, { status: 404 })
       }
 
-      // @ts-expect-error - Supabase type inference issue with tags table
       path = `${parentTag.path}/${name.trim()}`
     }
 
@@ -149,7 +148,6 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase
       .from('tags')
-      // @ts-expect-error - Supabase type inference issue with tags table
       .insert(tagData)
       .select()
       .single()
@@ -209,7 +207,6 @@ export async function PATCH(request: NextRequest) {
         const { new_parent_id } = updateData
         const { data, error } = await supabase
           .from('tags')
-          // @ts-expect-error - Supabase type inference issue with tags table
           .update({ parent_id: new_parent_id || null })
           .eq('id', tag_id)
           .select()
@@ -230,7 +227,6 @@ export async function PATCH(request: NextRequest) {
 
         const { data, error } = await supabase
           .from('tags')
-          // @ts-expect-error - Supabase type inference issue with tags table
           .update({ name: name.trim() })
           .eq('id', tag_id)
           .select()
@@ -251,7 +247,6 @@ export async function PATCH(request: NextRequest) {
 
         const { data, error } = await supabase
           .from('tags')
-          // @ts-expect-error - Supabase type inference issue with tags table
           .update({ color })
           .eq('id', tag_id)
           .select()

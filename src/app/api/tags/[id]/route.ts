@@ -176,7 +176,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     const { data, error } = await supabase
       .from('tags')
-      // @ts-expect-error - Supabase type inference issue with tags table
       .update(updateData)
       .eq('id', id)
       .select()

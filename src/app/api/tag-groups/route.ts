@@ -95,7 +95,6 @@ export async function POST(request: NextRequest) {
     }
 
     // タググループ作成
-    // @ts-expect-error - Supabase型定義の制限
     const { data, error } = await supabase.from('tag_groups').insert(insertData).select().single()
 
     if (error) {

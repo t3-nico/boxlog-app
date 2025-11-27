@@ -67,7 +67,6 @@ export async function recordLoginAttempt(
       ip_address: ipAddress || null,
       user_agent: userAgent || null,
     }
-    // @ts-expect-error - Supabase型推論の問題（既知の問題、src/lib/supabase/hooks.ts参照）
     const { error } = await supabase.from('login_attempts').insert(insertData)
 
     if (error) {

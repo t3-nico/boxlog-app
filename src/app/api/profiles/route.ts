@@ -65,7 +65,6 @@ export async function POST(request: NextRequest) {
     }
 
     // upsert を使用して作成または更新
-    // @ts-expect-error - Supabase型推論の問題
     const { data, error } = await supabase.from('profiles').upsert(profileData).select().single()
 
     if (error) {
@@ -104,7 +103,6 @@ export async function PUT(request: NextRequest) {
       updateData.avatar_url = avatar_url
     }
 
-    // @ts-expect-error - Supabase型推論の問題
     const { data, error } = await supabase.from('profiles').update(updateData).eq('id', id).select().single()
 
     if (error) {

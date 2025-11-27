@@ -180,7 +180,6 @@ export function useProfile() {
         const updateData: Database['public']['Tables']['profiles']['Update'] = {
           ...updates,
         }
-        // @ts-expect-error - Supabase型推論の問題（既知の問題、src/server/api/routers/profile.ts:44参照）
         const { error } = await supabase.from('profiles').update(updateData).eq('id', user.id)
 
         if (error) throw error

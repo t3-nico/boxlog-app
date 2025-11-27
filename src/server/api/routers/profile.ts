@@ -40,7 +40,6 @@ export const profileRouter = createTRPCRouter({
         updated_at: new Date().toISOString(),
       }
 
-      // @ts-expect-error - Supabase型推論の問題
       const { data, error } = await supabase.from('profiles').update(updateData).eq('id', userId).select().single()
 
       if (error) {
