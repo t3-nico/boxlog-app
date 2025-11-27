@@ -13,7 +13,13 @@
  * - CLS: < 0.1 (Good)
  * - FCP: < 1.8s (.github要求)
  * - TTI: < 3.8s (.github要求)
+ *
+ * 環境変数:
+ * - LHCI_NUMBER_OF_RUNS: 実行回数（デフォルト: 1、mainブランチ: 3）
  */
+
+// PR時は1回、mainブランチでは3回実行
+const numberOfRuns = parseInt(process.env.LHCI_NUMBER_OF_RUNS || '1', 10)
 
 module.exports = {
   ci: {
@@ -21,7 +27,7 @@ module.exports = {
       // 本番ビルドでテスト
       startServerCommand: 'npm run start',
       url: ['http://localhost:3000'],
-      numberOfRuns: 3, // Google推奨: 分散低減のため3回実行
+      numberOfRuns, // PR: 1回（高速化）、main: 3回（精度重視）
     },
     assert: {
       // パフォーマンスバジェット設定
