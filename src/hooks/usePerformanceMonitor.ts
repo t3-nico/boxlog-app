@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
 
+import { logger } from '@/lib/logger'
+
 // Chrome固有のperformance.memory API用の型定義
 interface PerformanceMemory {
   usedJSHeapSize: number
@@ -25,11 +27,11 @@ export const usePerformanceMonitor = (componentName: string, enabled = false) =>
 
     // 16ms (60fps) を超える場合は警告
     if (renderDuration > 16) {
-      console.warn(`🐌 ${componentName} render took ${renderDuration.toFixed(2)}ms (> 16ms for 60fps)`)
+      logger.warn(`${componentName} render took ${renderDuration.toFixed(2)}ms (> 16ms for 60fps)`)
     } else if (renderDuration > 8) {
-      console.info(`⚠️ ${componentName} render took ${renderDuration.toFixed(2)}ms`)
+      logger.info(`${componentName} render took ${renderDuration.toFixed(2)}ms`)
     } else if (renderDuration > 0) {
-      console.log(`✅ ${componentName} render took ${renderDuration.toFixed(2)}ms`)
+      logger.debug(`${componentName} render took ${renderDuration.toFixed(2)}ms`)
     }
   })
 
@@ -43,7 +45,7 @@ export const useRenderCount = (componentName: string, enabled = false) => {
 
   useEffect(() => {
     if (enabled) {
-      console.log(`🔄 ${componentName} rendered ${renderCount.current} times`)
+      logger.debug(`${componentName} rendered ${renderCount.current} times`)
     }
   })
 
@@ -57,7 +59,7 @@ export const useMemoryMonitor = (componentName: string, enabled = false) => {
 
     const perfWithMemory = performance as PerformanceWithMemory
     if (perfWithMemory.memory) {
-      console.log(`💾 ${componentName} memory usage:`, {
+      logger.debug(`${componentName} memory usage:`, {
         used: `${(perfWithMemory.memory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB`,
         total: `${(perfWithMemory.memory.totalJSHeapSize / 1024 / 1024).toFixed(2)}MB`,
         limit: `${(perfWithMemory.memory.jsHeapSizeLimit / 1024 / 1024).toFixed(2)}MB`,
@@ -93,12 +95,7 @@ export const usePerformanceStats = (componentName: string, enabled = false) => {
 
     // 5回に1回統計を出力
     if (times.length % 5 === 0) {
-      console.group(`📊 ${componentName} Performance Stats`)
-      console.log(`Average: ${average.toFixed(2)}ms`)
-      console.log(`Max: ${max.toFixed(2)}ms`)
-      console.log(`Min: ${min.toFixed(2)}ms`)
-      console.log(`Recent renders: ${times.map((t) => t.toFixed(1)).join(', ')}ms`)
-      console.groupEnd()
+      logger.debug(`${componentName} Performance Stats - Average: ${average.toFixed(2)}ms, Max: ${max.toFixed(2)}ms, Min: ${min.toFixed(2)}ms, Recent: ${times.map((t) => t.toFixed(1)).join(', ')}ms`)
     }
   })
 

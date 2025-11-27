@@ -7,6 +7,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { logger } from '@/lib/logger'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
@@ -44,7 +45,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     //     source: 'fab',
     //   },
     // })
-    console.log('TODO: Sessions統合後に実装')
+    logger.debug('TODO: Sessions統合後に実装')
   }, [])
 
   const { isCalendarPage, calendarProviderProps } = useCalendarProviderProps(

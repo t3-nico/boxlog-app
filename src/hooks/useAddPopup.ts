@@ -1,6 +1,8 @@
 // TODO(#621): Events削除後、plans/Sessionsに移行予定
 'use client'
 
+import { logger } from '@/lib/logger'
+
 // import { useCreateModalStore } from '@/features/events/stores/useCreateModalStore'
 
 // ポップアップコンテキストの型定義
@@ -20,7 +22,7 @@ export function useAddPopup() {
   return {
     isOpen: false,
     openPopup: (_type: 'event' | 'log' = 'event', _context?: PopupContext) => {
-      console.log('TODO: Sessions統合後に実装')
+      logger.debug('TODO: Sessions統合後に実装')
       // 'event' の場合のみ新しいモーダルを開く
       // if (type === 'event') {
       //   openModal({
@@ -34,7 +36,7 @@ export function useAddPopup() {
       // 'log' は一旦無視（必要に応じて後で対応）
     },
     openEventPopup: (_context?: PopupContext) => {
-      console.log('TODO: Sessions統合後に実装')
+      logger.debug('TODO: Sessions統合後に実装')
       // openModal({
       //   initialData: context?.editingEvent || context?.initialData || {},
       //   context: {
@@ -44,7 +46,7 @@ export function useAddPopup() {
       // })
     },
     closePopup: () => {
-      console.log('TODO: Sessions統合後に実装')
+      logger.debug('TODO: Sessions統合後に実装')
     },
   }
 }

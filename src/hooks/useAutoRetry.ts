@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { ERROR_CODES, getErrorCategory } from '@/constants/errorCodes'
+import { logger } from '@/lib/logger'
 
 // === 型定義 ===
 
@@ -107,7 +108,7 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
 
   // 自動リトライ実行
   const executeWithRetry = useCallback(async (): Promise<T> => {
-    console.log('🔄 自動リトライ実行開始')
+    logger.debug('自動リトライ実行開始')
 
     setState((prev) => ({
       ...prev,
@@ -123,7 +124,7 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
 
     while (currentRetryCount <= finalConfig.maxRetries) {
       try {
-        console.log(`🎯 試行 ${currentRetryCount + 1}/${finalConfig.maxRetries + 1}`)
+        logger.debug(`試行 ${currentRetryCount + 1}/${finalConfig.maxRetries + 1}`)
 
         setState((prev) => ({
           ...prev,
@@ -133,7 +134,7 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
 
         const result = await asyncFunction()
 
-        console.log('✅ 成功！')
+        logger.debug('リトライ成功')
         setState((prev) => ({
           ...prev,
           isLoading: false,
@@ -145,7 +146,7 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error))
 
-        console.log(`❌ 試行 ${currentRetryCount + 1} 失敗:`, lastError.message)
+        logger.debug(`試行 ${currentRetryCount + 1} 失敗:`, lastError.message)
 
         setState((prev) => ({
           ...prev,
@@ -155,14 +156,14 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
 
         // リトライ判定
         if (!finalConfig.shouldRetry(lastError, currentRetryCount)) {
-          console.log('❌ これ以上リトライしません')
+          logger.debug('これ以上リトライしません')
           break
         }
 
         if (currentRetryCount < finalConfig.maxRetries) {
           const delay = calculateDelay(currentRetryCount)
 
-          console.log(`⏳ ${delay}ms 後に再試行...`)
+          logger.debug(`${delay}ms 後に再試行...`)
 
           // リトライコールバック実行
           finalConfig.onRetry(lastError, currentRetryCount)
@@ -182,7 +183,7 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
     }
 
     // すべてのリトライが失敗
-    console.log('💥 すべてのリトライが失敗しました')
+    logger.warn('すべてのリトライが失敗しました')
 
     setState((prev) => ({
       ...prev,
@@ -196,7 +197,7 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
 
   // 手動リトライ
   const manualRetry = useCallback(() => {
-    console.log('🔄 手動リトライを実行')
+    logger.debug('手動リトライを実行')
     setState((prev) => ({
       ...prev,
       retryCount: 0,
@@ -206,7 +207,7 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
 
   // キャンセル
   const cancel = useCallback(() => {
-    console.log('🚫 リトライをキャンセル')
+    logger.debug('リトライをキャンセル')
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
