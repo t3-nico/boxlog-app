@@ -50,6 +50,11 @@ function shouldRedirectToLocale(pathname: string): boolean {
     return false
   }
 
+  // メンテナンスページは言語プレフィックスなし
+  if (pathname === '/maintenance') {
+    return false
+  }
+
   return true
 }
 
@@ -57,12 +62,17 @@ async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const locale = getLocaleFromRequest(request)
 
+  // 言語プレフィックス付きメンテナンスページへのアクセスをリダイレクト
+  if (locales.some((locale) => pathname === `/${locale}/maintenance`)) {
+    return NextResponse.redirect(new URL('/maintenance', request.url))
+  }
+
   // メンテナンスモードチェック
   const isMaintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
-  const isMaintenancePage = pathname.includes('/error/maintenance')
+  const isMaintenancePage = pathname === '/maintenance'
 
   if (isMaintenanceMode && !isMaintenancePage) {
-    return NextResponse.redirect(new URL('/error/maintenance', request.url))
+    return NextResponse.redirect(new URL('/maintenance', request.url))
   }
 
   // 言語リダイレクトの処理
@@ -124,9 +134,11 @@ async function middleware(request: NextRequest) {
 
     // 未認証でprotectedPathにアクセスした場合
     if (!user && isProtectedPath) {
-      console.log('[Middleware] Redirecting to 401:', request.nextUrl.pathname)
-      // 401 Unauthorizedページにリダイレクト（言語プレフィックス付き）
-      return NextResponse.redirect(new URL(`/${currentLocale}/error/401`, request.url))
+      console.log('[Middleware] Redirecting to login:', request.nextUrl.pathname)
+      // ログインページにリダイレクト（元のURLを保持）
+      const loginUrl = new URL(`/${currentLocale}/auth/login`, request.url)
+      loginUrl.searchParams.set('redirect', pathWithoutLocale)
+      return NextResponse.redirect(loginUrl)
     }
 
     // 認証済みでauth系のパスにアクセスした場合

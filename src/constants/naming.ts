@@ -237,7 +237,7 @@ export const ROUTES = {
   helpChatHistory: () => '/help/chat-history',
 
   // === システムルート ===
-  error: () => '/error',
+  maintenance: () => '/maintenance',
   testSentry: () => '/test-sentry',
 } as const
 
