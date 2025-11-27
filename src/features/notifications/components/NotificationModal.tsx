@@ -87,7 +87,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
           'bg-white dark:bg-neutral-800',
           'border-border border',
           'shadow-lg ring-1',
-          'rounded-lg',
+          'rounded-xl',
           'transition-all duration-200'
         )}
       >

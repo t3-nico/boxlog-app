@@ -73,7 +73,7 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
     <Menu as="div" className={cn('relative', className)}>
       <Menu.Button
         className={cn(
-          'flex items-center gap-2 rounded-lg p-2 transition-colors',
+          'flex items-center gap-2 rounded-xl p-2 transition-colors',
           'hover:bg-neutral-200 dark:hover:bg-neutral-700',
           'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none'
         )}
@@ -92,7 +92,7 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
         className={cn(
           'absolute top-full right-0 z-20 mt-2 min-w-48 overflow-hidden',
           'bg-white dark:bg-neutral-800',
-          'border-border rounded-lg border shadow-lg',
+          'border-border rounded-xl border shadow-lg',
           'focus:outline-none'
         )}
       >

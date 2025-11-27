@@ -101,7 +101,7 @@ export function AccountDeletionDialog() {
 
   return (
     <>
-      <div className="border-destructive/30 bg-destructive/5 rounded-lg border">
+      <div className="border-destructive/30 bg-destructive/5 rounded-xl border">
         <div className="flex items-start justify-between p-6">
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
@@ -141,7 +141,7 @@ export function AccountDeletionDialog() {
             <AlertDialogDescription className="space-y-4">
               <p>{t('settings.account.deletion.dialogDescription')}</p>
 
-              <div className="bg-muted/50 rounded-lg p-4">
+              <div className="bg-muted/50 rounded-xl p-4">
                 <h4 className="text-foreground mb-2 text-sm font-semibold">
                   {t('settings.account.deletion.gracePeriodTitle')}
                 </h4>

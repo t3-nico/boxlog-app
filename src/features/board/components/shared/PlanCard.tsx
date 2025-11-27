@@ -224,7 +224,7 @@ export function PlanCard({ item }: PlanCardProps) {
             {...listeners}
             onClick={handleClick}
             className={cn(
-              'bg-card hover:bg-muted/50 border-border group flex cursor-pointer flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors',
+              'bg-card hover:bg-muted/50 border-border group flex cursor-pointer flex-col gap-2 rounded-xl border p-3 shadow-sm transition-colors',
               isActive && 'border-primary',
               isFocused && 'bg-primary/10 hover:bg-primary/15',
               isDragging && 'opacity-50'

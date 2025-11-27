@@ -12,7 +12,7 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, description, actionLabel, onAction, icon }: EmptyStateProps) {
   return (
-    <div className="border-border bg-card flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-12 text-center">
+    <div className="border-border bg-card flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed p-12 text-center">
       {icon && <div className="text-muted-foreground">{icon}</div>}
 
       <div className="space-y-2">

@@ -154,7 +154,7 @@ export function RecurrenceDialog({
     <Portal.Root>
       <div
         ref={dialogRef}
-        className="bg-card border-border fixed z-[9999] w-[400px] overflow-hidden rounded-lg border shadow-lg"
+        className="bg-card border-border fixed z-[9999] w-[400px] overflow-hidden rounded-xl border shadow-lg"
         style={{
           top: `${getPosition().top}px`,
           left: `${getPosition().left}px`,

@@ -61,7 +61,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // デフォルトエラーUI
       return (
-        <div className="rounded-lg border border-red-300 bg-red-50 p-6 dark:border-red-700 dark:bg-red-900/20">
+        <div className="rounded-xl border border-red-300 bg-red-50 p-6 dark:border-red-700 dark:bg-red-900/20">
           <div className="text-center">
             <div className="mb-4 text-6xl text-red-600 dark:text-red-400">⚠️</div>
             <h2 className="mb-2 text-3xl font-bold tracking-tight text-red-600 dark:text-red-400">
@@ -111,7 +111,7 @@ export function DetailedErrorBoundary({ children, componentName }: { children: R
       }}
       fallback={
         process.env.NODE_ENV === 'development' ? (
-          <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-6 dark:border-yellow-700 dark:bg-yellow-900/20">
+          <div className="rounded-xl border border-yellow-300 bg-yellow-50 p-6 dark:border-yellow-700 dark:bg-yellow-900/20">
             <h3 className="mb-2 text-2xl font-bold tracking-tight text-yellow-700 dark:text-yellow-400">
               開発環境 - コンポーネントエラー
             </h3>

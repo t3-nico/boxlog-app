@@ -215,7 +215,7 @@ export function InboxTableView() {
   if (error) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="border-destructive bg-destructive/10 text-destructive rounded-lg border p-4">
+        <div className="border-destructive bg-destructive/10 text-destructive rounded-xl border p-4">
           <p className="font-medium">エラーが発生しました</p>
           <p className="mt-1 text-sm">{error.message}</p>
         </div>
@@ -277,7 +277,7 @@ export function InboxTableView() {
         }}
       >
         {/* テーブル部分: 枠で囲む + 横スクロール対応 */}
-        <div className="border-border flex flex-1 flex-col overflow-auto rounded-lg border [&::-webkit-scrollbar-corner]:rounded-lg [&::-webkit-scrollbar-track]:rounded-lg">
+        <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl">
           <Table className="w-full">
             {/* ヘッダー: 固定 */}
             <TableHeader className="bg-background sticky top-0 z-10">

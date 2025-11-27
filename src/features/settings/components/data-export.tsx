@@ -74,7 +74,7 @@ export function DataExport() {
         <p className="text-muted-foreground mt-1 text-sm">{t('settings.account.dataExport.description')}</p>
       </div>
 
-      <div className="border-border bg-muted/50 rounded-lg border p-4">
+      <div className="border-border bg-muted/50 rounded-xl border p-4">
         <h4 className="mb-2 text-sm font-medium">{t('settings.account.dataExport.includedData')}</h4>
         <ul className="text-muted-foreground space-y-1 text-sm">
           <li>• {t('settings.account.dataExport.profile')}</li>

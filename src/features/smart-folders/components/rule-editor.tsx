@@ -267,7 +267,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                   key={index}
                   id={index.toString()}
                 >
-                  <div className="border-border flex items-center gap-3 rounded-lg border bg-gray-50 p-4 dark:bg-gray-800">
+                  <div className="border-border flex items-center gap-3 rounded-xl border bg-gray-50 p-4 dark:bg-gray-800">
                     {/* ドラッグハンドル */}
                     <div className="cursor-move text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                       <Bars3Icon className="h-4 w-4" data-slot="icon" />
@@ -349,7 +349,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
 
       {/* 空の状態 */}
       {rules.length === 0 && (
-        <div className="border-border rounded-lg border-2 border-dashed px-4 py-8 text-center">
+        <div className="border-border rounded-xl border-2 border-dashed px-4 py-8 text-center">
           <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
             No filter rules yet. Add your first rule to get started.
           </p>

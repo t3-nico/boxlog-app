@@ -751,12 +751,12 @@ export function AccountSettings() {
         <div className="space-y-4">
           {/* エラー・成功メッセージ */}
           {mfaError && (
-            <div className="border-destructive/30 bg-destructive/5 text-destructive rounded-lg border p-3 text-sm">
+            <div className="border-destructive/30 bg-destructive/5 text-destructive rounded-xl border p-3 text-sm">
               {mfaError}
             </div>
           )}
           {mfaSuccess && (
-            <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-3 text-sm text-green-700 dark:text-green-400">
+            <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-3 text-sm text-green-700 dark:text-green-400">
               {mfaSuccess}
             </div>
           )}
@@ -778,7 +778,7 @@ export function AccountSettings() {
 
           {/* MFA設定中の表示 */}
           {!hasMFA && showMFASetup && qrCode && (
-            <div className="border-border bg-card space-y-4 rounded-lg border p-6">
+            <div className="border-border bg-card space-y-4 rounded-xl border p-6">
               <div>
                 <h3 className="mb-2 text-lg font-semibold">2段階認証を設定</h3>
                 <p className="text-muted-foreground text-sm">
@@ -789,7 +789,7 @@ export function AccountSettings() {
               <div className="space-y-4">
                 <div>
                   <p className="mb-2 text-sm font-medium">1. QRコードをスキャン</p>
-                  <div className="border-border flex justify-center rounded-lg border bg-white p-4">
+                  <div className="border-border flex justify-center rounded-xl border bg-white p-4">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={qrCode} alt="QR Code" className="h-48 w-48" />
                   </div>
@@ -842,7 +842,7 @@ export function AccountSettings() {
           {/* MFA有効時の表示 */}
           {hasMFA && (
             <div className="space-y-4">
-              <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-4">
+              <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-4">
                 <div className="mb-2 flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-green-500"></div>
                   <span className="text-sm font-medium text-green-700 dark:text-green-400">

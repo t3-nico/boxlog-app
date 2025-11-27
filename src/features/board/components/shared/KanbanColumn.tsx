@@ -53,7 +53,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
     <div
       ref={setNodeRef}
       className={cn(
-        'flex w-80 shrink-0 flex-col gap-3 rounded-lg border p-3 transition-colors',
+        'flex w-80 shrink-0 flex-col gap-3 rounded-xl border p-3 transition-colors',
         colorClass,
         isOver && 'bg-accent/20 ring-primary/30 ring-2',
         isOverWipLimit && 'ring-destructive/50 ring-2' // WIP制限超過時
@@ -109,7 +109,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
 
         {/* 空状態 */}
         {column.cards.length === 0 && (
-          <div className="border-border/50 flex h-24 items-center justify-center rounded-lg border-2 border-dashed">
+          <div className="border-border/50 flex h-24 items-center justify-center rounded-xl border-2 border-dashed">
             <p className="text-muted-foreground text-xs">ドロップしてカードを追加</p>
           </div>
         )}

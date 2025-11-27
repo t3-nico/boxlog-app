@@ -164,7 +164,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
     >
       <div
         className={cn(
-          'mx-4 max-h-[90vh] w-full max-w-2xl overflow-auto rounded-lg bg-white shadow-xl',
+          'mx-4 max-h-[90vh] w-full max-w-2xl overflow-auto rounded-xl bg-white shadow-xl',
           getContrastClassName('bg-white', 'contrast-bg contrast-border border-2'),
           className
         )}
@@ -200,7 +200,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
                   <label
                     key={theme.key}
                     className={cn(
-                      'relative flex cursor-pointer items-center rounded-lg border p-4',
+                      'relative flex cursor-pointer items-center rounded-xl border p-4',
                       'focus-within:ring-2 focus-within:ring-blue-500 hover:bg-gray-50',
                       selectedTheme === theme.key
                         ? getContrastClassName(
@@ -282,7 +282,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
 
               <div
                 className={cn(
-                  'rounded-lg border p-4',
+                  'rounded-xl border p-4',
                   themeValidation.wcagAAA
                     ? getContrastClassName('border-green-200 bg-green-50', 'contrast-success')
                     : themeValidation.wcagAA

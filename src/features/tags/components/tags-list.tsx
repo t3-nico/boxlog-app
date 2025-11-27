@@ -128,7 +128,7 @@ const TagItem = ({
     <div className="space-y-2">
       {/* タグアイテム */}
       <div
-        className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 transition-colors duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+        className="flex cursor-pointer items-center justify-between rounded-xl px-2 py-2 transition-colors duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-700"
         style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={handleSelectTag}
         onKeyDown={handleKeyDown}
@@ -213,7 +213,7 @@ const TagItem = ({
 
             {/* コンテキストメニュー */}
             {showMenu != null && (
-              <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
+              <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-50 mt-1 min-w-[140px] rounded-xl border py-1 shadow-lg">
                 <button
                   type="button"
                   onClick={handleEditTag}

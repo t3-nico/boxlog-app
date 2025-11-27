@@ -100,7 +100,7 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group bg-card relative flex flex-col gap-2 rounded-lg p-3 shadow-sm transition-all hover:shadow-md',
+        'group bg-card relative flex flex-col gap-2 rounded-xl p-3 shadow-sm transition-all hover:shadow-md',
         'border-border cursor-pointer border',
         (isDragging || isSortableDragging) && 'opacity-50 shadow-lg',
         card.isBlocked && 'border-l-destructive border-l-4',
