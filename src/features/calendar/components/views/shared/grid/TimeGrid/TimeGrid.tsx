@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * メインのタイムグリッドコンポーネント
  */
@@ -113,7 +112,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
               clientX: rect.left + rect.width / 2,
               clientY: rect.top + rect.height / 2,
               stopPropagation: () => {},
-            } as React.MouseEvent
+            } as unknown as React.MouseEvent
             handleGridClick(mockEvent)
           }
         }

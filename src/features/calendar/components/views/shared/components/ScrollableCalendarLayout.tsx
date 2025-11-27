@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * 統一されたスクロール可能カレンダーレイアウト
  */
@@ -27,7 +26,7 @@ interface ScrollableCalendarLayoutProps {
   timeColumnWidth?: number
   onTimeClick?: (hour: number, minute: number) => void
   displayDates?: Date[]
-  viewMode?: 'day' | '3day' | 'week' | '2week'
+  viewMode?: 'day' | '3day' | '5day' | 'week' | '2week'
 
   // スクロール機能の追加
   enableKeyboardNavigation?: boolean
@@ -58,7 +57,7 @@ export const CalendarDateHeader = ({
     <div className="flex shrink-0 flex-col">
       <div className="flex px-4">
         {/* UTC/タイムゾーン表示エリア（ヘッダー左端） */}
-        {showTimeColumn && showTimezone ? (
+        {showTimeColumn && showTimezone && timezone ? (
           <div className="flex shrink-0 items-end justify-start" style={{ width: timeColumnWidth }}>
             <TimezoneOffset timezone={timezone} className="text-xs" />
           </div>

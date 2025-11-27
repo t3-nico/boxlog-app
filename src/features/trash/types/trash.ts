@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー5件を段階的に修正する
 /**
  * 統一ゴミ箱システムの型定義
  * すべての削除可能なアイテムを一元管理するシステム
@@ -139,7 +138,7 @@ export interface TrashActions {
 
   // 復元処理
   restoreItem: (id: string) => Promise<void>
-  restoreItems: (ids: string[]) => Promise<void>
+  restoreItems: (ids: string[]) => Promise<RestoreResult | undefined>
 
   // 完全削除
   permanentlyDelete: (id: string) => Promise<void>
@@ -238,14 +237,14 @@ export interface DeleteResult {
  * TrashItemのタイプガード関数
  */
 export const isTrashItem = (item: unknown): item is TrashItem => {
+  if (typeof item !== 'object' || item === null) return false
+  const obj = item as Record<string, unknown>
   return (
-    typeof item === 'object' &&
-    item !== null &&
-    typeof item.id === 'string' &&
-    typeof item.type === 'string' &&
-    typeof item.title === 'string' &&
-    item.deletedAt instanceof Date &&
-    typeof item.originalData === 'object'
+    typeof obj.id === 'string' &&
+    typeof obj.type === 'string' &&
+    typeof obj.title === 'string' &&
+    obj.deletedAt instanceof Date &&
+    typeof obj.originalData === 'object'
   )
 }
 

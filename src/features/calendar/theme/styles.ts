@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 // features/calendar/theme/styles.ts
 // カレンダー専用のスタイル定義（Tailwindクラスベース）
 
@@ -31,13 +30,6 @@ export interface CalendarStyles {
     default: string
     drag: string
     resize: string
-  }
-
-  // 統合：calendar-layout.cssからの移行
-  scrollbar: {
-    custom: string
-    touchOptimized: string
-    performance: string
   }
 
   print: {

@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 /**
  * 📊 BoxLog Analytics Tracker
  *
@@ -91,6 +90,14 @@ export class AnalyticsTracker {
     }
 
     this.debug('Analytics Tracker initialized', { config: this.config })
+  }
+
+  /**
+   * ⚙️ 設定の更新
+   */
+  updateConfig(config: Partial<AnalyticsConfig>): void {
+    this.config = { ...this.config, ...config }
+    this.debug('Config updated', { config: this.config })
   }
 
   /**
@@ -247,7 +254,7 @@ export class AnalyticsTracker {
    */
   private sendToVercel(events: Array<{ name: string; properties: EventProperties; timestamp: number }>): void {
     events.forEach((event) => {
-      vercelTrack(event.name, event.properties)
+      vercelTrack(event.name, event.properties as Record<string, string | number | boolean | null>)
     })
     this.debug('Events sent to Vercel Analytics', { count: events.length })
   }
@@ -257,8 +264,9 @@ export class AnalyticsTracker {
    */
   private sendToGoogleAnalytics(events: Array<{ name: string; properties: EventProperties; timestamp: number }>): void {
     if (typeof window !== 'undefined' && window.gtag) {
+      const gtag = window.gtag
       events.forEach((event) => {
-        window.gtag('event', event.name, {
+        gtag('event', event.name, {
           event_category: getEventCategory(event.name as any),
           event_timestamp: event.timestamp,
           ...event.properties,
@@ -424,6 +432,7 @@ export const analytics = new AnalyticsTracker()
  * 🎯 便利な関数エクスポート
  */
 export const trackEvent = analytics.track.bind(analytics)
+export const updateConfig = analytics.updateConfig.bind(analytics)
 export const setUserConsent = analytics.setUserConsent.bind(analytics)
 export const setUserId = analytics.setUserId.bind(analytics)
 export const flushEvents = analytics.flush.bind(analytics)

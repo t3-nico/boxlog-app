@@ -1,12 +1,36 @@
-// @ts-nocheck TODO(#389): 型エラー7件を段階的に修正する
 // Main Calendar Entry Point
 export { CalendarController } from './components/CalendarController'
 
 // Calendar Components
 export * from './components'
 
-// Calendar Types
-export * from './types/calendar.types'
+// Calendar Types (only export types not already exported from components)
+export type {
+  Calendar,
+  CalendarEvent,
+  CalendarFilter,
+  CalendarHeaderProps,
+  CalendarShare,
+  CalendarShareInput,
+  CalendarTicket,
+  CalendarViewProps,
+  CalendarViewState,
+  CreateCalendarInput,
+  CreateEventInput,
+  CreatePlanInput,
+  CreateTicketInput,
+  EventInstance,
+  PlanInstance,
+  RecordAdjustments,
+  RecordStats,
+  RecurrencePattern,
+  TicketInstance,
+  UpdateCalendarInput,
+  UpdateEventInput,
+  UpdatePlanInput,
+  UpdateTicketInput,
+  ViewSelectorProps,
+} from './types/calendar.types'
 
 // Calendar Constants
 export {

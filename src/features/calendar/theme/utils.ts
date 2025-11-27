@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 // features/calendar/theme/utils.ts
 // テーマ関連のユーティリティ関数（Tailwindクラスベース）
 
@@ -12,12 +11,10 @@ export const getEventColor = (
   status: keyof CalendarColors['event'],
   property: 'background' | 'text' | 'hover' = 'background'
 ): string => {
-  const colors = calendarColors.event[status as keyof typeof event]
-  return (
-    (colors && Object.prototype.hasOwnProperty.call(colors, property)
-      ? colors[property as keyof typeof colors]
-      : null) || calendarColors.event.scheduled[property as keyof typeof calendarColors.event.scheduled]
-  )
+  const colors = calendarColors.event[status as keyof typeof calendarColors.event]
+  const colorValue =
+    colors && Object.prototype.hasOwnProperty.call(colors, property) ? colors[property as keyof typeof colors] : null
+  return (colorValue ?? calendarColors.event.scheduled[property as keyof typeof calendarColors.event.scheduled]) || ''
 }
 
 // UI状態の色クラスを取得

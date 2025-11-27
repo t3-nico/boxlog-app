@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 // キーボードショートカットハンドラーの分離
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'

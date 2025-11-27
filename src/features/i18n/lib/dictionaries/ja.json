@@ -208,6 +208,7 @@
       "day": "日表示",
       "splitDay": "分割日表示",
       "3day": "3日表示",
+      "5day": "5日表示",
       "week": "週表示",
       "weekday": "平日",
       "weekNoWeekend": "週表示（平日のみ）",
@@ -230,10 +231,10 @@
         "viewLabels": {
           "day": "日",
           "3day": "3日",
-          "weekNoWeekend": "平日",
+          "5day": "5日",
           "week": "週",
           "2week": "2週",
-          "schedule": "リスト"
+          "month": "月"
         },
         "viewSuffix": "表示",
         "back": "戻る",

@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 /**
  * タスク管理tRPCルーター
  * 型安全なタスクCRUD操作とビジネスルール適用
@@ -114,7 +113,7 @@ export const tasksRouter = createTRPCRouter({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: '他のユーザーのタスクは編集できません',
-            cause: createAppError('権限不足', ERROR_CODES.PERMISSION_DENIED, {
+            cause: createAppError('権限不足', ERROR_CODES.NO_PERMISSION, {
               source: 'tasks_router',
               userId: ctx.userId,
               taskId: id,
@@ -204,7 +203,7 @@ export const tasksRouter = createTRPCRouter({
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: '他のユーザーのタスクは削除できません',
-            cause: createAppError('権限不足', ERROR_CODES.PERMISSION_DENIED, {
+            cause: createAppError('権限不足', ERROR_CODES.NO_PERMISSION, {
               source: 'tasks_router',
               userId: ctx.userId,
               taskId: id,
@@ -217,7 +216,7 @@ export const tasksRouter = createTRPCRouter({
           throw new TRPCError({
             code: 'PRECONDITION_FAILED',
             message: 'サブタスクがあるため削除できません。強制削除するか、先にサブタスクを削除してください。',
-            cause: createAppError('削除条件不足', ERROR_CODES.VALIDATION_ERROR, {
+            cause: createAppError('削除条件不足', ERROR_CODES.DATA_VALIDATION_ERROR, {
               source: 'tasks_router',
               userId: ctx.userId,
               taskId: id,
@@ -262,7 +261,7 @@ export const tasksRouter = createTRPCRouter({
   list: protectedProcedure
     .input(getTasksInputSchema)
     .output(tasksListOutputSchema)
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       try {
         const { page, limit } = input
 

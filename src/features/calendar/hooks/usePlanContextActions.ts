@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 // TODO(#621): Plans/Sessions統合後に型エラー解消
 'use client'
 
@@ -60,7 +59,7 @@ export function usePlanContextActions() {
     color: plan.color,
     location: plan.location,
     url: plan.url,
-    reminders: plan.reminders || [],
+    reminderMinutes: plan.reminder_minutes ?? null,
     tagIds: plan.tags?.map((tag) => tag.id) || [],
   })
 
@@ -103,7 +102,7 @@ export function usePlanContextActions() {
       color: newPlan.color,
       location: newPlan.location,
       url: newPlan.url,
-      reminders: newPlan.reminders,
+      reminderMinutes: newPlan.reminder_minutes ?? null,
       tagIds: newPlan.tags?.map((tag) => tag.id) || [],
     }),
     []

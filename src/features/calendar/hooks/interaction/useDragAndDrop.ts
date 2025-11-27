@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * ドラッグ&ドロップ機能のカスタムフック
  */
@@ -60,7 +59,9 @@ export function useDragAndDrop<TData = unknown, TTarget = unknown>(
       dragPosition: null,
     })
     dragDataRef.current = null
-    onDragEnd?.(data)
+    if (data) {
+      onDragEnd?.(data)
+    }
   }, [onDragEnd])
 
   const handleDrop = useCallback(

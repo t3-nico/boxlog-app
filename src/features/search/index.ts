@@ -11,5 +11,8 @@ export { CompactSearchBar, SearchBar } from './components/search-bar'
 export { GlobalSearchProvider, useGlobalSearch } from './hooks/use-global-search'
 export { useSearchHistory } from './hooks/use-search'
 
+// Lib
+export { FuzzySearch } from './lib/search-engine'
+
 // Re-export for convenience
 export type { SearchResultType } from './types'

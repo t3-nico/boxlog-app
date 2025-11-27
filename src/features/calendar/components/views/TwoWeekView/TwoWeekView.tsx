@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
 import { useMemo } from 'react'
@@ -179,14 +178,22 @@ export const TwoWeekView = ({
                   className="border-border relative flex-1 border-r last:border-r-0"
                   style={{ width: `${100 / displayDates.length}%` }}
                 >
-                  {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
                   <TwoWeekContent
                     date={date}
-                    events={dayEvents}
-                    onEventClick={onEventClick}
-                    onEventContextMenu={onEventContextMenu}
+                    plans={dayEvents}
+                    onPlanClick={onEventClick}
+                    onPlanContextMenu={onEventContextMenu}
                     onEmptyClick={onEmptyClick}
-                    onEventUpdate={onUpdateEvent}
+                    onPlanUpdate={
+                      onUpdateEvent
+                        ? (planId, updates) => {
+                            const plan = events.find((e) => e.id === planId)
+                            if (plan) {
+                              onUpdateEvent({ ...plan, ...updates })
+                            }
+                          }
+                        : undefined
+                    }
                     onTimeRangeSelect={(date, startTime, endTime) => {
                       // 時間範囲選択時の処理（従来と同じ）
                       const startDate = new Date(date)
@@ -196,7 +203,11 @@ export const TwoWeekView = ({
                       // onCreateEventは(date: Date, time?: string)の形式なので、startTimeのみ渡す
                       onCreateEvent?.(startDate, startTime)
                     }}
-                    onCreateEvent={onCreateEvent}
+                    onCreatePlan={(startDate, endDate) => {
+                      // onCreateEventの形式に変換
+                      const startTime = `${String(startDate.getHours()).padStart(2, '0')}:${String(startDate.getMinutes()).padStart(2, '0')}`
+                      onCreateEvent?.(startDate, startTime)
+                    }}
                     className="h-full"
                     dayIndex={dayIndex}
                     displayDates={displayDates}

@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
 /**
  * PerformanceMonitor - カレンダーアプリ専用のパフォーマンス監視システム
  * Web Vitals、メモリ使用量、レンダリング性能を包括的に監視
@@ -209,7 +208,7 @@ export class PerformanceMonitor {
         this.updateMetric('ttfb', ttfb)
 
         // Page Load Time
-        const loadTime = navEntry.loadEventEnd - navEntry.navigationStart
+        const loadTime = navEntry.loadEventEnd - navEntry.startTime
         if (loadTime > 0) {
           this.updateMetric('initialLoadTime', loadTime)
         }
@@ -364,7 +363,7 @@ export class PerformanceMonitor {
    */
   private checkThresholds(key: string, value: number): void {
     const thresholdKey = key as keyof PerformanceThreshold
-    const threshold = this.thresholds[thresholdKey as keyof typeof thresholds]
+    const threshold = this.thresholds[thresholdKey]
 
     if (threshold && value > threshold) {
       this.triggerCallback('thresholdExceeded', {

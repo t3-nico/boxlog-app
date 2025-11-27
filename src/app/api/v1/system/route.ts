@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * 🖥️ API System Information Endpoint (v1.0)
  *
@@ -68,8 +67,8 @@ export async function GET(_request: NextRequest, apiRequest?: ApiRequest): Promi
     const systemInfo: SystemInfoResponse = {
       api: {
         currentVersion: API_VERSIONS.CURRENT,
-        supportedVersions: API_VERSIONS.SUPPORTED,
-        deprecatedVersions: API_VERSIONS.DEPRECATED,
+        supportedVersions: [...API_VERSIONS.SUPPORTED],
+        deprecatedVersions: [...API_VERSIONS.DEPRECATED],
         requestedVersion: apiRequest?.requestedVersion || API_VERSIONS.CURRENT,
         versionSource: apiRequest?.versionSource || 'default',
       },

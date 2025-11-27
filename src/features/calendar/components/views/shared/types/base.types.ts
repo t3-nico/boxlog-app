@@ -42,7 +42,7 @@ export interface TaskRecord {
   created_at: string
   updated_at: string
 }
-export type CalendarViewType = 'day' | 'week' | 'month' | '3day' | '2week'
+export type CalendarViewType = 'day' | 'week' | 'month' | '3day' | '5day' | '2week'
 export interface CreateTaskInput {
   title: string
   planned_start: Date

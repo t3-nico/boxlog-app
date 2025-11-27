@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 'use client'
 
 import React, { ReactNode, createContext, useContext, useEffect, useRef, useState } from 'react'
@@ -8,7 +7,16 @@ import { AnimatePresence, LayoutGroup, motion, useMotionValue, useReducedMotion,
 import { cn } from '@/lib/utils'
 
 // ビュータイプの定義
-export type CalendarView = 'day' | 'split-day' | '3day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
+export type CalendarView =
+  | 'day'
+  | 'split-day'
+  | '3day'
+  | '5day'
+  | 'week'
+  | 'week-no-weekend'
+  | '2week'
+  | 'schedule'
+  | 'month'
 
 // 方向の定義
 export type SlideDirection = 'left' | 'right' | 'up' | 'down'
@@ -391,8 +399,8 @@ export const TaskCreateAnimation = ({ children, isNew = false }: TaskCreateAnima
 // カレンダービュー切り替え時のアニメーション
 interface CalendarViewAnimationProps {
   children: ReactNode
-  viewType: 'day' | 'split-day' | '3day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
-  previousViewType?: 'day' | 'split-day' | '3day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
+  viewType: 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
+  previousViewType?: 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
 }
 
 export const CalendarViewAnimation = ({ children, viewType, previousViewType }: CalendarViewAnimationProps) => {
@@ -818,9 +826,9 @@ export const OptimizedListAnimation = ({
           {visibleChildren.map((child, index) => (
             <motion.div
               key={`list-item-${startIndex + index}-${Date.now()}`}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? false : { opacity: 0, y: -20 }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -20 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
               style={{
                 position: 'absolute',

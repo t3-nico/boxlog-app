@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * Sentry統合React Error Boundary
  * UIエラーの自動捕捉・分類・ユーザーセッション記録
@@ -43,7 +42,11 @@ export class ErrorBoundary extends Component<Props, State> {
     })
 
     // パンくずリスト記録
-    SentryErrorHandler.addBreadcrumb(`React Error Boundary caught: ${error.message}`, 'error', 'error')
+    SentryErrorHandler.addBreadcrumb({
+      message: `React Error Boundary caught: ${error.message}`,
+      category: 'error',
+      level: 'error',
+    })
 
     // カスタムエラーハンドラーがあれば呼び出し
     this.props.onError?.(error, errorInfo)

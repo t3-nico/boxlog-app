@@ -1,8 +1,7 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 import { renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 import { CacheManager, useMemoizedPlans } from './useMemoizedPlans'
 

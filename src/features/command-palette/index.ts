@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 // Command Palette feature exports
 
 // Components
@@ -12,8 +11,7 @@ export * from './config/command-palette'
 
 // Lib
 export * from './lib/command-registry'
-export * from './lib/compass-commands'
 export * from './lib/search-engine'
 
-// Types
-export * from './types'
+// Types (only unique types not in config)
+export type { CommandCategory, CommandPaletteConfig, CommandPaletteContextType, CompassDoc } from './types'

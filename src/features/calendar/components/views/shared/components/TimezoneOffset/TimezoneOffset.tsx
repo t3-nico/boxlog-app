@@ -1,10 +1,13 @@
 'use client'
 
+import { cn } from '@/lib/utils'
+
 interface TimezoneOffsetProps {
   timezone: string
+  className?: string
 }
 
-export function TimezoneOffset({ timezone }: TimezoneOffsetProps) {
+export function TimezoneOffset({ timezone, className }: TimezoneOffsetProps) {
   const getUTCOffset = (tz: string): string => {
     try {
       const now = new Date()
@@ -39,7 +42,7 @@ export function TimezoneOffset({ timezone }: TimezoneOffsetProps) {
   const offset = getUTCOffset(timezone)
 
   return (
-    <div className="flex h-8 items-center justify-start text-xs text-gray-600 dark:text-gray-400">
+    <div className={cn('flex h-8 items-center justify-start text-xs text-gray-600 dark:text-gray-400', className)}>
       <span className="font-medium">UTC{offset}</span>
     </div>
   )

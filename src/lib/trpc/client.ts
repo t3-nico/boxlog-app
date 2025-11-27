@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 /**
  * tRPC Client設定
  * クライアント側API呼び出しの型安全性確保
@@ -19,7 +18,6 @@ export const trpc = createTRPCReact<AppRouter>()
  * Vanilla tRPCクライアント（React外での使用）
  */
 export const vanillaTrpc = createTRPCProxyClient<AppRouter>({
-  transformer: superjson,
   links: [
     loggerLink({
       enabled: (opts) =>
@@ -27,6 +25,7 @@ export const vanillaTrpc = createTRPCProxyClient<AppRouter>({
     }),
     httpBatchLink({
       url: '/api/trpc',
+      transformer: superjson,
       headers() {
         return {}
       },

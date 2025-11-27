@@ -1,11 +1,10 @@
-// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
 
 import { RotateCcw, Undo2, X } from 'lucide-react'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
@@ -35,6 +34,20 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
   const [isVisible, setIsVisible] = useState(false)
   const [progress, setProgress] = useState(100)
 
+  const handleUndo = useCallback(() => {
+    if (action) {
+      onUndo(action)
+      setIsVisible(false)
+    }
+  }, [action, onUndo])
+
+  const handleDismiss = useCallback(() => {
+    setIsVisible(false)
+    setTimeout(() => {
+      onDismiss()
+    }, 200) // アニメーション完了を待つ
+  }, [onDismiss])
+
   useEffect(() => {
     if (action) {
       setIsVisible(true)
@@ -61,20 +74,6 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
       setIsVisible(false)
     }
   }, [action, autoHideDelay, handleDismiss])
-
-  const handleUndo = useCallback(() => {
-    if (action) {
-      onUndo(action)
-      setIsVisible(false)
-    }
-  }, [action, onUndo])
-
-  const handleDismiss = useCallback(() => {
-    setIsVisible(false)
-    setTimeout(() => {
-      onDismiss()
-    }, 200) // アニメーション完了を待つ
-  }, [onDismiss])
 
   // キーボードショートカット
   useEffect(() => {
@@ -221,13 +220,13 @@ export const createUndoActions = {
   eventCreated: (plan: CalendarPlan): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'create',
     description: `Created "${plan.title}"`,
-    data: { event: plan },
+    data: plan,
   }),
 
   eventDeleted: (plan: CalendarPlan): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'delete',
     description: `Deleted "${plan.title}"`,
-    data: { event: plan },
+    data: plan,
   }),
 
   eventMoved: (
@@ -236,12 +235,12 @@ export const createUndoActions = {
   ): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'move',
     description: `Moved "${plan.title}"`,
-    data: { event: plan, oldData },
+    data: plan,
   }),
 
   eventEdited: (plan: CalendarPlan, oldData: Partial<CalendarPlan>): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'edit',
     description: `Edited "${plan.title}"`,
-    data: { event: plan, oldData },
+    data: plan,
   }),
 }

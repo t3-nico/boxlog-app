@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -50,7 +49,7 @@ export const CalendarDragSelection = ({
   const [isSelecting, setIsSelecting] = useState(false)
   const [selection, setSelection] = useState<TimeRange | null>(null)
   const [selectionStart, setSelectionStart] = useState<{ hour: number; minute: number } | null>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const isDragging = useRef(false)
   const [dropTime, setDropTime] = useState<string | null>(null)
 
@@ -377,5 +376,3 @@ export const CalendarDragSelection = ({
     </div>
   )
 }
-
-export type { DateTimeSelection }

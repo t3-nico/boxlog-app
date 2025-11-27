@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
 'use client'
 
 import { useCallback, useMemo, useState } from 'react'
@@ -55,7 +54,7 @@ interface SmartFolderListProps {
 // ソート可能なフォルダアイテム
 const SortableSmartFolderItem = ({
   folder,
-  _isSelected,
+  isSelected: _isSelected,
   isCollapsed,
   onClick,
   onContextMenu,
@@ -177,7 +176,7 @@ const SortableSmartFolderItem = ({
 
 export const SmartFolderList = ({
   collapsed = false,
-  _currentPath = '',
+  currentPath: _currentPath = '',
   selectedFolderId = '',
   onSelectFolder,
   previewItems = [],
@@ -310,9 +309,9 @@ export const SmartFolderList = ({
 
   // フォルダ作成
   const handleCreateFolder = useCallback(
-    async (data: CreateSmartFolderInput) => {
+    async (data: CreateSmartFolderInput | UpdateSmartFolderInput) => {
       try {
-        await createMutation.mutateAsync(data)
+        await createMutation.mutateAsync(data as CreateSmartFolderInput)
         setShowCreateDialog(false)
       } catch (error) {
         console.error('Failed to create folder:', error)
@@ -324,13 +323,13 @@ export const SmartFolderList = ({
 
   // フォルダ更新
   const handleUpdateFolder = useCallback(
-    async (data: UpdateSmartFolderInput) => {
+    async (data: CreateSmartFolderInput | UpdateSmartFolderInput) => {
       if (!editingFolder) return
 
       try {
         await updateMutation.mutateAsync({
           id: editingFolder.id,
-          ...data,
+          ...(data as UpdateSmartFolderInput),
         })
         setShowEditDialog(false)
         setEditingFolder(undefined)

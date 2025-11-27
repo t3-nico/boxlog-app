@@ -1,7 +1,6 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 // スマートフォルダテンプレートシステム
 
-import { CreateSmartFolderInput, SmartFolderRule } from '@/types/smart-folders'
+import { CreateSmartFolderInput, SmartFolderRule, SmartFolderRuleValue } from '@/types/smart-folders'
 
 // テンプレートカテゴリ
 export enum TemplateCategory {
@@ -502,19 +501,23 @@ export class TemplateApplicator {
   static parameterizeRules(rules: SmartFolderRule[], parameters: Record<string, unknown>): SmartFolderRule[] {
     return rules.map((rule) => ({
       ...rule,
-      value: this.replaceParameters(rule.value, parameters),
+      value: this.replaceParameters(rule.value, parameters) as SmartFolderRuleValue,
     }))
   }
 
   /**
    * パラメータ置換
    */
-  private static replaceParameters(value: unknown, parameters: Record<string, unknown>): unknown {
+  private static replaceParameters(
+    value: SmartFolderRuleValue,
+    parameters: Record<string, unknown>
+  ): SmartFolderRuleValue {
     if (typeof value !== 'string') return value
 
     // ${parameter} 形式のパラメータを置換
     return value.replace(/\$\{(\w+)\}/g, (match, paramName) => {
-      return parameters[paramName] !== undefined ? parameters[paramName] : match
+      const replacement = parameters[paramName]
+      return replacement !== undefined ? String(replacement) : match
     })
   }
 

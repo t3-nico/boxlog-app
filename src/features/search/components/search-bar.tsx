@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#621): Events/Tasks削除後の一時的な型エラー回避
 'use client'
 
 import { useCallback, useState } from 'react'
@@ -41,11 +40,18 @@ export function SearchBar({
   const smartFolders = useSmartFolderStore((state) => state.smartFolders)
   // const events = useEventStore((state) => state.events)
 
+  // TODO: Sessions統合後に実装
+  type TaskItem = { id: string; title: string; description?: string; tags?: string[] }
+  type EventItem = { id: string; title: string; description?: string; location?: string }
+
+  const tasks: TaskItem[] = []
+  const events: EventItem[] = []
+
   // Filter data by types
-  const filteredTasks = types.includes('task') ? [] : [] // TODO: Sessions統合後に実装
+  const filteredTasks = types.includes('task') ? tasks : []
   const filteredTags = types.includes('tag') ? tags : []
   const filteredFolders = types.includes('smart-folder') ? smartFolders : []
-  const filteredEvents = types.includes('event') ? [] : [] // TODO: Sessions統合後に実装
+  const filteredEvents = types.includes('event') ? events : []
 
   // Handle selection
   const handleSelect = useCallback(

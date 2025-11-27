@@ -1,41 +1,6 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 // 高度なスマートフォルダルール機能
 
-import { SmartFolderRule, SmartFolderRuleField } from '@/types/smart-folders'
-
-// 拡張ルールタイプ
-export interface AdvancedSmartFolderRule extends SmartFolderRule {
-  // 正規表現フラグ
-  isRegex?: boolean
-  regexFlags?: string
-
-  // カスタムフィールド
-  customField?: string
-
-  // 時間範囲の詳細設定
-  timeRange?: {
-    startTime?: string // HH:MM format
-    endTime?: string // HH:MM format
-    timezone?: string
-    excludeWeekends?: boolean
-    excludeHolidays?: boolean
-  }
-
-  // 複合条件のグループ化
-  groupId?: string
-  groupLogic?: 'AND' | 'OR'
-
-  // 重み付け（複数ルールの優先度）
-  weight?: number
-
-  // 条件の有効期間
-  validFrom?: Date
-  validUntil?: Date
-
-  // 動的パラメータ
-  parameters?: Record<string, unknown>
-}
+import { SmartFolderRule, SmartFolderRuleField, SmartFolderRuleOperator } from '@/types/smart-folders'
 
 // 拡張演算子
 export enum AdvancedRuleOperator {
@@ -69,6 +34,45 @@ export enum AdvancedRuleOperator {
 
   // カスタム関数
   CUSTOM_FUNCTION = 'custom_function',
+}
+
+// 拡張ルールタイプ（operator と value フィールドをオーバーライド）
+export interface AdvancedSmartFolderRule extends Omit<SmartFolderRule, 'operator' | 'value'> {
+  // 演算子：基本演算子 + 拡張演算子
+  operator: SmartFolderRuleOperator | AdvancedRuleOperator
+
+  // 値：基本の値 + 配列や複雑な値も許可
+  value: string | number | boolean | Date | null | [number, number] | unknown
+
+  // 正規表現フラグ
+  isRegex?: boolean
+  regexFlags?: string
+
+  // カスタムフィールド
+  customField?: string
+
+  // 時間範囲の詳細設定
+  timeRange?: {
+    startTime?: string // HH:MM format
+    endTime?: string // HH:MM format
+    timezone?: string
+    excludeWeekends?: boolean
+    excludeHolidays?: boolean
+  }
+
+  // 複合条件のグループ化
+  groupId?: string
+  groupLogic?: 'AND' | 'OR'
+
+  // 重み付け（複数ルールの優先度）
+  weight?: number
+
+  // 条件の有効期間
+  validFrom?: Date
+  validUntil?: Date
+
+  // 動的パラメータ
+  parameters?: Record<string, unknown>
 }
 
 // カスタム関数のシグネチャ
@@ -204,6 +208,11 @@ export class AdvancedRuleEngine {
    * 日時範囲の評価
    */
   private static evaluateTimeRange(value: unknown, rule: AdvancedSmartFolderRule): boolean {
+    // 型ガード: value が Date コンストラクタに渡せる型かチェック
+    if (typeof value !== 'string' && typeof value !== 'number' && !(value instanceof Date)) {
+      return false
+    }
+
     const date = new Date(value)
     if (isNaN(date.getTime())) return false
 
@@ -337,9 +346,14 @@ export class AdvancedRuleEngine {
 
     const possibleKeys = fieldMap[field] || [field]
 
+    // 型ガード: itemがオブジェクトであることを確認
+    if (typeof item !== 'object' || item === null) {
+      return undefined
+    }
+
     for (const key of possibleKeys) {
       if (key in item) {
-        return item[key as keyof typeof item]
+        return (item as Record<string, unknown>)[key]
       }
     }
 
@@ -481,7 +495,7 @@ export class AdvancedRuleBuilder {
   regex(field: SmartFolderRuleField, pattern: string, flags?: string): this {
     this.addRule({
       field,
-      operator: AdvancedRuleOperator.REGEX_MATCH as AdvancedRuleOperator,
+      operator: AdvancedRuleOperator.REGEX_MATCH,
       value: pattern,
       logic: 'AND',
       isRegex: true,
@@ -497,8 +511,8 @@ export class AdvancedRuleBuilder {
   between(field: SmartFolderRuleField, min: number, max: number): this {
     this.addRule({
       field,
-      operator: AdvancedRuleOperator.BETWEEN as AdvancedRuleOperator,
-      value: [min, max] as [number, number],
+      operator: AdvancedRuleOperator.BETWEEN,
+      value: [min, max],
       logic: 'AND',
       groupId: this.currentGroupId,
     })
@@ -516,7 +530,7 @@ export class AdvancedRuleBuilder {
   ): this {
     this.addRule({
       field,
-      operator: AdvancedRuleOperator.TIME_BETWEEN as AdvancedRuleOperator,
+      operator: AdvancedRuleOperator.TIME_BETWEEN,
       value: null,
       logic: 'AND',
       timeRange: {
@@ -632,7 +646,7 @@ export const ADVANCED_RULE_PRESETS = {
   EMAIL_TASKS: AdvancedRuleBuilder.create()
     .addRule({
       field: 'description',
-      operator: AdvancedRuleOperator.CUSTOM_FUNCTION as AdvancedRuleOperator,
+      operator: AdvancedRuleOperator.CUSTOM_FUNCTION,
       value: 'isValidEmail',
       logic: 'AND',
     })
@@ -642,7 +656,7 @@ export const ADVANCED_RULE_PRESETS = {
   RECENT_TASKS: AdvancedRuleBuilder.create()
     .addRule({
       field: 'created_date',
-      operator: AdvancedRuleOperator.CUSTOM_FUNCTION as AdvancedRuleOperator,
+      operator: AdvancedRuleOperator.CUSTOM_FUNCTION,
       value: 'isRecentDate',
       logic: 'AND',
     })

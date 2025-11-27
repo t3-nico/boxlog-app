@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 /**
  * 自動復旧戦略システム
  * エラーカテゴリ別の自動リトライ・復旧ロジックを提供
@@ -442,12 +441,12 @@ export async function executeWithFallback<T>(primary: () => Promise<T>, fallback
     console.log('Primary operation failed, executing fallback')
 
     if (fallback.timeout) {
-      return await Promise.race([
+      return (await Promise.race([
         fallback.handler(),
         new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Fallback timeout')), fallback.timeout)),
-      ])
+      ])) as T
     }
 
-    return await fallback.handler()
+    return (await fallback.handler()) as T
   }
 }

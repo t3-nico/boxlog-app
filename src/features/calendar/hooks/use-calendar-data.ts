@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 'use client'
 
 import { useCallback, useMemo, useState } from 'react'
@@ -10,13 +9,13 @@ import { Task } from '@/types/unified'
 
 import type { ViewDateRange } from '../types/calendar.types'
 
-interface CalendarTaskExtended extends Task {
+interface CalendarTaskExtended extends Omit<Task, 'planned_start' | 'planned_duration'> {
   // カレンダー表示用の追加フィールド
   displayStart: Date
   displayEnd: Date
-  planned_start?: string
+  planned_start: string // Task と同じ必須フィールド
   planned_end?: string
-  planned_duration?: number
+  planned_duration: number // Task と同じ必須フィールド
   column?: number // 重複時の列位置
   columnSpan?: number // 占有する列数
 }

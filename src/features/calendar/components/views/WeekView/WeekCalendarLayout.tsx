@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -8,7 +7,7 @@ import { X } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
@@ -151,7 +150,6 @@ export const WeekCalendarLayout = ({
       // AddPopupを開く
       openEventPopup({
         dueDate: date,
-        status: 'Todo',
       })
 
       // デフォルト値を設定（AddPopupが使用）
@@ -185,7 +183,7 @@ export const WeekCalendarLayout = ({
   // jsx-no-bind optimization: Empty slot click handler creator
   const createEmptySlotClickHandler = useCallback(
     (day: Date) => {
-      return (e: React.MouseEvent | unknown) => handleEmptySlotClick(e, day)
+      return (e: React.MouseEvent<HTMLDivElement>) => handleEmptySlotClick(e, day)
     },
     [handleEmptySlotClick]
   )
@@ -196,7 +194,7 @@ export const WeekCalendarLayout = ({
       return (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
-          handleEmptySlotClick(e as unknown, day)
+          handleEmptySlotClick(e as unknown as React.MouseEvent<HTMLDivElement>, day)
         }
       }
     },
@@ -246,7 +244,7 @@ export const WeekCalendarLayout = ({
           className="bg-background sticky left-0 z-10 flex-shrink-0 shadow-sm"
           style={{ height: `${24 * HOUR_HEIGHT}px` }}
         >
-          <TimeColumn startHour={0} endHour={24} interval={60} className="w-16" />
+          <TimeColumn startHour={0} endHour={24} className="w-16" />
         </div>
 
         {/* カレンダーグリッド */}

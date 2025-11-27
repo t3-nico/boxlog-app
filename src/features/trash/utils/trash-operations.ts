@@ -1,5 +1,3 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 import { TRASH_ITEM_CONFIG, TRASH_RETENTION_DAYS, TRASH_WARNING_DAYS, TrashItem, TrashItemType } from '../types/trash'
 
 /**
@@ -359,23 +357,31 @@ export const trashOperations = {
 export const validateTrashItem = (item: unknown): { valid: boolean; errors: string[] } => {
   const errors: string[] = []
 
-  if (!item.id || typeof item.id !== 'string') {
+  // 型ガード: itemがオブジェクトであることを確認
+  if (typeof item !== 'object' || item === null) {
+    errors.push('アイテムはオブジェクトである必要があります')
+    return { valid: false, errors }
+  }
+
+  const typedItem = item as Record<string, unknown>
+
+  if (!typedItem.id || typeof typedItem.id !== 'string') {
     errors.push('IDが必要です')
   }
 
-  if (!item.type || typeof item.type !== 'string') {
+  if (!typedItem.type || typeof typedItem.type !== 'string') {
     errors.push('タイプが必要です')
   }
 
-  if (!item.title || typeof item.title !== 'string') {
+  if (!typedItem.title || typeof typedItem.title !== 'string') {
     errors.push('タイトルが必要です')
   }
 
-  if (!item.deletedAt || !(item.deletedAt instanceof Date)) {
+  if (!typedItem.deletedAt || !(typedItem.deletedAt instanceof Date)) {
     errors.push('削除日時が必要です')
   }
 
-  if (!item.originalData) {
+  if (!typedItem.originalData) {
     errors.push('復元用のデータが必要です')
   }
 

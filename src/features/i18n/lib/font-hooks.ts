@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー5件を段階的に修正する
 'use client'
 
 /**
@@ -80,7 +79,7 @@ export const useFontPreloader = (locale: Locale) => {
         const prefetchUrls = fontSystem.getFontPrefetchUrls(locale)
 
         // プリロード実行
-        const preloadPromises = preloadUrls.map((url) => {
+        const preloadPromises = preloadUrls.map((url: string) => {
           return new Promise<void>((resolve, reject) => {
             const link = document.createElement('link')
             link.rel = 'preload'
@@ -96,7 +95,7 @@ export const useFontPreloader = (locale: Locale) => {
         setPreloadStatus((prev) => ({ ...prev, preloaded: true }))
 
         // プリフェッチ実行（失敗しても続行）
-        prefetchUrls.forEach((url) => {
+        prefetchUrls.forEach((url: string) => {
           const link = document.createElement('link')
           link.rel = 'prefetch'
           link.as = 'style'
@@ -279,7 +278,7 @@ export const useFontPerformance = () => {
         const fontUrls = fontSystem.getFontPreloadUrls(locale)
 
         const results = await Promise.allSettled(
-          fontUrls.map(async (url) => {
+          fontUrls.map(async (url: string) => {
             try {
               const response = await fetch(url)
               if (response.ok) {

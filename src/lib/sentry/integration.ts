@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * Sentry連携システム
  * エラーパターン辞書との統合による自動分類・構造化レポーティング
@@ -101,14 +100,13 @@ export class SentryIntegration {
       release: this.options.release || process.env.NEXT_PUBLIC_APP_VERSION,
       sampleRate: this.options.sampleRate,
       tracesSampleRate: this.options.tracesSampleRate,
-      autoSessionTracking: this.options.enableAutoSessionTracking,
 
       beforeSend: (event, hint) => {
         const filteredEvent = this.filterEvent(event, hint)
         if (this.options.beforeSend && filteredEvent) {
-          return this.options.beforeSend(filteredEvent)
+          return this.options.beforeSend(filteredEvent) as Sentry.ErrorEvent | null
         }
-        return filteredEvent
+        return filteredEvent as Sentry.ErrorEvent | null
       },
     })
 
@@ -231,7 +229,7 @@ export class SentryErrorHandler {
   }
 }
 
-export function handleReactError(error: Error, errorInfo?: { componentStack?: string }): void {
+export function handleReactError(error: Error, errorInfo?: { componentStack?: string | null }): void {
   SentryErrorHandler.handleError(error, { errorInfo, type: 'react' })
 }
 

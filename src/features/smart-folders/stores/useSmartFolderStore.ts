@@ -1,9 +1,18 @@
-// @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
 import { SmartFolder, SmartFolderRule } from '@/types/smart-folders'
 import { Task } from '@/types/unified'
+
+// Internal type aliases (uppercase to match SmartFolderRuleLogic)
+type FilterLogic = 'AND' | 'OR'
+
+interface FolderCondition {
+  field: string
+  operator: string
+  value: unknown
+  logic?: FilterLogic
+}
 
 interface SmartFolderStore {
   smartFolders: SmartFolder[]
@@ -171,16 +180,16 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
           if (conditions.length === 0) return true
 
           let result = true
-          let currentLogic: FilterLogic = 'and'
+          let currentLogic: FilterLogic = 'AND'
 
           for (let i = 0; i < conditions.length; i++) {
-            const condition = conditions[i]
+            const condition = conditions[i] as FolderCondition
             const conditionResult = evaluateCondition(task, condition)
 
             if (i === 0) {
               result = conditionResult
             } else {
-              if (currentLogic === 'and') {
+              if (currentLogic === 'AND') {
                 result = result && conditionResult
               } else {
                 result = result || conditionResult
@@ -189,7 +198,7 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
 
             // Set logic for next iteration
             if (condition) {
-              currentLogic = condition.logic || 'and'
+              currentLogic = condition.logic || 'AND'
             }
           }
 

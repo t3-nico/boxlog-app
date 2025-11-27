@@ -4,7 +4,7 @@
 
 import type { CalendarPlan, EventInteractionHandler } from './plan.types'
 
-export type ViewType = 'day' | 'week' | 'month' | '3day' | '2week'
+export type ViewType = 'day' | 'week' | 'month' | '3day' | '5day' | '2week'
 
 export interface ViewProps {
   dates: Date[]

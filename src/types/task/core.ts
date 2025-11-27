@@ -1,20 +1,15 @@
 /**
  * タスク関連の基本型定義
  *
- * 基本型（TaskStatus, TaskPriority, Task）は src/types/index.ts に統一
+ * 基本型（TaskStatus, TaskPriority, Task, TaskType）は src/types/index.ts に統一
  * ここでは詳細な拡張型のみ定義
  */
 
-import type { Task as BaseTask, TaskPriority, TaskStatus } from '../index'
+import type { Task as BaseTask, TaskPriority, TaskStatus, TaskType } from '../index'
 
 // 基本型を再エクスポート
-export type { TaskPriority, TaskStatus }
+export type { TaskPriority, TaskStatus, TaskType }
 export type Task = BaseTask
-
-/**
- * タスクの種別（開発管理用の詳細タイプ）
- */
-export type TaskType = 'feature' | 'bug' | 'improvement' | 'maintenance' | 'documentation'
 
 /**
  * タスクのラベル

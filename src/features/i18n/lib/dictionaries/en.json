@@ -208,6 +208,7 @@
       "day": "Day View",
       "splitDay": "Split Day View",
       "3day": "3-Day View",
+      "5day": "5-Day View",
       "week": "Week View",
       "weekday": "Weekday",
       "weekNoWeekend": "Week View (Weekdays)",
@@ -230,10 +231,10 @@
         "viewLabels": {
           "day": "Day",
           "3day": "3-Day",
-          "weekNoWeekend": "Weekday",
+          "5day": "5-Day",
           "week": "Week",
           "2week": "2-Week",
-          "schedule": "List"
+          "month": "Month"
         },
         "viewSuffix": "View",
         "back": "Back",

@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 /**
  * Sentry パフォーマンス監視拡張機能
  * API レスポンス時間・Core Web Vitals・ページロード時間の自動測定
@@ -15,14 +14,15 @@ export function instrumentApiCalls() {
   // fetch API のインストゥルメンテーション
   const originalFetch = window.fetch
   window.fetch = function (...args: Parameters<typeof fetch>) {
-    const url = typeof args[0] === 'string' ? args[0] : args[0].url
+    const input = args[0]
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url
     const method = args[1]?.method || 'GET'
 
     return Sentry.startSpan(
       {
         name: `${method} ${url}`,
         op: 'http.client',
-        data: {
+        attributes: {
           url,
           method,
           type: 'fetch',

@@ -28,6 +28,34 @@ import {
   getRecoveryStrategy,
 } from './recovery-strategies'
 
+// Re-export from categories
+export {
+  CATEGORY_RETRYABLE,
+  CATEGORY_SEVERITY,
+  ERROR_CATEGORIES,
+  ERROR_CODES,
+  getErrorCategory,
+  type ErrorCategory,
+  type ErrorCode,
+  type SeverityLevel,
+}
+
+// Re-export from messages
+export { getUserMessage, SEVERITY_STYLES, type UserMessage }
+
+// Re-export from recovery-strategies
+export {
+  CircuitBreaker,
+  executeWithFallback,
+  executeWithRetry,
+  getRecoveryStrategy,
+  type CircuitBreakerConfig,
+  type CircuitBreakerMetrics,
+  type FallbackStrategy,
+  type RecoveryStrategy,
+  type RetryStrategy,
+}
+
 /**
  * エラーパターン辞書の完全な定義
  */
@@ -78,6 +106,7 @@ export class AppError extends Error {
   public readonly userMessage: UserMessage
   public readonly metadata: ErrorMetadata
   public readonly pattern: ErrorPattern
+  public readonly cause?: Error
 
   constructor(message: string, code: ErrorCode, metadata: Partial<ErrorMetadata> = {}, cause?: Error) {
     super(message)
@@ -383,35 +412,6 @@ export class ErrorPatternDictionary {
  * グローバルエラーパターン辞書インスタンス
  */
 export const errorPatternDictionary = new ErrorPatternDictionary()
-
-/**
- * 便利な関数のエクスポート
- */
-export {
-  CATEGORY_RETRYABLE,
-  CATEGORY_SEVERITY,
-  // クラス
-  CircuitBreaker,
-  // 定数
-  ERROR_CATEGORIES,
-  ERROR_CODES,
-  executeWithFallback,
-  executeWithRetry,
-  // 関数
-  getErrorCategory,
-  getRecoveryStrategy,
-  getUserMessage,
-  SEVERITY_STYLES,
-  type CircuitBreakerConfig,
-  // 型定義
-  type ErrorCategory,
-  type ErrorCode,
-  type FallbackStrategy,
-  type RecoveryStrategy,
-  type RetryStrategy,
-  type SeverityLevel,
-  type UserMessage,
-}
 
 /**
  * 便利なヘルパー関数

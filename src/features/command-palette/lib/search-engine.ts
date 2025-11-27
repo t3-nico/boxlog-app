@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { FuzzySearch } from '@/features/search'
 import { SmartFolder, Tag, Task } from '@/types/common'
 
@@ -76,7 +75,7 @@ export class SearchEngine {
   static searchTasks(query: string, tasks: Task[]): SearchResult[] {
     if (!tasks || tasks.length === 0) return []
 
-    const taskResults = FuzzySearch.search(tasks, query).map((task) => ({
+    const taskResults = FuzzySearch.search(tasks, query).map((task: Task) => ({
       id: `task:${task.id}`,
       title: task.title,
       description: task.description,
@@ -90,7 +89,7 @@ export class SearchEngine {
       metadata: {
         status: task.status,
         priority: task.priority,
-        dueDate: task.due_date,
+        dueDate: task.planned_start,
         tags: task.tags || [],
       },
     }))
@@ -111,7 +110,7 @@ export class SearchEngine {
       originalTag: tag,
     }))
 
-    const tagResults = FuzzySearch.search(searchableTags, query).map((result) => {
+    const tagResults = FuzzySearch.search(searchableTags, query).map((result: { originalTag: Tag }) => {
       const tag = result.originalTag
       return {
         id: `tag:${tag.id}`,
@@ -146,21 +145,23 @@ export class SearchEngine {
       originalFolder: folder,
     }))
 
-    const folderResults = FuzzySearch.search(searchableFolders, query).map((result) => {
-      const folder = result.originalFolder
-      return {
-        id: `smart-folder:${folder.id}`,
-        title: folder.name,
-        description: folder.description || 'Smart folder',
-        category: 'navigation',
-        icon: 'folder',
-        type: 'smart-folder' as const,
-        action: () => {
-          // Navigation implementation tracked in Issue #86
-          console.log('Navigate to smart folder:', folder.id)
-        },
+    const folderResults = FuzzySearch.search(searchableFolders, query).map(
+      (result: { originalFolder: SmartFolder }) => {
+        const folder = result.originalFolder
+        return {
+          id: `smart-folder:${folder.id}`,
+          title: folder.name,
+          description: folder.description || 'Smart folder',
+          category: 'navigation',
+          icon: 'folder',
+          type: 'smart-folder' as const,
+          action: () => {
+            // Navigation implementation tracked in Issue #86
+            console.log('Navigate to smart folder:', folder.id)
+          },
+        }
       }
-    })
+    )
 
     return folderResults
   }

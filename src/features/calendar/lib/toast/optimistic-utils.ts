@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー5件を段階的に修正する
 import { useCallback } from 'react'
 
 import { getTranslation } from './get-translation'
@@ -44,7 +43,7 @@ export const useOptimisticUpdate = () => {
         errorMessage,
         customErrorHandling = false,
         enableRetry = true,
-        _operationDescription = getTranslation(CALENDAR_TOAST_KEYS.TOAST_OPERATION),
+        operationDescription = getTranslation(CALENDAR_TOAST_KEYS.TOAST_OPERATION),
       } = options
 
       // 楽観的更新を実行
@@ -70,12 +69,14 @@ export const useOptimisticUpdate = () => {
             toast.error(errorMessage)
           } else {
             // ネットワークエラーハンドリングを使用
+            const errorObj =
+              error instanceof Error ? error : new Error(typeof error === 'string' ? error : String(error))
             handleError(
-              error,
+              errorObj as Error & { code?: string; response?: { status: number }; statusCode?: number },
               enableRetry
                 ? () => {
                     // 再試行時は再度楽観的更新から実行
-                    withOptimisticUpdate(optimisticUpdate, actualUpdate, rollback, options)
+                    void withOptimisticUpdate(optimisticUpdate, actualUpdate, rollback, options)
                   }
                 : undefined
             )
@@ -137,7 +138,7 @@ export const useBatchOperations = () => {
       })
 
       // プログレスToastを表示（オプション）
-      let progressToastId: string | undefined
+      let progressToastId: string | number | undefined
       if (showProgress) {
         progressToastId = toast.loading(
           `${operations.length}${getTranslation(CALENDAR_TOAST_KEYS.TOAST_OPERATION_IN_PROGRESS)}`,
@@ -207,7 +208,8 @@ export const useBatchOperations = () => {
           if (rollback) rollback()
         })
 
-        handleError(error)
+        const errorObj = error instanceof Error ? error : new Error(typeof error === 'string' ? error : String(error))
+        handleError(errorObj as Error & { code?: string; response?: { status: number }; statusCode?: number })
 
         return {
           success: false,

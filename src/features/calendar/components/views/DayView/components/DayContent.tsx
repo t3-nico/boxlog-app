@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
 import React, { useCallback } from 'react'
@@ -9,7 +8,7 @@ import { CalendarDragSelection, EventBlock, calculateEventGhostStyle, calculateP
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor'
 import { useTimeCalculation } from '../../shared/hooks/useTimeCalculation'
-import type { CalendarPlan } from '../../shared/types/event.types'
+import type { CalendarPlan } from '../../shared/types/base.types'
 import type { DayContentProps } from '../DayView.types'
 import { useDragAndDrop } from '../hooks/useDragAndDrop'
 
@@ -17,8 +16,8 @@ export const DayContent = ({
   date,
   events,
   eventStyles,
-  onEventClick,
-  onEventContextMenu,
+  onPlanClick,
+  onPlanContextMenu,
   onEmptyClick,
   onEventUpdate,
   onTimeRangeSelect,
@@ -39,12 +38,11 @@ export const DayContent = ({
   )
 
   // ドラッグ&ドロップ機能
-  // @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある
   const { dragState, handlers } = useDragAndDrop({
     onEventUpdate: handleEventUpdate,
-    onEventClick,
+    onEventClick: onPlanClick,
     date,
-    events,
+    events: events ?? [],
   })
 
   // 時間計算機能
@@ -63,30 +61,28 @@ export const DayContent = ({
     [date, onEmptyClick, calculateTimeFromEvent]
   )
 
-  // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
-  const handleEventClick = useCallback(
+  // プランクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
+  const handlePlanClick = useCallback(
     (plan: CalendarPlan) => {
       // ドラッグ・リサイズ操作中のクリックは無視
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
-      // @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある
-      onEventClick?.(event)
+      onPlanClick?.(plan)
     },
-    [onEventClick, dragState.isDragging, dragState.isResizing]
+    [onPlanClick, dragState.isDragging, dragState.isResizing]
   )
 
-  // イベント右クリックハンドラー
-  const handleEventContextMenu = useCallback(
+  // プラン右クリックハンドラー
+  const handlePlanContextMenu = useCallback(
     (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {
       // ドラッグ操作中またはリサイズ操作中は右クリックを無視
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
-      // @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある
-      onEventContextMenu?.(event, mouseEvent)
+      onPlanContextMenu?.(plan, mouseEvent)
     },
-    [onEventContextMenu, dragState.isDragging, dragState.isResizing]
+    [onPlanContextMenu, dragState.isDragging, dragState.isResizing]
   )
 
   // 時間グリッドの生成（1時間単位、23時は下線なし）
@@ -119,7 +115,7 @@ export const DayContent = ({
         {events &&
           Array.isArray(events) &&
           events.map((event) => {
-            const style = eventStyles[event.id]
+            const style = eventStyles?.[event.id]
             if (!style) return null
 
             const isDragging = dragState.draggedEventId === event.id && dragState.isDragging
@@ -163,17 +159,24 @@ export const DayContent = ({
                   }}
                 >
                   <EventBlock
-                    event={event}
+                    plan={event}
                     position={{
                       top: 0,
                       left: 0,
                       width: 100,
                       height:
-                        isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
+                        isResizingThis && dragState.snappedPosition
+                          ? (dragState.snappedPosition.height ?? currentHeight)
+                          : currentHeight,
                     }}
                     // クリックは useDragAndDrop で処理されるため削除
-                    onContextMenu={(event, e) => handleEventContextMenu(event, e)}
-                    onResizeStart={(event, direction, e, _position) =>
+                    onContextMenu={(event: CalendarPlan, e: React.MouseEvent) => handlePlanContextMenu(event, e)}
+                    onResizeStart={(
+                      event: CalendarPlan,
+                      direction: 'top' | 'bottom',
+                      e: React.MouseEvent,
+                      _position: { top: number; left: number; width: number; height: number }
+                    ) =>
                       handlers.handleResizeStart(event.id, direction, e, {
                         top: currentTop,
                         left: 0,

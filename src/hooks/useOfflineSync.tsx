@@ -1,9 +1,9 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { offlineManager, type OfflineAction } from '@/features/offline/services/offline-manager'
+import { offlineManager } from '@/features/offline/services/offline-manager'
+import type { OfflineAction } from '@/features/offline/types'
 // import { ConflictResolutionModal } from '@/components/ConflictResolutionModal'
 // import { toast } from '@/components/ui/use-toast'
 interface ToastOptions {
@@ -156,13 +156,16 @@ export function useOfflineSync() {
       conflicts: unknown[]
       conflictId: string
     }) => {
+      const firstConflict = conflictData.conflicts[0] as
+        | { serverData?: unknown; serverTimestamp?: string | number }
+        | undefined
       setCurrentConflict({
         actionId: conflictData.action.id,
         entity: conflictData.action.entity,
         localData: conflictData.action.data,
-        serverData: conflictData.conflicts[0]?.serverData || {},
+        serverData: firstConflict?.serverData || {},
         localTimestamp: conflictData.action.timestamp,
-        serverTimestamp: new Date(conflictData.conflicts[0]?.serverTimestamp || Date.now()),
+        serverTimestamp: new Date(firstConflict?.serverTimestamp || Date.now()),
         conflicts: conflictData.conflicts,
       })
       setIsConflictModalOpen(true)

@@ -1,10 +1,8 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
 import React, { useCallback } from 'react'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 import {
@@ -58,8 +56,8 @@ export const ThreeDayContent = ({
 
       // handleUpdatePlan形式で呼び出し
       await onPlanUpdate(planId, {
-        startTime: updates.startTime,
-        endTime: updates.endTime,
+        startDate: updates.startTime,
+        endDate: updates.endTime,
       })
     },
     [onPlanUpdate]
@@ -70,7 +68,7 @@ export const ThreeDayContent = ({
     onPlanUpdate: handlePlanUpdate,
     onPlanClick,
     date,
-    plans,
+    events: plans,
     displayDates,
     viewMode: '3day',
   })
@@ -132,7 +130,11 @@ export const ThreeDayContent = ({
       <CalendarDragSelection
         date={date}
         className="absolute inset-0"
-        onTimeRangeSelect={(startTime, endTime) => onTimeRangeSelect?.(date, startTime, endTime)}
+        onTimeRangeSelect={(selection) => {
+          const startTime = `${String(selection.startHour).padStart(2, '0')}:${String(selection.startMinute).padStart(2, '0')}`
+          const endTime = `${String(selection.endHour).padStart(2, '0')}:${String(selection.endMinute).padStart(2, '0')}`
+          onTimeRangeSelect?.(date, startTime, endTime)
+        }}
         onSingleClick={onEmptyClick}
         disabled={dragState.isDragging || dragState.isResizing}
       >
@@ -148,8 +150,8 @@ export const ThreeDayContent = ({
           const style = planStyles[plan.id]
           if (!style) return null
 
-          const isDragging = dragState.draggedPlanId === plan.id && dragState.isDragging
-          const isResizingThis = dragState.isResizing && dragState.draggedPlanId === plan.id
+          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
+          const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
 
@@ -194,11 +196,18 @@ export const ThreeDayContent = ({
                     left: 0,
                     width: 100,
                     height:
-                      isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
+                      isResizingThis && dragState.snappedPosition
+                        ? (dragState.snappedPosition.height ?? currentHeight)
+                        : currentHeight,
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
-                  onContextMenu={(plan, e) => handlePlanContextMenu(plan, e)}
-                  onResizeStart={(plan, direction, e, _position) =>
+                  onContextMenu={(plan: CalendarPlan, e: React.MouseEvent) => handlePlanContextMenu(plan, e)}
+                  onResizeStart={(
+                    plan: CalendarPlan,
+                    direction: 'top' | 'bottom',
+                    e: React.MouseEvent,
+                    _position: { top: number; left: number; width: number; height: number }
+                  ) =>
                     handlers.handleResizeStart(plan.id, direction, e, {
                       top: currentTop,
                       left: 0,

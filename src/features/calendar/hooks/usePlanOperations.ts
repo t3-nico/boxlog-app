@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 import { useCallback, useEffect } from 'react'
 
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
@@ -56,6 +55,12 @@ export const usePlanOperations = () => {
         // CalendarPlanオブジェクト形式
         else if (typeof planIdOrPlan === 'object') {
           const updatedPlan = planIdOrPlan
+
+          // startDateがnullの場合は早期リターン
+          if (!updatedPlan.startDate) {
+            logger.error('❌ startDateがnullのため更新できません:', updatedPlan.id)
+            return
+          }
 
           logger.log('🔧 プラン更新 (CalendarPlan形式):', {
             planId: updatedPlan.id,

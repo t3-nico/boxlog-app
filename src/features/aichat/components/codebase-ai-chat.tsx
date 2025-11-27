@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 'use client'
 
 import React, { useEffect, useState } from 'react'
@@ -7,7 +6,7 @@ import { useChat } from '@ai-sdk/react'
 
 import { BotMessageSquare, Copy, MoreVertical, RefreshCw, Trash2, X } from 'lucide-react'
 
-import { Avatar } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Conversation,
   ConversationContent,
@@ -204,7 +203,12 @@ const UserAvatar = () => {
     return <div className="bg-muted flex size-8 items-center justify-center rounded-full text-xl">{profileIcon}</div>
   }
 
-  return <Avatar src={avatarUrl} initials={initials} className="size-8" />
+  return (
+    <Avatar className="size-8">
+      {avatarUrl && <AvatarImage src={avatarUrl} alt="User avatar" />}
+      <AvatarFallback>{initials}</AvatarFallback>
+    </Avatar>
+  )
 }
 
 // アシスタントアイコン
@@ -256,7 +260,7 @@ const CodebaseChatInput = ({
 }: {
   input: string
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void
-  handleSubmit: (_message: unknown, e: React.FormEvent<HTMLFormElement>) => void
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   isLoading: boolean
 }) => {
   const [_isComposing, _setIsComposing] = useState(false)
@@ -280,7 +284,7 @@ const CodebaseChatInput = ({
         </div>
       )}
 
-      <PromptInput onSubmit={handleSubmit}>
+      <PromptInput onSubmit={(_message, event) => handleSubmit(event)}>
         <PromptInputTextarea
           value={input}
           onChange={handleInputChange}
@@ -308,34 +312,18 @@ export const CodebaseAIChat = ({ isOpen, onClose }: CodebaseAIChatProps) => {
   const [_isComposing, _setIsComposing] = useState(false)
 
   // Use Vercel AI SDK's useChat hook with simple configuration
+  // Note: @ai-sdk/react v2 uses default /api/chat endpoint
+  // TODO: Move route handler from /api/chat/codebase to /api/chat or configure proxy
   const chatHelpers = useChat({
-    api: '/api/chat/codebase',
+    id: 'codebase-chat',
     onError: (error) => {
       console.error('Chat error:', error)
     },
     onFinish: (message) => {
       console.log('Message finished:', message)
     },
-    initialMessages: [
-      {
-        id: '1',
-        role: 'assistant',
-        content: `Hello! I'm the **BoxLog** application support assistant.
-
-I can help you with:
-
-• 📅 **Calendar Features** - How to use calendar views
-• 📋 **Task Management** - Creating and organizing tasks
-• 🏷️ **Tag System** - Categorizing and filtering
-• 📊 **Progress Tracking** - Monitoring productivity
-• 🔄 **Smart Folders** - Automated organization
-• 🛠️ **Troubleshooting** - Solving common issues
-
-**Note**: I only provide support for BoxLog application usage.
-
-What would you like to know about BoxLog?`,
-      },
-    ],
+    // Note: initialMessages removed in @ai-sdk/react v2
+    // Initial message is now displayed in the empty state (line 475-490)
   })
 
   // Extract properties from chat helpers
@@ -416,8 +404,8 @@ What would you like to know about BoxLog?`,
                     onClick={() => {
                       const exportMessages = messages.map((msg) => ({
                         role: msg.role,
-                        content: msg.content,
-                        timestamp: msg.createdAt,
+                        content: (msg as unknown as ExtendedMessage).content,
+                        timestamp: (msg as unknown as ExtendedMessage).createdAt,
                       }))
                       navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
                       setShowMenu(false)
@@ -489,7 +477,9 @@ What would you like to know about BoxLog?`,
               </MessageContent>
             </Message>
           ) : (
-            messages.map((message) => <MessageBubble key={message.id} message={message as ExtendedMessage} />)
+            messages.map((message) => (
+              <MessageBubble key={message.id} message={message as unknown as ExtendedMessage} />
+            ))
           )}
         </ConversationContent>
         <ConversationScrollButton />
