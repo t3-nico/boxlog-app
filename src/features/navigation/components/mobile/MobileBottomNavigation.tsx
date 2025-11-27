@@ -4,19 +4,7 @@ import { useState } from 'react'
 
 import { usePathname, useRouter } from 'next/navigation'
 
-import {
-  BarChart3,
-  Calendar,
-  HelpCircle,
-  Inbox,
-  LogOut,
-  Moon,
-  MoreHorizontal,
-  Settings,
-  Sun,
-  Tag,
-  User,
-} from 'lucide-react'
+import { BarChart3, Calendar, Inbox, LogOut, Moon, MoreHorizontal, Settings, Sun, Tag, User } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -221,12 +209,6 @@ function MoreSheet({
       label: resolvedTheme === 'dark' ? t('theme.light') : t('theme.dark'),
       icon: resolvedTheme === 'dark' ? Sun : Moon,
       onClick: handleToggleTheme,
-    },
-    {
-      id: 'help',
-      label: t('navUser.help'),
-      icon: HelpCircle,
-      onClick: () => handleNavigation(`/${locale}/help`),
     },
   ]
 
