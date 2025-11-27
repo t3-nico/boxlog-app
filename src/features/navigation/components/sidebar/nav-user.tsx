@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  BookOpen,
   ChevronDown,
   FileText,
   HelpCircle,
@@ -134,12 +133,6 @@ export function NavUser({
               {t('navUser.help')}
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="border-input">
-              <DropdownMenuItem asChild>
-                <Link href={`/${locale}/help`}>
-                  <BookOpen />
-                  {t('navUser.helpSubmenu.helpCenter')}
-                </Link>
-              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="https://github.com/t3-nico/boxlog-app/releases" target="_blank" rel="noopener noreferrer">
                   <Megaphone />

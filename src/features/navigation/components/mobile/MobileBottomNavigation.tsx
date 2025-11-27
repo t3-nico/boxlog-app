@@ -7,7 +7,6 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   BarChart3,
   Calendar,
-  HelpCircle,
   Inbox,
   LogOut,
   Moon,
@@ -221,12 +220,6 @@ function MoreSheet({
       label: resolvedTheme === 'dark' ? t('theme.light') : t('theme.dark'),
       icon: resolvedTheme === 'dark' ? Sun : Moon,
       onClick: handleToggleTheme,
-    },
-    {
-      id: 'help',
-      label: t('navUser.help'),
-      icon: HelpCircle,
-      onClick: () => handleNavigation(`/${locale}/help`),
     },
   ]
 
