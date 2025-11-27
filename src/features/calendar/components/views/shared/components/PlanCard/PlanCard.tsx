@@ -180,7 +180,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     scheduledColors.text,
     // 状態別スタイル
     isDragging ? 'cursor-grabbing' : 'cursor-pointer',
-    isSelected && 'ring-2 ring-blue-500 ring-offset-1',
+    isSelected && 'ring-primary ring-2 ring-offset-1',
     // サイズ別スタイル（上下左右に8pxのpadding = p-2）
     safePosition.height < 30 ? 'p-2 text-xs' : 'p-2 text-sm',
     className
@@ -213,7 +213,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
 
       {/* 下部リサイズハンドル */}
       <div
-        className="absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
+        className="absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-ring focus:ring-2 focus:ring-offset-1 focus:outline-none"
         role="slider"
         tabIndex={0}
         aria-label="Resize plan duration"

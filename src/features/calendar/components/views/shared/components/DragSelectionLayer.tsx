@@ -232,7 +232,7 @@ export const DragSelectionLayer = ({ className, onTimeRangeSelect, children }: D
         return (
           selectionStyle && (
             <div style={selectionStyle}>
-              <span className="rounded bg-blue-600 px-2 py-1 text-sm font-medium text-white">新しいイベント</span>
+              <span className="bg-primary text-primary-foreground rounded px-2 py-1 text-sm font-medium">新しいイベント</span>
             </div>
           )
         )

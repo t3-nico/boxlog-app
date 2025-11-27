@@ -29,8 +29,8 @@ const generateHeaderClasses = (
     : isSelected
       ? 'bg-primary/10 text-primary'
       : isWeekend
-        ? 'text-gray-500 dark:text-gray-400'
-        : 'text-gray-900 dark:text-gray-100'
+        ? 'text-muted-foreground'
+        : 'text-foreground'
 
   return [baseClasses, hoverClasses, statusClasses, className].filter(Boolean).join(' ')
 }
@@ -40,7 +40,7 @@ const getTextClasses = (isToday: boolean, isBase: boolean = false): string => {
   if (isToday) {
     return isBase ? 'text-primary-foreground' : 'text-primary-foreground/75'
   }
-  return 'text-gray-500 dark:text-gray-400'
+  return 'text-muted-foreground'
 }
 
 export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({

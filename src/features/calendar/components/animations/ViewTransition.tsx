@@ -388,7 +388,7 @@ export const TaskCreateAnimation = ({ children, isNew = false }: TaskCreateAnima
   return (
     <div
       className={`${
-        isNew ? 'ring-opacity-50 animate-pulse shadow-lg ring-2 ring-blue-400' : ''
+        isNew ? 'ring-primary/50 animate-pulse shadow-lg ring-2' : ''
       } transition-all duration-300`}
     >
       {children}
@@ -438,7 +438,7 @@ export const SkeletonAnimation = ({ show, count = 3, height = 'h-8', className =
       {Array.from({ length: count }, (_, index) => (
         <div
           key={`skeleton-${Date.now()}-${index}`}
-          className={`${height} animate-pulse rounded bg-gray-200 dark:bg-gray-700`}
+          className={`${height} bg-muted animate-pulse rounded`}
           style={{
             animationDelay: `${index * 0.1}s`,
           }}

@@ -64,7 +64,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
     'relative flex-1 min-w-0',
     GRID_BACKGROUND,
     'border-r border-border last:border-r-0',
-    isWeekendActual ? 'bg-gray-50 dark:bg-gray-800/50' : '',
+    isWeekendActual ? 'bg-muted/50' : '',
     className,
   ]
     .filter(Boolean)
@@ -114,7 +114,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
             <EmptyState
               title=""
               description=""
-              icon={<div className="text-4xl text-gray-300 dark:text-gray-600">📅</div>}
+              icon={<div className="text-muted-foreground text-4xl">📅</div>}
               className="p-4"
             />
           </div>

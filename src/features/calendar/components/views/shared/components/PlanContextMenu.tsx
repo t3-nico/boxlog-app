@@ -161,8 +161,8 @@ export const EventContextMenu = ({
               className={cn(
                 'flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left transition-colors',
                 item.dangerous
-                  ? 'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20'
-                  : 'text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800'
+                  ? 'text-destructive hover:bg-destructive/8'
+                  : 'text-foreground hover:bg-foreground/8'
               )}
             >
               <IconComponent className="h-4 w-4 flex-shrink-0" />

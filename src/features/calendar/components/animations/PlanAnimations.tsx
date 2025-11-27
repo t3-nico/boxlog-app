@@ -191,7 +191,7 @@ export const CreatingEventPreview = ({
         )}
 
         {/* 時間表示 */}
-        <div className="mt-1 text-xs text-gray-600">
+        <div className="text-muted-foreground mt-1 text-xs">
           {startTime} - {endTime}
         </div>
 
@@ -200,14 +200,14 @@ export const CreatingEventPreview = ({
           <button
             type="button"
             onClick={handleConfirm}
-            className="rounded bg-blue-500 px-2 py-1 text-xs text-white transition-colors hover:bg-blue-600"
+            className="bg-primary text-primary-foreground hover:bg-primary/92 rounded px-2 py-1 text-xs transition-colors"
           >
             Save
           </button>
           <button
             type="button"
             onClick={handleCancel}
-            className="rounded bg-gray-500 px-2 py-1 text-xs text-white transition-colors hover:bg-gray-600"
+            className="bg-muted text-muted-foreground hover:bg-muted/80 rounded px-2 py-1 text-xs transition-colors"
           >
             Cancel
           </button>
