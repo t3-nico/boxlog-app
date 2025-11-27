@@ -171,15 +171,6 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDUxOTI4MDAsImV4cCI6MTk2MDc2ODgwMH0.placeholder' }}
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }}
 
-      - name: 📤 Upload build artifacts for Lighthouse
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: nextjs-build
-          path: |
-            .next
-            !.next/cache
-          retention-days: 1
-
   accessibility:
     name: ♿ Accessibility
     runs-on: ubuntu-latest
@@ -236,7 +227,7 @@ jobs:
     name: ⚡ Performance (Lighthouse CI)
     runs-on: ubuntu-latest
     environment: development # Environment Secrets保護
-    needs: [build]
+    needs: [lint, typecheck, unit-tests]
     timeout-minutes: 10
     steps:
       - name: 📥 Checkout
@@ -250,12 +241,6 @@ jobs:
 
       - name: 📦 Install dependencies
         run: npm ci
-
-      - name: 📥 Download build artifacts
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
-        with:
-          name: nextjs-build
-          path: .next
 
       - name: ⚡ Run Lighthouse CI
         run: npm run perf:lighthouse
