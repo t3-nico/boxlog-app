@@ -67,9 +67,9 @@ export function TrashTable({ items, className }: TrashTableProps) {
       return <span className="text-muted-foreground">↕</span>
     }
     return sort.order === 'asc' ? (
-      <span className="text-blue-600 dark:text-blue-400">↑</span>
+      <span className="text-primary">↑</span>
     ) : (
-      <span className="text-blue-600 dark:text-blue-400">↓</span>
+      <span className="text-primary">↓</span>
     )
   }
 
@@ -114,7 +114,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
                   if (input) input.indeterminate = isSomeSelected && !isAllSelected
                 }}
                 onChange={handleHeaderCheckboxChange}
-                className="border-input h-4 w-4 rounded-sm text-blue-600 focus:ring-2 focus:ring-blue-500"
+                className="border-input text-primary focus:ring-ring h-4 w-4 rounded-sm focus:ring-2"
               />
               <span className="text-foreground ml-2 text-sm font-medium">
                 {isAllSelected ? t('trash.actions.deselectAll') : t('trash.actions.selectAll')}
@@ -203,8 +203,8 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
 
   return (
     <div
-      className={`border-border hover:bg-muted flex items-center border-b px-4 py-3 transition-colors ${
-        isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+      className={`border-border hover:bg-foreground/8 flex items-center border-b px-4 py-3 transition-colors ${
+        isSelected ? 'bg-primary/12' : ''
       }`}
     >
       {/* 選択チェックボックス */}
@@ -213,7 +213,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
           type="checkbox"
           checked={isSelected}
           onChange={handleToggleSelect}
-          className="border-input h-4 w-4 rounded-sm text-blue-600 focus:ring-2 focus:ring-blue-500"
+          className="border-input text-primary focus:ring-ring h-4 w-4 rounded-sm focus:ring-2"
         />
       </div>
 
@@ -256,7 +256,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
                 {/* 自動削除警告 */}
                 {isExpired || isExpiringSoon ? (
                   <span
-                    className={`font-medium ${isExpired ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}
+                    className={`font-medium ${isExpired ? 'text-destructive' : 'text-destructive/80'}`}
                   >
                     {isExpired
                       ? t('trash.status.expired')
@@ -271,7 +271,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
                   {trashOperations.formatTags(item.metadata.tags).visible.map((tag) => (
                     <span
                       key={tag}
-                      className="inline-block rounded-sm bg-blue-50 px-2 py-1 text-sm text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                      className="bg-primary/10 text-primary inline-block rounded-sm px-2 py-1 text-sm"
                     >
                       #{tag}
                     </span>
@@ -291,7 +291,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
             <button
               type="button"
               onClick={handleRestore}
-              className="rounded-sm px-3 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/30"
+              className="text-primary hover:bg-primary/8 rounded-sm px-3 py-1 text-sm transition-colors"
               title={t('trash.actions.restore')}
             >
               {t('trash.actions.restore')}
@@ -299,7 +299,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
             <button
               type="button"
               onClick={handlePermanentDelete}
-              className="rounded-sm px-3 py-1 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
+              className="text-destructive hover:bg-destructive/8 rounded-sm px-3 py-1 text-sm transition-colors"
               title={t('trash.actions.permanentDelete')}
             >
               {t('trash.actions.delete')}

@@ -57,7 +57,7 @@ const CommandInput = ({ className, ...props }: React.ComponentProps<typeof Comma
         data-slot="command-input"
         className={cn(
           'flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden',
-          'placeholder:text-neutral-400 dark:placeholder:text-neutral-500',
+          'placeholder:text-muted-foreground',
           'disabled:cursor-not-allowed disabled:opacity-50',
           className
         )}
