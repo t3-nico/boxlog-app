@@ -4,7 +4,7 @@ import '@/styles/globals.css'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Noto_Sans_JP } from 'next/font/google'
 import { Suspense } from 'react'
 
 import { CookieConsentBanner, GlobalErrorBoundary } from '@/components/common'
@@ -17,6 +17,14 @@ const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
+})
+
+// 日本語フォント（GAFA方針準拠: Google = Noto Sans JP）
+const notoSansJP = Noto_Sans_JP({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  display: 'swap',
+  variable: '--font-noto-jp',
 })
 
 export const metadata: Metadata = {
@@ -35,7 +43,7 @@ interface RootLayoutProps {
 const RootLayout = ({ children, params }: RootLayoutProps) => {
   const locale = params?.locale || 'en'
   return (
-    <html lang={locale} suppressHydrationWarning className={inter.variable}>
+    <html lang={locale} suppressHydrationWarning className={`${inter.variable} ${notoSansJP.variable}`}>
       <body className={cn('bg-background')} suppressHydrationWarning>
         <Suspense fallback={null}>
           <GlobalErrorBoundary maxRetries={3} retryDelay={1000}>
