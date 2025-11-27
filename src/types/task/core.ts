@@ -70,8 +70,8 @@ export interface TaskHistory {
   userId: string
   action: 'created' | 'updated' | 'commented' | 'attached' | 'status_changed' | 'assigned'
   field?: string
-  oldValue?: any
-  newValue?: any
+  oldValue?: unknown
+  newValue?: unknown
   description?: string
   createdAt: string
 }

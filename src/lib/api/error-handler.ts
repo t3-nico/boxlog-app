@@ -15,7 +15,7 @@ export interface APIErrorResponse {
   error: {
     code: string
     message: string
-    details?: any
+    details?: unknown
     path?: string[]
     userMessage?: string
     timestamp: string
@@ -25,7 +25,7 @@ export interface APIErrorResponse {
 /**
  * API成功レスポンス型
  */
-export interface APISuccessResponse<T = any> {
+export interface APISuccessResponse<T = unknown> {
   success: true
   data: T
   timestamp: string
@@ -34,7 +34,7 @@ export interface APISuccessResponse<T = any> {
 /**
  * 統一レスポンス型
  */
-export type APIResponse<T = any> = APISuccessResponse<T> | APIErrorResponse
+export type APIResponse<T = unknown> = APISuccessResponse<T> | APIErrorResponse
 /**
  * Zodバリデーションエラーの日本語化
  */

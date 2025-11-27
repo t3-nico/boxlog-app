@@ -18,7 +18,7 @@ import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Calendar } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { type Control, type FieldValues, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { kanbanCardSchema, type KanbanCard } from '../../types'
 
@@ -30,6 +30,10 @@ const kanbanCardInputSchema = kanbanCardSchema.omit({
 })
 
 type KanbanCardFormData = z.infer<typeof kanbanCardInputSchema>
+
+// react-hook-form の Control 型互換性のためのヘルパー型
+// FormField は Control<FieldValues> を期待するが、useForm は具体的な型を返すため
+type FormControl = Control<FieldValues>
 
 interface KanbanCardDialogProps {
   card?: KanbanCard
@@ -56,7 +60,7 @@ interface KanbanCardDialogProps {
  */
 export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus = 'todo' }: KanbanCardDialogProps) {
   const form = useForm<KanbanCardFormData>({
-    resolver: zodResolver(kanbanCardInputSchema) as any,
+    resolver: zodResolver(kanbanCardInputSchema),
     defaultValues: card
       ? {
           title: card.title,
@@ -102,7 +106,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             {/* タイトル */}
             <FormField
-              control={form.control as any}
+              control={form.control as FormControl}
               name="title"
               render={({ field }) => (
                 <FormItem>
@@ -117,7 +121,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
 
             {/* 説明 */}
             <FormField
-              control={form.control as any}
+              control={form.control as FormControl}
               name="description"
               render={({ field }) => (
                 <FormItem>
@@ -133,7 +137,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
             {/* ステータス・優先度 */}
             <div className="grid grid-cols-2 gap-4">
               <FormField
-                control={form.control as any}
+                control={form.control as FormControl}
                 name="status"
                 render={({ field }) => (
                   <FormItem>
@@ -156,7 +160,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
               />
 
               <FormField
-                control={form.control as any}
+                control={form.control as FormControl}
                 name="priority"
                 render={({ field }) => (
                   <FormItem>
@@ -182,7 +186,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
             {/* 担当者・期限 */}
             <div className="grid grid-cols-2 gap-4">
               <FormField
-                control={form.control as any}
+                control={form.control as FormControl}
                 name="assignee"
                 render={({ field }) => (
                   <FormItem>
@@ -196,7 +200,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
               />
 
               <FormField
-                control={form.control as any}
+                control={form.control as FormControl}
                 name="dueDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
