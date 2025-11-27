@@ -174,7 +174,7 @@ jobs:
       - name: 📤 Upload build artifacts for Lighthouse
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: nextjs-build-${{ github.run_id }}
+          name: nextjs-build
           path: |
             .next
             !.next/cache
@@ -254,7 +254,7 @@ jobs:
       - name: 📥 Download build artifacts
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
-          name: nextjs-build-${{ github.run_id }}
+          name: nextjs-build
           path: .next
 
       - name: ⚡ Run Lighthouse CI
