@@ -34,7 +34,7 @@ export function SortableTableHead({ field, children, className }: SortableTableH
       <button
         type="button"
         onClick={() => setSortField(field)}
-        className="hover:text-foreground flex items-center gap-2 transition-colors"
+        className="hover:bg-foreground/8 flex items-center gap-2 rounded-md px-2 py-1 -ml-2 transition-colors"
       >
         <span>{children}</span>
         <Icon className={`size-4 ${isActive ? 'text-foreground' : 'text-muted-foreground'}`} />
