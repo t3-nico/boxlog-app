@@ -199,7 +199,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
 
         {/* グループ一覧 */}
         {groups.length === 0 && !isCreating ? (
-          <div className="border-border flex h-32 items-center justify-center rounded-lg border-2 border-dashed">
+          <div className="border-border flex h-32 items-center justify-center rounded-xl border-2 border-dashed">
             <div className="text-center">
               <p className="text-muted-foreground mb-2">グループがありません</p>
               <Button onClick={handleStartCreating} variant="outline" size="sm">
@@ -209,7 +209,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
             </div>
           </div>
         ) : (
-          <div className="border-border divide-border divide-y rounded-lg border">
+          <div className="border-border divide-border divide-y rounded-xl border">
             {/* 既存グループ */}
             {groups.map((group) => (
               <div

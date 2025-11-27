@@ -290,7 +290,7 @@ export function QualityReviewPanel({
 
   if (loading && !assessment) {
     return (
-      <div className="border-border bg-muted rounded-lg border p-6">
+      <div className="border-border bg-muted rounded-xl border p-6">
         <div className="flex items-center justify-center">
           <div className="mr-3 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
           <span className="text-neutral-800 dark:text-neutral-200">品質評価を実行中...</span>
@@ -422,7 +422,7 @@ export function QualityReviewPanel({
               {assessment.issues.length > 0 ? (
                 <div className="space-y-4">
                   {assessment.issues.map((issue, index) => (
-                    <div key={index} className="rounded-lg border p-4">
+                    <div key={index} className="rounded-xl border p-4">
                       <div className="flex items-start justify-between">
                         <div className="mb-2 flex items-center gap-2">
                           <Badge variant="outline">{ISSUE_TYPE_LABELS[issue.type]}</Badge>

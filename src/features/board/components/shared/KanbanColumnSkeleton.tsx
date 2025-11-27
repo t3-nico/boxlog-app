@@ -25,7 +25,7 @@ interface KanbanColumnSkeletonProps {
  */
 export function KanbanColumnSkeleton({ cardCount = 3 }: KanbanColumnSkeletonProps) {
   return (
-    <div className="bg-muted/20 flex h-full w-80 shrink-0 flex-col gap-4 rounded-lg border p-4">
+    <div className="bg-muted/20 flex h-full w-80 shrink-0 flex-col gap-4 rounded-xl border p-4">
       {/* カラムヘッダー */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">

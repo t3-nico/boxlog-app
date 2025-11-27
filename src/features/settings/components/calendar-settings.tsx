@@ -186,7 +186,7 @@ export function CalendarSettings() {
           </SettingField>
 
           {/* プレビュー表示 */}
-          <div className="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
+          <div className="rounded-xl bg-neutral-100 p-4 dark:bg-neutral-800">
             <p className="mb-2 text-sm text-neutral-600 dark:text-neutral-400">{t('settings.calendar.preview')}</p>
             <div className="space-y-1">
               <p className="font-medium">
@@ -329,7 +329,7 @@ export function CalendarSettings() {
           </SettingField>
 
           {/* 営業時間プレビュー */}
-          <div className="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
+          <div className="rounded-xl bg-neutral-100 p-4 dark:bg-neutral-800">
             <p className="mb-2 text-sm text-neutral-600 dark:text-neutral-400">
               {t('settings.calendar.businessHoursPreview')}
             </p>

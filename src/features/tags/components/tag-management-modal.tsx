@@ -206,14 +206,14 @@ export const TagManagementModal = ({
       />
 
       {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-96 -translate-x-1/2 -translate-y-1/2 transform overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-800">
+      <div className="fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-96 -translate-x-1/2 -translate-y-1/2 transform overflow-hidden rounded-xl bg-white shadow-xl dark:bg-gray-800">
         {/* Header */}
         <div className="border-border flex items-center justify-between border-b p-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Tag Management</h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="rounded-xl p-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
           </button>
@@ -238,7 +238,7 @@ export const TagManagementModal = ({
                   value={newTagName}
                   onChange={handleNewTagNameChange}
                   placeholder="Enter tag name..."
-                  className="border-border w-full rounded-lg border bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  className="border-border w-full rounded-xl border bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   onKeyDown={handleNewTagNameKeyDown}
                 />
               </div>
@@ -254,7 +254,7 @@ export const TagManagementModal = ({
                   id="new-tag-parent"
                   value={newTagParentId || ''}
                   onChange={handleNewTagParentChange}
-                  className="border-border w-full rounded-lg border bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  className="border-border w-full rounded-xl border bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                 >
                   <option value="">None (Root Level)</option>
                   {getAvailableParentTags().map((tag) => (
@@ -279,7 +279,7 @@ export const TagManagementModal = ({
                       key={color}
                       onClick={handleNewTagColorSelect}
                       data-color={color}
-                      className={`h-8 w-8 rounded-lg transition-all hover:scale-110 ${
+                      className={`h-8 w-8 rounded-xl transition-all hover:scale-110 ${
                         newTagColor === color ? 'ring-2 ring-gray-400 ring-offset-2' : ''
                       }`}
                       style={{ backgroundColor: color }}
@@ -293,7 +293,7 @@ export const TagManagementModal = ({
                 type="button"
                 onClick={handleCreateTag}
                 disabled={!newTagName.trim()}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-gray-600"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-500 px-3 py-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-gray-600"
               >
                 <Plus className="h-4 w-4" />
                 Create Tag
@@ -315,7 +315,7 @@ export const TagManagementModal = ({
                 {tags.map((tag) => (
                   <div
                     key={tag.id}
-                    className="border-border flex items-center gap-3 rounded-lg border bg-gray-50 p-3 dark:bg-gray-700"
+                    className="border-border flex items-center gap-3 rounded-xl border bg-gray-50 p-3 dark:bg-gray-700"
                   >
                     {editingTag === tag.id ? (
                       <>
@@ -421,7 +421,7 @@ export const TagManagementModal = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-4 py-2 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+            className="rounded-xl px-4 py-2 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             Done
           </button>

@@ -143,7 +143,6 @@
    * ============================================ */
   --radius-sm: 0.25rem; /* 4px - 例外: 小要素用 */
   --radius-md: 0.5rem; /* 8px */
-  --radius-lg: 0.75rem; /* 12px - 例外: 視覚的バランス用 */
   --radius-xl: 1rem; /* 16px */
   --radius-2xl: 1.5rem; /* 24px */
   --radius-full: 9999px;

@@ -34,8 +34,8 @@ export function Item({ icon: Icon, label, url, isActive, onClick }: ItemProps) {
       {/* アイコン（ハイライト対象） */}
       <div
         className={cn(
-          'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
-          'hover:bg-foreground/8',
+          'flex h-10 w-10 items-center justify-center rounded-xl transition-colors',
+          'hover:bg-accent hover:text-accent-foreground',
           'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
           isActive && 'bg-primary/12 text-foreground'
         )}

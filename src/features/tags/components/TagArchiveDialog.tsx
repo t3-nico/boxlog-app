@@ -72,18 +72,18 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
 
         <div className="space-y-3">
           {/* 警告 */}
-          <div className="flex items-center gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3 text-yellow-700 dark:text-yellow-400">
+          <div className="flex items-center gap-2 rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-3 text-yellow-700 dark:text-yellow-400">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             <p className="text-sm font-medium">アーカイブされたタグは新規のタグ付けには使用できません</p>
           </div>
 
           {/* 使用状況 */}
           {isLoading ? (
-            <div className="bg-muted flex items-center justify-center rounded-lg p-4">
+            <div className="bg-muted flex items-center justify-center rounded-xl p-4">
               <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-blue-600"></div>
             </div>
           ) : usage ? (
-            <div className="bg-muted rounded-lg p-4">
+            <div className="bg-muted rounded-xl p-4">
               <p className="mb-2 text-sm font-medium">現在の使用状況:</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
                 <li>• Plans: {usage.planCount}件</li>

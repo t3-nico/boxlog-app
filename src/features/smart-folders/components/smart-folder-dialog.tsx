@@ -112,11 +112,11 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
 
       {/* ダイアログコンテナ */}
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900">
+        <DialogPanel className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl bg-white shadow-xl dark:bg-gray-900">
           {/* ヘッダー */}
           <div className="border-border flex items-center justify-between border-b p-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900">
                 <FolderIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>

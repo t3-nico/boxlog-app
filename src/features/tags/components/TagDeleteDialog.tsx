@@ -81,18 +81,18 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
 
         <div className="space-y-3">
           {/* 警告 */}
-          <div className="bg-destructive/10 text-destructive border-destructive/20 flex items-center gap-2 rounded-lg border p-3">
+          <div className="bg-destructive/10 text-destructive border-destructive/20 flex items-center gap-2 rounded-xl border p-3">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             <p className="text-sm font-medium">{t('tags.delete.warningIrreversible')}</p>
           </div>
 
           {/* 使用状況 */}
           {isLoading ? (
-            <div className="bg-muted flex items-center justify-center rounded-lg p-4">
+            <div className="bg-muted flex items-center justify-center rounded-xl p-4">
               <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-blue-600"></div>
             </div>
           ) : usage ? (
-            <div className="bg-muted rounded-lg p-4">
+            <div className="bg-muted rounded-xl p-4">
               <p className="mb-2 text-sm font-medium">{t('tags.delete.affectedItems')}:</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
                 <li>

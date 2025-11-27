@@ -36,7 +36,7 @@ export function TrashView({ className }: TrashViewProps) {
     <div className={`bg-background min-h-screen ${className}`}>
       <div className="mx-auto max-w-7xl space-y-6 p-6">
         {/* ヘッダー */}
-        <div className="border-border bg-card rounded-lg border p-6">
+        <div className="border-border bg-card rounded-xl border p-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-foreground flex items-center text-3xl font-bold tracking-tight">
@@ -116,7 +116,7 @@ export function TrashView({ className }: TrashViewProps) {
 
         {/* エラー表示 */}
         {error != null && (
-          <div className="rounded-lg border border-red-300 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
+          <div className="rounded-xl border border-red-300 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
             <div className="flex items-start">
               <div className="flex-shrink-0">
                 <svg
@@ -153,7 +153,7 @@ export function TrashView({ className }: TrashViewProps) {
         )}
 
         {/* 検索バー（シンプル版） */}
-        <div className="border-border bg-card rounded-lg border p-4">
+        <div className="border-border bg-card rounded-xl border p-4">
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <svg className="text-muted-foreground h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -183,7 +183,7 @@ export function TrashView({ className }: TrashViewProps) {
 
         {/* 空の状態での説明 */}
         {stats.totalItems === 0 && !loading && (
-          <div className="border-border bg-card rounded-lg border p-8 text-center">
+          <div className="border-border bg-card rounded-xl border p-8 text-center">
             <div className="mb-4 text-6xl">🌟</div>
             <h3 className="text-foreground mb-2 text-xl font-bold">ゴミ箱は空です</h3>
             <p className="text-muted-foreground mb-6">
@@ -205,7 +205,7 @@ export function TrashView({ className }: TrashViewProps) {
         )}
 
         {/* フッター情報 */}
-        <div className="bg-muted rounded-lg p-4">
+        <div className="bg-muted rounded-xl p-4">
           <div className="text-muted-foreground text-center text-sm">
             <p>アイテムは削除から30日後に自動的に完全削除されます。 必要なアイテムは期限内に復元してください。</p>
           </div>

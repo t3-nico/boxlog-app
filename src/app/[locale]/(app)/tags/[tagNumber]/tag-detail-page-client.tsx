@@ -78,7 +78,7 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
                 <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
               </div>
             ) : plans.length === 0 ? (
-              <div className="border-border rounded-lg border p-6">
+              <div className="border-border rounded-xl border p-6">
                 <p className="text-muted-foreground text-center">このタグに紐づくプランはありません</p>
               </div>
             ) : (

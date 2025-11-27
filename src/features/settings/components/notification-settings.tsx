@@ -146,7 +146,7 @@ export function NotificationSettings() {
       </SettingsCard>
 
       {/* ヒント情報 */}
-      <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
+      <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
         <p className="text-sm text-blue-700 dark:text-blue-300">{t('notifications.settings.tip')}</p>
       </div>
     </div>

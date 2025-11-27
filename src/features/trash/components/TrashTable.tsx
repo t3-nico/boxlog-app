@@ -92,7 +92,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
 
   if (items.length === 0) {
     return (
-      <div className={`border-border bg-card rounded-lg border p-8 text-center ${className}`}>
+      <div className={`border-border bg-card rounded-xl border p-8 text-center ${className}`}>
         <div className="mb-4 text-6xl">🗑️</div>
         <h3 className="text-foreground mb-2 text-xl font-bold">ゴミ箱は空です</h3>
         <p className="text-muted-foreground">削除されたアイテムはここに表示されます</p>
@@ -101,7 +101,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
   }
 
   return (
-    <div className={`border-border bg-card overflow-hidden rounded-lg border ${className}`}>
+    <div className={`border-border bg-card overflow-hidden rounded-xl border ${className}`}>
       {/* テーブルヘッダー */}
       <div className="border-border bg-muted border-b px-4 py-3">
         <div className="flex items-center justify-between">

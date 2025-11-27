@@ -15,7 +15,7 @@ export function TrashConfirmDialog({ dialog, onClose }: TrashConfirmDialogProps)
 
   return (
     <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
-      <div className="bg-card mx-4 w-full max-w-md rounded-lg p-4">
+      <div className="bg-card mx-4 w-full max-w-md rounded-xl p-4">
         <div className="mb-4">
           <h3 className="text-foreground mb-2 text-base font-semibold">{t('trash.actions.confirm')}</h3>
           <p className="text-muted-foreground text-sm">{dialog.message}</p>

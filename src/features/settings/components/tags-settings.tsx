@@ -91,7 +91,7 @@ export function TagsSettings() {
           title={t('settings.dialog.categories.tags') || 'タグ'}
           description={t('settings.dialog.categories.tagsDesc') || 'タグを管理します'}
         >
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950">
+          <div className="rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950">
             <p className="text-sm text-red-600 dark:text-red-400">
               エラー: {error instanceof Error ? error.message : String(error)}
             </p>
@@ -164,7 +164,7 @@ export function TagsSettings() {
         </SettingsCard>
 
         {/* ヒント */}
-        <div className="bg-muted/50 rounded-lg p-4">
+        <div className="bg-muted/50 rounded-xl p-4">
           <p className="text-muted-foreground text-sm">
             💡 タグは最大3階層まで作成できます。親タグを右クリックして子タグを追加できます。
           </p>

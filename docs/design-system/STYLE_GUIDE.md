@@ -31,12 +31,15 @@ m - 8 // 32px  - セクションマージン
 ### 角丸（Border Radius）
 
 ```typescript
-// globals.css で定義済み
---radius-sm: 4px   - 小ボタン、バッジ
---radius-md: 8px   - 標準（ボタン、カード）
---radius-lg: 12px  - 非推奨（8の倍数でない）
---radius-xl: 16px  - 大カード、モーダル
---radius-2xl: 24px - 特大要素
+// globals.css で定義済み（8pxグリッド準拠）
+--radius-sm: 4px   - 内部の小要素（Checkbox, Menu item）
+--radius-md: 8px   - インタラクティブ要素（Button, Input, Badge）
+--radius-xl: 16px  - パネル・コンテナ（Card, Dialog, Alert）
+--radius-2xl: 24px - 特大要素（必要に応じて）
+--radius-full: 50% - 円形（Avatar, Switch）
+
+// ❌ 使用禁止
+--radius-lg: 12px  - 削除済み（8の倍数でない）
 ```
 
 ### コンポーネントサイズ
@@ -61,7 +64,9 @@ size - 8 // 32px - 特大
 gap-3   // 12px
 gap-5   // 20px
 p-3     // 12px
-rounded-lg // 12px
+
+// ❌ 削除された角丸
+rounded-lg // 12px - 使用禁止（rounded-xl を使用）
 
 // ❌ 任意の値
 gap-[13px]

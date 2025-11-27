@@ -273,7 +273,7 @@ export function AnalyticsDebugPanel() {
   if (!debugMode) return null
 
   return (
-    <div className="bg-opacity-90 fixed right-4 bottom-4 z-50 max-h-96 w-96 overflow-y-auto rounded-lg bg-black p-4 text-xs text-white">
+    <div className="bg-opacity-90 fixed right-4 bottom-4 z-50 max-h-96 w-96 overflow-y-auto rounded-xl bg-black p-4 text-xs text-white">
       <div className="mb-2">
         <h3 className="text-sm font-bold">📊 Analytics Debug</h3>
         <div className="text-xs text-gray-300">
