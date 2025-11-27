@@ -83,7 +83,7 @@ export const CalendarSkeleton = () => {
                     <div
                       style={{ top: '320px', height: '64px' }}
                       className={cn(
-                        'bg-accent/20 border-accent/30 absolute right-1 left-1 animate-pulse rounded-md border'
+                        'bg-muted border-muted-foreground/20 absolute right-1 left-1 animate-pulse rounded-md border'
                       )}
                     ></div>
                   )}

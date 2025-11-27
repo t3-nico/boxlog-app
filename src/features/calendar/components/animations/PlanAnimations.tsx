@@ -83,7 +83,7 @@ export const AnimatedEventItem = ({
       {isVisible === true && (
         <div
           key={plan.id}
-          className={`${className} transition-all duration-200 ease-out ${isCreating ? 'animate-in fade-in scale-in-95 slide-in-from-bottom-2' : ''} ${isSelected ? 'scale-105 border-2 shadow-[0_8px_24px_rgba(59,130,246,0.3)]' : ''} ${isHovered ? 'scale-[1.02] shadow-[0_4px_12px_rgba(0,0,0,0.15)]' : ''} ${isDragging ? 'z-50 scale-110 shadow-[0_12px_32px_rgba(0,0,0,0.2)]' : ''} ${!isDragging ? 'hover:brightness-110' : ''}`}
+          className={`${className} transition-all duration-200 ease-out ${isCreating ? 'animate-in fade-in scale-in-95 slide-in-from-bottom-2' : ''} ${isSelected ? 'scale-105 border-2 shadow-[0_8px_24px_rgba(59,130,246,0.3)]' : ''} ${isHovered ? 'scale-[1.02] shadow-[0_4px_12px_rgba(0,0,0,0.15)]' : ''} ${isDragging ? 'z-50 scale-110 shadow-[0_12px_32px_rgba(0,0,0,0.2)]' : ''} ${!isDragging ? 'hover:shadow-lg' : ''}`}
           style={style}
         >
           {children}

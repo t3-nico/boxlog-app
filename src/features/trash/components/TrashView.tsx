@@ -141,7 +141,7 @@ export function TrashView({ className }: TrashViewProps) {
                 <button
                   type="button"
                   onClick={clearError}
-                  className="text-red-600 hover:brightness-75 dark:text-red-400"
+                  className="text-red-600 hover:opacity-75 dark:text-red-400"
                 >
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
