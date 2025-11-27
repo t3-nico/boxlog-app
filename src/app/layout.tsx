@@ -12,11 +12,12 @@ import { Providers } from '@/components/providers'
 import { WebVitalsReporter } from '@/components/WebVitalsReporter'
 import { cn } from '@/lib/utils'
 
-// next/font による最適化されたフォント読み込み
+// next/font による最適化されたフォント読み込み（Variable Font: optical size軸有効）
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
+  axes: ['opsz'],
 })
 
 // 日本語フォント（GAFA方針準拠: Google = Noto Sans JP）
