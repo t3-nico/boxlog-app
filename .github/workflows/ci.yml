@@ -100,30 +100,6 @@ jobs:
       - name: 🧪 Run tests
         run: npm run test:run
 
-  # i18n-check:
-  #   name: 🌍 i18n Translation Check
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 5
-  #   steps:
-  #     - name: 📥 Checkout
-  #       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
-
-  #     - name: 🏗️ Setup Node.js
-  #       uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903  # v6.0.0
-  #       with:
-  #         node-version: ${{ env.NODE_VERSION }}
-  #         cache: 'npm'
-
-  #     - name: 📦 Install dependencies
-  #       run: npm ci
-
-  #     - name: 🔍 Check translation integrity
-  #       run: npm run test:i18n:integrity
-
-  #     - name: ⚠️ Check hardcoded strings (warning)
-  #       run: npm run test:i18n:hardcoded
-  #       continue-on-error: true
-
   # =====================================
   # 🔍 Phase 2: Quality Checks (並列実行 / 5分以内)
   # =====================================
