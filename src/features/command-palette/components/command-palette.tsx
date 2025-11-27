@@ -17,7 +17,6 @@ import {
 
 import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
-// TODO(#621): Plans統合後にusePlansで実装予定
 import { useDebounce } from '@/hooks/useDebounce'
 import { Task } from '@/types/unified'
 

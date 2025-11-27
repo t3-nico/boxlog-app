@@ -1,4 +1,3 @@
-// TODO(#621): Plans統合後に再実装予定
 'use client'
 // import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { usePathname } from 'next/navigation'

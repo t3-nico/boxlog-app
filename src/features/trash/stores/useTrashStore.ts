@@ -451,11 +451,9 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
  */
 async function restoreItemByType(item: TrashItem): Promise<void> {
   switch (item.type) {
-    // TODO(#621): Plans統合後に再実装予定
     case 'event':
     case 'task': {
-      // Plans機能に移行後、usePlanStoreで復元処理を実装
-      console.log('TODO: Plans統合後に実装')
+      // noop - Plans統合後に実装予定
       break
     }
 
