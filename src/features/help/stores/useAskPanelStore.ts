@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 

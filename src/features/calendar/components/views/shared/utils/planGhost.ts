@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import type { CSSProperties } from 'react'
 
 import type { DragState } from '../hooks/useDragAndDrop'
@@ -53,7 +52,7 @@ export const calculateEventGhostStyle = calculatePlanGhostStyle
  * @param dragState ドラッグ状態
  * @returns プレビュー時間（リサイズ中のみ）
  */
-export function calculatePreviewTime(eventId: string, dragState: DragState): string | null {
+export function calculatePreviewTime(eventId: string, dragState: DragState): { start: Date; end: Date } | null {
   const isDragging = dragState.draggedEventId === eventId && dragState.isDragging
   const isResizing = dragState.isResizing && dragState.draggedEventId === eventId
 

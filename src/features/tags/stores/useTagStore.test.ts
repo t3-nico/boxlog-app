@@ -1,6 +1,6 @@
-// @ts-nocheck
 import { beforeEach, describe, expect, it } from 'vitest'
 
+import type { TagLevel } from '@/types/tags'
 import type { Task } from '@/types/unified'
 
 import { useTagStore } from './useTagStore'
@@ -58,7 +58,7 @@ describe('useTagStore', () => {
       const result = await useTagStore.getState().addTag({
         name: 'レベル3タグ',
         color: '#3b82f6',
-        level: 3,
+        level: 3 as TagLevel, // 意図的に無効な値でバリデーションをテスト
       })
 
       expect(result).toBe(false)
@@ -88,7 +88,7 @@ describe('useTagStore', () => {
       const result = await useTagStore.getState().addTag({
         name: 'サブタスク',
         color: '#ef4444',
-        level: 3,
+        level: 3 as TagLevel, // 意図的に無効な値でバリデーションをテスト
         parent_id: level2Id,
       })
 
@@ -307,26 +307,38 @@ describe('useTagStore', () => {
         {
           id: 'task-1',
           title: 'タスク1',
+          status: 'scheduled',
+          priority: 'medium',
+          planned_start: new Date().toISOString(),
+          planned_duration: 60,
           tags: [tagId],
-          userId: 'user-1',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          user_id: 'user-1',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         },
         {
           id: 'task-2',
           title: 'タスク2',
+          status: 'scheduled',
+          priority: 'medium',
+          planned_start: new Date().toISOString(),
+          planned_duration: 60,
           tags: [tagId],
-          userId: 'user-1',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          user_id: 'user-1',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         },
         {
           id: 'task-3',
           title: 'タスク3',
+          status: 'scheduled',
+          priority: 'medium',
+          planned_start: new Date().toISOString(),
+          planned_duration: 60,
           tags: [],
-          userId: 'user-1',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          user_id: 'user-1',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         },
       ]
 
@@ -356,10 +368,14 @@ describe('useTagStore', () => {
         {
           id: 'task-1',
           title: 'タスク1',
+          status: 'scheduled',
+          priority: 'medium',
+          planned_start: new Date().toISOString(),
+          planned_duration: 60,
           tags: [tag1.id],
-          userId: 'user-1',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          user_id: 'user-1',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         },
       ]
 

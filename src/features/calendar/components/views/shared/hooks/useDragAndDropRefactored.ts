@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 /**
  * リファクタリング後のドラッグ&ドロップフック
  * 複雑度を大幅に削減し、責任を分離
@@ -8,18 +7,12 @@
 
 import { useCallback, useEffect, useRef } from 'react'
 
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+
 import { useDragCalculations } from './drag-operations/useDragCalculations'
 import { useDragElement } from './drag-operations/useDragElement'
 import { useDragState } from './drag-operations/useDragState'
-import { useEventUpdate } from './drag-operations/useEventUpdate'
-
-interface CalendarPlan {
-  id: string
-  title: string
-  startDate?: Date
-  endDate?: Date
-  [key: string]: unknown
-}
+import { useEventUpdate } from './drag-operations/usePlanUpdate'
 
 interface UseDragAndDropRefactoredProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
@@ -27,7 +20,7 @@ interface UseDragAndDropRefactoredProps {
   date: Date
   events: CalendarPlan[]
   displayDates?: Date[]
-  viewMode?: 'day' | 'week' | '2week' | '3day'
+  viewMode?: 'day' | 'week' | '2week' | '3day' | '5day'
 }
 
 export function useDragAndDropRefactored({
@@ -101,7 +94,7 @@ export function useDragAndDropRefactored({
 
       // ドラッグ要素作成
       let dragElement: HTMLElement | null = null
-      let initialRect: DOMRect | null = null
+      let initialRect: DOMRect | undefined = undefined
       if (originalElement) {
         const result = createDragElement(originalElement)
         dragElement = result.dragElement
@@ -149,7 +142,7 @@ export function useDragAndDropRefactored({
         dragData.hasMoved,
         dragData.columnWidth,
         displayDates || [],
-        dragData.originalElement,
+        dragData.originalElement ?? undefined,
         viewMode
       )
 

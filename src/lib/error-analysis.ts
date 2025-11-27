@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * エラー分析ユーティリティ
  * GlobalErrorBoundaryで使用するエラー分析ロジック
@@ -81,7 +80,7 @@ export function estimateErrorCodeFromMessage(message: string): ErrorCode | null 
  * error-patterns.ts の情報と統合して詳細な分析結果を返す
  */
 export function analyzeError(error: Error): ErrorAnalysis {
-  let code = ERROR_CODES.UI_COMPONENT_ERROR
+  let code: ErrorCode = ERROR_CODES.UI_COMPONENT_ERROR
   let recoverable = true
   let autoRetryable = false
 

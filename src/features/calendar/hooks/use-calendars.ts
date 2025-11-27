@@ -31,9 +31,9 @@ export const calendarKeys = {
 
 export function useCalendars(userId: string) {
   // Calendar management tracked in Issue #87
-  return useQuery<Calendar[]>({
+  return useQuery({
     queryKey: calendarKeys.list(userId),
-    queryFn: () => Promise.resolve([] as Calendar[]), // Temporary stub
+    queryFn: () => Promise.resolve<Calendar[]>([]), // Temporary stub
     enabled: !!userId,
   })
 }
@@ -41,7 +41,7 @@ export function useCalendars(userId: string) {
 export function useCalendar(calendarId: string) {
   return useQuery({
     queryKey: calendarKeys.detail(calendarId),
-    queryFn: () => Promise.resolve(null), // Temporary stub
+    queryFn: () => Promise.resolve<Calendar | null>(null), // Temporary stub
     enabled: !!calendarId,
   })
 }
@@ -78,7 +78,7 @@ export function useSetDefaultCalendar() {
 export function useCalendarShares(calendarId: string) {
   return useQuery({
     queryKey: calendarKeys.share(calendarId),
-    queryFn: () => Promise.resolve([]), // Temporary stub
+    queryFn: () => Promise.resolve<CalendarShare[]>([]), // Temporary stub
     enabled: !!calendarId,
   })
 }
@@ -129,9 +129,9 @@ export function useCreatePublicShareLink() {
 // ========================================
 
 export function useCalendarViewState(userId: string) {
-  return useQuery<CalendarViewState | null>({
+  return useQuery({
     queryKey: calendarKeys.viewState(userId),
-    queryFn: () => Promise.resolve(null), // Temporary stub
+    queryFn: () => Promise.resolve<CalendarViewState | null>(null), // Temporary stub
     enabled: !!userId,
     staleTime: 1000 * 60 * 5, // 5分間はキャッシュを維持
   })

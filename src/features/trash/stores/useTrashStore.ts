@@ -1,11 +1,8 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 import { create } from 'zustand'
 
 import { getTranslation } from '@/features/calendar/lib/toast/get-translation'
 
 import {
-  DeleteResult,
   RestoreResult,
   TRASH_RETENTION_DAYS,
   TrashFilters,
@@ -261,13 +258,6 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
 
     get().removeItems(ids)
     console.log('🗑️ Items permanently deleted:', itemsToDelete.length, 'items')
-
-    const result: DeleteResult = {
-      deletedCount: itemsToDelete.length,
-      errors: [],
-    }
-
-    return result
   },
 
   // ゴミ箱を空にする
@@ -437,14 +427,14 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
 
     // タイプ別カウント初期化
     const types: TrashItemType[] = ['event', 'task', 'document', 'note', 'tag', 'folder', 'record', 'template']
-    types.forEach((type) => {
-      stats.itemsByType[type as keyof typeof itemsByType] = 0
+    types.forEach((type: TrashItemType) => {
+      stats.itemsByType[type] = 0
     })
 
     // タイプ別カウント
     items.forEach((item) => {
-      stats.itemsByType[item.type as keyof typeof itemsByType] =
-        (stats.itemsByType[item.type as keyof typeof itemsByType] || 0) + 1
+      const itemType = item.type as TrashItemType
+      stats.itemsByType[itemType] = (stats.itemsByType[itemType] || 0) + 1
     })
 
     return stats

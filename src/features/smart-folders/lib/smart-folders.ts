@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 // Smart Folders システムのコアロジック
 
 import {
@@ -7,6 +6,7 @@ import {
   SmartFolderRule,
   SmartFolderRuleField,
   SmartFolderRuleOperator,
+  SmartFolderRuleValue,
 } from '@/types/smart-folders'
 
 // ルール評価エンジン
@@ -123,7 +123,7 @@ export class SmartFolderRuleEngine {
    * アイテムからフィールド値を取得
    */
   private static getFieldValue(item: Record<string, unknown>, field: SmartFolderRuleField): unknown {
-    const fieldMapper = this.FIELD_MAPPING[field as keyof typeof FIELD_MAPPING]
+    const fieldMapper = this.FIELD_MAPPING[field]
     if (fieldMapper) {
       return fieldMapper(item)
     }
@@ -180,8 +180,10 @@ export class SmartFolderRuleEngine {
       if (typeof ruleValue === 'string' && ruleValue.endsWith('days')) {
         const days = parseInt(ruleValue.replace('days', ''))
         compareDate = new Date(context.now.getTime() - days * 24 * 60 * 60 * 1000)
-      } else {
+      } else if (typeof ruleValue === 'string' || typeof ruleValue === 'number' || ruleValue instanceof Date) {
         compareDate = new Date(ruleValue)
+      } else {
+        return 0
       }
 
       return fieldDate.getTime() - compareDate.getTime()
@@ -344,7 +346,7 @@ export class RuleBuilder {
     return this
   }
 
-  value(value: unknown): RuleBuilder {
+  value(value: SmartFolderRuleValue): RuleBuilder {
     this.currentRule.value = value
     return this
   }

@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー8件を段階的に修正する
 'use client'
 
 import { useEffect, useMemo, useRef } from 'react'
@@ -47,7 +46,9 @@ class LRUCache<K, V> {
     } else if (this.cache.size >= this.maxSize) {
       // 最も古いアイテムを削除
       const firstKey = this.cache.keys().next().value
-      this.cache.delete(firstKey)
+      if (firstKey !== undefined) {
+        this.cache.delete(firstKey)
+      }
     }
     this.cache.set(key, value)
   }
@@ -208,8 +209,9 @@ function applyFilters(events: CalendarPlan[], filters: Record<string, unknown>):
 
   return events.filter((event) => {
     // タグフィルター
-    if (filters.tags && Array.isArray(filters.tags) && filters.tags.length > 0) {
-      if (!event.tags || !event.tags.some((tag) => filters.tags.includes(tag.id))) {
+    const filterTags = filters.tags as string[] | undefined
+    if (filterTags && Array.isArray(filterTags) && filterTags.length > 0) {
+      if (!event.tags || !event.tags.some((tag) => filterTags.includes(tag.id))) {
         return false
       }
     }
@@ -225,13 +227,14 @@ function applyFilters(events: CalendarPlan[], filters: Record<string, unknown>):
     if (filters.timeRange) {
       if (!event.startDate) return false
       const hour = event.startDate.getHours()
-      if (hour < filters.timeRange.start || hour > filters.timeRange.end) {
+      const timeRange = filters.timeRange as { start: number; end: number }
+      if (hour < timeRange.start || hour > timeRange.end) {
         return false
       }
     }
 
     // テキスト検索フィルター
-    if (filters.searchQuery) {
+    if (filters.searchQuery && typeof filters.searchQuery === 'string') {
       const query = filters.searchQuery.toLowerCase()
       if (
         !event.title.toLowerCase().includes(query) &&
@@ -292,7 +295,7 @@ export function useMemoizedComputation<T>(computeFunction: () => T, dependencies
   return useMemo(() => {
     const cached = computationCache.get(key)
     if (cached !== undefined) {
-      return cached
+      return cached as T
     }
 
     const result = computeFunction()
@@ -314,7 +317,7 @@ export function useAsyncMemoizedComputation<T>(
     // 同期的な初期値を返し、非同期で更新
     const cached = computationCache.get(key)
     if (cached !== undefined) {
-      return { data: cached, loading: false, error: null }
+      return { data: cached as T, loading: false, error: null }
     }
 
     // 非同期計算を開始

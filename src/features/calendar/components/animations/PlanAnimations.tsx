@@ -1,10 +1,9 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
 
 import { timeToMinutes } from '@/features/calendar/lib/time-grid-helpers'
-// import { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 // アニメーション設定
 export const eventAnimations = {
@@ -60,7 +59,7 @@ interface AnimatedEventItemProps {
 }
 
 export const AnimatedEventItem = ({
-  event,
+  plan,
   children,
   isSelected = false,
   isHovered = false,
@@ -83,7 +82,7 @@ export const AnimatedEventItem = ({
     <div>
       {isVisible === true && (
         <div
-          key={event.id}
+          key={plan.id}
           className={`${className} transition-all duration-200 ease-out ${isCreating ? 'animate-in fade-in scale-in-95 slide-in-from-bottom-2' : ''} ${isSelected ? 'scale-105 border-2 shadow-[0_8px_24px_rgba(59,130,246,0.3)]' : ''} ${isHovered ? 'scale-[1.02] shadow-[0_4px_12px_rgba(0,0,0,0.15)]' : ''} ${isDragging ? 'z-50 scale-110 shadow-[0_12px_32px_rgba(0,0,0,0.2)]' : ''} ${!isDragging ? 'hover:brightness-110' : ''}`}
           style={style}
         >
@@ -225,10 +224,10 @@ interface DeletingEventProps {
   children: React.ReactNode
 }
 
-export const DeletingEvent = ({ event, onAnimationComplete, children }: DeletingEventProps) => {
+export const DeletingEvent = ({ plan, onAnimationComplete, children }: DeletingEventProps) => {
   return (
     <div
-      key={`deleting-${event.id}`}
+      key={`deleting-${plan.id}`}
       className="animate-out fade-out scale-out-95 slide-out-to-bottom-2 duration-150"
       onAnimationEnd={onAnimationComplete}
     >

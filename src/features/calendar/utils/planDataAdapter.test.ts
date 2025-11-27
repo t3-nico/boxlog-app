@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { describe, expect, it } from 'vitest'
 
 import type { CalendarPlan as Plan } from '@/features/calendar/types/calendar.types'
@@ -21,7 +20,12 @@ describe('planDataAdapter', () => {
         color: '#3b82f6',
         startDate: new Date('2024-06-15T10:00:00'),
         endDate: new Date('2024-06-15T11:00:00'),
-        status: 'confirmed',
+        status: 'planned',
+        displayStartDate: new Date('2024-06-15T10:00:00'),
+        displayEndDate: new Date('2024-06-15T11:00:00'),
+        duration: 60,
+        isMultiDay: false,
+        isRecurring: false,
         userId: 'user-1',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -42,7 +46,15 @@ describe('planDataAdapter', () => {
       const event: Plan = {
         id: 'plan-1',
         title: 'ミーティング',
+        startDate: new Date(),
+        endDate: new Date(),
         status: 'completed',
+        color: '#3b82f6',
+        displayStartDate: new Date(),
+        displayEndDate: new Date(),
+        duration: 60,
+        isMultiDay: false,
+        isRecurring: false,
         userId: 'user-1',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -57,7 +69,15 @@ describe('planDataAdapter', () => {
       const event: Plan = {
         id: 'plan-1',
         title: 'ミーティング',
+        startDate: new Date(),
+        endDate: new Date(),
         status: 'cancelled',
+        color: '#3b82f6',
+        displayStartDate: new Date(),
+        displayEndDate: new Date(),
+        duration: 60,
+        isMultiDay: false,
+        isRecurring: false,
         userId: 'user-1',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -74,6 +94,13 @@ describe('planDataAdapter', () => {
         title: 'ミーティング',
         startDate: null,
         endDate: null,
+        status: 'planned',
+        color: '#3b82f6',
+        displayStartDate: new Date(),
+        displayEndDate: new Date(),
+        duration: 60,
+        isMultiDay: false,
+        isRecurring: false,
         userId: 'user-1',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -92,6 +119,15 @@ describe('planDataAdapter', () => {
         {
           id: 'plan-1',
           title: 'ミーティング1',
+          startDate: new Date(),
+          endDate: new Date(),
+          status: 'planned',
+          color: '#3b82f6',
+          displayStartDate: new Date(),
+          displayEndDate: new Date(),
+          duration: 60,
+          isMultiDay: false,
+          isRecurring: false,
           userId: 'user-1',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -99,6 +135,15 @@ describe('planDataAdapter', () => {
         {
           id: 'plan-2',
           title: 'ミーティング2',
+          startDate: new Date(),
+          endDate: new Date(),
+          status: 'planned',
+          color: '#3b82f6',
+          displayStartDate: new Date(),
+          displayEndDate: new Date(),
+          duration: 60,
+          isMultiDay: false,
+          isRecurring: false,
           userId: 'user-1',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -130,7 +175,7 @@ describe('planDataAdapter', () => {
         isReadOnly: false,
       }
 
-      const result = timedEventToEventUpdate(timedEvent)
+      const result = timedEventToEventUpdate(timedEvent as unknown as Parameters<typeof timedEventToEventUpdate>[0])
 
       expect(result.id).toBe('plan-1')
       expect(result.title).toBe('ミーティング')

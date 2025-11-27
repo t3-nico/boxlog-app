@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -11,19 +10,20 @@ describe('useCalendarData', () => {
   const mockTask: Task = {
     id: 'task-1',
     title: 'テストタスク',
-    type: 'task',
+    type: 'feature',
     status: 'backlog',
     priority: 'medium',
     planned_start: '2025-01-15T10:00:00.000Z',
     planned_duration: 60,
     created_at: '2025-01-01T00:00:00.000Z',
     updated_at: '2025-01-01T00:00:00.000Z',
-    userId: 'user-1',
+    user_id: 'user-1',
   }
 
   const mockDateRange: ViewDateRange = {
     start: new Date('2025-01-10T00:00:00.000Z'),
     end: new Date('2025-01-20T23:59:59.999Z'),
+    days: Array.from({ length: 11 }, (_, i) => new Date(2025, 0, 10 + i)),
   }
 
   beforeEach(() => {
@@ -52,7 +52,7 @@ describe('useCalendarData', () => {
     it('planned_startがないタスクは除外される', () => {
       const tasks: Task[] = [
         { ...mockTask, id: 'task-1', planned_start: '2025-01-15T10:00:00.000Z' },
-        { ...mockTask, id: 'task-2', planned_start: undefined },
+        { ...mockTask, id: 'task-2', planned_start: '' },
       ]
 
       const { result } = renderHook(() =>

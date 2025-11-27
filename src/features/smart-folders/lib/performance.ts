@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 // スマートフォルダ パフォーマンス最適化
 
 import { SmartFolderRule } from '@/types/smart-folders'
@@ -94,10 +93,10 @@ export class IndexManager {
    */
   private static getFieldValue(item: Record<string, unknown>, field: string): unknown {
     const keys = field.split('.')
-    let value = item
+    let value: unknown = item
 
     for (const key of keys) {
-      value = value?.[key]
+      value = (value as Record<string, unknown> | null)?.[key]
     }
 
     return value

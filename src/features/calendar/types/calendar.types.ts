@@ -1,4 +1,4 @@
-export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | '2week'
+export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | '2week' | 'month'
 
 export interface CalendarViewProps {
   className?: string
@@ -79,8 +79,8 @@ export interface CalendarPlan {
   id: string
   title: string
   description?: string
-  startDate: Date
-  endDate: Date
+  startDate: Date | null
+  endDate: Date | null
   status: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
   color: string
   plan_number?: string // プラン番号（#123 形式）
@@ -100,6 +100,14 @@ export interface CalendarPlan {
   duration: number // minutes
   isMultiDay: boolean
   isRecurring: boolean
+  // Optional properties used in various contexts
+  type?: 'event' | 'plan' | 'task' // エントリの種類
+  userId?: string // 所有者ID
+  location?: string // 場所
+  url?: string // 関連URL
+  allDay?: boolean // 終日予定
+  priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional' // 優先度
+  calendarId?: string // カレンダーID
 }
 
 // 後方互換性のためのエイリアス

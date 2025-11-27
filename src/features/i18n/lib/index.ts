@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 /**
  * App Router対応の軽量i18n実装
  */
@@ -20,8 +19,8 @@ export type Dictionary = Record<string, NestedObject>
 
 // 翻訳辞書の動的インポート
 const dictionaries: Record<Locale, () => Promise<Dictionary>> = {
-  en: () => import('./dictionaries/en.json').then((module) => module.default),
-  ja: () => import('./dictionaries/ja.json').then((module) => module.default),
+  en: () => import('./dictionaries/en.json').then((module) => module.default as unknown as Dictionary),
+  ja: () => import('./dictionaries/ja.json').then((module) => module.default as unknown as Dictionary),
 }
 
 // 翻訳辞書取得

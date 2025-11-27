@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { describe, expect, it } from 'vitest'
 
 import type { TimedPlan } from '../types/plan.types'
@@ -22,15 +21,10 @@ describe('planPositioning', () => {
     type: 'plan',
     status: 'inbox',
     color: '#3b82f6',
-    priority: 'medium',
     isRecurring: false,
-    items: [],
-    reminders: [],
     tags: [],
     createdAt: new Date(),
     updatedAt: new Date(),
-    isDeleted: false,
-    deletedAt: null,
     displayStartDate: new Date(2025, 0, 15, startHour, startMinute),
     displayEndDate: new Date(2025, 0, 15, endHour, endMinute),
     duration: (endHour - startHour) * 60 + (endMinute - startMinute),

@@ -1,8 +1,7 @@
-// @ts-nocheck
 import { renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 import { CacheManager, useMemoizedPlans } from './useMemoizedPlans'
 

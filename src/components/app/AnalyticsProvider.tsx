@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 /**
  * 📊 Analytics Provider Component
  *
@@ -11,7 +10,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 
 import type { AnalyticsProvider } from '@/lib/analytics'
-import { analytics, setUserConsent, setUserId } from '@/lib/analytics'
+import { analytics, setUserConsent, setUserId, updateConfig } from '@/lib/analytics'
 
 /**
  * 🎯 Analytics Context の型定義
@@ -108,14 +107,13 @@ export function AnalyticsProvider({
     }
 
     // アナリティクス設定を更新
-    analytics.config = {
-      ...analytics.config,
+    updateConfig({
       enabledProviders,
       debug,
       disableInDevelopment,
       requireConsent,
       customEndpoint,
-    }
+    })
 
     // 初期ユーザーID設定
     if (userId) {

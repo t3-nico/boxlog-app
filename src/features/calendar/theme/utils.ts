@@ -11,12 +11,10 @@ export const getEventColor = (
   status: keyof CalendarColors['event'],
   property: 'background' | 'text' | 'hover' = 'background'
 ): string => {
-  const colors = calendarColors.event[status]
-  const result =
-    colors && Object.prototype.hasOwnProperty.call(colors, property)
-      ? (colors[property as keyof typeof colors] as string | undefined)
-      : undefined
-  return (result || calendarColors.event.scheduled[property as keyof typeof calendarColors.event.scheduled]) as string
+  const colors = calendarColors.event[status as keyof typeof calendarColors.event]
+  const colorValue =
+    colors && Object.prototype.hasOwnProperty.call(colors, property) ? colors[property as keyof typeof colors] : null
+  return (colorValue ?? calendarColors.event.scheduled[property as keyof typeof calendarColors.event.scheduled]) || ''
 }
 
 // UI状態の色クラスを取得

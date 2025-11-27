@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * 📋 Breaking Changes Manager
  *
@@ -565,7 +564,7 @@ export class BreakingChangeManager {
       behavior_change: '🔄',
       removal: '🗑️',
     }
-    return emojis[type] || '🔧'
+    return emojis[type as keyof typeof emojis] || '🔧'
   }
 
   private getGroupEmoji(group: AffectedGroup): string {

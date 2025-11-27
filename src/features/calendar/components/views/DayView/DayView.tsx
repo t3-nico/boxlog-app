@@ -1,9 +1,7 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 'use client'
 
 import React, { useMemo } from 'react'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 // import { eventSelectors, useEventStore } from '@/features/events/stores/useEventStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
@@ -18,17 +16,17 @@ import { useDayView } from './hooks/useDayView'
 export const DayView = ({
   dateRange: _dateRange,
   tasks: _tasks,
-  events,
+  plans,
   currentDate,
   showWeekends: _showWeekends = true,
   className,
   onTaskClick: _onTaskClick,
-  onEventClick,
-  onEventContextMenu,
-  onCreateEvent: _onCreateEvent,
-  onUpdateEvent,
-  onDeleteEvent: _onDeleteEvent,
-  onRestoreEvent: _onRestoreEvent,
+  onPlanClick,
+  onPlanContextMenu,
+  onCreatePlan: _onCreatePlan,
+  onUpdatePlan,
+  onDeletePlan: _onDeletePlan,
+  onRestorePlan: _onRestorePlan,
   onEmptyClick,
   onTimeRangeSelect,
   onTaskDrag: _onTaskDrag,
@@ -61,29 +59,32 @@ export const DayView = ({
 
   // ドラッグイベント用のハンドラー
   // TODO(#621): Events削除後、plans/Sessions統合後に再実装
-  const handleEventTimeUpdate = React.useCallback((_plan: CalendarPlan) => {
-    console.log('TODO: Sessions統合後に実装')
-    // if (!event.startDate || !event.endDate) return
+  const handleEventTimeUpdate = React.useCallback(
+    async (_eventId: string, _updates: { startTime: Date; endTime: Date }) => {
+      console.log('TODO: Sessions統合後に実装')
+      // if (!event.startDate || !event.endDate) return
 
-    // void updateEvent({ ...event, startDate: event.startDate, endDate: event.endDate })
-    //   .then(() => {
-    //     console.log('Event time updated via drag & drop:', event.id)
-    //   })
-    //   .catch((error) => {
-    //     console.error('Failed to update event time:', error)
-    //   })
-  }, [])
+      // void updateEvent({ ...event, startDate: event.startDate, endDate: event.endDate })
+      //   .then(() => {
+      //     console.log('Event time updated via drag & drop:', event.id)
+      //   })
+      //   .catch((error) => {
+      //     console.error('Failed to update event time:', error)
+      //   })
+    },
+    []
+  )
 
-  // DayView専用ロジック（CalendarControllerから渡されたイベントデータを使用）
+  // DayView専用ロジック（CalendarControllerから渡されたプランデータを使用）
   const {
-    dayPlans,
-    planStyles,
+    dayPlans: dayEvents,
+    planStyles: eventStyles,
     isToday,
     timeSlots: _timeSlots,
   } = useDayView({
     date,
-    plans: events || [],
-    ...(onUpdateEvent && { onPlanUpdate: onUpdateEvent }),
+    plans: plans || [],
+    ...(onUpdatePlan && { onPlanUpdate: onUpdatePlan }),
   })
 
   // 空き時間クリックハンドラー
@@ -137,12 +138,12 @@ export const DayView = ({
           {/* 日のコンテンツ */}
           <DayContent
             date={date}
-            plans={dayPlans}
-            planStyles={planStyles}
-            {...(onEventClick && { onPlanClick: onEventClick })}
-            {...(onEventContextMenu && { onPlanContextMenu: onEventContextMenu })}
+            events={dayEvents}
+            eventStyles={eventStyles}
+            {...(onPlanClick && { onPlanClick })}
+            {...(onPlanContextMenu && { onPlanContextMenu })}
             {...(onEmptyClick && { onEmptyClick })}
-            {...(onUpdateEvent && { onPlanUpdate: onUpdateEvent })}
+            {...(handleEventTimeUpdate && { onEventUpdate: handleEventTimeUpdate })}
             {...(onTimeRangeSelect && { onTimeRangeSelect })}
             className="absolute inset-y-0 right-0 left-0"
           />

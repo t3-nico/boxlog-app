@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -213,7 +212,7 @@ export const DragSelectionLayer = ({ className, onTimeRangeSelect, children }: D
               target: containerRef.current,
               preventDefault: () => {},
               stopPropagation: () => {},
-            } as React.MouseEvent
+            } as unknown as React.MouseEvent
             handleMouseDown(mockEvent)
           }
         }

@@ -1,5 +1,3 @@
-// @ts-nocheck
-// TODO(#389): NotificationModal型エラーを修正後、@ts-nocheckを削除
 'use client'
 
 import { useState } from 'react'

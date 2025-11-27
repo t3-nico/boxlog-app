@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー5件を段階的に修正する
 'use client'
 
 import React from 'react'
@@ -44,6 +43,17 @@ export const WeekGrid = ({
     tablet: 60,
     desktop: 72,
   })
+
+  // onEventUpdate を WeekContent が期待する型に変換
+  const handlePlanUpdate = React.useCallback(
+    async (planId: string, updates: Partial<import('@/features/calendar/types/calendar.types').CalendarPlan>) => {
+      if (!onEventUpdate) return
+      const plan = events.find((e) => e.id === planId)
+      if (!plan) return
+      onEventUpdate({ ...plan, ...updates })
+    },
+    [onEventUpdate, events]
+  )
 
   // プラン位置計算
   const { eventPositions } = useWeekPlans({
@@ -123,7 +133,6 @@ export const WeekGrid = ({
               )}
               style={{ width: `${100 / 7}%` }}
             >
-              {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
               <WeekContent
                 date={date}
                 plans={dayEvents}
@@ -131,7 +140,7 @@ export const WeekGrid = ({
                 onPlanClick={onEventClick}
                 onPlanContextMenu={onEventContextMenu}
                 onEmptyClick={onEmptyClick}
-                onPlanUpdate={onEventUpdate}
+                onPlanUpdate={handlePlanUpdate}
                 onTimeRangeSelect={(selection) => {
                   // 時間範囲選択時の処理: そのまま渡す（DayViewと同じ方式）
                   console.log('🔧 WeekGrid: 直接渡し:', {

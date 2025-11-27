@@ -1,10 +1,8 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
 import React, { useCallback } from 'react'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 import {
@@ -25,7 +23,7 @@ interface ThreeDayContentProps {
   onPlanClick?: (plan: CalendarPlan) => void
   onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onPlanUpdate?: (planIdOrPlan: string | CalendarPlan, updates?: { startTime: Date; endTime: Date }) => void
+  onPlanUpdate?: (planId: string, updates: Partial<CalendarPlan>) => void
   onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
   className?: string
   dayIndex: number // 3日間内での日付インデックス（0-2）
@@ -45,7 +43,7 @@ export const ThreeDayContent = ({
   dayIndex,
   displayDates,
 }: ThreeDayContentProps) => {
-  // ドラッグ&ドロップ機能用にonPlanUpdateをそのまま使用
+  // ドラッグ&ドロップ機能用にonPlanUpdateを変換
   const handlePlanUpdate = useCallback(
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onPlanUpdate) return
@@ -56,8 +54,11 @@ export const ThreeDayContent = ({
         endTime: updates.endTime.toISOString(),
       })
 
-      // handleUpdatePlanは両方の形式に対応（planId + updates形式で呼び出し）
-      await onPlanUpdate(planId, updates)
+      // handleUpdatePlan形式で呼び出し
+      await onPlanUpdate(planId, {
+        startDate: updates.startTime,
+        endDate: updates.endTime,
+      })
     },
     [onPlanUpdate]
   )
@@ -67,7 +68,7 @@ export const ThreeDayContent = ({
     onPlanUpdate: handlePlanUpdate,
     onPlanClick,
     date,
-    plans,
+    events: plans,
     displayDates,
     viewMode: '3day',
   })
@@ -135,7 +136,6 @@ export const ThreeDayContent = ({
           onTimeRangeSelect?.(date, startTime, endTime)
         }}
         onSingleClick={onEmptyClick}
-        onDoubleClick={onEmptyClick} // ダブルクリックでもイベント作成
         disabled={dragState.isDragging || dragState.isResizing}
       >
         {/* 背景グリッド（DayViewと同じパターン） */}
@@ -147,17 +147,11 @@ export const ThreeDayContent = ({
       {/* プラン表示エリア */}
       <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
         {plans.map((plan) => {
-          // planがundefinedの場合はスキップ
-          if (!plan || !plan.id) {
-            console.warn('ThreeDayContent: Invalid plan detected', plan)
-            return null
-          }
-
           const style = planStyles[plan.id]
           if (!style) return null
 
-          const isDragging = dragState.draggedPlanId === plan.id && dragState.isDragging
-          const isResizingThis = dragState.isResizing && dragState.draggedPlanId === plan.id
+          const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
+          const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
 
@@ -165,7 +159,7 @@ export const ThreeDayContent = ({
           const adjustedStyle = calculatePlanGhostStyle(style, plan.id, dragState)
 
           return (
-            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-event-block="true">
+            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-plan-block="true">
               {/* PlanBlockの内容部分のみクリック可能 */}
               <div
                 className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
@@ -202,11 +196,18 @@ export const ThreeDayContent = ({
                     left: 0,
                     width: 100,
                     height:
-                      isResizingThis && dragState.snappedPosition ? dragState.snappedPosition.height : currentHeight,
+                      isResizingThis && dragState.snappedPosition
+                        ? (dragState.snappedPosition.height ?? currentHeight)
+                        : currentHeight,
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
-                  onContextMenu={(plan, e) => handlePlanContextMenu(plan, e)}
-                  onResizeStart={(plan, direction, e, _position) =>
+                  onContextMenu={(plan: CalendarPlan, e: React.MouseEvent) => handlePlanContextMenu(plan, e)}
+                  onResizeStart={(
+                    plan: CalendarPlan,
+                    direction: 'top' | 'bottom',
+                    e: React.MouseEvent,
+                    _position: { top: number; left: number; width: number; height: number }
+                  ) =>
                     handlers.handleResizeStart(plan.id, direction, e, {
                       top: currentTop,
                       left: 0,

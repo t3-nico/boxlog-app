@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
 import { useMemo } from 'react'
@@ -12,7 +11,7 @@ import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout, usePlanStyles } from '../shared'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 
-import type { PlanPosition } from '../DayView/DayView.types'
+import type { PlanPosition } from '../shared/hooks/useViewPlans'
 
 import { ThreeDayContent } from './components'
 import { useThreeDayView } from './hooks/useThreeDayView'
@@ -73,11 +72,11 @@ export const ThreeDayView = ({
     return threeDayDates
   }, [threeDayDates])
 
-  // プラン位置計算（統一された日付配列ベース）
+  // イベント位置計算（統一された日付配列ベース）
   const eventPositions = useMemo(() => {
     const positions: PlanPosition[] = []
 
-    // displayDates（統一フィルタリング済み）を基準にプランを配置
+    // displayDates（統一フィルタリング済み）を基準にイベントを配置
     displayDates.forEach((displayDate, _dayIndex) => {
       const dateKey = format(displayDate, 'yyyy-MM-dd')
 
@@ -109,8 +108,9 @@ export const ThreeDayView = ({
           left: 1, // 各カラム内での位置（%）
           width: 98, // カラム幅の98%を使用
           zIndex: 20,
-          column: 0,
-          totalColumns: 1,
+          column: 0, // 単独カラム
+          totalColumns: 1, // 単独カラム
+          opacity: 1.0,
         })
       })
     })
@@ -136,7 +136,7 @@ export const ThreeDayView = ({
             className="text-center"
             showDayName={true}
             showMonthYear={false}
-            dayNameFormat="d"
+            dayNameFormat="short"
             isToday={isToday(date)}
             isSelected={false}
           />
@@ -179,7 +179,6 @@ export const ThreeDayView = ({
                 className={cn('relative flex-1', dayIndex < displayDates.length - 1 ? 'border-border border-r' : '')}
                 style={{ width: `${100 / displayDates.length}%` }}
               >
-                {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
                 <ThreeDayContent
                   date={date}
                   plans={dayEvents}
@@ -187,10 +186,19 @@ export const ThreeDayView = ({
                   onPlanClick={onEventClick}
                   onPlanContextMenu={onEventContextMenu}
                   onEmptyClick={onEmptyClick}
-                  onPlanUpdate={onUpdateEvent}
-                  onTimeRangeSelect={(date, startTime, endTime) => {
+                  onPlanUpdate={
+                    onUpdateEvent
+                      ? (planId, updates) => {
+                          const plan = events.find((e) => e.id === planId)
+                          if (plan) {
+                            onUpdateEvent({ ...plan, ...updates })
+                          }
+                        }
+                      : undefined
+                  }
+                  onTimeRangeSelect={(selectedDate, startTime, _endTime) => {
                     // 時間範囲選択時の処理（必要に応じて実装）
-                    const startDate = new Date(date)
+                    const startDate = new Date(selectedDate)
                     const [startHour, startMinute] = startTime.split(':').map(Number)
                     startDate.setHours(startHour, startMinute, 0, 0)
 

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 
 interface SettingsCardProps {
   title?: React.ReactNode
-  description?: React.ReactNode
+  description?: string
   children: React.ReactNode
   className?: string
   actions?: React.ReactNode

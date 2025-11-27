@@ -32,13 +32,6 @@ export interface CalendarStyles {
     resize: string
   }
 
-  // 統合：calendar-layout.cssからの移行
-  scrollbar: {
-    custom: string
-    touchOptimized: string
-    performance: string
-  }
-
   print: {
     hiddenClasses: string[]
     colorClasses: string[]

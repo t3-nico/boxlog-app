@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -276,15 +275,15 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
         navigationState,
         navigateDate,
         navigateTime,
-        navigatePlans,
-        editCurrentPlan,
-        createPlan,
-        deleteCurrentPlan,
+        navigateEvents: navigatePlans,
+        editCurrentEvent: editCurrentPlan,
+        createEvent: createPlan,
+        deleteCurrentEvent: deleteCurrentPlan,
         handleEscape,
         showKeyboardHelp,
         setNavigationState,
         announce,
-        plans,
+        events: plans,
         TIME_SLOTS,
         noDescriptionText: t('calendar.plan.noDescription'),
       }

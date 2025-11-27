@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#621): Events削除後の一時的な型エラー回避
 'use client'
 
 import { useCallback, useMemo, useRef } from 'react'
@@ -15,10 +14,10 @@ interface AccessibleCalendarGridProps {
   selectedDate?: Date
   selectedTime?: string
   selectedEventId?: string | null
-  onCreateEvent: (date: Date, time: string) => void
-  onEditEvent: (eventId: string) => void
-  onDeleteEvent: (eventId: string) => void
-  onSelectEvent: (eventId: string) => void
+  onCreatePlan: (date: Date, time: string) => void
+  onEditPlan: (eventId: string) => void
+  onDeletePlan: (eventId: string) => void
+  onSelectPlan: (eventId: string) => void
   onNavigateDate: (date: Date) => void
   onNavigateTime: (time: string) => void
   onEscapeAction: () => void
@@ -47,10 +46,10 @@ export const AccessibleCalendarGrid = ({
   dates,
   events,
   currentDate,
-  onCreateEvent,
-  onEditEvent,
-  onDeleteEvent,
-  onSelectEvent,
+  onCreatePlan,
+  onEditPlan,
+  onDeletePlan,
+  onSelectPlan,
   onNavigateDate,
   onNavigateTime,
   onEscapeAction,
@@ -66,10 +65,10 @@ export const AccessibleCalendarGrid = ({
     events,
     currentDate,
     {
-      onCreateEvent,
-      onEditEvent,
-      onDeleteEvent,
-      onSelectEvent,
+      onCreatePlan,
+      onEditPlan,
+      onDeletePlan,
+      onSelectPlan,
       onNavigateDate,
       onNavigateTime,
       onEscapeAction,
@@ -97,21 +96,21 @@ export const AccessibleCalendarGrid = ({
 
   // イベントの詳細説明
   const getEventDescription = useCallback((plan: CalendarPlan) => {
-    const startTime = event.startDate?.toLocaleTimeString('ja-JP', {
+    const startTime = plan.startDate?.toLocaleTimeString('ja-JP', {
       hour: '2-digit',
       minute: '2-digit',
     })
-    const endTime = event.endDate?.toLocaleTimeString('ja-JP', {
+    const endTime = plan.endDate?.toLocaleTimeString('ja-JP', {
       hour: '2-digit',
       minute: '2-digit',
     })
 
     return [
-      event.title,
+      plan.title,
       startTime && endTime ? `${startTime}から${endTime}まで` : '',
-      event.description || '',
-      event.location ? `場所: ${event.location}` : '',
-      event.tags?.length ? `タグ: ${event.tags.join(', ')}` : '',
+      plan.description || '',
+      plan.location ? `場所: ${plan.location}` : '',
+      plan.tags?.length ? `タグ: ${plan.tags.join(', ')}` : '',
     ]
       .filter(Boolean)
       .join('。')
@@ -162,18 +161,18 @@ export const AccessibleCalendarGrid = ({
   // イベントのARIA属性
   const getEventAriaProps = useCallback(
     (plan: CalendarPlan) => {
-      const isSelected = navigationState.selectedEventId === event.id
-      const description = getEventDescription(event)
+      const isSelected = navigationState.selectedPlanId === plan.id
+      const description = getEventDescription(plan)
 
       return {
         'aria-label': description,
         'aria-selected': isSelected,
         role: 'button',
         tabIndex: isSelected ? 0 : -1,
-        'aria-describedby': `event-details-${event.id}`,
+        'aria-describedby': `event-details-${plan.id}`,
       }
     },
-    [navigationState.selectedEventId, getEventDescription]
+    [navigationState.selectedPlanId, getEventDescription]
   )
 
   return (
@@ -286,7 +285,7 @@ export const AccessibleCalendarGrid = ({
                       className={cn(
                         'absolute inset-x-1 cursor-pointer rounded p-1 text-xs',
                         'focus:ring-2 focus:ring-white focus:ring-offset-1 focus:outline-none',
-                        navigationState.selectedEventId === event.id && 'ring-2 ring-white ring-offset-1'
+                        navigationState.selectedPlanId === event.id && 'ring-2 ring-white ring-offset-1'
                       )}
                       style={{
                         backgroundColor: event.color || '#3b82f6',
@@ -299,7 +298,7 @@ export const AccessibleCalendarGrid = ({
                       }}
                       onClick={(e) => {
                         e.stopPropagation()
-                        onSelectEvent(event.id)
+                        onSelectPlan(event.id)
                       }}
                     >
                       <div className="truncate font-medium">{event.title}</div>

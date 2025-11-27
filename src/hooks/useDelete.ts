@@ -1,11 +1,10 @@
-// @ts-nocheck
 // TODO(#621): Events削除後、plans/Sessionsに移行予定
 'use client'
 
 // import { Event } from '@/features/events/types/events'
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
+import { TrashItemType } from '@/features/trash/types/trash'
 import { SmartFolder } from '@/types/smart-folders'
-import { DeletedItem } from '@/types/trash'
 import { Task } from '@/types/unified'
 
 // 削除可能なアイテムの共通インターフェース
@@ -19,18 +18,18 @@ interface DeletableItem {
 }
 
 export const useDelete = () => {
-  const { moveToTrash } = useTrashStore()
+  const addItem = useTrashStore((state) => state.addItem)
 
-  const deleteWithTrash = async (item: DeletableItem, type: DeletedItem['type'], originalPath?: string) => {
+  const deleteWithTrash = async (item: DeletableItem, type: TrashItemType, originalPath?: string) => {
     try {
-      // 1. アイテムにパス情報を追加
-      const itemWithPath = {
-        ...item,
-        originalPath: originalPath || item.path || item.folder || undefined,
-      }
-
-      // 2. ゴミ箱に移動
-      await moveToTrash(itemWithPath, type)
+      // 1. ゴミ箱に追加
+      await addItem({
+        id: item.id,
+        type,
+        title: item.name || item.title || 'Untitled',
+        originalData: item as unknown as Record<string, unknown>,
+        deletedFrom: originalPath || item.path || item.folder,
+      })
 
       // 3. 元の場所から削除処理は各呼び出し元で実装
       // これはstoreごとに異なる削除処理が必要なため
@@ -61,7 +60,7 @@ export const useDelete = () => {
   }
 
   const deleteSmartFolder = async (folder: SmartFolder, originalPath?: string) => {
-    await deleteWithTrash(folder, 'smart-folder', originalPath)
+    await deleteWithTrash(folder, 'folder', originalPath)
     // Delete implementation tracked in Issue #85
   }
 

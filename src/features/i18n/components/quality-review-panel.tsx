@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
 /**
@@ -136,31 +135,6 @@ export function QualityReviewPanel({
   const [selectedReviewer, setSelectedReviewer] = useState('')
   const [activeTab, setActiveTab] = useState('assessment')
 
-  useEffect(() => {
-    if (initialWorkflow) {
-      setWorkflow(initialWorkflow)
-      if (initialWorkflow.assessment) {
-        setAssessment(initialWorkflow.assessment)
-      }
-    } else {
-      // 自動品質評価を実行
-      performAutomaticAssessment()
-    }
-  }, [translationKey, language, originalText, translatedText, initialWorkflow, performAutomaticAssessment])
-
-  const performAutomaticAssessment = useCallback(async () => {
-    setLoading(true)
-    try {
-      // 自動品質評価（実際の実装ではAPIコール）
-      const mockAssessment = await generateMockAssessment()
-      setAssessment(mockAssessment)
-    } catch (error) {
-      console.error('品質評価エラー:', error)
-    } finally {
-      setLoading(false)
-    }
-  }, [generateMockAssessment])
-
   const generateMockAssessment = useCallback(async (): Promise<QualityAssessment> => {
     // モック評価（実際の実装では quality-assurance.ts を使用）
     const metrics: QualityMetrics = {
@@ -227,6 +201,31 @@ export function QualityReviewPanel({
       ],
     }
   }, [translationKey, language, originalText, translatedText])
+
+  const performAutomaticAssessment = useCallback(async () => {
+    setLoading(true)
+    try {
+      // 自動品質評価（実際の実装ではAPIコール）
+      const mockAssessment = await generateMockAssessment()
+      setAssessment(mockAssessment)
+    } catch (error) {
+      console.error('品質評価エラー:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [generateMockAssessment])
+
+  useEffect(() => {
+    if (initialWorkflow) {
+      setWorkflow(initialWorkflow)
+      if (initialWorkflow.assessment) {
+        setAssessment(initialWorkflow.assessment)
+      }
+    } else {
+      // 自動品質評価を実行
+      performAutomaticAssessment()
+    }
+  }, [translationKey, language, originalText, translatedText, initialWorkflow, performAutomaticAssessment])
 
   const handleSubmitReview = async () => {
     if (!assessment) return

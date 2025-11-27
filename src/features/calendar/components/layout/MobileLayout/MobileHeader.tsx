@@ -1,9 +1,9 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
 import { useCallback, useState } from 'react'
 
 import { format, getWeek } from 'date-fns'
+import { ja } from 'date-fns/locale'
 import { ChevronLeft, ChevronRight, Menu } from 'lucide-react'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
@@ -44,14 +44,14 @@ export const MobileHeader = ({
   const [isViewMenuOpen, setIsViewMenuOpen] = useState(false)
   const weekNumber = getWeek(currentDate, { weekStartsOn: 1 })
 
-  const viewLabels = {
+  const viewLabels: Record<CalendarViewType, string> = {
     day: t('calendar.mobile.header.viewLabels.day'),
     '3day': t('calendar.mobile.header.viewLabels.3day'),
-    'week-no-weekend': t('calendar.mobile.header.viewLabels.weekNoWeekend'),
+    '5day': t('calendar.mobile.header.viewLabels.5day'),
     week: t('calendar.mobile.header.viewLabels.week'),
     '2week': t('calendar.mobile.header.viewLabels.2week'),
-    schedule: t('calendar.mobile.header.viewLabels.schedule'),
-  } as const
+    month: t('calendar.mobile.header.viewLabels.month'),
+  }
 
   // jsx-no-bind optimization: Navigation handlers
   const handleViewMenuOpen = useCallback(() => {
@@ -91,7 +91,7 @@ export const MobileHeader = ({
   const getDateDisplay = () => {
     switch (viewType) {
       case 'day':
-        return format(currentDate, 'M/d (E)', { locale: { code: 'ja' } })
+        return format(currentDate, 'M/d (E)', { locale: ja })
       case 'week':
       case '2week':
         return `${format(currentDate, 'M月')} W${weekNumber}`

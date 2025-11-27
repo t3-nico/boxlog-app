@@ -1,11 +1,10 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 // スマートフォルダ ルール評価エンジン（拡張版）
 
 import { RuleEvaluationContext, SmartFolderRule, SmartFolderRuleField } from '@/types/smart-folders'
 import { Task } from '@/types/unified'
 
 // ルールエンジンで評価可能なアイテムの型
-type EvaluableItem = Task | Record<string, unknown>
+export type EvaluableItem = Task | Record<string, unknown>
 
 // フィールド値の型
 type FieldValue = string | number | boolean | Date | string[] | null | undefined
@@ -156,14 +155,15 @@ export class AdvancedRuleEngine {
   private static evaluateTagCondition(fieldValue: FieldValue, rule: SmartFolderRule): boolean {
     const tags = Array.isArray(fieldValue) ? fieldValue : []
     const ruleValue = rule.value
+    const ruleValueAsString = ruleValue != null ? String(ruleValue) : ''
 
     switch (rule.operator) {
       case 'contains':
-        return tags.includes(ruleValue)
+        return tags.includes(ruleValueAsString)
       case 'not_contains':
-        return !tags.includes(ruleValue)
+        return !tags.includes(ruleValueAsString)
       case 'equals':
-        return JSON.stringify(tags.sort()) === JSON.stringify([ruleValue].sort())
+        return JSON.stringify(tags.sort()) === JSON.stringify([ruleValueAsString].sort())
       case 'is_empty':
         return tags.length === 0
       case 'is_not_empty':
@@ -183,7 +183,7 @@ export class AdvancedRuleEngine {
   ): boolean {
     if (!fieldValue) return rule.operator === 'is_empty'
 
-    const fieldDate = new Date(fieldValue)
+    const fieldDate = new Date(fieldValue as string | number | Date)
     if (isNaN(fieldDate.getTime())) return false
 
     let compareDate: Date
@@ -191,8 +191,10 @@ export class AdvancedRuleEngine {
     // 相対日付の処理（例: "7days", "1month"）
     if (typeof rule.value === 'string' && /^\d+\w+$/.test(rule.value)) {
       compareDate = this.parseRelativeDate(rule.value, context.now)
+    } else if (typeof rule.value === 'string' || typeof rule.value === 'number' || rule.value instanceof Date) {
+      compareDate = new Date(rule.value)
     } else {
-      compareDate = new Date(rule.value as string)
+      return false
     }
 
     switch (rule.operator) {
@@ -347,7 +349,7 @@ export class AdvancedRuleEngine {
 
     for (const key of possibleKeys) {
       if (key in item) {
-        return item[key as keyof typeof item]
+        return item[key as keyof typeof item] as FieldValue
       }
     }
 

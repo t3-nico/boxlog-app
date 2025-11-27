@@ -1,7 +1,6 @@
-// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { format, isToday } from 'date-fns'
 
@@ -12,7 +11,7 @@ import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout, usePlanStyles } from '../shared'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 
-import type { PlanPosition } from '../DayView/DayView.types'
+import type { PlanPosition } from '../shared/hooks/useViewPlans'
 
 import { FiveDayContent } from './components'
 import type { FiveDayViewProps } from './FiveDayView.types'
@@ -74,11 +73,11 @@ export const FiveDayView = ({
     return fiveDayDates
   }, [fiveDayDates])
 
-  // プラン位置計算（統一された日付配列ベース）
+  // イベント位置計算（統一された日付配列ベース）
   const eventPositions = useMemo(() => {
     const positions: PlanPosition[] = []
 
-    // displayDates（統一フィルタリング済み）を基準にプランを配置
+    // displayDates（統一フィルタリング済み）を基準にイベントを配置
     displayDates.forEach((displayDate, _dayIndex) => {
       const dateKey = format(displayDate, 'yyyy-MM-dd')
 
@@ -110,8 +109,9 @@ export const FiveDayView = ({
           left: 1, // 各カラム内での位置（%）
           width: 98, // カラム幅の98%を使用
           zIndex: 20,
-          column: 0,
-          totalColumns: 1,
+          column: 0, // 単独カラム
+          totalColumns: 1, // 単独カラム
+          opacity: 1.0,
         })
       })
     })
@@ -121,17 +121,6 @@ export const FiveDayView = ({
 
   // 共通フック使用してスタイル計算
   const eventStyles = usePlanStyles(eventPositions)
-
-  // デバッグ用ログ
-  useEffect(() => {
-    console.log('🔍 FiveDayView Debug:', {
-      eventsCount: events.length,
-      positionsCount: eventPositions.length,
-      stylesCount: Object.keys(eventStyles).length,
-      positions: eventPositions.slice(0, 3),
-      styles: Object.entries(eventStyles).slice(0, 3),
-    })
-  }, [events, eventPositions, eventStyles])
 
   // TimeGrid が空き時間クリック処理を担当するため、この関数は不要
 
@@ -192,7 +181,6 @@ export const FiveDayView = ({
                 className={cn('relative flex-1', dayIndex < displayDates.length - 1 ? 'border-border border-r' : '')}
                 style={{ width: `${100 / displayDates.length}%` }}
               >
-                {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarPlan型に統一する必要がある */}
                 <FiveDayContent
                   date={date}
                   plans={dayEvents}
@@ -200,7 +188,16 @@ export const FiveDayView = ({
                   onPlanClick={onEventClick}
                   onPlanContextMenu={onEventContextMenu}
                   onEmptyClick={onEmptyClick}
-                  onPlanUpdate={onUpdateEvent}
+                  onPlanUpdate={
+                    onUpdateEvent
+                      ? (planId, updates) => {
+                          const plan = events.find((e) => e.id === planId)
+                          if (plan) {
+                            onUpdateEvent({ ...plan, ...updates })
+                          }
+                        }
+                      : undefined
+                  }
                   onTimeRangeSelect={onTimeRangeSelect}
                   className="h-full"
                   dayIndex={dayIndex}

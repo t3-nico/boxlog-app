@@ -7,7 +7,7 @@ import { Field, FieldDescription, FieldLabel } from '@/components/ui/field'
 interface SettingFieldProps {
   label: string
   description?: string
-  children: React.ReactNode
+  children?: React.ReactNode
   required?: boolean
   orientation?: 'vertical' | 'horizontal' | 'responsive'
 }
@@ -30,7 +30,7 @@ export const SettingField = ({
         {required && <span className="text-destructive ml-1">*</span>}
       </FieldLabel>
       {description && <FieldDescription>{description}</FieldDescription>}
-      {children}
+      {children && children}
     </Field>
   )
 }

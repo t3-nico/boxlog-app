@@ -1,9 +1,16 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
 import { useCallback } from 'react'
 
-import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Input } from '@headlessui/react'
 import { Menu as Bars3Icon, Plus as PlusIcon, Trash2 as TrashIcon } from 'lucide-react'
@@ -177,12 +184,16 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
 
   // ドラッグ&ドロップ処理
   const handleDragEnd = useCallback(
-    (event: { active: { id: string }; over: { id: string } }) => {
+    (event: DragEndEvent) => {
       const { active, over } = event
+      if (!over) return
 
-      if (active.id !== over.id) {
-        const oldIndex = rules.findIndex((_, i) => i.toString() === active.id)
-        const newIndex = rules.findIndex((_, i) => i.toString() === over.id)
+      const activeId = String(active.id)
+      const overId = String(over.id)
+
+      if (activeId !== overId) {
+        const oldIndex = rules.findIndex((_, i) => i.toString() === activeId)
+        const newIndex = rules.findIndex((_, i) => i.toString() === overId)
 
         onChange(arrayMove(rules, oldIndex, newIndex))
       }
@@ -205,7 +216,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
         <select
           value={String(rule.value)}
           onChange={(e) => {
-            const value = options.find((opt) => String(opt.value) === e.target.value)?.value
+            const value = options.find((opt) => String(opt.value) === e.target.value)?.value ?? null
             updateRule(index, { ...rule, value })
           }}
           className="border-border w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"

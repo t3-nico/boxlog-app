@@ -1,10 +1,9 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { useMemo } from 'react'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
-import { useEventPositioning } from '../../shared/hooks/useEventPositioning'
-import type { EventPosition } from '../DayView.types'
+import { useEventPositioning, type EventPositionInfo } from '../../shared/hooks/usePlanPositioning'
+import type { EventPosition } from '../../shared/types/plan.types'
 
 interface UseDayEventLayoutOptions {
   date: Date
@@ -38,7 +37,7 @@ export function useDayEventLayout({
 
   // DayView固有のEventPosition形式に変換
   const eventPositions = useMemo(() => {
-    return positionsInfo.map((info) => ({
+    return positionsInfo.map((info: EventPositionInfo) => ({
       event: info.event as any, // TODO(#389): CalendarPlan型の統一が必要
       top: info.top,
       height: info.height,

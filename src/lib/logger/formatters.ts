@@ -1,5 +1,3 @@
-// @ts-nocheck
-// TODO(#389): logger型エラーを修正後、@ts-nocheckを削除
 /**
  * 🎨 BoxLog Logger Formatters
  *
@@ -86,7 +84,8 @@ export const prettyFormatter: LogFormatter = (entry: LogEntry): string => {
 
   // エラー詳細（型ガードで安全にアクセス）
   if (entry.level === 'error' && 'error' in entry && entry.error) {
-    output += `\n${colors.red}${entry.error.stack || entry.error.message}${colors.reset}`
+    const errorEntry = entry as { error: { stack?: string; message: string } }
+    output += `\n${colors.red}${errorEntry.error.stack || errorEntry.error.message}${colors.reset}`
   }
 
   // パフォーマンス情報
@@ -132,8 +131,9 @@ export const structuredFormatter: LogFormatter = (entry: LogEntry): string => {
 
   // null/undefined値を除去
   Object.keys(structured).forEach((key) => {
-    if (structured[key] === null || structured[key] === undefined) {
-      delete structured[key]
+    const typedKey = key as keyof typeof structured
+    if (structured[typedKey] === null || structured[typedKey] === undefined) {
+      delete structured[typedKey]
     }
   })
 
@@ -233,33 +233,36 @@ function maskSensitiveData(entry: LogEntry): LogEntry {
   }
 
   // エラー情報内の機密情報をマスク
-  if ('error' in maskedEntry && maskedEntry.error && maskedEntry.error.message) {
-    // パスワードやトークンを含む可能性のあるエラーメッセージをマスク
-    sensitiveKeys.forEach((key) => {
-      // Security: Use safer string replacement instead of dynamic regex
-      const patterns = [`${key}:`, `${key}=`, `${key} :`, `${key} =`]
+  if ('error' in maskedEntry && maskedEntry.error) {
+    const errorEntry = maskedEntry as { error: { message: string; name?: string; stack?: string } }
+    if (errorEntry.error.message) {
+      // パスワードやトークンを含む可能性のあるエラーメッセージをマスク
+      sensitiveKeys.forEach((key) => {
+        // Security: Use safer string replacement instead of dynamic regex
+        const patterns = [`${key}:`, `${key}=`, `${key} :`, `${key} =`]
 
-      patterns.forEach((pattern) => {
-        const lowerMessage = maskedEntry.error!.message.toLowerCase()
-        const lowerPattern = pattern.toLowerCase()
+        patterns.forEach((pattern) => {
+          const lowerMessage = errorEntry.error.message.toLowerCase()
+          const lowerPattern = pattern.toLowerCase()
 
-        if (lowerMessage.includes(lowerPattern)) {
-          const index = lowerMessage.indexOf(lowerPattern)
-          if (index !== -1) {
-            const before = maskedEntry.error!.message.substring(0, index)
-            const patternPart = maskedEntry.error!.message.substring(index, index + pattern.length)
-            const after = maskedEntry.error!.message.substring(index + pattern.length)
+          if (lowerMessage.includes(lowerPattern)) {
+            const index = lowerMessage.indexOf(lowerPattern)
+            if (index !== -1) {
+              const before = errorEntry.error.message.substring(0, index)
+              const patternPart = errorEntry.error.message.substring(index, index + pattern.length)
+              const after = errorEntry.error.message.substring(index + pattern.length)
 
-            // Replace the first word after pattern with ***
-            const afterWords = after.split(/\s+/)
-            if (afterWords.length > 0 && afterWords[0]) {
-              afterWords[0] = '***'
-              maskedEntry.error!.message = before + patternPart + afterWords.join(' ')
+              // Replace the first word after pattern with ***
+              const afterWords = after.split(/\s+/)
+              if (afterWords.length > 0 && afterWords[0]) {
+                afterWords[0] = '***'
+                errorEntry.error.message = before + patternPart + afterWords.join(' ')
+              }
             }
           }
-        }
+        })
       })
-    })
+    }
   }
 
   return maskedEntry

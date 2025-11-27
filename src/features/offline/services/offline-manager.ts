@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { ConflictData } from '@/types/common'
 import type { ConflictResolution, OfflineAction, OfflineManagerStatus, SyncResult } from '../types'
 
@@ -389,10 +388,11 @@ export class OfflineManager {
 
     const transaction = this.db.transaction(['cache'], 'readwrite')
     const store = transaction.objectStore('cache')
+    const dataId = (data as { id?: string })?.id || 'unknown'
 
     await this.promisifyRequest(
       store.put({
-        key: `${entity}_${data.id}`,
+        key: `${entity}_${dataId}`,
         data,
         updatedAt: new Date(),
         expiry: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24時間

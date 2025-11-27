@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー7件を段階的に修正する
 'use client'
 
 import { useState } from 'react'
@@ -50,7 +49,7 @@ interface NotificationsListProps {
 }
 
 export function NotificationsList({ notifications }: NotificationsListProps) {
-  const t = useTranslation()
+  const { t } = useTranslation()
   const getTypeLabel = useNotificationTypeLabel()
   const defaultNotifications = getDefaultNotifications(t)
   const [notificationList, setNotificationList] = useState(notifications || defaultNotifications)

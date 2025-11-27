@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 // スマートフォルダパフォーマンス最適化システム
 
 import { SmartFolder } from '@/types/smart-folders'
@@ -56,7 +55,9 @@ export class IncrementalUpdateManager {
         // 非同期でバッチを処理
         setTimeout(() => {
           batch.forEach((item) => {
-            this.trackChange(item.id, 'update')
+            // 型アサーション: itemはidプロパティを持つオブジェクト
+            const typedItem = item as { id: string }
+            this.trackChange(typedItem.id, 'update')
           })
 
           processed++

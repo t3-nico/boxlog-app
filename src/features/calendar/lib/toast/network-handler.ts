@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 import { useCallback } from 'react'
 
 import { getTranslation } from './get-translation'
@@ -114,7 +113,12 @@ export const useNetworkErrorHandler = () => {
             description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_TIMEOUT_DESC),
             duration: 8000,
             ...(retryFn && {
-              retryAction: retryFn,
+              action: {
+                label: '再試行',
+                onClick: () => {
+                  void retryFn()
+                },
+              },
             }),
           })
 
@@ -122,8 +126,11 @@ export const useNetworkErrorHandler = () => {
           return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_AUTH_ERROR_TITLE), {
             description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_AUTH_ERROR_DESC),
             duration: 10000,
-            viewAction: () => {
-              window.location.href = '/login'
+            action: {
+              label: 'ログイン',
+              onClick: () => {
+                window.location.href = '/login'
+              },
             },
           })
 
@@ -138,7 +145,12 @@ export const useNetworkErrorHandler = () => {
             description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_NOT_FOUND_DESC),
             duration: 6000,
             ...(retryFn && {
-              retryAction: retryFn,
+              action: {
+                label: '再試行',
+                onClick: () => {
+                  void retryFn()
+                },
+              },
             }),
           })
 
@@ -147,7 +159,12 @@ export const useNetworkErrorHandler = () => {
             description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_CONFLICT_DESC),
             duration: 8000,
             ...(retryFn && {
-              retryAction: retryFn,
+              action: {
+                label: '再試行',
+                onClick: () => {
+                  void retryFn()
+                },
+              },
             }),
           })
 
@@ -156,7 +173,12 @@ export const useNetworkErrorHandler = () => {
             description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_SERVER_ERROR_DESC),
             duration: 10000,
             ...(retryFn && {
-              retryAction: retryFn,
+              action: {
+                label: '再試行',
+                onClick: () => {
+                  void retryFn()
+                },
+              },
             }),
           })
 
@@ -165,7 +187,12 @@ export const useNetworkErrorHandler = () => {
             description: errorInfo.message || getTranslation(CALENDAR_TOAST_KEYS.TOAST_UNKNOWN_ERROR_DESC),
             duration: 6000,
             ...(retryFn && {
-              retryAction: retryFn,
+              action: {
+                label: '再試行',
+                onClick: () => {
+                  void retryFn()
+                },
+              },
             }),
           })
       }
@@ -178,8 +205,11 @@ export const useNetworkErrorHandler = () => {
       return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_PERMISSION_ERROR_TITLE), {
         description: `${getTranslation(CALENDAR_TOAST_KEYS.TOAST_PERMISSION_ERROR_DESC)}（${action}）`,
         duration: 8000,
-        viewAction: () => {
-          window.location.href = '/settings/permissions'
+        action: {
+          label: '設定を開く',
+          onClick: () => {
+            window.location.href = '/settings/permissions'
+          },
         },
       })
     },

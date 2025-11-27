@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー8件を段階的に修正する
 /**
  * MemoryOptimizer - メモリ使用量を100MB以下に最適化
  * ガベージコレクション、メモリリーク検出、自動クリーンアップを提供
@@ -40,12 +39,12 @@ export class MemoryOptimizer {
   private config: MemoryConfig
   private listeners: Set<EventListener> = new Set()
   private timers: Set<NodeJS.Timeout> = new Set()
-  private intervals: Set<NodeJS.Timer> = new Set()
+  private intervals: Set<NodeJS.Timeout> = new Set()
   private observers: Set<MutationObserver | IntersectionObserver | ResizeObserver> = new Set()
   private weakRefs: Set<WeakRef<object>> = new Set()
   private memoryHistory: MemoryStats[] = []
   private cleanupCallbacks: Map<string, () => void> = new Map()
-  private monitoringInterval: NodeJS.Timer | null = null
+  private monitoringInterval: NodeJS.Timeout | null = null
   private detectedLeaks: MemoryLeak[] = []
 
   constructor(config?: Partial<MemoryConfig>) {
@@ -109,7 +108,7 @@ export class MemoryOptimizer {
     // トレンド判定
     let trend: MemoryStats['trend'] = 'stable'
     if (this.memoryHistory.length > 0) {
-      const previous = this.memoryHistory[(this.memoryHistory.length - 1) as keyof typeof memoryHistory]
+      const previous = this.memoryHistory[this.memoryHistory.length - 1]
       const change = (used - previous.used) / previous.used
 
       if (change > 0.05) trend = 'increasing'
@@ -154,8 +153,9 @@ export class MemoryOptimizer {
     this.cleanupWeakReferences()
 
     // 手動でのメモリ解放を促進
-    if ((window as Window & { gc?: () => void }).gc) {
-      ;(window as Window & { gc?: () => void }).gc()
+    const windowWithGc = window as Window & { gc?: () => void }
+    if (windowWithGc.gc) {
+      windowWithGc.gc()
     }
 
     // 大きなオブジェクトの削除を促進
@@ -201,7 +201,7 @@ export class MemoryOptimizer {
   /**
    * インターバルの追跡登録
    */
-  trackInterval(callback: () => void, delay: number): NodeJS.Timer {
+  trackInterval(callback: () => void, delay: number): NodeJS.Timeout {
     const interval = setInterval(callback, delay)
     this.intervals.add(interval)
 

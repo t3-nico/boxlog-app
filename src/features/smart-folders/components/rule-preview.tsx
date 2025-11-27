@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 'use client'
 
 import { useMemo } from 'react'
@@ -11,7 +10,7 @@ import {
   XCircle as XCircleIcon,
 } from 'lucide-react'
 
-import { AdvancedRuleEngine } from '@/features/smart-folders/lib/rule-engine'
+import { AdvancedRuleEngine, EvaluableItem } from '@/features/smart-folders/lib/rule-engine'
 import { SmartFolderRule } from '@/types/smart-folders'
 
 interface PreviewItem {
@@ -47,7 +46,7 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
       }
     }
 
-    const matchingItems = items.filter((item) => AdvancedRuleEngine.evaluateRuleSet(item, rules))
+    const matchingItems = items.filter((item) => AdvancedRuleEngine.evaluateRuleSet(item as EvaluableItem, rules))
 
     return {
       totalItems: items.length,

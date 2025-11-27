@@ -1,11 +1,10 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useDraggable } from '@dnd-kit/core'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 export interface DraggedPlanData {
@@ -39,7 +38,7 @@ type DraggableEventProps = DraggablePlanProps
 const DRAG_THRESHOLD = 5
 
 export const DraggablePlan = ({ plan, dayIndex, topPosition, onPlanClick, style, children }: DraggablePlanProps) => {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLDivElement | null>(null)
   const [dragStartPos, setDragStartPos] = useState<{ x: number; y: number } | null>(null)
   const [isClicking, setIsClicking] = useState(false)
   const [isDragReady, setIsDragReady] = useState(false)

@@ -1,5 +1,3 @@
-// @ts-nocheck
-// TODO(#389): logger型エラーを修正後、@ts-nocheckを削除
 /**
  * 📤 BoxLog Logger Outputs
  *
@@ -46,8 +44,8 @@ export class ConsoleOutput implements LogOutput {
  */
 export class FileOutput implements LogOutput {
   name = 'file'
-  private formatter
-  private filePath: string
+  protected formatter
+  protected filePath: string
   private writeStream?: fs.WriteStream
   private buffer: string[] = []
   private bufferTimeout?: NodeJS.Timeout
@@ -75,7 +73,7 @@ export class FileOutput implements LogOutput {
     this.init()
   }
 
-  private async init(): Promise<void> {
+  protected async init(): Promise<void> {
     try {
       // セキュリティ: ログディレクトリ内のみ許可
       const allowedBasePath = path.resolve(process.cwd(), 'logs')
@@ -556,13 +554,17 @@ export class MultiOutput implements LogOutput {
 
   async flush(): Promise<void> {
     await Promise.all(
-      this.outputs.filter((output) => output.flush).map((output) => output.flush!().catch(console.error))
+      this.outputs
+        .filter((output) => output.flush)
+        .map((output) => Promise.resolve(output.flush!()).catch(console.error))
     )
   }
 
   async close(): Promise<void> {
     await Promise.all(
-      this.outputs.filter((output) => output.close).map((output) => output.close!().catch(console.error))
+      this.outputs
+        .filter((output) => output.close)
+        .map((output) => Promise.resolve(output.close!()).catch(console.error))
     )
   }
 }

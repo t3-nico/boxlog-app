@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
 'use client'
 
 import * as React from 'react'
@@ -7,7 +6,7 @@ import { useCallback, useState } from 'react'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
 // Speech Recognition API types
-interface SpeechRecognitionEvent {
+interface BoxLogSpeechRecognitionEvent {
   results: {
     [index: number]: {
       [index: number]: {
@@ -19,26 +18,16 @@ interface SpeechRecognitionEvent {
   }
 }
 
-interface SpeechRecognition {
+interface BoxLogSpeechRecognition {
   continuous: boolean
   interimResults: boolean
   lang: string
-  onresult: ((event: SpeechRecognitionEvent) => void) | null
+  onstart: (() => void) | null
+  onresult: ((event: BoxLogSpeechRecognitionEvent) => void) | null
   onend: (() => void) | null
   onerror: ((event: Event) => void) | null
   start(): void
   stop(): void
-}
-
-declare global {
-  interface Window {
-    SpeechRecognition: {
-      new (): SpeechRecognition
-    }
-    webkitSpeechRecognition: {
-      new (): SpeechRecognition
-    }
-  }
 }
 
 import { Copy, Mic, MicOff, MoreVertical, Sparkles, Trash2, X } from 'lucide-react'
@@ -152,7 +141,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
 
 const ChatInput = () => {
   const { t } = useI18n()
-  const { state, sendMessage, setInputValue } = useChatStore()
+  const { inputValue, isTyping, sendMessage, setInputValue } = useChatStore()
   const [_isComposing, _setIsComposing] = useState(false)
   const [isListening, setIsListening] = useState(false)
   const [selectedModel, setSelectedModel] = useState('claude-3-sonnet')
@@ -174,14 +163,14 @@ const ChatInput = () => {
 
   const handleSubmit = async (_message: unknown, event: React.FormEvent) => {
     event.preventDefault()
-    if (state.inputValue.trim() && !state.isTyping) {
-      await sendMessage(state.inputValue)
+    if (inputValue.trim() && !isTyping) {
+      await sendMessage(inputValue)
     }
   }
 
   const getSubmitStatus = () => {
-    if (state.isTyping) return 'streaming'
-    if (!state.inputValue.trim()) return 'ready'
+    if (isTyping) return 'streaming'
+    if (!inputValue.trim()) return 'ready'
     return 'ready'
   }
 
@@ -189,7 +178,9 @@ const ChatInput = () => {
     if (!isListening) {
       // 音声認識開始
       if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+        const SpeechRecognition = (window.SpeechRecognition || window.webkitSpeechRecognition) as unknown as {
+          new (): BoxLogSpeechRecognition
+        }
         const recognition = new SpeechRecognition()
 
         recognition.continuous = false
@@ -199,7 +190,7 @@ const ChatInput = () => {
         recognition.onstart = () => setIsListening(true)
         recognition.onend = () => setIsListening(false)
 
-        recognition.onresult = (event: SpeechRecognitionEvent) => {
+        recognition.onresult = (event: BoxLogSpeechRecognitionEvent) => {
           const transcript = Array.from(event.results)
             .map((result) => result[0])
             .map((result) => result.transcript)
@@ -221,7 +212,7 @@ const ChatInput = () => {
   return (
     <div className="bg-background flex-shrink-0 p-4">
       {/* Typing indicator */}
-      {state.isTyping === true && (
+      {isTyping === true && (
         <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
           <div className="flex gap-1">
             <div className="bg-muted-foreground/60 h-2 w-2 animate-pulse rounded-full"></div>
@@ -240,12 +231,12 @@ const ChatInput = () => {
 
       <PromptInput onSubmit={handleSubmit}>
         <PromptInputTextarea
-          value={state.inputValue}
+          value={inputValue}
           onChange={handleInputChange}
           onCompositionStart={handleCompositionStart}
           onCompositionEnd={handleCompositionEnd}
           placeholder={t('aiChat.input.placeholderClaude')}
-          disabled={state.isTyping}
+          disabled={isTyping}
         />
         <div className="flex items-center justify-between gap-2 px-3 pb-2">
           <div className="flex items-center gap-2">
@@ -274,7 +265,7 @@ const ChatInput = () => {
             </Button>
           </div>
 
-          <PromptInputSubmit disabled={!state.inputValue.trim() || state.isTyping} />
+          <PromptInputSubmit disabled={!inputValue.trim() || isTyping} />
         </div>
       </PromptInput>
     </div>
@@ -283,7 +274,8 @@ const ChatInput = () => {
 
 export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSidebarProps) => {
   const { t } = useI18n()
-  const { state, clearMessages } = useChatStore()
+  const { messages, clearMessages } = useChatStore()
+  const [showMenu, setShowMenu] = useState(false)
 
   const handleMenuToggle = useCallback(() => {
     setShowMenu(!showMenu)
@@ -295,10 +287,9 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
   }, [clearMessages])
 
   const handleExportMessages = useCallback(() => {
-    navigator.clipboard.writeText(JSON.stringify(state.messages))
+    navigator.clipboard.writeText(JSON.stringify(messages))
     setShowMenu(false)
-  }, [state.messages])
-  const [showMenu, setShowMenu] = useState(false)
+  }, [messages])
 
   if (!isOpen) return null
 
@@ -379,7 +370,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
       {/* Chat Content */}
       <Conversation>
         <ConversationContent>
-          {state.messages.length === 0 ? (
+          {messages.length === 0 ? (
             <Message from="assistant">
               <div className="bg-muted flex inline-grid size-8 shrink-0 items-center justify-center rounded-full align-middle outline -outline-offset-1 outline-black/10 dark:outline-white/10">
                 <Sparkles className="text-foreground h-4 w-4" />
@@ -388,31 +379,13 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                 <Branch>
                   <BranchMessages>
                     <BoxLogAIResponse>
-                      {t('aiChat.welcome.greeting1')}
-                      {'\n\n'}• {t('aiChat.welcome.capabilities1.0')}
-                      {'\n'}• {t('aiChat.welcome.capabilities1.1')}
-                      {'\n'}• {t('aiChat.welcome.capabilities1.2')}
-                      {'\n'}• {t('aiChat.welcome.capabilities1.3')}
-                      {'\n\n'}
-                      {t('aiChat.welcome.question1')}
+                      {`${t('aiChat.welcome.greeting1')}\n\n• ${t('aiChat.welcome.capabilities1.0')}\n• ${t('aiChat.welcome.capabilities1.1')}\n• ${t('aiChat.welcome.capabilities1.2')}\n• ${t('aiChat.welcome.capabilities1.3')}\n\n${t('aiChat.welcome.question1')}`}
                     </BoxLogAIResponse>
                     <BoxLogAIResponse>
-                      {t('aiChat.welcome.greeting2')}
-                      {'\n\n'}• {t('aiChat.welcome.capabilities2.0')}
-                      {'\n'}• {t('aiChat.welcome.capabilities2.1')}
-                      {'\n'}• {t('aiChat.welcome.capabilities2.2')}
-                      {'\n'}• {t('aiChat.welcome.capabilities2.3')}
-                      {'\n\n'}
-                      {t('aiChat.welcome.question2')}
+                      {`${t('aiChat.welcome.greeting2')}\n\n• ${t('aiChat.welcome.capabilities2.0')}\n• ${t('aiChat.welcome.capabilities2.1')}\n• ${t('aiChat.welcome.capabilities2.2')}\n• ${t('aiChat.welcome.capabilities2.3')}\n\n${t('aiChat.welcome.question2')}`}
                     </BoxLogAIResponse>
                     <BoxLogAIResponse>
-                      {t('aiChat.welcome.greeting3')}
-                      {'\n\n'}• {t('aiChat.welcome.capabilities3.0')}
-                      {'\n'}• {t('aiChat.welcome.capabilities3.1')}
-                      {'\n'}• {t('aiChat.welcome.capabilities3.2')}
-                      {'\n'}• {t('aiChat.welcome.capabilities3.3')}
-                      {'\n\n'}
-                      {t('aiChat.welcome.question3')}
+                      {`${t('aiChat.welcome.greeting3')}\n\n• ${t('aiChat.welcome.capabilities3.0')}\n• ${t('aiChat.welcome.capabilities3.1')}\n• ${t('aiChat.welcome.capabilities3.2')}\n• ${t('aiChat.welcome.capabilities3.3')}\n\n${t('aiChat.welcome.question3')}`}
                     </BoxLogAIResponse>
                   </BranchMessages>
                   <BranchSelector from="assistant">
@@ -424,7 +397,15 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
               </MessageContent>
             </Message>
           ) : (
-            state.messages.map((message) => <MessageBubble key={message.id} message={message} />)
+            messages.map(
+              (message: {
+                id: string
+                content: string | string[]
+                sender: 'user' | 'assistant'
+                timestamp: Date
+                status?: 'sending' | 'error' | 'sent'
+              }) => <MessageBubble key={message.id} message={message} />
+            )
           )}
         </ConversationContent>
         <ConversationScrollButton />

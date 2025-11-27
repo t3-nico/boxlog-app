@@ -1,9 +1,8 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 'use client'
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-// import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 interface VirtualCalendarGridProps {
@@ -341,8 +340,10 @@ interface VirtualPlanCardProps {
 }
 
 const VirtualPlanCard = React.memo(function VirtualPlanCard({ plan, onClick }: VirtualPlanCardProps) {
-  const style = useMemo(() => {
-    if (!plan.startDate || !plan.endDate) return {}
+  const { style, heightInPixels } = useMemo(() => {
+    if (!plan.startDate || !plan.endDate) {
+      return { style: {}, heightInPixels: 0 }
+    }
 
     const startHour = plan.startDate.getHours()
     const startMinutes = plan.startDate.getMinutes()
@@ -354,13 +355,16 @@ const VirtualPlanCard = React.memo(function VirtualPlanCard({ plan, onClick }: V
     const height = duration * HOUR_HEIGHT
 
     return {
-      position: 'absolute' as const,
-      top: `${top}px`,
-      left: '2px',
-      right: '2px',
-      height: `${height}px`,
-      backgroundColor: plan.color || '#3b82f6',
-      zIndex: 10,
+      style: {
+        position: 'absolute' as const,
+        top: `${top}px`,
+        left: '2px',
+        right: '2px',
+        height: `${height}px`,
+        backgroundColor: plan.color || '#3b82f6',
+        zIndex: 10,
+      },
+      heightInPixels: height,
     }
   }, [plan])
 
@@ -380,7 +384,7 @@ const VirtualPlanCard = React.memo(function VirtualPlanCard({ plan, onClick }: V
       }}
     >
       <div className="truncate font-medium">{plan.title}</div>
-      {(style.height as number) > 30 && plan.startDate ? (
+      {heightInPixels > 30 && plan.startDate ? (
         <div className="opacity-90">{format(plan.startDate, 'HH:mm')}</div>
       ) : null}
     </div>

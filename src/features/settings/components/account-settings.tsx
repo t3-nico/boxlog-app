@@ -36,8 +36,7 @@ interface SecuritySettings {
 }
 
 export function AccountSettings() {
-  // @ts-ignore - Zustand selector type inference issue
-  const user = useAuthStore((state) => state.user)
+  const user = useAuthStore((state: { user: import('@supabase/supabase-js').User | null }) => state.user)
   const { t } = useI18n()
   const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
@@ -80,13 +79,12 @@ export function AccountSettings() {
       }
 
       // Supabase直接でプロフィール更新
-      const { error: profileError } = await supabase
-        .from('profiles')
+      const { error: profileError } = await (supabase.from('profiles') as any)
         .update({
           username: values.username,
           avatar_url: values.uploadedAvatar,
           updated_at: new Date().toISOString(),
-        } as never)
+        })
         .eq('id', user.id)
 
       if (profileError) {

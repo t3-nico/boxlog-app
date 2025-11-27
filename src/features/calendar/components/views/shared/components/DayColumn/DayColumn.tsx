@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * 1日分の列コンポーネント（再利用可能）
  */
@@ -32,7 +31,13 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
 
   // この日のイベントをフィルタリング
   const dayEvents = useMemo(() => {
-    const filtered = filterEventsByDate(events, date)
+    // CalendarPlanをTimedPlanに変換
+    const timedEvents = events.map((event) => ({
+      ...event,
+      start: event.startDate || new Date(),
+      end: event.endDate || new Date(),
+    }))
+    const filtered = filterEventsByDate(timedEvents, date)
     return sortTimedEvents(filtered)
   }, [events, date])
 
@@ -94,7 +99,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
           return (
             <PlanCard
               key={event.id}
-              event={event}
+              plan={event}
               position={position} // undefinedでも大丈夫（PlanCard側で対応済み）
               onClick={onEventClick}
               onDoubleClick={onEventDoubleClick}
@@ -107,7 +112,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
         {dayEvents.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center opacity-30">
             <EmptyState
-              message=""
+              title=""
               description=""
               icon={<div className="text-4xl text-gray-300 dark:text-gray-600">📅</div>}
               className="p-4"

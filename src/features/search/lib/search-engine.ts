@@ -1,9 +1,19 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 // TODO(#621): Events削除後、plans/Sessionsに移行予定
 // import type { Event } from '@/features/events'
 import type { SmartFolder, Tag, Task } from '@/types/common'
 
 import type { SearchOptions, SearchProvider, SearchResult, SearchResultType } from '../types'
+
+// 一時的なEvent型定義（Sessions統合まで）
+interface Event {
+  id: string
+  title: string
+  description?: string
+  location?: string
+  startDate: Date
+  endDate: Date
+  status: string
+}
 
 // Simple fuzzy search implementation
 export class FuzzySearch {
@@ -173,7 +183,7 @@ export class SearchEngine {
       metadata: {
         status: task.status,
         priority: task.priority,
-        dueDate: task.due_date,
+        dueDate: task.planned_start,
         tags: task.tags || [],
       },
     }))

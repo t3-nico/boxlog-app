@@ -61,6 +61,11 @@ const EVENT_MARGIN = 2
  * 2つのプランが時間的に重なっているかを判定
  */
 function eventsOverlap(event1: CalendarPlan, event2: CalendarPlan): boolean {
+  // startDate が null の場合は重ならないと判定
+  if (!event1.startDate || !event2.startDate) {
+    return false
+  }
+
   const start1 = event1.startDate.getTime()
   const end1 = event1.endDate?.getTime() || event1.startDate.getTime()
   const start2 = event2.startDate.getTime()
@@ -99,6 +104,11 @@ export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
   const eventsByDay = new Map<string, CalendarPlan[]>()
 
   events.forEach((event) => {
+    // startDate が null の場合はスキップ
+    if (!event.startDate) {
+      return
+    }
+
     const dayKey = `${event.startDate.getFullYear()}-${event.startDate.getMonth()}-${event.startDate.getDate()}`
     const dayEvents = eventsByDay.get(dayKey) || []
     dayEvents.push(event)
@@ -109,8 +119,10 @@ export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
 
   // 各日のプランをグループ化
   eventsByDay.forEach((dayEvents, dayKey) => {
-    // 開始時刻でソート
-    const sortedEvents = [...dayEvents].sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
+    // 開始時刻でソート（startDate が null の場合は現在時刻を使用）
+    const sortedEvents = [...dayEvents].sort(
+      (a, b) => (a.startDate?.getTime() ?? Date.now()) - (b.startDate?.getTime() ?? Date.now())
+    )
 
     // 重なるプランをグループ化
     const dayGroups: CalendarPlan[][] = []
@@ -160,8 +172,10 @@ export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
 
     // EventGroup オブジェクトを作成
     mergedGroups.forEach((group, index) => {
-      const startTime = new Date(Math.min(...group.map((e) => e.startDate.getTime())))
-      const endTime = new Date(Math.max(...group.map((e) => e.endDate?.getTime() || e.startDate.getTime())))
+      const startTime = new Date(Math.min(...group.map((e) => e.startDate?.getTime() ?? Date.now())))
+      const endTime = new Date(
+        Math.max(...group.map((e) => e.endDate?.getTime() || e.startDate?.getTime() || Date.now()))
+      )
 
       groups.push({
         id: `${dayKey}-group-${index}`,
@@ -184,14 +198,18 @@ export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
 export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
   if (group.events.length === 0) return []
 
-  // プランを開始時刻でソート
-  const sortedEvents = [...group.events].sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
+  // プランを開始時刻でソート（nullの場合は現在時刻を使用）
+  const sortedEvents = [...group.events].sort((a, b) => {
+    const aTime = a.startDate?.getTime() ?? Date.now()
+    const bTime = b.startDate?.getTime() ?? Date.now()
+    return aTime - bTime
+  })
 
-  // 各プランの位置情報を作成
+  // 各プランの位置情報を作成（nullの場合は現在時刻を使用）
   const positions: EventPosition[] = sortedEvents.map((plan) => ({
     plan,
-    start: timeToMinutes(plan.startDate),
-    end: timeToMinutes(plan.endDate || plan.startDate),
+    start: timeToMinutes(plan.startDate || new Date()),
+    end: timeToMinutes(plan.endDate || plan.startDate || new Date()),
     column: undefined,
     columns: undefined,
   }))
@@ -316,8 +334,9 @@ export function applyEventLayout(
   const layoutedEvents: LayoutedEvent[] = events.map((event, _index) => {
     const assignment = allAssignments.get(event.id)
 
-    // 時間を位置に変換
-    const startMinutes = event.startDate.getHours() * 60 + event.startDate.getMinutes()
+    // 時間を位置に変換（startDate が null の場合は現在時刻を使用）
+    const startDate = event.startDate || new Date()
+    const startMinutes = startDate.getHours() * 60 + startDate.getMinutes()
     const endMinutes = event.endDate ? event.endDate.getHours() * 60 + event.endDate.getMinutes() : startMinutes + 60 // デフォルト1時間
 
     const dayStartMinutes = dayStartHour * 60

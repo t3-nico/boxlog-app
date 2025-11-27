@@ -1,6 +1,6 @@
-// シンプルなタグシステムの型定義（Level 1のみ）
+// タグシステムの型定義（Level 0, 1, 2 の3階層）
 
-export type TagLevel = 0 | 1
+export type TagLevel = 0 | 1 | 2
 
 export interface Tag {
   id: string
