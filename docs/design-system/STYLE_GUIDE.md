@@ -203,13 +203,37 @@ className="data-[state=active]:bg-primary/12"
 className="bg-green-600 hover:bg-green-700"
 className="text-red-500 hover:text-red-400"
 
+// ❌ accent トークンをホバー状態に使用（M3違反）
+className="hover:bg-accent"              // → hover:bg-foreground/8
+className="hover:bg-accent/50"           // → hover:bg-foreground/8
+className="hover:bg-accent hover:text-accent-foreground"  // → hover:bg-foreground/8（テキスト変更なし）
+
+// ❌ ホバー時のテキスト色変更（State Layerはオーバーレイのみ）
+className="hover:text-accent-foreground"  // 削除
+className="dark:hover:text-accent-foreground"  // 削除
+
 // ❌ バラバラなOpacity値
 className="hover:bg-primary/90"  // 別の場所で /80 を使っている
-className="hover:bg-accent/50"   // 別の場所で /30 を使っている
 
 // ❌ brightness調整（古い方式）
 className="hover:brightness-75"
 ```
+
+### shadcn/ui コンポーネント修正ルール
+
+shadcn/uiは `hover:bg-accent hover:text-accent-foreground` パターンをデフォルトで使用しています。
+このプロジェクトでは **必ず以下に置換** してください：
+
+```tsx
+// shadcn/ui デフォルト → BoxLog修正後
+"hover:bg-accent hover:text-accent-foreground"  →  "hover:bg-foreground/8"
+"hover:bg-accent"                               →  "hover:bg-foreground/8"
+"data-[state=open]:bg-accent"                   →  "data-[state=open]:bg-foreground/12"
+"aria-selected:bg-accent"                       →  "aria-selected:bg-foreground/12"
+"data-[state=selected]:bg-accent"               →  "data-[state=selected]:bg-foreground/12"
+```
+
+**対象コンポーネント例**: `button.tsx`, `toggle.tsx`, `dropdown-menu.tsx`, `command.tsx`, `calendar.tsx` など
 
 ---
 
@@ -240,9 +264,9 @@ className="hover:brightness-75"
 --muted            /* 控えめな背景 */
 --muted-foreground /* 控えめなテキスト */
 
-/* アクセント */
---accent           /* ホバー時の背景 */
---accent-foreground
+/* アクセント（⚠️ ホバー状態には使用しない） */
+--accent           /* shadcn/uiデフォルト用（このプロジェクトでは非推奨） */
+--accent-foreground /* shadcn/uiデフォルト用（このプロジェクトでは非推奨） */
 
 /* 状態 */
 --destructive      /* 削除・エラー */
@@ -341,6 +365,11 @@ xl: 1280px  // デスクトップ
 
 ---
 
-**最終更新**: 2025-10-22
-**バージョン**: v1.0
+**最終更新**: 2025-11-27
+**バージョン**: v1.1
 **管理**: BoxLog デザインシステムチーム
+
+### 更新履歴
+
+- **v1.1** (2025-11-27): hover:bg-accent禁止ルール追加、shadcn/ui修正ガイド追加
+- **v1.0** (2025-10-22): 初版
