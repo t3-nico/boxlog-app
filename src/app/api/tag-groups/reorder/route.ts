@@ -49,7 +49,7 @@ export async function PATCH(request: NextRequest) {
     const updates = groupIds.map((groupId, index) => {
       return supabase
         .from('tag_groups')
-        .update({ sort_order: index } as never) // Supabase型推論の制限を回避
+        .update({ sort_order: index })
         .eq('id', groupId)
         .eq('user_id', user.id) // セキュリティ: 自分のグループのみ更新
         .select()
