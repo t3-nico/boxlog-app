@@ -1,10 +1,16 @@
 // BoxLog ESLint - 公式準拠設定
 // Next.js公式推奨設定を使用（学習コスト0、メンテ0）
 
-import nextCoreWebVitals from 'eslint-config-next/core-web-vitals'
+import { FlatCompat } from '@eslint/eslintrc'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-// nextCoreWebVitalsからreact-hooksプラグインを取得
-const reactHooksPlugin = nextCoreWebVitals[0]?.plugins?.['react-hooks']
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+})
 
 const config = [
   // Ignore patterns
@@ -13,13 +19,8 @@ const config = [
   },
 
   // Next.js公式推奨設定（React, TypeScript, アクセシビリティ含む）
-  ...nextCoreWebVitals,
-
-  // カスタムルール（react-hooksルールのオーバーライド）
-  {
-    plugins: {
-      'react-hooks': reactHooksPlugin,
-    },
+  ...compat.config({
+    extends: ['next/core-web-vitals'],
     rules: {
       // TypeScriptルール無効化（inline disableを使用）
       '@typescript-eslint/no-explicit-any': 'off',
@@ -31,7 +32,7 @@ const config = [
       'react-hooks/immutability': 'warn',
       'react-hooks/preserve-manual-memoization': 'warn',
     },
-  },
+  }),
 
   // テスト用グローバル変数
   {

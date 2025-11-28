@@ -331,6 +331,7 @@
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
+    "@eslint/eslintrc": "^3.3.1",
     "@lhci/cli": "^0.15.1",
     "@next/bundle-analyzer": "^16.0.5",
     "@playwright/test": "^1.56.0",
