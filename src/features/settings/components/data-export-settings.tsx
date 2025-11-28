@@ -7,7 +7,6 @@ import { Download, FileJson, History, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { logger } from '@/lib/logger'
 import { toast } from 'sonner'
 
 import { SettingField } from './fields/SettingField'
@@ -22,7 +21,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
     setIsExporting(true)
 
     try {
-      logger.info('Data export initiated', {
+      console.info('Data export initiated', {
         component: 'data-export-settings',
       })
 
@@ -49,13 +48,13 @@ export const DataExportSettings = memo(function DataExportSettings() {
       document.body.removeChild(a)
       window.URL.revokeObjectURL(url)
 
-      logger.info('Data export completed', {
+      console.info('Data export completed', {
         component: 'data-export-settings',
       })
 
       toast.success(t('settings.account.dataExport.success'))
     } catch (error) {
-      logger.error('Data export failed', error as Error, {
+      console.error('Data export failed', error as Error, {
         component: 'data-export-settings',
       })
 
@@ -76,7 +75,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
       <SettingsCard title="データエクスポート" description="すべてのデータをJSON形式でダウンロードできます（GDPR準拠）">
         <div className="space-y-4">
           {/* エクスポート対象の説明 */}
-          <div className="bg-muted/50 rounded-lg p-4">
+          <div className="bg-muted/50 rounded-xl p-4">
             <h4 className="mb-2 flex items-center gap-2 text-sm font-medium">
               <FileJson className="h-4 w-4" />
               エクスポートされるデータ
@@ -102,7 +101,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
       {/* データインポート */}
       <SettingsCard title="データインポート" description="バックアップファイルからデータを復元します">
         <div className="space-y-4">
-          <div className="border-border flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-8">
+          <div className="border-border flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8">
             <Upload className="text-muted-foreground mb-2 h-8 w-8" />
             <p className="text-muted-foreground text-sm">JSONファイルをドロップまたはクリックして選択</p>
             <Button variant="outline" size="sm" className="mt-4" disabled>
@@ -121,7 +120,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
           </SettingField>
 
           {autoBackup && (
-            <div className="bg-muted/50 rounded-lg p-4">
+            <div className="bg-muted/50 rounded-xl p-4">
               <div className="flex items-center gap-2">
                 <History className="text-muted-foreground h-4 w-4" />
                 <span className="text-sm">最終バックアップ: 未実行</span>

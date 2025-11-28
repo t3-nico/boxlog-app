@@ -8,7 +8,7 @@ on:
       - 'package-lock.json'
       - '.licensrc.json'
 
-  # pushでも実行（main/dev保護）
+  # pushでも実行（main保護）
   push:
     paths:
       - 'package.json'
@@ -16,7 +16,6 @@ on:
       - '.licensrc.json'
     branches:
       - main
-      - dev
 
   # 手動実行可能
   workflow_dispatch:

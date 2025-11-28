@@ -17,8 +17,6 @@ import {
 
 import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
-// TODO(#621): Tasks削除後、plans/Sessionsに移行予定
-// import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { useDebounce } from '@/hooks/useDebounce'
 import { Task } from '@/types/unified'
 
@@ -37,7 +35,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
 
   // Use stores directly as React hooks (hydration-safe with Zustand)
   // const tasks = useTaskStore((state) => state.tasks ?? [])
-  const tasks: Task[] = [] // TODO: Sessions統合後に実装
+  const tasks: Task[] = [] // TODO: Plans統合後に実装
   const tags = useTagStore((state) => state.tags ?? [])
   const smartFolders = useSmartFolderStore((state) => state.smartFolders ?? [])
 

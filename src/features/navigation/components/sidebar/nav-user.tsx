@@ -75,25 +75,25 @@ export function NavUser({
           type="button"
           className="hover:bg-foreground/8 data-[state=open]:bg-foreground/12 flex w-fit items-center gap-2 rounded-md px-2 py-2 text-left text-sm outline-hidden"
         >
-          <Avatar className="h-6 w-6 rounded-lg">
+          <Avatar className="h-6 w-6 rounded-xl">
             {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
-            <AvatarFallback className="rounded-lg">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+            <AvatarFallback className="rounded-xl">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
           <span className="max-w-[80px] truncate font-medium">{user.name}</span>
           <ChevronDown className="text-muted-foreground size-4 shrink-0" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="border-input w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+        className="border-input w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-xl"
         side="right"
         align="start"
         sideOffset={4}
       >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-2 py-2 text-left text-sm">
-            <Avatar className="h-6 w-6 rounded-lg">
+            <Avatar className="h-6 w-6 rounded-xl">
               {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
-              <AvatarFallback className="rounded-lg">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+              <AvatarFallback className="rounded-xl">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{user.name}</span>

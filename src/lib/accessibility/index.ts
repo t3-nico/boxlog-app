@@ -257,8 +257,10 @@ export function monitorPerformance() {
     const observer = new PerformanceObserver((list) => {
       list.getEntries().forEach((entry) => {
         // Cumulative Layout Shift (CLS) - アクセシビリティに重要
-        if (entry.entryType === 'layout-shift' && !(entry as any).hadRecentInput) {
-          const cls = (entry as any).value
+        // LayoutShift エントリには hadRecentInput と value プロパティが存在
+        const layoutShiftEntry = entry as PerformanceEntry & { hadRecentInput?: boolean; value?: number }
+        if (entry.entryType === 'layout-shift' && !layoutShiftEntry.hadRecentInput) {
+          const cls = layoutShiftEntry.value ?? 0
           if (cls > 0.1) {
             console.warn('High Cumulative Layout Shift detected:', cls)
           }

@@ -28,7 +28,7 @@ export const SettingsCard = ({
   return (
     <div
       className={cn(
-        'border-border bg-card text-card-foreground rounded-lg border',
+        'border-border bg-card text-card-foreground rounded-xl border',
         'transition-all duration-200',
         isSaving && 'border-blue-300 dark:border-blue-700',
         className

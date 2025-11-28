@@ -2,7 +2,7 @@
 
 import React, { useCallback, useState } from 'react'
 
-import type { DragEndEvent, DragMoveEvent, DragStartEvent } from '@dnd-kit/core'
+import type { DragEndEvent, DragMoveEvent, DragStartEvent, Over } from '@dnd-kit/core'
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { fromZonedTime } from 'date-fns-tz'
@@ -101,7 +101,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
    * planドロップの共通処理
    */
   const handleplanDrop = useCallback(
-    (planId: string, over: any) => {
+    (planId: string, over: Over) => {
       // ドロップ先のデータ
       const dropData = over.data?.current
       if (!dropData || !dropData.date) {
@@ -281,7 +281,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
       {/* ドラッグ中のプレビュー */}
       <DragOverlay>
         {activeplan ? (
-          <div className="bg-card border-primary flex h-20 w-64 flex-col gap-1 rounded-lg border-2 p-3 shadow-lg">
+          <div className="bg-card border-primary flex h-20 w-64 flex-col gap-1 rounded-xl border-2 p-3 shadow-lg">
             <div className="flex items-center gap-2">
               <div className="bg-primary h-8 w-1 rounded-full" />
               <div className="text-foreground flex-1 text-sm font-semibold">{activeplan.title}</div>

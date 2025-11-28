@@ -124,7 +124,7 @@ const TagTreeNode = ({
     <div className="relative">
       {/* タグノード */}
       <div
-        className={`group flex items-center gap-2 rounded-lg px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${indentClass}`}
+        className={`group flex items-center gap-2 rounded-xl px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${indentClass}`}
         style={{ paddingLeft: `${level * 20 + 12}px` }}
       >
         {/* 展開/折りたたみアイコン */}
@@ -198,7 +198,7 @@ const TagTreeNode = ({
 
               {/* コンテキストメニュー */}
               {showMenu != null && (
-                <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-10 mt-1 min-w-[120px] rounded-lg border shadow-lg">
+                <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-10 mt-1 min-w-[120px] rounded-xl border shadow-lg">
                   <button
                     type="button"
                     onClick={handleEditTag}
@@ -300,7 +300,7 @@ export const TagTreeView = ({
         <button
           type="button"
           onClick={handleCreateRootTag}
-          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
         >
           <PlusIcon className="h-4 w-4" />
           {t('tags.actions.createFirst')}

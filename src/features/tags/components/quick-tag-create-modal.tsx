@@ -94,14 +94,14 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
       />
 
       {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 z-50 w-80 -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-white shadow-xl dark:bg-gray-800">
+      <div className="fixed top-1/2 left-1/2 z-50 w-80 -translate-x-1/2 -translate-y-1/2 transform rounded-xl bg-white shadow-xl dark:bg-gray-800">
         {/* Header */}
         <div className="border-border flex items-center justify-between border-b p-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Create New Tag</h2>
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg p-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="rounded-xl p-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
           </button>
@@ -119,7 +119,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
               value={tagName}
               onChange={handleTagNameChange}
               placeholder="Enter tag name..."
-              className="border-border bg-card text-foreground focus:ring-primary w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2"
+              className="border-border bg-card text-foreground focus:ring-primary w-full rounded-xl border px-3 py-2 focus:border-transparent focus:ring-2"
               onKeyDown={handleKeyDown}
             />
           </div>
@@ -134,7 +134,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
                   key={color}
                   type="button"
                   onClick={createColorHandler(color)}
-                  className={`h-10 w-10 rounded-lg transition-all hover:scale-105 ${
+                  className={`h-10 w-10 rounded-xl transition-all hover:scale-105 ${
                     selectedColor === color ? 'ring-2 ring-blue-500 ring-offset-2' : ''
                   }`}
                   style={{ backgroundColor: color }}
@@ -145,7 +145,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
           </div>
 
           {/* Preview */}
-          <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
+          <div className="rounded-xl bg-gray-50 p-3 dark:bg-gray-700">
             <div className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">Preview:</div>
             <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full" style={{ backgroundColor: selectedColor }} />
@@ -159,7 +159,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg px-4 py-2 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+            className="rounded-xl px-4 py-2 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             Cancel
           </button>
@@ -167,7 +167,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
             type="button"
             onClick={handleCreateTag}
             disabled={!tagName.trim()}
-            className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-gray-600"
+            className="flex items-center gap-2 rounded-xl bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-gray-600"
           >
             <Plus className="h-4 w-4" />
             Create Tag

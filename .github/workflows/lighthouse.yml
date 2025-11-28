@@ -1,0 +1,55 @@
+name: ⚡ Lighthouse CI (Post-merge)
+
+# mainマージ後に本番URLのパフォーマンスを測定
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+
+# 同じブランチで複数実行された場合、古い実行をキャンセル
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# セキュリティ: 最小権限の原則
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    name: ⚡ Lighthouse CI
+    runs-on: ubuntu-latest
+    environment: development
+    timeout-minutes: 10
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: ⚡ Run Lighthouse CI
+        run: npm run perf:lighthouse
+        continue-on-error: true
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          LHCI_BUILD_CONTEXT__CURRENT_BRANCH: ${{ github.ref_name }}
+          # mainブランチは3回（精度重視）
+          LHCI_NUMBER_OF_RUNS: '3'
+
+      - name: 📊 Upload Lighthouse reports
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: lighthouse-reports-${{ github.sha }}
+          path: .lighthouseci
+          retention-days: 30

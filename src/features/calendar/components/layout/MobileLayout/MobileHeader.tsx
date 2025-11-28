@@ -187,7 +187,7 @@ export const MobileHeader = ({
           />
 
           {/* メニュー */}
-          <div className="bg-background border-border absolute top-full left-1/2 z-50 mt-2 w-48 -translate-x-1/2 rounded-lg border shadow-lg">
+          <div className="bg-background border-border absolute top-full left-1/2 z-50 mt-2 w-48 -translate-x-1/2 rounded-xl border shadow-lg">
             <div className="py-2">
               {Object.entries(viewLabels).map(([value, label]) => (
                 <button

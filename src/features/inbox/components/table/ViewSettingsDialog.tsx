@@ -111,7 +111,7 @@ export function ViewSettingsDialog({ open, onOpenChange, view, currentState }: V
           </div>
 
           {!view && currentState && (
-            <div className="bg-muted rounded-lg p-3 text-sm">
+            <div className="bg-muted rounded-xl p-3 text-sm">
               <p className="mb-2 font-medium">保存される設定:</p>
               <ul className="text-muted-foreground space-y-1 text-xs">
                 {currentState.filters.status && currentState.filters.status.length > 0 && (

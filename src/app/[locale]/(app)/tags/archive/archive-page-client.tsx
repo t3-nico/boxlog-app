@@ -281,7 +281,7 @@ export function ArchivePageClient() {
       {/* テーブル */}
       <div className="flex flex-1 flex-col overflow-hidden px-4">
         {displayTags.length === 0 ? (
-          <div className="border-border flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
+          <div className="border-border flex h-64 items-center justify-center rounded-xl border-2 border-dashed">
             <div className="text-center">
               <p className="text-muted-foreground mb-4">アーカイブされたタグはありません</p>
             </div>
@@ -289,7 +289,7 @@ export function ArchivePageClient() {
         ) : (
           <>
             {/* テーブル部分: 枠で囲む */}
-            <div className="border-border flex-1 overflow-hidden rounded-lg border">
+            <div className="border-border flex-1 overflow-hidden rounded-xl border">
               {/* ヘッダー: 固定 */}
               <div className="overflow-x-auto">
                 <Table className="min-w-full" style={{ tableLayout: 'fixed' }}>

@@ -611,7 +611,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         }}
       >
         {displayTags.length === 0 ? (
-          <div className="border-border flex h-64 items-center justify-center rounded-lg border-2 border-dashed">
+          <div className="border-border flex h-64 items-center justify-center rounded-xl border-2 border-dashed">
             <div className="text-center">
               <p className="text-muted-foreground mb-4">{t('tags.page.noTags')}</p>
               <Button onClick={handleStartInlineCreation}>
@@ -623,7 +623,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         ) : (
           <>
             {/* テーブル部分 */}
-            <div className="border-border overflow-x-auto rounded-lg border">
+            <div className="border-border overflow-x-auto rounded-xl border">
               <Table
                 style={{
                   minWidth: `${Object.values(columnWidths).reduce((sum, width) => sum + width, 0)}px`,

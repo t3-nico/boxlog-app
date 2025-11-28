@@ -71,7 +71,7 @@ export default async function OSSCreditsPage({ params }: PageProps) {
       </div>
 
       {/* イントロダクション */}
-      <div className="bg-muted mb-8 rounded-lg p-6">
+      <div className="bg-muted mb-8 rounded-xl p-6">
         <p className="text-foreground mb-4">{t('ossCredits.intro')}</p>
         <div className="flex items-center gap-2">
           <span className="text-muted-foreground text-sm">{t('ossCredits.totalPackages')}:</span>
@@ -81,7 +81,7 @@ export default async function OSSCreditsPage({ params }: PageProps) {
 
       {/* エラー表示 */}
       {loadError && (
-        <div className="bg-destructive/10 text-destructive border-destructive/20 mb-8 rounded-lg border p-6">
+        <div className="bg-destructive/10 text-destructive border-destructive/20 mb-8 rounded-xl border p-6">
           <p className="font-semibold">{t('ossCredits.loadingError')}</p>
         </div>
       )}
@@ -90,7 +90,7 @@ export default async function OSSCreditsPage({ params }: PageProps) {
       {!loadError && (
         <div className="mb-8">
           <h2 className="mb-4 text-xl font-semibold">{t('ossCredits.licenseDistribution')}</h2>
-          <div className="bg-card border-border grid grid-cols-2 gap-4 rounded-lg border p-6 md:grid-cols-4">
+          <div className="bg-card border-border grid grid-cols-2 gap-4 rounded-xl border p-6 md:grid-cols-4">
             {Object.entries(licenseStats)
               .sort(([, a], [, b]) => b - a)
               .slice(0, 8)
@@ -112,7 +112,7 @@ export default async function OSSCreditsPage({ params }: PageProps) {
             {credits.map((credit) => (
               <div
                 key={`${credit.name}-${credit.version}`}
-                className="bg-card border-border hover:border-primary/50 rounded-lg border p-6 transition-colors"
+                className="bg-card border-border hover:border-primary/50 rounded-xl border p-6 transition-colors"
               >
                 <div className="mb-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                   <h3 className="text-foreground text-lg font-semibold">
@@ -151,7 +151,7 @@ export default async function OSSCreditsPage({ params }: PageProps) {
       )}
 
       {/* フッター - 詳細情報へのリンク */}
-      <div className="bg-muted mt-12 rounded-lg p-6 text-center">
+      <div className="bg-muted mt-12 rounded-xl p-6 text-center">
         <p className="text-muted-foreground mb-4 text-sm">{t('ossCredits.footer.notice')}</p>
         <div className="flex flex-col gap-2 md:flex-row md:justify-center md:gap-4">
           <Link href="/THIRD_PARTY_NOTICES.txt" target="_blank" className="text-primary hover:underline">

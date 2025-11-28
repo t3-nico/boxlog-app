@@ -7,7 +7,6 @@ on:
       - 'package.json'
       - 'package-lock.json'
     branches:
-      - dev
       - main
 
   # PRでpackage.json変更時

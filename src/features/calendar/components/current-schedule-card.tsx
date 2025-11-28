@@ -212,7 +212,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     return currentEvent ? (
       <div className="mb-4 flex justify-center">
         <div
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900"
+          className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900"
           style={{
             border: `2px solid ${borderColor}`,
           }}
@@ -229,7 +229,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
         role="button"
         tabIndex={0}
         aria-label="Navigate to calendar view"
-        className="bg-secondary border-secondary hover:bg-secondary/80 cursor-pointer rounded-lg border p-4 transition-colors"
+        className="bg-secondary border-secondary hover:bg-secondary/80 cursor-pointer rounded-xl border p-4 transition-colors"
         onClick={handleNoEventClick}
         onKeyDown={handleNoEventKeyDown}
       >
@@ -248,7 +248,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
       role="button"
       tabIndex={0}
       aria-label={`Current event: ${currentEvent.title}`}
-      className="bg-secondary hover:bg-secondary/80 flex cursor-pointer flex-col rounded-lg p-4 transition-colors"
+      className="bg-secondary hover:bg-secondary/80 flex cursor-pointer flex-col rounded-xl p-4 transition-colors"
       style={{
         border: `2px solid ${borderColor}`,
         gap: '8px',

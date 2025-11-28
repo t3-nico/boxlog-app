@@ -23,7 +23,7 @@ export function NotificationDropdown({ className }: NotificationDropdownProps) {
     <button
       type="button"
       onClick={open}
-      className="hover:bg-foreground/8 data-[state=open]:bg-foreground/12 relative flex h-10 w-10 items-center justify-center rounded-lg outline-hidden"
+      className="hover:bg-accent data-[state=open]:bg-accent relative flex h-10 w-10 items-center justify-center rounded-xl outline-hidden"
       aria-label="通知"
     >
       <Bell className="h-5 w-5" />

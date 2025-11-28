@@ -19,7 +19,7 @@ const generateHeaderClasses = (
   onClick?: (date: Date) => void,
   className?: string
 ): string => {
-  const baseClasses = 'flex items-center justify-center py-2 px-1 text-center transition-colors rounded-lg'
+  const baseClasses = 'flex items-center justify-center py-2 px-1 text-center transition-colors rounded-xl'
 
   const hoverClasses =
     onClick && !isToday ? 'cursor-pointer hover:bg-primary/10' : onClick && isToday ? 'cursor-pointer' : ''

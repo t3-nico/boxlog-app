@@ -24,7 +24,7 @@ export const TrashView = ({ events, onRestore, onPermanentDelete }: TrashViewPro
           {events.map((event) => (
             <div
               key={event.id}
-              className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-gray-800"
+              className="flex items-center justify-between rounded-xl bg-gray-50 p-3 dark:bg-gray-800"
             >
               <div>
                 <div className="font-medium">{event.title}</div>
