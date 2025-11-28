@@ -283,7 +283,7 @@ export const WeekCalendarLayout = ({
                     {Array.from({ length: 24 }, (_, hour) => (
                       <div
                         key={hour}
-                        className="border-border border-b transition-colors last:border-b-0 hover:bg-blue-50/30 dark:hover:bg-blue-900/10"
+                        className="border-border border-b transition-colors last:border-b-0 hover:bg-primary/5"
                         style={{ height: `${HOUR_HEIGHT}px` }}
                         title={`${hour}:00 - ${hour + 1}:00`}
                       />
@@ -328,10 +328,10 @@ export const WeekCalendarLayout = ({
                         <button
                           type="button"
                           onClick={createDeletePlanHandler(plan.id)}
-                          className="absolute top-1 right-1 z-30 rounded bg-white/90 p-0.5 opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700"
+                          className="bg-card/90 hover:bg-card absolute top-1 right-1 z-30 rounded p-0.5 opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100"
                           title={t('calendar.event.delete')}
                         >
-                          <X className="h-3 w-3 text-gray-700 dark:text-gray-300" />
+                          <X className="text-muted-foreground h-3 w-3" />
                         </button>
 
                         <div className="h-full overflow-hidden p-1 text-white sm:p-2">
