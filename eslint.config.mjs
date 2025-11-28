@@ -1,16 +1,7 @@
 // BoxLog ESLint - 公式準拠設定
 // Next.js公式推奨設定を使用（学習コスト0、メンテ0）
 
-import { FlatCompat } from '@eslint/eslintrc'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-})
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals'
 
 const config = [
   // Ignore patterns
@@ -19,13 +10,24 @@ const config = [
   },
 
   // Next.js公式推奨設定（React, TypeScript, アクセシビリティ含む）
-  ...compat.config({
-    extends: ['next/core-web-vitals'],
+  ...nextCoreWebVitals,
+
+  // カスタムルール
+  {
     rules: {
       // TypeScriptルール無効化（inline disableを使用）
       '@typescript-eslint/no-explicit-any': 'off',
+      // eslint-plugin-react-hooks v7 の新しい厳格ルールを一時的に無効化
+      // TODO: 将来的にこれらのルールに対応する (#XXX)
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/purity': 'off',
+      'react-hooks/refs': 'off',
+      'react-hooks/immutability': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
+      // React Compiler関連ルールを一時的に無効化
+      'react-compiler/react-compiler': 'off',
     },
-  }),
+  },
 
   // テスト用グローバル変数
   {
