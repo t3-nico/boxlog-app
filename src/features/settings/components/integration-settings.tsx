@@ -26,14 +26,14 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       id: 'google-calendar',
       name: 'Google Calendar',
       description: 'Googleカレンダーと予定を同期します',
-      icon: <Calendar className="h-5 w-5 text-blue-500" />,
+      icon: <Calendar className="text-primary h-5 w-5" />,
       connected: false,
     },
     {
       id: 'slack',
       name: 'Slack',
       description: 'Slackにリマインダーや通知を送信します',
-      icon: <MessageSquare className="h-5 w-5 text-purple-500" />,
+      icon: <MessageSquare className="text-primary h-5 w-5" />,
       connected: false,
     },
   ])

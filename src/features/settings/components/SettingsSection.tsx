@@ -17,10 +17,10 @@ export const SettingsSection = ({ title, description, children, className }: Set
       {title || description ? (
         <div>
           {title != null && (
-            <h2 className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-100')}>{title}</h2>
+            <h2 className={cn('text-foreground text-lg font-semibold')}>{title}</h2>
           )}
           {description != null && (
-            <p className={cn('mt-1 text-sm text-neutral-600 dark:text-neutral-400')}>{description}</p>
+            <p className={cn('text-muted-foreground mt-1 text-sm')}>{description}</p>
           )}
         </div>
       ) : null}
