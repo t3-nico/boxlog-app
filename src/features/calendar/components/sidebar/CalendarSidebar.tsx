@@ -42,17 +42,19 @@ export function CalendarSidebar() {
 
   // 現在表示している週の範囲を計算（週番号のハイライト表示用）
   const displayRange = useMemo(() => {
-    if (!navigation?.currentDate || !navigation?.viewType) return undefined
+    const currentDate = navigation?.currentDate
+    const viewType = navigation?.viewType
+    if (!currentDate || !viewType) return undefined
 
     // 週表示の場合のみハイライト
     const weekViewTypes = ['week', 'week-no-weekend', '2week']
-    if (!weekViewTypes.includes(navigation.viewType)) return undefined
+    if (!weekViewTypes.includes(viewType)) return undefined
 
-    const start = startOfWeek(navigation.currentDate, { weekStartsOn: 1 })
-    const end = endOfWeek(navigation.currentDate, { weekStartsOn: 1 })
+    const start = startOfWeek(currentDate, { weekStartsOn: 1 })
+    const end = endOfWeek(currentDate, { weekStartsOn: 1 })
 
     return { start, end }
-  }, [navigation?.currentDate, navigation?.viewType])
+  }, [navigation])
 
   const handlePriorityToggle = (priority: 'high' | 'medium' | 'low') => {
     if (priority === 'high') setShowHigh(!showHigh)

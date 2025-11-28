@@ -385,6 +385,40 @@
     "publisher": "Jorge Luis Calleja"
   },
   {
+    "name": "@img/colour",
+    "version": "1.0.0",
+    "license": "MIT",
+    "repository": "https://github.com/lovell/colour"
+  },
+  {
+    "name": "@img/sharp-libvips-linux-x64",
+    "version": "1.2.4",
+    "license": "LGPL-3.0-or-later",
+    "repository": "https://github.com/lovell/sharp-libvips",
+    "publisher": "Lovell Fuller"
+  },
+  {
+    "name": "@img/sharp-libvips-linuxmusl-x64",
+    "version": "1.2.4",
+    "license": "LGPL-3.0-or-later",
+    "repository": "https://github.com/lovell/sharp-libvips",
+    "publisher": "Lovell Fuller"
+  },
+  {
+    "name": "@img/sharp-linux-x64",
+    "version": "0.34.5",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/lovell/sharp",
+    "publisher": "Lovell Fuller"
+  },
+  {
+    "name": "@img/sharp-linuxmusl-x64",
+    "version": "0.34.5",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/lovell/sharp",
+    "publisher": "Lovell Fuller"
+  },
+  {
     "name": "@jridgewell/gen-mapping",
     "version": "0.3.13",
     "license": "MIT",
@@ -561,14 +595,14 @@
   },
   {
     "name": "@next/env",
-    "version": "14.2.33",
+    "version": "16.0.5",
     "license": "MIT",
     "repository": "https://github.com/vercel/next.js",
     "publisher": "Next.js Team"
   },
   {
-    "name": "@next/swc-darwin-arm64",
-    "version": "14.2.33",
+    "name": "@next/swc-linux-x64-gnu",
+    "version": "16.0.5",
     "license": "MIT",
     "repository": "https://github.com/vercel/next.js"
   },
@@ -886,6 +920,12 @@
     "repository": "https://github.com/radix-ui/primitives"
   },
   {
+    "name": "@radix-ui/react-avatar",
+    "version": "1.1.11",
+    "license": "MIT",
+    "repository": "https://github.com/radix-ui/primitives"
+  },
+  {
     "name": "@radix-ui/react-checkbox",
     "version": "1.3.3",
     "license": "MIT",
@@ -912,6 +952,12 @@
   {
     "name": "@radix-ui/react-context",
     "version": "1.1.2",
+    "license": "MIT",
+    "repository": "https://github.com/radix-ui/primitives"
+  },
+  {
+    "name": "@radix-ui/react-context",
+    "version": "1.1.3",
     "license": "MIT",
     "repository": "https://github.com/radix-ui/primitives"
   },
@@ -1060,6 +1106,12 @@
     "repository": "https://github.com/radix-ui/primitives"
   },
   {
+    "name": "@radix-ui/react-progress",
+    "version": "1.1.8",
+    "license": "MIT",
+    "repository": "https://github.com/radix-ui/primitives"
+  },
+  {
     "name": "@radix-ui/react-radio-group",
     "version": "1.3.8",
     "license": "MIT",
@@ -1086,6 +1138,12 @@
   {
     "name": "@radix-ui/react-separator",
     "version": "1.1.7",
+    "license": "MIT",
+    "repository": "https://github.com/radix-ui/primitives"
+  },
+  {
+    "name": "@radix-ui/react-separator",
+    "version": "1.1.8",
     "license": "MIT",
     "repository": "https://github.com/radix-ui/primitives"
   },
@@ -1305,7 +1363,14 @@
     "publisher": "Rich Harris"
   },
   {
-    "name": "@rollup/rollup-darwin-arm64",
+    "name": "@rollup/rollup-linux-x64-gnu",
+    "version": "4.52.4",
+    "license": "MIT",
+    "repository": "https://github.com/rollup/rollup",
+    "publisher": "Lukas Taegert-Atkinson"
+  },
+  {
+    "name": "@rollup/rollup-linux-x64-musl",
     "version": "4.52.4",
     "license": "MIT",
     "repository": "https://github.com/rollup/rollup",
@@ -1389,7 +1454,7 @@
     "publisher": "Sentry"
   },
   {
-    "name": "@sentry/cli-darwin",
+    "name": "@sentry/cli-linux-x64",
     "version": "2.56.1",
     "license": "BSD-3-Clause",
     "repository": "https://github.com/getsentry/sentry-cli"
@@ -1577,22 +1642,8 @@
     "publisher": "Supabase"
   },
   {
-    "name": "@swc/counter",
-    "version": "0.1.3",
-    "license": "Apache-2.0",
-    "repository": "https://github.com/swc-project/pkgs",
-    "publisher": "강동윤"
-  },
-  {
     "name": "@swc/helpers",
     "version": "0.5.15",
-    "license": "Apache-2.0",
-    "repository": "https://github.com/swc-project/swc",
-    "publisher": "강동윤"
-  },
-  {
-    "name": "@swc/helpers",
-    "version": "0.5.5",
     "license": "Apache-2.0",
     "repository": "https://github.com/swc-project/swc",
     "publisher": "강동윤"
@@ -2474,12 +2525,6 @@
     "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
   },
   {
-    "name": "@types/prop-types",
-    "version": "15.7.15",
-    "license": "MIT",
-    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
-  },
-  {
     "name": "@types/qrcode",
     "version": "1.5.5",
     "license": "MIT",
@@ -2487,13 +2532,13 @@
   },
   {
     "name": "@types/react",
-    "version": "18.3.26",
+    "version": "19.2.7",
     "license": "MIT",
     "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
   },
   {
     "name": "@types/react-dom",
-    "version": "18.3.7",
+    "version": "19.2.3",
     "license": "MIT",
     "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
   },
@@ -2875,7 +2920,7 @@
   },
   {
     "name": "boxlog-app",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "license": "UNLICENSED"
   },
   {
@@ -2904,13 +2949,6 @@
     "version": "1.1.2",
     "license": "MIT",
     "repository": "https://github.com/LinusU/buffer-from"
-  },
-  {
-    "name": "busboy",
-    "version": "1.6.0",
-    "license": "MIT",
-    "repository": "https://github.com/mscdex/busboy",
-    "publisher": "Brian White"
   },
   {
     "name": "camelcase",
@@ -3214,7 +3252,7 @@
   },
   {
     "name": "css-selector-parser",
-    "version": "3.1.3",
+    "version": "3.2.0",
     "license": "MIT",
     "repository": "https://github.com/mdevils/css-selector-parser",
     "publisher": "Marat Dulin"
@@ -3242,7 +3280,7 @@
   },
   {
     "name": "csstype",
-    "version": "3.1.3",
+    "version": "3.2.3",
     "license": "MIT",
     "repository": "https://github.com/frenic/csstype",
     "publisher": "Fredrik Nicol"
@@ -3593,6 +3631,13 @@
     "publisher": "Luke Edwards"
   },
   {
+    "name": "detect-libc",
+    "version": "2.1.2",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/lovell/detect-libc",
+    "publisher": "Lovell Fuller"
+  },
+  {
     "name": "detect-node-es",
     "version": "1.1.0",
     "license": "MIT",
@@ -3816,7 +3861,7 @@
   },
   {
     "name": "fast-equals",
-    "version": "5.3.2",
+    "version": "5.3.3",
     "license": "MIT",
     "repository": "https://github.com/planttheidea/fast-equals",
     "publisher": "tony_quetano@planttheidea.com"
@@ -3879,13 +3924,6 @@
   },
   {
     "name": "framer-motion",
-    "version": "11.18.2",
-    "license": "MIT",
-    "repository": "https://github.com/motiondivision/motion",
-    "publisher": "Matt Perry"
-  },
-  {
-    "name": "framer-motion",
     "version": "12.23.24",
     "license": "MIT",
     "repository": "https://github.com/motiondivision/motion",
@@ -3904,12 +3942,6 @@
     "license": "ISC",
     "repository": "https://github.com/isaacs/fs.realpath",
     "publisher": "Isaac Z. Schlueter"
-  },
-  {
-    "name": "fsevents",
-    "version": "2.3.2",
-    "license": "MIT",
-    "repository": "https://github.com/fsevents/fsevents"
   },
   {
     "name": "function-bind",
@@ -5096,21 +5128,7 @@
   },
   {
     "name": "motion-dom",
-    "version": "11.18.1",
-    "license": "MIT",
-    "repository": "https://github.com/motiondivision/motion",
-    "publisher": "Matt Perry"
-  },
-  {
-    "name": "motion-dom",
     "version": "12.23.23",
-    "license": "MIT",
-    "repository": "https://github.com/motiondivision/motion",
-    "publisher": "Matt Perry"
-  },
-  {
-    "name": "motion-utils",
-    "version": "11.18.1",
     "license": "MIT",
     "repository": "https://github.com/motiondivision/motion",
     "publisher": "Matt Perry"
@@ -5150,7 +5168,7 @@
   },
   {
     "name": "next",
-    "version": "14.2.33",
+    "version": "16.0.5",
     "license": "MIT",
     "repository": "https://github.com/vercel/next.js"
   },
@@ -5707,7 +5725,7 @@
   },
   {
     "name": "react",
-    "version": "18.3.1",
+    "version": "19.2.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/react"
   },
@@ -5746,7 +5764,7 @@
   },
   {
     "name": "react-dom",
-    "version": "18.3.1",
+    "version": "19.2.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/react"
   },
@@ -6173,7 +6191,7 @@
   },
   {
     "name": "scheduler",
-    "version": "0.23.2",
+    "version": "0.27.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/react"
   },
@@ -6224,6 +6242,13 @@
     "license": "ISC",
     "repository": "https://github.com/yargs/set-blocking",
     "publisher": "Ben Coe"
+  },
+  {
+    "name": "sharp",
+    "version": "0.34.5",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/lovell/sharp",
+    "publisher": "Lovell Fuller"
   },
   {
     "name": "shiki",
@@ -6302,13 +6327,6 @@
     "publisher": "Hayden Bleasel"
   },
   {
-    "name": "streamsearch",
-    "version": "1.1.0",
-    "license": "MIT",
-    "repository": "https://github.com/mscdex/streamsearch",
-    "publisher": "Brian White"
-  },
-  {
     "name": "string-width",
     "version": "4.2.3",
     "license": "MIT",
@@ -6345,7 +6363,7 @@
   },
   {
     "name": "styled-jsx",
-    "version": "5.1.1",
+    "version": "5.1.6",
     "license": "MIT",
     "repository": "https://github.com/vercel/styled-jsx"
   },

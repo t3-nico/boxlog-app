@@ -6,11 +6,12 @@ import type { Locale } from '@/types/i18n'
 
 interface LocaleLayoutProps {
   children: React.ReactNode
-  params: { locale: Locale }
+  params: Promise<{ locale: Locale }>
 }
 
 // 動的メタデータ生成
-export async function generateMetadata({ params: { locale } }: { params: { locale: Locale } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params
   const validLocale = locales.includes(locale) ? locale : defaultLocale
   const dictionary = await getDictionary(validLocale)
   const t = createTranslation(dictionary)
@@ -95,7 +96,8 @@ export async function generateStaticParams() {
 }
 
 // 言語特化レイアウト（HTMLタグなし - ルートレイアウトで定義済み）
-export default async function LocaleLayout({ children, params: { locale } }: LocaleLayoutProps) {
+export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
+  const { locale } = await params
   // 不正な言語の場合、デフォルト言語にフォールバック
   const validLocale = locales.includes(locale) ? locale : defaultLocale
   const direction = getDirection(validLocale)

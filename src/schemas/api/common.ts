@@ -75,7 +75,7 @@ export const passwordSchema = z
  * 優先度
  */
 export const prioritySchema = z.enum(['low', 'medium', 'high'], {
-  required_error: '優先度を選択してください',
+  required_error: '優先度は必須です',
   invalid_type_error: '有効な優先度を選択してください',
 })
 
@@ -83,7 +83,7 @@ export const prioritySchema = z.enum(['low', 'medium', 'high'], {
  * ステータス
  */
 export const statusSchema = z.enum(['todo', 'in_progress', 'done', 'archived'], {
-  required_error: 'ステータスを選択してください',
+  required_error: 'ステータスは必須です',
   invalid_type_error: '有効なステータスを選択してください',
 })
 
@@ -134,7 +134,7 @@ export const paginationOutputSchema = z.object({
  */
 export const searchInputSchema = z.object({
   query: z.string().max(100, '検索クエリは100文字以内で入力してください').optional(),
-  filters: z.record(z.any()).optional(),
+  filters: z.record(z.string(), z.any()).optional(),
   ...paginationInputSchema.shape,
 })
 
@@ -218,7 +218,7 @@ export function createValidatedInput<T extends z.ZodSchema>(schema: T) {
  * 複数のバリデーションエラーを日本語でフォーマット
  */
 export function formatValidationErrors(error: z.ZodError): string[] {
-  return error.errors.map((err) => {
+  return error.issues.map((err) => {
     const path = err.path.join('.')
     const pathLabel = path || '入力値'
     return `${pathLabel}: ${err.message}`

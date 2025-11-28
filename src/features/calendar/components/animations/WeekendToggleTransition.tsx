@@ -20,11 +20,14 @@ export const WeekendToggleTransition = ({ children, className }: WeekendToggleTr
 
   useEffect(() => {
     if (showWeekends !== previousShowWeekends) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- トランジション状態管理
       setIsTransitioning(true)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 前回値追跡
       setPreviousShowWeekends(showWeekends)
 
       // 300msのトランジション時間
       const timer = setTimeout(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- タイマーコールバック内setState
         setIsTransitioning(false)
       }, 300)
 
@@ -62,10 +65,12 @@ export const WeekendColumnTransition = ({
   useEffect(() => {
     if (isWeekendColumn) {
       if (showWeekends) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- 週末表示状態の同期
         setIsVisible(true)
       } else {
         // フェードアウトしてから非表示
         const timer = setTimeout(() => {
+          // eslint-disable-next-line react-hooks/set-state-in-effect -- タイマーコールバック内setState
           setIsVisible(false)
         }, 200)
         return () => clearTimeout(timer)
@@ -108,10 +113,13 @@ export const GridLayoutTransition = ({
 
   useEffect(() => {
     if (totalColumns !== previousColumns) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- グリッド調整状態管理
       setIsAdjusting(true)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 前回値追跡
       setPreviousColumns(totalColumns)
 
       const timer = setTimeout(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- タイマーコールバック内setState
         setIsAdjusting(false)
       }, 300)
 

@@ -47,6 +47,7 @@ export function useAutoAdjustEndTime(startTime: string, endTime: string, onEndTi
           onEndTimeChange(calculatedEndTime)
         }
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- 前回値追跡のための内部状態更新
         setPreviousStartTime(startTime)
       } catch {
         // パースエラーの場合は何もしない

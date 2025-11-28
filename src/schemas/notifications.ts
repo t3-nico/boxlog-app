@@ -27,7 +27,7 @@ export const createNotificationSchema = z.object({
   related_tag_id: z.string().uuid().nullable().optional(),
   action_url: z.string().max(500).nullable().optional(),
   icon: notificationIconSchema.nullable().optional(),
-  data: z.record(z.unknown()).optional(),
+  data: z.record(z.string(), z.unknown()).optional(),
   expires_at: z.string().datetime().nullable().optional(),
 })
 

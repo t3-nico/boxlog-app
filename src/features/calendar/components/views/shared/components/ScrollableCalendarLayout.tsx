@@ -91,7 +91,7 @@ export const ScrollableCalendarLayout = ({
   // ScrollableCalendarLayout がレンダリングされました
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const scrollTimeoutRef = useRef<NodeJS.Timeout>()
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const [_isScrolling, setIsScrolling] = useState(false)
   const [_containerWidth, setContainerWidth] = useState(800)
 

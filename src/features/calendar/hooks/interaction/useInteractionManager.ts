@@ -52,7 +52,7 @@ const defaultState: InteractionState = {
 export function useInteractionManager(options: UseInteractionManagerOptions = {}) {
   const { onEscape, onConfirmCreate } = options
   const [state, setState] = useState<InteractionState>(defaultState)
-  const timeoutRef = useRef<NodeJS.Timeout>()
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
 
   // イベント選択
   const selectEvent = useCallback((eventId: string | null) => {

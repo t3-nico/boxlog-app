@@ -27,16 +27,16 @@ import Link from 'next/link'
  * @see /src/lib/cookie-consent.ts - Cookie管理機能
  * @see /src/app/legal/cookies - Cookie設定ページ
  */
+// SSR対応の遅延初期化
+const getInitialShowBanner = (): boolean => {
+  if (typeof window === 'undefined') return false
+  return needsCookieConsent()
+}
+
 export function CookieConsentBanner() {
   const { t, locale } = useI18n()
-  const [showBanner, setShowBanner] = useState(false)
-
-  useEffect(() => {
-    // クライアントサイドでのみ実行
-    if (needsCookieConsent()) {
-      setShowBanner(true)
-    }
-  }, [])
+  // 遅延初期化でクッキー同意状態を確認
+  const [showBanner, setShowBanner] = useState(getInitialShowBanner)
 
   const handleAcceptAll = () => {
     acceptAllCookies()

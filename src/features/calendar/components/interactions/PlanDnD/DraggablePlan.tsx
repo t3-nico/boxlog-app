@@ -84,8 +84,11 @@ export const DraggablePlan = ({ plan, dayIndex, topPosition, onPlanClick, style,
   // ドラッグ終了後にリセット
   useEffect(() => {
     if (!isDragging && isDragReady) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- ドラッグ状態のリセット
       setIsDragReady(false)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- ドラッグ状態のリセット
       setDragStartPos(null)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- ドラッグ状態のリセット
       setIsClicking(false)
     }
   }, [isDragging, isDragReady])

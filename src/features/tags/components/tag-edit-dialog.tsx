@@ -24,8 +24,11 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
 
   useEffect(() => {
     if (tag) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- タグデータに応じたフォーム初期化
       setName(tag.name)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- タグデータに応じたフォーム初期化
       setColor(tag.color || '#6b7280')
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- タグデータに応じたフォーム初期化
       setIcon((tag.icon as TagIconName) || 'TagIcon')
     }
   }, [tag])
