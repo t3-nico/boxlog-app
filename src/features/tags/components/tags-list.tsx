@@ -406,7 +406,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
               <button
                 type="button"
                 onClick={handleCreateNewTagCollapsed}
-                className="text-primary hover:bg-primary/8 inline-flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors"
+                className="text-primary hover:bg-foreground/8 inline-flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors"
               >
                 <PlusIcon className="h-4 w-4" />
                 作成

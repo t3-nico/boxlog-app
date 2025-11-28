@@ -361,7 +361,7 @@ export const TagManagementModal = ({
                           <button
                             type="button"
                             onClick={handleSaveEdit}
-                            className="text-primary hover:bg-primary/8 rounded p-1 transition-colors"
+                            className="text-primary hover:bg-foreground/8 rounded p-1 transition-colors"
                           >
                             <Check className="h-4 w-4" />
                           </button>
@@ -391,7 +391,7 @@ export const TagManagementModal = ({
                             type="button"
                             onClick={handleEditClick}
                             data-tag-id={tag.id}
-                            className="text-primary hover:bg-primary/8 rounded p-1 transition-colors"
+                            className="text-primary hover:bg-foreground/8 rounded p-1 transition-colors"
                             title="Edit tag"
                           >
                             <Edit2 className="h-3 w-3" />
@@ -401,7 +401,7 @@ export const TagManagementModal = ({
                             onClick={handleDeleteClick}
                             data-tag-id={tag.id}
                             data-tag-name={tag.name}
-                            className="text-destructive hover:bg-destructive/8 rounded p-1 transition-colors"
+                            className="text-destructive hover:bg-foreground/8 rounded p-1 transition-colors"
                             title="Delete tag"
                           >
                             <Trash2 className="h-3 w-3" />

@@ -180,7 +180,7 @@ const TagTreeNode = ({
             <button
               type="button"
               onClick={handleCreateChildTag}
-              className="text-muted-foreground hover:bg-primary/8 hover:text-primary rounded p-1 transition-colors"
+              className="text-muted-foreground hover:bg-foreground/8 hover:text-foreground rounded p-1 transition-colors"
               title="タグを追加"
             >
               <PlusIcon className="h-4 w-4" data-slot="icon" />
@@ -319,7 +319,7 @@ export const TagTreeView = ({
         <button
           type="button"
           onClick={handleCreateRootTag}
-          className="text-primary hover:bg-primary/8 inline-flex items-center gap-1 rounded px-2 py-1 text-sm transition-colors"
+          className="text-primary hover:bg-foreground/8 inline-flex items-center gap-1 rounded px-2 py-1 text-sm transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
           {t('tags.messages.newTag')}
