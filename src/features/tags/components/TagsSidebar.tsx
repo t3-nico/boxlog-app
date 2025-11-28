@@ -309,7 +309,7 @@ export function TagsSidebar({
         type="button"
         onClick={handleUncategorizedClick}
         className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-          isUncategorizedPage ? 'bg-primary/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
+          isUncategorizedPage ? 'bg-foreground/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
         }`}
         style={{
           backgroundColor: isOver ? 'rgba(59, 130, 246, 0.1)' : undefined,
@@ -354,7 +354,7 @@ export function TagsSidebar({
             onClick={onAllTagsClick}
             className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
               !isArchivePage && !isUncategorizedPage && !currentGroupNumber
-                ? 'bg-primary/12 text-foreground'
+                ? 'bg-foreground/12 text-foreground'
                 : 'text-muted-foreground hover:bg-foreground/8'
             }`}
           >
@@ -375,7 +375,7 @@ export function TagsSidebar({
             type="button"
             onClick={handleArchiveClick}
             className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-              isArchivePage ? 'bg-primary/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
+              isArchivePage ? 'bg-foreground/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
             }`}
           >
             <div className="flex items-center justify-between gap-2">
@@ -443,7 +443,7 @@ export function TagsSidebar({
                 {/* DragOverlay: ドラッグ中のグループを表示 */}
                 <DragOverlay>
                   {activeGroup ? (
-                    <div className="bg-primary/12 text-foreground w-full rounded-md px-3 py-2 text-left text-sm opacity-80 shadow-lg">
+                    <div className="bg-foreground/12 text-foreground w-full rounded-md px-3 py-2 text-left text-sm opacity-80 shadow-lg">
                       <div className="flex items-center gap-2">
                         <Folder className="h-4 w-4 shrink-0" style={{ color: activeGroup.color || '#6B7280' }} />
                         <span className="flex-1 truncate">{activeGroup.name}</span>

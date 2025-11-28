@@ -159,7 +159,7 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
       {/* ドラッグ中のカードプレビュー */}
       <DragOverlay>
         {activeItem ? (
-          <div className="bg-card border-primary rotate-3 cursor-grabbing rounded-xl border-2 p-3 opacity-90 shadow-2xl">
+          <div className="bg-card border-primary rotate-3 cursor-grabbing rounded-lg border-2 p-3 opacity-90 shadow-2xl">
             {/* 1. タイトル */}
             <div className="flex items-center gap-2 overflow-hidden">
               <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold">{activeItem.title}</h3>
@@ -334,7 +334,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   }
 
   return (
-    <div ref={setNodeRef} className={cn('flex min-w-[300px] flex-col rounded-xl', isOver && 'ring-primary/30 ring-2')}>
+    <div ref={setNodeRef} className={cn('flex min-w-[300px] flex-col rounded-lg', isOver && 'ring-primary/30 ring-2')}>
       <div
         className={`${bgColor} flex items-center justify-between rounded-t-lg pt-2`}
         style={{ height: '48px', minHeight: '48px', maxHeight: '48px', paddingLeft: '16px', paddingRight: '16px' }}
@@ -385,7 +385,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
         {isAdding && (
           <div
             ref={formRef}
-            className="bg-card hover:bg-muted/50 border-border group flex flex-col gap-2 rounded-xl border p-3 shadow-sm transition-colors"
+            className="bg-card hover:bg-muted/50 border-border group flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors"
           >
             {/* タイトル入力 */}
             <div
@@ -532,7 +532,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
         {!isAdding && (
           <button
             onClick={() => setIsAdding(true)}
-            className="text-muted-foreground hover:text-foreground hover:bg-foreground/8 flex w-full items-center gap-2 rounded-xl p-3 text-sm transition-colors"
+            className="text-muted-foreground hover:bg-foreground/8 flex w-full items-center gap-2 rounded-lg p-3 text-sm transition-colors"
           >
             <Plus className="h-4 w-4" />
             <span>新規追加</span>

@@ -195,13 +195,13 @@ export const AccessibleCalendarGrid = ({
         aria-rowcount={timeSlots.length + 1}
         aria-colcount={dates.length + 1}
         tabIndex={0}
-        className="focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+        className="focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none"
         onFocus={focusCalendar}
       >
         {/* ヘッダー行（日付） */}
         <div role="row" aria-rowindex={1} className="flex border-b">
           {/* 時間列のヘッダー */}
-          <div role="columnheader" aria-colindex={1} className="w-16 bg-gray-50 p-2 text-sm font-medium">
+          <div role="columnheader" aria-colindex={1} className="bg-muted w-16 p-2 text-sm font-medium">
             <span className="sr-only">時間</span>
           </div>
 
@@ -212,16 +212,18 @@ export const AccessibleCalendarGrid = ({
               role="columnheader"
               aria-colindex={dateIndex + 2}
               className={cn(
-                'flex-1 bg-gray-50 p-2 text-center text-sm font-medium',
-                date.toDateString() === new Date().toDateString() && 'bg-blue-50'
+                'bg-muted flex-1 p-2 text-center text-sm font-medium',
+                date.toDateString() === new Date().toDateString() && 'bg-primary/12'
               )}
             >
               <div aria-label={formatDateForAria(date)}>
-                <div className="text-xs text-gray-600">{date.toLocaleDateString('ja-JP', { weekday: 'short' })}</div>
+                <div className="text-muted-foreground text-xs">
+                  {date.toLocaleDateString('ja-JP', { weekday: 'short' })}
+                </div>
                 <div
                   className={cn(
                     'text-lg',
-                    date.toDateString() === new Date().toDateString() && 'font-bold text-blue-600'
+                    date.toDateString() === new Date().toDateString() && 'text-primary font-bold'
                   )}
                 >
                   {date.getDate()}
@@ -266,10 +268,10 @@ export const AccessibleCalendarGrid = ({
                   {...getCellAriaProps(date, slot.time, dateIndex + 2)}
                   className={cn(
                     'border-border relative flex-1 border-r p-1',
-                    'hover:bg-gray-50 focus:bg-blue-50 focus:outline-none',
+                    'hover:bg-foreground/8 focus:bg-primary/12 focus:outline-none',
                     navigationState.selectedDate.toDateString() === date.toDateString() &&
                       navigationState.selectedTime === slot.time &&
-                      'bg-blue-100 ring-2 ring-blue-500 ring-inset'
+                      'bg-primary/12 ring-primary ring-2 ring-inset'
                   )}
                   onClick={() => {
                     onNavigateDate(date)

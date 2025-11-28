@@ -136,7 +136,7 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
 
       {/* 現在時刻ラベル */}
       <div
-        className="absolute rounded bg-white px-1 text-xs font-medium whitespace-nowrap text-red-600 dark:bg-gray-900 dark:text-red-400"
+        className="bg-card absolute rounded px-1 text-xs font-medium whitespace-nowrap text-red-600 dark:text-red-400"
         style={{
           left: '4px',
           top: '-12px',

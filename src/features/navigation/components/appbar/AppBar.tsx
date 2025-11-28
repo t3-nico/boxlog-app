@@ -95,7 +95,7 @@ export function AppBar() {
           size="icon"
           variant="ghost"
           aria-label={isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')}
-          className="text-muted-foreground hover:text-foreground size-10 shrink-0"
+          className="text-muted-foreground size-10 shrink-0"
         >
           {isOpen ? <PanelLeftClose className="size-5" /> : <PanelLeftOpen className="size-5" />}
         </Button>

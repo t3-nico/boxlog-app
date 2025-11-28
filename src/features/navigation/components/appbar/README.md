@@ -61,16 +61,23 @@ const typography = {
 }
 ```
 
-### カラー
+### カラー（M3 State Layer準拠）
 
 ```tsx
 // globals.css のセマンティックトークン使用
+// M3原則: ホバー時にテキスト色は変わらない（背景オーバーレイのみ）
 const colors = {
   background: 'bg-sidebar',
   text: 'text-sidebar-foreground',
-  hover: 'hover:bg-accent hover:text-accent-foreground',
-  active: 'bg-accent text-accent-foreground',
+  hover: 'hover:bg-primary/8', // M3: ホバー = 8%オーバーレイ
+  active: 'bg-primary/12 text-primary', // M3: 選択 = 12%オーバーレイ
 }
+
+// 禁止パターン（使用禁止）
+// ❌ hover:bg-accent
+// ❌ hover:text-accent-foreground
+// ❌ bg-accent
+// ❌ text-accent-foreground
 ```
 
 ## コンポーネント構成
@@ -149,4 +156,4 @@ npm run test:visual
 
 ---
 
-**最終更新**: 2025-10-21 | **バージョン**: v2.0 - app-sidebarからappbarにリネーム
+**最終更新**: 2025-11-27 | **バージョン**: v2.1 - M3 State Layer準拠に更新

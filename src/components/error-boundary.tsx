@@ -61,13 +61,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // デフォルトエラーUI
       return (
-        <div className="rounded-xl border border-red-300 bg-red-50 p-6 dark:border-red-700 dark:bg-red-900/20">
+        <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-6">
           <div className="text-center">
-            <div className="mb-4 text-6xl text-red-600 dark:text-red-400">⚠️</div>
-            <h2 className="mb-2 text-3xl font-bold tracking-tight text-red-600 dark:text-red-400">
-              予期しないエラーが発生しました
-            </h2>
-            <p className="mb-4 text-neutral-800 dark:text-neutral-200">
+            <div className="text-destructive mb-4 text-6xl">⚠️</div>
+            <h2 className="text-destructive mb-2 text-3xl font-bold tracking-tight">予期しないエラーが発生しました</h2>
+            <p className="text-foreground mb-4">
               申し訳ございません。アプリケーションでエラーが発生しました。
               <br />
               自動的にエラー報告を送信いたします。
@@ -75,13 +73,13 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="flex justify-center gap-2">
               <button
                 onClick={() => this.setState({ hasError: false })}
-                className="rounded bg-blue-600 px-4 py-2 text-white transition-opacity hover:opacity-80 dark:bg-blue-500"
+                className="bg-primary text-primary-foreground hover:bg-primary/92 rounded px-4 py-2 transition-colors"
               >
                 再試行
               </button>
               <button
                 onClick={() => window.location.reload()}
-                className="rounded bg-neutral-600 px-4 py-2 text-white transition-opacity hover:opacity-80 dark:bg-neutral-500"
+                className="bg-muted text-muted-foreground hover:bg-muted/80 rounded px-4 py-2 transition-colors"
               >
                 ページをリロード
               </button>
@@ -111,14 +109,10 @@ export function DetailedErrorBoundary({ children, componentName }: { children: R
       }}
       fallback={
         process.env.NODE_ENV === 'development' ? (
-          <div className="rounded-xl border border-yellow-300 bg-yellow-50 p-6 dark:border-yellow-700 dark:bg-yellow-900/20">
-            <h3 className="mb-2 text-2xl font-bold tracking-tight text-yellow-700 dark:text-yellow-400">
-              開発環境 - コンポーネントエラー
-            </h3>
-            <p className="mb-2 text-neutral-800 dark:text-neutral-200">コンポーネント: {componentName || '不明'}</p>
-            <p className="text-sm text-neutral-800 dark:text-neutral-200">
-              詳細はブラウザのコンソールを確認してください。
-            </p>
+          <div className="border-border bg-muted rounded-lg border p-6">
+            <h3 className="text-foreground mb-2 text-2xl font-bold tracking-tight">開発環境 - コンポーネントエラー</h3>
+            <p className="text-foreground mb-2">コンポーネント: {componentName || '不明'}</p>
+            <p className="text-muted-foreground text-sm">詳細はブラウザのコンソールを確認してください。</p>
           </div>
         ) : undefined
       }
@@ -154,12 +148,10 @@ export function FeatureErrorBoundary({
       fallback={
         fallback || (
           <div className="border-border bg-muted rounded border p-4">
-            <p className="text-center text-neutral-800 dark:text-neutral-200">
-              {featureName}機能でエラーが発生しました
-            </p>
+            <p className="text-foreground text-center">{featureName}機能でエラーが発生しました</p>
             <button
               onClick={() => window.location.reload()}
-              className="mx-auto mt-2 block rounded bg-blue-600 px-3 py-1 text-sm text-white transition-opacity hover:opacity-80 dark:bg-blue-500"
+              className="bg-primary text-primary-foreground hover:bg-primary/92 mx-auto mt-2 block rounded px-3 py-1 text-sm transition-colors"
             >
               リロード
             </button>
