@@ -42,7 +42,7 @@ export function TimezoneOffset({ timezone, className }: TimezoneOffsetProps) {
   const offset = getUTCOffset(timezone)
 
   return (
-    <div className={cn('flex h-8 items-center justify-start text-xs text-gray-600 dark:text-gray-400', className)}>
+    <div className={cn('text-muted-foreground flex h-8 items-center justify-start text-xs', className)}>
       <span className="font-medium">UTC{offset}</span>
     </div>
   )
