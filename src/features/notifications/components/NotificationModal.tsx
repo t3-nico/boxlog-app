@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { Bell, BellOff, Calendar, Check, Clock, Settings, X } from 'lucide-react'
 
@@ -22,32 +22,36 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
   const locale = useCurrentLocale()
 
   // Mock data - 実際のデータは useNotifications から取得
-  const mockNotifications = [
-    {
-      id: '1',
-      title: t('notifications.messages.meetingReminder'),
-      message: t('notifications.messages.meetingStartsIn'),
-      timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5分前
-      read: false,
-      type: 'reminder',
-    },
-    {
-      id: '2',
-      title: t('notifications.messages.taskCompleted'),
-      message: t('notifications.messages.taskCompletedMessage'),
-      timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30分前
-      read: true,
-      type: 'task',
-    },
-    {
-      id: '3',
-      title: t('notifications.messages.eventNotification'),
-      message: t('notifications.messages.eventAddedMessage'),
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2時間前
-      read: false,
-      type: 'event',
-    },
-  ]
+  // 相対時間（分前）で表現
+  const mockNotifications = useMemo(
+    () => [
+      {
+        id: '1',
+        title: t('notifications.messages.meetingReminder'),
+        message: t('notifications.messages.meetingStartsIn'),
+        minutesAgo: 5,
+        read: false,
+        type: 'reminder',
+      },
+      {
+        id: '2',
+        title: t('notifications.messages.taskCompleted'),
+        message: t('notifications.messages.taskCompletedMessage'),
+        minutesAgo: 30,
+        read: true,
+        type: 'task',
+      },
+      {
+        id: '3',
+        title: t('notifications.messages.eventNotification'),
+        message: t('notifications.messages.eventAddedMessage'),
+        minutesAgo: 120,
+        read: false,
+        type: 'event',
+      },
+    ],
+    [t]
+  )
 
   const filteredNotifications = activeTab === 'unread' ? mockNotifications.filter((n) => !n.read) : mockNotifications
 
@@ -228,7 +232,9 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                       )}
                     </div>
                     <p className={cn('text-xs', 'text-neutral-600 dark:text-neutral-400', 'mt-1')}>
-                      {new Date(notification.timestamp).toLocaleTimeString(locale === 'ja' ? 'ja-JP' : 'en-US')}
+                      {notification.minutesAgo < 60
+                        ? `${notification.minutesAgo}${locale === 'ja' ? '分前' : 'm ago'}`
+                        : `${Math.floor(notification.minutesAgo / 60)}${locale === 'ja' ? '時間前' : 'h ago'}`}
                     </p>
                   </div>
                 </div>

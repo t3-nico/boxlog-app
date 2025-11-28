@@ -437,7 +437,7 @@ export const SkeletonAnimation = ({ show, count = 3, height = 'h-8', className =
     <div className={`space-y-2 ${className}`}>
       {Array.from({ length: count }, (_, index) => (
         <div
-          key={`skeleton-${Date.now()}-${index}`}
+          key={`skeleton-${index}`}
           className={`${height} animate-pulse rounded bg-gray-200 dark:bg-gray-700`}
           style={{
             animationDelay: `${index * 0.1}s`,
@@ -730,10 +730,15 @@ export function useViewTransition() {
 // パフォーマンス監視フック
 export function useAnimationPerformance() {
   const frameCount = useRef(0)
-  const lastTime = useRef(performance.now())
+  const lastTime = useRef(0)
   const [fps, setFps] = useState(60)
 
   useEffect(() => {
+    // 初回のみタイムスタンプを設定
+    if (lastTime.current === 0) {
+      lastTime.current = performance.now()
+    }
+
     let animationId: number
 
     const measureFPS = () => {
@@ -825,7 +830,7 @@ export const OptimizedListAnimation = ({
         <AnimatePresence mode="popLayout">
           {visibleChildren.map((child, index) => (
             <motion.div
-              key={`list-item-${startIndex + index}-${Date.now()}`}
+              key={`list-item-${startIndex + index}`}
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -20 }}

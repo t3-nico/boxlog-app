@@ -29,7 +29,7 @@ export function CookieSettingsForm() {
     necessary: true,
     analytics: false,
     marketing: false,
-    timestamp: Date.now(),
+    timestamp: 0, // useEffect内で設定
   })
   const [isClient, setIsClient] = useState(false)
 
@@ -41,6 +41,9 @@ export function CookieSettingsForm() {
     const currentConsent = getCookieConsent()
     if (currentConsent) {
       setSettings(currentConsent)
+    } else {
+      // 初回アクセス時はtimestampを設定
+      setSettings((prev) => ({ ...prev, timestamp: Date.now() }))
     }
   }, [])
 
