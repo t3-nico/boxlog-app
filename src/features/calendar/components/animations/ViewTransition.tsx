@@ -95,6 +95,7 @@ export const AdvancedViewTransition = ({
   // ビューが変更された時の処理
   useEffect(() => {
     if (currentView !== previousView) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- ビュー切り替え検出のための前回値追跡
       setPreviousView(currentView)
     }
   }, [currentView, previousView])
@@ -236,6 +237,7 @@ export const EventCollapse = ({ isExpanded, children, maxHeight = 300, className
   useEffect(() => {
     if (contentRef.current) {
       const height = contentRef.current.scrollHeight
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- DOM測定後の高さ同期
       setContentHeight(Math.min(height, maxHeight))
     }
   }, [children, maxHeight])
@@ -747,6 +749,7 @@ export function useAnimationPerformance() {
 
       if (now - lastTime.current >= 1000) {
         const currentFPS = Math.round((frameCount.current * 1000) / (now - lastTime.current))
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- rAFコールバック内でのFPS更新
         setFps(currentFPS)
         frameCount.current = 0
         lastTime.current = now
@@ -813,6 +816,7 @@ export const OptimizedListAnimation = ({
     if (!container) return
 
     const handleScroll = () => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- スクロールイベントコールバック内setState
       setScrollY(container.scrollTop)
     }
 

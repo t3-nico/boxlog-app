@@ -31,7 +31,9 @@ export function AboutLegalSettings() {
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- ハイドレーション対策のマウント検出
     setIsClient(true)
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Cookie設定の初期同期
     setCookieConsent(getCookieConsent())
 
     const handleCookieConsentChange = (event: CustomEvent<CookieConsent | null>) => {

@@ -83,11 +83,13 @@ export function useOfflineSync() {
   // イベントリスナーの設定
   useEffect(() => {
     const handleInitialized = () => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- イベントコールバック内setState
       setState((prev) => ({ ...prev, isInitialized: true }))
       updateState()
     }
 
     const handleOnline = () => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- イベントコールバック内setState
       setState((prev) => ({ ...prev, isOnline: true }))
       toast({
         title: 'オンラインに復帰しました',
@@ -98,6 +100,7 @@ export function useOfflineSync() {
     }
 
     const handleOffline = () => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- イベントコールバック内setState
       setState((prev) => ({ ...prev, isOnline: false }))
       toast({
         title: 'オフラインモードで動作中',
@@ -107,11 +110,13 @@ export function useOfflineSync() {
     }
 
     const handleSyncStarted = () => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- イベントコールバック内setState
       setState((prev) => ({ ...prev, syncInProgress: true }))
       debouncedUpdateState()
     }
 
     const handleSyncCompleted = (data: { processed: number; conflicts: number }) => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- イベントコールバック内setState
       setState((prev) => ({
         ...prev,
         syncInProgress: false,
@@ -138,6 +143,7 @@ export function useOfflineSync() {
     }
 
     const handleSyncError = (error: Error) => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- イベントコールバック内setState
       setState((prev) => ({ ...prev, syncInProgress: false }))
       toast({
         title: '同期に失敗しました',
@@ -159,6 +165,7 @@ export function useOfflineSync() {
       const firstConflict = conflictData.conflicts[0] as
         | { serverData?: unknown; serverTimestamp?: string | number }
         | undefined
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- イベントコールバック内setState
       setCurrentConflict({
         actionId: conflictData.action.id,
         entity: conflictData.action.entity,
@@ -168,12 +175,15 @@ export function useOfflineSync() {
         serverTimestamp: new Date(firstConflict?.serverTimestamp || Date.now()),
         conflicts: conflictData.conflicts,
       })
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- イベントコールバック内setState
       setIsConflictModalOpen(true)
       debouncedUpdateState()
     }
 
     const handleConflictResolved = () => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- イベントコールバック内setState
       setCurrentConflict(null)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- イベントコールバック内setState
       setIsConflictModalOpen(false)
       toast({
         title: '競合が解決されました',
@@ -205,6 +215,7 @@ export function useOfflineSync() {
     offlineManager.on('syncFailed', handleSyncFailed)
 
     // 初期状態の取得
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- マウント時の初期状態取得
     updateState()
 
     return () => {

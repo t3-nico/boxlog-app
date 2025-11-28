@@ -126,6 +126,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   // リアルタイム時間更新
   useEffect(() => {
     const timer = setInterval(() => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- setIntervalコールバック内setState
       setCurrentTime(new Date())
     }, 1000)
 
@@ -169,6 +170,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     })
 
     if (todayEvents.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- イベント不在時の初期化
       setCurrentEvent(null)
       return
     }
@@ -194,6 +196,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     })
 
     console.log('🎯 Final active event:', activeEvent?.title || 'None')
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 現在時刻に基づくイベント検出
     setCurrentEvent(activeEvent || null)
   }, [currentTime, todayEvents])
 

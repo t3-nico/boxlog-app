@@ -302,10 +302,23 @@ function applyHighContrastTheme(themeName: string): void {
   document.head.appendChild(style)
 }
 
+// localStorageから安全に設定を取得
+const getStoredHighContrast = (): boolean => {
+  if (typeof window === 'undefined') return false
+  return localStorage.getItem('accessibility-high-contrast') === 'true'
+}
+
+const getStoredContrastTheme = (): string => {
+  if (typeof window === 'undefined') return 'default'
+  const savedTheme = localStorage.getItem('accessibility-contrast-theme')
+  return savedTheme && HIGH_CONTRAST_THEMES[savedTheme] ? savedTheme : 'default'
+}
+
 export function useHighContrast() {
   const { t } = useI18n()
-  const [isHighContrastEnabled, setIsHighContrastEnabled] = useState(false)
-  const [currentTheme, setCurrentTheme] = useState<string>('default')
+  // 遅延初期化でlocalStorageから読み込み
+  const [isHighContrastEnabled, setIsHighContrastEnabled] = useState(getStoredHighContrast)
+  const [currentTheme, setCurrentTheme] = useState<string>(getStoredContrastTheme)
   const [isSystemHighContrast, setIsSystemHighContrast] = useState(false)
 
   // 翻訳されたテーマ名を取得
@@ -324,11 +337,14 @@ export function useHighContrast() {
   useEffect(() => {
     const updateSystemHighContrast = () => {
       const systemHighContrast = detectSystemHighContrast()
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- メディアクエリ変更のコールバック内setState
       setIsSystemHighContrast(systemHighContrast)
 
       // システムでハイコントラストが有効な場合、自動的に適用
       if (systemHighContrast && !isHighContrastEnabled) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- システム設定同期
         setIsHighContrastEnabled(true)
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- システム設定同期
         setCurrentTheme('blackOnWhite')
       }
     }
@@ -354,19 +370,7 @@ export function useHighContrast() {
     }
   }, [isHighContrastEnabled])
 
-  // ローカルストレージから設定を復元
-  useEffect(() => {
-    const savedHighContrast = localStorage.getItem('accessibility-high-contrast')
-    const savedTheme = localStorage.getItem('accessibility-contrast-theme')
-
-    if (savedHighContrast === 'true') {
-      setIsHighContrastEnabled(true)
-    }
-
-    if (savedTheme && HIGH_CONTRAST_THEMES[savedTheme]) {
-      setCurrentTheme(savedTheme)
-    }
-  }, [])
+  // ローカルストレージからの設定復元は遅延初期化で行うため、useEffectは不要
 
   // テーマの適用
   useEffect(() => {

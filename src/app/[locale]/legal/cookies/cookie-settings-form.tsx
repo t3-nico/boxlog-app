@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -15,6 +15,28 @@ import {
 } from '@/lib/cookie-consent'
 import { toast } from 'sonner'
 
+// SSR対応の遅延初期化
+const getInitialSettings = (): CookieConsent => {
+  if (typeof window === 'undefined') {
+    return {
+      necessary: true,
+      analytics: false,
+      marketing: false,
+      timestamp: 0,
+    }
+  }
+  const currentConsent = getCookieConsent()
+  if (currentConsent) {
+    return currentConsent
+  }
+  return {
+    necessary: true,
+    analytics: false,
+    marketing: false,
+    timestamp: Date.now(),
+  }
+}
+
 /**
  * Cookie設定フォーム（Client Component）
  *
@@ -25,27 +47,8 @@ import { toast } from 'sonner'
  */
 export function CookieSettingsForm() {
   const { t } = useI18n()
-  const [settings, setSettings] = useState<CookieConsent>({
-    necessary: true,
-    analytics: false,
-    marketing: false,
-    timestamp: 0, // useEffect内で設定
-  })
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => {
-    // クライアントサイドレンダリング確認
-    setIsClient(true)
-
-    // 現在の設定を読み込み
-    const currentConsent = getCookieConsent()
-    if (currentConsent) {
-      setSettings(currentConsent)
-    } else {
-      // 初回アクセス時はtimestampを設定
-      setSettings((prev) => ({ ...prev, timestamp: Date.now() }))
-    }
-  }, [])
+  // 遅延初期化でCookie設定を読み込み
+  const [settings, setSettings] = useState<CookieConsent>(getInitialSettings)
 
   const handleSave = () => {
     setCookieConsent({
@@ -75,11 +78,6 @@ export function CookieSettingsForm() {
       timestamp: Date.now(),
     })
     toast.success(t('legal.cookies.settings.acceptedNecessaryOnly'))
-  }
-
-  // SSR時は何も表示しない
-  if (!isClient) {
-    return null
   }
 
   return (

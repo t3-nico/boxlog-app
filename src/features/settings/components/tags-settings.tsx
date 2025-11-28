@@ -36,6 +36,7 @@ export function TagsSettings() {
 
   // クライアントサイドでのみレンダリング
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- ハイドレーション対策のマウント検出
     setIsMounted(true)
   }, [])
 

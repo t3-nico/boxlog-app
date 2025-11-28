@@ -100,8 +100,10 @@ export function PlanInspector() {
   useEffect(() => {
     if (planData && 'tags' in planData) {
       const tagIds = (planData.tags as Array<{ id: string }>).map((tag) => tag.id)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部データに応じたフォーム初期化
       setSelectedTagIds(tagIds)
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部データに応じたフォーム初期化
       setSelectedTagIds([])
     }
   }, [planData])
@@ -272,6 +274,7 @@ export function PlanInspector() {
   // Inspector が閉じられたときにポップアップも閉じる
   useEffect(() => {
     if (!isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 親コンポーネント状態に応じたクリーンアップ
       setRecurrencePopoverOpen(false)
     }
   }, [isOpen])
@@ -281,22 +284,28 @@ export function PlanInspector() {
     // 既存プラン編集モード
     if (plan && 'id' in plan) {
       if (plan.due_date) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部データに応じたフォーム初期化
         setSelectedDate(parseDateString(plan.due_date))
       } else {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部データに応じたフォーム初期化
         setSelectedDate(undefined)
       }
 
       if (plan.start_time) {
         const date = parseDatetimeString(plan.start_time)
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部データに応じたフォーム初期化
         setStartTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部データに応じたフォーム初期化
         setStartTime('')
       }
 
       if (plan.end_time) {
         const date = parseDatetimeString(plan.end_time)
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部データに応じたフォーム初期化
         setEndTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部データに応じたフォーム初期化
         setEndTime('')
       }
 
@@ -311,8 +320,10 @@ export function PlanInspector() {
           1440: '1日前',
           10080: '1週間前',
         }
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部データに応じたフォーム初期化
         setReminderType(reminderMap[minutes] || 'カスタム')
       } else {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部データに応じたフォーム初期化
         setReminderType('')
       }
     }
