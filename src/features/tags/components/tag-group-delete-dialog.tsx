@@ -55,13 +55,13 @@ export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }
 
         <div className="space-y-3">
           {/* 警告 */}
-          <div className="bg-destructive/10 text-destructive border-destructive/20 flex items-center gap-2 rounded-lg border p-3">
+          <div className="bg-destructive/10 text-destructive border-destructive/20 flex items-center gap-2 rounded-xl border p-3">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             <p className="text-sm font-medium">この操作は元に戻せません</p>
           </div>
 
           {/* タグ数表示 */}
-          <div className="bg-muted rounded-lg p-4">
+          <div className="bg-muted rounded-xl p-4">
             <p className="mb-2 text-sm font-medium">このグループに属するタグ:</p>
             <p className="text-muted-foreground text-sm">{tagCount}件のタグが属しています</p>
           </div>

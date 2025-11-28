@@ -36,17 +36,14 @@ export const DragSelectionOverlay = ({ dragState, hourHeight = 72, className }: 
 
   return (
     <div
-      className={cn(
-        'pointer-events-none absolute right-0 left-0 z-20 border border-blue-400 bg-blue-200/50',
-        className
-      )}
+      className={cn('border-primary bg-primary/20 pointer-events-none absolute right-0 left-0 z-20 border', className)}
       style={{
         top: `${top}px`,
         height: `${height}px`,
       }}
     >
-      <div className="absolute inset-0 animate-pulse bg-blue-500/10" />
-      <div className="absolute top-1 left-2 text-xs font-medium text-blue-700">
+      <div className="bg-primary/10 absolute inset-0 animate-pulse" />
+      <div className="text-primary absolute top-1 left-2 text-xs font-medium">
         {dragState.dragStartTime} - {dragState.dragEndTime}
       </div>
     </div>

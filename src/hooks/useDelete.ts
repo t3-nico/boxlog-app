@@ -1,7 +1,6 @@
 // TODO(#621): Events削除後、plans/Sessionsに移行予定
 'use client'
 
-// import { Event } from '@/features/events/types/events'
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
 import { TrashItemType } from '@/features/trash/types/trash'
 import { SmartFolder } from '@/types/smart-folders'
@@ -35,7 +34,7 @@ export const useDelete = () => {
       // これはstoreごとに異なる削除処理が必要なため
 
       // 4. 成功ログ（将来的にtoast通知に変更）
-      console.log(`"${item.name || item.title}" moved to trash`)
+      console.debug(`"${item.name || item.title}" moved to trash`)
 
       return true
     } catch (error) {

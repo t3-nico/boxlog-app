@@ -245,7 +245,6 @@ npm run test src/features/plans
 
 ## 注意事項
 
-- Session機能は現在未実装（将来実装予定）
 - プラン番号は自動生成（`YYYY-{user_count}-{plan_count}`形式）
 - Inspector は常にレイアウトにマウントしておく必要あり
 - タグ機能は `/src/features/tags` と連携

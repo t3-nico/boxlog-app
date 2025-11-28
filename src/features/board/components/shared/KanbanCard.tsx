@@ -59,11 +59,11 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
     high: '高',
   }
 
-  // 優先度の色
+  // 優先度の色（M3準拠セマンティックトークン）
   const priorityColor: Record<'low' | 'medium' | 'high', string> = {
-    low: 'bg-blue-500/10 text-blue-700 border-blue-200',
-    medium: 'bg-yellow-500/10 text-yellow-700 border-yellow-200',
-    high: 'bg-red-500/10 text-red-700 border-red-200',
+    low: 'bg-primary/10 text-primary border-primary/30',
+    medium: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700',
+    high: 'bg-destructive/10 text-destructive border-destructive/30',
   }
 
   // 時間フォーマット関数
@@ -100,7 +100,7 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group bg-card relative flex flex-col gap-2 rounded-lg p-3 shadow-sm transition-all hover:shadow-md',
+        'group bg-card relative flex flex-col gap-2 rounded-xl p-3 shadow-sm transition-all hover:shadow-md',
         'border-border cursor-pointer border',
         (isDragging || isSortableDragging) && 'opacity-50 shadow-lg',
         card.isBlocked && 'border-l-destructive border-l-4',

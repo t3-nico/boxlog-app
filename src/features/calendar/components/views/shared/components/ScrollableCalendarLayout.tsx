@@ -357,7 +357,7 @@ export const ScrollableCalendarLayout = ({
             <>
               {/* 横線 - 今日の列のみ */}
               <div
-                className={cn('pointer-events-none absolute z-40 h-[2px] bg-blue-600 shadow-sm dark:bg-blue-500')}
+                className={cn('bg-primary pointer-events-none absolute z-40 h-[2px] shadow-sm')}
                 style={{
                   top: `${currentTimePosition}px`,
                   left: todayColumnPosition.left,
@@ -368,7 +368,7 @@ export const ScrollableCalendarLayout = ({
               {/* 点 - 今日の列の左端 */}
               <div
                 className={cn(
-                  'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border bg-blue-600 shadow-md dark:bg-blue-500'
+                  'border-background bg-primary pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md'
                 )}
                 style={{
                   top: `${currentTimePosition - 4}px`,

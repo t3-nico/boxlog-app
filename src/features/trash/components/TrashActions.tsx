@@ -26,7 +26,7 @@ export function TrashActions({ className }: TrashActionsProps) {
 
   return (
     <>
-      <div className={`border-border bg-card rounded-lg border p-4 ${className}`}>
+      <div className={`border-border bg-card rounded-xl border p-4 ${className}`}>
         {/* 統計情報 */}
         <TrashStatsDisplay
           stats={stats}

@@ -143,7 +143,6 @@
    * ============================================ */
   --radius-sm: 0.25rem; /* 4px - 例外: 小要素用 */
   --radius-md: 0.5rem; /* 8px */
-  --radius-lg: 0.75rem; /* 12px - 例外: 視覚的バランス用 */
   --radius-xl: 1rem; /* 16px */
   --radius-2xl: 1.5rem; /* 24px */
   --radius-full: 9999px;
@@ -203,9 +202,21 @@
   --line-height-relaxed: 1.75;
 }
 
-/* next/font 最適化フォント適用 */
+/* next/font 最適化フォント適用（GAFA方針準拠フォールバックスタック） */
 body {
-  font-family: var(--font-inter), sans-serif;
+  font-family:
+    var(--font-inter),
+    var(--font-noto-jp),
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    'Hiragino Sans',
+    'Hiragino Kaku Gothic ProN',
+    Meiryo,
+    sans-serif;
   font-feature-settings: 'cv11', 'ss01';
   font-variation-settings: 'opsz' 32;
 }

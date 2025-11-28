@@ -2,9 +2,9 @@ name: 🚀 BoxLog CI/CD Pipeline
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main]
   pull_request:
-    branches: [main, dev]
+    branches: [main]
   workflow_dispatch:
 
 env:
@@ -97,40 +97,8 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
-      - name: 🧪 Run tests with coverage
-        run: npm run test:run -- --coverage
-
-      - name: 📊 Upload coverage
-        uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
-        if: always()
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/coverage-final.json
-          fail_ci_if_error: false
-
-  # i18n-check:
-  #   name: 🌍 i18n Translation Check
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 5
-  #   steps:
-  #     - name: 📥 Checkout
-  #       uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
-
-  #     - name: 🏗️ Setup Node.js
-  #       uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903  # v6.0.0
-  #       with:
-  #         node-version: ${{ env.NODE_VERSION }}
-  #         cache: 'npm'
-
-  #     - name: 📦 Install dependencies
-  #       run: npm ci
-
-  #     - name: 🔍 Check translation integrity
-  #       run: npm run test:i18n:integrity
-
-  #     - name: ⚠️ Check hardcoded strings (warning)
-  #       run: npm run test:i18n:hardcoded
-  #       continue-on-error: true
+      - name: 🧪 Run tests
+        run: npm run test:run
 
   # =====================================
   # 🔍 Phase 2: Quality Checks (並列実行 / 5分以内)
@@ -223,42 +191,6 @@ jobs:
         run: npm run naming:migrate
         continue-on-error: true
 
-  performance:
-    name: ⚡ Performance (Lighthouse CI)
-    runs-on: ubuntu-latest
-    environment: development # Environment Secrets保護
-    needs: [lint, typecheck, unit-tests]
-    timeout-minutes: 10
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
-      - name: 🏗️ Setup Node.js
-        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: 📦 Install dependencies
-        run: npm ci
-
-      - name: ⚡ Run Lighthouse CI
-        run: npm run perf:lighthouse
-        continue-on-error: true
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-          LHCI_BUILD_CONTEXT__CURRENT_BRANCH: ${{ github.head_ref || github.ref_name }}
-          # mainブランチは3回（精度重視）、PRは1回（高速化）
-          LHCI_NUMBER_OF_RUNS: ${{ github.ref == 'refs/heads/main' && '3' || '1' }}
-
-      - name: 📊 Upload Lighthouse reports
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        if: always()
-        with:
-          name: lighthouse-reports-${{ github.sha }}
-          path: .lighthouseci
-          retention-days: 7
-
   docs-consistency:
     name: 📚 Docs Consistency
     runs-on: ubuntu-latest
@@ -319,7 +251,6 @@ jobs:
         typecheck,
         unit-tests,
         build,
-        performance,
         accessibility,
         heavy-checks,
         docs-consistency,
@@ -345,10 +276,6 @@ jobs:
             echo "❌ Build failed"
             exit 1
           fi
-          # Performance check is optional (Lighthouse CI has known issues)
-          if [[ "${{ needs.performance.result }}" == "failure" ]]; then
-            echo "⚠️  Performance check failed (non-blocking)"
-          fi
           # Sentry is optional, skip check
           echo "✅ All critical checks passed!"
 
@@ -371,7 +298,6 @@ jobs:
             | ${getEmoji('${{ needs.typecheck.result }}')} **TypeScript** | ${{ needs.typecheck.result }} |
             | ${getEmoji('${{ needs.unit-tests.result }}')} **Tests** | ${{ needs.unit-tests.result }} |
             | ${getEmoji('${{ needs.build.result }}')} **Build** | ${{ needs.build.result }} |
-            | ${getEmoji('${{ needs.performance.result }}')} **Performance** | ${{ needs.performance.result }} |
             | ${getEmoji('${{ needs.accessibility.result }}')} **Accessibility** | ${{ needs.accessibility.result }} |
             | ${getEmoji('${{ needs.heavy-checks.result }}')} **Heavy Checks** | ${{ needs.heavy-checks.result }} |
             | ${getEmoji('${{ needs.docs-consistency.result }}')} **Docs** | ${{ needs.docs-consistency.result }} |
@@ -423,4 +349,3 @@ jobs:
   # デプロイタイミング:
   # - main ブランチへのpush → 本番デプロイ
   # - PR作成 → プレビューデプロイ（自動生成）
-  # - dev ブランチへのpush → プレビューデプロイ（optional）

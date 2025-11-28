@@ -87,7 +87,7 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
 
         {success ? (
           <div className="space-y-4 py-4">
-            <div className="bg-muted rounded-lg p-4">
+            <div className="bg-muted rounded-xl p-4">
               <p className="text-sm">
                 <strong>{newEmail}</strong> に確認メールを送信しました。
               </p>

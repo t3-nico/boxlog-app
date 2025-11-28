@@ -57,20 +57,20 @@ export function Account({ userData, locale }: AccountProps) {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="hover:bg-foreground/8 data-[state=open]:bg-foreground/12 flex h-10 w-10 items-center justify-center rounded-lg outline-hidden"
+            className="hover:bg-accent data-[state=open]:bg-accent flex h-10 w-10 items-center justify-center rounded-xl outline-hidden"
           >
-            <Avatar className="h-8 w-8 rounded-lg">
+            <Avatar className="h-8 w-8 rounded-xl">
               {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}
-              <AvatarFallback className="rounded-lg">{userData.name.charAt(0).toUpperCase()}</AvatarFallback>
+              <AvatarFallback className="rounded-xl">{userData.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="border-input min-w-56 rounded-lg" side="right" align="start" sideOffset={8}>
+        <DropdownMenuContent className="border-input min-w-56 rounded-xl" side="right" align="start" sideOffset={8}>
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-2 px-2 py-2 text-left text-sm">
-              <Avatar className="h-6 w-6 rounded-lg">
+              <Avatar className="h-6 w-6 rounded-xl">
                 {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}
-                <AvatarFallback className="rounded-lg text-xs">{userData.name.charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarFallback className="rounded-xl text-xs">{userData.name.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{userData.name}</span>

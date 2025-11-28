@@ -44,7 +44,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
     <html lang="ja">
       <body>
         <div className="bg-background flex min-h-screen items-center justify-center p-4">
-          <div className="bg-card border-border w-full max-w-md rounded-lg border p-8 shadow-lg">
+          <div className="bg-card border-border w-full max-w-md rounded-xl border p-8 shadow-lg">
             <div className="mb-6">
               <h1 className="text-destructive mb-2 text-2xl font-bold">アプリケーションエラー</h1>
               <p className="text-muted-foreground">申し訳ございません。予期しない問題が発生しました。</p>
@@ -60,7 +60,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
             {process.env.NODE_ENV === 'development' && (
               <details className="mb-6">
-                <summary className="text-muted-foreground hover:text-foreground cursor-pointer text-sm transition-colors">
+                <summary className="text-muted-foreground hover:bg-foreground/8 -mx-1 cursor-pointer rounded px-1 text-sm transition-colors">
                   エラー詳細を表示
                 </summary>
                 <div className="bg-muted mt-3 rounded p-3">
@@ -73,7 +73,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             <div className="space-y-3">
               <button
                 onClick={reset}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 w-full rounded-md px-4 py-3 font-medium transition-colors"
+                className="bg-primary text-primary-foreground hover:bg-primary/92 w-full rounded-md px-4 py-3 font-medium transition-colors"
               >
                 再試行
               </button>

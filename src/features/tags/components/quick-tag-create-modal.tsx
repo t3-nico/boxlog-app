@@ -94,23 +94,23 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
       />
 
       {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 z-50 w-80 -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-white shadow-xl dark:bg-gray-800">
+      <div className="bg-card fixed top-1/2 left-1/2 z-50 w-80 -translate-x-1/2 -translate-y-1/2 transform rounded-lg shadow-xl">
         {/* Header */}
         <div className="border-border flex items-center justify-between border-b p-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Create New Tag</h2>
+          <h2 className="text-foreground text-lg font-semibold">Create New Tag</h2>
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg p-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="hover:bg-foreground/8 rounded-lg p-1 transition-colors"
           >
-            <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+            <X className="text-muted-foreground h-4 w-4" />
           </button>
         </div>
 
         {/* Content */}
         <div className="space-y-4 p-4">
           <div>
-            <label htmlFor="tag-name-input" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label htmlFor="tag-name-input" className="text-muted-foreground mb-2 block text-sm font-medium">
               Tag Name
             </label>
             <input
@@ -125,7 +125,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
           </div>
 
           <div>
-            <div className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300" id="color-selection-label">
+            <div className="text-muted-foreground mb-2 block text-sm font-medium" id="color-selection-label">
               Color
             </div>
             <div className="flex flex-wrap gap-2" role="group" aria-labelledby="color-selection-label">
@@ -135,7 +135,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
                   type="button"
                   onClick={createColorHandler(color)}
                   className={`h-10 w-10 rounded-lg transition-all hover:scale-105 ${
-                    selectedColor === color ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+                    selectedColor === color ? 'ring-primary ring-2 ring-offset-2' : ''
                   }`}
                   style={{ backgroundColor: color }}
                   title={color}
@@ -145,11 +145,11 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
           </div>
 
           {/* Preview */}
-          <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
-            <div className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">Preview:</div>
+          <div className="bg-muted rounded-lg p-3">
+            <div className="text-muted-foreground mb-2 text-xs font-medium">Preview:</div>
             <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full" style={{ backgroundColor: selectedColor }} />
-              <span className="text-sm text-gray-900 dark:text-white">{tagName || 'Tag name'}</span>
+              <span className="text-foreground text-sm">{tagName || 'Tag name'}</span>
             </div>
           </div>
         </div>
@@ -159,7 +159,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg px-4 py-2 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+            className="text-muted-foreground hover:bg-foreground/8 rounded-lg px-4 py-2 transition-colors"
           >
             Cancel
           </button>
@@ -167,7 +167,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
             type="button"
             onClick={handleCreateTag}
             disabled={!tagName.trim()}
-            className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-gray-600"
+            className="bg-primary text-primary-foreground hover:bg-primary/92 disabled:bg-muted disabled:text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 transition-colors disabled:cursor-not-allowed"
           >
             <Plus className="h-4 w-4" />
             Create Tag

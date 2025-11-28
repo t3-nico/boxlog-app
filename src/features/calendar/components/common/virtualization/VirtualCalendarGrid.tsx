@@ -272,7 +272,7 @@ const VirtualTimeSlot = React.memo(function VirtualTimeSlot({
       data-hour={hour}
     >
       {/* 時間ラベル */}
-      <div className="absolute top-0 left-0 -mt-2 w-16 text-xs text-gray-500">{timeString}</div>
+      <div className="text-muted-foreground absolute top-0 left-0 -mt-2 w-16 text-xs">{timeString}</div>
 
       {/* 各日付の列 */}
       <div className="ml-16 flex h-full">

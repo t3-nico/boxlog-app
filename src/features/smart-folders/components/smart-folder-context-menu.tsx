@@ -110,10 +110,10 @@ export const SmartFolderContextMenu = ({
           ) : (
             <div className="h-4 w-4 rounded" style={{ backgroundColor: folder.color }} />
           )}
-          <span className="truncate text-sm font-medium text-gray-900 dark:text-white">{folder.name}</span>
+          <span className="text-foreground truncate text-sm font-medium">{folder.name}</span>
           {folder.isSystem ? <StarIcon className="h-4 w-4 text-yellow-500" /> : null}
         </div>
-        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        <div className="text-muted-foreground mt-1 text-xs">
           {folder.taskCount || 0} items • {folder.isActive ? 'Active' : 'Inactive'}
         </div>
       </div>
@@ -138,10 +138,10 @@ export const SmartFolderContextMenu = ({
             disabled={item.disabled}
             className={`flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors ${
               item.disabled
-                ? 'cursor-not-allowed text-gray-400 dark:text-gray-600'
+                ? 'text-muted-foreground cursor-not-allowed opacity-50'
                 : item.danger
-                  ? 'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20'
-                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                  ? 'text-destructive hover:bg-destructive/8'
+                  : 'text-foreground hover:bg-foreground/8'
             }`}
           >
             <item.icon className="h-4 w-4" />

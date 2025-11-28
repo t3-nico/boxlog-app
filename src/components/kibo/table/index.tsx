@@ -54,8 +54,7 @@ export const TableProvider = <TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: (updater) => {
-      // @ts-expect-error updater is a function that returns a sorting object
-      const newSorting = updater(sorting)
+      const newSorting = typeof updater === 'function' ? updater(sorting) : updater
 
       setSorting(newSorting)
     },
@@ -141,7 +140,7 @@ export const TableColumnHeader = <TData, TValue>({
     <div className={cn('flex items-center space-x-2', className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="data-[state=open]:bg-accent -ml-3 h-8" size="sm" variant="ghost">
+          <Button className="data-[state=open]:bg-foreground/12 -ml-3 h-8" size="sm" variant="ghost">
             <span>{title}</span>
             {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="ml-2 h-4 w-4" />

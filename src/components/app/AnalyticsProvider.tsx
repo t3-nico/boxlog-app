@@ -219,12 +219,12 @@ export function CookieConsentBanner({
     >
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
         <div className="flex-1">
-          <p className="text-sm text-gray-600">
+          <p className="text-muted-foreground text-sm">
             {message}
             {privacyPolicyUrl ? (
               <>
                 {' '}
-                <a href={privacyPolicyUrl} className="text-blue-600 underline hover:text-blue-800">
+                <a href={privacyPolicyUrl} className="text-primary hover:text-primary/80 underline">
                   詳細はこちら
                 </a>
               </>
@@ -234,13 +234,13 @@ export function CookieConsentBanner({
         <div className="flex gap-3">
           <button
             onClick={handleDecline}
-            className="border-border text-muted-foreground hover:bg-muted rounded-md border px-4 py-2 text-sm transition-colors"
+            className="border-border text-muted-foreground hover:bg-foreground/8 rounded-md border px-4 py-2 text-sm transition-colors"
           >
             {declineText}
           </button>
           <button
             onClick={handleAccept}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-700"
+            className="bg-primary text-primary-foreground hover:bg-primary/92 rounded-md px-4 py-2 text-sm transition-colors"
           >
             {acceptText}
           </button>
@@ -282,7 +282,7 @@ export function AnalyticsDebugPanel() {
   if (!debugMode) return null
 
   return (
-    <div className="bg-opacity-90 fixed right-4 bottom-4 z-50 max-h-96 w-96 overflow-y-auto rounded-lg bg-black p-4 text-xs text-white">
+    <div className="bg-opacity-90 fixed right-4 bottom-4 z-50 max-h-96 w-96 overflow-y-auto rounded-xl bg-black p-4 text-xs text-white">
       <div className="mb-2">
         <h3 className="text-sm font-bold">📊 Analytics Debug</h3>
         <div className="text-xs text-gray-300">

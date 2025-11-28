@@ -97,34 +97,29 @@ export function TrashView({ className }: TrashViewProps) {
               <div className="text-muted-foreground text-sm">総アイテム数</div>
             </div>
 
-            <div className="rounded-md bg-blue-50 p-4 dark:bg-blue-900/20">
-              <div className="text-2xl font-bold text-blue-700 dark:text-blue-400">{stats.deletedToday}</div>
-              <div className="text-sm text-blue-700 dark:text-blue-400">今日削除</div>
+            <div className="bg-primary/10 rounded-md p-4">
+              <div className="text-primary text-2xl font-bold">{stats.deletedToday}</div>
+              <div className="text-primary text-sm">今日削除</div>
             </div>
 
-            <div className="rounded-md bg-yellow-50 p-4 dark:bg-yellow-900/20">
-              <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-400">{stats.expiredItems}</div>
-              <div className="text-sm text-yellow-700 dark:text-yellow-400">期限切れ</div>
+            <div className="bg-destructive/10 rounded-md p-4">
+              <div className="text-destructive text-2xl font-bold">{stats.expiredItems}</div>
+              <div className="text-destructive text-sm">期限切れ</div>
             </div>
 
-            <div className="rounded-md bg-green-50 p-4 dark:bg-green-900/20">
-              <div className="text-2xl font-bold text-green-700 dark:text-green-400">{stats.deletedThisWeek}</div>
-              <div className="text-sm text-green-700 dark:text-green-400">今週削除</div>
+            <div className="bg-muted rounded-md p-4">
+              <div className="text-foreground text-2xl font-bold">{stats.deletedThisWeek}</div>
+              <div className="text-muted-foreground text-sm">今週削除</div>
             </div>
           </div>
         </div>
 
         {/* エラー表示 */}
         {error != null && (
-          <div className="rounded-lg border border-red-300 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
+          <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-4">
             <div className="flex items-start">
               <div className="flex-shrink-0">
-                <svg
-                  className="h-5 w-5 text-red-600 dark:text-red-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                <svg className="text-destructive h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -134,15 +129,11 @@ export function TrashView({ className }: TrashViewProps) {
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">エラーが発生しました</h3>
-                <p className="mt-1 text-sm text-red-700 dark:text-red-400">{error}</p>
+                <h3 className="text-destructive text-sm font-medium">エラーが発生しました</h3>
+                <p className="text-destructive mt-1 text-sm">{error}</p>
               </div>
               <div className="ml-auto pl-3">
-                <button
-                  type="button"
-                  onClick={clearError}
-                  className="text-red-600 hover:brightness-75 dark:text-red-400"
-                >
+                <button type="button" onClick={clearError} className="text-destructive hover:text-destructive/80">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -170,7 +161,7 @@ export function TrashView({ className }: TrashViewProps) {
               placeholder="アイテムを検索..."
               value={filters.searchQuery}
               onChange={(e) => setFilters({ searchQuery: e.target.value })}
-              className="border-input bg-card text-foreground block w-full rounded-md border py-2 pr-3 pl-10 text-sm focus:ring-2 focus:ring-blue-500"
+              className="border-input bg-card text-foreground focus:ring-ring block w-full rounded-md border py-2 pr-3 pl-10 text-sm focus:ring-2"
             />
           </div>
         </div>

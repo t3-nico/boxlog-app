@@ -101,7 +101,7 @@ export function NotificationDialog() {
                     }) => (
                       <div
                         key={notification.id}
-                        className={`border-border rounded-lg border p-4 ${!notification.is_read ? 'bg-muted' : 'bg-card'}`}
+                        className={`border-border rounded-xl border p-4 ${!notification.is_read ? 'bg-muted' : 'bg-card'}`}
                         onClick={() => !notification.is_read && handleMarkAsRead(notification.id)}
                         role={!notification.is_read ? 'button' : undefined}
                         tabIndex={!notification.is_read ? 0 : undefined}
@@ -169,7 +169,7 @@ export function NotificationDialog() {
                     }) => (
                       <div
                         key={notification.id}
-                        className="bg-muted border-border rounded-lg border p-4"
+                        className="bg-muted border-border rounded-xl border p-4"
                         onClick={() => handleMarkAsRead(notification.id)}
                         role="button"
                         tabIndex={0}

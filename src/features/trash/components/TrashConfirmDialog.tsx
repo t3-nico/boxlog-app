@@ -15,7 +15,7 @@ export function TrashConfirmDialog({ dialog, onClose }: TrashConfirmDialogProps)
 
   return (
     <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
-      <div className="bg-card mx-4 w-full max-w-md rounded-lg p-4">
+      <div className="bg-card mx-4 w-full max-w-md rounded-xl p-4">
         <div className="mb-4">
           <h3 className="text-foreground mb-2 text-base font-semibold">{t('trash.actions.confirm')}</h3>
           <p className="text-muted-foreground text-sm">{dialog.message}</p>
@@ -25,7 +25,7 @@ export function TrashConfirmDialog({ dialog, onClose }: TrashConfirmDialogProps)
           <button
             type="button"
             onClick={onClose}
-            className="text-foreground hover:bg-muted rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200"
+            className="text-foreground hover:bg-foreground/8 rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200"
           >
             {t('trash.actions.cancel')}
           </button>
@@ -37,8 +37,8 @@ export function TrashConfirmDialog({ dialog, onClose }: TrashConfirmDialogProps)
             }}
             className={`rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200 ${
               dialog.action === 'restore'
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-red-600 text-white hover:bg-red-700'
+                ? 'bg-primary text-primary-foreground hover:bg-primary/92'
+                : 'bg-destructive text-destructive-foreground hover:bg-destructive/92'
             }`}
           >
             {dialog.action === 'restore' ? t('trash.actions.restore') : t('trash.actions.delete')}

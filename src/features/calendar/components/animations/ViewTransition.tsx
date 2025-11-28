@@ -2,7 +2,7 @@
 
 import React, { ReactNode, createContext, useContext, useEffect, useRef, useState } from 'react'
 
-import { AnimatePresence, LayoutGroup, motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react'
+import { AnimatePresence, LayoutGroup, motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion'
 
 import { cn } from '@/lib/utils'
 
@@ -95,7 +95,6 @@ export const AdvancedViewTransition = ({
   // ビューが変更された時の処理
   useEffect(() => {
     if (currentView !== previousView) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- ビュー切り替え検出のための前回値追跡
       setPreviousView(currentView)
     }
   }, [currentView, previousView])
@@ -237,7 +236,6 @@ export const EventCollapse = ({ isExpanded, children, maxHeight = 300, className
   useEffect(() => {
     if (contentRef.current) {
       const height = contentRef.current.scrollHeight
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- DOM測定後の高さ同期
       setContentHeight(Math.min(height, maxHeight))
     }
   }, [children, maxHeight])
@@ -388,11 +386,7 @@ interface TaskCreateAnimationProps {
 
 export const TaskCreateAnimation = ({ children, isNew = false }: TaskCreateAnimationProps) => {
   return (
-    <div
-      className={`${
-        isNew ? 'ring-opacity-50 animate-pulse shadow-lg ring-2 ring-blue-400' : ''
-      } transition-all duration-300`}
-    >
+    <div className={`${isNew ? 'ring-primary/50 animate-pulse shadow-lg ring-2' : ''} transition-all duration-300`}>
       {children}
     </div>
   )
@@ -439,8 +433,8 @@ export const SkeletonAnimation = ({ show, count = 3, height = 'h-8', className =
     <div className={`space-y-2 ${className}`}>
       {Array.from({ length: count }, (_, index) => (
         <div
-          key={`skeleton-${index}`}
-          className={`${height} animate-pulse rounded bg-gray-200 dark:bg-gray-700`}
+          key={`skeleton-${Date.now()}-${index}`}
+          className={`${height} bg-muted animate-pulse rounded`}
           style={{
             animationDelay: `${index * 0.1}s`,
           }}
@@ -469,7 +463,7 @@ export const TaskHoverTooltip = ({ show, children, position }: TaskHoverTooltipP
         transform: 'translate(-50%, -100%)',
       }}
     >
-      <div className="border-border bg-popover max-w-xs rounded-lg border p-3 shadow-lg">{children}</div>
+      <div className="border-border bg-popover max-w-xs rounded-xl border p-3 shadow-lg">{children}</div>
     </div>
   )
 }
@@ -546,7 +540,7 @@ export const StaggeredAnimation = ({ children, staggerDelay = 0.05, className }:
       opacity: 1,
       transition: {
         duration: prefersReducedMotion ? 0.1 : 0.3,
-        ease: [0.4, 0.0, 0.2, 1] as [number, number, number, number],
+        ease: [0.4, 0.0, 0.2, 1],
       },
     },
   }
@@ -732,15 +726,10 @@ export function useViewTransition() {
 // パフォーマンス監視フック
 export function useAnimationPerformance() {
   const frameCount = useRef(0)
-  const lastTime = useRef(0)
+  const lastTime = useRef(performance.now())
   const [fps, setFps] = useState(60)
 
   useEffect(() => {
-    // 初回のみタイムスタンプを設定
-    if (lastTime.current === 0) {
-      lastTime.current = performance.now()
-    }
-
     let animationId: number
 
     const measureFPS = () => {
@@ -749,7 +738,6 @@ export function useAnimationPerformance() {
 
       if (now - lastTime.current >= 1000) {
         const currentFPS = Math.round((frameCount.current * 1000) / (now - lastTime.current))
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- rAFコールバック内でのFPS更新
         setFps(currentFPS)
         frameCount.current = 0
         lastTime.current = now
@@ -816,7 +804,6 @@ export const OptimizedListAnimation = ({
     if (!container) return
 
     const handleScroll = () => {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- スクロールイベントコールバック内setState
       setScrollY(container.scrollTop)
     }
 
@@ -834,7 +821,7 @@ export const OptimizedListAnimation = ({
         <AnimatePresence mode="popLayout">
           {visibleChildren.map((child, index) => (
             <motion.div
-              key={`list-item-${startIndex + index}`}
+              key={`list-item-${startIndex + index}-${Date.now()}`}
               initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -20 }}

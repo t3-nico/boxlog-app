@@ -108,7 +108,7 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
         isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-95 opacity-0'
       )}
     >
-      <div className="border-border min-w-[320px] overflow-hidden rounded-lg border bg-gray-900 text-white shadow-2xl">
+      <div className="border-border bg-popover text-popover-foreground min-w-[320px] overflow-hidden rounded-lg border shadow-2xl">
         {/* プログレスバー */}
         <div className="bg-primary h-1 transition-all duration-100 ease-linear" style={{ width: `${progress}%` }} />
 
@@ -139,8 +139,8 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
 
           {/* メッセージ */}
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-white">{action.description}</p>
-            <p className="mt-1 text-xs text-gray-400">{t('calendar.undoToast.undoShortcut')}</p>
+            <p className="text-foreground text-sm font-medium">{action.description}</p>
+            <p className="text-muted-foreground mt-1 text-xs">{t('calendar.undoToast.undoShortcut')}</p>
           </div>
 
           {/* アクション */}
@@ -151,7 +151,7 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
               className={cn(
                 'inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium',
                 'bg-primary text-primary-foreground rounded-md',
-                'hover:bg-primary/90 focus:ring-primary/50 focus:ring-2 focus:outline-none',
+                'hover:bg-primary/92 focus:ring-primary/50 focus:ring-2 focus:outline-none',
                 'transition-colors duration-150'
               )}
             >
@@ -163,8 +163,8 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
               type="button"
               onClick={handleDismiss}
               className={cn(
-                'rounded-md p-2 text-gray-400 hover:text-white',
-                'hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:outline-none',
+                'text-muted-foreground hover:text-foreground rounded-md p-2',
+                'hover:bg-foreground/8 focus:ring-ring focus:ring-2 focus:outline-none',
                 'transition-colors duration-150'
               )}
             >

@@ -92,10 +92,8 @@ export function TagsSettings() {
           title={t('settings.dialog.categories.tags') || 'タグ'}
           description={t('settings.dialog.categories.tagsDesc') || 'タグを管理します'}
         >
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950">
-            <p className="text-sm text-red-600 dark:text-red-400">
-              エラー: {error instanceof Error ? error.message : String(error)}
-            </p>
+          <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-4">
+            <p className="text-destructive text-sm">エラー: {error instanceof Error ? error.message : String(error)}</p>
             <Button variant="destructive" size="sm" onClick={() => window.location.reload()} className="mt-4">
               再読み込み
             </Button>

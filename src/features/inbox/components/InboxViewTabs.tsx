@@ -83,7 +83,7 @@ export function InboxViewTabs() {
               className={`focus-visible:ring-ring flex h-10 items-center gap-2 rounded-none border-b-2 px-4 py-0 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
                 activeViewId === view.id
                   ? 'border-primary text-foreground'
-                  : 'text-muted-foreground hover:border-primary/50 hover:text-foreground border-transparent'
+                  : 'text-muted-foreground hover:border-primary/50 border-transparent'
               }`}
             >
               <span>{view.name}</span>

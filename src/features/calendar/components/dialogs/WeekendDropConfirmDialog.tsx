@@ -67,17 +67,17 @@ export const WeekendDropConfirmDialog = ({
 
         <div className="space-y-4">
           {/* イベント情報 */}
-          <div className={cn('rounded-lg border p-4', 'bg-neutral-100 dark:bg-neutral-800', 'border-border')}>
+          <div className={cn('border-border bg-muted rounded-lg border p-4')}>
             <div className="flex items-start gap-3">
-              <Calendar className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-500" />
+              <Calendar className="text-primary mt-0.5 h-5 w-5 flex-shrink-0" />
               <div className="min-w-0 flex-1">
-                <h3 className={cn('font-medium', 'text-neutral-900 dark:text-neutral-50')}>{eventTitle}</h3>
+                <h3 className={cn('text-foreground font-medium')}>{eventTitle}</h3>
                 <div className="mt-2 space-y-1">
-                  <p className={cn('text-sm', 'text-neutral-600 dark:text-neutral-400')}>
+                  <p className={cn('text-muted-foreground text-sm')}>
                     <span className="font-medium">{t('calendar.weekendDropDialog.sourceLabel')}</span>{' '}
                     {format(originalDate, 'M月d日(E) HH:mm', { locale: ja })}
                   </p>
-                  <p className={cn('text-sm', 'text-neutral-600 dark:text-neutral-400')}>
+                  <p className={cn('text-muted-foreground text-sm')}>
                     <span className="font-medium">{t('calendar.weekendDropDialog.targetLabel')}</span>{' '}
                     {format(suggestedDate, 'M月d日(E) HH:mm', { locale: ja })}
                   </p>
@@ -87,7 +87,7 @@ export const WeekendDropConfirmDialog = ({
           </div>
 
           {/* 説明テキスト */}
-          <div className={cn('text-sm', 'text-neutral-600 dark:text-neutral-400')}>
+          <div className={cn('text-muted-foreground text-sm')}>
             <p>{t('calendar.weekendDropDialog.explanation')}</p>
             <p className="mt-2">{t('calendar.weekendDropDialog.hint')}</p>
           </div>
@@ -99,7 +99,7 @@ export const WeekendDropConfirmDialog = ({
           </Button>
           <Button
             onClick={onConfirm}
-            className={cn('flex-1 sm:flex-none', 'bg-blue-500 hover:bg-blue-600', 'text-white')}
+            className={cn('flex-1 sm:flex-none', 'bg-primary hover:bg-primary/92', 'text-primary-foreground')}
           >
             {t('calendar.weekendDropDialog.confirmButton')}
           </Button>

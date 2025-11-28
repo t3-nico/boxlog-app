@@ -37,7 +37,7 @@ export function Item({ icon: Icon, label, url, isActive, onClick }: ItemProps) {
           'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
           'hover:bg-foreground/8',
           'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-          isActive && 'bg-primary/12 text-foreground'
+          isActive && 'bg-foreground/12 text-foreground'
         )}
       >
         <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />

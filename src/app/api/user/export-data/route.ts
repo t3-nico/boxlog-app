@@ -12,7 +12,6 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 
 /**
@@ -45,7 +44,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     } = await supabase.auth.getUser()
 
     if (authError || !user) {
-      logger.warn('Unauthorized data export attempt', {
+      console.warn('Unauthorized data export attempt', {
         component: 'export-data-api',
         error: authError?.message,
       })
@@ -59,7 +58,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       )
     }
 
-    logger.info('User data export requested', {
+    console.info('User data export requested', {
       component: 'export-data-api',
       userId: user.id,
     })
@@ -95,7 +94,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       },
     }
 
-    logger.info('User data export completed', {
+    console.info('User data export completed', {
       component: 'export-data-api',
       userId: user.id,
       dataSize: {
@@ -115,7 +114,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       },
     })
   } catch (error) {
-    logger.error('User data export error', error as Error, {
+    console.error('User data export error', error as Error, {
       component: 'export-data-api',
     })
 

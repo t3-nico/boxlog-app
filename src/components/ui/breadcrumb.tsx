@@ -35,7 +35,11 @@ function BreadcrumbLink({
   const Comp = asChild ? Slot : 'a'
 
   return (
-    <Comp data-slot="breadcrumb-link" className={cn('hover:text-foreground transition-colors', className)} {...props} />
+    <Comp
+      data-slot="breadcrumb-link"
+      className={cn('hover:bg-foreground/8 -mx-1 rounded-sm px-1 transition-colors', className)}
+      {...props}
+    />
   )
 }
 

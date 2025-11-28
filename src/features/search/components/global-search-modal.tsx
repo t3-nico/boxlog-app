@@ -19,7 +19,6 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 // import { useEventStore } from '@/features/events'
 import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
-// import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 
 import { useSearchHistory } from '../hooks/use-search'
 

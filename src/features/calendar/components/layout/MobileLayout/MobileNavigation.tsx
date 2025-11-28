@@ -94,12 +94,10 @@ export const MobileNavigation = ({
             disabled={item.disabled}
             className={cn(
               'relative flex flex-col items-center justify-center',
-              'h-12 min-w-[64px] rounded-lg px-2 py-1',
+              'h-12 min-w-[64px] rounded-xl px-2 py-1',
               'transition-colors duration-200',
               'disabled:cursor-not-allowed disabled:opacity-50',
-              activeItem === item.id
-                ? 'text-primary bg-primary/10'
-                : 'text-muted-foreground hover:text-foreground hover:bg-foreground/8'
+              activeItem === item.id ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:bg-foreground/8'
             )}
           >
             {/* アイコン */}

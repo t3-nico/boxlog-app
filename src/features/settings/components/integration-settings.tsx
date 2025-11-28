@@ -26,14 +26,14 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       id: 'google-calendar',
       name: 'Google Calendar',
       description: 'Googleカレンダーと予定を同期します',
-      icon: <Calendar className="h-5 w-5 text-blue-500" />,
+      icon: <Calendar className="text-primary h-5 w-5" />,
       connected: false,
     },
     {
       id: 'slack',
       name: 'Slack',
       description: 'Slackにリマインダーや通知を送信します',
-      icon: <MessageSquare className="h-5 w-5 text-purple-500" />,
+      icon: <MessageSquare className="text-primary h-5 w-5" />,
       connected: false,
     },
   ])
@@ -63,9 +63,9 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       <SettingsCard title="連携サービス" description="外部サービスと接続してBoxLogの機能を拡張できます">
         <div className="space-y-4">
           {integrations.map((integration) => (
-            <div key={integration.id} className="border-border flex items-center justify-between rounded-lg border p-4">
+            <div key={integration.id} className="border-border flex items-center justify-between rounded-xl border p-4">
               <div className="flex items-center gap-4">
-                <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg">{integration.icon}</div>
+                <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-xl">{integration.icon}</div>
                 <div>
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-medium">{integration.name}</h4>
@@ -105,7 +105,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
           </SettingField>
 
           {syncEnabled && (
-            <div className="bg-muted/50 rounded-lg p-4">
+            <div className="bg-muted/50 rounded-xl p-4">
               <p className="text-muted-foreground text-sm">
                 同期は5分ごとに自動実行されます。手動で同期する場合は各サービスの設定から実行できます。
               </p>
@@ -117,7 +117,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       {/* API連携 */}
       <SettingsCard title="API連携" description="開発者向けのAPI連携オプション">
         <div className="space-y-4">
-          <div className="bg-muted/50 rounded-lg p-4">
+          <div className="bg-muted/50 rounded-xl p-4">
             <p className="text-muted-foreground text-sm">APIキーの発行やWebhookの設定は開発者ポータルから行えます。</p>
           </div>
           <Button variant="outline" disabled>

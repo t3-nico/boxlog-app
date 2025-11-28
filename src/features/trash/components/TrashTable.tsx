@@ -66,11 +66,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
     if (sort.by !== column) {
       return <span className="text-muted-foreground">↕</span>
     }
-    return sort.order === 'asc' ? (
-      <span className="text-blue-600 dark:text-blue-400">↑</span>
-    ) : (
-      <span className="text-blue-600 dark:text-blue-400">↓</span>
-    )
+    return sort.order === 'asc' ? <span className="text-primary">↑</span> : <span className="text-primary">↓</span>
   }
 
   const groupedItems = useMemo(() => {
@@ -92,7 +88,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
 
   if (items.length === 0) {
     return (
-      <div className={`border-border bg-card rounded-lg border p-8 text-center ${className}`}>
+      <div className={`border-border bg-card rounded-xl border p-8 text-center ${className}`}>
         <div className="mb-4 text-6xl">🗑️</div>
         <h3 className="text-foreground mb-2 text-xl font-bold">ゴミ箱は空です</h3>
         <p className="text-muted-foreground">削除されたアイテムはここに表示されます</p>
@@ -101,7 +97,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
   }
 
   return (
-    <div className={`border-border bg-card overflow-hidden rounded-lg border ${className}`}>
+    <div className={`border-border bg-card overflow-hidden rounded-xl border ${className}`}>
       {/* テーブルヘッダー */}
       <div className="border-border bg-muted border-b px-4 py-3">
         <div className="flex items-center justify-between">
@@ -114,7 +110,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
                   if (input) input.indeterminate = isSomeSelected && !isAllSelected
                 }}
                 onChange={handleHeaderCheckboxChange}
-                className="border-input h-4 w-4 rounded-sm text-blue-600 focus:ring-2 focus:ring-blue-500"
+                className="border-input text-primary focus:ring-ring h-4 w-4 rounded-sm focus:ring-2"
               />
               <span className="text-foreground ml-2 text-sm font-medium">
                 {isAllSelected ? t('trash.actions.deselectAll') : t('trash.actions.selectAll')}
@@ -129,7 +125,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
             <button
               type="button"
               onClick={handleSortByDeletedAt}
-              className="text-muted-foreground hover:bg-muted flex items-center gap-1 rounded-sm px-2 py-1"
+              className="text-muted-foreground hover:bg-foreground/8 flex items-center gap-1 rounded-sm px-2 py-1"
             >
               <span>削除日</span>
               {getSortIcon('deletedAt')}
@@ -137,7 +133,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
             <button
               type="button"
               onClick={handleSortByTitle}
-              className="text-muted-foreground hover:bg-muted flex items-center gap-1 rounded-sm px-2 py-1"
+              className="text-muted-foreground hover:bg-foreground/8 flex items-center gap-1 rounded-sm px-2 py-1"
             >
               <span>タイトル</span>
               {getSortIcon('title')}
@@ -145,7 +141,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
             <button
               type="button"
               onClick={handleSortByType}
-              className="text-muted-foreground hover:bg-muted flex items-center gap-1 rounded-sm px-2 py-1"
+              className="text-muted-foreground hover:bg-foreground/8 flex items-center gap-1 rounded-sm px-2 py-1"
             >
               <span>タイプ</span>
               {getSortIcon('type')}
@@ -203,8 +199,8 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
 
   return (
     <div
-      className={`border-border hover:bg-muted flex items-center border-b px-4 py-3 transition-colors ${
-        isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+      className={`border-border hover:bg-foreground/8 flex items-center border-b px-4 py-3 transition-colors ${
+        isSelected ? 'bg-foreground/12' : ''
       }`}
     >
       {/* 選択チェックボックス */}
@@ -213,7 +209,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
           type="checkbox"
           checked={isSelected}
           onChange={handleToggleSelect}
-          className="border-input h-4 w-4 rounded-sm text-blue-600 focus:ring-2 focus:ring-blue-500"
+          className="border-input text-primary focus:ring-ring h-4 w-4 rounded-sm focus:ring-2"
         />
       </div>
 
@@ -255,9 +251,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
 
                 {/* 自動削除警告 */}
                 {isExpired || isExpiringSoon ? (
-                  <span
-                    className={`font-medium ${isExpired ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}
-                  >
+                  <span className={`font-medium ${isExpired ? 'text-destructive' : 'text-destructive/80'}`}>
                     {isExpired
                       ? t('trash.status.expired')
                       : t('trash.time.daysUntilDelete', { days: daysUntilDelete.toString() })}
@@ -269,10 +263,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
               {item.metadata?.tags && item.metadata.tags.length > 0 ? (
                 <div className="mt-2 flex flex-wrap gap-1">
                   {trashOperations.formatTags(item.metadata.tags).visible.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-block rounded-sm bg-blue-50 px-2 py-1 text-sm text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                    >
+                    <span key={tag} className="bg-primary/10 text-primary inline-block rounded-sm px-2 py-1 text-sm">
                       #{tag}
                     </span>
                   ))}
@@ -291,7 +282,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
             <button
               type="button"
               onClick={handleRestore}
-              className="rounded-sm px-3 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/30"
+              className="text-primary hover:bg-foreground/8 rounded-sm px-3 py-1 text-sm transition-colors"
               title={t('trash.actions.restore')}
             >
               {t('trash.actions.restore')}
@@ -299,7 +290,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
             <button
               type="button"
               onClick={handlePermanentDelete}
-              className="rounded-sm px-3 py-1 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
+              className="text-destructive hover:bg-foreground/8 rounded-sm px-3 py-1 text-sm transition-colors"
               title={t('trash.actions.permanentDelete')}
             >
               {t('trash.actions.delete')}

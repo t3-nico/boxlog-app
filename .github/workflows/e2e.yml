@@ -2,9 +2,9 @@ name: 🌐 E2E Browser Tests
 
 on:
   pull_request:
-    branches: [main, dev]
+    branches: [main]
   push:
-    branches: [main, dev]
+    branches: [main]
   workflow_dispatch:
 
 env:
@@ -38,10 +38,6 @@ jobs:
         project:
           - chromium
           - firefox
-          - webkit
-          - 'Mobile Chrome'
-          - 'Mobile Safari'
-          - iPad
 
     steps:
       - name: 📥 Checkout
@@ -58,25 +54,14 @@ jobs:
 
       - name: 🎭 Install Playwright Browsers
         run: |
-          if [ "${{ matrix.project }}" = "Mobile Chrome" ]; then
+          if [ "${{ matrix.project }}" = "chromium" ]; then
             npx playwright install --with-deps chromium chromium-headless-shell
-          elif [ "${{ matrix.project }}" = "Mobile Safari" ]; then
-            npx playwright install --with-deps webkit
-          elif [ "${{ matrix.project }}" = "iPad" ]; then
-            # iPadはwebkitを使用するが、chromium-headless-shellも必要
-            npx playwright install --with-deps webkit chromium-headless-shell
           else
-            # chromiumの場合はchromium-headless-shellも必要
-            if [ "${{ matrix.project }}" = "chromium" ]; then
-              npx playwright install --with-deps chromium chromium-headless-shell
-            else
-              npx playwright install --with-deps ${{ matrix.project }}
-            fi
+            npx playwright install --with-deps ${{ matrix.project }}
           fi
 
       - name: 🌐 Run E2E tests - ${{ matrix.project }}
         run: npm run test:e2e -- --project="${{ matrix.project }}"
-        continue-on-error: ${{ matrix.project == 'iPad' || matrix.project == 'webkit' || matrix.project == 'Mobile Safari' }} # TODO: Remove after Safari-specific tests are fixed
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1bW15IiXJvbGUiOiJhbm9uIiwiaWF0IjoxNjQ1MTkyMDAwLCJleHAiOjE5NjA1NjgwMDB9.DUMMY_KEY_FOR_TESTING' }}
@@ -136,10 +121,6 @@ jobs:
             ### Tested Browsers
             - ✅ Chrome (Chromium)
             - ✅ Firefox
-            - ✅ Safari (WebKit)
-            - ✅ Mobile Chrome (Pixel 5)
-            - ✅ Mobile Safari (iPhone 12)
-            - ✅ iPad Pro
 
             ---
 

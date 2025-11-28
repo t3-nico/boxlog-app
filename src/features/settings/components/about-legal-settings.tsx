@@ -102,7 +102,7 @@ export function AboutLegalSettings() {
       <SettingsCard title={t('settings.legal.cookies.title')} description={t('settings.legal.cookies.description')}>
         <div className="space-y-4">
           {/* 必須Cookie */}
-          <div className="border-border flex items-center justify-between rounded-lg border p-3">
+          <div className="border-border flex items-center justify-between rounded-xl border p-3">
             <div className="flex items-center gap-3">
               <Info className="text-muted-foreground h-4 w-4" />
               <span className="text-sm">{t('settings.legal.cookies.current.necessary')}</span>

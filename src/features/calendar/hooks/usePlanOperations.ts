@@ -16,9 +16,9 @@ export const usePlanOperations = () => {
     async (planId: string) => {
       try {
         deletePlan.mutate({ id: planId })
-        logger.log('✅ プラン削除:', planId)
+        console.log('✅ プラン削除:', planId)
       } catch (error) {
-        logger.error('プラン削除に失敗:', error)
+        console.error('プラン削除に失敗:', error)
       }
     },
     [deletePlan]
@@ -26,8 +26,7 @@ export const usePlanOperations = () => {
 
   // プラン復元ハンドラー
   const handlePlanRestore = useCallback(async (_plan: CalendarPlan) => {
-    console.log('TODO: Sessions統合後に実装')
-    // planにはソフトデリート機能がないため、復元は未実装
+    // noop - planにはソフトデリート機能がないため、復元は未実装
   }, [])
 
   // プラン更新ハンドラー（ドラッグ&ドロップ用）
@@ -38,7 +37,7 @@ export const usePlanOperations = () => {
         if (typeof planIdOrPlan === 'string' && updates) {
           const planId = planIdOrPlan
 
-          logger.log('🔧 プラン更新 (planId + updates形式):', {
+          console.log('🔧 プラン更新 (planId + updates形式):', {
             planId,
             newStartTime: updates.startTime.toISOString(),
             newEndTime: updates.endTime.toISOString(),
@@ -77,7 +76,7 @@ export const usePlanOperations = () => {
           })
         }
       } catch (error) {
-        logger.error('❌ プラン更新に失敗:', error)
+        console.error('❌ プラン更新に失敗:', error)
       }
     },
     [updatePlan]
@@ -85,7 +84,7 @@ export const usePlanOperations = () => {
 
   // 30日経過したプランを自動削除
   useEffect(() => {
-    // TODO(#621): Events削除後、plans/Sessions統合後に再実装
+    // noop - Plans統合後に実装予定
   }, [])
 
   return {

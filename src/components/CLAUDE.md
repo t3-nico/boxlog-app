@@ -255,7 +255,7 @@ interface TaskCardProps {
 
 export function TaskCard({ title, status, onStatusChange }: TaskCardProps) {
   return (
-    <div className="bg-card text-card-foreground border-border rounded-lg p-4">
+    <div className="bg-card text-card-foreground border-border rounded-xl p-4">
       <h3 className="text-lg font-semibold">{title}</h3>
       <select value={status} onChange={(e) => onStatusChange(e.target.value)} className="border-input rounded-md">
         <option value="todo">未着手</option>

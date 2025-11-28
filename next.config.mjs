@@ -172,9 +172,12 @@ const nextConfig = {
 
   // ビルド最適化
   compiler: {
+    // GAFAベストプラクティス: 本番環境でconsole.log/info/debugを削除
+    // error/warnは残す（エラー監視のため）
     removeConsole:
-      process.env.NODE_ENV === 'production' &&
-      (process.env.VERCEL_GIT_COMMIT_REF === 'main' || process.env.VERCEL_GIT_COMMIT_REF === undefined),
+      process.env.NODE_ENV === 'production'
+        ? { exclude: ['error', 'warn'] }
+        : false,
   },
 }
 

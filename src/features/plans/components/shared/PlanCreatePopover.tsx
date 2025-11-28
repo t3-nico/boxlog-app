@@ -28,7 +28,7 @@ interface PlanCreatePopoverProps {
 }
 
 export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopoverProps) {
-  const titleInputRef = useRef<HTMLInputElement>(null)
+  const titleInputRef = useRef<HTMLInputElement | null>(null)
 
   const [isOpen, setIsOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)

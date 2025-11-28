@@ -83,7 +83,7 @@ export const AnimatedEventItem = ({
       {isVisible === true && (
         <div
           key={plan.id}
-          className={`${className} transition-all duration-200 ease-out ${isCreating ? 'animate-in fade-in scale-in-95 slide-in-from-bottom-2' : ''} ${isSelected ? 'scale-105 border-2 shadow-[0_8px_24px_rgba(59,130,246,0.3)]' : ''} ${isHovered ? 'scale-[1.02] shadow-[0_4px_12px_rgba(0,0,0,0.15)]' : ''} ${isDragging ? 'z-50 scale-110 shadow-[0_12px_32px_rgba(0,0,0,0.2)]' : ''} ${!isDragging ? 'hover:brightness-110' : ''}`}
+          className={`${className} transition-all duration-200 ease-out ${isCreating ? 'animate-in fade-in scale-in-95 slide-in-from-bottom-2' : ''} ${isSelected ? 'scale-105 border-2 shadow-[0_8px_24px_rgba(59,130,246,0.3)]' : ''} ${isHovered ? 'scale-[1.02] shadow-[0_4px_12px_rgba(0,0,0,0.15)]' : ''} ${isDragging ? 'z-50 scale-110 shadow-[0_12px_32px_rgba(0,0,0,0.2)]' : ''} ${!isDragging ? 'hover:shadow-lg' : ''}`}
           style={style}
         >
           {children}
@@ -191,7 +191,7 @@ export const CreatingEventPreview = ({
         )}
 
         {/* 時間表示 */}
-        <div className="mt-1 text-xs text-gray-600">
+        <div className="text-muted-foreground mt-1 text-xs">
           {startTime} - {endTime}
         </div>
 
@@ -200,14 +200,14 @@ export const CreatingEventPreview = ({
           <button
             type="button"
             onClick={handleConfirm}
-            className="rounded bg-blue-500 px-2 py-1 text-xs text-white transition-colors hover:bg-blue-600"
+            className="bg-primary text-primary-foreground hover:bg-primary/92 rounded px-2 py-1 text-xs transition-colors"
           >
             Save
           </button>
           <button
             type="button"
             onClick={handleCancel}
-            className="rounded bg-gray-500 px-2 py-1 text-xs text-white transition-colors hover:bg-gray-600"
+            className="bg-muted text-muted-foreground hover:bg-muted/80 rounded px-2 py-1 text-xs transition-colors"
           >
             Cancel
           </button>

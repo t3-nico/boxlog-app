@@ -71,7 +71,7 @@ function showToggleFeedback(newState: boolean) {
     fixed top-4 right-4 z-[9999]
     bg-white dark:bg-gray-800
     border border-border
-    rounded-lg shadow-lg
+    rounded-xl shadow-lg
     px-4 py-3
     flex items-center gap-3
     transform transition-all duration-300 ease-out
