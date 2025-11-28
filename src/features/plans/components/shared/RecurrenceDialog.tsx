@@ -48,6 +48,7 @@ export function RecurrenceDialog({
 }: RecurrenceDialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
   const [showCalendar, setShowCalendar] = useState(false)
+  const [position, setPosition] = useState({ top: 0, left: 0 })
 
   const [config, setConfig] = useState<RecurrenceConfig>(() => {
     if (value) {
@@ -76,31 +77,30 @@ export function RecurrenceDialog({
     }
   })
 
-  // 位置を動的に計算（DatePickerPopover と同じ方式）
-  const getPosition = () => {
-    if (triggerRef?.current) {
-      const rect = triggerRef.current.getBoundingClientRect()
-      const dialogWidth = 400 // w-[400px]
+  // 位置を動的に計算（useEffect内でref参照）
+  useEffect(() => {
+    if (!open || !triggerRef?.current) return
 
-      if (placement === 'right') {
-        return {
-          top: rect.top + window.scrollY,
-          left: rect.right + window.scrollX + 4,
-        }
-      } else if (placement === 'left') {
-        return {
-          top: rect.top + window.scrollY,
-          left: rect.left + window.scrollX - dialogWidth - 4,
-        }
-      } else {
-        return {
-          top: rect.bottom + window.scrollY + 4,
-          left: rect.left + window.scrollX,
-        }
-      }
+    const rect = triggerRef.current.getBoundingClientRect()
+    const dialogWidth = 400 // w-[400px]
+
+    if (placement === 'right') {
+      setPosition({
+        top: rect.top + window.scrollY,
+        left: rect.right + window.scrollX + 4,
+      })
+    } else if (placement === 'left') {
+      setPosition({
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX - dialogWidth - 4,
+      })
+    } else {
+      setPosition({
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX,
+      })
     }
-    return { top: 0, left: 0 }
-  }
+  }, [open, triggerRef, placement])
 
   // 外側クリックで閉じる
   useEffect(() => {
@@ -156,8 +156,8 @@ export function RecurrenceDialog({
         ref={dialogRef}
         className="bg-card border-border fixed z-[9999] w-[400px] overflow-hidden rounded-lg border shadow-lg"
         style={{
-          top: `${getPosition().top}px`,
-          left: `${getPosition().left}px`,
+          top: `${position.top}px`,
+          left: `${position.left}px`,
         }}
       >
         {/* ヘッダー */}

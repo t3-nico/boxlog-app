@@ -26,6 +26,7 @@ export interface OptimisticUpdateOptions {
   operationDescription?: string
 }
 
+/* eslint-disable react-hooks/immutability -- 再試行機能のための再帰呼び出しは意図的 */
 // 楽観的更新のカスタムフック
 export const useOptimisticUpdate = () => {
   const toast = useCalendarToast()
@@ -91,6 +92,7 @@ export const useOptimisticUpdate = () => {
 
   return { withOptimisticUpdate }
 }
+/* eslint-enable react-hooks/immutability */
 
 // バッチ操作用のインターfaces
 interface BatchOperation<T> {

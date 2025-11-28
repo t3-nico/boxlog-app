@@ -44,60 +44,56 @@ export {
 } from '../../../utils/performance/BatteryOptimizer'
 
 // 統合パフォーマンス管理フック
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { getBatteryOptimizer } from '../../../utils/performance/BatteryOptimizer'
 import { getMemoryOptimizer } from '../../../utils/performance/MemoryOptimizer'
 import { getPerformanceMonitor } from '../../../utils/performance/PerformanceMonitor'
 
 export function useIntegratedPerformanceOptimization() {
-  const performanceMonitor = useRef(getPerformanceMonitor())
-  const memoryOptimizer = useRef(getMemoryOptimizer())
-  const batteryOptimizer = useRef(getBatteryOptimizer())
+  // シングルトンインスタンスをuseMemoで保持
+  const performanceMonitorInstance = useMemo(() => getPerformanceMonitor(), [])
+  const memoryOptimizerInstance = useMemo(() => getMemoryOptimizer(), [])
+  const batteryOptimizerInstance = useMemo(() => getBatteryOptimizer(), [])
 
   useEffect(() => {
-    // ref値をローカル変数にコピー
-    const currentPerformanceMonitor = performanceMonitor.current
-    const currentMemoryOptimizer = memoryOptimizer.current
-    const currentBatteryOptimizer = batteryOptimizer.current
-
     // 統合監視の開始
-    currentPerformanceMonitor.startMonitoring()
-    currentMemoryOptimizer.startMonitoring()
+    performanceMonitorInstance.startMonitoring()
+    memoryOptimizerInstance.startMonitoring()
 
     // パフォーマンス閾値超過時の自動メモリクリーンアップ
-    currentPerformanceMonitor.onMetric('thresholdExceeded', (data: unknown) => {
+    performanceMonitorInstance.onMetric('thresholdExceeded', (data: unknown) => {
       // TODO(#389): dataの型を適切に定義する
       const typedData = data as { metric?: string; severity?: string }
       if (typedData.metric === 'memoryUsage' || typedData.severity === 'critical') {
-        currentMemoryOptimizer.triggerCleanup('warning' as 'warning' | 'manual' | 'gc')
+        memoryOptimizerInstance.triggerCleanup('warning' as 'warning' | 'manual' | 'gc')
       }
     })
 
     // バッテリー低下時の最適化
-    currentBatteryOptimizer.addBatteryChangeListener((batteryInfo) => {
+    batteryOptimizerInstance.addBatteryChangeListener((batteryInfo) => {
       if (batteryInfo.level < 0.2 && !batteryInfo.charging) {
-        currentMemoryOptimizer.triggerCleanup('warning' as 'warning' | 'manual' | 'gc')
+        memoryOptimizerInstance.triggerCleanup('warning' as 'warning' | 'manual' | 'gc')
       }
     })
 
     return () => {
-      currentPerformanceMonitor.stopMonitoring()
-      currentMemoryOptimizer.stopMonitoring()
+      performanceMonitorInstance.stopMonitoring()
+      memoryOptimizerInstance.stopMonitoring()
     }
-  }, [])
+  }, [performanceMonitorInstance, memoryOptimizerInstance, batteryOptimizerInstance])
 
   return {
-    performanceMonitor: performanceMonitor.current,
-    memoryOptimizer: memoryOptimizer.current,
-    batteryOptimizer: batteryOptimizer.current,
+    performanceMonitor: performanceMonitorInstance,
+    memoryOptimizer: memoryOptimizerInstance,
+    batteryOptimizer: batteryOptimizerInstance,
 
     // 統合レポート生成
     generateIntegratedReport() {
       return {
-        performance: performanceMonitor.current.generateReport(),
-        memory: memoryOptimizer.current.generateMemoryReport(),
-        battery: batteryOptimizer.current.generatePowerReport(),
+        performance: performanceMonitorInstance.generateReport(),
+        memory: memoryOptimizerInstance.generateMemoryReport(),
+        battery: batteryOptimizerInstance.generatePowerReport(),
         timestamp: new Date().toISOString(),
       }
     },
@@ -105,9 +101,9 @@ export function useIntegratedPerformanceOptimization() {
     // 緊急時の全最適化実行
     emergencyOptimization() {
       console.log('🚨 Emergency optimization triggered')
-      memoryOptimizer.current.forceGarbageCollection()
-      memoryOptimizer.current.triggerCleanup('manual')
-      batteryOptimizer.current.togglePowerSaveMode(true)
+      memoryOptimizerInstance.forceGarbageCollection()
+      memoryOptimizerInstance.triggerCleanup('manual')
+      batteryOptimizerInstance.togglePowerSaveMode(true)
     },
   }
 }
