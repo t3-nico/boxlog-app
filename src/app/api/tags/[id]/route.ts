@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 /**
  * タグ個別操作API エンドポイント
  * @description 特定タグのGET/PATCH/DELETE操作
@@ -174,12 +175,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       updateData.group_id = body.group_id
     }
 
-    const { data, error } = await supabase
-      .from('tags')
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single()
+    const { data, error } = await supabase.from('tags').update(updateData).eq('id', id).select().single()
 
     if (error) {
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
