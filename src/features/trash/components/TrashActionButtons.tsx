@@ -30,7 +30,7 @@ export function TrashActionButtons({
         type="button"
         onClick={onRestore}
         disabled={selectedCount === 0 || loading}
-        className="disabled:bg-muted disabled:text-muted-foreground rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700"
+        className="disabled:bg-muted disabled:text-muted-foreground bg-primary text-primary-foreground hover:bg-primary/92 rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200"
       >
         <span className="mr-2">↩️</span>
         復元 ({selectedCount})
@@ -41,7 +41,7 @@ export function TrashActionButtons({
         type="button"
         onClick={onPermanentDelete}
         disabled={selectedCount === 0 || loading}
-        className="disabled:bg-muted disabled:text-muted-foreground rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-red-700"
+        className="disabled:bg-muted disabled:text-muted-foreground bg-destructive text-destructive-foreground hover:bg-destructive/92 rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200"
       >
         <span className="mr-2">🗑️</span>
         完全削除 ({selectedCount})
@@ -52,7 +52,7 @@ export function TrashActionButtons({
         type="button"
         onClick={onEmptyTrash}
         disabled={stats.totalItems === 0 || loading}
-        className="disabled:bg-muted disabled:text-muted-foreground rounded-md bg-yellow-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-yellow-700"
+        className="disabled:bg-muted disabled:text-muted-foreground rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-amber-600/92"
       >
         <span className="mr-2">🧹</span>
         ゴミ箱を空にする
@@ -64,7 +64,7 @@ export function TrashActionButtons({
           type="button"
           onClick={onClearExpired}
           disabled={loading}
-          className="disabled:bg-muted disabled:text-muted-foreground rounded-md bg-blue-100 px-4 py-2 text-sm font-medium text-blue-800 transition-colors duration-200 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
+          className="disabled:bg-muted disabled:text-muted-foreground bg-primary/10 text-primary hover:bg-primary/20 rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200"
         >
           <span className="mr-2">⏰</span>
           期限切れ削除 ({expiredItems.length})

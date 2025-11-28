@@ -158,16 +158,21 @@ className = 'text-muted-foreground hover:text-foreground transition-colors'
 
 #### パターン5: 選択状態（Selected）
 
-primary色で12%オーバーレイ（持続的な状態なので強めの視覚表現）
+foreground色で12%オーバーレイ（ChatGPT/Claude方式 - ニュートラルな選択表現）
 
 ```tsx
-// ✅ 推奨
-className = 'data-[state=selected]:bg-primary/12'
-className = 'aria-selected:bg-primary/12'
+// ✅ 推奨（統一ルール）
+className = 'data-[state=selected]:bg-foreground/12'
+className = 'aria-selected:bg-foreground/12'
 
 // hover + selected の組み合わせ
-className = 'hover:bg-foreground/8 data-[state=selected]:bg-primary/12'
+className = 'hover:bg-foreground/8 data-[state=selected]:bg-foreground/12'
+
+// サイドバー・リストアイテムの選択
+isActive ? 'bg-foreground/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
 ```
+
+**注意**: primary色は選択状態に使用しない（ホバーと選択の両方がforegroundベースで統一）
 
 #### パターン6: 無効状態（Disabled）
 
@@ -236,9 +241,31 @@ shadcn/uiは `hover:bg-accent hover:text-accent-foreground` パターンをデ�
 "data-[state=open]:bg-accent"                   →  "data-[state=open]:bg-foreground/12"
 "aria-selected:bg-accent"                       →  "aria-selected:bg-foreground/12"
 "data-[state=selected]:bg-accent"               →  "data-[state=selected]:bg-foreground/12"
+"bg-primary/12"                                 →  "bg-foreground/12" (選択状態)
+"hover:bg-primary/8"                            →  "hover:bg-foreground/8"
 ```
 
 **対象コンポーネント例**: `button.tsx`, `toggle.tsx`, `dropdown-menu.tsx`, `command.tsx`, `calendar.tsx` など
+
+### 統一ルール早見表（ChatGPT/Claude方式）
+
+| 状態               | パターン                             | 用途                       |
+| ------------------ | ------------------------------------ | -------------------------- |
+| ホバー             | `hover:bg-foreground/8`              | **すべての要素**           |
+| 選択               | `bg-foreground/12`                   | サイドバー、リスト、タブ等 |
+| 塗りボタンホバー   | `hover:bg-primary/92`                | Primaryボタン              |
+| 破壊的ボタンホバー | `hover:bg-destructive/92`            | 削除ボタン                 |
+| 警告ボタン         | `bg-amber-600 hover:bg-amber-600/92` | アーカイブ等               |
+| フォーカスリング   | `focus:ring-primary`                 | フォーカス表示             |
+| リンク             | `text-primary hover:underline`       | テキストリンク             |
+
+**Primary色の使用先**:
+
+- 塗りボタン（bg-primary）
+- アクティブタブのボーダー（border-primary）
+- フォーカスリング（ring-primary）
+- リンク（text-primary）
+- バッジ（bg-primary/10 text-primary）
 
 ---
 
@@ -370,11 +397,12 @@ xl: 1280px  // デスクトップ
 
 ---
 
-**最終更新**: 2025-11-27
-**バージョン**: v1.1
+**最終更新**: 2025-11-28
+**バージョン**: v1.2
 **管理**: BoxLog デザインシステムチーム
 
 ### 更新履歴
 
+- **v1.2** (2025-11-28): ChatGPT/Claude方式に統一（ホバー・選択ともにforegroundベース）、統一ルール早見表追加
 - **v1.1** (2025-11-27): hover:bg-accent禁止ルール追加、shadcn/ui修正ガイド追加
 - **v1.0** (2025-10-22): 初版

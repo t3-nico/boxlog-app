@@ -14,7 +14,7 @@ export const Stat = ({ title, value, change }: { title: string; value: string; c
         >
           {change}
         </Badge>{' '}
-        <span className="text-neutral-600 dark:text-neutral-400">from last week</span>
+        <span className="text-muted-foreground">from last week</span>
       </div>
     </div>
   )

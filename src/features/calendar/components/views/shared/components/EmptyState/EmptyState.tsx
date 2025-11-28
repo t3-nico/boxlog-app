@@ -28,7 +28,7 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
     if (!icon) {
       // デフォルトアイコン
       return (
-        <div className="mx-auto mb-4 h-16 w-16 text-gray-300 dark:text-gray-600">
+        <div className="text-muted-foreground mx-auto mb-4 h-16 w-16">
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" className="h-full w-full">
             <path
               strokeLinecap="round"
@@ -61,11 +61,11 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
       {renderIcon()}
 
       {/* タイトル */}
-      <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">{displayTitle}</h3>
+      <h3 className="text-foreground mb-2 text-lg font-medium">{displayTitle}</h3>
 
       {/* 説明 */}
       {displayDescription != null && (
-        <p className="mb-6 max-w-md text-sm text-gray-500 dark:text-gray-400">{displayDescription}</p>
+        <p className="text-muted-foreground mb-6 max-w-md text-sm">{displayDescription}</p>
       )}
 
       {/* アクションボタン */}

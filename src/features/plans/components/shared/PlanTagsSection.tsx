@@ -96,7 +96,10 @@ export function PlanTagsSection({
               sideOffset={popoverSideOffset}
             >
               {selectedTagIds.length === 0 ? (
-                <button type="button" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
+                <button
+                  type="button"
+                  className="text-muted-foreground hover:bg-foreground/8 rounded px-1 text-sm transition-colors"
+                >
                   タグを追加...
                 </button>
               ) : (

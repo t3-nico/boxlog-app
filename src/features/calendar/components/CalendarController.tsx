@@ -46,10 +46,10 @@ const FiveDayView = React.lazy(() => import('./views/FiveDayView').then((module)
 // ローディングフォールバック
 const CalendarViewSkeleton = () => (
   <div className="h-full w-full animate-pulse">
-    <div className="mb-4 h-12 rounded bg-neutral-200 dark:bg-neutral-800" />
+    <div className="bg-muted mb-4 h-12 rounded" />
     <div className="grid grid-cols-7 gap-2">
       {Array.from({ length: 21 }).map((_, i) => (
-        <div key={i} className="h-24 rounded bg-neutral-200 dark:bg-neutral-800" />
+        <div key={i} className="bg-muted h-24 rounded" />
       ))}
     </div>
   </div>

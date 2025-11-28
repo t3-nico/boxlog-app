@@ -231,7 +231,7 @@ function MoreSheet({
             <button
               type="button"
               onClick={() => handleOpenSettings('account')}
-              className="text-muted-foreground hover:text-foreground rounded-full p-2 transition-colors"
+              className="text-muted-foreground hover:bg-foreground/8 rounded-full p-2 transition-colors"
               aria-label={t('navUser.account')}
             >
               <User className="size-5" />

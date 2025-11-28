@@ -73,9 +73,9 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
     <Menu as="div" className={cn('relative', className)}>
       <Menu.Button
         className={cn(
-          'flex items-center gap-2 rounded-xl p-2 transition-colors',
-          'hover:bg-neutral-200 dark:hover:bg-neutral-700',
-          'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none'
+          'flex items-center gap-2 rounded-lg p-2 transition-colors',
+          'hover:bg-foreground/8',
+          'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none'
         )}
         aria-label={a11yLabels.languageSwitch}
       >
@@ -91,8 +91,8 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
       <Menu.Items
         className={cn(
           'absolute top-full right-0 z-20 mt-2 min-w-48 overflow-hidden',
-          'bg-white dark:bg-neutral-800',
-          'border-border rounded-xl border shadow-lg',
+          'bg-popover text-popover-foreground',
+          'border-border rounded-lg border shadow-lg',
           'focus:outline-none'
         )}
       >
@@ -104,8 +104,8 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
                 onClick={() => handleLanguageChange(option.code)}
                 className={cn(
                   'flex w-full items-center justify-between px-4 py-3 text-left transition-colors',
-                  active && 'bg-neutral-100 dark:bg-neutral-700',
-                  option.code === currentLocale && 'bg-blue-50 dark:bg-blue-900/30'
+                  active && 'bg-foreground/8',
+                  option.code === currentLocale && 'bg-foreground/12'
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -113,13 +113,11 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
                     {option.flag}
                   </span>
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                      {option.nativeName}
-                    </span>
-                    <span className="text-xs text-neutral-600 dark:text-neutral-400">{option.name}</span>
+                    <span className="text-foreground text-sm font-medium">{option.nativeName}</span>
+                    <span className="text-muted-foreground text-xs">{option.name}</span>
                   </div>
                 </div>
-                {option.code === currentLocale && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
+                {option.code === currentLocale && <Check className="text-primary h-4 w-4" />}
               </button>
             )}
           </Menu.Item>

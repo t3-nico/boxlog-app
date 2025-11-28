@@ -115,7 +115,7 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
         <div className="space-y-4">
           {/* 選択された日付のプレビュー */}
           {selectedDate && (
-            <div className="bg-accent/50 rounded-md p-3">
+            <div className="bg-muted rounded-md p-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="text-muted-foreground size-4" />

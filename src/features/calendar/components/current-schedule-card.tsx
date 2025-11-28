@@ -212,12 +212,12 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     return currentEvent ? (
       <div className="mb-4 flex justify-center">
         <div
-          className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900"
+          className="bg-primary/12 flex h-8 w-8 items-center justify-center rounded-lg"
           style={{
             border: `2px solid ${borderColor}`,
           }}
         >
-          <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <Calendar className="text-primary h-4 w-4" />
         </div>
       </div>
     ) : null
@@ -229,11 +229,11 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
         role="button"
         tabIndex={0}
         aria-label="Navigate to calendar view"
-        className="bg-secondary border-secondary hover:bg-secondary/80 cursor-pointer rounded-xl border p-4 transition-colors"
+        className="bg-secondary border-secondary hover:bg-secondary/80 cursor-pointer rounded-lg border p-4 transition-colors"
         onClick={handleNoEventClick}
         onKeyDown={handleNoEventKeyDown}
       >
-        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+        <div className="text-muted-foreground flex items-center gap-2">
           <Calendar className="h-4 w-4" />
           <span className="text-xs">No current events</span>
         </div>
@@ -248,7 +248,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
       role="button"
       tabIndex={0}
       aria-label={`Current event: ${currentEvent.title}`}
-      className="bg-secondary hover:bg-secondary/80 flex cursor-pointer flex-col rounded-xl p-4 transition-colors"
+      className="bg-secondary hover:bg-secondary/80 flex cursor-pointer flex-col rounded-lg p-4 transition-colors"
       style={{
         border: `2px solid ${borderColor}`,
         gap: '8px',
@@ -257,17 +257,17 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
       onKeyDown={handleKeyDown}
     >
       <div className="flex items-center" style={{ gap: '4px' }}>
-        <div className="border-border rounded border px-2 py-1 text-xs font-medium tracking-wide text-gray-600 uppercase dark:text-gray-400">
+        <div className="border-border text-muted-foreground rounded border px-2 py-1 text-xs font-medium tracking-wide uppercase">
           Live
         </div>
-        <div className="flex items-center text-sm font-semibold text-gray-600 tabular-nums dark:text-gray-400">
+        <div className="text-muted-foreground flex items-center text-sm font-semibold tabular-nums">
           <span>{currentEvent.startDate ? formatTime(new Date(currentEvent.startDate)) : null}</span>
-          <ArrowRight className="mx-1 h-4 w-4 text-gray-400 dark:text-gray-500" />
+          <ArrowRight className="text-muted-foreground mx-1 h-4 w-4" />
           <span>{currentEvent.endDate ? formatTime(new Date(currentEvent.endDate)) : null}</span>
         </div>
       </div>
 
-      <h3 className="text-sm leading-tight font-semibold text-gray-900 dark:text-white">{currentEvent.title}</h3>
+      <h3 className="text-foreground text-sm leading-tight font-semibold">{currentEvent.title}</h3>
     </div>
   )
 }

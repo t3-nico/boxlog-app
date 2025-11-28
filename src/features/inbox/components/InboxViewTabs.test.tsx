@@ -159,7 +159,7 @@ describe('InboxViewTabs', () => {
       const tableTab = screen.getByRole('tab', { name: 'Table' })
       expect(tableTab.className).toContain('border-transparent') // 非アクティブ時は透明ボーダー
       expect(tableTab.className).toContain('text-muted-foreground')
-      expect(tableTab.className).toContain('hover:text-foreground')
+      expect(tableTab.className).toContain('hover:border-primary/50') // M3: テキスト色変更なし、ボーダーのみ
     })
   })
 })

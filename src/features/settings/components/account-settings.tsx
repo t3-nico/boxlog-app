@@ -768,7 +768,7 @@ export function AccountSettings() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-base font-medium">Two-Factor Authentication (MFA)</div>
-                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                <p className="text-muted-foreground mt-1 text-sm">
                   認証アプリを使って、ログイン時に追加のセキュリティ層を追加します
                 </p>
               </div>

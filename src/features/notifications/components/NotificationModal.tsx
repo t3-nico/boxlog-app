@@ -84,7 +84,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         aria-modal="true"
         className={cn(
           'relative mx-4 w-full max-w-md',
-          'bg-white dark:bg-neutral-800',
+          'bg-popover',
           'border-border border',
           'shadow-lg ring-1',
           'rounded-xl',
@@ -94,10 +94,8 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         {/* Header */}
         <div className={cn('flex items-center justify-between', 'border-border border-b', 'p-4')}>
           <div className="flex items-center gap-2">
-            <Bell className={cn('h-5 w-5', 'text-neutral-900 dark:text-neutral-100')} />
-            <h1 className={cn('text-3xl font-bold tracking-tight', 'text-neutral-900 dark:text-neutral-100')}>
-              {t('notifications.title')}
-            </h1>
+            <Bell className={cn('h-5 w-5', 'text-foreground')} />
+            <h1 className={cn('text-3xl font-bold tracking-tight', 'text-foreground')}>{t('notifications.title')}</h1>
           </div>
 
           <div className="flex items-center gap-2">
@@ -105,12 +103,12 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               type="button"
               className={cn(
                 'flex h-8 w-8 items-center justify-center',
-                'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+                'hover:bg-foreground/8',
                 'rounded-sm',
                 'transition-all duration-200'
               )}
             >
-              <Settings className={cn('h-4 w-4', 'text-neutral-600 dark:text-neutral-400')} />
+              <Settings className={cn('h-4 w-4', 'text-muted-foreground')} />
             </button>
 
             <button
@@ -118,12 +116,12 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               onClick={onClose}
               className={cn(
                 'flex h-8 w-8 items-center justify-center',
-                'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+                'hover:bg-foreground/8',
                 'rounded-sm',
                 'transition-all duration-200'
               )}
             >
-              <X className={cn('h-4 w-4', 'text-neutral-600 dark:text-neutral-400')} />
+              <X className={cn('h-4 w-4', 'text-muted-foreground')} />
             </button>
           </div>
         </div>
@@ -135,9 +133,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
             onClick={() => setActiveTab('all')}
             className={cn(
               'flex-1 py-2 text-center text-sm',
-              activeTab === 'all'
-                ? cn('text-neutral-900 dark:text-neutral-100', 'border-b-2 border-blue-500')
-                : 'text-neutral-600 dark:text-neutral-400',
+              activeTab === 'all' ? cn('text-foreground', 'border-primary border-b-2') : 'text-muted-foreground',
               'transition-all duration-200'
             )}
           >
@@ -148,9 +144,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
             onClick={() => setActiveTab('unread')}
             className={cn(
               'relative flex-1 py-2 text-center text-sm',
-              activeTab === 'unread'
-                ? cn('text-neutral-900 dark:text-neutral-100', 'border-b-2 border-blue-500')
-                : 'text-neutral-600 dark:text-neutral-400',
+              activeTab === 'unread' ? cn('text-foreground', 'border-primary border-b-2') : 'text-muted-foreground',
               'transition-all duration-200'
             )}
           >
@@ -159,7 +153,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               <span
                 className={cn(
                   'absolute -top-1 -right-1 h-5 w-5',
-                  'bg-red-500 text-xs text-white',
+                  'bg-destructive text-destructive-foreground text-xs',
                   'flex items-center justify-center',
                   'rounded-full'
                 )}
@@ -173,12 +167,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         {/* Notification List */}
         <ScrollArea className="h-96">
           {filteredNotifications.length === 0 ? (
-            <div
-              className={cn(
-                'flex flex-col items-center justify-center py-16',
-                'text-neutral-600 dark:text-neutral-400'
-              )}
-            >
+            <div className={cn('flex flex-col items-center justify-center py-16', 'text-muted-foreground')}>
               <BellOff className={cn('h-6 w-6', 'mb-3')} />
               <p className="text-sm">
                 {activeTab === 'unread' ? t('notifications.empty.unread') : t('notifications.empty.all')}
@@ -191,8 +180,8 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                   key={notification.id}
                   className={cn(
                     'flex gap-3 px-4 py-3',
-                    !notification.read && 'bg-blue-50/5',
-                    'hover:bg-neutral-100 dark:hover:bg-neutral-800',
+                    !notification.read && 'bg-foreground/5',
+                    'hover:bg-foreground/8',
                     'transition-all duration-200',
                     'cursor-pointer'
                   )}
@@ -216,18 +205,14 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
-                        <p className={cn('text-sm font-medium', 'text-neutral-900 dark:text-neutral-100')}>
-                          {notification.title}
-                        </p>
-                        <p className={cn('text-xs', 'text-neutral-600 dark:text-neutral-400', 'mt-0.5')}>
-                          {notification.message}
-                        </p>
+                        <p className={cn('text-sm font-medium', 'text-foreground')}>{notification.title}</p>
+                        <p className={cn('text-xs', 'text-muted-foreground', 'mt-0.5')}>{notification.message}</p>
                       </div>
                       {!notification.read && (
-                        <div className={cn('h-2 w-2 rounded-full', 'bg-blue-500', 'mt-2 flex-shrink-0')} />
+                        <div className={cn('h-2 w-2 rounded-full', 'bg-primary', 'mt-2 flex-shrink-0')} />
                       )}
                     </div>
-                    <p className={cn('text-xs', 'text-neutral-600 dark:text-neutral-400', 'mt-1')}>
+                    <p className={cn('text-xs', 'text-muted-foreground', 'mt-1')}>
                       {new Date(notification.timestamp).toLocaleTimeString(locale === 'ja' ? 'ja-JP' : 'en-US')}
                     </p>
                   </div>
@@ -244,8 +229,8 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               type="button"
               className={cn(
                 'w-full py-2 text-sm',
-                'text-neutral-900 dark:text-neutral-100',
-                'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+                'text-foreground',
+                'hover:bg-foreground/8',
                 'rounded-md',
                 'transition-all duration-200'
               )}

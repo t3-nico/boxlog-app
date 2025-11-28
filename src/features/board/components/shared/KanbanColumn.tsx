@@ -55,7 +55,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
       className={cn(
         'flex w-80 shrink-0 flex-col gap-3 rounded-xl border p-3 transition-colors',
         colorClass,
-        isOver && 'bg-accent/20 ring-primary/30 ring-2',
+        isOver && 'bg-primary/12 ring-primary/30 ring-2',
         isOverWipLimit && 'ring-destructive/50 ring-2' // WIP制限超過時
       )}
     >
@@ -119,7 +119,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
       <Button
         variant="ghost"
         size="sm"
-        className="text-muted-foreground hover:bg-background hover:text-foreground w-full justify-start gap-2"
+        className="text-muted-foreground hover:bg-background w-full justify-start gap-2"
         onClick={() => onAddCard?.(column.id)}
       >
         <Plus className="size-4" />

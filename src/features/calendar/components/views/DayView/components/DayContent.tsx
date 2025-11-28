@@ -135,7 +135,7 @@ export const DayContent = ({
               >
                 {/* EventBlockの内容部分のみクリック可能 */}
                 <div
-                  className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
+                  className="focus:ring-ring pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"
                   role="button"
                   tabIndex={0}
                   aria-label={`Drag event: ${event.title}`}

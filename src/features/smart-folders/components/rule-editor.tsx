@@ -219,7 +219,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
             const value = options.find((opt) => String(opt.value) === e.target.value)?.value ?? null
             updateRule(index, { ...rule, value })
           }}
-          className="border-border w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
+          className="border-border bg-card text-foreground focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
         >
           <option value="">Select...</option>
           {options.map((option) => (
@@ -238,7 +238,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
           value={String(rule.value)}
           onChange={(e) => updateRule(index, { ...rule, value: e.target.value })}
           placeholder="e.g., 2024-01-15 or 7days"
-          className="border-border w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
+          className="border-border bg-card text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
         />
       )
     }
@@ -267,9 +267,9 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                   key={index}
                   id={index.toString()}
                 >
-                  <div className="border-border flex items-center gap-3 rounded-xl border bg-gray-50 p-4 dark:bg-gray-800">
+                  <div className="border-border bg-muted flex items-center gap-3 rounded-lg border p-4">
                     {/* ドラッグハンドル */}
-                    <div className="cursor-move text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <div className="text-muted-foreground hover:text-foreground cursor-move">
                       <Bars3Icon className="h-4 w-4" data-slot="icon" />
                     </div>
 
@@ -278,7 +278,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                       <select
                         value={rule.logic}
                         onChange={(e) => updateRule(index, { ...rule, logic: e.target.value as 'AND' | 'OR' })}
-                        className="border-border rounded-md border bg-white px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                        className="border-border bg-card text-foreground hover:bg-foreground/8 rounded-md border px-3 py-1 text-xs font-medium"
                       >
                         <option value="AND">AND</option>
                         <option value="OR">OR</option>
@@ -299,7 +299,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                             }
                             updateRule(index, newRule)
                           }}
-                          className="border-border w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
+                          className="border-border bg-card text-foreground focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
                         >
                           {FIELD_OPTIONS.map((field) => (
                             <option key={field.value} value={field.value} title={field.description}>
@@ -317,7 +317,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                             const newRule = { ...rule, operator: e.target.value as SmartFolderRuleOperator, value: '' }
                             updateRule(index, newRule)
                           }}
-                          className="border-border w-full rounded-md border bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-800 dark:text-white"
+                          className="border-border bg-card text-foreground focus:border-primary focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
                         >
                           {OPERATOR_OPTIONS[rule.field].map((operator) => (
                             <option key={operator.value} value={operator.value}>
@@ -335,7 +335,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                     <button
                       type="button"
                       onClick={() => removeRule(index)}
-                      className="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600 dark:hover:bg-gray-700 dark:hover:text-red-400"
+                      className="text-muted-foreground hover:bg-foreground/8 hover:text-destructive rounded p-2"
                     >
                       <TrashIcon className="h-4 w-4" data-slot="icon" />
                     </button>
@@ -349,10 +349,8 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
 
       {/* 空の状態 */}
       {rules.length === 0 && (
-        <div className="border-border rounded-xl border-2 border-dashed px-4 py-8 text-center">
-          <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
-            No filter rules yet. Add your first rule to get started.
-          </p>
+        <div className="border-border rounded-lg border-2 border-dashed px-4 py-8 text-center">
+          <p className="text-muted-foreground mb-4 text-sm">No filter rules yet. Add your first rule to get started.</p>
         </div>
       )}
 
@@ -360,7 +358,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
       <button
         type="button"
         onClick={addRule}
-        className="border-border flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed py-3 text-gray-700 transition-colors hover:border-blue-500 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"
+        className="border-border text-muted-foreground hover:border-primary hover:text-primary flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed py-3 transition-colors"
       >
         <PlusIcon className="h-4 w-4" data-slot="icon" />
         Add Filter Rule

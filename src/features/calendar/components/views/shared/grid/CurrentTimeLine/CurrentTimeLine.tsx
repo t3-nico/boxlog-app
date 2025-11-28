@@ -93,25 +93,19 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
         zIndex: Z_INDEX.CURRENT_TIME,
       }}
     >
-      {/* 時刻ラベル - 左端（時刻列内）に配置 */}
+      {/* 時刻線 */}
       <div
-        className="absolute rounded-md bg-blue-600 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-white shadow-sm dark:bg-blue-500"
+        className="bg-primary h-full w-full shadow-sm"
         style={{
-          left: `-${timeColumnWidth - 8}px`,
-          top: '-11px',
+          background: 'linear-gradient(90deg, rgba(239, 68, 68, 0.9) 0%, rgba(239, 68, 68, 0.7) 100%)',
+          boxShadow: '0 1px 3px rgba(239, 68, 68, 0.5)',
         }}
-      >
-        {currentTime.toLocaleTimeString('ja-JP', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false,
-        })}
-      </div>
+      />
 
       {/* ドット */}
       {showDot != null && (
         <div
-          className="border-background absolute rounded-full border-2 bg-blue-600 shadow-sm dark:bg-blue-500"
+          className="border-background bg-primary absolute rounded-full border-2 shadow-sm"
           style={{
             left: `-5px`,
             top: `-4px`,
@@ -120,15 +114,6 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
           }}
         />
       )}
-
-      {/* 時刻線 */}
-      <div
-        className="h-full w-full bg-blue-600 shadow-sm dark:bg-blue-500"
-        style={{
-          background: 'linear-gradient(90deg, rgba(37, 99, 235, 0.9) 0%, rgba(37, 99, 235, 0.7) 100%)',
-          boxShadow: '0 1px 2px rgba(37, 99, 235, 0.3)',
-        }}
-      />
     </div>
   )
 })
@@ -157,7 +142,7 @@ export const CurrentTimeLineForColumn = memo<{
       {/* ドット（列の左端） */}
       {showDot != null && (
         <div
-          className="border-background absolute rounded-full border-2 bg-blue-600 shadow-sm dark:bg-blue-500"
+          className="border-background bg-primary absolute rounded-full border-2 shadow-sm"
           style={{
             left: `-4px`,
             top: `-4px`,
@@ -168,7 +153,7 @@ export const CurrentTimeLineForColumn = memo<{
       )}
 
       {/* 時刻線 */}
-      <div className="h-0.5 w-full bg-blue-600 shadow-sm dark:bg-blue-500" />
+      <div className="bg-primary h-0.5 w-full shadow-sm" />
     </div>
   )
 })

@@ -29,7 +29,7 @@ export const HeaderActions = ({
   const { t } = useI18n()
   const buttonClass = cn(
     'rounded-md p-2 transition-colors',
-    'hover:bg-foreground/8 text-muted-foreground hover:text-foreground',
+    'hover:bg-foreground/8 text-muted-foreground',
     compact ? 'p-2' : 'p-2'
   )
 
