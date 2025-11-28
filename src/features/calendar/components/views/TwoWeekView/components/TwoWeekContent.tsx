@@ -201,7 +201,7 @@ export const TwoWeekContent = ({
             <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-plan-block="true">
               {/* PlanBlockの内容部分のみクリック可能 */}
               <div
-                className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
+                className="pointer-events-auto absolute inset-0 rounded focus:ring-ring focus:ring-2 focus:ring-offset-1 focus:outline-none"
                 role="button"
                 tabIndex={0}
                 aria-label={`Drag plan: ${plan.title}`}

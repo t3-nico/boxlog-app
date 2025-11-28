@@ -199,7 +199,7 @@ const ResizeHandleBody = ({
     className={cn(
       'group absolute right-0 left-0 z-30',
       'transition-colors duration-200 hover:bg-white/20',
-      'focus:ring-2 focus:ring-blue-500 focus:outline-none focus:ring-inset',
+      'focus:ring-ring focus:ring-2 focus:outline-none focus:ring-inset',
       resizeState.isResizing && 'bg-white/30',
       type === 'start' ? 'top-0 cursor-ns-resize' : 'bottom-0 cursor-ns-resize',
       className
@@ -322,7 +322,7 @@ const ResizeTooltip = ({
       className={cn(
         'pointer-events-none fixed z-[9999] rounded-md px-3 py-2 text-sm font-medium',
         '-translate-x-1/2 transform border shadow-lg',
-        resizeState.isInvalid ? 'border-red-600 bg-red-500 text-white' : 'border-border bg-gray-900 text-white'
+        resizeState.isInvalid ? 'border-destructive bg-destructive text-destructive-foreground' : 'border-border bg-popover text-popover-foreground'
       )}
       style={{
         left: '50%',
