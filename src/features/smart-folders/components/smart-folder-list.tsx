@@ -112,7 +112,7 @@ const SortableSmartFolderItem = ({
         'group flex cursor-pointer items-center justify-between rounded-md px-2 py-2 transition-colors duration-150',
         {
           'smart-folder-item-active': isActive,
-          'text-foreground hover:bg-foreground/8': !isActive,
+          'text-foreground hover:bg-primary/8': !isActive,
           'opacity-50': !folder.isActive,
         }
       )}
