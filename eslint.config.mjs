@@ -22,8 +22,8 @@ const config = [
   ...compat.config({
     extends: ['next/core-web-vitals'],
     rules: {
-      // TypeScriptルール無効化（inline disableを使用）
-      '@typescript-eslint/no-explicit-any': 'off',
+      // any型禁止（CLAUDE.md準拠）
+      '@typescript-eslint/no-explicit-any': 'error',
     },
   }),
 
