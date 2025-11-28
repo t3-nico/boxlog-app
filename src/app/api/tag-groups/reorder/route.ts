@@ -40,7 +40,7 @@ export async function PATCH(request: NextRequest) {
 
     if (!validation.success) {
       console.error('[tag-groups/reorder PATCH] Validation error:', validation.error)
-      return NextResponse.json({ error: validation.error.errors[0]?.message || 'Invalid request' }, { status: 400 })
+      return NextResponse.json({ error: validation.error.issues[0]?.message || 'Invalid request' }, { status: 400 })
     }
 
     const { groupIds } = validation.data

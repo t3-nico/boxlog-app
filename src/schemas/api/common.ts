@@ -14,8 +14,7 @@ export const idSchema = z.string().uuid('有効なUUIDを指定してくださ�
  * 日付関連
  */
 export const dateSchema = z.date({
-  required_error: '日付は必須です',
-  invalid_type_error: '有効な日付を指定してください',
+  error: '有効な日付を指定してください',
 })
 
 export const futureDateSchema = dateSchema.refine((date) => date > new Date(), '未来の日付を指定してください')
@@ -25,8 +24,7 @@ export const futureDateSchema = dateSchema.refine((date) => date > new Date(), '
  */
 export const requiredStringSchema = z
   .string({
-    required_error: 'この項目は必須です',
-    invalid_type_error: '文字列で入力してください',
+    error: '文字列で入力してください',
   })
   .min(1, 'この項目は必須です')
 
@@ -75,16 +73,14 @@ export const passwordSchema = z
  * 優先度
  */
 export const prioritySchema = z.enum(['low', 'medium', 'high'], {
-  required_error: '優先度を選択してください',
-  invalid_type_error: '有効な優先度を選択してください',
+  error: '有効な優先度を選択してください',
 })
 
 /**
  * ステータス
  */
 export const statusSchema = z.enum(['todo', 'in_progress', 'done', 'archived'], {
-  required_error: 'ステータスを選択してください',
-  invalid_type_error: '有効なステータスを選択してください',
+  error: '有効なステータスを選択してください',
 })
 
 /**
@@ -134,7 +130,7 @@ export const paginationOutputSchema = z.object({
  */
 export const searchInputSchema = z.object({
   query: z.string().max(100, '検索クエリは100文字以内で入力してください').optional(),
-  filters: z.record(z.any()).optional(),
+  filters: z.record(z.string(), z.any()).optional(),
   ...paginationInputSchema.shape,
 })
 
@@ -218,7 +214,7 @@ export function createValidatedInput<T extends z.ZodSchema>(schema: T) {
  * 複数のバリデーションエラーを日本語でフォーマット
  */
 export function formatValidationErrors(error: z.ZodError): string[] {
-  return error.errors.map((err) => {
+  return error.issues.map((err) => {
     const path = err.path.join('.')
     const pathLabel = path || '入力値'
     return `${pathLabel}: ${err.message}`

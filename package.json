@@ -325,7 +325,7 @@
     "tunnel-rat": "^0.1.2",
     "use-stick-to-bottom": "^1.1.1",
     "web-vitals": "^5.1.0",
-    "zod": "^3.25.76",
+    "zod": "^4.1.13",
     "zustand": "^5.0.6"
   },
   "devDependencies": {

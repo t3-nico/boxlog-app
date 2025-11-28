@@ -25,7 +25,7 @@ export function validateConfig(
     }
   } catch (error) {
     if (error instanceof ZodError) {
-      const errors: ConfigValidationError[] = error.errors.map((err) => ({
+      const errors: ConfigValidationError[] = error.issues.map((err) => ({
         path: err.path.map(String),
         message: err.message,
         code: err.code,
