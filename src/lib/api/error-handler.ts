@@ -126,22 +126,6 @@ export function translateZodError(error: z.ZodError): {
             message = `${fieldName}${baseMessage}`
           }
           break
-        case 'invalid_format': {
-          const format = 'format' in err ? err.format : undefined
-          if (format === 'email') {
-            message = `${fieldName}は有効なメールアドレスを入力してください`
-          } else if (format === 'url') {
-            message = `${fieldName}は有効なURLを入力してください`
-          } else if (format === 'regex') {
-            message = `${fieldName}の形式が正しくありません`
-          } else {
-            message = `${fieldName}${baseMessage}`
-          }
-          break
-        }
-        case 'invalid_value':
-          message = `${fieldName}は有効な選択肢から選んでください`
-          break
         default:
           message = `${fieldName}${baseMessage}`
       }

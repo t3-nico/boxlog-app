@@ -14,7 +14,8 @@ export const idSchema = z.string().uuid('有効なUUIDを指定してくださ�
  * 日付関連
  */
 export const dateSchema = z.date({
-  error: '有効な日付を指定してください',
+  required_error: '日付は必須です',
+  invalid_type_error: '有効な日付を指定してください',
 })
 
 export const futureDateSchema = dateSchema.refine((date) => date > new Date(), '未来の日付を指定してください')
@@ -24,7 +25,8 @@ export const futureDateSchema = dateSchema.refine((date) => date > new Date(), '
  */
 export const requiredStringSchema = z
   .string({
-    error: '文字列で入力してください',
+    required_error: 'この項目は必須です',
+    invalid_type_error: '文字列で入力してください',
   })
   .min(1, 'この項目は必須です')
 
@@ -73,14 +75,16 @@ export const passwordSchema = z
  * 優先度
  */
 export const prioritySchema = z.enum(['low', 'medium', 'high'], {
-  error: '有効な優先度を選択してください',
+  required_error: '優先度は必須です',
+  invalid_type_error: '有効な優先度を選択してください',
 })
 
 /**
  * ステータス
  */
 export const statusSchema = z.enum(['todo', 'in_progress', 'done', 'archived'], {
-  error: '有効なステータスを選択してください',
+  required_error: 'ステータスは必須です',
+  invalid_type_error: '有効なステータスを選択してください',
 })
 
 /**
