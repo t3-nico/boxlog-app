@@ -7,7 +7,6 @@ import { Download, FileJson, History, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { logger } from '@/lib/logger'
 import { toast } from 'sonner'
 
 import { SettingField } from './fields/SettingField'
@@ -22,7 +21,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
     setIsExporting(true)
 
     try {
-      logger.info('Data export initiated', {
+      console.info('Data export initiated', {
         component: 'data-export-settings',
       })
 
@@ -49,13 +48,13 @@ export const DataExportSettings = memo(function DataExportSettings() {
       document.body.removeChild(a)
       window.URL.revokeObjectURL(url)
 
-      logger.info('Data export completed', {
+      console.info('Data export completed', {
         component: 'data-export-settings',
       })
 
       toast.success(t('settings.account.dataExport.success'))
     } catch (error) {
-      logger.error('Data export failed', error as Error, {
+      console.error('Data export failed', error as Error, {
         component: 'data-export-settings',
       })
 

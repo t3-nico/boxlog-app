@@ -5,7 +5,6 @@ import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { logger } from '@/lib/logger'
 import { toast } from 'sonner'
 
 /**
@@ -24,7 +23,7 @@ export function DataExport() {
     setIsExporting(true)
 
     try {
-      logger.info('Data export initiated', {
+      console.info('Data export initiated', {
         component: 'data-export',
       })
 
@@ -51,13 +50,13 @@ export function DataExport() {
       document.body.removeChild(a)
       window.URL.revokeObjectURL(url)
 
-      logger.info('Data export completed', {
+      console.info('Data export completed', {
         component: 'data-export',
       })
 
       toast.success(t('settings.account.dataExport.success'))
     } catch (error) {
-      logger.error('Data export failed', error as Error, {
+      console.error('Data export failed', error as Error, {
         component: 'data-export',
       })
 

@@ -17,8 +17,8 @@ import { useplans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'
-// import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { logger } from '@/lib/logger'
+// import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 
@@ -82,7 +82,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       const dateToUse = newDate || new Date()
       const dateString = format(dateToUse, 'yyyy-MM-dd')
       const newURL = `/calendar/${newViewType}?date=${dateString}`
-      logger.log('🔗 updateURL called:', { newViewType, dateToUse, newURL })
+      console.log('🔗 updateURL called:', { newViewType, dateToUse, newURL })
       router.push(newURL)
     },
     [router]
@@ -105,7 +105,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   // デバッグ用ログ
   React.useEffect(() => {
-    logger.log('📊 CalendarController state:', {
+    console.log('📊 CalendarController state:', {
       contextAvailable,
       viewType,
       currentDate,
@@ -135,7 +135,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // const { events } = eventStore
 
   // デバッグ: イベントストアの状態を確認
-  // logger.log('🔍 EventStore状態確認:', {
+  // console.log('🔍 EventStore状態確認:', {
   //   eventsCount: events.length,
   //   events: events.slice(0, 3).map((e) => ({
   //     id: e.id,
@@ -165,7 +165,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   // 🚀 初回ロード時にイベントストアを初期化（マウント時のみ）
   useEffect(() => {
-    logger.log('🚀 Initializing EventStore...')
+    console.log('🚀 Initializing EventStore...')
     // マウント時のみ実行される初期化処理は不要
     // useEventStoreはすでにlocalStorageから初期化されている
   }, [])
@@ -182,7 +182,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // URLパラメータの日付変更を検知（Context利用時は無効にする）
   useEffect(() => {
     if (!contextAvailable && initialDate && initialDate.getTime() !== currentDate.getTime()) {
-      logger.log('🔄 URL date change detected (fallback mode):', { initialDate, currentDate })
+      console.log('🔄 URL date change detected (fallback mode):', { initialDate, currentDate })
       navigateToDate(initialDate)
     }
   }, [contextAvailable, initialDate, currentDate, navigateToDate])
@@ -207,7 +207,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
     // TwoWeekView診断ログ
     if (viewType === '2week') {
-      logger.log('[CalendarController] 2week範囲計算:', {
+      console.log('[CalendarController] 2week範囲計算:', {
         viewType,
         currentDate: currentDate.toDateString(),
         calculatedRange: {
@@ -287,7 +287,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       )
     })
 
-    logger.log(`[CalendarController] plansフィルタリング:`, {
+    console.log(`[CalendarController] plansフィルタリング:`, {
       totalplans: plansData.length,
       plansWithTime: plansWithTime.length,
       filteredCount: filtered.length,
@@ -323,7 +323,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   const handleCreateEvent = useCallback(
     (date?: Date, time?: string) => {
-      logger.log('➕ Create event requested:', {
+      console.log('➕ Create event requested:', {
         date: date?.toISOString(),
         dateString: date?.toDateString(),
         time,
@@ -398,7 +398,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // Navigation handlers using useCalendarLayout
   const handleNavigate = useCallback(
     (direction: 'prev' | 'next' | 'today') => {
-      logger.log(
+      console.log(
         '🧭 handleNavigate called:',
         direction,
         'current date:',
@@ -539,7 +539,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // 空き時間クリック用のハンドラー
   const handleEmptyClick = useCallback(
     (date: Date, time: string) => {
-      logger.log('🖱️ Empty time clicked:', { date, time })
+      console.log('🖱️ Empty time clicked:', { date, time })
       handleCreateEvent(date, time)
     },
     [handleCreateEvent]
@@ -564,7 +564,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         selection.endMinute
       )
 
-      logger.log('📅 Calendar Drag Selection:', {
+      console.log('📅 Calendar Drag Selection:', {
         date: selection.date.toDateString(),
         startTime: startTime.toLocaleTimeString(),
         endTime: endTime.toLocaleTimeString(),
@@ -583,7 +583,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
           onSuccess: (newplan) => {
             // 作成されたプランをInspectorで開く
             openInspector(newplan.id)
-            logger.log('✅ Created plan from drag selection:', {
+            console.log('✅ Created plan from drag selection:', {
               planId: newplan.id,
               title: newplan.title,
               dueDate: newplan.due_date,

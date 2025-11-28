@@ -41,7 +41,7 @@ export async function GET() {
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
     }
 
-    console.log('[tag-groups GET] Success - returning data:', JSON.stringify(data, null, 2))
+    console.debug('[tag-groups GET] Success - returning data:', JSON.stringify(data, null, 2))
     return NextResponse.json({ data })
   } catch (error) {
     console.error('[tag-groups GET] Unexpected error:', error)

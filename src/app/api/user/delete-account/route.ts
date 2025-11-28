@@ -11,7 +11,6 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { logger } from '@/lib/logger'
 import { createClient } from '@/lib/supabase/server'
 
 /**
@@ -41,7 +40,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     } = await supabase.auth.getUser()
 
     if (authError || !user) {
-      logger.warn('Unauthorized account deletion attempt', {
+      console.warn('Unauthorized account deletion attempt', {
         component: 'delete-account-api',
         error: authError?.message,
       })
@@ -78,7 +77,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       )
     }
 
-    logger.info('Account deletion requested', {
+    console.info('Account deletion requested', {
       component: 'delete-account-api',
       userId: user.id,
       email: user.email,
@@ -91,7 +90,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     })
 
     if (signInError) {
-      logger.warn('Account deletion: Invalid password', {
+      console.warn('Account deletion: Invalid password', {
         component: 'delete-account-api',
         userId: user.id,
       })
@@ -120,7 +119,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       .eq('id', user.id)
 
     if (updateError) {
-      logger.error('Account deletion: Profile update failed', updateError as Error, {
+      console.error('Account deletion: Profile update failed', updateError as Error, {
         component: 'delete-account-api',
         userId: user.id,
       })
@@ -134,7 +133,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       )
     }
 
-    logger.info('Account deletion scheduled', {
+    console.info('Account deletion scheduled', {
       component: 'delete-account-api',
       userId: user.id,
       scheduledDeletionDate: scheduledDeletionDate.toISOString(),
@@ -153,7 +152,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 200 }
     )
   } catch (error) {
-    logger.error('Account deletion error', error as Error, {
+    console.error('Account deletion error', error as Error, {
       component: 'delete-account-api',
     })
 

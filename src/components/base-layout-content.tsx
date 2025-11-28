@@ -44,7 +44,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     //     source: 'fab',
     //   },
     // })
-    console.log('TODO: Sessions統合後に実装')
+    console.debug('TODO: Sessions統合後に実装')
   }, [])
 
   const { isCalendarPage, calendarProviderProps } = useCalendarProviderProps(

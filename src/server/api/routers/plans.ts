@@ -60,7 +60,7 @@ function normalizeDateTimeConsistency(data: {
   const dueDateMatches = data.due_date === expectedDueDate
   const endAfterStart = endDate.getTime() >= startDate.getTime()
 
-  console.log('[normalizeDateTimeConsistency] チェック:', {
+  console.debug('[normalizeDateTimeConsistency] チェック:', {
     startDate: startDate.toISOString(),
     endDate: endDate.toISOString(),
     startLocalDate: `${startYear}-${String(startMonth + 1).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`,
@@ -73,11 +73,11 @@ function normalizeDateTimeConsistency(data: {
   })
 
   if (datesMatch && dueDateMatches && endAfterStart) {
-    console.log('[normalizeDateTimeConsistency] 既に整合性が取れているため、スキップ')
+    console.debug('[normalizeDateTimeConsistency] 既に整合性が取れているため、スキップ')
     return
   }
 
-  console.log('[normalizeDateTimeConsistency] 整合性の問題を検出 - 正規化を実行')
+  console.debug('[normalizeDateTimeConsistency] 整合性の問題を検出 - 正規化を実行')
 
   // 1. due_date を start_time の日付に合わせる
   data.due_date = expectedDueDate
@@ -98,7 +98,7 @@ function normalizeDateTimeConsistency(data: {
     data.end_time = fixedEndDate.toISOString()
   }
 
-  console.log('[normalizeDateTimeConsistency] 正規化完了:', {
+  console.debug('[normalizeDateTimeConsistency] 正規化完了:', {
     due_date: data.due_date,
     start_time: data.start_time,
     end_time: data.end_time,
@@ -343,7 +343,7 @@ export const plansRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { supabase, userId } = ctx
 
-      console.log('[plans.update] 更新リクエスト:', {
+      console.debug('[plans.update] 更新リクエスト:', {
         id: input.id,
         data: input.data,
         userId,
@@ -357,7 +357,7 @@ export const plansRouter = createTRPCRouter({
         .eq('user_id', userId)
         .single()
 
-      console.log('[plans.update] 更新前データ:', oldData)
+      console.debug('[plans.update] 更新前データ:', oldData)
 
       // 日付整合性を保証（日付/時刻フィールドが更新される場合のみ）
       const hasDateTimeUpdate = !!(input.data.due_date || input.data.start_time || input.data.end_time)
@@ -401,7 +401,7 @@ export const plansRouter = createTRPCRouter({
         })
       }
 
-      console.log('[plans.update] 更新後データ:', data)
+      console.debug('[plans.update] 更新後データ:', data)
 
       // アクティビティ記録: 変更検出して記録
       if (oldData) {

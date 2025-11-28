@@ -69,7 +69,7 @@ export async function PATCH(request: NextRequest) {
     // 更新されたグループを返却
     const updatedGroups = results.map((result) => result.data).filter(Boolean)
 
-    console.log('[tag-groups/reorder PATCH] Success - updated groups:', updatedGroups.length)
+    console.debug('[tag-groups/reorder PATCH] Success - updated groups:', updatedGroups.length)
     return NextResponse.json({ data: updatedGroups })
   } catch (error) {
     console.error('[tag-groups/reorder PATCH] Unexpected error:', error)
