@@ -16,12 +16,8 @@ export const SettingsSection = ({ title, description, children, className }: Set
     <div className={cn('flex flex-col gap-6', className)}>
       {title || description ? (
         <div>
-          {title != null && (
-            <h2 className={cn('text-foreground text-lg font-semibold')}>{title}</h2>
-          )}
-          {description != null && (
-            <p className={cn('text-muted-foreground mt-1 text-sm')}>{description}</p>
-          )}
+          {title != null && <h2 className={cn('text-foreground text-lg font-semibold')}>{title}</h2>}
+          {description != null && <p className={cn('text-muted-foreground mt-1 text-sm')}>{description}</p>}
         </div>
       ) : null}
       <div>{children}</div>

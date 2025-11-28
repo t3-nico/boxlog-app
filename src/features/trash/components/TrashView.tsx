@@ -119,12 +119,7 @@ export function TrashView({ className }: TrashViewProps) {
           <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-4">
             <div className="flex items-start">
               <div className="flex-shrink-0">
-                <svg
-                  className="text-destructive h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                <svg className="text-destructive h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -138,11 +133,7 @@ export function TrashView({ className }: TrashViewProps) {
                 <p className="text-destructive mt-1 text-sm">{error}</p>
               </div>
               <div className="ml-auto pl-3">
-                <button
-                  type="button"
-                  onClick={clearError}
-                  className="text-destructive hover:text-destructive/80"
-                >
+                <button type="button" onClick={clearError} className="text-destructive hover:text-destructive/80">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>

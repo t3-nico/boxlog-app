@@ -24,37 +24,25 @@ export default function LegalLayout({ children }: LegalLayoutProps) {
       <header className="border-b-border bg-card border-b">
         <div className="container mx-auto max-w-6xl px-4 py-4 md:px-8">
           <nav className="flex flex-wrap items-center gap-4">
-            <Link href="/calendar" className="text-muted-foreground hover:underline text-sm transition-colors">
+            <Link href="/calendar" className="text-muted-foreground text-sm transition-colors hover:underline">
               {t('legal.navigation.backToApp')}
             </Link>
             <div className="border-l-border ml-auto flex flex-wrap gap-4 border-l pl-4">
-              <Link
-                href="/legal/privacy"
-                className="text-muted-foreground hover:underline text-sm transition-colors"
-              >
+              <Link href="/legal/privacy" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.privacy')}
               </Link>
-              <Link
-                href="/legal/terms"
-                className="text-muted-foreground hover:underline text-sm transition-colors"
-              >
+              <Link href="/legal/terms" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.terms')}
               </Link>
-              <Link
-                href="/legal/security"
-                className="text-muted-foreground hover:underline text-sm transition-colors"
-              >
+              <Link href="/legal/security" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.security')}
               </Link>
-              <Link
-                href="/legal/cookies"
-                className="text-muted-foreground hover:underline text-sm transition-colors"
-              >
+              <Link href="/legal/cookies" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.cookies')}
               </Link>
               <Link
                 href="/legal/oss-credits"
-                className="text-muted-foreground hover:underline text-sm transition-colors"
+                className="text-muted-foreground text-sm transition-colors hover:underline"
               >
                 {t('legal.navigation.ossCredits')}
               </Link>
@@ -75,33 +63,21 @@ export default function LegalLayout({ children }: LegalLayoutProps) {
               <p>{t('legal.footer.contact', { email: 'support@boxlog.app' })}</p>
             </div>
             <div className="flex flex-wrap gap-4">
-              <Link
-                href="/legal/privacy"
-                className="text-muted-foreground hover:underline text-sm transition-colors"
-              >
+              <Link href="/legal/privacy" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.privacy')}
               </Link>
-              <Link
-                href="/legal/terms"
-                className="text-muted-foreground hover:underline text-sm transition-colors"
-              >
+              <Link href="/legal/terms" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.terms')}
               </Link>
-              <Link
-                href="/legal/security"
-                className="text-muted-foreground hover:underline text-sm transition-colors"
-              >
+              <Link href="/legal/security" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.security')}
               </Link>
-              <Link
-                href="/legal/cookies"
-                className="text-muted-foreground hover:underline text-sm transition-colors"
-              >
+              <Link href="/legal/cookies" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.cookies')}
               </Link>
               <Link
                 href="/legal/oss-credits"
-                className="text-muted-foreground hover:underline text-sm transition-colors"
+                className="text-muted-foreground text-sm transition-colors hover:underline"
               >
                 {t('legal.navigation.ossCredits')}
               </Link>

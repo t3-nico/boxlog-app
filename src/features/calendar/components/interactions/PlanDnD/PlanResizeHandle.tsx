@@ -322,7 +322,9 @@ const ResizeTooltip = ({
       className={cn(
         'pointer-events-none fixed z-[9999] rounded-md px-3 py-2 text-sm font-medium',
         '-translate-x-1/2 transform border shadow-lg',
-        resizeState.isInvalid ? 'border-destructive bg-destructive text-destructive-foreground' : 'border-border bg-popover text-popover-foreground'
+        resizeState.isInvalid
+          ? 'border-destructive bg-destructive text-destructive-foreground'
+          : 'border-border bg-popover text-popover-foreground'
       )}
       style={{
         left: '50%',

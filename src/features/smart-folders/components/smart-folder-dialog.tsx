@@ -133,7 +133,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
               <button
                 type="button"
                 onClick={() => setShowPreview(!showPreview)}
-                className="border-border bg-card text-foreground flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors hover:bg-foreground/8"
+                className="border-border bg-card text-foreground hover:bg-foreground/8 flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors"
               >
                 <EyeIcon className="h-4 w-4" />
                 {showPreview ? 'Hide Preview' : 'Show Preview'}
@@ -142,7 +142,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
               <button
                 type="button"
                 onClick={onClose}
-                className="text-muted-foreground hover:text-foreground rounded-md p-2 transition-colors hover:bg-foreground/8"
+                className="text-muted-foreground hover:text-foreground hover:bg-foreground/8 rounded-md p-2 transition-colors"
               >
                 <XMarkIcon className="h-5 w-5" />
               </button>
@@ -170,16 +170,11 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
                         placeholder="Enter folder name..."
                         className="border-border bg-card text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary mt-1 block w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
                       />
-                      {errors.name ? (
-                        <p className="text-destructive mt-1 text-sm">{errors.name}</p>
-                      ) : null}
+                      {errors.name ? <p className="text-destructive mt-1 text-sm">{errors.name}</p> : null}
                     </Field>
 
                     <Field>
-                      <Label
-                        htmlFor="folder-description"
-                        className="text-muted-foreground text-sm font-medium"
-                      >
+                      <Label htmlFor="folder-description" className="text-muted-foreground text-sm font-medium">
                         Description
                       </Label>
                       <Textarea
@@ -266,7 +261,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="border-border bg-card text-foreground rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-foreground/8 disabled:cursor-not-allowed disabled:opacity-50"
+              className="border-border bg-card text-foreground hover:bg-foreground/8 rounded-md border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
               Cancel
             </button>
@@ -275,7 +270,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
               type="submit"
               onClick={handleSubmit}
               disabled={isLoading || !formData.name.trim()}
-              className="bg-primary text-primary-foreground flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-primary/92 disabled:cursor-not-allowed disabled:opacity-50"
+              className="bg-primary text-primary-foreground hover:bg-primary/92 flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoading ? (
                 <>

@@ -217,7 +217,9 @@ export const AccessibleCalendarGrid = ({
               )}
             >
               <div aria-label={formatDateForAria(date)}>
-                <div className="text-muted-foreground text-xs">{date.toLocaleDateString('ja-JP', { weekday: 'short' })}</div>
+                <div className="text-muted-foreground text-xs">
+                  {date.toLocaleDateString('ja-JP', { weekday: 'short' })}
+                </div>
                 <div
                   className={cn(
                     'text-lg',

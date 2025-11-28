@@ -121,7 +121,7 @@ export default function StatsPage() {
             </div>
             <Link
               href={`${baseUrl}/trends`}
-              className="text-muted-foreground hover:underline flex items-center gap-1 text-sm transition-colors"
+              className="text-muted-foreground flex items-center gap-1 text-sm transition-colors hover:underline"
             >
               {t('stats.overview.viewDetails')}
               <ArrowRight className="size-4" />

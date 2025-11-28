@@ -61,10 +61,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label
-                htmlFor="tag-name-input"
-                className="text-foreground mb-2 block text-sm font-medium"
-              >
+              <label htmlFor="tag-name-input" className="text-foreground mb-2 block text-sm font-medium">
                 {t('tags.form.tagName')}
               </label>
               <Input

@@ -46,7 +46,7 @@ const AccessibilityHeader = ({
       type="button"
       onClick={onClose}
       className={cn(
-        'text-muted-foreground hover:text-foreground rounded-md p-2 hover:bg-foreground/8',
+        'text-muted-foreground hover:text-foreground hover:bg-foreground/8 rounded-md p-2',
         'focus:ring-ring focus:ring-2 focus:outline-none',
         getContrastClassName(
           'text-muted-foreground hover:bg-foreground/8 hover:text-foreground',
@@ -201,7 +201,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
                     key={theme.key}
                     className={cn(
                       'relative flex cursor-pointer items-center rounded-lg border p-4',
-                      'focus-within:ring-ring focus-within:ring-2 hover:bg-foreground/8',
+                      'focus-within:ring-ring hover:bg-foreground/8 focus-within:ring-2',
                       selectedTheme === theme.key
                         ? getContrastClassName(
                             'border-blue-500 bg-blue-50',

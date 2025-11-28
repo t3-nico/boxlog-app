@@ -39,9 +39,7 @@ export const SettingsCard = ({
           <div className="flex items-start justify-between">
             <div>
               {title ? <h3 className="text-foreground text-base font-medium">{title}</h3> : null}
-              {description ? (
-                <p className="text-muted-foreground mt-1 text-sm">{description}</p>
-              ) : null}
+              {description ? <p className="text-muted-foreground mt-1 text-sm">{description}</p> : null}
             </div>
 
             <div className="ml-4 flex flex-shrink-0 items-center gap-3">

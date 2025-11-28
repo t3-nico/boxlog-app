@@ -113,9 +113,7 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
                     {option.flag}
                   </span>
                   <div className="flex flex-col">
-                    <span className="text-foreground text-sm font-medium">
-                      {option.nativeName}
-                    </span>
+                    <span className="text-foreground text-sm font-medium">{option.nativeName}</span>
                     <span className="text-muted-foreground text-xs">{option.name}</span>
                   </div>
                 </div>

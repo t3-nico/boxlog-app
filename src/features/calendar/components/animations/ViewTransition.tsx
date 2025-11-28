@@ -386,11 +386,7 @@ interface TaskCreateAnimationProps {
 
 export const TaskCreateAnimation = ({ children, isNew = false }: TaskCreateAnimationProps) => {
   return (
-    <div
-      className={`${
-        isNew ? 'ring-primary/50 animate-pulse shadow-lg ring-2' : ''
-      } transition-all duration-300`}
-    >
+    <div className={`${isNew ? 'ring-primary/50 animate-pulse shadow-lg ring-2' : ''} transition-all duration-300`}>
       {children}
     </div>
   )

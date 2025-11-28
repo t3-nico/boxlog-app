@@ -350,9 +350,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
       {/* 空の状態 */}
       {rules.length === 0 && (
         <div className="border-border rounded-lg border-2 border-dashed px-4 py-8 text-center">
-          <p className="text-muted-foreground mb-4 text-sm">
-            No filter rules yet. Add your first rule to get started.
-          </p>
+          <p className="text-muted-foreground mb-4 text-sm">No filter rules yet. Add your first rule to get started.</p>
         </div>
       )}
 

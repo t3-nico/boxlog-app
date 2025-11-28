@@ -330,9 +330,7 @@ export function CalendarSettings() {
 
           {/* 営業時間プレビュー */}
           <div className="bg-muted rounded-lg p-4">
-            <p className="text-muted-foreground mb-2 text-sm">
-              {t('settings.calendar.businessHoursPreview')}
-            </p>
+            <p className="text-muted-foreground mb-2 text-sm">{t('settings.calendar.businessHoursPreview')}</p>
             <p className="font-medium">
               {formatHour(autoSave.values.businessHours.start, autoSave.values.timeFormat)} -{' '}
               {formatHour(autoSave.values.businessHours.end, autoSave.values.timeFormat)}

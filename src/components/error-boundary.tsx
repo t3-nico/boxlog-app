@@ -61,12 +61,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // デフォルトエラーUI
       return (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-6">
+        <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-6">
           <div className="text-center">
             <div className="text-destructive mb-4 text-6xl">⚠️</div>
-            <h2 className="text-destructive mb-2 text-3xl font-bold tracking-tight">
-              予期しないエラーが発生しました
-            </h2>
+            <h2 className="text-destructive mb-2 text-3xl font-bold tracking-tight">予期しないエラーが発生しました</h2>
             <p className="text-foreground mb-4">
               申し訳ございません。アプリケーションでエラーが発生しました。
               <br />
@@ -112,13 +110,9 @@ export function DetailedErrorBoundary({ children, componentName }: { children: R
       fallback={
         process.env.NODE_ENV === 'development' ? (
           <div className="border-border bg-muted rounded-lg border p-6">
-            <h3 className="text-foreground mb-2 text-2xl font-bold tracking-tight">
-              開発環境 - コンポーネントエラー
-            </h3>
+            <h3 className="text-foreground mb-2 text-2xl font-bold tracking-tight">開発環境 - コンポーネントエラー</h3>
             <p className="text-foreground mb-2">コンポーネント: {componentName || '不明'}</p>
-            <p className="text-muted-foreground text-sm">
-              詳細はブラウザのコンソールを確認してください。
-            </p>
+            <p className="text-muted-foreground text-sm">詳細はブラウザのコンソールを確認してください。</p>
           </div>
         ) : undefined
       }
@@ -154,9 +148,7 @@ export function FeatureErrorBoundary({
       fallback={
         fallback || (
           <div className="border-border bg-muted rounded border p-4">
-            <p className="text-foreground text-center">
-              {featureName}機能でエラーが発生しました
-            </p>
+            <p className="text-foreground text-center">{featureName}機能でエラーが発生しました</p>
             <button
               onClick={() => window.location.reload()}
               className="bg-primary text-primary-foreground hover:bg-primary/92 mx-auto mt-2 block rounded px-3 py-1 text-sm transition-colors"

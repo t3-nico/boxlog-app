@@ -60,7 +60,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
             {process.env.NODE_ENV === 'development' && (
               <details className="mb-6">
-                <summary className="text-muted-foreground hover:bg-foreground/8 cursor-pointer rounded px-1 -mx-1 text-sm transition-colors">
+                <summary className="text-muted-foreground hover:bg-foreground/8 -mx-1 cursor-pointer rounded px-1 text-sm transition-colors">
                   エラー詳細を表示
                 </summary>
                 <div className="bg-muted mt-3 rounded p-3">

@@ -69,8 +69,8 @@ const typography = {
 const colors = {
   background: 'bg-sidebar',
   text: 'text-sidebar-foreground',
-  hover: 'hover:bg-primary/8',           // M3: ホバー = 8%オーバーレイ
-  active: 'bg-primary/12 text-primary',  // M3: 選択 = 12%オーバーレイ
+  hover: 'hover:bg-primary/8', // M3: ホバー = 8%オーバーレイ
+  active: 'bg-primary/12 text-primary', // M3: 選択 = 12%オーバーレイ
 }
 
 // 禁止パターン（使用禁止）

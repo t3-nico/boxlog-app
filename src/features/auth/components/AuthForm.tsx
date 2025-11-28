@@ -137,7 +137,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           className={cn(
             'border-border flex w-full items-center justify-center gap-3 rounded-md border',
             'bg-card text-muted-foreground px-4 py-2 text-sm font-medium',
-            'shadow-sm hover:bg-foreground/8',
+            'hover:bg-foreground/8 shadow-sm',
             'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
             'disabled:cursor-not-allowed disabled:opacity-50'
           )}
@@ -170,7 +170,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           className={cn(
             'border-border flex w-full items-center justify-center gap-3 rounded-md border',
             'bg-foreground text-background px-4 py-2 text-sm font-medium',
-            'shadow-sm hover:bg-foreground/92',
+            'hover:bg-foreground/92 shadow-sm',
             'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
             'disabled:cursor-not-allowed disabled:opacity-50'
           )}
@@ -187,9 +187,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           <div className="border-border w-full border-t" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-card text-muted-foreground px-2">
-            Or continue with email
-          </span>
+          <span className="bg-card text-muted-foreground px-2">Or continue with email</span>
         </div>
       </div>
 

@@ -210,11 +210,7 @@ export const TagManagementModal = ({
         {/* Header */}
         <div className="border-border flex items-center justify-between border-b p-4">
           <h2 className="text-foreground text-lg font-semibold">Tag Management</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="hover:bg-foreground/8 rounded-lg p-1 transition-colors"
-          >
+          <button type="button" onClick={onClose} className="hover:bg-foreground/8 rounded-lg p-1 transition-colors">
             <X className="text-muted-foreground h-4 w-4" />
           </button>
         </div>
@@ -226,10 +222,7 @@ export const TagManagementModal = ({
 
             <div className="space-y-3">
               <div>
-                <label
-                  htmlFor="new-tag-name"
-                  className="text-muted-foreground mb-1 block text-xs font-medium"
-                >
+                <label htmlFor="new-tag-name" className="text-muted-foreground mb-1 block text-xs font-medium">
                   Name
                 </label>
                 <input
@@ -244,10 +237,7 @@ export const TagManagementModal = ({
               </div>
 
               <div>
-                <label
-                  htmlFor="new-tag-parent"
-                  className="text-muted-foreground mb-1 block text-xs font-medium"
-                >
+                <label htmlFor="new-tag-parent" className="text-muted-foreground mb-1 block text-xs font-medium">
                   Parent Tag (Optional)
                 </label>
                 <select
@@ -266,10 +256,7 @@ export const TagManagementModal = ({
               </div>
 
               <div>
-                <div
-                  className="text-muted-foreground mb-2 block text-xs font-medium"
-                  id="new-tag-color-label"
-                >
+                <div className="text-muted-foreground mb-2 block text-xs font-medium" id="new-tag-color-label">
                   Color
                 </div>
                 <div className="flex flex-wrap gap-2" role="group" aria-labelledby="new-tag-color-label">
@@ -313,10 +300,7 @@ export const TagManagementModal = ({
             ) : (
               <div className="max-h-64 space-y-2 overflow-y-auto">
                 {tags.map((tag) => (
-                  <div
-                    key={tag.id}
-                    className="border-border bg-muted flex items-center gap-3 rounded-lg border p-3"
-                  >
+                  <div key={tag.id} className="border-border bg-muted flex items-center gap-3 rounded-lg border p-3">
                     {editingTag === tag.id ? (
                       <>
                         {/* Edit Mode */}

@@ -66,11 +66,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
     if (sort.by !== column) {
       return <span className="text-muted-foreground">↕</span>
     }
-    return sort.order === 'asc' ? (
-      <span className="text-primary">↑</span>
-    ) : (
-      <span className="text-primary">↓</span>
-    )
+    return sort.order === 'asc' ? <span className="text-primary">↑</span> : <span className="text-primary">↓</span>
   }
 
   const groupedItems = useMemo(() => {
@@ -255,9 +251,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
 
                 {/* 自動削除警告 */}
                 {isExpired || isExpiringSoon ? (
-                  <span
-                    className={`font-medium ${isExpired ? 'text-destructive' : 'text-destructive/80'}`}
-                  >
+                  <span className={`font-medium ${isExpired ? 'text-destructive' : 'text-destructive/80'}`}>
                     {isExpired
                       ? t('trash.status.expired')
                       : t('trash.time.daysUntilDelete', { days: daysUntilDelete.toString() })}
@@ -269,10 +263,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
               {item.metadata?.tags && item.metadata.tags.length > 0 ? (
                 <div className="mt-2 flex flex-wrap gap-1">
                   {trashOperations.formatTags(item.metadata.tags).visible.map((tag) => (
-                    <span
-                      key={tag}
-                      className="bg-primary/10 text-primary inline-block rounded-sm px-2 py-1 text-sm"
-                    >
+                    <span key={tag} className="bg-primary/10 text-primary inline-block rounded-sm px-2 py-1 text-sm">
                       #{tag}
                     </span>
                   ))}

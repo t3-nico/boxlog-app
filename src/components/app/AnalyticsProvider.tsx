@@ -210,12 +210,12 @@ export function CookieConsentBanner({
     >
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
         <div className="flex-1">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {message}
             {privacyPolicyUrl ? (
               <>
                 {' '}
-                <a href={privacyPolicyUrl} className="text-primary underline hover:text-primary/80">
+                <a href={privacyPolicyUrl} className="text-primary hover:text-primary/80 underline">
                   詳細はこちら
                 </a>
               </>
@@ -231,7 +231,7 @@ export function CookieConsentBanner({
           </button>
           <button
             onClick={handleAccept}
-            className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground transition-colors hover:bg-primary/92"
+            className="bg-primary text-primary-foreground hover:bg-primary/92 rounded-md px-4 py-2 text-sm transition-colors"
           >
             {acceptText}
           </button>

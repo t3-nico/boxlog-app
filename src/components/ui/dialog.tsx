@@ -67,7 +67,7 @@ const DialogContent = ({
             data-slot="dialog-close"
             className={cn(
               'absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100',
-              'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-hidden',
+              'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
               'disabled:pointer-events-none',
               'data-[state=open]:bg-foreground/12',
               '[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4'
@@ -116,7 +116,7 @@ const DialogDescription = ({ className, ...props }: React.ComponentProps<typeof 
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn('text-sm text-muted-foreground', className)}
+      className={cn('text-muted-foreground text-sm', className)}
       {...props}
     />
   )
