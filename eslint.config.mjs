@@ -3,6 +3,9 @@
 
 import nextCoreWebVitals from 'eslint-config-next/core-web-vitals'
 
+// nextCoreWebVitalsからreact-hooksプラグインを取得
+const reactHooksPlugin = nextCoreWebVitals[0]?.plugins?.['react-hooks']
+
 const config = [
   // Ignore patterns
   {
@@ -12,20 +15,21 @@ const config = [
   // Next.js公式推奨設定（React, TypeScript, アクセシビリティ含む）
   ...nextCoreWebVitals,
 
-  // カスタムルール
+  // カスタムルール（react-hooksルールのオーバーライド）
   {
+    plugins: {
+      'react-hooks': reactHooksPlugin,
+    },
     rules: {
       // TypeScriptルール無効化（inline disableを使用）
       '@typescript-eslint/no-explicit-any': 'off',
       // eslint-plugin-react-hooks v7 の新しい厳格ルールを一時的に無効化
       // TODO: 将来的にこれらのルールに対応する (#XXX)
-      'react-hooks/set-state-in-effect': 'off',
-      'react-hooks/purity': 'off',
-      'react-hooks/refs': 'off',
-      'react-hooks/immutability': 'off',
-      'react-hooks/preserve-manual-memoization': 'off',
-      // React Compiler関連ルールを一時的に無効化
-      'react-compiler/react-compiler': 'off',
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/purity': 'warn',
+      'react-hooks/refs': 'warn',
+      'react-hooks/immutability': 'warn',
+      'react-hooks/preserve-manual-memoization': 'warn',
     },
   },
 
