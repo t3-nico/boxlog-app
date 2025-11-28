@@ -4,7 +4,7 @@
  * i18n関連のReactフック
  */
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 
 import type { Locale } from '@/types/i18n'
 import type { TranslatedString } from '@/types/i18n-branded'
@@ -13,20 +13,30 @@ import { markAsTranslated } from '@/types/i18n-branded'
 import { createTranslation, getDictionary, type Dictionary } from './index'
 import { getDirection, isRTL } from './rtl'
 
-// ブラウザの現在の言語を取得するフック
+// ブラウザの現在の言語を取得するフック（useSyncExternalStore使用）
 export const useCurrentLocale = (): Locale => {
-  const [locale, setLocale] = useState<Locale>('en')
-
-  useEffect(() => {
-    // クライアントサイドでのみ実行
-    if (typeof window !== 'undefined') {
-      const htmlElement = document.documentElement
-      const currentLang = htmlElement.lang as Locale
-      setLocale(currentLang || 'en')
-    }
+  const subscribe = useCallback((callback: () => void) => {
+    // MutationObserverでhtml要素のlang属性の変更を監視
+    if (typeof window === 'undefined') return () => {}
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.attributeName === 'lang') {
+          callback()
+        }
+      }
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] })
+    return () => observer.disconnect()
   }, [])
 
-  return locale
+  const getSnapshot = useCallback((): Locale => {
+    if (typeof window === 'undefined') return 'en'
+    return (document.documentElement.lang as Locale) || 'en'
+  }, [])
+
+  const getServerSnapshot = useCallback((): Locale => 'en', [])
+
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 }
 
 // RTL状態を取得するフック
@@ -127,19 +137,21 @@ export const useLocaleChange = (callback: (locale: Locale) => void) => {
 // メディアクエリと組み合わせた言語対応フック
 export const useResponsiveRTL = () => {
   const { isRTL: isRtl, direction, locale } = useRTL()
-  const [isMobile, setIsMobile] = useState(false)
 
-  useEffect(() => {
+  // useSyncExternalStoreベースのメディアクエリ監視
+  const subscribe = useCallback((callback: () => void) => {
+    if (typeof window === 'undefined') return () => {}
     const mediaQuery = window.matchMedia('(max-width: 768px)')
-    setIsMobile(mediaQuery.matches)
-
-    const handleResize = (e: MediaQueryListEvent) => {
-      setIsMobile(e.matches)
-    }
-
-    mediaQuery.addEventListener('change', handleResize)
-    return () => mediaQuery.removeEventListener('change', handleResize)
+    mediaQuery.addEventListener('change', callback)
+    return () => mediaQuery.removeEventListener('change', callback)
   }, [])
+
+  const getSnapshot = useCallback(() => {
+    if (typeof window === 'undefined') return false
+    return window.matchMedia('(max-width: 768px)').matches
+  }, [])
+
+  const isMobile = useSyncExternalStore(subscribe, getSnapshot, () => false)
 
   return {
     isRTL: isRtl,
@@ -229,6 +241,7 @@ export const useI18n = (providedLocale?: 'en' | 'ja') => {
     getDictionary(locale as 'en' | 'ja').then(setDictionary)
   }, [locale])
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- 翻訳関数の安定性のため意図的にメモ化
   const t = useMemo(() => {
     if (!dictionary) {
       // 辞書ロード中はキーをそのまま返す

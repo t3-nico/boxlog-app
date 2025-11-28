@@ -610,7 +610,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       // })
       console.log('TODO: Sessions統合後に実装', { startTime, endTime, selection })
     },
-    [viewType]
+    [createPlan, openInspector]
   )
 
   return (
