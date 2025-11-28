@@ -32,19 +32,19 @@ const TagFilterItem = ({ tag, level, isSelected, onToggle }: TagFilterItemProps)
   return (
     <div>
       <label
-        className={`flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-gray-50 dark:hover:bg-gray-700`}
+        className={`flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-foreground/8`}
         style={{ paddingLeft: `${paddingLeft}px` }}
       >
         <input
           type="checkbox"
           checked={isSelected}
           onChange={handleToggle}
-          className="border-border rounded text-blue-600 focus:ring-blue-500"
+          className="border-border rounded text-primary focus:ring-primary"
         />
         <TagIcon className="h-4 w-4 flex-shrink-0" style={{ color: tag.color }} />
         <span className="flex-1 truncate">{tag.name}</span>
         {tag.path && level > 0 ? (
-          <span className="truncate text-xs text-gray-500 dark:text-gray-400">{tag.path}</span>
+          <span className="truncate text-xs text-muted-foreground">{tag.path}</span>
         ) : null}
       </label>
 
@@ -114,13 +114,13 @@ export const TagFilter = ({
         className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors ${
           hasTagFilters
             ? 'border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-600 dark:bg-blue-900/20 dark:text-blue-300'
-            : 'border-border hover:border-border bg-white text-gray-700 dark:bg-gray-900 dark:text-gray-300'
+            : 'border-border hover:border-border bg-card text-foreground'
         }`}
       >
         <FunnelIcon className="h-4 w-4" />
         {showTitle ? <span className={compact ? 'hidden sm:inline' : ''}>Tags</span> : null}
         {showSelectedCount && selectedTagIds.length > 0 ? (
-          <span className="rounded bg-gray-200 px-2 py-1 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+          <span className="rounded bg-muted px-2 py-1 text-xs text-muted-foreground">
             {selectedTagIds.length}
           </span>
         ) : null}
@@ -167,7 +167,7 @@ export const TagFilter = ({
           <div className="border-border bg-popover text-popover-foreground absolute z-50 mt-1 max-h-96 w-80 overflow-hidden rounded-md border shadow-lg">
             {/* ヘッダー */}
             <div className="border-border flex items-center justify-between border-b p-3">
-              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Filter by Tags</h3>
+              <h3 className="text-sm font-medium text-foreground">Filter by Tags</h3>
               {hasTagFilters === true && (
                 <button
                   type="button"
@@ -183,7 +183,7 @@ export const TagFilter = ({
             <div className="max-h-80 overflow-y-auto">
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-blue-600"></div>
+                  <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-primary"></div>
                 </div>
               ) : topLevelTags.length > 0 ? (
                 <div className="py-2">
@@ -198,7 +198,7 @@ export const TagFilter = ({
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-gray-500 dark:text-gray-400">
+                <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
                   <TagIcon className="mb-2 h-8 w-8" />
                   <p className="text-sm">No tags available</p>
                 </div>
@@ -207,8 +207,8 @@ export const TagFilter = ({
 
             {/* フッター */}
             {hasTagFilters === true && (
-              <div className="border-border border-t bg-gray-50 p-3 dark:bg-gray-800">
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+              <div className="border-border border-t bg-muted p-3">
+                <p className="text-xs text-muted-foreground">
                   {selectedTagIds.length} tag{selectedTagIds.length !== 1 ? 's' : ''} selected
                 </p>
               </div>
@@ -241,8 +241,8 @@ export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
       onClick={handleToggle}
       className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
         isSelected
-          ? 'border border-blue-300 bg-blue-100 text-blue-700 dark:border-blue-600 dark:bg-blue-900/30 dark:text-blue-300'
-          : 'border-border border bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+          ? 'border border-primary/30 bg-primary/10 text-primary'
+          : 'border-border border bg-muted text-foreground hover:bg-foreground/8'
       }`}
     >
       <TagIcon className="h-4 w-4" style={{ color: tag.color }} />
