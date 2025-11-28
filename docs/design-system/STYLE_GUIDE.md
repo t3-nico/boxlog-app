@@ -389,7 +389,7 @@ xl: 1280px  // デスクトップ
 
 ## 🔗 関連ドキュメント
 
-- **実装詳細**: `/src/config/ui/theme.ts`
+- **セマンティックトークン定義**: `/src/styles/globals.css`
 - **コンポーネント例**: `/src/components/CLAUDE.md`
 - **テーマ移行**: `docs/design-system/THEME_MIGRATION.md`
 - **統合履歴**: `docs/design-system/INTEGRATION_LOG.md`

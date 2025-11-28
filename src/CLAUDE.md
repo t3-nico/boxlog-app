@@ -37,23 +37,24 @@ import { colors } from '@/config/theme'
 - `border-border` / `border-input` - ボーダー
 - `bg-destructive` / `text-destructive-foreground` - 削除ボタン等
 
-**スペーシング・タイポグラフィ・角丸は theme.ts のヘルパーを使用：**
+**スペーシング・タイポグラフィ・角丸も globals.css のユーティリティクラスを使用：**
 
 ```tsx
-import { typography, spacing, rounded } from '@/config/ui/theme'
+// ✅ タイポグラフィ（globals.css で定義されたユーティリティクラス）
+<h1 className="text-heading-h1">  // 48px, bold
+<h2 className="text-heading-h2">  // 32px, bold
+<p className="text-body-base">    // 16px, normal
 
-// ✅ タイポグラフィ
-<h1 className={typography.heading.h1}>
-<p className={typography.body.base}>
+// ✅ スペーシング（Tailwindクラス、8pxグリッド準拠）
+<div className="p-4">   // 16px padding
+<div className="gap-2"> // 8px gap
 
-// ✅ スペーシング（値が必要な場合）
-<div style={{ margin: spacing.md }}>
-
-// ✅ 角丸
-<button className={rounded.component.button.md}>
+// ✅ 角丸（globals.css で定義）
+<button className="rounded-md">  // 8px
+<div className="rounded-xl">     // 16px
 ```
 
-**重要：カラー以外（typography, spacing, rounded）は `/src/config/ui/theme.ts` を参照**
+**重要：すべてのスタイリングは `/src/styles/globals.css` のセマンティックトークンを参照**
 
 #### 1.1 スペーシング：8pxグリッドシステム（必須遵守）
 
