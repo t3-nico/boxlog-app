@@ -26,8 +26,7 @@ export const usePlanOperations = () => {
 
   // プラン復元ハンドラー
   const handlePlanRestore = useCallback(async (_plan: CalendarPlan) => {
-    console.log('TODO: Sessions統合後に実装')
-    // planにはソフトデリート機能がないため、復元は未実装
+    // noop - planにはソフトデリート機能がないため、復元は未実装
   }, [])
 
   // プラン更新ハンドラー（ドラッグ&ドロップ用）
@@ -85,7 +84,7 @@ export const usePlanOperations = () => {
 
   // 30日経過したプランを自動削除
   useEffect(() => {
-    // TODO(#621): Events削除後、plans/Sessions統合後に再実装
+    // noop - Plans統合後に実装予定
   }, [])
 
   return {

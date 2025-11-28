@@ -2,7 +2,7 @@
 
 import React, { useCallback, useState } from 'react'
 
-import type { DragEndEvent, DragMoveEvent, DragStartEvent } from '@dnd-kit/core'
+import type { DragEndEvent, DragMoveEvent, DragStartEvent, Over } from '@dnd-kit/core'
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { fromZonedTime } from 'date-fns-tz'
@@ -101,7 +101,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
    * planドロップの共通処理
    */
   const handleplanDrop = useCallback(
-    (planId: string, over: any) => {
+    (planId: string, over: Over) => {
       // ドロップ先のデータ
       const dropData = over.data?.current
       if (!dropData || !dropData.date) {

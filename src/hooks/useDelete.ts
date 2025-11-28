@@ -1,7 +1,6 @@
 // TODO(#621): Events削除後、plans/Sessionsに移行予定
 'use client'
 
-// import { Event } from '@/features/events/types/events'
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
 import { TrashItemType } from '@/features/trash/types/trash'
 import { SmartFolder } from '@/types/smart-folders'

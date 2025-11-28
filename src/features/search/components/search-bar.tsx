@@ -11,7 +11,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 // import { useEventStore } from '@/features/events'
 import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
-// import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { cn } from '@/lib/utils'
 
 import { useSearchHistory } from '../hooks/use-search'

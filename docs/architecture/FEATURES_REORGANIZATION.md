@@ -37,32 +37,29 @@ src/features/
 
 ```
 ┌─────────────────────────────────────────┐
-│         plan（親：作業単位）            │
+│           Plan（作業単位）              │
 │  - ID, タイトル, 説明                    │
 │  - ステータス, 優先度                    │
-│  - 予定時間 vs 実績時間（自動集計）       │
+│  - 開始・終了時刻                        │
 │  - タグ、メタデータ                      │
 └──────────────┬──────────────────────────┘
                │
-         ┌─────┴─────┐
-         │  Sessions  │
-         │ （子：作業時間）│
-         └─────┬─────┘
-               │
-    ┌──────────┼──────────┐
-    │          │          │
-┌───▼───┐  ┌──▼───┐  ┌──▼───┐
-│SES-001│  │SES-002│  │SES-003│
-│完了   │  │完了   │  │予定   │
-└───────┘  └──────┘  └──────┘
+      ┌────────┼────────┐
+      │        │        │
+  ┌───▼───┐┌──▼────┐┌──▼────┐
+  │Calendar││ Board  ││ Table │
+  │       ││        ││       │
+  │時間軸  ││ステータス││一覧   │
+  │で表示  ││別で表示││で表示  │
+  └───────┘└───────┘└───────┘
 ```
 
 ### プレゼンテーションレイヤー（ビュー）
 
 ```
 ┌─────────────────────────────────────────┐
-│            Sessions Data                │
-│  (planとの関連情報を含む)              │
+│              Plans Data                 │
+│  (タグ情報を含む)                       │
 └──────────────┬──────────────────────────┘
                │
       ┌────────┼────────┐
@@ -81,188 +78,97 @@ src/features/
 
 ### Phase 1: データ統合（優先度：高）
 
-#### 1. **`tasks` → `sessions`** への移行
+#### **`tasks` / `events` → `plans`** への移行
 
-**現状の`tasks`**:
+**現状**: tasks, events は削除済み
+
+**移行後の`plans`**:
 
 ```typescript
-// src/features/tasks/stores/useTaskStore.ts
-Task {
+// src/features/plans/types/plan.ts
+Plan {
   id: string
+  user_id: string
+  plan_number: string      // 自動採番
   title: string
-  planned_start: Date
-  planned_duration: number
-  status: TaskStatus
-  priority: TaskPriority
   description?: string
-  tags?: string[]
-}
-```
-
-**移行後の`sessions`**:
-
-```typescript
-// src/features/plans/stores/useSessionStore.ts
-Session {
-  id: string
-  plan_id: string        // ← planへの参照（必須）
-  session_number: string   // 自動採番
-  title: string
-  planned_start?: string
-  planned_end?: string
-  actual_start?: string
-  actual_end?: string
-  status: SessionStatus
-  duration_minutes?: number
-  notes?: string
+  status: PlanStatus       // backlog|ready|active|wait|done|cancel
+  priority?: PlanPriority  // urgent|high|normal|low
+  due_date?: string
+  start_time?: string      // 開始時刻
+  end_time?: string        // 終了時刻
+  recurrence_type?: RecurrenceType
   tags: Tag[]              // タグ関連付け
+  created_at: string
+  updated_at: string
 }
 ```
 
 **移行ステップ**:
 
-1. ✅ `useSessionStore`実装済み（Phase 3完了）
-2. ✅ `useSessions`フック実装済み（Phase 3完了）
-3. ⏳ データマイグレーション関数作成
-   ```typescript
-   // src/features/plans/utils/migrateTasksToSessions.ts
-   function migrateTaskToSession(task: Task): Session {
-     return {
-       id: generateUUID(),
-       plan_id: createDefaultplan(task).id, // 既存taskは新規planを自動作成
-       session_number: generateSessionNumber(),
-       title: task.title,
-       planned_start: task.planned_start.toISOString(),
-       planned_end: addMinutes(task.planned_start, task.planned_duration).toISOString(),
-       status: mapTaskStatusToSessionStatus(task.status),
-       // ...
-     }
-   }
-   ```
-4. ⏳ 段階的移行（既存データを壊さない）
-   - Week 1: SessionStore並行稼働（tasksとsessionsの両方を保持）
-   - Week 2: ビューでsessions優先表示（tasksはフォールバック）
-   - Week 3: tasksの新規作成を停止（sessionsのみ）
-   - Week 4: tasksの完全削除
-
-#### 2. **`events` と `sessions`** の棲み分け
-
-| 項目               | Events             | Sessions             |
-| ------------------ | ------------------ | -------------------- |
-| **用途**           | カレンダーイベント | 作業セッション       |
-| **例**             | 会議、締切、予定   | 実装作業、レビュー   |
-| **親エンティティ** | なし（単独）       | plan（必須）         |
-| **時間管理**       | 開始・終了時刻     | 実績時間トラッキング |
-| **繰り返し**       | ✅ サポート        | ❌ サポートなし      |
-| **チェックリスト** | ✅ サポート        | ❌ サポートなし      |
-
-**統合ポイント**:
-
-- カレンダービューでは**両方を表示**
-- EventsとSessionsは別々のデータソースだが、UIでは統合表示
-- Session作成時にEventを自動作成するオプション（将来拡張）
+1. ✅ `usePlanStore`実装済み（Phase 3完了）
+2. ✅ `usePlans`フック実装済み（Phase 3完了）
+3. ✅ tasks / events 削除済み
+4. ⏳ ビュー統合（Calendar/Board/TableでPlansを表示）
 
 ---
 
 ### Phase 2: ビュー統合（優先度：中）
 
-#### 1. **Calendar** - Events + Sessions統合表示
+#### 1. **Calendar** - Plans表示
 
 ```typescript
 // src/features/calendar/hooks/useCalendarData.ts
 export function useCalendarData() {
-  const { events } = useEventStore()
-  const { sessions } = useSessionStore()
+  const { data: plans } = usePlans()
 
-  // 統合して表示
   const calendarItems = useMemo(() => {
-    const eventItems = events.map((e) => ({
-      type: 'event' as const,
-      id: e.id,
-      title: e.title,
-      start: e.startDate,
-      end: e.endDate,
-      color: e.color,
-      source: e,
-    }))
-
-    const sessionItems = sessions.map((s) => ({
-      type: 'session' as const,
-      id: s.id,
-      title: s.title,
-      start: s.actual_start || s.planned_start,
-      end: s.actual_end || s.planned_end,
-      color: getSessionColor(s.status),
-      source: s,
-      planInfo: getplanById(s.plan_id), // plan情報も含める
-    }))
-
-    return [...eventItems, ...sessionItems]
-  }, [events, sessions])
+    return plans?.map((plan) => ({
+      id: plan.id,
+      title: plan.title,
+      start: plan.start_time,
+      end: plan.end_time,
+      color: getPlanColor(plan.status),
+      source: plan,
+    })) ?? []
+  }, [plans])
 
   return { calendarItems }
 }
 ```
 
-#### 2. **Board** - plan単位で表示（Session情報含む）
+#### 2. **Board** - Plan単位で表示
 
 ```typescript
-// src/features/board/components/planCard.tsx
-export function planCard({ plan }: { plan: plan }) {
-  const { sessions } = useSessions()
-  const planSessions = sessions.filter(s => s.plan_id === plan.id)
-
-  const completedSessions = planSessions.filter(s => s.status === 'completed')
-  const totalMinutes = completedSessions.reduce((sum, s) => sum + (s.duration_minutes || 0), 0)
-
+// src/features/board/components/PlanCard.tsx
+export function PlanCard({ plan }: { plan: Plan }) {
   return (
     <Card>
       <h3>{plan.title}</h3>
       <Badge>{plan.status}</Badge>
-
-      {/* 進捗表示 */}
-      <Progress
-        value={plan.actual_hours}
-        max={plan.planned_hours}
-        label={`${plan.actual_hours}h / ${plan.planned_hours}h`}
-      />
-
-      {/* Session情報 */}
-      <div>
-        <p>📋 {planSessions.length} sessions</p>
-        <p>✓ {completedSessions.length} 完了</p>
-        <p>⏳ {planSessions.length - completedSessions.length} 予定</p>
-      </div>
-
-      {/* ミニカレンダー: 今週のSession */}
-      <SessionTimeline sessions={planSessions} />
+      <p>{plan.description}</p>
+      {plan.due_date && <p>期限: {plan.due_date}</p>}
     </Card>
   )
 }
 ```
 
-#### 3. **Table** - Session一覧表示（plan情報含む）
+#### 3. **Table** - Plan一覧表示
 
 ```typescript
-// src/features/table/components/SessionTable.tsx
-export function SessionTable() {
-  const { sessions } = useSessions()
-  const { getplanById } = useplans()
+// src/features/table/components/PlanTable.tsx
+export function PlanTable() {
+  const { data: plans } = usePlans()
 
   const columns = [
-    { key: 'session_number', label: 'Session No.' },
-    { key: 'plan_number', label: 'plan',
-      render: (s) => getplanById(s.plan_id)?.plan_number
-    },
+    { key: 'plan_number', label: 'Plan No.' },
     { key: 'title', label: 'Title' },
-    { key: 'actual_start', label: 'Start' },
-    { key: 'duration_minutes', label: 'Duration',
-      render: (s) => s.duration_minutes ? `${s.duration_minutes / 60}h` : '-'
-    },
     { key: 'status', label: 'Status' },
+    { key: 'priority', label: 'Priority' },
+    { key: 'due_date', label: 'Due Date' },
   ]
 
-  return <DataTable data={sessions} columns={columns} />
+  return <DataTable data={plans} columns={columns} />
 }
 ```
 
@@ -272,45 +178,38 @@ export function SessionTable() {
 
 ```
 src/features/
-├── plans/           # コアドメイン
+├── plans/             # コアドメイン
 │   ├── stores/
-│   │   ├── useplanStore.ts      ✅ 実装済み
-│   │   └── useSessionStore.ts     ✅ 実装済み
+│   │   └── usePlanStore.ts        ✅ 実装済み
 │   ├── hooks/
-│   │   ├── useplans.ts          ✅ 実装済み
-│   │   ├── useSessions.ts         ✅ 実装済み
-│   │   └── useplanTags.ts       ✅ 実装済み
+│   │   ├── usePlans.ts            ✅ 実装済み
+│   │   └── usePlanTags.ts         ✅ 実装済み
 │   ├── types/
-│   │   ├── plan.ts              ✅ 実装済み
-│   │   └── session.ts             ✅ 実装済み
-│   ├── utils/
-│   │   └── migrateTasksToSessions.ts  ⏳ TODO
-│   └── components/                ⏳ Phase 4で実装
-│       ├── planForm.tsx
-│       ├── SessionForm.tsx
-│       └── planDetail.tsx
+│   │   └── plan.ts                ✅ 実装済み
+│   └── components/                ✅ 実装済み
+│       ├── PlanForm.tsx
+│       ├── PlanInspector.tsx
+│       └── PlanCard.tsx
 │
-├── calendar/          # ビュー（Events + Sessions統合表示）
+├── calendar/          # ビュー（Plans表示）
 │   ├── hooks/
-│   │   └── useCalendarData.ts     🔄 修正必要（Sessions統合）
+│   │   └── useCalendarData.ts     🔄 修正必要（Plans統合）
 │   └── components/
 │       └── CalendarView.tsx       🔄 修正必要
 │
-├── board/             # ビュー（plan単位表示）
+├── board/             # ビュー（Plan単位表示）
 │   ├── stores/
-│   │   └── useKanbanStore.ts      🔄 修正必要（planベースに）
+│   │   └── useKanbanStore.ts      🔄 修正必要（Planベースに）
 │   └── components/
-│       └── planCard.tsx         🔄 修正必要
+│       └── PlanCard.tsx           🔄 修正必要
 │
-├── table/             # ビュー（Session一覧表示）
+├── table/             # ビュー（Plan一覧表示）
 │   └── components/
-│       └── SessionTable.tsx       🔄 修正必要
+│       └── PlanTable.tsx          🔄 修正必要
 │
-├── events/            # カレンダーイベント専用
-│   └── ...                        ✅ そのまま維持
+├── events/            # 🗑️ 削除済み
 │
-└── tasks/             # ⚠️ 削除予定
-    └── ...                        🗑️ Phase 1完了後に削除
+└── tasks/             # 🗑️ 削除済み
 ```
 
 ---
@@ -319,44 +218,41 @@ src/features/
 
 ### 優先度：高（Phase 4）
 
-- [ ] データマイグレーション関数実装
-  - `migrateTasksToSessions.ts`
-  - LocalStorage → Supabase移行ツール
 - [ ] Calendarビュー統合
-  - `useCalendarData`にSessions追加
-  - EventとSessionの見分け方（色・アイコン）
+  - `useCalendarData`でPlansを取得・表示
+  - ステータス別の色分け
 - [ ] Boardビュー統合
-  - planベースのカード表示
-  - Session進捗情報の表示
+  - Planベースのカード表示
+  - ステータス別のカンバン表示
 
 ### 優先度：中（Phase 5）
 
 - [ ] Tableビュー統合
-  - Session一覧表示
-  - plan情報との紐付け
-- [ ] UIコンポーネント実装
-  - planForm, SessionForm
-  - planDetail（Session一覧含む）
+  - Plan一覧表示
+  - フィルター・ソート機能
+- [ ] Inspector統合
+  - PlanInspectorの完成
+  - 全ビューからのInspector呼び出し
 
 ### 優先度：低（Phase 6以降）
 
 - [ ] 高度な機能
-  - Session → Event自動変換
   - ガントチャート表示
   - 時間分析・レポート
+  - 繰り返しPlan
 
 ---
 
 ## 📊 移行スケジュール
 
-| フェーズ | 期間     | 内容                               | 状態      |
-| -------- | -------- | ---------------------------------- | --------- |
-| Phase 1  | Week 1   | Database設計・Migration            | ✅ 完了   |
-| Phase 2  | Week 2   | tRPC API + Zod                     | ⏳ 進行中 |
-| Phase 3  | Week 3   | Zustand Store + Hooks              | ✅ 完了   |
-| Phase 4  | Week 4-5 | データマイグレーション             | ⏳ TODO   |
-| Phase 5  | Week 6-7 | ビュー統合（Calendar/Board/Table） | ⏳ TODO   |
-| Phase 6  | Week 8+  | 高度な機能・最適化                 | ⏳ TODO   |
+| フェーズ | 内容                               | 状態      |
+| -------- | ---------------------------------- | --------- |
+| Phase 1  | Database設計・Migration            | ✅ 完了   |
+| Phase 2  | tRPC API + Zod                     | ✅ 完了   |
+| Phase 3  | Zustand Store + Hooks              | ✅ 完了   |
+| Phase 4  | ビュー統合（Calendar/Board/Table） | ⏳ TODO   |
+| Phase 5  | Inspector統合・UI完成              | ⏳ TODO   |
+| Phase 6  | 高度な機能・最適化                 | ⏳ TODO   |
 
 ---
 

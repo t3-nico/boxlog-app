@@ -88,10 +88,8 @@ api.sessions.endSession // セッション終了
 
 **Inspector の扱い:**
 
-- ディレクトリ構造を `.gitkeep` で維持
-- 全てのインポートをコメントアウト（`TODO(#621)`）
-- CLAUDE.md ドキュメントを保持
-- 将来的に plan/Session ベースで再実装予定
+- PlanInspector として実装済み
+- 全ビューからPlanの詳細表示・編集が可能
 
 ### tRPC統合（完了）
 

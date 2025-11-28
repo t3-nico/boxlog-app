@@ -28,7 +28,7 @@ interface PlanCreatePopoverProps {
 }
 
 export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopoverProps) {
-  const titleInputRef = useRef<HTMLInputElement>(null)
+  const titleInputRef = useRef<HTMLInputElement | null>(null)
 
   const [isOpen, setIsOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -157,7 +157,6 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopov
                           field.ref(e)
                           // Merge refs for focus management
                           if (titleInputRef.current !== e) {
-                            // @ts-expect-error - Ref assignment is needed for focus management
                             titleInputRef.current = e
                           }
                         }}
