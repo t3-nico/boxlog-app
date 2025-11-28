@@ -136,9 +136,9 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           disabled={isLoading}
           className={cn(
             'border-border flex w-full items-center justify-center gap-3 rounded-md border',
-            'bg-white px-4 py-2 text-sm font-medium text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400',
-            'shadow-sm hover:bg-neutral-50 dark:hover:bg-neutral-800',
-            'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none',
+            'bg-card text-muted-foreground px-4 py-2 text-sm font-medium',
+            'shadow-sm hover:bg-foreground/8',
+            'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
             'disabled:cursor-not-allowed disabled:opacity-50'
           )}
         >
@@ -169,9 +169,9 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           disabled={isLoading}
           className={cn(
             'border-border flex w-full items-center justify-center gap-3 rounded-md border',
-            'bg-neutral-950 px-4 py-2 text-sm font-medium text-white',
-            'shadow-sm hover:bg-gray-900',
-            'focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none',
+            'bg-foreground text-background px-4 py-2 text-sm font-medium',
+            'shadow-sm hover:bg-foreground/92',
+            'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
             'disabled:cursor-not-allowed disabled:opacity-50'
           )}
         >
@@ -187,7 +187,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           <div className="border-border w-full border-t" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-2 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400">
+          <span className="bg-card text-muted-foreground px-2">
             Or continue with email
           </span>
         </div>
@@ -196,7 +196,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
       {/* Email Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-neutral-600 dark:text-neutral-400">
+          <label htmlFor="email" className="text-muted-foreground block text-sm font-medium">
             Email address
           </label>
           <input
@@ -210,7 +210,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-neutral-600 dark:text-neutral-400">
+          <label htmlFor="password" className="text-muted-foreground block text-sm font-medium">
             Password
           </label>
           <input
