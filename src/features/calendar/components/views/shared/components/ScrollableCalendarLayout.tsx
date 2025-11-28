@@ -355,6 +355,22 @@ export const ScrollableCalendarLayout = ({
           {/* 現在時刻線 - 今日の列のみに表示 */}
           {shouldShowCurrentTimeLine && todayColumnPosition ? (
             <>
+              {/* 点 - 今日の列の左端 */}
+              <div
+                className={cn(
+                  'border-background pointer-events-none absolute z-40 h-2.5 w-2.5 rounded-full border bg-blue-600 shadow-sm dark:bg-blue-500'
+                )}
+                style={{
+                  top: `${currentTimePosition - 5}px`,
+                  left:
+                    typeof todayColumnPosition.left === 'number'
+                      ? todayColumnPosition.left === 0
+                        ? '-5px'
+                        : `${todayColumnPosition.left - 5}px`
+                      : todayColumnPosition.left,
+                }}
+              />
+
               {/* 横線 - 今日の列のみ */}
               <div
                 className={cn('pointer-events-none absolute z-40 h-[2px] bg-blue-600 shadow-sm dark:bg-blue-500')}
@@ -362,17 +378,6 @@ export const ScrollableCalendarLayout = ({
                   top: `${currentTimePosition}px`,
                   left: todayColumnPosition.left,
                   width: todayColumnPosition.width,
-                }}
-              />
-
-              {/* 点 - 今日の列の左端 */}
-              <div
-                className={cn(
-                  'border-background pointer-events-none absolute z-40 h-2 w-2 rounded-full border bg-blue-600 shadow-md dark:bg-blue-500'
-                )}
-                style={{
-                  top: `${currentTimePosition - 4}px`,
-                  left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
                 }}
               />
             </>

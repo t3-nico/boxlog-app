@@ -35,20 +35,11 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
-    const hasToday = displayDates.some((date) => {
+    return displayDates.some((date) => {
       const d = new Date(date)
       d.setHours(0, 0, 0, 0)
       return d.getTime() === today.getTime()
     })
-
-    console.log('🔧 CurrentTimeLine shouldShow:', {
-      viewMode,
-      hasToday,
-      displayDatesCount: displayDates.length,
-      today: today.toDateString(),
-    })
-
-    return hasToday
   }, [displayDates, viewMode])
 
   // 今日の列位置を計算（複数日表示の場合）
@@ -80,16 +71,6 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
     const columnWidth = availableWidth / displayDates.length
     const left = timeColumnWidth + todayIndex * columnWidth
 
-    console.log('🔧 CurrentTimeLine 列計算:', {
-      containerWidth,
-      timeColumnWidth,
-      availableWidth,
-      displayDatesLength: displayDates.length,
-      todayIndex,
-      columnWidth,
-      left,
-    })
-
     return {
       left,
       width: columnWidth,
@@ -112,34 +93,12 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
         zIndex: Z_INDEX.CURRENT_TIME,
       }}
     >
-      {/* 時間列のドット */}
-      {showDot != null && (
-        <div
-          className="border-background absolute rounded-full border-2 bg-red-500"
-          style={{
-            left: `-6px`,
-            top: `-4px`,
-            width: '8px',
-            height: '8px',
-          }}
-        />
-      )}
-
-      {/* 時刻線 */}
+      {/* 時刻ラベル - 左端（時刻列内）に配置 */}
       <div
-        className="h-full w-full bg-red-500 shadow-lg"
+        className="absolute rounded-md bg-blue-600 px-2 py-0.5 text-xs font-medium whitespace-nowrap text-white shadow-sm dark:bg-blue-500"
         style={{
-          background: 'linear-gradient(90deg, rgba(239, 68, 68, 0.9) 0%, rgba(239, 68, 68, 0.7) 100%)',
-          boxShadow: '0 1px 3px rgba(239, 68, 68, 0.5)',
-        }}
-      />
-
-      {/* 現在時刻ラベル */}
-      <div
-        className="absolute rounded bg-white px-1 text-xs font-medium whitespace-nowrap text-red-600 dark:bg-gray-900 dark:text-red-400"
-        style={{
-          left: '4px',
-          top: '-12px',
+          left: `-${timeColumnWidth - 8}px`,
+          top: '-11px',
         }}
       >
         {currentTime.toLocaleTimeString('ja-JP', {
@@ -148,6 +107,28 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
           hour12: false,
         })}
       </div>
+
+      {/* ドット */}
+      {showDot != null && (
+        <div
+          className="border-background absolute rounded-full border-2 bg-blue-600 shadow-sm dark:bg-blue-500"
+          style={{
+            left: `-5px`,
+            top: `-4px`,
+            width: '10px',
+            height: '10px',
+          }}
+        />
+      )}
+
+      {/* 時刻線 */}
+      <div
+        className="h-full w-full bg-blue-600 shadow-sm dark:bg-blue-500"
+        style={{
+          background: 'linear-gradient(90deg, rgba(37, 99, 235, 0.9) 0%, rgba(37, 99, 235, 0.7) 100%)',
+          boxShadow: '0 1px 2px rgba(37, 99, 235, 0.3)',
+        }}
+      />
     </div>
   )
 })
@@ -176,7 +157,7 @@ export const CurrentTimeLineForColumn = memo<{
       {/* ドット（列の左端） */}
       {showDot != null && (
         <div
-          className="border-background absolute rounded-full border-2 bg-red-500"
+          className="border-background absolute rounded-full border-2 bg-blue-600 shadow-sm dark:bg-blue-500"
           style={{
             left: `-4px`,
             top: `-4px`,
@@ -187,7 +168,7 @@ export const CurrentTimeLineForColumn = memo<{
       )}
 
       {/* 時刻線 */}
-      <div className="h-0.5 w-full bg-red-500" />
+      <div className="h-0.5 w-full bg-blue-600 shadow-sm dark:bg-blue-500" />
     </div>
   )
 })

@@ -13,7 +13,7 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants'
-import type { CalendarPlan, PlanCardProps } from '../../types/plan.types'
+import type { PlanCardProps } from '../../types/plan.types'
 
 import { PlanCardContent } from './PlanCardContent'
 
@@ -206,13 +206,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       aria-pressed={isSelected}
     >
       <PlanCardContent
-        event={
-          {
-            ...plan,
-            start: plan.startDate || new Date(),
-            end: plan.endDate || new Date(),
-          } as CalendarPlan
-        }
+        plan={plan}
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}
