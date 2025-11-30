@@ -315,7 +315,7 @@ const getStoredContrastTheme = (): string => {
 }
 
 export function useHighContrast() {
-  const { t } = useI18n()
+  useI18n()
   // 遅延初期化でlocalStorageから読み込み
   const [isHighContrastEnabled, setIsHighContrastEnabled] = useState(getStoredHighContrast)
   const [currentTheme, setCurrentTheme] = useState<string>(getStoredContrastTheme)

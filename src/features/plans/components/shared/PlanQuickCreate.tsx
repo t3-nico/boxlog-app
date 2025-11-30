@@ -88,20 +88,6 @@ export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCre
     }
   }, [isCreating])
 
-  // 作成キャンセル
-  const handleCancel = useCallback(() => {
-    setTitle('')
-    setSelectedDate(undefined)
-    setStartTime('')
-    setEndTime('')
-    setReminderType('none')
-    setRecurrenceType('none')
-    setRecurrenceRule(null)
-    setSelectedTagIds([])
-    setDateTimeOpen(false)
-    onFinishCreate()
-  }, [onFinishCreate])
-
   // フォーム外クリックでキャンセル
   useEffect(() => {
     if (!isCreating) return
