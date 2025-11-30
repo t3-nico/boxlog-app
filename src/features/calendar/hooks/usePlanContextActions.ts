@@ -40,29 +40,6 @@ export function usePlanContextActions() {
     [openInspector]
   )
 
-  // プランの日付データを正規化
-  const normalizePlanDates = (plan: CalendarPlan) => {
-    const startDate = plan.startDate || new Date()
-    const endDate = plan.endDate || new Date()
-    return { startDate, endDate }
-  }
-
-  // 複製プランデータを作成
-  const createDuplicatePlanData = (plan: CalendarPlan, newStartDate: Date, newEndDate: Date) => ({
-    title: `${plan.title} (コピー)`,
-    description: plan.description,
-    startDate: newStartDate,
-    endDate: newEndDate,
-    type: plan.type || 'event',
-    status: plan.status || 'planned',
-    priority: plan.priority || 'necessary',
-    color: plan.color,
-    location: plan.location,
-    url: plan.url,
-    reminderMinutes: plan.reminder_minutes ?? null,
-    tagIds: plan.tags?.map((tag) => tag.id) || [],
-  })
-
   // Toast用のプランデータを作成
   const createToastPlanData = useCallback(
     (newPlan: CalendarPlan) => {
@@ -107,32 +84,6 @@ export function usePlanContextActions() {
     }),
     []
   )
-
-  const logDuplicationStart = (plan: CalendarPlan, startDate: Date, endDate: Date) => {
-    console.log('🔍 Duplicating plan:', {
-      original: {
-        title: plan.title,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
-      },
-    })
-  }
-
-  const logNewPlanDates = (newStartDate: Date, newEndDate: Date) => {
-    console.log('📅 New plan dates:', {
-      newStartDate: newStartDate.toISOString(),
-      newEndDate: newEndDate.toISOString(),
-    })
-  }
-
-  const logDuplicationSuccess = (newPlan: CalendarPlan) => {
-    console.log('✅ Duplicated plan created:', {
-      id: newPlan.id,
-      title: newPlan.title,
-      startDate: newPlan.startDate,
-      endDate: newPlan.endDate,
-    })
-  }
 
   const showDuplicationSuccess = useCallback(
     (_newPlan: CalendarPlan) => {

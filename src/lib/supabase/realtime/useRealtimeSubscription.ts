@@ -94,7 +94,7 @@ export function useRealtimeSubscription<T extends Record<string, unknown> = Reco
       )
 
       // 購読開始
-      const subscription = channel.subscribe((status) => {
+      channel.subscribe((status) => {
         if (status === 'SUBSCRIBED') {
           console.debug(`[Realtime] Subscribed to channel: ${channelName}`)
         } else if (status === 'CHANNEL_ERROR') {

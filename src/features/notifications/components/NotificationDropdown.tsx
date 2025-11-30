@@ -15,7 +15,7 @@ interface NotificationDropdownProps {
   className?: string
 }
 
-export function NotificationDropdown({ className }: NotificationDropdownProps) {
+export function NotificationDropdown({ className: _className }: NotificationDropdownProps) {
   const { data: unreadCount = 0 } = useUnreadCount()
   const { open } = useNotificationDialogStore()
 

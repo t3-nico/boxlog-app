@@ -6,6 +6,6 @@ interface UncategorizedPageProps {
   }
 }
 
-export default function UncategorizedPage({ params }: UncategorizedPageProps) {
+export default function UncategorizedPage({ params: _params }: UncategorizedPageProps) {
   return <UncategorizedPageClient />
 }

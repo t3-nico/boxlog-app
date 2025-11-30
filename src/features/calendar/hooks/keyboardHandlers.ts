@@ -138,14 +138,14 @@ export const handleNavigationKeys = ({
 
     case 'Home':
       event.preventDefault()
-      setNavigationState((prev) => ({ ...prev, selectedTime: TIME_SLOTS[0] }))
-      announce(`${TIME_SLOTS[0]}に移動しました`)
+      setNavigationState((prev) => ({ ...prev, selectedTime: TIME_SLOTS[0]! }))
+      announce(`${TIME_SLOTS[0]!}に移動しました`)
       break
 
     case 'End':
       event.preventDefault()
-      setNavigationState((prev) => ({ ...prev, selectedTime: TIME_SLOTS[TIME_SLOTS.length - 1] }))
-      announce(`${TIME_SLOTS[TIME_SLOTS.length - 1]}に移動しました`)
+      setNavigationState((prev) => ({ ...prev, selectedTime: TIME_SLOTS[TIME_SLOTS.length - 1]! }))
+      announce(`${TIME_SLOTS[TIME_SLOTS.length - 1]!}に移動しました`)
       break
 
     case 'PageUp':

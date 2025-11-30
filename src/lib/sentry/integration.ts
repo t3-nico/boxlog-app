@@ -155,7 +155,7 @@ export class SentryIntegration {
     })
   }
 
-  private filterEvent(event: Sentry.Event, hint?: Sentry.EventHint): Sentry.Event | null {
+  private filterEvent(event: Sentry.Event, _hint?: Sentry.EventHint): Sentry.Event | null {
     if (this.options.environment === 'development') {
       const ignoredMessages = ['Non-Error promise rejection captured', 'Network Error', 'ChunkLoadError']
 

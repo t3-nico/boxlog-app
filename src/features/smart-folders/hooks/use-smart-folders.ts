@@ -220,7 +220,7 @@ export function useReorderSmartFolders() {
 
       return { previousFolders }
     },
-    onError: (err, folderOrders, context) => {
+    onError: (_err, _folderOrders, context) => {
       if (context?.previousFolders) {
         queryClient.setQueryData(smartFolderKeys.lists(), context.previousFolders)
       }

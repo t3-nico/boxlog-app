@@ -29,14 +29,6 @@ interface LicenseInfo {
   publisher?: string
 }
 
-interface LicenseConfig {
-  onlyAllow: string
-  prohibited: {
-    licenses: string[]
-    reason: string
-  }
-}
-
 /**
  * 禁止ライセンスのパターン
  */
@@ -86,10 +78,6 @@ async function checkLicenseRisks(): Promise<void> {
     console.log('\n📦 Collecting dependency licenses...')
     const packages = await collectLicenses()
     console.log(`   ✅ Found ${Object.keys(packages).length} packages`)
-
-    // 2. .licensrc.json を読み込み
-    const licensrcPath = new URL('../.licensrc.json', import.meta.url).pathname
-    const config: LicenseConfig = JSON.parse(readFileSync(licensrcPath, 'utf-8'))
 
     // 3. リスク検出
     console.log('\n🚨 Risk Detection:')
@@ -232,7 +220,7 @@ function findMITVariants(
     .map(([name, info]) => ({
       name,
       license: info.licenses,
-      licenseFile: info.licenseFile,
+      ...(info.licenseFile ? { licenseFile: info.licenseFile } : {}),
     }))
 }
 
@@ -268,7 +256,7 @@ function findDeprecatedSpdxIds(
     .map(([name, info]) => ({
       name,
       license: info.licenses,
-      recommended: DEPRECATED_SPDX_IDS[info.licenses],
+      recommended: DEPRECATED_SPDX_IDS[info.licenses]!,
     }))
 }
 

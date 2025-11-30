@@ -17,8 +17,8 @@ interface SmartFolderDialogProps {
   isOpen: boolean
   onClose: () => void
   onSave: (data: CreateSmartFolderInput | UpdateSmartFolderInput) => Promise<void>
-  folder?: SmartFolder
-  previewItems?: unknown[]
+  folder?: SmartFolder | undefined
+  previewItems?: unknown[] | undefined
 }
 
 export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItems = [] }: SmartFolderDialogProps) => {

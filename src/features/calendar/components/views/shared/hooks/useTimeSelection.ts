@@ -12,7 +12,7 @@ interface TimeSelection {
 interface UseTimeSelectionProps {
   hourHeight: number
   timeColumnWidth: number
-  onTimeRangeSelect?: (selection: TimeSelection) => void
+  onTimeRangeSelect?: ((selection: TimeSelection) => void) | undefined
 }
 
 interface UseTimeSelectionReturn {

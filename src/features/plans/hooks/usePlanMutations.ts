@@ -134,7 +134,7 @@ export function usePlanMutations() {
         setIsMutating(false)
       }, 500)
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       toast.error('更新に失敗しました')
 
       // mutation完了（フラグリセット）

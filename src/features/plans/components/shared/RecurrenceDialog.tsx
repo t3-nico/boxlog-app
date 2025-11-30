@@ -126,6 +126,7 @@ export function RecurrenceDialog({
         document.removeEventListener('mousedown', handleClickOutside)
       }
     }
+    return undefined
   }, [open, onOpenChange, triggerRef])
 
   const handleSave = () => {
@@ -133,13 +134,6 @@ export function RecurrenceDialog({
     onChange(rrule)
     onOpenChange(false)
   }
-
-  const handleClear = () => {
-    onChange(null)
-    onOpenChange(false)
-  }
-
-  const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
 
   // 曜日トグル
   const toggleWeekday = (index: number) => {

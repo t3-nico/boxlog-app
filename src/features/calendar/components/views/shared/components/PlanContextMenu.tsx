@@ -21,9 +21,6 @@ interface PlanContextMenuProps {
   onMoveToDate?: (plan: CalendarPlan) => void
 }
 
-/** @deprecated Use PlanContextMenuProps instead */
-type EventContextMenuProps = PlanContextMenuProps
-
 export const EventContextMenu = ({
   plan,
   position,

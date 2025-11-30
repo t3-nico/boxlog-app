@@ -10,7 +10,7 @@ import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat } from 'lucid
 import { useRef, useState } from 'react'
 
 interface DateTimePopoverContentProps {
-  selectedDate?: Date
+  selectedDate?: Date | undefined
   onDateSelect: (date: Date | undefined) => void
   startTime: string
   onStartTimeChange: (time: string) => void
@@ -18,8 +18,8 @@ interface DateTimePopoverContentProps {
   onEndTimeChange: (time: string) => void
   reminderType: string
   onReminderChange: (type: string) => void
-  recurrenceRule?: string | null
-  recurrenceType?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'
+  recurrenceRule?: string | null | undefined
+  recurrenceType?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays' | undefined
   onRepeatTypeChange: (type: string) => void
   onRecurrenceRuleChange: (rule: string | null) => void
 }

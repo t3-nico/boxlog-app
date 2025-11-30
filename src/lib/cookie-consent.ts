@@ -17,20 +17,6 @@ export interface CookieConsent {
 }
 
 const STORAGE_KEY = 'boxlog_cookie_consent'
-const CONSENT_VERSION = '1.0' // バージョン変更時に再同意を要求
-
-/**
- * デフォルト同意状態
- * - 必須Cookie: 有効（変更不可）
- * - 分析Cookie: 無効（ユーザー選択）
- * - マーケティングCookie: 無効（ユーザー選択）
- */
-const DEFAULT_CONSENT: CookieConsent = {
-  necessary: true,
-  analytics: false,
-  marketing: false,
-  timestamp: Date.now(),
-}
 
 /**
  * Cookie同意状態を取得

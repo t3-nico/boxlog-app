@@ -165,7 +165,7 @@ export function TagSelectionActions({
                     }
                   : undefined
               }
-              onDelete={(tag) => {
+              onDelete={() => {
                 onDelete()
                 onClearSelection()
               }}

@@ -6,12 +6,12 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 interface HeaderActionsProps {
-  onSettings?: () => void
-  onExport?: () => void
-  onImport?: () => void
-  onMore?: () => void
-  className?: string
-  compact?: boolean
+  onSettings?: (() => void) | undefined
+  onExport?: (() => void) | undefined
+  onImport?: (() => void) | undefined
+  onMore?: (() => void) | undefined
+  className?: string | undefined
+  compact?: boolean | undefined
 }
 
 /**

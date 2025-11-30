@@ -24,11 +24,11 @@ export interface DateTimeSelection extends TimeRange {
 
 interface CalendarDragSelectionProps {
   date: Date // 必須：この列が担当する日付
-  className?: string
-  onTimeRangeSelect?: (selection: DateTimeSelection) => void
-  onSingleClick?: (date: Date, timeString: string) => void // 単一クリック処理
-  children?: React.ReactNode
-  disabled?: boolean // ドラッグ選択を無効にする
+  className?: string | undefined
+  onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined
+  onSingleClick?: ((date: Date, timeString: string) => void) | undefined // 単一クリック処理
+  children?: React.ReactNode | undefined
+  disabled?: boolean | undefined // ドラッグ選択を無効にする
 }
 
 /**

@@ -204,7 +204,6 @@ export function ArchivePageClient() {
 
   // 一括選択
   const allSelected = displayTags.length > 0 && selectedTagIds.length === displayTags.length
-  const someSelected = selectedTagIds.length > 0 && selectedTagIds.length < displayTags.length
 
   const handleSelectAll = () => {
     if (allSelected) {

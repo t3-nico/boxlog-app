@@ -163,8 +163,6 @@ export class PlanDataManager {
     const cached = this.getFromCache(cacheKey)
     if (cached) return cached
 
-    const _startKey = this.getDateKey(startDate)
-    const _endKey = this.getDateKey(endDate)
     const planIds = new Set<string>()
 
     // 日付範囲をイテレート
@@ -227,9 +225,6 @@ export class PlanDataManager {
     } else {
       plans = Array.from(this.plans.values())
     }
-
-    const _startTime = startHour * 60 * 60 * 1000 // ミリ秒
-    const _endTime = endHour * 60 * 60 * 1000
 
     const result = plans.filter((plan) => {
       const planHour = new Date(plan.startTime).getHours()

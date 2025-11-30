@@ -45,7 +45,7 @@ interface UseTagRealtimeOptions {
 }
 
 export function useTagRealtime(userId: string | undefined, options: UseTagRealtimeOptions = {}) {
-  const { enabled = true } = options
+  const { enabled: _enabled = true } = options
   const queryClient = useQueryClient()
 
   useRealtimeSubscription<{ id: string }>({

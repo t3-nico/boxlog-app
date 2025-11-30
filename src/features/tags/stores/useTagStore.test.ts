@@ -362,7 +362,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const [tag1, tag2] = useTagStore.getState().tags
+      const [tag1] = useTagStore.getState().tags
 
       const tasks: Task[] = [
         {

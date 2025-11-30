@@ -42,15 +42,15 @@ export interface Notification {
   type: NotificationType
   priority: NotificationPriority
   title: string
-  message?: string
-  relatedEventId?: string
-  relatedTagId?: string
-  actionUrl?: string
-  icon?: NotificationIcon
-  data?: Record<string, unknown>
+  message?: string | undefined
+  relatedEventId?: string | undefined
+  relatedTagId?: string | undefined
+  actionUrl?: string | undefined
+  icon?: NotificationIcon | undefined
+  data?: Record<string, unknown> | undefined
   isRead: boolean
-  readAt?: Date
-  expiresAt?: Date
+  readAt?: Date | undefined
+  expiresAt?: Date | undefined
   createdAt: Date
   updatedAt: Date
 }
@@ -58,24 +58,24 @@ export interface Notification {
 // 通知作成リクエスト
 export interface CreateNotificationRequest {
   type: NotificationType
-  priority?: NotificationPriority
+  priority?: NotificationPriority | undefined
   title: string
-  message?: string
-  relatedEventId?: string
-  relatedTagId?: string
-  actionUrl?: string
-  icon?: NotificationIcon
-  data?: Record<string, unknown>
-  expiresAt?: Date
+  message?: string | undefined
+  relatedEventId?: string | undefined
+  relatedTagId?: string | undefined
+  actionUrl?: string | undefined
+  icon?: NotificationIcon | undefined
+  data?: Record<string, unknown> | undefined
+  expiresAt?: Date | undefined
 }
 
 // 通知フィルター
 export interface NotificationFilters {
-  types?: NotificationType[]
-  priorities?: NotificationPriority[]
-  isRead?: boolean
-  startDate?: Date
-  endDate?: Date
+  types?: NotificationType[] | undefined
+  priorities?: NotificationPriority[] | undefined
+  isRead?: boolean | undefined
+  startDate?: Date | undefined
+  endDate?: Date | undefined
 }
 
 // Zustand Store型

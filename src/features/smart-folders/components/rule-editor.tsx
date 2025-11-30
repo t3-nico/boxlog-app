@@ -294,7 +294,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                             const newRule = {
                               ...rule,
                               field: e.target.value as SmartFolderRuleField,
-                              operator: OPERATOR_OPTIONS[e.target.value as SmartFolderRuleField][0].value,
+                              operator: OPERATOR_OPTIONS[e.target.value as SmartFolderRuleField][0]!.value,
                               value: '',
                             }
                             updateRule(index, newRule)

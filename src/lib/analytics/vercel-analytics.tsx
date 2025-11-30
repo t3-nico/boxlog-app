@@ -431,7 +431,7 @@ export function useWebVitals() {
       // Largest Contentful Paint 測定
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries()
-        const lastEntry = entries[entries.length - 1]
+        const lastEntry = entries[entries.length - 1]!
         const lcp = lastEntry.startTime
 
         if (lcp > 2500) {

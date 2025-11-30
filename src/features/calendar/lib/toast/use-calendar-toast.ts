@@ -51,8 +51,8 @@ export const useCalendarToast = () => {
       duration,
       ...(actions.length > 0 && {
         action: {
-          label: actions[0].label,
-          onClick: actions[0].onClick,
+          label: actions[0]!.label,
+          onClick: actions[0]!.onClick,
         },
       }),
     }

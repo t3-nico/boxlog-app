@@ -12,7 +12,6 @@ import {
   PlanBlock,
   useGlobalDragCursor,
   usePlanStyles,
-  useTimeCalculation,
 } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
@@ -20,15 +19,15 @@ import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 interface TwoWeekContentProps {
   date: Date
   plans: CalendarPlan[]
-  onPlanClick?: (plan: CalendarPlan) => void
-  onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
-  onEmptyClick?: (date: Date, timeString: string) => void
-  onPlanUpdate?: (planId: string, updates: Partial<CalendarPlan>) => void
-  onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
-  onCreatePlan?: (startDate: Date, endDate: Date) => void
-  className?: string
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined
+  onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined
+  onEmptyClick?: ((date: Date, timeString: string) => void) | undefined
+  onPlanUpdate?: ((planId: string, updates: Partial<CalendarPlan>) => void) | undefined
+  onTimeRangeSelect?: ((date: Date, startTime: string, endTime: string) => void) | undefined
+  onCreatePlan?: ((startDate: Date, endDate: Date) => void) | undefined
+  className?: string | undefined
   dayIndex: number // 2週間内での日付インデックス（0-13）
-  displayDates?: Date[] // 2週間の全日付配列（日付間移動用）
+  displayDates?: Date[] | undefined // 2週間の全日付配列（日付間移動用）
 }
 
 export const TwoWeekContent = ({
@@ -74,9 +73,6 @@ export const TwoWeekContent = ({
     viewMode: '2week',
   })
 
-  // 時間計算機能
-  const { calculateTimeFromEvent } = useTimeCalculation()
-
   // グローバルドラッグカーソー管理（共通化）
   useGlobalDragCursor(dragState, handlers)
 
@@ -114,30 +110,6 @@ export const TwoWeekContent = ({
   }, [plans])
 
   const planStyles = usePlanStyles(dayPlanPositions)
-
-  // 空白クリックハンドラー
-  const handleEmptyClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!onEmptyClick) return
-
-      const { timeString } = calculateTimeFromEvent(e)
-      onEmptyClick(date, timeString)
-    },
-    [date, onEmptyClick, calculateTimeFromEvent]
-  )
-
-  // プランクリックハンドラー（ドラッグ・リサイズ後のクリックは無視）
-  const handlePlanClick = useCallback(
-    (plan: CalendarPlan) => {
-      // ドラッグ・リサイズ操作中またはドラッグ・リサイズ直後のクリックは無視
-      if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
-        return
-      }
-
-      onPlanClick?.(plan)
-    },
-    [onPlanClick, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged]
-  )
 
   // プラン右クリックハンドラー
   const handlePlanContextMenu = useCallback(

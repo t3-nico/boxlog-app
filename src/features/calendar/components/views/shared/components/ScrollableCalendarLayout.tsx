@@ -17,28 +17,28 @@ import { TimezoneOffset } from './TimezoneOffset'
 
 interface ScrollableCalendarLayoutProps {
   children: React.ReactNode
-  className?: string
-  timezone?: string
-  scrollToHour?: number
-  showTimeColumn?: boolean
-  showCurrentTime?: boolean
-  showTimezone?: boolean
-  timeColumnWidth?: number
-  onTimeClick?: (hour: number, minute: number) => void
-  displayDates?: Date[]
-  viewMode?: 'day' | '3day' | '5day' | 'week' | '2week'
+  className?: string | undefined
+  timezone?: string | undefined
+  scrollToHour?: number | undefined
+  showTimeColumn?: boolean | undefined
+  showCurrentTime?: boolean | undefined
+  showTimezone?: boolean | undefined
+  timeColumnWidth?: number | undefined
+  onTimeClick?: ((hour: number, minute: number) => void) | undefined
+  displayDates?: Date[] | undefined
+  viewMode?: 'day' | '3day' | '5day' | 'week' | '2week' | undefined
 
   // スクロール機能の追加
-  enableKeyboardNavigation?: boolean
-  onScrollPositionChange?: (scrollTop: number) => void
+  enableKeyboardNavigation?: boolean | undefined
+  onScrollPositionChange?: ((scrollTop: number) => void) | undefined
 }
 
 interface CalendarDateHeaderProps {
   header: React.ReactNode
-  showTimeColumn?: boolean
-  showTimezone?: boolean
-  timeColumnWidth?: number
-  timezone?: string
+  showTimeColumn?: boolean | undefined
+  showTimezone?: boolean | undefined
+  timeColumnWidth?: number | undefined
+  timezone?: string | undefined
 }
 
 const TIME_COLUMN_WIDTH = 48
@@ -76,11 +76,11 @@ export const CalendarDateHeader = ({
 export const ScrollableCalendarLayout = ({
   children,
   className = '',
-  timezone,
+  timezone: _timezone,
   scrollToHour = 8,
   showTimeColumn = true,
   showCurrentTime = true,
-  showTimezone = true,
+  showTimezone: _showTimezone = true,
   timeColumnWidth = TIME_COLUMN_WIDTH,
   onTimeClick,
   displayDates = [],

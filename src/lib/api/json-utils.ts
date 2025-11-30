@@ -120,7 +120,7 @@ export function analyzeInvalidChars(str: string): {
       if (!nextChar || nextChar.charCodeAt(0) < 0xdc00 || nextChar.charCodeAt(0) > 0xdfff) {
         issues.push({
           type: 'isolated_high_surrogate',
-          char,
+          char: char!,
           position: i,
           charCode,
         })
@@ -133,7 +133,7 @@ export function analyzeInvalidChars(str: string): {
       if (!prevChar || prevChar.charCodeAt(0) < 0xd800 || prevChar.charCodeAt(0) > 0xdbff) {
         issues.push({
           type: 'isolated_low_surrogate',
-          char,
+          char: char!,
           position: i,
           charCode,
         })
@@ -150,7 +150,7 @@ export function analyzeInvalidChars(str: string): {
     ) {
       issues.push({
         type: 'control_character',
-        char: char === '\u0000' ? '\\0' : char,
+        char: char === '\u0000' ? '\\0' : char!,
         position: i,
         charCode,
       })
@@ -160,7 +160,7 @@ export function analyzeInvalidChars(str: string): {
     if ((charCode >= 0xfdd0 && charCode <= 0xfdef) || charCode === 0xfffe || charCode === 0xffff) {
       issues.push({
         type: 'non_character',
-        char,
+        char: char!,
         position: i,
         charCode,
       })

@@ -145,7 +145,7 @@ export function translateZodError(error: z.ZodError): {
       code: err.code,
     }
   })
-  const primaryError = details[0]
+  const primaryError = details[0]!
   const summary = details.length === 1 ? primaryError.message : `入力内容に${details.length}件の問題があります`
   return {
     message: summary,

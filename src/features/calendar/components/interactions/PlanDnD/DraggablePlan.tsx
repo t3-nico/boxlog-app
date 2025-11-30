@@ -30,10 +30,6 @@ interface DraggablePlanProps {
   children: React.ReactNode
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use DraggablePlanProps instead */
-type DraggableEventProps = DraggablePlanProps
-
 // ドラッグ開始閾値（px）
 const DRAG_THRESHOLD = 5
 

@@ -44,8 +44,8 @@ interface EventPosition {
   plan: CalendarPlan
   start: number // 分単位
   end: number // 分単位
-  column?: number
-  columns?: number
+  column?: number | undefined
+  columns?: number | undefined
 }
 
 // 最大列数制限
@@ -79,17 +79,6 @@ function eventsOverlap(event1: CalendarPlan, event2: CalendarPlan): boolean {
  */
 function timeToMinutes(date: Date): number {
   return date.getHours() * 60 + date.getMinutes()
-}
-
-/**
- * 同じ日のプランかどうかを判定
- */
-function _isSameDay(date1: Date, date2: Date): boolean {
-  return (
-    date1.getFullYear() === date2.getFullYear() &&
-    date1.getMonth() === date2.getMonth() &&
-    date1.getDate() === date2.getDate()
-  )
 }
 
 /**

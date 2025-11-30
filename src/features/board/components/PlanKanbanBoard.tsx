@@ -324,15 +324,6 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
     setIsAdding(false)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleCreate()
-    } else if (e.key === 'Escape') {
-      handleCancel()
-    }
-  }
-
   return (
     <div ref={setNodeRef} className={cn('flex min-w-[300px] flex-col rounded-lg', isOver && 'ring-primary/30 ring-2')}>
       <div

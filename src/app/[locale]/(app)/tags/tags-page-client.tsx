@@ -58,7 +58,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const { t } = useI18n()
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
   const { data: groups = [] as TagGroup[] } = useTagGroups()
-  const { tags, setTags, setIsLoading, setIsCreatingGroup, isCreatingTag, setIsCreatingTag } = useTagsPageContext()
+  const { tags, setTags, setIsLoading, setIsCreatingGroup: _setIsCreatingGroup, isCreatingTag, setIsCreatingTag } = useTagsPageContext()
   const router = useRouter()
   const pathname = usePathname()
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
@@ -118,13 +118,13 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   const {
     showCreateModal,
-    showEditModal,
-    selectedTag,
-    createParentTag,
-    handleCreateTag,
+    showEditModal: _showEditModal,
+    selectedTag: _selectedTag,
+    createParentTag: _createParentTag,
+    handleCreateTag: _handleCreateTag,
     handleSaveNewTag,
     handleEditTag: _handleEditTag,
-    handleSaveTag,
+    handleSaveTag: _handleSaveTag,
     handleDeleteTag,
     handleCloseModals,
   } = useTagOperations(tags)
@@ -239,13 +239,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     }
   }, [isCreatingTag, handleCancelInlineCreation])
 
-  // インライン編集開始
-  const startEditing = useCallback((tagId: string, field: 'name' | 'description', currentValue: string) => {
-    setEditingTagId(tagId)
-    setEditingField(field)
-    setEditValue(currentValue || '')
-  }, [])
-
   // インライン編集キャンセル
   const cancelEditing = useCallback(() => {
     setEditingTagId(null)
@@ -272,21 +265,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       }
     },
     [editingField, editValue, updateTagMutation, cancelEditing]
-  )
-
-  // カラー変更ハンドラー
-  const handleColorChange = useCallback(
-    async (tagId: string, newColor: string) => {
-      try {
-        await updateTagMutation.mutateAsync({
-          id: tagId,
-          data: { color: newColor },
-        })
-      } catch (error) {
-        console.error('Failed to update tag color:', error)
-      }
-    },
-    [updateTagMutation]
   )
 
   // アーカイブ確認ダイアログを開く
@@ -452,14 +430,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     }
     setSelectedTagIds([])
   }
-
-  // カラムリサイズハンドラー
-  const handleColumnResize = useCallback((columnId: keyof typeof columnWidths, delta: number) => {
-    setColumnWidths((prev) => ({
-      ...prev,
-      [columnId]: Math.max(50, prev[columnId] + delta), // 最小幅50px
-    }))
-  }, [])
 
   // リサイズハンドルコンポーネント
   const ResizeHandle = ({ columnId }: { columnId: keyof typeof columnWidths }) => {

@@ -458,7 +458,7 @@ export class AdvancedRuleEngine {
     if (group.length === 0) return true
 
     // グループ内のロジック（最初のルールのgroupLogicを使用）
-    const groupLogic = group[0].groupLogic || 'AND'
+    const groupLogic = group[0]!.groupLogic || 'AND'
 
     if (groupLogic === 'AND') {
       return group.every((rule) => this.evaluateAdvancedRule(item, rule))

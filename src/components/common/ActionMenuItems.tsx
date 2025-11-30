@@ -15,9 +15,9 @@ export interface MenuAction<T = any> {
   /** クリック時の処理 */
   onClick: (item: T) => void
   /** 表示スタイル */
-  variant?: 'default' | 'destructive'
+  variant?: 'default' | 'destructive' | undefined
   /** 無効化フラグ */
-  disabled?: boolean
+  disabled?: boolean | undefined
 }
 
 /**
@@ -34,7 +34,7 @@ export interface SubMenuAction<T = any> {
   /** サブメニュー項目 */
   items: Array<{
     key: string
-    icon?: ReactNode
+    icon?: ReactNode | undefined
     label: string
     onClick: (item: T) => void
   }>
@@ -62,25 +62,27 @@ export interface ActionMenuItemsProps<T = any> {
   groups: ActionGroup<T>[]
   /** メニュー項目をレンダリングするための関数 */
   renderMenuItem: (props: {
-    key?: string
+    key?: string | undefined
     icon: ReactNode
     label: string
     onClick: () => void
-    variant?: 'default' | 'destructive'
-    disabled?: boolean
+    variant?: 'default' | 'destructive' | undefined
+    disabled?: boolean | undefined
   }) => ReactNode
   /** サブメニューをレンダリングするための関数（オプション） */
-  renderSubMenu?: (props: {
-    trigger: { icon: ReactNode; label: string }
-    items: Array<{
-      key: string
-      icon?: ReactNode
-      label: string
-      onClick: () => void
-    }>
-  }) => ReactNode
+  renderSubMenu?:
+    | ((props: {
+        trigger: { icon: ReactNode; label: string }
+        items: Array<{
+          key: string
+          icon?: ReactNode | undefined
+          label: string
+          onClick: () => void
+        }>
+      }) => ReactNode)
+    | undefined
   /** セパレーターをレンダリングするための関数（オプション） */
-  renderSeparator?: () => ReactNode
+  renderSeparator?: (() => ReactNode) | undefined
 }
 
 /**
@@ -137,8 +139,8 @@ export function ActionMenuItems<T = any>({
             icon: action.icon,
             label: action.label,
             onClick: () => action.onClick(item),
-            variant: action.variant,
-            disabled: action.disabled,
+            ...(action.variant !== undefined && { variant: action.variant }),
+            ...(action.disabled !== undefined && { disabled: action.disabled }),
           })
         )
       })

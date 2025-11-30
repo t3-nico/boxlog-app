@@ -61,40 +61,40 @@ export interface SmartFolderRow {
 export interface SmartFolder {
   id: string
   name: string
-  description?: string
+  description?: string | undefined
   userId: string
   rules: SmartFolderRule[]
   isActive: boolean
   orderIndex: number
-  icon?: string
+  icon?: string | undefined
   color: string
   isSystem: boolean
   createdAt: Date
   updatedAt: Date
 
   // 計算されるプロパティ
-  taskCount?: number
+  taskCount?: number | undefined
 }
 
 // スマートフォルダ作成用の型
 export interface CreateSmartFolderInput {
   name: string
-  description?: string
+  description?: string | undefined
   rules: SmartFolderRule[]
-  icon?: string
-  color?: string
-  orderIndex?: number
+  icon?: string | undefined
+  color?: string | undefined
+  orderIndex?: number | undefined
 }
 
 // スマートフォルダ更新用の型
 export interface UpdateSmartFolderInput {
-  name?: string
-  description?: string
-  rules?: SmartFolderRule[]
-  isActive?: boolean
-  icon?: string
-  color?: string
-  orderIndex?: number
+  name?: string | undefined
+  description?: string | undefined
+  rules?: SmartFolderRule[] | undefined
+  isActive?: boolean | undefined
+  icon?: string | undefined
+  color?: string | undefined
+  orderIndex?: number | undefined
 }
 
 // ルール構築用のヘルパー型
@@ -163,12 +163,12 @@ export const convertSmartFolderRowToSmartFolder = (row: SmartFolderRow): SmartFo
 export const convertSmartFolderToSmartFolderRow = (folder: Partial<SmartFolder>): Partial<SmartFolderRow> => ({
   id: folder.id,
   name: folder.name,
-  description: folder.description || null,
+  description: folder.description !== undefined ? (folder.description ?? null) : undefined,
   user_id: folder.userId,
   rules: folder.rules,
   is_active: folder.isActive,
   order_index: folder.orderIndex,
-  icon: folder.icon || null,
+  icon: folder.icon !== undefined ? (folder.icon ?? null) : undefined,
   color: folder.color,
   is_system: folder.isSystem,
   created_at: folder.createdAt?.toISOString(),

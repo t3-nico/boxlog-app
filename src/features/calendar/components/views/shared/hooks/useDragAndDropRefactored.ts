@@ -352,6 +352,7 @@ export function useDragAndDropRefactored({
         document.removeEventListener('mouseup', handleMouseUp)
       }
     }
+    return undefined
   }, [dragState.isDragging, dragState.isResizing, handleMouseMove, handleMouseUp])
 
   return {

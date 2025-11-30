@@ -416,7 +416,7 @@ export function measurePageLoad(): void {
 /**
  * API応答時間を測定
  */
-export function measureApiResponse(url: string, startTime: number): void {
+export function measureApiResponse(_url: string, startTime: number): void {
   const duration = performance.now() - startTime
 
   trackPerformance({

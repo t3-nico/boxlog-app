@@ -194,6 +194,8 @@ export const useKanbanStore = create<KanbanStore>()(
 
             // カードを移動
             const [movedCard] = sourceColumn.cards.splice(event.sourceIndex, 1)
+            if (!movedCard) return state
+
             const now = new Date()
 
             // ステータス変更時のサイクルタイム・リードタイム計測
@@ -257,7 +259,7 @@ export const useKanbanStore = create<KanbanStore>()(
               const cardIndex = column.cards.findIndex((c) => c.id === cardId)
               if (cardIndex !== -1) {
                 column.cards[cardIndex] = {
-                  ...column.cards[cardIndex],
+                  ...column.cards[cardIndex]!,
                   ...updates,
                   updatedAt: new Date(),
                 }

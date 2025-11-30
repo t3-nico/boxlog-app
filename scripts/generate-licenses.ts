@@ -164,9 +164,9 @@ function generateCredits(packages: Record<string, LicenseInfo>): CreditInfo[] {
         name,
         version,
         license: info.licenses,
-        repository: info.repository,
-        publisher: info.publisher,
-        copyright: info.copyright,
+        ...(info.repository ? { repository: info.repository } : {}),
+        ...(info.publisher ? { publisher: info.publisher } : {}),
+        ...(info.copyright ? { copyright: info.copyright } : {}),
       }
     })
     .sort((a, b) => a.name.localeCompare(b.name)) // アルファベット順にソート

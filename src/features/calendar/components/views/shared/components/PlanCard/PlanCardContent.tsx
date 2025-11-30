@@ -36,13 +36,6 @@ function parseplanEndDate(plan: CalendarPlan): Date | null {
   return null
 }
 
-// Helper function: Calculate plan duration
-function calculateplanDuration(planStart: Date | null, planEnd: Date | null): number {
-  const startTime = planStart?.getTime() || new Date().getTime()
-  const endTime = planEnd?.getTime() || new Date(startTime + 60 * 60 * 1000).getTime()
-  return Math.floor((endTime - startTime) / (1000 * 60))
-}
-
 export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardContent({
   plan,
   isCompact = false,
@@ -101,7 +94,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
       {/* タグ表示（残りスペースがあれば表示） */}
       {plan.tags && plan.tags.length > 0 ? (
         <div className="flex min-h-0 flex-shrink flex-wrap gap-1 overflow-hidden pt-1">
-          {plan.tags.slice(0, 2).map((tag: { id: string; name: string; color: string; icon?: string }) => (
+          {plan.tags.slice(0, 2).map((tag: { id: string; name: string; color: string; icon?: string | undefined; parent_id?: string | undefined }) => (
             <span
               key={tag.id}
               className="inline-flex flex-shrink-0 items-center gap-0.5 rounded-sm border px-1.5 py-0.5 text-xs leading-tight"

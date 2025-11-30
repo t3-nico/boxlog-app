@@ -219,14 +219,11 @@ export class BreakingChangeManager {
     )
 
     const planId = this.generatePlanId(version)
-    const totalSteps = relevantChanges.reduce((sum, change) => sum + change.migration.steps.length, 0)
 
     const checklist = relevantChanges.flatMap((change) =>
       change.migration.steps.map((step) => ({
         item: `${change.title}: ${step.title}`,
         completed: false,
-        assignee: undefined,
-        dueDate: undefined,
       }))
     )
 
@@ -278,7 +275,7 @@ export class BreakingChangeManager {
     Object.entries(versionGroups).forEach(([version, changes]) => {
       const summary = this.generateVersionSummary(version)
 
-      markdown += `## ${version} (${changes[0].releaseDate})\n\n`
+      markdown += `## ${version} (${changes[0]!.releaseDate})\n\n`
 
       if (changes.length > 1) {
         markdown += `### 📊 概要\n\n`
@@ -408,7 +405,7 @@ export class BreakingChangeManager {
   /**
    * 📋 グループ固有の詳細取得
    */
-  private getGroupSpecificDetails(change: BreakingChange, group: AffectedGroup): string[] {
+  private getGroupSpecificDetails(_change: BreakingChange, group: AffectedGroup): string[] {
     const details: string[] = []
 
     switch (group) {
@@ -432,7 +429,7 @@ export class BreakingChangeManager {
   /**
    * 🛡️ グループ固有の軽減策取得
    */
-  private getGroupSpecificMitigation(change: BreakingChange, group: AffectedGroup): string[] {
+  private getGroupSpecificMitigation(change: BreakingChange, _group: AffectedGroup): string[] {
     // グループごとの軽減策を返す
     return change.workaround?.steps || []
   }
@@ -471,7 +468,7 @@ export class BreakingChangeManager {
   /**
    * 🛡️ リスク軽減策提案
    */
-  private suggestRiskMitigation(change: BreakingChange): string[] {
+  private suggestRiskMitigation(_change: BreakingChange): string[] {
     return ['段階的ロールアウトの実施', 'バックアップとロールバック計画の準備', '十分なテスト期間の確保']
   }
 
@@ -504,7 +501,7 @@ export class BreakingChangeManager {
   private calculateDeadline(change: BreakingChange): string {
     const releaseDate = new Date(change.releaseDate)
     const deadline = new Date(releaseDate.getTime() + 30 * 24 * 60 * 60 * 1000) // 30日後
-    return deadline.toISOString().split('T')[0]
+    return deadline.toISOString().split('T')[0]!
   }
 
   /**
@@ -516,7 +513,7 @@ export class BreakingChangeManager {
         if (!groups[change.version]) {
           groups[change.version] = []
         }
-        groups[change.version].push(change)
+        groups[change.version]!.push(change)
         return groups
       },
       {} as Record<string, BreakingChange[]>
@@ -524,7 +521,7 @@ export class BreakingChangeManager {
   }
 
   private getDefaultStartDate(): string {
-    return new Date().toISOString().split('T')[0]
+    return new Date().toISOString().split('T')[0]!
   }
 
   private calculateEndDate(changes: BreakingChange[]): string {
@@ -532,7 +529,7 @@ export class BreakingChangeManager {
     const days = Math.ceil(totalTime / (8 * 60)) // 8時間/日として計算
     const endDate = new Date()
     endDate.setDate(endDate.getDate() + days)
-    return endDate.toISOString().split('T')[0]
+    return endDate.toISOString().split('T')[0]!
   }
 
   private createMigrationPhases(changes: BreakingChange[]) {

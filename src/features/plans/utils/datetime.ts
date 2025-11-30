@@ -20,7 +20,7 @@ export function toLocalISOString(dateStr: string, timeStr: string): string {
   const [hour, minute] = timeStr.split(':').map(Number)
 
   // ローカルタイムゾーンでDateオブジェクトを作成
-  const date = new Date(year, month - 1, day, hour, minute, 0, 0)
+  const date = new Date(year!, month! - 1, day!, hour!, minute!, 0, 0)
 
   // ISO 8601形式に変換（ローカルタイムゾーンのオフセット付き）
   return date.toISOString()

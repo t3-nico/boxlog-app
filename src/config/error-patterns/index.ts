@@ -125,7 +125,9 @@ export class AppError extends Error {
     // 元のエラーを保持
     if (cause) {
       this.cause = cause
-      this.stack = cause.stack
+      if (cause.stack) {
+        this.stack = cause.stack
+      }
     }
 
     // スタックトレースのキャプチャ
@@ -305,7 +307,8 @@ export class ErrorPatternDictionary {
       }
 
       // AppErrorとして返す
-      const appError = error instanceof AppError ? error : this.wrapError(error as Error, errorCode, { context })
+      const appError =
+        error instanceof AppError ? error : this.wrapError(error as Error, errorCode, context ? { context } : undefined)
 
       return {
         success: false,

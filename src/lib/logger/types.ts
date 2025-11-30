@@ -213,13 +213,13 @@ export interface LogOutput {
  */
 export interface LogContext {
   /** リクエストID */
-  requestId?: string
+  requestId?: string | undefined
   /** ユーザーID */
-  userId?: string
+  userId?: string | undefined
   /** セッションID */
-  sessionId?: string
+  sessionId?: string | undefined
   /** コンポーネント名 */
-  component?: string
+  component?: string | undefined
   /** 追加コンテキスト */
   [key: string]: unknown
 }

@@ -303,8 +303,8 @@ export const CodeBlock = ({
 }: CodeBlockProps) => {
   const [value, onValueChange] = useControllableState({
     defaultProp: defaultValue ?? '',
-    prop: controlledValue,
-    onChange: controlledOnValueChange,
+    ...(controlledValue !== undefined && { prop: controlledValue }),
+    ...(controlledOnValueChange !== undefined && { onChange: controlledOnValueChange }),
   })
 
   return (
@@ -381,7 +381,7 @@ export type CodeBlockSelectProps = ComponentProps<typeof Select>
 export const CodeBlockSelect = (props: CodeBlockSelectProps) => {
   const { value, onValueChange } = useContext(CodeBlockContext)
 
-  return <Select onValueChange={onValueChange} value={value} {...props} />
+  return <Select {...(value !== undefined && { value })} {...(onValueChange !== undefined && { onValueChange })} {...props} />
 }
 
 export type CodeBlockSelectTriggerProps = ComponentProps<typeof SelectTrigger>

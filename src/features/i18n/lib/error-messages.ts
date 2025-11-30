@@ -54,8 +54,8 @@ export interface ErrorMessage {
   type: ErrorType
   title: string
   message: string
-  suggestion?: string
-  action?: string
+  suggestion?: string | undefined
+  action?: string | undefined
 }
 
 // エラーメッセージ辞書（英語）

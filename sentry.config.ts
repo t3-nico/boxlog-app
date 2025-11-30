@@ -64,7 +64,7 @@ if (SENTRY_DSN && isAnalyticsConsented()) {
     enabled: IS_PRODUCTION || VERCEL_ENV === 'preview',
 
     // エラーフィルタリング
-    beforeSend(event, hint) {
+    beforeSend(event, _hint) {
       // 開発環境のノイズ除去
       if (!IS_PRODUCTION && event.environment === 'development') {
         // HMR関連エラーをフィルタ

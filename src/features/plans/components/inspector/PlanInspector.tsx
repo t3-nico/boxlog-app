@@ -264,7 +264,7 @@ export function PlanInspector() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
-  const [repeatType, setRepeatType] = useState<string>('')
+  const [_repeatType, setRepeatType] = useState<string>('')
   const [reminderType, setReminderType] = useState<string>('')
   const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
   const recurrenceTriggerRef = useRef<HTMLDivElement>(null)
@@ -362,6 +362,7 @@ export function PlanInspector() {
 
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [isOpen, planId])
 
   // 自動保存関数（デバウンス処理付き）
@@ -861,7 +862,7 @@ export function PlanInspector() {
 function ActivityTab({
   planId,
   order,
-  onOrderChange,
+  onOrderChange: _onOrderChange,
 }: {
   planId: string
   order: 'asc' | 'desc'

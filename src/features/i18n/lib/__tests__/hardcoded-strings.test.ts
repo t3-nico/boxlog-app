@@ -124,7 +124,7 @@ function isWhitelisted(line: string): boolean {
 /**
  * ハードコード文字列を検出
  */
-function detectHardcodedStrings(content: string, filePath: string) {
+function detectHardcodedStrings(content: string, _filePath: string) {
   const lines = content.split('\n')
   const issues: { line: number; match: string; type: 'japanese' | 'english' }[] = []
 

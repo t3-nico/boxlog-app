@@ -14,7 +14,6 @@ import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
 
 import { CalendarNavigation, type CalendarSortType } from '../navigation/CalendarNavigation'
 import { InboxCardList } from './inbox/InboxCardList'
-import { type InboxFilter, type InboxSort } from './inbox/InboxNavigation'
 
 /**
  * CalendarSidebar - カレンダーページ専用サイドバー
@@ -29,11 +28,9 @@ export function CalendarSidebar() {
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t } = useI18n(localeFromPath)
 
-  const [filter, setFilter] = useState<InboxFilter>('all')
-  const [sort, setSort] = useState<InboxSort>('due')
-  const [showHigh, setShowHigh] = useState(true)
-  const [showMedium, setShowMedium] = useState(true)
-  const [showLow, setShowLow] = useState(true)
+  const showHigh = true
+  const showMedium = true
+  const showLow = true
 
   // CalendarNavigation用のstate
   const [calendarSort, setCalendarSort] = useState<CalendarSortType>('updated-desc')
@@ -54,12 +51,6 @@ export function CalendarSidebar() {
     return { start, end }
   }, [navigation?.currentDate, navigation?.viewType])
 
-  const handlePriorityToggle = (priority: 'high' | 'medium' | 'low') => {
-    if (priority === 'high') setShowHigh(!showHigh)
-    if (priority === 'medium') setShowMedium(!showMedium)
-    if (priority === 'low') setShowLow(!showLow)
-  }
-
   const tabs: SidebarTab[] = [
     {
       value: 'inbox',
@@ -79,8 +70,8 @@ export function CalendarSidebar() {
           {/* カードリストコンテナ */}
           <div className="flex-1 overflow-hidden px-2">
             <InboxCardList
-              filter={filter}
-              sort={sort}
+              filter="all"
+              sort="due"
               showHigh={showHigh}
               showMedium={showMedium}
               showLow={showLow}

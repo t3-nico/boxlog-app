@@ -18,11 +18,9 @@ import type { LogEntry, LogOutput } from './types'
 export class ConsoleOutput implements LogOutput {
   name = 'console'
   private formatter
-  private useColors: boolean
 
-  constructor(format: 'json' | 'pretty' | 'simple' = 'pretty', useColors = true) {
+  constructor(format: 'json' | 'pretty' | 'simple' = 'pretty') {
     this.formatter = getFormatter(format)
-    this.useColors = useColors && process.stdout.isTTY
   }
 
   write(entry: LogEntry): void {
@@ -362,7 +360,7 @@ export class RotatingFileOutput extends FileOutput {
     }
 
     const [, size, unit] = match
-    return parseFloat(size) * (units[unit.toUpperCase()] || 1)
+    return parseFloat(size!) * (units[unit!.toUpperCase()] || 1)
   }
 }
 

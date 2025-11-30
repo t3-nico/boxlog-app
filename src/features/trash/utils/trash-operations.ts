@@ -209,7 +209,7 @@ export const trashOperations = {
         if (!groups[key as keyof typeof groups]) {
           groups[key as keyof typeof groups] = []
         }
-        groups[key as keyof typeof groups].push(item)
+        groups[key as keyof typeof groups]!.push(item)
         return groups
       },
       {} as Record<string, TrashItem[]>

@@ -290,7 +290,7 @@ export function useDataFetchRetry<T>(fetchFunction: () => Promise<T>, config: Re
     ...config,
     shouldRetry:
       config.shouldRetry ||
-      ((error: Error, retryCount: number) => {
+      ((_error: Error, retryCount: number) => {
         const category = getErrorCategory(ERROR_CODES.DATA_NOT_FOUND) // サンプル
         return ['data', 'api', 'system'].includes(category) && retryCount < 2
       }),

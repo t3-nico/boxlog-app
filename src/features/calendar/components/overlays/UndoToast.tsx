@@ -231,14 +231,14 @@ export const createUndoActions = {
 
   eventMoved: (
     plan: CalendarPlan,
-    oldData: { startDate: Date; endDate?: Date }
+    _oldData: { startDate: Date; endDate?: Date }
   ): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'move',
     description: `Moved "${plan.title}"`,
     data: plan,
   }),
 
-  eventEdited: (plan: CalendarPlan, oldData: Partial<CalendarPlan>): Omit<UndoAction, 'id' | 'timestamp'> => ({
+  eventEdited: (plan: CalendarPlan, _oldData: Partial<CalendarPlan>): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'edit',
     description: `Edited "${plan.title}"`,
     data: plan,

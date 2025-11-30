@@ -36,8 +36,8 @@ export interface QualityIssue {
   type: 'accuracy' | 'fluency' | 'consistency' | 'completeness' | 'cultural' | 'technical'
   severity: 'critical' | 'major' | 'minor'
   description: string
-  suggestion?: string
-  context?: string
+  suggestion?: string | undefined
+  context?: string | undefined
 }
 
 // レビューワークフローの状態
@@ -45,11 +45,11 @@ export interface ReviewWorkflow {
   translationKey: string
   language: string
   status: 'pending' | 'in_review' | 'approved' | 'rejected' | 'needs_revision'
-  reviewer?: string
-  assignedDate?: Date
-  reviewedDate?: Date
+  reviewer?: string | undefined
+  assignedDate?: Date | undefined
+  reviewedDate?: Date | undefined
   comments: ReviewComment[]
-  assessment?: QualityAssessment
+  assessment?: QualityAssessment | undefined
   history: ReviewHistoryEntry[]
 }
 
@@ -394,9 +394,9 @@ export class TranslationQualityAssurance {
    * 品質問題の特定
    */
   private identifyQualityIssues(
-    originalText: string,
-    translatedText: string,
-    language: string,
+    _originalText: string,
+    _translatedText: string,
+    _language: string,
     metrics: QualityMetrics
   ): QualityIssue[] {
     const issues: QualityIssue[] = []

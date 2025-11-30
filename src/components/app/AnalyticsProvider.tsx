@@ -112,7 +112,7 @@ export function AnalyticsProvider({
       debug,
       disableInDevelopment,
       requireConsent,
-      customEndpoint,
+      ...(customEndpoint !== undefined && { customEndpoint }),
     })
 
     // 初期ユーザーID設定
