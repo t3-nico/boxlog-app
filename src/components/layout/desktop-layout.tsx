@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar'
 import { AppBar } from '@/features/navigation/components/appbar'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
@@ -11,6 +12,7 @@ import { StatsSidebar } from '@/features/stats'
 import { TagsSidebarWrapper } from '@/features/tags/components/TagsSidebarWrapper'
 
 import { MainContentWrapper } from './main-content-wrapper'
+import { ChronotypeStatusItem, ScheduleStatusItem, StatusBar } from './status-bar'
 
 interface DesktopLayoutProps {
   children: React.ReactNode
@@ -28,6 +30,8 @@ interface DesktopLayoutProps {
 export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   const { isOpen } = useSidebarStore()
   const pathname = usePathname()
+  const user = useAuthStore((state) => state.user)
+  const isAuthenticated = !!user
 
   // ページごとにSidebarを切り替え
   const isCalendarPage = pathname?.startsWith(`/${locale}/calendar`) ?? false
@@ -67,6 +71,17 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         <ResizablePanel>
           <div className="relative flex h-full flex-col">
             <MainContentWrapper>{children}</MainContentWrapper>
+            {/* ステータスバー（ログイン後のみ表示） */}
+            {isAuthenticated ? (
+              <StatusBar>
+                <StatusBar.Left>
+                  <ScheduleStatusItem />
+                </StatusBar.Left>
+                <StatusBar.Right>
+                  <ChronotypeStatusItem />
+                </StatusBar.Right>
+              </StatusBar>
+            ) : null}
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
