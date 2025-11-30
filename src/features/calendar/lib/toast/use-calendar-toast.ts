@@ -46,15 +46,19 @@ export const useCalendarToast = () => {
     }
 
     // 既存のtoastシステムを使用
-    const toastOptions = {
-      description,
-      duration,
-      ...(actions.length > 0 && {
-        action: {
-          label: actions[0]!.label,
-          onClick: actions[0]!.onClick,
-        },
-      }),
+    const toastOptions: Record<string, unknown> = {}
+
+    if (description !== undefined) {
+      toastOptions.description = description
+    }
+    if (duration !== undefined) {
+      toastOptions.duration = duration
+    }
+    if (actions.length > 0) {
+      toastOptions.action = {
+        label: actions[0]!.label,
+        onClick: actions[0]!.onClick,
+      }
     }
 
     const toastId = toast[template.type](template.title, toastOptions)
@@ -79,7 +83,7 @@ export const useCalendarToast = () => {
 
   const eventDeleted = useCallback(
     (plan: CalendarPlan, undoAction?: () => void) => {
-      return showCalendarToast('deleted', { event: plan, undoAction })
+      return showCalendarToast('deleted', { event: plan, undoAction: undoAction ?? undefined })
     },
     [showCalendarToast]
   )
@@ -93,7 +97,7 @@ export const useCalendarToast = () => {
 
   const bulkDeleted = useCallback(
     (count: number, undoAction?: () => void) => {
-      return showCalendarToast('bulk-deleted', { count, undoAction })
+      return showCalendarToast('bulk-deleted', { count, undoAction: undoAction ?? undefined })
     },
     [showCalendarToast]
   )
@@ -109,7 +113,7 @@ export const useCalendarToast = () => {
 
   const syncFailed = useCallback(
     (retryAction?: () => void) => {
-      return showCalendarToast('sync-failed', { retryAction })
+      return showCalendarToast('sync-failed', { retryAction: retryAction ?? undefined })
     },
     [showCalendarToast]
   )

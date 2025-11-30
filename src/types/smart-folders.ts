@@ -160,17 +160,21 @@ export const convertSmartFolderRowToSmartFolder = (row: SmartFolderRow): SmartFo
   updatedAt: new Date(row.updated_at),
 })
 
-export const convertSmartFolderToSmartFolderRow = (folder: Partial<SmartFolder>): Partial<SmartFolderRow> => ({
-  id: folder.id,
-  name: folder.name,
-  description: folder.description !== undefined ? (folder.description ?? null) : undefined,
-  user_id: folder.userId,
-  rules: folder.rules,
-  is_active: folder.isActive,
-  order_index: folder.orderIndex,
-  icon: folder.icon !== undefined ? (folder.icon ?? null) : undefined,
-  color: folder.color,
-  is_system: folder.isSystem,
-  created_at: folder.createdAt?.toISOString(),
-  updated_at: folder.updatedAt?.toISOString(),
-})
+export const convertSmartFolderToSmartFolderRow = (folder: Partial<SmartFolder>): Partial<SmartFolderRow> => {
+  const result: Partial<SmartFolderRow> = {}
+
+  if (folder.id !== undefined) result.id = folder.id
+  if (folder.name !== undefined) result.name = folder.name
+  if (folder.description !== undefined) result.description = folder.description ?? null
+  if (folder.userId !== undefined) result.user_id = folder.userId
+  if (folder.rules !== undefined) result.rules = folder.rules
+  if (folder.isActive !== undefined) result.is_active = folder.isActive
+  if (folder.orderIndex !== undefined) result.order_index = folder.orderIndex
+  if (folder.icon !== undefined) result.icon = folder.icon ?? null
+  if (folder.color !== undefined) result.color = folder.color
+  if (folder.isSystem !== undefined) result.is_system = folder.isSystem
+  if (folder.createdAt !== undefined) result.created_at = folder.createdAt.toISOString()
+  if (folder.updatedAt !== undefined) result.updated_at = folder.updatedAt.toISOString()
+
+  return result
+}

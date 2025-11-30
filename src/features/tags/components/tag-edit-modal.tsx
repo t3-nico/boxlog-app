@@ -122,7 +122,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
             {/* グループ */}
             <div className="grid gap-2">
               <Label htmlFor="group">グループ</Label>
-              <Select value={groupId || undefined} onValueChange={(value) => setGroupId(value)}>
+              <Select value={groupId ?? undefined} onValueChange={(value) => setGroupId(value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="グループを選択（任意）" />
                 </SelectTrigger>

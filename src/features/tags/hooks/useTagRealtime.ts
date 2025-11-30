@@ -45,14 +45,15 @@ interface UseTagRealtimeOptions {
 }
 
 export function useTagRealtime(userId: string | undefined, options: UseTagRealtimeOptions = {}) {
-  const { enabled: _enabled = true } = options
+  const { enabled = true } = options
   const queryClient = useQueryClient()
 
   useRealtimeSubscription<{ id: string }>({
     channelName: `tag-changes-${userId}`,
     table: 'tags',
     event: '*', // INSERT, UPDATE, DELETE すべて
-    filter: userId ? `user_id=eq.${userId}` : undefined,
+    ...(userId && { filter: `user_id=eq.${userId}` }),
+    ...(enabled !== undefined && { enabled }),
     onEvent: (payload) => {
       const newRecord = payload.new as { id: string } | undefined
       const oldRecord = payload.old as { id: string } | undefined

@@ -447,7 +447,10 @@ export function useDragAndDrop({
       setDragState((prev) => ({
         ...prev,
         currentPosition: { x: constrainedX, y: constrainedY },
-        snappedPosition: { top: snappedTop, left: snappedLeft },
+        snappedPosition: {
+          top: snappedTop,
+          ...(snappedLeft !== undefined && { left: snappedLeft }),
+        },
         previewTime: { start: previewStartTime, end: previewEndTime },
         targetDateIndex,
       }))
@@ -1025,7 +1028,6 @@ export function useDragAndDrop({
         hasMoved: false,
         originalElement: null,
         originalDateIndex: 0,
-        columnWidth: undefined,
       }
 
       setDragState({

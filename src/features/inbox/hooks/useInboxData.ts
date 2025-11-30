@@ -154,8 +154,8 @@ export function useInboxData(filters: InboxFilters = {}) {
     isLoading,
     error,
   } = useplans({
-    status: filters.status,
-    search: filters.search,
+    ...(filters.status && { status: filters.status }),
+    ...(filters.search && { search: filters.search }),
   })
 
   // PlanをInboxItemに変換

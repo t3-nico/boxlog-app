@@ -32,13 +32,13 @@ export interface ApiVersion {
   /** マイナーバージョン */
   minor: number
   /** パッチバージョン */
-  patch?: number
+  patch?: number | undefined
   /** サポート状態 */
   status: 'supported' | 'deprecated' | 'unsupported'
   /** 非推奨日 */
-  deprecationDate?: string
+  deprecationDate?: string | undefined
   /** サポート終了日 */
-  endOfLifeDate?: string
+  endOfLifeDate?: string | undefined
 }
 
 /**

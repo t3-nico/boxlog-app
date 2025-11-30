@@ -31,17 +31,17 @@ export interface LogEntry {
   /** メッセージ */
   message: string
   /** アプリケーションバージョン */
-  version?: string
+  version?: string | undefined
   /** 実行環境 */
-  environment?: string
+  environment?: string | undefined
   /** コンポーネント名 */
-  component?: string
+  component?: string | undefined
   /** リクエストID */
-  requestId?: string
+  requestId?: string | undefined
   /** ユーザーID */
-  userId?: string
+  userId?: string | undefined
   /** セッションID */
-  sessionId?: string
+  sessionId?: string | undefined
   /** 追加メタデータ */
   meta?: Record<string, unknown>
 }
@@ -55,9 +55,9 @@ export interface ErrorLogEntry extends LogEntry {
   error?: {
     name: string
     message: string
-    stack?: string
-    code?: string | number
-  }
+    stack?: string | undefined
+    code?: string | number | undefined
+  } | undefined
   /** エラーコンテキスト */
   context?: {
     action?: string

@@ -408,7 +408,7 @@ export function PlanInspector() {
     if (time && selectedDate) {
       const [hours, minutes] = time.split(':').map(Number)
       const dateTime = new Date(selectedDate)
-      dateTime.setHours(hours, minutes, 0, 0)
+      dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
       autoSave('start_time', dateTime.toISOString())
     } else {
       autoSave('start_time', undefined)
@@ -421,7 +421,7 @@ export function PlanInspector() {
     if (time && selectedDate) {
       const [hours, minutes] = time.split(':').map(Number)
       const dateTime = new Date(selectedDate)
-      dateTime.setHours(hours, minutes, 0, 0)
+      dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
       autoSave('end_time', dateTime.toISOString())
     } else {
       autoSave('end_time', undefined)

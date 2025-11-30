@@ -10,7 +10,7 @@ import {
   useRenameTag,
   useUpdateTag,
 } from '@/features/tags/hooks/use-tags'
-import type { CreateTagInput, TagWithChildren, UpdateTagInput } from '@/types/tags'
+import type { CreateTagInput, Tag, TagWithChildren, UpdateTagInput } from '@/types/tags'
 import { useCallback, useState } from 'react'
 
 export function useTagOperations(tags: TagWithChildren[]) {
@@ -89,7 +89,7 @@ export function useTagOperations(tags: TagWithChildren[]) {
 
       try {
         // 楽観的更新
-        updateTagOptimistically(selectedTag.id, data)
+        updateTagOptimistically(selectedTag.id, data as Partial<Tag>)
 
         // 実際の更新
         await updateTagMutation.mutateAsync({

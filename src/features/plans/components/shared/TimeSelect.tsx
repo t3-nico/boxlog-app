@@ -30,8 +30,8 @@ function parseTimeInput(input: string): string {
   // 既にHH:MM形式の場合はそのまま
   if (/^\d{1,2}:\d{1,2}$/.test(input)) {
     const [hour, minute] = input.split(':')
-    const hourNum = parseInt(hour, 10)
-    const minuteNum = parseInt(minute, 10)
+    const hourNum = parseInt(hour!, 10)
+    const minuteNum = parseInt(minute!, 10)
 
     if (hourNum >= 0 && hourNum < 24 && minuteNum >= 0 && minuteNum < 60) {
       return `${hourNum.toString().padStart(2, '0')}:${minuteNum.toString().padStart(2, '0')}`
@@ -221,7 +221,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
       e.preventDefault()
       if (highlightedIndex >= 0 && highlightedIndex < filteredOptions.length) {
         // ハイライトされた選択肢を確定
-        const selected = filteredOptions[highlightedIndex]
+        const selected = filteredOptions[highlightedIndex]!
         onChange(selected)
         setInputValue(selected)
       } else {

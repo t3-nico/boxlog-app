@@ -35,7 +35,7 @@ export function useDragAndDropRefactored({
   const { dragState, updateDragState, resetDragState, startDrag, startResize, completeDragOperation } = useDragState()
 
   const { executeEventUpdate, executeEventResize } = useEventUpdate({
-    onEventUpdate,
+    onEventUpdate: onEventUpdate ?? undefined,
     events,
     date,
   })
@@ -62,7 +62,7 @@ export function useDragAndDropRefactored({
     originalElement: HTMLElement | null
     originalDateIndex: number
     columnWidth: number
-    initialRect?: DOMRect
+    initialRect?: DOMRect | undefined
   } | null>(null)
 
   // マウスダウン処理
@@ -112,7 +112,7 @@ export function useDragAndDropRefactored({
         originalElement,
         originalDateIndex: dateIndex,
         columnWidth,
-        initialRect,
+        initialRect: initialRect ?? undefined,
       }
 
       startDrag(eventId, startPosition, originalPosition, dateIndex)
@@ -203,7 +203,7 @@ export function useDragAndDropRefactored({
 
         updateDragState({
           currentPosition: { x: constrainedX, y: constrainedY },
-          snappedPosition: { top: snappedTop, left: snappedLeft },
+          snappedPosition: { top: snappedTop, left: snappedLeft ?? undefined },
           previewTime: { start: previewStartTime, end: previewEndTime },
           targetDateIndex,
         })

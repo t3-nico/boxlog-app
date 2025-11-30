@@ -74,13 +74,13 @@ export interface ErrorPattern {
 export interface ErrorMetadata {
   source: string // エラー発生源（API、DB、外部サービス等）
   timestamp: Date // 発生日時
-  context?: Record<string, any> // コンテキスト情報
-  userId?: string // ユーザーID（該当する場合）
-  sessionId?: string // セッションID
-  requestId?: string // リクエストID
-  userAgent?: string // ユーザーエージェント
-  ip?: string // IPアドレス
-  version?: string // アプリケーションバージョン
+  context?: Record<string, any> | undefined // コンテキスト情報
+  userId?: string | undefined // ユーザーID（該当する場合）
+  sessionId?: string | undefined // セッションID
+  requestId?: string | undefined // リクエストID
+  userAgent?: string | undefined // ユーザーエージェント
+  ip?: string | undefined // IPアドレス
+  version?: string | undefined // アプリケーションバージョン
 }
 
 /**

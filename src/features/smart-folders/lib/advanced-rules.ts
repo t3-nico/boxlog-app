@@ -237,7 +237,7 @@ export class AdvancedRuleEngine {
     if (timeRange.excludeHolidays) {
       // 実際のプロダクションでは祝日APIを使用
       const holidays = ['2024-01-01', '2024-12-25'] // 例
-      const dateStr = date.toISOString().split('T')[0]
+      const dateStr = date.toISOString().split('T')[0] ?? ''
       if (holidays.includes(dateStr)) return false
     }
 
@@ -485,7 +485,7 @@ export class AdvancedRuleBuilder {
    * グループの終了
    */
   endGroup(): this {
-    this.currentGroupId = undefined
+    delete this.currentGroupId
     return this
   }
 
@@ -493,15 +493,16 @@ export class AdvancedRuleBuilder {
    * 正規表現ルールの追加
    */
   regex(field: SmartFolderRuleField, pattern: string, flags?: string): this {
-    this.addRule({
+    const rule: AdvancedSmartFolderRule = {
       field,
       operator: AdvancedRuleOperator.REGEX_MATCH,
       value: pattern,
       logic: 'AND',
       isRegex: true,
-      regexFlags: flags,
-      groupId: this.currentGroupId,
-    })
+      ...(flags !== undefined && { regexFlags: flags }),
+      ...(this.currentGroupId !== undefined && { groupId: this.currentGroupId }),
+    }
+    this.addRule(rule)
     return this
   }
 
@@ -509,13 +510,14 @@ export class AdvancedRuleBuilder {
    * 範囲ルールの追加
    */
   between(field: SmartFolderRuleField, min: number, max: number): this {
-    this.addRule({
+    const rule: AdvancedSmartFolderRule = {
       field,
       operator: AdvancedRuleOperator.BETWEEN,
       value: [min, max],
       logic: 'AND',
-      groupId: this.currentGroupId,
-    })
+      ...(this.currentGroupId !== undefined && { groupId: this.currentGroupId }),
+    }
+    this.addRule(rule)
     return this
   }
 
@@ -528,7 +530,7 @@ export class AdvancedRuleBuilder {
     endTime: string,
     options?: Partial<AdvancedSmartFolderRule['timeRange']>
   ): this {
-    this.addRule({
+    const rule: AdvancedSmartFolderRule = {
       field,
       operator: AdvancedRuleOperator.TIME_BETWEEN,
       value: null,
@@ -538,8 +540,9 @@ export class AdvancedRuleBuilder {
         endTime,
         ...options,
       },
-      groupId: this.currentGroupId,
-    })
+      ...(this.currentGroupId !== undefined && { groupId: this.currentGroupId }),
+    }
+    this.addRule(rule)
     return this
   }
 
@@ -563,7 +566,7 @@ export class AdvancedRuleBuilder {
    */
   reset(): this {
     this.rules = []
-    this.currentGroupId = undefined
+    delete this.currentGroupId
     return this
   }
 

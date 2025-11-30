@@ -63,7 +63,7 @@ export class AnalyticsTracker {
   private eventQueue: Array<{ name: string; properties: EventProperties; timestamp: number }> = []
   private flushTimer?: NodeJS.Timeout
   private userConsent = false
-  private userId?: string
+  private userId?: string | undefined
   private sessionId: string
   private sessionStart: number
 

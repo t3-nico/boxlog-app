@@ -12,9 +12,9 @@ interface NormalizedPlan {
   startTime: number // Unix timestamp
   endTime: number // Unix timestamp
   dateKey: string // YYYY-MM-DD format
-  color?: string
-  location?: string
-  description?: string
+  color?: string | undefined
+  location?: string | undefined
+  description?: string | undefined
   tags?: string[]
   recurrenceId?: string
 }
@@ -106,9 +106,9 @@ export class PlanDataManager {
       startTime,
       endTime,
       dateKey,
-      color: plan.color,
-      location: plan.location,
-      description: plan.description,
+      color: plan.color ?? undefined,
+      location: plan.location ?? undefined,
+      description: plan.description ?? undefined,
       tags: plan.tags?.map((tag) => tag.name) || [],
     }
   }
@@ -367,7 +367,7 @@ export class PlanDataManager {
   private setCache(key: string, result: NormalizedPlan[]): void {
     if (this.queryCache.size >= this.MAX_CACHE_SIZE) {
       // LRU 的にキャッシュクリア
-      const oldestKey = Array.from(this.queryCache.keys())[0]
+      const oldestKey = Array.from(this.queryCache.keys())[0]!
       this.queryCache.delete(oldestKey)
     }
 
@@ -397,7 +397,7 @@ export class PlanDataManager {
    * ユーティリティメソッド
    */
   private getDateKey(date: Date): string {
-    return date.toISOString().split('T')[0]
+    return date.toISOString().split('T')[0]!
   }
 
   /**

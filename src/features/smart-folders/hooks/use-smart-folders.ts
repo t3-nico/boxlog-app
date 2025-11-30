@@ -151,9 +151,13 @@ export function useUpdateSmartFolder() {
       const previousFolders = queryClient.getQueryData<SmartFolder[]>(smartFolderKeys.lists())
 
       if (previousFolders) {
-        const updatedFolders = previousFolders.map((folder) =>
-          folder.id === id ? { ...folder, ...updates, updatedAt: new Date() } : folder
-        )
+        const updatedFolders: SmartFolder[] = previousFolders.map((folder) => {
+          if (folder.id !== id) return folder
+          const cleanUpdates = Object.fromEntries(
+            Object.entries(updates).filter(([, value]) => value !== undefined)
+          )
+          return { ...folder, ...cleanUpdates, updatedAt: new Date() }
+        })
         queryClient.setQueryData<SmartFolder[]>(smartFolderKeys.lists(), updatedFolders)
       }
 

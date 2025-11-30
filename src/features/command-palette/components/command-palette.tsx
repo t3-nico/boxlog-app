@@ -125,22 +125,27 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
 
       // Get recent tasks
       const recentTasks = tasks.slice(0, 5) // Get 5 most recent tasks
-      const taskResults: SearchResult[] = recentTasks.map((task) => ({
-        id: `task-${task.id}`,
-        title: task.title || 'Untitled Task',
-        description: task.description || '',
-        category: 'tasks' as const,
-        type: 'task' as const,
-        action: async () => {
-          // Navigate to task or show task details
-          console.log('Open task:', task)
-        },
-        metadata: {
-          tags: task.tags || [],
-          status: task.status,
-          dueDate: task.planned_start ? new Date(task.planned_start).toLocaleDateString() : undefined,
-        },
-      }))
+      const taskResults = recentTasks.map((task): SearchResult => {
+        const result: SearchResult = {
+          id: `task-${task.id}`,
+          title: task.title || 'Untitled Task',
+          description: task.description || '',
+          category: 'tasks',
+          type: 'task',
+          action: async () => {
+            // Navigate to task or show task details
+            console.log('Open task:', task)
+          },
+        }
+        // metadataは条件付きで追加
+        if (task.tags || task.status || task.planned_start) {
+          result.metadata = {}
+          if (task.tags) result.metadata.tags = Array.isArray(task.tags) ? task.tags : []
+          if (task.status) result.metadata.status = task.status
+          if (task.planned_start) result.metadata.dueDate = new Date(task.planned_start).toLocaleDateString()
+        }
+        return result
+      })
 
       const initialResults: SearchResult[] = [...commandResults, ...taskResults]
 
@@ -208,7 +213,10 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
 
   // Get category display info
   const getCategoryInfo = (category: string) => {
-    const categoryMap: Record<string, { label: string; icon: React.ComponentType<{ className?: string }> }> = {
+    const categoryMap: Record<
+      string,
+      { label: string; icon: React.ForwardRefExoticComponent<React.SVGProps<SVGSVGElement>> }
+    > = {
       navigation: { label: 'Navigation', icon: Navigation },
       create: { label: 'Actions', icon: Plus },
       tasks: { label: 'Recent Items', icon: CheckSquare },

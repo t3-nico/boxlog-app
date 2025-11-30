@@ -30,6 +30,7 @@ export class SmartFolderRuleEngine {
 
     for (let i = 0; i < rules.length; i++) {
       const rule = rules[i]
+      if (!rule) continue
       const ruleResult = this.evaluateRule(rule, item, context)
 
       if (i === 0) {

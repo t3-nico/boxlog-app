@@ -19,9 +19,9 @@ export interface CalendarToastOptions {
   event?: CalendarPlan
   events?: CalendarPlan[]
   count?: number
-  undoAction?: () => void | Promise<void>
-  viewAction?: () => void
-  retryAction?: () => void | Promise<void>
+  undoAction?: (() => void | Promise<void>) | undefined
+  viewAction?: (() => void) | undefined
+  retryAction?: (() => void | Promise<void>) | undefined
   fromDate?: Date
   toDate?: Date
   description?: string

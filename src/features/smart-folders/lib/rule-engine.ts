@@ -403,7 +403,7 @@ export class AdvancedRuleEngine {
     if (!match) return now
 
     const [, amountStr, unit] = match
-    const amount = parseInt(amountStr)
+    const amount = parseInt(amountStr!)
     const result = new Date(now)
 
     switch (unit) {

@@ -170,7 +170,7 @@ export function configToReadable(config: RecurrenceConfig): string {
       parts.push(`${config.byMonthDay}日`)
     } else if (config.bySetPos !== undefined && config.byWeekday?.length) {
       const weekdayNames = ['日', '月', '火', '水', '木', '金', '土']
-      const weekdayName = weekdayNames[config.byWeekday[0]]
+      const weekdayName = weekdayNames[config.byWeekday[0]!]
       if (config.bySetPos === -1) {
         parts.push(`最終${weekdayName}曜日`)
       } else {
