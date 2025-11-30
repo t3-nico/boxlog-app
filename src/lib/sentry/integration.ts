@@ -218,7 +218,7 @@ export function reportToSentry(error: AppError): void {
 
 // エラーハンドラーエクスポート
 export class SentryErrorHandler {
-  static handleError(error: Error | AppError, context?: Record<string, any>): void {
+  static handleError(error: Error | AppError, context?: Record<string, unknown>): void {
     if (error instanceof AppError) {
       sentryIntegration.reportError(error)
     } else {
@@ -227,7 +227,7 @@ export class SentryErrorHandler {
     }
   }
 
-  static setOperationContext(context: Record<string, any>): void {
+  static setOperationContext(context: Record<string, unknown>): void {
     Sentry.setContext('operation', context)
   }
 
@@ -235,7 +235,7 @@ export class SentryErrorHandler {
     message: string
     category?: string
     level?: Sentry.SeverityLevel
-    data?: Record<string, any>
+    data?: Record<string, unknown>
   }): void {
     Sentry.addBreadcrumb(breadcrumb)
   }

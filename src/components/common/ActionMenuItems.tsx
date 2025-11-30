@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 /**
  * メニューアクション定義
  */
-export interface MenuAction<T = any> {
+export interface MenuAction<T = unknown> {
   /** アクションのキー */
   key: string
   /** アイコン */
@@ -23,7 +23,7 @@ export interface MenuAction<T = any> {
 /**
  * サブメニューアクション定義
  */
-export interface SubMenuAction<T = any> {
+export interface SubMenuAction<T = unknown> {
   /** サブメニューのキー */
   key: string
   /** トリガー情報 */
@@ -43,7 +43,7 @@ export interface SubMenuAction<T = any> {
 /**
  * アクショングループ定義
  */
-export interface ActionGroup<T = any> {
+export interface ActionGroup<T = unknown> {
   /** グループのキー */
   key: string
   /** 通常アクション */
@@ -55,7 +55,7 @@ export interface ActionGroup<T = any> {
 /**
  * ActionMenuItemsのProps
  */
-export interface ActionMenuItemsProps<T = any> {
+export interface ActionMenuItemsProps<T = unknown> {
   /** 対象アイテム */
   item: T
   /** アクショングループのリスト */
@@ -120,7 +120,7 @@ export interface ActionMenuItemsProps<T = any> {
  * />
  * ```
  */
-export function ActionMenuItems<T = any>({
+export function ActionMenuItems<T = unknown>({
   item,
   groups,
   renderMenuItem,

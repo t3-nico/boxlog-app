@@ -121,7 +121,7 @@ export class SpeedInsightsManager {
    */
   private startMeasuring(): void {
     // Largest Contentful Paint
-    onLCP((metric: any) => {
+    onLCP((metric: { value: number; delta: number; id: string }) => {
       this.recordMetric({
         name: 'LCP',
         value: metric.value,
@@ -133,7 +133,7 @@ export class SpeedInsightsManager {
     })
 
     // Interaction to Next Paint (replaced FID in web-vitals v4)
-    onINP((metric: any) => {
+    onINP((metric: { value: number; delta: number; id: string }) => {
       this.recordMetric({
         name: 'FID', // Keep name as FID for backward compatibility
         value: metric.value,
@@ -145,7 +145,7 @@ export class SpeedInsightsManager {
     })
 
     // Cumulative Layout Shift
-    onCLS((metric: any) => {
+    onCLS((metric: { value: number; delta: number; id: string }) => {
       this.recordMetric({
         name: 'CLS',
         value: metric.value,
@@ -157,7 +157,7 @@ export class SpeedInsightsManager {
     })
 
     // First Contentful Paint
-    onFCP((metric: any) => {
+    onFCP((metric: { value: number; delta: number; id: string }) => {
       this.recordMetric({
         name: 'FCP',
         value: metric.value,
@@ -169,7 +169,7 @@ export class SpeedInsightsManager {
     })
 
     // Time to First Byte
-    onTTFB((metric: any) => {
+    onTTFB((metric: { value: number; delta: number; id: string }) => {
       this.recordMetric({
         name: 'TTFB',
         value: metric.value,

@@ -137,7 +137,9 @@ export class BreakingChangeManager {
       releaseDate: versionChanges[0]?.releaseDate || '',
       totalChanges: versionChanges.length,
       byImpact,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 動的に構築されるオブジェクト
       byType: byType as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 動的に構築されるオブジェクト
       byAffectedGroup: byAffectedGroup as any,
       requiredMigrations,
       totalMigrationTime,
@@ -161,6 +163,7 @@ export class BreakingChangeManager {
         details: string[]
         mitigation?: string[]
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 動的に構築されるRecord
     > = {} as any
 
     change.affectedGroups.forEach((group) => {

@@ -142,7 +142,7 @@ export class TranslationQualityAssurance {
     language: string,
     originalText: string,
     translatedText: string,
-    context?: any
+    context?: Record<string, unknown>
   ): Promise<QualityAssessment> {
     const metrics = await this.calculateQualityMetrics(originalText, translatedText, language, context)
 
@@ -176,7 +176,7 @@ export class TranslationQualityAssurance {
     originalText: string,
     translatedText: string,
     language: string,
-    context?: any
+    context?: Record<string, unknown>
   ): Promise<QualityMetrics> {
     // 基本的な品質チェック（実際の実装では高度なNLP/AIを使用）
     const accuracy = this.checkAccuracy(originalText, translatedText, language)
@@ -282,7 +282,7 @@ export class TranslationQualityAssurance {
   /**
    * 一貫性チェック
    */
-  private checkConsistency(translatedText: string, language: string, context?: any): number {
+  private checkConsistency(translatedText: string, language: string, context?: Record<string, unknown>): number {
     let score = 100
 
     // 用語の一貫性チェック（簡易版）

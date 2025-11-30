@@ -381,7 +381,13 @@ export type CodeBlockSelectProps = ComponentProps<typeof Select>
 export const CodeBlockSelect = (props: CodeBlockSelectProps) => {
   const { value, onValueChange } = useContext(CodeBlockContext)
 
-  return <Select {...(value !== undefined && { value })} {...(onValueChange !== undefined && { onValueChange })} {...props} />
+  return (
+    <Select
+      {...(value !== undefined && { value })}
+      {...(onValueChange !== undefined && { onValueChange })}
+      {...props}
+    />
+  )
 }
 
 export type CodeBlockSelectTriggerProps = ComponentProps<typeof SelectTrigger>
@@ -467,7 +473,6 @@ const CodeBlockFallback = ({ children, ...props }: CodeBlockFallbackProps) => (
           ?.toString()
           .split('\n')
           .map((line, lineNumber) => (
-            // eslint-disable-next-line react/no-array-index-key
             <span className="line" key={lineNumber}>
               {line}
             </span>

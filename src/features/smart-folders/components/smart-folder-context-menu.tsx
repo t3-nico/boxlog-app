@@ -121,13 +121,7 @@ export const SmartFolderContextMenu = ({
       {/* メニューアイテム */}
       {menuItems.map((item, index) => {
         if (item.type === 'divider') {
-          return (
-            <div
-              // eslint-disable-next-line react/no-array-index-key
-              key={`divider-${index}`}
-              className="border-border my-1 border-t"
-            />
-          )
+          return <div key={`divider-${index}`} className="border-border my-1 border-t" />
         }
 
         return (

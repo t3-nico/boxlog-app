@@ -411,7 +411,9 @@ export function useWebVitals() {
       const observer = new PerformanceObserver((list) => {
         let cls = 0
         for (const entry of list.getEntries()) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- PerformanceEntry拡張型
           if (!(entry as any).hadRecentInput) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- PerformanceEntry拡張型
             cls += (entry as any).value
           }
         }
@@ -450,6 +452,7 @@ export function useWebVitals() {
       // First Input Delay 測定
       const observer = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- PerformanceEntry拡張型
           const fid = (entry as any).processingStart - entry.startTime
 
           if (fid > 100) {
