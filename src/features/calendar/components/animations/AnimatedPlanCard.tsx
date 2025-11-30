@@ -42,7 +42,6 @@ export const AnimatedEventCard = ({
     if (isNew && !isVisible) {
       // 短い遅延後にフェードイン開始
       animationTimeoutRef.current = setTimeout(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- アニメーションタイマーのコールバック内setState
         setIsVisible(true)
       }, 10)
     }
@@ -57,7 +56,6 @@ export const AnimatedEventCard = ({
   // 削除アニメーション
   useEffect(() => {
     if (isDeleting) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- prop変更に応じたアニメーション状態更新
       setIsVisible(false)
     }
   }, [isDeleting])

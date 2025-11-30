@@ -241,7 +241,6 @@ export const useI18n = (providedLocale?: 'en' | 'ja') => {
     getDictionary(locale as 'en' | 'ja').then(setDictionary)
   }, [locale])
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- 翻訳関数の安定性のため意図的にメモ化
   const t = useMemo(() => {
     if (!dictionary) {
       // 辞書ロード中はキーをそのまま返す

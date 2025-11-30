@@ -197,17 +197,16 @@ export function PlanTagSelectDialogEnhanced({
   // Popoverを閉じた時に状態をリセット
   useEffect(() => {
     if (!isOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Popover閉じ時のクリーンアップ
       setSearchQuery('')
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Popover閉じ時のクリーンアップ
+
       setIsCreating(false)
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Popover閉じ時のクリーンアップ
+
       setNewTagName('')
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Popover閉じ時のクリーンアップ
+
       setSelectedGroupId(null)
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Popover閉じ時のクリーンアップ
+
       setShowArchived(false)
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Popover閉じ時のクリーンアップ
+
       setShowSidebar(true)
     }
   }, [isOpen])

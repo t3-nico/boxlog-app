@@ -82,7 +82,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
     // Apply theme
     root.classList.add(newResolvedTheme)
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- システムテーマ変更への同期は外部システム連携
+
     setResolvedTheme(newResolvedTheme)
 
     // Apply color scheme CSS variables
@@ -97,7 +97,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
     const handleChange = () => {
       const newResolvedTheme = mediaQuery.matches ? 'dark' : 'light'
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- メディアクエリ変更のコールバック内setState
+
       setResolvedTheme(newResolvedTheme)
       document.documentElement.classList.remove('light', 'dark')
       document.documentElement.classList.add(newResolvedTheme)

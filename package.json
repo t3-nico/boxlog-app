@@ -294,7 +294,7 @@
     "lucide-react": "^0.548.0",
     "motion": "^12.23.24",
     "nanoid": "^5.1.6",
-    "next": "^16.0.5",
+    "next": "^15.5.6",
     "next-recaptcha-v3": "^1.5.2",
     "next-themes": "^0.4.6",
     "novel": "^1.0.2",
@@ -325,7 +325,7 @@
     "tunnel-rat": "^0.1.2",
     "use-stick-to-bottom": "^1.1.1",
     "web-vitals": "^5.1.0",
-    "zod": "^4.1.13",
+    "zod": "^3.24.1",
     "zustand": "^5.0.6"
   },
   "devDependencies": {
@@ -352,7 +352,7 @@
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.39.1",
-    "eslint-config-next": "^16.0.5",
+    "eslint-config-next": "^15.5.6",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-security": "^3.0.1",

@@ -45,7 +45,7 @@ export function useTagGroupsDnd(groups: TagGroup[]) {
   useEffect(() => {
     if (currentGroupIds !== prevGroupIdsRef.current && !activeGroup) {
       prevGroupIdsRef.current = currentGroupIds
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部データ変更に応じたローカル状態同期
+
       setLocalGroups(groups)
     }
   }, [currentGroupIds, groups, activeGroup])

@@ -61,7 +61,6 @@ export const EventContextMenu = ({
         y = Math.max(10, viewportHeight - rect.height - 10)
       }
 
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- DOM測定後の位置調整
       setAdjustedPosition({ x, y })
     }
   }, [position])

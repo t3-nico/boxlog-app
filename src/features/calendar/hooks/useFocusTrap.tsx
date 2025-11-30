@@ -235,7 +235,6 @@ export function useFocusTrap(options: FocusTrapOptions) {
   // イベントリスナーの設定
   useEffect(() => {
     if (!options.enabled) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- 無効化時のクリーンアップ
       deactivate()
       return
     }
@@ -256,10 +255,8 @@ export function useFocusTrap(options: FocusTrapOptions) {
   // enabled状態の変更を監視
   useEffect(() => {
     if (options.enabled) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- enabled状態に応じたトラップ制御
       activate()
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- enabled状態に応じたトラップ制御
       deactivate()
     }
   }, [options.enabled, activate, deactivate])

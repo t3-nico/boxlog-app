@@ -189,7 +189,6 @@ export function ArchivePageClient() {
 
   // ページ変更時にページをリセット
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- ソート/フィルタ変更時のページリセットは意図的
     setCurrentPage(1)
   }, [sortField, sortDirection, pageSize])
 

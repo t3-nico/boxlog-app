@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity, react-hooks/refs */
 // パフォーマンス計測のため、render中にperformance.now()とrefへの書き込みが必要
 import { useEffect, useRef } from 'react'
 

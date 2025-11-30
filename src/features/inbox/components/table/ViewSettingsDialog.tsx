@@ -52,7 +52,6 @@ export function ViewSettingsDialog({ open, onOpenChange, view, currentState }: V
 
   // viewが変更されたら名前をリセット
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- prop変更に応じたフォーム初期化
     setName(view?.name || '')
   }, [view])
 

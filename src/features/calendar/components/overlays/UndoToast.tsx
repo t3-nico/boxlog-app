@@ -50,9 +50,8 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
 
   useEffect(() => {
     if (action) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- アクション表示の初期化
       setIsVisible(true)
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- プログレスバー初期化
+
       setProgress(100)
 
       // プログレスバーのアニメーション
@@ -62,7 +61,6 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
         const remaining = Math.max(0, autoHideDelay - elapsed)
         const newProgress = (remaining / autoHideDelay) * 100
 
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- rAFコールバック内setState
         setProgress(newProgress)
 
         if (remaining > 0) {
@@ -74,7 +72,6 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
 
       requestAnimationFrame(updateProgress)
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- アクションクリア時の非表示
       setIsVisible(false)
     }
   }, [action, autoHideDelay, handleDismiss])

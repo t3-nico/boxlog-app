@@ -80,9 +80,7 @@ export function AnalyticsProvider({
   customEndpoint,
 }: AnalyticsProviderProps) {
   // 遅延初期化でlocalStorageから同意状態を復元
-  const [hasUserConsent, setHasUserConsent] = useState(() =>
-    getStoredConsent(requireConsent, initialConsent)
-  )
+  const [hasUserConsent, setHasUserConsent] = useState(() => getStoredConsent(requireConsent, initialConsent))
   const [isReady, setIsReady] = useState(false)
   const initializedRef = useRef(false)
 
@@ -130,7 +128,6 @@ export function AnalyticsProvider({
       setUserId(userId)
     }
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- 初期化完了マーカーは初回のみ
     setIsReady(true)
   }, [enabledProviders, debug, disableInDevelopment, requireConsent, userId, customEndpoint, hasUserConsent])
 

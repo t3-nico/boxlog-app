@@ -91,7 +91,6 @@ export const LazyImage = ({
     const observer = getImageObserver(rootMargin, threshold)
 
     const callback = () => {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- IntersectionObserverコールバック内setState
       setState((prev) => ({ ...prev, isIntersecting: true }))
     }
 
@@ -110,7 +109,6 @@ export const LazyImage = ({
       return
     }
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- 画像読み込み開始の状態同期
     setState((prev) => ({ ...prev, isLoading: true }))
   }, [state.isIntersecting, state.isLoading])
 
@@ -307,7 +305,6 @@ export const LazyIcon = ({ name, size = 24, className, priority = false }: LazyI
     const observer = getImageObserver('50px', 0.1)
 
     const callback = () => {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- IntersectionObserverコールバック内setState
       setIsIntersecting(true)
     }
 
@@ -325,9 +322,8 @@ export const LazyIcon = ({ name, size = 24, className, priority = false }: LazyI
     if (!isIntersecting || isLoaded || hasError) return
 
     loadIcon(name)
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Promiseコールバック内setState
       .then(() => setIsLoaded(true))
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Promiseコールバック内setState
+
       .catch(() => setHasError(true))
   }, [isIntersecting, isLoaded, hasError, name])
 

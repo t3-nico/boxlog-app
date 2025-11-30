@@ -25,7 +25,7 @@ export function useCurrentTime(options: UseCurrentTimeOptions = {}) {
     // 定期更新
     const interval = setInterval(() => {
       const newTime = new Date()
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- setIntervalコールバック内setState
+
       setCurrentTime(newTime)
       if (process.env.NODE_ENV === 'development') {
         console.log('useCurrentTime updated:', newTime.toLocaleTimeString())

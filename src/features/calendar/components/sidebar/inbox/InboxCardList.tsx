@@ -118,7 +118,6 @@ export function InboxCardList({
   // 新規作成トリガー監視
   useEffect(() => {
     if (triggerCreate && !isCreating) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部トリガーに応じた状態更新
       setIsCreating(true)
     }
   }, [triggerCreate, isCreating])

@@ -337,14 +337,13 @@ export function useHighContrast() {
   useEffect(() => {
     const updateSystemHighContrast = () => {
       const systemHighContrast = detectSystemHighContrast()
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- メディアクエリ変更のコールバック内setState
+
       setIsSystemHighContrast(systemHighContrast)
 
       // システムでハイコントラストが有効な場合、自動的に適用
       if (systemHighContrast && !isHighContrastEnabled) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- システム設定同期
         setIsHighContrastEnabled(true)
-        // eslint-disable-next-line react-hooks/set-state-in-effect -- システム設定同期
+
         setCurrentTheme('blackOnWhite')
       }
     }

@@ -24,13 +24,6 @@ const config = [
     rules: {
       // TypeScriptルール無効化（inline disableを使用）
       '@typescript-eslint/no-explicit-any': 'off',
-      // eslint-plugin-react-hooks v7 の新しい厳格ルールを一時的に無効化
-      // TODO: 将来的にこれらのルールに対応する (#XXX)
-      'react-hooks/set-state-in-effect': 'warn',
-      'react-hooks/purity': 'warn',
-      'react-hooks/refs': 'warn',
-      'react-hooks/immutability': 'warn',
-      'react-hooks/preserve-manual-memoization': 'warn',
     },
   }),
 

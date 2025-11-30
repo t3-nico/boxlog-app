@@ -70,7 +70,6 @@ export function TagsCell({ tags = [], width, onTagsChange }: TagsCellProps) {
       }
     }
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- 列幅に応じた表示数計算
     setVisibleCount(Math.max(1, count))
   }, [width, tags])
 

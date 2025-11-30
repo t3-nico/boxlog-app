@@ -40,11 +40,10 @@ export function useNotifications({ events, onReminderTriggered }: UseNotificatio
   // 初回マウント時に現在の通知権限を取得
   useEffect(() => {
     if (typeof window !== 'undefined' && 'Notification' in window) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- ブラウザAPI状態の初期同期
       setPermission(Notification.permission)
       // localStorage から権限リクエスト履歴を取得
       const requested = localStorage.getItem('notification-permission-requested')
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage状態の初期同期
+
       setHasRequested(requested === 'true')
     }
   }, [])

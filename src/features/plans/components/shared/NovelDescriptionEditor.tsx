@@ -55,7 +55,7 @@ export function NovelDescriptionEditor({
   useEffect(() => {
     if (editorRef.current && content && !isLoaded) {
       editorRef.current.commands.setContent(content)
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- エディタ初期化完了フラグ
+
       setIsLoaded(true)
     }
   }, [content, isLoaded])
