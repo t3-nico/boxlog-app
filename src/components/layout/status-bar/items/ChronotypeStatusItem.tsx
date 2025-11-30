@@ -97,7 +97,7 @@ export function ChronotypeStatusItem() {
 
   return (
     <StatusBarItem
-      icon={<Dna className="h-3.5 w-3.5" />}
+      icon={<Dna className="h-3 w-3" />}
       label={label}
       onClick={handleClick}
       tooltip={zoneInfo ? '生産性ゾーン設定を開く' : 'クロノタイプを設定'}

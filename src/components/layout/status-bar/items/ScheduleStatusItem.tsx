@@ -130,7 +130,7 @@ export function ScheduleStatusItem() {
 
   return (
     <StatusBarItem
-      icon={<Calendar className="h-3.5 w-3.5" />}
+      icon={<Calendar className="h-3 w-3" />}
       label={label}
       onClick={handleClick}
       tooltip="カレンダーを開く"

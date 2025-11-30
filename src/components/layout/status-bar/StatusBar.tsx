@@ -17,7 +17,7 @@ interface StatusBarSectionProps {
  *
  * @description
  * - デスクトップのみ表示（モバイルは親コンポーネントで制御）
- * - 高さ32px、モノトーン基調
+ * - 高さ24px、モノトーン基調
  * - 左右にスロットを持ち、自由にアイテムを配置可能
  *
  * @example
@@ -36,13 +36,13 @@ export function StatusBar({ children, className }: StatusBarProps) {
   return (
     <div
       className={cn(
-        // レイアウト
-        'flex h-8 w-full items-center justify-between',
+        // レイアウト（24px = 1.5rem）
+        'flex h-6 w-full items-center justify-between',
         // 背景・ボーダー
         'border-border bg-background border-t',
         // パディング（8pxグリッド準拠）
         'px-4',
-        // テキストスタイル
+        // テキストスタイル（12px）
         'text-xs',
         className
       )}
