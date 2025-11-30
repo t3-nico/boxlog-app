@@ -554,12 +554,7 @@ export const StaggeredAnimation = ({ children, staggerDelay = 0.05, className }:
       style={GPU_OPTIMIZED_STYLES}
     >
       {children.map((child, index) => (
-        <motion.div
-           
-          key={index}
-          variants={itemVariants}
-          style={GPU_OPTIMIZED_STYLES}
-        >
+        <motion.div key={index} variants={itemVariants} style={GPU_OPTIMIZED_STYLES}>
           {child}
         </motion.div>
       ))}

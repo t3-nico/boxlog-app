@@ -75,13 +75,7 @@ export function CalendarSidebar() {
           </div>
           {/* カードリストコンテナ */}
           <div className="flex-1 overflow-hidden px-4">
-            <InboxCardList
-              filter={filter}
-              sort={sort}
-              showHigh={showHigh}
-              showMedium={showMedium}
-              showLow={showLow}
-            />
+            <InboxCardList filter={filter} sort={sort} showHigh={showHigh} showMedium={showMedium} showLow={showLow} />
           </div>
         </>
       ),
