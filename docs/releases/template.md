@@ -2,43 +2,51 @@
 
 **リリース日**: YYYY-MM-DD
 **バージョン**: X.Y.Z
-**PR**: [#{PR番号}](https://github.com/t3-nico/boxlog-app/pull/{PR番号})
 
 ## 🎯 概要
 
-このリリースの主な変更点を簡潔に記載
+このリリースの主な変更点を簡潔に記載（前回リリースからの全変更を網羅）
 
 ---
 
 ## 📋 変更内容
 
+**⚠️ 重要**: 前回リリース（v{前バージョン}）から今回リリース（v{今回バージョン}）までの**全てのPR**を網羅して記載すること。リリースPR単体の変更だけでなく、期間中にマージされた全PRの内容を反映する。
+
 ### ✨ 新機能 (Added)
 
-- 新機能1の説明 ([#{issue番号}](https://github.com/t3-nico/boxlog-app/issues/{issue番号}))
-- 新機能2の説明 ([#{issue番号}](https://github.com/t3-nico/boxlog-app/issues/{issue番号}))
+- **機能名** ([#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}))
+  - 詳細説明
 
 ### 🔄 変更 (Changed)
 
-- 変更1の説明 ([#{issue番号}](https://github.com/t3-nico/boxlog-app/issues/{issue番号}))
-- 変更2の説明 ([#{issue番号}](https://github.com/t3-nico/boxlog-app/issues/{issue番号}))
+- **変更内容** ([#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}))
+  - 詳細説明
 
 ### 🐛 バグ修正 (Fixed)
 
-- 修正1の説明 ([#{issue番号}](https://github.com/t3-nico/boxlog-app/issues/{issue番号}))
-- 修正2の説明 ([#{issue番号}](https://github.com/t3-nico/boxlog-app/issues/{issue番号}))
+- **修正内容** ([#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}))
+  - 詳細説明
 
 ### ⚠️ 破壊的変更 (Breaking Changes)
 
-- 破壊的変更がある場合、詳細に記載 ([#{issue番号}](https://github.com/t3-nico/boxlog-app/issues/{issue番号}))
+- 破壊的変更がある場合、詳細に記載
 - マイグレーション手順も記載
 
 ### 🗑️ 削除 (Removed)
 
-- 削除された機能や非推奨になった機能 ([#{issue番号}](https://github.com/t3-nico/boxlog-app/issues/{issue番号}))
+- **削除内容** ([#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}))
+  - 削除された機能や非推奨になった機能
+
+### ⚡ パフォーマンス (Performance)
+
+- **改善内容** ([#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}))
+  - 詳細説明
 
 ### 🔒 セキュリティ (Security)
 
-- セキュリティ関連の修正 ([#{issue番号}](https://github.com/t3-nico/boxlog-app/issues/{issue番号}))
+- **対応内容** ([#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}))
+  - セキュリティ関連の修正
 
 ---
 
@@ -46,18 +54,16 @@
 
 ### Pull Requests
 
-- メインPR: [#690](https://github.com/t3-nico/boxlog-app/pull/690) - {PR説明}
-- サブPR: [#{pr番号}](https://github.com/t3-nico/boxlog-app/pull/{pr番号}) - {PR説明}（必要に応じて）
+**⚠️ 重要**: 前回リリースから今回リリースまでの**全てのPR**をリストアップすること。
 
-### Issues
+```bash
+# 前回リリース以降のPR一覧を取得
+gh pr list --state merged --base main --search "merged:>=YYYY-MM-DD" --json number,title --jq '.[] | "- [#\(.number)](https://github.com/t3-nico/boxlog-app/pull/\(.number)) - \(.title)"'
+```
 
-- [#{issue番号}](https://github.com/t3-nico/boxlog-app/issues/{issue番号}) - {Issue説明}
-- [#{issue番号}](https://github.com/t3-nico/boxlog-app/issues/{issue番号}) - {Issue説明}
-
-### Commits
-
-- [`{hash}`](https://github.com/t3-nico/boxlog-app/commit/{hash}) - {コミット説明}
-- [`{hash}`](https://github.com/t3-nico/boxlog-app/commit/{hash}) - {コミット説明}
+- [#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}) - {PR説明}
+- [#PR番号](https://github.com/t3-nico/boxlog-app/pull/{PR番号}) - {PR説明}
+- ...（前回リリース以降の全PRを記載）
 
 ---
 
@@ -71,48 +77,62 @@
 
 ## 📝 使い方
 
-### リリースノート作成時（プロジェクトルート）
+### リリースノート作成時
 
-1. このテンプレートをコピー
+1. このテンプレートを `docs/releases/` にコピー
 
    ```bash
-   cp docs/releases/template.md RELEASE_NOTES_vX.Y.Z.md
+   VERSION="X.Y.Z"
+   cp docs/releases/template.md docs/releases/RELEASE_NOTES_v${VERSION}.md
    ```
 
-2. バージョン番号とPR番号を置換
-   - `vX.Y.Z` → 実際のバージョン（例: `v0.4.0`）
-   - `X.Y.Z` → バージョン番号（vなし、例: `0.4.0`）
-   - `YYYY-MM-DD` → リリース日（例: `2025-11-12`）
-   - `{PR番号}` → 実際のPR番号（例: `690`）
-   - `v{前バージョン}` → 前回のバージョン（例: `v0.3.0`）
-   - `v{今回バージョン}` → 今回のバージョン（例: `v0.4.0`）
+2. 前回リリース以降の全PRを取得
 
-3. 変更内容を記載
-   - 各項目にIssue番号を追記（例: `[#123](https://github.com/t3-nico/boxlog-app/issues/123)`）
-   - Issue番号がない場合は削除してOK
+   ```bash
+   # 前回リリースのタグを確認
+   git tag --sort=-creatordate | head -5
 
-4. 関連リンクを記載
-   - Pull Requests: メインPRとサブPR（必要に応じて）
-   - Issues: 関連する全てのIssue
-   - Commits: 主要なコミット（特に重要な変更のみ）
-   - 不要なセクションは削除してOK
+   # 前回リリース以降のPR一覧を取得
+   gh pr list --state merged --base main --limit 100 --json number,title,mergedAt \
+     | jq -r '.[] | select(.mergedAt > "YYYY-MM-DDT00:00:00Z") | "- [#\(.number)](https://github.com/t3-nico/boxlog-app/pull/\(.number)) - \(.title)"'
+   ```
+
+3. バージョン番号とPR番号を置換
+   - `vX.Y.Z` → 実際のバージョン（例: `v0.6.0`）
+   - `X.Y.Z` → バージョン番号（vなし、例: `0.6.0`）
+   - `YYYY-MM-DD` → リリース日（例: `2025-12-01`）
+   - `v{前バージョン}` → 前回のバージョン（例: `v0.5.0`）
+   - `v{今回バージョン}` → 今回のバージョン（例: `v0.6.0`）
+
+4. 変更内容を記載
+   - **全てのPR**をカテゴリ別に分類（Added, Changed, Fixed, Removed, Performance, Security）
+   - 各項目にPR番号のリンクを追加
 
 5. **必須**: Full Changelog リンクが正しいことを確認
 
    ```bash
-   grep "Full Changelog" RELEASE_NOTES_vX.Y.Z.md
-   # 結果: ✅ リンクが含まれている
+   grep "Full Changelog" docs/releases/RELEASE_NOTES_v${VERSION}.md
    ```
 
 6. GitHub Release作成時にこのファイルを使用
+
    ```bash
-   gh release create vX.Y.Z \
-     --title "vX.Y.Z: {簡潔な説明}" \
-     --notes-file RELEASE_NOTES_vX.Y.Z.md
+   gh release create v${VERSION} \
+     --title "v${VERSION}: {簡潔な説明}" \
+     --notes-file docs/releases/RELEASE_NOTES_v${VERSION}.md
    ```
 
 ### ⚠️ 注意事項
 
-- リリースノートファイルは**プロジェクトルート**に配置（`RELEASE_NOTES_vX.Y.Z.md`）
-- **Full Changelog リンクは必須**（RELEASE_CHECKLIST.md で二重チェック）
+- リリースノートファイルは **`docs/releases/`** に配置（`docs/releases/RELEASE_NOTES_vX.Y.Z.md`）
+- **前回リリースからの全PR**を網羅すること（リリースPR単体ではない）
+- **Full Changelog リンクは必須**
 - バージョン番号は package.json と一致させること
+
+### 📋 リリースノートの品質基準
+
+- [ ] 前回リリース以降の**全てのPR**が含まれている
+- [ ] 各PRにリンクが付いている
+- [ ] カテゴリ別に整理されている（Added, Changed, Fixed, etc.）
+- [ ] Full Changelogリンクが正しい
+- [ ] バージョン番号が正しい
