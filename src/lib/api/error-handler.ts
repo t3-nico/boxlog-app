@@ -69,16 +69,21 @@ export function translateZodError(error: z.ZodError): {
     sortBy: 'ソート項目',
     sortOrder: 'ソート順序',
   }
+  // Zod 4のissue codeに対応したエラーメッセージマップ
   const errorTypeMap: Record<string, string> = {
-    required_error: 'は必須項目です',
     invalid_type: 'の形式が正しくありません',
     too_small: 'が短すぎます',
     too_big: 'が長すぎます',
-    invalid_string: 'の形式が正しくありません',
-    invalid_date: 'の日付形式が正しくありません',
+    invalid_format: 'の形式が正しくありません',
+    invalid_value: 'は有効な選択肢から選んでください',
+    unrecognized_keys: 'に不明なフィールドがあります',
+    invalid_union: 'の形式が正しくありません',
+    invalid_key: 'のキーが不正です',
+    invalid_element: 'の要素が不正です',
+    not_multiple_of: 'は指定された倍数ではありません',
     custom: '', // カスタムメッセージをそのまま使用
   }
-  const details = error.errors.map((err) => {
+  const details = error.issues.map((err) => {
     const fieldPath = err.path.join('.')
     const fieldName = fieldErrorMap[fieldPath] || fieldPath
     let message = err.message
@@ -86,54 +91,40 @@ export function translateZodError(error: z.ZodError): {
     if (err.code !== 'custom') {
       const baseMessage = errorTypeMap[err.code] || 'に問題があります'
       switch (err.code) {
-        case 'too_small':
-          if (err.type === 'string') {
-            message = `${fieldName}は${err.minimum}文字以上で入力してください`
-          } else if (err.type === 'number') {
-            message = `${fieldName}は${err.minimum}以上の値を入力してください`
-          } else if (err.type === 'array') {
-            message = `${fieldName}は${err.minimum}個以上選択してください`
+        case 'too_small': {
+          const minValue = 'minimum' in err ? err.minimum : undefined
+          if (minValue !== undefined) {
+            message = `${fieldName}は${minValue}以上で入力してください`
           } else {
             message = `${fieldName}${baseMessage}`
           }
           break
-        case 'too_big':
-          if (err.type === 'string') {
-            message = `${fieldName}は${err.maximum}文字以下で入力してください`
-          } else if (err.type === 'number') {
-            message = `${fieldName}は${err.maximum}以下の値を入力してください`
-          } else if (err.type === 'array') {
-            message = `${fieldName}は${err.maximum}個以下で選択してください`
+        }
+        case 'too_big': {
+          const maxValue = 'maximum' in err ? err.maximum : undefined
+          if (maxValue !== undefined) {
+            message = `${fieldName}は${maxValue}以下で入力してください`
           } else {
             message = `${fieldName}${baseMessage}`
           }
           break
+        }
         case 'invalid_type':
-          if (err.expected === 'string') {
-            message = `${fieldName}は文字列で入力してください`
-          } else if (err.expected === 'number') {
-            message = `${fieldName}は数値で入力してください`
-          } else if (err.expected === 'boolean') {
-            message = `${fieldName}はtrue/falseで指定してください`
-          } else if (err.expected === 'date') {
-            message = `${fieldName}は有効な日付を入力してください`
+          if ('expected' in err) {
+            if (err.expected === 'string') {
+              message = `${fieldName}は文字列で入力してください`
+            } else if (err.expected === 'number') {
+              message = `${fieldName}は数値で入力してください`
+            } else if (err.expected === 'boolean') {
+              message = `${fieldName}はtrue/falseで指定してください`
+            } else if (err.expected === 'date') {
+              message = `${fieldName}は有効な日付を入力してください`
+            } else {
+              message = `${fieldName}${baseMessage}`
+            }
           } else {
             message = `${fieldName}${baseMessage}`
           }
-          break
-        case 'invalid_string':
-          if (err.validation === 'email') {
-            message = `${fieldName}は有効なメールアドレスを入力してください`
-          } else if (err.validation === 'url') {
-            message = `${fieldName}は有効なURLを入力してください`
-          } else if (err.validation === 'regex') {
-            message = `${fieldName}の形式が正しくありません`
-          } else {
-            message = `${fieldName}${baseMessage}`
-          }
-          break
-        case 'invalid_enum_value':
-          message = `${fieldName}は有効な選択肢から選んでください`
           break
         default:
           message = `${fieldName}${baseMessage}`

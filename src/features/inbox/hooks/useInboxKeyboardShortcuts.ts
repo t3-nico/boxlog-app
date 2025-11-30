@@ -7,7 +7,7 @@ interface UseInboxKeyboardShortcutsOptions {
   /** 表示中のアイテムIDリスト */
   itemIds: string[]
   /** 検索フィールドのref */
-  searchInputRef?: React.RefObject<HTMLInputElement>
+  searchInputRef?: React.RefObject<HTMLInputElement | null>
   /** ショートカットを有効にするか */
   enabled?: boolean
 }

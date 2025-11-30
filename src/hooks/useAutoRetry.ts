@@ -93,8 +93,8 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
     isRetrying: false,
   })
 
-  const timeoutRef = useRef<NodeJS.Timeout>()
-  const abortControllerRef = useRef<AbortController>()
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const abortControllerRef = useRef<AbortController | undefined>(undefined)
 
   // 計算された遅延時間を取得
   const calculateDelay = useCallback(

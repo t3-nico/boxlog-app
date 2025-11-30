@@ -1,23 +1,26 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
+
+// SSR対応の遅延初期化
+const getStoredHistory = (): string[] => {
+  if (typeof window === 'undefined') return []
+  const stored = localStorage.getItem('search-history')
+  if (stored) {
+    try {
+      return JSON.parse(stored)
+    } catch (e) {
+      console.error('Failed to load search history', e)
+    }
+  }
+  return []
+}
 
 /**
  * Search history hook
  * Manages search history in localStorage
  */
 export function useSearchHistory() {
-  const [history, setHistory] = useState<string[]>([])
-
-  useEffect(() => {
-    // Load history from localStorage
-    const stored = localStorage.getItem('search-history')
-    if (stored) {
-      try {
-        setHistory(JSON.parse(stored))
-      } catch (e) {
-        console.error('Failed to load search history', e)
-      }
-    }
-  }, [])
+  // 遅延初期化でlocalStorageから読み込み
+  const [history, setHistory] = useState<string[]>(getStoredHistory)
 
   const addToHistory = useCallback((query: string) => {
     if (!query.trim()) return

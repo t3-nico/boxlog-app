@@ -12,22 +12,20 @@ export interface UseCurrentTimeOptions {
 export function useCurrentTime(options: UseCurrentTimeOptions = {}) {
   const { updateInterval = 60000, enabled = true } = options // デフォルト1分間隔
 
-  const [currentTime, setCurrentTime] = useState(new Date())
+  // 遅延初期化で初期値を設定（useEffect内でのsetStateを回避）
+  const [currentTime, setCurrentTime] = useState(() => new Date())
 
   useEffect(() => {
     if (!enabled) return
 
-    // 初回更新
-    const now = new Date()
-    setCurrentTime(now)
-
     if (process.env.NODE_ENV === 'development') {
-      console.log('useCurrentTime initialized:', now.toLocaleTimeString())
+      console.log('useCurrentTime initialized:', currentTime.toLocaleTimeString())
     }
 
     // 定期更新
     const interval = setInterval(() => {
       const newTime = new Date()
+
       setCurrentTime(newTime)
       if (process.env.NODE_ENV === 'development') {
         console.log('useCurrentTime updated:', newTime.toLocaleTimeString())
@@ -35,7 +33,7 @@ export function useCurrentTime(options: UseCurrentTimeOptions = {}) {
     }, updateInterval)
 
     return () => clearInterval(interval)
-  }, [updateInterval, enabled])
+  }, [updateInterval, enabled, currentTime])
 
   return currentTime
 }

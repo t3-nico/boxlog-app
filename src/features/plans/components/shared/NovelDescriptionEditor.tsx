@@ -55,6 +55,7 @@ export function NovelDescriptionEditor({
   useEffect(() => {
     if (editorRef.current && content && !isLoaded) {
       editorRef.current.commands.setContent(content)
+
       setIsLoaded(true)
     }
   }, [content, isLoaded])

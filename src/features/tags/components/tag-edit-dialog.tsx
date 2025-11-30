@@ -25,7 +25,9 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
   useEffect(() => {
     if (tag) {
       setName(tag.name)
+
       setColor(tag.color || '#6b7280')
+
       setIcon((tag.icon as TagIconName) || 'TagIcon')
     }
   }, [tag])

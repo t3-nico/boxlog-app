@@ -230,10 +230,19 @@ export function useDeviceTracking() {
  * 🔄 セッション追跡フック
  */
 export function useSessionTracking() {
-  const sessionStartRef = useRef<number>(Date.now())
-  const lastActivityRef = useRef<number>(Date.now())
+  const sessionStartRef = useRef<number>(0)
+  const lastActivityRef = useRef<number>(0)
   const pageViewCountRef = useRef<number>(0)
   const interactionCountRef = useRef<number>(0)
+
+  // 初回マウント時にタイムスタンプを設定
+  useEffect(() => {
+    if (sessionStartRef.current === 0) {
+      const now = Date.now()
+      sessionStartRef.current = now
+      lastActivityRef.current = now
+    }
+  }, [])
 
   // アクティビティ更新
   const updateActivity = useCallback(() => {

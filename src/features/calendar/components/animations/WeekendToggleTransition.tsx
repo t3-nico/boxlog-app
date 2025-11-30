@@ -21,6 +21,7 @@ export const WeekendToggleTransition = ({ children, className }: WeekendToggleTr
   useEffect(() => {
     if (showWeekends !== previousShowWeekends) {
       setIsTransitioning(true)
+
       setPreviousShowWeekends(showWeekends)
 
       // 300msのトランジション時間
@@ -109,6 +110,7 @@ export const GridLayoutTransition = ({
   useEffect(() => {
     if (totalColumns !== previousColumns) {
       setIsAdjusting(true)
+
       setPreviousColumns(totalColumns)
 
       const timer = setTimeout(() => {

@@ -27,7 +27,7 @@ export const createPlanActivitySchema = z.object({
   field_name: z.string().optional(),
   old_value: z.string().optional(),
   new_value: z.string().optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 })
 
 export type CreatePlanActivityInput = z.infer<typeof createPlanActivitySchema>

@@ -19,11 +19,6 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
 
-  // ESLint設定
-  eslint: {
-    ignoreDuringBuilds: process.env.NODE_ENV === 'development' || process.env.VERCEL_GIT_COMMIT_REF !== 'main',
-  },
-
   // セキュリティヘッダー設定
   async headers() {
     // 開発環境ではローカルSupabaseへの接続を許可
@@ -168,7 +163,7 @@ const nextConfig = {
       '@radix-ui/react-tooltip',
       // ユーティリティ
       'date-fns',
-      'framer-motion',
+      'motion',
       'recharts',
       'clsx',
       'class-variance-authority',
@@ -176,7 +171,6 @@ const nextConfig = {
   },
 
   // ビルド最適化
-  swcMinify: true,
   compiler: {
     // GAFAベストプラクティス: 本番環境でconsole.log/info/debugを削除
     // error/warnは残す（エラー監視のため）

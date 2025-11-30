@@ -27,24 +27,37 @@ interface ThemeProviderProps {
   children: ReactNode
 }
 
+// カラースキーム適用（コンポーネント外に定義して参照安定性を確保）
+function applyColorScheme(scheme: ColorScheme, _currentTheme: 'light' | 'dark') {
+  const root = window.document.documentElement
+
+  // Remove existing color scheme classes
+  root.classList.remove('scheme-blue', 'scheme-green', 'scheme-purple', 'scheme-orange', 'scheme-red')
+
+  // Add new color scheme class
+  root.classList.add(`scheme-${scheme}`)
+
+  // NOTE: CSS変数の上書きを無効化
+  // modern-minimalテーマのOKLCH値を使用するため、
+  // RGB値での上書きは行わない
+}
+
+// localStorageから安全に値を取得（SSR対応）
+const getStoredTheme = (): Theme => {
+  if (typeof window === 'undefined') return 'system'
+  return (localStorage.getItem('theme') as Theme) || 'system'
+}
+
+const getStoredColorScheme = (): ColorScheme => {
+  if (typeof window === 'undefined') return 'blue'
+  return (localStorage.getItem('colorScheme') as ColorScheme) || 'blue'
+}
+
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
-  const [theme, setTheme] = useState<Theme>('system')
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('blue')
+  // 遅延初期化でlocalStorageから読み込み（useEffect内のsetStateを回避）
+  const [theme, setTheme] = useState<Theme>(getStoredTheme)
+  const [colorScheme, setColorScheme] = useState<ColorScheme>(getStoredColorScheme)
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
-
-  // Load saved preferences on mount
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme
-    const savedColorScheme = localStorage.getItem('colorScheme') as ColorScheme
-
-    if (savedTheme) {
-      setTheme(savedTheme)
-    }
-
-    if (savedColorScheme) {
-      setColorScheme(savedColorScheme)
-    }
-  }, [])
 
   // Handle theme changes
   useEffect(() => {
@@ -69,6 +82,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
     // Apply theme
     root.classList.add(newResolvedTheme)
+
     setResolvedTheme(newResolvedTheme)
 
     // Apply color scheme CSS variables
@@ -83,6 +97,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
     const handleChange = () => {
       const newResolvedTheme = mediaQuery.matches ? 'dark' : 'light'
+
       setResolvedTheme(newResolvedTheme)
       document.documentElement.classList.remove('light', 'dark')
       document.documentElement.classList.add(newResolvedTheme)
@@ -92,24 +107,6 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     mediaQuery.addEventListener('change', handleChange)
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [theme, colorScheme])
-
-  const applyColorScheme = (scheme: ColorScheme, currentTheme: 'light' | 'dark') => {
-    const root = window.document.documentElement
-
-    // Remove existing color scheme classes
-    root.classList.remove('scheme-blue', 'scheme-green', 'scheme-purple', 'scheme-orange', 'scheme-red')
-
-    // Add new color scheme class
-    root.classList.add(`scheme-${scheme}`)
-
-    // NOTE: CSS変数の上書きを無効化
-    // modern-minimalテーマのOKLCH値を使用するため、
-    // RGB値での上書きは行わない
-    // const colors = getColorVariables(scheme, currentTheme)
-    // Object.entries(colors).forEach(([key, value]) => {
-    //   root.style.setProperty(key, value)
-    // })
-  }
 
   return (
     <ThemeContext.Provider
