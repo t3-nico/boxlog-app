@@ -72,11 +72,11 @@ export const CalendarDragSelection = ({
   }
 
   // 時間をフォーマットするヘルパー関数
-  const formatTime = (hour: number, minute: number): string => {
+  const formatTime = useCallback((hour: number, minute: number): string => {
     const h = hour.toString().padStart(2, '0')
     const m = minute.toString().padStart(2, '0')
     return `${h}:${m}`
-  }
+  }, [])
 
   // 座標から時間を計算
   const pixelsToTime = useCallback((y: number) => {
@@ -257,7 +257,7 @@ export const CalendarDragSelection = ({
       document.removeEventListener('mouseup', handleGlobalMouseUp)
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isSelecting, selectionStart, selection, pixelsToTime, onTimeRangeSelect, date, disabled, onSingleClick])
+  }, [isSelecting, selectionStart, selection, pixelsToTime, onTimeRangeSelect, date, disabled, onSingleClick, formatTime])
 
   // モーダルキャンセル時のカスタムイベントリスナー
   useEffect(() => {

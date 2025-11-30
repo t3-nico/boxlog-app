@@ -134,7 +134,7 @@ export function ArchivePageClient() {
         toast.error('タグの復元に失敗しました')
       }
     },
-    [updateTagMutation, toast]
+    [updateTagMutation]
   )
 
   // 削除確認ダイアログを開く
@@ -159,7 +159,7 @@ export function ArchivePageClient() {
       console.error('Failed to delete tag:', error)
       toast.error('タグの削除に失敗しました')
     }
-  }, [deleteConfirmTag, handleDeleteTag, toast])
+  }, [deleteConfirmTag, handleDeleteTag])
 
   // アーカイブされたタグのみを取得（is_active = false）
   const baseTags = tags.filter((tag) => tag.level === 0 && !tag.is_active)

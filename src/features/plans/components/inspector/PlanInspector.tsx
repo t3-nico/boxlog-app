@@ -118,7 +118,7 @@ export function PlanInspector() {
       const newHeight = Math.min(textarea.scrollHeight, 96) // 96px = 6rem (4行分)
       textarea.style.height = `${newHeight}px`
     }
-  }, [plan?.id, plan?.description])
+  }, [plan])
 
   // Inspectorの幅管理
   const [inspectorWidth, setInspectorWidth] = useState(540)

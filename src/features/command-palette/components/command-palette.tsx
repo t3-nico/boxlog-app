@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -35,7 +35,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
 
   // Use stores directly as React hooks (hydration-safe with Zustand)
   // const tasks = useTaskStore((state) => state.tasks ?? [])
-  const tasks: Task[] = [] // TODO: Plans統合後に実装
+  const tasks: Task[] = useMemo(() => [], []) // TODO: Plans統合後に実装
   const tags = useTagStore((state) => state.tags ?? [])
   const smartFolders = useSmartFolderStore((state) => state.smartFolders ?? [])
 

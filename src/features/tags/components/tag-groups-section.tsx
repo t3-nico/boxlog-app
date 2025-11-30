@@ -111,7 +111,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
         console.error('Failed to create tag group:', error)
         toast.error('グループの作成に失敗しました')
       }
-    }, [newGroupName, newGroupColor, createGroupMutation, toast, router, pathname])
+    }, [newGroupName, newGroupColor, createGroupMutation, router, pathname])
 
     // インライン編集を開始
     const handleStartEditing = useCallback((group: TagGroup) => {
@@ -150,7 +150,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
           toast.error('グループ名の変更に失敗しました')
         }
       },
-      [editingGroupName, updateGroupMutation, toast]
+      [editingGroupName, updateGroupMutation]
     )
 
     // グループ削除
@@ -165,7 +165,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
         console.error('Failed to delete tag group:', error)
         toast.error('グループの削除に失敗しました')
       }
-    }, [deletingGroup, deleteGroupMutation, toast])
+    }, [deletingGroup, deleteGroupMutation])
 
     // グループごとのタグ数をカウント
     const getGroupTagCount = useCallback(

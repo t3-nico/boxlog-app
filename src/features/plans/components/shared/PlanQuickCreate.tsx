@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -74,6 +74,20 @@ export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCre
     }
   }, [isCreating])
 
+  // 作成キャンセル
+  const handleCancel = useCallback(() => {
+    setTitle('')
+    setSelectedDate(undefined)
+    setStartTime('')
+    setEndTime('')
+    setReminderType('none')
+    setRecurrenceType('none')
+    setRecurrenceRule(null)
+    setSelectedTagIds([])
+    setDateTimeOpen(false)
+    onFinishCreate()
+  }, [onFinishCreate])
+
   // フォーム外クリックでキャンセル
   useEffect(() => {
     if (!isCreating) return
@@ -88,21 +102,7 @@ export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCre
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [isCreating])
-
-  // 作成キャンセル
-  const handleCancel = () => {
-    setTitle('')
-    setSelectedDate(undefined)
-    setStartTime('')
-    setEndTime('')
-    setReminderType('none')
-    setRecurrenceType('none')
-    setRecurrenceRule(null)
-    setSelectedTagIds([])
-    setDateTimeOpen(false)
-    onFinishCreate()
-  }
+  }, [isCreating, handleCancel])
 
   // プラン作成
   const handleCreate = async () => {

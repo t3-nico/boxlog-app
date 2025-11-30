@@ -220,7 +220,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
         setDragPreviewTime(null)
       }
     },
-    [updatePlan]
+    [updatePlan, timezone]
   )
 
   /**

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 /**
  * 15分刻みの時刻オプションを生成（00:00 ~ 23:45）
@@ -92,7 +92,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
-  const timeOptions = generateTimeOptions()
+  const timeOptions = useMemo(() => generateTimeOptions(), [])
 
   // minTime でフィルタリング（開始時刻以降のみ）
   const availableOptions = minTime
@@ -179,7 +179,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
     if (!isOpen) {
       hasScrolledRef.current = false
     }
-  }, [isOpen, value, filteredOptions])
+  }, [isOpen, value, filteredOptions, timeOptions])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value

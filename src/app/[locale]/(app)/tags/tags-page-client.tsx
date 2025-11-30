@@ -208,16 +208,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       console.error('Failed to create tag:', error)
       toast.error(t('tags.page.tagCreateFailed'))
     }
-  }, [
-    newTagName,
-    newTagDescription,
-    newTagColor,
-    selectedGroupId,
-    createTagMutation,
-    toast,
-    handleCancelInlineCreation,
-    t,
-  ])
+  }, [newTagName, newTagDescription, newTagColor, selectedGroupId, createTagMutation, handleCancelInlineCreation, t])
 
   // クリックアウトサイド検出
   useEffect(() => {
@@ -292,7 +283,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       console.error('Failed to archive tag:', error)
       toast.error(t('tags.page.tagArchiveFailed'))
     }
-  }, [archiveConfirmTag, updateTagMutation, toast, t])
+  }, [archiveConfirmTag, updateTagMutation, t])
 
   // 削除確認ダイアログを開く
   const handleOpenDeleteConfirm = useCallback((tag: TagWithChildren) => {
@@ -316,7 +307,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       console.error('Failed to delete tag:', error)
       toast.error(t('tags.page.tagDeleteFailed'))
     }
-  }, [deleteConfirmTag, handleDeleteTag, toast, t])
+  }, [deleteConfirmTag, handleDeleteTag, t])
 
   // タグをグループに移動
   const handleMoveToGroup = useCallback(
@@ -336,7 +327,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         toast.error(t('tags.page.tagMoveFailed'))
       }
     },
-    [updateTagMutation, toast, groups, t]
+    [updateTagMutation, groups, t]
   )
 
   // すべてのLevel 0タグ（ルートタグ）を直接取得
