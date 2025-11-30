@@ -3,6 +3,7 @@
 import { useState } from 'react'
 
 import NextImage from 'next/image'
+import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
@@ -59,7 +60,7 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
                 </div>
                 <Field>
                   <Button asChild>
-                    <a href="/auth/login">{t('auth.passwordResetForm.backToLogin')}</a>
+                    <Link href="/auth/login">{t('auth.passwordResetForm.backToLogin')}</Link>
                   </Button>
                 </Field>
               </FieldGroup>
@@ -108,7 +109,7 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
               </Field>
               <FieldDescription className="text-center">
                 {t('auth.passwordResetForm.rememberPassword')}{' '}
-                <a href="/auth/login">{t('auth.passwordResetForm.login')}</a>
+                <Link href="/auth/login">{t('auth.passwordResetForm.login')}</Link>
               </FieldDescription>
             </FieldGroup>
           </form>

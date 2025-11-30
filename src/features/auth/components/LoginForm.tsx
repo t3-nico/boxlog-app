@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Eye, EyeOff, Shield, ShieldAlert } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
@@ -240,9 +241,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">{t('auth.loginForm.password')}</FieldLabel>
-                  <a href="/auth/password" className="ml-auto text-sm underline-offset-2 hover:underline">
+                  <Link href="/auth/password" className="ml-auto text-sm underline-offset-2 hover:underline">
                     {t('auth.loginForm.forgotPassword')}
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative">
                   <Input
@@ -337,7 +338,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               </Field>
 
               <FieldDescription className="text-center">
-                {t('auth.loginForm.noAccount')} <a href="/auth/signup">{t('auth.loginForm.signUp')}</a>
+                {t('auth.loginForm.noAccount')} <Link href="/auth/signup">{t('auth.loginForm.signUp')}</Link>
               </FieldDescription>
             </FieldGroup>
           </form>
