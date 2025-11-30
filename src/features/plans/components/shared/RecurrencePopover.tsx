@@ -9,7 +9,7 @@ interface RecurrencePopoverProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onRepeatTypeChange: (type: string) => void
-  triggerRef: React.RefObject<HTMLElement>
+  triggerRef: React.RefObject<HTMLElement | null>
   recurrenceRule: string | null // RRULE文字列
   onRecurrenceRuleChange: (rrule: string | null) => void
   placement?: 'bottom' | 'right' | 'left' // ポップアップの表示位置
@@ -26,32 +26,32 @@ export function RecurrencePopover({
 }: RecurrencePopoverProps) {
   const popoverRef = useRef<HTMLDivElement>(null)
   const [showCustomDialog, setShowCustomDialog] = useState(false)
+  const [position, setPosition] = useState({ top: 0, left: 0 })
 
-  // 位置を動的に計算（DatePickerPopover と同じ方式）
-  const getPosition = () => {
-    if (triggerRef?.current) {
-      const rect = triggerRef.current.getBoundingClientRect()
-      const popoverWidth = 192 // w-48 = 12rem = 192px
+  // 位置を動的に計算（useEffect内でref参照）
+  useEffect(() => {
+    if (!open || !triggerRef?.current) return
 
-      if (placement === 'right') {
-        return {
-          top: rect.top + window.scrollY,
-          left: rect.right + window.scrollX + 4,
-        }
-      } else if (placement === 'left') {
-        return {
-          top: rect.top + window.scrollY,
-          left: rect.left + window.scrollX - popoverWidth - 4,
-        }
-      } else {
-        return {
-          top: rect.bottom + window.scrollY + 4,
-          left: rect.left + window.scrollX,
-        }
-      }
+    const rect = triggerRef.current.getBoundingClientRect()
+    const popoverWidth = 192 // w-48 = 12rem = 192px
+
+    if (placement === 'right') {
+      setPosition({
+        top: rect.top + window.scrollY,
+        left: rect.right + window.scrollX + 4,
+      })
+    } else if (placement === 'left') {
+      setPosition({
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX - popoverWidth - 4,
+      })
+    } else {
+      setPosition({
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX,
+      })
     }
-    return { top: 0, left: 0 }
-  }
+  }, [open, triggerRef, placement])
 
   // 外側クリックで閉じる（カスタムダイアログが開いている時は除外）
   useEffect(() => {
@@ -86,8 +86,8 @@ export function RecurrencePopover({
             ref={popoverRef}
             className="border-input bg-popover fixed z-[9999] w-48 rounded-md border shadow-md"
             style={{
-              top: `${getPosition().top}px`,
-              left: `${getPosition().left}px`,
+              top: `${position.top}px`,
+              left: `${position.left}px`,
             }}
           >
             <div className="p-1">

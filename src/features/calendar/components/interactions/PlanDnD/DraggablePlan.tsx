@@ -81,7 +81,9 @@ export const DraggablePlan = ({ plan, dayIndex, topPosition, onPlanClick, style,
   useEffect(() => {
     if (!isDragging && isDragReady) {
       setIsDragReady(false)
+
       setDragStartPos(null)
+
       setIsClicking(false)
     }
   }, [isDragging, isDragReady])

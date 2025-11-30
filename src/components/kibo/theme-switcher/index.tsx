@@ -55,7 +55,7 @@ export const ThemeSwitcher = ({ value, onChange, defaultValue = 'system', classN
     [handleThemeClick]
   )
 
-  // Prevent hydration mismatch
+  // Prevent hydration mismatch - マウント検出は初回のみ必要なため意図的なsetState
   useEffect(() => {
     setMounted(true)
   }, [])

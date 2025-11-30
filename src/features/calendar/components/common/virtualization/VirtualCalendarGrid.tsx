@@ -126,13 +126,14 @@ export const VirtualCalendarGrid = ({
     [hourHeight, startHour]
   )
 
-  // Intersection Observer for further optimization
-  const observerRef = useRef<IntersectionObserver | null>(null)
+  // Intersection Observer state
+  const [observer, setObserver] = useState<IntersectionObserver | null>(null)
 
+  // Intersection Observer for further optimization
   useEffect(() => {
     if (!containerRef.current) return undefined
 
-    observerRef.current = new IntersectionObserver(
+    const newObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const element = entry.target as HTMLElement
@@ -150,8 +151,11 @@ export const VirtualCalendarGrid = ({
       }
     )
 
+    setObserver(newObserver)
+
     return () => {
-      observerRef.current?.disconnect()
+      newObserver.disconnect()
+      setObserver(null)
     }
   }, [overscan, hourHeight])
 
@@ -173,10 +177,10 @@ export const VirtualCalendarGrid = ({
           })}
           onPlanClick={onPlanClick}
           onCreatePlan={onCreatePlan}
-          observer={observerRef.current}
+          observer={observer}
         />
       ))
-  }, [virtualItems, dates, visiblePlans, onPlanClick, onCreatePlan])
+  }, [virtualItems, dates, visiblePlans, onPlanClick, onCreatePlan, observer])
 
   // 全体の高さ計算
   const totalHeight = (endHour - startHour) * hourHeight

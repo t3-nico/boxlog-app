@@ -251,7 +251,8 @@ export class ApiMiddleware {
   private getClientIdentifier(request: NextRequest): string {
     // IP アドレスやユーザーIDなどを使用
     const forwarded = request.headers.get('x-forwarded-for')
-    const ip = forwarded ? forwarded.split(',')[0] : request.ip || 'unknown'
+    const realIp = request.headers.get('x-real-ip')
+    const ip = forwarded ? forwarded.split(',')[0] : realIp || 'unknown'
     const userAgent = request.headers.get('user-agent') || 'unknown'
 
     // 実際の実装では、認証情報がある場合はユーザーIDを使用
@@ -290,7 +291,7 @@ export class ApiMiddleware {
       query: Object.fromEntries(url.searchParams),
       ...(this.config.logging.includeHeaders ? { headers: Object.fromEntries(request.headers) } : {}),
       timestamp: new Date().toISOString(),
-      ip: request.headers.get('x-forwarded-for') || request.ip || null,
+      ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || null,
       userAgent: request.headers.get('user-agent'),
     }
 

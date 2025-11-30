@@ -194,6 +194,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     })
 
     console.log('🎯 Final active event:', activeEvent?.title || 'None')
+
     setCurrentEvent(activeEvent || null)
   }, [currentTime, todayEvents])
 

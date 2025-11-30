@@ -198,10 +198,15 @@ export function PlanTagSelectDialogEnhanced({
   useEffect(() => {
     if (!isOpen) {
       setSearchQuery('')
+
       setIsCreating(false)
+
       setNewTagName('')
+
       setSelectedGroupId(null)
+
       setShowArchived(false)
+
       setShowSidebar(true)
     }
   }, [isOpen])

@@ -323,6 +323,7 @@ export const LazyIcon = ({ name, size = 24, className, priority = false }: LazyI
 
     loadIcon(name)
       .then(() => setIsLoaded(true))
+
       .catch(() => setHasError(true))
   }, [isIntersecting, isLoaded, hasError, name])
 

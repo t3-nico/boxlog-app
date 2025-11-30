@@ -67,6 +67,20 @@ export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCre
   const formRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLDivElement>(null)
 
+  // 作成キャンセル
+  const handleCancel = useCallback(() => {
+    setTitle('')
+    setSelectedDate(undefined)
+    setStartTime('')
+    setEndTime('')
+    setReminderType('none')
+    setRecurrenceType('none')
+    setRecurrenceRule(null)
+    setSelectedTagIds([])
+    setDateTimeOpen(false)
+    onFinishCreate()
+  }, [onFinishCreate])
+
   // 作成モードになったら自動フォーカス
   useEffect(() => {
     if (isCreating && titleRef.current) {

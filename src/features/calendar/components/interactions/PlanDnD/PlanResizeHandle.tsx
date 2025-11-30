@@ -186,7 +186,7 @@ const ResizeHandleBody = ({
   type: 'start' | 'end'
   className?: string
   resizeState: ResizeState
-  handleRef: React.RefObject<HTMLDivElement>
+  handleRef: React.RefObject<HTMLDivElement | null>
   handleMouseDown: (e: React.MouseEvent) => void
   handleTouchStart: (e: React.TouchEvent) => void
   currentTime: string

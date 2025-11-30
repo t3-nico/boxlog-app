@@ -100,6 +100,7 @@ export function PlanInspector() {
   useEffect(() => {
     if (planData && 'tags' in planData) {
       const tagIds = (planData.tags as Array<{ id: string }>).map((tag) => tag.id)
+
       setSelectedTagIds(tagIds)
     } else {
       setSelectedTagIds([])
@@ -288,6 +289,7 @@ export function PlanInspector() {
 
       if (plan.start_time) {
         const date = parseDatetimeString(plan.start_time)
+
         setStartTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setStartTime('')
@@ -295,6 +297,7 @@ export function PlanInspector() {
 
       if (plan.end_time) {
         const date = parseDatetimeString(plan.end_time)
+
         setEndTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setEndTime('')
@@ -311,6 +314,7 @@ export function PlanInspector() {
           1440: '1日前',
           10080: '1週間前',
         }
+
         setReminderType(reminderMap[minutes] || 'カスタム')
       } else {
         setReminderType('')

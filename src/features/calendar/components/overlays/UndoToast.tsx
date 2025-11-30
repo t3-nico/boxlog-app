@@ -51,6 +51,7 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
   useEffect(() => {
     if (action) {
       setIsVisible(true)
+
       setProgress(100)
 
       // プログレスバーのアニメーション

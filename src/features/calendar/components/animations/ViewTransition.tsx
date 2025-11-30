@@ -540,7 +540,7 @@ export const StaggeredAnimation = ({ children, staggerDelay = 0.05, className }:
       opacity: 1,
       transition: {
         duration: prefersReducedMotion ? 0.1 : 0.3,
-        ease: [0.4, 0.0, 0.2, 1],
+        ease: 'easeOut' as const,
       },
     },
   }
@@ -554,12 +554,7 @@ export const StaggeredAnimation = ({ children, staggerDelay = 0.05, className }:
       style={GPU_OPTIMIZED_STYLES}
     >
       {children.map((child, index) => (
-        <motion.div
-          // eslint-disable-next-line react/no-array-index-key
-          key={index}
-          variants={itemVariants}
-          style={GPU_OPTIMIZED_STYLES}
-        >
+        <motion.div key={index} variants={itemVariants} style={GPU_OPTIMIZED_STYLES}>
           {child}
         </motion.div>
       ))}

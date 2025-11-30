@@ -2,6 +2,8 @@
 // Next.js公式推奨設定を使用（学習コスト0、メンテ0）
 
 import { FlatCompat } from '@eslint/eslintrc'
+import tsPlugin from '@typescript-eslint/eslint-plugin'
+import tsParser from '@typescript-eslint/parser'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -19,13 +21,22 @@ const config = [
   },
 
   // Next.js公式推奨設定（React, TypeScript, アクセシビリティ含む）
-  ...compat.config({
-    extends: ['next/core-web-vitals'],
+  ...compat.extends('next/core-web-vitals'),
+
+  // TypeScript用カスタムルール
+  {
+    files: ['**/*.{ts,tsx}'],
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    languageOptions: {
+      parser: tsParser,
+    },
     rules: {
       // any型禁止（CLAUDE.md準拠）
       '@typescript-eslint/no-explicit-any': 'error',
     },
-  }),
+  },
 
   // テスト用グローバル変数
   {
