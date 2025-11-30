@@ -66,6 +66,14 @@ function StatusBarRight({ children, className }: StatusBarSectionProps) {
   return <div className={cn('flex items-center gap-3', className)}>{children}</div>
 }
 
+/**
+ * ステータスバーセパレーター（区切り線）
+ */
+function StatusBarSeparator({ className }: { className?: string }) {
+  return <div className={cn('bg-border h-3 w-px', className)} aria-hidden="true" />
+}
+
 // Compound Components パターン
 StatusBar.Left = StatusBarLeft
 StatusBar.Right = StatusBarRight
+StatusBar.Separator = StatusBarSeparator

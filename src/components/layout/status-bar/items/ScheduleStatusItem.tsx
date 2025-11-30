@@ -8,6 +8,7 @@ import { Calendar } from 'lucide-react'
 
 import { StatusBarItem } from '../StatusBarItem'
 
+import { Spinner } from '@/components/ui/spinner'
 import type { Plan } from '@/features/plans/types/plan'
 import { api } from '@/lib/trpc'
 
@@ -110,8 +111,6 @@ export function ScheduleStatusItem() {
 
   // ラベル生成
   const label = useMemo(() => {
-    if (isLoading) return '読み込み中...'
-
     if (currentPlan) {
       const startTime = currentPlan.start_time ? formatTime(currentPlan.start_time) : ''
       const endTime = currentPlan.end_time ? formatTime(currentPlan.end_time) : ''
@@ -126,12 +125,15 @@ export function ScheduleStatusItem() {
     }
 
     return '予定なし'
-  }, [isLoading, currentPlan, nextPlan, formatTime])
+  }, [currentPlan, nextPlan, formatTime])
+
+  // アイコン（ローディング時はスピナー）
+  const icon = isLoading ? <Spinner className="h-3 w-3" /> : <Calendar className="h-3 w-3" />
 
   return (
     <StatusBarItem
-      icon={<Calendar className="h-3 w-3" />}
-      label={label}
+      icon={icon}
+      label={isLoading ? '...' : label}
       onClick={handleClick}
       tooltip="カレンダーを開く"
     />

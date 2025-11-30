@@ -66,15 +66,18 @@ export function StatusBarItem({ icon, label, onClick, tooltip, className, disabl
       className={cn(
         // ベーススタイル
         'flex items-center gap-1.5',
+        // パディング・角丸（ホバー背景用）
+        'rounded-sm px-1.5 py-0.5',
         // テキストカラー
         'text-muted-foreground',
         // トランジション
         'transition-colors duration-150',
-        // インタラクティブな場合
+        // インタラクティブな場合（M3準拠）
         isClickable && [
           'cursor-pointer',
-          'hover:text-foreground',
-          'focus-visible:text-foreground focus-visible:outline-none',
+          'hover:text-foreground hover:bg-foreground/8',
+          'active:bg-foreground/12',
+          'focus-visible:text-foreground focus-visible:bg-foreground/12 focus-visible:outline-none',
         ],
         // 無効状態
         disabled && 'cursor-not-allowed opacity-50',
