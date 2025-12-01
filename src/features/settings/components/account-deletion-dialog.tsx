@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { DIALOG_WIDTH } from '@/constants/ui'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { toast } from 'sonner'
 
@@ -132,7 +131,7 @@ export function AccountDeletionDialog() {
       </div>
 
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-        <AlertDialogContent className={DIALOG_WIDTH.lg}>
+        <AlertDialogContent className="max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
               <AlertTriangle className="text-destructive h-5 w-5" />

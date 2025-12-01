@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { DIALOG_PRESET } from '@/constants/ui'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import type { CreateTagInput, TagGroup, TagLevel } from '@/types/tags'
 
@@ -96,7 +95,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={DIALOG_PRESET.form.width}>
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>新規タグ作成</DialogTitle>
           <DialogDescription>新しいタグを作成します</DialogDescription>

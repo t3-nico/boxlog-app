@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { DIALOG_WIDTH } from '@/constants/ui'
 import type { TagGroup } from '@/types/tags'
 import { AlertTriangle } from 'lucide-react'
 
@@ -49,7 +48,7 @@ export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }
 
   return (
     <AlertDialog open={!!group} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent className={`${DIALOG_WIDTH['2xl']} gap-0 p-6`}>
+      <AlertDialogContent className="max-w-2xl gap-0 p-6">
         <AlertDialogHeader className="mb-4">
           <AlertDialogTitle>グループ「{group?.name}」を削除しますか？</AlertDialogTitle>
         </AlertDialogHeader>

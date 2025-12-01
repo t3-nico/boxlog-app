@@ -14,7 +14,6 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { DIALOG_PRESET } from '@/constants/ui'
 import type { CreateTagGroupInput } from '@/types/tags'
 
 interface TagGroupCreateModalProps {
@@ -69,7 +68,7 @@ export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateM
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={DIALOG_PRESET.form.width}>
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>新規グループ作成</DialogTitle>
           <DialogDescription>新しいタググループを作成します</DialogDescription>

@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { DIALOG_WIDTH } from '@/constants/ui'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { formatDistanceToNow } from 'date-fns'
 import { enUS, ja } from 'date-fns/locale'
@@ -57,7 +56,7 @@ export function NotificationDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && close()}>
-      <DialogContent className={`top-4 !left-20 !translate-x-0 !translate-y-0 ${DIALOG_WIDTH.xl}`}>
+      <DialogContent className="top-4 max-w-xl !left-20 !translate-x-0 !translate-y-0">
         <DialogHeader>
           <DialogTitle>{t('notifications.title')}</DialogTitle>
         </DialogHeader>

@@ -1,7 +1,6 @@
 'use client'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { SETTINGS_DIALOG } from '@/constants/ui'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { SETTINGS_CATEGORIES } from '@/features/settings/constants'
@@ -14,13 +13,14 @@ import { cn } from '@/lib/utils'
  * CalendarSidebarと同じ構造：
  * - ヘッダー: 48px（h-12）
  * - カテゴリメニュー: スクロール可能
+ * - 幅: 192px (w-48)
  */
 export function SettingsSidebar() {
   const { t } = useI18n()
   const { activeCategory, setActiveCategory } = useSettingsDialogStore()
 
   return (
-    <aside className={`bg-muted border-border flex ${SETTINGS_DIALOG.sidebarWidth} flex-shrink-0 flex-col border-r`}>
+    <aside className="bg-muted border-border flex w-48 flex-shrink-0 flex-col border-r">
       {/* ヘッダー（48px - SidebarHeaderと同じ） */}
       <SidebarHeader title={t('settings.dialog.title')} />
 

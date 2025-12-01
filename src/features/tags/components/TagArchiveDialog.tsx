@@ -11,7 +11,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { DIALOG_WIDTH } from '@/constants/ui'
 import type { TagUsage, TagWithChildren } from '@/types/tags'
 import { AlertTriangle } from 'lucide-react'
 
@@ -66,7 +65,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
 
   return (
     <AlertDialog open={!!tag} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent className={`${DIALOG_WIDTH['2xl']} gap-0 p-6`}>
+      <AlertDialogContent className="max-w-2xl gap-0 p-6">
         <AlertDialogHeader className="mb-4">
           <AlertDialogTitle>タグ「{tag?.name}」をアーカイブしますか？</AlertDialogTitle>
         </AlertDialogHeader>

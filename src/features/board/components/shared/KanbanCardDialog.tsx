@@ -15,7 +15,6 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { DIALOG_WIDTH } from '@/constants/ui'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -96,7 +95,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className={DIALOG_WIDTH['2xl']}>
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>{card ? 'カードを編集' : '新しいカード'}</DialogTitle>
           <DialogDescription>

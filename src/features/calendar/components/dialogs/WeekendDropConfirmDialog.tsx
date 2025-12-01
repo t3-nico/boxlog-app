@@ -15,7 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { DIALOG_WIDTH } from '@/constants/ui'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
@@ -46,7 +45,7 @@ export const WeekendDropConfirmDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={DIALOG_WIDTH.lg}>
+      <DialogContent className="max-w-lg">
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
             <div

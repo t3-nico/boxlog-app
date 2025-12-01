@@ -1,7 +1,6 @@
 'use client'
 
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { SETTINGS_DIALOG } from '@/constants/ui'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
@@ -12,11 +11,10 @@ import { SettingsSidebar } from './SettingsSidebar'
  * 設定ダイアログ（ChatGPT風）
  *
  * 2カラムレイアウト：
- * - 左: カテゴリメニュー（240px / w-60）- ヘッダー含む
+ * - 左: カテゴリメニュー（192px / w-48）
  * - 右: 設定コンテンツ（フレキシブル）
  *
- * Note: !important はDialogContentのデフォルト(grid, gap-4, p-6, sm:max-w-lg)を
- * 上書きするために必要
+ * サイズ: 672x576px (max-w-2xl, h-[36rem])
  */
 export function SettingsDialog() {
   const { isOpen, closeSettings } = useSettingsDialogStore()
@@ -24,7 +22,7 @@ export function SettingsDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeSettings()}>
       <DialogContent
-        className={`!flex !${SETTINGS_DIALOG.height} !${SETTINGS_DIALOG.width} !flex-col !gap-0 !p-0`}
+        className="!flex !h-[36rem] !max-w-2xl !flex-col !gap-0 !p-0"
         showCloseButton={false}
       >
         {/* アクセシビリティ用の非表示タイトル */}

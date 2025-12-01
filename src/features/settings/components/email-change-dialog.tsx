@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { DIALOG_PRESET } from '@/constants/ui'
 import { createClient } from '@/lib/supabase/client'
 
 interface EmailChangeDialogProps {
@@ -78,7 +77,7 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className={DIALOG_PRESET.form.width}>
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>メールアドレスを変更</DialogTitle>
           <DialogDescription>
