@@ -147,7 +147,7 @@ export const AdvancedViewTransition = ({
 
   return (
     <LayoutGroup>
-      <AnimatePresence mode="wait" onExitComplete={onTransitionComplete}>
+      <AnimatePresence mode="wait" {...(onTransitionComplete && { onExitComplete: onTransitionComplete })}>
         <motion.div
           key={currentView}
           className={cn('relative h-full', className)}
@@ -209,7 +209,7 @@ export const AdvancedSlideTransition = ({
 
   return (
     <motion.div ref={containerRef} className={cn('relative overflow-hidden', className)} style={GPU_OPTIMIZED_STYLES}>
-      <AnimatePresence mode="wait" onExitComplete={onComplete}>
+      <AnimatePresence mode="wait" {...(onComplete && { onExitComplete: onComplete })}>
         <motion.div
           key={direction}
           variants={getSlideVariants(direction)}
@@ -540,7 +540,7 @@ export const StaggeredAnimation = ({ children, staggerDelay = 0.05, className }:
       opacity: 1,
       transition: {
         duration: prefersReducedMotion ? 0.1 : 0.3,
-        ease: [0.4, 0.0, 0.2, 1],
+        ease: 'easeOut' as const,
       },
     },
   }
@@ -554,12 +554,7 @@ export const StaggeredAnimation = ({ children, staggerDelay = 0.05, className }:
       style={GPU_OPTIMIZED_STYLES}
     >
       {children.map((child, index) => (
-        <motion.div
-          // eslint-disable-next-line react/no-array-index-key
-          key={index}
-          variants={itemVariants}
-          style={GPU_OPTIMIZED_STYLES}
-        >
+        <motion.div key={index} variants={itemVariants} style={GPU_OPTIMIZED_STYLES}>
           {child}
         </motion.div>
       ))}
@@ -627,6 +622,7 @@ export const Parallax = ({ children, offset, className }: ParallaxProps) => {
       window.addEventListener('scroll', handleScroll, { passive: true })
       return () => window.removeEventListener('scroll', handleScroll)
     }
+    return undefined
   }, [offset, y, prefersReducedMotion])
 
   if (prefersReducedMotion) {
@@ -773,7 +769,7 @@ export const TouchAnimation = ({ children, onTap, className }: TouchAnimationPro
       className={className}
       whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
       transition={{ duration: 0.1, ease: 'easeInOut' }}
-      onTap={onTap}
+      {...(onTap && { onTap })}
       style={GPU_OPTIMIZED_STYLES}
     >
       {children}
@@ -822,9 +818,8 @@ export const OptimizedListAnimation = ({
           {visibleChildren.map((child, index) => (
             <motion.div
               key={`list-item-${startIndex + index}-${Date.now()}`}
-              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
+              {...(prefersReducedMotion ? {} : { initial: { opacity: 0, y: 20 }, exit: { opacity: 0, y: -20 } })}
               animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -20 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
               style={{
                 position: 'absolute',

@@ -89,7 +89,7 @@ export const getTransform = (locale: Locale, transform: string): string => {
 
   // X軸のトランスフォームを反転
   if (transform.includes('translateX')) {
-    return transform.replace(/translateX\(([^)]+)\)/, (match, value) => {
+    return transform.replace(/translateX\(([^)]+)\)/, (_match, value) => {
       const numValue = parseFloat(value)
       const unit = value.replace(numValue.toString(), '')
       return `translateX(${-numValue}${unit})`
@@ -97,7 +97,7 @@ export const getTransform = (locale: Locale, transform: string): string => {
   }
 
   if (transform.includes('scaleX')) {
-    return transform.replace(/scaleX\(([^)]+)\)/, (match, value) => {
+    return transform.replace(/scaleX\(([^)]+)\)/, (_match, value) => {
       return `scaleX(${-parseFloat(value)})`
     })
   }

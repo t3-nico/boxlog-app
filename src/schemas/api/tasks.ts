@@ -170,6 +170,7 @@ export const taskHistorySchema = z.object({
   action: z.enum(['created', 'updated', 'completed', 'deleted', 'assigned', 'commented']),
   changes: z
     .record(
+      z.string(),
       z.object({
         from: z.any(),
         to: z.any(),

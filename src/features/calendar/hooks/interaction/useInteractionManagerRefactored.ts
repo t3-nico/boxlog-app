@@ -22,12 +22,14 @@ export function useInteractionManagerRefactored(options: UseInteractionManagerRe
   const { onEscape, onConfirmCreate, onSelectionChange } = options
 
   // 各機能のフックを初期化
-  const eventSelection = useEventSelection({ onSelectionChange })
+  const eventSelection = useEventSelection({
+    ...(onSelectionChange && { onSelectionChange }),
+  })
   const dragInteraction = useDragInteraction({
     onDragComplete: handleDragComplete,
   })
   const eventCreation = useEventCreation({
-    onConfirmCreate,
+    ...(onConfirmCreate && { onConfirmCreate }),
     defaultDurationMinutes: 30,
   })
 

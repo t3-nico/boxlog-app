@@ -24,7 +24,7 @@ const buildTaskRecord = (
   plannedStart: Date,
   plannedEnd: Date
 ): Partial<TaskRecord> => {
-  return {
+  const validated = {
     task_id: task.id,
     title: task.title,
     actual_start: (adjustments?.actualStart || plannedStart).toISOString(),
@@ -33,12 +33,20 @@ const buildTaskRecord = (
       adjustments?.actualEnd && adjustments?.actualStart
         ? differenceInMinutes(adjustments.actualEnd, adjustments.actualStart)
         : task.planned_duration || 60,
-    tags: task.tags,
-    memo: task.memo,
-    satisfaction: validateLevel(adjustments?.satisfaction),
-    focus_level: validateLevel(adjustments?.focusLevel),
-    energy_level: validateLevel(adjustments?.energyLevel),
-    interruptions: adjustments?.interruptions || 0,
+    ...(task.tags && { tags: task.tags }),
+    ...(task.memo && { memo: task.memo }),
+    ...(adjustments?.interruptions !== undefined && { interruptions: adjustments.interruptions }),
+  }
+
+  const satisfaction = validateLevel(adjustments?.satisfaction)
+  const focusLevel = validateLevel(adjustments?.focusLevel)
+  const energyLevel = validateLevel(adjustments?.energyLevel)
+
+  return {
+    ...validated,
+    ...(satisfaction !== undefined && { satisfaction }),
+    ...(focusLevel !== undefined && { focus_level: focusLevel }),
+    ...(energyLevel !== undefined && { energy_level: energyLevel }),
   }
 }
 

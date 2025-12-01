@@ -23,6 +23,19 @@ import { createPlanActivitySchema, getPlanActivitiesSchema } from '@/schemas/pla
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 
 /**
+ * undefined を除外したオブジェクトを返す（exactOptionalPropertyTypes対応）
+ */
+function removeUndefinedFields<T extends Record<string, unknown>>(obj: T): Partial<T> {
+  const result: Partial<T> = {}
+  for (const key in obj) {
+    if (obj[key] !== undefined) {
+      result[key] = obj[key]
+    }
+  }
+  return result
+}
+
+/**
  * プランの日付整合性を保証する
  *
  * ルール:
@@ -136,7 +149,9 @@ export const plansRouter = createTRPCRouter({
         .from('tags')
         .insert({
           user_id: userId,
-          ...input,
+          name: input.name,
+          ...(input.color !== undefined && { color: input.color }),
+          ...(input.description !== undefined && { description: input.description }),
         })
         .select()
         .single()
@@ -156,9 +171,15 @@ export const plansRouter = createTRPCRouter({
       .mutation(async ({ ctx, input }) => {
         const { supabase, userId } = ctx
 
+        // undefinedを除外してSupabaseに渡す
+        const updateData: Record<string, string | null> = {}
+        if (input.data.name !== undefined) updateData.name = input.data.name
+        if (input.data.color !== undefined) updateData.color = input.data.color
+        if (input.data.description !== undefined) updateData.description = input.data.description
+
         const { data, error } = await supabase
           .from('tags')
-          .update(input.data)
+          .update(updateData)
           .eq('id', input.id)
           .eq('user_id', userId)
           .select()
@@ -308,16 +329,33 @@ export const plansRouter = createTRPCRouter({
   create: protectedProcedure.input(createPlanSchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
-    // 日付整合性を保証
-    normalizeDateTimeConsistency(input)
+    // 日付整合性を保証（必要なフィールドのみ抽出）
+    const dateTimeData: {
+      due_date?: string
+      start_time?: string | null
+      end_time?: string | null
+    } = {}
+    if (input.due_date !== undefined) dateTimeData.due_date = input.due_date
+    if (input.start_time !== undefined) dateTimeData.start_time = input.start_time
+    if (input.end_time !== undefined) dateTimeData.end_time = input.end_time
+
+    normalizeDateTimeConsistency(dateTimeData)
+
+    // 日付整合性が変更された場合、inputに反映
+    if (dateTimeData.due_date !== undefined) input.due_date = dateTimeData.due_date
+    if (dateTimeData.start_time !== undefined) input.start_time = dateTimeData.start_time
+    if (dateTimeData.end_time !== undefined) input.end_time = dateTimeData.end_time
+
+    // undefinedを除外してSupabaseに渡す
+    const insertData = {
+      user_id: userId,
+      plan_number: '', // トリガーで自動採番
+      ...removeUndefinedFields(input),
+    }
 
     const { data, error } = await supabase
       .from('plans')
-      .insert({
-        user_id: userId,
-        plan_number: '', // トリガーで自動採番
-        ...input,
-      })
+      .insert(insertData as never)
       .select()
       .single()
 
@@ -362,12 +400,22 @@ export const plansRouter = createTRPCRouter({
       // 日付整合性を保証（日付/時刻フィールドが更新される場合のみ）
       const hasDateTimeUpdate = !!(input.data.due_date || input.data.start_time || input.data.end_time)
       if (hasDateTimeUpdate && oldData) {
-        // 既存データと新データをマージ
-        const mergedData = {
-          due_date: input.data.due_date ?? oldData.due_date ?? undefined,
-          start_time: input.data.start_time ?? oldData.start_time ?? undefined,
-          end_time: input.data.end_time ?? oldData.end_time ?? undefined,
-        }
+        // 既存データと新データをマージ（型を明示的に指定）
+        const mergedData: {
+          due_date?: string
+          start_time?: string | null
+          end_time?: string | null
+        } = {}
+
+        // 条件付きでプロパティを追加（undefinedを含まない）
+        const dueDateValue = input.data.due_date ?? oldData.due_date
+        if (dueDateValue) mergedData.due_date = dueDateValue
+
+        const startTimeValue = input.data.start_time ?? oldData.start_time
+        if (startTimeValue !== undefined) mergedData.start_time = startTimeValue
+
+        const endTimeValue = input.data.end_time ?? oldData.end_time
+        if (endTimeValue !== undefined) mergedData.end_time = endTimeValue
 
         // 整合性を保証
         normalizeDateTimeConsistency(mergedData)
@@ -376,18 +424,21 @@ export const plansRouter = createTRPCRouter({
         // （ユーザーが明示的に変更したフィールド + 整合性のために調整が必要なフィールド）
         if (input.data.start_time !== undefined || input.data.end_time !== undefined) {
           // 時刻が変更された場合、due_date も同期
-          input.data.due_date = mergedData.due_date ?? undefined
-          input.data.start_time = mergedData.start_time ?? undefined
-          input.data.end_time = mergedData.end_time ?? undefined
+          if (mergedData.due_date !== undefined) input.data.due_date = mergedData.due_date
+          if (mergedData.start_time !== undefined) input.data.start_time = mergedData.start_time
+          if (mergedData.end_time !== undefined) input.data.end_time = mergedData.end_time
         } else if (input.data.due_date !== undefined) {
           // due_date だけ変更された場合は、due_date のみ更新
-          input.data.due_date = mergedData.due_date ?? undefined
+          if (mergedData.due_date !== undefined) input.data.due_date = mergedData.due_date
         }
       }
 
+      // undefinedを除外してSupabaseに渡す
+      const updateData = removeUndefinedFields(input.data) as Record<string, unknown>
+
       const { data, error } = await supabase
         .from('plans')
-        .update(input.data)
+        .update(updateData)
         .eq('id', input.id)
         .eq('user_id', userId)
         .select()
@@ -543,9 +594,12 @@ export const plansRouter = createTRPCRouter({
   bulkUpdate: protectedProcedure.input(bulkUpdatePlanSchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
+    // undefinedを除外してSupabaseに渡す
+    const updateData = removeUndefinedFields(input.data) as Record<string, unknown>
+
     const { data, error } = await supabase
       .from('plans')
-      .update(input.data)
+      .update(updateData)
       .in('id', input.ids)
       .eq('user_id', userId)
       .select()
@@ -672,18 +726,20 @@ export const plansRouter = createTRPCRouter({
       })
     }
 
-    // アクティビティ作成
+    // アクティビティ作成（undefinedを除外）
+    const activityData: Record<string, unknown> = {
+      plan_id: input.plan_id,
+      user_id: userId,
+      action_type: input.action_type,
+    }
+    if (input.field_name !== undefined) activityData.field_name = input.field_name
+    if (input.old_value !== undefined) activityData.old_value = input.old_value
+    if (input.new_value !== undefined) activityData.new_value = input.new_value
+    if (input.metadata !== undefined) activityData.metadata = input.metadata as never
+
     const { data: activity, error } = await supabase
       .from('plan_activities')
-      .insert({
-        plan_id: input.plan_id,
-        user_id: userId,
-        action_type: input.action_type,
-        field_name: input.field_name,
-        old_value: input.old_value,
-        new_value: input.new_value,
-        metadata: (input.metadata ?? {}) as never, // Supabaseの Json 型にキャスト
-      })
+      .insert(activityData as never)
       .select()
       .single()
 

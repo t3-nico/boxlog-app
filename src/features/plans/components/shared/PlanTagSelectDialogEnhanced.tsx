@@ -21,10 +21,10 @@ interface PlanTagSelectDialogEnhancedProps {
   children: React.ReactNode
   selectedTagIds: string[]
   onTagsChange: (tagIds: string[]) => void
-  align?: 'start' | 'center' | 'end'
-  side?: 'top' | 'right' | 'bottom' | 'left'
-  alignOffset?: number
-  sideOffset?: number
+  align?: 'start' | 'center' | 'end' | undefined
+  side?: 'top' | 'right' | 'bottom' | 'left' | undefined
+  alignOffset?: number | undefined
+  sideOffset?: number | undefined
 }
 
 export function PlanTagSelectDialogEnhanced({
@@ -198,10 +198,15 @@ export function PlanTagSelectDialogEnhanced({
   useEffect(() => {
     if (!isOpen) {
       setSearchQuery('')
+
       setIsCreating(false)
+
       setNewTagName('')
+
       setSelectedGroupId(null)
+
       setShowArchived(false)
+
       setShowSidebar(true)
     }
   }, [isOpen])

@@ -15,12 +15,12 @@ export interface WeekGridProps {
   eventsByDate: Record<string, CalendarPlan[]>
   todayIndex: number
   timezone: string
-  onEventClick?: (plan: CalendarPlan) => void
-  onEventContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
-  onEmptyClick?: (date: Date, time: string) => void
-  onEventUpdate?: (plan: CalendarPlan) => void
-  onTimeRangeSelect?: (selection: DateTimeSelection) => void
-  className?: string
+  onEventClick?: ((plan: CalendarPlan) => void) | undefined
+  onEventContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined
+  onEmptyClick?: ((date: Date, time: string) => void) | undefined
+  onEventUpdate?: ((plan: CalendarPlan) => void) | undefined
+  onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined
+  className?: string | undefined
 }
 
 // useWeekViewフックのオプション

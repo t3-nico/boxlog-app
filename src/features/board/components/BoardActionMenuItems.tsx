@@ -10,21 +10,21 @@ interface BoardActionMenuItemsProps {
   item: InboxItem
   /** メニュー項目をレンダリングするための関数 */
   renderMenuItem: (props: {
-    key?: string
+    key?: string | undefined
     icon: React.ReactNode
     label: string
     onClick: () => void
-    variant?: 'default' | 'destructive'
-    disabled?: boolean
+    variant?: 'default' | 'destructive' | undefined
+    disabled?: boolean | undefined
   }) => React.ReactNode
   /** セパレーターをレンダリングするための関数 */
-  renderSeparator?: () => React.ReactNode
+  renderSeparator?: (() => React.ReactNode) | undefined
   /** アクションハンドラー */
-  onEdit?: (item: InboxItem) => void
-  onDuplicate?: (item: InboxItem) => void
-  onAddTags?: (item: InboxItem) => void
-  onChangeDueDate?: (item: InboxItem) => void
-  onArchive?: (item: InboxItem) => void
+  onEdit?: ((item: InboxItem) => void) | undefined
+  onDuplicate?: ((item: InboxItem) => void) | undefined
+  onAddTags?: ((item: InboxItem) => void) | undefined
+  onChangeDueDate?: ((item: InboxItem) => void) | undefined
+  onArchive?: ((item: InboxItem) => void) | undefined
   onDelete: (item: InboxItem) => void
 }
 

@@ -7,10 +7,20 @@
 
 'use client'
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 
 import type { AnalyticsProvider } from '@/lib/analytics'
 import { analytics, setUserConsent, setUserId, updateConfig } from '@/lib/analytics'
+
+// SSR対応: localStorageから同意状態を取得
+const getStoredConsent = (requireConsent: boolean, initialConsent: boolean): boolean => {
+  if (typeof window === 'undefined' || !requireConsent) return initialConsent
+  const savedConsent = localStorage.getItem('boxlog_analytics_consent')
+  if (savedConsent !== null) {
+    return savedConsent === 'true'
+  }
+  return initialConsent
+}
 
 /**
  * 🎯 Analytics Context の型定義
@@ -69,8 +79,10 @@ export function AnalyticsProvider({
   userId,
   customEndpoint,
 }: AnalyticsProviderProps) {
-  const [hasUserConsent, setHasUserConsent] = useState(initialConsent)
+  // 遅延初期化でlocalStorageから同意状態を復元
+  const [hasUserConsent, setHasUserConsent] = useState(() => getStoredConsent(requireConsent, initialConsent))
   const [isReady, setIsReady] = useState(false)
+  const initializedRef = useRef(false)
 
   /**
    * 🔐 同意状態の更新
@@ -96,14 +108,10 @@ export function AnalyticsProvider({
    * 🚀 初期化処理
    */
   useEffect(() => {
-    // ローカルストレージから同意状態を復元
-    if (typeof window !== 'undefined' && requireConsent) {
-      const savedConsent = localStorage.getItem('boxlog_analytics_consent')
-      if (savedConsent !== null) {
-        const consent = savedConsent === 'true'
-        setHasUserConsent(consent)
-        setUserConsent(consent)
-      }
+    // 初回のみ同意状態をアナリティクスに反映
+    if (!initializedRef.current) {
+      initializedRef.current = true
+      setUserConsent(hasUserConsent)
     }
 
     // アナリティクス設定を更新
@@ -112,7 +120,7 @@ export function AnalyticsProvider({
       debug,
       disableInDevelopment,
       requireConsent,
-      customEndpoint,
+      ...(customEndpoint !== undefined && { customEndpoint }),
     })
 
     // 初期ユーザーID設定
@@ -121,7 +129,7 @@ export function AnalyticsProvider({
     }
 
     setIsReady(true)
-  }, [enabledProviders, debug, disableInDevelopment, requireConsent, userId, customEndpoint])
+  }, [enabledProviders, debug, disableInDevelopment, requireConsent, userId, customEndpoint, hasUserConsent])
 
   /**
    * 🎯 Context値
@@ -167,6 +175,13 @@ interface CookieConsentProps {
   className?: string
 }
 
+// SSR対応: バナー表示状態の初期化
+const getInitialShowBanner = (): boolean => {
+  if (typeof window === 'undefined') return false
+  const savedConsent = localStorage.getItem('boxlog_analytics_consent')
+  return savedConsent === null
+}
+
 export function CookieConsentBanner({
   message = 'このサイトでは、サービス向上のためにクッキーを使用しています。',
   acceptText = '同意する',
@@ -176,17 +191,8 @@ export function CookieConsentBanner({
   className = '',
 }: CookieConsentProps) {
   const { hasUserConsent, setConsent } = useAnalyticsContext()
-  const [showBanner, setShowBanner] = useState(false)
-
-  useEffect(() => {
-    // 同意状態が未設定の場合のみバナーを表示
-    if (typeof window !== 'undefined') {
-      const savedConsent = localStorage.getItem('boxlog_analytics_consent')
-      if (savedConsent === null) {
-        setShowBanner(true)
-      }
-    }
-  }, [])
+  // 遅延初期化でバナー表示状態を決定
+  const [showBanner, setShowBanner] = useState(getInitialShowBanner)
 
   const handleAccept = () => {
     setConsent(true)
@@ -246,6 +252,7 @@ export function CookieConsentBanner({
  */
 export function AnalyticsDebugPanel() {
   const { debugMode, enabledProviders, hasUserConsent, isReady } = useAnalyticsContext()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- デバッグ用の汎用プロパティ
   const [events, setEvents] = useState<Array<{ name: string; timestamp: number; properties: any }>>([])
 
   useEffect(() => {

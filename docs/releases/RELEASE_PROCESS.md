@@ -273,35 +273,55 @@ git log main..dev --oneline  # 何も表示されないはず
 
 ### Phase 2: リリースノート作成
 
-#### 2.1 リリースノートファイル作成
+#### 2.1 前回リリース以降の全PRを取得
 
 ```bash
-# バージョン番号を決定（例: v0.1.0）
-VERSION="0.1.0"
+# バージョン番号を決定（例: v0.6.0）
+VERSION="0.6.0"
 
-# テンプレートをコピー
-cp docs/releases/template.md docs/releases/v${VERSION}.md
+# 前回リリースのタグを確認
+git tag --sort=-creatordate | head -5
+
+# 前回リリース以降のPR一覧を取得
+gh pr list --state merged --base main --limit 100 --json number,title,mergedAt \
+  | jq -r '.[] | select(.mergedAt > "YYYY-MM-DDT00:00:00Z") | "- [#\(.number)](https://github.com/t3-nico/boxlog-app/pull/\(.number)) - \(.title)"'
 ```
 
-#### 2.2 リリースノート編集
+#### 2.2 リリースノートファイル作成
+
+```bash
+# テンプレートをコピー（配置場所: docs/releases/）
+cp docs/releases/template.md docs/releases/RELEASE_NOTES_v${VERSION}.md
+```
+
+#### 2.3 リリースノート編集
 
 ```bash
 # エディタで編集
-vim docs/releases/v${VERSION}.md
+vim docs/releases/RELEASE_NOTES_v${VERSION}.md
 ```
 
-**記載内容:**
+**⚠️ 重要: 記載内容**
 
-- リリース日
-- 概要
-- 新機能 (Added)
-- 変更 (Changed)
-- バグ修正 (Fixed)
+前回リリース以降の**全てのPR**を以下のカテゴリに分類して記載：
+
+- 新機能 (Added) - 各項目にPRリンクを付ける
+- 変更 (Changed) - 各項目にPRリンクを付ける
+- バグ修正 (Fixed) - 各項目にPRリンクを付ける
 - 破壊的変更 (Breaking Changes)
-- 削除 (Removed)
-- セキュリティ (Security)
+- 削除 (Removed) - 各項目にPRリンクを付ける
+- パフォーマンス (Performance) - 各項目にPRリンクを付ける
+- セキュリティ (Security) - 各項目にPRリンクを付ける
+- Pull Requests一覧 - 全PRをリストアップ
 
-#### 2.3 CHANGELOG.md 更新
+**品質基準:**
+
+- [ ] 前回リリース以降の全てのPRが含まれている
+- [ ] 各PRにリンクが付いている
+- [ ] カテゴリ別に整理されている
+- [ ] Full Changelogリンクが正しい
+
+#### 2.4 CHANGELOG.md 更新
 
 ```bash
 # エディタで編集
@@ -416,10 +436,10 @@ vim /tmp/release-v${VERSION}.md
 #### 5.2 GitHub Release作成
 
 ```bash
-# GitHub CLI で作成
+# GitHub CLI で作成（リリースノートは docs/releases/ に配置）
 gh release create v${VERSION} \
   --title "Release v${VERSION}" \
-  --notes-file /tmp/release-v${VERSION}.md
+  --notes-file docs/releases/RELEASE_NOTES_v${VERSION}.md
 
 # または GitHub UI から作成
 # https://github.com/t3-nico/boxlog-app/releases/new

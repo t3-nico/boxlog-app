@@ -68,7 +68,7 @@ export const BUILT_IN_TEMPLATES: SmartFolderTemplate[] = [
       {
         field: 'due_date',
         operator: 'equals',
-        value: new Date().toISOString().split('T')[0],
+        value: new Date().toISOString().split('T')[0] ?? '',
         logic: 'OR',
       },
       {
@@ -531,7 +531,7 @@ export class TemplateApplicator {
       if (rule.field.includes('date') && typeof rule.value === 'string') {
         // 今日の日付に置換
         if (rule.value === 'today') {
-          return { ...rule, value: now.toISOString().split('T')[0] }
+          return { ...rule, value: now.toISOString().split('T')[0] ?? '' }
         }
 
         // 相対日付はそのまま（エンジンで処理される）

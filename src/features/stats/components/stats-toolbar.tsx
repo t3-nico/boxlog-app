@@ -42,10 +42,11 @@ export function StatsToolbar() {
 
   // 日付範囲のフォーマット
   const formatDateRange = () => {
+    const formatOptions = dateLocale ? { locale: dateLocale } : {}
     if (isSameDay(startDate, endDate)) {
-      return format(startDate, 'M/d (E)', { locale: dateLocale })
+      return format(startDate, 'M/d (E)', formatOptions)
     }
-    return `${format(startDate, 'M/d', { locale: dateLocale })} - ${format(endDate, 'M/d', { locale: dateLocale })}`
+    return `${format(startDate, 'M/d', formatOptions)} - ${format(endDate, 'M/d', formatOptions)}`
   }
 
   // 期間タイプの選択肢

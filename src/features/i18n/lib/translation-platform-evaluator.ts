@@ -672,8 +672,8 @@ export class TranslationPlatformEvaluator {
     implementationPlan: string[]
   } {
     const evaluated = this.evaluateAll()
-    const primary = evaluated[0]
-    const alternative = evaluated[1]
+    const primary = evaluated[0]!
+    const alternative = evaluated[1]!
 
     const reasoning = [
       `${primary.name}: 総合スコア ${primary.score.overall}、適合性 ${primary.compatibilityScore}%`,

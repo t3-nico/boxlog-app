@@ -27,7 +27,7 @@
 
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
 
@@ -39,6 +39,7 @@ export function useRealtimeSubscription<T extends Record<string, unknown> = Reco
 ) {
   const channelRef = useRef<RealtimeChannelManager | null>(null)
   const configRef = useRef(config)
+  const [channelManager, setChannelManager] = useState<RealtimeChannelManager | null>(null)
 
   // 最新のconfigを保持（クロージャ問題を回避）
   useEffect(() => {
@@ -94,7 +95,7 @@ export function useRealtimeSubscription<T extends Record<string, unknown> = Reco
       )
 
       // 購読開始
-      const subscription = channel.subscribe((status) => {
+      channel.subscribe((status) => {
         if (status === 'SUBSCRIBED') {
           console.debug(`[Realtime] Subscribed to channel: ${channelName}`)
         } else if (status === 'CHANNEL_ERROR') {
@@ -108,13 +109,15 @@ export function useRealtimeSubscription<T extends Record<string, unknown> = Reco
       })
 
       // チャンネル管理情報を保存
-      channelRef.current = {
+      const manager: RealtimeChannelManager = {
         channel,
         status: 'subscribing',
         unsubscribe: async () => {
           await supabase.removeChannel(channel)
         },
       }
+      channelRef.current = manager
+      setChannelManager(manager)
     } catch (error) {
       const subscriptionError = new RealtimeSubscriptionError(
         `Failed to create channel: ${channelName}`,
@@ -135,9 +138,10 @@ export function useRealtimeSubscription<T extends Record<string, unknown> = Reco
         supabase.removeChannel(channel)
         console.debug(`[Realtime] Unsubscribed from channel: ${channelName}`)
         channelRef.current = null
+        setChannelManager(null)
       }
     }
   }, []) // 空配列: マウント時に1回だけ実行
 
-  return channelRef.current
+  return channelManager
 }

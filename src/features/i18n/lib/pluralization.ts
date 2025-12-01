@@ -131,7 +131,9 @@ export const formatICUPlural = (
 
     while ((ruleMatch = rulePattern.exec(rules)) !== null) {
       const [, category, translation] = ruleMatch
-      ruleMap[category as PluralCategory] = translation
+      if (category && translation) {
+        ruleMap[category as PluralCategory] = translation
+      }
     }
 
     // 'other'がない場合はエラー
@@ -228,6 +230,10 @@ export const formatFileSize = (locale: Locale, count: number, unit: 'byte' | 'KB
 
   const translations = locale === 'ja' ? sizeTranslationsJa : sizeTranslations
   const unitTranslation = translations[unit]
+
+  if (!unitTranslation) {
+    return `${count} ${unit}`
+  }
 
   return pluralizeWithVariables(locale, count, unitTranslation, { count })
 }

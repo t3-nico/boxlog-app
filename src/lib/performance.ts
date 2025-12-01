@@ -103,8 +103,9 @@ export const scheduleWork = (tasks: (() => void)[], frameTimeLimit: number = 5):
       const start = performance.now()
 
       while (taskIndex < tasks.length && performance.now() - start < frameTimeLimit) {
-        if (taskIndex < tasks.length) {
-          tasks[taskIndex]()
+        const task = tasks[taskIndex]
+        if (task) {
+          task()
         }
         taskIndex++
       }
@@ -137,7 +138,7 @@ export const measureWebVitals = () => {
   // LCP (Largest Contentful Paint)
   new PerformanceObserver((list) => {
     const entries = list.getEntries()
-    const lastEntry = entries[entries.length - 1]
+    const lastEntry = entries[entries.length - 1]!
     console.log('LCP:', lastEntry.startTime)
   }).observe({ type: 'largest-contentful-paint', buffered: true })
 

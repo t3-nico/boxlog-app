@@ -72,34 +72,34 @@ export enum AuditSeverity {
  * 監査ログエントリ
  */
 export interface AuditLogEntry {
-  id?: string
+  id?: string | undefined
   timestamp: string
   eventType: AuditEventType
   severity: AuditSeverity
-  userId?: string
-  sessionId?: string
-  ipAddress?: string
-  userAgent?: string
-  resource?: string
-  action?: string
-  metadata?: Record<string, unknown>
+  userId?: string | undefined
+  sessionId?: string | undefined
+  ipAddress?: string | undefined
+  userAgent?: string | undefined
+  resource?: string | undefined
+  action?: string | undefined
+  metadata?: Record<string, unknown> | undefined
   success: boolean
-  errorMessage?: string
+  errorMessage?: string | undefined
 }
 
 /**
  * 監査ログオプション
  */
 export interface AuditLogOptions {
-  userId?: string
-  sessionId?: string
-  ipAddress?: string
-  userAgent?: string
-  resource?: string
-  action?: string
-  metadata?: Record<string, unknown>
-  success?: boolean
-  errorMessage?: string
+  userId?: string | undefined
+  sessionId?: string | undefined
+  ipAddress?: string | undefined
+  userAgent?: string | undefined
+  resource?: string | undefined
+  action?: string | undefined
+  metadata?: Record<string, unknown> | undefined
+  success?: boolean | undefined
+  errorMessage?: string | undefined
 }
 
 /**

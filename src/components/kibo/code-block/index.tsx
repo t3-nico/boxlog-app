@@ -303,8 +303,8 @@ export const CodeBlock = ({
 }: CodeBlockProps) => {
   const [value, onValueChange] = useControllableState({
     defaultProp: defaultValue ?? '',
-    prop: controlledValue,
-    onChange: controlledOnValueChange,
+    ...(controlledValue !== undefined && { prop: controlledValue }),
+    ...(controlledOnValueChange !== undefined && { onChange: controlledOnValueChange }),
   })
 
   return (
@@ -381,7 +381,13 @@ export type CodeBlockSelectProps = ComponentProps<typeof Select>
 export const CodeBlockSelect = (props: CodeBlockSelectProps) => {
   const { value, onValueChange } = useContext(CodeBlockContext)
 
-  return <Select onValueChange={onValueChange} value={value} {...props} />
+  return (
+    <Select
+      {...(value !== undefined && { value })}
+      {...(onValueChange !== undefined && { onValueChange })}
+      {...props}
+    />
+  )
 }
 
 export type CodeBlockSelectTriggerProps = ComponentProps<typeof SelectTrigger>
@@ -443,7 +449,7 @@ export const CodeBlockCopyButton = ({
   }, [code, onCopy, onError, timeout])
 
   if (asChild) {
-    return cloneElement(children as ReactElement, {
+    return cloneElement(children as ReactElement<{ onClick?: () => void }>, {
       onClick: copyToClipboard,
     })
   }
@@ -467,7 +473,6 @@ const CodeBlockFallback = ({ children, ...props }: CodeBlockFallbackProps) => (
           ?.toString()
           .split('\n')
           .map((line, lineNumber) => (
-            // eslint-disable-next-line react/no-array-index-key
             <span className="line" key={lineNumber}>
               {line}
             </span>

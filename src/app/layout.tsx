@@ -38,11 +38,12 @@ export const metadata: Metadata = {
 
 interface RootLayoutProps {
   children: React.ReactNode
-  params: { locale?: string }
+  params: Promise<{ locale?: string }>
 }
 
-const RootLayout = ({ children, params }: RootLayoutProps) => {
-  const locale = params?.locale || 'en'
+const RootLayout = async ({ children, params }: RootLayoutProps) => {
+  const resolvedParams = await params
+  const locale = resolvedParams?.locale || 'en'
   return (
     <html lang={locale} suppressHydrationWarning className={`${inter.variable} ${notoSansJP.variable}`}>
       <body className={cn('bg-background')} suppressHydrationWarning>

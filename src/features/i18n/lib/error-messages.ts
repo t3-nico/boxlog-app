@@ -54,8 +54,8 @@ export interface ErrorMessage {
   type: ErrorType
   title: string
   message: string
-  suggestion?: string
-  action?: string
+  suggestion?: string | undefined
+  action?: string | undefined
 }
 
 // エラーメッセージ辞書（英語）
@@ -529,9 +529,9 @@ export class LocalizedError extends Error {
   public readonly code: ErrorCode
   public readonly type: ErrorType
   public readonly locale: Locale
-  public readonly variables?: Record<string, string | number>
+  public readonly variables?: Record<string, string | number> | undefined
 
-  constructor(code: ErrorCode, locale: Locale = 'en', variables?: Record<string, string | number>) {
+  constructor(code: ErrorCode, locale: Locale = 'en', variables?: Record<string, string | number> | undefined) {
     const errorMessage = getErrorMessage(code, locale, variables)
     super(errorMessage.message)
 

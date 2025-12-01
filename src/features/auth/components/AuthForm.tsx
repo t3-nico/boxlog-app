@@ -49,7 +49,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
     try {
       if (mode === 'login') {
         // サインイン処理
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        const { error: signInError } = await supabase.auth.signInWithPassword({
           email: data.email,
           password: data.password,
         })

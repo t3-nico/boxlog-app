@@ -52,8 +52,8 @@ export function usePlanRealtime(userId: string | undefined, options: UsePlanReal
     channelName: `plan-changes-${userId}`,
     table: 'plans',
     event: '*', // INSERT, UPDATE, DELETE すべて
-    filter: userId ? `user_id=eq.${userId}` : undefined,
-    enabled, // enabledオプションを渡す
+    ...(userId && { filter: `user_id=eq.${userId}` }),
+    ...(enabled !== undefined && { enabled }), // enabledオプションを条件付きで渡す
     onEvent: (payload) => {
       const newRecord = payload.new as { id: string } | undefined
       const oldRecord = payload.old as { id: string } | undefined

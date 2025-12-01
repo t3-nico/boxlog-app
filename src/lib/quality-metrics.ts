@@ -308,9 +308,9 @@ export class QualityMetricsCollector {
         if (match) {
           details.push({
             type: line.includes('FIXME') ? 'fixme' : 'todo',
-            file: match[1],
-            line: parseInt(match[2]),
-            message: match[3].trim(),
+            file: match[1]!,
+            line: parseInt(match[2]!),
+            message: match[3]!.trim(),
             severity: line.includes('FIXME') ? 'high' : 'medium',
           })
         }
@@ -410,11 +410,11 @@ export class QualityMetricsCollector {
       const match = line.match(/^(.+)\((\d+),(\d+)\): error TS(\d+): (.+)$/)
       if (match) {
         errors.push({
-          file: match[1],
-          line: parseInt(match[2]),
-          column: parseInt(match[3]),
-          code: parseInt(match[4]),
-          message: match[5],
+          file: match[1]!,
+          line: parseInt(match[2]!),
+          column: parseInt(match[3]!),
+          code: parseInt(match[4]!),
+          message: match[5]!,
         })
       }
     })

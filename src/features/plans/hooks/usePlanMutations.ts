@@ -90,20 +90,24 @@ export function usePlanMutations() {
 
       // Zustandキャッシュを更新
       if (Object.keys(updateData).length > 0) {
-        updateCache(id, updateData)
+        updateCache(id, updateData as Parameters<typeof updateCache>[1])
       }
 
       // 4. TanStack Queryキャッシュを楽観的に更新
       // リストキャッシュを更新（フィルターなし）
-      utils.plans.list.setData(undefined, (oldData) => {
-        if (!oldData) return oldData
-        return oldData.map((plan) => (plan.id === id ? { ...plan, ...updateData } : plan))
+      utils.plans.list.setData(undefined, (oldData): typeof oldData => {
+        if (!oldData) return undefined
+        return oldData.map((plan) =>
+          plan.id === id ? ({ ...plan, ...updateData } as typeof plan) : plan
+        ) as typeof oldData
       })
 
       // リストキャッシュを更新（空オブジェクトフィルター）
-      utils.plans.list.setData({}, (oldData) => {
-        if (!oldData) return oldData
-        return oldData.map((plan) => (plan.id === id ? { ...plan, ...updateData } : plan))
+      utils.plans.list.setData({}, (oldData): typeof oldData => {
+        if (!oldData) return undefined
+        return oldData.map((plan) =>
+          plan.id === id ? ({ ...plan, ...updateData } as typeof plan) : plan
+        ) as typeof oldData
       })
 
       // 個別プランキャッシュを更新
@@ -134,7 +138,7 @@ export function usePlanMutations() {
         setIsMutating(false)
       }, 500)
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       toast.error('更新に失敗しました')
 
       // mutation完了（フラグリセット）

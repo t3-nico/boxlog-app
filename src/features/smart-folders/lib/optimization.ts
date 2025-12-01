@@ -222,11 +222,16 @@ export class BackgroundSyncManager {
       } as Record<string, string>
     )[item.operation]
 
-    const response = await fetch(url, {
-      method,
+    const requestInit: RequestInit = {
+      method: method as 'GET' | 'POST' | 'PUT' | 'DELETE',
       headers: item.operation === 'delete' ? {} : { 'Content-Type': 'application/json' },
-      body: item.operation === 'delete' ? undefined : JSON.stringify(item.data),
-    })
+    }
+
+    if (item.operation !== 'delete') {
+      requestInit.body = JSON.stringify(item.data)
+    }
+
+    const response = await fetch(url, requestInit)
 
     if (!response.ok) {
       throw new Error(`Sync failed for ${item.type} ${item.id}`)

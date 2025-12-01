@@ -32,6 +32,7 @@ export function AboutLegalSettings() {
 
   useEffect(() => {
     setIsClient(true)
+
     setCookieConsent(getCookieConsent())
 
     const handleCookieConsentChange = (event: CustomEvent<CookieConsent | null>) => {

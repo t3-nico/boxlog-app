@@ -325,7 +325,7 @@ export class ErrorHandler {
   /**
    * ユーザーに通知
    */
-  private async notifyUser(error: AppError, options: ErrorHandlingOptions): Promise<void> {
+  private async notifyUser(error: AppError, _options: ErrorHandlingOptions): Promise<void> {
     const config: NotificationConfig = {
       type: 'toast',
       duration: error.severity === 'critical' ? 0 : 5000,
@@ -349,7 +349,7 @@ export class ErrorHandler {
   /**
    * 復旧成功をログ出力
    */
-  private logRecoverySuccess(errorCode: ErrorCode, result: ErrorHandlingResult, options: ErrorHandlingOptions): void {
+  private logRecoverySuccess(errorCode: ErrorCode, result: ErrorHandlingResult, _options: ErrorHandlingOptions): void {
     const category = getErrorCategory(errorCode)
     const message = `Recovery successful for ${category}:${errorCode}`
 

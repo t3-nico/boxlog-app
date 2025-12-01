@@ -1,3 +1,4 @@
+// パフォーマンス計測のため、render中にperformance.now()とrefへの書き込みが必要
 import { useEffect, useRef } from 'react'
 
 // Chrome固有のperformance.memory API用の型定義
@@ -12,7 +13,7 @@ interface PerformanceWithMemory extends Performance {
 }
 
 export const usePerformanceMonitor = (componentName: string, enabled = false) => {
-  const renderStartTime = useRef<number>()
+  const renderStartTime = useRef<number | undefined>(undefined)
 
   // レンダリング開始時間を記録
   renderStartTime.current = performance.now()
@@ -69,7 +70,7 @@ export const useMemoryMonitor = (componentName: string, enabled = false) => {
 // パフォーマンス統計を追跡するフック
 export const usePerformanceStats = (componentName: string, enabled = false) => {
   const renderTimes = useRef<number[]>([])
-  const renderStartTime = useRef<number>()
+  const renderStartTime = useRef<number | undefined>(undefined)
 
   renderStartTime.current = performance.now()
 

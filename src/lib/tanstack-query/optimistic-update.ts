@@ -92,7 +92,7 @@ export function createOptimisticUpdateHelper<TData extends unknown[], TItem exte
  *   }),
  * })
  */
-export function createMutationWithOptimisticUpdate<TData, TVariables, TContext = unknown>(
+export function createMutationWithOptimisticUpdate<TVariables, TContext = unknown>(
   queryClient: QueryClient,
   config: {
     queryKey: unknown[]

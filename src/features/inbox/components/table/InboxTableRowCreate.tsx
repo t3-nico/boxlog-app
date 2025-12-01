@@ -32,7 +32,7 @@ export interface InboxTableRowCreateHandle {
  * createRef.current?.startCreate()
  * ```
  */
-export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((props, ref) => {
+export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((_props, ref) => {
   const { getVisibleColumns } = useInboxColumnStore()
   const { createPlan, deletePlan } = usePlanMutations()
   const [isCreating, setIsCreating] = useState(false)

@@ -32,8 +32,8 @@ export function PlanDateTimeInput({
     const [startHour, startMin] = startTime.split(':').map(Number)
     const [endHour, endMin] = endTime.split(':').map(Number)
 
-    const startMinutes = startHour * 60 + startMin
-    const endMinutes = endHour * 60 + endMin
+    const startMinutes = startHour! * 60 + startMin!
+    const endMinutes = endHour! * 60 + endMin!
 
     const diffMinutes = endMinutes - startMinutes
     if (diffMinutes <= 0) return null

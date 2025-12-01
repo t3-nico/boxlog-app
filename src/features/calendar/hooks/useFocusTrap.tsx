@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface FocusTrapOptions {
   enabled: boolean
@@ -107,18 +107,20 @@ function getFocusableElements(container: HTMLElement): FocusableElement[] {
 export function useFocusTrap(options: FocusTrapOptions) {
   const containerRef = useRef<HTMLDivElement>(null)
   const previouslyFocusedElement = useRef<HTMLElement | null>(null)
-  const isActive = useRef(false)
+  const isActiveRef = useRef(false)
+  const [isActive, setIsActive] = useState(false)
 
   // フォーカストラップの有効化
   const activate = useCallback(() => {
-    if (isActive.current || !containerRef.current || !options.enabled) return
+    if (isActiveRef.current || !containerRef.current || !options.enabled) return
 
     // 現在のフォーカス要素を保存
     if (options.restoreFocus && document.activeElement instanceof HTMLElement) {
       previouslyFocusedElement.current = document.activeElement
     }
 
-    isActive.current = true
+    isActiveRef.current = true
+    setIsActive(true)
     options.onActivate?.()
 
     // 自動フォーカス
@@ -135,9 +137,10 @@ export function useFocusTrap(options: FocusTrapOptions) {
 
   // フォーカストラップの無効化
   const deactivate = useCallback(() => {
-    if (!isActive.current) return
+    if (!isActiveRef.current) return
 
-    isActive.current = false
+    isActiveRef.current = false
+    setIsActive(false)
     options.onDeactivate?.()
 
     // フォーカスを復元
@@ -155,7 +158,7 @@ export function useFocusTrap(options: FocusTrapOptions) {
 
   // Tab キーの処理
   const handleTabKey = useCallback((event: KeyboardEvent) => {
-    if (!isActive.current || !containerRef.current || event.key !== 'Tab') return
+    if (!isActiveRef.current || !containerRef.current || event.key !== 'Tab') return
 
     const focusableElements = getFocusableElements(containerRef.current)
     if (focusableElements.length === 0) {
@@ -189,7 +192,7 @@ export function useFocusTrap(options: FocusTrapOptions) {
   // Escape キーの処理
   const handleEscapeKey = useCallback(
     (event: KeyboardEvent) => {
-      if (!isActive.current || !options.escapeDeactivates || event.key !== 'Escape') return
+      if (!isActiveRef.current || !options.escapeDeactivates || event.key !== 'Escape') return
 
       event.preventDefault()
       deactivate()
@@ -200,7 +203,7 @@ export function useFocusTrap(options: FocusTrapOptions) {
   // 外部クリックの処理
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
-      if (!isActive.current || !options.clickOutsideDeactivates || !containerRef.current) return
+      if (!isActiveRef.current || !options.clickOutsideDeactivates || !containerRef.current) return
 
       const target = event.target as Node
       if (!containerRef.current.contains(target)) {
@@ -212,7 +215,7 @@ export function useFocusTrap(options: FocusTrapOptions) {
 
   // フォーカスが外部に移動した場合の処理
   const handleFocusOut = useCallback((_event: FocusEvent) => {
-    if (!isActive.current || !containerRef.current) return
+    if (!isActiveRef.current || !containerRef.current) return
 
     // フォーカスが完全に外部に移動したかを確認
     setTimeout(() => {
@@ -261,7 +264,7 @@ export function useFocusTrap(options: FocusTrapOptions) {
   // クリーンアップ
   useEffect(() => {
     return () => {
-      if (isActive.current) {
+      if (isActiveRef.current) {
         deactivate()
       }
     }
@@ -360,7 +363,7 @@ export function useFocusTrap(options: FocusTrapOptions) {
 
   return {
     containerRef,
-    isActive: isActive.current,
+    isActive,
     activate,
     deactivate,
     focusFirst,
@@ -395,16 +398,18 @@ export const FocusTrap = ({
   onActivate,
   onDeactivate,
 }: FocusTrapProps) => {
-  const { containerRef } = useFocusTrap({
+  const trapOptions: FocusTrapOptions = {
     enabled,
     autoFocus,
     restoreFocus,
     clickOutsideDeactivates,
     escapeDeactivates,
     returnFocusOnDeactivate: restoreFocus,
-    onActivate,
-    onDeactivate,
-  })
+    ...(onActivate && { onActivate }),
+    ...(onDeactivate && { onDeactivate }),
+  }
+
+  const { containerRef } = useFocusTrap(trapOptions)
 
   return (
     <div ref={containerRef} className={className} data-focus-trap={enabled ? 'active' : 'inactive'}>

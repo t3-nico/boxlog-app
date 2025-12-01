@@ -68,7 +68,7 @@ export function calculateViewPlanColumns(plans: TimedPlan[]): Map<string, PlanCo
   for (const group of groups) {
     if (group.length === 1) {
       // 重複なしの場合
-      columnMap.set(group[0].id, {
+      columnMap.set(group[0]!.id, {
         plans: group,
         columnIndex: 0,
         totalColumns: 1,

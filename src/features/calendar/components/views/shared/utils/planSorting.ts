@@ -25,7 +25,7 @@ export function sortEventsByDateKeys(eventsByDate: Record<string, CalendarPlan[]
   const sorted = { ...eventsByDate }
 
   Object.keys(sorted).forEach((dateKey) => {
-    sorted[dateKey] = sortEventsByTime(sorted[dateKey])
+    sorted[dateKey] = sortEventsByTime(sorted[dateKey]!)
   })
 
   return sorted
@@ -60,7 +60,7 @@ export function sortAgendaEventsByDateKeys(
   const sorted = { ...eventsByDate }
 
   Object.keys(sorted).forEach((dateKey) => {
-    sorted[dateKey] = sortEventsForAgenda(sorted[dateKey])
+    sorted[dateKey] = sortEventsForAgenda(sorted[dateKey]!)
   })
 
   return sorted
