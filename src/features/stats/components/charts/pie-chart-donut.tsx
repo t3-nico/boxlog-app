@@ -42,7 +42,7 @@ export function PieChartDonut() {
         <CardDescription>プロジェクト・カテゴリごとの集計</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
+        <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-64">
           <PieChart>
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <Pie data={chartData} dataKey="tasks" nameKey="category" innerRadius={60} strokeWidth={5}>

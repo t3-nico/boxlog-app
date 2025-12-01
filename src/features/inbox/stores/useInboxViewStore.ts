@@ -183,7 +183,7 @@ export const useInboxViewStore = create<InboxViewState>()(
       },
     }),
     {
-      name: 'inbox-view-storage-v2',
+      name: 'inbox-view-storage-v3',
     }
   )
 )

@@ -65,7 +65,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
 
   return (
     <AlertDialog open={!!tag} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent className="max-w-3xl gap-0 p-6">
+      <AlertDialogContent className="max-w-2xl gap-0 p-6">
         <AlertDialogHeader className="mb-4">
           <AlertDialogTitle>タグ「{tag?.name}」をアーカイブしますか？</AlertDialogTitle>
         </AlertDialogHeader>

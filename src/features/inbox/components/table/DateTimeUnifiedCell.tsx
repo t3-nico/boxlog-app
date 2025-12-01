@@ -179,7 +179,7 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
                       setStartTime(e.target.value)
                       handleChange()
                     }}
-                    className="border-input flex h-9 w-[88px] gap-0 rounded-md border bg-transparent px-2 py-1 text-sm [&::-webkit-datetime-edit-fields-wrapper]:!gap-0 [&::-webkit-datetime-edit-hour-field]:!mr-0 [&::-webkit-datetime-edit-minute-field]:!ml-0"
+                    className="border-input flex h-9 w-20 gap-0 rounded-md border bg-transparent px-2 py-1 text-sm [&::-webkit-datetime-edit-fields-wrapper]:!gap-0 [&::-webkit-datetime-edit-hour-field]:!mr-0 [&::-webkit-datetime-edit-minute-field]:!ml-0"
                   />
                 </div>
                 <ArrowRight className="text-muted-foreground mb-2 size-4" />
@@ -192,7 +192,7 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
                       setEndTime(e.target.value)
                       handleChange()
                     }}
-                    className="border-input flex h-9 w-[88px] gap-0 rounded-md border bg-transparent px-2 py-1 text-sm [&::-webkit-datetime-edit-fields-wrapper]:!gap-0 [&::-webkit-datetime-edit-hour-field]:!mr-0 [&::-webkit-datetime-edit-minute-field]:!ml-0"
+                    className="border-input flex h-9 w-20 gap-0 rounded-md border bg-transparent px-2 py-1 text-sm [&::-webkit-datetime-edit-fields-wrapper]:!gap-0 [&::-webkit-datetime-edit-hour-field]:!mr-0 [&::-webkit-datetime-edit-minute-field]:!ml-0"
                   />
                 </div>
               </div>

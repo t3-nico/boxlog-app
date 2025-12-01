@@ -106,7 +106,7 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>期限一括設定</DialogTitle>
           <DialogDescription>{selectedIds.length}件のプランに期限を設定します</DialogDescription>

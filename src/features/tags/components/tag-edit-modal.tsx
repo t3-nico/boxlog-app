@@ -90,7 +90,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>タグを編集</DialogTitle>
           <DialogDescription>{tag.path}</DialogDescription>

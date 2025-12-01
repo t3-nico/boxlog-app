@@ -82,7 +82,7 @@ export function RecurrenceDialog({
     if (!open || !triggerRef?.current) return
 
     const rect = triggerRef.current.getBoundingClientRect()
-    const dialogWidth = 400 // w-[400px]
+    const dialogWidth = 400 // w-[25rem]
 
     if (placement === 'right') {
       setPosition({
@@ -148,7 +148,7 @@ export function RecurrenceDialog({
     <Portal.Root>
       <div
         ref={dialogRef}
-        className="bg-card border-border fixed z-[9999] w-[400px] overflow-hidden rounded-xl border shadow-lg"
+        className="bg-card border-border fixed z-[9999] w-[25rem] overflow-hidden rounded-xl border shadow-lg"
         style={{
           top: `${position.top}px`,
           left: `${position.left}px`,

@@ -14,7 +14,8 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 // TODO(#621): Events/Tasks削除後、plans/Sessionsに移行予定
 // import { useEventStore } from '@/features/events'
 import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
@@ -59,10 +60,13 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="overflow-hidden p-0" style={{ maxWidth: '768px' }}>
-        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3">
+      <DialogContent className="overflow-hidden p-0 sm:max-w-3xl" showCloseButton={false}>
+        <VisuallyHidden>
+          <DialogTitle>グローバル検索</DialogTitle>
+        </VisuallyHidden>
+        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground !rounded-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3">
           <CommandInput placeholder="Search tasks, events, tags, folders..." value={query} onValueChange={setQuery} />
-          <CommandList className="max-h-[500px]">
+          <CommandList className="max-h-[31rem]">
             <CommandEmpty>No results found.</CommandEmpty>
 
             {/* Recent Searches */}

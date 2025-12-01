@@ -42,7 +42,7 @@ export function PlanFilters({
         value={status ?? 'all'}
         onValueChange={(v) => onStatusChange?.(v === 'all' ? undefined : (v as PlanStatus))}
       >
-        <SelectTrigger className="w-full sm:w-[140px]">
+        <SelectTrigger className="w-full sm:w-36">
           <SelectValue placeholder="ステータス" />
         </SelectTrigger>
         <SelectContent>

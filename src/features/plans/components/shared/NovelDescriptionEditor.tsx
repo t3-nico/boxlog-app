@@ -62,7 +62,7 @@ export function NovelDescriptionEditor({
 
   return (
     <div
-      className="scrollbar-thin max-h-[200px] overflow-y-auto"
+      className="scrollbar-thin max-h-52 overflow-y-auto"
       style={{
         scrollbarColor: 'color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent',
       }}
@@ -87,7 +87,7 @@ export function NovelDescriptionEditor({
           }}
           className="text-muted-foreground min-h-[1.5rem] border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0"
         >
-          <EditorCommand className="novel-command-menu bg-card border-border z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border shadow-md transition-all">
+          <EditorCommand className="novel-command-menu bg-card border-border z-50 h-auto max-h-80 overflow-y-auto rounded-md border shadow-md transition-all">
             <EditorCommandEmpty className="text-muted-foreground px-3 py-2 text-sm">No results</EditorCommandEmpty>
             <EditorCommandList className="bg-card p-1">
               {suggestionItems.map((item) => (

@@ -77,7 +77,7 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>メールアドレスを変更</DialogTitle>
           <DialogDescription>

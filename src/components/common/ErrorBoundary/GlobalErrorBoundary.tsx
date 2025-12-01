@@ -327,7 +327,7 @@ export class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, Glo
                         <summary className="cursor-pointer text-xs text-blue-600 sm:text-sm dark:text-blue-400">
                           スタックトレース
                         </summary>
-                        <pre className="mt-2 max-h-40 overflow-auto rounded bg-neutral-100 p-2 text-[10px] break-all whitespace-pre-wrap sm:text-xs dark:bg-neutral-800">
+                        <pre className="mt-2 max-h-40 overflow-auto rounded bg-neutral-100 p-2 text-xs break-all whitespace-pre-wrap sm:text-xs dark:bg-neutral-800">
                           {this.state.error.stack}
                         </pre>
                       </details>

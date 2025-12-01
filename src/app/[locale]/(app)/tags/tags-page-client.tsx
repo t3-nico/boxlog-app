@@ -813,7 +813,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                 {trigger.icon}
                                 {trigger.label}
                               </ContextMenuSubTrigger>
-                              <ContextMenuSubContent className="min-w-[200px]">
+                              <ContextMenuSubContent className="min-w-48">
                                 {items.map((item) => (
                                   <ContextMenuItem key={item.key} onClick={item.onClick}>
                                     {item.icon}
@@ -926,7 +926,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground text-sm">{t('tags.page.rowsPerPage')}</span>
                   <Select value={String(pageSize)} onValueChange={(value) => setPageSize(Number(value))}>
-                    <SelectTrigger className="h-9 w-[64px]">
+                    <SelectTrigger className="h-9 w-16">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

@@ -45,7 +45,7 @@ export const WeekendDropConfirmDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="max-w-lg">
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
             <div

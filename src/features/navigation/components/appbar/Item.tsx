@@ -44,9 +44,7 @@ export function Item({ icon: Icon, label, url, isActive, onClick }: ItemProps) {
       </div>
 
       {/* 名前（ハイライトなし） */}
-      <span className={cn('text-center text-[11px] leading-tight break-words', isActive && 'font-semibold')}>
-        {label}
-      </span>
+      <span className={cn('text-center text-xs leading-tight break-words', isActive && 'font-semibold')}>{label}</span>
     </Link>
   )
 }

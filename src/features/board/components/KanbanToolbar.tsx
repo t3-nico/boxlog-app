@@ -33,7 +33,7 @@ export function KanbanToolbar() {
             setFilter({ priority: value === 'all' ? undefined : (value as 'low' | 'medium' | 'high') })
           }
         >
-          <SelectTrigger className="h-9 w-[120px]">
+          <SelectTrigger className="h-9 w-28">
             <SelectValue placeholder="優先度" />
           </SelectTrigger>
           <SelectContent>
@@ -55,7 +55,7 @@ export function KanbanToolbar() {
             setSort({ key, order })
           }}
         >
-          <SelectTrigger className="h-9 w-[140px]">
+          <SelectTrigger className="h-9 w-36">
             <SelectValue placeholder="並び替え" />
           </SelectTrigger>
           <SelectContent>

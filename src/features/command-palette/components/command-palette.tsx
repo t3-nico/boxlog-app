@@ -244,7 +244,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
       title="Command Palette"
       description="Search for commands and recent items..."
       showCloseButton={false}
-      className="w-[650px] max-w-[90vw] sm:max-w-[650px]"
+      className="w-full max-w-[90vw] sm:max-w-2xl"
     >
       <div className="relative">
         <CommandInput
@@ -254,12 +254,12 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
           className="pr-16 text-sm"
         />
         <div className="absolute top-1/2 right-3 flex -translate-y-1/2 items-center gap-1">
-          <kbd className="bg-muted text-muted-foreground inline-flex h-5 items-center gap-1 rounded border px-2 font-mono text-[10px] font-medium opacity-100 select-none">
+          <kbd className="bg-muted text-muted-foreground inline-flex h-5 items-center gap-1 rounded border px-2 font-mono text-xs font-medium opacity-100 select-none">
             ESC
           </kbd>
         </div>
       </div>
-      <CommandList className="max-h-[480px] min-h-[320px]">
+      <CommandList className="max-h-[30rem] min-h-80">
         <CommandEmpty>No results found.</CommandEmpty>
         {Object.entries(groupedResults).map(([category, categoryResults]) => {
           const categoryInfo = getCategoryInfo(category)

@@ -189,7 +189,7 @@ export const TagsContent = ({ children, className }: TagsContentProps) => {
   return (
     <div
       className={cn(
-        'bg-popover text-popover-foreground absolute top-full left-0 z-50 mt-1 max-h-60 min-w-48 overflow-hidden rounded-md border shadow-md',
+        'bg-popover text-popover-foreground border-border absolute top-full left-0 z-50 mt-1 max-h-60 min-w-48 overflow-hidden rounded-md border shadow-md',
         className
       )}
     >

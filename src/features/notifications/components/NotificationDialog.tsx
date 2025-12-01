@@ -56,7 +56,7 @@ export function NotificationDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && close()}>
-      <DialogContent className="top-4 !left-20 !translate-x-0 !translate-y-0 sm:max-w-[600px]">
+      <DialogContent className="top-4 !left-20 max-w-xl !translate-x-0 !translate-y-0">
         <DialogHeader>
           <DialogTitle>{t('notifications.title')}</DialogTitle>
         </DialogHeader>
@@ -90,7 +90,7 @@ export function NotificationDialog() {
                     </Button>
                   </div>
                 </div>
-                <div className="max-h-[500px] space-y-2 overflow-y-auto">
+                <div className="max-h-[31rem] space-y-2 overflow-y-auto">
                   {allNotifications.map(
                     (notification: {
                       id: string
@@ -158,7 +158,7 @@ export function NotificationDialog() {
                     {t('notifications.actions.markAllAsRead')}
                   </Button>
                 </div>
-                <div className="max-h-[500px] space-y-2 overflow-y-auto">
+                <div className="max-h-[31rem] space-y-2 overflow-y-auto">
                   {unreadNotifications.map(
                     (notification: {
                       id: string

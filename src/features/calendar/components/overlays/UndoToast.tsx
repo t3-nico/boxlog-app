@@ -105,7 +105,7 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
         isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-95 opacity-0'
       )}
     >
-      <div className="border-border bg-popover text-popover-foreground min-w-[320px] overflow-hidden rounded-lg border shadow-2xl">
+      <div className="border-border bg-popover text-popover-foreground min-w-80 overflow-hidden rounded-lg border shadow-2xl">
         {/* プログレスバー */}
         <div className="bg-primary h-1 transition-all duration-100 ease-linear" style={{ width: `${progress}%` }} />
 

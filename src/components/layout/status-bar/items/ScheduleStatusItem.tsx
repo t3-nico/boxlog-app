@@ -172,7 +172,7 @@ export function ScheduleStatusItem() {
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <span className="text-muted-foreground text-[10px] tabular-nums">{progressPercent}%</span>
+          <span className="text-muted-foreground text-xs tabular-nums">{progressPercent}%</span>
         </div>
       )}
     </div>

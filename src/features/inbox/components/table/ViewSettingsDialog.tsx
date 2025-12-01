@@ -85,7 +85,7 @@ export function ViewSettingsDialog({ open, onOpenChange, view, currentState }: V
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>{view ? 'ビューを編集' : '新しいビューを作成'}</DialogTitle>
           <DialogDescription>

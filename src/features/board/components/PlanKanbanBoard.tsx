@@ -325,7 +325,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   }
 
   return (
-    <div ref={setNodeRef} className={cn('flex min-w-[300px] flex-col rounded-lg', isOver && 'ring-primary/30 ring-2')}>
+    <div ref={setNodeRef} className={cn('flex min-w-72 flex-col rounded-lg', isOver && 'ring-primary/30 ring-2')}>
       <div
         className={`${bgColor} flex items-center justify-between rounded-t-lg pt-2`}
         style={{ height: '48px', minHeight: '48px', maxHeight: '48px', paddingLeft: '16px', paddingRight: '16px' }}

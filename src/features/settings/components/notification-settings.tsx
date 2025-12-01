@@ -86,7 +86,6 @@ export function NotificationSettings() {
             <span>{t('notifications.settings.deliverySettings.title')}</span>
           </div>
         }
-        description={t('notifications.settings.deliverySettings.description')}
         isSaving={notifications.isSaving}
       >
         <div className="space-y-4">
@@ -120,11 +119,7 @@ export function NotificationSettings() {
       </SettingsCard>
 
       {/* コンテンツ通知 */}
-      <SettingsCard
-        title={t('notifications.settings.contentSettings.title')}
-        description={t('notifications.settings.contentSettings.description')}
-        isSaving={notifications.isSaving}
-      >
+      <SettingsCard title={t('notifications.settings.contentSettings.title')} isSaving={notifications.isSaving}>
         <div className="space-y-4">
           <SettingField
             label={t('notifications.settings.contentSettings.weeklyDigest.label')}

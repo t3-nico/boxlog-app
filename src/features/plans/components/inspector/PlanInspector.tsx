@@ -585,14 +585,23 @@ export function PlanInspector() {
                 >
                   <span className="relative flex items-center gap-1.5">
                     アクティビティ
-                    <button
+                    <span
+                      role="button"
+                      tabIndex={0}
                       onClick={(e) => {
                         e.stopPropagation()
                         setActivityOrder(activityOrder === 'desc' ? 'asc' : 'desc')
                       }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setActivityOrder(activityOrder === 'desc' ? 'asc' : 'desc')
+                        }
+                      }}
                       onMouseEnter={() => setIsHoveringSort(true)}
                       onMouseLeave={() => setIsHoveringSort(false)}
-                      className="hover:bg-foreground/8 rounded p-0.5 transition-colors"
+                      className="hover:bg-foreground/8 cursor-pointer rounded p-0.5 transition-colors"
                       aria-label={activityOrder === 'desc' ? '古い順に変更' : '最新順に変更'}
                     >
                       {activityOrder === 'desc' ? (
@@ -600,7 +609,7 @@ export function PlanInspector() {
                       ) : (
                         <ChevronUp className="h-3.5 w-3.5" />
                       )}
-                    </button>
+                    </span>
                     {isHoveringSort && (
                       <div className="bg-foreground text-background absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 rounded-md px-3 py-1.5 text-xs whitespace-nowrap">
                         {activityOrder === 'desc' ? '最新順で表示中' : '古い順で表示中'}

@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  ExternalLink,
   FileText,
   HelpCircle,
   LogOut,
@@ -57,7 +58,7 @@ export function Account({ userData, locale }: AccountProps) {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="hover:bg-accent data-[state=open]:bg-accent flex h-10 w-10 items-center justify-center rounded-xl outline-hidden"
+            className="hover:bg-foreground/8 data-[state=open]:bg-foreground/12 flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
           >
             <Avatar className="h-8 w-8 rounded-xl">
               {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}
@@ -113,7 +114,8 @@ export function Account({ userData, locale }: AccountProps) {
                 <DropdownMenuItem asChild>
                   <Link href="https://github.com/t3-nico/boxlog-app/releases" target="_blank" rel="noopener noreferrer">
                     <Megaphone />
-                    {t('navUser.helpSubmenu.releaseNotes')}
+                    <span className="flex-1">{t('navUser.helpSubmenu.releaseNotes')}</span>
+                    <ExternalLink className="text-muted-foreground size-3" />
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -139,7 +141,8 @@ export function Account({ userData, locale }: AccountProps) {
                 <DropdownMenuItem asChild>
                   <Link href="mailto:support@boxlog.app">
                     <Mail />
-                    {t('navUser.helpSubmenu.contact')}
+                    <span className="flex-1">{t('navUser.helpSubmenu.contact')}</span>
+                    <ExternalLink className="text-muted-foreground size-3" />
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuSubContent>

@@ -66,20 +66,12 @@ export function AccountSettingsAutoSave() {
   })
 
   return (
-    <SettingsLayout title={t('settings.account.title')} description={t('settings.account.description')}>
+    <SettingsLayout title={t('settings.account.title')}>
       <div className="space-y-6">
         {/* プロフィール設定 */}
-        <SettingsCard
-          title={t('settings.account.profile')}
-          description={t('settings.account.publicInfo')}
-          isSaving={profile.isSaving}
-        >
+        <SettingsCard title={t('settings.account.profile')} isSaving={profile.isSaving}>
           <div className="space-y-4">
-            <SettingField
-              label={t('settings.account.displayName')}
-              description={t('settings.account.displayNameDesc')}
-              required
-            >
+            <SettingField label={t('settings.account.displayName')} required>
               <Input
                 value={profile.values.displayName}
                 onChange={(e) => profile.updateValue('displayName', e.target.value)}
@@ -125,17 +117,10 @@ export function AccountSettingsAutoSave() {
         </SettingsCard>
 
         {/* プライバシー設定 */}
-        <SettingsCard
-          title={t('settings.account.privacy')}
-          description={t('settings.account.privacyDesc')}
-          isSaving={privacy.isSaving}
-        >
+        <SettingsCard title={t('settings.account.privacy')} isSaving={privacy.isSaving}>
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <SettingField
-                label={t('settings.account.publicProfile')}
-                description={t('settings.account.publicProfileDesc')}
-              />
+              <SettingField label={t('settings.account.publicProfile')} />
               <Switch
                 checked={privacy.values.publicProfile}
                 onCheckedChange={(checked) => privacy.updateValue('publicProfile', checked)}
@@ -143,7 +128,7 @@ export function AccountSettingsAutoSave() {
             </div>
 
             <div className="flex items-center justify-between">
-              <SettingField label={t('settings.account.showEmail')} description={t('settings.account.showEmailDesc')} />
+              <SettingField label={t('settings.account.showEmail')} />
               <Switch
                 checked={privacy.values.showEmail}
                 onCheckedChange={(checked) => privacy.updateValue('showEmail', checked)}
@@ -151,10 +136,7 @@ export function AccountSettingsAutoSave() {
             </div>
 
             <div className="flex items-center justify-between">
-              <SettingField
-                label={t('settings.account.allowNotifications')}
-                description={t('settings.account.allowNotificationsDesc')}
-              />
+              <SettingField label={t('settings.account.allowNotifications')} />
               <Switch
                 checked={privacy.values.allowNotifications}
                 onCheckedChange={(checked) => privacy.updateValue('allowNotifications', checked)}
@@ -164,7 +146,7 @@ export function AccountSettingsAutoSave() {
         </SettingsCard>
 
         {/* デバッグ情報（開発用） */}
-        <SettingsCard title={t('settings.account.debugInfo')} description={t('settings.account.debugInfoDesc')}>
+        <SettingsCard title={t('settings.account.debugInfo')}>
           <div className="space-y-2 font-mono text-xs">
             <div>Profile: {JSON.stringify(profile.values, null, 2)}</div>
             <div>Privacy: {JSON.stringify(privacy.values, null, 2)}</div>

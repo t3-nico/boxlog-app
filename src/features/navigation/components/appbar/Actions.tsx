@@ -46,7 +46,7 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
               <div className="hover:bg-foreground/8 focus-visible:ring-ring flex h-10 w-10 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none">
                 <Plus className="h-5 w-5 shrink-0" aria-hidden="true" />
               </div>
-              <span className="text-center text-[11px] leading-tight">{t('actions.create')}</span>
+              <span className="text-center text-xs leading-tight">{t('actions.create')}</span>
             </button>
           }
         />
@@ -60,7 +60,7 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
         />
         <div className="flex flex-col items-center gap-1">
           <NotificationDropdown />
-          <span className="text-center text-[11px] leading-tight">{t('notifications.title')}</span>
+          <span className="text-center text-xs leading-tight">{t('notifications.title')}</span>
         </div>
       </div>
     </>

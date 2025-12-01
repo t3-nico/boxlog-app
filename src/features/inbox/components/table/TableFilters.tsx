@@ -86,7 +86,7 @@ export function TableFilters() {
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[280px]" align="start">
+      <PopoverContent className="w-72" align="start">
         <div className="space-y-4">
           {/* ヘッダー */}
           <div className="flex items-center justify-between">

@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 
 interface SidebarHeaderProps {
   title?: string
+  className?: string
 }
 
 /**
@@ -24,11 +25,11 @@ interface SidebarHeaderProps {
  * - 背景: bg-background
  * - 8pxグリッドシステム準拠
  */
-export function SidebarHeader({ title }: SidebarHeaderProps) {
+export function SidebarHeader({ title, className }: SidebarHeaderProps) {
   const { toggle } = useSidebarStore()
 
   return (
-    <div className="bg-background flex h-12 items-end px-4 pt-2">
+    <div className={cn('bg-background flex h-12 items-end px-4 pt-2', className)}>
       {/* タイトルコンテナ（40px） */}
       <div className="flex h-10 flex-1 items-center">
         <h2 className="text-base font-semibold">{title}</h2>

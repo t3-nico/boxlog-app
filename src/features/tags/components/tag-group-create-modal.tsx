@@ -68,7 +68,7 @@ export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateM
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>新規グループ作成</DialogTitle>
           <DialogDescription>新しいタググループを作成します</DialogDescription>

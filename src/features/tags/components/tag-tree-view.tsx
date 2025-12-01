@@ -197,7 +197,7 @@ const TagTreeNode = ({
 
               {/* コンテキストメニュー */}
               {showMenu != null && (
-                <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-10 mt-1 min-w-[120px] rounded-lg border shadow-lg">
+                <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-10 mt-1 min-w-32 rounded-lg border shadow-lg">
                   <button
                     type="button"
                     onClick={handleEditTag}

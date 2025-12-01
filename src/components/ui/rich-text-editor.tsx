@@ -52,7 +52,7 @@ export const RichTextEditor = ({
     editorProps: {
       attributes: {
         class: cn(
-          'focus:outline-none min-h-[60px] px-3 py-2',
+          'focus:outline-none min-h-14 px-3 py-2',
           // Custom styles for editor content
           '[&_h1]:text-lg [&_h1]:font-bold [&_h1]:mb-2',
           '[&_h2]:text-base [&_h2]:font-bold [&_h2]:mb-2',
@@ -206,14 +206,7 @@ export const RichTextEditor = ({
           </Button>
         </div>
       )}
-      <EditorContent
-        editor={editor}
-        className="min-h-[80px] resize-y overflow-auto"
-        style={{
-          minHeight: '80px',
-          maxHeight: '400px',
-        }}
-      />
+      <EditorContent editor={editor} className="max-h-[25rem] min-h-20 resize-y overflow-auto" />
     </div>
   )
 }

@@ -95,7 +95,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>新規タグ作成</DialogTitle>
           <DialogDescription>新しいタグを作成します</DialogDescription>

@@ -87,10 +87,7 @@ export function TagsSettings() {
   if (error) {
     return (
       <div className="space-y-6">
-        <SettingsCard
-          title={t('settings.dialog.categories.tags') || 'タグ'}
-          description={t('settings.dialog.categories.tagsDesc') || 'タグを管理します'}
-        >
+        <SettingsCard title={t('settings.dialog.categories.tags') || 'タグ'}>
           <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-4">
             <p className="text-destructive text-sm">エラー: {error instanceof Error ? error.message : String(error)}</p>
             <Button variant="destructive" size="sm" onClick={() => window.location.reload()} className="mt-4">
@@ -108,7 +105,6 @@ export function TagsSettings() {
         {/* タグ管理カード */}
         <SettingsCard
           title="タグ管理"
-          description="タスクやイベントを整理するためのタグを作成・編集できます"
           actions={
             <Button size="sm" onClick={handleCreateClick}>
               <Plus className="mr-2 h-4 w-4" />
@@ -131,13 +127,13 @@ export function TagsSettings() {
           </div>
 
           {/* タグツリービュー */}
-          <div className="min-h-[200px]">
+          <div className="min-h-52">
             {isLoading ? (
-              <div className="flex h-[200px] items-center justify-center">
+              <div className="flex h-52 items-center justify-center">
                 <p className="text-muted-foreground text-sm">読み込み中...</p>
               </div>
             ) : filteredTags.length === 0 ? (
-              <div className="flex h-[200px] flex-col items-center justify-center gap-3">
+              <div className="flex h-52 flex-col items-center justify-center gap-3">
                 <p className="text-muted-foreground text-sm">
                   {searchQuery ? '該当するタグが見つかりません' : 'タグがありません'}
                 </p>
