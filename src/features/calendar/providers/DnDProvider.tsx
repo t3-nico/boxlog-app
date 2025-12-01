@@ -111,11 +111,6 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
         return
       }
 
-      console.log('[DnDProvider] ドラッグ終了:', {
-        planId,
-        dropData,
-      })
-
       try {
         // 1. 日付を取得（Date型 または YYYY-MM-DD文字列）
         let due_date: string
@@ -131,11 +126,6 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
         } else {
           throw new Error('日付形式が不正です')
         }
-
-        console.log('[DnDProvider] ドロップ先日付:', {
-          originalDate: dropData.date,
-          parsedDueDate: due_date,
-        })
 
         // 3. 時刻を取得
         let start_time: string | null = null
@@ -170,24 +160,10 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           // ISO 8601形式（UTC）に変換
           start_time = startDate.toISOString()
           end_time = endDate.toISOString()
-
-          console.log('[DnDProvider] 時間指定プラン:', {
-            due_date,
-            dropTime: dropData.time,
-            timezone,
-            zonedStart: zonedStart.toLocaleString('ja-JP'),
-            zonedEnd: zonedEnd.toLocaleString('ja-JP'),
-            start_time,
-            end_time,
-          })
         } else {
           // 時間指定なし（終日プラン）
           start_time = null
           end_time = null
-
-          console.log('[DnDProvider] 終日プラン:', {
-            due_date,
-          })
         }
 
         // 4. plan更新
@@ -201,11 +177,6 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           start_time,
           end_time,
         }
-
-        console.log('[DnDProvider] updatePlan.mutate 呼び出し:', {
-          id: planId,
-          data: updateData,
-        })
 
         updatePlan.mutate({
           id: planId,
@@ -240,7 +211,6 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
 
       // ドロップ先がない場合は何もしない
       if (!over) {
-        console.log('[DnDProvider] ドロップ先なし')
         setActiveId(null)
         return
       }
@@ -262,7 +232,6 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
         }
         // planとして扱う（CalendarPlanはplanベース）
         currentPlanId = calendarEvent.id
-        console.log('[DnDProvider] カレンダープランをドラッグ中:', currentPlanId)
       } else {
         // 通常のplanカードの場合
         currentPlanId = active.id as string

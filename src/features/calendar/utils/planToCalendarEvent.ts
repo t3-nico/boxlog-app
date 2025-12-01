@@ -73,22 +73,6 @@ export function planToCalendarEvent(plan: Plan | PlanWithTags): CalendarEvent {
     ? parseDatetimeString(plan.end_time, userTimezone)
     : new Date(startDate.getTime() + 60 * 60 * 1000) // デフォルト1時間後
 
-  const duration = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60)) // 分単位
-
-  // デバッグログ
-  if (plan.id === '73a64deb-d41f-4f9e-ba4b-07fae568563f') {
-    console.log('[planToCalendarEvent] プラン#1 変換:', {
-      planId: plan.id,
-      userTimezone,
-      start_time_db: plan.start_time,
-      end_time_db: plan.end_time,
-      startDate_local: startDate.toLocaleString('ja-JP'),
-      endDate_local: endDate.toLocaleString('ja-JP'),
-      startDate_iso: startDate.toISOString(),
-      endDate_iso: endDate.toISOString(),
-    })
-  }
-
   // タグ情報を変換（PlanWithTagsの場合）
   const tags = 'tags' in plan && plan.tags ? plan.tags : undefined
 
@@ -107,7 +91,7 @@ export function planToCalendarEvent(plan: Plan | PlanWithTags): CalendarEvent {
     updatedAt: plan.updated_at ? new Date(plan.updated_at) : new Date(),
     displayStartDate: startDate,
     displayEndDate: endDate,
-    duration,
+    duration: Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60)), // 分単位
     isMultiDay: false, // TODO: 複数日対応
     isRecurring: plan.recurrence_type !== null && plan.recurrence_type !== 'none',
   }

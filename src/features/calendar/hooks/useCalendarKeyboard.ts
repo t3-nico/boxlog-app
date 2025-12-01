@@ -60,12 +60,6 @@ export const useCalendarKeyboard = ({
             e.preventDefault()
             onViewChange('week')
             break
-          case '5':
-            e.preventDefault()
-            // 週末なし表示
-            onToggleWeekends()
-            onViewChange('week')
-            break
           case 'w':
             e.preventDefault()
             onToggleWeekends()

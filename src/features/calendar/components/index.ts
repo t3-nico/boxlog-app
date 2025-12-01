@@ -20,4 +20,5 @@ export * from './overlays'
 export * from './common'
 
 // Views (avoid naming conflicts)
+// @ts-ignore - EventGroup is exported from multiple modules
 export * from './views'

@@ -205,9 +205,9 @@ const ResizeHandleBody = ({
       className
     )}
     style={{
-      height: '8px',
-      marginTop: type === 'start' ? '-4px' : '0',
-      marginBottom: type === 'end' ? '-4px' : '0',
+      height: '44px',
+      marginTop: type === 'start' ? '-22px' : '0',
+      marginBottom: type === 'end' ? '-22px' : '0',
     }}
     title={`Drag to ${type === 'start' ? 'change start time' : 'resize duration'}`}
     role="slider"

@@ -35,6 +35,10 @@
 
 ## サードパーティActions
 
+### actions/labeler
+
+- **v5.0.0**: `8558fd74291d67161a8a78ce36a881fa63b766a9`
+
 ### codecov/codecov-action
 
 - **v4.5.0**: `e28ff129e5465c2c0dcc6f003fc735cb6ae0c673`

@@ -255,6 +255,7 @@ npm run dev         # 開発サーバー起動・停止
 - **コマンド一覧**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
 - **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
 - **Issueラベル付けルール**: [`docs/development/ISSUE_LABELING_RULES.md`](docs/development/ISSUE_LABELING_RULES.md)
+- **PRラベル付けルール**: [`docs/development/PR_LABELING_RULES.md`](docs/development/PR_LABELING_RULES.md)
 - **セッション管理**: [`docs/development/CLAUDE_SESSION_MANAGEMENT.md`](docs/development/CLAUDE_SESSION_MANAGEMENT.md)
 
 ### 🚀 リリース管理（⚠️ 必読）

@@ -371,7 +371,11 @@ export function PlanInspector() {
 
   // 自動保存関数（デバウンス処理付き）
   const autoSave = (field: string, value: string | undefined) => {
-    if (!planId) return
+    if (!planId || !plan) return
+
+    // 値が変更されていない場合はスキップ
+    const currentValue = plan[field as keyof typeof plan]
+    if (currentValue === value) return
 
     // 既存のタイマーをクリア
     if (debounceTimerRef.current) {
@@ -631,7 +635,7 @@ export function PlanInspector() {
                       contentEditable
                       suppressContentEditableWarning
                       onBlur={(e) => autoSave('title', e.currentTarget.textContent || '')}
-                      className="bg-card dark:bg-card border-0 px-0 text-[2rem] font-bold outline-none"
+                      className="bg-popover border-0 px-0 text-[2rem] font-bold outline-none"
                       style={{ fontSize: 'var(--font-size-xl)' }}
                     >
                       {plan.title}
@@ -659,8 +663,8 @@ export function PlanInspector() {
                 />
 
                 {/* リピートと通知 */}
-                <div className="flex h-10 items-center gap-4 px-6 pb-2">
-                  <div className="ml-6 flex h-8 items-center gap-4">
+                <div className="flex items-center gap-3 px-6 py-2">
+                  <div className="ml-[28px] flex items-center gap-3">
                     <div className="relative" ref={recurrenceTriggerRef}>
                       <Button
                         variant="ghost"
@@ -821,7 +825,7 @@ export function PlanInspector() {
                 />
 
                 {/* 説明 */}
-                <div className="border-border/50 max-h-60 min-h-12 border-t px-6 py-2">
+                <div className="border-border/50 hover:bg-accent/50 max-h-[232px] min-h-[48px] border-t px-6 py-2 transition-colors">
                   <div className="flex h-full items-start gap-2">
                     <FileText className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
                     <div className="min-w-0 flex-1 overflow-hidden">

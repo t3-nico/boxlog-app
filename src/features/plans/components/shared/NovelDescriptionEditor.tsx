@@ -70,7 +70,8 @@ export function NovelDescriptionEditor({
       <EditorRoot>
         <EditorContent
           immediatelyRender={false}
-          extensions={extensions}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- novel内部の@tiptap/coreとルートの型が競合するため
+          extensions={extensions as any}
           editorProps={editorProps}
           onCreate={({ editor }: { editor: EditorInstance }) => {
             editorRef.current = editor

@@ -118,46 +118,48 @@ export function usePlanMutations() {
 
       return { id, previousPlans, previousPlan }
     },
-    onSuccess: (updatedPlan) => {
-      console.log('[usePlanMutations] 更新成功:', updatedPlan)
-      toast.success('更新しました')
-
-      // TanStack Queryキャッシュを無効化してサーバーから再取得
-      // refetchType: 'all' ですべてのクエリ（activeとinactive）を再フェッチ
-      console.log('[usePlanMutations] キャッシュ無効化開始')
-      void utils.plans.list.invalidate(undefined, { refetchType: 'all' }).then(() => {
-        console.log('[usePlanMutations] plans.list 無効化完了')
+    onSuccess: (updatedPlan, variables) => {
+      // サーバーから返ってきた最新データでキャッシュを更新
+      // plan_tags などのリレーションデータは保持する
+      utils.plans.list.setData(undefined, (oldData) => {
+        if (!oldData) return oldData
+        return oldData.map((plan) => {
+          if (plan.id === variables.id) {
+            // 既存のplan_tagsを保持しつつ、サーバーデータで更新
+            return { ...updatedPlan, plan_tags: plan.plan_tags }
+          }
+          return plan
+        })
       })
-      void utils.plans.getById.invalidate(undefined, { refetchType: 'all' }).then(() => {
-        console.log('[usePlanMutations] plans.getById 無効化完了')
-      })
 
-      // mutation完了後、少し遅延してからフラグをリセット（Realtimeイベント後に実行）
-      setTimeout(() => {
-        console.log('[usePlanMutations] isMutating = false')
-        setIsMutating(false)
-      }, 500)
+      // 重要な更新のみtoast表示（status変更、タグ変更など）
+      if (variables.data.status) {
+        const statusMap: Record<string, string> = {
+          open: 'Open',
+          in_progress: 'In Progress',
+          completed: 'Completed',
+          cancelled: 'Cancelled',
+        }
+        const statusLabel = statusMap[variables.data.status] || variables.data.status
+        toast.success(`ステータスを${statusLabel}に変更しました`)
+      }
+      // その他の自動保存（title、description、日時など）はtoast非表示
     },
     onError: (_err, _variables, context) => {
       toast.error('更新に失敗しました')
 
-      // mutation完了（フラグリセット）
-      setIsMutating(false)
-
       // エラー時: 楽観的更新をロールバック
       if (context?.previousPlans) {
         utils.plans.list.setData(undefined, context.previousPlans)
-        utils.plans.list.setData({}, context.previousPlans)
       }
       if (context?.previousPlan) {
         utils.plans.getById.setData({ id: context.id }, context.previousPlan)
       }
-
-      // キャッシュを再取得（念のため）
-      if (context?.id) {
-        void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
-        void utils.plans.getById.invalidate({ id: context.id })
-      }
+    },
+    onSettled: async () => {
+      // mutation完了後にフラグをリセット
+      console.log('[usePlanMutations] onSettled: isMutating = false')
+      setIsMutating(false)
     },
   })
 

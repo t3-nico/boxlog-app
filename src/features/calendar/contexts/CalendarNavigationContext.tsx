@@ -40,7 +40,6 @@ export const CalendarNavigationProvider = ({
 
   React.useEffect(() => {
     if (!isInitialized) {
-      console.log('🏁 CalendarNavigationContext: Initial setup', { initialDate, initialView })
       setCurrentDate(initialDate)
       setViewType(initialView)
       setIsInitialized(true)
@@ -49,18 +48,16 @@ export const CalendarNavigationProvider = ({
 
   const navigateToDate = useCallback(
     (date: Date, updateUrl = false) => {
-      console.log('🔄 navigateToDate called:', { date, viewType, currentDate, updateUrl })
       setCurrentDate(date)
 
       // URLの更新が明示的に要求された場合のみ実行
       if (updateUrl) {
         const dateString = format(date, 'yyyy-MM-dd')
         const newUrl = `/${locale}/calendar/${viewType}?date=${dateString}`
-        console.log('🚀 Pushing to:', newUrl)
         router.push(newUrl, { scroll: false })
       }
     },
-    [router, viewType, currentDate, locale]
+    [router, viewType, locale]
   )
 
   const changeView = useCallback(
@@ -74,7 +71,6 @@ export const CalendarNavigationProvider = ({
 
   const navigateRelative = useCallback(
     (direction: 'prev' | 'next' | 'today') => {
-      console.log('🧭 NavigateRelative called:', { direction, viewType, currentDate })
       let newDate: Date
 
       if (direction === 'today') {
@@ -101,7 +97,6 @@ export const CalendarNavigationProvider = ({
         }
       }
 
-      console.log('🧭 NavigateRelative computed new date:', newDate)
       navigateToDate(newDate, true) // URLも更新する
     },
     [currentDate, viewType, navigateToDate]
