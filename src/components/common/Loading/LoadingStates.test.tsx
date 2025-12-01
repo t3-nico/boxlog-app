@@ -3,9 +3,29 @@
  */
 
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { LoadingButton, LoadingCard, LoadingOverlay, LoadingSpinner } from './LoadingStates'
+
+// i18n モック
+vi.mock('@/features/i18n/lib/hooks', () => ({
+  useI18n: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'errors.loading.default': '読み込み中...',
+        'errors.loading.title': '読み込み中',
+        'errors.loading.loadingData': 'データを取得しています...',
+        'errors.loading.loadFailed': 'データの読み込みに失敗しました',
+        'errors.loading.retry': '再試行',
+        'errors.loading.noData': 'データがありません',
+        'errors.loading.loadingPage': 'ページを読み込み中',
+        'errors.loading.pleaseWait': 'しばらくお待ちください',
+      }
+      return translations[key] ?? key
+    },
+    locale: 'ja',
+  }),
+}))
 
 describe('LoadingSpinner', () => {
   it('デフォルトサイズでレンダリング', () => {
