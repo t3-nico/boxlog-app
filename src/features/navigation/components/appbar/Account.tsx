@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  ExternalLink,
   FileText,
   HelpCircle,
   LogOut,
@@ -113,7 +114,8 @@ export function Account({ userData, locale }: AccountProps) {
                 <DropdownMenuItem asChild>
                   <Link href="https://github.com/t3-nico/boxlog-app/releases" target="_blank" rel="noopener noreferrer">
                     <Megaphone />
-                    {t('navUser.helpSubmenu.releaseNotes')}
+                    <span className="flex-1">{t('navUser.helpSubmenu.releaseNotes')}</span>
+                    <ExternalLink className="text-muted-foreground size-3" />
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -139,7 +141,8 @@ export function Account({ userData, locale }: AccountProps) {
                 <DropdownMenuItem asChild>
                   <Link href="mailto:support@boxlog.app">
                     <Mail />
-                    {t('navUser.helpSubmenu.contact')}
+                    <span className="flex-1">{t('navUser.helpSubmenu.contact')}</span>
+                    <ExternalLink className="text-muted-foreground size-3" />
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuSubContent>
