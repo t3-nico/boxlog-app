@@ -206,10 +206,7 @@ export const RichTextEditor = ({
           </Button>
         </div>
       )}
-      <EditorContent
-        editor={editor}
-        className="min-h-20 max-h-[25rem] resize-y overflow-auto"
-      />
+      <EditorContent editor={editor} className="max-h-[25rem] min-h-20 resize-y overflow-auto" />
     </div>
   )
 }

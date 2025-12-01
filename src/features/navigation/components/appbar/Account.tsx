@@ -58,7 +58,7 @@ export function Account({ userData, locale }: AccountProps) {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="hover:bg-foreground/8 data-[state=open]:bg-foreground/12 flex h-10 w-10 items-center justify-center rounded-xl transition-colors outline-hidden"
+            className="hover:bg-foreground/8 data-[state=open]:bg-foreground/12 flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
           >
             <Avatar className="h-8 w-8 rounded-xl">
               {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}

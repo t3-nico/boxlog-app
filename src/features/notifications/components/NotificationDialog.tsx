@@ -56,7 +56,7 @@ export function NotificationDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && close()}>
-      <DialogContent className="top-4 max-w-xl !left-20 !translate-x-0 !translate-y-0">
+      <DialogContent className="top-4 !left-20 max-w-xl !translate-x-0 !translate-y-0">
         <DialogHeader>
           <DialogTitle>{t('notifications.title')}</DialogTitle>
         </DialogHeader>

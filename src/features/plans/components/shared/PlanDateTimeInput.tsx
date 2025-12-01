@@ -78,9 +78,7 @@ export function PlanDateTimeInput({
       </div>
 
       {elapsedTime && (
-        <span className="text-muted-foreground flex h-8 w-12 items-center justify-center text-sm">
-          {elapsedTime}
-        </span>
+        <span className="text-muted-foreground flex h-8 w-12 items-center justify-center text-sm">{elapsedTime}</span>
       )}
     </div>
   )
