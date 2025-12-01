@@ -1,6 +1,7 @@
 'use client'
 
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { SETTINGS_DIALOG } from '@/constants/ui'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
@@ -22,7 +23,10 @@ export function SettingsDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeSettings()}>
-      <DialogContent className="!flex !h-[36rem] !max-w-2xl !flex-col !gap-0 !p-0" showCloseButton={false}>
+      <DialogContent
+        className={`!flex !${SETTINGS_DIALOG.height} !${SETTINGS_DIALOG.width} !flex-col !gap-0 !p-0`}
+        showCloseButton={false}
+      >
         {/* アクセシビリティ用の非表示タイトル */}
         <VisuallyHidden>
           <DialogTitle>Settings</DialogTitle>
