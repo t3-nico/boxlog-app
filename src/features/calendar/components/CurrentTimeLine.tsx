@@ -9,9 +9,9 @@ import { useEffect, useMemo, useState } from 'react'
 
 const currentTimeLineStyles = {
   container: 'absolute z-30 pointer-events-none w-full',
-  label: 'absolute bg-red-500 text-white text-xs px-1 py-0.5 rounded text-[11px] top-[-10px]',
-  dot: 'absolute w-2 h-2 bg-red-500 rounded-full top-[-3px]',
-  line: 'absolute h-[2px] bg-red-500',
+  label: 'absolute bg-red-500 text-white text-xs font-medium px-2 py-0.5 rounded-md shadow-sm top-[-11px] left-0',
+  dot: 'absolute w-2.5 h-2.5 bg-red-500 rounded-full top-[-4px] shadow-sm',
+  line: 'absolute h-[2px] bg-red-500 shadow-sm',
 } as const
 
 interface CurrentTimeLineProps {
@@ -34,25 +34,14 @@ export const CurrentTimeLine = ({ hourHeight, displayDates, timeColumnWidth = 0 
 
   // 表示ロジック：displayDatesに今日が含まれているかチェック
   const shouldShowLine = useMemo(() => {
-    // 1. 今日の日付を取得（時刻部分は無視）
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
-    // 2. displayDates配列の各日付を今日と比較
-    const hasToday = displayDates.some((date) => {
+    return displayDates.some((date) => {
       const d = new Date(date)
-      d.setHours(0, 0, 0, 0) // 時刻部分は無視
+      d.setHours(0, 0, 0, 0)
       return d.getTime() === today.getTime()
     })
-
-    // 3. デバッグログ出力
-    console.log('🔍 CurrentTimeLine 表示判定:', {
-      today: today.toDateString(),
-      displayDates: displayDates.map((d) => d.toDateString()),
-      hasToday,
-    })
-
-    return hasToday
   }, [displayDates])
 
   // 現在時刻のY座標を計算
@@ -87,15 +76,8 @@ export const CurrentTimeLine = ({ hourHeight, displayDates, timeColumnWidth = 0 
         width: '100%',
       }}
     >
-      {/* 時刻ラベル */}
-      <div
-        className={cn(currentTimeLineStyles.label)}
-        style={{
-          left: `${timeColumnWidth - 40}px`,
-        }}
-      >
-        {timeString}
-      </div>
+      {/* 時刻ラベル - 左側の時刻列内に配置 */}
+      <div className={cn(currentTimeLineStyles.label)}>{timeString}</div>
 
       {/* 赤い点 */}
       <div

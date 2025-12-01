@@ -157,12 +157,12 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
     // Popoverモード
     if (asPopover) {
       return (
-        <Popover open={open} onOpenChange={handleOpenChange}>
+        <Popover open={open} onOpenChange={handleOpenChange} modal={false}>
           <PopoverTrigger asChild className={cn('hover:bg-foreground/8 transition-colors')}>
             {popoverTrigger}
           </PopoverTrigger>
           <PopoverContent
-            className={cn('bg-muted dark:border-input w-auto border p-0', popoverClassName)}
+            className={cn('bg-popover dark:border-input w-auto border p-0', popoverClassName)}
             align={popoverAlign}
             side={popoverSide}
           >

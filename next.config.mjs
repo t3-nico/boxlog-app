@@ -124,6 +124,8 @@ const nextConfig = {
   },
 
   // 画像最適化設定
+  // Vercelデプロイ時はVercel側で画像最適化が行われるためsharp不要
+  // ローカル開発時はomit=optional(.npmrc)によりsharpをスキップ
   images: {
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,

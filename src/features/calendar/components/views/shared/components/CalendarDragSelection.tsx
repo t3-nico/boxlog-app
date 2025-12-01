@@ -230,10 +230,9 @@ export const CalendarDragSelection = ({
           }
 
           onTimeRangeSelect(dateTimeSelection)
-        } else if (!isDragging.current && onSingleClick && selectionStart) {
-          // ドラッグしなかった場合：単一クリック
+        } else if (!isDragging.current && selectionStart && onSingleClick) {
+          // ドラッグしなかった場合：シングルクリック処理
           const timeString = formatTime(selectionStart.hour, selectionStart.minute)
-
           onSingleClick(date, timeString)
         }
       }

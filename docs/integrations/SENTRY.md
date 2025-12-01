@@ -69,13 +69,13 @@ boxlog-app/
 
 ### 各ファイルの役割
 
-| ファイル | 実行環境 | 責務 |
-|----------|---------|------|
-| `instrumentation.ts` | サーバー起動時 | 環境判定してserver/edge設定を読み込み |
-| `instrumentation-client.ts` | ブラウザ | クライアント初期化・Replay・Web Vitals |
-| `sentry.server.config.ts` | Node.js | サーバーサイドエラー監視 |
-| `sentry.edge.config.ts` | Edge Runtime | Middleware/Edge API監視 |
-| `next.config.mjs` | ビルド時 | ソースマップアップロード・設定統合 |
+| ファイル                    | 実行環境       | 責務                                   |
+| --------------------------- | -------------- | -------------------------------------- |
+| `instrumentation.ts`        | サーバー起動時 | 環境判定してserver/edge設定を読み込み  |
+| `instrumentation-client.ts` | ブラウザ       | クライアント初期化・Replay・Web Vitals |
+| `sentry.server.config.ts`   | Node.js        | サーバーサイドエラー監視               |
+| `sentry.edge.config.ts`     | Edge Runtime   | Middleware/Edge API監視                |
+| `next.config.mjs`           | ビルド時       | ソースマップアップロード・設定統合     |
 
 ### データフロー
 
@@ -95,11 +95,11 @@ Sentryダッシュボード表示
 
 ### 環境別設定
 
-| 環境 | トレースサンプリング | Session Replay | 有効/無効 |
-|------|---------------------|----------------|-----------|
-| Production | 10% | エラー時のみ100% | 有効 |
-| Preview | 50% | なし | 有効 |
-| Development | 100% | なし | 無効 |
+| 環境        | トレースサンプリング | Session Replay   | 有効/無効 |
+| ----------- | -------------------- | ---------------- | --------- |
+| Production  | 10%                  | エラー時のみ100% | 有効      |
+| Preview     | 50%                  | なし             | 有効      |
+| Development | 100%                 | なし             | 無効      |
 
 ---
 
@@ -444,6 +444,7 @@ const connectSrc = [
 開発環境ではSentryは自動的に無効化されています（`sentry.server.config.ts` の `enabled` 設定）。
 
 手動で有効化したい場合:
+
 ```bash
 # .env.local
 NEXT_PUBLIC_SENTRY_DEBUG=true

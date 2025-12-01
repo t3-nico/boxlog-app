@@ -15,6 +15,12 @@ export function usePlanStyles(planPositions: PlanPosition[]): Record<string, CSS
     const styles: Record<string, CSSProperties> = {}
 
     planPositions.forEach(({ plan, top, height, left, width, zIndex, opacity }) => {
+      // planがundefinedの場合はスキップ
+      if (!plan || !plan.id) {
+        console.warn('usePlanStyles: Invalid plan position detected', { plan, top, height, left, width })
+        return
+      }
+
       styles[plan.id] = {
         position: 'absolute',
         top: `${top}px`,
