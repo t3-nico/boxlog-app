@@ -2,8 +2,6 @@
 
 import { useCallback, useMemo, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { formatDistanceToNow } from 'date-fns'
-import { enUS, ja } from 'date-fns/locale'
 import { Bell, CheckCheck, Loader2, Settings, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -71,7 +69,6 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
   const router = useRouter()
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t } = useI18n(localeFromPath)
-  const dateLocale = localeFromPath === 'ja' ? ja : enUS
 
   const { openSettings } = useSettingsDialogStore()
 
@@ -147,17 +144,6 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
     setIsOpen(false)
     openSettings('notifications')
   }, [openSettings])
-
-  const formatTime = useCallback(
-    (timestamp: string) => {
-      try {
-        return formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: dateLocale })
-      } catch {
-        return timestamp
-      }
-    },
-    [dateLocale]
-  )
 
   // 通知リストのレンダリング
   const renderNotificationList = (
