@@ -1076,12 +1076,14 @@
       "groupCreateFailed": "Failed to create group"
     },
     "page": {
+      "title": "Tag Management",
       "searchPlaceholder": "Search tags...",
       "createGroup": "Create Group",
       "createTag": "Create Tag",
       "noTags": "No tags",
       "addFirstTag": "Add your first tag",
       "selectAll": "Select All",
+      "selectTag": "Select {{name}}",
       "name": "Name",
       "description": "Description",
       "createdAt": "Created At",
@@ -1104,7 +1106,20 @@
       "tagDeleted": "Permanently deleted tag \"{{name}}\"",
       "tagDeleteFailed": "Failed to delete tag",
       "tagMoved": "Moved tag \"{{name}}\" to {{group}}",
-      "tagMoveFailed": "Failed to move tag"
+      "tagMoveFailed": "Failed to move tag",
+      "filter": {
+        "type": "Type",
+        "all": "All",
+        "unused": "Unused",
+        "frequentlyUsed": "Frequently Used"
+      },
+      "bulkDeleteConfirm": "Delete {{count}} selected tags?",
+      "bulkArchived": "Archived {{count}} tags",
+      "bulkArchiveFailed": "Failed to archive tags",
+      "addDescription": "Add description...",
+      "addGroup": "Add to group...",
+      "changeColor": "Change color",
+      "tagColor": "Tag color"
     }
   },
   "trash": {
@@ -1286,6 +1301,67 @@
       "estimatedTime": "Estimated completion",
       "checkStatus": "Check Status",
       "thankYou": "We apologize for the inconvenience."
+    },
+    "global": {
+      "title": "Application Error",
+      "description": "We're sorry. An unexpected problem has occurred.",
+      "errorId": "Error ID",
+      "showDetails": "Show error details",
+      "retry": "Retry",
+      "goHome": "Go Home",
+      "sentryReport": "The error has been automatically reported"
+    },
+    "boundary": {
+      "title": "An unexpected error occurred",
+      "description": "We're sorry. An error occurred in the application.",
+      "autoReport": "An error report will be sent automatically.",
+      "retry": "Retry",
+      "reload": "Reload Page",
+      "devTitle": "Development - Component Error",
+      "component": "Component",
+      "unknown": "Unknown",
+      "checkConsole": "Check the browser console for details.",
+      "featureError": "An error occurred in the {{feature}} feature"
+    },
+    "globalBoundary": {
+      "title": "A system error has occurred",
+      "errorId": "Error ID",
+      "severity": "Severity",
+      "autoRecovering": "Auto-recovering...",
+      "pleaseWait": "Please wait",
+      "retryCount": "Retry count",
+      "problemAndSolution": "Problem and Solution",
+      "category": "Category",
+      "system": "system",
+      "autoRecovery": "Auto Recovery",
+      "possible": "Possible",
+      "manualRequired": "Manual action required",
+      "recommendedActions": "Recommended Actions",
+      "autoRecoverySystem": "Auto Recovery System",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "manualRetry": "Manual Retry",
+      "retriesLeft": "{{count}} attempts left",
+      "reloadPage": "Reload Page",
+      "goHome": "Go Home",
+      "technicalDetails": "Technical Details (Developer)",
+      "error": "Error",
+      "analysisCode": "Analysis Code",
+      "categoryLabel": "Category",
+      "recoverable": "Recoverable",
+      "yes": "Yes",
+      "no": "No",
+      "stackTrace": "Stack Trace"
+    },
+    "loading": {
+      "default": "Loading...",
+      "title": "Loading",
+      "loadingData": "Loading data...",
+      "loadFailed": "Failed to load data",
+      "retry": "Retry",
+      "noData": "No data available",
+      "loadingPage": "Loading page",
+      "pleaseWait": "Please wait..."
     }
   },
   "ossCredits": {

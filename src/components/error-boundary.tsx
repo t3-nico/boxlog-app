@@ -7,6 +7,7 @@
 
 import { Component, ErrorInfo, ReactNode } from 'react'
 
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { handleReactError, SentryErrorHandler } from '@/lib/sentry'
 
 interface Props {
@@ -18,6 +19,77 @@ interface Props {
 interface State {
   hasError: boolean
   error?: Error
+}
+
+/**
+ * デフォルトのエラーフォールバックUI
+ */
+function DefaultErrorFallback({ onRetry, onReload }: { onRetry: () => void; onReload: () => void }) {
+  const { t } = useI18n()
+
+  return (
+    <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-6">
+      <div className="text-center">
+        <div className="text-destructive mb-4 text-6xl">⚠️</div>
+        <h2 className="text-destructive mb-2 text-3xl font-bold tracking-tight">{t('errors.boundary.title')}</h2>
+        <p className="text-foreground mb-4">
+          {t('errors.boundary.description')}
+          <br />
+          {t('errors.boundary.autoReport')}
+        </p>
+        <div className="flex justify-center gap-2">
+          <button
+            onClick={onRetry}
+            className="bg-primary text-primary-foreground hover:bg-primary/92 rounded px-4 py-2 transition-colors"
+          >
+            {t('errors.boundary.retry')}
+          </button>
+          <button
+            onClick={onReload}
+            className="bg-muted text-muted-foreground hover:bg-muted/80 rounded px-4 py-2 transition-colors"
+          >
+            {t('errors.boundary.reload')}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * 開発環境用フォールバックUI
+ */
+function DevErrorFallback({ componentName }: { componentName?: string }) {
+  const { t } = useI18n()
+
+  return (
+    <div className="border-border bg-muted rounded-lg border p-6">
+      <h3 className="text-foreground mb-2 text-2xl font-bold tracking-tight">{t('errors.boundary.devTitle')}</h3>
+      <p className="text-foreground mb-2">
+        {t('errors.boundary.component')}: {componentName || t('errors.boundary.unknown')}
+      </p>
+      <p className="text-muted-foreground text-sm">{t('errors.boundary.checkConsole')}</p>
+    </div>
+  )
+}
+
+/**
+ * 機能エラー用フォールバックUI
+ */
+function FeatureErrorFallback({ featureName }: { featureName: string }) {
+  const { t } = useI18n()
+
+  return (
+    <div className="border-border bg-muted rounded border p-4">
+      <p className="text-foreground text-center">{t('errors.boundary.featureError', { feature: featureName })}</p>
+      <button
+        onClick={() => window.location.reload()}
+        className="bg-primary text-primary-foreground hover:bg-primary/92 mx-auto mt-2 block rounded px-3 py-1 text-sm transition-colors"
+      >
+        {t('errors.boundary.reload')}
+      </button>
+    </div>
+  )
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -61,31 +133,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // デフォルトエラーUI
       return (
-        <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-6">
-          <div className="text-center">
-            <div className="text-destructive mb-4 text-6xl">⚠️</div>
-            <h2 className="text-destructive mb-2 text-3xl font-bold tracking-tight">予期しないエラーが発生しました</h2>
-            <p className="text-foreground mb-4">
-              申し訳ございません。アプリケーションでエラーが発生しました。
-              <br />
-              自動的にエラー報告を送信いたします。
-            </p>
-            <div className="flex justify-center gap-2">
-              <button
-                onClick={() => this.setState({ hasError: false })}
-                className="bg-primary text-primary-foreground hover:bg-primary/92 rounded px-4 py-2 transition-colors"
-              >
-                再試行
-              </button>
-              <button
-                onClick={() => window.location.reload()}
-                className="bg-muted text-muted-foreground hover:bg-muted/80 rounded px-4 py-2 transition-colors"
-              >
-                ページをリロード
-              </button>
-            </div>
-          </div>
-        </div>
+        <DefaultErrorFallback
+          onRetry={() => this.setState({ hasError: false })}
+          onReload={() => window.location.reload()}
+        />
       )
     }
 
@@ -107,15 +158,7 @@ export function DetailedErrorBoundary({ children, componentName }: { children: R
           console.groupEnd()
         }
       }}
-      fallback={
-        process.env.NODE_ENV === 'development' ? (
-          <div className="border-border bg-muted rounded-lg border p-6">
-            <h3 className="text-foreground mb-2 text-2xl font-bold tracking-tight">開発環境 - コンポーネントエラー</h3>
-            <p className="text-foreground mb-2">コンポーネント: {componentName || '不明'}</p>
-            <p className="text-muted-foreground text-sm">詳細はブラウザのコンソールを確認してください。</p>
-          </div>
-        ) : undefined
-      }
+      fallback={process.env.NODE_ENV === 'development' ? <DevErrorFallback componentName={componentName} /> : undefined}
     >
       {children}
     </ErrorBoundary>
@@ -145,19 +188,7 @@ export function FeatureErrorBoundary({
           error_message: error.message,
         })
       }}
-      fallback={
-        fallback || (
-          <div className="border-border bg-muted rounded border p-4">
-            <p className="text-foreground text-center">{featureName}機能でエラーが発生しました</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-primary text-primary-foreground hover:bg-primary/92 mx-auto mt-2 block rounded px-3 py-1 text-sm transition-colors"
-            >
-              リロード
-            </button>
-          </div>
-        )
-      }
+      fallback={fallback || <FeatureErrorFallback featureName={featureName} />}
     >
       {children}
     </ErrorBoundary>

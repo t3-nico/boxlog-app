@@ -101,12 +101,12 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   // ページタイトルにタグ数を表示（タグ一覧ページのみ）
   useEffect(() => {
     if (!showUncategorizedOnly && !initialGroupNumber) {
-      document.title = `タグ管理 (${activeTagsCount})`
+      document.title = `${t('tags.page.title')} (${activeTagsCount})`
     }
     return () => {
-      document.title = 'タグ管理'
+      document.title = t('tags.page.title')
     }
-  }, [activeTagsCount, showUncategorizedOnly, initialGroupNumber])
+  }, [activeTagsCount, showUncategorizedOnly, initialGroupNumber, t])
 
   // インライン作成用の状態
   const inlineFormRef = useRef<HTMLTableRowElement>(null)
@@ -418,7 +418,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   const handleBulkDelete = async () => {
     if (selectedTagIds.length === 0) return
-    if (!confirm(`選択した${selectedTagIds.length}件のタグを削除しますか？`)) return
+    if (!confirm(t('tags.page.bulkDeleteConfirm', { count: selectedTagIds.length }))) return
 
     for (const tagId of selectedTagIds) {
       const tag = displayTags.find((t) => t.id === tagId)
@@ -523,10 +523,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                       })
                     }
                   }
-                  toast.success(`${tagIds.length}件のタグをアーカイブしました`)
+                  toast.success(t('tags.page.bulkArchived', { count: tagIds.length }))
                 } catch (error) {
                   console.error('Failed to archive tags:', error)
-                  toast.error('タグのアーカイブに失敗しました')
+                  toast.error(t('tags.page.bulkArchiveFailed'))
                 }
               }}
               onDelete={handleBulkDelete}
@@ -548,14 +548,14 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 gap-1">
                   <Filter className="h-3.5 w-3.5" />
-                  <span>タイプ</span>
+                  <span>{t('tags.page.filter.type')}</span>
                   <ChevronDown className="h-3.5 w-3.5 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
-                <DropdownMenuItem>すべて</DropdownMenuItem>
-                <DropdownMenuItem>未使用</DropdownMenuItem>
-                <DropdownMenuItem>よく使う</DropdownMenuItem>
+                <DropdownMenuItem>{t('tags.page.filter.all')}</DropdownMenuItem>
+                <DropdownMenuItem>{t('tags.page.filter.unused')}</DropdownMenuItem>
+                <DropdownMenuItem>{t('tags.page.filter.frequentlyUsed')}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -664,7 +664,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                             <Checkbox
                               checked={selectedTagIds.includes(tag.id)}
                               onCheckedChange={() => handleSelectTag(tag.id)}
-                              aria-label={`${tag.name}を選択`}
+                              aria-label={t('tags.page.selectTag', { name: tag.name })}
                             />
                           </TableCell>
                           <TableCell
@@ -683,12 +683,12 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                   <button
                                     type="button"
                                     className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                                    aria-label="カラーを変更"
+                                    aria-label={t('tags.page.changeColor')}
                                   >
                                     <Hash
                                       className="h-4 w-4"
                                       style={{ color: tag.color || DEFAULT_TAG_COLOR }}
-                                      aria-label="タグカラー"
+                                      aria-label={t('tags.page.tagColor')}
                                     />
                                   </button>
                                 </PopoverTrigger>
@@ -740,7 +740,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                             <span className="truncate">
                               {tag.description || (
                                 <span className="opacity-0 transition-opacity group-hover:opacity-100">
-                                  説明を追加...
+                                  {t('tags.page.addDescription')}
                                 </span>
                               )}
                             </span>
@@ -769,7 +769,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               })()
                             ) : (
                               <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">
-                                グループを追加...
+                                {t('tags.page.addGroup')}
                               </span>
                             )}
                           </TableCell>
@@ -845,9 +845,9 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               <button
                                 type="button"
                                 className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                                aria-label="カラーを変更"
+                                aria-label={t('tags.page.changeColor')}
                               >
-                                <Hash className="h-4 w-4" style={{ color: newTagColor }} aria-label="タグカラー" />
+                                <Hash className="h-4 w-4" style={{ color: newTagColor }} aria-label={t('tags.page.tagColor')} />
                               </button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-3" align="start">
