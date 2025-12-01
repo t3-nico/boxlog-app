@@ -44,7 +44,9 @@ import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore'
 import type { Plan } from '../../types/plan'
 import { formatActivity, formatRelativeTime } from '../../utils/activityFormatter'
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
+import { isRecurringPlan } from '../../utils/recurrence'
 import { NovelDescriptionEditor } from '../shared/NovelDescriptionEditor'
+import { RecurringEditDialog, type RecurringEditScope } from '../shared/RecurringEditDialog'
 import { PlanDateTimeInput } from '../shared/PlanDateTimeInput'
 import { PlanTagsSection } from '../shared/PlanTagsSection'
 import { RecurrencePopover } from '../shared/RecurrencePopover'
@@ -218,10 +220,41 @@ export function PlanInspector() {
 
   // 削除ハンドラー
   const handleDelete = () => {
-    if (!planId) return
+    if (!planId || !plan) return
+
+    // 繰り返しプランの場合はダイアログを表示
+    if (isRecurringPlan(plan)) {
+      setRecurringDialogMode('delete')
+      setRecurringDialogOpen(true)
+      return
+    }
+
+    // 通常プランは確認後削除
     if (confirm('このプランを削除しますか？')) {
       deletePlan.mutate({ id: planId })
       closeInspector()
+    }
+  }
+
+  // 繰り返しプラン削除/編集確認ハンドラー
+  const handleRecurringConfirm = (scope: RecurringEditScope) => {
+    if (!planId || !plan) return
+
+    if (recurringDialogMode === 'delete') {
+      // TODO: scopeに応じた削除処理を実装
+      // scope: 'this' - この日のみ例外として削除
+      // scope: 'thisAndFuture' - この日以降を終了日として設定
+      // scope: 'all' - 親プラン自体を削除
+      if (scope === 'all') {
+        deletePlan.mutate({ id: planId })
+        closeInspector()
+      } else {
+        // 部分削除の場合は例外を作成（TODO: 実装）
+        console.log('Partial delete with scope:', scope)
+        // 現時点では全削除のみ対応
+        deletePlan.mutate({ id: planId })
+        closeInspector()
+      }
     }
   }
 
@@ -269,6 +302,10 @@ export function PlanInspector() {
   const [reminderType, setReminderType] = useState<string>('')
   const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
   const recurrenceTriggerRef = useRef<HTMLDivElement>(null)
+
+  // 繰り返しプラン編集/削除ダイアログ
+  const [recurringDialogOpen, setRecurringDialogOpen] = useState(false)
+  const [recurringDialogMode, setRecurringDialogMode] = useState<'edit' | 'delete'>('delete')
 
   // Inspector が閉じられたときにポップアップも閉じる
   useEffect(() => {
@@ -871,6 +908,15 @@ export function PlanInspector() {
           </>
         )}
       </SheetContent>
+
+      {/* 繰り返しプラン編集/削除ダイアログ */}
+      <RecurringEditDialog
+        open={recurringDialogOpen}
+        onOpenChange={setRecurringDialogOpen}
+        onConfirm={handleRecurringConfirm}
+        mode={recurringDialogMode}
+        planTitle={plan?.title}
+      />
     </Sheet>
   )
 }

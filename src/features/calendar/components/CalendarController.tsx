@@ -32,6 +32,8 @@ import { expandRecurringPlansToCalendarPlans } from '../utils/planDataAdapter'
 
 import type { CalendarPlan, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
+import { RecurringEditDialog } from '@/features/plans/components/shared/RecurringEditDialog'
+
 import { CalendarLayout } from './layout/CalendarLayout'
 import { EventContextMenu } from './views/shared/components'
 
@@ -112,7 +114,16 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     useCalendarContextMenu()
 
   // プランコンテキストアクション
-  const { handleDeletePlan, handleEditPlan, handleDuplicatePlan, handleViewDetails } = usePlanContextActions()
+  const {
+    handleDeletePlan,
+    handleEditPlan,
+    handleDuplicatePlan,
+    handleViewDetails,
+    recurringDialogOpen,
+    recurringDeleteTarget,
+    handleRecurringDeleteConfirm,
+    handleRecurringDialogClose,
+  } = usePlanContextActions()
 
   // プラン操作（CRUD）をフック化
   const { handlePlanDelete: deletePlan, handlePlanRestore, handleUpdatePlan } = usePlanOperations()
@@ -679,6 +690,15 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
           onViewDetails={handleViewDetails}
         />
       ) : null}
+
+      {/* 繰り返しプラン削除ダイアログ */}
+      <RecurringEditDialog
+        open={recurringDialogOpen}
+        onOpenChange={handleRecurringDialogClose}
+        onConfirm={handleRecurringDeleteConfirm}
+        mode="delete"
+        planTitle={recurringDeleteTarget?.title}
+      />
     </DnDProvider>
   )
 }
