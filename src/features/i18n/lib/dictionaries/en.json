@@ -1120,6 +1120,28 @@
       "addGroup": "Add to group...",
       "changeColor": "Change color",
       "tagColor": "Tag color"
+    },
+    "archive": {
+      "restoreConfirm": "Restore tag \"{{name}}\"?\n\nRestored tags can be used for tagging again.",
+      "restoreSuccess": "Tag \"{{name}}\" has been restored",
+      "restoreFailed": "Failed to restore tag",
+      "deleteSuccess": "Tag \"{{name}}\" has been permanently deleted",
+      "deleteFailed": "Failed to delete tag",
+      "bulkDeleteConfirm": "Permanently delete {{count}} selected tag(s)?",
+      "noArchivedTags": "No archived tags",
+      "restore": "Restore",
+      "permanentDelete": "Delete permanently",
+      "view": "View",
+      "showing": "{{start}}-{{end}} of {{total}} items",
+      "noItems": "0 items",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "pageOf": "Page {{current}} / {{total}}"
+    },
+    "detail": {
+      "description": "Description",
+      "linkedPlans": "Linked Plans ({{count}})",
+      "noLinkedPlans": "No plans linked to this tag"
     }
   },
   "trash": {

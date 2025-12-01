@@ -1115,6 +1115,28 @@
       "addGroup": "グループを追加...",
       "changeColor": "カラーを変更",
       "tagColor": "タグカラー"
+    },
+    "archive": {
+      "restoreConfirm": "タグ「{{name}}」を復元しますか？\n\n復元されたタグは再び新規のタグ付けに使用できるようになります。",
+      "restoreSuccess": "タグ「{{name}}」を復元しました",
+      "restoreFailed": "タグの復元に失敗しました",
+      "deleteSuccess": "タグ「{{name}}」を完全に削除しました",
+      "deleteFailed": "タグの削除に失敗しました",
+      "bulkDeleteConfirm": "選択した{{count}}件のタグを完全に削除しますか？",
+      "noArchivedTags": "アーカイブされたタグはありません",
+      "restore": "復元",
+      "permanentDelete": "完全に削除",
+      "view": "表示",
+      "showing": "{{start}}〜{{end}}件 / 全{{total}}件",
+      "noItems": "0件",
+      "previousPage": "前のページ",
+      "nextPage": "次のページ",
+      "pageOf": "ページ {{current}} / {{total}}"
+    },
+    "detail": {
+      "description": "説明",
+      "linkedPlans": "紐づいたプラン ({{count}})",
+      "noLinkedPlans": "このタグに紐づくプランはありません"
     }
   },
   "trash": {
