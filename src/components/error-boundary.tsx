@@ -59,7 +59,7 @@ function DefaultErrorFallback({ onRetry, onReload }: { onRetry: () => void; onRe
 /**
  * 開発環境用フォールバックUI
  */
-function DevErrorFallback({ componentName }: { componentName?: string }) {
+function DevErrorFallback({ componentName }: { componentName?: string | undefined }) {
   const { t } = useI18n()
 
   return (

@@ -291,7 +291,11 @@ export function ArchivePageClient() {
                   <TableHeader>
                     <TableRow>
                       <TableHead style={{ width: '48px' }}>
-                        <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} aria-label={t('tags.page.selectAll')} />
+                        <Checkbox
+                          checked={allSelected}
+                          onCheckedChange={handleSelectAll}
+                          aria-label={t('tags.page.selectAll')}
+                        />
                       </TableHead>
                       <TableHead style={{ width: '80px' }}>ID</TableHead>
                       <TableHead style={{ width: '32px' }}></TableHead>
@@ -499,7 +503,11 @@ export function ArchivePageClient() {
                 {/* 中央: ページ情報 */}
                 <div className="text-muted-foreground text-sm">
                   {sortedTags.length > 0
-                    ? t('tags.archive.showing', { start: startIndex + 1, end: Math.min(endIndex, sortedTags.length), total: sortedTags.length })
+                    ? t('tags.archive.showing', {
+                        start: startIndex + 1,
+                        end: Math.min(endIndex, sortedTags.length),
+                        total: sortedTags.length,
+                      })
                     : t('tags.archive.noItems')}
                 </div>
 

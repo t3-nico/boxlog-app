@@ -847,7 +847,11 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                                 className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
                                 aria-label={t('tags.page.changeColor')}
                               >
-                                <Hash className="h-4 w-4" style={{ color: newTagColor }} aria-label={t('tags.page.tagColor')} />
+                                <Hash
+                                  className="h-4 w-4"
+                                  style={{ color: newTagColor }}
+                                  aria-label={t('tags.page.tagColor')}
+                                />
                               </button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-3" align="start">

@@ -27,7 +27,7 @@ interface ErrorDisplayProps {
   isRetrying: boolean
   autoRetryEnabled: boolean
   analysis: ErrorAnalysis
-  className?: string
+  className?: string | undefined
   onManualRetry: () => void
   onReload: () => void
   onGoHome: () => void
@@ -65,7 +65,8 @@ function ErrorDisplay({
                 {t('errors.globalBoundary.title')}
               </h1>
               <p className="mt-1 text-xs break-all text-neutral-800 sm:text-sm dark:text-neutral-200">
-                {t('errors.globalBoundary.errorId')}: {errorId} • {t('errors.globalBoundary.severity')}: {analysis.severity}
+                {t('errors.globalBoundary.errorId')}: {errorId} • {t('errors.globalBoundary.severity')}:{' '}
+                {analysis.severity}
               </p>
             </div>
           </div>
@@ -80,7 +81,8 @@ function ErrorDisplay({
                 {t('errors.globalBoundary.autoRecovering')}
               </p>
               <p className="text-xs break-words text-blue-800 sm:text-sm dark:text-blue-300">
-                {t('errors.globalBoundary.pleaseWait')}（{t('errors.globalBoundary.retryCount')}: {retryCount + 1}/{maxRetries}）
+                {t('errors.globalBoundary.pleaseWait')}（{t('errors.globalBoundary.retryCount')}: {retryCount + 1}/
+                {maxRetries}）
               </p>
             </div>
           </div>
@@ -110,7 +112,9 @@ function ErrorDisplay({
                   {t('errors.globalBoundary.system')} •{' '}
                   <span className="font-semibold">{t('errors.globalBoundary.severity')}:</span> {analysis.severity} •{' '}
                   <span className="font-semibold">{t('errors.globalBoundary.autoRecovery')}:</span>{' '}
-                  {analysis.autoRetryable ? `✅ ${t('errors.globalBoundary.possible')}` : `❌ ${t('errors.globalBoundary.manualRequired')}`}
+                  {analysis.autoRetryable
+                    ? `✅ ${t('errors.globalBoundary.possible')}`
+                    : `❌ ${t('errors.globalBoundary.manualRequired')}`}
                 </p>
               </div>
             </div>
@@ -143,7 +147,12 @@ function ErrorDisplay({
               {t('errors.globalBoundary.autoRecoverySystem')}
             </span>
           </div>
-          <Button onClick={onToggleAutoRetry} variant={autoRetryEnabled ? 'default' : 'outline'} size="sm" className="w-full sm:w-auto">
+          <Button
+            onClick={onToggleAutoRetry}
+            variant={autoRetryEnabled ? 'default' : 'outline'}
+            size="sm"
+            className="w-full sm:w-auto"
+          >
             {autoRetryEnabled ? t('errors.globalBoundary.enabled') : t('errors.globalBoundary.disabled')}
           </Button>
         </div>
@@ -151,10 +160,15 @@ function ErrorDisplay({
         {/* アクションボタン */}
         <div className="mb-4 flex flex-col gap-2 sm:mb-6 sm:gap-3">
           {canRetry && !isRetrying ? (
-            <Button onClick={onManualRetry} className="flex w-full items-center justify-center text-sm" variant="default">
+            <Button
+              onClick={onManualRetry}
+              className="flex w-full items-center justify-center text-sm"
+              variant="default"
+            >
               <Zap className="mr-2 h-4 w-4 flex-shrink-0" />
               <span className="truncate">
-                {t('errors.globalBoundary.manualRetry')} ({t('errors.globalBoundary.retriesLeft', { count: maxRetries - retryCount })})
+                {t('errors.globalBoundary.manualRetry')} (
+                {t('errors.globalBoundary.retriesLeft', { count: maxRetries - retryCount })})
               </span>
             </Button>
           ) : null}

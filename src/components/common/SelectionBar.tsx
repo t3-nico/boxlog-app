@@ -53,7 +53,13 @@ export function SelectionBar({
       {/* 選択コンテナ（40px） */}
       <div className="bg-muted flex h-10 flex-1 items-center gap-2 rounded-md px-2">
         {/* 選択解除ボタン（左端） */}
-        <Button variant="ghost" size="icon" onClick={onClearSelection} className="h-9 w-9" aria-label={t('aria.clearSelection')}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClearSelection}
+          className="h-9 w-9"
+          aria-label={t('aria.clearSelection')}
+        >
           <X className="h-4 w-4" />
         </Button>
 
