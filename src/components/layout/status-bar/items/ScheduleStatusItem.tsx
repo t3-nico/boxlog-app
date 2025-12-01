@@ -9,7 +9,6 @@ import { Calendar } from 'lucide-react'
 import { StatusBarItem } from '../StatusBarItem'
 
 import { Spinner } from '@/components/ui/spinner'
-import type { Plan } from '@/features/plans/types/plan'
 import { api } from '@/lib/trpc'
 
 /**
@@ -47,7 +46,7 @@ export function ScheduleStatusItem() {
     const todayStr = today.toISOString().split('T')[0]
 
     return plans
-      .filter((plan: Plan) => {
+      .filter((plan) => {
         // due_date または start_time が今日のもの
         if (plan.due_date === todayStr) return true
         if (plan.start_time) {
@@ -56,11 +55,11 @@ export function ScheduleStatusItem() {
         }
         return false
       })
-      .filter((plan: Plan) => {
+      .filter((plan) => {
         // 完了・キャンセル以外
         return plan.status !== 'done' && plan.status !== 'cancel'
       })
-      .sort((a: Plan, b: Plan) => {
+      .sort((a, b) => {
         // start_time でソート
         const aTime = a.start_time ? new Date(a.start_time).getTime() : Infinity
         const bTime = b.start_time ? new Date(b.start_time).getTime() : Infinity
@@ -72,7 +71,7 @@ export function ScheduleStatusItem() {
   const currentPlan = useMemo(() => {
     const now = currentTime.getTime()
 
-    return todayPlans.find((plan: Plan) => {
+    return todayPlans.find((plan) => {
       if (!plan.start_time || !plan.end_time) return false
       const start = new Date(plan.start_time).getTime()
       const end = new Date(plan.end_time).getTime()
@@ -86,7 +85,7 @@ export function ScheduleStatusItem() {
 
     const now = currentTime.getTime()
 
-    return todayPlans.find((plan: Plan) => {
+    return todayPlans.find((plan) => {
       if (!plan.start_time) return false
       const start = new Date(plan.start_time).getTime()
       return start > now
@@ -131,11 +130,6 @@ export function ScheduleStatusItem() {
   const icon = isLoading ? <Spinner className="h-3 w-3" /> : <Calendar className="h-3 w-3" />
 
   return (
-    <StatusBarItem
-      icon={icon}
-      label={isLoading ? '...' : label}
-      onClick={handleClick}
-      tooltip="カレンダーを開く"
-    />
+    <StatusBarItem icon={icon} label={isLoading ? '...' : label} onClick={handleClick} tooltip="カレンダーを開く" />
   )
 }

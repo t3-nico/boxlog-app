@@ -83,7 +83,7 @@ export function ChronotypeStatusItem() {
 
   // クリック時: 設定ダイアログを開く
   const handleClick = useCallback(() => {
-    openSettingsDialog('calendar')
+    openSettingsDialog('personalization')
   }, [openSettingsDialog])
 
   // ラベル生成
