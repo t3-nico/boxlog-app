@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent'
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
@@ -242,6 +243,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   const [dateTimeOpen, setDateTimeOpen] = useState(false)
   const { createPlan } = usePlanMutations()
   const formRef = useRef<HTMLDivElement>(null)
+  const { t } = useI18n()
 
   // 作成キャンセル
   const handleCancel = () => {
@@ -342,9 +344,9 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>すべて完了にする</DropdownMenuItem>
-              <DropdownMenuItem>すべてアーカイブ</DropdownMenuItem>
-              <DropdownMenuItem>カラムをクリア</DropdownMenuItem>
+              <DropdownMenuItem>{t('board.kanban.markAllComplete')}</DropdownMenuItem>
+              <DropdownMenuItem>{t('board.kanban.archiveAll')}</DropdownMenuItem>
+              <DropdownMenuItem>{t('board.kanban.clearColumn')}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -363,7 +365,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top">
-                <p>新規プランを追加</p>
+                <p>{t('board.kanban.addNewPlan')}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -392,7 +394,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
                 }
               }}
               className="text-foreground empty:before:text-muted-foreground min-w-0 text-base leading-tight font-semibold outline-none empty:before:content-[attr(data-placeholder)]"
-              data-placeholder="タイトルを入力..."
+              data-placeholder={t('board.kanban.enterTitle')}
               ref={(el) => {
                 if (el && !newTitle) {
                   el.focus()
@@ -418,7 +420,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
                   ) : (
                     <div className="text-muted-foreground flex items-center gap-1">
                       <CalendarIcon className="size-3" />
-                      <span>日付を追加</span>
+                      <span>{t('board.kanban.addDate')}</span>
                     </div>
                   )}
 
@@ -432,15 +434,15 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
                         <div
                           title={
                             recurrenceType === 'daily'
-                              ? '毎日'
+                              ? t('board.kanban.recurrence.daily')
                               : recurrenceType === 'weekly'
-                                ? '毎週'
+                                ? t('board.kanban.recurrence.weekly')
                                 : recurrenceType === 'monthly'
-                                  ? '毎月'
+                                  ? t('board.kanban.recurrence.monthly')
                                   : recurrenceType === 'yearly'
-                                    ? '毎年'
+                                    ? t('board.kanban.recurrence.yearly')
                                     : recurrenceType === 'weekdays'
-                                      ? '平日'
+                                      ? t('board.kanban.recurrence.weekdays')
                                       : ''
                           }
                         >
@@ -506,14 +508,14 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
                 onClick={(e) => e.stopPropagation()}
               >
                 <Tag className="size-3" />
-                <span>タグを追加</span>
+                <span>{t('board.kanban.addTag')}</span>
               </div>
             </PlanTagSelectDialogEnhanced>
 
             {/* 作成ボタン */}
             <div className="flex justify-end">
               <Button size="sm" className="h-7 text-xs" onClick={handleCreate}>
-                追加
+                {t('board.kanban.add')}
               </Button>
             </div>
           </div>
@@ -526,7 +528,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
             className="text-muted-foreground hover:bg-foreground/8 flex w-full items-center gap-2 rounded-lg p-3 text-sm transition-colors"
           >
             <Plus className="h-4 w-4" />
-            <span>新規追加</span>
+            <span>{t('board.kanban.addNew')}</span>
           </button>
         )}
       </div>

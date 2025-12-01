@@ -9,6 +9,7 @@ import React, { useCallback } from 'react'
 
 import { Loader2, RefreshCw } from 'lucide-react'
 
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import { LoadingButtonProps, LoadingCardProps, LoadingOverlayProps, LoadingSpinnerProps } from './types'
@@ -72,10 +73,13 @@ export const RefreshSpinner = ({
 export const LoadingOverlay = ({
   isLoading,
   children,
-  message = '読み込み中...',
+  message,
   className = '',
   spinnerSize = 'md',
 }: LoadingOverlayProps) => {
+  const { t } = useI18n()
+  const displayMessage = message ?? t('errors.loading.default')
+
   return (
     <div className={cn('relative', className)}>
       {children}
@@ -83,7 +87,9 @@ export const LoadingOverlay = ({
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-neutral-100/80 backdrop-blur-sm dark:bg-neutral-900/80">
           <div className="flex flex-col items-center gap-2">
             <LoadingSpinner size={spinnerSize} />
-            {message ? <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{message}</p> : null}
+            {displayMessage ? (
+              <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{displayMessage}</p>
+            ) : null}
           </div>
         </div>
       )}
@@ -93,11 +99,11 @@ export const LoadingOverlay = ({
 
 // === ローディングカード ===
 
-export const LoadingCard = ({
-  title = '読み込み中',
-  message = 'データを読み込んでいます...',
-  className = '',
-}: LoadingCardProps) => {
+export const LoadingCard = ({ title, message, className = '' }: LoadingCardProps) => {
+  const { t } = useI18n()
+  const displayTitle = title ?? t('errors.loading.title')
+  const displayMessage = message ?? t('errors.loading.loadingData')
+
   return (
     <div
       className={cn(
@@ -106,8 +112,8 @@ export const LoadingCard = ({
       )}
     >
       <LoadingSpinner size="lg" className="mb-4" />
-      <h3 className="mb-2 text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">{title}</h3>
-      <p className="max-w-sm text-center text-neutral-800 dark:text-neutral-200">{message}</p>
+      <h3 className="mb-2 text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">{displayTitle}</h3>
+      <p className="max-w-sm text-center text-neutral-800 dark:text-neutral-200">{displayMessage}</p>
     </div>
   )
 }
@@ -240,6 +246,7 @@ export const DataLoading = ({
   emptyComponent,
   className = '',
 }: DataLoadingProps) => {
+  const { t } = useI18n()
   const handleReload = useCallback(() => {
     window.location.reload()
   }, [])
@@ -256,9 +263,9 @@ export const DataLoading = ({
       <div className={cn('flex items-center justify-center p-8', className)}>
         {errorComponent || (
           <div className="text-center">
-            <p className="mb-2 text-red-600 dark:text-red-400">データの読み込みに失敗しました</p>
+            <p className="mb-2 text-red-600 dark:text-red-400">{t('errors.loading.loadFailed')}</p>
             <button type="button" onClick={handleReload} className="text-blue-600 hover:underline dark:text-blue-400">
-              再試行
+              {t('errors.loading.retry')}
             </button>
           </div>
         )}
@@ -269,7 +276,7 @@ export const DataLoading = ({
   if (isEmpty) {
     return (
       <div className={cn('flex items-center justify-center p-8', className)}>
-        {emptyComponent || <p className="text-neutral-600 dark:text-neutral-400">データがありません</p>}
+        {emptyComponent || <p className="text-neutral-600 dark:text-neutral-400">{t('errors.loading.noData')}</p>}
       </div>
     )
   }
@@ -279,16 +286,19 @@ export const DataLoading = ({
 
 // === プリセットローディング状態 ===
 
-export const PresetLoadings = {
-  // ページローディング
-  Page: () => (
+// ページローディング
+function PageLoading() {
+  const { t } = useI18n()
+  return (
     <div className="flex min-h-screen items-center justify-center">
-      <LoadingCard title="ページを読み込み中" message="しばらくお待ちください..." />
+      <LoadingCard title={t('errors.loading.loadingPage')} message={t('errors.loading.pleaseWait')} />
     </div>
-  ),
+  )
+}
 
-  // テーブルローディング
-  Table: ({ rows = 5 }: { rows?: number }) => (
+// テーブルローディング
+function TableLoading({ rows = 5 }: { rows?: number }) {
+  return (
     <div className="flex flex-col gap-2">
       {Array.from({ length: rows }, (_, i) => (
         <div key={i} className="flex items-center gap-4 p-2">
@@ -299,19 +309,23 @@ export const PresetLoadings = {
         </div>
       ))}
     </div>
-  ),
+  )
+}
 
-  // リストローディング
-  List: ({ items = 3 }: { items?: number }) => (
+// リストローディング
+function ListLoading({ items = 3 }: { items?: number }) {
+  return (
     <div className="flex flex-col gap-4">
       {Array.from({ length: items }, (_, i) => (
         <SkeletonCard key={i} showAvatar />
       ))}
     </div>
-  ),
+  )
+}
 
-  // フォームローディング
-  Form: () => (
+// フォームローディング
+function FormLoading() {
+  return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <Skeleton className="h-4 w-20" />
@@ -327,7 +341,14 @@ export const PresetLoadings = {
       </div>
       <Skeleton className="h-10 w-24" />
     </div>
-  ),
+  )
+}
+
+export const PresetLoadings = {
+  Page: PageLoading,
+  Table: TableLoading,
+  List: ListLoading,
+  Form: FormLoading,
 }
 
 export const LoadingStates = {
