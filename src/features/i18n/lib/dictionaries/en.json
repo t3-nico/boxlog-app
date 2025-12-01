@@ -597,6 +597,42 @@
         "title": "Sample Task 3",
         "description": "Completed task"
       }
+    },
+    "kanban": {
+      "markAllComplete": "Mark all complete",
+      "archiveAll": "Archive all",
+      "clearColumn": "Clear column",
+      "addNewPlan": "Add new plan",
+      "enterTitle": "Enter title...",
+      "addDate": "Add date",
+      "addTag": "Add tag",
+      "add": "Add",
+      "addNew": "Add new",
+      "recurrence": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "weekdays": "Weekdays"
+      }
+    },
+    "toolbar": {
+      "priority": "Priority",
+      "all": "All",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "sort": "Sort by",
+      "createdAtDesc": "Created (newest)",
+      "createdAtAsc": "Created (oldest)",
+      "updatedAtDesc": "Updated (newest)",
+      "updatedAtAsc": "Updated (oldest)",
+      "priorityDesc": "Priority (high first)",
+      "priorityAsc": "Priority (low first)",
+      "titleAsc": "Title (A-Z)",
+      "titleDesc": "Title (Z-A)",
+      "reset": "Reset",
+      "addCard": "Add card"
     }
   },
   "table": {

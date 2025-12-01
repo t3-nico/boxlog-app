@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { Plus, X } from 'lucide-react'
 import { useKanbanStore } from '../stores/useKanbanStore'
 
@@ -20,6 +21,7 @@ import { useKanbanStore } from '../stores/useKanbanStore'
  */
 export function KanbanToolbar() {
   const { filter, setFilter, clearFilter, sort, setSort } = useKanbanStore()
+  const { t } = useI18n()
 
   const isFiltered = Object.keys(filter).length > 0
 
@@ -33,16 +35,16 @@ export function KanbanToolbar() {
             setFilter({ priority: value === 'all' ? undefined : (value as 'low' | 'medium' | 'high') })
           }
         >
-          <SelectTrigger className="h-9 w-28">
-            <SelectValue placeholder="優先度" />
+          <SelectTrigger className="h-9 w-[120px]">
+            <SelectValue placeholder={t('board.toolbar.priority')} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>優先度</SelectLabel>
-              <SelectItem value="all">すべて</SelectItem>
-              <SelectItem value="low">低</SelectItem>
-              <SelectItem value="medium">中</SelectItem>
-              <SelectItem value="high">高</SelectItem>
+              <SelectLabel>{t('board.toolbar.priority')}</SelectLabel>
+              <SelectItem value="all">{t('board.toolbar.all')}</SelectItem>
+              <SelectItem value="low">{t('board.toolbar.low')}</SelectItem>
+              <SelectItem value="medium">{t('board.toolbar.medium')}</SelectItem>
+              <SelectItem value="high">{t('board.toolbar.high')}</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -55,20 +57,20 @@ export function KanbanToolbar() {
             setSort({ key, order })
           }}
         >
-          <SelectTrigger className="h-9 w-36">
-            <SelectValue placeholder="並び替え" />
+          <SelectTrigger className="h-9 w-[140px]">
+            <SelectValue placeholder={t('board.toolbar.sort')} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>並び替え</SelectLabel>
-              <SelectItem value="createdAt-desc">作成日（新しい順）</SelectItem>
-              <SelectItem value="createdAt-asc">作成日（古い順）</SelectItem>
-              <SelectItem value="updatedAt-desc">更新日（新しい順）</SelectItem>
-              <SelectItem value="updatedAt-asc">更新日（古い順）</SelectItem>
-              <SelectItem value="priority-desc">優先度（高い順）</SelectItem>
-              <SelectItem value="priority-asc">優先度（低い順）</SelectItem>
-              <SelectItem value="title-asc">タイトル（A-Z）</SelectItem>
-              <SelectItem value="title-desc">タイトル（Z-A）</SelectItem>
+              <SelectLabel>{t('board.toolbar.sort')}</SelectLabel>
+              <SelectItem value="createdAt-desc">{t('board.toolbar.createdAtDesc')}</SelectItem>
+              <SelectItem value="createdAt-asc">{t('board.toolbar.createdAtAsc')}</SelectItem>
+              <SelectItem value="updatedAt-desc">{t('board.toolbar.updatedAtDesc')}</SelectItem>
+              <SelectItem value="updatedAt-asc">{t('board.toolbar.updatedAtAsc')}</SelectItem>
+              <SelectItem value="priority-desc">{t('board.toolbar.priorityDesc')}</SelectItem>
+              <SelectItem value="priority-asc">{t('board.toolbar.priorityAsc')}</SelectItem>
+              <SelectItem value="title-asc">{t('board.toolbar.titleAsc')}</SelectItem>
+              <SelectItem value="title-desc">{t('board.toolbar.titleDesc')}</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -76,7 +78,7 @@ export function KanbanToolbar() {
         {/* フィルターリセット */}
         {isFiltered && (
           <Button variant="ghost" onClick={clearFilter} className="h-9 px-2 lg:px-3">
-            リセット
+            {t('board.toolbar.reset')}
             <X className="ml-2 size-4" />
           </Button>
         )}
@@ -86,7 +88,7 @@ export function KanbanToolbar() {
       <div className="flex items-center gap-2">
         <Button variant="default" size="sm" className="h-9">
           <Plus className="mr-2 size-4" />
-          カード追加
+          {t('board.toolbar.addCard')}
         </Button>
       </div>
     </div>
