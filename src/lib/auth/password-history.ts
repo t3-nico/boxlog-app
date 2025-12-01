@@ -36,7 +36,8 @@ export async function isPasswordReused(userId: string, newPassword: string): Pro
       return false
     }
 
-    return data === true
+    // RPC関数の戻り値はboolean or numberの可能性があるため、明示的にキャスト
+    return (data as boolean | number) === true || (data as boolean | number) === 1
   } catch (err) {
     console.error('Password history check error:', err)
     // エラー時は安全側に倒して、チェックをスキップ
