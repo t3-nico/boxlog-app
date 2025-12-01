@@ -24,11 +24,11 @@ export interface RecurrenceConfig {
   interval: number // 1-365（1 = 毎日/毎週、2 = 2日ごと/2週間ごと）
 
   // 週次のみ
-  byWeekday?: number[] // 0-6（日曜-土曜）
+  byWeekday?: number[] | undefined // 0-6（日曜-土曜）
 
   // 月次のみ
-  byMonthDay?: number // 1-31（毎月X日形式）
-  bySetPos?: number // 1-5（第1-第5週、-1=最終週）※ byWeekday と併用
+  byMonthDay?: number | undefined // 1-31（毎月X日形式）
+  bySetPos?: number | undefined // 1-5（第1-第5週、-1=最終週）※ byWeekday と併用
 
   // 終了条件（いずれか1つ）
   endType: 'never' | 'until' | 'count'

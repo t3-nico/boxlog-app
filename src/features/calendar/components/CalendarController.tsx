@@ -209,7 +209,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // 表示範囲のタスクを取得
   const filteredTasks = useMemo(() => {
     return []
-  }, [viewDateRange.start, viewDateRange.end])
+  }, [])
 
   // plansを取得（リアルタイム性最適化済み）
   const { data: plansData } = useplans({})

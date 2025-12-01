@@ -39,7 +39,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   devtools(
-    (set, get) => ({
+    (set, _get) => ({
       // Initial state
       user: null,
       session: null,
@@ -98,9 +98,7 @@ export const useAuthStore = create<AuthState>()(
           const result = await supabase.auth.signUp({
             email,
             password,
-            options: {
-              data: metadata,
-            },
+            ...(metadata && { options: { data: metadata } }),
           })
 
           if (result.error) {

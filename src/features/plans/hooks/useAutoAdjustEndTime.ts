@@ -28,12 +28,12 @@ export function useAutoAdjustEndTime(startTime: string, endTime: string, onEndTi
           const [prevStartHour, prevStartMin] = (previousStartTime || startTime).split(':').map(Number)
           const [endHour, endMin] = endTime.split(':').map(Number)
 
-          const prevStartMinutes = prevStartHour * 60 + prevStartMin
-          const endMinutes = endHour * 60 + endMin
+          const prevStartMinutes = prevStartHour! * 60 + prevStartMin!
+          const endMinutes = endHour! * 60 + endMin!
           const durationMinutes = endMinutes - prevStartMinutes
 
           // 開始時刻 + 既存の時間幅
-          const startMinutes = startHour * 60 + startMin
+          const startMinutes = startHour! * 60 + startMin!
           const newEndMinutes = startMinutes + durationMinutes
           const newEndHour = Math.floor(newEndMinutes / 60) % 24
           const newEndMin = newEndMinutes % 60
@@ -42,8 +42,8 @@ export function useAutoAdjustEndTime(startTime: string, endTime: string, onEndTi
           onEndTimeChange(calculatedEndTime)
         } else {
           // 終了時刻が未設定の場合: +1時間
-          const newEndHour = (startHour + 1) % 24
-          const calculatedEndTime = `${newEndHour.toString().padStart(2, '0')}:${startMin.toString().padStart(2, '0')}`
+          const newEndHour = (startHour! + 1) % 24
+          const calculatedEndTime = `${newEndHour.toString().padStart(2, '0')}:${startMin!.toString().padStart(2, '0')}`
           onEndTimeChange(calculatedEndTime)
         }
 

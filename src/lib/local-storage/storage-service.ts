@@ -7,33 +7,33 @@
 export interface LocalEvent {
   id: string
   title: string
-  description?: string
+  description?: string | undefined
   startDate: Date
-  endDate?: Date
+  endDate?: Date | undefined
   status: string
-  priority?: string
+  priority?: string | undefined
   color: string
-  tags?: string[]
+  tags?: string[] | undefined
   createdAt: Date
   updatedAt: Date
-  deletedAt?: Date // ソフト削除用
+  deletedAt?: Date | undefined // ソフト削除用
 }
 
 export interface LocalLog {
   id: string
-  eventId?: string
+  eventId?: string | undefined
   title: string
   actualStart: Date
   actualEnd: Date
   duration: number // 分
-  satisfaction?: 1 | 2 | 3 | 4 | 5
-  focusLevel?: 1 | 2 | 3 | 4 | 5
-  energyLevel?: 1 | 2 | 3 | 4 | 5
-  note?: string
-  tags?: string[]
+  satisfaction?: 1 | 2 | 3 | 4 | 5 | undefined
+  focusLevel?: 1 | 2 | 3 | 4 | 5 | undefined
+  energyLevel?: 1 | 2 | 3 | 4 | 5 | undefined
+  note?: string | undefined
+  tags?: string[] | undefined
   createdAt: Date
   updatedAt: Date
-  deletedAt?: Date
+  deletedAt?: Date | undefined
 }
 
 export interface LocalTag {
@@ -48,10 +48,10 @@ export interface LocalTag {
 // ストレージ用の内部型（Date -> string変換）
 interface StoredEvent extends Omit<LocalEvent, 'startDate' | 'endDate' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
   startDate: string
-  endDate?: string
+  endDate?: string | undefined
   createdAt: string
   updatedAt: string
-  deletedAt?: string
+  deletedAt?: string | undefined
 }
 
 interface StoredLog extends Omit<LocalLog, 'actualStart' | 'actualEnd' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
@@ -59,7 +59,7 @@ interface StoredLog extends Omit<LocalLog, 'actualStart' | 'actualEnd' | 'create
   actualEnd: string
   createdAt: string
   updatedAt: string
-  deletedAt?: string
+  deletedAt?: string | undefined
 }
 
 // ストレージ制限とエラー
@@ -296,7 +296,7 @@ export class LocalStorageService {
 
       if (soft) {
         if (eventIndex >= 0 && eventIndex < events.length) {
-          events[eventIndex].deletedAt = new Date()
+          events[eventIndex]!.deletedAt = new Date()
         }
       } else {
         events.splice(eventIndex, 1)
@@ -424,7 +424,7 @@ export class LocalStorageService {
 
       if (soft) {
         if (logIndex >= 0 && logIndex < logs.length) {
-          logs[logIndex].deletedAt = new Date()
+          logs[logIndex]!.deletedAt = new Date()
         }
       } else {
         logs.splice(logIndex, 1)

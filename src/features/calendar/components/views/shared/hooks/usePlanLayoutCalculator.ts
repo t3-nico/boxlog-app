@@ -96,7 +96,7 @@ function findOverlapGroups(plans: TimedPlan[]): OverlapGroup[] {
       if (currentGroup.length > 0) {
         groups.push({
           plans: currentGroup,
-          startTime: new Date(currentGroup[0].start),
+          startTime: new Date(currentGroup[0]!.start),
           endTime: groupEndTime!,
         })
       }
@@ -116,7 +116,7 @@ function findOverlapGroups(plans: TimedPlan[]): OverlapGroup[] {
   if (currentGroup.length > 0 && groupEndTime) {
     groups.push({
       plans: currentGroup,
-      startTime: new Date(currentGroup[0].start),
+      startTime: new Date(currentGroup[0]!.start),
       endTime: groupEndTime,
     })
   }

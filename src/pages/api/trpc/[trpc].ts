@@ -30,7 +30,7 @@ export default createNextApiHandler({
       error.message = 'サーバーエラーが発生しました'
     }
   },
-  responseMeta: ({ ctx, paths, type, errors }) => {
+  responseMeta: ({ ctx: _ctx, paths, type, errors: _errors }) => {
     // リクエストごとのメタデータ設定
     const oneDay = 60 * 60 * 24
     const isQuery = type === 'query'

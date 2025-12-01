@@ -41,7 +41,7 @@ export function getNextViewType(currentView: CalendarViewType): CalendarViewType
   const currentIndex = viewOrder.indexOf(currentView)
   const nextIndex = (currentIndex + 1) % viewOrder.length
 
-  return viewOrder[nextIndex]
+  return viewOrder[nextIndex]!
 }
 
 /**
@@ -53,5 +53,5 @@ export function getPrevViewType(currentView: CalendarViewType): CalendarViewType
   const currentIndex = viewOrder.indexOf(currentView)
   const prevIndex = currentIndex === 0 ? viewOrder.length - 1 : currentIndex - 1
 
-  return viewOrder[prevIndex]
+  return viewOrder[prevIndex]!
 }

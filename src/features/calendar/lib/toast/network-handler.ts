@@ -18,9 +18,9 @@ export type NetworkErrorType =
 // ネットワークエラー情報
 export interface NetworkErrorInfo {
   type: NetworkErrorType
-  code?: string | number
-  message?: string
-  statusCode?: number
+  code?: string | number | undefined
+  message?: string | undefined
+  statusCode?: number | undefined
 }
 
 // HTTPステータスコードマッピング
@@ -86,7 +86,7 @@ export const classifyNetworkError = (
   return {
     type: 'unknown',
     message: error.message || getTranslation(CALENDAR_TOAST_KEYS.ERROR_UNEXPECTED),
-    code: error.code,
+    code: error.code ?? undefined,
   }
 }
 

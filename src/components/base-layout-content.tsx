@@ -47,10 +47,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     console.debug('TODO: Sessions統合後に実装')
   }, [])
 
-  const { isCalendarPage, calendarProviderProps } = useCalendarProviderProps(
-    pathname,
-    searchParams || new URLSearchParams()
-  )
+  const { calendarProviderProps } = useCalendarProviderProps(pathname, searchParams || new URLSearchParams())
 
   const content = (
     <div className="flex h-screen flex-col">

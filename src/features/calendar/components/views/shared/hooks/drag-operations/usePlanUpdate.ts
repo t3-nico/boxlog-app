@@ -13,7 +13,7 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { HOUR_HEIGHT } from '../../constants/grid.constants'
 
 interface UseEventUpdateProps {
-  onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
+  onEventUpdate?: ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void) | undefined
   events: CalendarPlan[]
   date: Date
 }

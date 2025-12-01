@@ -30,9 +30,9 @@ export function parseDateString(dateString: string): Date {
   }
 
   const [, yearStr, monthStr, dayStr] = match
-  const year = parseInt(yearStr, 10)
-  const month = parseInt(monthStr, 10) - 1 // 0始まり
-  const day = parseInt(dayStr, 10)
+  const year = parseInt(yearStr!, 10)
+  const month = parseInt(monthStr!, 10) - 1 // 0始まり
+  const day = parseInt(dayStr!, 10)
 
   return new Date(year, month, day)
 }
@@ -70,7 +70,7 @@ export function formatDateString(dateString: string): string {
  * // UTC 10:00 → JST 19:00 として解釈
  * ```
  */
-export function parseDatetimeString(datetimeString: string, targetTimezone?: string): Date {
+export function parseDatetimeString(datetimeString: string, _targetTimezone?: string): Date {
   // タイムゾーン付きの形式（YYYY-MM-DDTHH:mm:ss±HH:MM または YYYY-MM-DDTHH:mm:ss.sss±HH:MM）
   if (datetimeString.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?([+-]\d{2}:\d{2}|Z)$/)) {
     const date = new Date(datetimeString)
@@ -94,12 +94,12 @@ export function parseDatetimeString(datetimeString: string, targetTimezone?: str
   }
 
   const [, yearStr, monthStr, dayStr, hourStr, minuteStr, secondStr] = match
-  const year = parseInt(yearStr, 10)
-  const month = parseInt(monthStr, 10) - 1 // 0始まり
-  const day = parseInt(dayStr, 10)
-  const hour = parseInt(hourStr, 10)
-  const minute = parseInt(minuteStr, 10)
-  const second = parseInt(secondStr, 10)
+  const year = parseInt(yearStr!, 10)
+  const month = parseInt(monthStr!, 10) - 1 // 0始まり
+  const day = parseInt(dayStr!, 10)
+  const hour = parseInt(hourStr!, 10)
+  const minute = parseInt(minuteStr!, 10)
+  const second = parseInt(secondStr!, 10)
 
   // targetTimezoneが指定されている場合は、そのタイムゾーンの時刻として解釈
   // ただし、現在の実装ではローカルタイムゾーンとして解釈

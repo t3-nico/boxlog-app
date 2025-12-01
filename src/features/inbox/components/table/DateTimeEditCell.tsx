@@ -28,7 +28,7 @@ interface DateTimeEditCellProps {
  * />
  * ```
  */
-export function DateTimeEditCell({ dateTime, width, onDateTimeChange }: DateTimeEditCellProps) {
+export function DateTimeEditCell({ dateTime, width, onDateTimeChange: _onDateTimeChange }: DateTimeEditCellProps) {
   const style = width ? { width: `${width}px` } : undefined
 
   // 日時フォーマット（時刻があれば HH:mm も表示、なければ日付のみ）

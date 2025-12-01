@@ -108,7 +108,7 @@ export class MemoryOptimizer {
     // トレンド判定
     let trend: MemoryStats['trend'] = 'stable'
     if (this.memoryHistory.length > 0) {
-      const previous = this.memoryHistory[this.memoryHistory.length - 1]
+      const previous = this.memoryHistory[this.memoryHistory.length - 1]!
       const change = (used - previous.used) / previous.used
 
       if (change > 0.05) trend = 'increasing'
@@ -259,7 +259,7 @@ export class MemoryOptimizer {
     // 継続的なメモリ増加の検出
     if (this.memoryHistory.length >= 10) {
       const recent = this.memoryHistory.slice(-10)
-      const increasing = recent.every((stat, index) => index === 0 || stat.used > recent[index - 1].used)
+      const increasing = recent.every((stat, index) => index === 0 || stat.used > recent[index - 1]!.used)
 
       if (increasing) {
         this.reportLeak({
@@ -316,7 +316,6 @@ export class MemoryOptimizer {
     this.cleanupWeakReferences()
 
     // 期限切れタイマーの削除
-    const _currentTime = Date.now()
     const expiredTimers = new Set<NodeJS.Timeout>()
 
     for (const timer of this.timers) {

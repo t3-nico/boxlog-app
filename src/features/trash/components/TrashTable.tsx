@@ -80,7 +80,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
 
     const sortedGroups: Record<string, TrashItem[]> = {}
     sortedDates.forEach((date) => {
-      sortedGroups[date] = groups[date]
+      sortedGroups[date] = groups[date]!
     })
 
     return sortedGroups

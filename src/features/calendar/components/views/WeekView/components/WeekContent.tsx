@@ -12,7 +12,6 @@ import {
   PlanBlock,
   useGlobalDragCursor,
   usePlanStyles,
-  useTimeCalculation,
 } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
@@ -22,14 +21,14 @@ interface WeekContentProps {
   date: Date
   plans: CalendarPlan[]
   planPositions: WeekPlanPosition[]
-  onPlanClick?: (plan: CalendarPlan) => void
-  onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
-  onEmptyClick?: (date: Date, timeString: string) => void
-  onPlanUpdate?: (planId: string, updates: Partial<CalendarPlan>) => void
-  onTimeRangeSelect?: (selection: import('../../shared').DateTimeSelection) => void
-  className?: string
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined
+  onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined
+  onEmptyClick?: ((date: Date, timeString: string) => void) | undefined
+  onPlanUpdate?: ((planId: string, updates: Partial<CalendarPlan>) => void) | undefined
+  onTimeRangeSelect?: ((selection: import('../../shared').DateTimeSelection) => void) | undefined
+  className?: string | undefined
   dayIndex: number // 週内での日付インデックス（0-6）
-  displayDates?: Date[] // 週の全日付配列（日付間移動用）
+  displayDates?: Date[] | undefined // 週の全日付配列（日付間移動用）
 }
 
 export const WeekContent = ({
@@ -75,9 +74,6 @@ export const WeekContent = ({
     viewMode: 'week',
   })
 
-  // 時間計算機能
-  const { calculateTimeFromEvent } = useTimeCalculation()
-
   // グローバルドラッグカーソー管理（共通化）
   useGlobalDragCursor(dragState, handlers)
 
@@ -100,30 +96,6 @@ export const WeekContent = ({
   }, [planPositions, dayIndex])
 
   const planStyles = usePlanStyles(dayPlanPositions)
-
-  // 空白クリックハンドラー
-  const _handleEmptyClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!onEmptyClick) return
-
-      const { timeString } = calculateTimeFromEvent(e)
-      onEmptyClick(date, timeString)
-    },
-    [date, onEmptyClick, calculateTimeFromEvent]
-  )
-
-  // プランクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
-  const _handlePlanClick = useCallback(
-    (plan: CalendarPlan) => {
-      // ドラッグ・リサイズ操作中のクリックは無視
-      if (dragState.isDragging || dragState.isResizing) {
-        return
-      }
-
-      onPlanClick?.(plan)
-    },
-    [onPlanClick, dragState.isDragging, dragState.isResizing]
-  )
 
   // プラン右クリックハンドラー
   const handlePlanContextMenu = useCallback(
@@ -267,7 +239,6 @@ export const WeekContent = ({
           ? (() => {
               // 週の全プランからドラッグ中のプランを探す
               // displayDates配列を使って全日付のプランを探索
-              const _draggedPlan: CalendarPlan | null = null
 
               // 他のWeekContentインスタンスが保持しているプランを探すのは困難
               // そのため、親コンポーネントから渡されるplans配列から探す

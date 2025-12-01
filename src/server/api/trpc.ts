@@ -20,8 +20,8 @@ import type { Database } from '@/types/supabase'
 export interface Context {
   req: CreateNextContextOptions['req']
   res: CreateNextContextOptions['res']
-  userId?: string
-  sessionId?: string
+  userId?: string | undefined
+  sessionId?: string | undefined
   supabase: SupabaseClient<Database>
 }
 
@@ -193,13 +193,13 @@ export const mergeRouters = t.mergeRouters
  * ヘルパー関数
  */
 
-async function checkAdminPermission(userId: string): Promise<boolean> {
+async function checkAdminPermission(_userId: string): Promise<boolean> {
   // 実際の管理者権限確認ロジックを実装
   // データベースからユーザーの権限を確認
   return false // 仮実装
 }
 
-async function checkRateLimit(ip: string): Promise<boolean> {
+async function checkRateLimit(_ip: string): Promise<boolean> {
   // レート制限の確認ロジックを実装
   // Redis等を使用してIPごとのリクエスト数を管理
   return true // 仮実装

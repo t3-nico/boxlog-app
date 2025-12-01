@@ -273,7 +273,7 @@ export class PerformanceMonitor {
       scrollTimeout = setTimeout(() => {
         isScrolling = false
         const endTime = performance.now()
-        const duration = endTime - scrollTimes[scrollTimes.length - 1]
+        const duration = endTime - scrollTimes[scrollTimes.length - 1]!
 
         this.metrics.scrollPerformance!.push(duration)
 

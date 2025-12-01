@@ -281,7 +281,7 @@ export class SmartFolderAnalytics {
     return {
       optimized: changes.length > 0,
       changes,
-      newRules: changes.length > 0 ? newRules : undefined,
+      ...(changes.length > 0 && { newRules }),
     }
   }
 

@@ -76,6 +76,7 @@ export const AnimatedEventItem = ({
       const timer = setTimeout(() => setIsVisible(true), 10)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [isCreating])
 
   return (

@@ -8,14 +8,14 @@ import { useEffect, useRef, useState } from 'react'
 interface Tag {
   id: string
   name: string
-  color?: string
+  color?: string | undefined
 }
 
 interface TagsCellProps {
   /** 現在のタグ */
-  tags?: Tag[]
+  tags?: Tag[] | undefined
   /** 列幅 */
-  width?: number
+  width?: number | undefined
   /** タグ変更時のコールバック */
   onTagsChange: (tagIds: string[]) => void
 }
@@ -59,7 +59,7 @@ export function TagsCell({ tags = [], width, onTagsChange }: TagsCellProps) {
     let count = 0
 
     for (let i = 0; i < tags.length; i++) {
-      const tagWidth = estimateTagWidth(tags[i].name)
+      const tagWidth = estimateTagWidth(tags[i]!.name)
       const needsMoreTag = i < tags.length - 1
 
       if (currentWidth + tagWidth + (needsMoreTag ? moreTagWidth : 0) <= availableWidth) {

@@ -315,23 +315,11 @@ const getStoredContrastTheme = (): string => {
 }
 
 export function useHighContrast() {
-  const { t } = useI18n()
+  useI18n()
   // 遅延初期化でlocalStorageから読み込み
   const [isHighContrastEnabled, setIsHighContrastEnabled] = useState(getStoredHighContrast)
   const [currentTheme, setCurrentTheme] = useState<string>(getStoredContrastTheme)
   const [isSystemHighContrast, setIsSystemHighContrast] = useState(false)
-
-  // 翻訳されたテーマ名を取得
-  const getThemeNames = useCallback(
-    () => ({
-      default: t('calendar.accessibility.standardContrast'),
-      blackOnWhite: '黒地に白文字（ハイコントラスト）',
-      whiteOnBlack: '白地に黒文字（ハイコントラスト）',
-      yellowOnBlack: '黒地に黄色文字（ハイコントラスト）',
-      blueOnYellow: '黄色地に青文字（ハイコントラスト）',
-    }),
-    [t]
-  )
 
   // システムのハイコントラスト設定を監視
   useEffect(() => {
@@ -488,7 +476,7 @@ export function useHighContrast() {
     getContrastClassName,
 
     // 便利なプロパティ
-    colors: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default).colors,
-    isWcagAAA: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default).wcagAAA,
+    colors: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default!).colors,
+    isWcagAAA: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default!).wcagAAA,
   }
 }

@@ -42,35 +42,39 @@ export type InboxView = {
   /** フィルター設定 */
   filters: {
     /** ステータスフィルター */
-    status?: string[]
+    status?: string[] | undefined
     /** 優先度フィルター */
-    priority?: string[]
+    priority?: string[] | undefined
     /** タグフィルター */
-    tags?: string[]
+    tags?: string[] | undefined
     /** 検索キーワード */
-    search?: string
+    search?: string | undefined
     /** アーカイブ済みかどうか */
-    archived?: boolean
+    archived?: boolean | undefined
   }
 
   /** ソート設定（将来拡張用） */
-  sorting?: {
-    field: string
-    direction: 'asc' | 'desc'
-  }
+  sorting?:
+    | {
+        field: string
+        direction: 'asc' | 'desc'
+      }
+    | undefined
 
   /** Table view専用: 列設定 */
-  columns?: Array<{
-    id: string
-    visible: boolean
-    width: number
-  }>
+  columns?:
+    | Array<{
+        id: string
+        visible: boolean
+        width: number
+      }>
+    | undefined
 
   /** Table view専用: ページサイズ */
-  pageSize?: number
+  pageSize?: number | undefined
 
   /** デフォルトViewかどうか */
-  isDefault?: boolean
+  isDefault?: boolean | undefined
 
   /** 作成日時 */
   createdAt: Date
@@ -84,9 +88,9 @@ export type InboxView = {
  */
 export type CreateInboxViewInput = {
   name: string
-  filters?: InboxView['filters']
-  sorting?: InboxView['sorting']
-  isDefault?: boolean
+  filters?: InboxView['filters'] | undefined
+  sorting?: InboxView['sorting'] | undefined
+  isDefault?: boolean | undefined
 }
 
 /**

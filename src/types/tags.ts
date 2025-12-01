@@ -57,23 +57,23 @@ export interface TagHierarchy {
 export interface CreateTagInput {
   name: string
   color: string
-  description?: string | null
-  icon?: string | null
-  parent_id?: string | null
+  description?: string | null | undefined
+  icon?: string | null | undefined
+  parent_id?: string | null | undefined
   level: TagLevel
-  group_id?: string | null
+  group_id?: string | null | undefined
 }
 
 // タグ更新用入力型
 export interface UpdateTagInput {
-  name?: string
-  color?: string
-  description?: string | null
-  icon?: string | null
-  parent_id?: string | null
-  level?: TagLevel
-  is_active?: boolean
-  group_id?: string | null
+  name?: string | undefined
+  color?: string | undefined
+  description?: string | null | undefined
+  icon?: string | null | undefined
+  parent_id?: string | null | undefined
+  level?: TagLevel | undefined
+  is_active?: boolean | undefined
+  group_id?: string | null | undefined
 }
 
 // タググループ作成用入力型

@@ -12,9 +12,9 @@ interface NormalizedPlan {
   startTime: number // Unix timestamp
   endTime: number // Unix timestamp
   dateKey: string // YYYY-MM-DD format
-  color?: string
-  location?: string
-  description?: string
+  color?: string | undefined
+  location?: string | undefined
+  description?: string | undefined
   tags?: string[]
   recurrenceId?: string
 }
@@ -106,9 +106,9 @@ export class PlanDataManager {
       startTime,
       endTime,
       dateKey,
-      color: plan.color,
-      location: plan.location,
-      description: plan.description,
+      color: plan.color ?? undefined,
+      location: plan.location ?? undefined,
+      description: plan.description ?? undefined,
       tags: plan.tags?.map((tag) => tag.name) || [],
     }
   }
@@ -163,8 +163,6 @@ export class PlanDataManager {
     const cached = this.getFromCache(cacheKey)
     if (cached) return cached
 
-    const _startKey = this.getDateKey(startDate)
-    const _endKey = this.getDateKey(endDate)
     const planIds = new Set<string>()
 
     // 日付範囲をイテレート
@@ -227,9 +225,6 @@ export class PlanDataManager {
     } else {
       plans = Array.from(this.plans.values())
     }
-
-    const _startTime = startHour * 60 * 60 * 1000 // ミリ秒
-    const _endTime = endHour * 60 * 60 * 1000
 
     const result = plans.filter((plan) => {
       const planHour = new Date(plan.startTime).getHours()
@@ -372,7 +367,7 @@ export class PlanDataManager {
   private setCache(key: string, result: NormalizedPlan[]): void {
     if (this.queryCache.size >= this.MAX_CACHE_SIZE) {
       // LRU 的にキャッシュクリア
-      const oldestKey = Array.from(this.queryCache.keys())[0]
+      const oldestKey = Array.from(this.queryCache.keys())[0]!
       this.queryCache.delete(oldestKey)
     }
 
@@ -402,7 +397,7 @@ export class PlanDataManager {
    * ユーティリティメソッド
    */
   private getDateKey(date: Date): string {
-    return date.toISOString().split('T')[0]
+    return date.toISOString().split('T')[0]!
   }
 
   /**

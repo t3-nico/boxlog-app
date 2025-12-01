@@ -186,7 +186,23 @@ export const useTagStore = create<TagStore>()(
             }
 
             set((state) => ({
-              tags: state.tags.map((tag) => (tag.id === id ? { ...tag, ...updates, updatedAt: new Date() } : tag)),
+              tags: state.tags.map((tag) => {
+                if (tag.id === id) {
+                  return {
+                    ...tag,
+                    ...(updates.name !== undefined && { name: updates.name }),
+                    ...(updates.color !== undefined && { color: updates.color }),
+                    ...(updates.description !== undefined && { description: updates.description }),
+                    ...(updates.icon !== undefined && { icon: updates.icon }),
+                    ...(updates.parent_id !== undefined && { parent_id: updates.parent_id }),
+                    ...(updates.level !== undefined && { level: updates.level }),
+                    ...(updates.is_active !== undefined && { is_active: updates.is_active }),
+                    ...(updates.group_id !== undefined && { group_id: updates.group_id }),
+                    updated_at: new Date(),
+                  } as Tag
+                }
+                return tag
+              }),
             }))
             return true
           } catch (error) {

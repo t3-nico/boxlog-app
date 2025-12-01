@@ -138,7 +138,7 @@ function useMouseTouchEvents(
     const handleTouchMove = (e: TouchEvent) => {
       e.preventDefault()
       if (e.touches.length > 0) {
-        handleMove(e.touches[0].clientY)
+        handleMove(e.touches[0]!.clientY)
       }
     }
 
@@ -442,7 +442,7 @@ export const PlanResizeHandle = ({
       e.stopPropagation()
       e.preventDefault()
       if (e.touches.length > 0) {
-        handleStart(e.touches[0].clientY)
+        handleStart(e.touches[0]!.clientY)
       }
     },
     [handleStart]
@@ -454,7 +454,7 @@ export const PlanResizeHandle = ({
     <>
       <ResizeHandleBody
         type={type}
-        className={className}
+        {...(className && { className })}
         resizeState={resizeState}
         handleRef={handleRef}
         handleMouseDown={handleMouseDown}

@@ -74,19 +74,19 @@ export interface ErrorPattern {
 export interface ErrorMetadata {
   source: string // エラー発生源（API、DB、外部サービス等）
   timestamp: Date // 発生日時
-  context?: Record<string, any> // コンテキスト情報
-  userId?: string // ユーザーID（該当する場合）
-  sessionId?: string // セッションID
-  requestId?: string // リクエストID
-  userAgent?: string // ユーザーエージェント
-  ip?: string // IPアドレス
-  version?: string // アプリケーションバージョン
+  context?: Record<string, unknown> | undefined // コンテキスト情報
+  userId?: string | undefined // ユーザーID（該当する場合）
+  sessionId?: string | undefined // セッションID
+  requestId?: string | undefined // リクエストID
+  userAgent?: string | undefined // ユーザーエージェント
+  ip?: string | undefined // IPアドレス
+  version?: string | undefined // アプリケーションバージョン
 }
 
 /**
  * 処理結果の型定義
  */
-export interface ErrorHandlingResult<T = any> {
+export interface ErrorHandlingResult<T = unknown> {
   success: boolean // 処理成功フラグ
   data?: T // 成功時のデータ
   error?: AppError // エラー情報
@@ -125,7 +125,9 @@ export class AppError extends Error {
     // 元のエラーを保持
     if (cause) {
       this.cause = cause
-      this.stack = cause.stack
+      if (cause.stack) {
+        this.stack = cause.stack
+      }
     }
 
     // スタックトレースのキャプチャ
@@ -254,7 +256,7 @@ export class ErrorPatternDictionary {
   async executeWithRecovery<T>(
     operation: () => Promise<T>,
     errorCode: ErrorCode,
-    context?: Record<string, any>
+    context?: Record<string, unknown>
   ): Promise<ErrorHandlingResult<T>> {
     const startTime = Date.now()
     const pattern = this.getPattern(errorCode)
@@ -305,7 +307,8 @@ export class ErrorPatternDictionary {
       }
 
       // AppErrorとして返す
-      const appError = error instanceof AppError ? error : this.wrapError(error as Error, errorCode, { context })
+      const appError =
+        error instanceof AppError ? error : this.wrapError(error as Error, errorCode, context ? { context } : undefined)
 
       return {
         success: false,
@@ -390,7 +393,7 @@ export class ErrorPatternDictionary {
   healthCheck(): {
     totalErrors: number
     categoryBreakdown: Record<ErrorCategory, number>
-    circuitBreakers: Record<string, any>
+    circuitBreakers: Record<string, unknown>
     criticalErrors: number
   } {
     const categoryStats = this.getCategoryStats()
@@ -432,7 +435,7 @@ export function wrapError(error: Error, code: ErrorCode, metadata?: Partial<Erro
 export async function executeWithAutoRecovery<T>(
   operation: () => Promise<T>,
   errorCode: ErrorCode,
-  context?: Record<string, any>
+  context?: Record<string, unknown>
 ): Promise<ErrorHandlingResult<T>> {
   return errorPatternDictionary.executeWithRecovery(operation, errorCode, context)
 }

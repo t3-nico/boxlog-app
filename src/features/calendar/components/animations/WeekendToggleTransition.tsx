@@ -31,6 +31,7 @@ export const WeekendToggleTransition = ({ children, className }: WeekendToggleTr
 
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [showWeekends, previousShowWeekends])
 
   return (
@@ -72,6 +73,7 @@ export const WeekendColumnTransition = ({
         return () => clearTimeout(timer)
       }
     }
+    return undefined
   }, [showWeekends, isWeekendColumn])
 
   if (isWeekendColumn && !showWeekends && !isVisible) {
@@ -119,6 +121,7 @@ export const GridLayoutTransition = ({
 
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [totalColumns, previousColumns])
 
   return (

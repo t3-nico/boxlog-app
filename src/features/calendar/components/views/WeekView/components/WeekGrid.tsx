@@ -38,7 +38,7 @@ export const WeekGrid = ({
   className,
 }: WeekGridProps) => {
   // レスポンシブな時間高さ（ThreeDayViewと同じパターン）
-  const HOUR_HEIGHT = useResponsiveHourHeight({
+  useResponsiveHourHeight({
     mobile: 48,
     tablet: 60,
     desktop: 72,
@@ -72,7 +72,7 @@ export const WeekGrid = ({
   const headerComponent = (
     <div className="bg-background flex h-16 flex-1">
       {/* 7日分の日付ヘッダー */}
-      {weekDates.map((date, index) => (
+      {weekDates.map((date) => (
         <div
           key={date.toISOString()}
           className="flex flex-col items-center justify-center px-1"
@@ -107,7 +107,7 @@ export const WeekGrid = ({
         onTimeClick={(hour, minute) => {
           // WeekViewでは週の最初の日付を使用（日付は後でWeekContentで決定）
           const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-          onEmptyClick?.(weekDates[0], timeString)
+          onEmptyClick?.(weekDates[0]!, timeString)
         }}
         enableKeyboardNavigation={true}
       >

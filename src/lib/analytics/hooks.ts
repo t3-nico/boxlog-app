@@ -90,7 +90,7 @@ export function useTimeTracking(eventName: AnalyticsEventName, properties?: Even
  * 🔍 検索追跡フック
  */
 export function useSearchTracking() {
-  const trackSearch = useCallback((query: string, resultCount?: number, filters?: Record<string, any>) => {
+  const trackSearch = useCallback((query: string, resultCount?: number, filters?: Record<string, unknown>) => {
     trackEvent(ANALYTICS_EVENTS.FEATURE.SEARCH_PERFORM, {
       search_query: query.slice(0, 100), // 最初の100文字のみ
       result_count: resultCount,
@@ -106,7 +106,7 @@ export function useSearchTracking() {
  * ❌ エラー追跡フック
  */
 export function useErrorTracking() {
-  const trackError = useCallback((error: Error | string, context?: Record<string, any>) => {
+  const trackError = useCallback((error: Error | string, context?: Record<string, unknown>) => {
     const errorMessage = typeof error === 'string' ? error : error.message
     const stackTrace = typeof error === 'object' ? error.stack : undefined
 

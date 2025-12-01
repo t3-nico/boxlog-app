@@ -126,6 +126,7 @@ export function RecurrenceDialog({
         document.removeEventListener('mousedown', handleClickOutside)
       }
     }
+    return undefined
   }, [open, onOpenChange, triggerRef])
 
   const handleSave = () => {
@@ -133,13 +134,6 @@ export function RecurrenceDialog({
     onChange(rrule)
     onOpenChange(false)
   }
-
-  const handleClear = () => {
-    onChange(null)
-    onOpenChange(false)
-  }
-
-  const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
 
   // 曜日トグル
   const toggleWeekday = (index: number) => {
@@ -186,8 +180,8 @@ export function RecurrenceDialog({
                     ...config,
                     frequency: value as 'daily' | 'weekly' | 'monthly' | 'yearly',
                     // 頻度変更時にリセット
-                    byWeekday: value === 'weekly' ? config.byWeekday : undefined,
-                    byMonthDay: value === 'monthly' ? config.byMonthDay || 1 : undefined,
+                    byWeekday: value === 'weekly' ? (config.byWeekday ?? undefined) : undefined,
+                    byMonthDay: value === 'monthly' ? (config.byMonthDay ?? 1) : undefined,
                   })
                 }
               >
@@ -246,11 +240,11 @@ export function RecurrenceDialog({
                     setConfig({
                       ...config,
                       byMonthDay: undefined,
-                      bySetPos: Number(setPos),
-                      byWeekday: [Number(weekday)],
+                      bySetPos: Number(setPos!),
+                      byWeekday: [Number(weekday!)],
                     })
                   } else {
-                    const monthDay = Number(value.split('-')[1])
+                    const monthDay = Number(value.split('-')[1]!)
                     setConfig({
                       ...config,
                       byMonthDay: monthDay,

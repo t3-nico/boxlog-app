@@ -73,6 +73,7 @@ export function RecurrencePopover({
         document.removeEventListener('mousedown', handleClickOutside)
       }
     }
+    return undefined
   }, [open, onOpenChange, triggerRef, showCustomDialog])
 
   if (!open) return null

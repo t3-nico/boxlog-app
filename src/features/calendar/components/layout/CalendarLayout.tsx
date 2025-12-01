@@ -88,7 +88,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
         <CalendarNavigationArea>{navigationContent}</CalendarNavigationArea>
 
         {/* メインコンテンツ */}
-        <main data-calendar-main className="flex min-h-0 flex-1 flex-col overflow-hidden pb-2">
+        <main data-calendar-main className="flex min-h-0 flex-1 flex-col overflow-hidden">
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</div>
         </main>
       </div>
