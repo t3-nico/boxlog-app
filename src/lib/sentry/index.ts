@@ -7,17 +7,17 @@
 
 // メイン統合機能
 export {
+  SentryErrorHandler,
+  /** @deprecated */
+  SentryIntegration,
   // 推奨API
   handleApiError,
   handleReactError,
-  isSentryInitialized,
-  reportToSentry,
-  SentryErrorHandler,
   // 後方互換性（非推奨）
   /** @deprecated */
   initializeSentry,
-  /** @deprecated */
-  SentryIntegration,
+  isSentryInitialized,
+  reportToSentry,
   /** @deprecated */
   sentryIntegration,
 } from './integration'
