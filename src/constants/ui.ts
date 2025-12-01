@@ -55,10 +55,33 @@ export const DROPDOWN_WIDTH = {
 } as const
 
 /**
- * 設定ダイアログ専用定数
+ * ダイアログプリセット
+ *
+ * 用途別のダイアログサイズ設定
  */
-export const SETTINGS_DIALOG = {
-  width: DIALOG_WIDTH['2xl'],
-  height: DIALOG_HEIGHT.xl,
-  sidebarWidth: SIDEBAR_WIDTH.md,
+export const DIALOG_PRESET = {
+  /** 設定ダイアログ（2カラムレイアウト） */
+  settings: {
+    width: DIALOG_WIDTH['2xl'],
+    height: DIALOG_HEIGHT.xl,
+    sidebarWidth: SIDEBAR_WIDTH.md,
+  },
+  /** フォームダイアログ（作成・編集） */
+  form: {
+    width: DIALOG_WIDTH.md,
+  },
+  /** 確認ダイアログ（削除・アーカイブ） */
+  confirm: {
+    width: DIALOG_WIDTH.lg,
+  },
+  /** 詳細ダイアログ（カード詳細など） */
+  detail: {
+    width: DIALOG_WIDTH.xl,
+  },
 } as const
+
+/**
+ * 設定ダイアログ専用定数（後方互換用）
+ * @deprecated DIALOG_PRESET.settings を使用してください
+ */
+export const SETTINGS_DIALOG = DIALOG_PRESET.settings

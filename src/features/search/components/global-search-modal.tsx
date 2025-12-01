@@ -15,6 +15,7 @@ import {
   CommandSeparator,
 } from '@/components/ui/command'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { DIALOG_WIDTH } from '@/constants/ui'
 // TODO(#621): Events/Tasks削除後、plans/Sessionsに移行予定
 // import { useEventStore } from '@/features/events'
 import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
@@ -59,7 +60,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="overflow-hidden p-0" style={{ maxWidth: '768px' }}>
+      <DialogContent className={`overflow-hidden p-0 ${DIALOG_WIDTH['3xl']}`}>
         <Command className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3">
           <CommandInput placeholder="Search tasks, events, tags, folders..." value={query} onValueChange={setQuery} />
           <CommandList className="max-h-[500px]">

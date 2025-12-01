@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { DIALOG_PRESET } from '@/constants/ui'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { format } from 'date-fns'
@@ -106,7 +107,7 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent className={DIALOG_PRESET.form.width}>
         <DialogHeader>
           <DialogTitle>期限一括設定</DialogTitle>
           <DialogDescription>{selectedIds.length}件のプランに期限を設定します</DialogDescription>

@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { DIALOG_PRESET } from '@/constants/ui'
 
 type SaveViewDialogProps = {
   open: boolean
@@ -74,7 +75,7 @@ export function SaveViewDialog({ open, onOpenChange, onSave, currentFilters }: S
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className={DIALOG_PRESET.form.width}>
         <DialogHeader>
           <DialogTitle>Viewを保存</DialogTitle>
           <DialogDescription>現在のフィルター設定を新しいViewとして保存します</DialogDescription>

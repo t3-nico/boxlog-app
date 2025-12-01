@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { DIALOG_PRESET } from '@/constants/ui'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { Tag } from '@/types/tags'
 import { tagIconCategories, tagIconMapping, TagIconName } from '../constants/icons'
@@ -56,7 +57,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
 
   return (
     <Dialog open={open} onOpenChange={() => handleClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className={DIALOG_PRESET.form.width}>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{t('tags.actions.editTag')}</DialogTitle>

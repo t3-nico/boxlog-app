@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { DIALOG_WIDTH } from '@/constants/ui'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import type { TagUsage, TagWithChildren } from '@/types/tags'
 import { AlertTriangle } from 'lucide-react'
@@ -74,7 +75,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
 
   return (
     <AlertDialog open={!!tag} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent className="max-w-3xl gap-0 p-6">
+      <AlertDialogContent className={`${DIALOG_WIDTH['3xl']} gap-0 p-6`}>
         <AlertDialogHeader className="mb-4">
           <AlertDialogTitle>{t('tags.delete.confirmTitleWithName', { name: tag?.name || '' })}</AlertDialogTitle>
         </AlertDialogHeader>

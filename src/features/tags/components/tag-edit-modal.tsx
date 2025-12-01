@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { DIALOG_PRESET } from '@/constants/ui'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import type { TagGroup, TagWithChildren, UpdateTagInput } from '@/types/tags'
 
@@ -90,7 +91,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className={DIALOG_PRESET.form.width}>
         <DialogHeader>
           <DialogTitle>タグを編集</DialogTitle>
           <DialogDescription>{tag.path}</DialogDescription>

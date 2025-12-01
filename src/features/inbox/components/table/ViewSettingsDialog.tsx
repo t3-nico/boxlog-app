@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { DIALOG_PRESET } from '@/constants/ui'
 import { useEffect, useState } from 'react'
 import { useInboxViewStore } from '../../stores/useInboxViewStore'
 import type { InboxView } from '../../types/view'
@@ -85,7 +86,7 @@ export function ViewSettingsDialog({ open, onOpenChange, view, currentState }: V
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className={DIALOG_PRESET.form.width}>
         <DialogHeader>
           <DialogTitle>{view ? 'ビューを編集' : '新しいビューを作成'}</DialogTitle>
           <DialogDescription>
