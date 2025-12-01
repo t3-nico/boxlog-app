@@ -80,7 +80,7 @@ export function SearchBar({
           <span className="text-muted-foreground truncate">{placeholder}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[400px] p-0" align="start">
+      <PopoverContent className="w-[25rem] p-0" align="start">
         <Command>
           <CommandInput placeholder={placeholder} value={query} onValueChange={setQuery} />
           <CommandList>

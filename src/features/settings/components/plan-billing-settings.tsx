@@ -178,7 +178,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
       {/* 請求履歴 */}
       <SettingsCard title="請求履歴" description="過去の請求書と支払い履歴">
         <div className="space-y-4">
-          <div className="flex h-[120px] flex-col items-center justify-center">
+          <div className="flex h-32 flex-col items-center justify-center">
             <Receipt className="text-muted-foreground mb-2 h-8 w-8" />
             <p className="text-muted-foreground text-sm">請求履歴はありません</p>
           </div>

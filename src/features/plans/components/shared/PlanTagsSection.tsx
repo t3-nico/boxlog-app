@@ -52,8 +52,8 @@ export function PlanTagsSection({
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
 
   return (
-    <div className={`h-[48px] px-6 py-2 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
-      <div className="flex h-[32px] items-center gap-2">
+    <div className={`h-12 px-6 py-2 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
+      <div className="flex h-8 items-center gap-2">
         <Tag className="text-muted-foreground h-4 w-4 flex-shrink-0" />
         <div className="min-w-0 flex-1">
           <div className="bg-card dark:bg-card flex max-h-[5.25rem] flex-wrap items-center gap-2 overflow-y-auto pr-2">

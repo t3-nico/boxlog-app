@@ -64,7 +64,7 @@ export function PlanDateTimeInput({
   }
 
   return (
-    <div className={`flex h-[48px] items-center px-6 pt-2 pb-1 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
+    <div className={`flex h-12 items-center px-6 pt-2 pb-1 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
       <div className="flex items-center gap-3">
         <Calendar className="text-muted-foreground h-4 w-4 flex-shrink-0" />
 
@@ -78,7 +78,7 @@ export function PlanDateTimeInput({
       </div>
 
       {elapsedTime && (
-        <span className="text-muted-foreground flex h-8 w-[48px] items-center justify-center text-sm">
+        <span className="text-muted-foreground flex h-8 w-12 items-center justify-center text-sm">
           {elapsedTime}
         </span>
       )}

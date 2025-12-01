@@ -94,7 +94,7 @@ export const MobileNavigation = ({
             disabled={item.disabled}
             className={cn(
               'relative flex flex-col items-center justify-center',
-              'h-12 min-w-[64px] rounded-xl px-2 py-1',
+              'h-12 min-w-16 rounded-xl px-2 py-1',
               'transition-colors duration-200',
               'disabled:cursor-not-allowed disabled:opacity-50',
               activeItem === item.id ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:bg-foreground/8'
@@ -105,7 +105,7 @@ export const MobileNavigation = ({
               {item.icon}
               {/* バッジ */}
               {item.badge && item.badge > 0 ? (
-                <div className="bg-destructive text-destructive-foreground absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-xs">
+                <div className="bg-destructive text-destructive-foreground absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-xs">
                   {item.badge > 99 ? '99+' : item.badge}
                 </div>
               ) : null}

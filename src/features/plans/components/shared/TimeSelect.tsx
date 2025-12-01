@@ -169,7 +169,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
 
       if (targetIndex !== -1) {
         const itemHeight = 32 // py-1.5 = 6px*2 + text height ≈ 32px
-        const containerHeight = 200 // max-h-[200px]
+        const containerHeight = 200 // max-h-52
         // 選択された項目を中央に配置
         listRef.current.scrollTop = targetIndex * itemHeight - containerHeight / 2 + itemHeight / 2
         hasScrolledRef.current = true
@@ -326,7 +326,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
           onFocus={handleInputFocus}
           disabled={disabled}
           placeholder="10:00"
-          className={`flex h-8 w-[48px] bg-transparent px-0 py-1 text-center text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+          className={`flex h-8 w-12 bg-transparent px-0 py-1 text-center text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
             value ? 'text-foreground' : 'text-muted-foreground'
           } ${error ? 'text-destructive' : ''}`}
         />
@@ -335,12 +335,12 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
         )}
 
         {isOpen && !disabled && filteredOptions.length > 0 && (
-          <div className="border-input bg-popover absolute top-10 left-0 z-50 w-[88px] overflow-hidden rounded-md border shadow-md">
+          <div className="border-input bg-popover absolute top-10 left-0 z-50 w-20 overflow-hidden rounded-md border shadow-md">
             <div
               id="time-listbox"
               ref={listRef}
               role="listbox"
-              className="scrollbar-thin max-h-[200px] overflow-y-auto p-1"
+              className="scrollbar-thin max-h-52 overflow-y-auto p-1"
               style={{
                 scrollbarColor: 'color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent',
               }}

@@ -131,13 +131,13 @@ export function TagsSettings() {
           </div>
 
           {/* タグツリービュー */}
-          <div className="min-h-[200px]">
+          <div className="min-h-52">
             {isLoading ? (
-              <div className="flex h-[200px] items-center justify-center">
+              <div className="flex h-52 items-center justify-center">
                 <p className="text-muted-foreground text-sm">読み込み中...</p>
               </div>
             ) : filteredTags.length === 0 ? (
-              <div className="flex h-[200px] flex-col items-center justify-center gap-3">
+              <div className="flex h-52 flex-col items-center justify-center gap-3">
                 <p className="text-muted-foreground text-sm">
                   {searchQuery ? '該当するタグが見つかりません' : 'タグがありません'}
                 </p>

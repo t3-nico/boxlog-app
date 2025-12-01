@@ -63,7 +63,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
       <DialogContent className={`overflow-hidden p-0 ${DIALOG_WIDTH['3xl']}`}>
         <Command className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3">
           <CommandInput placeholder="Search tasks, events, tags, folders..." value={query} onValueChange={setQuery} />
-          <CommandList className="max-h-[500px]">
+          <CommandList className="max-h-[31rem]">
             <CommandEmpty>No results found.</CommandEmpty>
 
             {/* Recent Searches */}

@@ -119,7 +119,7 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopov
     <Popover modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>{triggerElement}</PopoverTrigger>
       <PopoverContent
-        className="!border-border bg-popover w-[560px] !border p-0"
+        className="!border-border bg-popover w-[35rem] !border p-0"
         align="end"
         side="right"
         sideOffset={8}
@@ -181,8 +181,8 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopov
             />
 
             {/* リピートと通知 */}
-            <div className="flex h-[40px] items-center gap-2 px-6 pb-2">
-              <div className="ml-4 flex h-[32px] items-center gap-2">
+            <div className="flex h-10 items-center gap-2 px-6 pb-2">
+              <div className="ml-4 flex h-8 items-center gap-2">
                 <Button
                   ref={recurrenceTriggerRef}
                   variant="ghost"
@@ -245,7 +245,7 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopov
             />
 
             {/* Description欄（最下部・コンパクト表示） */}
-            <div className="border-border/50 max-h-[232px] min-h-[48px] border-t px-6 py-2">
+            <div className="border-border/50 max-h-60 min-h-12 border-t px-6 py-2">
               <div className="flex h-full items-start gap-2">
                 <FileText className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
                 <div className="min-w-0 flex-1 overflow-hidden">

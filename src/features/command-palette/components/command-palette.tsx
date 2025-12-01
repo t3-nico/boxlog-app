@@ -244,7 +244,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
       title="Command Palette"
       description="Search for commands and recent items..."
       showCloseButton={false}
-      className="w-[650px] max-w-[90vw] sm:max-w-[650px]"
+      className="w-full max-w-[90vw] sm:max-w-2xl"
     >
       <div className="relative">
         <CommandInput
@@ -259,7 +259,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
           </kbd>
         </div>
       </div>
-      <CommandList className="max-h-[480px] min-h-[320px]">
+      <CommandList className="max-h-[30rem] min-h-80">
         <CommandEmpty>No results found.</CommandEmpty>
         {Object.entries(groupedResults).map(([category, categoryResults]) => {
           const categoryInfo = getCategoryInfo(category)

@@ -91,7 +91,7 @@ export function NotificationDialog() {
                     </Button>
                   </div>
                 </div>
-                <div className="max-h-[500px] space-y-2 overflow-y-auto">
+                <div className="max-h-[31rem] space-y-2 overflow-y-auto">
                   {allNotifications.map(
                     (notification: {
                       id: string
@@ -159,7 +159,7 @@ export function NotificationDialog() {
                     {t('notifications.actions.markAllAsRead')}
                   </Button>
                 </div>
-                <div className="max-h-[500px] space-y-2 overflow-y-auto">
+                <div className="max-h-[31rem] space-y-2 overflow-y-auto">
                   {unreadNotifications.map(
                     (notification: {
                       id: string

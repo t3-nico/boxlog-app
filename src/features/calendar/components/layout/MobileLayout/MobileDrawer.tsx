@@ -232,7 +232,7 @@ export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, classNam
 
                   {/* バッジ */}
                   {item.badge && item.badge > 0 ? (
-                    <div className="bg-primary text-primary-foreground flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs">
+                    <div className="bg-primary text-primary-foreground flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs">
                       {item.badge > 99 ? '99+' : item.badge}
                     </div>
                   ) : null}
