@@ -28,7 +28,7 @@ import { useWeekendNavigation } from '../hooks/useWeekendNavigation'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { calculateViewDateRange } from '../lib/view-helpers'
 import { DnDProvider } from '../providers/DnDProvider'
-import { plansToCalendarPlans } from '../utils/planDataAdapter'
+import { expandRecurringPlansToCalendarPlans } from '../utils/planDataAdapter'
 
 import type { CalendarPlan, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
@@ -229,7 +229,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     })
   }, [plansData])
 
-  // 表示範囲のイベントを取得してCalendarPlan型に変換（削除済みを除外）
+  // 表示範囲のイベントを取得してCalendarPlan型に変換（繰り返し展開対応）
   const filteredEvents = useMemo(() => {
     // planデータがない場合は空配列を返す
     if (!plansData) {
@@ -246,14 +246,14 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     })
 
     // start_time/end_timeが設定されているplanのみを抽出
+    // ただし、繰り返しプランはdue_dateのみでも展開対象
     const plansWithTime = plansWithTags.filter((plan) => {
-      return plan.start_time && plan.end_time
+      const hasTime = plan.start_time && plan.end_time
+      const isRecurring = plan.recurrence_type && plan.recurrence_type !== 'none'
+      return hasTime || (isRecurring && plan.due_date)
     })
 
-    // planをCalendarPlanに変換
-    const calendarEvents = plansToCalendarPlans(plansWithTime as plan[])
-
-    // 表示範囲内のイベントのみをフィルタリング
+    // 表示範囲
     const startDateOnly = new Date(
       viewDateRange.start.getFullYear(),
       viewDateRange.start.getMonth(),
@@ -265,7 +265,21 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       viewDateRange.end.getDate()
     )
 
+    // planをCalendarPlanに変換（繰り返し展開対応）
+    // TODO: 例外情報をDBから取得してここに渡す
+    const calendarEvents = expandRecurringPlansToCalendarPlans(
+      plansWithTime as plan[],
+      startDateOnly,
+      endDateOnly
+    )
+
+    // 展開後のイベントは既に範囲内なので、非繰り返しプランのみ追加フィルタリング
     const filtered = calendarEvents.filter((event) => {
+      // 繰り返しプランは展開時に範囲フィルタ済み
+      if (event.isRecurring) {
+        return true
+      }
+
       const eventStartDateOnly = new Date(
         event.startDate.getFullYear(),
         event.startDate.getMonth(),
@@ -280,9 +294,10 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       )
     })
 
-    logger.log(`[CalendarController] plansフィルタリング:`, {
+    logger.log(`[CalendarController] plansフィルタリング（繰り返し展開対応）:`, {
       totalplans: plansData.length,
       plansWithTime: plansWithTime.length,
+      expandedCount: calendarEvents.length,
       filteredCount: filtered.length,
       dateRange: {
         start: startDateOnly.toDateString(),
@@ -292,7 +307,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         title: e.title,
         startDate: e.startDate.toISOString(),
         endDate: e.endDate.toISOString(),
-        tags: e.tags,
+        isRecurring: e.isRecurring,
       })),
     })
 
