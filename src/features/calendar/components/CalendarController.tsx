@@ -42,6 +42,7 @@ const ThreeDayView = React.lazy(() =>
   import('./views/ThreeDayView').then((module) => ({ default: module.ThreeDayView }))
 )
 const FiveDayView = React.lazy(() => import('./views/FiveDayView').then((module) => ({ default: module.FiveDayView })))
+const AgendaView = React.lazy(() => import('./views/AgendaView').then((module) => ({ default: module.AgendaView })))
 
 // ローディングフォールバック
 const CalendarViewSkeleton = () => (
@@ -491,6 +492,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
               return <FiveDayView {...commonProps} showWeekends={showWeekends} />
             case 'week':
               return <WeekView {...commonProps} showWeekends={showWeekends} />
+            case 'agenda':
+              return <AgendaView {...commonProps} />
             default:
               return <DayView {...commonProps} />
           }
