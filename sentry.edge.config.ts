@@ -1,0 +1,44 @@
+/**
+ * Sentry Edge設定（Edge Runtime）
+ *
+ * Middleware、Edge API Routes用の軽量設定。
+ * instrumentation.ts から動的にインポートされます。
+ *
+ * @see https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+ */
+
+import * as Sentry from '@sentry/nextjs'
+
+const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN
+const VERCEL_ENV = process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.NODE_ENV || 'development'
+const IS_PRODUCTION = process.env.NODE_ENV === 'production'
+
+// DSNが設定されている場合のみ初期化
+if (SENTRY_DSN) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    environment: VERCEL_ENV,
+    release: process.env.NEXT_PUBLIC_APP_VERSION,
+
+    // Edge環境は軽量設定
+    // トレースサンプリングを低めに設定（コスト最適化）
+    tracesSampleRate: IS_PRODUCTION ? 0.05 : 0.5,
+
+    // デバッグモード無効（Edgeは軽量に）
+    debug: false,
+
+    // 本番・プレビュー環境のみ有効
+    enabled: IS_PRODUCTION || VERCEL_ENV === 'preview',
+
+    // Edgeでは最小限のフィルタリング
+    beforeSend(event) {
+      // Edgeタイムアウトエラーは無視（正常動作の一部）
+      const errorMessage = event.exception?.values?.[0]?.value || ''
+      if (errorMessage.includes('Edge function has timed out')) {
+        return null
+      }
+
+      return event
+    },
+  })
+}

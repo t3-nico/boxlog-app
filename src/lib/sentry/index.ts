@@ -1,17 +1,25 @@
 /**
  * Sentry統合システム - エクスポートモジュール
+ *
+ * Sentryの初期化は instrumentation.ts / instrumentation-client.ts で行われます。
+ * このモジュールはヘルパー関数のみを提供します。
  */
 
 // メイン統合機能
 export {
-  SentryErrorHandler,
-  SentryIntegration,
+  // 推奨API
   handleApiError,
   handleReactError,
-  initializeSentry,
+  isSentryInitialized,
   reportToSentry,
+  SentryErrorHandler,
+  // 後方互換性（非推奨）
+  /** @deprecated */
+  initializeSentry,
+  /** @deprecated */
+  SentryIntegration,
+  /** @deprecated */
   sentryIntegration,
-  type SentryIntegrationOptions,
 } from './integration'
 
 // パフォーマンス監視
