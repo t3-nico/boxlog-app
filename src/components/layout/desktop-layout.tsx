@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar'
 import { AppBar } from '@/features/navigation/components/appbar'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
@@ -11,6 +12,7 @@ import { StatsSidebar } from '@/features/stats'
 import { TagsSidebarWrapper } from '@/features/tags/components/TagsSidebarWrapper'
 
 import { MainContentWrapper } from './main-content-wrapper'
+import { ChronotypeStatusItem, ScheduleStatusItem, StatusBar } from './status-bar'
 
 interface DesktopLayoutProps {
   children: React.ReactNode
@@ -28,6 +30,8 @@ interface DesktopLayoutProps {
 export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   const { isOpen } = useSidebarStore()
   const pathname = usePathname()
+  const user = useAuthStore((state) => state.user)
+  const isAuthenticated = !!user
 
   // ページごとにSidebarを切り替え
   const isCalendarPage = pathname?.startsWith(`/${locale}/calendar`) ?? false
@@ -50,26 +54,41 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         <AppBar />
       </div>
 
-      {/* 元のレイアウト（ResizablePanel） */}
-      <ResizablePanelGroup direction="horizontal" className="flex-1">
-        {/* Sidebar（240px、開閉可能）← ページごとに動的切り替え */}
-        {/* Inboxページでは非表示 */}
-        {isOpen && !isInboxPage && (
-          <>
-            <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
-              {renderSidebar()}
-            </ResizablePanel>
-            <ResizableHandle className="border-border hover:bg-foreground/8 w-1 border-r transition-colors" />
-          </>
-        )}
+      {/* メインエリア（サイドバー + コンテンツ + ステータスバー） */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        {/* 上部: サイドバー + コンテンツ */}
+        <ResizablePanelGroup direction="horizontal" className="min-h-0 flex-1">
+          {/* Sidebar（240px、開閉可能）← ページごとに動的切り替え */}
+          {/* Inboxページでは非表示 */}
+          {isOpen && !isInboxPage && (
+            <>
+              <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
+                {renderSidebar()}
+              </ResizablePanel>
+              <ResizableHandle className="border-border hover:bg-foreground/8 w-1 border-r transition-colors" />
+            </>
+          )}
 
-        {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
-        <ResizablePanel>
-          <div className="relative flex h-full flex-col">
-            <MainContentWrapper>{children}</MainContentWrapper>
-          </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+          {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
+          <ResizablePanel className="overflow-hidden">
+            <div className="relative flex h-full flex-col">
+              <MainContentWrapper>{children}</MainContentWrapper>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+
+        {/* ステータスバー（サイドバー〜コンテンツ全幅、ログイン後のみ表示） */}
+        {isAuthenticated ? (
+          <StatusBar>
+            <StatusBar.Left>
+              <ScheduleStatusItem />
+            </StatusBar.Left>
+            <StatusBar.Right>
+              <ChronotypeStatusItem />
+            </StatusBar.Right>
+          </StatusBar>
+        ) : null}
+      </div>
     </div>
   )
 }

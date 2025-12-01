@@ -43,6 +43,7 @@ export function useNotifications({ events, onReminderTriggered }: UseNotificatio
       setPermission(Notification.permission)
       // localStorage から権限リクエスト履歴を取得
       const requested = localStorage.getItem('notification-permission-requested')
+
       setHasRequested(requested === 'true')
     }
   }, [])

@@ -63,7 +63,7 @@ export class AnalyticsTracker {
   private eventQueue: Array<{ name: string; properties: EventProperties; timestamp: number }> = []
   private flushTimer?: NodeJS.Timeout
   private userConsent = false
-  private userId?: string
+  private userId?: string | undefined
   private sessionId: string
   private sessionStart: number
 
@@ -267,6 +267,7 @@ export class AnalyticsTracker {
       const gtag = window.gtag
       events.forEach((event) => {
         gtag('event', event.name, {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 外部API型との互換性
           event_category: getEventCategory(event.name as any),
           event_timestamp: event.timestamp,
           ...event.properties,
@@ -405,6 +406,7 @@ export class AnalyticsTracker {
   /**
    * 🐛 デバッグログ
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- デバッグ用の汎用データ
   private debug(message: string, data?: any): void {
     if (this.config.debug) {
       console.log(`[Analytics] ${message}`, data)
@@ -417,8 +419,11 @@ export class AnalyticsTracker {
  */
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 外部ライブラリの型定義
     gtag?: (...args: any[]) => void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 外部ライブラリの型定義
     mixpanel?: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 外部ライブラリの型定義
     amplitude?: any
   }
 }

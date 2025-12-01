@@ -149,8 +149,8 @@ export const DateDisplay = ({
       onKeyDown={keyDownHandler}
       {...accessibilityProps}
     >
-      <MonthYearDisplay monthYear={monthYear} />
-      <DateMainDisplay dayName={dayName} dateString={dateString} today={today} />
+      <MonthYearDisplay {...(monthYear && { monthYear })} />
+      <DateMainDisplay {...(dayName && { dayName })} dateString={dateString} today={today} />
     </Component>
   )
 }

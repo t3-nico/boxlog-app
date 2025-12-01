@@ -8,13 +8,13 @@ import { cn } from '@/lib/utils'
 interface VirtualCalendarGridProps {
   dates: Date[]
   plans: CalendarPlan[]
-  hourHeight?: number
-  startHour?: number
-  endHour?: number
-  overscan?: number // レンダリングバッファ（時間単位）
-  onPlanClick?: (plan: CalendarPlan) => void
-  onCreatePlan?: (date: Date, time: string) => void
-  className?: string
+  hourHeight?: number | undefined
+  startHour?: number | undefined
+  endHour?: number | undefined
+  overscan?: number | undefined // レンダリングバッファ（時間単位）
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined
+  onCreatePlan?: ((date: Date, time: string) => void) | undefined
+  className?: string | undefined
 }
 
 interface VirtualizedItem {
@@ -126,13 +126,14 @@ export const VirtualCalendarGrid = ({
     [hourHeight, startHour]
   )
 
+  // Intersection Observer state
+  const [observer, setObserver] = useState<IntersectionObserver | null>(null)
+
   // Intersection Observer for further optimization
-  const observerRef = useRef<IntersectionObserver | null>(null)
-
   useEffect(() => {
-    if (!containerRef.current) return
+    if (!containerRef.current) return undefined
 
-    observerRef.current = new IntersectionObserver(
+    const newObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const element = entry.target as HTMLElement
@@ -150,8 +151,11 @@ export const VirtualCalendarGrid = ({
       }
     )
 
+    setObserver(newObserver)
+
     return () => {
-      observerRef.current?.disconnect()
+      newObserver.disconnect()
+      setObserver(null)
     }
   }, [overscan, hourHeight])
 
@@ -173,10 +177,10 @@ export const VirtualCalendarGrid = ({
           })}
           onPlanClick={onPlanClick}
           onCreatePlan={onCreatePlan}
-          observer={observerRef.current}
+          observer={observer}
         />
       ))
-  }, [virtualItems, dates, visiblePlans, onPlanClick, onCreatePlan])
+  }, [virtualItems, dates, visiblePlans, onPlanClick, onCreatePlan, observer])
 
   // 全体の高さ計算
   const totalHeight = (endHour - startHour) * hourHeight
@@ -228,9 +232,9 @@ interface VirtualTimeSlotProps {
   height: number
   dates: Date[]
   plans: CalendarPlan[]
-  onPlanClick?: (plan: CalendarPlan) => void
-  onCreatePlan?: (date: Date, time: string) => void
-  observer?: IntersectionObserver | null
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined
+  onCreatePlan?: ((date: Date, time: string) => void) | undefined
+  observer?: IntersectionObserver | null | undefined
 }
 
 const VirtualTimeSlot = React.memo(function VirtualTimeSlot({
@@ -252,6 +256,7 @@ const VirtualTimeSlot = React.memo(function VirtualTimeSlot({
       observer.observe(element)
       return () => observer.unobserve(element)
     }
+    return undefined
   }, [observer])
 
   const timeString = `${String(hour).padStart(2, '0')}:00`
@@ -292,8 +297,8 @@ interface VirtualDayColumnProps {
   date: Date
   hour: number
   plans: CalendarPlan[]
-  onPlanClick?: (plan: CalendarPlan) => void
-  onCreatePlan?: (date: Date, time: string) => void
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined
+  onCreatePlan?: ((date: Date, time: string) => void) | undefined
 }
 
 const VirtualDayColumn = React.memo(function VirtualDayColumn({
@@ -394,7 +399,7 @@ const VirtualPlanCard = React.memo(function VirtualPlanCard({ plan, onClick }: V
 // ユーティリティ関数
 function format(date: Date, formatStr: string): string {
   if (formatStr === 'yyyy-MM-dd') {
-    return date.toISOString().split('T')[0]
+    return date.toISOString().split('T')[0]!
   }
   if (formatStr === 'HH:mm') {
     return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`

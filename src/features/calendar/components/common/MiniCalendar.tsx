@@ -11,25 +11,27 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 export interface MiniCalendarProps {
-  selectedDate?: Date
-  onDateSelect?: (date: Date | undefined) => void
-  onMonthChange?: (date: Date) => void
-  className?: string
-  showWeekNumbers?: boolean
+  selectedDate?: Date | undefined
+  onDateSelect?: ((date: Date | undefined) => void) | undefined
+  onMonthChange?: ((date: Date) => void) | undefined
+  className?: string | undefined
+  showWeekNumbers?: boolean | undefined
   // 現在表示している期間（週表示などの範囲ハイライト用）
-  displayRange?: {
-    start: Date
-    end: Date
-  }
+  displayRange?:
+    | {
+        start: Date
+        end: Date
+      }
+    | undefined
   // 表示する月（メインカレンダーの日付に同期）
-  month?: Date
+  month?: Date | undefined
   // Popoverモード
-  asPopover?: boolean
-  popoverTrigger?: React.ReactNode
-  popoverClassName?: string
-  popoverAlign?: 'start' | 'center' | 'end'
-  popoverSide?: 'top' | 'right' | 'bottom' | 'left'
-  onOpenChange?: (open: boolean) => void
+  asPopover?: boolean | undefined
+  popoverTrigger?: React.ReactNode | undefined
+  popoverClassName?: string | undefined
+  popoverAlign?: 'start' | 'center' | 'end' | undefined
+  popoverSide?: 'top' | 'right' | 'bottom' | 'left' | undefined
+  onOpenChange?: ((open: boolean) => void) | undefined
 }
 
 /**
@@ -113,21 +115,21 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
           <Calendar
             mode="range"
             selected={range}
-            month={month}
+            {...(month && { month })}
             onSelect={(newRange) => {
               // rangeモードでは日付クリック時にその日に移動
               if (newRange?.from) {
                 handleDateSelect(newRange.from)
               }
             }}
-            onMonthChange={onMonthChange}
+            {...(onMonthChange && { onMonthChange })}
             showWeekNumber={false}
             captionLayout="dropdown"
-            locale={locale === 'ja' ? ja : undefined}
+            {...(locale === 'ja' && { locale: ja })}
             weekStartsOn={1}
             startMonth={new Date(2020, 0)}
             endMonth={new Date(2050, 11)}
-            className={className}
+            {...(className && { className })}
           />
         )
       }
@@ -138,16 +140,16 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
           mode="single"
           required={false}
           selected={selectedDate}
-          month={month}
+          {...(month && { month })}
           onSelect={handleDateSelect}
-          onMonthChange={onMonthChange}
+          {...(onMonthChange && { onMonthChange })}
           showWeekNumber={false}
           captionLayout="dropdown"
-          locale={locale === 'ja' ? ja : undefined}
+          {...(locale === 'ja' && { locale: ja })}
           weekStartsOn={1}
           startMonth={new Date(2020, 0)}
           endMonth={new Date(2050, 11)}
-          className={className}
+          {...(className && { className })}
         />
       )
     }

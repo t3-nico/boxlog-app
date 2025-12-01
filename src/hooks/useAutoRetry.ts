@@ -93,8 +93,8 @@ export function useAutoRetry<T>(asyncFunction: () => Promise<T>, config: RetryCo
     isRetrying: false,
   })
 
-  const timeoutRef = useRef<NodeJS.Timeout>()
-  const abortControllerRef = useRef<AbortController>()
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const abortControllerRef = useRef<AbortController | undefined>(undefined)
 
   // 計算された遅延時間を取得
   const calculateDelay = useCallback(
@@ -290,7 +290,7 @@ export function useDataFetchRetry<T>(fetchFunction: () => Promise<T>, config: Re
     ...config,
     shouldRetry:
       config.shouldRetry ||
-      ((error: Error, retryCount: number) => {
+      ((_error: Error, retryCount: number) => {
         const category = getErrorCategory(ERROR_CODES.DATA_NOT_FOUND) // サンプル
         return ['data', 'api', 'system'].includes(category) && retryCount < 2
       }),

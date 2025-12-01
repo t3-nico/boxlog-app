@@ -104,35 +104,44 @@
 
 ### 0.4 ドキュメントの準備
 
+- [ ] **前回リリース以降の全PRを取得**
+
+  ```bash
+  # 前回リリースのタグを確認
+  git tag --sort=-creatordate | head -5
+
+  # 前回リリース以降のPR一覧を取得（例: v0.5.0以降）
+  gh pr list --state merged --base main --limit 100 --json number,title,mergedAt \
+    | jq -r '.[] | select(.mergedAt > "YYYY-MM-DDT00:00:00Z") | "- [#\(.number)](https://github.com/t3-nico/boxlog-app/pull/\(.number)) - \(.title)"'
+  ```
+
 - [ ] **リリースノートファイルの作成**
 
   ```bash
-  # テンプレートをコピー
-  cp docs/releases/template.md RELEASE_NOTES_v${VERSION}.md
-
-  # ファイル名: RELEASE_NOTES_v${VERSION}.md
-  # 場所: プロジェクトルート
+  # テンプレートをコピー（配置場所: docs/releases/）
+  cp docs/releases/template.md docs/releases/RELEASE_NOTES_v${VERSION}.md
 
   # ✅ 確認: ファイルが存在すること
-  ls -la RELEASE_NOTES_v${VERSION}.md
+  ls -la docs/releases/RELEASE_NOTES_v${VERSION}.md
   ```
 
 - [ ] **リリースノートの内容確認**
   - [ ] バージョン番号が正しい（package.jsonと一致）
   - [ ] リリース日が正しい
-  - [ ] PR番号が正しい
+  - [ ] **前回リリース以降の全てのPRが含まれている**（⚠️ 最重要）
+  - [ ] 各PRにリンクが付いている
+  - [ ] カテゴリ別に整理されている（Added, Changed, Fixed, Removed, Performance, Security）
   - [ ] **Full Changelogリンクが含まれている**
     ```markdown
     **Full Changelog**: https://github.com/t3-nico/boxlog-app/compare/v{前バージョン}...v{今回バージョン}
     ```
-  - [ ] 新機能の説明が含まれている
   - [ ] Breaking Changesがあれば明記されている
   - [ ] Migration Guideが必要なら含まれている
 
 - [ ] **変更をコミット**
 
   ```bash
-  git add RELEASE_NOTES_v${VERSION}.md
+  git add docs/releases/RELEASE_NOTES_v${VERSION}.md
   git commit -m "docs(release): add release notes for v${VERSION}
 
   🤖 Generated with [Claude Code](https://claude.com/claude-code)
@@ -255,7 +264,7 @@
 ```bash
 gh release create v${VERSION} \
   --title "v${VERSION}: {簡潔な説明}" \
-  --notes-file RELEASE_NOTES_v${VERSION}.md
+  --notes-file docs/releases/RELEASE_NOTES_v${VERSION}.md
 ```
 
 ---
@@ -321,15 +330,24 @@ gh release create v${VERSION} \
 **対策**:
 
 - ✅ template.md をコピーして使用（リンクがあらかじめ含まれている）
-- ✅ Phase 0.4で確認: `grep "Full Changelog" RELEASE_NOTES_v${VERSION}.md`
+- ✅ Phase 0.4で確認: `grep "Full Changelog" docs/releases/RELEASE_NOTES_v${VERSION}.md`
 
 ### 失敗例4: リリースノートファイル名の不整合
 
 **対策**:
 
-- ✅ ファイル名は必ず `RELEASE_NOTES_v{VERSION}.md`
-- ✅ 例: `RELEASE_NOTES_v0.4.0.md`（`v`を含む）
-- ✅ template.md をコピーする際にファイル名を正しく指定
+- ✅ ファイル名は必ず `docs/releases/RELEASE_NOTES_v{VERSION}.md`
+- ✅ 例: `docs/releases/RELEASE_NOTES_v0.6.0.md`（`v`を含む）
+- ✅ template.md をコピーする際にファイル名と配置場所を正しく指定
+
+### 失敗例6: リリースノートに一部のPRしか含まれていない
+
+**対策**:
+
+- ✅ 前回リリース以降の**全てのPR**を取得してから記載
+- ✅ `gh pr list --state merged` コマンドで漏れなく取得
+- ✅ Phase 0.4で全PR取得を必須化
+- ✅ リリースPR単体の変更だけでなく、期間中にマージされた全PRを含める
 
 ### 失敗例5: GitHub Releaseを手動作成し忘れる
 

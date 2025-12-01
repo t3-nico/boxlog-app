@@ -302,33 +302,36 @@ function applyHighContrastTheme(themeName: string): void {
   document.head.appendChild(style)
 }
 
-export function useHighContrast() {
-  const { t } = useI18n()
-  const [isHighContrastEnabled, setIsHighContrastEnabled] = useState(false)
-  const [currentTheme, setCurrentTheme] = useState<string>('default')
-  const [isSystemHighContrast, setIsSystemHighContrast] = useState(false)
+// localStorageから安全に設定を取得
+const getStoredHighContrast = (): boolean => {
+  if (typeof window === 'undefined') return false
+  return localStorage.getItem('accessibility-high-contrast') === 'true'
+}
 
-  // 翻訳されたテーマ名を取得
-  const getThemeNames = useCallback(
-    () => ({
-      default: t('calendar.accessibility.standardContrast'),
-      blackOnWhite: '黒地に白文字（ハイコントラスト）',
-      whiteOnBlack: '白地に黒文字（ハイコントラスト）',
-      yellowOnBlack: '黒地に黄色文字（ハイコントラスト）',
-      blueOnYellow: '黄色地に青文字（ハイコントラスト）',
-    }),
-    [t]
-  )
+const getStoredContrastTheme = (): string => {
+  if (typeof window === 'undefined') return 'default'
+  const savedTheme = localStorage.getItem('accessibility-contrast-theme')
+  return savedTheme && HIGH_CONTRAST_THEMES[savedTheme] ? savedTheme : 'default'
+}
+
+export function useHighContrast() {
+  useI18n()
+  // 遅延初期化でlocalStorageから読み込み
+  const [isHighContrastEnabled, setIsHighContrastEnabled] = useState(getStoredHighContrast)
+  const [currentTheme, setCurrentTheme] = useState<string>(getStoredContrastTheme)
+  const [isSystemHighContrast, setIsSystemHighContrast] = useState(false)
 
   // システムのハイコントラスト設定を監視
   useEffect(() => {
     const updateSystemHighContrast = () => {
       const systemHighContrast = detectSystemHighContrast()
+
       setIsSystemHighContrast(systemHighContrast)
 
       // システムでハイコントラストが有効な場合、自動的に適用
       if (systemHighContrast && !isHighContrastEnabled) {
         setIsHighContrastEnabled(true)
+
         setCurrentTheme('blackOnWhite')
       }
     }
@@ -354,19 +357,7 @@ export function useHighContrast() {
     }
   }, [isHighContrastEnabled])
 
-  // ローカルストレージから設定を復元
-  useEffect(() => {
-    const savedHighContrast = localStorage.getItem('accessibility-high-contrast')
-    const savedTheme = localStorage.getItem('accessibility-contrast-theme')
-
-    if (savedHighContrast === 'true') {
-      setIsHighContrastEnabled(true)
-    }
-
-    if (savedTheme && HIGH_CONTRAST_THEMES[savedTheme]) {
-      setCurrentTheme(savedTheme)
-    }
-  }, [])
+  // ローカルストレージからの設定復元は遅延初期化で行うため、useEffectは不要
 
   // テーマの適用
   useEffect(() => {
@@ -485,7 +476,7 @@ export function useHighContrast() {
     getContrastClassName,
 
     // 便利なプロパティ
-    colors: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default).colors,
-    isWcagAAA: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default).wcagAAA,
+    colors: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default!).colors,
+    isWcagAAA: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default!).wcagAAA,
   }
 }

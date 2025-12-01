@@ -9,7 +9,7 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import { arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import type { TagGroup } from '@/types/tags'
 import { useReorderTagGroups } from './use-tag-groups'
@@ -40,13 +40,15 @@ export function useTagGroupsDnd(groups: TagGroup[]) {
     })
   )
 
-  // グループIDが変わった時のみlocalGroupsを更新
-  // useEffectを使わず、レンダリング時に直接チェック
+  // グループIDが変わった時のみlocalGroupsを更新（useEffect内でref操作）
   const currentGroupIds = groups.map((g) => g.id).join(',')
-  if (currentGroupIds !== prevGroupIdsRef.current && !activeGroup) {
-    prevGroupIdsRef.current = currentGroupIds
-    setLocalGroups(groups)
-  }
+  useEffect(() => {
+    if (currentGroupIds !== prevGroupIdsRef.current && !activeGroup) {
+      prevGroupIdsRef.current = currentGroupIds
+
+      setLocalGroups(groups)
+    }
+  }, [currentGroupIds, groups, activeGroup])
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event

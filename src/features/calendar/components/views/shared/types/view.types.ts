@@ -17,14 +17,14 @@ export interface ViewProps {
 export interface DayColumnProps {
   date: Date
   events: CalendarPlan[]
-  hourHeight?: number
-  isToday?: boolean
-  isWeekend?: boolean
-  onTimeClick?: (date: Date, hour: number, minute: number) => void
-  onEventClick?: (plan: CalendarPlan) => void
-  onEventDoubleClick?: (plan: CalendarPlan) => void
-  onEventContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
-  className?: string
+  hourHeight?: number | undefined
+  isToday?: boolean | undefined
+  isWeekend?: boolean | undefined
+  onTimeClick?: ((date: Date, hour: number, minute: number) => void) | undefined
+  onEventClick?: ((plan: CalendarPlan) => void) | undefined
+  onEventDoubleClick?: ((plan: CalendarPlan) => void) | undefined
+  onEventContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined
+  className?: string | undefined
 }
 
 export interface DayDisplayProps {

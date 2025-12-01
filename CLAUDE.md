@@ -124,12 +124,13 @@ AIは、コードを書く前に以下を必ず実行すること：
 - [ ] データフェッチングは、どの方法が推奨されているか？
 - [ ] この機能にNext.js組み込みの解決策は存在するか？
 
-### 3. theme.ts適用可能性の確認（所要時間：10秒）
+### 3. globals.css セマンティックトークン確認（所要時間：10秒）
 
 ```typescript
-// 必ず確認：/src/config/ui/theme.ts
-// スタイリングに関わる全ての値はここから取得
+// 必ず確認：/src/styles/globals.css
+// スタイリングは globals.css で定義されたセマンティックトークンを使用
 // 新しい色やサイズを勝手に定義しない
+// 例: bg-card, text-foreground, border-border 等
 ```
 
 ---
@@ -146,8 +147,8 @@ AIは、コードを書く前に以下を必ず実行すること：
 #### 2. スタイリング
 
 - ❌ 禁止: `style`属性、任意のカラーコード、マジックナンバー
-- ❌ 禁止: `className="text-blue-500"`（Tailwindクラスの直接指定）
-- ✅ 必須: `/src/config/ui/theme.ts`の値のみ使用
+- ❌ 禁止: `className="text-blue-500"`（Tailwindカラークラスの直接指定）
+- ✅ 必須: `globals.css` のセマンティックトークン使用（`bg-card`, `text-foreground` 等）
 
 #### 3. コンポーネント作成
 
@@ -254,6 +255,7 @@ npm run dev         # 開発サーバー起動・停止
 - **コマンド一覧**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
 - **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
 - **Issueラベル付けルール**: [`docs/development/ISSUE_LABELING_RULES.md`](docs/development/ISSUE_LABELING_RULES.md)
+- **PRラベル付けルール**: [`docs/development/PR_LABELING_RULES.md`](docs/development/PR_LABELING_RULES.md)
 - **セッション管理**: [`docs/development/CLAUDE_SESSION_MANAGEMENT.md`](docs/development/CLAUDE_SESSION_MANAGEMENT.md)
 
 ### 🚀 リリース管理（⚠️ 必読）

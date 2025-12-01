@@ -12,9 +12,8 @@ import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarH
 import { SidebarTabLayout } from '@/features/navigation/components/sidebar/SidebarTabLayout'
 import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
 
-import { CalendarNavigation, type CalendarSortType } from '../navigation/CalendarNavigation'
 import { InboxCardList } from './inbox/InboxCardList'
-import { type InboxFilter, type InboxSort } from './inbox/InboxNavigation'
+import { InboxNavigation, type InboxFilter, type InboxSort } from './inbox/InboxNavigation'
 
 /**
  * CalendarSidebar - カレンダーページ専用サイドバー
@@ -34,11 +33,6 @@ export function CalendarSidebar() {
   const [showHigh, setShowHigh] = useState(true)
   const [showMedium, setShowMedium] = useState(true)
   const [showLow, setShowLow] = useState(true)
-
-  // CalendarNavigation用のstate
-  const [calendarSort, setCalendarSort] = useState<CalendarSortType>('updated-desc')
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [triggerCreate, setTriggerCreate] = useState(false)
 
   // 現在表示している週の範囲を計算（週番号のハイライト表示用）
   const displayRange = useMemo(() => {
@@ -66,29 +60,22 @@ export function CalendarSidebar() {
       label: 'Inbox',
       content: (
         <>
-          {/* ナビゲーションコンテナ: コンテナ40px + 上padding 8px = 合計48px */}
-          <div className="flex h-12 shrink-0 items-center px-2 pt-2">
-            <CalendarNavigation
-              sort={calendarSort}
-              onSortChange={setCalendarSort}
-              selectedTags={selectedTags}
-              onTagsChange={setSelectedTags}
-              onCreateClick={() => setTriggerCreate(true)}
-            />
-          </div>
-          {/* カードリストコンテナ */}
-          <div className="flex-1 overflow-hidden px-2">
-            <InboxCardList
+          {/* ナビゲーションコンテナ: 高さ48px（内部32px + 上padding 8px + 下padding 8px） */}
+          <div className="h-12 shrink-0 px-4 pt-2">
+            <InboxNavigation
               filter={filter}
+              onFilterChange={setFilter}
               sort={sort}
+              onSortChange={setSort}
               showHigh={showHigh}
               showMedium={showMedium}
               showLow={showLow}
-              calendarSort={calendarSort}
-              selectedTags={selectedTags}
-              triggerCreate={triggerCreate}
-              onCreateFinish={() => setTriggerCreate(false)}
+              onPriorityToggle={handlePriorityToggle}
             />
+          </div>
+          {/* カードリストコンテナ */}
+          <div className="flex-1 overflow-hidden px-4">
+            <InboxCardList filter={filter} sort={sort} showHigh={showHigh} showMedium={showMedium} showLow={showLow} />
           </div>
         </>
       ),
@@ -97,7 +84,7 @@ export function CalendarSidebar() {
       value: 'view',
       label: 'View',
       content: (
-        <div className="flex w-full flex-col items-center px-2 pt-2">
+        <div className="px-4 pt-4">
           <MiniCalendar
             selectedDate={navigation?.currentDate}
             month={navigation?.currentDate}
@@ -106,14 +93,9 @@ export function CalendarSidebar() {
                 navigation.navigateToDate(date, true)
               }
             }}
-            onMonthChange={(date) => {
-              if (navigation) {
-                navigation.navigateToDate(date, true)
-              }
-            }}
-            showWeekNumbers={false}
+            showWeekNumbers={true}
             displayRange={displayRange}
-            className="w-fit border-none bg-transparent p-0"
+            className="border-input w-full rounded-lg border"
           />
         </div>
       ),

@@ -109,17 +109,20 @@ export class Logger {
    * 🚨 エラーログ
    */
   error(message: string, error?: Error | unknown, context?: Record<string, unknown>): void {
-    const errorEntry: Partial<ErrorLogEntry> = {
-      error:
-        error instanceof Error
-          ? {
-              name: error.name,
-              message: error.message,
-              stack: error.stack,
-              code: error instanceof Error && 'code' in error ? (error as { code: string }).code : undefined,
-            }
-          : undefined,
-      context,
+    const errorEntry: Partial<ErrorLogEntry> = {}
+
+    // undefined を除外して追加
+    if (error instanceof Error) {
+      errorEntry.error = {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        code: error instanceof Error && 'code' in error ? (error as { code: string }).code : undefined,
+      }
+    }
+
+    if (context) {
+      errorEntry.context = context
     }
 
     this.log('error', message, errorEntry)

@@ -16,9 +16,9 @@ interface KanbanCardProps {
   card: KanbanCardType
   columnId: string
   index: number
-  onEdit?: (card: KanbanCardType) => void
-  onDelete?: (cardId: string) => void
-  isDragging?: boolean
+  onEdit?: ((card: KanbanCardType) => void) | undefined
+  onDelete?: ((cardId: string) => void) | undefined
+  isDragging?: boolean | undefined
 }
 
 /**

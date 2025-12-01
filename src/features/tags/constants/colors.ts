@@ -29,7 +29,7 @@ export const DEFAULT_TAG_COLOR = 'rgb(59 130 246)'
 
 // ヘルパー関数
 export function getTagPresetColor(index: number): string {
-  return TAG_PRESET_COLORS[index % TAG_PRESET_COLORS.length]
+  return TAG_PRESET_COLORS[index % TAG_PRESET_COLORS.length] as string
 }
 
 // 型定義

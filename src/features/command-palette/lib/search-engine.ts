@@ -22,15 +22,18 @@ export class SearchEngine {
 
     // Search commands
     const commands = commandRegistry.search(query, categories)
-    const commandResults: SearchResult[] = commands.map((command) => ({
-      id: `command:${command.id}`,
-      title: command.title,
-      description: command.description,
-      category: command.category,
-      icon: command.icon,
-      type: 'command' as const,
-      action: command.action,
-    }))
+    const commandResults = commands.map((command): SearchResult => {
+      const result: SearchResult = {
+        id: `command:${command.id}`,
+        title: command.title,
+        category: command.category,
+        type: 'command',
+        action: command.action,
+      }
+      if (command.description) result.description = command.description
+      if (command.icon) result.icon = command.icon
+      return result
+    })
 
     results.push(...commandResults)
 
@@ -75,24 +78,29 @@ export class SearchEngine {
   static searchTasks(query: string, tasks: Task[]): SearchResult[] {
     if (!tasks || tasks.length === 0) return []
 
-    const taskResults = FuzzySearch.search(tasks, query).map((task: Task) => ({
-      id: `task:${task.id}`,
-      title: task.title,
-      description: task.description,
-      category: 'tasks',
-      icon: 'check-square',
-      type: 'task' as const,
-      action: () => {
-        // Navigation implementation tracked in Issue #86
-        console.log('Navigate to task:', task.id)
-      },
-      metadata: {
-        status: task.status,
-        priority: task.priority,
-        dueDate: task.planned_start,
-        tags: task.tags || [],
-      },
-    }))
+    const taskResults = FuzzySearch.search(tasks, query).map((task: Task): SearchResult => {
+      const result: SearchResult = {
+        id: `task:${task.id}`,
+        title: task.title,
+        category: 'tasks',
+        icon: 'check-square',
+        type: 'task',
+        action: () => {
+          // Navigation implementation tracked in Issue #86
+          console.log('Navigate to task:', task.id)
+        },
+      }
+      if (task.description) result.description = task.description
+      // metadataは条件付きで追加
+      if (task.status || task.priority || task.planned_start || task.tags) {
+        result.metadata = {}
+        if (task.status) result.metadata.status = task.status
+        if (task.priority) result.metadata.priority = task.priority
+        if (task.planned_start) result.metadata.dueDate = task.planned_start
+        if (task.tags) result.metadata.tags = Array.isArray(task.tags) ? task.tags : []
+      }
+      return result
+    })
 
     return taskResults
   }

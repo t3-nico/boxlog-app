@@ -32,13 +32,13 @@ export interface ApiVersion {
   /** マイナーバージョン */
   minor: number
   /** パッチバージョン */
-  patch?: number
+  patch?: number | undefined
   /** サポート状態 */
   status: 'supported' | 'deprecated' | 'unsupported'
   /** 非推奨日 */
-  deprecationDate?: string
+  deprecationDate?: string | undefined
   /** サポート終了日 */
-  endOfLifeDate?: string
+  endOfLifeDate?: string | undefined
 }
 
 /**
@@ -130,7 +130,7 @@ export class ApiVersionManager {
   private initializeVersions(): void {
     // サポートされているバージョンを登録
     API_VERSIONS.SUPPORTED.forEach((version) => {
-      const [major, minor] = version.split('.').map(Number)
+      const [major = 0, minor = 0] = version.split('.').map(Number)
       const isDeprecated = API_VERSIONS.DEPRECATED.includes(version)
 
       this.versionInfo.set(version, {
@@ -164,9 +164,9 @@ export class ApiVersionManager {
     // 1. URLからバージョンを検出
     const urlVersionMatch = originalPath.match(/^\/api\/v(\d+(?:\.\d+)?)\/(.*)$/)
     if (urlVersionMatch) {
-      requestedVersion = urlVersionMatch[1]
+      requestedVersion = urlVersionMatch[1]!
       versionSource = 'url'
-      normalizedPath = `/api/${urlVersionMatch[2]}`
+      normalizedPath = `/api/${urlVersionMatch[2]!}`
     }
 
     // 2. ヘッダーからバージョンを検出（URLが優先）
@@ -196,7 +196,7 @@ export class ApiVersionManager {
     if (info) return info
 
     // バージョンが見つからない場合は未サポートとして扱う
-    const [major, minor] = version.split('.').map(Number)
+    const [major = 0, minor = 0] = version.split('.').map(Number)
     return {
       version,
       major,

@@ -534,7 +534,7 @@ export function getDetailedErrorInfo(errorCode: ErrorCode): {
 // ==============================================
 
 export interface AppErrorMetadata {
-  [key: string]: any
+  [key: string]: unknown
   userId?: string
   requestId?: string
   timestamp?: Date

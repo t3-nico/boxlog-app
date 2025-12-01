@@ -36,8 +36,8 @@ export type ThemeSwitcherProps = {
 export const ThemeSwitcher = ({ value, onChange, defaultValue = 'system', className }: ThemeSwitcherProps) => {
   const [theme, setTheme] = useControllableState({
     defaultProp: defaultValue,
-    prop: value,
-    onChange,
+    ...(value !== undefined && { prop: value }),
+    ...(onChange !== undefined && { onChange }),
   })
   const [mounted, setMounted] = useState(false)
 
@@ -55,7 +55,7 @@ export const ThemeSwitcher = ({ value, onChange, defaultValue = 'system', classN
     [handleThemeClick]
   )
 
-  // Prevent hydration mismatch
+  // Prevent hydration mismatch - マウント検出は初回のみ必要なため意図的なsetState
   useEffect(() => {
     setMounted(true)
   }, [])

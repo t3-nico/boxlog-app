@@ -1,3 +1,4 @@
+import { withSentryConfig } from '@sentry/nextjs'
 import bundleAnalyzer from '@next/bundle-analyzer'
 
 const withBundleAnalyzer = bundleAnalyzer({
@@ -19,11 +20,6 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
 
-  // ESLint設定
-  eslint: {
-    ignoreDuringBuilds: process.env.NODE_ENV === 'development' || process.env.VERCEL_GIT_COMMIT_REF !== 'main',
-  },
-
   // セキュリティヘッダー設定
   async headers() {
     // 開発環境ではローカルSupabaseへの接続を許可
@@ -35,6 +31,9 @@ const nextConfig = {
       'wss://*.supabase.co',
       'https://vitals.vercel-insights.com',
       'https://api.pwnedpasswords.com', // Have I Been Pwned API
+      // Sentry エラー監視・パフォーマンス監視
+      'https://*.sentry.io',
+      'https://*.ingest.sentry.io',
       ...(isDevelopment ? ['http://127.0.0.1:54321', 'http://localhost:54321'] : []),
     ].join(' ')
 
@@ -168,7 +167,7 @@ const nextConfig = {
       '@radix-ui/react-tooltip',
       // ユーティリティ
       'date-fns',
-      'framer-motion',
+      'motion',
       'recharts',
       'clsx',
       'class-variance-authority',
@@ -176,7 +175,6 @@ const nextConfig = {
   },
 
   // ビルド最適化
-  swcMinify: true,
   compiler: {
     // GAFAベストプラクティス: 本番環境でconsole.log/info/debugを削除
     // error/warnは残す（エラー監視のため）
@@ -187,4 +185,34 @@ const nextConfig = {
   },
 }
 
-export default withBundleAnalyzer(nextConfig)
+/**
+ * Sentry設定オプション
+ * @see https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+ */
+const sentryOptions = {
+  // ソースマップアップロード（ビルド時）
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  // ソースマップ設定
+  sourcemaps: {
+    // ソースマップを自動削除（本番環境でソースコード露出防止）
+    deleteSourcemapsAfterUpload: true,
+  },
+
+  // ビルドログ制御
+  silent: !process.env.CI, // CI環境以外ではログを抑制
+  disableLogger: true, // Sentryロガーを無効化
+
+  // パフォーマンス最適化
+  widenClientFileUpload: true, // クライアントファイルのアップロード範囲拡大
+
+  // Next.js固有設定
+  hideSourceMaps: true, // 本番環境でソースマップを非公開
+  tunnelRoute: '/monitoring-tunnel', // CSP回避用トンネル（オプション）
+}
+
+// withBundleAnalyzer → withSentryConfig の順で適用
+// 重要: Sentryが最後に適用されるようにする
+export default withSentryConfig(withBundleAnalyzer(nextConfig), sentryOptions)

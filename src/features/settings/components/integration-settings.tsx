@@ -49,7 +49,13 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
 
   const handleDisconnect = useCallback((integrationId: string) => {
     setIntegrations((prev) =>
-      prev.map((int) => (int.id === integrationId ? { ...int, connected: false, status: undefined } : int))
+      prev.map((int) => {
+        if (int.id === integrationId) {
+          const { status: _, ...rest } = int
+          return { ...rest, connected: false }
+        }
+        return int
+      })
     )
   }, [])
 

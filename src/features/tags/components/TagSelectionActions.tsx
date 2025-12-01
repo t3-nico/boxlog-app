@@ -152,20 +152,18 @@ export function TagSelectionActions({
             <TagActionMenuItems
               tag={selectedTag}
               groups={groups}
-              onView={onView}
-              onEdit={onEdit}
+              {...(onView && { onView })}
+              {...(onEdit && { onEdit })}
               onMoveToGroup={(tag, groupId) => {
                 onMoveToGroup(tag, groupId)
               }}
-              onArchive={
-                onArchive
-                  ? async (tag) => {
-                      await onArchive([tag.id])
-                      onClearSelection()
-                    }
-                  : undefined
-              }
-              onDelete={(tag) => {
+              {...(onArchive && {
+                onArchive: async (tag) => {
+                  await onArchive([tag.id])
+                  onClearSelection()
+                },
+              })}
+              onDelete={() => {
                 onDelete()
                 onClearSelection()
               }}

@@ -6,10 +6,10 @@
 interface CrowdinConfig {
   projectId: string
   apiToken: string
-  organizationDomain?: string
+  organizationDomain?: string | undefined
   sourceLanguage: string
   targetLanguages: string[]
-  baseUrl?: string
+  baseUrl?: string | undefined
 }
 
 interface CrowdinTranslation {
@@ -27,13 +27,6 @@ interface CrowdinUploadResponse {
   fileName: string
   uploadedKeys: number
   errors?: string[]
-}
-
-interface CrowdinDownloadResponse {
-  downloadUrl: string
-  buildId: number
-  progress: number
-  status: 'building' | 'finished' | 'failed'
 }
 
 /** Crowdin API language progress response item */

@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
-import { Sheet, SheetContent } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
@@ -100,6 +100,7 @@ export function PlanInspector() {
   useEffect(() => {
     if (planData && 'tags' in planData) {
       const tagIds = (planData.tags as Array<{ id: string }>).map((tag) => tag.id)
+
       setSelectedTagIds(tagIds)
     } else {
       setSelectedTagIds([])
@@ -118,7 +119,7 @@ export function PlanInspector() {
       const newHeight = Math.min(textarea.scrollHeight, 96) // 96px = 6rem (4行分)
       textarea.style.height = `${newHeight}px`
     }
-  }, [plan?.id, plan?.description])
+  }, [plan])
 
   // Inspectorの幅管理
   const [inspectorWidth, setInspectorWidth] = useState(540)
@@ -264,7 +265,7 @@ export function PlanInspector() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
-  const [repeatType, setRepeatType] = useState<string>('')
+  const [_repeatType, setRepeatType] = useState<string>('')
   const [reminderType, setReminderType] = useState<string>('')
   const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
   const recurrenceTriggerRef = useRef<HTMLDivElement>(null)
@@ -288,6 +289,7 @@ export function PlanInspector() {
 
       if (plan.start_time) {
         const date = parseDatetimeString(plan.start_time)
+
         setStartTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setStartTime('')
@@ -295,6 +297,7 @@ export function PlanInspector() {
 
       if (plan.end_time) {
         const date = parseDatetimeString(plan.end_time)
+
         setEndTime(`${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`)
       } else {
         setEndTime('')
@@ -311,6 +314,7 @@ export function PlanInspector() {
           1440: '1日前',
           10080: '1週間前',
         }
+
         setReminderType(reminderMap[minutes] || 'カスタム')
       } else {
         setReminderType('')
@@ -362,6 +366,7 @@ export function PlanInspector() {
 
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [isOpen, planId])
 
   // 自動保存関数（デバウンス処理付き）
@@ -411,7 +416,7 @@ export function PlanInspector() {
     if (time && selectedDate) {
       const [hours, minutes] = time.split(':').map(Number)
       const dateTime = new Date(selectedDate)
-      dateTime.setHours(hours, minutes, 0, 0)
+      dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
       autoSave('start_time', dateTime.toISOString())
     } else {
       autoSave('start_time', undefined)
@@ -424,7 +429,7 @@ export function PlanInspector() {
     if (time && selectedDate) {
       const [hours, minutes] = time.split(':').map(Number)
       const dateTime = new Date(selectedDate)
-      dateTime.setHours(hours, minutes, 0, 0)
+      dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
       autoSave('end_time', dateTime.toISOString())
     } else {
       autoSave('end_time', undefined)
@@ -448,6 +453,8 @@ export function PlanInspector() {
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && closeInspector()} modal={false}>
       <SheetContent className="gap-0 overflow-y-auto" style={{ width: `${inspectorWidth}px` }} showCloseButton={false}>
+        {/* スクリーンリーダー用タイトル（視覚的には非表示） */}
+        <SheetTitle className="sr-only">{plan?.title || '予定の詳細'}</SheetTitle>
         {/* リサイズハンドル */}
         <div
           onMouseDown={handleMouseDown}
@@ -865,7 +872,7 @@ export function PlanInspector() {
 function ActivityTab({
   planId,
   order,
-  onOrderChange,
+  onOrderChange: _onOrderChange,
 }: {
   planId: string
   order: 'asc' | 'desc'

@@ -36,9 +36,9 @@ interface InboxCardListProps {
 export function InboxCardList({
   filter,
   sort,
-  showHigh,
-  showMedium,
-  showLow,
+  showHigh: _showHigh,
+  showMedium: _showMedium,
+  showLow: _showLow,
   calendarSort,
   selectedTags,
   triggerCreate,
@@ -113,7 +113,7 @@ export function InboxCardList({
     })
 
     return result
-  }, [items, filter, sort, showHigh, showMedium, showLow, calendarSort, selectedTags])
+  }, [items, filter, sort, calendarSort, selectedTags])
 
   // 新規作成トリガー監視
   useEffect(() => {

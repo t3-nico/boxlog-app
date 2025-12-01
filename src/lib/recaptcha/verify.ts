@@ -10,11 +10,11 @@ import { RECAPTCHA_CONFIG, isDevelopment } from './config'
  */
 export interface RecaptchaVerifyResponse {
   success: boolean
-  score?: number // v3のみ
-  action?: string // v3のみ
-  challenge_ts?: string
-  hostname?: string
-  'error-codes'?: string[]
+  score?: number | undefined // v3のみ
+  action?: string | undefined // v3のみ
+  challenge_ts?: string | undefined
+  hostname?: string | undefined
+  'error-codes'?: string[] | undefined
 }
 
 /**

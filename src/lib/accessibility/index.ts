@@ -157,7 +157,7 @@ export function handleArrowNavigation(
 
   if (newIndex !== currentIndex) {
     event.preventDefault()
-    items[newIndex].focus()
+    items[newIndex]!.focus()
     return newIndex
   }
 

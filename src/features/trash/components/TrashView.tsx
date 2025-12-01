@@ -30,6 +30,7 @@ export function TrashView({ className }: TrashViewProps) {
       }, 10000)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [error, clearError])
 
   return (

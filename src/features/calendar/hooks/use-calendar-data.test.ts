@@ -192,7 +192,7 @@ describe('useCalendarData', () => {
         })
       )
 
-      const callArg = onTaskCreate.mock.calls[0][0]
+      const callArg = onTaskCreate.mock.calls[0]![0]
       const dueDate = new Date(callArg.planned_start)
       expect(dueDate.getHours()).toBe(14)
       expect(dueDate.getMinutes()).toBe(30)

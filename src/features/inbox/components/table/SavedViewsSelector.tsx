@@ -41,7 +41,6 @@ interface SavedViewsSelectorProps {
 export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
   const { views, activeViewId, setActiveView, deleteView, createView, updateView } = useInboxViewStore()
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [editingView, setEditingView] = useState<InboxView | undefined>(undefined)
   const [editingViewId, setEditingViewId] = useState<string | null>(null)
   const [editingName, setEditingName] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -99,13 +98,6 @@ export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
     }
     setEditingViewId(null)
     setEditingName('')
-  }
-
-  // ビュー設定ダイアログを開く（詳細設定用）
-  const handleOpenSettings = (view: InboxView, e: React.MouseEvent) => {
-    e.stopPropagation()
-    setEditingView(view)
-    setDialogOpen(true)
   }
 
   // ビューを削除
@@ -231,12 +223,7 @@ export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
       </DropdownMenu>
 
       {/* ビュー作成・編集ダイアログ */}
-      <ViewSettingsDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        view={editingView}
-        currentState={currentState}
-      />
+      <ViewSettingsDialog open={dialogOpen} onOpenChange={setDialogOpen} view={undefined} currentState={currentState} />
     </>
   )
 }

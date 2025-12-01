@@ -24,11 +24,11 @@ export interface DateTimeSelection extends TimeRange {
 
 interface CalendarDragSelectionProps {
   date: Date // 必須：この列が担当する日付
-  className?: string
-  onTimeRangeSelect?: (selection: DateTimeSelection) => void
-  onSingleClick?: (date: Date, timeString: string) => void // 単一クリック処理
-  children?: React.ReactNode
-  disabled?: boolean // ドラッグ選択を無効にする
+  className?: string | undefined
+  onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined
+  onSingleClick?: ((date: Date, timeString: string) => void) | undefined // 単一クリック処理
+  children?: React.ReactNode | undefined
+  disabled?: boolean | undefined // ドラッグ選択を無効にする
 }
 
 /**
@@ -72,11 +72,11 @@ export const CalendarDragSelection = ({
   }
 
   // 時間をフォーマットするヘルパー関数
-  const formatTime = (hour: number, minute: number): string => {
+  const formatTime = useCallback((hour: number, minute: number): string => {
     const h = hour.toString().padStart(2, '0')
     const m = minute.toString().padStart(2, '0')
     return `${h}:${m}`
-  }
+  }, [])
 
   // 座標から時間を計算
   const pixelsToTime = useCallback((y: number) => {
@@ -256,7 +256,17 @@ export const CalendarDragSelection = ({
       document.removeEventListener('mouseup', handleGlobalMouseUp)
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isSelecting, selectionStart, selection, pixelsToTime, onTimeRangeSelect, date, disabled, onSingleClick])
+  }, [
+    isSelecting,
+    selectionStart,
+    selection,
+    pixelsToTime,
+    onTimeRangeSelect,
+    date,
+    disabled,
+    onSingleClick,
+    formatTime,
+  ])
 
   // モーダルキャンセル時のカスタムイベントリスナー
   useEffect(() => {

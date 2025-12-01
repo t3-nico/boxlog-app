@@ -188,7 +188,7 @@ export class SearchEngine {
       },
     }))
 
-    return taskResults
+    return taskResults as SearchResult[]
   }
 
   /**

@@ -390,6 +390,105 @@ export type Database = {
         }
         Relationships: []
       }
+      smart_filters: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          filter_config: Json | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          filter_config?: Json | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          filter_config?: Json | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          id: string
+          user_id: string
+          title: string
+          status: string
+          planned_start: string | null
+          planned_duration: number | null
+          actual_start: string | null
+          actual_end: string | null
+          satisfaction: number | null
+          tags: string[] | null
+          memo: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          title: string
+          status?: string
+          planned_start?: string | null
+          planned_duration?: number | null
+          actual_start?: string | null
+          actual_end?: string | null
+          satisfaction?: number | null
+          tags?: string[] | null
+          memo?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          title?: string
+          status?: string
+          planned_start?: string | null
+          planned_duration?: number | null
+          actual_start?: string | null
+          actual_end?: string | null
+          satisfaction?: number | null
+          tags?: string[] | null
+          memo?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_values: {
+        Row: {
+          id: string
+          user_id: string
+          values: Json | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          values?: Json | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          values?: Json | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       tags: {
         Row: {
           color: string | null

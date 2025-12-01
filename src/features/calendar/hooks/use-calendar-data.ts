@@ -120,7 +120,7 @@ export function useCalendarData({
 
       const [hours, minutes] = time.split(':').map(Number)
       const startDate = new Date(date)
-      startDate.setHours(hours, minutes, 0, 0)
+      startDate.setHours(hours!, minutes!, 0, 0)
 
       setIsLoading(true)
       setError(null)
@@ -216,13 +216,16 @@ function assignTaskColumns(tasks: CalendarTaskExtended[]): CalendarTaskExtended[
     let placed = false
 
     for (let col = 0; col < columns.length; col++) {
-      const canPlace = columns[col].every((existing) => {
+      const column = columns[col]
+      if (!column) continue
+
+      const canPlace = column.every((existing) => {
         // 重複チェック
         return task.displayStart >= existing.displayEnd || task.displayEnd <= existing.displayStart
       })
 
       if (canPlace) {
-        columns[col].push(task)
+        column.push(task)
         task.column = col
         placed = true
         break

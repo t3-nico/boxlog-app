@@ -7,10 +7,8 @@ BoxLogアプリケーションにおけるSentryの統合・設定・運用の�
 ## 📋 目次
 
 - [概要](#概要)
+- [アーキテクチャ（v2.0）](#アーキテクチャv20)
 - [セットアップ](#セットアップ)
-  - [ローカル環境](#ローカル環境)
-  - [Vercel環境](#vercel環境)
-- [アーキテクチャ](#アーキテクチャ)
 - [実装ガイド](#実装ガイド)
 - [運用](#運用)
 - [トラブルシューティング](#トラブルシューティング)
@@ -43,6 +41,65 @@ try {
   reportToSentry(appError) // 自動分類・構造化レポート
 }
 ```
+
+---
+
+## アーキテクチャ（v2.0）
+
+### Sentry SDK v10 + Next.js 15 ベストプラクティス
+
+BoxLogは **Sentry SDK v10** と **Next.js 15** の公式推奨構成に従っています。
+
+### ファイル構成
+
+```
+boxlog-app/
+├── instrumentation.ts           # サーバー・エッジ初期化ルーター（Next.js 15標準）
+├── instrumentation-client.ts    # クライアント初期化
+├── sentry.server.config.ts      # Node.jsランタイム設定
+├── sentry.edge.config.ts        # Edgeランタイム設定
+├── next.config.mjs              # withSentryConfig()統合
+├── .sentryclirc                 # Sentry CLI設定
+└── src/lib/sentry/              # ヘルパー関数
+    ├── index.ts                 # エクスポート
+    ├── integration.ts           # エラーパターン統合
+    ├── performance.ts           # パフォーマンス監視
+    └── trace.ts                 # カスタムトレース
+```
+
+### 各ファイルの役割
+
+| ファイル                    | 実行環境       | 責務                                   |
+| --------------------------- | -------------- | -------------------------------------- |
+| `instrumentation.ts`        | サーバー起動時 | 環境判定してserver/edge設定を読み込み  |
+| `instrumentation-client.ts` | ブラウザ       | クライアント初期化・Replay・Web Vitals |
+| `sentry.server.config.ts`   | Node.js        | サーバーサイドエラー監視               |
+| `sentry.edge.config.ts`     | Edge Runtime   | Middleware/Edge API監視                |
+| `next.config.mjs`           | ビルド時       | ソースマップアップロード・設定統合     |
+
+### データフロー
+
+```
+エラー発生
+  ↓
+AppError生成（エラーパターン辞書）
+  ↓
+reportToSentry()
+  ↓
+カテゴリ別タグ付与・フィンガープリント生成
+  ↓
+Sentry送信（自動分類・構造化）
+  ↓
+Sentryダッシュボード表示
+```
+
+### 環境別設定
+
+| 環境        | トレースサンプリング | Session Replay   | 有効/無効 |
+| ----------- | -------------------- | ---------------- | --------- |
+| Production  | 10%                  | エラー時のみ100% | 有効      |
+| Preview     | 50%                  | なし             | 有効      |
+| Development | 100%                 | なし             | 無効      |
 
 ---
 
@@ -101,7 +158,7 @@ NEXT_PUBLIC_APP_VERSION=1.0.0
 npm run sentry:verify
 
 # 開発サーバー起動
-npm run smart:dev
+npm run dev
 
 # テストエンドポイントにアクセス
 curl http://localhost:3000/api/test/sentry?type=message
@@ -109,8 +166,6 @@ curl http://localhost:3000/api/test/sentry?type=error
 
 # Sentryダッシュボードで確認（5分以内）
 # https://sentry.io/organizations/[YOUR_ORG]/issues/
-
-# エラーテストボタンをクリックしてSentryダッシュボードで確認
 ```
 
 **確認ポイント**:
@@ -150,71 +205,6 @@ git push origin dev
 
 # デプロイ完了後、本番環境でテスト
 curl https://your-app.vercel.app/api/health
-curl https://your-app.vercel.app/test-sentry
-```
-
-**確認ポイント**:
-
-- [ ] プロジェクトが正常にデプロイされている
-- [ ] 本番環境でエラーが記録される
-- [ ] パフォーマンスデータが収集される
-- [ ] ソースマップが正常に動作する
-
----
-
-## アーキテクチャ
-
-### ディレクトリ構造
-
-```
-boxlog-app/
-├── src/lib/sentry/              # Sentry実装
-│   ├── index.ts                 # エクスポート
-│   ├── integration.ts           # エラーパターン統合
-│   └── performance.ts           # パフォーマンス監視
-├── scripts/sentry/              # ヘルパースクリプト
-│   ├── connection-test.js       # 接続テスト
-│   └── dsn-guide.js             # DSN設定ガイド
-├── .sentryclirc                 # Sentry CLI設定（ルート必須）
-├── sentry.config.ts             # サーバー・Edge共通設定（ルート必須）
-├── instrumentation.ts           # Next.js instrumentation（ルート必須）
-└── instrumentation-client.ts    # クライアント側instrumentation（ルート必須）
-```
-
-### データフロー
-
-```
-エラー発生
-  ↓
-AppError生成（エラーパターン辞書）
-  ↓
-SentryIntegration.reportError()
-  ↓
-カテゴリ別タグ付与・フィンガープリント生成
-  ↓
-Sentry送信（自動分類・構造化）
-  ↓
-Sentryダッシュボード表示
-```
-
-### カテゴリ別タグ設定
-
-```typescript
-const CATEGORY_TAGS = {
-  AUTH: {
-    domain: 'authentication',
-    priority: 'high',
-    team: 'security',
-    alerting: 'immediate',
-  },
-  DB: {
-    domain: 'database',
-    priority: 'critical',
-    team: 'backend',
-    alerting: 'immediate',
-  },
-  // ... 他のカテゴリ
-}
 ```
 
 ---
@@ -232,7 +222,10 @@ import { AppError } from '@/config/error-patterns'
 try {
   await fetchUserData(userId)
 } catch (error) {
-  const appError = new AppError('ユーザーデータの取得に失敗', 'DATA_NOT_FOUND_404', { userId, originalError: error })
+  const appError = new AppError('ユーザーデータの取得に失敗', 'DATA_NOT_FOUND_404', {
+    userId,
+    originalError: error,
+  })
   reportToSentry(appError)
   throw appError
 }
@@ -273,31 +266,15 @@ export async function GET(request: Request) {
 
 #### Web Vitals自動計測（2025基準準拠）
 
-```typescript
-// src/app/layout.tsx
-import { WebVitalsReporter } from '@/components/WebVitalsReporter'
-
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        {children}
-        <WebVitalsReporter /> {/* Core Web Vitals 2025自動計測 */}
-      </body>
-    </html>
-  )
-}
-```
+Web Vitalsは `instrumentation-client.ts` で自動計測されます。
 
 **計測される指標（Google 2025基準）**:
 
 - **LCP** (Largest Contentful Paint): ≤ 2.5s (Good), > 4.0s (Poor)
-- **INP** (Interaction to Next Paint): ≤ 200ms (Good), > 500ms (Poor) 🆕
+- **INP** (Interaction to Next Paint): ≤ 200ms (Good), > 500ms (Poor)
 - **CLS** (Cumulative Layout Shift): < 0.1 (Good), > 0.25 (Poor)
 - **FCP** (First Contentful Paint): < 1.8s (Good), > 3.0s (Poor)
 - **TTFB** (Time to First Byte): < 800ms (Good), > 1800ms (Poor)
-
-**注**: FID (First Input Delay) は2024年3月に廃止され、INPに置き換えられました。
 
 #### カスタムパフォーマンストレース
 
@@ -325,45 +302,6 @@ const { result, duration } = await withTrace(
     tags: { complexity: 'high' },
   }
 )
-```
-
-#### 旧形式（非推奨）
-
-```typescript
-// ❌ 非推奨: 手動トランザクション管理
-import * as Sentry from '@sentry/nextjs'
-
-const transaction = Sentry.startTransaction({
-  name: 'Custom Operation',
-  op: 'custom',
-})
-
-try {
-  await performOperation()
-  transaction.setStatus('ok')
-} catch (error) {
-  transaction.setStatus('internal_error')
-  throw error
-} finally {
-  transaction.finish()
-}
-```
-
-#### カスタムメトリクス
-
-```typescript
-import * as Sentry from '@sentry/nextjs'
-
-// カスタムメトリクス記録
-Sentry.setMeasurement('custom_metric', 123, 'millisecond')
-
-// パンくずリスト追加
-Sentry.addBreadcrumb({
-  message: 'User performed action',
-  category: 'user-action',
-  level: 'info',
-  data: { action: 'click', target: 'button' },
-})
 ```
 
 ---
@@ -413,17 +351,25 @@ Sentry.addBreadcrumb({
    - 条件: 影響ユーザー > 10人/時
    - 通知: Slack（緊急チャンネル）
 
-### チームコラボレーション
+### カテゴリ別タグ設定
 
-#### Issue割り当て
-
-- カテゴリ別タグ（`team:security`, `team:backend`）で自動割り当て
-- 優先度タグ（`priority:critical`, `priority:high`）で優先順位付け
-
-#### コメント・ディスカッション
-
-- Issueに対するコメント・解決方法の共有
-- GitHubとの連携でコミット・PRとのリンク
+```typescript
+const CATEGORY_TAGS = {
+  AUTH: {
+    domain: 'authentication',
+    priority: 'high',
+    team: 'security',
+    alerting: 'immediate',
+  },
+  DB: {
+    domain: 'database',
+    priority: 'critical',
+    team: 'backend',
+    alerting: 'immediate',
+  },
+  // ... 他のカテゴリ
+}
+```
 
 ---
 
@@ -447,6 +393,22 @@ npm run sentry:verify
 npm run sentry:test
 ```
 
+### CSPエラー
+
+**症状**: ブラウザコンソールに `Refused to connect to 'https://xxx.sentry.io'`
+
+**解決方法**:
+
+`next.config.mjs` の CSP `connect-src` に以下が含まれていることを確認:
+
+```javascript
+const connectSrc = [
+  // ...
+  'https://*.sentry.io',
+  'https://*.ingest.sentry.io',
+]
+```
+
 ### Auth Token エラー
 
 **症状**: `[Sentry] Unauthorized`
@@ -466,30 +428,12 @@ npm run sentry:test
 
 **解決方法**:
 
-1. `.sentryclirc` ファイルの設定を確認
-2. ビルド時にソースマップがアップロードされているか確認
-
-```bash
-# ビルドログで確認
-npm run build
-
-# Sentry CLIで手動アップロード
-npx @sentry/cli releases files <version> upload-sourcemaps ./build
-```
-
-### パフォーマンス監視が動作しない
-
-**症状**: Performance タブにデータが表示されない
-
-**解決方法**:
-
-1. Sentryプロジェクトで **Performance** が有効か確認
-2. `tracesSampleRate` の設定を確認（`sentry.server.config.ts`）
-3. `web-vitals` パッケージがインストールされているか確認
-
-```bash
-npm install web-vitals
-```
+1. `next.config.mjs` で `withSentryConfig` が適用されていることを確認
+2. 環境変数が正しく設定されていることを確認:
+   - `SENTRY_ORG`
+   - `SENTRY_PROJECT`
+   - `SENTRY_AUTH_TOKEN`
+3. ビルドログでソースマップアップロードを確認
 
 ### 開発環境でノイズが多い
 
@@ -497,12 +441,13 @@ npm install web-vitals
 
 **解決方法**:
 
-1. 開発環境でのフィルタリング設定を確認（`src/lib/sentry/integration.ts`）
-2. 環境変数で開発環境を無効化
+開発環境ではSentryは自動的に無効化されています（`sentry.server.config.ts` の `enabled` 設定）。
+
+手動で有効化したい場合:
 
 ```bash
 # .env.local
-NEXT_PUBLIC_SENTRY_ENABLED=false  # 開発環境で無効化
+NEXT_PUBLIC_SENTRY_DEBUG=true
 ```
 
 ---
@@ -525,44 +470,40 @@ BoxLogは無料プランで十分です：
 
 ### Q3. パフォーマンス目標値は？
 
-Core Web Vitals目標：
+Core Web Vitals目標（2025基準）：
 
-- **LCP** (Largest Contentful Paint): < 2.5秒
-- **FID** (First Input Delay): < 100ms
-- **CLS** (Cumulative Layout Shift): < 0.1
+- **LCP**: ≤ 2.5秒 (Good)
+- **INP**: ≤ 200ms (Good)
+- **CLS**: < 0.1 (Good)
 
 ### Q4. ソースマップは本番環境に公開される？
 
-いいえ。ソースマップはSentryに直接アップロードされ、本番環境には含まれません。
+いいえ。`withSentryConfig` の `hideSourceMaps: true` と `deleteSourcemapsAfterUpload: true` により、ソースマップはSentryに直接アップロードされ、本番環境には含まれません。
 
 ### Q5. ユーザーのプライバシーは保護される？
 
 はい。以下の対応を実施：
 
+- Session Replayで `maskAllText: true`, `blockAllMedia: true`
+- GDPR対応: Cookie同意がある場合のみSentry有効化
 - 個人情報（メールアドレス、パスワード等）はマスキング
-- IPアドレスは匿名化オプション有効
-- GDPRコンプライアンス対応
 
-### Q6. エラーが発生しても通知が来ない
+### Q6. 旧APIからの移行は？
 
-**アラートルール**を設定してください：
-
-1. Sentry Dashboard → **Alerts** → **Create Alert**
-2. 条件・通知先（Slack/Email）を設定
-
-### Q7. テスト環境のエラーを除外したい
-
-環境別フィルタリング：
+`initializeSentry()` と `SentryIntegration` クラスは非推奨になりました。
 
 ```typescript
-// src/lib/sentry/integration.ts
-beforeSend: (event) => {
-  if (event.environment === 'test') {
-    return null // テスト環境のエラーを送信しない
-  }
-  return event
-}
+// ❌ 旧（非推奨）
+import { initializeSentry, sentryIntegration } from '@/lib/sentry'
+initializeSentry()
+sentryIntegration.reportError(error)
+
+// ✅ 新（推奨）
+import { reportToSentry } from '@/lib/sentry'
+reportToSentry(error)
 ```
+
+Sentryの初期化は `instrumentation.ts` / `instrumentation-client.ts` で自動的に行われます。
 
 ---
 
@@ -571,6 +512,7 @@ beforeSend: (event) => {
 ### 公式ドキュメント
 
 - [Sentry Next.js Guide](https://docs.sentry.io/platforms/javascript/guides/nextjs/)
+- [Sentry Manual Setup](https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/)
 - [Sentry Performance Monitoring](https://docs.sentry.io/product/performance/)
 - [Sentry Error Monitoring](https://docs.sentry.io/product/issues/)
 
@@ -581,11 +523,11 @@ beforeSend: (event) => {
 
 ### ヘルパースクリプト
 
-- **接続テスト**: `node scripts/sentry/connection-test.js`
-- **DSNガイド**: `node scripts/sentry/dsn-guide.js`
+- **設定検証**: `npm run sentry:verify`
+- **接続テスト**: `npm run sentry:test`
 
 ---
 
-**📖 最終更新**: 2025-09-30
-**バージョン**: 1.0
+**📖 最終更新**: 2025-12-01
+**バージョン**: 2.0
 **メンテナー**: BoxLog Development Team

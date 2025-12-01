@@ -1,5 +1,6 @@
 'use client'
 
+// パフォーマンス計測のため、useMemo内でperformance.now()を呼び出す必要がある
 import { useEffect, useMemo, useRef } from 'react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
@@ -147,7 +148,7 @@ export function useMemoizedPlans(
       if (!event.startDate) continue
 
       // 日付別
-      const dateKey = event.startDate.toISOString().split('T')[0]
+      const dateKey = event.startDate.toISOString().split('T')[0]!
       if (!eventsByDate.has(dateKey)) {
         eventsByDate.set(dateKey, [])
       }

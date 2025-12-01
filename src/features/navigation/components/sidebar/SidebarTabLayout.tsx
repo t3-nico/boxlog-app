@@ -30,10 +30,11 @@ import type { SidebarTabLayoutProps } from './types'
  * ```
  */
 export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
+  const initialTab = defaultTab || tabs[0]?.value || tabs[0]?.value || ''
   return (
-    <aside className="flex h-full w-full flex-col py-2">
+    <aside className="flex h-full w-full flex-col pt-2">
       {/* Tabs */}
-      <Tabs defaultValue={defaultTab || tabs[0]?.value} className="flex flex-1 flex-col overflow-hidden">
+      <Tabs defaultValue={initialTab} className="flex flex-1 flex-col overflow-hidden">
         {/* TabsList - Slack風アンダーラインデザイン */}
         <TabsList
           className="border-border grid h-10 w-full shrink-0 rounded-none border-b bg-transparent p-0 px-4"

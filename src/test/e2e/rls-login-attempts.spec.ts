@@ -76,7 +76,7 @@ test.describe('RLS: login_attempts テーブル', () => {
   })
 
   test('通常ユーザーはlogin_attemptsを閲覧できない', async () => {
-    const { data, error } = await supabaseUser.from('login_attempts').select('*')
+    const { data } = await supabaseUser.from('login_attempts').select('*')
 
     // RLSによりデータが取得できないことを確認
     expect(data).toEqual([]) // 空配列が返される
@@ -143,7 +143,7 @@ test.describe('RLS: login_attempts テーブル', () => {
     const attemptId = insertData!.id
 
     // 通常ユーザーで更新を試みる
-    const { data, error } = await supabaseUser
+    const { data } = await supabaseUser
       .from('login_attempts')
       .update({ is_successful: true })
       .eq('id', attemptId)
@@ -175,7 +175,7 @@ test.describe('RLS: login_attempts テーブル', () => {
     const attemptId = insertData!.id
 
     // 通常ユーザーで削除を試みる
-    const { data, error } = await supabaseUser.from('login_attempts').delete().eq('id', attemptId).select()
+    const { data } = await supabaseUser.from('login_attempts').delete().eq('id', attemptId).select()
 
     // RLSにより削除できないことを確認
     expect(data).toEqual([]) // 削除されたレコードが0件

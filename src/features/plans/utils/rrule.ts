@@ -96,27 +96,27 @@ export function ruleToConfig(rrule: string): RecurrenceConfig {
 
     switch (key) {
       case 'FREQ':
-        config.frequency = value.toLowerCase() as 'daily' | 'weekly' | 'monthly' | 'yearly'
+        config.frequency = value!.toLowerCase() as 'daily' | 'weekly' | 'monthly' | 'yearly'
         break
       case 'INTERVAL':
-        config.interval = Number(value)
+        config.interval = Number(value!)
         break
       case 'BYDAY':
-        config.byWeekday = value.split(',').map((day) => WEEKDAY_MAP.indexOf(day))
+        config.byWeekday = value!.split(',').map((day) => WEEKDAY_MAP.indexOf(day))
         break
       case 'BYMONTHDAY':
-        config.byMonthDay = Number(value)
+        config.byMonthDay = Number(value!)
         break
       case 'BYSETPOS':
-        config.bySetPos = Number(value)
+        config.bySetPos = Number(value!)
         break
       case 'UNTIL':
         config.endType = 'until'
-        config.endDate = `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}`
+        config.endDate = `${value!.slice(0, 4)}-${value!.slice(4, 6)}-${value!.slice(6, 8)}`
         break
       case 'COUNT':
         config.endType = 'count'
-        config.count = Number(value)
+        config.count = Number(value!)
         break
     }
   })
@@ -170,7 +170,7 @@ export function configToReadable(config: RecurrenceConfig): string {
       parts.push(`${config.byMonthDay}日`)
     } else if (config.bySetPos !== undefined && config.byWeekday?.length) {
       const weekdayNames = ['日', '月', '火', '水', '木', '金', '土']
-      const weekdayName = weekdayNames[config.byWeekday[0]]
+      const weekdayName = weekdayNames[config.byWeekday[0]!]
       if (config.bySetPos === -1) {
         parts.push(`最終${weekdayName}曜日`)
       } else {

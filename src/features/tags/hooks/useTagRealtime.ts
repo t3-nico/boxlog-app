@@ -52,8 +52,8 @@ export function useTagRealtime(userId: string | undefined, options: UseTagRealti
     channelName: `tag-changes-${userId}`,
     table: 'tags',
     event: '*', // INSERT, UPDATE, DELETE すべて
-    filter: userId ? `user_id=eq.${userId}` : undefined,
-    enabled, // enabledオプションを渡す
+    ...(userId && { filter: `user_id=eq.${userId}` }),
+    ...(enabled !== undefined && { enabled }),
     onEvent: (payload) => {
       const newRecord = payload.new as { id: string } | undefined
       const oldRecord = payload.old as { id: string } | undefined

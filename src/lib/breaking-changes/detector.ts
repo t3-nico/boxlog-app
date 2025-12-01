@@ -157,8 +157,8 @@ export class BreakingChangeDetector {
     const majorVersionPattern = /"[^"]+": "(?:\^|~)?(\d+)\.\d+\.\d+".*-.*"(?:\^|~)?(\d+)\.\d+\.\d+"/g
     let match
     while ((match = majorVersionPattern.exec(diff)) !== null) {
-      const oldMajor = parseInt(match[1])
-      const newMajor = parseInt(match[2])
+      const oldMajor = parseInt(match[1] ?? '0', 10)
+      const newMajor = parseInt(match[2] ?? '0', 10)
       if (newMajor > oldMajor) {
         isBreaking = true
         confidence = Math.max(confidence, 0.8)
@@ -358,7 +358,7 @@ export class BreakingChangeDetector {
       .filter((line) => line.trim())
       .map((line) => {
         const [status, path] = line.split('\t')
-        return { path, status }
+        return { path: path ?? '', status: status ?? '' }
       })
   }
 
