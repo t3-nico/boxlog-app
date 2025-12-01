@@ -22,11 +22,11 @@ export function SettingsSidebar() {
   return (
     <aside className="bg-muted border-border flex w-48 flex-shrink-0 flex-col border-r">
       {/* ヘッダー（48px - SidebarHeaderと同じ） */}
-      <SidebarHeader title={t('settings.dialog.title')} />
+      <SidebarHeader title={t('settings.dialog.title')} className="bg-muted" />
 
       {/* カテゴリメニュー（8pxグリッド準拠） */}
       <ScrollArea className="flex-1">
-        <nav className="space-y-1 p-4">
+        <nav className="flex flex-col gap-1 p-2">
           {SETTINGS_CATEGORIES.map((category) => {
             const Icon = category.icon
             const isActive = activeCategory === category.id
@@ -36,14 +36,12 @@ export function SettingsSidebar() {
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
                 className={cn(
-                  'flex w-full items-center gap-2 rounded-lg px-4 py-2 text-left text-sm font-medium transition-colors',
+                  'flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm font-medium transition-colors',
                   isActive ? 'bg-foreground/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
                 )}
               >
-                <Icon className="h-4 w-4 flex-shrink-0" />
-                <div className="flex-1 overflow-hidden">
-                  <div className="truncate">{t(category.labelKey)}</div>
-                </div>
+                <Icon className="h-4 w-4" />
+                <span className="truncate">{t(category.labelKey)}</span>
               </button>
             )
           })}

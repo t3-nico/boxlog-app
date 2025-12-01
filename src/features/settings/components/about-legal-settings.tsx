@@ -81,7 +81,7 @@ export function AboutLegalSettings() {
   return (
     <div className="space-y-6">
       {/* アプリ情報 */}
-      <SettingsCard title="BoxLog について" description="アプリのバージョン情報">
+      <SettingsCard title="BoxLog について">
         <div className="flex items-center gap-4">
           <div className="bg-primary/10 flex h-16 w-16 items-center justify-center rounded-xl">
             <Box className="text-primary h-8 w-8" />
@@ -98,7 +98,7 @@ export function AboutLegalSettings() {
       </SettingsCard>
 
       {/* Cookie設定 */}
-      <SettingsCard title={t('settings.legal.cookies.title')} description={t('settings.legal.cookies.description')}>
+      <SettingsCard title={t('settings.legal.cookies.title')}>
         <div className="space-y-4">
           {/* 必須Cookie */}
           <div className="border-border flex items-center justify-between rounded-xl border p-3">
@@ -146,7 +146,7 @@ export function AboutLegalSettings() {
       </SettingsCard>
 
       {/* 法的文書 */}
-      <SettingsCard title={t('settings.legal.links.title')} description={t('settings.legal.links.description')}>
+      <SettingsCard title={t('settings.legal.links.title')}>
         <div className="divide-border -mx-4 -mb-4 divide-y">
           {legalLinks.map((link) => {
             const Icon = link.icon
@@ -168,7 +168,7 @@ export function AboutLegalSettings() {
       </SettingsCard>
 
       {/* フィードバック */}
-      <SettingsCard title="フィードバック" description="ご意見・ご要望をお聞かせください">
+      <SettingsCard title="フィードバック">
         <div className="flex gap-3">
           <Button variant="outline" asChild>
             <Link href="https://github.com/t3-nico/boxlog-app/issues" target="_blank" rel="noopener noreferrer">

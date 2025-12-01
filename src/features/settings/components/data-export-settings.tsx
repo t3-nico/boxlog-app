@@ -72,7 +72,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
   return (
     <div className="space-y-6">
       {/* データエクスポート */}
-      <SettingsCard title="データエクスポート" description="すべてのデータをJSON形式でダウンロードできます（GDPR準拠）">
+      <SettingsCard title="データエクスポート">
         <div className="space-y-4">
           {/* エクスポート対象の説明 */}
           <div className="bg-muted/50 rounded-xl p-4">
@@ -99,7 +99,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
       </SettingsCard>
 
       {/* データインポート */}
-      <SettingsCard title="データインポート" description="バックアップファイルからデータを復元します">
+      <SettingsCard title="データインポート">
         <div className="space-y-4">
           <div className="border-border flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8">
             <Upload className="text-muted-foreground mb-2 h-8 w-8" />
@@ -113,7 +113,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
       </SettingsCard>
 
       {/* 自動バックアップ */}
-      <SettingsCard title="自動バックアップ" description="データを定期的にバックアップします">
+      <SettingsCard title="自動バックアップ">
         <div className="space-y-4">
           <SettingField label="自動バックアップを有効にする" description="毎日自動的にデータをバックアップします">
             <Switch checked={autoBackup} onCheckedChange={handleAutoBackupChange} />

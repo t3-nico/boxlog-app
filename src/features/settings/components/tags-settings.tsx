@@ -87,10 +87,7 @@ export function TagsSettings() {
   if (error) {
     return (
       <div className="space-y-6">
-        <SettingsCard
-          title={t('settings.dialog.categories.tags') || 'タグ'}
-          description={t('settings.dialog.categories.tagsDesc') || 'タグを管理します'}
-        >
+        <SettingsCard title={t('settings.dialog.categories.tags') || 'タグ'}>
           <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-4">
             <p className="text-destructive text-sm">エラー: {error instanceof Error ? error.message : String(error)}</p>
             <Button variant="destructive" size="sm" onClick={() => window.location.reload()} className="mt-4">
@@ -108,7 +105,6 @@ export function TagsSettings() {
         {/* タグ管理カード */}
         <SettingsCard
           title="タグ管理"
-          description="タスクやイベントを整理するためのタグを作成・編集できます"
           actions={
             <Button size="sm" onClick={handleCreateClick}>
               <Plus className="mr-2 h-4 w-4" />

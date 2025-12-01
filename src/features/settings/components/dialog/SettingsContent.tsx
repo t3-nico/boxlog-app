@@ -33,50 +33,29 @@ export function SettingsContent() {
   const { activeCategory, closeSettings } = useSettingsDialogStore()
   const { t } = useI18n()
 
-  // カテゴリごとのtitle/descriptionを取得
-  const getCategoryInfo = () => {
+  // カテゴリごとのtitleを取得
+  const getCategoryTitle = () => {
     switch (activeCategory) {
       case 'general':
-        return {
-          title: t('settings.dialog.categories.general'),
-          description: t('settings.dialog.categories.generalDesc'),
-        }
+        return t('settings.dialog.categories.general')
       case 'personalization':
-        return {
-          title: t('settings.dialog.categories.personalization'),
-          description: t('settings.dialog.categories.personalizationDesc'),
-        }
+        return t('settings.dialog.categories.personalization')
       case 'notifications':
-        return {
-          title: t('settings.dialog.categories.notifications'),
-          description: t('settings.dialog.categories.notificationsDesc'),
-        }
+        return t('settings.dialog.categories.notifications')
       case 'data-controls':
-        return {
-          title: t('settings.dialog.categories.dataControls'),
-          description: t('settings.dialog.categories.dataControlsDesc'),
-        }
+        return t('settings.dialog.categories.dataControls')
       case 'account':
-        return {
-          title: t('settings.dialog.categories.account'),
-          description: t('settings.dialog.categories.accountDesc'),
-        }
+        return t('settings.dialog.categories.account')
       case 'subscription':
-        return {
-          title: t('settings.dialog.categories.subscription'),
-          description: t('settings.dialog.categories.subscriptionDesc'),
-        }
+        return t('settings.dialog.categories.subscription')
       case 'about':
-        return {
-          title: t('settings.dialog.categories.about'),
-          description: t('settings.dialog.categories.aboutDesc'),
-        }
+        return t('settings.dialog.categories.about')
       default:
-        return { title: '', description: '' }
+        return ''
     }
   }
 
-  const { title, description } = getCategoryInfo()
+  const title = getCategoryTitle()
 
   const closeButton = (
     <Button variant="ghost" size="icon" onClick={closeSettings} className="h-8 w-8">
@@ -86,8 +65,8 @@ export function SettingsContent() {
   )
 
   return (
-    <main className="bg-muted flex flex-1 flex-col overflow-hidden">
-      <SettingsLayout title={title} description={description} actions={closeButton}>
+    <main className="bg-muted flex min-h-0 flex-1 flex-col overflow-hidden">
+      <SettingsLayout title={title} actions={closeButton}>
         {/* General: 言語、テーマ、起動画面（既存のPreferencesSettingsを再利用） */}
         {activeCategory === 'general' && <PreferencesSettings />}
 

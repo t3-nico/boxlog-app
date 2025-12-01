@@ -523,17 +523,10 @@ export function AccountSettings() {
   return (
     <div className="space-y-6">
       {/* Profile Section */}
-      <SettingsCard
-        title={t('settings.account.profile')}
-        description={t('settings.account.profileDesc')}
-        isSaving={profile.isSaving}
-      >
+      <SettingsCard title={t('settings.account.profile')} isSaving={profile.isSaving}>
         <div className="space-y-4">
           {/* Profile Picture Section */}
-          <SettingField
-            label={t('settings.account.profilePicture')}
-            description={t('settings.account.profilePictureDesc')}
-          >
+          <SettingField label={t('settings.account.profilePicture')}>
             <div className="flex items-start gap-6">
               {/* Avatar Preview */}
               <div className="group relative">
@@ -622,7 +615,7 @@ export function AccountSettings() {
       <EmailChangeDialog open={showEmailDialog} onOpenChange={setShowEmailDialog} currentEmail={profile.values.email} />
 
       {/* Password Section */}
-      <SettingsCard title={t('settings.account.password')} description={t('settings.account.passwordDesc')}>
+      <SettingsCard title={t('settings.account.password')}>
         <form onSubmit={handlePasswordSave} className="space-y-2">
           <InputGroup>
             <InputGroupInput
@@ -745,11 +738,7 @@ export function AccountSettings() {
       </SettingsCard>
 
       {/* Two-Factor Authentication Section */}
-      <SettingsCard
-        title={t('settings.account.twoFactor')}
-        description={t('settings.account.twoFactorDesc')}
-        isSaving={isMFALoading}
-      >
+      <SettingsCard title={t('settings.account.twoFactor')} isSaving={isMFALoading}>
         <div className="space-y-4">
           {/* エラー・成功メッセージ */}
           {mfaError && (
@@ -867,10 +856,7 @@ export function AccountSettings() {
       </SettingsCard>
 
       {/* Danger Zone */}
-      <SettingsCard
-        title={<span className="text-destructive">{t('settings.account.dangerZone')}</span>}
-        description={t('settings.account.dangerZoneDesc')}
-      >
+      <SettingsCard title={<span className="text-destructive">{t('settings.account.dangerZone')}</span>}>
         <AccountDeletionDialog />
       </SettingsCard>
     </div>

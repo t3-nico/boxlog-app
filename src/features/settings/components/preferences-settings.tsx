@@ -77,16 +77,9 @@ export function PreferencesSettings() {
   return (
     <div className="space-y-6">
       {/* 言語とテーマ */}
-      <SettingsCard
-        title={t('settings.preferences.theme')}
-        description={t('settings.preferences.themeDesc')}
-        isSaving={preferences.isSaving}
-      >
+      <SettingsCard title={t('settings.preferences.theme')} isSaving={preferences.isSaving}>
         <div className="space-y-4">
-          <SettingField
-            label={t('settings.preferences.themeLabel')}
-            description={t('settings.preferences.themeLabelDesc')}
-          >
+          <SettingField label={t('settings.preferences.themeLabel')}>
             <Select value={preferences.values.theme} onValueChange={handleThemeChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.preferences.selectTheme')} />
@@ -102,46 +95,26 @@ export function PreferencesSettings() {
       </SettingsCard>
 
       {/* ユーザーエクスペリエンス */}
-      <SettingsCard
-        title={t('settings.preferences.userExperience')}
-        description={t('settings.preferences.userExperienceDesc')}
-        isSaving={preferences.isSaving}
-      >
+      <SettingsCard title={t('settings.preferences.userExperience')} isSaving={preferences.isSaving}>
         <div className="space-y-4">
-          <SettingField
-            label={t('settings.preferences.animations')}
-            description={t('settings.preferences.animationsDesc')}
-          >
+          <SettingField label={t('settings.preferences.animations')}>
             <Switch checked={preferences.values.animations} onCheckedChange={handleAnimationsChange} />
           </SettingField>
 
-          <SettingField
-            label={t('settings.preferences.soundEffects')}
-            description={t('settings.preferences.soundEffectsDesc')}
-          >
+          <SettingField label={t('settings.preferences.soundEffects')}>
             <Switch checked={preferences.values.sounds} onCheckedChange={handleSoundsChange} />
           </SettingField>
         </div>
       </SettingsCard>
 
       {/* データとプライバシー */}
-      <SettingsCard
-        title={t('settings.preferences.dataPrivacy')}
-        description={t('settings.preferences.dataPrivacyDesc')}
-        isSaving={preferences.isSaving}
-      >
+      <SettingsCard title={t('settings.preferences.dataPrivacy')} isSaving={preferences.isSaving}>
         <div className="space-y-4">
-          <SettingField
-            label={t('settings.preferences.autoBackup')}
-            description={t('settings.preferences.autoBackupDesc')}
-          >
+          <SettingField label={t('settings.preferences.autoBackup')}>
             <Switch checked={preferences.values.autoBackup} onCheckedChange={handleAutoBackupChange} />
           </SettingField>
 
-          <SettingField
-            label={t('settings.preferences.developerMode')}
-            description={t('settings.preferences.developerModeDesc')}
-          >
+          <SettingField label={t('settings.preferences.developerMode')}>
             <Switch checked={preferences.values.developerMode} onCheckedChange={handleDeveloperModeChange} />
           </SettingField>
         </div>

@@ -66,7 +66,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
   return (
     <div className="space-y-6">
       {/* 連携サービス一覧 */}
-      <SettingsCard title="連携サービス" description="外部サービスと接続してBoxLogの機能を拡張できます">
+      <SettingsCard title="連携サービス">
         <div className="space-y-4">
           {integrations.map((integration) => (
             <div key={integration.id} className="border-border flex items-center justify-between rounded-xl border p-4">
@@ -104,7 +104,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       </SettingsCard>
 
       {/* 同期設定 */}
-      <SettingsCard title="同期設定" description="連携サービスとのデータ同期を管理します">
+      <SettingsCard title="同期設定">
         <div className="space-y-4">
           <SettingField label="自動同期を有効にする" description="連携サービスのデータを自動的に同期します">
             <Switch checked={syncEnabled} onCheckedChange={handleSyncChange} />
@@ -121,7 +121,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       </SettingsCard>
 
       {/* API連携 */}
-      <SettingsCard title="API連携" description="開発者向けのAPI連携オプション">
+      <SettingsCard title="API連携">
         <div className="space-y-4">
           <div className="bg-muted/50 rounded-xl p-4">
             <p className="text-muted-foreground text-sm">APIキーの発行やWebhookの設定は開発者ポータルから行えます。</p>

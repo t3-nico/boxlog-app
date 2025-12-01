@@ -153,13 +153,9 @@ export function CalendarSettings() {
   return (
     <div className="space-y-6">
       {/* Time & Timezone Section */}
-      <SettingsCard
-        title={t('settings.calendar.timeAndTimezone')}
-        description={t('settings.calendar.timeAndTimezoneDesc')}
-        isSaving={autoSave.isSaving}
-      >
+      <SettingsCard title={t('settings.calendar.timeAndTimezone')} isSaving={autoSave.isSaving}>
         <div className="space-y-4">
-          <SettingField label={t('settings.calendar.timezone')} description={t('settings.calendar.timezoneDesc')}>
+          <SettingField label={t('settings.calendar.timezone')}>
             <Select value={autoSave.values.timezone} onValueChange={handleTimezoneChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectTimezone')} />
@@ -173,7 +169,7 @@ export function CalendarSettings() {
             </Select>
           </SettingField>
 
-          <SettingField label={t('settings.calendar.timeFormat')} description={t('settings.calendar.timeFormatDesc')}>
+          <SettingField label={t('settings.calendar.timeFormat')}>
             <Select value={autoSave.values.timeFormat} onValueChange={handleTimeFormatChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectTimeFormat')} />
@@ -203,16 +199,9 @@ export function CalendarSettings() {
       </SettingsCard>
 
       {/* Week & Calendar Display Section */}
-      <SettingsCard
-        title={t('settings.calendar.weekAndCalendar')}
-        description={t('settings.calendar.weekAndCalendarDesc')}
-        isSaving={autoSave.isSaving}
-      >
+      <SettingsCard title={t('settings.calendar.weekAndCalendar')} isSaving={autoSave.isSaving}>
         <div className="space-y-4">
-          <SettingField
-            label={t('settings.calendar.weekStartsOn')}
-            description={t('settings.calendar.weekStartsOnDesc')}
-          >
+          <SettingField label={t('settings.calendar.weekStartsOn')}>
             <Select value={String(autoSave.values.weekStartsOn)} onValueChange={handleWeekStartsOnChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectStartDay')} />
@@ -225,33 +214,20 @@ export function CalendarSettings() {
             </Select>
           </SettingField>
 
-          <SettingField
-            label={t('settings.calendar.showWeekNumbers')}
-            description={t('settings.calendar.showWeekNumbersDesc')}
-          >
+          <SettingField label={t('settings.calendar.showWeekNumbers')}>
             <Switch checked={autoSave.values.showWeekNumbers} onCheckedChange={handleShowWeekNumbersChange} />
           </SettingField>
 
-          <SettingField
-            label={t('settings.calendar.showDeclinedEvents')}
-            description={t('settings.calendar.showDeclinedEventsDesc')}
-          >
+          <SettingField label={t('settings.calendar.showDeclinedEvents')}>
             <Switch checked={autoSave.values.showDeclinedEvents} onCheckedChange={handleShowDeclinedEventsChange} />
           </SettingField>
         </div>
       </SettingsCard>
 
       {/* Default Task Settings Section */}
-      <SettingsCard
-        title={t('settings.calendar.defaultTaskSettings')}
-        description={t('settings.calendar.defaultTaskSettingsDesc')}
-        isSaving={autoSave.isSaving}
-      >
+      <SettingsCard title={t('settings.calendar.defaultTaskSettings')} isSaving={autoSave.isSaving}>
         <div className="space-y-4">
-          <SettingField
-            label={t('settings.calendar.defaultDuration')}
-            description={t('settings.calendar.defaultDurationDesc')}
-          >
+          <SettingField label={t('settings.calendar.defaultDuration')}>
             <Select value={String(autoSave.values.defaultDuration)} onValueChange={handleDefaultDurationChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectDuration')} />
@@ -266,10 +242,7 @@ export function CalendarSettings() {
             </Select>
           </SettingField>
 
-          <SettingField
-            label={t('settings.calendar.snapInterval')}
-            description={t('settings.calendar.snapIntervalDesc')}
-          >
+          <SettingField label={t('settings.calendar.snapInterval')}>
             <Select value={String(autoSave.values.snapInterval)} onValueChange={handleSnapIntervalChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectInterval')} />
@@ -286,16 +259,9 @@ export function CalendarSettings() {
       </SettingsCard>
 
       {/* Business Hours Section */}
-      <SettingsCard
-        title={t('settings.calendar.businessHours')}
-        description={t('settings.calendar.businessHoursDesc')}
-        isSaving={autoSave.isSaving}
-      >
+      <SettingsCard title={t('settings.calendar.businessHours')} isSaving={autoSave.isSaving}>
         <div className="space-y-4">
-          <SettingField
-            label={t('settings.calendar.businessHoursStart')}
-            description={t('settings.calendar.businessHoursStartDesc')}
-          >
+          <SettingField label={t('settings.calendar.businessHoursStart')}>
             <Select value={String(autoSave.values.businessHours.start)} onValueChange={handleBusinessHoursStartChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectStartTime')} />
@@ -310,10 +276,7 @@ export function CalendarSettings() {
             </Select>
           </SettingField>
 
-          <SettingField
-            label={t('settings.calendar.businessHoursEnd')}
-            description={t('settings.calendar.businessHoursEndDesc')}
-          >
+          <SettingField label={t('settings.calendar.businessHoursEnd')}>
             <Select value={String(autoSave.values.businessHours.end)} onValueChange={handleBusinessHoursEndChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectEndTime')} />
@@ -340,7 +303,7 @@ export function CalendarSettings() {
       </SettingsCard>
 
       {/* Reset Settings Section */}
-      <SettingsCard title={t('settings.calendar.resetSettings')} description={t('settings.calendar.resetSettingsDesc')}>
+      <SettingsCard title={t('settings.calendar.resetSettings')}>
         <Button variant="destructive" onClick={handleResetSettings}>
           {t('settings.calendar.resetToDefault')}
         </Button>
