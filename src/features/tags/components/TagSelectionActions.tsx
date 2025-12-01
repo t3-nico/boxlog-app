@@ -70,7 +70,7 @@ export function TagSelectionActions({
             </TooltipTrigger>
             <TooltipContent>{t('tags.page.moveToGroup')}</TooltipContent>
           </Tooltip>
-          <DropdownMenuContent className="min-w-[200px]">
+          <DropdownMenuContent className="min-w-48">
             <DropdownMenuItem
               onClick={() => {
                 selectedTagIds.forEach((tagId) => {
@@ -187,7 +187,7 @@ export function TagSelectionActions({
                     {trigger.icon}
                     {trigger.label}
                   </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="min-w-[200px]">
+                  <DropdownMenuSubContent className="min-w-48">
                     {items.map((item) => (
                       <DropdownMenuItem key={item.key} onClick={item.onClick}>
                         {item.icon}

@@ -208,11 +208,7 @@ export const RichTextEditor = ({
       )}
       <EditorContent
         editor={editor}
-        className="min-h-[80px] resize-y overflow-auto"
-        style={{
-          minHeight: '80px',
-          maxHeight: '400px',
-        }}
+        className="min-h-20 max-h-[25rem] resize-y overflow-auto"
       />
     </div>
   )

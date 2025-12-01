@@ -56,7 +56,7 @@ export function TablePagination({ totalItems }: TablePaginationProps) {
       <div className="flex items-center gap-2">
         <span className="text-muted-foreground text-sm">表示件数</span>
         <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
-          <SelectTrigger className="h-9 w-[64px]">
+          <SelectTrigger className="h-9 w-16">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

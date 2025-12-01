@@ -284,7 +284,7 @@ export function TranslationDashboard() {
                 </CardHeader>
                 <CardContent>
                   {/* TODO: Install recharts package to enable charts */}
-                  <div className="text-muted-foreground flex h-[300px] items-center justify-center">
+                  <div className="text-muted-foreground flex h-80 items-center justify-center">
                     <p>Chart visualization (recharts package required)</p>
                   </div>
                   {/* <ResponsiveContainer width="100%" height={300}>
@@ -307,7 +307,7 @@ export function TranslationDashboard() {
                 </CardHeader>
                 <CardContent>
                   {/* TODO: Install recharts package to enable charts */}
-                  <div className="text-muted-foreground flex h-[300px] items-center justify-center">
+                  <div className="text-muted-foreground flex h-80 items-center justify-center">
                     <p>Pie chart visualization (recharts package required)</p>
                   </div>
                   {/* <ResponsiveContainer width="100%" height={300}>

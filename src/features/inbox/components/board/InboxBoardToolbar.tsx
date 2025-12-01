@@ -82,7 +82,7 @@ export function InboxBoardToolbar() {
       <div className="flex flex-1 items-center gap-2">
         {/* 期限フィルター */}
         <Select value={dueDate} onValueChange={(value) => setDueDate(value as DueDateFilter)}>
-          <SelectTrigger className="h-9 w-[140px]">
+          <SelectTrigger className="h-9 w-36">
             <Calendar className="mr-2 size-4" />
             <SelectValue placeholder="期限" />
           </SelectTrigger>
@@ -139,7 +139,7 @@ export function InboxBoardToolbar() {
               列設定
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-[280px]" align="end">
+          <PopoverContent className="w-72" align="end">
             <div className="space-y-4">
               {/* ヘッダー */}
               <div className="flex items-center justify-between">

@@ -118,7 +118,7 @@ export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
             <ChevronDown className="size-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-[240px]">
+        <DropdownMenuContent align="start" className="w-60">
           <DropdownMenuLabel>保存されたビュー</DropdownMenuLabel>
           <DropdownMenuSeparator />
 

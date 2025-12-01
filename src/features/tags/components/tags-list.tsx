@@ -213,7 +213,7 @@ const TagItem = ({
 
             {/* コンテキストメニュー */}
             {showMenu != null && (
-              <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
+              <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-50 mt-1 min-w-36 rounded-lg border py-1 shadow-lg">
                 <button
                   type="button"
                   onClick={handleEditTag}

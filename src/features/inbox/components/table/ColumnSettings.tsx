@@ -35,7 +35,7 @@ export function ColumnSettings() {
           列設定
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[280px]" align="end">
+      <PopoverContent className="w-72" align="end">
         <div className="space-y-4">
           {/* ヘッダー */}
           <div className="flex items-center justify-between">

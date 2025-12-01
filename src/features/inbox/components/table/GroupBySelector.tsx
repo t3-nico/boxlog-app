@@ -59,7 +59,7 @@ export function GroupBySelector() {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-[180px]">
+      <DropdownMenuContent align="start" className="w-44">
         <DropdownMenuLabel>グループ化</DropdownMenuLabel>
         <DropdownMenuSeparator />
 

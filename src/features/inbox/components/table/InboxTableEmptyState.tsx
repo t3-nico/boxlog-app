@@ -88,9 +88,9 @@ export function InboxTableEmptyState({ columnCount, totalItems: _totalItems }: I
 
   return (
     <TableRow>
-      <TableCell colSpan={columnCount} className="h-[450px]">
+      <TableCell colSpan={columnCount} className="h-[28rem]">
         <div className="flex h-full items-center justify-center">
-          <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
+          <div className="mx-auto flex max-w-md flex-col items-center justify-center text-center">
             <div className="bg-muted flex size-20 items-center justify-center rounded-full">
               <Icon className="text-muted-foreground size-10" />
             </div>

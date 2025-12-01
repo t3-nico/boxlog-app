@@ -111,7 +111,7 @@ export function StatsToolbar() {
 
         {/* 期間タイプ選択 */}
         <Select value={periodType} onValueChange={(value) => setPeriodType(value as PeriodType)}>
-          <SelectTrigger className="h-8 w-[100px]">
+          <SelectTrigger className="h-8 w-24">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -144,7 +144,7 @@ export function StatsToolbar() {
         {/* 比較期間選択（比較有効時のみ表示） */}
         {compareEnabled && (
           <Select value={comparePeriod} onValueChange={(value) => setComparePeriod(value as ComparePeriod)}>
-            <SelectTrigger className="h-8 w-[120px]">
+            <SelectTrigger className="h-8 w-28">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

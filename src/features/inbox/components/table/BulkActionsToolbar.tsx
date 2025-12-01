@@ -130,7 +130,7 @@ export function BulkActionsToolbar() {
       <div className="flex items-center gap-2">
         {/* ステータス変更 */}
         <Select onValueChange={(value) => handleStatusChange(value as PlanStatus)} disabled={isProcessing}>
-          <SelectTrigger className="h-8 w-[140px]">
+          <SelectTrigger className="h-8 w-36">
             <SelectValue placeholder="ステータス変更" />
           </SelectTrigger>
           <SelectContent>
