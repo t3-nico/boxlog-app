@@ -9,18 +9,21 @@ import { Calendar } from 'lucide-react'
 import { StatusBarItem } from '../StatusBarItem'
 
 import { Spinner } from '@/components/ui/spinner'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { api } from '@/lib/trpc'
+import { cn } from '@/lib/utils'
 
 /**
  * 現在の予定/次の予定をステータスバーに表示
  *
  * 表示パターン:
- * - 現在進行中: "ミーティング (14:00-15:00)"
+ * - 現在進行中: "ミーティング (14:00-15:00)" + プログレスバー
  * - 次の予定あり: "次: 打ち合わせ (16:00〜)"
  * - 予定なし: "予定なし"
  */
 export function ScheduleStatusItem() {
   const router = useRouter()
+  const openInspector = usePlanInspectorStore((state) => state.openInspector)
   const [currentTime, setCurrentTime] = useState(() => new Date())
 
   // 1分ごとに現在時刻を更新
@@ -102,11 +105,33 @@ export function ScheduleStatusItem() {
     })
   }, [])
 
-  // クリック時: カレンダーへ遷移
+  // クリック時: 予定があればインスペクターを開く、なければカレンダーへ遷移
   const handleClick = useCallback(() => {
-    const today = new Date().toISOString().split('T')[0]
-    router.push(`/calendar/day?date=${today}`)
-  }, [router])
+    const activePlan = currentPlan || nextPlan
+    if (activePlan) {
+      openInspector(activePlan.id)
+    } else {
+      const today = new Date().toISOString().split('T')[0]
+      router.push(`/calendar/day?date=${today}`)
+    }
+  }, [currentPlan, nextPlan, openInspector, router])
+
+  // 進捗率を計算（0〜100）
+  const progressPercent = useMemo(() => {
+    if (!currentPlan?.start_time || !currentPlan?.end_time) return null
+
+    const start = new Date(currentPlan.start_time).getTime()
+    const end = new Date(currentPlan.end_time).getTime()
+    const now = currentTime.getTime()
+
+    const total = end - start
+    const elapsed = now - start
+
+    if (total <= 0) return null
+
+    const percent = Math.min(100, Math.max(0, (elapsed / total) * 100))
+    return Math.round(percent)
+  }, [currentPlan, currentTime])
 
   // ラベル生成
   const label = useMemo(() => {
@@ -129,7 +154,27 @@ export function ScheduleStatusItem() {
   // アイコン（ローディング時はスピナー）
   const icon = isLoading ? <Spinner className="h-3 w-3" /> : <Calendar className="h-3 w-3" />
 
+  // ツールチップ
+  const tooltip = currentPlan || nextPlan ? '予定を開く' : 'カレンダーを開く'
+
   return (
-    <StatusBarItem icon={icon} label={isLoading ? '...' : label} onClick={handleClick} tooltip="カレンダーを開く" />
+    <div className="flex items-center gap-2">
+      <StatusBarItem icon={icon} label={isLoading ? '...' : label} onClick={handleClick} tooltip={tooltip} />
+      {/* 進行中の予定がある場合のみプログレスバーを表示 */}
+      {progressPercent !== null && (
+        <div className="flex items-center gap-1.5" title={`${progressPercent}% 経過`}>
+          <div className="bg-muted h-1 w-16 overflow-hidden rounded-full">
+            <div
+              className={cn(
+                'h-full rounded-full transition-all duration-300',
+                progressPercent < 80 ? 'bg-primary' : 'bg-destructive'
+              )}
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <span className="text-muted-foreground text-[10px] tabular-nums">{progressPercent}%</span>
+        </div>
+      )}
+    </div>
   )
 }

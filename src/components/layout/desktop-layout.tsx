@@ -54,37 +54,41 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         <AppBar />
       </div>
 
-      {/* 元のレイアウト（ResizablePanel） */}
-      <ResizablePanelGroup direction="horizontal" className="flex-1">
-        {/* Sidebar（240px、開閉可能）← ページごとに動的切り替え */}
-        {/* Inboxページでは非表示 */}
-        {isOpen && !isInboxPage && (
-          <>
-            <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
-              {renderSidebar()}
-            </ResizablePanel>
-            <ResizableHandle className="border-border hover:bg-foreground/8 w-1 border-r transition-colors" />
-          </>
-        )}
+      {/* メインエリア（サイドバー + コンテンツ + ステータスバー） */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        {/* 上部: サイドバー + コンテンツ */}
+        <ResizablePanelGroup direction="horizontal" className="min-h-0 flex-1">
+          {/* Sidebar（240px、開閉可能）← ページごとに動的切り替え */}
+          {/* Inboxページでは非表示 */}
+          {isOpen && !isInboxPage && (
+            <>
+              <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
+                {renderSidebar()}
+              </ResizablePanel>
+              <ResizableHandle className="border-border hover:bg-foreground/8 w-1 border-r transition-colors" />
+            </>
+          )}
 
-        {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
-        <ResizablePanel>
-          <div className="relative flex h-full flex-col">
-            <MainContentWrapper>{children}</MainContentWrapper>
-            {/* ステータスバー（ログイン後のみ表示） */}
-            {isAuthenticated ? (
-              <StatusBar>
-                <StatusBar.Left>
-                  <ScheduleStatusItem />
-                </StatusBar.Left>
-                <StatusBar.Right>
-                  <ChronotypeStatusItem />
-                </StatusBar.Right>
-              </StatusBar>
-            ) : null}
-          </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+          {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
+          <ResizablePanel className="overflow-hidden">
+            <div className="relative flex h-full flex-col">
+              <MainContentWrapper>{children}</MainContentWrapper>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+
+        {/* ステータスバー（サイドバー〜コンテンツ全幅、ログイン後のみ表示） */}
+        {isAuthenticated ? (
+          <StatusBar>
+            <StatusBar.Left>
+              <ScheduleStatusItem />
+            </StatusBar.Left>
+            <StatusBar.Right>
+              <ChronotypeStatusItem />
+            </StatusBar.Right>
+          </StatusBar>
+        ) : null}
+      </div>
     </div>
   )
 }

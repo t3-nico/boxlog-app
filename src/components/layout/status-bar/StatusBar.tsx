@@ -36,8 +36,8 @@ export function StatusBar({ children, className }: StatusBarProps) {
   return (
     <div
       className={cn(
-        // レイアウト（24px = 1.5rem）
-        'flex h-6 w-full items-center justify-between',
+        // レイアウト（20px = 1.25rem）、縮小防止
+        'flex h-5 w-full shrink-0 items-center justify-between',
         // 背景・ボーダー
         'border-border bg-background border-t',
         // パディング（8pxグリッド準拠）
