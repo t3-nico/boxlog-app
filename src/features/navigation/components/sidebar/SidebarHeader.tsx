@@ -3,6 +3,7 @@
 import { PanelLeftClose } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
 import { cn } from '@/lib/utils'
 
@@ -27,6 +28,7 @@ interface SidebarHeaderProps {
  */
 export function SidebarHeader({ title, className }: SidebarHeaderProps) {
   const { toggle } = useSidebarStore()
+  const { t } = useI18n()
 
   return (
     <div className={cn('bg-background flex h-12 items-end px-4 pt-2', className)}>
@@ -39,7 +41,7 @@ export function SidebarHeader({ title, className }: SidebarHeaderProps) {
         onClick={toggle}
         size="icon"
         variant="ghost"
-        aria-label="サイドバーを閉じる"
+        aria-label={t('aria.closeSidebar')}
         className={cn('text-muted-foreground size-10 shrink-0 md:hidden')}
       >
         <PanelLeftClose className="size-5" />

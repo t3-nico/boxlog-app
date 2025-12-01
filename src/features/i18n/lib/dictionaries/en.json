@@ -74,6 +74,27 @@
     "filter": "Filter",
     "sort": "Sort"
   },
+  "aria": {
+    "clearSelection": "Clear selection",
+    "openMenu": "Open menu",
+    "closeSidebar": "Close sidebar",
+    "cardMenu": "Card menu",
+    "closeModal": "Close modal",
+    "closeFilterMenu": "Close filter menu",
+    "changeColor": "Change color",
+    "unread": "Unread",
+    "notifications": "Notifications",
+    "close": "Close",
+    "previousPlan": "Previous plan",
+    "nextPlan": "Next plan",
+    "options": "Options",
+    "selectAll": "Select all",
+    "tagColor": "Tag color",
+    "closeSettings": "Close settings",
+    "weeklyCalendar": "Weekly calendar",
+    "previous": "Previous",
+    "next": "Next"
+  },
   "search": {
     "shortcut": "⌘K"
   },
@@ -200,7 +221,8 @@
     "view": "View",
     "toast": {
       "eventDeleted": "Event deleted"
-    }
+    },
+    "selectedCount": "{{count}} selected"
   },
   "calendar": {
     "title": "Calendar",
@@ -597,6 +619,42 @@
         "title": "Sample Task 3",
         "description": "Completed task"
       }
+    },
+    "kanban": {
+      "markAllComplete": "Mark all complete",
+      "archiveAll": "Archive all",
+      "clearColumn": "Clear column",
+      "addNewPlan": "Add new plan",
+      "enterTitle": "Enter title...",
+      "addDate": "Add date",
+      "addTag": "Add tag",
+      "add": "Add",
+      "addNew": "Add new",
+      "recurrence": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "weekdays": "Weekdays"
+      }
+    },
+    "toolbar": {
+      "priority": "Priority",
+      "all": "All",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "sort": "Sort by",
+      "createdAtDesc": "Created (newest)",
+      "createdAtAsc": "Created (oldest)",
+      "updatedAtDesc": "Updated (newest)",
+      "updatedAtAsc": "Updated (oldest)",
+      "priorityDesc": "Priority (high first)",
+      "priorityAsc": "Priority (low first)",
+      "titleAsc": "Title (A-Z)",
+      "titleDesc": "Title (Z-A)",
+      "reset": "Reset",
+      "addCard": "Add card"
     }
   },
   "table": {
@@ -1076,12 +1134,14 @@
       "groupCreateFailed": "Failed to create group"
     },
     "page": {
+      "title": "Tag Management",
       "searchPlaceholder": "Search tags...",
       "createGroup": "Create Group",
       "createTag": "Create Tag",
       "noTags": "No tags",
       "addFirstTag": "Add your first tag",
       "selectAll": "Select All",
+      "selectTag": "Select {{name}}",
       "name": "Name",
       "description": "Description",
       "createdAt": "Created At",
@@ -1104,7 +1164,42 @@
       "tagDeleted": "Permanently deleted tag \"{{name}}\"",
       "tagDeleteFailed": "Failed to delete tag",
       "tagMoved": "Moved tag \"{{name}}\" to {{group}}",
-      "tagMoveFailed": "Failed to move tag"
+      "tagMoveFailed": "Failed to move tag",
+      "filter": {
+        "type": "Type",
+        "all": "All",
+        "unused": "Unused",
+        "frequentlyUsed": "Frequently Used"
+      },
+      "bulkDeleteConfirm": "Delete {{count}} selected tags?",
+      "bulkArchived": "Archived {{count}} tags",
+      "bulkArchiveFailed": "Failed to archive tags",
+      "addDescription": "Add description...",
+      "addGroup": "Add to group...",
+      "changeColor": "Change color",
+      "tagColor": "Tag color"
+    },
+    "archive": {
+      "restoreConfirm": "Restore tag \"{{name}}\"?\n\nRestored tags can be used for tagging again.",
+      "restoreSuccess": "Tag \"{{name}}\" has been restored",
+      "restoreFailed": "Failed to restore tag",
+      "deleteSuccess": "Tag \"{{name}}\" has been permanently deleted",
+      "deleteFailed": "Failed to delete tag",
+      "bulkDeleteConfirm": "Permanently delete {{count}} selected tag(s)?",
+      "noArchivedTags": "No archived tags",
+      "restore": "Restore",
+      "permanentDelete": "Delete permanently",
+      "view": "View",
+      "showing": "{{start}}-{{end}} of {{total}} items",
+      "noItems": "0 items",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "pageOf": "Page {{current}} / {{total}}"
+    },
+    "detail": {
+      "description": "Description",
+      "linkedPlans": "Linked Plans ({{count}})",
+      "noLinkedPlans": "No plans linked to this tag"
     }
   },
   "trash": {
@@ -1286,6 +1381,67 @@
       "estimatedTime": "Estimated completion",
       "checkStatus": "Check Status",
       "thankYou": "We apologize for the inconvenience."
+    },
+    "global": {
+      "title": "Application Error",
+      "description": "We're sorry. An unexpected problem has occurred.",
+      "errorId": "Error ID",
+      "showDetails": "Show error details",
+      "retry": "Retry",
+      "goHome": "Go Home",
+      "sentryReport": "The error has been automatically reported"
+    },
+    "boundary": {
+      "title": "An unexpected error occurred",
+      "description": "We're sorry. An error occurred in the application.",
+      "autoReport": "An error report will be sent automatically.",
+      "retry": "Retry",
+      "reload": "Reload Page",
+      "devTitle": "Development - Component Error",
+      "component": "Component",
+      "unknown": "Unknown",
+      "checkConsole": "Check the browser console for details.",
+      "featureError": "An error occurred in the {{feature}} feature"
+    },
+    "globalBoundary": {
+      "title": "A system error has occurred",
+      "errorId": "Error ID",
+      "severity": "Severity",
+      "autoRecovering": "Auto-recovering...",
+      "pleaseWait": "Please wait",
+      "retryCount": "Retry count",
+      "problemAndSolution": "Problem and Solution",
+      "category": "Category",
+      "system": "system",
+      "autoRecovery": "Auto Recovery",
+      "possible": "Possible",
+      "manualRequired": "Manual action required",
+      "recommendedActions": "Recommended Actions",
+      "autoRecoverySystem": "Auto Recovery System",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "manualRetry": "Manual Retry",
+      "retriesLeft": "{{count}} attempts left",
+      "reloadPage": "Reload Page",
+      "goHome": "Go Home",
+      "technicalDetails": "Technical Details (Developer)",
+      "error": "Error",
+      "analysisCode": "Analysis Code",
+      "categoryLabel": "Category",
+      "recoverable": "Recoverable",
+      "yes": "Yes",
+      "no": "No",
+      "stackTrace": "Stack Trace"
+    },
+    "loading": {
+      "default": "Loading...",
+      "title": "Loading",
+      "loadingData": "Loading data...",
+      "loadFailed": "Failed to load data",
+      "retry": "Retry",
+      "noData": "No data available",
+      "loadingPage": "Loading page",
+      "pleaseWait": "Please wait..."
     }
   },
   "ossCredits": {
