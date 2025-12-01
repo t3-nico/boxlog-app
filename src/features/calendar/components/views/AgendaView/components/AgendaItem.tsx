@@ -1,8 +1,10 @@
 'use client'
 
 import { format } from 'date-fns'
+import { Bell, Repeat } from 'lucide-react'
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { calendarColors } from '@/features/calendar/theme'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import type { AgendaItemProps } from '../AgendaView.types'
@@ -10,12 +12,15 @@ import type { AgendaItemProps } from '../AgendaView.types'
 /**
  * AgendaItem - アジェンダビュー内の個別プラン表示
  *
- * Googleカレンダーのアジェンダ風デザイン:
+ * PlanCardContentと統一されたスタイル:
  * - 左側に時間表示
- * - カラーインジケーター
- * - タイトルと詳細情報
+ * - カラーインジケーター（calendarColors使用）
+ * - タイトル、タグ、アイコン表示
  */
 export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
+  const { locale } = useI18n()
+  const scheduledColors = calendarColors.event.scheduled
+
   const handleClick = () => {
     onClick?.(plan)
   }
@@ -44,6 +49,7 @@ export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
       className={cn(
         'group flex w-full items-start gap-3 rounded-lg p-3',
         'hover:bg-accent/50 focus-visible:bg-accent/50',
+        'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:outline-none',
         'transition-colors duration-150',
         'cursor-pointer text-left'
       )}
@@ -58,34 +64,63 @@ export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
             <span className="text-muted-foreground/60 text-xs">{endTime}</span>
           </div>
         ) : (
-          <span className="text-xs">終日</span>
+          <span className="text-xs">{locale === 'ja' ? '終日' : 'All day'}</span>
         )}
       </div>
 
-      {/* カラーインジケーター */}
+      {/* カラーインジケーター（calendarColors使用） */}
       <div
-        className="mt-1.5 h-4 w-1 shrink-0 rounded-full"
-        style={{ backgroundColor: plan.color || 'var(--primary)' }}
+        className={cn('mt-1.5 h-4 w-1 shrink-0 rounded-full', scheduledColors.background)}
+        style={plan.color ? { backgroundColor: plan.color } : undefined}
       />
 
       {/* コンテンツ */}
       <div className="min-w-0 flex-1">
-        <div className="text-foreground truncate font-medium">{plan.title}</div>
+        {/* タイトル + プラン番号（PlanCardContentと統一） */}
+        <div className="flex items-baseline gap-1">
+          <span className="text-foreground truncate font-medium">{plan.title}</span>
+          {plan.plan_number && (
+            <span className="text-muted-foreground flex-shrink-0 text-sm">#{plan.plan_number}</span>
+          )}
+        </div>
 
-        {/* タグ */}
+        {/* アイコン表示（繰り返し・通知） */}
+        {(plan.isRecurring || plan.reminder_minutes != null) && (
+          <div className="mt-0.5 flex items-center gap-1.5">
+            {plan.isRecurring && (
+              <Repeat className="text-muted-foreground h-3.5 w-3.5" aria-label="Recurring" />
+            )}
+            {plan.reminder_minutes != null && (
+              <Bell className="text-muted-foreground h-3.5 w-3.5" aria-label="Reminder set" />
+            )}
+          </div>
+        )}
+
+        {/* タグ（PlanCardContentと統一されたスタイル） */}
         {displayTags.length > 0 && (
-          <div className="mt-1 flex flex-wrap gap-1">
+          <div className="mt-1.5 flex flex-wrap gap-1">
             {displayTags.map((tag) => (
               <span
                 key={tag.id}
-                className="bg-muted text-muted-foreground rounded px-1.5 py-0.5 text-xs"
-                style={tag.color ? { backgroundColor: `${tag.color}20`, color: tag.color } : undefined}
+                className="inline-flex flex-shrink-0 items-center gap-0.5 rounded-sm border px-1.5 py-0.5 text-xs leading-tight"
+                style={{ borderColor: tag.color }}
+                title={tag.name}
               >
-                {tag.name}
+                {tag.icon && (
+                  <span className="flex-shrink-0" style={{ color: tag.color }}>
+                    {tag.icon}
+                  </span>
+                )}
+                <span className="flex-shrink-0 font-medium" style={{ color: tag.color }}>
+                  #
+                </span>
+                <span className="truncate">{tag.name}</span>
               </span>
             ))}
             {(plan.tags?.length ?? 0) > 2 && (
-              <span className="text-muted-foreground text-xs">+{(plan.tags?.length ?? 0) - 2}</span>
+              <span className="text-muted-foreground inline-flex items-center px-1 text-xs">
+                +{(plan.tags?.length ?? 0) - 2}
+              </span>
             )}
           </div>
         )}

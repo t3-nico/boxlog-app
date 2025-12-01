@@ -3,12 +3,14 @@
 import { useMemo } from 'react'
 
 import { addDays, isSameDay, isToday, startOfDay } from 'date-fns'
+import { CalendarDays } from 'lucide-react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
+import { EmptyState } from '../shared/components/EmptyState'
 
 import type { AgendaViewProps } from './AgendaView.types'
 import { AgendaDayGroup } from './components/AgendaDayGroup'
@@ -120,19 +122,15 @@ export function AgendaView({
               })}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-16">
-              <div className="text-muted-foreground/50 mb-4 text-6xl">📅</div>
-              <p className="text-muted-foreground text-center">
-                {locale === 'ja'
-                  ? '今後の予定はありません'
-                  : 'No upcoming events'}
-              </p>
-              <p className="text-muted-foreground/70 mt-1 text-center text-sm">
-                {locale === 'ja'
+            <EmptyState
+              icon={CalendarDays}
+              title={locale === 'ja' ? '今後の予定はありません' : 'No upcoming events'}
+              description={
+                locale === 'ja'
                   ? 'カレンダーで新しい予定を作成してください'
-                  : 'Create a new event in the calendar'}
-              </p>
-            </div>
+                  : 'Create a new event in the calendar'
+              }
+            />
           )}
         </div>
       </div>
