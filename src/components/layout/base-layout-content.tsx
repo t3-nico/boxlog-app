@@ -7,7 +7,6 @@ import { CalendarNavigationProvider } from '@/features/calendar/contexts/Calenda
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
-import { NotificationDialog } from '@/features/notifications'
 import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime'
 import { SettingsDialog } from '@/features/settings/components/dialog'
 import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext'
@@ -67,9 +66,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
       {/* Settings Dialog */}
       <SettingsDialog />
-
-      {/* Notification Dialog */}
-      <NotificationDialog />
 
       {/* Cookie Consent Banner */}
       <CookieConsentBanner />

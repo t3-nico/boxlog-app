@@ -91,15 +91,15 @@ export function NotificationItem({
 
   return (
     <div
-      className={`border-border rounded-xl border p-4 transition-colors ${
-        !isRead ? 'bg-muted' : 'bg-card hover:bg-muted/50'
+      className={`rounded-lg px-3 py-2.5 transition-colors ${
+        !isRead ? 'bg-accent' : 'hover:bg-accent/50'
       } ${actionUrl ? 'cursor-pointer' : ''}`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       role={actionUrl || !isRead ? 'button' : undefined}
       tabIndex={actionUrl || !isRead ? 0 : undefined}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-2.5">
         {/* アイコン */}
         <div className={`mt-0.5 shrink-0 ${typeColors[type]}`}>
           {typeIcons[type]}
@@ -108,15 +108,15 @@ export function NotificationItem({
         {/* コンテンツ */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h4 className="truncate text-sm font-semibold">{title}</h4>
+            <h4 className="truncate text-sm font-medium">{title}</h4>
             {!isRead && (
-              <span className="bg-primary h-2 w-2 shrink-0 rounded-full" aria-label="未読" />
+              <span className="bg-primary h-1.5 w-1.5 shrink-0 rounded-full" aria-label="未読" />
             )}
           </div>
           {message && (
-            <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{message}</p>
+            <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">{message}</p>
           )}
-          <span className="text-muted-foreground mt-2 block text-xs">
+          <span className="text-muted-foreground mt-1 block text-xs">
             {formatTime(createdAt)}
           </span>
         </div>
@@ -125,14 +125,14 @@ export function NotificationItem({
         <Button
           variant="ghost"
           size="sm"
-          className="shrink-0"
+          className="h-7 w-7 shrink-0 p-0"
           onClick={(e) => {
             e.stopPropagation()
             onDelete(id)
           }}
           disabled={isDeleting}
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="h-3.5 w-3.5" />
         </Button>
       </div>
     </div>
