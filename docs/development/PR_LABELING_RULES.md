@@ -250,6 +250,38 @@ gh pr list --label "tech/supabase" --label "area/backend" --state all
 
 ---
 
+## ⚙️ 自動化（GitHub Actions）
+
+PR作成時に以下のラベルが自動付与されます。
+
+### 自動付与されるラベル
+
+| ラベル | 判定方法 | 設定ファイル |
+| ------ | -------- | ------------ |
+| `type/*` | PRタイトルのConventional Commitsプレフィックス | `pr-labeler.yml` |
+| `size/*` | 変更行数（additions + deletions） | `pr-labeler.yml` |
+| `area/*` | 変更ファイルのパス | `labeler.yml` |
+| `tech/*` | 変更ファイルのパス | `labeler.yml` |
+| `scope/*` | 変更ファイルのパス | `labeler.yml` |
+| `impact/breaking` | PRタイトルに `!:` または `BREAKING` | `pr-labeler.yml` |
+| `impact/dependencies` | `package.json` の変更 | `labeler.yml` |
+
+### 手動付与が必要なラベル
+
+以下は内容を理解した上で手動で付与：
+
+- `release/*` - リリース計画時
+- `motivation/*` - 変更の動機（一部自動）
+- `caution/*` - レビュー時の注意点
+- `impact/security`, `impact/migration` など
+
+### 設定ファイル
+
+- `.github/workflows/pr-labeler.yml` - ワークフロー定義
+- `.github/labeler.yml` - ファイルパスベースのラベル設定
+
+---
+
 ## 🤖 AIによる新規ラベル追加履歴
 
 新しいラベルを追加した場合、ここに記録を残す。
