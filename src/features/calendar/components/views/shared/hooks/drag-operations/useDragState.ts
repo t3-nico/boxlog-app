@@ -13,13 +13,13 @@ export interface DragState {
   dragStartPosition: { x: number; y: number } | null
   currentPosition: { x: number; y: number } | null
   originalPosition: { top: number; left: number; width: number; height: number } | null
-  snappedPosition: { top: number; height?: number; left?: number } | null
+  snappedPosition: { top: number; height?: number | undefined; left?: number | undefined } | null
   previewTime: { start: Date; end: Date } | null
   recentlyDragged: boolean
   recentlyResized: boolean
   dragElement: HTMLElement | null
-  targetDateIndex?: number
-  originalDateIndex?: number
+  targetDateIndex?: number | undefined
+  originalDateIndex?: number | undefined
   ghostElement: HTMLElement | null
 }
 

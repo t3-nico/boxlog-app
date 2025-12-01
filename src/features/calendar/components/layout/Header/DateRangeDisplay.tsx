@@ -7,19 +7,21 @@ import { cn } from '@/lib/utils'
 
 interface DateRangeDisplayProps {
   date: Date
-  endDate?: Date
-  viewType?: string
-  showWeekNumber?: boolean
-  formatPattern?: string
-  className?: string
-  weekBadgeClassName?: string
-  onDateSelect?: (date: Date | undefined) => void
-  clickable?: boolean
+  endDate?: Date | undefined
+  viewType?: string | undefined
+  showWeekNumber?: boolean | undefined
+  formatPattern?: string | undefined
+  className?: string | undefined
+  weekBadgeClassName?: string | undefined
+  onDateSelect?: ((date: Date | undefined) => void) | undefined
+  clickable?: boolean | undefined
   // 現在表示している期間（MiniCalendarでのハイライト用）
-  displayRange?: {
-    start: Date
-    end: Date
-  }
+  displayRange?:
+    | {
+        start: Date
+        end: Date
+      }
+    | undefined
 }
 
 /**
@@ -62,7 +64,9 @@ const createStaticContent = (
 ) => (
   <div className={cn('flex items-center gap-2', className)}>
     {dateContent}
-    {showWeekNumber ? <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} /> : null}
+    {showWeekNumber ? (
+      <WeekBadge weekNumber={weekNumber} {...(weekBadgeClassName && { className: weekBadgeClassName })} />
+    ) : null}
   </div>
 )
 
@@ -79,7 +83,9 @@ const createClickableContent = (
 ) => (
   <div className={cn('flex items-center gap-2', className)}>
     {dateContent}
-    {showWeekNumber ? <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} /> : null}
+    {showWeekNumber ? (
+      <WeekBadge weekNumber={weekNumber} {...(weekBadgeClassName && { className: weekBadgeClassName })} />
+    ) : null}
   </div>
 )
 
@@ -96,7 +102,7 @@ export const DateRangeDisplay = ({
   weekBadgeClassName,
   onDateSelect,
   clickable = false,
-  displayRange,
+  displayRange: _displayRange,
 }: DateRangeDisplayProps) => {
   const weekNumber = getWeek(date, { weekStartsOn: 1 })
   const isClickable = clickable && onDateSelect

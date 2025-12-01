@@ -27,7 +27,7 @@ export const useDelete = () => {
         type,
         title: item.name || item.title || 'Untitled',
         originalData: item as unknown as Record<string, unknown>,
-        deletedFrom: originalPath || item.path || item.folder,
+        deletedFrom: (originalPath || item.path || item.folder) as string,
       })
 
       // 3. 元の場所から削除処理は各呼び出し元で実装

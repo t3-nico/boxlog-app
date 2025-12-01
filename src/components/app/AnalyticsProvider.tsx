@@ -120,7 +120,7 @@ export function AnalyticsProvider({
       debug,
       disableInDevelopment,
       requireConsent,
-      customEndpoint,
+      ...(customEndpoint !== undefined && { customEndpoint }),
     })
 
     // 初期ユーザーID設定
@@ -252,6 +252,7 @@ export function CookieConsentBanner({
  */
 export function AnalyticsDebugPanel() {
   const { debugMode, enabledProviders, hasUserConsent, isReady } = useAnalyticsContext()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- デバッグ用の汎用プロパティ
   const [events, setEvents] = useState<Array<{ name: string; timestamp: number; properties: any }>>([])
 
   useEffect(() => {

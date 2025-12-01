@@ -160,8 +160,8 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           // ユーザーのタイムゾーンでDateオブジェクトを作成
           const [year, month, day] = due_date.split('-').map(Number)
           // ユーザーのタイムゾーンの時刻として作成
-          const zonedStart = new Date(year, month - 1, day, hour, minute, 0)
-          const zonedEnd = new Date(year, month - 1, day, hour + 1, minute, 0)
+          const zonedStart = new Date(year!, month! - 1, day!, hour, minute, 0)
+          const zonedEnd = new Date(year!, month! - 1, day!, hour + 1, minute, 0)
 
           // ユーザーのタイムゾーンの時刻をUTCに変換
           const startDate = fromZonedTime(zonedStart, timezone)
@@ -220,7 +220,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
         setDragPreviewTime(null)
       }
     },
-    [updatePlan]
+    [updatePlan, timezone]
   )
 
   /**
@@ -297,8 +297,8 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
                       {(() => {
                         // 終了時間を計算（開始時刻 + 1時間）
                         const [hour, minute] = dragPreviewTime.time.split(':').map(Number)
-                        const endHour = String(hour + 1).padStart(2, '0')
-                        const endMinute = String(minute).padStart(2, '0')
+                        const endHour = String(hour! + 1).padStart(2, '0')
+                        const endMinute = String(minute!).padStart(2, '0')
                         return `${endHour}:${endMinute}`
                       })()}
                     </div>

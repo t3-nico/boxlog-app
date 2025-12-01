@@ -54,7 +54,6 @@ const TagTreeNode = ({
 
   const hasChildren = tag.children && tag.children.length > 0
   const isGroup = tag.level === 0 // Level 0 はグループ
-  const canHaveChildren = tag.level === 0 // グループのみ子を持てる
 
   const handleToggleExpanded = useCallback(() => {
     if (hasChildren) {

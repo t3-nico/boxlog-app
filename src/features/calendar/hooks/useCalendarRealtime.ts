@@ -45,7 +45,7 @@ export function useCalendarRealtime(userId: string | undefined, options: UseCale
     channelName: `calendar-changes-${userId}`,
     table: 'tickets',
     event: '*', // INSERT, UPDATE, DELETE すべて
-    filter: userId ? `user_id=eq.${userId}` : undefined,
+    ...(userId && { filter: `user_id=eq.${userId}` }),
     enabled, // enabledオプションを渡す
     onEvent: (payload) => {
       const newRecord = payload.new as { id: string } | undefined

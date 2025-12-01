@@ -30,8 +30,8 @@ describe('crossWeekPlanHelpers', () => {
       const segments = splitCrossWeekPlans(plans, true, weekStart)
 
       expect(segments).toHaveLength(1)
-      expect(segments[0].segmentType).toBe('full')
-      expect(segments[0].isPartialSegment).toBe(false)
+      expect(segments[0]!.segmentType).toBe('full')
+      expect(segments[0]!.isPartialSegment).toBe(false)
     })
 
     it('複数日プランを分割する', () => {
@@ -58,8 +58,8 @@ describe('crossWeekPlanHelpers', () => {
       const segments = splitCrossWeekPlans(plans, true, weekStart)
 
       expect(segments.length).toBeGreaterThan(1)
-      expect(segments[0].segmentType).toBe('start')
-      expect(segments[segments.length - 1].segmentType).toBe('end')
+      expect(segments[0]!.segmentType).toBe('start')
+      expect(segments[segments.length - 1]!.segmentType).toBe('end')
     })
 
     it('週末表示OFF時は土日をスキップする', () => {
@@ -115,7 +115,7 @@ describe('crossWeekPlanHelpers', () => {
       const segments = splitCrossWeekPlans(plans, true, weekStart)
 
       expect(segments).toHaveLength(1)
-      expect(segments[0].segmentType).toBe('full')
+      expect(segments[0]!.segmentType).toBe('full')
     })
   })
 
@@ -256,7 +256,7 @@ describe('crossWeekPlanHelpers', () => {
       const fridayToMonday = detectFridayToMondayPlans(plans)
 
       expect(fridayToMonday).toHaveLength(1)
-      expect(fridayToMonday[0].id).toBe('plan-1')
+      expect(fridayToMonday[0]!.id).toBe('plan-1')
     })
 
     it('startDate/endDateがnullの場合は除外する', () => {

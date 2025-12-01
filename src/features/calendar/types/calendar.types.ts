@@ -78,20 +78,22 @@ export interface RecordStats {
 export interface CalendarPlan {
   id: string
   title: string
-  description?: string
+  description?: string | undefined
   startDate: Date | null
   endDate: Date | null
   status: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
   color: string
-  plan_number?: string // プラン番号（#123 形式）
-  reminder_minutes?: number | null // 通知タイミング（開始時刻の何分前か）
-  tags?: Array<{
-    id: string
-    name: string
-    color: string
-    icon?: string
-    parent_id?: string
-  }>
+  plan_number?: string | undefined // プラン番号（#123 形式）
+  reminder_minutes?: number | null | undefined // 通知タイミング（開始時刻の何分前か）
+  tags?:
+    | Array<{
+        id: string
+        name: string
+        color: string
+        icon?: string | undefined
+        parent_id?: string | undefined
+      }>
+    | undefined
   createdAt: Date
   updatedAt: Date
   // Display-specific properties
@@ -101,13 +103,13 @@ export interface CalendarPlan {
   isMultiDay: boolean
   isRecurring: boolean
   // Optional properties used in various contexts
-  type?: 'event' | 'plan' | 'task' // エントリの種類
-  userId?: string // 所有者ID
-  location?: string // 場所
-  url?: string // 関連URL
-  allDay?: boolean // 終日予定
-  priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional' // 優先度
-  calendarId?: string // カレンダーID
+  type?: 'event' | 'plan' | 'task' | undefined // エントリの種類
+  userId?: string | undefined // 所有者ID
+  location?: string | undefined // 場所
+  url?: string | undefined // 関連URL
+  allDay?: boolean | undefined // 終日予定
+  priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional' | undefined // 優先度
+  calendarId?: string | undefined // カレンダーID
 }
 
 // 後方互換性のためのエイリアス

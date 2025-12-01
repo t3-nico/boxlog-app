@@ -150,7 +150,7 @@ export function TagsSidebar({
       console.error('Failed to create tag group:', error)
       toast.error(t('tags.toast.groupCreateFailed'))
     }
-  }, [newGroupName, newGroupColor, createGroupMutation, toast, router, pathname, setIsCreatingGroup])
+  }, [newGroupName, newGroupColor, createGroupMutation, router, pathname, setIsCreatingGroup, t])
 
   // 削除確認ダイアログからの削除実行
   const handleConfirmDelete = useCallback(async () => {
@@ -170,7 +170,7 @@ export function TagsSidebar({
       console.error('Failed to delete tag group:', error)
       toast.error('グループの削除に失敗しました')
     }
-  }, [deletingGroup, deleteGroupMutation, toast, currentGroupNumber, router, pathname])
+  }, [deletingGroup, deleteGroupMutation, currentGroupNumber, router, pathname, t])
 
   // インライン編集を開始
   const handleStartEditing = useCallback((group: TagGroup) => {
@@ -209,7 +209,7 @@ export function TagsSidebar({
         toast.error(t('tags.toast.groupNameChangeFailed'))
       }
     },
-    [editingGroupName, updateGroupMutation, toast, t]
+    [editingGroupName, updateGroupMutation, t]
   )
 
   // カラー更新
@@ -267,7 +267,7 @@ export function TagsSidebar({
         setDeletingGroup(group)
       }
     },
-    [getGroupTagCount, deleteGroupMutation, toast, t, currentGroupNumber, pathname, router]
+    [getGroupTagCount, deleteGroupMutation, t, currentGroupNumber, pathname, router]
   )
 
   // 未分類タグ数をカウント
@@ -505,50 +505,5 @@ export function TagsSidebar({
         onConfirm={handleConfirmDelete}
       />
     </aside>
-  )
-}
-
-/**
- * グループ名表示 - 省略時のみツールチップを表示
- */
-function GroupNameWithTooltip({ name, onDoubleClick }: { name: string; onDoubleClick: (e: React.MouseEvent) => void }) {
-  const textRef = useRef<HTMLSpanElement>(null)
-  const [isTruncated, setIsTruncated] = useState(false)
-
-  useEffect(() => {
-    const element = textRef.current
-    if (!element) return
-
-    // 省略されているかどうかをチェック
-    const checkTruncation = () => {
-      setIsTruncated(element.scrollWidth > element.clientWidth)
-    }
-
-    checkTruncation()
-
-    // リサイズ時に再チェック
-    window.addEventListener('resize', checkTruncation)
-    return () => window.removeEventListener('resize', checkTruncation)
-  }, [name])
-
-  const content = (
-    <span ref={textRef} className="flex-1 truncate" onDoubleClick={onDoubleClick}>
-      {name}
-    </span>
-  )
-
-  if (!isTruncated) {
-    return content
-  }
-
-  return (
-    <TooltipProvider delayDuration={300}>
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>{content}</TooltipTrigger>
-        <TooltipContent side="top" sideOffset={4}>
-          <p className="whitespace-nowrap">{name}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
   )
 }

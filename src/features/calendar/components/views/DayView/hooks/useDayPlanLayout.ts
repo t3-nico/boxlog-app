@@ -31,14 +31,14 @@ export function useDayEventLayout({
     maxConcurrentEvents,
   } = useEventPositioning({
     date,
-    events: events as any, // TODO(#389): CalendarPlan型の統一が必要
+    events: events as unknown as Parameters<typeof useEventPositioning>[0]['events'], // TODO(#389): CalendarPlan型の統一が必要
     viewType: 'day',
   })
 
   // DayView固有のEventPosition形式に変換
   const eventPositions = useMemo(() => {
     return positionsInfo.map((info: EventPositionInfo) => ({
-      event: info.event as any, // TODO(#389): CalendarPlan型の統一が必要
+      event: info.event as unknown as CalendarPlan, // TODO(#389): CalendarPlan型の統一が必要
       top: info.top,
       height: info.height,
       left: info.left,

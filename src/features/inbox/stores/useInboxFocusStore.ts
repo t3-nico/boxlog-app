@@ -52,7 +52,7 @@ export const useInboxFocusStore = create<InboxFocusState>()(
 
         if (!focusedId) {
           // フォーカスがない場合は最初の行にフォーカス
-          set({ focusedId: ids[0] })
+          set({ focusedId: ids[0] ?? null })
           return
         }
 
@@ -63,7 +63,7 @@ export const useInboxFocusStore = create<InboxFocusState>()(
         }
 
         // 次の行にフォーカス
-        set({ focusedId: ids[currentIndex + 1] })
+        set({ focusedId: ids[currentIndex + 1] ?? null })
       },
 
       focusPrevious: (ids) => {
@@ -72,7 +72,7 @@ export const useInboxFocusStore = create<InboxFocusState>()(
 
         if (!focusedId) {
           // フォーカスがない場合は最初の行にフォーカス
-          set({ focusedId: ids[0] })
+          set({ focusedId: ids[0] ?? null })
           return
         }
 
@@ -83,7 +83,7 @@ export const useInboxFocusStore = create<InboxFocusState>()(
         }
 
         // 前の行にフォーカス
-        set({ focusedId: ids[currentIndex - 1] })
+        set({ focusedId: ids[currentIndex - 1] ?? null })
       },
 
       clearFocus: () => set({ focusedId: null }),

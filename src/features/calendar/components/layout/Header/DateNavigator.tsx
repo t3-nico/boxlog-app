@@ -10,12 +10,12 @@ export type NavigationDirection = 'prev' | 'next' | 'today'
 
 interface DateNavigatorProps {
   onNavigate: (direction: NavigationDirection) => void
-  todayLabel?: string
-  showTodayButton?: boolean
-  showArrows?: boolean
-  className?: string
-  buttonClassName?: string
-  arrowSize?: 'sm' | 'md' | 'lg'
+  todayLabel?: string | undefined
+  showTodayButton?: boolean | undefined
+  showArrows?: boolean | undefined
+  className?: string | undefined
+  buttonClassName?: string | undefined
+  arrowSize?: 'sm' | 'md' | 'lg' | undefined
 }
 
 const arrowSizes = {

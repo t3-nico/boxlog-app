@@ -11,16 +11,16 @@ import { getTodayIndex } from '../utils/dateHelpers'
 
 export interface UseCurrentPeriodOptions {
   dates: Date[]
-  referenceDate?: Date // 基準日（デフォルト: 今日）
+  referenceDate?: Date | undefined // 基準日（デフォルト: 今日）
   periodType: 'day' | 'week' | 'twoweek' | 'threeday' | 'fiveday' | 'agenda'
-  weekStartsOn?: 0 | 1 // 週の開始日
+  weekStartsOn?: 0 | 1 | undefined // 週の開始日
 }
 
 export interface UseCurrentPeriodReturn {
   isCurrentPeriod: boolean
   todayIndex: number // -1 if not in period
-  currentWeekIndex?: number // TwoWeekViewでのみ使用
-  relativeDayIndex?: number // ThreeDayViewでのみ使用（-1=昨日, 0=今日, 1=明日）
+  currentWeekIndex?: number | undefined // TwoWeekViewでのみ使用
+  relativeDayIndex?: number | undefined // ThreeDayViewでのみ使用（-1=昨日, 0=今日, 1=明日）
 }
 
 /**

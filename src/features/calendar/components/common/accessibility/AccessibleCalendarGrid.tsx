@@ -91,7 +91,7 @@ export const AccessibleCalendarGrid = ({
   // 時間のフォーマット
   const formatTimeForAria = useCallback((time: string) => {
     const [hour, minute] = time.split(':')
-    return `${parseInt(hour)}時${parseInt(minute)}分`
+    return `${parseInt(hour!)}時${parseInt(minute!)}分`
   }, [])
 
   // イベントの詳細説明
@@ -123,8 +123,8 @@ export const AccessibleCalendarGrid = ({
         (event) =>
           event.startDate &&
           event.startDate.toDateString() === date.toDateString() &&
-          event.startDate.getHours() === parseInt(time.split(':')[0]) &&
-          event.startDate.getMinutes() === parseInt(time.split(':')[1])
+          event.startDate.getHours() === parseInt(time.split(':')[0]!) &&
+          event.startDate.getMinutes() === parseInt(time.split(':')[1]!)
       )
 
       const isSelected =

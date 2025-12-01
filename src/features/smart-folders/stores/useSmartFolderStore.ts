@@ -41,10 +41,6 @@ const generateId = (): string => {
   return Math.random().toString(36).substring(2) + Date.now().toString(36)
 }
 
-const generateConditionId = (): string => {
-  return `cond_${Math.random().toString(36).substring(2)}`
-}
-
 // Eagle-style system smart folders
 const systemSmartFolders: SmartFolder[] = [
   {
@@ -120,7 +116,7 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
           const { smartFolders } = get()
 
           // const parentFolder = folder.parentId ? smartFolders.find(f => f.id === folder.parentId) : null
-          const parentFolder = null
+          // const _parentFolder = null
 
           // if (folder.level > 3) {
           //   throw new Error('Maximum hierarchy level is 3')
@@ -131,9 +127,9 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
           // }
 
           // Generate path - temporarily use folder name only
-          const path = folder.name
+          // const _path = folder.name
 
-          const maxOrder = smartFolders.length
+          // const _maxOrder = smartFolders.length
 
           const newFolder: SmartFolder = {
             ...folder,

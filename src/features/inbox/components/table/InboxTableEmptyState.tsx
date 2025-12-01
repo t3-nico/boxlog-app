@@ -26,7 +26,7 @@ interface InboxTableEmptyStateProps {
  * <InboxTableEmptyState columnCount={5} totalItems={0} />
  * ```
  */
-export function InboxTableEmptyState({ columnCount, totalItems }: InboxTableEmptyStateProps) {
+export function InboxTableEmptyState({ columnCount, totalItems: _totalItems }: InboxTableEmptyStateProps) {
   const { search, status, reset } = useInboxFilterStore()
   const { openInspector } = usePlanInspectorStore()
 

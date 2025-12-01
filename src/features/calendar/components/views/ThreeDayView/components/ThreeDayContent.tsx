@@ -11,7 +11,6 @@ import {
   CalendarDragSelection,
   PlanBlock,
   useGlobalDragCursor,
-  useTimeCalculation,
 } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
@@ -20,14 +19,14 @@ interface ThreeDayContentProps {
   date: Date
   plans: CalendarPlan[]
   planStyles: Record<string, React.CSSProperties>
-  onPlanClick?: (plan: CalendarPlan) => void
-  onPlanContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
-  onEmptyClick?: (date: Date, timeString: string) => void
-  onPlanUpdate?: (planId: string, updates: Partial<CalendarPlan>) => void
-  onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
-  className?: string
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined
+  onPlanContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined
+  onEmptyClick?: ((date: Date, timeString: string) => void) | undefined
+  onPlanUpdate?: ((planId: string, updates: Partial<CalendarPlan>) => void) | undefined
+  onTimeRangeSelect?: ((date: Date, startTime: string, endTime: string) => void) | undefined
+  className?: string | undefined
   dayIndex: number // 3日間内での日付インデックス（0-2）
-  displayDates?: Date[] // 3日間の全日付配列（日付間移動用）
+  displayDates?: Date[] | undefined // 3日間の全日付配列（日付間移動用）
 }
 
 export const ThreeDayContent = ({
@@ -73,35 +72,8 @@ export const ThreeDayContent = ({
     viewMode: '3day',
   })
 
-  // 時間計算機能
-  const { calculateTimeFromEvent } = useTimeCalculation()
-
   // グローバルドラッグカーソー管理（共通化）
   useGlobalDragCursor(dragState, handlers)
-
-  // 空白クリックハンドラー
-  const handleEmptyClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!onEmptyClick) return
-
-      const { timeString } = calculateTimeFromEvent(e)
-      onEmptyClick(date, timeString)
-    },
-    [date, onEmptyClick, calculateTimeFromEvent]
-  )
-
-  // プランクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
-  const handlePlanClick = useCallback(
-    (plan: CalendarPlan) => {
-      // ドラッグ・リサイズ操作中のクリックは無視
-      if (dragState.isDragging || dragState.isResizing) {
-        return
-      }
-
-      onPlanClick?.(plan)
-    },
-    [onPlanClick, dragState.isDragging, dragState.isResizing]
-  )
 
   // プラン右クリックハンドラー
   const handlePlanContextMenu = useCallback(

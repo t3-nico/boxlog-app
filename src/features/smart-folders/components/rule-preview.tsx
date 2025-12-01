@@ -183,11 +183,7 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
           <h4 className="mb-3 text-xs font-medium text-gray-700 dark:text-gray-300">Active Rules ({rules.length})</h4>
           <div className="space-y-2">
             {rules.map((rule, index) => (
-              <div
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
-                className="text-xs"
-              >
+              <div key={index} className="text-xs">
                 {index > 0 && (
                   <div className="mb-1 flex items-center gap-2">
                     <span

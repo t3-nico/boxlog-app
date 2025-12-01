@@ -74,7 +74,7 @@ export function useAuth() {
       email,
       password,
       options: {
-        data: metadata,
+        ...(metadata !== undefined && { data: metadata }),
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     })

@@ -73,9 +73,9 @@ export interface KanbanColumn {
   status: KanbanStatus
   cards: KanbanCard[]
   order: number
-  wipLimit?: number // WIP制限（Work In Progress Limit）
-  definitionOfDone?: string[] // 完了定義（Definition of Done）
-  color?: KanbanColumnColor // カラム背景色
+  wipLimit?: number | undefined // WIP制限（Work In Progress Limit）
+  definitionOfDone?: string[] | undefined // 完了定義（Definition of Done）
+  color?: KanbanColumnColor | undefined // カラム背景色
 }
 
 /**
@@ -84,7 +84,7 @@ export interface KanbanColumn {
 export interface KanbanBoard {
   id: string
   name: string
-  description?: string
+  description?: string | undefined
   columns: KanbanColumn[]
   createdAt: Date
   updatedAt: Date
@@ -105,10 +105,10 @@ export interface DragEvent {
  * フィルター条件
  */
 export interface KanbanFilter {
-  priority?: KanbanPriority
-  tags?: string[]
-  assignee?: string
-  search?: string
+  priority?: KanbanPriority | undefined
+  tags?: string[] | undefined
+  assignee?: string | undefined
+  search?: string | undefined
 }
 
 /**

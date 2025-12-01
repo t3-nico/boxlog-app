@@ -21,29 +21,33 @@ export type TimedEvent = TimedPlan
 
 export interface PlanCardProps {
   plan: CalendarPlan
-  position?: PlanCardPosition
-  onClick?: (plan: CalendarPlan) => void
-  onDoubleClick?: (plan: CalendarPlan) => void
-  onContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
-  onDragStart?: (
-    plan: CalendarPlan,
-    mouseEvent: React.MouseEvent,
-    position: { top: number; left: number; width: number; height: number }
-  ) => void
-  onDragEnd?: (plan: CalendarPlan) => void
-  onResizeStart?: (
-    plan: CalendarPlan,
-    direction: 'top' | 'bottom',
-    mouseEvent: React.MouseEvent,
-    position: { top: number; left: number; width: number; height: number }
-  ) => void
-  onResizeEnd?: (plan: CalendarPlan) => void
-  isDragging?: boolean
-  isSelected?: boolean
-  isResizing?: boolean
-  className?: string
-  style?: React.CSSProperties
-  previewTime?: { start: Date; end: Date } | null
+  position?: PlanCardPosition | undefined
+  onClick?: ((plan: CalendarPlan) => void) | undefined
+  onDoubleClick?: ((plan: CalendarPlan) => void) | undefined
+  onContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined
+  onDragStart?:
+    | ((
+        plan: CalendarPlan,
+        mouseEvent: React.MouseEvent,
+        position: { top: number; left: number; width: number; height: number }
+      ) => void)
+    | undefined
+  onDragEnd?: ((plan: CalendarPlan) => void) | undefined
+  onResizeStart?:
+    | ((
+        plan: CalendarPlan,
+        direction: 'top' | 'bottom',
+        mouseEvent: React.MouseEvent,
+        position: { top: number; left: number; width: number; height: number }
+      ) => void)
+    | undefined
+  onResizeEnd?: ((plan: CalendarPlan) => void) | undefined
+  isDragging?: boolean | undefined
+  isSelected?: boolean | undefined
+  isResizing?: boolean | undefined
+  className?: string | undefined
+  style?: React.CSSProperties | undefined
+  previewTime?: ({ start: Date; end: Date } | null) | undefined
 }
 
 // 後方互換性のためのエイリアス

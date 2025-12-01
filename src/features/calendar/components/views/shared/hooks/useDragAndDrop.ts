@@ -48,14 +48,14 @@ export interface DragHandlers {
 }
 
 interface UseDragAndDropProps {
-  onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
-  onPlanUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void // onEventUpdateのエイリアス（下位互換性のため）
-  onEventClick?: (plan: CalendarPlan) => void // クリック処理用
-  onPlanClick?: (plan: CalendarPlan) => void // onEventClickのエイリアス（下位互換性のため）
+  onEventUpdate?: ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void) | undefined
+  onPlanUpdate?: ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void) | undefined // onEventUpdateのエイリアス（下位互換性のため）
+  onEventClick?: ((plan: CalendarPlan) => void) | undefined // クリック処理用
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined // onEventClickのエイリアス（下位互換性のため）
   date: Date // DayViewでは単一日付、他のビューでは基準日付
   events: CalendarPlan[] // プランデータを受け取る
-  displayDates?: Date[] // WeekView/TwoWeekView/ThreeDayView用の日付配列
-  viewMode?: 'day' | 'week' | '2week' | '3day' | '5day' // ビューモード
+  displayDates?: Date[] | undefined // WeekView/TwoWeekView/ThreeDayView用の日付配列
+  viewMode?: 'day' | 'week' | '2week' | '3day' | '5day' | undefined // ビューモード
 }
 
 /**
@@ -447,7 +447,10 @@ export function useDragAndDrop({
       setDragState((prev) => ({
         ...prev,
         currentPosition: { x: constrainedX, y: constrainedY },
-        snappedPosition: { top: snappedTop, left: snappedLeft },
+        snappedPosition: {
+          top: snappedTop,
+          ...(snappedLeft !== undefined && { left: snappedLeft }),
+        },
         previewTime: { start: previewStartTime, end: previewEndTime },
         targetDateIndex,
       }))
@@ -1025,7 +1028,6 @@ export function useDragAndDrop({
         hasMoved: false,
         originalElement: null,
         originalDateIndex: 0,
-        columnWidth: undefined,
       }
 
       setDragState({
@@ -1058,6 +1060,7 @@ export function useDragAndDrop({
         document.removeEventListener('mouseup', handleMouseUp)
       }
     }
+    return undefined
   }, [dragState.isDragging, dragState.isResizing, handleMouseMove, handleMouseUp])
 
   return {

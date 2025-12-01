@@ -81,6 +81,7 @@ export async function POST(request: NextRequest) {
       memo: memo || null,
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase型定義の制限による
     const { data, error } = await (supabase.from('tasks') as any).insert([taskData]).select().single()
 
     if (error) {
@@ -169,6 +170,7 @@ export async function PUT(request: NextRequest) {
     })
 
     // データベース更新
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase型定義の制限による
     const { data, error } = await (supabase.from('tasks') as any).update(updateData).eq('id', id).select().single()
 
     if (error) {

@@ -86,24 +86,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
     }
   }
 
-  const handleStartTimeChange = (startTime: string | null) => {
-    // TODO: APIで開始日時を更新
-    console.log('Update start time:', item.id, startTime)
-  }
-
-  const handleEndTimeChange = (endTime: string | null) => {
-    // TODO: APIで終了日時を更新
-    console.log('Update end time:', item.id, endTime)
-  }
-
-  const handleDueDateChange = (dueDate: string | null) => {
-    updatePlan.mutate({
-      id: item.id,
-      data: {
-        due_date: dueDate ? dueDate.split('T')[0] : undefined, // ISO 8601 → YYYY-MM-DD
-      },
-    })
-  }
+  // TODO: 開始日時・終了日時・期限日の更新機能は将来実装予定
 
   // コンテキストメニューアクション
   const handleEdit = (item: InboxItem) => {
@@ -208,13 +191,13 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           <DateTimeUnifiedCell
             key={columnId}
             data={{
-              date: item.start_time ? parseDatetimeString(item.start_time).toISOString().split('T')[0] : null,
+              date: item.start_time ? parseDatetimeString(item.start_time).toISOString().split('T')[0]! : null,
               startTime: item.start_time ? format(parseDatetimeString(item.start_time), 'HH:mm') : null,
               endTime: item.end_time ? format(parseDatetimeString(item.end_time), 'HH:mm') : null,
               reminder: null,
               recurrence: null,
             }}
-            width={column?.width}
+            {...(column?.width !== undefined && { width: column.width })}
             onChange={(data) => {
               // 日付+時刻をISO 8601形式に変換
               const startTime = data.date && data.startTime ? `${data.date}T${data.startTime}:00Z` : null

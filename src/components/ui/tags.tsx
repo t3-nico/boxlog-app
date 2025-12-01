@@ -64,15 +64,16 @@ export const Tags = ({ value = [], onValueChange, options, children, onCreateTag
         document.removeEventListener('mousedown', handleClickOutside)
       }
     }
+    return undefined
   }, [open])
 
-  const contextValue = {
+  const contextValue: TagsContextType = {
     value,
     onValueChange: onValueChange || (() => {}),
     options,
     open,
     setOpen,
-    onCreateTag,
+    ...(onCreateTag !== undefined && { onCreateTag }),
     searchValue,
     setSearchValue,
   }
@@ -284,9 +285,14 @@ interface SimpleTagsProps {
 
 export const SimpleTags = ({ value, onValueChange, options, placeholder, className, onCreateTag }: SimpleTagsProps) => {
   return (
-    <Tags value={value} onValueChange={onValueChange} options={options} onCreateTag={onCreateTag}>
+    <Tags
+      {...(value !== undefined && { value })}
+      {...(onValueChange !== undefined && { onValueChange })}
+      options={options}
+      {...(onCreateTag !== undefined && { onCreateTag })}
+    >
       <div className={cn('', className)}>
-        <TagsTrigger placeholder={placeholder} />
+        <TagsTrigger {...(placeholder !== undefined && { placeholder })} />
         <TagsContent>
           <TagsInput />
           <TagsList>

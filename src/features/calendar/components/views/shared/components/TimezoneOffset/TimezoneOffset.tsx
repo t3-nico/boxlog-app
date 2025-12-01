@@ -20,7 +20,7 @@ export function TimezoneOffset({ timezone, className }: TimezoneOffsetProps) {
 
       if (offsetPart?.value) {
         const match = offsetPart.value.match(/GMT([+-]\d+)/)
-        if (match) {
+        if (match && match[1]) {
           const offset = parseInt(match[1])
           return offset >= 0 ? `+${offset}` : `${offset}`
         }

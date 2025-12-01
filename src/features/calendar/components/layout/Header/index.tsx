@@ -13,20 +13,22 @@ interface CalendarHeaderProps {
   onNavigate: (direction: 'prev' | 'next' | 'today') => void
   onViewChange: (view: CalendarViewType) => void
   // オプションのアクション
-  onSettings?: () => void
-  onExport?: () => void
-  onImport?: () => void
-  showActions?: boolean
+  onSettings?: (() => void) | undefined
+  onExport?: (() => void) | undefined
+  onImport?: (() => void) | undefined
+  showActions?: boolean | undefined
   // 左側のカスタムコンテンツ（モバイルメニューボタンなど）
-  leftSlot?: React.ReactNode
+  leftSlot?: React.ReactNode | undefined
   // 日付選択機能
-  onDateSelect?: (date: Date) => void
-  showMiniCalendar?: boolean
+  onDateSelect?: ((date: Date) => void) | undefined
+  showMiniCalendar?: boolean | undefined
   // 現在表示している期間（MiniCalendarでのハイライト用）
-  displayRange?: {
-    start: Date
-    end: Date
-  }
+  displayRange?:
+    | {
+        start: Date
+        end: Date
+      }
+    | undefined
 }
 
 const viewOptions = [

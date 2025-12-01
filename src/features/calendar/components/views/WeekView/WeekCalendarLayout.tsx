@@ -66,9 +66,6 @@ export const WeekCalendarLayout = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
 
-  // ドラッグ機能は一時的に無効化
-  const _enableDragToCreate = false
-
   // Records取得
   useEffect(() => {
     if (planRecordMode === 'record' || planRecordMode === 'both') {

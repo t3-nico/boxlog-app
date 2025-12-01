@@ -60,7 +60,7 @@ export function joinTranslated(strings: TranslatedString[], separator: string = 
  *
  * 実行時には常にtrueを返しますが、TypeScriptの型推論に使用します。
  */
-export function isTranslated(str: string): str is TranslatedString {
+export function isTranslated(_str: string): _str is TranslatedString {
   // ブランド型は実行時には存在しないため、常にtrueを返す
   // この関数は型推論のためにのみ使用される
   return true
