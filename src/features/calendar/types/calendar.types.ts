@@ -85,13 +85,15 @@ export interface CalendarPlan {
   color: string
   plan_number?: string | undefined // プラン番号（#123 形式）
   reminder_minutes?: number | null | undefined // 通知タイミング（開始時刻の何分前か）
-  tags?: Array<{
-    id: string
-    name: string
-    color: string
-    icon?: string | undefined
-    parent_id?: string | undefined
-  }> | undefined
+  tags?:
+    | Array<{
+        id: string
+        name: string
+        color: string
+        icon?: string | undefined
+        parent_id?: string | undefined
+      }>
+    | undefined
   createdAt: Date
   updatedAt: Date
   // Display-specific properties

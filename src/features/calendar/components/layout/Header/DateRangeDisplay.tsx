@@ -64,7 +64,9 @@ const createStaticContent = (
 ) => (
   <div className={cn('flex items-center gap-2', className)}>
     {dateContent}
-    {showWeekNumber ? <WeekBadge weekNumber={weekNumber} {...(weekBadgeClassName && { className: weekBadgeClassName })} /> : null}
+    {showWeekNumber ? (
+      <WeekBadge weekNumber={weekNumber} {...(weekBadgeClassName && { className: weekBadgeClassName })} />
+    ) : null}
   </div>
 )
 
@@ -81,7 +83,9 @@ const createClickableContent = (
 ) => (
   <div className={cn('flex items-center gap-2', className)}>
     {dateContent}
-    {showWeekNumber ? <WeekBadge weekNumber={weekNumber} {...(weekBadgeClassName && { className: weekBadgeClassName })} /> : null}
+    {showWeekNumber ? (
+      <WeekBadge weekNumber={weekNumber} {...(weekBadgeClassName && { className: weekBadgeClassName })} />
+    ) : null}
   </div>
 )
 

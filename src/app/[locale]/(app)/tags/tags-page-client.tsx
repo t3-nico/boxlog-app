@@ -58,7 +58,14 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const { t } = useI18n()
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
   const { data: groups = [] as TagGroup[] } = useTagGroups()
-  const { tags, setTags, setIsLoading, setIsCreatingGroup: _setIsCreatingGroup, isCreatingTag, setIsCreatingTag } = useTagsPageContext()
+  const {
+    tags,
+    setTags,
+    setIsLoading,
+    setIsCreatingGroup: _setIsCreatingGroup,
+    isCreatingTag,
+    setIsCreatingTag,
+  } = useTagsPageContext()
   const router = useRouter()
   const pathname = usePathname()
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])

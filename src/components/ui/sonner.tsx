@@ -30,7 +30,7 @@ type ToasterProps = React.ComponentProps<typeof Sonner>
  */
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme()
-  const validTheme = (theme === 'light' || theme === 'dark' || theme === 'system') ? theme : 'system'
+  const validTheme = theme === 'light' || theme === 'dark' || theme === 'system' ? theme : 'system'
 
   return (
     <Sonner

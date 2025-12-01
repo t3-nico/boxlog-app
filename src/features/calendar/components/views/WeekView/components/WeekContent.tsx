@@ -97,7 +97,6 @@ export const WeekContent = ({
 
   const planStyles = usePlanStyles(dayPlanPositions)
 
-
   // プラン右クリックハンドラー
   const handlePlanContextMenu = useCallback(
     (plan: CalendarPlan, mouseEvent: React.MouseEvent) => {

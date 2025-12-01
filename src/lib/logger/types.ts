@@ -52,12 +52,14 @@ export interface LogEntry {
 export interface ErrorLogEntry extends LogEntry {
   level: 'error'
   /** エラーオブジェクト */
-  error?: {
-    name: string
-    message: string
-    stack?: string | undefined
-    code?: string | number | undefined
-  } | undefined
+  error?:
+    | {
+        name: string
+        message: string
+        stack?: string | undefined
+        code?: string | number | undefined
+      }
+    | undefined
   /** エラーコンテキスト */
   context?: {
     action?: string

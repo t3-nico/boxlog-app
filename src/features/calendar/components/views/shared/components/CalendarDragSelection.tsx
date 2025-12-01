@@ -257,7 +257,17 @@ export const CalendarDragSelection = ({
       document.removeEventListener('mouseup', handleGlobalMouseUp)
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isSelecting, selectionStart, selection, pixelsToTime, onTimeRangeSelect, date, disabled, onSingleClick, formatTime])
+  }, [
+    isSelecting,
+    selectionStart,
+    selection,
+    pixelsToTime,
+    onTimeRangeSelect,
+    date,
+    disabled,
+    onSingleClick,
+    formatTime,
+  ])
 
   // モーダルキャンセル時のカスタムイベントリスナー
   useEffect(() => {

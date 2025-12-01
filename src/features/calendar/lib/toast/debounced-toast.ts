@@ -34,7 +34,9 @@ export interface ToastGroupConfig {
 export const useDebouncedToast = () => {
   const toast = useCalendarToast()
   const debounceStates = useRef<Map<string, DebounceState>>(new Map())
-  const groupedToasts = useRef<Map<string, { count: number; lastMessage: string; toastId?: string | undefined }>>(new Map())
+  const groupedToasts = useRef<Map<string, { count: number; lastMessage: string; toastId?: string | undefined }>>(
+    new Map()
+  )
 
   // クリーンアップ
   useEffect(() => {

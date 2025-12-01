@@ -23,10 +23,9 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
   const tag = tags.find((t) => t.tag_number === Number(tagNumber))
 
   // タグに紐づくプランを取得（リアルタイム性最適化済み）
-  const { data: plansData = [], isLoading: isLoadingPlans } = usePlans(
-    tag?.id ? { tagId: tag.id } : {},
-    { enabled: !!tag?.id }
-  )
+  const { data: plansData = [], isLoading: isLoadingPlans } = usePlans(tag?.id ? { tagId: tag.id } : {}, {
+    enabled: !!tag?.id,
+  })
   const plans = plansData as unknown as Plan[]
 
   useEffect(() => {

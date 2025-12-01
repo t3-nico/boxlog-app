@@ -36,30 +36,27 @@ export function usePlanContextActions() {
     [openInspector]
   )
 
-  const handleDuplicatePlan = useCallback(
-    async (_plan: CalendarPlan) => {
-      // TODO(#621): Plans/Sessions統合後に再実装
-      console.log('TODO: Sessions統合後に実装')
-      // try {
-      //   const { startDate, endDate } = normalizePlanDates(plan)
-      //   logDuplicationStart(plan, startDate, endDate)
-      //
-      //   const newStartDate = new Date(startDate)
-      //   const newEndDate = new Date(endDate)
-      //   logNewPlanDates(newStartDate, newEndDate)
-      //
-      //   const duplicateData = createDuplicatePlanData(plan, newStartDate, newEndDate)
-      //   const newPlan = await createPlan(duplicateData)
-      //   logDuplicationSuccess(newPlan)
-      //
-      //   showDuplicationSuccess(newPlan)
-      // } catch (err) {
-      //   console.error('❌ Failed to duplicate plan:', err)
-      //   calendarToast.error(t('calendar.plan.duplicateFailed'))
-      // }
-    },
-    []
-  )
+  const handleDuplicatePlan = useCallback(async (_plan: CalendarPlan) => {
+    // TODO(#621): Plans/Sessions統合後に再実装
+    console.log('TODO: Sessions統合後に実装')
+    // try {
+    //   const { startDate, endDate } = normalizePlanDates(plan)
+    //   logDuplicationStart(plan, startDate, endDate)
+    //
+    //   const newStartDate = new Date(startDate)
+    //   const newEndDate = new Date(endDate)
+    //   logNewPlanDates(newStartDate, newEndDate)
+    //
+    //   const duplicateData = createDuplicatePlanData(plan, newStartDate, newEndDate)
+    //   const newPlan = await createPlan(duplicateData)
+    //   logDuplicationSuccess(newPlan)
+    //
+    //   showDuplicationSuccess(newPlan)
+    // } catch (err) {
+    //   console.error('❌ Failed to duplicate plan:', err)
+    //   calendarToast.error(t('calendar.plan.duplicateFailed'))
+    // }
+  }, [])
 
   const handleViewDetails = useCallback(
     (plan: CalendarPlan) => {

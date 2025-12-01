@@ -223,12 +223,7 @@ export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
       </DropdownMenu>
 
       {/* ビュー作成・編集ダイアログ */}
-      <ViewSettingsDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        view={undefined}
-        currentState={currentState}
-      />
+      <ViewSettingsDialog open={dialogOpen} onOpenChange={setDialogOpen} view={undefined} currentState={currentState} />
     </>
   )
 }
