@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils'
 import { CalendarDragSelection, EventBlock, calculateEventGhostStyle, calculatePreviewTime } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor'
-import { useTimeCalculation } from '../../shared/hooks/useTimeCalculation'
 import type { CalendarPlan } from '../../shared/types/base.types'
 import type { DayContentProps } from '../DayView.types'
 import { useDragAndDrop } from '../hooks/useDragAndDrop'
@@ -40,38 +39,13 @@ export const DayContent = ({
   // ドラッグ&ドロップ機能
   const { dragState, handlers } = useDragAndDrop({
     onEventUpdate: handleEventUpdate,
-    onEventClick: onPlanClick,
+    ...(onPlanClick && { onEventClick: onPlanClick }),
     date,
     events: events ?? [],
   })
 
-  // 時間計算機能
-  const { calculateTimeFromEvent } = useTimeCalculation()
-
   // グローバルドラッグカーソー管理（共通化）
   useGlobalDragCursor(dragState, handlers)
-  // 空白クリックハンドラー（現在使用されていない - CalendarDragSelectionが処理）
-  const handleEmptyClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!onEmptyClick) return
-
-      const { timeString } = calculateTimeFromEvent(e)
-      onEmptyClick(date, timeString)
-    },
-    [date, onEmptyClick, calculateTimeFromEvent]
-  )
-
-  // プランクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
-  const handlePlanClick = useCallback(
-    (plan: CalendarPlan) => {
-      // ドラッグ・リサイズ操作中のクリックは無視
-      if (dragState.isDragging || dragState.isResizing) {
-        return
-      }
-      onPlanClick?.(plan)
-    },
-    [onPlanClick, dragState.isDragging, dragState.isResizing]
-  )
 
   // プラン右クリックハンドラー
   const handlePlanContextMenu = useCallback(

@@ -17,10 +17,10 @@ export interface DebounceConfig {
 
 // デバウンス状態
 interface DebounceState {
-  timeoutId?: NodeJS.Timeout
-  lastCallTime?: number
-  lastInvokeTime?: number
-  result?: string | number
+  timeoutId?: NodeJS.Timeout | undefined
+  lastCallTime?: number | undefined
+  lastInvokeTime?: number | undefined
+  result?: string | number | undefined
 }
 
 // グループ化設定
@@ -34,7 +34,9 @@ export interface ToastGroupConfig {
 export const useDebouncedToast = () => {
   const toast = useCalendarToast()
   const debounceStates = useRef<Map<string, DebounceState>>(new Map())
-  const groupedToasts = useRef<Map<string, { count: number; lastMessage: string; toastId?: string }>>(new Map())
+  const groupedToasts = useRef<Map<string, { count: number; lastMessage: string; toastId?: string | undefined }>>(
+    new Map()
+  )
 
   // クリーンアップ
   useEffect(() => {
@@ -92,7 +94,7 @@ export const useDebouncedToast = () => {
           state.timeoutId = setTimeout(() => {
             state.lastInvokeTime = Date.now()
             state.result = fn(...args)
-            state.timeoutId = undefined
+            delete state.timeoutId
           }, delay)
         }
 

@@ -148,7 +148,7 @@ export function useMemoizedPlans(
       if (!event.startDate) continue
 
       // 日付別
-      const dateKey = event.startDate.toISOString().split('T')[0]
+      const dateKey = event.startDate.toISOString().split('T')[0]!
       if (!eventsByDate.has(dateKey)) {
         eventsByDate.set(dateKey, [])
       }

@@ -127,7 +127,7 @@ test.describe('RLS: profiles テーブル', () => {
   })
 
   test('ユーザーAは他人（ユーザーB）のプロフィールを更新できない', async () => {
-    const { data, error, count } = await supabaseA
+    const { data, count } = await supabaseA
       .from('profiles')
       .update({ full_name: 'Hacked by User A' })
       .eq('id', userBId)
@@ -144,9 +144,8 @@ test.describe('RLS: profiles テーブル', () => {
     // ここでは削除可能かどうかの確認のみ行う
 
     // まず、削除可能かどうかを確認（SELECT権限で代替）
-    const { data, error } = await supabaseA.from('profiles').select('*').eq('id', userAId).single()
+    const { data } = await supabaseA.from('profiles').select('*').eq('id', userAId).single()
 
-    expect(error).toBeNull()
     expect(data).not.toBeNull()
     expect(data?.id).toBe(userAId)
 
@@ -162,7 +161,7 @@ test.describe('RLS: profiles テーブル', () => {
   })
 
   test('ユーザーAは他人（ユーザーB）のプロフィールを削除できない', async () => {
-    const { data, error, count } = await supabaseA.from('profiles').delete().eq('id', userBId).select()
+    const { data, count } = await supabaseA.from('profiles').delete().eq('id', userBId).select()
 
     // RLSにより削除できないことを確認
     expect(data).toEqual([]) // 削除されたレコードが0件

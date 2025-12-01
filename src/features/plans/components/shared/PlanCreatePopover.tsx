@@ -36,7 +36,7 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopov
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const [repeatType, setRepeatType] = useState<string>('')
+  const [_repeatType, setRepeatType] = useState<string>('')
   const [reminderType, setReminderType] = useState<string>('')
   const [recurrenceRule, setRecurrenceRule] = useState<string | null>(null)
   const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
@@ -53,6 +53,7 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopov
       }, 150)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [isOpen])
 
   const form = useForm<CreatePlanInput>({

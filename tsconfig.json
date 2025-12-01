@@ -24,13 +24,13 @@
     },
     "types": ["node"],
     "forceConsistentCasingInFileNames": true,
-    // 2025 TypeScript Best Practices - 設定完了（エラー修正は #389 で実施）
-    "noUnusedLocals": false, // ⚠️ 一時的に無効化（エラー削減のため）
-    "noUnusedParameters": false, // ⚠️ 一時的に無効化（エラー削減のため）
-    "noUncheckedIndexedAccess": false, // ⚠️ 一時的に無効化（エラー削減のため）
-    "exactOptionalPropertyTypes": false, // ⚠️ 一時的に無効化（エラー削減のため）
-    "noImplicitReturns": false, // ⚠️ 一時的に無効化（エラー削減のため）
-    "noFallthroughCasesInSwitch": true, // ✅ 有効化完了
+    // 2025 TypeScript Best Practices - 厳格モード有効化
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "target": "ES2017"
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"],

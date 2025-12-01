@@ -38,7 +38,7 @@ export const getNestedValue = (obj: NestedObject, path: string): string => {
 
   for (const key of keys) {
     if (typeof current === 'object' && current && key in current) {
-      current = current[key]
+      current = current[key] as NestedObject | string
     } else {
       return path // キーが見つからない場合はパスをそのまま返す
     }

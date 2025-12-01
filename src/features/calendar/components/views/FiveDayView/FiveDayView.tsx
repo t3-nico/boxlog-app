@@ -31,7 +31,7 @@ export const FiveDayView = ({
   onTaskClick: _onTaskClick,
   onEventClick,
   onEventContextMenu,
-  onCreateEvent,
+  onCreateEvent: _onCreateEvent,
   onUpdateEvent,
   onDeleteEvent: _onDeleteEvent,
   onRestoreEvent: _onRestoreEvent,
@@ -62,7 +62,7 @@ export const FiveDayView = ({
   }, [currentDate])
 
   // FiveDayView specific logic
-  const { fiveDayDates, eventsByDate, isCurrentDay } = useFiveDayView({
+  const { fiveDayDates, isCurrentDay } = useFiveDayView({
     centerDate: displayCenterDate,
     events,
     showWeekends,
@@ -78,7 +78,7 @@ export const FiveDayView = ({
     const positions: PlanPosition[] = []
 
     // displayDates（統一フィルタリング済み）を基準にイベントを配置
-    displayDates.forEach((displayDate, _dayIndex) => {
+    displayDates.forEach((displayDate) => {
       const dateKey = format(displayDate, 'yyyy-MM-dd')
 
       // 元のevents配列から直接フィルタリング（週末設定に依存しない）
@@ -130,7 +130,7 @@ export const FiveDayView = ({
   const headerComponent = (
     <div className="bg-background flex h-16">
       {/* 表示日数分のヘッダー（週末フィルタリング対応） */}
-      {displayDates.map((date, index) => (
+      {displayDates.map((date) => (
         <div key={date.toISOString()} className="flex flex-1 items-center justify-center px-1">
           <DateDisplay
             date={date}
@@ -162,7 +162,7 @@ export const FiveDayView = ({
           onTimeClick={(hour, minute) => {
             // FiveDayViewでは最初にクリックされた日付を使用
             const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-            onEmptyClick?.(displayDates[0], timeString)
+            onEmptyClick?.(displayDates[0]!, timeString)
           }}
           enableKeyboardNavigation={true}
         >

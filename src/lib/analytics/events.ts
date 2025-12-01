@@ -203,31 +203,31 @@ export const ANALYTICS_EVENTS = {
  */
 export interface BaseEventProperties {
   /** ユーザーID（匿名化済み） */
-  user_id?: string
+  user_id?: string | undefined
   /** セッションID */
-  session_id?: string
+  session_id?: string | undefined
   /** ページURL */
-  page_url?: string
+  page_url?: string | undefined
   /** リファラー */
-  referrer?: string
+  referrer?: string | undefined
   /** デバイスタイプ */
-  device_type?: 'desktop' | 'tablet' | 'mobile'
+  device_type?: 'desktop' | 'tablet' | 'mobile' | undefined
   /** ブラウザ */
-  browser?: string
+  browser?: string | undefined
   /** OS */
-  operating_system?: string
+  operating_system?: string | undefined
   /** 画面解像度 */
-  screen_resolution?: string
+  screen_resolution?: string | undefined
   /** タイムゾーン */
-  timezone?: string
+  timezone?: string | undefined
   /** 言語設定 */
-  language?: string
+  language?: string | undefined
   /** アプリバージョン */
-  app_version?: string
+  app_version?: string | undefined
   /** 環境 */
-  environment?: 'development' | 'staging' | 'production'
+  environment?: 'development' | 'staging' | 'production' | undefined
   /** 実験グループ */
-  experiment_group?: string
+  experiment_group?: string | undefined
   /** カスタムプロパティ */
   [key: string]: unknown
 }

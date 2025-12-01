@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- TODO(#389): 型エラーを段階的に修正する */
 // @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 /**
  * 命名辞書システム - ユーティリティ関数

@@ -113,7 +113,7 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
         const newIndex =
           direction === 'next' ? Math.min(currentIndex + 1, TIME_SLOTS.length - 1) : Math.max(currentIndex - 1, 0)
 
-        const newTime = TIME_SLOTS[newIndex]
+        const newTime = TIME_SLOTS[newIndex]!
         announce(`${newTime}に移動しました`)
         callbacks.onNavigateTime(newTime)
 
@@ -283,7 +283,13 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
         showKeyboardHelp,
         setNavigationState,
         announce,
-        events: plans,
+        events: plans as Array<{
+          id: string
+          title: string
+          startDate?: Date | null
+          endDate?: Date | null
+          description?: string
+        }>,
         TIME_SLOTS,
         noDescriptionText: t('calendar.plan.noDescription'),
       }

@@ -114,7 +114,7 @@ export function isBusinessHour(hour: number): boolean {
  */
 export function filterBusinessHours(timeLabels: string[]): string[] {
   return timeLabels.filter((time) => {
-    const hour = parseInt(time.split(':')[0])
+    const hour = parseInt(time.split(':')[0]!)
     return isBusinessHour(hour)
   })
 }

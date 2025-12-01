@@ -79,15 +79,15 @@ const defaultCurrencies: Record<string, string> = {
 const getDefaultCurrency = (locale: Locale): string => {
   // 完全一致を試す
   if (locale in defaultCurrencies) {
-    return defaultCurrencies[locale as keyof typeof defaultCurrencies]
+    return defaultCurrencies[locale as keyof typeof defaultCurrencies] ?? 'USD'
   }
 
   // 言語コードでの一致を試す
-  const languageCode = locale.split('-')[0]
+  const languageCode = locale.split('-')[0] ?? 'en'
   const matchingKey = Object.keys(defaultCurrencies).find((key) => key.startsWith(languageCode))
 
   if (matchingKey) {
-    return defaultCurrencies[matchingKey]
+    return defaultCurrencies[matchingKey] ?? 'USD'
   }
 
   return 'USD' // デフォルト
@@ -193,11 +193,11 @@ export const formatFileSize = (bytes: number, locale: Locale, binary: boolean = 
   const base = binary ? 1024 : 1000
   const units = binary ? ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'] : ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
 
-  if (bytes === 0) return formatWithUnit(0, locale, units[0])
+  if (bytes === 0) return formatWithUnit(0, locale, units[0] ?? 'B')
 
   const exponent = Math.floor(Math.log(Math.abs(bytes)) / Math.log(base))
   const value = bytes / Math.pow(base, exponent)
-  const unit = units[Math.min(exponent, units.length - 1)]
+  const unit = units[Math.min(exponent, units.length - 1)] ?? 'B'
 
   const precision = exponent === 0 ? 0 : 1
   const formatted = formatNumber(value, locale, 'decimal', {

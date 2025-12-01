@@ -12,12 +12,12 @@ export interface Tag {
 
 export interface CreateTagInput {
   name: string
-  color?: string
-  description?: string
+  color?: string | undefined
+  description?: string | undefined
 }
 
 export interface UpdateTagInput {
-  name?: string
-  color?: string
-  description?: string
+  name?: string | undefined
+  color?: string | undefined
+  description?: string | undefined
 }

@@ -150,7 +150,7 @@ export const TwoWeekView = ({
           onTimeClick={(hour, minute) => {
             // TwoWeekViewでは最初にクリックされた日付を使用
             const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-            onEmptyClick?.(displayDates[0], timeString)
+            onEmptyClick?.(displayDates[0]!, timeString)
           }}
           enableKeyboardNavigation={true}
         >
@@ -194,16 +194,16 @@ export const TwoWeekView = ({
                           }
                         : undefined
                     }
-                    onTimeRangeSelect={(date, startTime, endTime) => {
+                    onTimeRangeSelect={(date, startTime, _endTime) => {
                       // 時間範囲選択時の処理（従来と同じ）
                       const startDate = new Date(date)
-                      const [startHour, startMinute] = startTime.split(':').map(Number)
+                      const [startHour = 0, startMinute = 0] = startTime.split(':').map(Number)
                       startDate.setHours(startHour, startMinute, 0, 0)
 
                       // onCreateEventは(date: Date, time?: string)の形式なので、startTimeのみ渡す
                       onCreateEvent?.(startDate, startTime)
                     }}
-                    onCreatePlan={(startDate, endDate) => {
+                    onCreatePlan={(startDate, _endDate) => {
                       // onCreateEventの形式に変換
                       const startTime = `${String(startDate.getHours()).padStart(2, '0')}:${String(startDate.getMinutes()).padStart(2, '0')}`
                       onCreateEvent?.(startDate, startTime)

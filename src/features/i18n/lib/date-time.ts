@@ -92,19 +92,23 @@ const defaultConfig = localeConfigs['en-US']
 // 地域設定を取得
 const getLocaleConfig = (locale: Locale): LocaleConfig => {
   // 完全一致を試す
-  if (locale in localeConfigs) {
-    return localeConfigs[locale as keyof typeof localeConfigs]
+  const config = localeConfigs[locale as keyof typeof localeConfigs]
+  if (config) {
+    return config
   }
 
   // 言語コードでの一致を試す
-  const languageCode = locale.split('-')[0]
+  const languageCode = locale.split('-')[0] ?? 'en'
   const matchingKey = Object.keys(localeConfigs).find((key) => key.startsWith(languageCode))
 
   if (matchingKey) {
-    return localeConfigs[matchingKey]
+    const matchedConfig = localeConfigs[matchingKey as keyof typeof localeConfigs]
+    if (matchedConfig) {
+      return matchedConfig
+    }
   }
 
-  return defaultConfig
+  return defaultConfig as LocaleConfig
 }
 
 // 現在のロケールに基づくIntl.DateTimeFormatオプション生成

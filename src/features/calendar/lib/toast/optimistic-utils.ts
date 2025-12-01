@@ -43,7 +43,7 @@ export const useOptimisticUpdate = () => {
         errorMessage,
         customErrorHandling = false,
         enableRetry = true,
-        operationDescription = getTranslation(CALENDAR_TOAST_KEYS.TOAST_OPERATION),
+        operationDescription: _operationDescription = getTranslation(CALENDAR_TOAST_KEYS.TOAST_OPERATION),
       } = options
 
       // 楽観的更新を実行

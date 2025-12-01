@@ -180,7 +180,7 @@ export function formatTimeForDisplay(time: string): string {
   const [hours, minutes] = time.split(':')
 
   if (minutes === '00') {
-    return `${parseInt(hours)}:00`
+    return `${parseInt(hours!)}:00`
   } else {
     return time
   }

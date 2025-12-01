@@ -92,7 +92,7 @@ function getGroupKey(item: InboxItem, groupBy: GroupByField): string {
       return getDueDateGroup(item.due_date || null)
 
     case 'tags':
-      return item.tags && item.tags.length > 0 ? item.tags[0].name : 'タグなし'
+      return item.tags && item.tags.length > 0 ? item.tags[0]!.name : 'タグなし'
 
     default:
       return 'unknown'

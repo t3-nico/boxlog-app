@@ -160,7 +160,7 @@ export function getTranslation(key: string, locale: 'ja' | 'en' = 'ja'): string 
   }
 
   // キーパスに従って値を取得
-  let result: string | Dictionary = translations[locale]
+  let result: string | Dictionary | undefined = translations[locale]
   for (const k of keys) {
     if (result && typeof result === 'object' && k in result) {
       result = result[k]
@@ -168,6 +168,11 @@ export function getTranslation(key: string, locale: 'ja' | 'en' = 'ja'): string 
       // キーが見つからない場合はキー自体を返す
       return key
     }
+  }
+
+  // undefined チェックを追加
+  if (result === undefined) {
+    return key
   }
 
   return typeof result === 'string' ? result : key

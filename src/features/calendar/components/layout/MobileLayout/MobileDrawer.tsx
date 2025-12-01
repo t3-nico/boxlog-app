@@ -133,6 +133,7 @@ export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, classNam
 
       return () => document.removeEventListener('keydown', handleTabKey)
     }
+    return undefined
   }, [isOpen])
 
   const handleItemClick = (item: DrawerMenuItem) => {

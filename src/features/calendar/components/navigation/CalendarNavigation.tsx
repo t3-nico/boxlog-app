@@ -25,8 +25,8 @@ interface CalendarNavigationProps {
 export function CalendarNavigation({
   sort,
   onSortChange,
-  selectedTags,
-  onTagsChange,
+  selectedTags: _selectedTags,
+  onTagsChange: _onTagsChange,
   onCreateClick,
 }: CalendarNavigationProps) {
   const handleSortToggle = () => {

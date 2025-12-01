@@ -226,7 +226,7 @@ describe('useTagStore', () => {
       const rootTags = useTagStore.getState().getRootTags()
 
       expect(rootTags).toHaveLength(1)
-      expect(rootTags[0].name).toBe('仕事')
+      expect(rootTags[0]!.name).toBe('仕事')
     })
   })
 
@@ -257,8 +257,8 @@ describe('useTagStore', () => {
       const childTags = useTagStore.getState().getChildTags(parentId)
 
       expect(childTags).toHaveLength(2)
-      expect(childTags[0].name).toBe('プロジェクトA')
-      expect(childTags[1].name).toBe('プロジェクトB')
+      expect(childTags[0]!.name).toBe('プロジェクトA')
+      expect(childTags[1]!.name).toBe('プロジェクトB')
     })
   })
 
@@ -362,7 +362,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const [tag1, tag2] = useTagStore.getState().tags
+      const [tag1] = useTagStore.getState().tags
 
       const tasks: Task[] = [
         {
@@ -372,7 +372,7 @@ describe('useTagStore', () => {
           priority: 'medium',
           planned_start: new Date().toISOString(),
           planned_duration: 60,
-          tags: [tag1.id],
+          tags: [tag1!.id],
           user_id: 'user-1',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
@@ -382,7 +382,7 @@ describe('useTagStore', () => {
       const usedTags = useTagStore.getState().getUsedTags(tasks)
 
       expect(usedTags).toHaveLength(1)
-      expect(usedTags[0].id).toBe(tag1.id)
+      expect(usedTags[0]!.id).toBe(tag1!.id)
     })
   })
 

@@ -262,11 +262,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
           <SortableContext items={rules.map((_, i) => i.toString())} strategy={verticalListSortingStrategy}>
             <div className="space-y-3">
               {rules.map((rule, index) => (
-                <SortableItem
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={index}
-                  id={index.toString()}
-                >
+                <SortableItem key={index} id={index.toString()}>
                   <div className="border-border bg-muted flex items-center gap-3 rounded-lg border p-4">
                     {/* ドラッグハンドル */}
                     <div className="text-muted-foreground hover:text-foreground cursor-move">
@@ -294,7 +290,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                             const newRule = {
                               ...rule,
                               field: e.target.value as SmartFolderRuleField,
-                              operator: OPERATOR_OPTIONS[e.target.value as SmartFolderRuleField][0].value,
+                              operator: OPERATOR_OPTIONS[e.target.value as SmartFolderRuleField][0]!.value,
                               value: '',
                             }
                             updateRule(index, newRule)

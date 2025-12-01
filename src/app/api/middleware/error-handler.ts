@@ -27,12 +27,14 @@ export function withErrorHandling<T = unknown>(handler: ApiHandler<T>, config: M
     const requestId = generateRequestId()
 
     // コンテキスト作成
+    const userId = extractUserId(req)
+    const sessionId = extractSessionId(req)
     const context: ApiContext = {
       request: req,
       requestId,
       startTime,
-      userId: extractUserId(req),
-      sessionId: extractSessionId(req),
+      ...(userId !== undefined && { userId }),
+      ...(sessionId !== undefined && { sessionId }),
     }
 
     // CORS設定
@@ -166,8 +168,8 @@ function normalizeApiError(error: unknown, context: ApiContext): AppError {
       {
         source: 'api',
         requestId: context.requestId,
-        userId: context.userId,
-        sessionId: context.sessionId,
+        ...(context.userId !== undefined && { userId: context.userId }),
+        ...(context.sessionId !== undefined && { sessionId: context.sessionId }),
         context: {
           url: context.request.url,
           method: context.request.method,

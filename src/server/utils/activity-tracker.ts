@@ -20,7 +20,9 @@ export async function trackPlanChanges(
   supabase: SupabaseClient,
   planId: string,
   userId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 動的なプランデータ
   oldData: Record<string, any>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 動的なプランデータ
   newData: Record<string, any>
 ) {
   const changes = detectChanges(oldData, newData)
@@ -44,6 +46,7 @@ export const trackplanChanges = trackPlanChanges
 /**
  * 変更を検出してアクティビティ種別を決定
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- 動的なプランデータ
 function detectChanges(oldData: Record<string, any>, newData: Record<string, any>): PlanChanges[] {
   const changes: PlanChanges[] = []
 

@@ -78,7 +78,7 @@ export function usePlanTags() {
    * 注: Phase 4以降でtRPC APIに一括設定エンドポイントを追加予定
    * 現在はaddplanTag/removeplanTagを使用してください
    */
-  const setplanTags = useCallback(async (planId: string, tagIds: string[]): Promise<boolean> => {
+  const setplanTags = useCallback(async (_planId: string, _tagIds: string[]): Promise<boolean> => {
     try {
       setIsLoading(true)
       setError(null)

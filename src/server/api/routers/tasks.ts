@@ -52,12 +52,12 @@ export const tasksRouter = createTRPCRouter({
         // 実際のデータベース保存処理をここに実装
         // await db.task.create({ data: task })
 
-        // Analytics追跡
+        // Analytics追跡（undefinedを除外）
         trackTaskCreated({
           priority: task.priority,
           hasDescription: !!task.description,
           hasDueDate: !!task.dueDate,
-          projectId: task.projectId,
+          ...(task.projectId !== undefined && { projectId: task.projectId }),
         })
 
         const duration = Date.now() - startTime
@@ -130,17 +130,21 @@ export const tasksRouter = createTRPCRouter({
             ? Math.round((Date.now() - existingTask.createdAt.getTime()) / (1000 * 60)) // 分単位
             : undefined
 
+          // Analytics追跡（undefinedを除外）
           trackTaskCompleted({
-            timeToComplete,
+            ...(timeToComplete !== undefined && { timeToComplete }),
             priority: existingTask.priority,
             hadDescription: !!existingTask.description,
           })
         }
 
-        // タスク更新
+        // タスク更新（undefinedを除外してマージ）
+        const filteredUpdateData = Object.fromEntries(
+          Object.entries(updateData).filter(([, value]) => value !== undefined)
+        )
         const updatedTask: Task = {
           ...existingTask,
-          ...updateData,
+          ...filteredUpdateData,
           updatedAt: new Date(),
           updatedBy: ctx.userId,
           version: existingTask.version + 1,

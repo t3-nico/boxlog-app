@@ -80,6 +80,7 @@ export const PlanGrid = ({
         document.body.style.userSelect = ''
       }
     }
+    return undefined
   }, [dragState.isDragging, dragState.isResizing, handlers.handleMouseMove, handlers.handleMouseUp])
 
   // プランクリックハンドラー
