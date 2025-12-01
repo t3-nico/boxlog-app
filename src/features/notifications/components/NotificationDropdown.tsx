@@ -28,7 +28,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
     >
       <Bell className="h-5 w-5" />
       {unreadCount > 0 && (
-        <span className="bg-destructive text-destructive-foreground absolute top-0.5 right-0 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-semibold">
+        <span className="bg-destructive text-destructive-foreground absolute top-0.5 right-0 flex h-4 w-4 items-center justify-center rounded-full text-xs font-semibold">
           {unreadCount > 9 ? '9+' : unreadCount}
         </span>
       )}

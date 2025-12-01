@@ -254,7 +254,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
           className="pr-16 text-sm"
         />
         <div className="absolute top-1/2 right-3 flex -translate-y-1/2 items-center gap-1">
-          <kbd className="bg-muted text-muted-foreground inline-flex h-5 items-center gap-1 rounded border px-2 font-mono text-[10px] font-medium opacity-100 select-none">
+          <kbd className="bg-muted text-muted-foreground inline-flex h-5 items-center gap-1 rounded border px-2 font-mono text-xs font-medium opacity-100 select-none">
             ESC
           </kbd>
         </div>

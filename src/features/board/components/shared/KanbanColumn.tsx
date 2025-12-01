@@ -76,7 +76,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
             )}
           >
             {column.cards.length}
-            {column.wipLimit && <span className="ml-0.5 text-[10px]">/{column.wipLimit}</span>}
+            {column.wipLimit && <span className="ml-0.5 text-xs">/{column.wipLimit}</span>}
           </span>
         </div>
         <Button
