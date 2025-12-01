@@ -1,0 +1,222 @@
+name: 🏷️ PR Auto Labeler
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # =====================================
+  # 0. PRタイトルのConventional Commits検証
+  # =====================================
+  validate-title:
+    name: ✅ Validate PR Title
+    runs-on: ubuntu-latest
+    steps:
+      - name: ✅ Check Conventional Commits format
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+
+            // Conventional Commits パターン
+            // type(scope)!: description
+            const pattern = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore)(\(.+\))?!?:\s.+$/;
+
+            if (!pattern.test(title)) {
+              const errorMessage = `
+            ❌ **PRタイトルがConventional Commits形式ではありません**
+
+            現在のタイトル: \`${title}\`
+
+            ### 正しい形式
+            \`\`\`
+            <type>(<scope>): <description>
+            \`\`\`
+
+            ### 使用可能なtype
+            | type | 説明 |
+            |------|------|
+            | \`feat\` | 新機能 |
+            | \`fix\` | バグ修正 |
+            | \`docs\` | ドキュメント |
+            | \`style\` | フォーマット |
+            | \`refactor\` | リファクタリング |
+            | \`perf\` | パフォーマンス |
+            | \`test\` | テスト |
+            | \`build\` | ビルド |
+            | \`ci\` | CI/CD |
+            | \`chore\` | その他 |
+
+            ### 例
+            - ✅ \`feat: ユーザー認証機能を追加\`
+            - ✅ \`fix(auth): ログインエラーを修正\`
+            - ✅ \`docs: READMEを更新\`
+            - ❌ \`fixed login bug\`
+            - ❌ \`Update README\`
+            `;
+
+              core.setFailed(errorMessage);
+            } else {
+              console.log(`✅ PRタイトルは正しい形式です: ${title}`);
+            }
+
+  # =====================================
+  # 1. PRタイトルからtype/ラベルを付与
+  # =====================================
+  type-label:
+    name: 🏷️ Type Label
+    runs-on: ubuntu-latest
+    needs: validate-title
+    steps:
+      - name: 🏷️ Add type label from PR title
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            const prNumber = context.payload.pull_request.number;
+
+            // Conventional Commits パターンからラベルを決定
+            const typeMap = {
+              '^feat(\\(.+\\))?!?:': 'type/feature',
+              '^fix(\\(.+\\))?!?:': 'type/fix',
+              '^docs(\\(.+\\))?!?:': 'type/docs',
+              '^style(\\(.+\\))?!?:': 'type/style',
+              '^refactor(\\(.+\\))?!?:': 'type/refactor',
+              '^perf(\\(.+\\))?!?:': 'type/perf',
+              '^test(\\(.+\\))?!?:': 'type/test',
+              '^build(\\(.+\\))?!?:': 'type/build',
+              '^ci(\\(.+\\))?!?:': 'type/ci',
+              '^chore(\\(.+\\))?!?:': 'type/chore',
+            };
+
+            let typeLabel = null;
+            for (const [pattern, label] of Object.entries(typeMap)) {
+              if (new RegExp(pattern, 'i').test(title)) {
+                typeLabel = label;
+                break;
+              }
+            }
+
+            if (typeLabel) {
+              // 既存のtype/ラベルを取得
+              const { data: currentLabels } = await github.rest.issues.listLabelsOnIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+              });
+
+              // 他のtype/ラベルを削除
+              const typeLabelsToRemove = currentLabels
+                .filter(l => l.name.startsWith('type/') && l.name !== typeLabel)
+                .map(l => l.name);
+
+              for (const label of typeLabelsToRemove) {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  name: label,
+                });
+              }
+
+              // 新しいラベルを追加
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: [typeLabel],
+              });
+
+              console.log(`Added label: ${typeLabel}`);
+            }
+
+            // Breaking Change検出（!マークまたはBREAKING CHANGE）
+            if (title.includes('!:') || title.toUpperCase().includes('BREAKING')) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: ['impact/breaking'],
+              });
+              console.log('Added label: impact/breaking');
+            }
+
+  # =====================================
+  # 2. 変更ファイルからarea/ラベルを付与
+  # =====================================
+  area-label:
+    name: 🗂️ Area Label
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: 🗂️ Add area labels from changed files
+        uses: actions/labeler@8558fd74291d67161a8a78ce36a881fa63b766a9 # v5.0.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/labeler.yml
+
+  # =====================================
+  # 3. 変更行数からsize/ラベルを付与
+  # =====================================
+  size-label:
+    name: 📏 Size Label
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📏 Add size label from changed lines
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const additions = context.payload.pull_request.additions;
+            const deletions = context.payload.pull_request.deletions;
+            const totalChanges = additions + deletions;
+
+            // サイズ判定
+            let sizeLabel;
+            if (totalChanges <= 10) {
+              sizeLabel = 'size/xs';
+            } else if (totalChanges <= 50) {
+              sizeLabel = 'size/s';
+            } else if (totalChanges <= 200) {
+              sizeLabel = 'size/m';
+            } else if (totalChanges <= 500) {
+              sizeLabel = 'size/l';
+            } else {
+              sizeLabel = 'size/xl';
+            }
+
+            // 既存のsize/ラベルを取得して削除
+            const { data: currentLabels } = await github.rest.issues.listLabelsOnIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            const sizeLabelsToRemove = currentLabels
+              .filter(l => l.name.startsWith('size/') && l.name !== sizeLabel)
+              .map(l => l.name);
+
+            for (const label of sizeLabelsToRemove) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                name: label,
+              });
+            }
+
+            // 新しいラベルを追加
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              labels: [sizeLabel],
+            });
+
+            console.log(`Total changes: ${totalChanges} → ${sizeLabel}`);

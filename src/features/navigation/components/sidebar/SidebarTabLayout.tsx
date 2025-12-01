@@ -32,7 +32,7 @@ import type { SidebarTabLayoutProps } from './types'
 export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
   const initialTab = defaultTab || tabs[0]?.value || tabs[0]?.value || ''
   return (
-    <aside className="flex h-full w-full flex-col py-2">
+    <aside className="flex h-full w-full flex-col pt-2">
       {/* Tabs */}
       <Tabs defaultValue={initialTab} className="flex flex-1 flex-col overflow-hidden">
         {/* TabsList - Slack風アンダーラインデザイン */}

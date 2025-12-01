@@ -1,0 +1,211 @@
+# PR Auto Labeler Configuration
+# ファイルパスに基づいてラベルを自動付与
+# 参考: https://github.com/actions/labeler
+
+# =====================================
+# 領域ラベル（area/）
+# =====================================
+
+area/frontend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/app/**'
+          - 'src/components/**'
+          - 'src/features/**/components/**'
+
+area/backend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/server/**'
+          - 'src/pages/api/**'
+          - 'src/lib/api/**'
+
+area/database:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'supabase/**'
+          - 'prisma/**'
+          - 'src/lib/supabase/**'
+
+area/api:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/server/routers/**'
+          - 'src/pages/api/**'
+
+area/ui:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/components/ui/**'
+          - 'src/styles/**'
+
+area/infra:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/**'
+          - 'vercel.json'
+          - 'Dockerfile'
+          - 'docker-compose*.yml'
+
+area/config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '*.config.*'
+          - '.env*'
+          - 'tsconfig*.json'
+          - '.eslintrc*'
+          - '.prettierrc*'
+
+# =====================================
+# 技術スタックラベル（tech/）
+# =====================================
+
+tech/shadcn:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/components/ui/**'
+          - 'components.json'
+
+tech/tailwind:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'tailwind.config.*'
+          - 'src/styles/globals.css'
+          - 'postcss.config.*'
+
+tech/supabase:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'supabase/**'
+          - 'src/lib/supabase/**'
+          - 'src/server/supabase/**'
+
+tech/trpc:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/server/routers/**'
+          - 'src/server/trpc/**'
+          - 'src/lib/trpc/**'
+
+tech/zustand:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/stores/**'
+          - 'src/**/store.ts'
+          - 'src/**/*Store.ts'
+
+tech/zod:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/**/schema.ts'
+          - 'src/**/schemas/**'
+          - 'src/lib/validations/**'
+
+tech/sentry:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'sentry.*.config.*'
+          - 'src/lib/sentry/**'
+          - 'src/instrumentation.ts'
+
+tech/nextjs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'next.config.*'
+          - 'src/middleware.ts'
+          - 'src/app/**'
+
+tech/eslint:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.eslintrc*'
+          - 'eslint.config.*'
+
+tech/vitest:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'vitest.config.*'
+          - 'src/**/*.test.ts'
+          - 'src/**/*.test.tsx'
+          - 'src/**/*.spec.ts'
+          - 'src/**/*.spec.tsx'
+
+# =====================================
+# 変更対象ラベル（scope/）
+# =====================================
+
+scope/component:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/components/**/*.tsx'
+          - 'src/features/**/components/**/*.tsx'
+
+scope/hook:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/hooks/**'
+          - 'src/**/hooks/**'
+          - 'src/**/use*.ts'
+
+scope/util:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/lib/**'
+          - 'src/utils/**'
+
+scope/type:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/types/**'
+          - 'src/**/*.d.ts'
+
+scope/route:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/app/**/page.tsx'
+          - 'src/app/**/layout.tsx'
+          - 'src/app/**/route.ts'
+
+scope/middleware:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/middleware.ts'
+          - 'src/server/middleware/**'
+
+# =====================================
+# 影響ラベル（impact/）
+# =====================================
+
+impact/dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'package.json'
+          - 'package-lock.json'
+
+impact/config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '*.config.*'
+          - 'tsconfig*.json'
+
+# =====================================
+# 動機ラベル（motivation/）- ドキュメント関連
+# =====================================
+
+motivation/dx:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/**'
+          - 'scripts/**'
+          - '.husky/**'
+          - '.vscode/**'
+
+# =====================================
+# 特殊ラベル
+# =====================================
+
+type/docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.md'
+          - 'docs/**'

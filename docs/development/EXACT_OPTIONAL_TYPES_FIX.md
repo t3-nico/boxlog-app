@@ -15,7 +15,7 @@ interface Props {
 }
 
 const props: Props = {
-  name: undefined // TS2375 エラー
+  name: undefined, // TS2375 エラー
 }
 ```
 
@@ -30,7 +30,7 @@ interface Props {
 }
 
 const props: Props = {
-  name: undefined // OK
+  name: undefined, // OK
 }
 ```
 
@@ -39,7 +39,7 @@ const props: Props = {
 ```typescript
 // ✅ undefined の場合はプロパティを省略
 const props: Props = {
-  ...(name !== undefined && { name })
+  ...(name !== undefined && { name }),
 }
 ```
 

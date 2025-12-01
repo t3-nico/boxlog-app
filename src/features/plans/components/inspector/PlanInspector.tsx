@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
-import { Sheet, SheetContent } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
@@ -449,6 +449,8 @@ export function PlanInspector() {
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && closeInspector()} modal={false}>
       <SheetContent className="gap-0 overflow-y-auto" style={{ width: `${inspectorWidth}px` }} showCloseButton={false}>
+        {/* スクリーンリーダー用タイトル（視覚的には非表示） */}
+        <SheetTitle className="sr-only">{plan?.title || '予定の詳細'}</SheetTitle>
         {/* リサイズハンドル */}
         <div
           onMouseDown={handleMouseDown}
