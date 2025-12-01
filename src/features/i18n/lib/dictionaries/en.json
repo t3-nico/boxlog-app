@@ -74,6 +74,27 @@
     "filter": "Filter",
     "sort": "Sort"
   },
+  "aria": {
+    "clearSelection": "Clear selection",
+    "openMenu": "Open menu",
+    "closeSidebar": "Close sidebar",
+    "cardMenu": "Card menu",
+    "closeModal": "Close modal",
+    "closeFilterMenu": "Close filter menu",
+    "changeColor": "Change color",
+    "unread": "Unread",
+    "notifications": "Notifications",
+    "close": "Close",
+    "previousPlan": "Previous plan",
+    "nextPlan": "Next plan",
+    "options": "Options",
+    "selectAll": "Select all",
+    "tagColor": "Tag color",
+    "closeSettings": "Close settings",
+    "weeklyCalendar": "Weekly calendar",
+    "previous": "Previous",
+    "next": "Next"
+  },
   "search": {
     "shortcut": "⌘K"
   },
@@ -200,7 +221,8 @@
     "view": "View",
     "toast": {
       "eventDeleted": "Event deleted"
-    }
+    },
+    "selectedCount": "{{count}} selected"
   },
   "calendar": {
     "title": "Calendar",

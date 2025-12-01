@@ -3,6 +3,7 @@
 import { Menu } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
 
 /**
@@ -21,9 +22,10 @@ import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
  */
 export function MobileMenuButton({ className }: { className?: string }) {
   const { toggle } = useSidebarStore()
+  const { t } = useI18n()
 
   return (
-    <Button variant="ghost" size="icon" onClick={toggle} aria-label="メニューを開く" className={className}>
+    <Button variant="ghost" size="icon" onClick={toggle} aria-label={t('aria.openMenu')} className={className}>
       <Menu className="size-5" />
     </Button>
   )

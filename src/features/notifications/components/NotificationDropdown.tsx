@@ -2,6 +2,8 @@
 
 import { Bell } from 'lucide-react'
 
+import { useI18n } from '@/features/i18n/lib/hooks'
+
 import { useUnreadCount } from '../hooks/useNotificationsData'
 import { useNotificationDialogStore } from '../stores/useNotificationDialogStore'
 
@@ -18,13 +20,14 @@ interface NotificationDropdownProps {
 export function NotificationDropdown({ className: _className }: NotificationDropdownProps) {
   const { data: unreadCount = 0 } = useUnreadCount()
   const { open } = useNotificationDialogStore()
+  const { t } = useI18n()
 
   return (
     <button
       type="button"
       onClick={open}
       className="hover:bg-accent data-[state=open]:bg-accent relative flex h-10 w-10 items-center justify-center rounded-xl outline-hidden"
-      aria-label="通知"
+      aria-label={t('aria.notifications')}
     >
       <Bell className="h-5 w-5" />
       {unreadCount > 0 && (

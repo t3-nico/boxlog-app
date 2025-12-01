@@ -74,6 +74,27 @@
     "filter": "フィルター",
     "sort": "並べ替え"
   },
+  "aria": {
+    "clearSelection": "選択を解除",
+    "openMenu": "メニューを開く",
+    "closeSidebar": "サイドバーを閉じる",
+    "cardMenu": "カードメニュー",
+    "closeModal": "モーダルを閉じる",
+    "closeFilterMenu": "フィルターメニューを閉じる",
+    "changeColor": "カラーを変更",
+    "unread": "未読",
+    "notifications": "通知",
+    "close": "閉じる",
+    "previousPlan": "前のプラン",
+    "nextPlan": "次のプラン",
+    "options": "オプション",
+    "selectAll": "すべて選択",
+    "tagColor": "タグカラー",
+    "closeSettings": "設定を閉じる",
+    "weeklyCalendar": "週間カレンダー",
+    "previous": "前へ",
+    "next": "次へ"
+  },
   "search": {
     "shortcut": "⌘K"
   },
@@ -200,7 +221,8 @@
     "view": "表示",
     "toast": {
       "eventDeleted": "予定を削除しました"
-    }
+    },
+    "selectedCount": "{{count}}件選択中"
   },
   "calendar": {
     "title": "カレンダー",

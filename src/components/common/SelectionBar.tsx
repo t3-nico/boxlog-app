@@ -4,6 +4,7 @@ import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 interface SelectionBarProps {
@@ -43,6 +44,8 @@ export function SelectionBar({
   actions,
   paddingX = 'px-4 md:px-6',
 }: SelectionBarProps) {
+  const { t } = useI18n()
+
   if (selectedCount === 0) return null
 
   return (
@@ -50,12 +53,12 @@ export function SelectionBar({
       {/* 選択コンテナ（40px） */}
       <div className="bg-muted flex h-10 flex-1 items-center gap-2 rounded-md px-2">
         {/* 選択解除ボタン（左端） */}
-        <Button variant="ghost" size="icon" onClick={onClearSelection} className="h-9 w-9" aria-label="選択を解除">
+        <Button variant="ghost" size="icon" onClick={onClearSelection} className="h-9 w-9" aria-label={t('aria.clearSelection')}>
           <X className="h-4 w-4" />
         </Button>
 
         {/* 選択数表示 */}
-        <span className="text-base font-semibold">{selectedCount}件選択中</span>
+        <span className="text-base font-semibold">{t('common.selectedCount', { count: selectedCount })}</span>
 
         {/* アクションボタン */}
         <div className="flex items-center gap-1">{actions}</div>

@@ -6,6 +6,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -31,6 +32,7 @@ interface KanbanCardProps {
  * 4. 優先順位
  */
 export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging = false }: KanbanCardProps) {
+  const { t } = useI18n()
   const {
     attributes,
     listeners,
@@ -126,7 +128,7 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
               variant="ghost"
               size="icon"
               className="size-6 opacity-0 transition-opacity group-hover:opacity-100"
-              aria-label="カードメニュー"
+              aria-label={t('aria.cardMenu')}
             >
               <MoreHorizontal className="size-4" />
             </Button>
