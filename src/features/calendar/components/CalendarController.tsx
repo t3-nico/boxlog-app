@@ -33,6 +33,8 @@ import { expandRecurringPlansToCalendarPlans } from '../utils/planDataAdapter'
 import type { CalendarPlan, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
 import { RecurringEditDialog } from '@/features/plans/components/shared/RecurringEditDialog'
+import { usePlanInstances, instancesToExceptionsMap } from '@/features/plans/hooks/usePlanInstances'
+import { isRecurringPlan } from '@/features/plans/utils/recurrence'
 
 import { CalendarLayout } from './layout/CalendarLayout'
 import { EventContextMenu } from './views/shared/components'
@@ -226,6 +228,35 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // plansを取得（リアルタイム性最優化済み）
   const { data: plansData } = useplans()
 
+  // 繰り返しプランのIDを抽出
+  const recurringPlanIds = useMemo(() => {
+    if (!plansData) return []
+    return plansData
+      .filter((plan) => isRecurringPlan(plan as Parameters<typeof isRecurringPlan>[0]))
+      .map((plan) => plan.id)
+  }, [plansData])
+
+  // 表示範囲の日付文字列（例外取得用）
+  const dateRangeStrings = useMemo(() => {
+    return {
+      startDate: viewDateRange.start.toISOString().slice(0, 10),
+      endDate: viewDateRange.end.toISOString().slice(0, 10),
+    }
+  }, [viewDateRange.start, viewDateRange.end])
+
+  // 繰り返しプランの例外情報を取得
+  const { data: instancesData } = usePlanInstances(recurringPlanIds, {
+    startDate: dateRangeStrings.startDate,
+    endDate: dateRangeStrings.endDate,
+    enabled: recurringPlanIds.length > 0,
+  })
+
+  // 例外情報をMapに変換
+  const exceptionsMap = useMemo(() => {
+    if (!instancesData) return new Map()
+    return instancesToExceptionsMap(instancesData)
+  }, [instancesData])
+
   // デバッグ: plansDataの更新を検知
   useEffect(() => {
     console.log('[CalendarController] plansData 更新検知:', {
@@ -277,11 +308,12 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     )
 
     // planをCalendarPlanに変換（繰り返し展開対応）
-    // TODO: 例外情報をDBから取得してここに渡す
+    // 例外情報（キャンセル/変更/移動）を考慮して展開
     const calendarEvents = expandRecurringPlansToCalendarPlans(
       plansWithTime as plan[],
       startDateOnly,
-      endDateOnly
+      endDateOnly,
+      exceptionsMap
     )
 
     // 展開後のイベントは既に範囲内なので、非繰り返しプランのみ追加フィルタリング
@@ -323,7 +355,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     })
 
     return filtered
-  }, [viewDateRange.start, viewDateRange.end, plansData])
+  }, [viewDateRange.start, viewDateRange.end, plansData, exceptionsMap])
 
   // タスククリックハンドラー
   const handleTaskClick = useCallback(() => {
