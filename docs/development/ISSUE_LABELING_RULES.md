@@ -323,6 +323,7 @@ refactor, P3-low, size-L, blocked, depends-on, blocks  （関係性は複数可�
 
 ## 🔗 関連ドキュメント
 
+- **PRラベル付けルール**: [`PR_LABELING_RULES.md`](./PR_LABELING_RULES.md)
 - **Issue管理ルール**: [`ISSUE_MANAGEMENT.md`](./ISSUE_MANAGEMENT.md)
 - **セッション管理**: [`CLAUDE_SESSION_MANAGEMENT.md`](./CLAUDE_SESSION_MANAGEMENT.md)
 - **Claude Code作業規範**: [`/CLAUDE.md`](../../CLAUDE.md)
