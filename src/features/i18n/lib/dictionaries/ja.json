@@ -180,7 +180,21 @@
       "notSupported": "このブラウザは通知をサポートしていません",
       "permissionFailed": "通知許可の取得に失敗しました",
       "displayFailed": "ブラウザ通知の表示に失敗しました"
-    }
+    },
+    "types": {
+      "all": "すべて",
+      "reminder": "リマインダー",
+      "plan_created": "作成",
+      "plan_updated": "更新",
+      "plan_deleted": "削除",
+      "plan_completed": "完了",
+      "trash_warning": "ゴミ箱",
+      "system": "システム"
+    },
+    "dateGroups": {
+      "older": "それ以前"
+    },
+    "settings": "通知設定"
   },
   "common": {
     "dates": {

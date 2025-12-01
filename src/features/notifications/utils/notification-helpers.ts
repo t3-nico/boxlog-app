@@ -1,4 +1,87 @@
+import { isToday, isYesterday, isThisWeek, isThisMonth } from 'date-fns'
+
 import { useTranslation } from '@/features/i18n/lib/hooks'
+import type { NotificationType } from '@/schemas/notifications'
+
+// 日付グループのキー
+export type DateGroupKey = 'today' | 'yesterday' | 'thisWeek' | 'thisMonth' | 'older'
+
+// グループ化された通知
+export interface GroupedNotifications<T> {
+  key: DateGroupKey
+  label: string
+  notifications: T[]
+}
+
+/**
+ * 日付からグループキーを取得
+ */
+export function getDateGroupKey(date: Date | string): DateGroupKey {
+  const d = typeof date === 'string' ? new Date(date) : date
+
+  if (isToday(d)) return 'today'
+  if (isYesterday(d)) return 'yesterday'
+  if (isThisWeek(d, { weekStartsOn: 1 })) return 'thisWeek'
+  if (isThisMonth(d)) return 'thisMonth'
+  return 'older'
+}
+
+/**
+ * 通知を日付グループでグループ化
+ */
+export function groupNotificationsByDate<T extends { created_at: string }>(
+  notifications: T[],
+  t: (key: string) => string
+): GroupedNotifications<T>[] {
+  const groups: Record<DateGroupKey, T[]> = {
+    today: [],
+    yesterday: [],
+    thisWeek: [],
+    thisMonth: [],
+    older: [],
+  }
+
+  // 通知をグループに振り分け
+  for (const notification of notifications) {
+    const key = getDateGroupKey(notification.created_at)
+    groups[key].push(notification)
+  }
+
+  // ラベル付きのグループ配列を作成（空のグループは除外）
+  const groupLabels: Record<DateGroupKey, string> = {
+    today: t('time.today'),
+    yesterday: t('time.yesterday'),
+    thisWeek: t('time.thisWeek'),
+    thisMonth: t('time.thisMonth'),
+    older: t('notifications.dateGroups.older'),
+  }
+
+  const orderedKeys: DateGroupKey[] = ['today', 'yesterday', 'thisWeek', 'thisMonth', 'older']
+
+  return orderedKeys
+    .filter((key) => groups[key].length > 0)
+    .map((key) => ({
+      key,
+      label: groupLabels[key],
+      notifications: groups[key],
+    }))
+}
+
+/**
+ * 通知タイプのアイコン名を取得
+ */
+export function getNotificationTypeIcon(type: NotificationType): string {
+  const icons: Record<NotificationType, string> = {
+    reminder: 'bell',
+    plan_created: 'plus-circle',
+    plan_updated: 'edit',
+    plan_deleted: 'trash',
+    plan_completed: 'check-circle',
+    trash_warning: 'alert-triangle',
+    system: 'info',
+  }
+  return icons[type] || 'bell'
+}
 
 export const getNotificationTypeColor = (type: string) => {
   switch (type) {
