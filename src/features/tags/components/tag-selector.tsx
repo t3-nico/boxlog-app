@@ -41,7 +41,7 @@ export const TagSelector = ({
   const createTagMutation = useCreateTag()
 
   // データベースからタグを取得
-  const { data: tagsData, isLoading } = useTags(true)
+  const { data: tagsData } = useTags(true)
 
   // TagWithChildren[] を Tag[] に変換（階層を平坦化）
   const flattenTags = (tags: typeof tagsData): Tag[] => {

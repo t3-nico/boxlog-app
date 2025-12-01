@@ -33,8 +33,12 @@ export async function generateMetadata({
   const { id } = await params
   const review = (await getReview(id)) as Review | null
 
+  if (!review) {
+    return {}
+  }
+
   return {
-    title: review ? `Review #${review.id}` : undefined,
+    title: `Review #${review.id}`,
   }
 }
 

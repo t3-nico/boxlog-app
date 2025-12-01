@@ -117,7 +117,7 @@ export interface TaskTemplate {
   defaultPriority: import('../index').TaskPriority
   defaultTags?: string[]
   defaultEstimatedHours?: number
-  customFields?: Record<string, any>
+  customFields?: Record<string, unknown>
   createdBy: string
   createdAt: string
   isPublic: boolean

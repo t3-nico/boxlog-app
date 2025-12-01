@@ -194,7 +194,7 @@ describe('PlanCard', () => {
       const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i })
       // MIN_EVENT_HEIGHTが適用されるため、少なくとも20px以上
       const heightMatch = eventBlock.style.height.match(/(\d+)px/)
-      const height = heightMatch ? parseInt(heightMatch[1], 10) : 0
+      const height = heightMatch ? parseInt(heightMatch[1]!, 10) : 0
       expect(height).toBeGreaterThanOrEqual(20)
     })
   })

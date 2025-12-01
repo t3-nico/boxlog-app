@@ -58,7 +58,14 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const { t } = useI18n()
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
   const { data: groups = [] as TagGroup[] } = useTagGroups()
-  const { tags, setTags, setIsLoading, setIsCreatingGroup, isCreatingTag, setIsCreatingTag } = useTagsPageContext()
+  const {
+    tags,
+    setTags,
+    setIsLoading,
+    setIsCreatingGroup: _setIsCreatingGroup,
+    isCreatingTag,
+    setIsCreatingTag,
+  } = useTagsPageContext()
   const router = useRouter()
   const pathname = usePathname()
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
@@ -118,13 +125,13 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   const {
     showCreateModal,
-    showEditModal,
-    selectedTag,
-    createParentTag,
-    handleCreateTag,
+    showEditModal: _showEditModal,
+    selectedTag: _selectedTag,
+    createParentTag: _createParentTag,
+    handleCreateTag: _handleCreateTag,
     handleSaveNewTag,
     handleEditTag: _handleEditTag,
-    handleSaveTag,
+    handleSaveTag: _handleSaveTag,
     handleDeleteTag,
     handleCloseModals,
   } = useTagOperations(tags)
@@ -208,16 +215,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       console.error('Failed to create tag:', error)
       toast.error(t('tags.page.tagCreateFailed'))
     }
-  }, [
-    newTagName,
-    newTagDescription,
-    newTagColor,
-    selectedGroupId,
-    createTagMutation,
-    toast,
-    handleCancelInlineCreation,
-    t,
-  ])
+  }, [newTagName, newTagDescription, newTagColor, selectedGroupId, createTagMutation, handleCancelInlineCreation, t])
 
   // クリックアウトサイド検出
   useEffect(() => {
@@ -238,13 +236,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [isCreatingTag, handleCancelInlineCreation])
-
-  // インライン編集開始
-  const startEditing = useCallback((tagId: string, field: 'name' | 'description', currentValue: string) => {
-    setEditingTagId(tagId)
-    setEditingField(field)
-    setEditValue(currentValue || '')
-  }, [])
 
   // インライン編集キャンセル
   const cancelEditing = useCallback(() => {
@@ -274,21 +265,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     [editingField, editValue, updateTagMutation, cancelEditing]
   )
 
-  // カラー変更ハンドラー
-  const handleColorChange = useCallback(
-    async (tagId: string, newColor: string) => {
-      try {
-        await updateTagMutation.mutateAsync({
-          id: tagId,
-          data: { color: newColor },
-        })
-      } catch (error) {
-        console.error('Failed to update tag color:', error)
-      }
-    },
-    [updateTagMutation]
-  )
-
   // アーカイブ確認ダイアログを開く
   const handleOpenArchiveConfirm = useCallback((tag: TagWithChildren) => {
     setArchiveConfirmTag(tag)
@@ -314,7 +290,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       console.error('Failed to archive tag:', error)
       toast.error(t('tags.page.tagArchiveFailed'))
     }
-  }, [archiveConfirmTag, updateTagMutation, toast, t])
+  }, [archiveConfirmTag, updateTagMutation, t])
 
   // 削除確認ダイアログを開く
   const handleOpenDeleteConfirm = useCallback((tag: TagWithChildren) => {
@@ -338,7 +314,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       console.error('Failed to delete tag:', error)
       toast.error(t('tags.page.tagDeleteFailed'))
     }
-  }, [deleteConfirmTag, handleDeleteTag, toast, t])
+  }, [deleteConfirmTag, handleDeleteTag, t])
 
   // タグをグループに移動
   const handleMoveToGroup = useCallback(
@@ -358,7 +334,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         toast.error(t('tags.page.tagMoveFailed'))
       }
     },
-    [updateTagMutation, toast, groups, t]
+    [updateTagMutation, groups, t]
   )
 
   // すべてのLevel 0タグ（ルートタグ）を直接取得
@@ -452,14 +428,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     }
     setSelectedTagIds([])
   }
-
-  // カラムリサイズハンドラー
-  const handleColumnResize = useCallback((columnId: keyof typeof columnWidths, delta: number) => {
-    setColumnWidths((prev) => ({
-      ...prev,
-      [columnId]: Math.max(50, prev[columnId] + delta), // 最小幅50px
-    }))
-  }, [])
 
   // リサイズハンドルコンポーネント
   const ResizeHandle = ({ columnId }: { columnId: keyof typeof columnWidths }) => {

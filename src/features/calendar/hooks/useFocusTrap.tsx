@@ -398,16 +398,18 @@ export const FocusTrap = ({
   onActivate,
   onDeactivate,
 }: FocusTrapProps) => {
-  const { containerRef } = useFocusTrap({
+  const trapOptions: FocusTrapOptions = {
     enabled,
     autoFocus,
     restoreFocus,
     clickOutsideDeactivates,
     escapeDeactivates,
     returnFocusOnDeactivate: restoreFocus,
-    onActivate,
-    onDeactivate,
-  })
+    ...(onActivate && { onActivate }),
+    ...(onDeactivate && { onDeactivate }),
+  }
+
+  const { containerRef } = useFocusTrap(trapOptions)
 
   return (
     <div ref={containerRef} className={className} data-focus-trap={enabled ? 'active' : 'inactive'}>

@@ -153,8 +153,8 @@ describe('planDataAdapter', () => {
       const result = eventsToTimedEvents(events)
 
       expect(result).toHaveLength(2)
-      expect(result[0].id).toBe('plan-1')
-      expect(result[1].id).toBe('plan-2')
+      expect(result[0]!.id).toBe('plan-1')
+      expect(result[1]!.id).toBe('plan-2')
     })
 
     it.skip('削除済みイベントは除外される（廃止予定の機能）', () => {
@@ -285,8 +285,8 @@ describe('planDataAdapter', () => {
       const result = safeEventsToTimedEvents(events)
 
       expect(result).toHaveLength(2)
-      expect(result[0].id).toBe('plan-1')
-      expect(result[1].id).toBe('plan-4')
+      expect(result[0]!.id).toBe('plan-1')
+      expect(result[1]!.id).toBe('plan-4')
     })
 
     it('空配列の場合は空配列を返す', () => {

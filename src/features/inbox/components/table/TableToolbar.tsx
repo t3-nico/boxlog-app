@@ -24,7 +24,7 @@ interface TableToolbarProps {
  * - リセットボタン
  */
 export function TableToolbar({ onCreateClick }: TableToolbarProps) {
-  const { search, status, tags, dueDate, setSearch, reset } = useInboxFilterStore()
+  const { search, status, tags, dueDate, reset } = useInboxFilterStore()
 
   const isFiltered = search !== '' || status.length > 0 || tags.length > 0 || dueDate !== 'all'
 

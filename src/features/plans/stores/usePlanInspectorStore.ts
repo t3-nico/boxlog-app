@@ -18,8 +18,8 @@ interface PlanInitialData {
 interface PlanInspectorStore {
   isOpen: boolean
   planId: string | null
-  initialData?: PlanInitialData
-  openInspector: (planId: string | null, initialData?: PlanInitialData) => void
+  initialData?: PlanInitialData | undefined
+  openInspector: (planId: string | null, initialData?: PlanInitialData | undefined) => void
   closeInspector: () => void
 }
 
@@ -28,6 +28,6 @@ export const usePlanInspectorStore = create<PlanInspectorStore>((set) => ({
   planId: null,
   initialData: undefined,
   openInspector: (planId, initialData) =>
-    set({ isOpen: true, planId, initialData: planId === null ? initialData : undefined }),
+    set({ isOpen: true, planId, initialData: planId === null ? (initialData ?? undefined) : undefined }),
   closeInspector: () => set({ isOpen: false, planId: null, initialData: undefined }),
 }))

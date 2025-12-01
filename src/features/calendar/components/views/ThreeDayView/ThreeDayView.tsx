@@ -61,7 +61,7 @@ export const ThreeDayView = ({
   }, [currentDate])
 
   // ThreeDayView specific logic
-  const { threeDayDates, eventsByDate, isCurrentDay } = useThreeDayView({
+  const { threeDayDates, isCurrentDay } = useThreeDayView({
     centerDate: displayCenterDate,
     events,
     showWeekends,
@@ -77,7 +77,7 @@ export const ThreeDayView = ({
     const positions: PlanPosition[] = []
 
     // displayDates（統一フィルタリング済み）を基準にイベントを配置
-    displayDates.forEach((displayDate, _dayIndex) => {
+    displayDates.forEach((displayDate) => {
       const dateKey = format(displayDate, 'yyyy-MM-dd')
 
       // 元のevents配列から直接フィルタリング（週末設定に依存しない）
@@ -129,7 +129,7 @@ export const ThreeDayView = ({
   const headerComponent = (
     <div className="bg-background flex h-16">
       {/* 表示日数分のヘッダー（週末フィルタリング対応） */}
-      {displayDates.map((date, index) => (
+      {displayDates.map((date) => (
         <div key={date.toISOString()} className="flex flex-1 items-center justify-center px-1">
           <DateDisplay
             date={date}
@@ -160,7 +160,7 @@ export const ThreeDayView = ({
           onTimeClick={(hour, minute) => {
             // ThreeDayViewでは最初にクリックされた日付を使用
             const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-            onEmptyClick?.(displayDates[0], timeString)
+            onEmptyClick?.(displayDates[0]!, timeString)
           }}
           enableKeyboardNavigation={true}
         >
@@ -199,7 +199,7 @@ export const ThreeDayView = ({
                   onTimeRangeSelect={(selectedDate, startTime, _endTime) => {
                     // 時間範囲選択時の処理（必要に応じて実装）
                     const startDate = new Date(selectedDate)
-                    const [startHour, startMinute] = startTime.split(':').map(Number)
+                    const [startHour = 0, startMinute = 0] = startTime.split(':').map(Number)
                     startDate.setHours(startHour, startMinute, 0, 0)
 
                     // onCreateEventは(date: Date, time?: string)の形式なので、startTimeのみ渡す

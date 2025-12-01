@@ -12,7 +12,7 @@ interface StatusEditCellProps {
   /** 現在のステータス */
   status: PlanStatus
   /** 列幅 */
-  width?: number
+  width?: number | undefined
   /** ステータス変更時のコールバック */
   onStatusChange: (status: PlanStatus) => void
 }

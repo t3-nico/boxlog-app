@@ -137,8 +137,8 @@ export function InboxSelectionActions({
           <DropdownMenuContent>
             <InboxActionMenuItems
               item={selectedItem}
-              onEdit={onEdit ? (item) => handleSingleItemAction(onEdit) : undefined}
-              onDuplicate={onDuplicate ? (item) => handleSingleItemAction(onDuplicate) : undefined}
+              onEdit={onEdit ? () => handleSingleItemAction(onEdit) : undefined}
+              onDuplicate={onDuplicate ? () => handleSingleItemAction(onDuplicate) : undefined}
               onAddTags={onAddTags ? () => onAddTags() : undefined}
               onChangeDueDate={onChangeDueDate ? () => onChangeDueDate() : undefined}
               onArchive={() => {

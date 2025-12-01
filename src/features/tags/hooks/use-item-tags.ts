@@ -126,8 +126,8 @@ export function useItemTagsByItem(item_id: string, item_type: ItemType) {
 // 特定タグのアイテム取得フック
 export function useItemsByTags(tag_ids: string[], item_type?: ItemType) {
   return useQuery({
-    queryKey: itemTagsKeys.list({ tag_ids, item_type }),
-    queryFn: () => itemTagsAPI.getItemTags({ tag_ids, item_type }),
+    queryKey: itemTagsKeys.list({ tag_ids, ...(item_type !== undefined && { item_type }) }),
+    queryFn: () => itemTagsAPI.getItemTags({ tag_ids, ...(item_type !== undefined && { item_type }) }),
     enabled: tag_ids.length > 0,
   })
 }
@@ -226,7 +226,7 @@ export function useItemTagsOptimisticUpdate() {
         tagged_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        tags: tag,
+        ...(tag !== undefined && { tags: tag }),
       }
       return [...old, newItemTag]
     })

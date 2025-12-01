@@ -83,6 +83,7 @@ export class TranslationTracker {
   /**
    * 翻訳辞書の読み込み
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- JSON辞書は動的構造
   private async loadDictionary(language: string): Promise<Record<string, any> | null> {
     try {
       const filePath = path.resolve(this.dictionariesPath, `${language}.json`)
@@ -96,6 +97,7 @@ export class TranslationTracker {
   /**
    * ネストされたオブジェクトからフラットなキーリストを生成
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 再帰的なネスト構造
   private flattenKeys(obj: Record<string, any>, prefix = '', result: TranslationKey[] = []): TranslationKey[] {
     for (const [key, value] of Object.entries(obj)) {
       const fullKey = prefix ? `${prefix}.${key}` : key

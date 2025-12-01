@@ -54,7 +54,7 @@ export default function InboxLayout({ children }: InboxLayoutProps) {
     } else if (lastSegment === 'archive') {
       viewId = 'default-archive'
     } else if (segments[segments.length - 2] === 'view') {
-      viewId = lastSegment // カスタムビューID
+      viewId = lastSegment ?? 'default-all' // カスタムビューID
     } else {
       viewId = 'default-all' // デフォルト
     }

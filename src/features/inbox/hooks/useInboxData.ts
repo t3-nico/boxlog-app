@@ -18,27 +18,27 @@ export interface InboxItem {
   status: PlanStatus
   created_at: string
   updated_at: string
-  plan_number?: string
-  planned_hours?: number
-  description?: string
-  due_date?: string | null // 期限日（YYYY-MM-DD）
-  start_time?: string | null // 開始時刻（ISO 8601）
-  end_time?: string | null // 終了時刻（ISO 8601）
-  reminder_minutes?: number | null // 通知タイミング（開始時刻の何分前か）
-  recurrence_type?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays' | null // 繰り返しタイプ（シンプル版）
-  recurrence_end_date?: string | null // 繰り返し終了日（YYYY-MM-DD）
-  recurrence_rule?: string | null // カスタム繰り返し（RRULE形式）
-  tags?: Array<{ id: string; name: string; color?: string }> // タグ情報
+  plan_number?: string | undefined
+  planned_hours?: number | undefined
+  description?: string | undefined
+  due_date?: string | null | undefined // 期限日（YYYY-MM-DD）
+  start_time?: string | null | undefined // 開始時刻（ISO 8601）
+  end_time?: string | null | undefined // 終了時刻（ISO 8601）
+  reminder_minutes?: number | null | undefined // 通知タイミング（開始時刻の何分前か）
+  recurrence_type?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays' | null | undefined // 繰り返しタイプ（シンプル版）
+  recurrence_end_date?: string | null | undefined // 繰り返し終了日（YYYY-MM-DD）
+  recurrence_rule?: string | null | undefined // カスタム繰り返し（RRULE形式）
+  tags?: Array<{ id: string; name: string; color?: string | undefined }> | undefined // タグ情報
 }
 
 /**
  * Inboxフィルター型
  */
 export interface InboxFilters {
-  status?: PlanStatus
-  search?: string
-  tags?: string[] // タグIDの配列
-  dueDate?: DueDateFilter // 期限フィルター
+  status?: PlanStatus | undefined
+  search?: string | undefined
+  tags?: string[] | undefined // タグIDの配列
+  dueDate?: DueDateFilter | undefined // 期限フィルター
 }
 
 /**
@@ -154,8 +154,8 @@ export function useInboxData(filters: InboxFilters = {}) {
     isLoading,
     error,
   } = useplans({
-    status: filters.status,
-    search: filters.search,
+    ...(filters.status && { status: filters.status }),
+    ...(filters.search && { search: filters.search }),
   })
 
   // PlanをInboxItemに変換

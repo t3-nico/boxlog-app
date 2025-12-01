@@ -277,7 +277,7 @@ export interface AnalyticsEvent {
   name: string
   screen?: ScreenValue
   feature?: FeatureValue
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
   timestamp?: number
 }
 

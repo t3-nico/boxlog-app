@@ -31,7 +31,7 @@ interface InboxViewPageProps {
 /**
  * カスタムビュー ページ
  */
-export default function InboxViewPage({ params }: InboxViewPageProps) {
+export default function InboxViewPage({ params: _params }: InboxViewPageProps) {
   return (
     <div className="flex flex-1 flex-col">
       {/* 1. ヘッダー：タイトル + ビュースイッチャー */}

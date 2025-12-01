@@ -18,7 +18,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
   date,
   events,
   hourHeight = HOUR_HEIGHT,
-  isToday: isTodayProp,
+  isToday: _isTodayProp,
   isWeekend: isWeekendProp,
   onTimeClick,
   onEventClick,

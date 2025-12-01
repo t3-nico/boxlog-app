@@ -124,7 +124,7 @@ export async function getPasswordPwnedCount(password: string): Promise<number> {
 
     for (const line of lines) {
       const [hashSuffix, count] = line.split(':')
-      if (hashSuffix === suffix) {
+      if (hashSuffix === suffix && count) {
         return parseInt(count, 10)
       }
     }

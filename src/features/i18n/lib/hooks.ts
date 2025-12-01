@@ -187,7 +187,7 @@ export const useRTLAnimation = () => {
 
       // translateX値を反転
       if (value.includes('translateX(')) {
-        return value.replace(/translateX\(([^)]+)\)/, (match, translateValue) => {
+        return value.replace(/translateX\(([^)]+)\)/, (_match, translateValue) => {
           const numValue = parseFloat(translateValue)
           const unit = translateValue.replace(numValue.toString(), '')
           return `translateX(${-numValue}${unit})`

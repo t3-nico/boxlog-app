@@ -94,13 +94,7 @@ export class SentryIntegration {
       return
     }
 
-    Sentry.init({
-      dsn: this.options.dsn || process.env.SENTRY_DSN,
-      environment: this.options.environment,
-      release: this.options.release || process.env.NEXT_PUBLIC_APP_VERSION,
-      sampleRate: this.options.sampleRate,
-      tracesSampleRate: this.options.tracesSampleRate,
-
+    const initOptions: Sentry.BrowserOptions = {
       beforeSend: (event, hint) => {
         const filteredEvent = this.filterEvent(event, hint)
         if (this.options.beforeSend && filteredEvent) {
@@ -108,7 +102,21 @@ export class SentryIntegration {
         }
         return filteredEvent as Sentry.ErrorEvent | null
       },
-    })
+    }
+
+    // undefined を除外して追加
+    const dsn = this.options.dsn || process.env.SENTRY_DSN
+    if (dsn) initOptions.dsn = dsn
+
+    if (this.options.environment) initOptions.environment = this.options.environment
+
+    const release = this.options.release || process.env.NEXT_PUBLIC_APP_VERSION
+    if (release) initOptions.release = release
+
+    if (this.options.sampleRate !== undefined) initOptions.sampleRate = this.options.sampleRate
+    if (this.options.tracesSampleRate !== undefined) initOptions.tracesSampleRate = this.options.tracesSampleRate
+
+    Sentry.init(initOptions)
 
     this.initialized = true
     console.log('Sentry integration initialized')
@@ -144,18 +152,22 @@ export class SentryIntegration {
       }
 
       if (this.options.enableUserContext && error.metadata.userId) {
-        scope.setUser({
+        const userContext: Sentry.User = {
           id: error.metadata.userId,
-          ip_address: error.metadata.ip,
-          userAgent: error.metadata.userAgent,
-        })
+        }
+
+        // undefined を除外して追加
+        if (error.metadata.ip) userContext.ip_address = error.metadata.ip
+        if (error.metadata.userAgent) userContext.userAgent = error.metadata.userAgent
+
+        scope.setUser(userContext)
       }
 
       Sentry.captureException(error)
     })
   }
 
-  private filterEvent(event: Sentry.Event, hint?: Sentry.EventHint): Sentry.Event | null {
+  private filterEvent(event: Sentry.Event, _hint?: Sentry.EventHint): Sentry.Event | null {
     if (this.options.environment === 'development') {
       const ignoredMessages = ['Non-Error promise rejection captured', 'Network Error', 'ChunkLoadError']
 
@@ -206,7 +218,7 @@ export function reportToSentry(error: AppError): void {
 
 // エラーハンドラーエクスポート
 export class SentryErrorHandler {
-  static handleError(error: Error | AppError, context?: Record<string, any>): void {
+  static handleError(error: Error | AppError, context?: Record<string, unknown>): void {
     if (error instanceof AppError) {
       sentryIntegration.reportError(error)
     } else {
@@ -215,7 +227,7 @@ export class SentryErrorHandler {
     }
   }
 
-  static setOperationContext(context: Record<string, any>): void {
+  static setOperationContext(context: Record<string, unknown>): void {
     Sentry.setContext('operation', context)
   }
 
@@ -223,7 +235,7 @@ export class SentryErrorHandler {
     message: string
     category?: string
     level?: Sentry.SeverityLevel
-    data?: Record<string, any>
+    data?: Record<string, unknown>
   }): void {
     Sentry.addBreadcrumb(breadcrumb)
   }

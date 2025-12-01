@@ -277,7 +277,7 @@ export const useFontPerformance = () => {
       try {
         const fontUrls = fontSystem.getFontPreloadUrls(locale)
 
-        const results = await Promise.allSettled(
+        await Promise.allSettled(
           fontUrls.map(async (url: string) => {
             try {
               const response = await fetch(url)

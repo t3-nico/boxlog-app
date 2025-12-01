@@ -53,7 +53,7 @@ export function BoardSelectionActions({
   const isSingleSelection = selectedCount === 1
   const selectedItem = isSingleSelection ? items.find((item) => item.id === selectedIds[0]) : null
 
-  const handleSingleItemAction = (action: (item: InboxItem) => void) => {
+  const handleSingleItemAction = (action: (_item: InboxItem) => void) => {
     if (selectedItem) {
       action(selectedItem)
     }
@@ -137,8 +137,8 @@ export function BoardSelectionActions({
           <DropdownMenuContent>
             <BoardActionMenuItems
               item={selectedItem}
-              onEdit={onEdit ? (item) => handleSingleItemAction(onEdit) : undefined}
-              onDuplicate={onDuplicate ? (item) => handleSingleItemAction(onDuplicate) : undefined}
+              onEdit={onEdit ? (_item) => handleSingleItemAction(onEdit) : undefined}
+              onDuplicate={onDuplicate ? (_item) => handleSingleItemAction(onDuplicate) : undefined}
               onAddTags={onAddTags ? () => onAddTags() : undefined}
               onChangeDueDate={onChangeDueDate ? () => onChangeDueDate() : undefined}
               onArchive={() => {

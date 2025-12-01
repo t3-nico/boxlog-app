@@ -186,7 +186,7 @@ describe('time-grid-helpers', () => {
       const conflicts = detectTimeConflicts(newTask, existingTasks)
 
       expect(conflicts).toHaveLength(1)
-      expect(conflicts[0].id).toBe('task-1')
+      expect(conflicts[0]!.id).toBe('task-1')
     })
   })
 
@@ -210,8 +210,8 @@ describe('time-grid-helpers', () => {
       const result = assignTaskColumns(tasks)
 
       expect(result).toHaveLength(2)
-      expect(result[0].column).toBe(0)
-      expect(result[1].column).toBe(1)
+      expect(result[0]!.column).toBe(0)
+      expect(result[1]!.column).toBe(1)
     })
   })
 

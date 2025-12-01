@@ -179,8 +179,8 @@ describe('dateHelpers', () => {
       const dates = generateDateRange(start, end)
 
       expect(dates).toHaveLength(4)
-      expect(dates[0].getDate()).toBe(15)
-      expect(dates[3].getDate()).toBe(18)
+      expect(dates[0]!.getDate()).toBe(15)
+      expect(dates[3]!.getDate()).toBe(18)
     })
 
     it('1日だけの範囲を生成する', () => {
@@ -188,7 +188,7 @@ describe('dateHelpers', () => {
       const dates = generateDateRange(date, date)
 
       expect(dates).toHaveLength(1)
-      expect(dates[0].getDate()).toBe(15)
+      expect(dates[0]!.getDate()).toBe(15)
     })
   })
 

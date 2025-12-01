@@ -16,7 +16,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
 
   // 並列ワーカー数（GitHub Actions ubuntu-latest: 2 vCPU）
-  workers: process.env.CI ? 2 : undefined,
+  ...(process.env.CI ? { workers: 2 } : {}),
 
   // タイムアウト設定
   timeout: 30 * 1000, // テスト全体: 30秒

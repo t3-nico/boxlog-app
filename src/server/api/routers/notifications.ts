@@ -110,13 +110,24 @@ export const notificationsRouter = createTRPCRouter({
   create: protectedProcedure.input(createNotificationSchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
+    // undefinedを除外してSupabaseに渡す
+    const insertData: Record<string, unknown> = {
+      user_id: userId,
+      type: input.type,
+      priority: input.priority,
+      title: input.title,
+    }
+    if (input.message !== undefined) insertData.message = input.message
+    if (input.related_plan_id !== undefined) insertData.related_plan_id = input.related_plan_id
+    if (input.related_tag_id !== undefined) insertData.related_tag_id = input.related_tag_id
+    if (input.action_url !== undefined) insertData.action_url = input.action_url
+    if (input.icon !== undefined) insertData.icon = input.icon
+    if (input.data !== undefined) insertData.data = input.data as never
+    if (input.expires_at !== undefined) insertData.expires_at = input.expires_at
+
     const { data, error } = await supabase
       .from('notifications')
-      .insert({
-        user_id: userId,
-        ...input,
-        data: input.data as Record<string, never> | undefined, // Json型にキャスト
-      })
+      .insert(insertData as never)
       .select()
       .single()
 
@@ -143,9 +154,14 @@ export const notificationsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { supabase, userId } = ctx
 
+      // undefinedを除外してSupabaseに渡す
+      const updateData: Record<string, boolean | string | null> = {}
+      if (input.data.is_read !== undefined) updateData.is_read = input.data.is_read
+      if (input.data.read_at !== undefined) updateData.read_at = input.data.read_at
+
       const { data, error } = await supabase
         .from('notifications')
-        .update(input.data)
+        .update(updateData)
         .eq('id', input.id)
         .eq('user_id', userId)
         .select()

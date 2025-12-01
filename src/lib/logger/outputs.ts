@@ -18,11 +18,9 @@ import type { LogEntry, LogOutput } from './types'
 export class ConsoleOutput implements LogOutput {
   name = 'console'
   private formatter
-  private useColors: boolean
 
-  constructor(format: 'json' | 'pretty' | 'simple' = 'pretty', useColors = true) {
+  constructor(format: 'json' | 'pretty' | 'simple' = 'pretty') {
     this.formatter = getFormatter(format)
-    this.useColors = useColors && process.stdout.isTTY
   }
 
   write(entry: LogEntry): void {
@@ -48,7 +46,7 @@ export class FileOutput implements LogOutput {
   protected filePath: string
   private writeStream?: fs.WriteStream
   private buffer: string[] = []
-  private bufferTimeout?: NodeJS.Timeout
+  private bufferTimeout?: NodeJS.Timeout | undefined
 
   constructor(
     filePath: string,
@@ -180,7 +178,7 @@ export class FileOutput implements LogOutput {
 
     this.buffer = []
 
-    if (this.bufferTimeout) {
+    if (this.bufferTimeout !== undefined) {
       clearTimeout(this.bufferTimeout)
       this.bufferTimeout = undefined
     }
@@ -209,7 +207,7 @@ export class RotatingFileOutput extends FileOutput {
   constructor(
     filePath: string,
     format: 'json' | 'structured' | 'csv' = 'json',
-    private rotationOptions: {
+    rotationOptions: {
       maxSize: string // '10MB', '100KB'
       maxFiles: number
       datePattern?: string // 'YYYY-MM-DD'
@@ -362,7 +360,7 @@ export class RotatingFileOutput extends FileOutput {
     }
 
     const [, size, unit] = match
-    return parseFloat(size) * (units[unit.toUpperCase()] || 1)
+    return parseFloat(size!) * (units[unit!.toUpperCase()] || 1)
   }
 }
 
@@ -372,7 +370,7 @@ export class RotatingFileOutput extends FileOutput {
 export class WebhookOutput implements LogOutput {
   name = 'webhook'
   private buffer: LogEntry[] = []
-  private bufferTimeout?: NodeJS.Timeout
+  private bufferTimeout?: NodeJS.Timeout | undefined
 
   constructor(
     private url: string,
@@ -413,7 +411,7 @@ export class WebhookOutput implements LogOutput {
     const entries = [...this.buffer]
     this.buffer = []
 
-    if (this.bufferTimeout) {
+    if (this.bufferTimeout !== undefined) {
       clearTimeout(this.bufferTimeout)
       this.bufferTimeout = undefined
     }
@@ -466,7 +464,7 @@ export class WebhookOutput implements LogOutput {
 export class SupabaseOutput implements LogOutput {
   name = 'supabase'
   private buffer: LogEntry[] = []
-  private bufferTimeout?: NodeJS.Timeout
+  private bufferTimeout?: NodeJS.Timeout | undefined
 
   constructor(
     private supabaseUrl: string,
@@ -504,7 +502,7 @@ export class SupabaseOutput implements LogOutput {
     const entries = [...this.buffer]
     this.buffer = []
 
-    if (this.bufferTimeout) {
+    if (this.bufferTimeout !== undefined) {
       clearTimeout(this.bufferTimeout)
       this.bufferTimeout = undefined
     }
@@ -573,7 +571,7 @@ export class MultiOutput implements LogOutput {
  * 🎯 ファクトリー関数
  */
 export function createConsoleOutput(format: 'json' | 'pretty' | 'simple' = 'pretty'): ConsoleOutput {
-  return new ConsoleOutput(format, process.env.NODE_ENV !== 'test')
+  return new ConsoleOutput(format)
 }
 
 export function createFileOutput(filePath: string, format: 'json' | 'structured' | 'csv' = 'json'): FileOutput {

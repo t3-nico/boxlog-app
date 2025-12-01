@@ -21,13 +21,15 @@ interface ViewSettingsDialogProps {
   /** ダイアログを閉じる関数 */
   onOpenChange: (open: boolean) => void
   /** 編集対象のビュー（新規作成時はundefined） */
-  view?: InboxView
+  view?: InboxView | undefined
   /** 現在のフィルター・ソート・ページサイズ（新規作成時に使用） */
-  currentState?: {
-    filters: InboxView['filters']
-    sorting?: InboxView['sorting']
-    pageSize?: number
-  }
+  currentState?:
+    | {
+        filters: InboxView['filters']
+        sorting?: InboxView['sorting'] | undefined
+        pageSize?: number | undefined
+      }
+    | undefined
 }
 
 /**
