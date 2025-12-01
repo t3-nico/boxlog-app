@@ -18,7 +18,7 @@ if (SENTRY_DSN) {
   Sentry.init({
     dsn: SENTRY_DSN,
     environment: VERCEL_ENV,
-    release: process.env.NEXT_PUBLIC_APP_VERSION,
+    ...(process.env.NEXT_PUBLIC_APP_VERSION && { release: process.env.NEXT_PUBLIC_APP_VERSION }),
 
     // サンプリングレート（環境別）
     // Production: 10%（コスト最適化）
@@ -36,7 +36,7 @@ if (SENTRY_DSN) {
     enabled: IS_PRODUCTION || VERCEL_ENV === 'preview',
 
     // エラーフィルタリング
-    beforeSend(event, hint) {
+    beforeSend(event, _hint) {
       // 開発環境のノイズ除去
       if (!IS_PRODUCTION) {
         const errorMessage = event.exception?.values?.[0]?.value || ''

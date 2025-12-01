@@ -99,7 +99,10 @@ function generateFingerprint(error: AppError): string[] {
  * }
  * ```
  */
-export function reportToSentry(error: AppError, userContext?: { userId?: string; ip?: string; userAgent?: string }): void {
+export function reportToSentry(
+  error: AppError,
+  userContext?: { userId?: string; ip?: string; userAgent?: string }
+): void {
   Sentry.withScope((scope) => {
     // エラーコード・カテゴリ・重要度をタグ付け
     scope.setTag('errorCode', error.code)
@@ -133,7 +136,7 @@ export function reportToSentry(error: AppError, userContext?: { userId?: string;
     if (userContext?.userId) {
       scope.setUser({
         id: userContext.userId,
-        ip_address: userContext.ip,
+        ...(userContext.ip && { ip_address: userContext.ip }),
       })
     }
 

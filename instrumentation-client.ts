@@ -45,7 +45,7 @@ if (SENTRY_DSN && isAnalyticsConsented()) {
   Sentry.init({
     dsn: SENTRY_DSN,
     environment: VERCEL_ENV,
-    release: process.env.NEXT_PUBLIC_APP_VERSION,
+    ...(process.env.NEXT_PUBLIC_APP_VERSION && { release: process.env.NEXT_PUBLIC_APP_VERSION }),
 
     // サンプリングレート（環境別）
     tracesSampleRate: IS_PRODUCTION ? 0.1 : VERCEL_ENV === 'preview' ? 0.5 : 1.0,
