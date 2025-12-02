@@ -51,6 +51,7 @@ export const MobileHeader = ({
     week: t('calendar.mobile.header.viewLabels.week'),
     '2week': t('calendar.mobile.header.viewLabels.2week'),
     month: t('calendar.mobile.header.viewLabels.month'),
+    agenda: t('calendar.mobile.header.viewLabels.agenda'),
   }
 
   // jsx-no-bind optimization: Navigation handlers

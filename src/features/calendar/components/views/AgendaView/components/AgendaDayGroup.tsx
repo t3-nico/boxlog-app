@@ -1,6 +1,6 @@
 'use client'
 
-import { format, isToday as checkIsToday, isTomorrow } from 'date-fns'
+import { isToday as checkIsToday, format, isTomorrow } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
@@ -27,12 +27,12 @@ export function AgendaDayGroup({ date, plans, isToday, onPlanClick, onPlanContex
     if (isTomorrow(date)) {
       return locale === 'ja' ? '明日' : 'Tomorrow'
     }
-    return format(date, locale === 'ja' ? 'M月d日' : 'MMM d', { locale: dateLocale })
+    return format(date, locale === 'ja' ? 'M月d日' : 'MMM d', dateLocale ? { locale: dateLocale } : undefined)
   }
 
   // 曜日の取得
   const getDayOfWeek = () => {
-    return format(date, locale === 'ja' ? 'EEEE' : 'EEEE', { locale: dateLocale })
+    return format(date, locale === 'ja' ? 'EEEE' : 'EEEE', dateLocale ? { locale: dateLocale } : undefined)
   }
 
   // プランを時間順にソート
@@ -56,12 +56,7 @@ export function AgendaDayGroup({ date, plans, isToday, onPlanClick, onPlanContex
           'border-border border-b'
         )}
       >
-        <span
-          className={cn(
-            'text-lg font-semibold',
-            isToday ? 'text-primary' : 'text-foreground'
-          )}
-        >
+        <span className={cn('text-lg font-semibold', isToday ? 'text-primary' : 'text-foreground')}>
           {getDateLabel()}
         </span>
         <span className="text-muted-foreground text-sm">{getDayOfWeek()}</span>
@@ -76,12 +71,7 @@ export function AgendaDayGroup({ date, plans, isToday, onPlanClick, onPlanContex
       <div className="divide-border divide-y">
         {sortedPlans.length > 0 ? (
           sortedPlans.map((plan) => (
-            <AgendaItem
-              key={plan.id}
-              plan={plan}
-              onClick={onPlanClick}
-              onContextMenu={onPlanContextMenu}
-            />
+            <AgendaItem key={plan.id} plan={plan} onClick={onPlanClick} onContextMenu={onPlanContextMenu} />
           ))
         ) : (
           <div className="text-muted-foreground px-4 py-6 text-center text-sm">

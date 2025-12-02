@@ -9,13 +9,13 @@ import {
   addMonths,
   addWeeks,
   addYears,
-  getDay,
-  isBefore,
-  isAfter,
-  isSameDay,
-  startOfDay,
-  setDate,
   getDate,
+  getDay,
+  isAfter,
+  isBefore,
+  isSameDay,
+  setDate,
+  startOfDay,
 } from 'date-fns'
 
 import type { Plan, RecurrenceConfig } from '../types/plan'
@@ -37,9 +37,9 @@ export interface ExpandedOccurrence {
   /** 例外かどうか（DBに保存された例外） */
   isException: boolean
   /** 例外タイプ */
-  exceptionType?: 'modified' | 'cancelled' | 'moved'
+  exceptionType?: 'modified' | 'cancelled' | 'moved' | undefined
   /** オーバーライド値 */
-  overrides?: Record<string, unknown>
+  overrides?: Record<string, unknown> | undefined
 }
 
 /**
@@ -56,10 +56,7 @@ export interface PlanInstanceException {
 /**
  * recurrence_type（シンプル版）からRecurrenceConfigに変換
  */
-function simpleTypeToConfig(
-  recurrenceType: string,
-  startDate: Date
-): RecurrenceConfig | null {
+function simpleTypeToConfig(recurrenceType: string, startDate: Date): RecurrenceConfig | null {
   switch (recurrenceType) {
     case 'daily':
       return { frequency: 'daily', interval: 1, endType: 'never' }
@@ -106,11 +103,7 @@ export function getPlanRecurrenceConfig(plan: Plan): RecurrenceConfig | null {
 
   // recurrence_type（シンプル版）
   if (plan.recurrence_type && plan.recurrence_type !== 'none') {
-    const startDate = plan.start_time
-      ? new Date(plan.start_time)
-      : plan.due_date
-        ? new Date(plan.due_date)
-        : new Date()
+    const startDate = plan.start_time ? new Date(plan.start_time) : plan.due_date ? new Date(plan.due_date) : new Date()
     return simpleTypeToConfig(plan.recurrence_type, startDate)
   }
 
@@ -120,11 +113,7 @@ export function getPlanRecurrenceConfig(plan: Plan): RecurrenceConfig | null {
 /**
  * 次のオカレンス日付を計算
  */
-function getNextOccurrence(
-  current: Date,
-  config: RecurrenceConfig,
-  startDate: Date
-): Date | null {
+function getNextOccurrence(current: Date, config: RecurrenceConfig, _startDate: Date): Date | null {
   let next: Date
 
   switch (config.frequency) {
@@ -205,12 +194,8 @@ export function expandRecurrence(
   }
 
   // 時刻を抽出（HH:mm形式）
-  const startTime = plan.start_time
-    ? new Date(plan.start_time).toTimeString().slice(0, 5)
-    : null
-  const endTime = plan.end_time
-    ? new Date(plan.end_time).toTimeString().slice(0, 5)
-    : null
+  const startTime = plan.start_time ? new Date(plan.start_time).toTimeString().slice(0, 5) : null
+  const endTime = plan.end_time ? new Date(plan.end_time).toTimeString().slice(0, 5) : null
 
   // 終了日を決定
   let recurrenceEndDate: Date | null = null
@@ -315,8 +300,5 @@ export function expandRecurrence(
  * 繰り返しプランかどうかを判定
  */
 export function isRecurringPlan(plan: Plan): boolean {
-  return !!(
-    (plan.recurrence_type && plan.recurrence_type !== 'none') ||
-    plan.recurrence_rule
-  )
+  return !!((plan.recurrence_type && plan.recurrence_type !== 'none') || plan.recurrence_rule)
 }

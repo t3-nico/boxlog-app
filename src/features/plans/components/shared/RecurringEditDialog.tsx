@@ -13,8 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
 export type RecurringEditScope = 'this' | 'thisAndFuture' | 'all'
@@ -26,7 +26,7 @@ export interface RecurringEditDialogProps {
   /** 編集か削除か */
   mode: 'edit' | 'delete'
   /** プランタイトル（表示用） */
-  planTitle?: string
+  planTitle?: string | undefined
 }
 
 /**
@@ -37,13 +37,7 @@ export interface RecurringEditDialogProps {
  * - このイベント以降すべて
  * - すべてのイベント
  */
-export function RecurringEditDialog({
-  open,
-  onOpenChange,
-  onConfirm,
-  mode,
-  planTitle,
-}: RecurringEditDialogProps) {
+export function RecurringEditDialog({ open, onOpenChange, onConfirm, mode, planTitle }: RecurringEditDialogProps) {
   const { locale } = useI18n()
   const [scope, setScope] = useState<RecurringEditScope>('this')
 
@@ -99,9 +93,7 @@ export function RecurringEditDialog({
                 {locale === 'ja' ? 'このイベントのみ' : 'This event only'}
               </div>
               <span className="text-muted-foreground text-sm">
-                {locale === 'ja'
-                  ? 'この日のイベントのみ変更されます'
-                  : 'Only this occurrence will be changed'}
+                {locale === 'ja' ? 'この日のイベントのみ変更されます' : 'Only this occurrence will be changed'}
               </span>
             </Label>
           </div>
@@ -131,9 +123,7 @@ export function RecurringEditDialog({
                 {locale === 'ja' ? 'すべてのイベント' : 'All events'}
               </div>
               <span className="text-muted-foreground text-sm">
-                {locale === 'ja'
-                  ? 'すべての繰り返しイベントが変更されます'
-                  : 'All occurrences will be changed'}
+                {locale === 'ja' ? 'すべての繰り返しイベントが変更されます' : 'All occurrences will be changed'}
               </span>
             </Label>
           </div>
@@ -143,17 +133,8 @@ export function RecurringEditDialog({
           <Button variant="outline" onClick={handleCancel}>
             {locale === 'ja' ? 'キャンセル' : 'Cancel'}
           </Button>
-          <Button
-            onClick={handleConfirm}
-            variant={isEdit ? 'default' : 'destructive'}
-          >
-            {isEdit
-              ? locale === 'ja'
-                ? '編集'
-                : 'Edit'
-              : locale === 'ja'
-                ? '削除'
-                : 'Delete'}
+          <Button onClick={handleConfirm} variant={isEdit ? 'default' : 'destructive'}>
+            {isEdit ? (locale === 'ja' ? '編集' : 'Edit') : locale === 'ja' ? '削除' : 'Delete'}
           </Button>
         </DialogFooter>
       </DialogContent>

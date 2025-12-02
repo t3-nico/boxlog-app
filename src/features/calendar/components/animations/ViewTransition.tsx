@@ -395,8 +395,28 @@ export const TaskCreateAnimation = ({ children, isNew = false }: TaskCreateAnima
 // カレンダービュー切り替え時のアニメーション
 interface CalendarViewAnimationProps {
   children: ReactNode
-  viewType: 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
-  previousViewType?: 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
+  viewType:
+    | 'day'
+    | 'split-day'
+    | '3day'
+    | '5day'
+    | 'week'
+    | 'week-no-weekend'
+    | '2week'
+    | 'schedule'
+    | 'month'
+    | 'agenda'
+  previousViewType?:
+    | 'day'
+    | 'split-day'
+    | '3day'
+    | '5day'
+    | 'week'
+    | 'week-no-weekend'
+    | '2week'
+    | 'schedule'
+    | 'month'
+    | 'agenda'
 }
 
 export const CalendarViewAnimation = ({ children, viewType, previousViewType }: CalendarViewAnimationProps) => {

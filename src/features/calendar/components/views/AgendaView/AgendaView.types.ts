@@ -37,14 +37,14 @@ export interface AgendaViewProps {
 
 export interface AgendaItemProps {
   plan: CalendarPlan
-  onClick?: (plan: CalendarPlan) => void
-  onContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
+  onClick?: ((plan: CalendarPlan) => void) | undefined
+  onContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined
 }
 
 export interface AgendaDayGroupProps {
   date: Date
   plans: CalendarPlan[]
   isToday: boolean
-  onPlanClick?: (plan: CalendarPlan) => void
-  onPlanContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined
+  onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined
 }
