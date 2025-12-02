@@ -23,11 +23,12 @@ import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorS
 import { toLocalISOString } from '@/features/plans/utils/datetime'
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder'
 import { configToReadable, ruleToConfig } from '@/features/plans/utils/rrule'
+import { getEffectiveStatus } from '@/features/plans/utils/status'
 import { cn } from '@/lib/utils'
 import { useDraggable } from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Bell, Calendar as CalendarIcon, Plus, Repeat, Tag, Trash2 } from 'lucide-react'
+import { Bell, Calendar as CalendarIcon, CheckCircle2, Circle, Plus, Repeat, Tag, Trash2 } from 'lucide-react'
 
 import { useBoardFocusStore } from '../../stores/useBoardFocusStore'
 import { BoardActionMenuItems } from '../BoardActionMenuItems'
@@ -230,9 +231,41 @@ export function PlanCard({ item }: PlanCardProps) {
               isDragging && 'opacity-50'
             )}
           >
-            {/* 1. タイトル */}
+            {/* 1. タイトル + チェックボックス */}
             <div className="flex items-center gap-2 overflow-hidden">
-              <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold hover:underline">
+              {/* Done チェックボックス */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  const effectiveStatus = getEffectiveStatus(item)
+                  const newStatus = effectiveStatus === 'done' ? 'todo' : 'done'
+                  updatePlan.mutate({
+                    id: item.id,
+                    data: { status: newStatus },
+                  })
+                }}
+                className="flex-shrink-0 transition-colors hover:opacity-80"
+                aria-label={getEffectiveStatus(item) === 'done' ? '未完了に戻す' : '完了にする'}
+              >
+                {(() => {
+                  const status = getEffectiveStatus(item)
+                  if (status === 'done') {
+                    return <CheckCircle2 className="h-4 w-4 text-success" />
+                  }
+                  if (status === 'doing') {
+                    return <Circle className="h-4 w-4 text-primary" />
+                  }
+                  // todo
+                  return <Circle className="h-4 w-4 text-muted-foreground" />
+                })()}
+              </button>
+              <h3
+                className={cn(
+                  'text-foreground min-w-0 text-base leading-tight font-semibold hover:underline',
+                  getEffectiveStatus(item) === 'done' && 'text-muted-foreground line-through'
+                )}
+              >
                 {item.title}
               </h3>
               {item.plan_number && <span className="text-muted-foreground shrink-0 text-sm">#{item.plan_number}</span>}
