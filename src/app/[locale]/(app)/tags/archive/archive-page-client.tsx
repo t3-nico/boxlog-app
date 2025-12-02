@@ -115,11 +115,7 @@ export function ArchivePageClient() {
   // 復元ハンドラー（is_active = true）
   const handleRestoreTag = useCallback(
     async (tag: TagWithChildren) => {
-      if (
-        !confirm(
-          `タグ「${tag.name}」を復元しますか？\n\n復元されたタグは再び新規のタグ付けに使用できるようになります。`
-        )
-      ) {
+      if (!confirm(t('tags.archive.restoreConfirm', { name: tag.name }))) {
         return
       }
 
@@ -128,13 +124,13 @@ export function ArchivePageClient() {
           id: tag.id,
           data: { is_active: true },
         })
-        toast.success(`タグ「${tag.name}」を復元しました`)
+        toast.success(t('tags.archive.restoreSuccess', { name: tag.name }))
       } catch (error) {
         console.error('Failed to restore tag:', error)
-        toast.error('タグの復元に失敗しました')
+        toast.error(t('tags.archive.restoreFailed'))
       }
     },
-    [updateTagMutation]
+    [updateTagMutation, t]
   )
 
   // 削除確認ダイアログを開く
@@ -153,13 +149,13 @@ export function ArchivePageClient() {
 
     try {
       await handleDeleteTag(deleteConfirmTag)
-      toast.success(`タグ「${deleteConfirmTag.name}」を完全に削除しました`)
+      toast.success(t('tags.archive.deleteSuccess', { name: deleteConfirmTag.name }))
       setDeleteConfirmTag(null)
     } catch (error) {
       console.error('Failed to delete tag:', error)
-      toast.error('タグの削除に失敗しました')
+      toast.error(t('tags.archive.deleteFailed'))
     }
-  }, [deleteConfirmTag, handleDeleteTag])
+  }, [deleteConfirmTag, handleDeleteTag, t])
 
   // アーカイブされたタグのみを取得（is_active = false）
   const baseTags = tags.filter((tag) => tag.level === 0 && !tag.is_active)
@@ -219,7 +215,7 @@ export function ArchivePageClient() {
 
   const handleBulkDelete = async () => {
     if (selectedTagIds.length === 0) return
-    if (!confirm(`選択した${selectedTagIds.length}件のタグを完全に削除しますか？`)) return
+    if (!confirm(t('tags.archive.bulkDeleteConfirm', { count: selectedTagIds.length }))) return
 
     for (const tagId of selectedTagIds) {
       const tag = displayTags.find((t) => t.id === tagId)
@@ -282,7 +278,7 @@ export function ArchivePageClient() {
         {displayTags.length === 0 ? (
           <div className="border-border flex h-64 items-center justify-center rounded-xl border-2 border-dashed">
             <div className="text-center">
-              <p className="text-muted-foreground mb-4">アーカイブされたタグはありません</p>
+              <p className="text-muted-foreground mb-4">{t('tags.archive.noArchivedTags')}</p>
             </div>
           </div>
         ) : (
@@ -295,13 +291,17 @@ export function ArchivePageClient() {
                   <TableHeader>
                     <TableRow>
                       <TableHead style={{ width: '48px' }}>
-                        <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} aria-label="すべて選択" />
+                        <Checkbox
+                          checked={allSelected}
+                          onCheckedChange={handleSelectAll}
+                          aria-label={t('tags.page.selectAll')}
+                        />
                       </TableHead>
                       <TableHead style={{ width: '80px' }}>ID</TableHead>
                       <TableHead style={{ width: '32px' }}></TableHead>
                       <TableHead>
                         <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
-                          名前
+                          {t('tags.page.name')}
                           {sortField === 'name' &&
                             (sortDirection === 'asc' ? (
                               <ArrowUp className="ml-1 h-4 w-4" />
@@ -311,10 +311,10 @@ export function ArchivePageClient() {
                           {sortField !== 'name' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
                         </Button>
                       </TableHead>
-                      <TableHead>説明</TableHead>
+                      <TableHead>{t('tags.page.description')}</TableHead>
                       <TableHead style={{ width: '160px' }}>
                         <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
-                          作成日時
+                          {t('tags.page.createdAt')}
                           {sortField === 'created_at' &&
                             (sortDirection === 'asc' ? (
                               <ArrowUp className="ml-1 h-4 w-4" />
@@ -347,7 +347,7 @@ export function ArchivePageClient() {
                           <Checkbox
                             checked={selectedTagIds.includes(tag.id)}
                             onCheckedChange={() => handleSelectTag(tag.id)}
-                            aria-label={`${tag.name}を選択`}
+                            aria-label={t('tags.page.selectTag', { name: tag.name })}
                           />
                         </TableCell>
                         <TableCell style={{ width: '80px' }} className="text-muted-foreground font-mono text-sm">
@@ -359,7 +359,7 @@ export function ArchivePageClient() {
                               <button
                                 className="hover:ring-offset-background focus-visible:ring-ring h-3 w-3 cursor-pointer rounded-full transition-all hover:ring-2 hover:ring-offset-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                                 style={{ backgroundColor: tag.color || DEFAULT_TAG_COLOR }}
-                                aria-label="カラーを変更"
+                                aria-label={t('tags.page.changeColor')}
                               />
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-3" align="start">
@@ -450,7 +450,7 @@ export function ArchivePageClient() {
                                   router.push(`/${locale}/tags/t-${tag.tag_number}`)
                                 }}
                               >
-                                表示
+                                {t('tags.archive.view')}
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={(e) => {
@@ -459,7 +459,7 @@ export function ArchivePageClient() {
                                 }}
                               >
                                 <RotateCcw className="mr-2 h-4 w-4" />
-                                復元
+                                {t('tags.archive.restore')}
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={(e) => {
@@ -469,7 +469,7 @@ export function ArchivePageClient() {
                                 className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
                               >
                                 <Trash2 className="mr-2 h-4 w-4" />
-                                完全に削除
+                                {t('tags.archive.permanentDelete')}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -486,7 +486,7 @@ export function ArchivePageClient() {
               <div className="flex items-center justify-between px-4 py-4">
                 {/* 左側: 表示件数選択 */}
                 <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground text-sm">表示件数</span>
+                  <span className="text-muted-foreground text-sm">{t('tags.page.rowsPerPage')}</span>
                   <Select value={String(pageSize)} onValueChange={(value) => setPageSize(Number(value))}>
                     <SelectTrigger className="h-9 w-16">
                       <SelectValue />
@@ -503,8 +503,12 @@ export function ArchivePageClient() {
                 {/* 中央: ページ情報 */}
                 <div className="text-muted-foreground text-sm">
                   {sortedTags.length > 0
-                    ? `${startIndex + 1}〜${Math.min(endIndex, sortedTags.length)}件 / 全${sortedTags.length}件`
-                    : '0件'}
+                    ? t('tags.archive.showing', {
+                        start: startIndex + 1,
+                        end: Math.min(endIndex, sortedTags.length),
+                        total: sortedTags.length,
+                      })
+                    : t('tags.archive.noItems')}
                 </div>
 
                 {/* 右側: ページ移動ボタン */}
@@ -517,10 +521,10 @@ export function ArchivePageClient() {
                     className="h-9 w-9 p-0"
                   >
                     <ChevronLeft className="size-4" />
-                    <span className="sr-only">前のページ</span>
+                    <span className="sr-only">{t('tags.archive.previousPage')}</span>
                   </Button>
                   <div className="text-muted-foreground flex h-9 items-center px-3 text-sm">
-                    ページ {currentPage} / {totalPages || 1}
+                    {t('tags.archive.pageOf', { current: currentPage, total: totalPages || 1 })}
                   </div>
                   <Button
                     variant="outline"
@@ -530,7 +534,7 @@ export function ArchivePageClient() {
                     className="h-9 w-9 p-0"
                   >
                     <ChevronRight className="size-4" />
-                    <span className="sr-only">次のページ</span>
+                    <span className="sr-only">{t('tags.archive.nextPage')}</span>
                   </Button>
                 </div>
               </div>

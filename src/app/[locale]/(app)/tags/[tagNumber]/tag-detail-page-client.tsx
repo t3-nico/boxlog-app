@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
@@ -19,6 +20,7 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
   const { data: tags = [], isLoading } = useTags(true)
   const router = useRouter()
   const { openInspector } = usePlanInspectorStore()
+  const { t } = useI18n()
 
   const tag = tags.find((t) => t.tag_number === Number(tagNumber))
 
@@ -67,21 +69,21 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
 
           {tag.description && (
             <div className="mb-6">
-              <h2 className="mb-2 text-lg font-semibold">説明</h2>
+              <h2 className="mb-2 text-lg font-semibold">{t('tags.detail.description')}</h2>
               <p className="text-muted-foreground">{tag.description}</p>
             </div>
           )}
 
           {/* プラン一覧 */}
           <div>
-            <h2 className="mb-4 text-lg font-semibold">紐づいたプラン ({plans.length})</h2>
+            <h2 className="mb-4 text-lg font-semibold">{t('tags.detail.linkedPlans', { count: plans.length })}</h2>
             {isLoadingPlans ? (
               <div className="flex h-32 items-center justify-center">
                 <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
               </div>
             ) : plans.length === 0 ? (
               <div className="border-border rounded-xl border p-6">
-                <p className="text-muted-foreground text-center">このタグに紐づくプランはありません</p>
+                <p className="text-muted-foreground text-center">{t('tags.detail.noLinkedPlans')}</p>
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
