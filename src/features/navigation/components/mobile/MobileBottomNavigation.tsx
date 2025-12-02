@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 
+import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { BarChart3, Calendar, Inbox, LogOut, Moon, MoreHorizontal, Settings, Sun, Tag, User } from 'lucide-react'
@@ -32,7 +33,6 @@ import { toast } from 'sonner'
  * - セマンティックトークン使用
  */
 export function MobileBottomNavigation() {
-  const router = useRouter()
   const pathname = usePathname()
   const [isMoreOpen, setIsMoreOpen] = useState(false)
 
@@ -65,10 +65,6 @@ export function MobileBottomNavigation() {
     },
   ]
 
-  const handleNavigation = (href: string) => {
-    router.push(href)
-  }
-
   return (
     <>
       <nav
@@ -86,10 +82,10 @@ export function MobileBottomNavigation() {
           const Icon = item.icon
 
           return (
-            <button
+            <Link
               key={item.id}
-              type="button"
-              onClick={() => handleNavigation(item.href)}
+              href={item.href}
+              prefetch={true}
               className="flex h-full flex-1 flex-col items-center justify-center gap-1 px-2 py-2"
               aria-current={item.isActive ? 'page' : undefined}
             >
@@ -111,7 +107,7 @@ export function MobileBottomNavigation() {
               >
                 {item.label}
               </span>
-            </button>
+            </Link>
           )
         })}
 

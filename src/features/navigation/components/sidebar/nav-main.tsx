@@ -1,6 +1,7 @@
 'use client'
 
 import { type LucideIcon } from 'lucide-react'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
@@ -30,9 +31,10 @@ export function NavMain({
             // パス比較: 両方のパスを正規化して比較
             const isActive = pathname === item.url || pathname?.startsWith(item.url + '/')
             return (
-              <a
+              <Link
                 key={item.title}
                 href={item.url}
+                prefetch={true}
                 className={cn(
                   'flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors',
                   isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'hover:bg-sidebar-accent/50'
@@ -40,7 +42,7 @@ export function NavMain({
               >
                 {item.icon && <item.icon className="h-4 w-4" />}
                 <span>{item.title}</span>
-              </a>
+              </Link>
             )
           })}
         </div>
