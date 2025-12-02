@@ -27,13 +27,7 @@ const AGENDA_DAYS = 14
  * - 予定がある日のみ表示（空の日はスキップ可能）
  * - 今日・明日のラベル表示
  */
-export function AgendaView({
-  plans,
-  currentDate,
-  className,
-  onPlanClick,
-  onPlanContextMenu,
-}: AgendaViewProps) {
+export function AgendaView({ plans, currentDate, className, onPlanClick, onPlanContextMenu }: AgendaViewProps) {
   const { locale } = useI18n()
 
   // 表示範囲の計算（currentDateから14日間）
@@ -56,7 +50,7 @@ export function AgendaView({
     })
 
     // プランを日付ごとに振り分け
-    plans.forEach((plan) => {
+    ;(plans ?? []).forEach((plan) => {
       if (!plan.startDate) return
 
       const planDate = startOfDay(plan.startDate)
@@ -84,20 +78,16 @@ export function AgendaView({
   }, [dateRange, plansByDate])
 
   // プランが全くない場合のメッセージ
-  const hasAnyPlans = plans.length > 0
+  const hasAnyPlans = (plans ?? []).length > 0
 
   return (
     <CalendarViewAnimation viewType="agenda">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         {/* ヘッダー */}
         <div className="border-border bg-background shrink-0 border-b px-4 py-3">
-          <h2 className="text-foreground text-lg font-semibold">
-            {locale === 'ja' ? 'アジェンダ' : 'Agenda'}
-          </h2>
+          <h2 className="text-foreground text-lg font-semibold">{locale === 'ja' ? 'アジェンダ' : 'Agenda'}</h2>
           <p className="text-muted-foreground text-sm">
-            {locale === 'ja'
-              ? `今後${AGENDA_DAYS}日間の予定`
-              : `Next ${AGENDA_DAYS} days`}
+            {locale === 'ja' ? `今後${AGENDA_DAYS}日間の予定` : `Next ${AGENDA_DAYS} days`}
           </p>
         </div>
 
@@ -126,9 +116,7 @@ export function AgendaView({
               icon={CalendarDays}
               title={locale === 'ja' ? '今後の予定はありません' : 'No upcoming events'}
               description={
-                locale === 'ja'
-                  ? 'カレンダーで新しい予定を作成してください'
-                  : 'Create a new event in the calendar'
+                locale === 'ja' ? 'カレンダーで新しい予定を作成してください' : 'Create a new event in the calendar'
               }
             />
           )}
