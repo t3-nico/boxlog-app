@@ -36,7 +36,8 @@ const SIZE_CLASSES = {
 }
 
 export function PlanStatusBadge({ status, size = 'sm' }: PlanStatusBadgeProps) {
-  const config = STATUS_CONFIG[status]
+  // フォールバック: 未知のステータスの場合はtodoとして扱う
+  const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.todo
 
   return (
     <Badge variant="outline" className={`${config.className} ${SIZE_CLASSES[size]} font-medium`}>
