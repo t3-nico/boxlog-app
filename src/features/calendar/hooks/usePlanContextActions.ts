@@ -6,13 +6,16 @@ import { useCallback, useState } from 'react'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances'
+import { usePlanTags } from '@/features/plans/hooks/usePlanTags'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import type { RecurringEditScope } from '@/features/plans/components/shared/RecurringEditDialog'
+import { format } from 'date-fns'
 
 export function usePlanContextActions() {
   const { openInspector } = usePlanInspectorStore()
-  const { deletePlan, updatePlan } = usePlanMutations()
+  const { createPlan, deletePlan, updatePlan } = usePlanMutations()
   const { createInstance } = usePlanInstanceMutations()
+  const { addPlanTag } = usePlanTags()
 
   // 繰り返しプラン削除用の状態
   const [recurringDeleteTarget, setRecurringDeleteTarget] = useState<CalendarPlan | null>(null)
@@ -113,27 +116,42 @@ export function usePlanContextActions() {
     [openInspector]
   )
 
-  const handleDuplicatePlan = useCallback(async (_plan: CalendarPlan) => {
-    // TODO(#621): Plans/Sessions統合後に再実装
-    console.log('TODO: Sessions統合後に実装')
-    // try {
-    //   const { startDate, endDate } = normalizePlanDates(plan)
-    //   logDuplicationStart(plan, startDate, endDate)
-    //
-    //   const newStartDate = new Date(startDate)
-    //   const newEndDate = new Date(endDate)
-    //   logNewPlanDates(newStartDate, newEndDate)
-    //
-    //   const duplicateData = createDuplicatePlanData(plan, newStartDate, newEndDate)
-    //   const newPlan = await createPlan(duplicateData)
-    //   logDuplicationSuccess(newPlan)
-    //
-    //   showDuplicationSuccess(newPlan)
-    // } catch (err) {
-    //   console.error('❌ Failed to duplicate plan:', err)
-    //   calendarToast.error(t('calendar.plan.duplicateFailed'))
-    // }
-  }, [])
+  const handleDuplicatePlan = useCallback(
+    async (plan: CalendarPlan) => {
+      try {
+        // 日付をフォーマット
+        const dueDate = plan.startDate ? format(plan.startDate, 'yyyy-MM-dd') : undefined
+        const startTime = plan.startDate ? plan.startDate.toISOString() : undefined
+        const endTime = plan.endDate ? plan.endDate.toISOString() : undefined
+
+        // プランを複製（タイトルに「のコピー」を追加）
+        // 繰り返しプランの場合は、その日のインスタンスを単発プランとして複製
+        const newPlan = await createPlan.mutateAsync({
+          title: `${plan.title}のコピー`,
+          description: plan.description ?? undefined,
+          status: 'backlog', // 複製時はbacklogにリセット
+          due_date: dueDate,
+          start_time: startTime,
+          end_time: endTime,
+          reminder_minutes: plan.reminder_minutes ?? undefined,
+          // 繰り返し設定はコピーしない（単発プランとして複製）
+        })
+
+        // タグも複製
+        if (plan.tags && plan.tags.length > 0) {
+          for (const tag of plan.tags) {
+            await addPlanTag(newPlan.id, tag.id)
+          }
+        }
+
+        // 複製したプランをInspectorで開く
+        openInspector(newPlan.id)
+      } catch (err) {
+        console.error('Failed to duplicate plan:', err)
+      }
+    },
+    [createPlan, addPlanTag, openInspector]
+  )
 
   const handleViewDetails = useCallback(
     (plan: CalendarPlan) => {
