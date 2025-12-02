@@ -1,8 +1,8 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
 import { Bell, CheckCheck, Loader2, Settings, Trash2 } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -14,13 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
@@ -83,8 +77,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
     is_read: false,
   })
 
-  const { markAsRead, markAllAsRead, deleteNotification, deleteAllRead } =
-    useNotificationMutations()
+  const { markAsRead, markAllAsRead, deleteNotification, deleteAllRead } = useNotificationMutations()
 
   // フィルター適用
   const filteredAllNotifications = useMemo(() => {
@@ -163,11 +156,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
     const totalCount = groups.reduce((acc, g) => acc + g.notifications.length, 0)
 
     if (totalCount === 0) {
-      return (
-        <div className="text-muted-foreground py-8 text-center text-sm">
-          {t(emptyMessageKey)}
-        </div>
-      )
+      return <div className="text-muted-foreground py-8 text-center text-sm">{t(emptyMessageKey)}</div>
     }
 
     return (
@@ -205,13 +194,11 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
         </div>
 
         {/* グループ化された通知リスト */}
-        <div className="max-h-80 space-y-3 overflow-y-auto">
+        <div className="max-h-[28rem] min-h-[20rem] space-y-3 overflow-y-auto">
           {groups.map((group) => (
             <div key={group.key}>
               {/* グループヘッダー */}
-              <h3 className="text-muted-foreground mb-1.5 px-1 text-xs font-medium">
-                {group.label}
-              </h3>
+              <h3 className="text-muted-foreground mb-1.5 px-1 text-xs font-medium">{group.label}</h3>
               {/* 通知アイテム */}
               <div className="space-y-1">
                 {group.notifications.map((notification) => (
@@ -255,46 +242,42 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
           )}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="w-96 rounded-xl p-0"
-        side="right"
-        align="start"
-        sideOffset={8}
-      >
+      <DropdownMenuContent className="w-96 overflow-visible rounded-xl p-0" side="right" align="start" sideOffset={8}>
         {/* ヘッダー */}
         <DropdownMenuLabel className="flex items-center justify-between px-4 py-3">
           <span className="text-sm font-semibold">{t('notifications.title')}</span>
           {unreadCount > 0 && (
-            <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">
-              {unreadCount}
-            </span>
+            <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">{unreadCount}</span>
           )}
         </DropdownMenuLabel>
 
         <DropdownMenuSeparator className="my-0" />
 
         {/* タブとフィルター */}
-        <div className="p-3">
+        <div className="overflow-visible p-3">
           <Tabs defaultValue="all" className="w-full">
             <div className="mb-3 flex items-center justify-between gap-2">
-              <TabsList className="h-8 rounded-lg p-0.5">
-                <TabsTrigger value="all" className="h-7 rounded-md px-3 text-xs">
+              <TabsList className="h-8 rounded-lg bg-transparent p-0.5">
+                <TabsTrigger
+                  value="all"
+                  className="data-[state=inactive]:hover:bg-foreground/8 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-md px-3 text-xs"
+                >
                   {t('notifications.tabs.all')}
                 </TabsTrigger>
-                <TabsTrigger value="unread" className="h-7 rounded-md px-3 text-xs">
+                <TabsTrigger
+                  value="unread"
+                  className="data-[state=inactive]:hover:bg-foreground/8 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-md px-3 text-xs"
+                >
                   {t('notifications.tabs.unread')}
                 </TabsTrigger>
               </TabsList>
 
               {/* タイプフィルター */}
-              <Select
-                value={typeFilter}
-                onValueChange={(value) => setTypeFilter(value as NotificationType | 'all')}
-              >
+              <Select value={typeFilter} onValueChange={(value) => setTypeFilter(value as NotificationType | 'all')}>
                 <SelectTrigger size="sm" className="h-8 w-28 text-xs">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent side="bottom" align="end">
                   {TYPE_FILTER_OPTIONS.map((option) => (
                     <SelectItem key={option.value} value={option.value} className="text-xs">
                       {t(option.labelKey)}
@@ -306,22 +289,12 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
 
             {/* すべてタブ */}
             <TabsContent value="all" className="mt-0">
-              {renderNotificationList(
-                groupedAllNotifications,
-                isLoadingAll,
-                'notifications.empty.all',
-                true
-              )}
+              {renderNotificationList(groupedAllNotifications, isLoadingAll, 'notifications.empty.all', true)}
             </TabsContent>
 
             {/* 未読タブ */}
             <TabsContent value="unread" className="mt-0">
-              {renderNotificationList(
-                groupedUnreadNotifications,
-                isLoadingUnread,
-                'notifications.empty.unread',
-                false
-              )}
+              {renderNotificationList(groupedUnreadNotifications, isLoadingUnread, 'notifications.empty.unread', false)}
             </TabsContent>
           </Tabs>
         </div>
