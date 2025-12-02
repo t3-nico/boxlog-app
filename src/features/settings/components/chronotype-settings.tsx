@@ -1,0 +1,282 @@
+'use client'
+
+import { useCallback, useMemo } from 'react'
+
+import { ExternalLink, Star } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
+
+import { useI18n } from '@/features/i18n/lib/hooks'
+import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+
+import { SettingsCard } from './SettingsCard'
+
+import type { ChronotypeType, ProductivityZone } from '@/types/chronotype'
+import { CHRONOTYPE_PRESETS } from '@/types/chronotype'
+
+// クロノタイプごとの絵文字アイコン
+const CHRONOTYPE_EMOJI: Record<Exclude<ChronotypeType, 'custom'>, string> = {
+  lion: '🦁',
+  bear: '🐻',
+  wolf: '🐺',
+  dolphin: '🐬',
+}
+
+// クロノタイプごとの日本語ラベル
+const CHRONOTYPE_LABEL: Record<Exclude<ChronotypeType, 'custom'>, string> = {
+  lion: '早起き型',
+  bear: '標準型',
+  wolf: '夜型',
+  dolphin: '不規則型',
+}
+
+// 生産性レベルの色
+const LEVEL_COLORS: Record<ProductivityZone['level'], string> = {
+  peak: 'bg-green-500',
+  good: 'bg-green-300',
+  moderate: 'bg-blue-200',
+  low: 'bg-gray-300',
+  sleep: 'bg-indigo-400',
+}
+
+// 生産性レベルの日本語ラベル
+const LEVEL_LABELS: Record<ProductivityZone['level'], string> = {
+  peak: 'ピーク',
+  good: '集中',
+  moderate: '通常',
+  low: '低調',
+  sleep: '睡眠',
+}
+
+interface ChronotypeAutoSaveSettings {
+  chronotype: {
+    enabled: boolean
+    type: ChronotypeType
+    displayMode: 'border' | 'background' | 'both'
+    opacity: number
+  }
+}
+
+/**
+ * 24時間タイムラインバーコンポーネント
+ */
+function TimelineBar({ zones }: { zones: ProductivityZone[] }) {
+  // 0-24時間を表すバーを生成
+  const segments = useMemo(() => {
+    const result: Array<{ hour: number; level: ProductivityZone['level']; label: string }> = []
+
+    for (let hour = 0; hour < 24; hour++) {
+      const zone = zones.find((z) => {
+        if (z.startHour <= z.endHour) {
+          return hour >= z.startHour && hour < z.endHour
+        } else {
+          // 日跨ぎの時間帯
+          return hour >= z.startHour || hour < z.endHour
+        }
+      })
+
+      result.push({
+        hour,
+        level: zone?.level || 'moderate',
+        label: zone?.label || '',
+      })
+    }
+
+    return result
+  }, [zones])
+
+  return (
+    <div className="space-y-2">
+      {/* 時間ラベル */}
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <span>0時</span>
+        <span>6時</span>
+        <span>12時</span>
+        <span>18時</span>
+        <span>24時</span>
+      </div>
+
+      {/* タイムラインバー */}
+      <div className="flex h-6 overflow-hidden rounded-md">
+        {segments.map((segment, index) => (
+          <div
+            key={index}
+            className={cn(LEVEL_COLORS[segment.level], 'flex-1 transition-colors')}
+            title={`${segment.hour}:00 - ${segment.label}`}
+          />
+        ))}
+      </div>
+
+      {/* 凡例 */}
+      <div className="flex flex-wrap gap-3 text-xs">
+        {(['peak', 'good', 'moderate', 'low', 'sleep'] as const).map((level) => (
+          <div key={level} className="flex items-center gap-1">
+            <div className={cn(LEVEL_COLORS[level], 'h-3 w-3 rounded')} />
+            <span className="text-muted-foreground">{LEVEL_LABELS[level]}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * ピーク時間の取得
+ */
+function getPeakHours(zones: ProductivityZone[]): string {
+  const peakZone = zones.find((z) => z.level === 'peak')
+  if (!peakZone) return '-'
+
+  const formatHour = (hour: number) => `${hour}:00`
+  return `${formatHour(peakZone.startHour)} - ${formatHour(peakZone.endHour)}`
+}
+
+/**
+ * クロノタイプ設定コンポーネント
+ */
+export function ChronotypeSettings() {
+  const settings = useCalendarSettingsStore()
+  const { t } = useI18n()
+
+  // 選択可能なタイプ（customは除外）
+  const selectableTypes: Exclude<ChronotypeType, 'custom'>[] = ['bear', 'lion', 'wolf', 'dolphin']
+
+  // 自動保存システム
+  const autoSave = useAutoSaveSettings<ChronotypeAutoSaveSettings>({
+    initialValues: {
+      chronotype: {
+        enabled: settings.chronotype.enabled,
+        type: settings.chronotype.type,
+        displayMode: settings.chronotype.displayMode,
+        opacity: settings.chronotype.opacity,
+      },
+    },
+    onSave: async (values) => {
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      settings.updateSettings({ chronotype: values.chronotype })
+    },
+    successMessage: t('settings.chronotype.settingsSaved'),
+    debounceMs: 800,
+  })
+
+  // タイプ選択ハンドラー
+  const handleTypeSelect = useCallback(
+    (type: ChronotypeType) => {
+      autoSave.updateValue('chronotype', {
+        ...autoSave.values.chronotype,
+        type,
+      })
+    },
+    [autoSave]
+  )
+
+  // 現在選択中のタイプ
+  const selectedType = autoSave.values.chronotype.type
+  const selectedProfile =
+    selectedType !== 'custom' ? CHRONOTYPE_PRESETS[selectedType] : null
+
+  return (
+    <div className="space-y-6">
+      {/* タイプ選択セクション */}
+      <SettingsCard
+        title={t('settings.chronotype.title')}
+        isSaving={autoSave.isSaving}
+      >
+        <div className="space-y-4">
+          <p className="text-muted-foreground text-sm">
+            {t('settings.chronotype.description')}
+          </p>
+
+          {/* タイプ選択ボタン */}
+          <div className="grid grid-cols-2 gap-2">
+            {selectableTypes.map((type) => {
+              const isSelected = selectedType === type
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => handleTypeSelect(type)}
+                  className={cn(
+                    'flex items-center gap-2 rounded-lg border p-3 text-left transition-colors',
+                    isSelected
+                      ? 'border-primary bg-primary/5'
+                      : 'border-border hover:border-primary/50 hover:bg-muted'
+                  )}
+                >
+                  <span className="text-xl">{CHRONOTYPE_EMOJI[type]}</span>
+                  <div>
+                    <div className="font-medium">{CHRONOTYPE_PRESETS[type].name}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {CHRONOTYPE_LABEL[type]}
+                    </div>
+                  </div>
+                  {isSelected && (
+                    <div className="ml-auto text-primary">✓</div>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </SettingsCard>
+
+      {/* 選択中のタイプの詳細 */}
+      {selectedProfile && (
+        <SettingsCard title={t('settings.chronotype.details')}>
+          <div className="space-y-4">
+            {/* タイプ名と説明 */}
+            <div className="flex items-start gap-3">
+              <span className="text-3xl">{CHRONOTYPE_EMOJI[selectedType as Exclude<ChronotypeType, 'custom'>]}</span>
+              <div>
+                <h4 className="font-medium">
+                  {selectedProfile.name} - {CHRONOTYPE_LABEL[selectedType as Exclude<ChronotypeType, 'custom'>]}
+                </h4>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {selectedProfile.description}
+                </p>
+              </div>
+            </div>
+
+            {/* 24時間タイムライン */}
+            <div className="pt-2">
+              <h5 className="text-sm font-medium mb-3">
+                {t('settings.chronotype.timeline')}
+              </h5>
+              <TimelineBar zones={selectedProfile.productivityZones} />
+            </div>
+
+            {/* ピーク時間のハイライト */}
+            <div className="flex items-center gap-2 rounded-lg bg-green-500/10 p-3">
+              <Star className="h-4 w-4 text-green-600" />
+              <div>
+                <span className="text-sm font-medium">
+                  {t('settings.chronotype.peakTime')}
+                </span>
+                <span className="text-sm text-muted-foreground ml-2">
+                  {getPeakHours(selectedProfile.productivityZones)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </SettingsCard>
+      )}
+
+      {/* 参考リンク */}
+      <SettingsCard>
+        <a
+          href="https://sleepdoctor.com/pages/chronotypes"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ExternalLink className="h-4 w-4" />
+          <span>{t('settings.chronotype.learnMore')}</span>
+        </a>
+        <p className="text-xs text-muted-foreground mt-1">
+          Sleep Doctor (Dr. Michael Breus)
+        </p>
+      </SettingsCard>
+    </div>
+  )
+}

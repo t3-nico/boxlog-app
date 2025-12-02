@@ -9,6 +9,7 @@ import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDi
 import { AboutLegalSettings } from '../about-legal-settings'
 import { AccountSettings } from '../account-settings'
 import { CalendarSettings } from '../calendar-settings'
+import { ChronotypeSettings } from '../chronotype-settings'
 import { DataExportSettings } from '../data-export-settings'
 import { IntegrationSettings } from '../integration-settings'
 import { NotificationSettings } from '../notification-settings'
@@ -70,10 +71,11 @@ export function SettingsContent() {
         {/* General: 言語、テーマ、起動画面（既存のPreferencesSettingsを再利用） */}
         {activeCategory === 'general' && <PreferencesSettings />}
 
-        {/* Personalization: カレンダー + タグ */}
+        {/* Personalization: カレンダー + クロノタイプ + タグ */}
         {activeCategory === 'personalization' && (
           <div className="space-y-8">
             <CalendarSettings />
+            <ChronotypeSettings />
             <TagsSettings />
           </div>
         )}
