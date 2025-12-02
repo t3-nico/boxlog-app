@@ -216,7 +216,7 @@ export function PlanInspector() {
   }
 
   // Mutations（Toast通知・キャッシュ無効化込み）
-  const { updatePlan, deletePlan } = usePlanMutations()
+  const { createPlan, updatePlan, deletePlan } = usePlanMutations()
   const { createInstance } = usePlanInstanceMutations()
   const { getCache } = usePlanCacheStore()
 
@@ -303,10 +303,36 @@ export function PlanInspector() {
   }
 
   // 複製
-  const handleDuplicate = () => {
-    if (!plan) return
-    // TODO: 複製ロジックを実装
-    console.log('Duplicate plan:', plan)
+  const handleDuplicate = async () => {
+    if (!plan || !planData) return
+
+    try {
+      // プランを複製（タイトルに「のコピー」を追加）
+      const newPlan = await createPlan.mutateAsync({
+        title: `${plan.title}のコピー`,
+        description: plan.description ?? undefined,
+        status: 'backlog', // 複製時はbacklogにリセット
+        due_date: plan.due_date ?? undefined,
+        start_time: plan.start_time ?? undefined,
+        end_time: plan.end_time ?? undefined,
+        recurrence_type: plan.recurrence_type ?? undefined,
+        recurrence_end_date: plan.recurrence_end_date ?? undefined,
+        recurrence_rule: plan.recurrence_rule ?? undefined,
+        reminder_minutes: plan.reminder_minutes ?? undefined,
+      })
+
+      // タグも複製（planDataからタグ情報を取得）
+      if ('tags' in planData && Array.isArray(planData.tags) && planData.tags.length > 0) {
+        for (const tag of planData.tags) {
+          await addPlanTag(newPlan.id, tag.id)
+        }
+      }
+
+      // 複製したプランをInspectorで開く
+      openInspector(newPlan.id)
+    } catch (err) {
+      console.error('Failed to duplicate plan:', err)
+    }
   }
 
   // リンクをコピー
