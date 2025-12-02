@@ -80,9 +80,7 @@ export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
         {/* タイトル + プラン番号（PlanCardContentと統一） */}
         <div className="flex items-baseline gap-1">
           <span className="text-foreground truncate font-medium">{plan.title}</span>
-          {plan.plan_number && (
-            <span className="text-muted-foreground flex-shrink-0 text-sm">#{plan.plan_number}</span>
-          )}
+          {plan.plan_number && <span className="text-muted-foreground flex-shrink-0 text-sm">#{plan.plan_number}</span>}
         </div>
 
         {/* アイコン表示（繰り返し・通知） */}
@@ -125,9 +123,7 @@ export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
         )}
 
         {/* 説明（存在する場合） */}
-        {plan.description && (
-          <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{plan.description}</p>
-        )}
+        {plan.description && <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{plan.description}</p>}
       </div>
 
       {/* 所要時間 */}

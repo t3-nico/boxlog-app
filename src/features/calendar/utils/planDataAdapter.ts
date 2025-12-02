@@ -224,10 +224,7 @@ export function expandRecurringPlansToCalendarPlans(
 /**
  * オカレンスをCalendarPlanに変換
  */
-function occurrenceToCalendarPlan(
-  basePlan: Plan,
-  occurrence: ExpandedOccurrence
-): CalendarPlan {
+function occurrenceToCalendarPlan(basePlan: Plan, occurrence: ExpandedOccurrence): CalendarPlan {
   const createdAt = basePlan.created_at ? new Date(basePlan.created_at) : new Date()
   const updatedAt = basePlan.updated_at ? new Date(basePlan.updated_at) : new Date()
 
@@ -285,4 +282,4 @@ function occurrenceToCalendarPlan(
 }
 
 // 型をエクスポート
-export type { PlanInstanceException, ExpandedOccurrence }
+export type { ExpandedOccurrence, PlanInstanceException }

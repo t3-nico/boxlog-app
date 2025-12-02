@@ -1,2 +1,2 @@
 export { AgendaView } from './AgendaView'
-export type { AgendaViewProps, AgendaItemProps, AgendaDayGroupProps } from './AgendaView.types'
+export type { AgendaDayGroupProps, AgendaItemProps, AgendaViewProps } from './AgendaView.types'
