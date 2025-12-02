@@ -649,13 +649,13 @@ export function PlanInspector() {
                       {(() => {
                         const status = getEffectiveStatus(plan)
                         if (status === 'done') {
-                          return <CheckCircle2 className="h-7 w-7 text-green-500" />
+                          return <CheckCircle2 className="h-7 w-7 text-success" />
                         }
                         if (status === 'doing') {
-                          return <Circle className="h-7 w-7 text-blue-500" />
+                          return <Circle className="h-7 w-7 text-primary" />
                         }
                         // todo
-                        return <Circle className="h-7 w-7 text-gray-400" />
+                        return <Circle className="h-7 w-7 text-muted-foreground" />
                       })()}
                     </button>
                     <div className="inline">
