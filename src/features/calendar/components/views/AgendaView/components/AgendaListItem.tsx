@@ -1,10 +1,15 @@
 'use client'
 
+import { useCallback, useMemo } from 'react'
+
 import { format, isToday, isTomorrow } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import { Tag } from 'lucide-react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
+import { usePlanTags } from '@/features/plans/hooks/usePlanTags'
 import { cn } from '@/lib/utils'
 
 interface AgendaListItemProps {
@@ -21,6 +26,15 @@ interface AgendaListItemProps {
 export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemProps) {
   const { locale } = useI18n()
   const dateLocale = locale === 'ja' ? ja : undefined
+  const { addPlanTag, removePlanTag } = usePlanTags()
+
+  // プランの実際のIDを取得（繰り返しプランの場合はcalendarIdを使用）
+  const planId = plan.calendarId ?? plan.id
+
+  // 選択中のタグID
+  const selectedTagIds = useMemo(() => {
+    return plan.tags?.map((t) => t.id) ?? []
+  }, [plan.tags])
 
   const handleClick = () => {
     onClick?.(plan)
@@ -30,6 +44,26 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
     e.preventDefault()
     onContextMenu?.(plan, e)
   }
+
+  // タグの変更ハンドラー
+  const handleTagsChange = useCallback(
+    async (newTagIds: string[]) => {
+      const currentTagIds = selectedTagIds
+      const addedTagIds = newTagIds.filter((id) => !currentTagIds.includes(id))
+      const removedTagIds = currentTagIds.filter((id) => !newTagIds.includes(id))
+
+      // 追加されたタグを処理
+      for (const tagId of addedTagIds) {
+        await addPlanTag(planId, tagId)
+      }
+
+      // 削除されたタグを処理
+      for (const tagId of removedTagIds) {
+        await removePlanTag(planId, tagId)
+      }
+    },
+    [planId, selectedTagIds, addPlanTag, removePlanTag]
+  )
 
   // 日付のフォーマット
   const formatDate = (date: Date | null) => {
@@ -63,7 +97,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
       type="button"
       className={cn(
         'group flex w-full items-center gap-4 px-4 py-3',
-        'hover:bg-accent/50 focus-visible:bg-accent/50',
+        'hover:bg-secondary focus-visible:bg-secondary',
         'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
         'transition-colors duration-150',
         'cursor-pointer text-left'
@@ -86,28 +120,48 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
 
       {/* タイトル + # */}
       <div className="flex min-w-0 flex-1 items-baseline gap-1.5">
-        <span className="text-foreground truncate font-medium">{plan.title}</span>
+        <span className="text-foreground max-w-48 truncate font-medium group-hover:underline">{plan.title}</span>
         {plan.plan_number && <span className="text-muted-foreground shrink-0 text-sm">#{plan.plan_number}</span>}
       </div>
 
       {/* タグ */}
-      {displayTags.length > 0 && (
-        <div className="flex shrink-0 items-center gap-1">
-          {displayTags.map((tag) => (
-            <span
-              key={tag.id}
-              className="inline-flex items-center gap-0.5 rounded border px-1.5 py-0.5 text-xs"
-              style={{ borderColor: tag.color, color: tag.color }}
-              title={tag.name}
-            >
-              <span className="max-w-16 truncate">{tag.name}</span>
-            </span>
-          ))}
-          {(plan.tags?.length ?? 0) > 3 && (
-            <span className="text-muted-foreground text-xs">+{(plan.tags?.length ?? 0) - 3}</span>
-          )}
-        </div>
-      )}
+      <div
+        className="flex w-40 shrink-0 items-center gap-1"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        {displayTags.length > 0 ? (
+          <>
+            {displayTags.map((tag) => (
+              <span
+                key={tag.id}
+                className="inline-flex max-w-20 items-center gap-0.5 truncate rounded border px-1.5 py-0.5 text-xs"
+                style={{ borderColor: tag.color, color: tag.color }}
+                title={tag.name}
+              >
+                <span className="truncate">{tag.name}</span>
+              </span>
+            ))}
+            {(plan.tags?.length ?? 0) > 3 && (
+              <span className="text-muted-foreground text-xs">+{(plan.tags?.length ?? 0) - 3}</span>
+            )}
+          </>
+        ) : (
+          <PlanTagSelectDialogEnhanced
+            selectedTagIds={selectedTagIds}
+            onTagsChange={handleTagsChange}
+            align="end"
+            side="bottom"
+          >
+            <div className="hover:bg-primary/10 flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors">
+              <div className="text-muted-foreground flex items-center gap-1">
+                <Tag className="size-3" />
+                <span>{locale === 'ja' ? 'タグを追加' : 'Add tag'}</span>
+              </div>
+            </div>
+          </PlanTagSelectDialogEnhanced>
+        )}
+      </div>
     </button>
   )
 }
