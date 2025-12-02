@@ -1,6 +1,6 @@
 // スマートフォルダパフォーマンス最適化システム
 
-import { SmartFolder } from '@/types/smart-folders'
+import { SmartFolder } from '../types'
 
 // インクリメンタル更新管理
 export class IncrementalUpdateManager {

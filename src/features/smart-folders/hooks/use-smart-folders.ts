@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { getCacheStrategy } from '@/lib/tanstack-query/cache-config'
-import { CreateSmartFolderInput, SmartFolder, UpdateSmartFolderInput } from '@/types/smart-folders'
+import { CreateSmartFolderInput, SmartFolder, UpdateSmartFolderInput } from '../types'
 
 // API関数
 const fetchSmartFolders = async (): Promise<SmartFolder[]> => {

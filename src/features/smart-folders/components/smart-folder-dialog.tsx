@@ -8,7 +8,7 @@ import { Eye as EyeIcon, Folder as FolderIcon, Plus as PlusIcon, X as XMarkIcon 
 import { z } from 'zod'
 
 import { createSmartFolderSchema, updateSmartFolderSchema } from '@/features/smart-folders/validations/smart-folders'
-import { CreateSmartFolderInput, SmartFolder, SmartFolderRule, UpdateSmartFolderInput } from '@/types/smart-folders'
+import { CreateSmartFolderInput, SmartFolder, SmartFolderRule, UpdateSmartFolderInput } from '../types'
 
 import { RuleEditor } from './rule-editor'
 import { RulePreview } from './rule-preview'

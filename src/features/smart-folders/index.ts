@@ -61,3 +61,24 @@ export {
   createSmartFolderSchema,
   updateSmartFolderSchema,
 } from './validations'
+
+// Types
+export type {
+  SmartFolder,
+  SmartFolderRow,
+  SmartFolderRule,
+  SmartFolderRuleField,
+  SmartFolderRuleOperator,
+  SmartFolderRuleLogic,
+  SmartFolderRuleValue,
+  CreateSmartFolderInput,
+  UpdateSmartFolderInput,
+  SmartFolderStats,
+  RuleBuilder,
+  PresetRule,
+} from './types'
+
+export {
+  convertSmartFolderRowToSmartFolder,
+  convertSmartFolderToSmartFolderRow,
+} from './types'

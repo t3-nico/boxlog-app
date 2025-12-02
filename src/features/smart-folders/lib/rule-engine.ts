@@ -1,6 +1,6 @@
 // スマートフォルダ ルール評価エンジン（拡張版）
 
-import { RuleEvaluationContext, SmartFolderRule, SmartFolderRuleField } from '@/types/smart-folders'
+import { RuleEvaluationContext, SmartFolderRule, SmartFolderRuleField } from '../types'
 import { Task } from '@/types/unified'
 
 // ルールエンジンで評価可能なアイテムの型

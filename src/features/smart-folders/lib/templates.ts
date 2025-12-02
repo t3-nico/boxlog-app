@@ -1,6 +1,6 @@
 // スマートフォルダテンプレートシステム
 
-import { CreateSmartFolderInput, SmartFolderRule, SmartFolderRuleValue } from '@/types/smart-folders'
+import { CreateSmartFolderInput, SmartFolderRule, SmartFolderRuleValue } from '../types'
 
 // テンプレートカテゴリ
 export enum TemplateCategory {

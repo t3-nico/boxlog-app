@@ -1,6 +1,6 @@
 // スマートフォルダアナリティクスシステム
 
-import { SmartFolder, SmartFolderRule } from '@/types/smart-folders'
+import { SmartFolder, SmartFolderRule } from '../types'
 
 // アナリティクスイベント
 export interface AnalyticsEvent {

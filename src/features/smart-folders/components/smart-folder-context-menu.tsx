@@ -11,7 +11,7 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react'
 
-import { SmartFolder } from '@/types/smart-folders'
+import { SmartFolder } from '../types'
 
 interface SmartFolderContextMenuProps {
   x: number

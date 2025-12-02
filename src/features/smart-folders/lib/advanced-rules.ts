@@ -1,6 +1,6 @@
 // 高度なスマートフォルダルール機能
 
-import { SmartFolderRule, SmartFolderRuleField, SmartFolderRuleOperator } from '@/types/smart-folders'
+import { SmartFolderRule, SmartFolderRuleField, SmartFolderRuleOperator } from '../types'
 
 // 拡張演算子
 export enum AdvancedRuleOperator {

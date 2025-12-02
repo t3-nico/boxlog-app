@@ -3,7 +3,7 @@
 
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
 import { TrashItemType } from '@/features/trash/types/trash'
-import { SmartFolder } from '@/types/smart-folders'
+import { SmartFolder } from '@/features/smart-folders/types'
 import { Task } from '@/types/unified'
 
 // 削除可能なアイテムの共通インターフェース

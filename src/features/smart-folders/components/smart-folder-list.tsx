@@ -37,7 +37,7 @@ import {
   useUpdateSmartFolder,
 } from '@/features/smart-folders/hooks/use-smart-folders'
 import { useActiveState } from '@/hooks/useActiveState'
-import { CreateSmartFolderInput, SmartFolder, UpdateSmartFolderInput } from '@/types/smart-folders'
+import { CreateSmartFolderInput, SmartFolder, UpdateSmartFolderInput } from '../types'
 import { Task } from '@/types/unified'
 
 import { SmartFolderContextMenu } from './smart-folder-context-menu'

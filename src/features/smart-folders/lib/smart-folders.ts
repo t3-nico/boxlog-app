@@ -7,7 +7,7 @@ import {
   SmartFolderRuleField,
   SmartFolderRuleOperator,
   SmartFolderRuleValue,
-} from '@/types/smart-folders'
+} from '../types'
 
 // ルール評価エンジン
 export class SmartFolderRuleEngine {

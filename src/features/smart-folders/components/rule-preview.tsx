@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 
 import { AdvancedRuleEngine, EvaluableItem } from '@/features/smart-folders/lib/rule-engine'
-import { SmartFolderRule } from '@/types/smart-folders'
+import { SmartFolderRule } from '../types'
 
 interface PreviewItem {
   id?: string

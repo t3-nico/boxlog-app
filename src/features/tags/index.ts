@@ -114,13 +114,19 @@ export type { TagIconName } from './constants'
 // Context
 export { TagsPageProvider, useTagsPageContext } from './contexts/TagsPageContext'
 
-// Types (re-export from @/types/tags for convenience)
+// Types
 export type {
   Tag,
   TagWithChildren,
   TagGroup,
   TagLevel,
-  TagColor,
   CreateTagInput,
   UpdateTagInput,
-} from '@/types/tags'
+  TagUsage,
+  TagUsageStats,
+  TagOption,
+  TagFilter,
+  TagSortField,
+  TagSortOrder,
+  TagSortOptions,
+} from './types'

@@ -15,7 +15,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { Input } from '@headlessui/react'
 import { Menu as Bars3Icon, Plus as PlusIcon, Trash2 as TrashIcon } from 'lucide-react'
 
-import { SmartFolderRule, SmartFolderRuleField, SmartFolderRuleOperator } from '@/types/smart-folders'
+import { SmartFolderRule, SmartFolderRuleField, SmartFolderRuleOperator } from '../types'
 
 import { SortableItem } from './sortable-rule-item'
 

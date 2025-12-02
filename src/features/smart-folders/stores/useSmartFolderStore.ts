@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
-import { SmartFolder, SmartFolderRule } from '@/types/smart-folders'
+import { SmartFolder, SmartFolderRule } from '../types'
 import { Task } from '@/types/unified'
 
 // Internal type aliases (uppercase to match SmartFolderRuleLogic)
