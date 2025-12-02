@@ -201,7 +201,21 @@
       "notSupported": "This browser does not support notifications",
       "permissionFailed": "Failed to obtain notification permission",
       "displayFailed": "Failed to display browser notification"
-    }
+    },
+    "types": {
+      "all": "All",
+      "reminder": "Reminder",
+      "plan_created": "Created",
+      "plan_updated": "Updated",
+      "plan_deleted": "Deleted",
+      "plan_completed": "Completed",
+      "trash_warning": "Trash",
+      "system": "System"
+    },
+    "dateGroups": {
+      "older": "Older"
+    },
+    "settings": "Notification Settings"
   },
   "common": {
     "dates": {
