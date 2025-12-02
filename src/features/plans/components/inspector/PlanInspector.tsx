@@ -646,11 +646,17 @@ export function PlanInspector() {
                       className="mt-1 flex-shrink-0 transition-colors hover:opacity-80"
                       aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
                     >
-                      {getEffectiveStatus(plan) === 'done' ? (
-                        <CheckCircle2 className="h-7 w-7 text-green-500" />
-                      ) : (
-                        <Circle className="text-muted-foreground h-7 w-7" />
-                      )}
+                      {(() => {
+                        const status = getEffectiveStatus(plan)
+                        if (status === 'done') {
+                          return <CheckCircle2 className="h-7 w-7 text-green-500" />
+                        }
+                        if (status === 'doing') {
+                          return <Circle className="h-7 w-7 text-blue-500" />
+                        }
+                        // todo
+                        return <Circle className="h-7 w-7 text-gray-400" />
+                      })()}
                     </button>
                     <div className="inline">
                       <span
