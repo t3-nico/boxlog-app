@@ -631,7 +631,7 @@ export function PlanInspector() {
               <TabsContent value="details">
                 {/* タイトル + チェックボックス */}
                 <div className="px-6 pt-4 pb-2">
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-2">
                     {/* Done チェックボックス */}
                     <button
                       type="button"
@@ -649,13 +649,13 @@ export function PlanInspector() {
                       {(() => {
                         const status = getEffectiveStatus(plan)
                         if (status === 'done') {
-                          return <CheckCircle2 className="h-7 w-7 text-success" />
+                          return <CheckCircle2 className="h-6 w-6 text-success" />
                         }
                         if (status === 'doing') {
-                          return <Circle className="h-7 w-7 text-primary" />
+                          return <Circle className="h-6 w-6 text-primary" />
                         }
                         // todo
-                        return <Circle className="h-7 w-7 text-muted-foreground" />
+                        return <Circle className="h-6 w-6 text-muted-foreground" />
                       })()}
                     </button>
                     <div className="inline">
