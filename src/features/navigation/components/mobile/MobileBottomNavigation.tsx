@@ -147,7 +147,7 @@ function MoreSheet({
   const router = useRouter()
   const { t } = useI18n(locale)
   const { resolvedTheme, setTheme } = useTheme()
-  const { openSettings } = useSettingsDialogStore()
+  const openSettings = useSettingsDialogStore((state) => state.openSettings)
   const user = useAuthStore((state) => state.user)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 

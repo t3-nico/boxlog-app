@@ -22,7 +22,7 @@ interface InboxLayoutProps {
  */
 export default function InboxLayout({ children }: InboxLayoutProps) {
   const pathname = usePathname()
-  const { setActiveView } = useInboxViewStore()
+  const setActiveView = useInboxViewStore((state) => state.setActiveView)
 
   // 全Planデータを取得
   const { items } = useInboxData()

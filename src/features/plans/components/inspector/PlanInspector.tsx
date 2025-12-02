@@ -69,8 +69,13 @@ import { ReminderSelect } from '../shared/ReminderSelect'
  * ```
  */
 export function PlanInspector() {
-  const { isOpen, planId, initialData, closeInspector, openInspector } = usePlanInspectorStore()
-  const { setFocusedId } = useInboxFocusStore()
+  // selector化: 必要な値だけ監視（他の状態変更時の再レンダリングを防止）
+  const isOpen = usePlanInspectorStore((state) => state.isOpen)
+  const planId = usePlanInspectorStore((state) => state.planId)
+  const initialData = usePlanInspectorStore((state) => state.initialData)
+  const closeInspector = usePlanInspectorStore((state) => state.closeInspector)
+  const openInspector = usePlanInspectorStore((state) => state.openInspector)
+  const setFocusedId = useInboxFocusStore((state) => state.setFocusedId)
 
   // Planデータ取得（タグ情報も含む）
   const { data: planData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId })
@@ -214,7 +219,7 @@ export function PlanInspector() {
 
   // Mutations（Toast通知・キャッシュ無効化込み）
   const { updatePlan, deletePlan } = usePlanMutations()
-  const { getCache } = usePlanCacheStore()
+  const getCache = usePlanCacheStore((state) => state.getCache)
 
   // 削除ハンドラー
   const handleDelete = () => {

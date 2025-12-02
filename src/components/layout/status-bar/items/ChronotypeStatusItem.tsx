@@ -19,7 +19,7 @@ import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronoty
  */
 export function ChronotypeStatusItem() {
   const [currentTime, setCurrentTime] = useState(() => new Date())
-  const { chronotype } = useCalendarSettingsStore()
+  const chronotype = useCalendarSettingsStore((state) => state.chronotype)
   const openSettingsDialog = useSettingsDialogStore((state) => state.openSettings)
 
   // 1分ごとに現在時刻を更新

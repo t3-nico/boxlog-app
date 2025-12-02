@@ -47,7 +47,7 @@ export function NavUser({
   const router = useRouter()
   const pathname = usePathname()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
-  const { openSettings } = useSettingsDialogStore()
+  const openSettings = useSettingsDialogStore((state) => state.openSettings)
 
   // URLから locale を抽出
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'

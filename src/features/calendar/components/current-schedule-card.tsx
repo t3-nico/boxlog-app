@@ -20,7 +20,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   const router = useRouter()
 
   // ストアから実際のイベントデータを取得
-  const { chronotype } = useCalendarSettingsStore()
+  const chronotype = useCalendarSettingsStore((state) => state.chronotype)
 
   // jsx-no-bind optimization: No event click handler
   const handleNoEventClick = useCallback(() => {
