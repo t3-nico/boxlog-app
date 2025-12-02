@@ -8,14 +8,13 @@ import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import type { NotificationType } from '@/schemas/notifications'
@@ -245,10 +244,27 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
       <DropdownMenuContent className="w-96 overflow-visible rounded-xl p-0" side="right" align="start" sideOffset={8}>
         {/* ヘッダー */}
         <DropdownMenuLabel className="flex items-center justify-between px-4 py-3">
-          <span className="text-sm font-semibold">{t('notifications.title')}</span>
-          {unreadCount > 0 && (
-            <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">{unreadCount}</span>
-          )}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold">{t('notifications.title')}</span>
+            {unreadCount > 0 && (
+              <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">{unreadCount}</span>
+            )}
+          </div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={handleOpenSettings}
+                className="hover:bg-foreground/8 flex h-7 w-7 items-center justify-center rounded-md transition-colors"
+              >
+                <Settings className="h-4 w-4" />
+                <span className="sr-only">{t('notifications.settings')}</span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>{t('notifications.settings')}</p>
+            </TooltipContent>
+          </Tooltip>
         </DropdownMenuLabel>
 
         <DropdownMenuSeparator className="my-0" />
@@ -298,16 +314,6 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
             </TabsContent>
           </Tabs>
         </div>
-
-        <DropdownMenuSeparator className="my-0" />
-
-        {/* フッター：設定リンク */}
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={handleOpenSettings} className="gap-2 px-4 py-2.5">
-            <Settings className="h-4 w-4" />
-            {t('notifications.settings')}
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   )
