@@ -43,14 +43,11 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
   const { updatePlan } = usePlanMutations()
   const { isStatusVisible } = useBoardStatusFilterStore()
 
-  // Planデータをカラムごとに分類
+  // Planデータをカラムごとに分類（3段階ステータス）
   const columns = {
-    backlog: items.filter((item) => item.status === 'backlog'),
-    ready: items.filter((item) => item.status === 'ready'),
-    active: items.filter((item) => item.status === 'active'),
-    wait: items.filter((item) => item.status === 'wait'),
+    todo: items.filter((item) => item.status === 'todo'),
+    doing: items.filter((item) => item.status === 'doing'),
     done: items.filter((item) => item.status === 'done'),
-    cancel: items.filter((item) => item.status === 'cancel'),
   }
 
   // ドラッグ中のカードを取得
@@ -101,37 +98,19 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="flex h-full gap-4 overflow-x-auto p-4">
-        {/* Backlog カラム */}
-        {isStatusVisible('backlog') && (
-          <KanbanColumn title="Backlog" count={columns.backlog.length} variant="default" status="backlog">
-            {columns.backlog.map((item) => (
+        {/* Todo カラム */}
+        {isStatusVisible('todo') && (
+          <KanbanColumn title="Todo" count={columns.todo.length} variant="todo" status="todo">
+            {columns.todo.map((item) => (
               <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
         )}
 
-        {/* Ready カラム */}
-        {isStatusVisible('ready') && (
-          <KanbanColumn title="Ready" count={columns.ready.length} variant="ready" status="ready">
-            {columns.ready.map((item) => (
-              <PlanCard key={item.id} item={item} />
-            ))}
-          </KanbanColumn>
-        )}
-
-        {/* Active カラム */}
-        {isStatusVisible('active') && (
-          <KanbanColumn title="Active" count={columns.active.length} variant="active" status="active">
-            {columns.active.map((item) => (
-              <PlanCard key={item.id} item={item} />
-            ))}
-          </KanbanColumn>
-        )}
-
-        {/* Wait カラム */}
-        {isStatusVisible('wait') && (
-          <KanbanColumn title="Wait" count={columns.wait.length} variant="wait" status="wait">
-            {columns.wait.map((item) => (
+        {/* Doing カラム */}
+        {isStatusVisible('doing') && (
+          <KanbanColumn title="Doing" count={columns.doing.length} variant="doing" status="doing">
+            {columns.doing.map((item) => (
               <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
@@ -141,15 +120,6 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
         {isStatusVisible('done') && (
           <KanbanColumn title="Done" count={columns.done.length} variant="done" status="done">
             {columns.done.map((item) => (
-              <PlanCard key={item.id} item={item} />
-            ))}
-          </KanbanColumn>
-        )}
-
-        {/* Cancel カラム */}
-        {isStatusVisible('cancel') && (
-          <KanbanColumn title="Cancel" count={columns.cancel.length} variant="cancel" status="cancel">
-            {columns.cancel.map((item) => (
               <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
@@ -222,8 +192,8 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
 interface KanbanColumnProps {
   title: string
   count: number
-  variant: 'default' | 'ready' | 'active' | 'wait' | 'done' | 'cancel'
-  status: 'backlog' | 'ready' | 'active' | 'wait' | 'done' | 'cancel'
+  variant: 'todo' | 'doing' | 'done'
+  status: 'todo' | 'doing' | 'done'
   children: React.ReactNode
 }
 
@@ -280,12 +250,9 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   })
 
   const bgColor = {
-    default: 'bg-gray-100 dark:bg-gray-800/40',
-    ready: 'bg-blue-100 dark:bg-blue-900/30',
-    active: 'bg-purple-100 dark:bg-purple-900/30',
-    wait: 'bg-orange-100 dark:bg-orange-900/30',
-    done: 'bg-green-100 dark:bg-green-900/30',
-    cancel: 'bg-red-100 dark:bg-red-900/30',
+    todo: 'bg-muted/50',
+    doing: 'bg-primary/5 dark:bg-primary/10',
+    done: 'bg-success/5 dark:bg-success/10',
   }[variant]
 
   const handleCreate = () => {

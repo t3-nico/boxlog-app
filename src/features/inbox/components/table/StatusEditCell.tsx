@@ -18,12 +18,9 @@ interface StatusEditCellProps {
 }
 
 const STATUS_OPTIONS: { value: PlanStatus; label: string }[] = [
-  { value: 'backlog', label: 'Backlog' },
-  { value: 'ready', label: 'Ready' },
-  { value: 'active', label: 'Active' },
-  { value: 'wait', label: 'Wait' },
+  { value: 'todo', label: 'Todo' },
+  { value: 'doing', label: 'Doing' },
   { value: 'done', label: 'Done' },
-  { value: 'cancel', label: 'Cancel' },
 ]
 
 /**
