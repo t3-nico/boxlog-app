@@ -48,9 +48,9 @@ export interface ExpandedOccurrence {
 export interface PlanInstanceException {
   instanceDate: string // YYYY-MM-DD
   isException: boolean
-  exceptionType?: 'modified' | 'cancelled' | 'moved'
-  overrides?: Record<string, unknown>
-  originalDate?: string // moved時の元日付
+  exceptionType?: 'modified' | 'cancelled' | 'moved' | undefined
+  overrides?: Record<string, unknown> | undefined
+  originalDate?: string | undefined // moved時の元日付
 }
 
 /**

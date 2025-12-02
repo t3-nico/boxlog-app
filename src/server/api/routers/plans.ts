@@ -798,7 +798,9 @@ export const plansRouter = createTRPCRouter({
       }
 
       // plan_instances から例外情報を取得
-      let query = supabase
+      // TODO: plan_instances テーブルはマイグレーション後に型定義に追加予定
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let query = (supabase as any)
         .from('plan_instances')
         .select('*')
         .in('plan_id', validPlanIds)
@@ -857,7 +859,9 @@ export const plansRouter = createTRPCRouter({
       }
 
       // upsert: 同じ日付の既存レコードがあれば更新、なければ挿入
-      const { data, error } = await supabase
+      // TODO: plan_instances テーブルはマイグレーション後に型定義に追加予定
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase as any)
         .from('plan_instances')
         .upsert(
           {
@@ -914,7 +918,9 @@ export const plansRouter = createTRPCRouter({
         })
       }
 
-      const { error } = await supabase
+      // TODO: plan_instances テーブルはマイグレーション後に型定義に追加予定
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase as any)
         .from('plan_instances')
         .delete()
         .eq('plan_id', input.planId)

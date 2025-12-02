@@ -17,6 +17,7 @@ export type CalendarView =
   | '2week'
   | 'schedule'
   | 'month'
+  | 'agenda'
 
 // 方向の定義
 export type SlideDirection = 'left' | 'right' | 'up' | 'down'
@@ -139,6 +140,12 @@ export const AdvancedViewTransition = ({
           ...baseAnimation,
           initial: { ...baseAnimation.initial, y: -20 },
           exit: { ...baseAnimation.exit, y: 20 },
+        }
+      case 'agenda':
+        return {
+          ...baseAnimation,
+          initial: { ...baseAnimation.initial, y: 20 },
+          exit: { ...baseAnimation.exit, y: -20 },
         }
       default:
         return baseAnimation

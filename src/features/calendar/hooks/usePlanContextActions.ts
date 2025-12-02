@@ -4,11 +4,11 @@
 import { useCallback, useState } from 'react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
+import type { RecurringEditScope } from '@/features/plans/components/shared/RecurringEditDialog'
 import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { usePlanTags } from '@/features/plans/hooks/usePlanTags'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import type { RecurringEditScope } from '@/features/plans/components/shared/RecurringEditDialog'
 import { format } from 'date-fns'
 
 export function usePlanContextActions() {
@@ -58,8 +58,8 @@ export function usePlanContextActions() {
         // インスタンスの日付を取得（展開されたオカレンスのIDから抽出）
         // ID形式: {parentPlanId}_{YYYY-MM-DD}
         const instanceDate = recurringDeleteTarget.id.includes('_')
-          ? recurringDeleteTarget.id.split('_').pop() ?? ''
-          : recurringDeleteTarget.startDate.toISOString().slice(0, 10)
+          ? (recurringDeleteTarget.id.split('_').pop() ?? '')
+          : (recurringDeleteTarget.startDate?.toISOString().slice(0, 10) ?? '')
 
         switch (scope) {
           case 'this':
@@ -108,10 +108,12 @@ export function usePlanContextActions() {
     (plan: CalendarPlan) => {
       // planInspectorを開いて編集モードにする
       // 繰り返しプランの場合はインスタンス日付を渡す
-      const instanceDate = plan.isRecurring && plan.id.includes('_')
-        ? plan.id.split('_').pop()
-        : plan.startDate.toISOString().slice(0, 10)
-      openInspector(plan.calendarId || plan.id, { instanceDate })
+      const instanceDateRaw =
+        plan.isRecurring && plan.id.includes('_')
+          ? plan.id.split('_').pop()
+          : plan.startDate?.toISOString().slice(0, 10)
+      // instanceDateがundefinedの場合は渡さない
+      openInspector(plan.calendarId || plan.id, instanceDateRaw ? { instanceDate: instanceDateRaw } : undefined)
     },
     [openInspector]
   )
@@ -157,10 +159,12 @@ export function usePlanContextActions() {
     (plan: CalendarPlan) => {
       // planInspectorを開いて詳細を表示
       // 繰り返しプランの場合はインスタンス日付を渡す
-      const instanceDate = plan.isRecurring && plan.id.includes('_')
-        ? plan.id.split('_').pop()
-        : plan.startDate.toISOString().slice(0, 10)
-      openInspector(plan.calendarId || plan.id, { instanceDate })
+      const instanceDateRaw =
+        plan.isRecurring && plan.id.includes('_')
+          ? plan.id.split('_').pop()
+          : plan.startDate?.toISOString().slice(0, 10)
+      // instanceDateがundefinedの場合は渡さない
+      openInspector(plan.calendarId || plan.id, instanceDateRaw ? { instanceDate: instanceDateRaw } : undefined)
     },
     [openInspector]
   )

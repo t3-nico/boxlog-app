@@ -54,10 +54,11 @@ export function instancesToExceptionsMap(
   const map = new Map<string, PlanInstanceException[]>()
 
   for (const instance of instances) {
+    const exceptionType = instance.exception_type as 'modified' | 'cancelled' | 'moved' | null
     const exception: PlanInstanceException = {
       instanceDate: instance.instance_date,
       isException: instance.is_exception,
-      exceptionType: instance.exception_type as 'modified' | 'cancelled' | 'moved' | undefined,
+      exceptionType: exceptionType ?? undefined,
       overrides: instance.overrides ?? undefined,
       originalDate: instance.original_date ?? undefined,
     }

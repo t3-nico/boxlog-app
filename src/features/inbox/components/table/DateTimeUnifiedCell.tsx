@@ -5,11 +5,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { TableCell } from '@/components/ui/table'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
+import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator'
 import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator'
-import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Trash2 } from 'lucide-react'
+import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 interface DateTimeData {
