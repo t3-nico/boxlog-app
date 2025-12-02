@@ -578,7 +578,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           }
         }}
       >
-        {displayTags.length === 0 ? (
+        {displayTags.length === 0 && !isCreatingTag ? (
           <div className="border-border flex h-64 items-center justify-center rounded-xl border-2 border-dashed">
             <div className="text-center">
               <p className="text-muted-foreground mb-4">{t('tags.page.noTags')}</p>
