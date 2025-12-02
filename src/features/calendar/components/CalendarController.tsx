@@ -43,6 +43,25 @@ const ThreeDayView = React.lazy(() =>
 )
 const FiveDayView = React.lazy(() => import('./views/FiveDayView').then((module) => ({ default: module.FiveDayView })))
 
+// ビューのプリロード: ブラウザがアイドル状態の時に先読みして遷移を高速化
+const preloadCalendarViews = () => {
+  // 最もよく使うビューを先読み
+  import('./views/DayView')
+  import('./views/WeekView')
+  import('./views/ThreeDayView')
+  import('./views/FiveDayView')
+}
+
+// クライアントサイドでのみ実行
+if (typeof window !== 'undefined') {
+  if ('requestIdleCallback' in window) {
+    ;(window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(preloadCalendarViews)
+  } else {
+    // Safari等のフォールバック
+    setTimeout(preloadCalendarViews, 1000)
+  }
+}
+
 // ローディングフォールバック
 const CalendarViewSkeleton = () => (
   <div className="h-full w-full animate-pulse">
