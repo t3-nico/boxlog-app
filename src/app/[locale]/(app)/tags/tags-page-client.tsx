@@ -69,7 +69,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const router = useRouter()
   const pathname = usePathname()
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const [sortField, setSortField] = useState<'name' | 'created_at'>('created_at')
+  const [sortField, setSortField] = useState<'name' | 'created_at' | 'tag_number' | 'group'>('created_at')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
   // カラム幅の状態管理
   const [columnWidths, setColumnWidths] = useState({
@@ -367,11 +367,23 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         case 'created_at':
           comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
           break
+        case 'tag_number':
+          comparison = a.tag_number - b.tag_number
+          break
+        case 'group': {
+          const groupA = a.group_id ? groups.find((g) => g.id === a.group_id)?.name || '' : ''
+          const groupB = b.group_id ? groups.find((g) => g.id === b.group_id)?.name || '' : ''
+          // グループなしは最後に
+          if (!groupA && groupB) return 1
+          if (groupA && !groupB) return -1
+          comparison = groupA.localeCompare(groupB)
+          break
+        }
       }
       return sortDirection === 'asc' ? comparison : -comparison
     })
     return sorted
-  }, [filteredTags, sortField, sortDirection])
+  }, [filteredTags, sortField, sortDirection, groups])
 
   // ページネーション
   const totalPages = Math.ceil(sortedTags.length / pageSize)
@@ -385,7 +397,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   }, [sortField, sortDirection, pageSize])
 
   // ソート変更ハンドラー
-  const handleSort = (field: 'name' | 'created_at') => {
+  const handleSort = (field: 'name' | 'created_at' | 'tag_number' | 'group') => {
     if (sortField === field) {
       setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))
     } else {
@@ -607,7 +619,16 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                       />
                     </TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.id}px` }}>
-                      ID
+                      <Button variant="ghost" size="sm" onClick={() => handleSort('tag_number')} className="-ml-3">
+                        ID
+                        {sortField === 'tag_number' &&
+                          (sortDirection === 'asc' ? (
+                            <ArrowUp className="ml-1 h-4 w-4" />
+                          ) : (
+                            <ArrowDown className="ml-1 h-4 w-4" />
+                          ))}
+                        {sortField !== 'tag_number' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
+                      </Button>
                       <ResizeHandle columnId="id" />
                     </TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
@@ -628,7 +649,16 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                       <ResizeHandle columnId="description" />
                     </TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.group}px` }}>
-                      {t('tags.sidebar.groups')}
+                      <Button variant="ghost" size="sm" onClick={() => handleSort('group')} className="-ml-3">
+                        {t('tags.sidebar.groups')}
+                        {sortField === 'group' &&
+                          (sortDirection === 'asc' ? (
+                            <ArrowUp className="ml-1 h-4 w-4" />
+                          ) : (
+                            <ArrowDown className="ml-1 h-4 w-4" />
+                          ))}
+                        {sortField !== 'group' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
+                      </Button>
                       <ResizeHandle columnId="group" />
                     </TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.created_at}px` }}>
