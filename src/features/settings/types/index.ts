@@ -26,6 +26,14 @@ export type SettingsCategory =
   | 'about' // 法的情報、バージョン
 
 /**
+ * 設定セクションの識別子（スクロールターゲット用）
+ */
+export type SettingsSectionId =
+  | 'calendar' // カレンダー設定
+  | 'chronotype' // クロノタイプ設定
+  | 'tags' // タグ設定
+
+/**
  * 設定メニュー項目
  */
 export interface SettingsMenuItem {

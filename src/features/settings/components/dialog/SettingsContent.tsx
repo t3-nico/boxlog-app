@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
+
 import { X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -9,6 +11,7 @@ import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDi
 import { AboutLegalSettings } from '../about-legal-settings'
 import { AccountSettings } from '../account-settings'
 import { CalendarSettings } from '../calendar-settings'
+import { ChronotypeSettings } from '../chronotype-settings'
 import { DataExportSettings } from '../data-export-settings'
 import { IntegrationSettings } from '../integration-settings'
 import { NotificationSettings } from '../notification-settings'
@@ -30,8 +33,22 @@ import { TagsSettings } from '../tags-settings'
  * - About: 法的情報、バージョン
  */
 export function SettingsContent() {
-  const { activeCategory, closeSettings } = useSettingsDialogStore()
+  const { activeCategory, closeSettings, scrollToSection, clearScrollTarget } = useSettingsDialogStore()
   const { t } = useI18n()
+  const chronotypeRef = useRef<HTMLDivElement>(null)
+
+  // スクロールターゲットへのスクロール処理
+  useEffect(() => {
+    if (scrollToSection === 'chronotype' && activeCategory === 'personalization' && chronotypeRef.current) {
+      // DOMが描画されるまで少し待つ
+      const timer = setTimeout(() => {
+        chronotypeRef.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
+        clearScrollTarget()
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+    return undefined
+  }, [scrollToSection, activeCategory, clearScrollTarget])
 
   // カテゴリごとのtitleを取得
   const getCategoryTitle = () => {
@@ -70,10 +87,13 @@ export function SettingsContent() {
         {/* General: 言語、テーマ、起動画面（既存のPreferencesSettingsを再利用） */}
         {activeCategory === 'general' && <PreferencesSettings />}
 
-        {/* Personalization: カレンダー + タグ */}
+        {/* Personalization: カレンダー + クロノタイプ + タグ */}
         {activeCategory === 'personalization' && (
           <div className="space-y-8">
             <CalendarSettings />
+            <div ref={chronotypeRef}>
+              <ChronotypeSettings />
+            </div>
             <TagsSettings />
           </div>
         )}

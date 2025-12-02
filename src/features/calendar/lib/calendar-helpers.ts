@@ -4,7 +4,7 @@ import type { CalendarViewType } from '../types/calendar.types'
  * 有効なビュータイプかどうかを判定
  */
 export function isValidViewType(view: string): view is CalendarViewType {
-  const validTypes: CalendarViewType[] = ['day', '3day', '5day', 'week', '2week', 'month']
+  const validTypes: CalendarViewType[] = ['day', '3day', '5day', 'week', '2week', 'month', 'agenda']
 
   return validTypes.includes(view as CalendarViewType)
 }
@@ -20,6 +20,7 @@ export function getViewDisplayName(viewType: CalendarViewType): string {
     week: 'Week',
     '2week': '2 Weeks',
     month: 'Month',
+    agenda: 'Agenda',
   }
 
   return Object.prototype.hasOwnProperty.call(displayNames, viewType) ? displayNames[viewType] : viewType
