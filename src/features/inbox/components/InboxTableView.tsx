@@ -4,7 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { Activity, Calendar, CalendarRange, FileText, Hash, Tag } from 'lucide-react'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import type { InboxItem } from '../hooks/useInboxData'
 import { useInboxData } from '../hooks/useInboxData'
@@ -66,6 +66,12 @@ export function InboxTableView() {
     tags: filters.tags,
     dueDate: filters.dueDate,
   })
+
+  // ハイドレーション対策: マウント前は常にローディング表示
+  const [isMounted, setIsMounted] = useState(false)
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // 新規作成行のref
   const createRowRef = useRef<InboxTableRowCreateHandle>(null)
@@ -211,157 +217,156 @@ export function InboxTableView() {
     toggleAll(currentPageIds)
   }
 
-  // エラー表示
-  if (error) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="border-destructive bg-destructive/10 text-destructive rounded-xl border p-4">
-          <p className="font-medium">エラーが発生しました</p>
-          <p className="mt-1 text-sm">{error.message}</p>
-        </div>
-      </div>
-    )
-  }
-
-  // ローディング表示
-  if (isLoading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="flex flex-col items-center gap-2">
-          <div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />
-          <p className="text-muted-foreground text-sm">読み込み中...</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div id="inbox-table-view-panel" role="tabpanel" className="flex h-full flex-col">
-      {/* ツールバー または 選択バー（Googleドライブ風） */}
-      {selectedCount > 0 ? (
-        <InboxSelectionBar
-          selectedCount={selectedCount}
-          onClearSelection={clearSelection}
-          actions={
-            <InboxSelectionActions
-              selectedCount={selectedCount}
-              selectedIds={Array.from(selectedIds)}
-              items={paginatedItems}
-              onArchive={handleArchive}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-              onDuplicate={handleDuplicate}
-              onAddTags={handleAddTags}
-              onChangeDueDate={handleChangeDueDate}
-              onClearSelection={clearSelection}
-            />
-          }
-        />
+      {/* エラー表示 */}
+      {error ? (
+        <div className="flex flex-1 items-center justify-center">
+          <div className="border-destructive bg-destructive/10 text-destructive rounded-xl border p-4">
+            <p className="font-medium">エラーが発生しました</p>
+            <p className="mt-1 text-sm">{error.message}</p>
+          </div>
+        </div>
+      ) : /* ローディング表示（マウント前も含む） */
+      !isMounted || isLoading ? (
+        <div className="flex flex-1 items-center justify-center">
+          <div className="flex flex-col items-center gap-2">
+            <div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />
+            <p className="text-muted-foreground text-sm">読み込み中...</p>
+          </div>
+        </div>
       ) : (
-        <div className="flex h-12 shrink-0 items-end gap-2 px-4 pt-2 md:px-6">
-          <div className="flex h-10 w-full items-center justify-between gap-2">
-            <GroupBySelector />
-            <TableToolbar onCreateClick={() => createRowRef.current?.startCreate()} />
+        <>
+          {/* ツールバー または 選択バー（Googleドライブ風） */}
+          {selectedCount > 0 ? (
+            <InboxSelectionBar
+              selectedCount={selectedCount}
+              onClearSelection={clearSelection}
+              actions={
+                <InboxSelectionActions
+                  selectedCount={selectedCount}
+                  selectedIds={Array.from(selectedIds)}
+                  items={paginatedItems}
+                  onArchive={handleArchive}
+                  onDelete={handleDelete}
+                  onEdit={handleEdit}
+                  onDuplicate={handleDuplicate}
+                  onAddTags={handleAddTags}
+                  onChangeDueDate={handleChangeDueDate}
+                  onClearSelection={clearSelection}
+                />
+              }
+            />
+          ) : (
+            <div className="flex h-12 shrink-0 items-end gap-2 px-4 pt-2 md:px-6">
+              <div className="flex h-10 w-full items-center justify-between gap-2">
+                <GroupBySelector />
+                <TableToolbar onCreateClick={() => createRowRef.current?.startCreate()} />
+              </div>
+            </div>
+          )}
+
+          {/* テーブル */}
+          <div
+            className="flex flex-1 flex-col overflow-hidden px-4 pt-4 md:px-6"
+            onClick={(e) => {
+              // テーブルコンテナの直接クリック（空白部分）で選択解除（Tagsテーブルと同様）
+              if (e.target === e.currentTarget) {
+                useInboxSelectionStore.getState().clearSelection()
+              }
+            }}
+          >
+            {/* テーブル部分: 枠で囲む + 横スクロール対応 */}
+            <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl">
+              <Table className="w-full">
+                {/* ヘッダー: 固定 */}
+                <TableHeader className="bg-background sticky top-0 z-10">
+                  <TableRow>
+                    {visibleColumns.map((column) => {
+                      if (column.id === 'selection') {
+                        return (
+                          <TableHead
+                            key={column.id}
+                            style={{ width: `${column.width}px`, minWidth: `${column.width}px` }}
+                          >
+                            <Checkbox
+                              checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+                              onCheckedChange={handleToggleAll}
+                            />
+                          </TableHead>
+                        )
+                      }
+
+                      // アイコンを取得
+                      const Icon = columnIcons[column.id as keyof typeof columnIcons]
+
+                      // tagsはソート不可
+                      if (column.id === 'tags') {
+                        return (
+                          <ResizableTableHead key={column.id} columnId={column.id} icon={Icon}>
+                            {column.label}
+                          </ResizableTableHead>
+                        )
+                      }
+
+                      // ソート可能な列（selection, tags以外）
+                      return (
+                        <ResizableTableHead
+                          key={column.id}
+                          columnId={column.id}
+                          sortField={column.id as SortField}
+                          icon={Icon}
+                        >
+                          {column.label}
+                        </ResizableTableHead>
+                      )
+                    })}
+                  </TableRow>
+                </TableHeader>
+
+                {/* ボディ: スクロール可能 */}
+                <TableBody>
+                  {paginatedItems.length === 0 ? (
+                    <InboxTableEmptyState columnCount={visibleColumns.length} totalItems={items.length} />
+                  ) : groupBy ? (
+                    // グループ化表示
+                    groupedData.map((group) => [
+                      <GroupHeader
+                        key={`header-${group.groupKey}`}
+                        groupKey={group.groupKey}
+                        groupLabel={group.groupLabel}
+                        count={group.count}
+                        columnCount={visibleColumns.length}
+                      />,
+                      ...(collapsedGroups.has(group.groupKey)
+                        ? []
+                        : group.items.map((item) => <InboxTableRow key={item.id} item={item} />)),
+                    ])
+                  ) : (
+                    // 通常表示
+                    <>
+                      {paginatedItems.map((item) => (
+                        <InboxTableRow key={item.id} item={item} />
+                      ))}
+                      {/* Notionスタイル：新規作成行 */}
+                      <InboxTableRowCreate ref={createRowRef} />
+                      {/* 下部スペーサー：スクロールバーと被らないように4px確保 */}
+                      <TableRow className="pointer-events-none h-1" />
+                    </>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* フッター: テーブルの外側に配置（グループ化なしの場合のみ） */}
+            {!groupBy && (
+              <div className="shrink-0">
+                <TablePagination totalItems={sortedItems.length} />
+              </div>
+            )}
           </div>
-        </div>
+        </>
       )}
-
-      {/* テーブル */}
-      <div
-        className="flex flex-1 flex-col overflow-hidden px-4 pt-4 md:px-6"
-        onClick={(e) => {
-          // テーブルコンテナの直接クリック（空白部分）で選択解除（Tagsテーブルと同様）
-          if (e.target === e.currentTarget) {
-            useInboxSelectionStore.getState().clearSelection()
-          }
-        }}
-      >
-        {/* テーブル部分: 枠で囲む + 横スクロール対応 */}
-        <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl">
-          <Table className="w-full">
-            {/* ヘッダー: 固定 */}
-            <TableHeader className="bg-background sticky top-0 z-10">
-              <TableRow>
-                {visibleColumns.map((column) => {
-                  if (column.id === 'selection') {
-                    return (
-                      <TableHead key={column.id} style={{ width: `${column.width}px`, minWidth: `${column.width}px` }}>
-                        <Checkbox
-                          checked={allSelected ? true : someSelected ? 'indeterminate' : false}
-                          onCheckedChange={handleToggleAll}
-                        />
-                      </TableHead>
-                    )
-                  }
-
-                  // アイコンを取得
-                  const Icon = columnIcons[column.id as keyof typeof columnIcons]
-
-                  // tagsはソート不可
-                  if (column.id === 'tags') {
-                    return (
-                      <ResizableTableHead key={column.id} columnId={column.id} icon={Icon}>
-                        {column.label}
-                      </ResizableTableHead>
-                    )
-                  }
-
-                  // ソート可能な列（selection, tags以外）
-                  return (
-                    <ResizableTableHead
-                      key={column.id}
-                      columnId={column.id}
-                      sortField={column.id as SortField}
-                      icon={Icon}
-                    >
-                      {column.label}
-                    </ResizableTableHead>
-                  )
-                })}
-              </TableRow>
-            </TableHeader>
-
-            {/* ボディ: スクロール可能 */}
-            <TableBody>
-              {paginatedItems.length === 0 ? (
-                <InboxTableEmptyState columnCount={visibleColumns.length} totalItems={items.length} />
-              ) : groupBy ? (
-                // グループ化表示
-                groupedData.map((group) => [
-                  <GroupHeader
-                    key={`header-${group.groupKey}`}
-                    groupKey={group.groupKey}
-                    groupLabel={group.groupLabel}
-                    count={group.count}
-                    columnCount={visibleColumns.length}
-                  />,
-                  ...(collapsedGroups.has(group.groupKey)
-                    ? []
-                    : group.items.map((item) => <InboxTableRow key={item.id} item={item} />)),
-                ])
-              ) : (
-                // 通常表示
-                <>
-                  {paginatedItems.map((item) => (
-                    <InboxTableRow key={item.id} item={item} />
-                  ))}
-                  {/* Notionスタイル：新規作成行 */}
-                  <InboxTableRowCreate ref={createRowRef} />
-                  {/* 下部スペーサー：スクロールバーと被らないように4px確保 */}
-                  <TableRow className="pointer-events-none h-1" />
-                </>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* フッター: テーブルの外側に配置（グループ化なしの場合のみ） */}
-        {!groupBy && (
-          <div className="shrink-0">
-            <TablePagination totalItems={sortedItems.length} />
-          </div>
-        )}
-      </div>
     </div>
   )
 }

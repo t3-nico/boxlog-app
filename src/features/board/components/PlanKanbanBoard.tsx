@@ -13,6 +13,7 @@ import { RecurringIndicator } from '@/features/plans/components/shared/Recurring
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { reminderTypeToMinutes } from '@/features/plans/utils/reminder'
+import { getEffectiveStatus } from '@/features/plans/utils/status'
 import { cn } from '@/lib/utils'
 import {
   DndContext,
@@ -45,11 +46,12 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
   const { updatePlan } = usePlanMutations()
   const { isStatusVisible } = useBoardStatusFilterStore()
 
-  // Planデータをカラムごとに分類（3段階ステータス）
+  // Planデータをカラムごとに分類（実効ステータスで判定）
+  // DBには旧ステータス値が残っている可能性があるため、getEffectiveStatusで判定
   const columns = {
-    todo: items.filter((item) => item.status === 'todo'),
-    doing: items.filter((item) => item.status === 'doing'),
-    done: items.filter((item) => item.status === 'done'),
+    todo: items.filter((item) => getEffectiveStatus(item) === 'todo'),
+    doing: items.filter((item) => getEffectiveStatus(item) === 'doing'),
+    done: items.filter((item) => getEffectiveStatus(item) === 'done'),
   }
 
   // ドラッグ中のカードを取得
@@ -83,15 +85,29 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
 
     // ドラッグ中のアイテムを取得
     const draggedItem = items.find((item) => item.id === active.id)
+    const currentEffectiveStatus = draggedItem ? getEffectiveStatus(draggedItem) : null
 
-    if (draggedItem && draggedItem.status !== targetStatus) {
-      // ステータスを更新
-      updatePlan.mutate({
-        id: draggedItem.id,
-        data: {
-          status: targetStatus,
-        },
-      })
+    if (draggedItem && currentEffectiveStatus !== targetStatus) {
+      // todoに移動した場合、スケジュール（due_date, start_time, end_time）をクリア
+      if (targetStatus === 'todo') {
+        updatePlan.mutate({
+          id: draggedItem.id,
+          data: {
+            status: targetStatus,
+            due_date: null,
+            start_time: null,
+            end_time: null,
+          },
+        })
+      } else {
+        // doing/doneに移動した場合、ステータスのみ更新
+        updatePlan.mutate({
+          id: draggedItem.id,
+          data: {
+            status: targetStatus,
+          },
+        })
+      }
     }
 
     setActiveId(null)
@@ -99,7 +115,7 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="flex h-full gap-4 overflow-x-auto p-4">
+      <div className="flex h-[calc(100vh-8rem)] gap-4 overflow-x-auto px-4 pt-4">
         {/* Todo カラム */}
         {isStatusVisible('todo') && (
           <KanbanColumn title="Todo" count={columns.todo.length} variant="todo" status="todo">
@@ -297,7 +313,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   return (
     <div
       ref={setNodeRef}
-      className={cn('flex h-full min-w-72 flex-col rounded-lg', isOver && 'ring-primary/30 ring-2')}
+      className={cn('flex h-full min-h-0 min-w-72 flex-1 flex-col rounded-lg', isOver && 'ring-primary/30 ring-2')}
     >
       <div
         className={`${bgColor} flex items-center justify-between rounded-t-lg pt-2`}
@@ -342,7 +358,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
           </TooltipProvider>
         </div>
       </div>
-      <div className={`${bgColor} flex-1 space-y-2 overflow-y-auto rounded-b-lg px-4 pt-4 pb-2`}>
+      <div className={`${bgColor} min-h-0 flex-1 space-y-2 overflow-y-auto rounded-b-lg px-4 pt-4 pb-2`}>
         {children}
 
         {/* 新規作成フォーム（入力中） */}

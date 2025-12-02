@@ -70,7 +70,7 @@ export default function InboxLayout({ children }: InboxLayoutProps) {
       </div>
 
       {/* 右: メインコンテンツ */}
-      <div className="flex-1 overflow-hidden">{children}</div>
+      <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
     </div>
   )
 }

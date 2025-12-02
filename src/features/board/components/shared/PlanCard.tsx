@@ -260,12 +260,7 @@ export function PlanCard({ item }: PlanCardProps) {
                   return <Circle className="text-muted-foreground h-4 w-4" />
                 })()}
               </button>
-              <h3
-                className={cn(
-                  'text-foreground min-w-0 text-base leading-tight font-semibold hover:underline',
-                  getEffectiveStatus(item) === 'done' && 'text-muted-foreground line-through'
-                )}
-              >
+              <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold hover:underline">
                 {item.title}
               </h3>
               {item.plan_number && <span className="text-muted-foreground shrink-0 text-sm">#{item.plan_number}</span>}

@@ -516,7 +516,27 @@ export function PlanInspector() {
       dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
       autoSave('start_time', dateTime.toISOString())
     } else {
-      autoSave('start_time', undefined)
+      // 時間をクリアする場合：due_date, start_time, end_time を null に、status を todo に
+      if (planId) {
+        // 既存のタイマーをクリア
+        if (debounceTimerRef.current) {
+          clearTimeout(debounceTimerRef.current)
+        }
+        debounceTimerRef.current = setTimeout(() => {
+          updatePlan.mutate({
+            id: planId,
+            data: {
+              due_date: null,
+              start_time: null,
+              end_time: null,
+              status: 'todo',
+            },
+          })
+        }, 500)
+        // ローカル状態もクリア
+        setEndTime('')
+        setSelectedDate(undefined)
+      }
     }
   }
 
@@ -529,7 +549,20 @@ export function PlanInspector() {
       dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
       autoSave('end_time', dateTime.toISOString())
     } else {
-      autoSave('end_time', undefined)
+      // end_time のみクリア（start_time はそのまま）
+      if (planId) {
+        if (debounceTimerRef.current) {
+          clearTimeout(debounceTimerRef.current)
+        }
+        debounceTimerRef.current = setTimeout(() => {
+          updatePlan.mutate({
+            id: planId,
+            data: {
+              end_time: null,
+            },
+          })
+        }, 500)
+      }
     }
   }
 
@@ -727,7 +760,7 @@ export function PlanInspector() {
                 {/* タイトル + チェックボックス */}
                 <div className="px-6 pt-4 pb-2">
                   <div className="flex items-start gap-2">
-                    {/* Done チェックボックス */}
+                    {/* Done チェックボックス - タイトルの1行目と垂直中央揃え */}
                     <button
                       type="button"
                       onClick={() => {
@@ -738,19 +771,19 @@ export function PlanInspector() {
                           data: { status: newStatus },
                         })
                       }}
-                      className="mt-1 flex-shrink-0 transition-colors hover:opacity-80"
+                      className="flex h-[2.5rem] flex-shrink-0 items-center transition-colors hover:opacity-80"
                       aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
                     >
                       {(() => {
                         const status = getEffectiveStatus(plan)
                         if (status === 'done') {
-                          return <CheckCircle2 className="text-success h-6 w-6" />
+                          return <CheckCircle2 className="text-success h-[1.5rem] w-[1.5rem]" />
                         }
                         if (status === 'doing') {
-                          return <Circle className="text-primary h-6 w-6" />
+                          return <Circle className="text-primary h-[1.5rem] w-[1.5rem]" />
                         }
                         // todo
-                        return <Circle className="text-muted-foreground h-6 w-6" />
+                        return <Circle className="text-muted-foreground h-[1.5rem] w-[1.5rem]" />
                       })()}
                     </button>
                     <div className="inline">
@@ -759,9 +792,7 @@ export function PlanInspector() {
                         contentEditable
                         suppressContentEditableWarning
                         onBlur={(e) => autoSave('title', e.currentTarget.textContent || '')}
-                        className={`bg-popover border-0 px-0 text-[2rem] font-bold outline-none ${
-                          getEffectiveStatus(plan) === 'done' ? 'text-muted-foreground line-through' : ''
-                        }`}
+                        className="bg-popover border-0 px-0 text-[2rem] font-bold outline-none"
                         style={{ fontSize: 'var(--font-size-xl)' }}
                       >
                         {plan.title}
