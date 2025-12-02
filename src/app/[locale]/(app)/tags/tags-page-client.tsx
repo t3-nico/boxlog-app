@@ -11,6 +11,7 @@ import {
   Folder,
   Hash,
   Plus,
+  Settings2,
 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -27,7 +28,15 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -89,6 +98,36 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const [editValue, setEditValue] = useState('')
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
+
+  // 列の表示/非表示設定
+  const [columnVisibility, setColumnVisibility] = useState({
+    id: true,
+    description: true,
+    group: true,
+    created_at: true,
+  })
+
+  // localStorage から列設定を復元
+  useEffect(() => {
+    const saved = localStorage.getItem('tagsPageColumnVisibility')
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        setColumnVisibility(parsed)
+      } catch {
+        // ignore parse error
+      }
+    }
+  }, [])
+
+  // 列設定を localStorage に保存
+  const handleColumnVisibilityChange = useCallback((column: keyof typeof columnVisibility, visible: boolean) => {
+    setColumnVisibility((prev) => {
+      const next = { ...prev, [column]: visible }
+      localStorage.setItem('tagsPageColumnVisibility', JSON.stringify(next))
+      return next
+    })
+  }, [])
 
   // タグごとのプラン数を取得
   const { data: tagplanCounts = {} } = api.plans.getTagPlanCounts.useQuery()
@@ -570,6 +609,45 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                 <DropdownMenuItem>{t('tags.page.filter.frequentlyUsed')}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* 列設定ドロップダウン */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1">
+                  <Settings2 className="h-3.5 w-3.5" />
+                  <span>{t('tags.page.columns')}</span>
+                  <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuLabel>{t('tags.page.columnSettings')}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuCheckboxItem
+                  checked={columnVisibility.id}
+                  onCheckedChange={(checked) => handleColumnVisibilityChange('id', checked)}
+                >
+                  ID
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={columnVisibility.description}
+                  onCheckedChange={(checked) => handleColumnVisibilityChange('description', checked)}
+                >
+                  {t('tags.page.description')}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={columnVisibility.group}
+                  onCheckedChange={(checked) => handleColumnVisibilityChange('group', checked)}
+                >
+                  {t('tags.sidebar.groups')}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={columnVisibility.created_at}
+                  onCheckedChange={(checked) => handleColumnVisibilityChange('created_at', checked)}
+                >
+                  {t('tags.page.createdAt')}
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div className="flex h-8 items-center">
             <Button onClick={handleStartInlineCreation} size="sm" className="h-8">
@@ -618,19 +696,21 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                         aria-label={t('tags.page.selectAll')}
                       />
                     </TableHead>
-                    <TableHead className="relative" style={{ width: `${columnWidths.id}px` }}>
-                      <Button variant="ghost" size="sm" onClick={() => handleSort('tag_number')} className="-ml-3">
-                        ID
-                        {sortField === 'tag_number' &&
-                          (sortDirection === 'asc' ? (
-                            <ArrowUp className="ml-1 h-4 w-4" />
-                          ) : (
-                            <ArrowDown className="ml-1 h-4 w-4" />
-                          ))}
-                        {sortField !== 'tag_number' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                      </Button>
-                      <ResizeHandle columnId="id" />
-                    </TableHead>
+                    {columnVisibility.id && (
+                      <TableHead className="relative" style={{ width: `${columnWidths.id}px` }}>
+                        <Button variant="ghost" size="sm" onClick={() => handleSort('tag_number')} className="-ml-3">
+                          ID
+                          {sortField === 'tag_number' &&
+                            (sortDirection === 'asc' ? (
+                              <ArrowUp className="ml-1 h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="ml-1 h-4 w-4" />
+                            ))}
+                          {sortField !== 'tag_number' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
+                        </Button>
+                        <ResizeHandle columnId="id" />
+                      </TableHead>
+                    )}
                     <TableHead className="relative" style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
                       <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
                         {t('tags.page.name')}
@@ -644,36 +724,42 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                       </Button>
                       <ResizeHandle columnId="name" />
                     </TableHead>
-                    <TableHead className="relative" style={{ width: `${columnWidths.description}px` }}>
-                      {t('tags.page.description')}
-                      <ResizeHandle columnId="description" />
-                    </TableHead>
-                    <TableHead className="relative" style={{ width: `${columnWidths.group}px` }}>
-                      <Button variant="ghost" size="sm" onClick={() => handleSort('group')} className="-ml-3">
-                        {t('tags.sidebar.groups')}
-                        {sortField === 'group' &&
-                          (sortDirection === 'asc' ? (
-                            <ArrowUp className="ml-1 h-4 w-4" />
-                          ) : (
-                            <ArrowDown className="ml-1 h-4 w-4" />
-                          ))}
-                        {sortField !== 'group' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                      </Button>
-                      <ResizeHandle columnId="group" />
-                    </TableHead>
-                    <TableHead className="relative" style={{ width: `${columnWidths.created_at}px` }}>
-                      <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
-                        {t('tags.page.createdAt')}
-                        {sortField === 'created_at' &&
-                          (sortDirection === 'asc' ? (
-                            <ArrowUp className="ml-1 h-4 w-4" />
-                          ) : (
-                            <ArrowDown className="ml-1 h-4 w-4" />
-                          ))}
-                        {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                      </Button>
-                      <ResizeHandle columnId="created_at" />
-                    </TableHead>
+                    {columnVisibility.description && (
+                      <TableHead className="relative" style={{ width: `${columnWidths.description}px` }}>
+                        {t('tags.page.description')}
+                        <ResizeHandle columnId="description" />
+                      </TableHead>
+                    )}
+                    {columnVisibility.group && (
+                      <TableHead className="relative" style={{ width: `${columnWidths.group}px` }}>
+                        <Button variant="ghost" size="sm" onClick={() => handleSort('group')} className="-ml-3">
+                          {t('tags.sidebar.groups')}
+                          {sortField === 'group' &&
+                            (sortDirection === 'asc' ? (
+                              <ArrowUp className="ml-1 h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="ml-1 h-4 w-4" />
+                            ))}
+                          {sortField !== 'group' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
+                        </Button>
+                        <ResizeHandle columnId="group" />
+                      </TableHead>
+                    )}
+                    {columnVisibility.created_at && (
+                      <TableHead className="relative" style={{ width: `${columnWidths.created_at}px` }}>
+                        <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
+                          {t('tags.page.createdAt')}
+                          {sortField === 'created_at' &&
+                            (sortDirection === 'asc' ? (
+                              <ArrowUp className="ml-1 h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="ml-1 h-4 w-4" />
+                            ))}
+                          {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
+                        </Button>
+                        <ResizeHandle columnId="created_at" />
+                      </TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -697,12 +783,14 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               aria-label={t('tags.page.selectTag', { name: tag.name })}
                             />
                           </TableCell>
-                          <TableCell
-                            className="text-muted-foreground font-mono text-sm"
-                            style={{ width: `${columnWidths.id}px` }}
-                          >
-                            t-{tag.tag_number}
-                          </TableCell>
+                          {columnVisibility.id && (
+                            <TableCell
+                              className="text-muted-foreground font-mono text-sm"
+                              style={{ width: `${columnWidths.id}px` }}
+                            >
+                              t-{tag.tag_number}
+                            </TableCell>
+                          )}
                           <TableCell
                             className="font-medium"
                             style={{ width: `${columnWidths.color + columnWidths.name}px` }}
@@ -763,52 +851,58 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               )}
                             </div>
                           </TableCell>
-                          <TableCell
-                            className="text-muted-foreground"
-                            style={{ width: `${columnWidths.description}px` }}
-                          >
-                            <span className="truncate">
-                              {tag.description || (
-                                <span className="opacity-0 transition-opacity group-hover:opacity-100">
-                                  {t('tags.page.addDescription')}
+                          {columnVisibility.description && (
+                            <TableCell
+                              className="text-muted-foreground"
+                              style={{ width: `${columnWidths.description}px` }}
+                            >
+                              <span className="truncate">
+                                {tag.description || (
+                                  <span className="opacity-0 transition-opacity group-hover:opacity-100">
+                                    {t('tags.page.addDescription')}
+                                  </span>
+                                )}
+                              </span>
+                            </TableCell>
+                          )}
+                          {columnVisibility.group && (
+                            <TableCell style={{ width: `${columnWidths.group}px` }}>
+                              {tag.group_id ? (
+                                (() => {
+                                  const group = groups.find((g) => g.id === tag.group_id)
+                                  if (!group) {
+                                    return null
+                                  }
+                                  const groupTagCount = tags.filter(
+                                    (t) => t.group_id === group.id && t.is_active && t.level === 0
+                                  ).length
+                                  return (
+                                    <div className="flex items-center gap-1">
+                                      <Folder
+                                        className="h-4 w-4 shrink-0"
+                                        style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+                                      />
+                                      <span className="text-sm">
+                                        {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
+                                      </span>
+                                    </div>
+                                  )
+                                })()
+                              ) : (
+                                <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">
+                                  {t('tags.page.addGroup')}
                                 </span>
                               )}
-                            </span>
-                          </TableCell>
-                          <TableCell style={{ width: `${columnWidths.group}px` }}>
-                            {tag.group_id ? (
-                              (() => {
-                                const group = groups.find((g) => g.id === tag.group_id)
-                                if (!group) {
-                                  return null
-                                }
-                                const groupTagCount = tags.filter(
-                                  (t) => t.group_id === group.id && t.is_active && t.level === 0
-                                ).length
-                                return (
-                                  <div className="flex items-center gap-1">
-                                    <Folder
-                                      className="h-4 w-4 shrink-0"
-                                      style={{ color: group.color || DEFAULT_GROUP_COLOR }}
-                                    />
-                                    <span className="text-sm">
-                                      {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
-                                    </span>
-                                  </div>
-                                )
-                              })()
-                            ) : (
-                              <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">
-                                {t('tags.page.addGroup')}
-                              </span>
-                            )}
-                          </TableCell>
-                          <TableCell
-                            className="text-muted-foreground text-xs"
-                            style={{ width: `${columnWidths.created_at}px` }}
-                          >
-                            {formatDate(tag.created_at)}
-                          </TableCell>
+                            </TableCell>
+                          )}
+                          {columnVisibility.created_at && (
+                            <TableCell
+                              className="text-muted-foreground text-xs"
+                              style={{ width: `${columnWidths.created_at}px` }}
+                            >
+                              {formatDate(tag.created_at)}
+                            </TableCell>
+                          )}
                         </TableRow>
                       </ContextMenuTrigger>
                       <ContextMenuContent>
@@ -862,12 +956,14 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                   {isCreatingTag && (
                     <TableRow ref={inlineFormRef} className="bg-muted/30">
                       <TableCell style={{ width: `${columnWidths.select}px` }}></TableCell>
-                      <TableCell
-                        className="text-muted-foreground font-mono text-sm"
-                        style={{ width: `${columnWidths.id}px` }}
-                      >
-                        -
-                      </TableCell>
+                      {columnVisibility.id && (
+                        <TableCell
+                          className="text-muted-foreground font-mono text-sm"
+                          style={{ width: `${columnWidths.id}px` }}
+                        >
+                          -
+                        </TableCell>
+                      )}
                       <TableCell style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
                         <div className="flex items-center gap-2">
                           <Popover>
@@ -904,49 +1000,55 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           />
                         </div>
                       </TableCell>
-                      <TableCell style={{ width: `${columnWidths.description}px` }}>
-                        <Input
-                          value={newTagDescription}
-                          onChange={(e) => setNewTagDescription(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleSaveInlineTag()
-                            } else if (e.key === 'Escape') {
-                              handleCancelInlineCreation()
-                            }
-                          }}
-                          placeholder={t('tags.page.description')}
-                          className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
-                        />
-                      </TableCell>
-                      <TableCell style={{ width: `${columnWidths.group}px` }}>
-                        {selectedGroupId
-                          ? (() => {
-                              const group = groups.find((g) => g.id === selectedGroupId)
-                              if (!group) {
-                                return null
+                      {columnVisibility.description && (
+                        <TableCell style={{ width: `${columnWidths.description}px` }}>
+                          <Input
+                            value={newTagDescription}
+                            onChange={(e) => setNewTagDescription(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleSaveInlineTag()
+                              } else if (e.key === 'Escape') {
+                                handleCancelInlineCreation()
                               }
-                              const groupTagCount = tags.filter(
-                                (t) => t.group_id === group.id && t.is_active && t.level === 0
-                              ).length
-                              return (
-                                <div className="flex items-center gap-1">
-                                  <Folder
-                                    className="h-4 w-4 shrink-0"
-                                    style={{ color: group.color || DEFAULT_GROUP_COLOR }}
-                                  />
-                                  <span className="text-sm">
-                                    {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
-                                  </span>
-                                </div>
-                              )
-                            })()
-                          : null}
-                      </TableCell>
-                      <TableCell
-                        className="text-muted-foreground text-xs"
-                        style={{ width: `${columnWidths.created_at}px` }}
-                      ></TableCell>
+                            }}
+                            placeholder={t('tags.page.description')}
+                            className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
+                          />
+                        </TableCell>
+                      )}
+                      {columnVisibility.group && (
+                        <TableCell style={{ width: `${columnWidths.group}px` }}>
+                          {selectedGroupId
+                            ? (() => {
+                                const group = groups.find((g) => g.id === selectedGroupId)
+                                if (!group) {
+                                  return null
+                                }
+                                const groupTagCount = tags.filter(
+                                  (t) => t.group_id === group.id && t.is_active && t.level === 0
+                                ).length
+                                return (
+                                  <div className="flex items-center gap-1">
+                                    <Folder
+                                      className="h-4 w-4 shrink-0"
+                                      style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+                                    />
+                                    <span className="text-sm">
+                                      {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
+                                    </span>
+                                  </div>
+                                )
+                              })()
+                            : null}
+                        </TableCell>
+                      )}
+                      {columnVisibility.created_at && (
+                        <TableCell
+                          className="text-muted-foreground text-xs"
+                          style={{ width: `${columnWidths.created_at}px` }}
+                        ></TableCell>
+                      )}
                     </TableRow>
                   )}
                 </TableBody>

@@ -1220,7 +1220,9 @@
       "addDescription": "Add description...",
       "addGroup": "Add to group...",
       "changeColor": "Change color",
-      "tagColor": "Tag color"
+      "tagColor": "Tag color",
+      "columns": "Columns",
+      "columnSettings": "Column settings"
     },
     "archive": {
       "restoreConfirm": "Restore tag \"{{name}}\"?\n\nRestored tags can be used for tagging again.",
