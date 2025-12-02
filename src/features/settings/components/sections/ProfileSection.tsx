@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { getErrorMessage } from '@/lib/errors'
 import { createClient } from '@/lib/supabase/client'
 import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage'
 
@@ -98,8 +99,7 @@ export function ProfileSection() {
         profile.updateValue('uploadedAvatar', publicUrl)
       } catch (error) {
         console.error('Avatar upload error:', error)
-        const errorMessage = error instanceof Error ? error.message : 'アバター画像のアップロードに失敗しました'
-        alert(errorMessage)
+        alert(getErrorMessage(error, 'アバター画像のアップロードに失敗しました'))
       } finally {
         setIsUploading(false)
       }
@@ -120,8 +120,7 @@ export function ProfileSection() {
       profile.updateValue('uploadedAvatar', null)
     } catch (error) {
       console.error('Avatar delete error:', error)
-      const errorMessage = error instanceof Error ? error.message : 'アバター画像の削除に失敗しました'
-      alert(errorMessage)
+      alert(getErrorMessage(error, 'アバター画像の削除に失敗しました'))
     } finally {
       setIsUploading(false)
     }
