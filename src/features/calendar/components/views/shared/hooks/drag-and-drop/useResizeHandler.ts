@@ -7,7 +7,7 @@ import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
-import { HOUR_HEIGHT } from '../constants/grid.constants'
+import { HOUR_HEIGHT } from '../../constants/grid.constants'
 
 import type { DragDataRef, DragState } from './types'
 import { snapToQuarterHour } from './utils'
