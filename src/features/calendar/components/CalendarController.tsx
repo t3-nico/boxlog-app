@@ -74,6 +74,41 @@ const CalendarViewSkeleton = () => (
   </div>
 )
 
+/**
+ * CalendarViewRenderer - ビューレンダリング専用コンポーネント
+ *
+ * memo化により、propsが変更されない限り再レンダリングをスキップ
+ * これにより、親コンポーネントの他の状態変更時の不要な再描画を防止
+ */
+const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
+  viewType,
+  showWeekends,
+  commonProps,
+}: {
+  viewType: CalendarViewType
+  showWeekends: boolean
+  commonProps: Record<string, unknown>
+}) {
+  return (
+    <Suspense fallback={<CalendarViewSkeleton />}>
+      {(() => {
+        switch (viewType) {
+          case 'day':
+            return <DayView {...commonProps} showWeekends={showWeekends} />
+          case '3day':
+            return <ThreeDayView {...commonProps} showWeekends={showWeekends} />
+          case '5day':
+            return <FiveDayView {...commonProps} showWeekends={showWeekends} />
+          case 'week':
+            return <WeekView {...commonProps} showWeekends={showWeekends} />
+          default:
+            return <DayView {...commonProps} showWeekends={showWeekends} />
+        }
+      })()}
+    </Suspense>
+  )
+})
+
 interface CalendarViewExtendedProps extends CalendarViewProps {
   initialViewType?: CalendarViewType
   initialDate?: Date | null
@@ -471,12 +506,11 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     onToggleWeekends: handleToggleWeekends,
   })
 
-  // ビューコンポーネントのレンダリング
-  const renderView = () => {
-    // TODO(#389): Task/Event型の統一が必要
-    // 現在は複数の型定義が存在し、型互換性がない問題がある
-    // @ts-expect-error - Task型とCalendarPlan型の統一が必要
-    const commonProps = {
+  // ビューコンポーネントのレンダリング用props（memo化のため安定した参照を保持）
+  // TODO(#389): Task/Event型の統一が必要
+  // @ts-expect-error - Task型とCalendarPlan型の統一が必要
+  const commonProps = useMemo(
+    () => ({
       dateRange: viewDateRange,
       tasks: filteredTasks,
       events: filteredEvents,
@@ -496,27 +530,29 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       onNavigatePrev: handleNavigatePrev,
       onNavigateNext: handleNavigateNext,
       onNavigateToday: handleNavigateToday,
-    }
-
-    return (
-      <Suspense fallback={<CalendarViewSkeleton />}>
-        {(() => {
-          switch (viewType) {
-            case 'day':
-              return <DayView {...commonProps} showWeekends={showWeekends} />
-            case '3day':
-              return <ThreeDayView {...commonProps} showWeekends={showWeekends} />
-            case '5day':
-              return <FiveDayView {...commonProps} showWeekends={showWeekends} />
-            case 'week':
-              return <WeekView {...commonProps} showWeekends={showWeekends} />
-            default:
-              return <DayView {...commonProps} />
-          }
-        })()}
-      </Suspense>
-    )
-  }
+    }),
+    [
+      viewDateRange,
+      filteredTasks,
+      filteredEvents,
+      currentDate,
+      handleCreateTask,
+      handleCreateRecord,
+      handleTaskClick,
+      handleEventClick,
+      handleEventContextMenu,
+      handleCreateEvent,
+      handleUpdatePlan,
+      deletePlan,
+      handlePlanRestore,
+      handleEmptyClick,
+      handleDateTimeRangeSelect,
+      handleViewChange,
+      handleNavigatePrev,
+      handleNavigateNext,
+      handleNavigateToday,
+    ]
+  )
 
   // 日付選択ハンドラー（週末調整フック使用）
   const handleDateSelect = useCallback(
@@ -664,8 +700,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
           end: viewDateRange.end,
         }}
       >
-        {/* ビュー固有のコンテンツ */}
-        {renderView()}
+        {/* ビュー固有のコンテンツ - memo化されたCalendarViewRendererで効率的にレンダリング */}
+        <CalendarViewRenderer viewType={viewType} showWeekends={showWeekends} commonProps={commonProps} />
       </CalendarLayout>
 
       {/* イベントコンテキストメニュー */}
