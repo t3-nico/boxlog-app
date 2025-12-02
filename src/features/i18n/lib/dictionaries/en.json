@@ -539,6 +539,15 @@
       "resetSettingsDesc": "Reset all calendar settings to default values",
       "resetToDefault": "Reset to Default"
     },
+    "chronotype": {
+      "title": "Chronotype Settings",
+      "description": "Select a type that matches your biological rhythm. Based on your selection, optimal work hours will be displayed in the status bar.",
+      "settingsSaved": "Chronotype settings saved",
+      "details": "Type Details",
+      "timeline": "24-Hour Timeline",
+      "peakTime": "Peak Time",
+      "learnMore": "Learn more about chronotypes"
+    },
     "preferences": {
       "settingsSaved": "Preferences saved successfully",
       "theme": "Theme",
