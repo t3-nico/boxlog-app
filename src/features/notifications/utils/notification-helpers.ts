@@ -1,4 +1,4 @@
-import { isToday, isYesterday, isThisWeek, isThisMonth } from 'date-fns'
+import { isThisMonth, isThisWeek, isToday, isYesterday } from 'date-fns'
 
 import { useTranslation } from '@/features/i18n/lib/hooks'
 import type { NotificationType } from '@/schemas/notifications'

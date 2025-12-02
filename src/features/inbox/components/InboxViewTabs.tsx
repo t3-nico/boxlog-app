@@ -74,7 +74,7 @@ export function InboxViewTabs() {
         </Button>
 
         {/* View タブ - pill形式 */}
-        <Tabs value={activeViewId} onValueChange={handleViewChange}>
+        <Tabs value={activeViewId ?? 'default-all'} onValueChange={handleViewChange}>
           <TabsList className="h-8 rounded-lg p-0.5">
             {views.map((view) => (
               <div key={view.id} className="group relative flex items-center">

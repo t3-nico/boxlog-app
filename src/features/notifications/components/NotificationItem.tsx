@@ -4,15 +4,7 @@ import { Button } from '@/components/ui/button'
 import type { NotificationType } from '@/schemas/notifications'
 import { formatDistanceToNow } from 'date-fns'
 import { enUS, ja } from 'date-fns/locale'
-import {
-  AlertTriangle,
-  Bell,
-  CheckCircle,
-  Edit,
-  Info,
-  PlusCircle,
-  Trash2,
-} from 'lucide-react'
+import { AlertTriangle, Bell, CheckCircle, Edit, Info, PlusCircle, Trash2 } from 'lucide-react'
 
 interface NotificationItemProps {
   id: string
@@ -21,7 +13,7 @@ interface NotificationItemProps {
   message: string | null
   isRead: boolean
   createdAt: string
-  actionUrl?: string | null
+  actionUrl?: string | null | undefined
   locale: 'ja' | 'en'
   onMarkAsRead: (id: string) => void
   onDelete: (id: string) => void
@@ -101,24 +93,16 @@ export function NotificationItem({
     >
       <div className="flex items-start gap-2.5">
         {/* アイコン */}
-        <div className={`mt-0.5 shrink-0 ${typeColors[type]}`}>
-          {typeIcons[type]}
-        </div>
+        <div className={`mt-0.5 shrink-0 ${typeColors[type]}`}>{typeIcons[type]}</div>
 
         {/* コンテンツ */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h4 className="truncate text-sm font-medium">{title}</h4>
-            {!isRead && (
-              <span className="bg-primary h-1.5 w-1.5 shrink-0 rounded-full" aria-label="未読" />
-            )}
+            {!isRead && <span className="bg-primary h-1.5 w-1.5 shrink-0 rounded-full" aria-label="未読" />}
           </div>
-          {message && (
-            <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">{message}</p>
-          )}
-          <span className="text-muted-foreground mt-1 block text-xs">
-            {formatTime(createdAt)}
-          </span>
+          {message && <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">{message}</p>}
+          <span className="text-muted-foreground mt-1 block text-xs">{formatTime(createdAt)}</span>
         </div>
 
         {/* 削除ボタン */}

@@ -1,17 +1,11 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import { useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useI18n } from '@/features/i18n/lib/hooks'
@@ -65,8 +59,7 @@ export function NotificationDialog() {
     is_read: false,
   })
 
-  const { markAsRead, markAllAsRead, deleteNotification, deleteAllRead } =
-    useNotificationMutations()
+  const { markAsRead, markAllAsRead, deleteNotification, deleteAllRead } = useNotificationMutations()
 
   // フィルター適用
   const filteredAllNotifications = useMemo(() => {
@@ -145,11 +138,7 @@ export function NotificationDialog() {
     const totalCount = groups.reduce((acc, g) => acc + g.notifications.length, 0)
 
     if (totalCount === 0) {
-      return (
-        <div className="text-muted-foreground py-8 text-center text-sm">
-          {t(emptyMessageKey)}
-        </div>
-      )
+      return <div className="text-muted-foreground py-8 text-center text-sm">{t(emptyMessageKey)}</div>
     }
 
     return (
@@ -162,21 +151,11 @@ export function NotificationDialog() {
             })}
           </span>
           <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleMarkAllAsRead}
-              disabled={markAllAsRead.isPending}
-            >
+            <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} disabled={markAllAsRead.isPending}>
               {t('notifications.actions.markAllAsRead')}
             </Button>
             {showActions && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleDeleteAllRead}
-                disabled={deleteAllRead.isPending}
-              >
+              <Button variant="ghost" size="sm" onClick={handleDeleteAllRead} disabled={deleteAllRead.isPending}>
                 <Trash2 className="mr-1 h-4 w-4" />
                 {t('notifications.actions.deleteAllRead')}
               </Button>
@@ -189,9 +168,7 @@ export function NotificationDialog() {
           {groups.map((group) => (
             <div key={group.key}>
               {/* グループヘッダー */}
-              <h3 className="text-muted-foreground mb-2 text-xs font-medium uppercase tracking-wide">
-                {group.label}
-              </h3>
+              <h3 className="text-muted-foreground mb-2 text-xs font-medium tracking-wide uppercase">{group.label}</h3>
               {/* 通知アイテム */}
               <div className="space-y-2">
                 {group.notifications.map((notification) => (
@@ -235,10 +212,7 @@ export function NotificationDialog() {
             </TabsList>
 
             {/* タイプフィルター */}
-            <Select
-              value={typeFilter}
-              onValueChange={(value) => setTypeFilter(value as NotificationType | 'all')}
-            >
+            <Select value={typeFilter} onValueChange={(value) => setTypeFilter(value as NotificationType | 'all')}>
               <SelectTrigger size="sm" className="w-[140px]">
                 <SelectValue />
               </SelectTrigger>
@@ -254,22 +228,12 @@ export function NotificationDialog() {
 
           {/* すべてタブ */}
           <TabsContent value="all" className="mt-4 space-y-4">
-            {renderNotificationList(
-              groupedAllNotifications,
-              isLoadingAll,
-              'notifications.empty.all',
-              true
-            )}
+            {renderNotificationList(groupedAllNotifications, isLoadingAll, 'notifications.empty.all', true)}
           </TabsContent>
 
           {/* 未読タブ */}
           <TabsContent value="unread" className="mt-4 space-y-4">
-            {renderNotificationList(
-              groupedUnreadNotifications,
-              isLoadingUnread,
-              'notifications.empty.unread',
-              false
-            )}
+            {renderNotificationList(groupedUnreadNotifications, isLoadingUnread, 'notifications.empty.unread', false)}
           </TabsContent>
         </Tabs>
 

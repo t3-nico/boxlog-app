@@ -49,8 +49,8 @@ function SelectContent({
   children,
   position = 'popper',
   align = 'center',
-  side,
-  sideOffset,
+  side = 'bottom',
+  sideOffset = 4,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Content>) {
   return (
