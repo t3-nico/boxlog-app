@@ -1,8 +1,8 @@
+'use client'
+
 /**
  * 空状態表示コンポーネント
  */
-
-'use client'
 
 import { memo } from 'react'
 
@@ -41,9 +41,15 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
       )
     }
 
-    // アイコンがコンポーネント型の場合
-    if (typeof icon === 'function') {
-      const IconComponent = icon
+    // アイコンがコンポーネント型の場合（function または forwardRef）
+    // forwardRefコンポーネントは $$typeof プロパティを持つオブジェクト
+    const isComponent =
+      typeof icon === 'function' ||
+      (typeof icon === 'object' && icon !== null && '$$typeof' in icon && 'render' in icon)
+
+    if (isComponent) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const IconComponent = icon as React.ComponentType<any>
       return (
         <div className="bg-muted mb-4 flex h-16 w-16 items-center justify-center rounded-full">
           <IconComponent className="text-muted-foreground h-8 w-8" />

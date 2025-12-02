@@ -1,4 +1,5 @@
 // ビューコンポーネント
+export { AgendaView } from './AgendaView'
 export { DayView } from './DayView'
 export { FiveDayView } from './FiveDayView'
 export { ThreeDayView } from './ThreeDayView'

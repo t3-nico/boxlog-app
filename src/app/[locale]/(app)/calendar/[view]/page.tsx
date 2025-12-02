@@ -7,13 +7,13 @@ import type { Locale } from '@/types/i18n'
 import { CalendarViewClient } from './client'
 
 interface CalendarViewPageProps {
-  params: {
+  params: Promise<{
     view: string
     locale?: Locale
-  }
-  searchParams: {
+  }>
+  searchParams: Promise<{
     date?: string
-  }
+  }>
 }
 
 // 有効なビュータイプかチェック

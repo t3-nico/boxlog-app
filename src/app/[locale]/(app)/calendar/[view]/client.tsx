@@ -1,19 +1,8 @@
 'use client'
 
-import dynamic from 'next/dynamic'
-
 import { FeatureErrorBoundary } from '@/components/error-boundary'
-import { CalendarSkeleton } from '@/features/calendar/components/CalendarSkeleton'
+import { CalendarController } from '@/features/calendar/components/CalendarController'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
-
-// Calendar機能を動的インポート（Bundle size最適化）
-const CalendarController = dynamic(
-  () => import('@/features/calendar').then((mod) => ({ default: mod.CalendarController })),
-  {
-    loading: () => <CalendarSkeleton />,
-    ssr: false,
-  }
-)
 
 interface CalendarViewClientProps {
   view: CalendarViewType

@@ -817,6 +817,13 @@ export const plansRouter = createTRPCRouter({
       const { data, error } = await query
 
       if (error) {
+        // テーブルが存在しない場合は空配列を返す（マイグレーション未実行時の対応）
+        if (error.message.includes('does not exist')) {
+          console.warn(
+            '[plans.getInstances] plan_instances テーブルが存在しません。マイグレーションを実行してください。'
+          )
+          return []
+        }
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `例外情報の取得に失敗しました: ${error.message}`,

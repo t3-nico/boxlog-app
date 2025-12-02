@@ -2,10 +2,9 @@
 
 import { useMemo } from 'react'
 
-import { addDays, isSameDay, isToday, startOfDay } from 'date-fns'
+import { addDays, isSameDay, startOfDay } from 'date-fns'
 import { CalendarDays } from 'lucide-react'
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
@@ -13,19 +12,15 @@ import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { EmptyState } from '../shared/components/EmptyState'
 
 import type { AgendaViewProps } from './AgendaView.types'
-import { AgendaDayGroup } from './components/AgendaDayGroup'
+import { AgendaListItem } from './components/AgendaListItem'
 
 /** アジェンダビューで表示する日数 */
 const AGENDA_DAYS = 14
 
 /**
- * AgendaView - スケジュール済みプランを時系列リストで表示
+ * AgendaView - スケジュール済みプランをフラットなリストで表示
  *
- * **特徴**:
- * - 日付ヘッダー付きのリスト形式
- * - 今日から14日先までを表示
- * - 予定がある日のみ表示（空の日はスキップ可能）
- * - 今日・明日のラベル表示
+ * **レイアウト**: 日付 | 時間 | タイトル# | タグ
  */
 export function AgendaView({ plans, currentDate, className, onPlanClick, onPlanContextMenu }: AgendaViewProps) {
   const { locale } = useI18n()
@@ -40,76 +35,34 @@ export function AgendaView({ plans, currentDate, className, onPlanClick, onPlanC
     return dates
   }, [currentDate])
 
-  // プランを日付ごとにグループ化
-  const plansByDate = useMemo(() => {
-    const grouped = new Map<string, CalendarPlan[]>()
-
-    // 各日付の初期化
-    dateRange.forEach((date) => {
-      grouped.set(date.toISOString(), [])
-    })
-
-    // プランを日付ごとに振り分け
-    ;(plans ?? []).forEach((plan) => {
-      if (!plan.startDate) return
-
+  // プランをフラットなリストに変換し、時系列でソート
+  const sortedPlans = useMemo(() => {
+    const plansInRange = (plans ?? []).filter((plan) => {
+      if (!plan.startDate) return false
       const planDate = startOfDay(plan.startDate)
-
-      // 表示範囲内の日付を探す
-      const matchingDate = dateRange.find((d) => isSameDay(d, planDate))
-      if (matchingDate) {
-        const key = matchingDate.toISOString()
-        const existing = grouped.get(key) ?? []
-        grouped.set(key, [...existing, plan])
-      }
+      return dateRange.some((d) => isSameDay(d, planDate))
     })
 
-    return grouped
+    // 日時順でソート
+    return plansInRange.sort((a, b) => {
+      const aTime = a.startDate?.getTime() ?? 0
+      const bTime = b.startDate?.getTime() ?? 0
+      return aTime - bTime
+    })
   }, [plans, dateRange])
 
-  // 予定がある日のみをフィルタリング（オプション）
-  const datesWithPlans = useMemo(() => {
-    return dateRange.filter((date) => {
-      const key = date.toISOString()
-      const dayPlans = plansByDate.get(key) ?? []
-      // 今日は常に表示、それ以外は予定がある日のみ
-      return isToday(date) || dayPlans.length > 0
-    })
-  }, [dateRange, plansByDate])
-
-  // プランが全くない場合のメッセージ
-  const hasAnyPlans = (plans ?? []).length > 0
+  const hasAnyPlans = sortedPlans.length > 0
 
   return (
     <CalendarViewAnimation viewType="agenda">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
-        {/* ヘッダー */}
-        <div className="border-border bg-background shrink-0 border-b px-4 py-3">
-          <h2 className="text-foreground text-lg font-semibold">{locale === 'ja' ? 'アジェンダ' : 'Agenda'}</h2>
-          <p className="text-muted-foreground text-sm">
-            {locale === 'ja' ? `今後${AGENDA_DAYS}日間の予定` : `Next ${AGENDA_DAYS} days`}
-          </p>
-        </div>
-
         {/* スクロール可能なコンテンツ */}
         <div className="flex-1 overflow-y-auto">
-          {hasAnyPlans || datesWithPlans.length > 0 ? (
-            <div className="py-2">
-              {datesWithPlans.map((date) => {
-                const key = date.toISOString()
-                const dayPlans = plansByDate.get(key) ?? []
-
-                return (
-                  <AgendaDayGroup
-                    key={key}
-                    date={date}
-                    plans={dayPlans}
-                    isToday={isToday(date)}
-                    onPlanClick={onPlanClick}
-                    onPlanContextMenu={onPlanContextMenu}
-                  />
-                )
-              })}
+          {hasAnyPlans ? (
+            <div className="divide-border divide-y">
+              {sortedPlans.map((plan) => (
+                <AgendaListItem key={plan.id} plan={plan} onClick={onPlanClick} onContextMenu={onPlanContextMenu} />
+              ))}
             </div>
           ) : (
             <EmptyState

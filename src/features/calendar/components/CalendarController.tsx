@@ -2,7 +2,7 @@
 // TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
-import React, { Suspense, useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 
 import { useRouter } from 'next/navigation'
 
@@ -37,28 +37,12 @@ import { instancesToExceptionsMap, usePlanInstances } from '@/features/plans/hoo
 import { isRecurringPlan } from '@/features/plans/utils/recurrence'
 
 import { CalendarLayout } from './layout/CalendarLayout'
+import { AgendaView } from './views/AgendaView'
+import { DayView } from './views/DayView'
+import { FiveDayView } from './views/FiveDayView'
 import { EventContextMenu } from './views/shared/components'
-
-// 遅延ロード: カレンダービューコンポーネントは大きいため、使用時のみロード
-const DayView = React.lazy(() => import('./views/DayView').then((module) => ({ default: module.DayView })))
-const WeekView = React.lazy(() => import('./views/WeekView').then((module) => ({ default: module.WeekView })))
-const ThreeDayView = React.lazy(() =>
-  import('./views/ThreeDayView').then((module) => ({ default: module.ThreeDayView }))
-)
-const FiveDayView = React.lazy(() => import('./views/FiveDayView').then((module) => ({ default: module.FiveDayView })))
-const AgendaView = React.lazy(() => import('./views/AgendaView').then((module) => ({ default: module.AgendaView })))
-
-// ローディングフォールバック
-const CalendarViewSkeleton = () => (
-  <div className="h-full w-full animate-pulse">
-    <div className="bg-muted mb-4 h-12 rounded" />
-    <div className="grid grid-cols-7 gap-2">
-      {Array.from({ length: 21 }).map((_, i) => (
-        <div key={i} className="bg-muted h-24 rounded" />
-      ))}
-    </div>
-  </div>
-)
+import { ThreeDayView } from './views/ThreeDayView'
+import { WeekView } from './views/WeekView'
 
 interface CalendarViewExtendedProps extends CalendarViewProps {
   initialViewType?: CalendarViewType
@@ -541,33 +525,27 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       onNavigateToday: handleNavigateToday,
     }
 
-    return (
-      <Suspense fallback={<CalendarViewSkeleton />}>
-        {(() => {
-          switch (viewType) {
-            case 'day':
-              return <DayView {...commonProps} showWeekends={showWeekends} />
-            case '3day':
-              return <ThreeDayView {...commonProps} showWeekends={showWeekends} />
-            case '5day':
-              return <FiveDayView {...commonProps} showWeekends={showWeekends} />
-            case 'week':
-              return <WeekView {...commonProps} showWeekends={showWeekends} />
-            case 'agenda':
-              return (
-                <AgendaView
-                  {...commonProps}
-                  plans={filteredEvents}
-                  onPlanClick={handleEventClick}
-                  onPlanContextMenu={handleEventContextMenu}
-                />
-              )
-            default:
-              return <DayView {...commonProps} />
-          }
-        })()}
-      </Suspense>
-    )
+    switch (viewType) {
+      case 'day':
+        return <DayView {...commonProps} showWeekends={showWeekends} />
+      case '3day':
+        return <ThreeDayView {...commonProps} showWeekends={showWeekends} />
+      case '5day':
+        return <FiveDayView {...commonProps} showWeekends={showWeekends} />
+      case 'week':
+        return <WeekView {...commonProps} showWeekends={showWeekends} />
+      case 'agenda':
+        return (
+          <AgendaView
+            {...commonProps}
+            plans={filteredEvents}
+            onPlanClick={handleEventClick}
+            onPlanContextMenu={handleEventContextMenu}
+          />
+        )
+      default:
+        return <DayView {...commonProps} />
+    }
   }
 
   // 日付選択ハンドラー（週末調整フック使用）
