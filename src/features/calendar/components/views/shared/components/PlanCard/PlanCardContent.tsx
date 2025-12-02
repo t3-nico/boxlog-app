@@ -4,10 +4,11 @@
 
 'use client'
 
-import { Bell, Repeat } from 'lucide-react'
+import { Bell } from 'lucide-react'
 import { memo } from 'react'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { RecurringIndicatorFromFlag } from '@/features/plans/components/shared/RecurringIndicator'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { formatTimeRange } from '../../utils/dateHelpers'
@@ -85,7 +86,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
                 : t('calendar.event.noTimeSet')}
           </span>
           {/* 繰り返しアイコン */}
-          {plan.isRecurring && <Repeat className="h-3 w-3 flex-shrink-0 opacity-75" />}
+          <RecurringIndicatorFromFlag isRecurring={plan.isRecurring} size="xs" className="opacity-75" />
           {/* 通知アイコン（reminder_minutesが設定されている場合） */}
           {plan.reminder_minutes != null && <Bell className="h-3 w-3 flex-shrink-0 opacity-75" />}
         </div>

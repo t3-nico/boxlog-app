@@ -18,16 +18,24 @@ interface PlanInitialData {
 interface PlanInspectorStore {
   isOpen: boolean
   planId: string | null
+  /** 繰り返しプランの特定インスタンス日付（YYYY-MM-DD形式） */
+  instanceDate: string | null
   initialData?: PlanInitialData | undefined
-  openInspector: (planId: string | null, initialData?: PlanInitialData | undefined) => void
+  openInspector: (planId: string | null, options?: { initialData?: PlanInitialData; instanceDate?: string }) => void
   closeInspector: () => void
 }
 
 export const usePlanInspectorStore = create<PlanInspectorStore>((set) => ({
   isOpen: false,
   planId: null,
+  instanceDate: null,
   initialData: undefined,
-  openInspector: (planId, initialData) =>
-    set({ isOpen: true, planId, initialData: planId === null ? (initialData ?? undefined) : undefined }),
-  closeInspector: () => set({ isOpen: false, planId: null, initialData: undefined }),
+  openInspector: (planId, options) =>
+    set({
+      isOpen: true,
+      planId,
+      instanceDate: options?.instanceDate ?? null,
+      initialData: planId === null ? (options?.initialData ?? undefined) : undefined,
+    }),
+  closeInspector: () => set({ isOpen: false, planId: null, instanceDate: null, initialData: undefined }),
 }))

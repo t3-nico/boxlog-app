@@ -36,6 +36,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { usePlan } from '../../hooks/usePlan'
 import { usePlanActivities } from '../../hooks/usePlanActivities'
+import { usePlanInstanceMutations } from '../../hooks/usePlanInstances'
 import { usePlanMutations } from '../../hooks/usePlanMutations'
 import { usePlans } from '../../hooks/usePlans'
 import { usePlanTags } from '../../hooks/usePlanTags'
@@ -43,11 +44,13 @@ import { usePlanCacheStore } from '../../stores/usePlanCacheStore'
 import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore'
 import type { Plan } from '../../types/plan'
 import { formatActivity, formatRelativeTime } from '../../utils/activityFormatter'
+import { isRecurringPlan } from '../../utils/recurrence'
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
 import { NovelDescriptionEditor } from '../shared/NovelDescriptionEditor'
 import { PlanDateTimeInput } from '../shared/PlanDateTimeInput'
 import { PlanTagsSection } from '../shared/PlanTagsSection'
 import { RecurrencePopover } from '../shared/RecurrencePopover'
+import { RecurringEditDialog, type RecurringEditScope } from '../shared/RecurringEditDialog'
 import { ReminderSelect } from '../shared/ReminderSelect'
 
 /**
@@ -69,7 +72,7 @@ import { ReminderSelect } from '../shared/ReminderSelect'
  * ```
  */
 export function PlanInspector() {
-  const { isOpen, planId, initialData, closeInspector, openInspector } = usePlanInspectorStore()
+  const { isOpen, planId, instanceDate, initialData, closeInspector, openInspector } = usePlanInspectorStore()
   const { setFocusedId } = useInboxFocusStore()
 
   // Planデータ取得（タグ情報も含む）
@@ -213,16 +216,78 @@ export function PlanInspector() {
   }
 
   // Mutations（Toast通知・キャッシュ無効化込み）
-  const { updatePlan, deletePlan } = usePlanMutations()
+  const { createPlan, updatePlan, deletePlan } = usePlanMutations()
+  const { createInstance } = usePlanInstanceMutations()
   const { getCache } = usePlanCacheStore()
 
   // 削除ハンドラー
   const handleDelete = () => {
-    if (!planId) return
+    if (!planId || !plan) return
+
+    // 繰り返しプランの場合はダイアログを表示
+    if (isRecurringPlan(plan)) {
+      setRecurringDialogMode('delete')
+      setRecurringDialogOpen(true)
+      return
+    }
+
+    // 通常プランは確認後削除
     if (confirm('このプランを削除しますか？')) {
       deletePlan.mutate({ id: planId })
       closeInspector()
     }
+  }
+
+  // 繰り返しプラン削除/編集確認ハンドラー
+  const handleRecurringConfirm = async (scope: RecurringEditScope) => {
+    if (!planId || !plan) return
+
+    if (recurringDialogMode === 'delete') {
+      try {
+        switch (scope) {
+          case 'this':
+            // この日のみ例外として削除（cancelled例外を作成）
+            if (instanceDate) {
+              await createInstance.mutateAsync({
+                planId,
+                instanceDate,
+                exceptionType: 'cancelled',
+              })
+            } else {
+              // instanceDateがない場合は全削除にフォールバック
+              await deletePlan.mutateAsync({ id: planId })
+            }
+            break
+
+          case 'thisAndFuture':
+            // この日以降を終了: recurrence_end_date を更新
+            if (instanceDate) {
+              // 前日を終了日にする（この日は含めない）
+              const endDate = new Date(instanceDate)
+              endDate.setDate(endDate.getDate() - 1)
+              await updatePlan.mutateAsync({
+                id: planId,
+                data: {
+                  recurrence_end_date: endDate.toISOString().slice(0, 10),
+                },
+              })
+            } else {
+              // instanceDateがない場合は全削除にフォールバック
+              await deletePlan.mutateAsync({ id: planId })
+            }
+            break
+
+          case 'all':
+            // 親プラン自体を削除
+            await deletePlan.mutateAsync({ id: planId })
+            break
+        }
+        closeInspector()
+      } catch (err) {
+        console.error('Failed to delete recurring plan:', err)
+      }
+    }
+    setRecurringDialogOpen(false)
   }
 
   // IDコピー
@@ -238,10 +303,36 @@ export function PlanInspector() {
   }
 
   // 複製
-  const handleDuplicate = () => {
-    if (!plan) return
-    // TODO: 複製ロジックを実装
-    console.log('Duplicate plan:', plan)
+  const handleDuplicate = async () => {
+    if (!plan || !planData) return
+
+    try {
+      // プランを複製（タイトルに「のコピー」を追加）
+      const newPlan = await createPlan.mutateAsync({
+        title: `${plan.title}のコピー`,
+        description: plan.description ?? undefined,
+        status: 'backlog', // 複製時はbacklogにリセット
+        due_date: plan.due_date ?? undefined,
+        start_time: plan.start_time ?? undefined,
+        end_time: plan.end_time ?? undefined,
+        recurrence_type: plan.recurrence_type ?? undefined,
+        recurrence_end_date: plan.recurrence_end_date ?? undefined,
+        recurrence_rule: plan.recurrence_rule ?? undefined,
+        reminder_minutes: plan.reminder_minutes ?? undefined,
+      })
+
+      // タグも複製（planDataからタグ情報を取得）
+      if ('tags' in planData && Array.isArray(planData.tags) && planData.tags.length > 0) {
+        for (const tag of planData.tags) {
+          await addPlanTag(newPlan.id, tag.id)
+        }
+      }
+
+      // 複製したプランをInspectorで開く
+      openInspector(newPlan.id)
+    } catch (err) {
+      console.error('Failed to duplicate plan:', err)
+    }
   }
 
   // リンクをコピー
@@ -269,6 +360,10 @@ export function PlanInspector() {
   const [reminderType, setReminderType] = useState<string>('')
   const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
   const recurrenceTriggerRef = useRef<HTMLDivElement>(null)
+
+  // 繰り返しプラン編集/削除ダイアログ
+  const [recurringDialogOpen, setRecurringDialogOpen] = useState(false)
+  const [recurringDialogMode, setRecurringDialogMode] = useState<'edit' | 'delete'>('delete')
 
   // Inspector が閉じられたときにポップアップも閉じる
   useEffect(() => {
@@ -871,6 +966,15 @@ export function PlanInspector() {
           </>
         )}
       </SheetContent>
+
+      {/* 繰り返しプラン編集/削除ダイアログ */}
+      <RecurringEditDialog
+        open={recurringDialogOpen}
+        onOpenChange={setRecurringDialogOpen}
+        onConfirm={handleRecurringConfirm}
+        mode={recurringDialogMode}
+        planTitle={plan?.title}
+      />
     </Sheet>
   )
 }

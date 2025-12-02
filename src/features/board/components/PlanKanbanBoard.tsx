@@ -9,6 +9,7 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent'
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
+import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { reminderTypeToMinutes } from '@/features/plans/utils/reminder'
@@ -25,7 +26,7 @@ import {
 } from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Bell, Calendar as CalendarIcon, MoreVertical, Plus, Repeat, Tag } from 'lucide-react'
+import { Bell, Calendar as CalendarIcon, MoreVertical, Plus, Tag } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useBoardStatusFilterStore } from '../stores/useBoardStatusFilterStore'
 import { PlanCard } from './shared/PlanCard'
@@ -429,26 +430,13 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
                     (recurrenceType && recurrenceType !== 'none') ||
                     (reminderType && reminderType !== 'none')) && (
                     <div className="flex items-center gap-1">
-                      {/* 繰り返しアイコン */}
-                      {(recurrenceRule || (recurrenceType && recurrenceType !== 'none')) && (
-                        <div
-                          title={
-                            recurrenceType === 'daily'
-                              ? t('board.kanban.recurrence.daily')
-                              : recurrenceType === 'weekly'
-                                ? t('board.kanban.recurrence.weekly')
-                                : recurrenceType === 'monthly'
-                                  ? t('board.kanban.recurrence.monthly')
-                                  : recurrenceType === 'yearly'
-                                    ? t('board.kanban.recurrence.yearly')
-                                    : recurrenceType === 'weekdays'
-                                      ? t('board.kanban.recurrence.weekdays')
-                                      : ''
-                          }
-                        >
-                          <Repeat className="text-muted-foreground size-4" />
-                        </div>
-                      )}
+                      {/* 繰り返しアイコン（共通コンポーネント） */}
+                      <RecurringIndicator
+                        recurrenceType={recurrenceType}
+                        recurrenceRule={recurrenceRule}
+                        size="md"
+                        showTooltip
+                      />
 
                       {/* 通知アイコン（設定時のみ表示） */}
                       {reminderType && reminderType !== 'none' && (

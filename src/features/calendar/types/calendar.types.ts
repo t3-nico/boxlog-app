@@ -1,4 +1,4 @@
-export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | '2week' | 'month'
+export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | '2week' | 'month' | 'agenda'
 
 export interface CalendarViewProps {
   className?: string
