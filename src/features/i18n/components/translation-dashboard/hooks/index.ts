@@ -1,0 +1,1 @@
+export { useTranslationData } from './useTranslationData'
