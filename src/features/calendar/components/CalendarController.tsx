@@ -33,7 +33,7 @@ import { expandRecurringPlansToCalendarPlans } from '../utils/planDataAdapter'
 import type { CalendarPlan, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
 import { RecurringEditDialog } from '@/features/plans/components/shared/RecurringEditDialog'
-import { usePlanInstances, instancesToExceptionsMap } from '@/features/plans/hooks/usePlanInstances'
+import { instancesToExceptionsMap, usePlanInstances } from '@/features/plans/hooks/usePlanInstances'
 import { isRecurringPlan } from '@/features/plans/utils/recurrence'
 
 import { CalendarLayout } from './layout/CalendarLayout'
@@ -367,9 +367,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     (plan: CalendarPlan) => {
       // プランIDでplan Inspectorを開く
       // 繰り返しプランの場合はインスタンス日付を渡す
-      const instanceDate = plan.isRecurring && plan.id.includes('_')
-        ? plan.id.split('_').pop()
-        : plan.startDate.toISOString().slice(0, 10)
+      const instanceDate =
+        plan.isRecurring && plan.id.includes('_') ? plan.id.split('_').pop() : plan.startDate.toISOString().slice(0, 10)
       openInspector(plan.calendarId || plan.id, { instanceDate })
       logger.log('📋 Opening plan Inspector:', { planId: plan.calendarId || plan.id, title: plan.title, instanceDate })
     },
@@ -555,7 +554,14 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
             case 'week':
               return <WeekView {...commonProps} showWeekends={showWeekends} />
             case 'agenda':
-              return <AgendaView {...commonProps} />
+              return (
+                <AgendaView
+                  {...commonProps}
+                  plans={filteredEvents}
+                  onPlanClick={handleEventClick}
+                  onPlanContextMenu={handleEventContextMenu}
+                />
+              )
             default:
               return <DayView {...commonProps} />
           }
