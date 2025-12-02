@@ -473,18 +473,74 @@ export const selectIsAuthenticated = (state: AuthState) => !!state.user
 **使用例**:
 
 ```tsx
-// ❌ 避ける：全体を取得
+// ❌ 禁止：全体を取得（不要な再レンダリングが発生）
 const { user, session, loading } = useAuthStore()
 
-// ✅ 推奨：必要な状態だけ監視
+// ✅ 推奨：auto-generated selectors
+const user = useAuthStore.use.user()
+const signOut = useAuthStore.use.signOut()
+
+// ✅ OK：手動selector
 const user = useAuthStore((state) => state.user)
 const signOut = useAuthStore((state) => state.signOut)
 
-// ✅ セレクター使用
+// ✅ OK：カスタムセレクター
 const isAuthenticated = useAuthStore(selectIsAuthenticated)
 ```
 
-#### 7.6 参考リンク
+#### 7.6 Zustand Selector必須パターン（再レンダリング最適化）
+
+**原則**: Zustand storeは必ず `createSelectors` でラップし、selector経由でアクセスする
+
+```tsx
+// ✅ Store定義時にcreateSelectorsを使用
+import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
+import { createSelectors } from '@/lib/zustand/createSelectors'
+
+interface SidebarState {
+  isOpen: boolean
+  toggle: () => void
+}
+
+const useSidebarStoreBase = create<SidebarState>()(
+  devtools(
+    (set) => ({
+      isOpen: true,
+      toggle: () => set((state) => ({ isOpen: !state.isOpen })),
+    }),
+    { name: 'sidebar-store' }
+  )
+)
+
+// ✅ createSelectorsでラップしてexport
+export const useSidebarStore = createSelectors(useSidebarStoreBase)
+```
+
+**コンポーネントでの使用**:
+
+```tsx
+// ✅ 推奨: .use.プロパティ名() で取得（最も簡潔）
+const isOpen = useSidebarStore.use.isOpen()
+const toggle = useSidebarStore.use.toggle()
+
+// ✅ OK: 手動selectorでも可
+const isOpen = useSidebarStore((state) => state.isOpen)
+
+// ❌ 禁止: 全プロパティ取得（不要な再レンダリングが発生）
+const { isOpen, toggle } = useSidebarStore()
+```
+
+**なぜ重要か（比喩）**:
+- ❌ 全プロパティ取得 = 「教室の全員起立」→ 1人の名前を呼ぶだけで全員が反応
+- ✅ selector使用 = 「担当制」→ 必要な人だけが反応、他の人は座ったまま
+
+**新規Store作成時のチェックリスト**:
+- [ ] `createSelectors` でラップしている
+- [ ] JSDocに `.use.` パターンの使用例を記載
+- [ ] コンポーネントでselector経由でアクセス
+
+#### 7.7 参考リンク
 
 - **詳細判断ガイド**: [docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md](../docs/architecture/STATE_MANAGEMENT_DECISION_GUIDE.md)
 - **Zustand公式**: https://zustand-demo.pmnd.rs/

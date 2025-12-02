@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
+import { createSelectors } from '@/lib/zustand/createSelectors'
+
 interface SidebarState {
   /** Sidebarの開閉状態 */
   isOpen: boolean
@@ -17,11 +19,18 @@ interface SidebarState {
  *
  * @example
  * ```tsx
+ * // ✅ 推奨: auto-generated selectors（再レンダリング最適化）
+ * const isOpen = useSidebarStore.use.isOpen()
+ * const toggle = useSidebarStore.use.toggle()
+ *
+ * // ✅ OK: 手動selector
+ * const isOpen = useSidebarStore((state) => state.isOpen)
+ *
+ * // ❌ 非推奨: 全プロパティ取得（不要な再レンダリングが発生）
  * const { isOpen, toggle } = useSidebarStore()
- * <button onClick={toggle}>Toggle Sidebar</button>
  * ```
  */
-export const useSidebarStore = create<SidebarState>()(
+const useSidebarStoreBase = create<SidebarState>()(
   devtools(
     persist(
       (set) => ({
@@ -39,3 +48,6 @@ export const useSidebarStore = create<SidebarState>()(
     }
   )
 )
+
+// Auto-generated selectors でパフォーマンス最適化
+export const useSidebarStore = createSelectors(useSidebarStoreBase)
