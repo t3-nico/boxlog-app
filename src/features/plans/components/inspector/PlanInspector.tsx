@@ -8,7 +8,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Label } from '@/components/ui/label'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
@@ -17,8 +16,10 @@ import { useInboxFocusStore } from '@/features/inbox/stores/useInboxFocusStore'
 import { format } from 'date-fns'
 import {
   CheckCircle,
+  CheckCircle2,
   ChevronDown,
   ChevronUp,
+  Circle,
   Copy,
   Edit,
   ExternalLink,
@@ -44,6 +45,7 @@ import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore'
 import type { Plan } from '../../types/plan'
 import { formatActivity, formatRelativeTime } from '../../utils/activityFormatter'
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
+import { getEffectiveStatus } from '../../utils/status'
 import { NovelDescriptionEditor } from '../shared/NovelDescriptionEditor'
 import { PlanDateTimeInput } from '../shared/PlanDateTimeInput'
 import { PlanTagsSection } from '../shared/PlanTagsSection'
@@ -388,7 +390,7 @@ export function PlanInspector() {
 
       // フィールドに応じて適切な型で設定
       if (field === 'status' && value) {
-        updateData.status = value as 'open' | 'in_progress' | 'completed' | 'cancelled'
+        updateData.status = value as 'todo' | 'doing' | 'done'
       } else {
         updateData[field] = value
       }
@@ -627,27 +629,51 @@ export function PlanInspector() {
 
               {/* 詳細タブ */}
               <TabsContent value="details">
-                {/* タイトル */}
+                {/* タイトル + チェックボックス */}
                 <div className="px-6 pt-4 pb-2">
-                  <div className="inline">
-                    <span
-                      ref={titleRef}
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={(e) => autoSave('title', e.currentTarget.textContent || '')}
-                      className="bg-popover border-0 px-0 text-[2rem] font-bold outline-none"
-                      style={{ fontSize: 'var(--font-size-xl)' }}
+                  <div className="flex items-start gap-3">
+                    {/* Done チェックボックス */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const effectiveStatus = getEffectiveStatus(plan)
+                        const newStatus = effectiveStatus === 'done' ? 'todo' : 'done'
+                        updatePlan.mutate({
+                          id: plan.id,
+                          data: { status: newStatus },
+                        })
+                      }}
+                      className="mt-1 flex-shrink-0 transition-colors hover:opacity-80"
+                      aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
                     >
-                      {plan.title}
-                    </span>
-                    {plan.plan_number && (
+                      {getEffectiveStatus(plan) === 'done' ? (
+                        <CheckCircle2 className="h-7 w-7 text-green-500" />
+                      ) : (
+                        <Circle className="text-muted-foreground h-7 w-7" />
+                      )}
+                    </button>
+                    <div className="inline">
                       <span
-                        className="text-muted-foreground ml-4 text-[2rem]"
+                        ref={titleRef}
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => autoSave('title', e.currentTarget.textContent || '')}
+                        className={`bg-popover border-0 px-0 text-[2rem] font-bold outline-none ${
+                          getEffectiveStatus(plan) === 'done' ? 'text-muted-foreground line-through' : ''
+                        }`}
                         style={{ fontSize: 'var(--font-size-xl)' }}
                       >
-                        #{plan.plan_number}
+                        {plan.title}
                       </span>
-                    )}
+                      {plan.plan_number && (
+                        <span
+                          className="text-muted-foreground ml-4 text-[2rem]"
+                          style={{ fontSize: 'var(--font-size-xl)' }}
+                        >
+                          #{plan.plan_number}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -839,24 +865,6 @@ export function PlanInspector() {
                   </div>
                 </div>
 
-                {/* ステータス */}
-                <div className="flex flex-col gap-4 px-6 py-4">
-                  <div className="flex flex-col gap-2">
-                    <Label htmlFor="status">ステータス</Label>
-                    <select
-                      id="status"
-                      key={`status-${plan.id}`}
-                      defaultValue={plan.status}
-                      onChange={(e) => autoSave('status', e.target.value)}
-                      className="bg-background border-input ring-offset-background focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                    >
-                      <option value="open">Open</option>
-                      <option value="in_progress">In Progress</option>
-                      <option value="completed">Completed</option>
-                      <option value="cancelled">Cancelled</option>
-                    </select>
-                  </div>
-                </div>
               </TabsContent>
 
               {/* アクティビティタブ */}

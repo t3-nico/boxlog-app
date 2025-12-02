@@ -54,7 +54,7 @@ function getColorForStatus(status: PlanStatus): string {
  *   title: 'ミーティング',
  *   start_time: '2025-11-20T10:00:00Z',
  *   end_time: '2025-11-20T11:00:00Z',
- *   status: 'ready',
+ *   status: 'doing',
  *   tags: [{ id: '1', name: '重要', color: '#ff0000' }],
  *   // ...
  * }
@@ -62,7 +62,7 @@ function getColorForStatus(status: PlanStatus): string {
  * const event = planToCalendarEvent(plan)
  * // event.startDate: Date(2025-11-20 10:00)
  * // event.endDate: Date(2025-11-20 11:00)
- * // event.status: 'planned'
+ * // event.status: 'in_progress'
  * // event.tags: [{ id: '1', name: '重要', color: '#ff0000' }]
  * ```
  */

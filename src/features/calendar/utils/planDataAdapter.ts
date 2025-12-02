@@ -20,18 +20,12 @@ function mapPlanStatusToCalendarStatus(
   status: string
 ): 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled' {
   switch (status) {
-    case 'backlog':
+    case 'todo':
       return 'inbox'
-    case 'ready':
-      return 'planned'
-    case 'active':
+    case 'doing':
       return 'in_progress'
     case 'done':
       return 'completed'
-    case 'cancel':
-      return 'cancelled'
-    case 'wait':
-      return 'planned' // 待ち状態は「計画済み」として扱う
     default:
       return 'inbox'
   }

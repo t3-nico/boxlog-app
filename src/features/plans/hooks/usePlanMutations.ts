@@ -18,7 +18,7 @@ import { usePlanInspectorStore } from '../stores/usePlanInspectorStore'
  * const { createPlan, updatePlan, deletePlan } = usePlanMutations()
  *
  * // 作成
- * createPlan.mutate({ title: 'New Plan', status: 'backlog' })
+ * createPlan.mutate({ title: 'New Plan', status: 'todo' })
  *
  * // 更新
  * updatePlan.mutate({ id: '123', data: { title: 'Updated' } })
