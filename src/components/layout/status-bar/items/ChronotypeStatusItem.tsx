@@ -94,9 +94,9 @@ export function ChronotypeStatusItem() {
     return `残り${mins}m`
   }, [])
 
-  // クリック時: 設定ダイアログを開く
+  // クリック時: 設定ダイアログを開き、クロノタイプ設定へスクロール
   const handleClick = useCallback(() => {
-    openSettingsDialog('personalization')
+    openSettingsDialog('personalization', 'chronotype')
   }, [openSettingsDialog])
 
   // ラベル生成

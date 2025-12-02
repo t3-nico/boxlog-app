@@ -89,7 +89,7 @@ function TimelineBar({ zones }: { zones: ProductivityZone[] }) {
   return (
     <div className="space-y-2">
       {/* 時間ラベル */}
-      <div className="flex justify-between text-xs text-muted-foreground">
+      <div className="text-muted-foreground flex justify-between text-xs">
         <span>0時</span>
         <span>6時</span>
         <span>12時</span>
@@ -173,20 +173,26 @@ export function ChronotypeSettings() {
 
   // 現在選択中のタイプ
   const selectedType = autoSave.values.chronotype.type
-  const selectedProfile =
-    selectedType !== 'custom' ? CHRONOTYPE_PRESETS[selectedType] : null
+  const selectedProfile = selectedType !== 'custom' ? CHRONOTYPE_PRESETS[selectedType] : null
 
   return (
     <div className="space-y-6">
       {/* タイプ選択セクション */}
-      <SettingsCard
-        title={t('settings.chronotype.title')}
-        isSaving={autoSave.isSaving}
-      >
+      <SettingsCard title={t('settings.chronotype.title')} isSaving={autoSave.isSaving}>
         <div className="space-y-4">
-          <p className="text-muted-foreground text-sm">
-            {t('settings.chronotype.description')}
-          </p>
+          {/* 説明・参考リンク */}
+          <div className="space-y-3">
+            <p className="text-muted-foreground text-sm">{t('settings.chronotype.description')}</p>
+            <a
+              href="https://sleepdoctor.com/pages/chronotypes"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-xs underline transition-colors"
+            >
+              <span>{t('settings.chronotype.learnMore')}</span>
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
 
           {/* タイプ選択ボタン */}
           <div className="grid grid-cols-2 gap-2">
@@ -198,22 +204,16 @@ export function ChronotypeSettings() {
                   type="button"
                   onClick={() => handleTypeSelect(type)}
                   className={cn(
-                    'flex items-center gap-2 rounded-lg border p-3 text-left transition-colors',
-                    isSelected
-                      ? 'border-primary bg-primary/5'
-                      : 'border-border hover:border-primary/50 hover:bg-muted'
+                    'flex items-center gap-2 rounded-lg border p-3 text-left transition-colors outline-none',
+                    isSelected ? 'border-foreground bg-secondary' : 'border-border hover:bg-secondary'
                   )}
                 >
                   <span className="text-xl">{CHRONOTYPE_EMOJI[type]}</span>
                   <div>
                     <div className="font-medium">{CHRONOTYPE_PRESETS[type].name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {CHRONOTYPE_LABEL[type]}
-                    </div>
+                    <div className="text-muted-foreground text-xs">{CHRONOTYPE_LABEL[type]}</div>
                   </div>
-                  {isSelected && (
-                    <div className="ml-auto text-primary">✓</div>
-                  )}
+                  {isSelected && <div className="text-foreground ml-auto">✓</div>}
                 </button>
               )
             })}
@@ -232,17 +232,13 @@ export function ChronotypeSettings() {
                 <h4 className="font-medium">
                   {selectedProfile.name} - {CHRONOTYPE_LABEL[selectedType as Exclude<ChronotypeType, 'custom'>]}
                 </h4>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {selectedProfile.description}
-                </p>
+                <p className="text-muted-foreground mt-1 text-sm">{selectedProfile.description}</p>
               </div>
             </div>
 
             {/* 24時間タイムライン */}
             <div className="pt-2">
-              <h5 className="text-sm font-medium mb-3">
-                {t('settings.chronotype.timeline')}
-              </h5>
+              <h5 className="mb-3 text-sm font-medium">{t('settings.chronotype.timeline')}</h5>
               <TimelineBar zones={selectedProfile.productivityZones} />
             </div>
 
@@ -250,10 +246,8 @@ export function ChronotypeSettings() {
             <div className="flex items-center gap-2 rounded-lg bg-green-500/10 p-3">
               <Star className="h-4 w-4 text-green-600" />
               <div>
-                <span className="text-sm font-medium">
-                  {t('settings.chronotype.peakTime')}
-                </span>
-                <span className="text-sm text-muted-foreground ml-2">
+                <span className="text-sm font-medium">{t('settings.chronotype.peakTime')}</span>
+                <span className="text-muted-foreground ml-2 text-sm">
                   {getPeakHours(selectedProfile.productivityZones)}
                 </span>
               </div>
@@ -261,22 +255,6 @@ export function ChronotypeSettings() {
           </div>
         </SettingsCard>
       )}
-
-      {/* 参考リンク */}
-      <SettingsCard>
-        <a
-          href="https://sleepdoctor.com/pages/chronotypes"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ExternalLink className="h-4 w-4" />
-          <span>{t('settings.chronotype.learnMore')}</span>
-        </a>
-        <p className="text-xs text-muted-foreground mt-1">
-          Sleep Doctor (Dr. Michael Breus)
-        </p>
-      </SettingsCard>
     </div>
   )
 }
