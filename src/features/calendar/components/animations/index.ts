@@ -24,6 +24,8 @@ export {
   useViewTransition,
 } from './ViewTransition'
 
+export type { CalendarView, SlideDirection } from './types'
+
 export { AnimatedEventCard } from './AnimatedPlanCard'
 export {
   // tailwindAnimations, // TODO(#389): EventAnimations.tsxで定義されていない
