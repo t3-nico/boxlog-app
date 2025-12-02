@@ -104,7 +104,11 @@ export function usePlanContextActions() {
   const handleEditPlan = useCallback(
     (plan: CalendarPlan) => {
       // planInspectorを開いて編集モードにする
-      openInspector(plan.id)
+      // 繰り返しプランの場合はインスタンス日付を渡す
+      const instanceDate = plan.isRecurring && plan.id.includes('_')
+        ? plan.id.split('_').pop()
+        : plan.startDate.toISOString().slice(0, 10)
+      openInspector(plan.calendarId || plan.id, { instanceDate })
     },
     [openInspector]
   )
@@ -134,7 +138,11 @@ export function usePlanContextActions() {
   const handleViewDetails = useCallback(
     (plan: CalendarPlan) => {
       // planInspectorを開いて詳細を表示
-      openInspector(plan.id)
+      // 繰り返しプランの場合はインスタンス日付を渡す
+      const instanceDate = plan.isRecurring && plan.id.includes('_')
+        ? plan.id.split('_').pop()
+        : plan.startDate.toISOString().slice(0, 10)
+      openInspector(plan.calendarId || plan.id, { instanceDate })
     },
     [openInspector]
   )

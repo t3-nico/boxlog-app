@@ -366,8 +366,12 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const handleEventClick = useCallback(
     (plan: CalendarPlan) => {
       // プランIDでplan Inspectorを開く
-      openInspector(event.id)
-      logger.log('📋 Opening plan Inspector:', { planId: event.id, title: event.title })
+      // 繰り返しプランの場合はインスタンス日付を渡す
+      const instanceDate = plan.isRecurring && plan.id.includes('_')
+        ? plan.id.split('_').pop()
+        : plan.startDate.toISOString().slice(0, 10)
+      openInspector(plan.calendarId || plan.id, { instanceDate })
+      logger.log('📋 Opening plan Inspector:', { planId: plan.calendarId || plan.id, title: plan.title, instanceDate })
     },
     [openInspector]
   )

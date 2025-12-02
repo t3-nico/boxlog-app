@@ -36,6 +36,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { usePlan } from '../../hooks/usePlan'
 import { usePlanActivities } from '../../hooks/usePlanActivities'
+import { usePlanInstanceMutations } from '../../hooks/usePlanInstances'
 import { usePlanMutations } from '../../hooks/usePlanMutations'
 import { usePlans } from '../../hooks/usePlans'
 import { usePlanTags } from '../../hooks/usePlanTags'
@@ -71,7 +72,7 @@ import { ReminderSelect } from '../shared/ReminderSelect'
  * ```
  */
 export function PlanInspector() {
-  const { isOpen, planId, initialData, closeInspector, openInspector } = usePlanInspectorStore()
+  const { isOpen, planId, instanceDate, initialData, closeInspector, openInspector } = usePlanInspectorStore()
   const { setFocusedId } = useInboxFocusStore()
 
   // Planデータ取得（タグ情報も含む）
@@ -216,6 +217,7 @@ export function PlanInspector() {
 
   // Mutations（Toast通知・キャッシュ無効化込み）
   const { updatePlan, deletePlan } = usePlanMutations()
+  const { createInstance } = usePlanInstanceMutations()
   const { getCache } = usePlanCacheStore()
 
   // 削除ハンドラー
@@ -237,25 +239,55 @@ export function PlanInspector() {
   }
 
   // 繰り返しプラン削除/編集確認ハンドラー
-  const handleRecurringConfirm = (scope: RecurringEditScope) => {
+  const handleRecurringConfirm = async (scope: RecurringEditScope) => {
     if (!planId || !plan) return
 
     if (recurringDialogMode === 'delete') {
-      // TODO: scopeに応じた削除処理を実装
-      // scope: 'this' - この日のみ例外として削除
-      // scope: 'thisAndFuture' - この日以降を終了日として設定
-      // scope: 'all' - 親プラン自体を削除
-      if (scope === 'all') {
-        deletePlan.mutate({ id: planId })
+      try {
+        switch (scope) {
+          case 'this':
+            // この日のみ例外として削除（cancelled例外を作成）
+            if (instanceDate) {
+              await createInstance.mutateAsync({
+                planId,
+                instanceDate,
+                exceptionType: 'cancelled',
+              })
+            } else {
+              // instanceDateがない場合は全削除にフォールバック
+              await deletePlan.mutateAsync({ id: planId })
+            }
+            break
+
+          case 'thisAndFuture':
+            // この日以降を終了: recurrence_end_date を更新
+            if (instanceDate) {
+              // 前日を終了日にする（この日は含めない）
+              const endDate = new Date(instanceDate)
+              endDate.setDate(endDate.getDate() - 1)
+              await updatePlan.mutateAsync({
+                id: planId,
+                data: {
+                  recurrence_end_date: endDate.toISOString().slice(0, 10),
+                },
+              })
+            } else {
+              // instanceDateがない場合は全削除にフォールバック
+              await deletePlan.mutateAsync({ id: planId })
+            }
+            break
+
+          case 'all':
+            // 親プラン自体を削除
+            await deletePlan.mutateAsync({ id: planId })
+            break
+        }
         closeInspector()
-      } else {
-        // 部分削除の場合は例外を作成（TODO: 実装）
-        console.log('Partial delete with scope:', scope)
-        // 現時点では全削除のみ対応
-        deletePlan.mutate({ id: planId })
-        closeInspector()
+      } catch (err) {
+        console.error('Failed to delete recurring plan:', err)
       }
     }
+    setRecurringDialogOpen(false)
   }
 
   // IDコピー
