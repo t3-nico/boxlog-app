@@ -56,6 +56,32 @@ export {
   type RetryStrategy,
 }
 
+// Re-export from helpers (error message patterns)
+export {
+  createErrorToast,
+  estimateErrorCode,
+  getDetailedErrorInfo,
+  getErrorPattern,
+  getRecommendedActions,
+  getUserFriendlyMessage,
+  isAutoRecoverable,
+} from './helpers'
+
+// Re-export from patterns
+export {
+  API_ERROR_PATTERNS,
+  AUTH_ERROR_PATTERNS,
+  BUSINESS_ERROR_PATTERNS,
+  DATA_ERROR_PATTERNS,
+  ERROR_MESSAGE_PATTERNS,
+  EXTERNAL_ERROR_PATTERNS,
+  SYSTEM_ERROR_PATTERNS,
+  UI_ERROR_PATTERNS,
+} from './patterns'
+
+// Re-export error message pattern type
+export type { ErrorMessagePattern } from './types'
+
 /**
  * エラーパターン辞書の完全な定義
  */
