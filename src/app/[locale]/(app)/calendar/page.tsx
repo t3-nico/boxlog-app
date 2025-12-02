@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import type { Locale } from '@/types/i18n'
 
 interface CalendarPageProps {
-  params: { locale: Locale }
+  params: Promise<{ locale: Locale }>
 }
 
 export default async function CalendarPage({ params }: CalendarPageProps) {

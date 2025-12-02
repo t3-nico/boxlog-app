@@ -7,18 +7,18 @@ import type { Locale } from '@/types/i18n'
 import { CalendarViewClient } from './client'
 
 interface CalendarViewPageProps {
-  params: {
+  params: Promise<{
     view: string
     locale?: Locale
-  }
-  searchParams: {
+  }>
+  searchParams: Promise<{
     date?: string
-  }
+  }>
 }
 
 // 有効なビュータイプかチェック
 function isValidViewType(view: string): view is CalendarViewType {
-  const validTypes: CalendarViewType[] = ['day', '3day', '5day', 'week', '2week']
+  const validTypes: CalendarViewType[] = ['day', '3day', '5day', 'week', '2week', 'agenda']
 
   return validTypes.includes(view as CalendarViewType)
 }

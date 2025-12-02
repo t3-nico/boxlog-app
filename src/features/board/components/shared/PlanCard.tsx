@@ -16,19 +16,19 @@ import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent'
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
+import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { useplanTags } from '@/features/plans/hooks/usePlanTags'
 import { useplanCacheStore } from '@/features/plans/stores/usePlanCacheStore'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { toLocalISOString } from '@/features/plans/utils/datetime'
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder'
-import { configToReadable, ruleToConfig } from '@/features/plans/utils/rrule'
 import { getEffectiveStatus } from '@/features/plans/utils/status'
 import { cn } from '@/lib/utils'
 import { useDraggable } from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Bell, Calendar as CalendarIcon, CheckCircle2, Circle, Plus, Repeat, Tag, Trash2 } from 'lucide-react'
+import { Bell, Calendar as CalendarIcon, CheckCircle2, Circle, Plus, Tag, Trash2 } from 'lucide-react'
 
 import { useBoardFocusStore } from '../../stores/useBoardFocusStore'
 import { BoardActionMenuItems } from '../BoardActionMenuItems'
@@ -251,13 +251,13 @@ export function PlanCard({ item }: PlanCardProps) {
                 {(() => {
                   const status = getEffectiveStatus(item)
                   if (status === 'done') {
-                    return <CheckCircle2 className="h-4 w-4 text-success" />
+                    return <CheckCircle2 className="text-success h-4 w-4" />
                   }
                   if (status === 'doing') {
-                    return <Circle className="h-4 w-4 text-primary" />
+                    return <Circle className="text-primary h-4 w-4" />
                   }
                   // todo
-                  return <Circle className="h-4 w-4 text-muted-foreground" />
+                  return <Circle className="text-muted-foreground h-4 w-4" />
                 })()}
               </button>
               <h3
@@ -293,28 +293,13 @@ export function PlanCard({ item }: PlanCardProps) {
                     (recurrenceType && recurrenceType !== 'none') ||
                     (reminderType && reminderType !== 'none' && reminderType !== '')) && (
                     <div className="flex items-center gap-1">
-                      {/* 繰り返しアイコン（設定時のみ表示） */}
-                      {(recurrenceRule || (recurrenceType && recurrenceType !== 'none')) && (
-                        <div
-                          title={
-                            recurrenceRule
-                              ? configToReadable(ruleToConfig(recurrenceRule))
-                              : recurrenceType === 'daily'
-                                ? '毎日'
-                                : recurrenceType === 'weekly'
-                                  ? '毎週'
-                                  : recurrenceType === 'monthly'
-                                    ? '毎月'
-                                    : recurrenceType === 'yearly'
-                                      ? '毎年'
-                                      : recurrenceType === 'weekdays'
-                                        ? '平日'
-                                        : ''
-                          }
-                        >
-                          <Repeat className="text-muted-foreground size-4" />
-                        </div>
-                      )}
+                      {/* 繰り返しアイコン（設定時のみ表示・ツールチップ付き） */}
+                      <RecurringIndicator
+                        recurrenceType={recurrenceType}
+                        recurrenceRule={recurrenceRule}
+                        size="md"
+                        showTooltip
+                      />
 
                       {/* 通知アイコン（設定時のみ表示） */}
                       {reminderType && reminderType !== 'none' && reminderType !== '' && (

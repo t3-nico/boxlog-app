@@ -50,6 +50,10 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
             </button>
           }
         />
+        <div className="flex flex-col items-center gap-1">
+          <NotificationDropdown />
+          <span className="text-center text-xs leading-tight">{t('notifications.title')}</span>
+        </div>
         <Item icon={Search} label={t('actions.search')} url="#" isActive={false} onClick={handleSearchClick} />
         <Item
           icon={resolvedTheme === 'light' ? Moon : Sun}
@@ -58,10 +62,6 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
           isActive={false}
           onClick={handleThemeClick}
         />
-        <div className="flex flex-col items-center gap-1">
-          <NotificationDropdown />
-          <span className="text-center text-xs leading-tight">{t('notifications.title')}</span>
-        </div>
       </div>
     </>
   )

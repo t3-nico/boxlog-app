@@ -17,6 +17,7 @@ export type CalendarView =
   | '2week'
   | 'schedule'
   | 'month'
+  | 'agenda'
 
 // 方向の定義
 export type SlideDirection = 'left' | 'right' | 'up' | 'down'
@@ -139,6 +140,12 @@ export const AdvancedViewTransition = ({
           ...baseAnimation,
           initial: { ...baseAnimation.initial, y: -20 },
           exit: { ...baseAnimation.exit, y: 20 },
+        }
+      case 'agenda':
+        return {
+          ...baseAnimation,
+          initial: { ...baseAnimation.initial, y: 20 },
+          exit: { ...baseAnimation.exit, y: -20 },
         }
       default:
         return baseAnimation
@@ -395,8 +402,28 @@ export const TaskCreateAnimation = ({ children, isNew = false }: TaskCreateAnima
 // カレンダービュー切り替え時のアニメーション
 interface CalendarViewAnimationProps {
   children: ReactNode
-  viewType: 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
-  previousViewType?: 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
+  viewType:
+    | 'day'
+    | 'split-day'
+    | '3day'
+    | '5day'
+    | 'week'
+    | 'week-no-weekend'
+    | '2week'
+    | 'schedule'
+    | 'month'
+    | 'agenda'
+  previousViewType?:
+    | 'day'
+    | 'split-day'
+    | '3day'
+    | '5day'
+    | 'week'
+    | 'week-no-weekend'
+    | '2week'
+    | 'schedule'
+    | 'month'
+    | 'agenda'
 }
 
 export const CalendarViewAnimation = ({ children, viewType, previousViewType }: CalendarViewAnimationProps) => {

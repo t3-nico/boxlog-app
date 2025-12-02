@@ -2,7 +2,7 @@
 // TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
-import React, { Suspense, useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 
 import { useRouter } from 'next/navigation'
 
@@ -28,32 +28,21 @@ import { useWeekendNavigation } from '../hooks/useWeekendNavigation'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { calculateViewDateRange } from '../lib/view-helpers'
 import { DnDProvider } from '../providers/DnDProvider'
-import { plansToCalendarPlans } from '../utils/planDataAdapter'
+import { expandRecurringPlansToCalendarPlans } from '../utils/planDataAdapter'
 
 import type { CalendarPlan, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
+import { RecurringEditDialog } from '@/features/plans/components/shared/RecurringEditDialog'
+import { instancesToExceptionsMap, usePlanInstances } from '@/features/plans/hooks/usePlanInstances'
+import { isRecurringPlan } from '@/features/plans/utils/recurrence'
+
 import { CalendarLayout } from './layout/CalendarLayout'
+import { AgendaView } from './views/AgendaView'
+import { DayView } from './views/DayView'
+import { FiveDayView } from './views/FiveDayView'
 import { EventContextMenu } from './views/shared/components'
-
-// 遅延ロード: カレンダービューコンポーネントは大きいため、使用時のみロード
-const DayView = React.lazy(() => import('./views/DayView').then((module) => ({ default: module.DayView })))
-const WeekView = React.lazy(() => import('./views/WeekView').then((module) => ({ default: module.WeekView })))
-const ThreeDayView = React.lazy(() =>
-  import('./views/ThreeDayView').then((module) => ({ default: module.ThreeDayView }))
-)
-const FiveDayView = React.lazy(() => import('./views/FiveDayView').then((module) => ({ default: module.FiveDayView })))
-
-// ローディングフォールバック
-const CalendarViewSkeleton = () => (
-  <div className="h-full w-full animate-pulse">
-    <div className="bg-muted mb-4 h-12 rounded" />
-    <div className="grid grid-cols-7 gap-2">
-      {Array.from({ length: 21 }).map((_, i) => (
-        <div key={i} className="bg-muted h-24 rounded" />
-      ))}
-    </div>
-  </div>
-)
+import { ThreeDayView } from './views/ThreeDayView'
+import { WeekView } from './views/WeekView'
 
 interface CalendarViewExtendedProps extends CalendarViewProps {
   initialViewType?: CalendarViewType
@@ -111,7 +100,16 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     useCalendarContextMenu()
 
   // プランコンテキストアクション
-  const { handleDeletePlan, handleEditPlan, handleDuplicatePlan, handleViewDetails } = usePlanContextActions()
+  const {
+    handleDeletePlan,
+    handleEditPlan,
+    handleDuplicatePlan,
+    handleViewDetails,
+    recurringDialogOpen,
+    recurringDeleteTarget,
+    handleRecurringDeleteConfirm,
+    handleRecurringDialogClose,
+  } = usePlanContextActions()
 
   // プラン操作（CRUD）をフック化
   const { handlePlanDelete: deletePlan, handlePlanRestore, handleUpdatePlan } = usePlanOperations()
@@ -214,6 +212,35 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // plansを取得（リアルタイム性最優化済み）
   const { data: plansData } = useplans()
 
+  // 繰り返しプランのIDを抽出
+  const recurringPlanIds = useMemo(() => {
+    if (!plansData) return []
+    return plansData
+      .filter((plan) => isRecurringPlan(plan as Parameters<typeof isRecurringPlan>[0]))
+      .map((plan) => plan.id)
+  }, [plansData])
+
+  // 表示範囲の日付文字列（例外取得用）
+  const dateRangeStrings = useMemo(() => {
+    return {
+      startDate: viewDateRange.start.toISOString().slice(0, 10),
+      endDate: viewDateRange.end.toISOString().slice(0, 10),
+    }
+  }, [viewDateRange.start, viewDateRange.end])
+
+  // 繰り返しプランの例外情報を取得
+  const { data: instancesData } = usePlanInstances(recurringPlanIds, {
+    startDate: dateRangeStrings.startDate,
+    endDate: dateRangeStrings.endDate,
+    enabled: recurringPlanIds.length > 0,
+  })
+
+  // 例外情報をMapに変換
+  const exceptionsMap = useMemo(() => {
+    if (!instancesData) return new Map()
+    return instancesToExceptionsMap(instancesData)
+  }, [instancesData])
+
   // デバッグ: plansDataの更新を検知
   useEffect(() => {
     console.log('[CalendarController] plansData 更新検知:', {
@@ -228,7 +255,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     })
   }, [plansData])
 
-  // 表示範囲のイベントを取得してCalendarPlan型に変換（削除済みを除外）
+  // 表示範囲のイベントを取得してCalendarPlan型に変換（繰り返し展開対応）
   const filteredEvents = useMemo(() => {
     // planデータがない場合は空配列を返す
     if (!plansData) {
@@ -245,14 +272,14 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     })
 
     // start_time/end_timeが設定されているplanのみを抽出
+    // ただし、繰り返しプランはdue_dateのみでも展開対象
     const plansWithTime = plansWithTags.filter((plan) => {
-      return plan.start_time && plan.end_time
+      const hasTime = plan.start_time && plan.end_time
+      const isRecurring = plan.recurrence_type && plan.recurrence_type !== 'none'
+      return hasTime || (isRecurring && plan.due_date)
     })
 
-    // planをCalendarPlanに変換
-    const calendarEvents = plansToCalendarPlans(plansWithTime as plan[])
-
-    // 表示範囲内のイベントのみをフィルタリング
+    // 表示範囲
     const startDateOnly = new Date(
       viewDateRange.start.getFullYear(),
       viewDateRange.start.getMonth(),
@@ -264,7 +291,22 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       viewDateRange.end.getDate()
     )
 
+    // planをCalendarPlanに変換（繰り返し展開対応）
+    // 例外情報（キャンセル/変更/移動）を考慮して展開
+    const calendarEvents = expandRecurringPlansToCalendarPlans(
+      plansWithTime as plan[],
+      startDateOnly,
+      endDateOnly,
+      exceptionsMap
+    )
+
+    // 展開後のイベントは既に範囲内なので、非繰り返しプランのみ追加フィルタリング
     const filtered = calendarEvents.filter((event) => {
+      // 繰り返しプランは展開時に範囲フィルタ済み
+      if (event.isRecurring) {
+        return true
+      }
+
       const eventStartDateOnly = new Date(
         event.startDate.getFullYear(),
         event.startDate.getMonth(),
@@ -279,9 +321,10 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       )
     })
 
-    logger.log(`[CalendarController] plansフィルタリング:`, {
+    logger.log(`[CalendarController] plansフィルタリング（繰り返し展開対応）:`, {
       totalplans: plansData.length,
       plansWithTime: plansWithTime.length,
+      expandedCount: calendarEvents.length,
       filteredCount: filtered.length,
       dateRange: {
         start: startDateOnly.toDateString(),
@@ -291,12 +334,12 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         title: e.title,
         startDate: e.startDate.toISOString(),
         endDate: e.endDate.toISOString(),
-        tags: e.tags,
+        isRecurring: e.isRecurring,
       })),
     })
 
     return filtered
-  }, [viewDateRange.start, viewDateRange.end, plansData])
+  }, [viewDateRange.start, viewDateRange.end, plansData, exceptionsMap])
 
   // タスククリックハンドラー
   const handleTaskClick = useCallback(() => {
@@ -307,8 +350,11 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const handleEventClick = useCallback(
     (plan: CalendarPlan) => {
       // プランIDでplan Inspectorを開く
-      openInspector(event.id)
-      logger.log('📋 Opening plan Inspector:', { planId: event.id, title: event.title })
+      // 繰り返しプランの場合はインスタンス日付を渡す
+      const instanceDate =
+        plan.isRecurring && plan.id.includes('_') ? plan.id.split('_').pop() : plan.startDate.toISOString().slice(0, 10)
+      openInspector(plan.calendarId || plan.id, { instanceDate })
+      logger.log('📋 Opening plan Inspector:', { planId: plan.calendarId || plan.id, title: plan.title, instanceDate })
     },
     [openInspector]
   )
@@ -479,24 +525,27 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       onNavigateToday: handleNavigateToday,
     }
 
-    return (
-      <Suspense fallback={<CalendarViewSkeleton />}>
-        {(() => {
-          switch (viewType) {
-            case 'day':
-              return <DayView {...commonProps} showWeekends={showWeekends} />
-            case '3day':
-              return <ThreeDayView {...commonProps} showWeekends={showWeekends} />
-            case '5day':
-              return <FiveDayView {...commonProps} showWeekends={showWeekends} />
-            case 'week':
-              return <WeekView {...commonProps} showWeekends={showWeekends} />
-            default:
-              return <DayView {...commonProps} />
-          }
-        })()}
-      </Suspense>
-    )
+    switch (viewType) {
+      case 'day':
+        return <DayView {...commonProps} showWeekends={showWeekends} />
+      case '3day':
+        return <ThreeDayView {...commonProps} showWeekends={showWeekends} />
+      case '5day':
+        return <FiveDayView {...commonProps} showWeekends={showWeekends} />
+      case 'week':
+        return <WeekView {...commonProps} showWeekends={showWeekends} />
+      case 'agenda':
+        return (
+          <AgendaView
+            {...commonProps}
+            plans={filteredEvents}
+            onPlanClick={handleEventClick}
+            onPlanContextMenu={handleEventContextMenu}
+          />
+        )
+      default:
+        return <DayView {...commonProps} />
+    }
   }
 
   // 日付選択ハンドラー（週末調整フック使用）
@@ -661,6 +710,15 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
           onViewDetails={handleViewDetails}
         />
       ) : null}
+
+      {/* 繰り返しプラン削除ダイアログ */}
+      <RecurringEditDialog
+        open={recurringDialogOpen}
+        onOpenChange={handleRecurringDialogClose}
+        onConfirm={handleRecurringDeleteConfirm}
+        mode="delete"
+        planTitle={recurringDeleteTarget?.title}
+      />
     </DnDProvider>
   )
 }

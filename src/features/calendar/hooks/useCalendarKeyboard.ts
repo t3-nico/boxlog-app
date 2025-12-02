@@ -20,6 +20,7 @@ interface UseCalendarKeyboardProps {
  * - Cmd/Ctrl + 3: 3-Day View
  * - Cmd/Ctrl + 5: Week View (週末なし)
  * - Cmd/Ctrl + 7: Week View
+ * - Cmd/Ctrl + A: Agenda View
  * - Cmd/Ctrl + W: 週末表示切り替え
  */
 export const useCalendarKeyboard = ({
@@ -59,6 +60,10 @@ export const useCalendarKeyboard = ({
           case '7':
             e.preventDefault()
             onViewChange('week')
+            break
+          case 'a':
+            e.preventDefault()
+            onViewChange('agenda')
             break
           case 'w':
             e.preventDefault()

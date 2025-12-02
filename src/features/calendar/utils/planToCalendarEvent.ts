@@ -14,12 +14,9 @@ export function setUserTimezone(timezone: string) {
  */
 function mapPlanStatusToCalendarStatus(planStatus: PlanStatus): CalendarEvent['status'] {
   const statusMap: Record<PlanStatus, CalendarEvent['status']> = {
-    backlog: 'inbox',
-    ready: 'planned',
-    active: 'in_progress',
-    wait: 'planned',
+    todo: 'inbox',
+    doing: 'in_progress',
     done: 'completed',
-    cancel: 'cancelled',
   }
 
   return statusMap[planStatus]
@@ -30,12 +27,9 @@ function mapPlanStatusToCalendarStatus(planStatus: PlanStatus): CalendarEvent['s
  */
 function getColorForStatus(status: PlanStatus): string {
   const colorMap: Record<PlanStatus, string> = {
-    backlog: 'hsl(var(--muted))',
-    ready: 'hsl(var(--primary))',
-    active: 'hsl(var(--chart-2))',
-    wait: 'hsl(var(--chart-4))',
+    todo: 'hsl(var(--muted))',
+    doing: 'hsl(var(--primary))',
     done: 'hsl(var(--chart-3))',
-    cancel: 'hsl(var(--muted))',
   }
 
   return colorMap[status]

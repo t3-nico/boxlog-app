@@ -15,12 +15,9 @@ import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFi
  * ステータス選択肢
  */
 const STATUS_OPTIONS: Array<{ value: PlanStatus; label: string }> = [
-  { value: 'backlog', label: '準備中' },
-  { value: 'ready', label: '配置済み' },
-  { value: 'active', label: '作業中' },
-  { value: 'wait', label: '待ち' },
-  { value: 'done', label: '完了' },
-  { value: 'cancel', label: '中止' },
+  { value: 'todo', label: 'Todo' },
+  { value: 'doing', label: 'Doing' },
+  { value: 'done', label: 'Done' },
 ]
 
 /**

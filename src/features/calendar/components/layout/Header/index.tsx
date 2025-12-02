@@ -36,6 +36,7 @@ const viewOptions = [
   { value: '3day' as CalendarViewType, label: '3 Days', shortcut: '3' },
   { value: '5day' as CalendarViewType, label: '5 Days', shortcut: '5' },
   { value: 'week' as CalendarViewType, label: 'Week', shortcut: 'W' },
+  { value: 'agenda' as CalendarViewType, label: 'Agenda', shortcut: 'A' },
 ]
 
 /**

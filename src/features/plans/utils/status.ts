@@ -1,15 +1,24 @@
 import type { Plan, PlanStatus } from '../types/plan'
 
 /**
+ * getEffectiveStatusに必要な最小プロパティ
+ * InboxItemとPlan両方に対応するため、start_timeはundefinedも許容
+ */
+type StatusInput = {
+  status: PlanStatus
+  start_time?: string | null | undefined
+}
+
+/**
  * プランの実効ステータスを計算する
  *
  * DBには 'done' かどうかのみ保存。
  * 'doing' は start_time / log_id から計算で導出。
  *
- * @param plan - プランオブジェクト
+ * @param plan - プランオブジェクト（statusとstart_timeが必要）
  * @returns 実効ステータス ('todo' | 'doing' | 'done')
  */
-export function getEffectiveStatus(plan: Plan): PlanStatus {
+export function getEffectiveStatus(plan: StatusInput): PlanStatus {
   // 明示的にdoneならdone
   if (plan.status === 'done') {
     return 'done'

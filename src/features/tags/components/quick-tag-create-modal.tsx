@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react'
 
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { Plus, X } from 'lucide-react'
 
 // Tag interface
@@ -20,6 +21,7 @@ interface QuickTagCreateModalProps {
 export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCreateModalProps) => {
   const [tagName, setTagName] = useState('')
   const [selectedColor, setSelectedColor] = useState('#3b82f6')
+  const { t } = useI18n()
 
   // jsx-no-bind optimization: Event handlers
   const handleTagNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,7 +92,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
         className="bg-opacity-50 fixed inset-0 z-50 bg-black"
         onClick={handleClose}
         onKeyDown={handleOverlayKeyDown}
-        aria-label="モーダルを閉じる"
+        aria-label={t('aria.closeModal')}
       />
 
       {/* Modal */}
