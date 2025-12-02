@@ -170,7 +170,10 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // プラン操作（CRUD）をフック化
   const { handlePlanDelete: deletePlan, handlePlanRestore, handleUpdatePlan } = usePlanOperations()
 
-  const { timezone, showWeekends, updateSettings } = useCalendarSettingsStore()
+  // selector化: 必要な値だけ監視（他の設定変更時の再レンダリングを防止）
+  const timezone = useCalendarSettingsStore((state) => state.timezone)
+  const showWeekends = useCalendarSettingsStore((state) => state.showWeekends)
+  const updateSettings = useCalendarSettingsStore((state) => state.updateSettings)
 
   // キーボードショートカット（Cmd/Ctrl + W）
   useWeekendToggleShortcut()
