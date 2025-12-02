@@ -46,7 +46,7 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              className="data-[state=active]:border-foreground hover:border-foreground/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
             >
               {tab.label}
             </TabsTrigger>

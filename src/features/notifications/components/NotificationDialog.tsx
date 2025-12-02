@@ -1,57 +1,199 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { formatDistanceToNow } from 'date-fns'
-import { enUS, ja } from 'date-fns/locale'
-import { Loader2, Trash2 } from 'lucide-react'
+import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
+import type { NotificationType } from '@/schemas/notifications'
+import { Loader2, Settings, Trash2 } from 'lucide-react'
 
 import { useNotificationMutations, useNotificationsList } from '../hooks/useNotificationsData'
 import { useNotificationDialogStore } from '../stores/useNotificationDialogStore'
+import { groupNotificationsByDate } from '../utils/notification-helpers'
+import { NotificationItem } from './NotificationItem'
+
+// 通知の型定義
+interface NotificationData {
+  id: string
+  type: NotificationType
+  title: string
+  message: string | null
+  is_read: boolean
+  created_at: string
+  action_url?: string | null
+}
+
+// フィルターの選択肢
+const TYPE_FILTER_OPTIONS: Array<{ value: NotificationType | 'all'; labelKey: string }> = [
+  { value: 'all', labelKey: 'notifications.types.all' },
+  { value: 'reminder', labelKey: 'notifications.types.reminder' },
+  { value: 'plan_created', labelKey: 'notifications.types.plan_created' },
+  { value: 'plan_updated', labelKey: 'notifications.types.plan_updated' },
+  { value: 'plan_completed', labelKey: 'notifications.types.plan_completed' },
+  { value: 'trash_warning', labelKey: 'notifications.types.trash_warning' },
+  { value: 'system', labelKey: 'notifications.types.system' },
+]
 
 export function NotificationDialog() {
   const pathname = usePathname()
+  const router = useRouter()
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t } = useI18n(localeFromPath)
-  const dateLocale = localeFromPath === 'ja' ? ja : enUS
 
   const { isOpen, close } = useNotificationDialogStore()
+  const { openSettings } = useSettingsDialogStore()
+
+  // タイプフィルター
+  const [typeFilter, setTypeFilter] = useState<NotificationType | 'all'>('all')
 
   // 全通知取得
   const { data: allNotifications = [], isLoading: isLoadingAll } = useNotificationsList()
   // 未読通知取得
-  const { data: unreadNotifications = [], isLoading: isLoadingUnread } = useNotificationsList({ is_read: false })
+  const { data: unreadNotifications = [], isLoading: isLoadingUnread } = useNotificationsList({
+    is_read: false,
+  })
 
   const { markAsRead, markAllAsRead, deleteNotification, deleteAllRead } = useNotificationMutations()
 
-  const handleMarkAsRead = (id: string) => {
-    markAsRead.mutate({ id })
-  }
+  // フィルター適用
+  const filteredAllNotifications = useMemo(() => {
+    if (typeFilter === 'all') return allNotifications as NotificationData[]
+    return (allNotifications as NotificationData[]).filter((n) => n.type === typeFilter)
+  }, [allNotifications, typeFilter])
 
-  const handleMarkAllAsRead = () => {
+  const filteredUnreadNotifications = useMemo(() => {
+    if (typeFilter === 'all') return unreadNotifications as NotificationData[]
+    return (unreadNotifications as NotificationData[]).filter((n) => n.type === typeFilter)
+  }, [unreadNotifications, typeFilter])
+
+  // 日付グループ化
+  const groupedAllNotifications = useMemo(
+    () => groupNotificationsByDate(filteredAllNotifications, t),
+    [filteredAllNotifications, t]
+  )
+
+  const groupedUnreadNotifications = useMemo(
+    () => groupNotificationsByDate(filteredUnreadNotifications, t),
+    [filteredUnreadNotifications, t]
+  )
+
+  const handleMarkAsRead = useCallback(
+    (id: string) => {
+      markAsRead.mutate({ id })
+    },
+    [markAsRead]
+  )
+
+  const handleMarkAllAsRead = useCallback(() => {
     markAllAsRead.mutate()
-  }
+  }, [markAllAsRead])
 
-  const handleDelete = (id: string) => {
-    deleteNotification.mutate({ id })
-  }
+  const handleDelete = useCallback(
+    (id: string) => {
+      deleteNotification.mutate({ id })
+    },
+    [deleteNotification]
+  )
 
-  const handleDeleteAllRead = () => {
+  const handleDeleteAllRead = useCallback(() => {
     if (window.confirm(t('notifications.confirm.deleteAllRead'))) {
       deleteAllRead.mutate()
     }
-  }
+  }, [deleteAllRead, t])
 
-  const formatTime = (timestamp: string) => {
-    try {
-      return formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: dateLocale })
-    } catch {
-      return timestamp
+  const handleNavigate = useCallback(
+    (url: string) => {
+      close()
+      router.push(url)
+    },
+    [close, router]
+  )
+
+  const handleOpenSettings = useCallback(() => {
+    close()
+    openSettings('notifications')
+  }, [close, openSettings])
+
+  // 通知リストのレンダリング
+  const renderNotificationList = (
+    groups: ReturnType<typeof groupNotificationsByDate<NotificationData>>,
+    isLoading: boolean,
+    emptyMessageKey: string,
+    showActions: boolean
+  ) => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </div>
+      )
     }
+
+    const totalCount = groups.reduce((acc, g) => acc + g.notifications.length, 0)
+
+    if (totalCount === 0) {
+      return <div className="text-muted-foreground py-8 text-center text-sm">{t(emptyMessageKey)}</div>
+    }
+
+    return (
+      <>
+        {/* アクションバー */}
+        <div className="mb-4 flex items-center justify-between">
+          <span className="text-muted-foreground text-sm">
+            {t(showActions ? 'notifications.count.all' : 'notifications.count.unread', {
+              count: totalCount,
+            })}
+          </span>
+          <div className="flex gap-2">
+            <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} disabled={markAllAsRead.isPending}>
+              {t('notifications.actions.markAllAsRead')}
+            </Button>
+            {showActions && (
+              <Button variant="ghost" size="sm" onClick={handleDeleteAllRead} disabled={deleteAllRead.isPending}>
+                <Trash2 className="mr-1 h-4 w-4" />
+                {t('notifications.actions.deleteAllRead')}
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* グループ化された通知リスト */}
+        <div className="max-h-[28rem] space-y-4 overflow-y-auto">
+          {groups.map((group) => (
+            <div key={group.key}>
+              {/* グループヘッダー */}
+              <h3 className="text-muted-foreground mb-2 text-xs font-medium tracking-wide uppercase">{group.label}</h3>
+              {/* 通知アイテム */}
+              <div className="space-y-2">
+                {group.notifications.map((notification) => (
+                  <NotificationItem
+                    key={notification.id}
+                    id={notification.id}
+                    type={notification.type}
+                    title={notification.title}
+                    message={notification.message}
+                    isRead={notification.is_read}
+                    createdAt={notification.created_at}
+                    actionUrl={notification.action_url}
+                    locale={localeFromPath}
+                    onMarkAsRead={handleMarkAsRead}
+                    onDelete={handleDelete}
+                    onNavigate={handleNavigate}
+                    isDeleting={deleteNotification.isPending}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
+    )
   }
 
   return (
@@ -62,151 +204,49 @@ export function NotificationDialog() {
         </DialogHeader>
 
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="all">{t('notifications.tabs.all')}</TabsTrigger>
-            <TabsTrigger value="unread">{t('notifications.tabs.unread')}</TabsTrigger>
-          </TabsList>
+          {/* タブとフィルター */}
+          <div className="flex items-center justify-between gap-4">
+            <TabsList className="grid w-full max-w-[200px] grid-cols-2">
+              <TabsTrigger value="all">{t('notifications.tabs.all')}</TabsTrigger>
+              <TabsTrigger value="unread">{t('notifications.tabs.unread')}</TabsTrigger>
+            </TabsList>
 
+            {/* タイプフィルター */}
+            <Select value={typeFilter} onValueChange={(value) => setTypeFilter(value as NotificationType | 'all')}>
+              <SelectTrigger size="sm" className="w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {TYPE_FILTER_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {t(option.labelKey)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* すべてタブ */}
           <TabsContent value="all" className="mt-4 space-y-4">
-            {isLoadingAll ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin" />
-              </div>
-            ) : allNotifications.length === 0 ? (
-              <div className="text-muted-foreground py-8 text-center text-sm">{t('notifications.empty.all')}</div>
-            ) : (
-              <>
-                <div className="mb-4 flex items-center justify-between">
-                  <span className="text-muted-foreground text-sm">
-                    {t('notifications.count.all', { count: allNotifications.length })}
-                  </span>
-                  <div className="flex gap-2">
-                    <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} disabled={markAllAsRead.isPending}>
-                      {t('notifications.actions.markAllAsRead')}
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={handleDeleteAllRead} disabled={deleteAllRead.isPending}>
-                      <Trash2 className="mr-1 h-4 w-4" />
-                      {t('notifications.actions.deleteAllRead')}
-                    </Button>
-                  </div>
-                </div>
-                <div className="max-h-[31rem] space-y-2 overflow-y-auto">
-                  {allNotifications.map(
-                    (notification: {
-                      id: string
-                      title: string
-                      message: string | null
-                      is_read: boolean
-                      created_at: string
-                    }) => (
-                      <div
-                        key={notification.id}
-                        className={`border-border rounded-xl border p-4 ${!notification.is_read ? 'bg-muted' : 'bg-card'}`}
-                        onClick={() => !notification.is_read && handleMarkAsRead(notification.id)}
-                        role={!notification.is_read ? 'button' : undefined}
-                        tabIndex={!notification.is_read ? 0 : undefined}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <h4 className="text-sm font-semibold">{notification.title}</h4>
-                              {!notification.is_read && (
-                                <span className="bg-primary h-2 w-2 rounded-full" aria-label="未読" />
-                              )}
-                            </div>
-                            {notification.message && (
-                              <p className="text-muted-foreground mt-1 text-sm">{notification.message}</p>
-                            )}
-                            <span className="text-muted-foreground mt-2 text-xs">
-                              {formatTime(notification.created_at)}
-                            </span>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleDelete(notification.id)
-                            }}
-                            disabled={deleteNotification.isPending}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
-              </>
-            )}
+            {renderNotificationList(groupedAllNotifications, isLoadingAll, 'notifications.empty.all', true)}
           </TabsContent>
 
+          {/* 未読タブ */}
           <TabsContent value="unread" className="mt-4 space-y-4">
-            {isLoadingUnread ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin" />
-              </div>
-            ) : unreadNotifications.length === 0 ? (
-              <div className="text-muted-foreground py-8 text-center text-sm">{t('notifications.empty.unread')}</div>
-            ) : (
-              <>
-                <div className="mb-4 flex items-center justify-between">
-                  <span className="text-muted-foreground text-sm">
-                    {t('notifications.count.unread', { count: unreadNotifications.length })}
-                  </span>
-                  <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} disabled={markAllAsRead.isPending}>
-                    {t('notifications.actions.markAllAsRead')}
-                  </Button>
-                </div>
-                <div className="max-h-[31rem] space-y-2 overflow-y-auto">
-                  {unreadNotifications.map(
-                    (notification: {
-                      id: string
-                      title: string
-                      message: string | null
-                      is_read: boolean
-                      created_at: string
-                    }) => (
-                      <div
-                        key={notification.id}
-                        className="bg-muted border-border rounded-xl border p-4"
-                        onClick={() => handleMarkAsRead(notification.id)}
-                        role="button"
-                        tabIndex={0}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <h4 className="text-sm font-semibold">{notification.title}</h4>
-                              <span className="bg-primary h-2 w-2 rounded-full" aria-label="未読" />
-                            </div>
-                            {notification.message && (
-                              <p className="text-muted-foreground mt-1 text-sm">{notification.message}</p>
-                            )}
-                            <span className="text-muted-foreground mt-2 text-xs">
-                              {formatTime(notification.created_at)}
-                            </span>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleDelete(notification.id)
-                            }}
-                            disabled={deleteNotification.isPending}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
-              </>
-            )}
+            {renderNotificationList(groupedUnreadNotifications, isLoadingUnread, 'notifications.empty.unread', false)}
           </TabsContent>
         </Tabs>
+
+        {/* フッター：設定リンク */}
+        <Separator className="my-2" />
+        <button
+          type="button"
+          onClick={handleOpenSettings}
+          className="text-muted-foreground hover:text-foreground flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-transparent"
+        >
+          <Settings className="h-4 w-4" />
+          {t('notifications.settings')}
+        </button>
       </DialogContent>
     </Dialog>
   )
