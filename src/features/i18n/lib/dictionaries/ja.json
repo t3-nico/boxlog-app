@@ -1116,6 +1116,26 @@
       "deleting": "削除中...",
       "permanentDelete": "完全に削除"
     },
+    "merge": {
+      "title": "タグをマージ",
+      "description": "「{{source}}」を別のタグにマージします",
+      "sourceTag": "マージ元タグ",
+      "targetTag": "マージ先タグ",
+      "selectTarget": "マージ先のタグを選択",
+      "options": "マージオプション",
+      "mergeAssociations": "関連付けを移行する",
+      "mergeAssociationsDescription": "マージ元タグに紐づいているプランをマージ先タグに移行します",
+      "deleteSource": "マージ元タグを削除する",
+      "deleteSourceDescription": "マージ完了後にマージ元タグを削除します",
+      "warning": "この操作は取り消せません",
+      "warningChildren": "マージ元タグの子タグはマージ先タグの子タグになります",
+      "confirm": "マージする",
+      "merging": "マージ中...",
+      "success": "タグをマージしました（{{count}}件の関連付けを移行）",
+      "failed": "タグのマージに失敗しました",
+      "cannotMergeSelf": "同じタグにはマージできません",
+      "noTargetSelected": "マージ先タグを選択してください"
+    },
     "validation": {
       "nameRequired": "タグ名は必須です",
       "nameEmpty": "タグ名を入力してください",

@@ -1121,6 +1121,26 @@
       "deleting": "Deleting...",
       "permanentDelete": "Permanently Delete"
     },
+    "merge": {
+      "title": "Merge Tag",
+      "description": "Merge \"{{source}}\" into another tag",
+      "sourceTag": "Source Tag",
+      "targetTag": "Target Tag",
+      "selectTarget": "Select target tag",
+      "options": "Merge Options",
+      "mergeAssociations": "Migrate associations",
+      "mergeAssociationsDescription": "Move plans linked to source tag to target tag",
+      "deleteSource": "Delete source tag",
+      "deleteSourceDescription": "Delete source tag after merge is complete",
+      "warning": "This action cannot be undone",
+      "warningChildren": "Child tags of source tag will become children of target tag",
+      "confirm": "Merge",
+      "merging": "Merging...",
+      "success": "Tags merged ({{count}} associations migrated)",
+      "failed": "Failed to merge tags",
+      "cannotMergeSelf": "Cannot merge a tag into itself",
+      "noTargetSelected": "Please select a target tag"
+    },
     "validation": {
       "nameRequired": "Tag name is required",
       "nameEmpty": "Please enter a tag name",

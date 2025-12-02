@@ -1,6 +1,6 @@
 'use client'
 
-import { Archive, Eye, Folder, FolderX, Pencil, Trash2 } from 'lucide-react'
+import { Archive, Eye, Folder, FolderX, GitMerge, Pencil, Trash2 } from 'lucide-react'
 
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 
@@ -10,6 +10,7 @@ interface TagActionMenuItemsProps {
   onView?: (tag: TagWithChildren) => void
   onEdit?: (tag: TagWithChildren) => void
   onMoveToGroup: (tag: TagWithChildren, groupId: string | null) => void
+  onMerge?: (tag: TagWithChildren) => void
   onArchive?: (tag: TagWithChildren) => void
   onDelete: (tag: TagWithChildren) => void
   t: (key: string) => string
@@ -46,6 +47,7 @@ export function TagActionMenuItems({
   onView,
   onEdit,
   onMoveToGroup,
+  onMerge,
   onArchive,
   onDelete,
   t,
@@ -100,6 +102,18 @@ export function TagActionMenuItems({
             onClick: () => onMoveToGroup(tag, group.id),
           })),
         ],
+      })
+    )
+  }
+
+  // マージ
+  if (onMerge) {
+    menuItems.push(
+      renderMenuItem({
+        key: 'merge',
+        icon: <GitMerge className="mr-2 h-4 w-4" />,
+        label: t('tags.merge.title'),
+        onClick: () => onMerge(tag),
       })
     )
   }
