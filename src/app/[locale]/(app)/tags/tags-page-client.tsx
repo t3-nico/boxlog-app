@@ -78,7 +78,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const router = useRouter()
   const pathname = usePathname()
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const [sortField, setSortField] = useState<'name' | 'created_at' | 'tag_number' | 'group'>('created_at')
+  const [sortField, setSortField] = useState<'name' | 'created_at' | 'tag_number' | 'group' | 'last_used'>('created_at')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
   // カラム幅の状態管理
   const [columnWidths, setColumnWidths] = useState({
@@ -89,6 +89,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     description: 300,
     group: 120,
     created_at: 160,
+    last_used: 160,
     actions: 192,
   })
   const [currentPage, setCurrentPage] = useState(1)
@@ -105,6 +106,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     description: true,
     group: true,
     created_at: true,
+    last_used: true,
   })
 
   // localStorage から列設定を復元
@@ -131,6 +133,9 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   // タグごとのプラン数を取得
   const { data: tagplanCounts = {} } = api.plans.getTagPlanCounts.useQuery()
+
+  // タグごとの最終使用日時を取得
+  const { data: tagLastUsed = {} } = api.plans.getTagLastUsed.useQuery()
 
   // アクティブなタグ数を計算
   const activeTagsCount = useMemo(() => {
@@ -418,11 +423,20 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           comparison = groupA.localeCompare(groupB)
           break
         }
+        case 'last_used': {
+          const lastUsedA = tagLastUsed[a.id] ? new Date(tagLastUsed[a.id]).getTime() : 0
+          const lastUsedB = tagLastUsed[b.id] ? new Date(tagLastUsed[b.id]).getTime() : 0
+          // 使用されていないものは最後に
+          if (!lastUsedA && lastUsedB) return 1
+          if (lastUsedA && !lastUsedB) return -1
+          comparison = lastUsedA - lastUsedB
+          break
+        }
       }
       return sortDirection === 'asc' ? comparison : -comparison
     })
     return sorted
-  }, [filteredTags, sortField, sortDirection, groups])
+  }, [filteredTags, sortField, sortDirection, groups, tagLastUsed])
 
   // ページネーション
   const totalPages = Math.ceil(sortedTags.length / pageSize)
@@ -436,7 +450,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   }, [sortField, sortDirection, pageSize])
 
   // ソート変更ハンドラー
-  const handleSort = (field: 'name' | 'created_at' | 'tag_number' | 'group') => {
+  const handleSort = (field: 'name' | 'created_at' | 'tag_number' | 'group' | 'last_used') => {
     if (sortField === field) {
       setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))
     } else {
@@ -646,6 +660,12 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                 >
                   {t('tags.page.createdAt')}
                 </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={columnVisibility.last_used}
+                  onCheckedChange={(checked) => handleColumnVisibilityChange('last_used', checked)}
+                >
+                  {t('tags.page.lastUsed')}
+                </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -758,6 +778,21 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                           {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
                         </Button>
                         <ResizeHandle columnId="created_at" />
+                      </TableHead>
+                    )}
+                    {columnVisibility.last_used && (
+                      <TableHead className="relative" style={{ width: `${columnWidths.last_used}px` }}>
+                        <Button variant="ghost" size="sm" onClick={() => handleSort('last_used')} className="-ml-3">
+                          {t('tags.page.lastUsed')}
+                          {sortField === 'last_used' &&
+                            (sortDirection === 'asc' ? (
+                              <ArrowUp className="ml-1 h-4 w-4" />
+                            ) : (
+                              <ArrowDown className="ml-1 h-4 w-4" />
+                            ))}
+                          {sortField !== 'last_used' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
+                        </Button>
+                        <ResizeHandle columnId="last_used" />
                       </TableHead>
                     )}
                   </TableRow>
@@ -901,6 +936,14 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               style={{ width: `${columnWidths.created_at}px` }}
                             >
                               {formatDate(tag.created_at)}
+                            </TableCell>
+                          )}
+                          {columnVisibility.last_used && (
+                            <TableCell
+                              className="text-muted-foreground text-xs"
+                              style={{ width: `${columnWidths.last_used}px` }}
+                            >
+                              {tagLastUsed[tag.id] ? formatDate(tagLastUsed[tag.id]) : '-'}
                             </TableCell>
                           )}
                         </TableRow>
@@ -1047,6 +1090,12 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                         <TableCell
                           className="text-muted-foreground text-xs"
                           style={{ width: `${columnWidths.created_at}px` }}
+                        ></TableCell>
+                      )}
+                      {columnVisibility.last_used && (
+                        <TableCell
+                          className="text-muted-foreground text-xs"
+                          style={{ width: `${columnWidths.last_used}px` }}
                         ></TableCell>
                       )}
                     </TableRow>

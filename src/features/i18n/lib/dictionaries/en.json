@@ -1222,7 +1222,8 @@
       "changeColor": "Change color",
       "tagColor": "Tag color",
       "columns": "Columns",
-      "columnSettings": "Column settings"
+      "columnSettings": "Column settings",
+      "lastUsed": "Last used"
     },
     "archive": {
       "restoreConfirm": "Restore tag \"{{name}}\"?\n\nRestored tags can be used for tagging again.",

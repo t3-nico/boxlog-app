@@ -1217,7 +1217,8 @@
       "changeColor": "カラーを変更",
       "tagColor": "タグカラー",
       "columns": "列",
-      "columnSettings": "列の表示設定"
+      "columnSettings": "列の表示設定",
+      "lastUsed": "最終使用日時"
     },
     "archive": {
       "restoreConfirm": "タグ「{{name}}」を復元しますか？\n\n復元されたタグは再び新規のタグ付けに使用できるようになります。",
