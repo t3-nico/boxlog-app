@@ -1,10 +1,11 @@
 'use client'
 
 import { format } from 'date-fns'
-import { Bell, Repeat } from 'lucide-react'
+import { Bell } from 'lucide-react'
 
 import { calendarColors } from '@/features/calendar/theme'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { RecurringIndicatorFromFlag } from '@/features/plans/components/shared/RecurringIndicator'
 import { cn } from '@/lib/utils'
 
 import type { AgendaItemProps } from '../AgendaView.types'
@@ -87,9 +88,7 @@ export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
         {/* アイコン表示（繰り返し・通知） */}
         {(plan.isRecurring || plan.reminder_minutes != null) && (
           <div className="mt-0.5 flex items-center gap-1.5">
-            {plan.isRecurring && (
-              <Repeat className="text-muted-foreground h-3.5 w-3.5" aria-label="Recurring" />
-            )}
+            <RecurringIndicatorFromFlag isRecurring={plan.isRecurring} size="sm" />
             {plan.reminder_minutes != null && (
               <Bell className="text-muted-foreground h-3.5 w-3.5" aria-label="Reminder set" />
             )}

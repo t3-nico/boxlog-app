@@ -22,12 +22,12 @@ import { useplanCacheStore } from '@/features/plans/stores/usePlanCacheStore'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { toLocalISOString } from '@/features/plans/utils/datetime'
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder'
-import { configToReadable, ruleToConfig } from '@/features/plans/utils/rrule'
+import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator'
 import { cn } from '@/lib/utils'
 import { useDraggable } from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Bell, Calendar as CalendarIcon, Plus, Repeat, Tag, Trash2 } from 'lucide-react'
+import { Bell, Calendar as CalendarIcon, Plus, Tag, Trash2 } from 'lucide-react'
 
 import { useBoardFocusStore } from '../../stores/useBoardFocusStore'
 import { BoardActionMenuItems } from '../BoardActionMenuItems'
@@ -260,28 +260,13 @@ export function PlanCard({ item }: PlanCardProps) {
                     (recurrenceType && recurrenceType !== 'none') ||
                     (reminderType && reminderType !== 'none' && reminderType !== '')) && (
                     <div className="flex items-center gap-1">
-                      {/* 繰り返しアイコン（設定時のみ表示） */}
-                      {(recurrenceRule || (recurrenceType && recurrenceType !== 'none')) && (
-                        <div
-                          title={
-                            recurrenceRule
-                              ? configToReadable(ruleToConfig(recurrenceRule))
-                              : recurrenceType === 'daily'
-                                ? '毎日'
-                                : recurrenceType === 'weekly'
-                                  ? '毎週'
-                                  : recurrenceType === 'monthly'
-                                    ? '毎月'
-                                    : recurrenceType === 'yearly'
-                                      ? '毎年'
-                                      : recurrenceType === 'weekdays'
-                                        ? '平日'
-                                        : ''
-                          }
-                        >
-                          <Repeat className="text-muted-foreground size-4" />
-                        </div>
-                      )}
+                      {/* 繰り返しアイコン（設定時のみ表示・ツールチップ付き） */}
+                      <RecurringIndicator
+                        recurrenceType={recurrenceType}
+                        recurrenceRule={recurrenceRule}
+                        size="md"
+                        showTooltip
+                      />
 
                       {/* 通知アイコン（設定時のみ表示） */}
                       {reminderType && reminderType !== 'none' && reminderType !== '' && (

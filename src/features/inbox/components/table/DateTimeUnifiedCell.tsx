@@ -8,7 +8,8 @@ import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar
 import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat, Trash2 } from 'lucide-react'
+import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator'
+import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 interface DateTimeData {
@@ -78,7 +79,6 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
 
     const dateStr = format(new Date(data.date), 'yyyy/MM/dd', { locale: ja })
     const hasReminder = data.reminder?.enabled
-    const hasRecurrence = data.recurrence && data.recurrence !== 'none'
 
     let timeStr = ''
     if (data.startTime && data.endTime) {
@@ -94,7 +94,7 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
           {timeStr}
         </span>
         {hasReminder && <Bell className="size-3.5" />}
-        {hasRecurrence && <Repeat className="size-3.5" />}
+        <RecurringIndicator recurrenceType={data.recurrence} size="sm" />
       </span>
     )
   }
