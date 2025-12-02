@@ -1,13 +1,19 @@
 /**
- * 📊 BoxLog Logger Core
+ * BoxLog Logger Core
  *
  * メインロガークラス・統一ログインターフェース
  * - 構造化ログ・メタデータ管理・出力制御
  * - パフォーマンス・セキュリティ・ビジネスログ対応
+ *
+ * @see ./config.ts - 設定関連
+ * @see ./stats.ts - 統計関連
+ * @see ./outputs.ts - 出力先
  */
 
 import os from 'os'
 
+import { DEFAULT_CONFIG } from './config'
+import { initStats, updateStats } from './stats'
 import type {
   BusinessLogEntry,
   ErrorLogEntry,
@@ -23,6 +29,9 @@ import type {
 } from './types'
 import { LOG_LEVELS } from './types'
 
+// Re-export config utilities
+export { getDefaultConfig } from './config'
+
 /**
  * 🎯 メインロガークラス
  */
@@ -31,40 +40,11 @@ export class Logger {
   private outputs: LogOutput[] = []
   private context: LogContext = {}
   private filters: LogFilter[] = []
-  private stats: LogStats = this.initStats()
+  private stats: LogStats = initStats()
 
   constructor(config: Partial<LoggerConfig> = {}) {
     this.config = {
-      level: 'info',
-      console: {
-        enabled: true,
-        colors: true,
-        format: 'pretty',
-      },
-      file: {
-        enabled: false,
-        path: './logs/app.log',
-        rotation: {
-          maxSize: '10MB',
-          maxFiles: 5,
-        },
-      },
-      external: {
-        enabled: false,
-        services: {},
-      },
-      metadata: {
-        includeVersion: true,
-        includeEnvironment: true,
-        includeHostname: false,
-        includeProcessId: false,
-        includeMemory: false,
-      },
-      filtering: {
-        sensitiveKeys: ['password', 'token', 'secret', 'key'],
-        excludeComponents: [],
-        samplingRate: 1.0,
-      },
+      ...DEFAULT_CONFIG,
       ...config,
     }
 
@@ -93,7 +73,7 @@ export class Logger {
     }
 
     // 統計更新
-    this.updateStats(entry)
+    updateStats(this.stats, entry)
 
     // 出力
     this.outputs.forEach((output) => {
@@ -285,10 +265,10 @@ export class Logger {
   }
 
   /**
-   * 🧹 統計リセット
+   * 統計リセット
    */
   resetStats(): void {
-    this.stats = this.initStats()
+    this.stats = initStats()
   }
 
   /**
@@ -353,96 +333,6 @@ export class Logger {
     return this.filters.every((filter) => filter(entry))
   }
 
-  private updateStats(entry: LogEntry): void {
-    this.updateBasicStats(entry)
-    this.updateTimeStats(entry)
-    this.updateComponentStats(entry)
-    this.updateErrorStats(entry)
-    this.updatePerformanceStats(entry)
-  }
-
-  private updateBasicStats(entry: LogEntry): void {
-    this.stats.totalLogs++
-    this.stats.byLevel[entry.level] = (this.stats.byLevel[entry.level] || 0) + 1
-  }
-
-  private updateTimeStats(entry: LogEntry): void {
-    const hour = new Date(entry.timestamp).getHours().toString()
-    this.stats.byHour[hour] = (this.stats.byHour[hour] || 0) + 1
-  }
-
-  private updateComponentStats(entry: LogEntry): void {
-    if (entry.component) {
-      this.stats.byComponent[entry.component] = (this.stats.byComponent[entry.component] || 0) + 1
-    }
-  }
-
-  private updateErrorStats(entry: LogEntry): void {
-    if (entry.level === 'error') {
-      this.stats.errors.total++
-
-      if ('error' in entry && entry.error) {
-        const err = entry.error as Error | { name?: string }
-        const errorType = ('name' in err && err.name) || 'Unknown'
-        this.stats.errors.byType[errorType] = (this.stats.errors.byType[errorType] || 0) + 1
-
-        this.stats.errors.recent.push(entry as ErrorLogEntry)
-        if (this.stats.errors.recent.length > 10) {
-          this.stats.errors.recent.shift()
-        }
-      }
-    }
-  }
-
-  private updatePerformanceStats(entry: LogEntry): void {
-    if ('performance' in entry && entry.performance) {
-      const perf = entry.performance as { duration: number; memory?: number }
-      if (perf.duration) {
-        const currentAvg = this.stats.performance.averageDuration
-        const count = this.stats.totalLogs
-        this.stats.performance.averageDuration = (currentAvg * (count - 1) + perf.duration) / count
-
-        this.stats.performance.slowestOperations.push(entry as PerformanceLogEntry)
-        this.stats.performance.slowestOperations.sort((a, b) => b.performance.duration - a.performance.duration)
-        if (this.stats.performance.slowestOperations.length > 5) {
-          this.stats.performance.slowestOperations.pop()
-        }
-      }
-
-      if (perf.memory) {
-        const currentAvg = this.stats.performance.memoryUsage.average
-        const count = this.stats.totalLogs
-        this.stats.performance.memoryUsage.average = (currentAvg * (count - 1) + perf.memory) / count
-
-        if (perf.memory > this.stats.performance.memoryUsage.peak) {
-          this.stats.performance.memoryUsage.peak = perf.memory
-        }
-      }
-    }
-  }
-
-  private initStats(): LogStats {
-    return {
-      totalLogs: 0,
-      byLevel: { error: 0, warn: 0, info: 0, debug: 0 },
-      byHour: {},
-      byComponent: {},
-      errors: {
-        total: 0,
-        byType: {},
-        recent: [],
-      },
-      performance: {
-        averageDuration: 0,
-        slowestOperations: [],
-        memoryUsage: {
-          average: 0,
-          peak: 0,
-        },
-      },
-    }
-  }
-
   private setupDefaultOutputs(): void {
     // 既存の出力先をクリア（カスタム出力は保持）
     this.outputs = this.outputs.filter((output) => !['console', 'file', 'rotating-file'].includes(output.name))
@@ -462,108 +352,8 @@ export class Logger {
 }
 
 /**
- * 🎯 便利関数
+ * 便利関数
  */
 export function createLogger(config?: Partial<LoggerConfig>): Logger {
   return new Logger(config)
-}
-
-/**
- * 🔧 環境別デフォルト設定
- */
-export function getDefaultConfig(environment: string = process.env.NODE_ENV || 'development'): LoggerConfig {
-  const base: LoggerConfig = {
-    level: 'info',
-    console: {
-      enabled: true,
-      colors: true,
-      format: 'pretty',
-    },
-    file: {
-      enabled: false,
-      path: './logs/app.log',
-      rotation: {
-        maxSize: '10MB',
-        maxFiles: 5,
-      },
-    },
-    external: {
-      enabled: false,
-      services: {},
-    },
-    metadata: {
-      includeVersion: true,
-      includeEnvironment: true,
-      includeHostname: false,
-      includeProcessId: false,
-      includeMemory: false,
-    },
-    filtering: {
-      sensitiveKeys: ['password', 'token', 'secret', 'key'],
-      excludeComponents: [],
-      samplingRate: 1.0,
-    },
-  }
-
-  switch (environment) {
-    case 'development':
-      return {
-        ...base,
-        level: 'debug',
-        console: {
-          enabled: true,
-          colors: true,
-          format: 'pretty',
-        },
-        metadata: {
-          ...base.metadata,
-          includeMemory: true,
-        },
-      }
-
-    case 'production':
-      return {
-        ...base,
-        level: 'warn',
-        console: {
-          enabled: false,
-          colors: false,
-          format: 'json',
-        },
-        file: {
-          enabled: true,
-          path: './logs/production.log',
-          rotation: {
-            maxSize: '50MB',
-            maxFiles: 10,
-          },
-        },
-        metadata: {
-          ...base.metadata,
-          includeHostname: true,
-          includeProcessId: true,
-        },
-      }
-
-    case 'staging':
-      return {
-        ...base,
-        level: 'info',
-        file: {
-          enabled: true,
-          path: './logs/staging.log',
-          rotation: {
-            maxSize: '20MB',
-            maxFiles: 7,
-          },
-        },
-        metadata: {
-          ...base.metadata,
-          includeHostname: true,
-        },
-      }
-
-    default:
-      return base
-  }
 }
