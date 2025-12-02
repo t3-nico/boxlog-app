@@ -2,112 +2,37 @@
 // TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
-import React, { Suspense, useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 
 import { useRouter } from 'next/navigation'
 
 import { format } from 'date-fns'
 
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
-import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
-import { useplans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { getCurrentTimezone } from '@/features/settings/utils/timezone'
+import { getCurrentTimezone, setUserTimezone } from '@/features/settings/utils/timezone'
 import { logger } from '@/lib/logger'
 
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
-
-import { setUserTimezone } from '@/features/settings/utils/timezone'
 import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
 import { useCalendarContextMenu } from '../hooks/useCalendarContextMenu'
 import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard'
 import { usePlanContextActions } from '../hooks/usePlanContextActions'
 import { usePlanOperations } from '../hooks/usePlanOperations'
-import { useWeekendNavigation } from '../hooks/useWeekendNavigation'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
-import { calculateViewDateRange } from '../lib/view-helpers'
 import { DnDProvider } from '../providers/DnDProvider'
-import { plansToCalendarPlans } from '../utils/planDataAdapter'
 
-import type { CalendarPlan, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
+import type { CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
+import { CalendarViewRenderer } from './controller/components'
+import { useCalendarData, useCalendarHandlers, useCalendarNavigationHandlers } from './controller/hooks'
+import { initializePreload } from './controller/utils'
 import { CalendarLayout } from './layout/CalendarLayout'
 import { EventContextMenu } from './views/shared/components'
 
-// 遅延ロード: カレンダービューコンポーネントは大きいため、使用時のみロード
-const DayView = React.lazy(() => import('./views/DayView').then((module) => ({ default: module.DayView })))
-const WeekView = React.lazy(() => import('./views/WeekView').then((module) => ({ default: module.WeekView })))
-const ThreeDayView = React.lazy(() =>
-  import('./views/ThreeDayView').then((module) => ({ default: module.ThreeDayView }))
-)
-const FiveDayView = React.lazy(() => import('./views/FiveDayView').then((module) => ({ default: module.FiveDayView })))
-
-// ビューのプリロード: ブラウザがアイドル状態の時に先読みして遷移を高速化
-const preloadCalendarViews = () => {
-  // 最もよく使うビューを先読み
-  import('./views/DayView')
-  import('./views/WeekView')
-  import('./views/ThreeDayView')
-  import('./views/FiveDayView')
-}
-
-// クライアントサイドでのみ実行
-if (typeof window !== 'undefined') {
-  if ('requestIdleCallback' in window) {
-    ;(window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(preloadCalendarViews)
-  } else {
-    // Safari等のフォールバック
-    setTimeout(preloadCalendarViews, 1000)
-  }
-}
-
-// ローディングフォールバック
-const CalendarViewSkeleton = () => (
-  <div className="h-full w-full animate-pulse">
-    <div className="bg-muted mb-4 h-12 rounded" />
-    <div className="grid grid-cols-7 gap-2">
-      {Array.from({ length: 21 }).map((_, i) => (
-        <div key={i} className="bg-muted h-24 rounded" />
-      ))}
-    </div>
-  </div>
-)
-
-/**
- * CalendarViewRenderer - ビューレンダリング専用コンポーネント
- *
- * memo化により、propsが変更されない限り再レンダリングをスキップ
- * これにより、親コンポーネントの他の状態変更時の不要な再描画を防止
- */
-const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
-  viewType,
-  showWeekends,
-  commonProps,
-}: {
-  viewType: CalendarViewType
-  showWeekends: boolean
-  commonProps: Record<string, unknown>
-}) {
-  return (
-    <Suspense fallback={<CalendarViewSkeleton />}>
-      {(() => {
-        switch (viewType) {
-          case 'day':
-            return <DayView {...commonProps} showWeekends={showWeekends} />
-          case '3day':
-            return <ThreeDayView {...commonProps} showWeekends={showWeekends} />
-          case '5day':
-            return <FiveDayView {...commonProps} showWeekends={showWeekends} />
-          case 'week':
-            return <WeekView {...commonProps} showWeekends={showWeekends} />
-          default:
-            return <DayView {...commonProps} showWeekends={showWeekends} />
-        }
-      })()}
-    </Suspense>
-  )
-})
+// 初回ロード時にビューをプリロード
+initializePreload()
 
 interface CalendarViewExtendedProps extends CalendarViewProps {
   initialViewType?: CalendarViewType
@@ -118,7 +43,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const router = useRouter()
   const calendarNavigation = useCalendarNavigation()
   const { openInspector } = usePlanInspectorStore()
-  const { createPlan } = usePlanMutations()
 
   // Context が利用可能な場合はそれを使用、そうでない場合は useCalendarLayout を使用
   const contextAvailable = calendarNavigation !== null
@@ -151,7 +75,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const navigateToDate = contextAvailable ? calendarNavigation.navigateToDate : layoutHook.navigateToDate
 
   // デバッグ用ログ
-  React.useEffect(() => {
+  useEffect(() => {
     logger.log('📊 CalendarController state:', {
       contextAvailable,
       viewType,
@@ -178,21 +102,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // キーボードショートカット（Cmd/Ctrl + W）
   useWeekendToggleShortcut()
 
-  // const eventStore = useEventStore()
-  // const { events } = eventStore
-
-  // デバッグ: イベントストアの状態を確認
-  // logger.log('🔍 EventStore状態確認:', {
-  //   eventsCount: events.length,
-  //   events: events.slice(0, 3).map((e) => ({
-  //     id: e.id,
-  //     title: e.title,
-  //     startDate: e.startDate?.toISOString?.(),
-  //     endDate: e.endDate?.toISOString?.(),
-  //     isDeleted: e.isDeleted,
-  //   })),
-  // })
-
   // 通知機能の統合
   const {
     permission: notificationPermission,
@@ -200,16 +109,12 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     requestPermission: requestNotificationPermission,
   } = useNotifications({
     events: [],
-    onReminderTriggered: () => {
-      // Reminder triggered for event
-    },
+    onReminderTriggered: () => {},
   })
 
   // 🚀 初回ロード時にイベントストアを初期化（マウント時のみ）
   useEffect(() => {
     logger.log('🚀 Initializing EventStore...')
-    // マウント時のみ実行される初期化処理は不要
-    // useEventStoreはすでにlocalStorageから初期化されている
   }, [])
 
   // 通知許可のリクエスト（初回のみ）
@@ -218,8 +123,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       requestNotificationPermission()
     }
   }, [hasRequestedNotification, notificationPermission, requestNotificationPermission])
-
-  // 削除: week-no-weekendは廃止
 
   // URLパラメータの日付変更を検知（Context利用時は無効にする）
   useEffect(() => {
@@ -231,11 +134,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   // タイムゾーン設定の初期化（マウント時のみ）
   useEffect(() => {
-    // グローバル変数にタイムゾーンを設定
     setUserTimezone(timezone)
-
     if (timezone === 'Asia/Tokyo') {
-      // デフォルト値の場合のみ実際のタイムゾーンに更新
       const actualTimezone = getCurrentTimezone()
       if (actualTimezone !== 'Asia/Tokyo') {
         updateSettings({ timezone: actualTimezone })
@@ -243,265 +143,42 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     }
   }, [timezone, updateSettings])
 
-  // ビューに応じた期間計算
-  const viewDateRange = useMemo(() => {
-    const dateRange = calculateViewDateRange(viewType, currentDate)
+  // カレンダーデータ取得（フック化）
+  const { viewDateRange, filteredTasks, filteredEvents } = useCalendarData({
+    viewType,
+    currentDate,
+  })
 
-    // TwoWeekView診断ログ
-    if (viewType === '2week') {
-      logger.log('[CalendarController] 2week範囲計算:', {
-        viewType,
-        currentDate: currentDate.toDateString(),
-        calculatedRange: {
-          start: dateRange.start.toDateString(),
-          end: dateRange.end.toDateString(),
-          dayCount: dateRange.days.length,
-        },
-      })
-    }
+  // カレンダーハンドラー（フック化）
+  const {
+    handleTaskClick,
+    handleEventClick,
+    handleCreateEvent,
+    handleCreateTask,
+    handleCreateRecord,
+    handleEmptyClick,
+    handleDateTimeRangeSelect,
+  } = useCalendarHandlers({ viewType, currentDate })
 
-    return dateRange
-  }, [viewType, currentDate])
-
-  // 表示範囲のタスクを取得
-  const filteredTasks = useMemo(() => {
-    return []
-  }, [])
-
-  // plansを取得（リアルタイム性最優化済み）
-  const { data: plansData } = useplans()
-
-  // デバッグ: plansDataの更新を検知
-  useEffect(() => {
-    console.log('[CalendarController] plansData 更新検知:', {
-      count: plansData?.length,
-      firstPlan: plansData?.[0]
-        ? {
-            id: plansData[0].id,
-            start_time: plansData[0].start_time,
-            end_time: plansData[0].end_time,
-          }
-        : null,
-    })
-  }, [plansData])
-
-  // 表示範囲のイベントを取得してCalendarPlan型に変換（削除済みを除外）
-  const filteredEvents = useMemo(() => {
-    // planデータがない場合は空配列を返す
-    if (!plansData) {
-      return []
-    }
-
-    // plan_tags を tags に変換
-    const plansWithTags = (
-      plansData as unknown as Array<plan & { plan_tags?: Array<{ tag_id: string; tags: unknown }> }>
-    ).map((plan) => {
-      const tags = plan.plan_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
-      const { plan_tags, ...planData } = plan
-      return { ...planData, tags } as plan & { tags: unknown[] }
-    })
-
-    // start_time/end_timeが設定されているplanのみを抽出
-    const plansWithTime = plansWithTags.filter((plan) => {
-      return plan.start_time && plan.end_time
-    })
-
-    // planをCalendarPlanに変換
-    const calendarEvents = plansToCalendarPlans(plansWithTime as plan[])
-
-    // 表示範囲内のイベントのみをフィルタリング
-    const startDateOnly = new Date(
-      viewDateRange.start.getFullYear(),
-      viewDateRange.start.getMonth(),
-      viewDateRange.start.getDate()
-    )
-    const endDateOnly = new Date(
-      viewDateRange.end.getFullYear(),
-      viewDateRange.end.getMonth(),
-      viewDateRange.end.getDate()
-    )
-
-    const filtered = calendarEvents.filter((event) => {
-      const eventStartDateOnly = new Date(
-        event.startDate.getFullYear(),
-        event.startDate.getMonth(),
-        event.startDate.getDate()
-      )
-      const eventEndDateOnly = new Date(event.endDate.getFullYear(), event.endDate.getMonth(), event.endDate.getDate())
-
-      return (
-        (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
-        (eventEndDateOnly >= startDateOnly && eventEndDateOnly <= endDateOnly) ||
-        (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
-      )
-    })
-
-    logger.log(`[CalendarController] plansフィルタリング:`, {
-      totalplans: plansData.length,
-      plansWithTime: plansWithTime.length,
-      filteredCount: filtered.length,
-      dateRange: {
-        start: startDateOnly.toDateString(),
-        end: endDateOnly.toDateString(),
-      },
-      sampleEvents: filtered.slice(0, 3).map((e) => ({
-        title: e.title,
-        startDate: e.startDate.toISOString(),
-        endDate: e.endDate.toISOString(),
-        tags: e.tags,
-      })),
-    })
-
-    return filtered
-  }, [viewDateRange.start, viewDateRange.end, plansData])
-
-  // タスククリックハンドラー
-  const handleTaskClick = useCallback(() => {
-    // Task click functionality removed - not used in current implementation
-  }, [])
-
-  // イベント関連のハンドラー
-  const handleEventClick = useCallback(
-    (plan: CalendarPlan) => {
-      // プランIDでplan Inspectorを開く
-      openInspector(event.id)
-      logger.log('📋 Opening plan Inspector:', { planId: event.id, title: event.title })
-    },
-    [openInspector]
-  )
-
-  const handleCreateEvent = useCallback(
-    (date?: Date, time?: string) => {
-      logger.log('➕ Create event requested:', {
-        date: date?.toISOString(),
-        dateString: date?.toDateString(),
-        time,
-        currentDate: currentDate.toISOString(),
-        viewType,
-      })
-
-      // 時刻の解析
-      let startTime: Date | undefined
-      let endTime: Date | undefined
-
-      if (date) {
-        if (time) {
-          if (time.includes('-')) {
-            const [start, end] = time.split('-')
-            const [startHour, startMin] = start?.split(':').map(Number) ?? [9, 0]
-            const [endHour, endMin] = end?.split(':').map(Number) ?? [10, 0]
-
-            startTime = new Date(date)
-            startTime.setHours(startHour ?? 9, startMin ?? 0, 0, 0)
-
-            endTime = new Date(date)
-            endTime.setHours(endHour ?? 10, endMin ?? 0, 0, 0)
-          } else {
-            const [hour, min] = time.split(':').map(Number)
-            startTime = new Date(date)
-            startTime.setHours(hour ?? 9, min ?? 0, 0, 0)
-
-            endTime = new Date(date)
-            endTime.setHours((hour ?? 9) + 1, min ?? 0, 0, 0) // デフォルト1時間
-          }
-        } else {
-          startTime = new Date(date)
-          startTime.setHours(9, 0, 0, 0) // デフォルト9:00
-
-          endTime = new Date(date)
-          endTime.setHours(10, 0, 0, 0) // デフォルト10:00
-        }
-      }
-
-      // CreateEventInspectorを新規作成モードで開く
-      // if (startTime && endTime && date) {
-      //   openCreateInspector({
-      //     initialData: {
-      //       startDate: startTime,
-      //       endDate: endTime,
-      //       type: 'event',
-      //       status: 'planned',
-      //       priority: 'necessary',
-      //     },
-      //     context: {
-      //       source: 'calendar',
-      //       date,
-      //       viewType,
-      //     },
-      //   })
-      // }
-      console.log('TODO: Plans統合後に実装', { startTime, endTime, date })
-    },
-    [viewType, currentDate]
-  )
-
-  // 週末スキップナビゲーション（フック化）
-  const { handleTodayWithWeekendSkip, handleWeekendSkipNavigation, adjustWeekendDate } = useWeekendNavigation({
+  // ナビゲーションハンドラー（フック化）
+  const {
+    handleNavigate,
+    handleViewChange,
+    handleNavigatePrev,
+    handleNavigateNext,
+    handleNavigateToday,
+    handleToggleWeekends,
+    handleDateSelect,
+  } = useCalendarNavigationHandlers({
     viewType,
     currentDate,
     showWeekends,
+    navigateRelative,
     navigateToDate,
+    changeView,
   })
 
-  // Navigation handlers using useCalendarLayout
-  const handleNavigate = useCallback(
-    (direction: 'prev' | 'next' | 'today') => {
-      logger.log(
-        '🧭 handleNavigate called:',
-        direction,
-        'current date:',
-        currentDate,
-        'viewType:',
-        viewType,
-        'showWeekends:',
-        showWeekends
-      )
-
-      // 特別な処理が必要かチェック
-      const needsWeekendSkip = (viewType === 'day' || viewType === '3day') && !showWeekends
-
-      if (!needsWeekendSkip) {
-        navigateRelative(direction)
-        return
-      }
-
-      // 週末スキップ処理
-      if (direction === 'today') {
-        if (handleTodayWithWeekendSkip()) {
-          return
-        }
-        navigateRelative(direction)
-        return
-      }
-
-      // prev/nextの週末スキップ処理
-      if (handleWeekendSkipNavigation(direction)) {
-        return
-      }
-
-      // フォールバックとして通常処理
-      navigateRelative(direction)
-    },
-    [navigateRelative, currentDate, viewType, showWeekends, handleTodayWithWeekendSkip, handleWeekendSkipNavigation]
-  )
-
-  const handleViewChange = useCallback(
-    (newView: CalendarViewType) => {
-      changeView(newView)
-    },
-    [changeView]
-  )
-
-  // Navigation callback handlers
-  const handleNavigatePrev = useCallback(() => handleNavigate('prev'), [handleNavigate])
-  const handleNavigateNext = useCallback(() => handleNavigate('next'), [handleNavigate])
-  const handleNavigateToday = useCallback(() => handleNavigate('today'), [handleNavigate])
-
-  // キーボードショートカット（フック化）
-  const handleToggleWeekends = useCallback(() => {
-    updateSettings({ showWeekends: !showWeekends })
-  }, [updateSettings, showWeekends])
-
+  // キーボードショートカット
   useCalendarKeyboard({
     viewType,
     onNavigate: handleNavigate,
@@ -510,8 +187,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   })
 
   // ビューコンポーネントのレンダリング用props（memo化のため安定した参照を保持）
-  // TODO(#389): Task/Event型の統一が必要
-  // @ts-expect-error - Task型とCalendarPlan型の統一が必要
   const commonProps = useMemo(
     () => ({
       dateRange: viewDateRange,
@@ -557,157 +232,31 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     ]
   )
 
-  // 日付選択ハンドラー（週末調整フック使用）
-  const handleDateSelect = useCallback(
-    (date: Date) => {
-      const adjustedDate = adjustWeekendDate(date)
-      navigateToDate(adjustedDate)
-    },
-    [navigateToDate, adjustWeekendDate]
-  )
-
-  // タスク作成ハンドラー
-  const handleCreateTask = useCallback(
-    (_taskData: {
-      title: string
-      planned_start: Date
-      planned_duration: number
-      status: 'pending' | 'in_progress' | 'completed'
-      priority: 'low' | 'medium' | 'high'
-      description?: string
-      tags?: string[]
-    }) => {
-      // noop - Plans統合後に実装予定
-    },
-    []
-  )
-
-  // 記録作成ハンドラー
-  const handleCreateRecord = useCallback(
-    (_recordData: {
-      title: string
-      actual_start: Date
-      actual_end: Date
-      actual_duration: number
-      satisfaction?: number
-      focus_level?: number
-      energy_level?: number
-      memo?: string
-      interruptions?: number
-    }) => {
-      // Record creation tracked in Issue #89
-      // ここで Supabase やローカルストレージに記録を保存
-    },
-    []
-  )
-
-  // 空き時間クリック用のハンドラー
-  const handleEmptyClick = useCallback(
-    (date: Date, time: string) => {
-      logger.log('🖱️ Empty time clicked:', { date, time })
-      handleCreateEvent(date, time)
-    },
-    [handleCreateEvent]
-  )
-
-  // 統一された時間範囲選択ハンドラー（全ビュー共通）
-  const handleDateTimeRangeSelect = useCallback(
-    (selection: { date: Date; startHour: number; startMinute: number; endHour: number; endMinute: number }) => {
-      // 指定された日付に時間を設定
-      const startTime = new Date(
-        selection.date.getFullYear(),
-        selection.date.getMonth(),
-        selection.date.getDate(),
-        selection.startHour,
-        selection.startMinute
-      )
-      const endTime = new Date(
-        selection.date.getFullYear(),
-        selection.date.getMonth(),
-        selection.date.getDate(),
-        selection.endHour,
-        selection.endMinute
-      )
-
-      logger.log('📅 Calendar Drag Selection:', {
-        date: selection.date.toDateString(),
-        startTime: startTime.toLocaleTimeString(),
-        endTime: endTime.toLocaleTimeString(),
-      })
-
-      // プランを作成してからInspectorで編集
-      createPlan.mutate(
-        {
-          title: '新規プラン',
-          status: 'backlog',
-          due_date: format(selection.date, 'yyyy-MM-dd'),
-          start_time: startTime.toISOString(),
-          end_time: endTime.toISOString(),
-        },
-        {
-          onSuccess: (newplan) => {
-            // 作成されたプランをInspectorで開く
-            openInspector(newplan.id)
-            logger.log('✅ Created plan from drag selection:', {
-              planId: newplan.id,
-              title: newplan.title,
-              dueDate: newplan.due_date,
-            })
-          },
-        }
-      )
-
-      // CreateEventInspectorを開く
-      // openCreateInspector({
-      //   initialData: {
-      //     startDate: startTime,
-      //     endDate: endTime,
-      //     type: 'event',
-      //     status: 'planned',
-      //     priority: 'necessary',
-      //   },
-      //   context: {
-      //     source: 'calendar',
-      //     date: selection.date,
-      //     viewType,
-      //   },
-      // })
-      console.log('TODO: Plans統合後に実装', { startTime, endTime, selection })
-    },
-    [createPlan, openInspector]
-  )
-
   return (
     <DnDProvider>
       <CalendarLayout
         className={className}
-        // Header props
         viewType={viewType}
         currentDate={currentDate}
         onNavigate={handleNavigate}
         onViewChange={handleViewChange}
         showHeaderActions={false}
-        // Calendar integration props
         selectedDate={currentDate}
         onDateSelect={handleDateSelect}
         onCreateEvent={handleCreateEvent}
         onGoToToday={handleNavigateToday}
-        // Display options
         showMiniCalendar={true}
-        showCalendarList={false} // まだカレンダーリストはないので無効
-        showTagFilter={false} // まだタグフィルターはないので無効
+        showCalendarList={false}
+        showTagFilter={false}
         showQuickActions={true}
-        // Display range for mini calendar highlight
         displayRange={{
           start: viewDateRange.start,
           end: viewDateRange.end,
         }}
       >
-        {/* ビュー固有のコンテンツ - memo化されたCalendarViewRendererで効率的にレンダリング */}
         <CalendarViewRenderer viewType={viewType} showWeekends={showWeekends} commonProps={commonProps} />
       </CalendarLayout>
 
-      {/* イベントコンテキストメニュー */}
       {contextMenuEvent && contextMenuPosition ? (
         <EventContextMenu
           event={contextMenuEvent}
