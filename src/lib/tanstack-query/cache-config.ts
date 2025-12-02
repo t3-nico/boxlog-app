@@ -41,19 +41,32 @@ export const staticCache = {
 }
 
 /**
+ * 短期キャッシュ（1分）
+ * - タグ使用数（頻繁に更新される可能性）
+ * - プランアクティビティ（履歴は少し遅れてもOK）
+ */
+export const shortTermCache = {
+  staleTime: 60 * 1000, // 1分
+  gcTime: 5 * 60 * 1000, // 5分
+}
+
+/**
  * 機能別のキャッシュ戦略マトリクス
  */
 export const cacheStrategies = {
   events: realtimeCache,
   calendars: realtimeCache,
+  calendarViewState: standardCache, // ビュー状態はリアルタイム不要
   tags: standardCache,
   tagGroups: standardCache, // タググループは頻繁に変更されない
   itemTags: standardCache,
   tagStats: standardCache,
+  tagUsage: shortTermCache, // タグ使用数は頻繁に更新される
   smartFolders: standardCache,
   userSettings: staticCache,
   inbox: realtimeCache, // Inboxデータはリアルタイム性が重要
   plans: realtimeCache, // プランもリアルタイム性が重要
+  planActivities: shortTermCache, // アクティビティ履歴は少し遅れてもOK
   sessions: realtimeCache, // セッションもリアルタイム性が重要
 } as const
 

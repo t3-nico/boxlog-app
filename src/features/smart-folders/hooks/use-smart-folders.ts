@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { getCacheStrategy } from '@/lib/tanstack-query/cache-config'
 import { CreateSmartFolderInput, SmartFolder, UpdateSmartFolderInput } from '@/types/smart-folders'
 
 // API関数
@@ -89,7 +90,7 @@ export function useSmartFolders() {
   return useQuery({
     queryKey: smartFolderKeys.lists(),
     queryFn: fetchSmartFolders,
-    staleTime: 5 * 60 * 1000, // 5分
+    ...getCacheStrategy('smartFolders'),
     refetchOnWindowFocus: false,
   })
 }

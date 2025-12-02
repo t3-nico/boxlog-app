@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 
 import { useQuery } from '@tanstack/react-query'
 
+import { getCacheStrategy } from '@/lib/tanstack-query/cache-config'
 import type { TagUsageStats, TagWithChildren } from '@/types/tags'
 
 interface TagWithUsage extends TagWithChildren {
@@ -66,7 +67,7 @@ export function useTagStats() {
   return useQuery({
     queryKey: tagStatsKeys.stats(),
     queryFn: tagStatsAPI.fetchTagStats,
-    staleTime: 5 * 60 * 1000, // 5分
+    ...getCacheStrategy('tagStats'),
   })
 }
 
@@ -75,7 +76,7 @@ export function useTagUsageCounts() {
   return useQuery({
     queryKey: tagStatsKeys.usage(),
     queryFn: tagStatsAPI.fetchTagUsageCounts,
-    staleTime: 60 * 1000, // 1分
+    ...getCacheStrategy('tagUsage'),
   })
 }
 

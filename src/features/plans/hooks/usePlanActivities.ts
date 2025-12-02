@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
+import { getCacheStrategy } from '@/lib/tanstack-query/cache-config'
 import { api } from '@/lib/trpc'
 import type { Database } from '@/types/supabase'
 import type { RealtimePostgresInsertPayload } from '@supabase/supabase-js'
@@ -37,7 +38,7 @@ export function usePlanActivities(
     {
       retry: 1,
       refetchOnWindowFocus: false,
-      staleTime: 1000 * 60, // 1分間キャッシュ
+      ...getCacheStrategy('planActivities'),
       enabled: options?.enabled ?? true,
     }
   )
