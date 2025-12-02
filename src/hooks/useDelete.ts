@@ -3,7 +3,6 @@
 
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
 import { TrashItemType } from '@/features/trash/types/trash'
-import { SmartFolder } from '@/features/smart-folders/types'
 import { Task } from '@/types/unified'
 
 // 削除可能なアイテムの共通インターフェース
@@ -58,16 +57,10 @@ export const useDelete = () => {
     // Delete implementation tracked in Issue #85
   }
 
-  const deleteSmartFolder = async (folder: SmartFolder, originalPath?: string) => {
-    await deleteWithTrash(folder, 'folder', originalPath)
-    // Delete implementation tracked in Issue #85
-  }
-
   return {
     deleteWithTrash,
     deleteTask,
     deleteEvent,
     deleteTag,
-    deleteSmartFolder,
   }
 }

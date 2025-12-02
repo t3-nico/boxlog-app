@@ -1,5 +1,3 @@
-import { SmartFolder } from './smart-folders'
-
 export interface Notification {
   id: string
   type: 'meeting' | 'task' | 'reminder' | 'mention' | 'system'
@@ -9,11 +7,6 @@ export interface Notification {
   read: boolean
   actionUrl?: string
   priority: 'low' | 'normal' | 'high'
-}
-
-export interface SidebarSmartFolder extends Omit<SmartFolder, 'createdAt' | 'updatedAt'> {
-  count: number
-  orderIndex: number
 }
 
 export interface SidebarTag {
@@ -40,9 +33,6 @@ export interface SidebarState {
   unreadNotifications: number
   notifications: Notification[]
 
-  // スマートフォルダ
-  smartFolders: SidebarSmartFolder[]
-
   // タグ関連
   tags: SidebarTag[]
   tagCounts: Record<string, number>
@@ -63,10 +53,6 @@ export interface SidebarActions {
   markAllNotificationsRead: () => void
   setUnreadCount: (_count: number) => void
   setNotifications: (_notifications: Notification[]) => void
-
-  // スマートフォルダ操作
-  setSmartFolders: (_folders: SidebarSmartFolder[]) => void
-  addSmartFolder: (_folder: SidebarSmartFolder) => void
 
   // タグ操作
   setTags: (_tags: SidebarTag[]) => void

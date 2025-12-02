@@ -19,7 +19,6 @@ export interface CreateTaskRequest {
   planned_start: string
   planned_duration: number
   tags?: string[]
-  smart_folder_id?: string
 }
 
 export interface UpdateTaskRequest extends Partial<CreateTaskRequest> {
@@ -62,8 +61,7 @@ export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>
 // tags.tsから最新の定義を再エクスポート
 export type { CreateTagInput, Tag, TagLevel, TagWithChildren, UpdateTagInput } from './tags'
 
-// smart-folders.tsから最新の定義を再エクスポート
-export type { CreateSmartFolderInput, SmartFolder, SmartFolderRule } from './smart-folders'
-
 // 注: events型定義は削除済み（plans機能に移行）
 // src/features/plans/types/plan.tsを使用してください
+
+// 注: smart-folders型定義は削除済み

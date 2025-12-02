@@ -22,7 +22,6 @@ export const realtimeCache = {
 /**
  * 通常のデータ（標準）
  * - タグ（頻繁に変更されない）
- * - スマートフォルダ（設定的な性質）
  * - タグ関連付け
  */
 export const standardCache = {
@@ -62,7 +61,6 @@ export const cacheStrategies = {
   itemTags: standardCache,
   tagStats: standardCache,
   tagUsage: shortTermCache, // タグ使用数は頻繁に更新される
-  smartFolders: standardCache,
   userSettings: staticCache,
   inbox: realtimeCache, // Inboxデータはリアルタイム性が重要
   plans: realtimeCache, // プランもリアルタイム性が重要

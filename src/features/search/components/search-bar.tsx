@@ -2,14 +2,13 @@
 
 import { useCallback, useState } from 'react'
 
-import { Calendar, CheckSquare, Folder, Search, Tag } from 'lucide-react'
+import { Calendar, CheckSquare, Search, Tag } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 // TODO(#621): Events/Tasks削除後、plans/Sessionsに移行予定
 // import { useEventStore } from '@/features/events'
-import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { cn } from '@/lib/utils'
 
@@ -26,7 +25,7 @@ interface SearchBarProps {
 export function SearchBar({
   className,
   placeholder = 'Search tasks, tags, events...',
-  types = ['task', 'tag', 'smart-folder', 'event'],
+  types = ['task', 'tag', 'event'],
   onResultSelect,
 }: SearchBarProps) {
   const [open, setOpen] = useState(false)
@@ -36,7 +35,6 @@ export function SearchBar({
   // Get data from stores
   // const tasks = useTaskStore((state) => state.tasks)
   const tags = useTagStore((state) => state.tags)
-  const smartFolders = useSmartFolderStore((state) => state.smartFolders)
   // const events = useEventStore((state) => state.events)
 
   // TODO: Sessions統合後に実装
@@ -49,7 +47,6 @@ export function SearchBar({
   // Filter data by types
   const filteredTasks = types.includes('task') ? tasks : []
   const filteredTags = types.includes('tag') ? tags : []
-  const filteredFolders = types.includes('smart-folder') ? smartFolders : []
   const filteredEvents = types.includes('event') ? events : []
 
   // Handle selection
@@ -140,28 +137,6 @@ export function SearchBar({
                     <div className="flex flex-1 flex-col">
                       <span>{tag.name}</span>
                       {tag.description && <span className="text-muted-foreground text-xs">{tag.description}</span>}
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-
-            {/* Smart Folders */}
-            {filteredFolders.length > 0 && (
-              <CommandGroup heading="Smart Folders">
-                {filteredFolders.slice(0, 5).map((folder) => (
-                  <CommandItem
-                    key={folder.id}
-                    value={folder.name}
-                    keywords={[folder.description || '']}
-                    onSelect={() => handleSelect(folder.id, 'smart-folder')}
-                  >
-                    <Folder className="mr-2 h-4 w-4" />
-                    <div className="flex flex-1 flex-col">
-                      <span>{folder.name}</span>
-                      {folder.description && (
-                        <span className="text-muted-foreground text-xs">{folder.description}</span>
-                      )}
                     </div>
                   </CommandItem>
                 ))}

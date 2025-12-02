@@ -11,7 +11,6 @@ export const APP_CONFIG = {
 export const LIMITS = {
   maxTasksPerPage: 50,
   maxTagsPerItem: 10,
-  maxSmartFolders: 20,
 } as const
 
 export const TIMEOUTS = {

@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 
-import { Calendar, CheckSquare, Clock, Folder, Tag, TrendingUp } from 'lucide-react'
+import { Calendar, CheckSquare, Clock, Tag, TrendingUp } from 'lucide-react'
 
 import {
   Command,
@@ -18,7 +18,6 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 // TODO(#621): Events/Tasks削除後、plans/Sessionsに移行予定
 // import { useEventStore } from '@/features/events'
-import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 
 import { useSearchHistory } from '../hooks/use-search'
@@ -36,7 +35,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   // Get data from stores
   // const tasks = useTaskStore((state) => state.tasks)
   const tags = useTagStore((state) => state.tags)
-  const smartFolders = useSmartFolderStore((state) => state.smartFolders)
   // const events = useEventStore((state) => state.events)
 
   // TODO: Sessions統合後に実装
@@ -65,7 +63,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
           <DialogTitle>グローバル検索</DialogTitle>
         </VisuallyHidden>
         <Command className="[&_[cmdk-group-heading]]:text-muted-foreground !rounded-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3">
-          <CommandInput placeholder="Search tasks, events, tags, folders..." value={query} onValueChange={setQuery} />
+          <CommandInput placeholder="Search tasks, events, tags..." value={query} onValueChange={setQuery} />
           <CommandList className="max-h-[31rem]">
             <CommandEmpty>No results found.</CommandEmpty>
 
@@ -194,32 +192,6 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                     <div className="flex flex-1 flex-col">
                       <span>{tag.name}</span>
                       {tag.description && <span className="text-muted-foreground text-xs">{tag.description}</span>}
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-
-            {/* Smart Folders */}
-            {smartFolders.length > 0 && (
-              <CommandGroup heading="Smart Folders">
-                {smartFolders.slice(0, 5).map((folder) => (
-                  <CommandItem
-                    key={folder.id}
-                    value={folder.name}
-                    keywords={[folder.description || '']}
-                    onSelect={() =>
-                      handleSelect(() => {
-                        router.push(`/smart-folders/${folder.id}`)
-                      }, query)
-                    }
-                  >
-                    <Folder className="mr-2 h-4 w-4" />
-                    <div className="flex flex-1 flex-col">
-                      <span>{folder.name}</span>
-                      {folder.description && (
-                        <span className="text-muted-foreground text-xs">{folder.description}</span>
-                      )}
                     </div>
                   </CommandItem>
                 ))}
