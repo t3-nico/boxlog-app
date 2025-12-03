@@ -14,6 +14,7 @@ export interface SearchResult {
   type: SearchResultType
   category?: string
   icon?: string
+  shortcut?: string[]
   metadata?: Record<string, unknown>
   score?: number
   action?: () => void | Promise<void>

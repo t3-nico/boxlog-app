@@ -8,6 +8,7 @@ import {
   Calendar,
   CheckSquare,
   Clock,
+  Filter,
   Inbox,
   Moon,
   Navigation,
@@ -36,8 +37,11 @@ import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModal
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
+import { useRecentPlans } from '../hooks/use-recent-plans'
 import { useSearchHistory } from '../hooks/use-search'
 import { registerDefaultCommands } from '../lib/command-registry'
+import { HighlightedText } from '../lib/highlight-text'
+import { getFilterHints, parseSearchQuery } from '../lib/query-parser'
 import { SearchEngine } from '../lib/search-engine'
 import type { SearchResult } from '../types'
 
@@ -71,8 +75,13 @@ const iconNameMap: Record<string, React.ElementType> = {
 export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const router = useRouter()
   const { history, addToHistory } = useSearchHistory()
+  const { recentPlans, addRecentPlan } = useRecentPlans()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
+
+  // Parse query for active filters
+  const parsedQuery = useMemo(() => parseSearchQuery(query), [query])
+  const filterHints = useMemo(() => getFilterHints(), [])
 
   // Get data from stores
   const { data: plans = [] } = usePlans()
@@ -176,6 +185,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
         // Default navigation based on type
         if (result.type === 'plan') {
           const planId = result.id.replace('plan:', '')
+          addRecentPlan(planId, result.title)
           router.push(`/inbox?plan=${planId}`)
         } else if (result.type === 'tag') {
           const tagNumber = (result.metadata as { tagNumber?: string })?.tagNumber
@@ -185,7 +195,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
         }
       }
     },
-    [query, addToHistory, router, onClose]
+    [query, addToHistory, addRecentPlan, router, onClose]
   )
 
   return (
@@ -206,6 +216,48 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
           <CommandList className="max-h-[30rem]">
             <CommandEmpty>結果が見つかりませんでした</CommandEmpty>
 
+            {/* Active Filters Indicator */}
+            {parsedQuery.hasFilters && (
+              <div className="border-border flex items-center gap-2 border-b px-4 py-2">
+                <Filter className="text-muted-foreground h-3 w-3" />
+                <span className="text-muted-foreground text-xs">フィルター適用中:</span>
+                {parsedQuery.filters.status && (
+                  <span className="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-xs">
+                    status: {parsedQuery.filters.status.join(', ')}
+                  </span>
+                )}
+                {parsedQuery.filters.tags && (
+                  <span className="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-xs">
+                    #{parsedQuery.filters.tags.join(', #')}
+                  </span>
+                )}
+                {parsedQuery.filters.dueDate && (
+                  <span className="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-xs">
+                    due: {parsedQuery.filters.dueDate}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Filter Hints (shown on empty query) */}
+            {query === '' && (
+              <CommandGroup heading="クイックフィルター">
+                {filterHints.slice(0, 4).map((hint) => (
+                  <CommandItem
+                    key={hint.syntax}
+                    onSelect={() => setQuery(hint.syntax + ' ')}
+                    className="flex items-center gap-3"
+                  >
+                    <Filter className="h-4 w-4 shrink-0" />
+                    <div className="flex min-w-0 flex-1 items-center gap-2">
+                      <code className="bg-muted rounded px-1.5 py-0.5 text-xs">{hint.syntax}</code>
+                      <span className="text-muted-foreground text-xs">{hint.description}</span>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+
             {/* Recent Searches */}
             {history.length > 0 && query === '' && (
               <>
@@ -214,6 +266,27 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                     <CommandItem key={`history-${item}`} onSelect={() => setQuery(item)}>
                       <Clock className="mr-2 h-4 w-4" />
                       {item}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+                <CommandSeparator />
+              </>
+            )}
+
+            {/* Recent Plans */}
+            {recentPlans.length > 0 && query === '' && (
+              <>
+                <CommandGroup heading="最近使ったプラン">
+                  {recentPlans.map((plan) => (
+                    <CommandItem
+                      key={`recent-plan-${plan.id}`}
+                      onSelect={() => {
+                        onClose()
+                        router.push(`/inbox?plan=${plan.id}`)
+                      }}
+                    >
+                      <CheckSquare className="mr-2 h-4 w-4" />
+                      {plan.title}
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -236,11 +309,27 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                     >
                       <ResultIcon className="h-4 w-4 shrink-0" />
                       <div className="flex min-w-0 flex-1 flex-col">
-                        <span className="truncate">{result.title}</span>
+                        <span className="truncate">
+                          <HighlightedText text={result.title} query={query} />
+                        </span>
                         {result.description && (
-                          <span className="text-muted-foreground truncate text-xs">{result.description}</span>
+                          <span className="text-muted-foreground truncate text-xs">
+                            <HighlightedText text={result.description} query={query} />
+                          </span>
                         )}
                       </div>
+                      {result.shortcut && result.shortcut.length > 0 && (
+                        <div className="flex shrink-0 items-center gap-1">
+                          {result.shortcut.map((key, index) => (
+                            <kbd
+                              key={index}
+                              className="bg-muted text-muted-foreground inline-flex h-5 min-w-5 items-center justify-center rounded border px-1.5 font-mono text-xs font-medium"
+                            >
+                              {key}
+                            </kbd>
+                          ))}
+                        </div>
+                      )}
                     </CommandItem>
                   )
                 })}

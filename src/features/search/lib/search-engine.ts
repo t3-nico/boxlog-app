@@ -2,9 +2,10 @@ import type { Tag } from '@/types/common'
 
 import type { PlanWithTags } from '@/features/plans/types'
 
-import type { SearchOptions, SearchResult, SearchResultType } from '../types'
+import type { SearchFilters, SearchOptions, SearchResult, SearchResultType } from '../types'
 
 import { commandRegistry } from './command-registry'
+import { parseSearchQuery } from './query-parser'
 
 // Simple fuzzy search implementation
 export class FuzzySearch {
@@ -103,21 +104,25 @@ export class SearchEngine {
     const { query, types, limit = 10 } = options
     const results: SearchResult[] = []
 
-    // Search commands if included
-    if (!types || types.includes('command')) {
-      const commandResults = SearchEngine.searchCommands(query)
+    // Parse query for quick filters
+    const parsed = parseSearchQuery(query)
+
+    // Search commands if included (only when no filters applied)
+    if (!parsed.hasFilters && (!types || types.includes('command'))) {
+      const commandResults = SearchEngine.searchCommands(parsed.text)
       results.push(...commandResults)
     }
 
     // Search plans if provided
     if (stores?.plans && (!types || types.includes('plan'))) {
-      const planResults = SearchEngine.searchPlans(query, stores.plans)
+      const planResults = SearchEngine.searchPlans(parsed.text, stores.plans, parsed.filters)
       results.push(...planResults)
     }
 
     // Search tags if provided
     if (stores?.tags && (!types || types.includes('tag'))) {
-      const tagResults = SearchEngine.searchTags(query, stores.tags)
+      // If filtering by tag, search in tags as well
+      const tagResults = SearchEngine.searchTags(parsed.text, stores.tags, parsed.filters.tags)
       results.push(...tagResults)
     }
 
@@ -150,6 +155,7 @@ export class SearchEngine {
       type: 'command' as SearchResultType,
       category: command.category,
       icon: command.icon,
+      shortcut: command.shortcut,
       action: command.action,
     }))
   }
@@ -157,10 +163,57 @@ export class SearchEngine {
   /**
    * Search plans
    */
-  static searchPlans(query: string, plans: PlanWithTags[]): SearchResult[] {
+  static searchPlans(query: string, plans: PlanWithTags[], filters?: SearchFilters): SearchResult[] {
     if (!plans || plans.length === 0) return []
 
-    const searchablePlans = plans.map((plan) => ({
+    // Apply filters first
+    let filteredPlans = plans
+
+    if (filters?.status && filters.status.length > 0) {
+      filteredPlans = filteredPlans.filter((plan) => filters.status!.includes(plan.status))
+    }
+
+    if (filters?.tags && filters.tags.length > 0) {
+      filteredPlans = filteredPlans.filter((plan) =>
+        filters.tags!.some((filterTag) =>
+          plan.tags?.some((planTag) => planTag.name.toLowerCase().includes(filterTag.toLowerCase()))
+        )
+      )
+    }
+
+    if (filters?.dueDate) {
+      const now = new Date()
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      const tomorrow = new Date(today)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      const weekEnd = new Date(today)
+      weekEnd.setDate(weekEnd.getDate() + 7)
+
+      filteredPlans = filteredPlans.filter((plan) => {
+        if (!plan.due_date) {
+          return filters.dueDate === 'no_due_date'
+        }
+
+        const dueDate = new Date(plan.due_date)
+
+        switch (filters.dueDate) {
+          case 'today':
+            return dueDate >= today && dueDate < tomorrow
+          case 'tomorrow':
+            return dueDate >= tomorrow && dueDate < new Date(tomorrow.getTime() + 86400000)
+          case 'this_week':
+            return dueDate >= today && dueDate < weekEnd
+          case 'overdue':
+            return dueDate < today && plan.status !== 'done'
+          case 'no_due_date':
+            return false
+          default:
+            return true
+        }
+      })
+    }
+
+    const searchablePlans = filteredPlans.map((plan) => ({
       ...plan,
       title: plan.title,
       description: plan.description || '',
@@ -189,10 +242,18 @@ export class SearchEngine {
   /**
    * Search tags from the tag store
    */
-  static searchTags(query: string, tags: Tag[]): SearchResult[] {
+  static searchTags(query: string, tags: Tag[], filterTags?: string[]): SearchResult[] {
     if (!tags || tags.length === 0) return []
 
-    const searchableTags = tags.map((tag) => ({
+    // If we have filter tags, prioritize matching those
+    let filteredTags = tags
+    if (filterTags && filterTags.length > 0) {
+      filteredTags = tags.filter((tag) =>
+        filterTags.some((filterTag) => tag.name.toLowerCase().includes(filterTag.toLowerCase()))
+      )
+    }
+
+    const searchableTags = filteredTags.map((tag) => ({
       title: tag.name,
       description: tag.description || '',
       keywords: [tag.name, tag.path].filter((keyword): keyword is string => Boolean(keyword)),
