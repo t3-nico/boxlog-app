@@ -6,6 +6,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
@@ -18,9 +21,11 @@ import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import {
   Archive,
   ChevronDown,
+  ChevronRight,
   ChevronUp,
   FileText,
   Folder,
+  FolderX,
   Merge,
   MoreHorizontal,
   Palette,
@@ -226,6 +231,19 @@ export function TagInspector() {
     setShowMergeDialog(true)
   }, [])
 
+  // グループ変更ハンドラー
+  const handleChangeGroup = useCallback(
+    (groupId: string | null) => {
+      if (!tagId || !tag) return
+      if (tag.group_id === groupId) return
+      updateTagMutation.mutate({
+        id: tagId,
+        data: { group_id: groupId },
+      })
+    },
+    [tagId, tag, updateTagMutation]
+  )
+
   // クリーンアップ
   useEffect(() => {
     return () => {
@@ -362,6 +380,35 @@ export function TagInspector() {
                       <Palette className="mr-2 h-4 w-4" />
                       カラー変更
                     </DropdownMenuItem>
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>
+                        <Folder className="mr-2 h-4 w-4" />
+                        グループを変更
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent className="w-48">
+                        <DropdownMenuItem
+                          onClick={() => handleChangeGroup(null)}
+                          className={!tagGroup ? 'bg-accent' : ''}
+                        >
+                          <FolderX className="mr-2 h-4 w-4" />
+                          グループなし
+                        </DropdownMenuItem>
+                        {groups.length > 0 && <DropdownMenuSeparator />}
+                        {groups.map((group) => (
+                          <DropdownMenuItem
+                            key={group.id}
+                            onClick={() => handleChangeGroup(group.id)}
+                            className={tagGroup?.id === group.id ? 'bg-accent' : ''}
+                          >
+                            <Folder
+                              className="mr-2 h-4 w-4"
+                              style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+                            />
+                            {group.name}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
                     <DropdownMenuItem onClick={handleMerge}>
                       <Merge className="mr-2 h-4 w-4" />
                       マージ
@@ -436,17 +483,57 @@ export function TagInspector() {
               </div>
 
               {/* グループ */}
-              {tagGroup && (
-                <div className="border-border/50 border-t px-6 py-3">
-                  <div className="flex items-center gap-2">
-                    <Folder
-                      className="h-4 w-4 flex-shrink-0"
-                      style={{ color: tagGroup.color || DEFAULT_GROUP_COLOR }}
-                    />
-                    <span className="text-sm">{tagGroup.name}</span>
-                  </div>
-                </div>
-              )}
+              <div className="border-border/50 border-t px-6 py-3">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      className="hover:bg-accent/50 flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        {tagGroup ? (
+                          <>
+                            <Folder
+                              className="h-4 w-4 flex-shrink-0"
+                              style={{ color: tagGroup.color || DEFAULT_GROUP_COLOR }}
+                            />
+                            <span className="text-sm">{tagGroup.name}</span>
+                          </>
+                        ) : (
+                          <>
+                            <FolderX className="text-muted-foreground h-4 w-4 flex-shrink-0" />
+                            <span className="text-muted-foreground text-sm">グループなし</span>
+                          </>
+                        )}
+                      </div>
+                      <ChevronRight className="text-muted-foreground h-4 w-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48">
+                    <DropdownMenuItem
+                      onClick={() => handleChangeGroup(null)}
+                      className={!tagGroup ? 'bg-accent' : ''}
+                    >
+                      <FolderX className="mr-2 h-4 w-4" />
+                      グループなし
+                    </DropdownMenuItem>
+                    {groups.length > 0 && <DropdownMenuSeparator />}
+                    {groups.map((group) => (
+                      <DropdownMenuItem
+                        key={group.id}
+                        onClick={() => handleChangeGroup(group.id)}
+                        className={tagGroup?.id === group.id ? 'bg-accent' : ''}
+                      >
+                        <Folder
+                          className="mr-2 h-4 w-4"
+                          style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+                        />
+                        {group.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
 
               {/* 説明 */}
               <div className="border-border/50 hover:bg-accent/50 min-h-[48px] border-t px-6 py-3 transition-colors">
