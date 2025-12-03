@@ -1,6 +1,8 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
+import { Suspense } from 'react'
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
@@ -12,11 +14,26 @@ import { StatsSidebar } from '@/features/stats'
 import { TagsSidebarWrapper } from '@/features/tags/components/TagsSidebarWrapper'
 
 import { MainContentWrapper } from './main-content-wrapper'
-import { ChronotypeStatusItem, ScheduleStatusItem, StatusBar } from './status-bar'
+import { StatusBar } from './status-bar'
+
+// LCP改善: StatusBarアイテムを遅延ロード（APIコール・ストア参照を含むため初回レンダリングをブロックしない）
+const ScheduleStatusItem = dynamic(
+  () => import('./status-bar/items/ScheduleStatusItem').then((mod) => ({ default: mod.ScheduleStatusItem })),
+  { ssr: false }
+)
+const ChronotypeStatusItem = dynamic(
+  () => import('./status-bar/items/ChronotypeStatusItem').then((mod) => ({ default: mod.ChronotypeStatusItem })),
+  { ssr: false }
+)
 
 interface DesktopLayoutProps {
   children: React.ReactNode
   locale: 'ja' | 'en'
+}
+
+// StatusBarアイテムのスケルトン（遅延ロード中の表示）
+function StatusBarItemSkeleton() {
+  return <div className="bg-muted/50 h-3 w-20 animate-pulse rounded" />
 }
 
 /**
@@ -28,7 +45,8 @@ interface DesktopLayoutProps {
  * - MainContent + Inspector
  */
 export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
-  const { isOpen } = useSidebarStore()
+  // selector化: isOpenのみ監視（toggle変更時の再レンダリングを防止）
+  const isOpen = useSidebarStore((state) => state.isOpen)
   const pathname = usePathname()
   const user = useAuthStore((state) => state.user)
   const isAuthenticated = !!user
@@ -81,10 +99,14 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         {isAuthenticated ? (
           <StatusBar>
             <StatusBar.Left>
-              <ScheduleStatusItem />
+              <Suspense fallback={<StatusBarItemSkeleton />}>
+                <ScheduleStatusItem />
+              </Suspense>
             </StatusBar.Left>
             <StatusBar.Right>
-              <ChronotypeStatusItem />
+              <Suspense fallback={<StatusBarItemSkeleton />}>
+                <ChronotypeStatusItem />
+              </Suspense>
             </StatusBar.Right>
           </StatusBar>
         ) : null}

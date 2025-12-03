@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { useMutation, useQuery } from '@tanstack/react-query'
 
+import { getCacheStrategy } from '@/lib/tanstack-query/cache-config'
 // import { calendarService } from '../services/calendar-service' // Removed - using localStorage
 import type {
   Calendar,
@@ -133,7 +134,7 @@ export function useCalendarViewState(userId: string) {
     queryKey: calendarKeys.viewState(userId),
     queryFn: () => Promise.resolve<CalendarViewState | null>(null), // Temporary stub
     enabled: !!userId,
-    staleTime: 1000 * 60 * 5, // 5分間はキャッシュを維持
+    ...getCacheStrategy('calendarViewState'),
   })
 }
 

@@ -654,6 +654,7 @@
       }
     },
     "kanban": {
+      "columnOptions": "カラムオプション",
       "markAllComplete": "すべて完了にする",
       "archiveAll": "すべてアーカイブ",
       "clearColumn": "カラムをクリア",

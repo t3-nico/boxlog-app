@@ -23,7 +23,7 @@ export function NavSecondary({
   const pathname = usePathname()
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t } = useI18n(localeFromPath)
-  const { openSettings } = useSettingsDialogStore()
+  const openSettings = useSettingsDialogStore((state) => state.openSettings)
 
   const handleItemClick = React.useCallback(
     (item: { title: TranslatedString; url: string }) => {

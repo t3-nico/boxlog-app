@@ -49,7 +49,7 @@ interface AccountProps {
  */
 export function Account({ userData, locale }: AccountProps) {
   const { t } = useI18n(locale)
-  const { openSettings } = useSettingsDialogStore()
+  const openSettings = useSettingsDialogStore((state) => state.openSettings)
   const { handleLogout, isLoggingOut } = useUserAuth()
 
   return (

@@ -1,5 +1,6 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -8,8 +9,17 @@ import { ArrowRight, CheckCircle2, Clock, FolderKanban, Tag, Target, TrendingUp 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { LineChartMultiple } from '@/features/stats/components/charts'
+
+// LCP改善: Rechartsは重いため遅延ロード（約250KB削減）
+const LineChartMultiple = dynamic(
+  () => import('@/features/stats/components/charts').then((mod) => mod.LineChartMultiple),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[300px] w-full" />,
+  }
+)
 
 /**
  * 統計ページ - 概要ダッシュボード

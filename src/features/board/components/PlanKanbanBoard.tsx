@@ -340,7 +340,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
           {/* ドロップダウンメニュー */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-6 w-6">
+              <Button variant="ghost" size="icon" className="h-6 w-6" aria-label={t('board.kanban.columnOptions')}>
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>

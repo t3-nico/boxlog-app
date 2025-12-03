@@ -1,51 +1,74 @@
 'use client'
 
-import { DataTable, type ColumnDef, type GroupedData, type SortState } from '@/components/common/table'
 import type { PlanStatus } from '@/features/plans/types/plan'
-import { Activity, Calendar, CalendarRange, FileText, Hash, Tag } from 'lucide-react'
-import type { ReactNode } from 'react'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import type { InboxItem } from '../hooks/useInboxData'
 import { useInboxData } from '../hooks/useInboxData'
-import { useInboxColumnStore } from '../stores/useInboxColumnStore'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 import { useInboxGroupStore } from '../stores/useInboxGroupStore'
 import { useInboxPaginationStore } from '../stores/useInboxPaginationStore'
 import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'
 import { useInboxSortStore } from '../stores/useInboxSortStore'
 import { useInboxViewStore } from '../stores/useInboxViewStore'
-import { groupItems } from '../utils/grouping'
 import { GroupBySelector } from './table/GroupBySelector'
-import { InboxCellContent } from './table/InboxCellContent'
-import { InboxRowWrapper } from './table/InboxRowWrapper'
 import { InboxSelectionActions } from './table/InboxSelectionActions'
 import { InboxSelectionBar } from './table/InboxSelectionBar'
-import { InboxTableEmptyState } from './table/InboxTableEmptyState'
-import { InboxTableRowCreate, type InboxTableRowCreateHandle } from './table/InboxTableRowCreate'
+import { InboxTableContent } from './table/InboxTableContent'
+import { type InboxTableRowCreateHandle } from './table/InboxTableRowCreate'
+import { TablePagination } from './table/TablePagination'
 import { TableToolbar } from './table/TableToolbar'
 
 /**
  * Inbox Table View コンポーネント
  *
- * DataTableを使用したテーブル形式でプランを表示
- * - グループ化対応
- * - ソート・フィルター・ページネーション
+ * テーブル形式でプランを表示
+ * - useInboxData でデータ取得
+ * - useInboxFilterStore でフィルタ管理
  * - 行クリックで Inspector 表示
+ *
+ * パフォーマンス最適化:
+ * - Store監視をselectorで必要な値のみに限定
+ * - テーブル本体はInboxTableContentに委譲（担当制）
+ * - 各子コンポーネントはmemo化済み
+ *
+ * @example
+ * ```tsx
+ * <InboxTableView />
+ * ```
  */
 export function InboxTableView() {
-  const filters = useInboxFilterStore()
-  const { sortField, sortDirection, setSort } = useInboxSortStore()
-  const { currentPage, pageSize, setCurrentPage, setPageSize } = useInboxPaginationStore()
-  const { selectedIds, setSelectedIds, clearSelection } = useInboxSelectionStore()
-  const { getVisibleColumns, getColumnWidth, setColumnWidth } = useInboxColumnStore()
-  const { getActiveView } = useInboxViewStore()
-  const { groupBy, collapsedGroups, toggleGroupCollapse } = useInboxGroupStore()
+  // フィルター関連：必要な値のみselectorで取得
+  const filterStatus = useInboxFilterStore((state) => state.status)
+  const filterSearch = useInboxFilterStore((state) => state.search)
+  const filterTags = useInboxFilterStore((state) => state.tags)
+  const filterDueDate = useInboxFilterStore((state) => state.dueDate)
+  const setStatus = useInboxFilterStore((state) => state.setStatus)
+  const setSearch = useInboxFilterStore((state) => state.setSearch)
+
+  // ソート関連
+  const setSort = useInboxSortStore((state) => state.setSort)
+
+  // ページネーション関連
+  const setCurrentPage = useInboxPaginationStore((state) => state.setCurrentPage)
+  const setPageSize = useInboxPaginationStore((state) => state.setPageSize)
+
+  // 選択関連
+  const selectedIds = useInboxSelectionStore((state) => state.selectedIds)
+  const clearSelection = useInboxSelectionStore((state) => state.clearSelection)
+
+  // ビュー関連
+  const getActiveView = useInboxViewStore((state) => state.getActiveView)
+
+  // グループ化関連（ページネーション表示判定用）
+  const groupBy = useInboxGroupStore((state) => state.groupBy)
+
+  // データ取得
   const { items, isLoading, error } = useInboxData({
-    status: filters.status[0] as PlanStatus | undefined,
-    search: filters.search,
-    tags: filters.tags,
-    dueDate: filters.dueDate,
+    status: filterStatus[0] as PlanStatus | undefined,
+    search: filterSearch,
+    tags: filterTags,
+    dueDate: filterDueDate,
   })
 
   // 新規作成行のref
@@ -53,197 +76,68 @@ export function InboxTableView() {
 
   // 選択数
   const selectedCount = selectedIds.size
-  const selectedIdsArray = useMemo(() => Array.from(selectedIds), [selectedIds])
 
   // アクションハンドラー
   const handleArchive = () => {
-    console.log('Archive:', selectedIdsArray)
+    // TODO: アーカイブ機能実装
+    console.log('Archive:', Array.from(selectedIds))
   }
 
   const handleDelete = () => {
-    console.log('Delete:', selectedIdsArray)
+    // TODO: 削除機能実装
+    console.log('Delete:', Array.from(selectedIds))
   }
 
   const handleEdit = (item: InboxItem) => {
+    // TODO: 編集機能実装（Inspectorを開く）
     console.log('Edit:', item.id)
   }
 
   const handleDuplicate = (item: InboxItem) => {
+    // TODO: 複製機能実装
     console.log('Duplicate:', item.id)
   }
 
   const handleAddTags = () => {
-    console.log('Add tags to:', selectedIdsArray)
+    // TODO: タグ一括追加機能実装
+    console.log('Add tags to:', Array.from(selectedIds))
   }
 
   const handleChangeDueDate = () => {
-    console.log('Change due date for:', selectedIdsArray)
+    // TODO: 期限一括変更機能実装
+    console.log('Change due date for:', Array.from(selectedIds))
   }
 
   // アクティブなビューを取得
   const activeView = getActiveView()
 
-  // 表示する列を取得
-  const visibleColumns = getVisibleColumns()
-
   // アクティブビュー変更時にフィルター・ソート・ページサイズを適用
   useEffect(() => {
     if (!activeView) return
 
+    // フィルター適用
     if (activeView.filters.status) {
-      filters.setStatus(activeView.filters.status as PlanStatus[])
+      setStatus(activeView.filters.status as PlanStatus[])
     }
     if (activeView.filters.search) {
-      filters.setSearch(activeView.filters.search)
+      setSearch(activeView.filters.search)
     }
 
+    // ソート適用
     if (activeView.sorting) {
       setSort(activeView.sorting.field, activeView.sorting.direction)
     }
 
+    // ページサイズ適用
     if (activeView.pageSize) {
       setPageSize(activeView.pageSize)
     }
-  }, [activeView, filters, setSort, setPageSize])
+  }, [activeView, setStatus, setSearch, setSort, setPageSize])
 
   // フィルター変更時にページ1に戻る
   useEffect(() => {
     setCurrentPage(1)
-  }, [filters.status, filters.search, setCurrentPage])
-
-  // ソート適用
-  const sortedItems = useMemo(() => {
-    if (!sortField || !sortDirection) return items
-
-    return [...items].sort((a, b) => {
-      let aValue: string | number | null = null
-      let bValue: string | number | null = null
-
-      switch (sortField) {
-        case 'id':
-          aValue = a.plan_number || ''
-          bValue = b.plan_number || ''
-          break
-        case 'title':
-          aValue = a.title
-          bValue = b.title
-          break
-        case 'status':
-          aValue = a.status
-          bValue = b.status
-          break
-        case 'duration':
-          aValue = a.start_time ? new Date(a.start_time).getTime() : 0
-          bValue = b.start_time ? new Date(b.start_time).getTime() : 0
-          break
-        case 'created_at':
-          aValue = new Date(a.created_at).getTime()
-          bValue = new Date(b.created_at).getTime()
-          break
-        case 'updated_at':
-          aValue = new Date(a.updated_at).getTime()
-          bValue = new Date(b.updated_at).getTime()
-          break
-      }
-
-      if (aValue === null || aValue === '') return 1
-      if (bValue === null || bValue === '') return -1
-
-      if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
-      }
-
-      return sortDirection === 'asc' ? (aValue as number) - (bValue as number) : (bValue as number) - (aValue as number)
-    })
-  }, [items, sortField, sortDirection])
-
-  // グループ化適用
-  const groupedData: GroupedData<InboxItem>[] | undefined = useMemo(() => {
-    if (!groupBy) return undefined
-    return groupItems(sortedItems, groupBy)
-  }, [sortedItems, groupBy])
-
-  // DataTable用のソート状態
-  const sortState: SortState = useMemo(
-    () => ({
-      field: sortField,
-      direction: sortDirection || 'asc',
-    }),
-    [sortField, sortDirection]
-  )
-
-  // DataTable用のソート変更ハンドラー
-  const handleSortChange = useCallback(
-    (newSortState: SortState) => {
-      if (newSortState.field) {
-        setSort(newSortState.field, newSortState.direction)
-      }
-    },
-    [setSort]
-  )
-
-  // DataTable用の選択変更ハンドラー
-  const handleSelectionChange = useCallback(
-    (newSelectedIds: Set<string>) => {
-      setSelectedIds(Array.from(newSelectedIds))
-    },
-    [setSelectedIds]
-  )
-
-  // DataTable用のページネーション変更ハンドラー
-  const handlePaginationChange = useCallback(
-    (state: { currentPage: number; pageSize: number }) => {
-      setCurrentPage(state.currentPage)
-      setPageSize(state.pageSize)
-    },
-    [setCurrentPage, setPageSize]
-  )
-
-  // DataTable用の列定義
-  const columns: ColumnDef<InboxItem>[] = useMemo(() => {
-    const columnIcons: Record<string, typeof Hash> = {
-      id: Hash,
-      title: FileText,
-      status: Activity,
-      tags: Tag,
-      duration: CalendarRange,
-      created_at: Calendar,
-      updated_at: Calendar,
-    }
-
-    return visibleColumns
-      .filter((col) => col.id !== 'selection')
-      .map((col) => ({
-        id: col.id,
-        label: col.label,
-        width: col.width,
-        resizable: col.resizable,
-        sortKey: col.id !== 'tags' ? col.id : undefined,
-        icon: columnIcons[col.id],
-        render: (item: InboxItem) => (
-          <InboxCellContent item={item} columnId={col.id} width={getColumnWidth(col.id)} />
-        ),
-      }))
-  }, [visibleColumns, getColumnWidth])
-
-  // DataTable用の列幅マップ
-  const columnWidths = useMemo(() => {
-    const widths: Record<string, number> = {}
-    visibleColumns.forEach((col) => {
-      widths[col.id] = col.width
-    })
-    return widths
-  }, [visibleColumns])
-
-  // 行ラッパー
-  const rowWrapper = useCallback(
-    ({ item, children, isSelected }: { item: InboxItem; children: ReactNode; isSelected: boolean }) => (
-      <InboxRowWrapper key={item.id} item={item} isSelected={isSelected}>
-        {children}
-      </InboxRowWrapper>
-    ),
-    []
-  )
+  }, [filterStatus, filterSearch, setCurrentPage])
 
   // エラー表示
   if (error) {
@@ -271,7 +165,7 @@ export function InboxTableView() {
 
   return (
     <div id="inbox-table-view-panel" role="tabpanel" className="flex h-full flex-col">
-      {/* ツールバー または 選択バー */}
+      {/* ツールバー または 選択バー（Googleドライブ風） */}
       {selectedCount > 0 ? (
         <InboxSelectionBar
           selectedCount={selectedCount}
@@ -279,8 +173,8 @@ export function InboxTableView() {
           actions={
             <InboxSelectionActions
               selectedCount={selectedCount}
-              selectedIds={selectedIdsArray}
-              items={sortedItems}
+              selectedIds={Array.from(selectedIds)}
+              items={items}
               onArchive={handleArchive}
               onDelete={handleDelete}
               onEdit={handleEdit}
@@ -300,34 +194,25 @@ export function InboxTableView() {
         </div>
       )}
 
-      {/* テーブル */}
-      <div className="flex flex-1 flex-col overflow-hidden px-4 pt-4 md:px-6">
-        <DataTable
-          data={sortedItems}
-          columns={columns}
-          getRowKey={(item) => item.id}
-          selectable
-          selectedIds={selectedIds}
-          onSelectionChange={handleSelectionChange}
-          sortState={sortState}
-          onSortChange={handleSortChange}
-          showPagination={!groupBy}
-          paginationState={{ currentPage, pageSize }}
-          onPaginationChange={handlePaginationChange}
-          pageSizeOptions={[10, 25, 50, 100]}
-          columnWidths={columnWidths}
-          onColumnWidthChange={setColumnWidth}
-          groupedData={groupedData}
-          collapsedGroups={collapsedGroups}
-          onToggleGroupCollapse={toggleGroupCollapse}
-          rowWrapper={rowWrapper}
-          onOutsideClick={clearSelection}
-          selectAllLabel="全て選択"
-          getSelectLabel={(item) => `${item.title}を選択`}
-          extraRows={!groupBy ? <InboxTableRowCreate ref={createRowRef} /> : undefined}
-          emptyState={<InboxTableEmptyState columnCount={visibleColumns.length} totalItems={items.length} />}
-          stickyHeader
-        />
+      {/* テーブル - InboxTableContentに委譲（担当制） */}
+      <div
+        className="flex flex-1 flex-col overflow-hidden px-4 pt-4 md:px-6"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            useInboxSelectionStore.getState().clearSelection()
+          }
+        }}
+      >
+        <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl">
+          <InboxTableContent items={items} createRowRef={createRowRef} />
+        </div>
+
+        {/* フッター: グループ化なしの場合のみ */}
+        {!groupBy && (
+          <div className="shrink-0">
+            <TablePagination totalItems={items.length} />
+          </div>
+        )}
       </div>
     </div>
   )

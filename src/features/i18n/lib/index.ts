@@ -6,6 +6,9 @@ import type { Locale } from '@/types/i18n'
 import type { TranslatedString } from '@/types/i18n-branded'
 import { markAsTranslated } from '@/types/i18n-branded'
 
+// 翻訳辞書の静的インポート（gzip圧縮後は約10-15KB、遷移時のフラッシュ防止）
+import enDict from './dictionaries/en.json'
+import jaDict from './dictionaries/ja.json'
 import type { PluralTranslation } from './pluralization'
 import { formatICUPlural, pluralizeWithVariables } from './pluralization'
 
@@ -17,19 +20,30 @@ export const defaultLocale: Locale = 'en'
 export type NestedObject = { [key: string]: NestedObject | string }
 export type Dictionary = Record<string, NestedObject>
 
-// 翻訳辞書の動的インポート
-const dictionaries: Record<Locale, () => Promise<Dictionary>> = {
-  en: () => import('./dictionaries/en.json').then((module) => module.default as unknown as Dictionary),
-  ja: () => import('./dictionaries/ja.json').then((module) => module.default as unknown as Dictionary),
+// 静的辞書マップ（同期アクセス可能）
+const staticDictionaries: Record<Locale, Dictionary> = {
+  en: enDict as unknown as Dictionary,
+  ja: jaDict as unknown as Dictionary,
 }
 
-// 翻訳辞書取得
+// 翻訳辞書取得（同期版 - 互換性のためasyncを維持）
 export const getDictionary = async (locale: Locale): Promise<Dictionary> => {
   if (!locales.includes(locale)) {
     locale = defaultLocale
   }
-  return locale in dictionaries ? dictionaries[locale as keyof typeof dictionaries]() : dictionaries[defaultLocale]()
+  return staticDictionaries[locale] ?? staticDictionaries[defaultLocale]
 }
+
+// 同期的に辞書を取得（常に成功）
+export const getCachedDictionary = (locale: Locale): Dictionary | null => {
+  if (!locales.includes(locale)) {
+    locale = defaultLocale
+  }
+  return staticDictionaries[locale] ?? staticDictionaries[defaultLocale]
+}
+
+// プリロード（静的インポートなので何もしない - 互換性のため維持）
+export const preloadDictionaries = (): Promise<void> => Promise.resolve()
 
 // ネストしたオブジェクトから値を取得
 export const getNestedValue = (obj: NestedObject, path: string): string => {
