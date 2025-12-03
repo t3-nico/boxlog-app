@@ -4,7 +4,7 @@
 
 import React, { Suspense } from 'react'
 
-import type { CalendarViewType } from '../../types/calendar.types'
+import type { CalendarViewType } from '../../../types/calendar.types'
 
 import { CalendarViewSkeleton } from './CalendarViewSkeleton'
 
@@ -17,6 +17,7 @@ const ThreeDayView = React.lazy(() =>
 const FiveDayView = React.lazy(() =>
   import('../../views/FiveDayView').then((module) => ({ default: module.FiveDayView }))
 )
+const AgendaView = React.lazy(() => import('../../views/AgendaView').then((module) => ({ default: module.AgendaView })))
 
 interface CalendarViewRendererProps {
   viewType: CalendarViewType
@@ -47,6 +48,8 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
             return <FiveDayView {...commonProps} showWeekends={showWeekends} />
           case 'week':
             return <WeekView {...commonProps} showWeekends={showWeekends} />
+          case 'agenda':
+            return <AgendaView {...commonProps} showWeekends={showWeekends} />
           default:
             return <DayView {...commonProps} showWeekends={showWeekends} />
         }

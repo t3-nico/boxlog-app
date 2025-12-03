@@ -5,6 +5,7 @@ export const preloadCalendarViews = () => {
   import('../../views/WeekView')
   import('../../views/ThreeDayView')
   import('../../views/FiveDayView')
+  import('../../views/AgendaView')
 }
 
 // クライアントサイドでのみ実行
