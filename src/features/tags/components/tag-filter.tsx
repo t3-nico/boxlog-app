@@ -131,14 +131,14 @@ export const TagFilter = ({
           {selectedTags.map((tag) => (
             <span
               key={tag.id}
-              className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"
+              className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium"
             >
               <TagIcon className="h-4 w-4" style={{ color: tag.color }} />
               {tag.name}
               <button
                 type="button"
                 onClick={createRemoveTagHandler(tag.id)}
-                className="ml-1 text-primary/70 hover:text-primary"
+                className="text-primary/70 hover:text-primary ml-1"
                 aria-label={`Remove ${tag.name} filter`}
               >
                 <XMarkIcon className="h-4 w-4" />
@@ -167,11 +167,7 @@ export const TagFilter = ({
             <div className="border-border flex items-center justify-between border-b p-3">
               <h3 className="text-foreground text-sm font-medium">Filter by Tags</h3>
               {hasTagFilters === true && (
-                <button
-                  type="button"
-                  onClick={clearTags}
-                  className="text-xs text-primary hover:text-primary/80"
-                >
+                <button type="button" onClick={clearTags} className="text-primary hover:text-primary/80 text-xs">
                   Clear all
                 </button>
               )}

@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect } from 'react'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore'
 import type { TagWithChildren } from '@/types/tags'
+import { useEffect } from 'react'
 
 interface TagInspectorOpenerProps {
   tagNumber: string

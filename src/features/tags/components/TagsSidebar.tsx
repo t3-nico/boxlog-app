@@ -17,11 +17,7 @@ import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarH
 import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
-import {
-  useCreateTagGroup,
-  useDeleteTagGroup,
-  useUpdateTagGroup,
-} from '@/features/tags/hooks/use-tag-groups'
+import { useCreateTagGroup, useDeleteTagGroup, useUpdateTagGroup } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import type { TagGroup } from '@/types/tags'
 import { toast } from 'sonner'
@@ -331,7 +327,7 @@ export function TagsSidebar({
         <SidebarHeader title={t('sidebar.navigation.tags')} />
 
         <div className="flex flex-1 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+          <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
         </div>
       </aside>
     )

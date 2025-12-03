@@ -146,7 +146,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
             </div>
 
             {/* エラー表示 */}
-            {error && <p className="text-sm text-destructive">{error}</p>}
+            {error && <p className="text-destructive text-sm">{error}</p>}
           </div>
 
           <DialogFooter>

@@ -13,13 +13,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useMergeTag, useTags } from '@/features/tags/hooks/use-tags'
@@ -96,9 +90,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
 
         <div className="space-y-4">
           {/* 説明 */}
-          <p className="text-muted-foreground text-sm">
-            {t('tags.merge.description', { source: tag?.name || '' })}
-          </p>
+          <p className="text-muted-foreground text-sm">{t('tags.merge.description', { source: tag?.name || '' })}</p>
 
           {/* ソースタグ表示 */}
           <div className="space-y-2">
@@ -152,9 +144,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                   <Label htmlFor="merge-associations" className="text-sm font-medium">
                     {t('tags.merge.mergeAssociations')}
                   </Label>
-                  <p className="text-muted-foreground text-xs">
-                    {t('tags.merge.mergeAssociationsDescription')}
-                  </p>
+                  <p className="text-muted-foreground text-xs">{t('tags.merge.mergeAssociationsDescription')}</p>
                 </div>
               </div>
 
@@ -168,9 +158,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                   <Label htmlFor="delete-source" className="text-sm font-medium">
                     {t('tags.merge.deleteSource')}
                   </Label>
-                  <p className="text-muted-foreground text-xs">
-                    {t('tags.merge.deleteSourceDescription')}
-                  </p>
+                  <p className="text-muted-foreground text-xs">{t('tags.merge.deleteSourceDescription')}</p>
                 </div>
               </div>
             </div>
@@ -181,17 +169,13 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <div className="space-y-1">
               <p className="text-sm font-medium">{t('tags.merge.warning')}</p>
-              {hasChildren && (
-                <p className="text-xs opacity-80">{t('tags.merge.warningChildren')}</p>
-              )}
+              {hasChildren && <p className="text-xs opacity-80">{t('tags.merge.warningChildren')}</p>}
             </div>
           </div>
         </div>
 
         <AlertDialogFooter className="mt-6">
-          <AlertDialogCancel disabled={mergeTagMutation.isPending}>
-            {t('tags.actions.cancel')}
-          </AlertDialogCancel>
+          <AlertDialogCancel disabled={mergeTagMutation.isPending}>{t('tags.actions.cancel')}</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleMerge}
             disabled={!targetTagId || mergeTagMutation.isPending}

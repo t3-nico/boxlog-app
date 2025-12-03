@@ -290,10 +290,7 @@ export async function PATCH(request: NextRequest) {
           const existingPlanIds = new Set((existingPlanTags || []).map((pt: { plan_id: string }) => pt.plan_id))
 
           // ソースタグの関連付けを取得
-          const { data: sourcePlanTags } = await supabase
-            .from('plan_tags')
-            .select('*')
-            .eq('tag_id', tag_id)
+          const { data: sourcePlanTags } = await supabase.from('plan_tags').select('*').eq('tag_id', tag_id)
 
           // 重複しない関連付けを移行
           const tagsToMigrate = (sourcePlanTags || []).filter(

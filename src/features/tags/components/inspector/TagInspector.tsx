@@ -13,11 +13,12 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors'
+import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import type { Plan } from '@/features/plans/types/plan'
-import { PlanCard } from '@/features/plans/components/display/PlanCard'
+import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors'
+import type { TagWithChildren } from '@/types/tags'
 import {
   Archive,
   ChevronDown,
@@ -36,9 +37,8 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { TAG_PRESET_COLORS } from '../../constants/colors'
 import { useTagGroups } from '../../hooks/use-tag-groups'
-import { useTags, useUpdateTag, useDeleteTag, useUpdateTagColor } from '../../hooks/use-tags'
+import { useDeleteTag, useTags, useUpdateTag, useUpdateTagColor } from '../../hooks/use-tags'
 import { useTagInspectorStore } from '../../stores/useTagInspectorStore'
-import type { TagWithChildren } from '@/types/tags'
 import { TagArchiveDialog } from '../TagArchiveDialog'
 import { TagMergeDialog } from '../TagMergeDialog'
 
@@ -371,7 +371,12 @@ export function TagInspector() {
                 {/* オプションメニュー */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 focus-visible:ring-0" aria-label="オプション">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 focus-visible:ring-0"
+                      aria-label="オプション"
+                    >
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -400,10 +405,7 @@ export function TagInspector() {
                             onClick={() => handleChangeGroup(group.id)}
                             className={tagGroup?.id === group.id ? 'bg-accent' : ''}
                           >
-                            <Folder
-                              className="mr-2 h-4 w-4"
-                              style={{ color: group.color || DEFAULT_GROUP_COLOR }}
-                            />
+                            <Folder className="mr-2 h-4 w-4" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
                             {group.name}
                           </DropdownMenuItem>
                         ))}
@@ -510,10 +512,7 @@ export function TagInspector() {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-48">
-                    <DropdownMenuItem
-                      onClick={() => handleChangeGroup(null)}
-                      className={!tagGroup ? 'bg-accent' : ''}
-                    >
+                    <DropdownMenuItem onClick={() => handleChangeGroup(null)} className={!tagGroup ? 'bg-accent' : ''}>
                       <FolderX className="mr-2 h-4 w-4" />
                       グループなし
                     </DropdownMenuItem>
@@ -524,10 +523,7 @@ export function TagInspector() {
                         onClick={() => handleChangeGroup(group.id)}
                         className={tagGroup?.id === group.id ? 'bg-accent' : ''}
                       >
-                        <Folder
-                          className="mr-2 h-4 w-4"
-                          style={{ color: group.color || DEFAULT_GROUP_COLOR }}
-                        />
+                        <Folder className="mr-2 h-4 w-4" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
                         {group.name}
                       </DropdownMenuItem>
                     ))}
@@ -575,9 +571,7 @@ export function TagInspector() {
 
               {/* 紐づくプラン */}
               <div className="border-border/50 border-t px-6 py-4">
-                <h3 className="text-muted-foreground mb-3 text-sm font-medium">
-                  紐づくプラン ({plans.length})
-                </h3>
+                <h3 className="text-muted-foreground mb-3 text-sm font-medium">紐づくプラン ({plans.length})</h3>
                 {isLoadingPlans ? (
                   <div className="flex h-24 items-center justify-center">
                     <div className="border-primary h-6 w-6 animate-spin rounded-full border-b-2" />
@@ -592,9 +586,7 @@ export function TagInspector() {
                       <PlanCard key={plan.id} plan={plan} onClick={(p) => openPlanInspector(p.id)} />
                     ))}
                     {plans.length > 10 && (
-                      <p className="text-muted-foreground text-center text-sm">
-                        他 {plans.length - 10} 件のプラン
-                      </p>
+                      <p className="text-muted-foreground text-center text-sm">他 {plans.length - 10} 件のプラン</p>
                     )}
                   </div>
                 )}

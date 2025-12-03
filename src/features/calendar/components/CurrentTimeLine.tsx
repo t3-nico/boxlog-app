@@ -9,7 +9,8 @@ import { useEffect, useMemo, useState } from 'react'
 
 const currentTimeLineStyles = {
   container: 'absolute z-30 pointer-events-none w-full',
-  label: 'absolute bg-primary text-primary-foreground text-xs font-medium px-2 py-0.5 rounded-md shadow-sm top-[-11px] left-0',
+  label:
+    'absolute bg-primary text-primary-foreground text-xs font-medium px-2 py-0.5 rounded-md shadow-sm top-[-11px] left-0',
   dot: 'absolute w-2.5 h-2.5 bg-primary rounded-full top-[-4px] shadow-sm',
   line: 'absolute h-[2px] bg-primary shadow-sm',
 } as const

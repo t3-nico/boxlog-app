@@ -80,7 +80,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
           {/* 使用状況 */}
           {isLoading ? (
             <div className="bg-muted flex items-center justify-center rounded-xl p-4">
-              <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-primary"></div>
+              <div className="border-primary h-5 w-5 animate-spin rounded-full border-b-2"></div>
             </div>
           ) : usage ? (
             <div className="bg-muted rounded-xl p-4">
