@@ -236,7 +236,17 @@
     "toast": {
       "eventDeleted": "予定を削除しました"
     },
-    "selectedCount": "{{count}}件選択中"
+    "selectedCount": "{{count}}件選択中",
+    "table": {
+      "rowsPerPage": "表示件数",
+      "items": "件",
+      "total": "全",
+      "page": "ページ",
+      "firstPage": "最初のページ",
+      "previousPage": "前のページ",
+      "nextPage": "次のページ",
+      "lastPage": "最後のページ"
+    }
   },
   "calendar": {
     "title": "カレンダー",

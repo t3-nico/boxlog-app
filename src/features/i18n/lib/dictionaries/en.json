@@ -236,7 +236,17 @@
     "toast": {
       "eventDeleted": "Event deleted"
     },
-    "selectedCount": "{{count}} selected"
+    "selectedCount": "{{count}} selected",
+    "table": {
+      "rowsPerPage": "Rows per page",
+      "items": "",
+      "total": "of ",
+      "page": "Page",
+      "firstPage": "First page",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "lastPage": "Last page"
+    }
   },
   "calendar": {
     "title": "Calendar",

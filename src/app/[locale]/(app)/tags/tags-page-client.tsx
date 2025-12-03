@@ -1,33 +1,12 @@
 'use client'
 
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  Filter,
-  Folder,
-  Hash,
-  Plus,
-  Settings2,
-} from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ChevronDown, Filter, Hash, Plus, Settings2 } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 
+import { ResizableTableHead, TablePagination } from '@/components/common/table'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuTrigger,
-} from '@/components/ui/context-menu'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -37,29 +16,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { DraggableTagRow } from '@/features/tags/components/DraggableTagRow'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
-import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
 import { TagBulkMergeDialog } from '@/features/tags/components/TagBulkMergeDialog'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
+import { TagTableRow, TagTableRowCreate, type TagTableRowCreateHandle } from '@/features/tags/components/table'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
-import { useCreateTag, useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
-import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore'
+import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
+import { useTagColumnStore, type TagColumnId } from '@/features/tags/stores/useTagColumnStore'
+import { useTagPaginationStore } from '@/features/tags/stores/useTagPaginationStore'
+import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore'
+import { useTagSortStore, type TagSortField } from '@/features/tags/stores/useTagSortStore'
 import { api } from '@/lib/trpc'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 import { toast } from 'sonner'
+import { useState } from 'react'
 
 interface TagsPageClientProps {
   initialGroupNumber?: string
@@ -68,139 +46,52 @@ interface TagsPageClientProps {
 
 export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = false }: TagsPageClientProps = {}) {
   const { t } = useI18n()
-  const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
-  const { openInspector } = useTagInspectorStore()
-  const { data: groups = [] as TagGroup[] } = useTagGroups()
-  const {
-    tags,
-    setTags,
-    setIsLoading,
-    setIsCreatingGroup: _setIsCreatingGroup,
-    isCreatingTag,
-    setIsCreatingTag,
-  } = useTagsPageContext()
-  const router = useRouter()
   const pathname = usePathname()
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
-  const [sortField, setSortField] = useState<'name' | 'created_at' | 'tag_number' | 'group' | 'last_used'>('created_at')
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
-  // カラム幅の状態管理
-  const [columnWidths, setColumnWidths] = useState({
-    select: 48,
-    id: 80,
-    color: 32,
-    name: 200,
-    description: 300,
-    group: 120,
-    created_at: 160,
-    last_used: 160,
-    actions: 192,
-  })
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(50)
-  const [editingTagId, setEditingTagId] = useState<string | null>(null)
-  const [editingField, setEditingField] = useState<'name' | 'description' | null>(null)
-  const [editValue, setEditValue] = useState('')
+
+  // データ取得
+  const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
+  const { data: groups = [] as TagGroup[] } = useTagGroups()
+  const { data: tagPlanCounts = {} } = api.plans.getTagPlanCounts.useQuery()
+  const { data: tagLastUsed = {} } = api.plans.getTagLastUsed.useQuery()
+
+  // コンテキスト
+  const { tags, setTags, setIsLoading } = useTagsPageContext()
+
+  // Zustand stores
+  const { selectedIds, toggleSelection, toggleAll, clearSelection, getSelectedIds, getSelectedCount } =
+    useTagSelectionStore()
+  const { sortField, sortDirection, setSortField } = useTagSortStore()
+  const { currentPage, pageSize, setCurrentPage, setPageSize } = useTagPaginationStore()
+  const { getVisibleColumns, setColumnWidth, setColumnVisibility, getColumnWidth } = useTagColumnStore()
+
+  // タグ操作
+  const updateTagMutation = useUpdateTag()
+  const { showCreateModal, handleSaveNewTag, handleDeleteTag, handleCloseModals } = useTagOperations(tags)
+
+  // ローカル状態
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
   const [bulkMergeTags, setBulkMergeTags] = useState<TagWithChildren[]>([])
+  const createRowRef = useRef<TagTableRowCreateHandle>(null)
 
-  // 列の表示/非表示設定
-  const [columnVisibility, setColumnVisibility] = useState({
-    id: true,
-    description: true,
-    group: true,
-    created_at: true,
-    last_used: true,
-  })
-
-  // localStorage から列設定を復元
-  useEffect(() => {
-    const saved = localStorage.getItem('tagsPageColumnVisibility')
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
-        setColumnVisibility(parsed)
-      } catch {
-        // ignore parse error
-      }
-    }
-  }, [])
-
-  // 列設定を localStorage に保存
-  const handleColumnVisibilityChange = useCallback((column: keyof typeof columnVisibility, visible: boolean) => {
-    setColumnVisibility((prev) => {
-      const next = { ...prev, [column]: visible }
-      localStorage.setItem('tagsPageColumnVisibility', JSON.stringify(next))
-      return next
-    })
-  }, [])
-
-  // タグごとのプラン数を取得
-  const { data: tagplanCounts = {} } = api.plans.getTagPlanCounts.useQuery()
-
-  // タグごとの最終使用日時を取得
-  const { data: tagLastUsed = {} } = api.plans.getTagLastUsed.useQuery()
-
-  // アクティブなタグ数を計算
-  const activeTagsCount = useMemo(() => {
-    return tags.filter((tag) => tag.level === 0 && tag.is_active).length
-  }, [tags])
-
-  // ページタイトルにタグ数を表示（タグ一覧ページのみ）
-  useEffect(() => {
-    if (!showUncategorizedOnly && !initialGroupNumber) {
-      document.title = `${t('tags.page.title')} (${activeTagsCount})`
-    }
-    return () => {
-      document.title = t('tags.page.title')
-    }
-  }, [activeTagsCount, showUncategorizedOnly, initialGroupNumber, t])
-
-  // インライン作成用の状態
-  const inlineFormRef = useRef<HTMLTableRowElement>(null)
-  const [newTagName, setNewTagName] = useState('')
-  const [newTagDescription, setNewTagDescription] = useState('')
-  const [newTagColor, setNewTagColor] = useState<string>(DEFAULT_TAG_COLOR)
+  // 表示列
+  const visibleColumns = getVisibleColumns()
+  const selectedTagIds = getSelectedIds()
+  const selectedCount = getSelectedCount()
 
   // initialGroupNumber からグループIDを解決
   const initialGroup = useMemo(() => {
     if (!initialGroupNumber) return null
-    const group = groups.find((g) => g.group_number === Number(initialGroupNumber))
-    return group
+    return groups.find((g) => g.group_number === Number(initialGroupNumber)) ?? null
   }, [initialGroupNumber, groups])
-
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(initialGroup?.id || null)
-
-  const {
-    showCreateModal,
-    showEditModal: _showEditModal,
-    selectedTag: _selectedTag,
-    createParentTag: _createParentTag,
-    handleCreateTag: _handleCreateTag,
-    handleSaveNewTag,
-    handleEditTag: _handleEditTag,
-    handleSaveTag: _handleSaveTag,
-    handleDeleteTag,
-    handleCloseModals,
-  } = useTagOperations(tags)
-
-  // handleEditTagをオーバーライド: モーダルではなくインライン編集にする
-  const handleEditTag = useCallback((tag: TagWithChildren) => {
-    setEditingTagId(tag.id)
-    setEditingField('name')
-    setEditValue(tag.name)
-  }, [])
-
-  const updateTagMutation = useUpdateTag()
-  const createTagMutation = useCreateTag()
 
   // 選択されたグループ情報を取得
   const selectedGroup = useMemo(() => {
     return selectedGroupId ? groups.find((g) => g.id === selectedGroupId) : null
   }, [selectedGroupId, groups])
 
-  // ページタイトルを決定（サイドバーの選択状態に基づく）
+  // ページタイトルを決定
   const pageTitle = useMemo(() => {
     if (showUncategorizedOnly) {
       return t('tags.sidebar.uncategorized')
@@ -214,7 +105,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     return t('tags.sidebar.allTags')
   }, [showUncategorizedOnly, pathname, selectedGroup, t])
 
-  // initialGroup が解決されたら selectedGroupId を更新（selectedGroupIdが未設定の場合のみ）
+  // initialGroup が解決されたら selectedGroupId を更新
   useEffect(() => {
     if (initialGroup && selectedGroupId !== initialGroup.id) {
       setSelectedGroupId(initialGroup.id)
@@ -227,181 +118,34 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     setIsLoading(isFetching)
   }, [fetchedTags, isFetching, setTags, setIsLoading])
 
-  // インライン作成開始
-  const handleStartInlineCreation = useCallback(() => {
-    setIsCreatingTag(true)
-    setNewTagName('')
-    setNewTagDescription('')
-    setNewTagColor(DEFAULT_TAG_COLOR)
-  }, [setIsCreatingTag])
+  // アクティブなタグ数を計算
+  const activeTagsCount = useMemo(() => {
+    return tags.filter((tag) => tag.level === 0 && tag.is_active).length
+  }, [tags])
 
-  // インライン作成キャンセル
-  const handleCancelInlineCreation = useCallback(() => {
-    setIsCreatingTag(false)
-    setNewTagName('')
-    setNewTagDescription('')
-    setNewTagColor(DEFAULT_TAG_COLOR)
-  }, [setIsCreatingTag])
-
-  // インライン作成保存
-  const handleSaveInlineTag = useCallback(async () => {
-    if (newTagName.trim() === '') {
-      handleCancelInlineCreation()
-      return
-    }
-
-    try {
-      await createTagMutation.mutateAsync({
-        name: newTagName.trim(),
-        description: newTagDescription.trim() || null,
-        color: newTagColor,
-        group_id: selectedGroupId,
-        level: 0 as const,
-      })
-      toast.success(t('tags.page.tagCreated', { name: newTagName }))
-      handleCancelInlineCreation()
-    } catch (error) {
-      console.error('Failed to create tag:', error)
-      toast.error(t('tags.page.tagCreateFailed'))
-    }
-  }, [newTagName, newTagDescription, newTagColor, selectedGroupId, createTagMutation, handleCancelInlineCreation, t])
-
-  // クリックアウトサイド検出
+  // ページタイトルにタグ数を表示
   useEffect(() => {
-    if (!isCreatingTag) return
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (inlineFormRef.current && !inlineFormRef.current.contains(event.target as Node)) {
-        handleCancelInlineCreation()
-      }
+    if (!showUncategorizedOnly && !initialGroupNumber) {
+      document.title = `${t('tags.page.title')} (${activeTagsCount})`
     }
-
-    const timeoutId = setTimeout(() => {
-      document.addEventListener('mousedown', handleClickOutside)
-    }, 0)
-
     return () => {
-      clearTimeout(timeoutId)
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.title = t('tags.page.title')
     }
-  }, [isCreatingTag, handleCancelInlineCreation])
-
-  // インライン編集キャンセル
-  const cancelEditing = useCallback(() => {
-    setEditingTagId(null)
-    setEditingField(null)
-    setEditValue('')
-  }, [])
-
-  // インライン編集保存
-  const saveInlineEdit = useCallback(
-    async (tagId: string) => {
-      if (!editingField || editValue.trim() === '') {
-        cancelEditing()
-        return
-      }
-
-      try {
-        await updateTagMutation.mutateAsync({
-          id: tagId,
-          data: { [editingField]: editValue.trim() },
-        })
-        cancelEditing()
-      } catch (error) {
-        console.error('Failed to update tag:', error)
-      }
-    },
-    [editingField, editValue, updateTagMutation, cancelEditing]
-  )
-
-  // アーカイブ確認ダイアログを開く
-  const handleOpenArchiveConfirm = useCallback((tag: TagWithChildren) => {
-    setArchiveConfirmTag(tag)
-  }, [])
-
-  // アーカイブ確認ダイアログを閉じる
-  const handleCloseArchiveConfirm = useCallback(() => {
-    setArchiveConfirmTag(null)
-  }, [])
-
-  // アーカイブの実行
-  const handleConfirmArchive = useCallback(async () => {
-    if (!archiveConfirmTag) return
-
-    try {
-      await updateTagMutation.mutateAsync({
-        id: archiveConfirmTag.id,
-        data: { is_active: false },
-      })
-      toast.success(t('tags.page.tagArchived', { name: archiveConfirmTag.name }))
-      setArchiveConfirmTag(null)
-    } catch (error) {
-      console.error('Failed to archive tag:', error)
-      toast.error(t('tags.page.tagArchiveFailed'))
-    }
-  }, [archiveConfirmTag, updateTagMutation, t])
-
-  // 削除確認ダイアログを開く
-  const handleOpenDeleteConfirm = useCallback((tag: TagWithChildren) => {
-    setDeleteConfirmTag(tag)
-  }, [])
-
-  // 削除確認ダイアログを閉じる
-  const handleCloseDeleteConfirm = useCallback(() => {
-    setDeleteConfirmTag(null)
-  }, [])
-
-  // 物理削除の実行
-  const handleConfirmDelete = useCallback(async () => {
-    if (!deleteConfirmTag) return
-
-    try {
-      await handleDeleteTag(deleteConfirmTag)
-      toast.success(t('tags.page.tagDeleted', { name: deleteConfirmTag.name }))
-      setDeleteConfirmTag(null)
-    } catch (error) {
-      console.error('Failed to delete tag:', error)
-      toast.error(t('tags.page.tagDeleteFailed'))
-    }
-  }, [deleteConfirmTag, handleDeleteTag, t])
-
-  // タグをグループに移動
-  const handleMoveToGroup = useCallback(
-    async (tag: TagWithChildren, groupId: string | null) => {
-      try {
-        await updateTagMutation.mutateAsync({
-          id: tag.id,
-          data: {
-            group_id: groupId,
-          },
-        })
-        const group = groupId ? groups.find((g) => g.id === groupId) : null
-        const groupName = group?.name ?? t('tags.page.noGroup')
-        toast.success(t('tags.page.tagMoved', { name: tag.name, group: groupName }))
-      } catch (error) {
-        console.error('Failed to move tag to group:', error)
-        toast.error(t('tags.page.tagMoveFailed'))
-      }
-    },
-    [updateTagMutation, groups, t]
-  )
+  }, [activeTagsCount, showUncategorizedOnly, initialGroupNumber, t])
 
   // すべてのLevel 0タグ（ルートタグ）を直接取得
-  // is_active = true のみをフィルタリング
-  const baseTags = tags.filter((tag) => tag.level === 0 && tag.is_active)
+  const baseTags = useMemo(() => {
+    return tags.filter((tag) => tag.level === 0 && tag.is_active)
+  }, [tags])
 
   // 検索とグループフィルタ適用
   const filteredTags = useMemo(() => {
     let filtered = baseTags
-
-    // 未分類フィルタ
     if (showUncategorizedOnly) {
       filtered = filtered.filter((tag) => !tag.group_id)
     } else if (selectedGroupId) {
-      // グループフィルタ
       filtered = filtered.filter((tag) => tag.group_id === selectedGroupId)
     }
-
     return filtered
   }, [baseTags, selectedGroupId, showUncategorizedOnly])
 
@@ -422,7 +166,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         case 'group': {
           const groupA = a.group_id ? groups.find((g) => g.id === a.group_id)?.name || '' : ''
           const groupB = b.group_id ? groups.find((g) => g.id === b.group_id)?.name || '' : ''
-          // グループなしは最後に
           if (!groupA && groupB) return 1
           if (groupA && !groupB) return -1
           comparison = groupA.localeCompare(groupB)
@@ -431,7 +174,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         case 'last_used': {
           const lastUsedA = tagLastUsed[a.id] ? new Date(tagLastUsed[a.id]).getTime() : 0
           const lastUsedB = tagLastUsed[b.id] ? new Date(tagLastUsed[b.id]).getTime() : 0
-          // 使用されていないものは最後に
           if (!lastUsedA && lastUsedB) return 1
           if (lastUsedA && !lastUsedB) return -1
           comparison = lastUsedA - lastUsedB
@@ -449,126 +191,149 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const endIndex = startIndex + pageSize
   const displayTags = sortedTags.slice(startIndex, endIndex)
 
-  // ページ変更時にページをリセット
+  // ソート変更時にページ1に戻る
   useEffect(() => {
     setCurrentPage(1)
-  }, [sortField, sortDirection, pageSize])
+  }, [sortField, sortDirection, pageSize, setCurrentPage])
 
-  // ソート変更ハンドラー
-  const handleSort = (field: 'name' | 'created_at' | 'tag_number' | 'group' | 'last_used') => {
-    if (sortField === field) {
-      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))
-    } else {
-      setSortField(field)
-      setSortDirection('asc')
-    }
-  }
+  // 全選択状態
+  const currentPageIds = useMemo(() => displayTags.map((tag) => tag.id), [displayTags])
+  const selectedCountInPage = useMemo(
+    () => currentPageIds.filter((id) => selectedIds.has(id)).length,
+    [currentPageIds, selectedIds]
+  )
+  const allSelected = selectedCountInPage === currentPageIds.length && currentPageIds.length > 0
+  const someSelected = selectedCountInPage > 0 && selectedCountInPage < currentPageIds.length
 
-  // 一括選択
-  const getCheckboxState = (): boolean | 'indeterminate' => {
-    if (displayTags.length === 0) return false
-    if (selectedTagIds.length === 0) return false
-    if (selectedTagIds.length === displayTags.length) return true
-    return 'indeterminate'
-  }
+  // 全選択ハンドラー
+  const handleToggleAll = useCallback(() => {
+    toggleAll(currentPageIds)
+  }, [toggleAll, currentPageIds])
 
-  const checkboxState = getCheckboxState()
+  // ハンドラー: グループ移動
+  const handleMoveToGroup = useCallback(
+    async (tag: TagWithChildren, groupId: string | null) => {
+      try {
+        await updateTagMutation.mutateAsync({
+          id: tag.id,
+          data: { group_id: groupId },
+        })
+        const group = groupId ? groups.find((g) => g.id === groupId) : null
+        const groupName = group?.name ?? t('tags.page.noGroup')
+        toast.success(t('tags.page.tagMoved', { name: tag.name, group: groupName }))
+      } catch (error) {
+        console.error('Failed to move tag to group:', error)
+        toast.error(t('tags.page.tagMoveFailed'))
+      }
+    },
+    [updateTagMutation, groups, t]
+  )
 
-  const handleSelectAll = () => {
-    if (selectedTagIds.length === displayTags.length) {
-      setSelectedTagIds([])
-    } else {
-      setSelectedTagIds(displayTags.map((tag) => tag.id))
-    }
-  }
+  // ハンドラー: 一括アーカイブ
+  const handleBulkArchive = useCallback(
+    async (tagIds: string[]) => {
+      try {
+        for (const tagId of tagIds) {
+          const tag = tags.find((t) => t.id === tagId)
+          if (tag) {
+            await updateTagMutation.mutateAsync({
+              id: tag.id,
+              data: { is_active: false },
+            })
+          }
+        }
+        toast.success(t('tags.page.bulkArchived', { count: tagIds.length }))
+      } catch (error) {
+        console.error('Failed to archive tags:', error)
+        toast.error(t('tags.page.bulkArchiveFailed'))
+      }
+    },
+    [tags, updateTagMutation, t]
+  )
 
-  const handleSelectTag = (tagId: string) => {
-    setSelectedTagIds((prev) => (prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]))
-  }
+  // ハンドラー: 一括削除
+  const handleBulkDelete = useCallback(async () => {
+    const ids = selectedTagIds
+    if (ids.length === 0) return
+    if (!confirm(t('tags.page.bulkDeleteConfirm', { count: ids.length }))) return
 
-  const handleBulkDelete = async () => {
-    if (selectedTagIds.length === 0) return
-    if (!confirm(t('tags.page.bulkDeleteConfirm', { count: selectedTagIds.length }))) return
-
-    for (const tagId of selectedTagIds) {
+    for (const tagId of ids) {
       const tag = displayTags.find((t) => t.id === tagId)
       if (tag) {
         await handleDeleteTag(tag)
       }
     }
-    setSelectedTagIds([])
-  }
+    clearSelection()
+  }, [selectedTagIds, displayTags, handleDeleteTag, clearSelection, t])
 
-  // 一括マージダイアログを開く
+  // ハンドラー: 一括マージダイアログを開く
   const handleOpenBulkMerge = useCallback(() => {
-    if (selectedTagIds.length < 2) return
-    const selectedTags = tags.filter((t) => selectedTagIds.includes(t.id))
+    const ids = selectedTagIds
+    if (ids.length < 2) return
+    const selectedTags = tags.filter((t) => ids.includes(t.id))
     setBulkMergeTags(selectedTags)
   }, [selectedTagIds, tags])
 
-  // 一括マージダイアログを閉じる
+  // ハンドラー: 一括マージダイアログを閉じる
   const handleCloseBulkMerge = useCallback(() => {
     setBulkMergeTags([])
-    setSelectedTagIds([])
+    clearSelection()
+  }, [clearSelection])
+
+  // ハンドラー: アーカイブ確認ダイアログ
+  const handleOpenArchiveConfirm = useCallback((tag: TagWithChildren) => {
+    setArchiveConfirmTag(tag)
   }, [])
 
-  // リサイズハンドルコンポーネント
-  const ResizeHandle = ({ columnId }: { columnId: keyof typeof columnWidths }) => {
-    const [isResizing, setIsResizing] = useState(false)
-    const startXRef = useRef<number>(0)
-    const startWidthRef = useRef<number>(0)
+  const handleCloseArchiveConfirm = useCallback(() => {
+    setArchiveConfirmTag(null)
+  }, [])
 
-    const onMouseDown = useCallback(
-      (e: React.MouseEvent) => {
-        e.preventDefault()
-        e.stopPropagation()
-        setIsResizing(true)
-        startXRef.current = e.clientX
-        startWidthRef.current = columnWidths[columnId]
+  const handleConfirmArchive = useCallback(async () => {
+    if (!archiveConfirmTag) return
+    try {
+      await updateTagMutation.mutateAsync({
+        id: archiveConfirmTag.id,
+        data: { is_active: false },
+      })
+      toast.success(t('tags.page.tagArchived', { name: archiveConfirmTag.name }))
+      setArchiveConfirmTag(null)
+    } catch (error) {
+      console.error('Failed to archive tag:', error)
+      toast.error(t('tags.page.tagArchiveFailed'))
+    }
+  }, [archiveConfirmTag, updateTagMutation, t])
 
-        const onMouseMove = (moveEvent: MouseEvent) => {
-          const delta = moveEvent.clientX - startXRef.current
-          setColumnWidths((prev) => ({
-            ...prev,
-            [columnId]: Math.max(50, startWidthRef.current + delta),
-          }))
-        }
+  // ハンドラー: 削除確認ダイアログ
+  const handleOpenDeleteConfirm = useCallback((tag: TagWithChildren) => {
+    setDeleteConfirmTag(tag)
+  }, [])
 
-        const onMouseUp = () => {
-          setIsResizing(false)
-          document.removeEventListener('mousemove', onMouseMove)
-          document.removeEventListener('mouseup', onMouseUp)
-        }
+  const handleCloseDeleteConfirm = useCallback(() => {
+    setDeleteConfirmTag(null)
+  }, [])
 
-        document.addEventListener('mousemove', onMouseMove)
-        document.addEventListener('mouseup', onMouseUp)
-      },
-      [columnId]
-    )
+  const handleConfirmDelete = useCallback(async () => {
+    if (!deleteConfirmTag) return
+    try {
+      await handleDeleteTag(deleteConfirmTag)
+      toast.success(t('tags.page.tagDeleted', { name: deleteConfirmTag.name }))
+      setDeleteConfirmTag(null)
+    } catch (error) {
+      console.error('Failed to delete tag:', error)
+      toast.error(t('tags.page.tagDeleteFailed'))
+    }
+  }, [deleteConfirmTag, handleDeleteTag, t])
 
-    return (
-      <div
-        className={`hover:bg-primary absolute top-0 right-0 h-full w-1 cursor-col-resize ${
-          isResizing ? 'bg-primary' : ''
-        }`}
-        onMouseDown={onMouseDown}
-        style={{ userSelect: 'none' }}
-      />
-    )
-  }
+  // ソートハンドラー
+  const handleSort = useCallback(
+    (field: TagSortField) => {
+      setSortField(field)
+    },
+    [setSortField]
+  )
 
-  // 日時フォーマット関数
-  const formatDate = (date: Date | string) => {
-    const d = typeof date === 'string' ? new Date(date) : date
-    return new Intl.DateTimeFormat('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(d)
-  }
-
+  // ローディング表示
   if (isFetching) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -577,46 +342,35 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     )
   }
 
+  // 列の表示設定用
+  const columnSettings: { id: TagColumnId; label: string }[] = [
+    { id: 'id', label: 'ID' },
+    { id: 'description', label: t('tags.page.description') },
+    { id: 'group', label: t('tags.sidebar.groups') },
+    { id: 'created_at', label: t('tags.page.createdAt') },
+    { id: 'last_used', label: t('tags.page.lastUsed') },
+  ]
+
   return (
     <div className="flex h-full flex-col">
       {/* ヘッダー */}
       <TagsPageHeader title={pageTitle} count={filteredTags.length} />
 
-      {/* フィルターバー または 選択バー（Googleドライブ風） */}
-      {selectedTagIds.length > 0 ? (
+      {/* フィルターバー または 選択バー */}
+      {selectedCount > 0 ? (
         <TagsSelectionBar
-          selectedCount={selectedTagIds.length}
-          onClearSelection={() => setSelectedTagIds([])}
+          selectedCount={selectedCount}
+          onClearSelection={clearSelection}
           actions={
             <TagSelectionActions
               selectedTagIds={selectedTagIds}
               tags={tags}
               groups={groups}
               onMoveToGroup={handleMoveToGroup}
-              onArchive={async (tagIds) => {
-                try {
-                  for (const tagId of tagIds) {
-                    const tag = tags.find((t) => t.id === tagId)
-                    if (tag) {
-                      await updateTagMutation.mutateAsync({
-                        id: tag.id,
-                        data: {
-                          is_active: false,
-                        },
-                      })
-                    }
-                  }
-                  toast.success(t('tags.page.bulkArchived', { count: tagIds.length }))
-                } catch (error) {
-                  console.error('Failed to archive tags:', error)
-                  toast.error(t('tags.page.bulkArchiveFailed'))
-                }
-              }}
+              onArchive={handleBulkArchive}
               onDelete={handleBulkDelete}
               onMerge={handleOpenBulkMerge}
-              onEdit={handleEditTag}
-              onView={(tag) => openInspector(tag.id)}
-              onClearSelection={() => setSelectedTagIds([])}
+              onClearSelection={clearSelection}
               t={t}
             />
           }
@@ -652,41 +406,24 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
               <DropdownMenuContent align="start">
                 <DropdownMenuLabel>{t('tags.page.columnSettings')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem
-                  checked={columnVisibility.id}
-                  onCheckedChange={(checked) => handleColumnVisibilityChange('id', checked)}
-                >
-                  ID
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  checked={columnVisibility.description}
-                  onCheckedChange={(checked) => handleColumnVisibilityChange('description', checked)}
-                >
-                  {t('tags.page.description')}
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  checked={columnVisibility.group}
-                  onCheckedChange={(checked) => handleColumnVisibilityChange('group', checked)}
-                >
-                  {t('tags.sidebar.groups')}
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  checked={columnVisibility.created_at}
-                  onCheckedChange={(checked) => handleColumnVisibilityChange('created_at', checked)}
-                >
-                  {t('tags.page.createdAt')}
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  checked={columnVisibility.last_used}
-                  onCheckedChange={(checked) => handleColumnVisibilityChange('last_used', checked)}
-                >
-                  {t('tags.page.lastUsed')}
-                </DropdownMenuCheckboxItem>
+                {columnSettings.map((col) => {
+                  const column = visibleColumns.find((c) => c.id === col.id)
+                  const isVisible = !!column
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={col.id}
+                      checked={isVisible}
+                      onCheckedChange={(checked) => setColumnVisibility(col.id, checked)}
+                    >
+                      {col.label}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
           <div className="flex h-8 items-center">
-            <Button onClick={handleStartInlineCreation} size="sm" className="h-8">
+            <Button onClick={() => createRowRef.current?.startCreate()} size="sm" className="h-8">
               <Plus className="mr-2 size-4" />
               {t('tags.page.createTag')}
             </Button>
@@ -698,17 +435,16 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       <div
         className="flex flex-1 flex-col overflow-auto px-6 pt-4 pb-2"
         onClick={(e) => {
-          // テーブルコンテナの直接クリック（空白部分）で選択解除
           if (e.target === e.currentTarget) {
-            setSelectedTagIds([])
+            clearSelection()
           }
         }}
       >
-        {displayTags.length === 0 && !isCreatingTag ? (
+        {displayTags.length === 0 && !createRowRef.current?.isCreating ? (
           <div className="border-border flex h-64 items-center justify-center rounded-xl border-2 border-dashed">
             <div className="text-center">
               <p className="text-muted-foreground mb-4">{t('tags.page.noTags')}</p>
-              <Button onClick={handleStartInlineCreation}>
+              <Button onClick={() => createRowRef.current?.startCreate()}>
                 <Plus className="mr-2 h-4 w-4" />
                 {t('tags.page.addFirstTag')}
               </Button>
@@ -716,459 +452,86 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           </div>
         ) : (
           <>
-            {/* テーブル部分 */}
             <div className="border-border overflow-x-auto rounded-xl border">
-              <Table
-                style={{
-                  minWidth: `${Object.values(columnWidths).reduce((sum, width) => sum + width, 0)}px`,
-                }}
-              >
+              <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="relative" style={{ width: `${columnWidths.select}px` }}>
-                      <Checkbox
-                        checked={checkboxState}
-                        onCheckedChange={handleSelectAll}
-                        aria-label={t('tags.page.selectAll')}
-                      />
-                    </TableHead>
-                    {columnVisibility.id && (
-                      <TableHead className="relative" style={{ width: `${columnWidths.id}px` }}>
-                        <Button variant="ghost" size="sm" onClick={() => handleSort('tag_number')} className="-ml-3">
-                          ID
-                          {sortField === 'tag_number' &&
-                            (sortDirection === 'asc' ? (
-                              <ArrowUp className="ml-1 h-4 w-4" />
-                            ) : (
-                              <ArrowDown className="ml-1 h-4 w-4" />
-                            ))}
-                          {sortField !== 'tag_number' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                        </Button>
-                        <ResizeHandle columnId="id" />
-                      </TableHead>
-                    )}
-                    <TableHead className="relative" style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
-                      <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
-                        {t('tags.page.name')}
-                        {sortField === 'name' &&
-                          (sortDirection === 'asc' ? (
-                            <ArrowUp className="ml-1 h-4 w-4" />
-                          ) : (
-                            <ArrowDown className="ml-1 h-4 w-4" />
-                          ))}
-                        {sortField !== 'name' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                      </Button>
-                      <ResizeHandle columnId="name" />
-                    </TableHead>
-                    {columnVisibility.description && (
-                      <TableHead className="relative" style={{ width: `${columnWidths.description}px` }}>
-                        {t('tags.page.description')}
-                        <ResizeHandle columnId="description" />
-                      </TableHead>
-                    )}
-                    {columnVisibility.group && (
-                      <TableHead className="relative" style={{ width: `${columnWidths.group}px` }}>
-                        <Button variant="ghost" size="sm" onClick={() => handleSort('group')} className="-ml-3">
-                          {t('tags.sidebar.groups')}
-                          {sortField === 'group' &&
-                            (sortDirection === 'asc' ? (
-                              <ArrowUp className="ml-1 h-4 w-4" />
-                            ) : (
-                              <ArrowDown className="ml-1 h-4 w-4" />
-                            ))}
-                          {sortField !== 'group' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                        </Button>
-                        <ResizeHandle columnId="group" />
-                      </TableHead>
-                    )}
-                    {columnVisibility.created_at && (
-                      <TableHead className="relative" style={{ width: `${columnWidths.created_at}px` }}>
-                        <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
-                          {t('tags.page.createdAt')}
-                          {sortField === 'created_at' &&
-                            (sortDirection === 'asc' ? (
-                              <ArrowUp className="ml-1 h-4 w-4" />
-                            ) : (
-                              <ArrowDown className="ml-1 h-4 w-4" />
-                            ))}
-                          {sortField !== 'created_at' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                        </Button>
-                        <ResizeHandle columnId="created_at" />
-                      </TableHead>
-                    )}
-                    {columnVisibility.last_used && (
-                      <TableHead className="relative" style={{ width: `${columnWidths.last_used}px` }}>
-                        <Button variant="ghost" size="sm" onClick={() => handleSort('last_used')} className="-ml-3">
-                          {t('tags.page.lastUsed')}
-                          {sortField === 'last_used' &&
-                            (sortDirection === 'asc' ? (
-                              <ArrowUp className="ml-1 h-4 w-4" />
-                            ) : (
-                              <ArrowDown className="ml-1 h-4 w-4" />
-                            ))}
-                          {sortField !== 'last_used' && <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />}
-                        </Button>
-                        <ResizeHandle columnId="last_used" />
-                      </TableHead>
-                    )}
+                    {visibleColumns.map((column) => {
+                      if (column.id === 'selection') {
+                        return (
+                          <TableHead key={column.id} style={{ width: `${column.width}px` }}>
+                            <Checkbox
+                              checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+                              onCheckedChange={handleToggleAll}
+                              aria-label={t('tags.page.selectAll')}
+                            />
+                          </TableHead>
+                        )
+                      }
+
+                      // ソート可能な列
+                      const sortFieldMap: Record<string, TagSortField> = {
+                        id: 'tag_number',
+                        name: 'name',
+                        group: 'group',
+                        created_at: 'created_at',
+                        last_used: 'last_used',
+                      }
+                      const columnSortField = sortFieldMap[column.id]
+                      const isSorting = sortField === columnSortField
+
+                      return (
+                        <ResizableTableHead
+                          key={column.id}
+                          width={column.width}
+                          resizable={column.resizable}
+                          sortable={!!columnSortField}
+                          isSorting={isSorting}
+                          sortDirection={isSorting ? sortDirection : undefined}
+                          onSort={columnSortField ? () => handleSort(columnSortField) : undefined}
+                          onResize={(newWidth) => setColumnWidth(column.id, newWidth)}
+                          icon={column.id === 'name' ? Hash : undefined}
+                        >
+                          {column.label}
+                        </ResizableTableHead>
+                      )
+                    })}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {/* 既存のタグ行 */}
                   {displayTags.map((tag) => (
-                    <ContextMenu key={tag.id} modal={false}>
-                      <ContextMenuTrigger asChild>
-                        <DraggableTagRow
-                          id={tag.id}
-                          className="group"
-                          onContextMenu={() => {
-                            // 右クリックされた行を選択
-                            if (!selectedTagIds.includes(tag.id)) {
-                              setSelectedTagIds([tag.id])
-                            }
-                          }}
-                        >
-                          <TableCell style={{ width: `${columnWidths.select}px` }} onClick={(e) => e.stopPropagation()}>
-                            <Checkbox
-                              checked={selectedTagIds.includes(tag.id)}
-                              onCheckedChange={() => handleSelectTag(tag.id)}
-                              aria-label={t('tags.page.selectTag', { name: tag.name })}
-                            />
-                          </TableCell>
-                          {columnVisibility.id && (
-                            <TableCell
-                              className="text-muted-foreground font-mono text-sm"
-                              style={{ width: `${columnWidths.id}px` }}
-                            >
-                              t-{tag.tag_number}
-                            </TableCell>
-                          )}
-                          <TableCell
-                            className="font-medium"
-                            style={{ width: `${columnWidths.color + columnWidths.name}px` }}
-                          >
-                            <div className="flex items-center gap-2">
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <button
-                                    type="button"
-                                    className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                                    aria-label={t('tags.page.changeColor')}
-                                  >
-                                    <Hash
-                                      className="h-4 w-4"
-                                      style={{ color: tag.color || DEFAULT_TAG_COLOR }}
-                                      aria-label={t('tags.page.tagColor')}
-                                    />
-                                  </button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-3" align="start">
-                                  <ColorPalettePicker
-                                    selectedColor={tag.color || DEFAULT_TAG_COLOR}
-                                    onColorSelect={(color) => {
-                                      updateTagMutation.mutate({
-                                        id: tag.id,
-                                        data: { color },
-                                      })
-                                    }}
-                                  />
-                                </PopoverContent>
-                              </Popover>
-                              {editingTagId === tag.id && editingField === 'name' ? (
-                                <Input
-                                  value={editValue}
-                                  onChange={(e) => setEditValue(e.target.value)}
-                                  onBlur={() => saveInlineEdit(tag.id)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                      saveInlineEdit(tag.id)
-                                    } else if (e.key === 'Escape') {
-                                      cancelEditing()
-                                    }
-                                  }}
-                                  autoFocus
-                                  className="h-7 px-2"
-                                />
-                              ) : (
-                                <span
-                                  className="cursor-pointer hover:underline"
-                                  onClick={() => openInspector(tag.id)}
-                                >
-                                  {tag.name}{' '}
-                                  <span className="text-muted-foreground">({tagplanCounts[tag.id] || 0})</span>
-                                </span>
-                              )}
-                            </div>
-                          </TableCell>
-                          {columnVisibility.description && (
-                            <TableCell
-                              className="text-muted-foreground"
-                              style={{ width: `${columnWidths.description}px` }}
-                            >
-                              <span className="truncate">
-                                {tag.description || (
-                                  <span className="opacity-0 transition-opacity group-hover:opacity-100">
-                                    {t('tags.page.addDescription')}
-                                  </span>
-                                )}
-                              </span>
-                            </TableCell>
-                          )}
-                          {columnVisibility.group && (
-                            <TableCell style={{ width: `${columnWidths.group}px` }}>
-                              {tag.group_id ? (
-                                (() => {
-                                  const group = groups.find((g) => g.id === tag.group_id)
-                                  if (!group) {
-                                    return null
-                                  }
-                                  const groupTagCount = tags.filter(
-                                    (t) => t.group_id === group.id && t.is_active && t.level === 0
-                                  ).length
-                                  return (
-                                    <div className="flex items-center gap-1">
-                                      <Folder
-                                        className="h-4 w-4 shrink-0"
-                                        style={{ color: group.color || DEFAULT_GROUP_COLOR }}
-                                      />
-                                      <span className="text-sm">
-                                        {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
-                                      </span>
-                                    </div>
-                                  )
-                                })()
-                              ) : (
-                                <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">
-                                  {t('tags.page.addGroup')}
-                                </span>
-                              )}
-                            </TableCell>
-                          )}
-                          {columnVisibility.created_at && (
-                            <TableCell
-                              className="text-muted-foreground text-xs"
-                              style={{ width: `${columnWidths.created_at}px` }}
-                            >
-                              {formatDate(tag.created_at)}
-                            </TableCell>
-                          )}
-                          {columnVisibility.last_used && (
-                            <TableCell
-                              className="text-muted-foreground text-xs"
-                              style={{ width: `${columnWidths.last_used}px` }}
-                            >
-                              {tagLastUsed[tag.id] ? formatDate(tagLastUsed[tag.id]) : '-'}
-                            </TableCell>
-                          )}
-                        </DraggableTagRow>
-                      </ContextMenuTrigger>
-                      <ContextMenuContent>
-                        <TagActionMenuItems
-                          tag={tag}
-                          groups={groups}
-                          onView={(tag) => openInspector(tag.id)}
-                          onEdit={handleEditTag}
-                          onMoveToGroup={handleMoveToGroup}
-                          onArchive={(tag) => handleOpenArchiveConfirm(tag)}
-                          onDelete={handleOpenDeleteConfirm}
-                          t={t}
-                          renderMenuItem={({ icon, label, onClick, variant }) => (
-                            <ContextMenuItem
-                              onClick={onClick}
-                              className={
-                                variant === 'destructive'
-                                  ? 'text-destructive hover:bg-destructive hover:text-destructive-foreground'
-                                  : ''
-                              }
-                            >
-                              {icon}
-                              {label}
-                            </ContextMenuItem>
-                          )}
-                          renderSubMenu={({ trigger, items }) => (
-                            <ContextMenuSub>
-                              <ContextMenuSubTrigger>
-                                {trigger.icon}
-                                {trigger.label}
-                              </ContextMenuSubTrigger>
-                              <ContextMenuSubContent className="min-w-48">
-                                {items.map((item) => (
-                                  <ContextMenuItem key={item.key} onClick={item.onClick}>
-                                    {item.icon}
-                                    {item.label}
-                                  </ContextMenuItem>
-                                ))}
-                              </ContextMenuSubContent>
-                            </ContextMenuSub>
-                          )}
-                        />
-                      </ContextMenuContent>
-                    </ContextMenu>
+                    <TagTableRow
+                      key={tag.id}
+                      tag={tag}
+                      groups={groups}
+                      allTags={tags}
+                      planCounts={tagPlanCounts}
+                      lastUsed={tagLastUsed}
+                      onMoveToGroup={handleMoveToGroup}
+                      onArchiveConfirm={handleOpenArchiveConfirm}
+                      onDeleteConfirm={handleOpenDeleteConfirm}
+                    />
                   ))}
-
-                  {/* インライン作成行（最下部） */}
-                  {isCreatingTag && (
-                    <TableRow ref={inlineFormRef} className="bg-muted/30">
-                      <TableCell style={{ width: `${columnWidths.select}px` }}></TableCell>
-                      {columnVisibility.id && (
-                        <TableCell
-                          className="text-muted-foreground font-mono text-sm"
-                          style={{ width: `${columnWidths.id}px` }}
-                        >
-                          -
-                        </TableCell>
-                      )}
-                      <TableCell style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
-                        <div className="flex items-center gap-2">
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <button
-                                type="button"
-                                className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                                aria-label={t('tags.page.changeColor')}
-                              >
-                                <Hash
-                                  className="h-4 w-4"
-                                  style={{ color: newTagColor }}
-                                  aria-label={t('tags.page.tagColor')}
-                                />
-                              </button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-3" align="start">
-                              <ColorPalettePicker selectedColor={newTagColor} onColorSelect={setNewTagColor} />
-                            </PopoverContent>
-                          </Popover>
-                          <Input
-                            value={newTagName}
-                            onChange={(e) => setNewTagName(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                handleSaveInlineTag()
-                              } else if (e.key === 'Escape') {
-                                handleCancelInlineCreation()
-                              }
-                            }}
-                            placeholder={t('tags.page.name')}
-                            autoFocus
-                            className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
-                          />
-                        </div>
-                      </TableCell>
-                      {columnVisibility.description && (
-                        <TableCell style={{ width: `${columnWidths.description}px` }}>
-                          <Input
-                            value={newTagDescription}
-                            onChange={(e) => setNewTagDescription(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                handleSaveInlineTag()
-                              } else if (e.key === 'Escape') {
-                                handleCancelInlineCreation()
-                              }
-                            }}
-                            placeholder={t('tags.page.description')}
-                            className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
-                          />
-                        </TableCell>
-                      )}
-                      {columnVisibility.group && (
-                        <TableCell style={{ width: `${columnWidths.group}px` }}>
-                          {selectedGroupId
-                            ? (() => {
-                                const group = groups.find((g) => g.id === selectedGroupId)
-                                if (!group) {
-                                  return null
-                                }
-                                const groupTagCount = tags.filter(
-                                  (t) => t.group_id === group.id && t.is_active && t.level === 0
-                                ).length
-                                return (
-                                  <div className="flex items-center gap-1">
-                                    <Folder
-                                      className="h-4 w-4 shrink-0"
-                                      style={{ color: group.color || DEFAULT_GROUP_COLOR }}
-                                    />
-                                    <span className="text-sm">
-                                      {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
-                                    </span>
-                                  </div>
-                                )
-                              })()
-                            : null}
-                        </TableCell>
-                      )}
-                      {columnVisibility.created_at && (
-                        <TableCell
-                          className="text-muted-foreground text-xs"
-                          style={{ width: `${columnWidths.created_at}px` }}
-                        ></TableCell>
-                      )}
-                      {columnVisibility.last_used && (
-                        <TableCell
-                          className="text-muted-foreground text-xs"
-                          style={{ width: `${columnWidths.last_used}px` }}
-                        ></TableCell>
-                      )}
-                    </TableRow>
-                  )}
+                  <TagTableRowCreate
+                    ref={createRowRef}
+                    selectedGroupId={selectedGroupId}
+                    groups={groups}
+                    allTags={tags}
+                  />
                 </TableBody>
               </Table>
             </div>
 
-            {/* フッター: テーブルの外側に配置 */}
-            <div className="shrink-0">
-              <div className="flex items-center justify-between px-6 py-4">
-                {/* 左側: 表示件数選択 */}
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground text-sm">{t('tags.page.rowsPerPage')}</span>
-                  <Select value={String(pageSize)} onValueChange={(value) => setPageSize(Number(value))}>
-                    <SelectTrigger className="h-9 w-16">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* 中央: ページ情報 */}
-                <div className="text-muted-foreground text-sm">
-                  {sortedTags.length > 0
-                    ? `${startIndex + 1}〜${Math.min(endIndex, sortedTags.length)}件 ${t('tags.page.of')} ${sortedTags.length}件`
-                    : '0件'}
-                </div>
-
-                {/* 右側: ページ移動ボタン */}
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
-                    className="h-9 w-9 p-0"
-                  >
-                    <ChevronLeft className="size-4" />
-                    <span className="sr-only">{t('tags.page.previous')}</span>
-                  </Button>
-                  <div className="text-muted-foreground flex h-9 items-center px-3 text-sm">
-                    {t('tags.page.page')} {currentPage} {t('tags.page.of')} {totalPages || 1}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                    disabled={currentPage === totalPages || totalPages === 0}
-                    className="h-9 w-9 p-0"
-                  >
-                    <ChevronRight className="size-4" />
-                    <span className="sr-only">{t('tags.page.next')}</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
+            {/* ページネーション */}
+            <TablePagination
+              totalItems={sortedTags.length}
+              currentPage={currentPage}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setPageSize}
+              pageSizeOptions={[10, 25, 50, 100]}
+              showFirstLastButtons={false}
+            />
           </>
         )}
       </div>
