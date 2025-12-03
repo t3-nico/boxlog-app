@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
 import {
   useCreateTagGroup,
@@ -56,13 +57,13 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
     const [editingGroupName, setEditingGroupName] = useState('')
     const [isCreating, setIsCreating] = useState(false)
     const [newGroupName, setNewGroupName] = useState('')
-    const [newGroupColor, setNewGroupColor] = useState('#6B7280')
+    const [newGroupColor, setNewGroupColor] = useState(DEFAULT_GROUP_COLOR)
 
     // インライン作成を開始
     const handleStartCreating = useCallback(() => {
       setIsCreating(true)
       setNewGroupName('')
-      setNewGroupColor('#6B7280')
+      setNewGroupColor(DEFAULT_GROUP_COLOR)
     }, [])
 
     // 外部から呼び出せるように公開
@@ -74,7 +75,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
     const handleCancelCreating = useCallback(() => {
       setIsCreating(false)
       setNewGroupName('')
-      setNewGroupColor('#6B7280')
+      setNewGroupColor(DEFAULT_GROUP_COLOR)
     }, [])
 
     // インライン作成を保存
@@ -102,7 +103,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
         toast.success(`グループ「${newGroupName}」を作成しました`)
         setIsCreating(false)
         setNewGroupName('')
-        setNewGroupColor('#6B7280')
+        setNewGroupColor(DEFAULT_GROUP_COLOR)
 
         // 作成したグループのページに遷移
         const locale = pathname?.split('/')[1] || 'ja'
@@ -178,7 +179,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
     if (isLoading) {
       return (
         <div className="flex items-center justify-center p-8">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
         </div>
       )
     }
@@ -240,14 +241,14 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                       >
                         <Folder
                           className="h-5 w-5"
-                          style={{ color: group.color || '#6B7280' }}
-                          fill={group.color || '#6B7280'}
+                          style={{ color: group.color || DEFAULT_GROUP_COLOR }}
+                          fill={group.color || DEFAULT_GROUP_COLOR}
                         />
                       </button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-3" align="start">
                       <ColorPalettePicker
-                        selectedColor={group.color || '#6B7280'}
+                        selectedColor={group.color || DEFAULT_GROUP_COLOR}
                         onColorSelect={async (color) => {
                           try {
                             await updateGroupMutation.mutateAsync({

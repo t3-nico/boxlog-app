@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useMergeTag, useTags } from '@/features/tags/hooks/use-tags'
 import type { TagWithChildren } from '@/types/tags'
@@ -105,7 +106,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
             <div className="bg-muted flex items-center gap-2 rounded-lg border px-3 py-2">
               <div
                 className="h-3 w-3 shrink-0 rounded-full"
-                style={{ backgroundColor: tag?.color || '#6B7280' }}
+                style={{ backgroundColor: tag?.color || DEFAULT_TAG_COLOR }}
               />
               <span className="text-sm font-medium">{tag?.name}</span>
               <span className="text-muted-foreground text-xs">{tag?.path}</span>
@@ -125,7 +126,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                     <div className="flex items-center gap-2">
                       <div
                         className="h-3 w-3 shrink-0 rounded-full"
-                        style={{ backgroundColor: t.color || '#6B7280' }}
+                        style={{ backgroundColor: t.color || DEFAULT_TAG_COLOR }}
                       />
                       <span>{t.name}</span>
                       <span className="text-muted-foreground text-xs">{t.path}</span>

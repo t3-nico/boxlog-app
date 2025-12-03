@@ -2,6 +2,7 @@
 
 import { Archive, Eye, Folder, FolderX, GitMerge, Pencil, Trash2 } from 'lucide-react'
 
+import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 
 interface TagActionMenuItemsProps {
@@ -97,7 +98,7 @@ export function TagActionMenuItems({
           },
           ...groups.map((group) => ({
             key: group.id,
-            icon: <Folder className="mr-2 h-4 w-4" style={{ color: group.color || '#6B7280' }} />,
+            icon: <Folder className="mr-2 h-4 w-4" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />,
             label: group.name,
             onClick: () => onMoveToGroup(tag, group.id),
           })),
