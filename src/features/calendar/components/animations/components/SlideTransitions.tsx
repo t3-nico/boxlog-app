@@ -6,12 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
 import { cn } from '@/lib/utils'
 
-import type {
-  AdvancedSlideTransitionProps,
-  FadeTransitionProps,
-  SlideDirection,
-  SlideTransitionProps,
-} from '../types'
+import type { AdvancedSlideTransitionProps, FadeTransitionProps, SlideDirection, SlideTransitionProps } from '../types'
 import { ANIMATION_CONFIG, GPU_OPTIMIZED_STYLES } from '../types'
 
 // 高度なスライド遷移コンポーネント

@@ -117,11 +117,15 @@ export function PlanInspector() {
       if (initialData.start_time) {
         const startDate = new Date(initialData.start_time)
         setSelectedDate(startDate)
-        setStartTime(`${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`)
+        setStartTime(
+          `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`
+        )
       }
       if (initialData.end_time) {
         const endDate = new Date(initialData.end_time)
-        setEndTime(`${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`)
+        setEndTime(
+          `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`
+        )
       }
     } else if (!plan && !initialData) {
       setSelectedDate(undefined)
@@ -160,32 +164,38 @@ export function PlanInspector() {
   }, [plan])
 
   // Handlers
-  const handleTagsChange = useCallback(async (newTagIds: string[]) => {
-    if (!planId) return
-    const oldTagIds = selectedTagIds
-    const added = newTagIds.filter((id) => !oldTagIds.includes(id))
-    setSelectedTagIds(newTagIds)
-    try {
-      for (const tagId of added) {
-        await addPlanTag(planId, tagId)
+  const handleTagsChange = useCallback(
+    async (newTagIds: string[]) => {
+      if (!planId) return
+      const oldTagIds = selectedTagIds
+      const added = newTagIds.filter((id) => !oldTagIds.includes(id))
+      setSelectedTagIds(newTagIds)
+      try {
+        for (const tagId of added) {
+          await addPlanTag(planId, tagId)
+        }
+      } catch (error) {
+        console.error('Failed to add tags:', error)
+        setSelectedTagIds(oldTagIds)
       }
-    } catch (error) {
-      console.error('Failed to add tags:', error)
-      setSelectedTagIds(oldTagIds)
-    }
-  }, [planId, selectedTagIds, addPlanTag])
+    },
+    [planId, selectedTagIds, addPlanTag]
+  )
 
-  const handleRemoveTag = useCallback(async (tagId: string) => {
-    if (!planId) return
-    const oldTagIds = selectedTagIds
-    setSelectedTagIds((prev) => prev.filter((id) => id !== tagId))
-    try {
-      await removePlanTag(planId, tagId)
-    } catch (error) {
-      console.error('Failed to remove tag:', error)
-      setSelectedTagIds(oldTagIds)
-    }
-  }, [planId, selectedTagIds, removePlanTag])
+  const handleRemoveTag = useCallback(
+    async (tagId: string) => {
+      if (!planId) return
+      const oldTagIds = selectedTagIds
+      setSelectedTagIds((prev) => prev.filter((id) => id !== tagId))
+      try {
+        await removePlanTag(planId, tagId)
+      } catch (error) {
+        console.error('Failed to remove tag:', error)
+        setSelectedTagIds(oldTagIds)
+      }
+    },
+    [planId, selectedTagIds, removePlanTag]
+  )
 
   const handleDelete = useCallback(() => {
     if (!planId) return
@@ -195,34 +205,43 @@ export function PlanInspector() {
     }
   }, [planId, deletePlan, closeInspector])
 
-  const handleDateChange = useCallback((date: Date | undefined) => {
-    setSelectedDate(date)
-    autoSave('due_date', date ? format(date, 'yyyy-MM-dd') : undefined)
-  }, [autoSave])
+  const handleDateChange = useCallback(
+    (date: Date | undefined) => {
+      setSelectedDate(date)
+      autoSave('due_date', date ? format(date, 'yyyy-MM-dd') : undefined)
+    },
+    [autoSave]
+  )
 
-  const handleStartTimeChange = useCallback((time: string) => {
-    setStartTime(time)
-    if (time && selectedDate) {
-      const [hours, minutes] = time.split(':').map(Number)
-      const dateTime = new Date(selectedDate)
-      dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
-      autoSave('start_time', dateTime.toISOString())
-    } else {
-      autoSave('start_time', undefined)
-    }
-  }, [selectedDate, autoSave])
+  const handleStartTimeChange = useCallback(
+    (time: string) => {
+      setStartTime(time)
+      if (time && selectedDate) {
+        const [hours, minutes] = time.split(':').map(Number)
+        const dateTime = new Date(selectedDate)
+        dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
+        autoSave('start_time', dateTime.toISOString())
+      } else {
+        autoSave('start_time', undefined)
+      }
+    },
+    [selectedDate, autoSave]
+  )
 
-  const handleEndTimeChange = useCallback((time: string) => {
-    setEndTime(time)
-    if (time && selectedDate) {
-      const [hours, minutes] = time.split(':').map(Number)
-      const dateTime = new Date(selectedDate)
-      dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
-      autoSave('end_time', dateTime.toISOString())
-    } else {
-      autoSave('end_time', undefined)
-    }
-  }, [selectedDate, autoSave])
+  const handleEndTimeChange = useCallback(
+    (time: string) => {
+      setEndTime(time)
+      if (time && selectedDate) {
+        const [hours, minutes] = time.split(':').map(Number)
+        const dateTime = new Date(selectedDate)
+        dateTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
+        autoSave('end_time', dateTime.toISOString())
+      } else {
+        autoSave('end_time', undefined)
+      }
+    },
+    [selectedDate, autoSave]
+  )
 
   if (!isOpen) return null
 
@@ -292,7 +311,11 @@ export function PlanInspector() {
                       className="hover:bg-foreground/8 cursor-pointer rounded p-0.5 transition-colors"
                       aria-label={activityOrder === 'desc' ? '古い順に変更' : '最新順に変更'}
                     >
-                      {activityOrder === 'desc' ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronUp className="h-3.5 w-3.5" />}
+                      {activityOrder === 'desc' ? (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronUp className="h-3.5 w-3.5" />
+                      )}
                     </span>
                     {isHoveringSort && (
                       <div className="bg-foreground text-background absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 rounded-md px-3 py-1.5 text-xs whitespace-nowrap">
@@ -324,7 +347,10 @@ export function PlanInspector() {
                       {plan.title}
                     </span>
                     {plan.plan_number && (
-                      <span className="text-muted-foreground ml-4 text-[2rem]" style={{ fontSize: 'var(--font-size-xl)' }}>
+                      <span
+                        className="text-muted-foreground ml-4 text-[2rem]"
+                        style={{ fontSize: 'var(--font-size-xl)' }}
+                      >
                         #{plan.plan_number}
                       </span>
                     )}
@@ -352,8 +378,14 @@ export function PlanInspector() {
                         className={(() => {
                           if (!planId) return 'text-muted-foreground h-8 gap-2 px-2'
                           const cache = getCache(planId)
-                          const recurrence_rule = cache?.recurrence_rule !== undefined ? cache.recurrence_rule : plan?.recurrence_rule ?? null
-                          const recurrence_type = cache?.recurrence_type !== undefined ? cache.recurrence_type : plan?.recurrence_type ?? null
+                          const recurrence_rule =
+                            cache?.recurrence_rule !== undefined
+                              ? cache.recurrence_rule
+                              : (plan?.recurrence_rule ?? null)
+                          const recurrence_type =
+                            cache?.recurrence_type !== undefined
+                              ? cache.recurrence_type
+                              : (plan?.recurrence_type ?? null)
                           return recurrence_rule || (recurrence_type && recurrence_type !== 'none')
                             ? 'text-foreground h-8 gap-2 px-2'
                             : 'text-muted-foreground h-8 gap-2 px-2'
@@ -369,11 +401,24 @@ export function PlanInspector() {
                           {(() => {
                             if (!planId) return '繰り返し'
                             const cache = getCache(planId)
-                            const recurrence_rule = cache?.recurrence_rule !== undefined ? cache.recurrence_rule : plan?.recurrence_rule ?? null
-                            const recurrence_type = cache?.recurrence_type !== undefined ? cache.recurrence_type : plan?.recurrence_type ?? null
+                            const recurrence_rule =
+                              cache?.recurrence_rule !== undefined
+                                ? cache.recurrence_rule
+                                : (plan?.recurrence_rule ?? null)
+                            const recurrence_type =
+                              cache?.recurrence_type !== undefined
+                                ? cache.recurrence_type
+                                : (plan?.recurrence_type ?? null)
                             if (recurrence_rule) return configToReadable(ruleToConfig(recurrence_rule))
                             if (recurrence_type && recurrence_type !== 'none') {
-                              const typeMap: Record<string, string> = { daily: '毎日', weekly: '毎週', monthly: '毎月', yearly: '毎年', weekdays: '平日', none: '繰り返し' }
+                              const typeMap: Record<string, string> = {
+                                daily: '毎日',
+                                weekly: '毎週',
+                                monthly: '毎月',
+                                yearly: '毎年',
+                                weekdays: '平日',
+                                none: '繰り返し',
+                              }
                               return typeMap[recurrence_type] || '繰り返し'
                             }
                             return '繰り返し'
@@ -387,16 +432,29 @@ export function PlanInspector() {
                         onRepeatTypeChange={(type) => {
                           if (!planId) return
                           setRepeatType(type)
-                          const typeMap: Record<string, 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'> = {
-                            '': 'none', 毎日: 'daily', 毎週: 'weekly', 毎月: 'monthly', 毎年: 'yearly', 平日: 'weekdays',
+                          const typeMap: Record<
+                            string,
+                            'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'
+                          > = {
+                            '': 'none',
+                            毎日: 'daily',
+                            毎週: 'weekly',
+                            毎月: 'monthly',
+                            毎年: 'yearly',
+                            平日: 'weekdays',
                           }
-                          updatePlan.mutate({ id: planId, data: { recurrence_type: typeMap[type] || 'none', recurrence_rule: null } })
+                          updatePlan.mutate({
+                            id: planId,
+                            data: { recurrence_type: typeMap[type] || 'none', recurrence_rule: null },
+                          })
                         }}
                         triggerRef={recurrenceTriggerRef}
                         recurrenceRule={(() => {
                           if (!planId) return null
                           const cache = getCache(planId)
-                          return cache?.recurrence_rule !== undefined ? cache.recurrence_rule : plan?.recurrence_rule ?? null
+                          return cache?.recurrence_rule !== undefined
+                            ? cache.recurrence_rule
+                            : (plan?.recurrence_rule ?? null)
                         })()}
                         onRecurrenceRuleChange={(rrule) => {
                           if (!planId) return
@@ -412,7 +470,13 @@ export function PlanInspector() {
                         if (!planId) return
                         setReminderType(type)
                         const reminderMap: Record<string, number | null> = {
-                          '': null, 開始時刻: 0, '10分前': 10, '30分前': 30, '1時間前': 60, '1日前': 1440, '1週間前': 10080,
+                          '': null,
+                          開始時刻: 0,
+                          '10分前': 10,
+                          '30分前': 30,
+                          '1時間前': 60,
+                          '1日前': 1440,
+                          '1週間前': 10080,
                         }
                         updatePlan.mutate({ id: planId, data: { reminder_minutes: reminderMap[type] ?? null } })
                       }}

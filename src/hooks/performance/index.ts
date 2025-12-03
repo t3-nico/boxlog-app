@@ -2,10 +2,10 @@
  * Performance Hooks - Public API
  */
 
-export { usePerformanceMonitor } from './usePerformanceMonitor'
-export { useRenderCount } from './useRenderCount'
-export { useMemoryMonitor } from './useMemoryMonitor'
-export { usePerformanceStats } from './usePerformanceStats'
 export { useDevelopmentPerformanceMonitor } from './useDevelopmentPerformanceMonitor'
+export { useMemoryMonitor } from './useMemoryMonitor'
+export { usePerformanceMonitor } from './usePerformanceMonitor'
+export { usePerformanceStats } from './usePerformanceStats'
+export { useRenderCount } from './useRenderCount'
 
-export type { PerformanceMemory, PerformanceWithMemory, PerformanceStatsResult } from './types'
+export type { PerformanceMemory, PerformanceStatsResult, PerformanceWithMemory } from './types'

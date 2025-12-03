@@ -7,4 +7,4 @@
  * ```
  */
 
-export { useTagStore, tagColors, colorCategories } from './useTagStore'
+export { colorCategories, tagColors, useTagStore } from './useTagStore'

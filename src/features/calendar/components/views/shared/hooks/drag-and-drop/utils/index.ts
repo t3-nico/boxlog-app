@@ -1,21 +1,16 @@
 export {
-  snapToQuarterHour,
-  getConstrainedPosition,
   calculateSnappedPosition,
   calculateTargetDateIndex,
+  getConstrainedPosition,
+  snapToQuarterHour,
 } from './position'
 
 export {
+  calculateEventDuration,
+  calculateNewTime,
   calculatePreviewTime,
   calculateTargetDate,
-  calculateNewTime,
-  calculateEventDuration,
   updateTimeDisplay,
 } from './time'
 
-export {
-  createDragElement,
-  updateDragElementPosition,
-  cleanupDragElements,
-  calculateColumnWidth,
-} from './dragElement'
+export { calculateColumnWidth, cleanupDragElements, createDragElement, updateDragElementPosition } from './dragElement'

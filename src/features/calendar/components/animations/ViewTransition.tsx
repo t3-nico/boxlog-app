@@ -8,27 +8,27 @@ export { useAnimation } from './context'
 
 // Components
 export {
-  AdvancedViewTransition,
-  ViewTransition,
-  CalendarViewAnimation,
   AdvancedSlideTransition,
-  FadeTransition,
-  SlideTransition,
-  EventCollapse,
-  TaskDragAnimation,
-  TaskCreateAnimation,
-  TaskHoverTooltip,
-  StaggeredAnimation,
-  SpringAnimation,
-  Parallax,
-  TouchAnimation,
-  SkeletonAnimation,
-  AnimationWrapper,
-  PerformanceIndicator,
-  OptimizedListAnimation,
-  HoverEffect,
+  AdvancedViewTransition,
   AnimationProvider,
+  AnimationWrapper,
+  CalendarViewAnimation,
+  EventCollapse,
+  FadeTransition,
+  HoverEffect,
+  OptimizedListAnimation,
+  Parallax,
+  PerformanceIndicator,
+  SkeletonAnimation,
+  SlideTransition,
+  SpringAnimation,
+  StaggeredAnimation,
+  TaskCreateAnimation,
+  TaskDragAnimation,
+  TaskHoverTooltip,
+  TouchAnimation,
+  ViewTransition,
 } from './components'
 
 // Hooks
-export { useViewTransition, useAnimationPerformance } from './hooks'
+export { useAnimationPerformance, useViewTransition } from './hooks'

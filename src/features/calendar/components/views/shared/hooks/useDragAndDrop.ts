@@ -7,6 +7,6 @@
 
 export { useDragAndDrop } from './drag-and-drop'
 
-export type { DragState, DragHandlers, UseDragAndDropProps, DragDataRef } from './drag-and-drop'
+export type { DragDataRef, DragHandlers, DragState, UseDragAndDropProps } from './drag-and-drop'
 
 export { initialDragState } from './drag-and-drop'

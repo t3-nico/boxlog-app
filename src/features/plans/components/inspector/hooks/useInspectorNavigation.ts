@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { useInboxFocusStore } from '@/features/inbox/stores/useInboxFocusStore'
 

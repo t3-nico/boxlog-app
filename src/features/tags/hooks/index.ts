@@ -9,27 +9,27 @@
 
 // Tags CRUD
 export {
-  useTags,
-  useTag,
+  tagKeys,
   useCreateTag,
-  useUpdateTag,
   useDeleteTag,
   useMoveTag,
-  useRenameTag,
-  useUpdateTagColor,
   useOptimisticTagUpdate,
-  tagKeys,
+  useRenameTag,
+  useTag,
+  useTags,
+  useUpdateTag,
+  useUpdateTagColor,
 } from './use-tags'
 
 // Tag Groups
 export {
-  useTagGroups,
-  useTagGroup,
+  tagGroupKeys,
   useCreateTagGroup,
-  useUpdateTagGroup,
   useDeleteTagGroup,
   useReorderTagGroups,
-  tagGroupKeys,
+  useTagGroup,
+  useTagGroups,
+  useUpdateTagGroup,
 } from './use-tag-groups'
 
 // Tag Group DnD
@@ -37,14 +37,14 @@ export { useTagGroupsDnd } from './use-tag-groups-dnd'
 
 // Item Tags (Plan, Task etc.)
 export {
+  itemTagsKeys,
+  useBatchUpdateItemTags,
+  useCreateItemTag,
+  useDeleteItemTag,
   useItemTags,
   useItemTagsByItem,
-  useItemsByTags,
-  useCreateItemTag,
-  useBatchUpdateItemTags,
-  useDeleteItemTag,
   useItemTagsOptimisticUpdate,
-  itemTagsKeys,
+  useItemsByTags,
 } from './use-item-tags'
 
 // Tag Operations
@@ -52,13 +52,13 @@ export { useTagOperations } from './use-tag-operations'
 
 // Tag Stats
 export {
-  useTagStats,
-  useTagUsageCounts,
+  tagStatsKeys,
   useSidebarTags,
   useTagExpandedState,
   useTagItemAnimation,
+  useTagStats,
   useTagStatsDebug,
-  tagStatsKeys,
+  useTagUsageCounts,
 } from './use-tag-stats'
 
 // Realtime

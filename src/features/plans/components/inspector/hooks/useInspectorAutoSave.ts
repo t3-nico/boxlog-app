@@ -11,11 +11,7 @@ interface UseInspectorAutoSaveOptions {
   debounceMs?: number
 }
 
-export function useInspectorAutoSave({
-  planId,
-  plan,
-  debounceMs = 500,
-}: UseInspectorAutoSaveOptions) {
+export function useInspectorAutoSave({ planId, plan, debounceMs = 500 }: UseInspectorAutoSaveOptions) {
   const { updatePlan, deletePlan } = usePlanMutations()
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 

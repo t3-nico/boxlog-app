@@ -76,10 +76,7 @@ export function updateDragElementPosition(
 /**
  * ドラッグ要素をクリーンアップする
  */
-export function cleanupDragElements(
-  dragElement: HTMLElement | null,
-  originalElement: HTMLElement | null
-): void {
+export function cleanupDragElements(dragElement: HTMLElement | null, originalElement: HTMLElement | null): void {
   if (dragElement) {
     dragElement.remove()
   }

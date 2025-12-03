@@ -38,7 +38,7 @@ export {
 
 export { generateMarkdownDocument } from './markdown'
 
-export { createMigrationPlan, createMigrationPhases } from './migration'
+export { createMigrationPhases, createMigrationPlan } from './migration'
 
 // グローバルインスタンスと便利関数
 import { BreakingChangeManager } from './core'

@@ -1,3 +1,3 @@
-export { CalendarViewSkeleton, CalendarViewRenderer } from './components'
+export { CalendarViewRenderer, CalendarViewSkeleton } from './components'
 export { useCalendarData, useCalendarHandlers, useCalendarNavigationHandlers } from './hooks'
-export { preloadCalendarViews, initializePreload } from './utils'
+export { initializePreload, preloadCalendarViews } from './utils'

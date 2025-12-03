@@ -11,16 +11,16 @@
 
 export {
   ConsoleOutput,
-  createConsoleOutput,
-  createFileOutput,
-  createRotatingFileOutput,
-  createSupabaseOutput,
-  createWebhookOutput,
   FileOutput,
   MultiOutput,
   RotatingFileOutput,
   SupabaseOutput,
   WebhookOutput,
+  createConsoleOutput,
+  createFileOutput,
+  createRotatingFileOutput,
+  createSupabaseOutput,
+  createWebhookOutput,
 } from './outputs/index'
 
 export { default } from './outputs/index'

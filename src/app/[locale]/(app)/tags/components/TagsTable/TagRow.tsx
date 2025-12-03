@@ -17,8 +17,8 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
 import type { TranslationFunction } from '@/features/i18n/lib/hooks'
+import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
 import type { TagGroup, TagWithChildren } from '@/features/tags/types'
 
 interface ColumnWidths {
@@ -82,9 +82,7 @@ export function TagRow({
   t,
 }: TagRowProps) {
   const group = tag.group_id ? groups.find((g) => g.id === tag.group_id) : null
-  const groupTagCount = group
-    ? tags.filter((t) => t.group_id === group.id && t.is_active && t.level === 0).length
-    : 0
+  const groupTagCount = group ? tags.filter((t) => t.group_id === group.id && t.is_active && t.level === 0).length : 0
 
   return (
     <ContextMenu modal={false}>
@@ -104,16 +102,10 @@ export function TagRow({
               aria-label={t('tags.page.selectTag', { name: tag.name })}
             />
           </TableCell>
-          <TableCell
-            className="text-muted-foreground font-mono text-sm"
-            style={{ width: `${columnWidths.id}px` }}
-          >
+          <TableCell className="text-muted-foreground font-mono text-sm" style={{ width: `${columnWidths.id}px` }}>
             t-{tag.tag_number}
           </TableCell>
-          <TableCell
-            className="font-medium"
-            style={{ width: `${columnWidths.color + columnWidths.name}px` }}
-          >
+          <TableCell className="font-medium" style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
             <div className="flex items-center gap-2">
               <Popover>
                 <PopoverTrigger asChild>
@@ -152,20 +144,13 @@ export function TagRow({
                   className="h-7 px-2"
                 />
               ) : (
-                <span
-                  className="cursor-pointer hover:underline"
-                  onClick={() => onView(tag)}
-                >
-                  {tag.name}{' '}
-                  <span className="text-muted-foreground">({planCount})</span>
+                <span className="cursor-pointer hover:underline" onClick={() => onView(tag)}>
+                  {tag.name} <span className="text-muted-foreground">({planCount})</span>
                 </span>
               )}
             </div>
           </TableCell>
-          <TableCell
-            className="text-muted-foreground"
-            style={{ width: `${columnWidths.description}px` }}
-          >
+          <TableCell className="text-muted-foreground" style={{ width: `${columnWidths.description}px` }}>
             <span className="truncate">
               {tag.description || (
                 <span className="opacity-0 transition-opacity group-hover:opacity-100">
@@ -177,10 +162,7 @@ export function TagRow({
           <TableCell style={{ width: `${columnWidths.group}px` }}>
             {group ? (
               <div className="flex items-center gap-1">
-                <Folder
-                  className="h-4 w-4 shrink-0"
-                  style={{ color: group.color || DEFAULT_GROUP_COLOR }}
-                />
+                <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
                 <span className="text-sm">
                   {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
                 </span>
@@ -191,10 +173,7 @@ export function TagRow({
               </span>
             )}
           </TableCell>
-          <TableCell
-            className="text-muted-foreground text-xs"
-            style={{ width: `${columnWidths.created_at}px` }}
-          >
+          <TableCell className="text-muted-foreground text-xs" style={{ width: `${columnWidths.created_at}px` }}>
             {formatDate(tag.created_at)}
           </TableCell>
         </TableRow>

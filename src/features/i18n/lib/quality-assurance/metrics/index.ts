@@ -6,9 +6,4 @@ export {
   checkFluency,
   checkTechnicalAccuracy,
 } from './checks'
-export {
-  calculateOverallScore,
-  determineQualityLevel,
-  generateRecommendations,
-  identifyQualityIssues,
-} from './scoring'
+export { calculateOverallScore, determineQualityLevel, generateRecommendations, identifyQualityIssues } from './scoring'

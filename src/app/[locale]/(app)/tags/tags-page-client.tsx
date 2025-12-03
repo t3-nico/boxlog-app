@@ -10,20 +10,20 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
+import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
+import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
-import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
-import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useCreateTag, useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
-import { api } from '@/lib/trpc'
 import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import { api } from '@/lib/trpc'
 import { toast } from 'sonner'
 
-import { TagsFilterBar, TagsPagination, ResizeHandle, TagRow, InlineCreateRow } from './components'
+import { InlineCreateRow, ResizeHandle, TagRow, TagsFilterBar, TagsPagination } from './components'
 
 interface TagsPageClientProps {
   initialGroupNumber?: string
@@ -34,13 +34,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const { t } = useI18n()
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
   const { data: groups = [] as TagGroup[] } = useTagGroups()
-  const {
-    tags,
-    setTags,
-    setIsLoading,
-    isCreatingTag,
-    setIsCreatingTag,
-  } = useTagsPageContext()
+  const { tags, setTags, setIsLoading, isCreatingTag, setIsCreatingTag } = useTagsPageContext()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -83,12 +77,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(initialGroup?.id || null)
 
-  const {
-    showCreateModal,
-    handleSaveNewTag,
-    handleDeleteTag,
-    handleCloseModals,
-  } = useTagOperations(tags)
+  const { showCreateModal, handleSaveNewTag, handleDeleteTag, handleCloseModals } = useTagOperations(tags)
 
   const updateTagMutation = useUpdateTag()
   const createTagMutation = useCreateTag()
@@ -456,7 +445,11 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                       <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
                         {t('tags.page.name')}
                         {sortField === 'name' ? (
-                          sortDirection === 'asc' ? <ArrowUp className="ml-1 h-4 w-4" /> : <ArrowDown className="ml-1 h-4 w-4" />
+                          sortDirection === 'asc' ? (
+                            <ArrowUp className="ml-1 h-4 w-4" />
+                          ) : (
+                            <ArrowDown className="ml-1 h-4 w-4" />
+                          )
                         ) : (
                           <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />
                         )}
@@ -465,7 +458,11 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                     </TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.description}px` }}>
                       {t('tags.page.description')}
-                      <ResizeHandle columnId="description" currentWidth={columnWidths.description} onResize={handleColumnResize} />
+                      <ResizeHandle
+                        columnId="description"
+                        currentWidth={columnWidths.description}
+                        onResize={handleColumnResize}
+                      />
                     </TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.group}px` }}>
                       {t('tags.sidebar.groups')}
@@ -475,12 +472,20 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                       <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
                         {t('tags.page.createdAt')}
                         {sortField === 'created_at' ? (
-                          sortDirection === 'asc' ? <ArrowUp className="ml-1 h-4 w-4" /> : <ArrowDown className="ml-1 h-4 w-4" />
+                          sortDirection === 'asc' ? (
+                            <ArrowUp className="ml-1 h-4 w-4" />
+                          ) : (
+                            <ArrowDown className="ml-1 h-4 w-4" />
+                          )
                         ) : (
                           <ArrowUpDown className="ml-1 h-4 w-4 opacity-30" />
                         )}
                       </Button>
-                      <ResizeHandle columnId="created_at" currentWidth={columnWidths.created_at} onResize={handleColumnResize} />
+                      <ResizeHandle
+                        columnId="created_at"
+                        currentWidth={columnWidths.created_at}
+                        onResize={handleColumnResize}
+                      />
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -557,8 +562,16 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       </div>
 
       <TagCreateModal isOpen={showCreateModal} onClose={handleCloseModals} onSave={handleSaveNewTag} />
-      <TagArchiveDialog tag={archiveConfirmTag} onClose={() => setArchiveConfirmTag(null)} onConfirm={handleConfirmArchive} />
-      <TagDeleteDialog tag={deleteConfirmTag} onClose={() => setDeleteConfirmTag(null)} onConfirm={handleConfirmDelete} />
+      <TagArchiveDialog
+        tag={archiveConfirmTag}
+        onClose={() => setArchiveConfirmTag(null)}
+        onConfirm={handleConfirmArchive}
+      />
+      <TagDeleteDialog
+        tag={deleteConfirmTag}
+        onClose={() => setDeleteConfirmTag(null)}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   )
 }

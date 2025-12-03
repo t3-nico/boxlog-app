@@ -1,2 +1,2 @@
-export { InspectorHeader } from './InspectorHeader'
 export { ActivityTab } from './ActivityTab'
+export { InspectorHeader } from './InspectorHeader'

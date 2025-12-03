@@ -1,3 +1,3 @@
-export { useInspectorResize } from './useInspectorResize'
-export { useInspectorNavigation } from './useInspectorNavigation'
 export { useInspectorAutoSave } from './useInspectorAutoSave'
+export { useInspectorNavigation } from './useInspectorNavigation'
+export { useInspectorResize } from './useInspectorResize'

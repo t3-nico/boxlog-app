@@ -1,12 +1,12 @@
-export { AdvancedViewTransition, ViewTransition, CalendarViewAnimation } from './ViewTransitions'
-export { AdvancedSlideTransition, FadeTransition, SlideTransition } from './SlideTransitions'
-export { EventCollapse, TaskDragAnimation, TaskCreateAnimation, TaskHoverTooltip } from './EventAnimations'
-export { StaggeredAnimation, SpringAnimation, Parallax, TouchAnimation } from './MotionAnimations'
+export { AnimationProvider } from './AnimationProvider'
+export { EventCollapse, TaskCreateAnimation, TaskDragAnimation, TaskHoverTooltip } from './EventAnimations'
+export { Parallax, SpringAnimation, StaggeredAnimation, TouchAnimation } from './MotionAnimations'
 export {
-  SkeletonAnimation,
   AnimationWrapper,
-  PerformanceIndicator,
   OptimizedListAnimation,
+  PerformanceIndicator,
+  SkeletonAnimation,
 } from './PerformanceComponents'
 export { HoverEffect } from './SimpleEffects'
-export { AnimationProvider } from './AnimationProvider'
+export { AdvancedSlideTransition, FadeTransition, SlideTransition } from './SlideTransitions'
+export { AdvancedViewTransition, CalendarViewAnimation, ViewTransition } from './ViewTransitions'

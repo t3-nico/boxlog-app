@@ -21,9 +21,7 @@ export function ProgressTab({ languageProgress }: ProgressTabProps) {
                 <Badge variant="outline">{progress.language.toUpperCase()}</Badge>
                 言語進捗詳細
               </CardTitle>
-              <div className="text-muted-foreground text-sm">
-                最終更新: {progress.lastUpdated.toLocaleDateString()}
-              </div>
+              <div className="text-muted-foreground text-sm">最終更新: {progress.lastUpdated.toLocaleDateString()}</div>
             </div>
           </CardHeader>
           <CardContent>

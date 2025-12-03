@@ -39,102 +39,90 @@ interface InlineCreateRowProps {
   t: TranslationFunction
 }
 
-export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowProps>(
-  function InlineCreateRow(
-    {
-      columnWidths,
-      newTagName,
-      newTagDescription,
-      newTagColor,
-      selectedGroup,
-      tags,
-      onNameChange,
-      onDescriptionChange,
-      onColorChange,
-      onSave,
-      onCancel,
-      t,
-    },
-    ref
-  ) {
-    const groupTagCount = selectedGroup
-      ? tags.filter((t) => t.group_id === selectedGroup.id && t.is_active && t.level === 0).length
-      : 0
+export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowProps>(function InlineCreateRow(
+  {
+    columnWidths,
+    newTagName,
+    newTagDescription,
+    newTagColor,
+    selectedGroup,
+    tags,
+    onNameChange,
+    onDescriptionChange,
+    onColorChange,
+    onSave,
+    onCancel,
+    t,
+  },
+  ref
+) {
+  const groupTagCount = selectedGroup
+    ? tags.filter((t) => t.group_id === selectedGroup.id && t.is_active && t.level === 0).length
+    : 0
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        onSave()
-      } else if (e.key === 'Escape') {
-        onCancel()
-      }
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      onSave()
+    } else if (e.key === 'Escape') {
+      onCancel()
     }
+  }
 
-    return (
-      <TableRow ref={ref} className="bg-muted/30">
-        <TableCell style={{ width: `${columnWidths.select}px` }}></TableCell>
-        <TableCell
-          className="text-muted-foreground font-mono text-sm"
-          style={{ width: `${columnWidths.id}px` }}
-        >
-          -
-        </TableCell>
-        <TableCell style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
-          <div className="flex items-center gap-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                  aria-label={t('tags.page.changeColor')}
-                >
-                  <Hash
-                    className="h-4 w-4"
-                    style={{ color: newTagColor }}
-                    aria-label={t('tags.page.tagColor')}
-                  />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-3" align="start">
-                <ColorPalettePicker selectedColor={newTagColor} onColorSelect={onColorChange} />
-              </PopoverContent>
-            </Popover>
-            <Input
-              value={newTagName}
-              onChange={(e) => onNameChange(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={t('tags.page.name')}
-              autoFocus
-              className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
-            />
-          </div>
-        </TableCell>
-        <TableCell style={{ width: `${columnWidths.description}px` }}>
+  return (
+    <TableRow ref={ref} className="bg-muted/30">
+      <TableCell style={{ width: `${columnWidths.select}px` }}></TableCell>
+      <TableCell className="text-muted-foreground font-mono text-sm" style={{ width: `${columnWidths.id}px` }}>
+        -
+      </TableCell>
+      <TableCell style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
+        <div className="flex items-center gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                aria-label={t('tags.page.changeColor')}
+              >
+                <Hash className="h-4 w-4" style={{ color: newTagColor }} aria-label={t('tags.page.tagColor')} />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-3" align="start">
+              <ColorPalettePicker selectedColor={newTagColor} onColorSelect={onColorChange} />
+            </PopoverContent>
+          </Popover>
           <Input
-            value={newTagDescription}
-            onChange={(e) => onDescriptionChange(e.target.value)}
+            value={newTagName}
+            onChange={(e) => onNameChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={t('tags.page.description')}
+            placeholder={t('tags.page.name')}
+            autoFocus
             className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
           />
-        </TableCell>
-        <TableCell style={{ width: `${columnWidths.group}px` }}>
-          {selectedGroup ? (
-            <div className="flex items-center gap-1">
-              <Folder
-                className="h-4 w-4 shrink-0"
-                style={{ color: selectedGroup.color || DEFAULT_GROUP_COLOR }}
-              />
-              <span className="text-sm">
-                {selectedGroup.name} <span className="text-muted-foreground">({groupTagCount})</span>
-              </span>
-            </div>
-          ) : null}
-        </TableCell>
-        <TableCell
-          className="text-muted-foreground text-xs"
-          style={{ width: `${columnWidths.created_at}px` }}
-        ></TableCell>
-      </TableRow>
-    )
-  }
-)
+        </div>
+      </TableCell>
+      <TableCell style={{ width: `${columnWidths.description}px` }}>
+        <Input
+          value={newTagDescription}
+          onChange={(e) => onDescriptionChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={t('tags.page.description')}
+          className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
+        />
+      </TableCell>
+      <TableCell style={{ width: `${columnWidths.group}px` }}>
+        {selectedGroup ? (
+          <div className="flex items-center gap-1">
+            <Folder className="h-4 w-4 shrink-0" style={{ color: selectedGroup.color || DEFAULT_GROUP_COLOR }} />
+            <span className="text-sm">
+              {selectedGroup.name} <span className="text-muted-foreground">({groupTagCount})</span>
+            </span>
+          </div>
+        ) : null}
+      </TableCell>
+      <TableCell
+        className="text-muted-foreground text-xs"
+        style={{ width: `${columnWidths.created_at}px` }}
+      ></TableCell>
+    </TableRow>
+  )
+})

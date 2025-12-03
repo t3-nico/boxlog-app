@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
@@ -83,12 +83,7 @@ export function PerformanceIndicator({ isLoading, progress = 0, className }: Per
 }
 
 // パフォーマンス最適化されたリストアニメーション
-export function OptimizedListAnimation({
-  children,
-  itemHeight,
-  visibleItems,
-  className,
-}: OptimizedListAnimationProps) {
+export function OptimizedListAnimation({ children, itemHeight, visibleItems, className }: OptimizedListAnimationProps) {
   const prefersReducedMotion = useReducedMotion()
   const [scrollY, setScrollY] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)

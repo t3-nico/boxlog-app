@@ -171,12 +171,7 @@ export const updateProcedure = protectedProcedure
 
     console.debug('[plans.update] 更新リクエスト:', { id: input.id, data: input.data, userId })
 
-    const { data: oldData } = await supabase
-      .from('plans')
-      .select('*')
-      .eq('id', input.id)
-      .eq('user_id', userId)
-      .single()
+    const { data: oldData } = await supabase.from('plans').select('*').eq('id', input.id).eq('user_id', userId).single()
 
     console.debug('[plans.update] 更新前データ:', oldData)
 
@@ -239,12 +234,7 @@ export const updateProcedure = protectedProcedure
 export const deleteProcedure = protectedProcedure.input(planIdSchema).mutation(async ({ ctx, input }) => {
   const { supabase, userId } = ctx
 
-  const { data: plan } = await supabase
-    .from('plans')
-    .select('title')
-    .eq('id', input.id)
-    .eq('user_id', userId)
-    .single()
+  const { data: plan } = await supabase.from('plans').select('title').eq('id', input.id).eq('user_id', userId).single()
 
   await supabase.from('plan_activities').insert({
     plan_id: input.id,

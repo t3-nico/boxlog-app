@@ -6,12 +6,7 @@ import type { DragDataRef, DragState, UseDragAndDropProps } from './types'
 import { initialDragState } from './types'
 import { useDragHandler } from './useDragHandler'
 import { useResizeHandler } from './useResizeHandler'
-import {
-  calculateNewTime,
-  calculateTargetDateIndex,
-  cleanupDragElements,
-  getConstrainedPosition,
-} from './utils'
+import { calculateNewTime, calculateTargetDateIndex, cleanupDragElements, getConstrainedPosition } from './utils'
 
 /**
  * カレンダービュー共通のドラッグ&ドロップ機能
@@ -43,13 +38,7 @@ export function useDragAndDrop({
   })
 
   // Drag handler
-  const {
-    handleMouseDown,
-    handleDragging,
-    handleEventDrop,
-    handleEventClick,
-    executeEventUpdate,
-  } = useDragHandler({
+  const { handleMouseDown, handleDragging, handleEventDrop, handleEventClick, executeEventUpdate } = useDragHandler({
     events,
     date,
     displayDates,
@@ -68,10 +57,7 @@ export function useDragAndDrop({
 
   // ドラッグ要素のクリーンアップ
   const cleanupDrag = useCallback(() => {
-    cleanupDragElements(
-      dragState.dragElement,
-      dragDataRef.current?.originalElement || null
-    )
+    cleanupDragElements(dragState.dragElement, dragDataRef.current?.originalElement || null)
   }, [dragState.dragElement])
 
   // リサイズ完了処理
@@ -148,14 +134,7 @@ export function useDragAndDrop({
         handleDragging(constrainedX, constrainedY, deltaX, deltaY, targetDateIndex)
       }
     },
-    [
-      dragState.isDragging,
-      dragState.isResizing,
-      viewMode,
-      displayDates,
-      handleResizing,
-      handleDragging,
-    ]
+    [dragState.isDragging, dragState.isResizing, viewMode, displayDates, handleResizing, handleDragging]
   )
 
   // ドラッグ終了
@@ -187,14 +166,7 @@ export function useDragAndDrop({
     const targetDateIndex =
       dragState.targetDateIndex !== undefined ? dragState.targetDateIndex : dragDataRef.current.originalDateIndex
 
-    const newStartTime = calculateNewTime(
-      newTop,
-      targetDateIndex,
-      date,
-      viewMode,
-      displayDates,
-      dragDataRef.current
-    )
+    const newStartTime = calculateNewTime(newTop, targetDateIndex, date, viewMode, displayDates, dragDataRef.current)
 
     await executeEventUpdate(newStartTime)
 

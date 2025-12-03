@@ -9,8 +9,8 @@
 export {
   DataCorruptionError,
   LocalStorageService,
-  localStorageService,
   StorageQuotaExceededError,
+  localStorageService,
 } from './storage-service/index'
 
 export type { LocalEvent, LocalLog, LocalTag, StoredEvent, StoredLog } from './storage-service/index'

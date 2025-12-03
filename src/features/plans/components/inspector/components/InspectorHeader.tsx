@@ -72,13 +72,7 @@ export function InspectorHeader({
         <div className="flex items-center gap-1">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={onClose}
-                aria-label="閉じる"
-              >
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose} aria-label="閉じる">
                 <PanelRight className="h-4 w-4" />
               </Button>
             </TooltipTrigger>

@@ -23,7 +23,9 @@ interface UseDragHandlerProps {
   date: Date
   displayDates: Date[] | undefined
   viewMode: string
-  eventUpdateHandler: ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void) | undefined
+  eventUpdateHandler:
+    | ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void)
+    | undefined
   eventClickHandler: ((plan: CalendarPlan) => void) | undefined
   dragDataRef: React.MutableRefObject<DragDataRef | null>
   setDragState: React.Dispatch<React.SetStateAction<DragState>>
@@ -107,13 +109,7 @@ export function useDragHandler({
 
   // ドラッグ処理
   const handleDragging = useCallback(
-    (
-      constrainedX: number,
-      constrainedY: number,
-      deltaX: number,
-      deltaY: number,
-      targetDateIndex: number
-    ) => {
+    (constrainedX: number, constrainedY: number, deltaX: number, deltaY: number, targetDateIndex: number) => {
       const dragData = dragDataRef.current
       if (!dragData) return
 
@@ -126,12 +122,7 @@ export function useDragHandler({
         displayDates
       )
 
-      updateDragElementPosition(
-        dragData.dragElement || null,
-        dragData.initialRect || null,
-        deltaX,
-        deltaY
-      )
+      updateDragElementPosition(dragData.dragElement || null, dragData.initialRect || null, deltaX, deltaY)
 
       const { previewStartTime, previewEndTime } = calculatePreviewTime(
         events,

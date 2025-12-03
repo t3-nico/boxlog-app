@@ -1,12 +1,6 @@
 'use client'
 
-import {
-  DangerZoneSection,
-  EmailSection,
-  MFASection,
-  PasswordSection,
-  ProfileSection,
-} from './sections'
+import { DangerZoneSection, EmailSection, MFASection, PasswordSection, ProfileSection } from './sections'
 
 /**
  * アカウント設定コンポーネント

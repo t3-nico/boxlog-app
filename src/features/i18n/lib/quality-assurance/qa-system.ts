@@ -76,13 +76,7 @@ export class TranslationQualityAssurance {
   ): Promise<QualityMetrics> {
     const accuracy = checkAccuracy(originalText, translatedText, language)
     const fluency = checkFluency(translatedText, language)
-    const consistency = checkConsistency(
-      translatedText,
-      language,
-      context,
-      getTerminologyGlossary,
-      detectWritingStyle
-    )
+    const consistency = checkConsistency(translatedText, language, context, getTerminologyGlossary, detectWritingStyle)
     const completeness = checkCompleteness(originalText, translatedText)
     const culturalAdaptation = checkCulturalAdaptation(translatedText, language)
     const technicalAccuracy = checkTechnicalAccuracy(originalText, translatedText)

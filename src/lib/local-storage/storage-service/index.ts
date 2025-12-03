@@ -10,8 +10,8 @@
  */
 
 // 型定義
-export type { LocalEvent, LocalLog, LocalTag, StoredEvent, StoredLog } from './types'
 export { DataCorruptionError, StorageQuotaExceededError } from './types'
+export type { LocalEvent, LocalLog, LocalTag, StoredEvent, StoredLog } from './types'
 
 // サービス
 export { LocalStorageService, localStorageService } from './service'

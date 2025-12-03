@@ -11,8 +11,8 @@
 // 型定義
 export type {
   BundleBreakdown,
-  ErrorSummary,
   ESLintResult,
+  ErrorSummary,
   QualityMetrics,
   Recommendation,
   TechnicalDebtDetail,
