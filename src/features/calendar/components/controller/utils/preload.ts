@@ -1,11 +1,11 @@
 // ビューのプリロード: ブラウザがアイドル状態の時に先読みして遷移を高速化
 export const preloadCalendarViews = () => {
-  // 最もよく使うビューを先読み
-  import('../../views/DayView')
-  import('../../views/WeekView')
-  import('../../views/ThreeDayView')
-  import('../../views/FiveDayView')
-  import('../../views/AgendaView')
+  // 最もよく使うビューを先読み（絶対パスで指定）
+  import('@/features/calendar/components/views/DayView')
+  import('@/features/calendar/components/views/WeekView')
+  import('@/features/calendar/components/views/ThreeDayView')
+  import('@/features/calendar/components/views/FiveDayView')
+  import('@/features/calendar/components/views/AgendaView')
 }
 
 // クライアントサイドでのみ実行

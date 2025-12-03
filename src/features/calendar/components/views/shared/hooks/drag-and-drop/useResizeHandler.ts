@@ -7,24 +7,21 @@ import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
-import { HOUR_HEIGHT } from '../../constants/grid.constants'
+import { HOUR_HEIGHT } from '@/features/calendar/components/views/shared/constants/grid.constants'
 
 import type { DragDataRef, DragState } from './types'
 import { snapToQuarterHour } from './utils'
 
 interface UseResizeHandlerProps {
   events: CalendarPlan[]
-  eventUpdateHandler: ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void) | undefined
+  eventUpdateHandler:
+    | ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void)
+    | undefined
   dragDataRef: React.MutableRefObject<DragDataRef | null>
   setDragState: React.Dispatch<React.SetStateAction<DragState>>
 }
 
-export function useResizeHandler({
-  events,
-  eventUpdateHandler,
-  dragDataRef,
-  setDragState,
-}: UseResizeHandlerProps) {
+export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setDragState }: UseResizeHandlerProps) {
   const { t } = useI18n()
   const calendarToast = useCalendarToast()
 

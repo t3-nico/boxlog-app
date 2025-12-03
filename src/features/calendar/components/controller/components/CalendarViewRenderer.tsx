@@ -8,16 +8,22 @@ import type { CalendarViewType } from '../../../types/calendar.types'
 
 import { CalendarViewSkeleton } from './CalendarViewSkeleton'
 
-// 遅延ロード: カレンダービューコンポーネントは大きいため、使用時のみロード
-const DayView = React.lazy(() => import('../../views/DayView').then((module) => ({ default: module.DayView })))
-const WeekView = React.lazy(() => import('../../views/WeekView').then((module) => ({ default: module.WeekView })))
+// 遅延ロード: カレンダービューコンポーネントは大きいため、使用時のみロード（絶対パスで指定）
+const DayView = React.lazy(() =>
+  import('@/features/calendar/components/views/DayView').then((module) => ({ default: module.DayView }))
+)
+const WeekView = React.lazy(() =>
+  import('@/features/calendar/components/views/WeekView').then((module) => ({ default: module.WeekView }))
+)
 const ThreeDayView = React.lazy(() =>
-  import('../../views/ThreeDayView').then((module) => ({ default: module.ThreeDayView }))
+  import('@/features/calendar/components/views/ThreeDayView').then((module) => ({ default: module.ThreeDayView }))
 )
 const FiveDayView = React.lazy(() =>
-  import('../../views/FiveDayView').then((module) => ({ default: module.FiveDayView }))
+  import('@/features/calendar/components/views/FiveDayView').then((module) => ({ default: module.FiveDayView }))
 )
-const AgendaView = React.lazy(() => import('../../views/AgendaView').then((module) => ({ default: module.AgendaView })))
+const AgendaView = React.lazy(() =>
+  import('@/features/calendar/components/views/AgendaView').then((module) => ({ default: module.AgendaView }))
+)
 
 interface CalendarViewRendererProps {
   viewType: CalendarViewType
