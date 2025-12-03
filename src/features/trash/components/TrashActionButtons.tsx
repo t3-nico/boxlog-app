@@ -52,7 +52,7 @@ export function TrashActionButtons({
         type="button"
         onClick={onEmptyTrash}
         disabled={stats.totalItems === 0 || loading}
-        className="disabled:bg-muted disabled:text-muted-foreground rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-amber-600/92"
+        className="disabled:bg-muted disabled:text-muted-foreground rounded-md bg-warning px-4 py-2 text-sm font-medium text-warning-foreground transition-colors duration-200 hover:bg-warning/92"
       >
         <span className="mr-2">🧹</span>
         ゴミ箱を空にする
