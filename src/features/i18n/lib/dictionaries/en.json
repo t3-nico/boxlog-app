@@ -644,6 +644,7 @@
       }
     },
     "kanban": {
+      "columnOptions": "Column options",
       "markAllComplete": "Mark all complete",
       "archiveAll": "Archive all",
       "clearColumn": "Clear column",
