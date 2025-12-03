@@ -54,6 +54,7 @@ import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useCreateTag, useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
+import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore'
 import { api } from '@/lib/trpc'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 import { toast } from 'sonner'
@@ -66,6 +67,7 @@ interface TagsPageClientProps {
 export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = false }: TagsPageClientProps = {}) {
   const { t } = useI18n()
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
+  const { openInspector } = useTagInspectorStore()
   const { data: groups = [] as TagGroup[] } = useTagGroups()
   const {
     tags,
@@ -554,7 +556,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   if (isFetching) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+        <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
       </div>
     )
   }
@@ -596,10 +598,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
               }}
               onDelete={handleBulkDelete}
               onEdit={handleEditTag}
-              onView={(tag) => {
-                const locale = pathname?.split('/')[1] || 'ja'
-                router.push(`/${locale}/tags/t-${tag.tag_number}`)
-              }}
+              onView={(tag) => openInspector(tag.id)}
               onClearSelection={() => setSelectedTagIds([])}
               t={t}
             />
@@ -875,10 +874,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               ) : (
                                 <span
                                   className="cursor-pointer hover:underline"
-                                  onClick={() => {
-                                    const locale = pathname?.split('/')[1] || 'ja'
-                                    router.push(`/${locale}/tags/t-${tag.tag_number}`)
-                                  }}
+                                  onClick={() => openInspector(tag.id)}
                                 >
                                   {tag.name}{' '}
                                   <span className="text-muted-foreground">({tagplanCounts[tag.id] || 0})</span>
@@ -952,10 +948,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                         <TagActionMenuItems
                           tag={tag}
                           groups={groups}
-                          onView={(tag) => {
-                            const locale = pathname?.split('/')[1] || 'ja'
-                            router.push(`/${locale}/tags/t-${tag.tag_number}`)
-                          }}
+                          onView={(tag) => openInspector(tag.id)}
                           onEdit={handleEditTag}
                           onMoveToGroup={handleMoveToGroup}
                           onArchive={(tag) => handleOpenArchiveConfirm(tag)}
