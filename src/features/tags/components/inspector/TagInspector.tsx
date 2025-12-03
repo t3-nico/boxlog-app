@@ -27,6 +27,7 @@ import {
   PanelRight,
   Trash2,
 } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { TAG_PRESET_COLORS } from '../../constants/colors'
 import { useTagGroups } from '../../hooks/use-tag-groups'
@@ -45,8 +46,20 @@ import { TagMergeDialog } from '../TagMergeDialog'
  * - 各フィールド変更時に自動保存（デバウンス処理あり）
  */
 export function TagInspector() {
-  const { isOpen, tagId, closeInspector, openInspector } = useTagInspectorStore()
+  const { isOpen, tagId, closeInspector: closeInspectorStore, openInspector } = useTagInspectorStore()
   const { openInspector: openPlanInspector } = usePlanInspectorStore()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  // Inspectorを閉じる時にURLも更新
+  const closeInspector = useCallback(() => {
+    closeInspectorStore()
+    // /tags/t-123 形式の場合、/tags に戻す
+    if (pathname?.match(/\/tags\/t-\d+$/)) {
+      const locale = pathname.split('/')[1]
+      router.push(`/${locale}/tags`)
+    }
+  }, [closeInspectorStore, pathname, router])
 
   // タグデータ取得
   const { data: tags = [], isLoading } = useTags(true)
@@ -221,6 +234,42 @@ export function TagInspector() {
       }
     }
   }, [])
+
+  // キーボードショートカット
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 入力中は無視
+      const target = e.target as HTMLElement
+      if (target.isContentEditable || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return
+      }
+
+      switch (e.key) {
+        case 'Escape':
+          closeInspector()
+          break
+        case 'ArrowUp':
+        case 'k':
+          if (hasPrevious) {
+            e.preventDefault()
+            goToPrevious()
+          }
+          break
+        case 'ArrowDown':
+        case 'j':
+          if (hasNext) {
+            e.preventDefault()
+            goToNext()
+          }
+          break
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, hasPrevious, hasNext, closeInspector, goToPrevious, goToNext])
 
   if (!isOpen) {
     return null
