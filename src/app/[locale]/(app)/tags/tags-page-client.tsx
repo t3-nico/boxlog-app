@@ -17,6 +17,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import {
+  TagCellContent,
+  TagRowWrapper,
+  TagTableRowCreate,
+  type TagTableRowCreateHandle,
+} from '@/features/tags/components/table'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
 import { TagBulkMergeDialog } from '@/features/tags/components/TagBulkMergeDialog'
@@ -24,7 +30,6 @@ import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
-import { TagCellContent, TagRowWrapper, TagTableRowCreate, type TagTableRowCreateHandle } from '@/features/tags/components/table'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
@@ -35,8 +40,8 @@ import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStor
 import { useTagSortStore } from '@/features/tags/stores/useTagSortStore'
 import { api } from '@/lib/trpc'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
-import { toast } from 'sonner'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 interface TagsPageClientProps {
   initialGroupNumber?: string
@@ -58,7 +63,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   // Zustand stores
   const { selectedIds, setSelectedIds, clearSelection, getSelectedIds, getSelectedCount } = useTagSelectionStore()
-  const { sortField, sortDirection, setSortField, setSortDirection } = useTagSortStore()
+  const { sortField, sortDirection, setSort } = useTagSortStore()
   const { currentPage, pageSize, setCurrentPage, setPageSize } = useTagPaginationStore()
   const { getVisibleColumns, setColumnWidth, setColumnVisibility } = useTagColumnStore()
 
@@ -170,8 +175,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           break
         }
         case 'last_used': {
-          const lastUsedA = tagLastUsed[a.id] ? new Date(tagLastUsed[a.id]).getTime() : 0
-          const lastUsedB = tagLastUsed[b.id] ? new Date(tagLastUsed[b.id]).getTime() : 0
+          const lastUsedStrA = tagLastUsed[a.id]
+          const lastUsedStrB = tagLastUsed[b.id]
+          const lastUsedA = lastUsedStrA ? new Date(lastUsedStrA).getTime() : 0
+          const lastUsedB = lastUsedStrB ? new Date(lastUsedStrB).getTime() : 0
           if (!lastUsedA && lastUsedB) return 1
           if (lastUsedA && !lastUsedB) return -1
           comparison = lastUsedA - lastUsedB
@@ -201,11 +208,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const handleSortChange = useCallback(
     (newSortState: SortState) => {
       if (newSortState.field) {
-        setSortField(newSortState.field as typeof sortField)
+        setSort(newSortState.field as typeof sortField, newSortState.direction)
       }
-      setSortDirection(newSortState.direction)
     },
-    [setSortField, setSortDirection]
+    [setSort]
   )
 
   // DataTable用の選択変更ハンドラー
@@ -273,13 +279,13 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     if (!confirm(t('tags.page.bulkDeleteConfirm', { count: ids.length }))) return
 
     for (const tagId of ids) {
-      const tag = displayTags.find((t) => t.id === tagId)
+      const tag = sortedTags.find((item) => item.id === tagId)
       if (tag) {
         await handleDeleteTag(tag)
       }
     }
     clearSelection()
-  }, [selectedTagIds, displayTags, handleDeleteTag, clearSelection, t])
+  }, [selectedTagIds, sortedTags, handleDeleteTag, clearSelection, t])
 
   // ハンドラー: 一括マージダイアログを開く
   const handleOpenBulkMerge = useCallback(() => {
@@ -339,6 +345,14 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       toast.error(t('tags.page.tagDeleteFailed'))
     }
   }, [deleteConfirmTag, handleDeleteTag, t])
+
+  // ハンドラー: 列幅変更（stringをTagColumnIdにキャスト）
+  const handleColumnWidthChange = useCallback(
+    (columnId: string, width: number) => {
+      setColumnWidth(columnId as TagColumnId, width)
+    },
+    [setColumnWidth]
+  )
 
   // DataTable用の列定義
   const columns: ColumnDef<TagWithChildren>[] = useMemo(() => {
@@ -453,7 +467,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
     // 表示列のみをフィルタリング
     const visibleColumnIds = visibleColumns.filter((c) => c.id !== 'selection').map((c) => c.id)
-    return allColumnDefs.filter((col) => visibleColumnIds.includes(col.id))
+    return allColumnDefs.filter((col) => visibleColumnIds.includes(col.id as TagColumnId))
   }, [t, groups, tags, tagPlanCounts, tagLastUsed, visibleColumns])
 
   // DataTable用の列幅マップ
@@ -597,7 +611,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           onPaginationChange={handlePaginationChange}
           pageSizeOptions={[10, 25, 50, 100]}
           columnWidths={columnWidths}
-          onColumnWidthChange={setColumnWidth}
+          onColumnWidthChange={handleColumnWidthChange}
           rowWrapper={rowWrapper}
           onOutsideClick={clearSelection}
           selectAllLabel={t('tags.page.selectAll')}

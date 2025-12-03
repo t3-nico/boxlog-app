@@ -49,14 +49,7 @@ interface TagCellContentProps {
  * タグテーブルのセル内容をレンダリング
  * DataTableのrender関数から使用
  */
-export function TagCellContent({
-  tag,
-  columnId,
-  groups,
-  allTags,
-  planCounts,
-  lastUsed,
-}: TagCellContentProps) {
+export function TagCellContent({ tag, columnId, groups, allTags, planCounts, lastUsed }: TagCellContentProps) {
   const { t } = useI18n()
   const { openInspector } = useTagInspectorStore()
   const updateTagMutation = useUpdateTag()
@@ -114,10 +107,7 @@ export function TagCellContent({
                 className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
                 aria-label={t('tags.page.changeColor')}
               >
-                <Hash
-                  className="h-4 w-4"
-                  style={{ color: tag.color || DEFAULT_TAG_COLOR }}
-                />
+                <Hash className="h-4 w-4" style={{ color: tag.color || DEFAULT_TAG_COLOR }} />
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-3" align="start">
@@ -142,10 +132,7 @@ export function TagCellContent({
               className="h-7 px-2"
             />
           ) : (
-            <span
-              className="cursor-pointer font-medium hover:underline"
-              onClick={() => openInspector(tag.id)}
-            >
+            <span className="cursor-pointer font-medium hover:underline" onClick={() => openInspector(tag.id)}>
               {tag.name} <span className="text-muted-foreground">({planCounts[tag.id] || 0})</span>
             </span>
           )}
@@ -180,12 +167,10 @@ export function TagCellContent({
     case 'created_at':
       return <span className="text-muted-foreground text-xs">{formatDate(tag.created_at)}</span>
 
-    case 'last_used':
-      return (
-        <span className="text-muted-foreground text-xs">
-          {lastUsed[tag.id] ? formatDate(lastUsed[tag.id]) : '-'}
-        </span>
-      )
+    case 'last_used': {
+      const lastUsedDate = lastUsed[tag.id]
+      return <span className="text-muted-foreground text-xs">{lastUsedDate ? formatDate(lastUsedDate) : '-'}</span>
+    }
 
     default:
       return null

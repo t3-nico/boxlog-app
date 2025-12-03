@@ -13,13 +13,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useMergeTag, useTags } from '@/features/tags/hooks/use-tags'
@@ -52,8 +46,6 @@ export function TagBulkMergeDialog({ sourceTags, onClose }: TagBulkMergeDialogPr
 
   // 選択されたタグ以外のすべてのタグ + 選択されたタグ自身（マージ先として選択可能）
   const availableTags = flattenTags(tags).filter((t) => {
-    // 選択されたタグのIDリスト
-    const sourceIds = sourceTags.map((s) => s.id)
     // 選択されたタグの子孫は除外（循環を防ぐ）
     for (const sourceTag of sourceTags) {
       if (isDescendant(sourceTag, t.id)) return false
@@ -223,9 +215,7 @@ export function TagBulkMergeDialog({ sourceTags, onClose }: TagBulkMergeDialogPr
                   <Label htmlFor="bulk-merge-associations" className="text-sm font-medium">
                     {t('tags.merge.mergeAssociations')}
                   </Label>
-                  <p className="text-muted-foreground text-xs">
-                    {t('tags.merge.mergeAssociationsDescription')}
-                  </p>
+                  <p className="text-muted-foreground text-xs">{t('tags.merge.mergeAssociationsDescription')}</p>
                 </div>
               </div>
 
@@ -252,23 +242,15 @@ export function TagBulkMergeDialog({ sourceTags, onClose }: TagBulkMergeDialogPr
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <div className="space-y-1">
               <p className="text-sm font-medium">{t('tags.merge.warning')}</p>
-              <p className="text-xs opacity-80">
-                {t('tags.bulkMerge.warningDetail', { count: tagsToMerge.length })}
-              </p>
+              <p className="text-xs opacity-80">{t('tags.bulkMerge.warningDetail', { count: tagsToMerge.length })}</p>
             </div>
           </div>
         </div>
 
         <AlertDialogFooter className="mt-6">
           <AlertDialogCancel disabled={isMerging}>{t('tags.actions.cancel')}</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleMerge}
-            disabled={!targetTagId || isMerging}
-            className="bg-primary"
-          >
-            {isMerging
-              ? t('tags.merge.merging')
-              : t('tags.bulkMerge.confirm', { count: tagsToMerge.length })}
+          <AlertDialogAction onClick={handleMerge} disabled={!targetTagId || isMerging} className="bg-primary">
+            {isMerging ? t('tags.merge.merging') : t('tags.bulkMerge.confirm', { count: tagsToMerge.length })}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

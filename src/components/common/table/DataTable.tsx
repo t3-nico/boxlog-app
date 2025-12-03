@@ -278,11 +278,6 @@ export function DataTable<T>({
     [handleColumnWidthChange]
   )
 
-  // 空状態（extraRowsがある場合はテーブルを表示）
-  if (paginatedData.length === 0 && emptyState && !extraRows) {
-    return <>{emptyState}</>
-  }
-
   // 選択列を含む全列
   const allColumns = selectable
     ? [{ id: '__selection__', label: '', width: 48, resizable: false } as const, ...columns]
@@ -358,6 +353,11 @@ export function DataTable<T>({
     [columns, getColumnWidth, getRowKey, getSelectLabel, handleToggleSelection, rowWrapper, selectable, selectedIds]
   )
 
+  // 空状態（extraRowsがある場合はテーブルを表示）
+  if (paginatedData.length === 0 && emptyState && !extraRows) {
+    return <>{emptyState}</>
+  }
+
   return (
     <div
       className="flex flex-1 flex-col"
@@ -373,7 +373,12 @@ export function DataTable<T>({
             <TableRow>
               {allColumns.map((column) => {
                 const width = column.id === '__selection__' ? 48 : getColumnWidth(column.id)
-                const style = { width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px`, position: 'relative' as const }
+                const style = {
+                  width: `${width}px`,
+                  minWidth: `${width}px`,
+                  maxWidth: `${width}px`,
+                  position: 'relative' as const,
+                }
 
                 // 選択列
                 if (column.id === '__selection__') {
@@ -404,7 +409,7 @@ export function DataTable<T>({
                           {Icon && <Icon className="text-muted-foreground size-4 shrink-0" />}
                           <span className="truncate">{col.label}</span>
                           {isSorting ? (
-                            sortState.direction === 'asc' ? (
+                            sortState?.direction === 'asc' ? (
                               <ArrowUp className="text-foreground size-4 shrink-0" />
                             ) : (
                               <ArrowDown className="text-foreground size-4 shrink-0" />
@@ -446,12 +451,7 @@ export function DataTable<T>({
                     ? renderGroupHeader(group, columnCount, isCollapsed)
                     : defaultRenderGroupHeader(group, columnCount, isCollapsed)
 
-                  return [
-                    groupHeader,
-                    ...(isCollapsed
-                      ? []
-                      : group.items.map((item, index) => renderRow(item, index))),
-                  ]
+                  return [groupHeader, ...(isCollapsed ? [] : group.items.map((item, index) => renderRow(item, index)))]
                 })
               : // 通常表示
                 paginatedData.map((item, index) => renderRow(item, index))}
