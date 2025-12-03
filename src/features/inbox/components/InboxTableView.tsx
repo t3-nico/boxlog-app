@@ -1,10 +1,10 @@
 'use client'
 
-import { Checkbox } from '@/components/ui/checkbox'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { DataTable, type ColumnDef, type GroupedData, type SortState } from '@/components/common/table'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { Activity, Calendar, CalendarRange, FileText, Hash, Tag } from 'lucide-react'
-import { useEffect, useMemo, useRef } from 'react'
+import type { ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import type { InboxItem } from '../hooks/useInboxData'
 import { useInboxData } from '../hooks/useInboxData'
@@ -13,53 +13,34 @@ import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 import { useInboxGroupStore } from '../stores/useInboxGroupStore'
 import { useInboxPaginationStore } from '../stores/useInboxPaginationStore'
 import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'
-import type { SortField } from '../stores/useInboxSortStore'
 import { useInboxSortStore } from '../stores/useInboxSortStore'
 import { useInboxViewStore } from '../stores/useInboxViewStore'
 import { groupItems } from '../utils/grouping'
 import { GroupBySelector } from './table/GroupBySelector'
-import { GroupHeader } from './table/GroupHeader'
+import { InboxCellContent } from './table/InboxCellContent'
+import { InboxRowWrapper } from './table/InboxRowWrapper'
 import { InboxSelectionActions } from './table/InboxSelectionActions'
 import { InboxSelectionBar } from './table/InboxSelectionBar'
 import { InboxTableEmptyState } from './table/InboxTableEmptyState'
-import { InboxTableRow } from './table/InboxTableRow'
 import { InboxTableRowCreate, type InboxTableRowCreateHandle } from './table/InboxTableRowCreate'
-import { ResizableTableHead } from './table/ResizableTableHead'
-import { TablePagination } from './table/TablePagination'
 import { TableToolbar } from './table/TableToolbar'
-
-// 列IDとアイコンのマッピング
-const columnIcons = {
-  id: Hash,
-  title: FileText,
-  status: Activity,
-  tags: Tag,
-  duration: CalendarRange,
-  created_at: Calendar,
-  updated_at: Calendar,
-} as const
 
 /**
  * Inbox Table View コンポーネント
  *
- * テーブル形式でプランを表示
- * - useInboxData でデータ取得
- * - useInboxFilterStore でフィルタ管理
+ * DataTableを使用したテーブル形式でプランを表示
+ * - グループ化対応
+ * - ソート・フィルター・ページネーション
  * - 行クリックで Inspector 表示
- *
- * @example
- * ```tsx
- * <InboxTableView />
- * ```
  */
 export function InboxTableView() {
   const filters = useInboxFilterStore()
   const { sortField, sortDirection, setSort } = useInboxSortStore()
   const { currentPage, pageSize, setCurrentPage, setPageSize } = useInboxPaginationStore()
-  const { selectedIds, toggleAll, clearSelection } = useInboxSelectionStore()
-  const { getVisibleColumns } = useInboxColumnStore()
+  const { selectedIds, setSelectedIds, clearSelection } = useInboxSelectionStore()
+  const { getVisibleColumns, getColumnWidth, setColumnWidth } = useInboxColumnStore()
   const { getActiveView } = useInboxViewStore()
-  const { groupBy, collapsedGroups } = useInboxGroupStore()
+  const { groupBy, collapsedGroups, toggleGroupCollapse } = useInboxGroupStore()
   const { items, isLoading, error } = useInboxData({
     status: filters.status[0] as PlanStatus | undefined,
     search: filters.search,
@@ -72,36 +53,31 @@ export function InboxTableView() {
 
   // 選択数
   const selectedCount = selectedIds.size
+  const selectedIdsArray = useMemo(() => Array.from(selectedIds), [selectedIds])
 
   // アクションハンドラー
   const handleArchive = () => {
-    // TODO: アーカイブ機能実装
-    console.log('Archive:', Array.from(selectedIds))
+    console.log('Archive:', selectedIdsArray)
   }
 
   const handleDelete = () => {
-    // TODO: 削除機能実装
-    console.log('Delete:', Array.from(selectedIds))
+    console.log('Delete:', selectedIdsArray)
   }
 
   const handleEdit = (item: InboxItem) => {
-    // TODO: 編集機能実装（Inspectorを開く）
     console.log('Edit:', item.id)
   }
 
   const handleDuplicate = (item: InboxItem) => {
-    // TODO: 複製機能実装
     console.log('Duplicate:', item.id)
   }
 
   const handleAddTags = () => {
-    // TODO: タグ一括追加機能実装
-    console.log('Add tags to:', Array.from(selectedIds))
+    console.log('Add tags to:', selectedIdsArray)
   }
 
   const handleChangeDueDate = () => {
-    // TODO: 期限一括変更機能実装
-    console.log('Change due date for:', Array.from(selectedIds))
+    console.log('Change due date for:', selectedIdsArray)
   }
 
   // アクティブなビューを取得
@@ -114,7 +90,6 @@ export function InboxTableView() {
   useEffect(() => {
     if (!activeView) return
 
-    // フィルター適用
     if (activeView.filters.status) {
       filters.setStatus(activeView.filters.status as PlanStatus[])
     }
@@ -122,12 +97,10 @@ export function InboxTableView() {
       filters.setSearch(activeView.filters.search)
     }
 
-    // ソート適用
     if (activeView.sorting) {
       setSort(activeView.sorting.field, activeView.sorting.direction)
     }
 
-    // ページサイズ適用
     if (activeView.pageSize) {
       setPageSize(activeView.pageSize)
     }
@@ -185,31 +158,92 @@ export function InboxTableView() {
   }, [items, sortField, sortDirection])
 
   // グループ化適用
-  const groupedData = useMemo(() => {
+  const groupedData: GroupedData<InboxItem>[] | undefined = useMemo(() => {
+    if (!groupBy) return undefined
     return groupItems(sortedItems, groupBy)
   }, [sortedItems, groupBy])
 
-  // ページネーション適用（グループ化なしの場合のみ）
-  const paginatedItems = useMemo(() => {
-    if (groupBy) return sortedItems // グループ化時はページネーションなし
-    const startIndex = (currentPage - 1) * pageSize
-    const endIndex = startIndex + pageSize
-    return sortedItems.slice(startIndex, endIndex)
-  }, [sortedItems, currentPage, pageSize, groupBy])
-
-  // 全選択状態の計算（フックはreturnの前に必ず配置）
-  const currentPageIds = useMemo(() => paginatedItems.map((item) => item.id), [paginatedItems])
-  const selectedCountInPage = useMemo(
-    () => currentPageIds.filter((id) => selectedIds.has(id)).length,
-    [currentPageIds, selectedIds]
+  // DataTable用のソート状態
+  const sortState: SortState = useMemo(
+    () => ({
+      field: sortField,
+      direction: sortDirection || 'asc',
+    }),
+    [sortField, sortDirection]
   )
-  const allSelected = selectedCountInPage === currentPageIds.length && currentPageIds.length > 0
-  const someSelected = selectedCountInPage > 0 && selectedCountInPage < currentPageIds.length
 
-  // 全選択ハンドラー
-  const handleToggleAll = () => {
-    toggleAll(currentPageIds)
-  }
+  // DataTable用のソート変更ハンドラー
+  const handleSortChange = useCallback(
+    (newSortState: SortState) => {
+      if (newSortState.field) {
+        setSort(newSortState.field, newSortState.direction)
+      }
+    },
+    [setSort]
+  )
+
+  // DataTable用の選択変更ハンドラー
+  const handleSelectionChange = useCallback(
+    (newSelectedIds: Set<string>) => {
+      setSelectedIds(Array.from(newSelectedIds))
+    },
+    [setSelectedIds]
+  )
+
+  // DataTable用のページネーション変更ハンドラー
+  const handlePaginationChange = useCallback(
+    (state: { currentPage: number; pageSize: number }) => {
+      setCurrentPage(state.currentPage)
+      setPageSize(state.pageSize)
+    },
+    [setCurrentPage, setPageSize]
+  )
+
+  // DataTable用の列定義
+  const columns: ColumnDef<InboxItem>[] = useMemo(() => {
+    const columnIcons: Record<string, typeof Hash> = {
+      id: Hash,
+      title: FileText,
+      status: Activity,
+      tags: Tag,
+      duration: CalendarRange,
+      created_at: Calendar,
+      updated_at: Calendar,
+    }
+
+    return visibleColumns
+      .filter((col) => col.id !== 'selection')
+      .map((col) => ({
+        id: col.id,
+        label: col.label,
+        width: col.width,
+        resizable: col.resizable,
+        sortKey: col.id !== 'tags' ? col.id : undefined,
+        icon: columnIcons[col.id],
+        render: (item: InboxItem) => (
+          <InboxCellContent item={item} columnId={col.id} width={getColumnWidth(col.id)} />
+        ),
+      }))
+  }, [visibleColumns, getColumnWidth])
+
+  // DataTable用の列幅マップ
+  const columnWidths = useMemo(() => {
+    const widths: Record<string, number> = {}
+    visibleColumns.forEach((col) => {
+      widths[col.id] = col.width
+    })
+    return widths
+  }, [visibleColumns])
+
+  // 行ラッパー
+  const rowWrapper = useCallback(
+    ({ item, children, isSelected }: { item: InboxItem; children: ReactNode; isSelected: boolean }) => (
+      <InboxRowWrapper key={item.id} item={item} isSelected={isSelected}>
+        {children}
+      </InboxRowWrapper>
+    ),
+    []
+  )
 
   // エラー表示
   if (error) {
@@ -237,7 +271,7 @@ export function InboxTableView() {
 
   return (
     <div id="inbox-table-view-panel" role="tabpanel" className="flex h-full flex-col">
-      {/* ツールバー または 選択バー（Googleドライブ風） */}
+      {/* ツールバー または 選択バー */}
       {selectedCount > 0 ? (
         <InboxSelectionBar
           selectedCount={selectedCount}
@@ -245,8 +279,8 @@ export function InboxTableView() {
           actions={
             <InboxSelectionActions
               selectedCount={selectedCount}
-              selectedIds={Array.from(selectedIds)}
-              items={paginatedItems}
+              selectedIds={selectedIdsArray}
+              items={sortedItems}
               onArchive={handleArchive}
               onDelete={handleDelete}
               onEdit={handleEdit}
@@ -267,100 +301,33 @@ export function InboxTableView() {
       )}
 
       {/* テーブル */}
-      <div
-        className="flex flex-1 flex-col overflow-hidden px-4 pt-4 md:px-6"
-        onClick={(e) => {
-          // テーブルコンテナの直接クリック（空白部分）で選択解除（Tagsテーブルと同様）
-          if (e.target === e.currentTarget) {
-            useInboxSelectionStore.getState().clearSelection()
-          }
-        }}
-      >
-        {/* テーブル部分: 枠で囲む + 横スクロール対応 */}
-        <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl">
-          <Table className="w-full">
-            {/* ヘッダー: 固定 */}
-            <TableHeader className="bg-background sticky top-0 z-10">
-              <TableRow>
-                {visibleColumns.map((column) => {
-                  if (column.id === 'selection') {
-                    return (
-                      <TableHead key={column.id} style={{ width: `${column.width}px`, minWidth: `${column.width}px` }}>
-                        <Checkbox
-                          checked={allSelected ? true : someSelected ? 'indeterminate' : false}
-                          onCheckedChange={handleToggleAll}
-                        />
-                      </TableHead>
-                    )
-                  }
-
-                  // アイコンを取得
-                  const Icon = columnIcons[column.id as keyof typeof columnIcons]
-
-                  // tagsはソート不可
-                  if (column.id === 'tags') {
-                    return (
-                      <ResizableTableHead key={column.id} columnId={column.id} icon={Icon}>
-                        {column.label}
-                      </ResizableTableHead>
-                    )
-                  }
-
-                  // ソート可能な列（selection, tags以外）
-                  return (
-                    <ResizableTableHead
-                      key={column.id}
-                      columnId={column.id}
-                      sortField={column.id as SortField}
-                      icon={Icon}
-                    >
-                      {column.label}
-                    </ResizableTableHead>
-                  )
-                })}
-              </TableRow>
-            </TableHeader>
-
-            {/* ボディ: スクロール可能 */}
-            <TableBody>
-              {paginatedItems.length === 0 ? (
-                <InboxTableEmptyState columnCount={visibleColumns.length} totalItems={items.length} />
-              ) : groupBy ? (
-                // グループ化表示
-                groupedData.map((group) => [
-                  <GroupHeader
-                    key={`header-${group.groupKey}`}
-                    groupKey={group.groupKey}
-                    groupLabel={group.groupLabel}
-                    count={group.count}
-                    columnCount={visibleColumns.length}
-                  />,
-                  ...(collapsedGroups.has(group.groupKey)
-                    ? []
-                    : group.items.map((item) => <InboxTableRow key={item.id} item={item} />)),
-                ])
-              ) : (
-                // 通常表示
-                <>
-                  {paginatedItems.map((item) => (
-                    <InboxTableRow key={item.id} item={item} />
-                  ))}
-                  {/* Notionスタイル：新規作成行 */}
-                  <InboxTableRowCreate ref={createRowRef} />
-                  {/* 下部スペーサー：スクロールバーと被らないように4px確保 */}
-                  <TableRow className="pointer-events-none h-1" />
-                </>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* フッター: テーブルの外側に配置（グループ化なしの場合のみ） */}
-        {!groupBy && (
-          <div className="shrink-0">
-            <TablePagination totalItems={sortedItems.length} />
-          </div>
-        )}
+      <div className="flex flex-1 flex-col overflow-hidden px-4 pt-4 md:px-6">
+        <DataTable
+          data={sortedItems}
+          columns={columns}
+          getRowKey={(item) => item.id}
+          selectable
+          selectedIds={selectedIds}
+          onSelectionChange={handleSelectionChange}
+          sortState={sortState}
+          onSortChange={handleSortChange}
+          showPagination={!groupBy}
+          paginationState={{ currentPage, pageSize }}
+          onPaginationChange={handlePaginationChange}
+          pageSizeOptions={[10, 25, 50, 100]}
+          columnWidths={columnWidths}
+          onColumnWidthChange={setColumnWidth}
+          groupedData={groupedData}
+          collapsedGroups={collapsedGroups}
+          onToggleGroupCollapse={toggleGroupCollapse}
+          rowWrapper={rowWrapper}
+          onOutsideClick={clearSelection}
+          selectAllLabel="全て選択"
+          getSelectLabel={(item) => `${item.title}を選択`}
+          extraRows={!groupBy ? <InboxTableRowCreate ref={createRowRef} /> : undefined}
+          emptyState={<InboxTableEmptyState columnCount={visibleColumns.length} totalItems={items.length} />}
+          stickyHeader
+        />
       </div>
     </div>
   )
