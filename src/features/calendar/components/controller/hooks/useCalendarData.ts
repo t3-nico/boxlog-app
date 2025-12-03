@@ -135,7 +135,7 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
     })
 
     return filtered
-  }, [viewDateRange.start, viewDateRange.end, plansData])
+  }, [viewDateRange, plansData])
 
   return {
     viewDateRange,
