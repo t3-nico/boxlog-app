@@ -39,6 +39,10 @@ export const DraggablePlan = ({ plan, dayIndex, topPosition, onPlanClick, style,
   const [isClicking, setIsClicking] = useState(false)
   const [isDragReady, setIsDragReady] = useState(false)
 
+  // RAF throttle用のref（INP改善: 連続的なmousemove/touchmoveをthrottle化）
+  const rafIdRef = useRef<number | null>(null)
+  const pendingMoveRef = useRef<{ x: number; y: number } | null>(null)
+
   // @dnd-kit/core の useDraggable
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `calendar-plan-${plan.id}`,
@@ -51,6 +55,24 @@ export const DraggablePlan = ({ plan, dayIndex, topPosition, onPlanClick, style,
     disabled: !isDragReady,
   })
 
+  // RAF throttle化された距離計算処理（INP改善）
+  const processPendingMove = useCallback(() => {
+    const pending = pendingMoveRef.current
+    if (!pending || !dragStartPos || isDragReady) {
+      rafIdRef.current = null
+      return
+    }
+
+    const distance = Math.sqrt(Math.pow(pending.x - dragStartPos.x, 2) + Math.pow(pending.y - dragStartPos.y, 2))
+
+    if (distance >= DRAG_THRESHOLD) {
+      setIsDragReady(true)
+    }
+
+    pendingMoveRef.current = null
+    rafIdRef.current = null
+  }, [dragStartPos, isDragReady])
+
   // ドラッグ閾値を考慮したマウスイベントハンドラー
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     setIsClicking(true)
@@ -59,18 +81,26 @@ export const DraggablePlan = ({ plan, dayIndex, topPosition, onPlanClick, style,
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      if (!isClicking || !dragStartPos) return
+      if (!isClicking || !dragStartPos || isDragReady) return
 
-      const distance = Math.sqrt(Math.pow(e.clientX - dragStartPos.x, 2) + Math.pow(e.clientY - dragStartPos.y, 2))
+      // RAF throttle: 最新の座標を保存し、次のフレームで処理
+      pendingMoveRef.current = { x: e.clientX, y: e.clientY }
 
-      if (distance >= DRAG_THRESHOLD && !isDragReady) {
-        setIsDragReady(true)
+      if (rafIdRef.current === null) {
+        rafIdRef.current = requestAnimationFrame(processPendingMove)
       }
     },
-    [isClicking, dragStartPos, isDragReady]
+    [isClicking, dragStartPos, isDragReady, processPendingMove]
   )
 
   const handleMouseUp = useCallback(() => {
+    // RAFをキャンセル
+    if (rafIdRef.current !== null) {
+      cancelAnimationFrame(rafIdRef.current)
+      rafIdRef.current = null
+    }
+    pendingMoveRef.current = null
+
     if (!isDragReady) {
       setIsClicking(false)
       setDragStartPos(null)
@@ -81,14 +111,21 @@ export const DraggablePlan = ({ plan, dayIndex, topPosition, onPlanClick, style,
   useEffect(() => {
     if (!isDragging && isDragReady) {
       setIsDragReady(false)
-
       setDragStartPos(null)
-
       setIsClicking(false)
     }
   }, [isDragging, isDragReady])
 
-  // タッチイベントのサポート
+  // コンポーネントアンマウント時のRAFクリーンアップ
+  useEffect(() => {
+    return () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current)
+      }
+    }
+  }, [])
+
+  // タッチイベントのサポート（RAF throttle化）
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0]
     if (!touch) return
@@ -98,22 +135,29 @@ export const DraggablePlan = ({ plan, dayIndex, topPosition, onPlanClick, style,
 
   const handleTouchMove = useCallback(
     (e: React.TouchEvent) => {
-      if (!isClicking || !dragStartPos) return
+      if (!isClicking || !dragStartPos || isDragReady) return
 
       const touch = e.touches[0]
       if (!touch) return
-      const distance = Math.sqrt(
-        Math.pow(touch.clientX - dragStartPos.x, 2) + Math.pow(touch.clientY - dragStartPos.y, 2)
-      )
 
-      if (distance >= DRAG_THRESHOLD && !isDragReady) {
-        setIsDragReady(true)
+      // RAF throttle: 最新の座標を保存し、次のフレームで処理
+      pendingMoveRef.current = { x: touch.clientX, y: touch.clientY }
+
+      if (rafIdRef.current === null) {
+        rafIdRef.current = requestAnimationFrame(processPendingMove)
       }
     },
-    [isClicking, dragStartPos, isDragReady]
+    [isClicking, dragStartPos, isDragReady, processPendingMove]
   )
 
   const handleTouchEnd = useCallback(() => {
+    // RAFをキャンセル
+    if (rafIdRef.current !== null) {
+      cancelAnimationFrame(rafIdRef.current)
+      rafIdRef.current = null
+    }
+    pendingMoveRef.current = null
+
     if (!isDragReady) {
       setIsClicking(false)
       setDragStartPos(null)
