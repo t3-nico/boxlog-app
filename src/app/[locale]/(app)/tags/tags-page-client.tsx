@@ -43,6 +43,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { DraggableTagRow } from '@/features/tags/components/DraggableTagRow'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
@@ -801,7 +802,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                   {displayTags.map((tag) => (
                     <ContextMenu key={tag.id} modal={false}>
                       <ContextMenuTrigger asChild>
-                        <TableRow
+                        <DraggableTagRow
+                          id={tag.id}
                           className="group"
                           onContextMenu={() => {
                             // 右クリックされた行を選択
@@ -942,7 +944,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                               {tagLastUsed[tag.id] ? formatDate(tagLastUsed[tag.id]) : '-'}
                             </TableCell>
                           )}
-                        </TableRow>
+                        </DraggableTagRow>
                       </ContextMenuTrigger>
                       <ContextMenuContent>
                         <TagActionMenuItems
