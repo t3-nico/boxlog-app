@@ -1,7 +1,10 @@
 import type { MetadataRoute } from 'next'
 
+// サポートする言語
+const locales = ['ja', 'en'] as const
+
 /**
- * 動的Sitemap生成
+ * 動的Sitemap生成（多言語対応）
  * SEO最適化のため、全ページを検索エンジンに通知
  *
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
@@ -10,77 +13,42 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://boxlog.app'
   const now = new Date()
 
-  // 静的ページ
+  // 多言語URLを生成するヘルパー関数
+  const createLocalizedUrls = (
+    path: string,
+    changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never',
+    priority: number
+  ): MetadataRoute.Sitemap => {
+    return locales.map((locale) => ({
+      url: `${baseUrl}/${locale}${path}`,
+      lastModified: now,
+      changeFrequency,
+      priority,
+      alternates: {
+        languages: Object.fromEntries(locales.map((l) => [l, `${baseUrl}/${l}${path}`])),
+      },
+    }))
+  }
+
+  // 静的ページ（多言語対応）
   const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: baseUrl,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
+    // ホームページ
+    ...createLocalizedUrls('', 'daily', 1.0),
     // 認証ページ
-    {
-      url: `${baseUrl}/auth/login`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/auth/signup`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
+    ...createLocalizedUrls('/auth', 'monthly', 0.5),
   ]
 
-  // メインアプリケーションページ（認証後）
+  // メインアプリケーションページ（認証後・多言語対応）
   const appPages: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/dashboard`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/calendar`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/tasks`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/table`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/board`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/stats`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/settings`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
+    ...createLocalizedUrls('/calendar', 'daily', 0.9),
+    ...createLocalizedUrls('/inbox', 'daily', 0.8),
+    ...createLocalizedUrls('/tags', 'daily', 0.8),
+    ...createLocalizedUrls('/stats', 'weekly', 0.7),
+    ...createLocalizedUrls('/trash', 'weekly', 0.5),
   ]
 
-  // 設定サブページ
-  const settingsPages: MetadataRoute.Sitemap = [
+  // 設定サブページ（多言語対応）
+  const settingsPaths = [
     'general',
     'account',
     'preferences',
@@ -91,15 +59,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'integration',
     'data-export',
     'plan-billing',
-  ].map((path) => ({
-    url: `${baseUrl}/settings/${path}`,
-    lastModified: now,
-    changeFrequency: 'monthly' as const,
-    priority: 0.5,
-  }))
+  ]
+  const settingsPages: MetadataRoute.Sitemap = settingsPaths.flatMap((path) =>
+    createLocalizedUrls(`/settings/${path}`, 'monthly', 0.5)
+  )
 
-  // Stats サブページ
-  const statsPages: MetadataRoute.Sitemap = [
+  // Stats サブページ（多言語対応）
+  const statsPaths = [
     'value',
     'antivalues',
     'purpose',
@@ -113,14 +79,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'reflect/week',
     'reflect/month',
     'reflect/all',
-  ].map((path) => ({
-    url: `${baseUrl}/stats/${path}`,
-    lastModified: now,
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
-  }))
+  ]
+  const statsPages: MetadataRoute.Sitemap = statsPaths.flatMap((path) =>
+    createLocalizedUrls(`/stats/${path}`, 'weekly', 0.6)
+  )
 
-  // APIドキュメント（公開する場合）
+  // APIドキュメント（言語非依存）
   const apiPages: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/api/health`,

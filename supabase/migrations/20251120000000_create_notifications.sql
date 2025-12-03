@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS notifications (
   title TEXT NOT NULL,
   message TEXT,
 
-  -- 関連データ（plansテーブルへの参照）
-  related_plan_id UUID REFERENCES plans(id) ON DELETE SET NULL,
+  -- 関連データ（ticketsテーブルへの参照、後にplansにリネーム）
+  related_plan_id UUID REFERENCES tickets(id) ON DELETE SET NULL,
   related_tag_id UUID REFERENCES tags(id) ON DELETE SET NULL,
   action_url TEXT,  -- クリック時の遷移先（例: /inbox?id=xxx）
 

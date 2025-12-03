@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 
 import { createTranslation, defaultLocale, getDictionary, locales } from '@/features/i18n/lib'
 import { getDirection } from '@/features/i18n/lib/rtl'
@@ -88,6 +89,37 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
   }
 }
 
+// JSON-LD構造化データ（SEO改善）
+function generateJsonLd(locale: Locale, appName: string, appDescription: string) {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: appName,
+    description: appDescription,
+    url: `${baseUrl}/${locale}`,
+    applicationCategory: 'ProductivityApplication',
+    operatingSystem: 'Web',
+    inLanguage: locale,
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'JPY',
+    },
+    screenshot: {
+      '@type': 'ImageObject',
+      url: `${baseUrl}/og-image.png`,
+      width: 1200,
+      height: 630,
+    },
+    author: {
+      '@type': 'Organization',
+      name: 'BoxLog',
+    },
+  }
+}
+
 // 静的生成用の言語パラメータ
 export async function generateStaticParams() {
   return locales.map((locale) => ({
@@ -101,9 +133,21 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   // 不正な言語の場合、デフォルト言語にフォールバック
   const validLocale = locales.includes(locale) ? locale : defaultLocale
   const direction = getDirection(validLocale)
+  const dictionary = await getDictionary(validLocale)
+  const t = createTranslation(dictionary)
+
+  // JSON-LD構造化データ
+  const jsonLd = generateJsonLd(validLocale, t('app.name'), t('app.description'))
 
   return (
     <div data-locale={validLocale} data-direction={direction}>
+      {/* SEO: JSON-LD構造化データ */}
+      <Script
+        id="json-ld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        strategy="afterInteractive"
+      />
       {children}
     </div>
   )
