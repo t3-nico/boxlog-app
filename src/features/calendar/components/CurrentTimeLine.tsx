@@ -9,9 +9,9 @@ import { useEffect, useMemo, useState } from 'react'
 
 const currentTimeLineStyles = {
   container: 'absolute z-30 pointer-events-none w-full',
-  label: 'absolute bg-red-500 text-white text-xs font-medium px-2 py-0.5 rounded-md shadow-sm top-[-11px] left-0',
-  dot: 'absolute w-2.5 h-2.5 bg-red-500 rounded-full top-[-4px] shadow-sm',
-  line: 'absolute h-[2px] bg-red-500 shadow-sm',
+  label: 'absolute bg-primary text-primary-foreground text-xs font-medium px-2 py-0.5 rounded-md shadow-sm top-[-11px] left-0',
+  dot: 'absolute w-2.5 h-2.5 bg-primary rounded-full top-[-4px] shadow-sm',
+  line: 'absolute h-[2px] bg-primary shadow-sm',
 } as const
 
 interface CurrentTimeLineProps {
