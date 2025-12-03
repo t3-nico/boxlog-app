@@ -119,8 +119,19 @@ class CommandRegistry {
 // Export singleton instance
 export const commandRegistry = new CommandRegistry()
 
+// Command actions interface
+interface CommandActions {
+  router: { push: (path: string) => void }
+  openPlanInspector: (planId: string | null) => void
+  openTagCreateModal: () => void
+  openSettings: () => void
+  toggleTheme: () => void
+}
+
 // Default commands that are always available
-export const registerDefaultCommands = (router: { push: (path: string) => void }) => {
+export const registerDefaultCommands = (actions: CommandActions) => {
+  const { router, openPlanInspector, openTagCreateModal, openSettings, toggleTheme } = actions
+
   const defaultCommands: Command[] = [
     // Navigation commands
     {
@@ -168,9 +179,7 @@ export const registerDefaultCommands = (router: { push: (path: string) => void }
       category: 'create',
       icon: 'plus',
       keywords: ['new', 'add', 'create', '新規', '作成', 'プラン'],
-      action: () => {
-        console.log('Create new plan')
-      },
+      action: () => openPlanInspector(null),
     },
     {
       id: 'create:tag',
@@ -179,9 +188,27 @@ export const registerDefaultCommands = (router: { push: (path: string) => void }
       category: 'create',
       icon: 'tag',
       keywords: ['new', 'add', 'create', '新規', '作成', 'タグ'],
-      action: () => {
-        console.log('Create new tag')
-      },
+      action: () => openTagCreateModal(),
+    },
+
+    // Settings & Theme commands
+    {
+      id: 'nav:settings',
+      title: '設定を開く',
+      description: 'アプリケーション設定',
+      category: 'navigation',
+      icon: 'settings',
+      keywords: ['settings', 'preferences', '設定', '環境設定'],
+      action: () => openSettings(),
+    },
+    {
+      id: 'action:toggle-theme',
+      title: 'テーマを切り替え',
+      description: 'ライト/ダークモードを切り替え',
+      category: 'actions',
+      icon: 'moon',
+      keywords: ['theme', 'dark', 'light', 'テーマ', 'ダーク', 'ライト'],
+      action: () => toggleTheme(),
     },
   ]
 
