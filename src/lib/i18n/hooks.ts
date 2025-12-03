@@ -2,52 +2,37 @@
 
 /**
  * i18n関連のReactフック
+ *
+ * next-intlのuseTranslationsをラップし、既存のAPIとの互換性を提供します。
  */
 
-import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
+import { useCallback, useSyncExternalStore } from 'react'
 
 import type { TranslatedString } from '@/types/i18n-branded'
 import { markAsTranslated } from '@/types/i18n-branded'
 
-import {
-  createTranslation,
-  getCachedDictionary,
-  getDictionary,
-  loadNamespaces,
-  preloadDictionaries,
-  type Dictionary,
-  type Locale,
-  type Namespace,
-  type TranslationFunction,
-} from './index'
+// 互換性のための型定義
+export type Locale = 'en' | 'ja'
+
+// 拡張翻訳関数の型定義（後方互換性用）
+export interface TranslationFunction {
+  (key: string, variables?: Record<string, string | number>): TranslatedString
+  plural: (key: string, count: number, variables?: Record<string, string | number>) => TranslatedString
+  icu: (message: string, count: number, variables?: Record<string, string | number>) => TranslatedString
+}
 
 // Re-export TranslationFunction for external use
-export type { TranslationFunction }
+export type { TranslatedString }
 
-// ブラウザの現在の言語を取得するフック（useSyncExternalStore使用）
+/**
+ * 現在の言語を取得するフック
+ *
+ * next-intlのuseLocaleをラップして、型安全な言語を返します。
+ */
 export function useCurrentLocale(): Locale {
-  const subscribe = useCallback((callback: () => void) => {
-    // MutationObserverでhtml要素のlang属性の変更を監視
-    if (typeof window === 'undefined') return () => {}
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.attributeName === 'lang') {
-          callback()
-        }
-      }
-    })
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] })
-    return () => observer.disconnect()
-  }, [])
-
-  const getSnapshot = useCallback((): Locale => {
-    if (typeof window === 'undefined') return 'en'
-    return (document.documentElement.lang as Locale) || 'en'
-  }, [])
-
-  const getServerSnapshot = useCallback((): Locale => 'en', [])
-
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  const locale = useLocale()
+  return locale as Locale
 }
 
 // RTL判定（将来の拡張用）
@@ -126,33 +111,11 @@ export function useDirectionalClasses() {
   }
 }
 
-// 言語変更を監視するフック
+// 言語変更を監視するフック（レガシー互換性用）
 export function useLocaleChange(callback: (locale: Locale) => void): void {
-  useEffect(() => {
-    const handleLocaleChange = () => {
-      const htmlElement = document.documentElement
-      const newLocale = htmlElement.lang as Locale
-      callback(newLocale)
-    }
-
-    // MutationObserverでlang属性の変更を監視
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'lang') {
-          handleLocaleChange()
-        }
-      })
-    })
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['lang'],
-    })
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [callback])
+  // next-intlではルーティングベースの言語切替なので、このフックは不要
+  // 互換性のために空実装を維持
+  void callback
 }
 
 // メディアクエリと組み合わせた言語対応フック
@@ -220,27 +183,28 @@ export function useRTLAnimation() {
   }
 }
 
-// 翻訳フック（基本実装）
+// 翻訳フック（基本実装 - レガシー互換性用）
 export function useTranslation() {
   const locale = useCurrentLocale()
-
-  // 基本的な翻訳機能（実装されている翻訳システムに合わせて調整）
-  const t = (key: string, defaultValue?: string): string => {
-    // 今のところデフォルト値を返す（本格的なi18nは将来実装）
-    return defaultValue || key
-  }
+  const t = useTranslations()
 
   return {
-    t,
+    t: (key: string, defaultValue?: string): string => {
+      try {
+        return t(key as Parameters<typeof t>[0])
+      } catch {
+        return defaultValue || key
+      }
+    },
     locale,
-    ready: true, // 翻訳リソースの読み込み状態
+    ready: true,
   }
 }
 
 /**
- * i18n翻訳フック（型安全版）
+ * i18n翻訳フック（next-intlラッパー）
  *
- * TranslatedString型を返すことで、ハードコード文字列の使用を防ぎます。
+ * next-intlのuseTranslationsをラップし、既存のAPIとの互換性を提供します。
  *
  * @example
  * ```tsx
@@ -249,54 +213,59 @@ export function useTranslation() {
  *
  * export function MyComponent() {
  *   const { t } = useI18n()
- *   return <h1>{t('page.title')}</h1>
+ *   return <h1>{t('app.name')}</h1>
  * }
  * ```
  */
-export function useI18n(providedLocale?: 'en' | 'ja') {
-  const detectedLocale = useCurrentLocale()
-  const locale = providedLocale || detectedLocale
+export function useI18n(_providedLocale?: 'en' | 'ja') {
+  const locale = useCurrentLocale()
+  const nextIntlT = useTranslations()
 
-  // キャッシュ済み辞書があれば即座に使用（フラッシュ防止）
-  const [dictionary, setDictionary] = useState<Dictionary | null>(() => getCachedDictionary(locale as 'en' | 'ja'))
-
-  useEffect(() => {
-    const cached = getCachedDictionary(locale as 'en' | 'ja')
-    if (cached) {
-      // キャッシュがあれば即座に設定
-      setDictionary(cached)
-    } else {
-      // キャッシュがない場合のみ非同期ロード
-      getDictionary(locale as 'en' | 'ja').then(setDictionary)
+  // next-intlのt関数をラップして、既存のAPIと互換性を持たせる
+  const t = ((key: string, variables?: Record<string, string | number>): TranslatedString => {
+    try {
+      // next-intlのt関数を呼び出し
+      const result = nextIntlT(key as Parameters<typeof nextIntlT>[0], variables)
+      return markAsTranslated(result)
+    } catch {
+      // キーが見つからない場合はキーをそのまま返す
+      return markAsTranslated(key)
     }
+  }) as TranslationFunction
 
-    // バックグラウンドで両言語をプリロード（言語切替時の遅延防止）
-    preloadDictionaries()
-  }, [locale])
-
-  const t: TranslationFunction = useMemo(() => {
-    if (!dictionary) {
-      // 辞書ロード中はキーをそのまま返す（TranslationFunctionの基本形を返す）
-      const fallback = ((key: string): TranslatedString => markAsTranslated(key)) as TranslationFunction
-      fallback.plural = (key: string, _count: number): TranslatedString => markAsTranslated(key)
-      fallback.icu = (message: string, _count: number): TranslatedString => markAsTranslated(message)
-      return fallback
+  // 複数形処理関数（next-intlの機能を使用）
+  t.plural = (key: string, count: number, variables?: Record<string, string | number>): TranslatedString => {
+    try {
+      const result = nextIntlT(key as Parameters<typeof nextIntlT>[0], { count, ...variables })
+      return markAsTranslated(result)
+    } catch {
+      return markAsTranslated(key)
     }
+  }
 
-    return createTranslation(dictionary, locale as 'en' | 'ja')
-  }, [dictionary, locale])
+  // ICU形式処理関数
+  t.icu = (message: string, count: number, variables?: Record<string, string | number>): TranslatedString => {
+    // next-intlはICU形式をネイティブサポート
+    // 直接メッセージを処理する場合はそのまま返す
+    try {
+      const result = nextIntlT(message as Parameters<typeof nextIntlT>[0], { count, ...variables })
+      return markAsTranslated(result)
+    } catch {
+      return markAsTranslated(message)
+    }
+  }
 
   return {
     t,
     locale,
-    ready: dictionary !== null,
+    ready: true, // next-intlは常にready
   }
 }
 
 /**
  * ネームスペース指定のi18n翻訳フック
  *
- * 必要なネームスペースのみをロードして使用できます。
+ * next-intlのuseTranslationsをネームスペース指定で使用します。
  *
  * @example
  * ```tsx
@@ -304,43 +273,46 @@ export function useI18n(providedLocale?: 'en' | 'ja') {
  * import { useI18nNamespaces } from '@/lib/i18n/hooks'
  *
  * export function CalendarPage() {
- *   const { t, ready } = useI18nNamespaces(['common', 'calendar'])
- *   if (!ready) return <Loading />
- *   return <h1>{t('calendar.title')}</h1>
+ *   const { t } = useI18nNamespaces('calendar')
+ *   return <h1>{t('title')}</h1>
  * }
  * ```
  */
-export function useI18nNamespaces(namespaces: Namespace[], providedLocale?: 'en' | 'ja') {
-  const detectedLocale = useCurrentLocale()
-  const locale = providedLocale || detectedLocale
-  const [dictionary, setDictionary] = useState<Dictionary | null>(null)
-  const [loading, setLoading] = useState(true)
+export function useI18nNamespaces(namespace?: string) {
+  const locale = useCurrentLocale()
+  const nextIntlT = useTranslations(namespace as Parameters<typeof useTranslations>[0])
 
-  // Memoize namespace key for stable dependency
-  const namespacesKey = useMemo(() => namespaces.join(','), [namespaces])
-
-  useEffect(() => {
-    setLoading(true)
-    loadNamespaces(locale as 'en' | 'ja', namespaces)
-      .then(setDictionary)
-      .finally(() => setLoading(false))
-  }, [locale, namespacesKey, namespaces])
-
-  const t: TranslationFunction = useMemo(() => {
-    if (!dictionary) {
-      const fallback = ((key: string): TranslatedString => markAsTranslated(key)) as TranslationFunction
-      fallback.plural = (key: string, _count: number): TranslatedString => markAsTranslated(key)
-      fallback.icu = (message: string, _count: number): TranslatedString => markAsTranslated(message)
-      return fallback
+  const t = ((key: string, variables?: Record<string, string | number>): TranslatedString => {
+    try {
+      const result = nextIntlT(key as Parameters<typeof nextIntlT>[0], variables)
+      return markAsTranslated(result)
+    } catch {
+      return markAsTranslated(key)
     }
+  }) as TranslationFunction
 
-    return createTranslation(dictionary, locale as 'en' | 'ja')
-  }, [dictionary, locale])
+  t.plural = (key: string, count: number, variables?: Record<string, string | number>): TranslatedString => {
+    try {
+      const result = nextIntlT(key as Parameters<typeof nextIntlT>[0], { count, ...variables })
+      return markAsTranslated(result)
+    } catch {
+      return markAsTranslated(key)
+    }
+  }
+
+  t.icu = (message: string, count: number, variables?: Record<string, string | number>): TranslatedString => {
+    try {
+      const result = nextIntlT(message as Parameters<typeof nextIntlT>[0], { count, ...variables })
+      return markAsTranslated(result)
+    } catch {
+      return markAsTranslated(message)
+    }
+  }
 
   return {
     t,
     locale,
-    ready: !loading && dictionary !== null,
-    loading,
+    ready: true,
+    loading: false,
   }
 }

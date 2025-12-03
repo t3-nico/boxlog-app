@@ -1,35 +1,41 @@
 import type { Metadata } from 'next'
+import { NextIntlClientProvider } from 'next-intl'
+import { getMessages, getTranslations } from 'next-intl/server'
 import Script from 'next/script'
 
-import { createTranslation, defaultLocale, getDictionary, locales } from '@/features/i18n/lib'
-import { getDirection } from '@/features/i18n/lib/rtl'
-import type { Locale } from '@/types/i18n'
+import { routing } from '@/i18n/routing'
+import type { Locale } from '@/i18n/routing'
 
 interface LocaleLayoutProps {
   children: React.ReactNode
   params: Promise<{ locale: Locale }>
 }
 
+// RTL言語判定
+function getDirection(locale: string): 'ltr' | 'rtl' {
+  const rtlLocales = ['ar', 'he', 'fa', 'ur']
+  return rtlLocales.includes(locale) ? 'rtl' : 'ltr'
+}
+
 // 動的メタデータ生成
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const { locale } = await params
-  const validLocale = locales.includes(locale) ? locale : defaultLocale
-  const dictionary = await getDictionary(validLocale)
-  const t = createTranslation(dictionary)
+  const validLocale = routing.locales.includes(locale) ? locale : routing.defaultLocale
+  const t = await getTranslations({ locale: validLocale, namespace: 'app' })
 
   // 代替言語URLの生成
   const alternateLanguages: Record<string, string> = {}
-  locales.forEach((lang) => {
+  routing.locales.forEach((lang) => {
     const url = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${lang}`
     alternateLanguages[lang as keyof typeof alternateLanguages] = url
   })
 
   return {
     title: {
-      template: `%s - ${t('app.name')}`,
-      default: t('app.name'),
+      template: `%s - ${t('name')}`,
+      default: t('name'),
     },
-    description: t('app.description'),
+    description: t('description'),
     keywords: [
       'BoxLog',
       'task management',
@@ -57,17 +63,17 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
     openGraph: {
       type: 'website',
       locale: validLocale,
-      alternateLocale: locales.filter((l) => l !== validLocale),
+      alternateLocale: routing.locales.filter((l) => l !== validLocale),
       url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${validLocale}`,
-      siteName: t('app.name'),
-      title: t('app.name'),
-      description: t('app.description'),
+      siteName: t('name'),
+      title: t('name'),
+      description: t('description'),
       images: [
         {
           url: '/og-image.png',
           width: 1200,
           height: 630,
-          alt: t('app.name'),
+          alt: t('name'),
         },
       ],
     },
@@ -75,8 +81,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
       card: 'summary_large_image',
       site: '@boxlog',
       creator: '@boxlog',
-      title: t('app.name'),
-      description: t('app.description'),
+      title: t('name'),
+      description: t('description'),
       images: ['/og-image.png'],
     },
     alternates: {
@@ -90,7 +96,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 }
 
 // JSON-LD構造化データ（SEO改善）
-function generateJsonLd(locale: Locale, appName: string, appDescription: string) {
+function generateJsonLd(locale: string, appName: string, appDescription: string) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
   return {
@@ -122,7 +128,7 @@ function generateJsonLd(locale: Locale, appName: string, appDescription: string)
 
 // 静的生成用の言語パラメータ
 export async function generateStaticParams() {
-  return locales.map((locale) => ({
+  return routing.locales.map((locale) => ({
     locale,
   }))
 }
@@ -131,24 +137,28 @@ export async function generateStaticParams() {
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale } = await params
   // 不正な言語の場合、デフォルト言語にフォールバック
-  const validLocale = locales.includes(locale) ? locale : defaultLocale
+  const validLocale = routing.locales.includes(locale) ? locale : routing.defaultLocale
   const direction = getDirection(validLocale)
-  const dictionary = await getDictionary(validLocale)
-  const t = createTranslation(dictionary)
+
+  // next-intl: メッセージを取得
+  const messages = await getMessages()
+  const t = await getTranslations({ locale: validLocale, namespace: 'app' })
 
   // JSON-LD構造化データ
-  const jsonLd = generateJsonLd(validLocale, t('app.name'), t('app.description'))
+  const jsonLd = generateJsonLd(validLocale, t('name'), t('description'))
 
   return (
-    <div data-locale={validLocale} data-direction={direction}>
-      {/* SEO: JSON-LD構造化データ */}
-      <Script
-        id="json-ld"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        strategy="afterInteractive"
-      />
-      {children}
-    </div>
+    <NextIntlClientProvider messages={messages}>
+      <div data-locale={validLocale} data-direction={direction}>
+        {/* SEO: JSON-LD構造化データ */}
+        <Script
+          id="json-ld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          strategy="afterInteractive"
+        />
+        {children}
+      </div>
+    </NextIntlClientProvider>
   )
 }
