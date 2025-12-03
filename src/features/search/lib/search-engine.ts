@@ -1,19 +1,8 @@
-// TODO(#621): Events削除後、plans/Sessionsに移行予定
-// import type { Event } from '@/features/events'
-import type { Tag, Task } from '@/types/common'
+import type { Tag } from '@/types/common'
 
-import type { SearchOptions, SearchProvider, SearchResult, SearchResultType } from '../types'
+import type { PlanWithTags } from '@/features/plans/types'
 
-// 一時的なEvent型定義（Sessions統合まで）
-interface Event {
-  id: string
-  title: string
-  description?: string
-  location?: string
-  startDate: Date
-  endDate: Date
-  status: string
-}
+import type { SearchOptions, SearchResult, SearchResultType } from '../types'
 
 // Simple fuzzy search implementation
 export class FuzzySearch {
@@ -99,45 +88,29 @@ export class FuzzySearch {
 }
 
 export class SearchEngine {
-  private static providers: Map<SearchResultType, SearchProvider> = new Map()
-
-  /**
-   * Register a search provider
-   */
-  static registerProvider(type: SearchResultType, provider: SearchProvider) {
-    SearchEngine.providers.set(type, provider)
-  }
-
   /**
    * Search across all available data sources
    */
   static async search(
     options: SearchOptions,
     stores?: {
-      tasks?: Task[]
+      plans?: PlanWithTags[]
       tags?: Tag[]
-      events?: Event[]
     }
   ): Promise<SearchResult[]> {
     const { query, types, limit = 10 } = options
     const results: SearchResult[] = []
 
-    // Search tasks if provided
-    if (stores?.tasks && (!types || types.includes('task'))) {
-      const taskResults = SearchEngine.searchTasks(query, stores.tasks)
-      results.push(...taskResults)
+    // Search plans if provided
+    if (stores?.plans && (!types || types.includes('plan'))) {
+      const planResults = SearchEngine.searchPlans(query, stores.plans)
+      results.push(...planResults)
     }
 
     // Search tags if provided
     if (stores?.tags && (!types || types.includes('tag'))) {
       const tagResults = SearchEngine.searchTags(query, stores.tags)
       results.push(...tagResults)
-    }
-
-    // Search events if provided
-    if (stores?.events && (!types || types.includes('event'))) {
-      const eventResults = SearchEngine.searchEvents(query, stores.events)
-      results.push(...eventResults)
     }
 
     // If no query, show recent/suggested items
@@ -158,30 +131,37 @@ export class SearchEngine {
   }
 
   /**
-   * Search tasks from the task store
+   * Search plans
    */
-  static searchTasks(query: string, tasks: Task[]): SearchResult[] {
-    if (!tasks || tasks.length === 0) return []
+  static searchPlans(query: string, plans: PlanWithTags[]): SearchResult[] {
+    if (!plans || plans.length === 0) return []
 
-    const taskResults = FuzzySearch.search(tasks, query).map((task) => ({
-      id: `task:${task.id}`,
-      title: task.title,
-      description: task.description,
-      type: 'task' as SearchResultType,
-      icon: 'check-square',
-      action: () => {
-        // Navigation implementation tracked in Issue #86
-        console.log('Navigate to task:', task.id)
-      },
-      metadata: {
-        status: task.status,
-        priority: task.priority,
-        dueDate: task.planned_start,
-        tags: task.tags || [],
-      },
+    const searchablePlans = plans.map((plan) => ({
+      title: plan.title,
+      description: plan.description || '',
+      keywords: plan.tags?.map((tag) => tag.name) || [],
+      originalPlan: plan,
     }))
 
-    return taskResults as SearchResult[]
+    const planResults = FuzzySearch.search(searchablePlans, query).map((result) => {
+      const plan = result.originalPlan
+      return {
+        id: `plan:${plan.id}`,
+        title: plan.title,
+        description: plan.description || undefined,
+        type: 'plan' as SearchResultType,
+        icon: 'check-square',
+        score: result.score,
+        metadata: {
+          status: plan.status,
+          dueDate: plan.due_date,
+          tags: plan.tags?.map((t) => t.name) || [],
+          planNumber: plan.plan_number,
+        },
+      }
+    })
+
+    return planResults
   }
 
   /**
@@ -205,12 +185,10 @@ export class SearchEngine {
         description: tag.description || `Level ${tag.level} tag`,
         type: 'tag' as SearchResultType,
         icon: 'tag',
-        action: () => {
-          // Filtering implementation tracked in Issue #86
-          console.log('Filter by tag:', tag.id)
-        },
+        score: result.score,
         metadata: {
           path: tag.path ? [tag.path] : [],
+          color: tag.color,
         },
       }
     })
@@ -219,66 +197,18 @@ export class SearchEngine {
   }
 
   /**
-   * Search events
-   */
-  static searchEvents(query: string, events: Event[]): SearchResult[] {
-    if (!events || events.length === 0) return []
-
-    const searchableEvents = events.map((event) => ({
-      title: event.title,
-      description: event.description || '',
-      keywords: [event.title, event.location].filter((keyword): keyword is string => Boolean(keyword)),
-      originalEvent: event,
-    }))
-
-    const eventResults = FuzzySearch.search(searchableEvents, query).map((result) => {
-      const event = result.originalEvent
-      return {
-        id: `event:${event.id}`,
-        title: event.title,
-        description: event.description || 'Event',
-        type: 'event' as SearchResultType,
-        icon: 'calendar',
-        action: () => {
-          // Navigation implementation tracked in Issue #86
-          console.log('Navigate to event:', event.id)
-        },
-        metadata: {
-          startDate: event.startDate,
-          endDate: event.endDate,
-          status: event.status,
-        },
-        score: result.score,
-      }
-    })
-
-    return eventResults
-  }
-
-  /**
    * Get recent items for empty search
    */
   static getRecentItems(): SearchResult[] {
-    // Recent items tracking tracked in Issue #86
-    // This could be stored in localStorage or a store
-    return [
-      {
-        id: 'recent:calendar',
-        title: 'Calendar View',
-        description: 'Recently visited',
-        type: 'task' as SearchResultType,
-        icon: 'calendar',
-        action: () => console.log('Navigate to calendar'),
-      },
-    ]
+    // TODO: LocalStorage から最近アクセスしたアイテムを取得
+    return []
   }
 
   /**
    * Get suggested actions based on context
    */
   static getSuggestions(): SearchResult[] {
-    // Context suggestions tracked in Issue #86
-    // Based on current page, time of day, recent actions, etc.
+    // TODO: コンテキストに基づくサジェスト
     return []
   }
 }

@@ -1,9 +1,11 @@
 // Search Feature Types
 
-import type { Tag, Task } from '@/types/common'
+import type { Tag } from '@/types/common'
+
+import type { PlanStatus, PlanWithTags } from '@/features/plans/types'
 
 // Search result types
-export type SearchResultType = 'task' | 'tag' | 'event' | 'note' | 'file'
+export type SearchResultType = 'plan' | 'tag'
 
 export interface SearchResult {
   id: string
@@ -27,12 +29,9 @@ export interface SearchOptions {
 }
 
 export interface SearchFilters {
-  startDate?: Date
-  endDate?: Date
+  status?: PlanStatus[]
   tags?: string[]
-  status?: string[]
-  priority?: string[]
-  [key: string]: unknown
+  dueDate?: 'today' | 'tomorrow' | 'this_week' | 'overdue' | 'no_due_date' | 'all'
 }
 
 // Search context for advanced features
@@ -71,5 +70,5 @@ export interface SearchHistoryItem {
   clickedResults?: string[]
 }
 
-// Export data source types from common
-export type { Tag, Task }
+// Export data source types
+export type { Tag, PlanWithTags }

@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 
-import { Calendar, CheckSquare, Clock, Tag, TrendingUp } from 'lucide-react'
+import { CheckSquare, Clock, Tag } from 'lucide-react'
 
 import {
   Command,
@@ -15,12 +15,12 @@ import {
   CommandSeparator,
 } from '@/components/ui/command'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-// TODO(#621): Events/Tasks削除後、plans/Sessionsに移行予定
-// import { useEventStore } from '@/features/events'
+import { usePlans } from '@/features/plans/hooks'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
 import { useSearchHistory } from '../hooks/use-search'
+import { FuzzySearch } from '../lib/search-engine'
 
 interface GlobalSearchModalProps {
   isOpen: boolean
@@ -33,16 +33,35 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const [query, setQuery] = useState('')
 
   // Get data from stores
-  // const tasks = useTaskStore((state) => state.tasks)
+  const { data: plans = [] } = usePlans()
   const tags = useTagStore((state) => state.tags)
-  // const events = useEventStore((state) => state.events)
 
-  // TODO: Sessions統合後に実装
-  type TaskItem = { id: string; title: string; description?: string; tags?: string[] }
-  type EventItem = { id: string; title: string; description?: string; location?: string }
+  // Filter results based on query
+  const filteredPlans = query
+    ? FuzzySearch.search(
+        plans.map((plan) => ({
+          ...plan,
+          title: plan.title,
+          description: plan.description || '',
+          keywords: plan.tags?.map((t) => t.name) || [],
+        })),
+        query,
+        5
+      )
+    : plans.slice(0, 5)
 
-  const tasks: TaskItem[] = []
-  const events: EventItem[] = []
+  const filteredTags = query
+    ? FuzzySearch.search(
+        tags.map((tag) => ({
+          ...tag,
+          title: tag.name,
+          description: tag.description || '',
+          keywords: [tag.name, tag.path].filter(Boolean) as string[],
+        })),
+        query,
+        5
+      )
+    : tags.slice(0, 5)
 
   // Handle result selection
   const handleSelect = useCallback(
@@ -63,14 +82,14 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
           <DialogTitle>グローバル検索</DialogTitle>
         </VisuallyHidden>
         <Command className="[&_[cmdk-group-heading]]:text-muted-foreground !rounded-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3">
-          <CommandInput placeholder="Search tasks, events, tags..." value={query} onValueChange={setQuery} />
+          <CommandInput placeholder="プランやタグを検索..." value={query} onValueChange={setQuery} />
           <CommandList className="max-h-[31rem]">
-            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandEmpty>結果が見つかりませんでした</CommandEmpty>
 
             {/* Recent Searches */}
             {history.length > 0 && query === '' && (
               <>
-                <CommandGroup heading="Recent Searches">
+                <CommandGroup heading="最近の検索">
                   {history.slice(0, 5).map((item) => (
                     <CommandItem
                       key={`history-${item}`}
@@ -87,87 +106,24 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
               </>
             )}
 
-            {/* Suggested Actions */}
-            {query === '' && (
-              <>
-                <CommandGroup heading="Suggested">
+            {/* Plans */}
+            {filteredPlans.length > 0 && (
+              <CommandGroup heading="プラン">
+                {filteredPlans.map((plan) => (
                   <CommandItem
+                    key={plan.id}
+                    value={plan.title}
+                    keywords={[plan.description || '', ...(plan.tags?.map((t) => t.name) || [])]}
                     onSelect={() =>
                       handleSelect(() => {
-                        router.push('/tasks?priority=high')
-                      })
-                    }
-                  >
-                    <TrendingUp className="mr-2 h-4 w-4" />
-                    <span>High priority tasks</span>
-                  </CommandItem>
-                  <CommandItem
-                    onSelect={() =>
-                      handleSelect(() => {
-                        router.push('/calendar?view=today')
-                      })
-                    }
-                  >
-                    <Calendar className="mr-2 h-4 w-4" />
-                    <span>Today&apos;s events</span>
-                  </CommandItem>
-                  <CommandItem
-                    onSelect={() =>
-                      handleSelect(() => {
-                        router.push('/tasks?filter=untagged')
-                      })
-                    }
-                  >
-                    <Tag className="mr-2 h-4 w-4" />
-                    <span>Untagged items</span>
-                  </CommandItem>
-                </CommandGroup>
-                <CommandSeparator />
-              </>
-            )}
-
-            {/* Tasks */}
-            {tasks.length > 0 && (
-              <CommandGroup heading="Tasks">
-                {tasks.slice(0, 5).map((task) => (
-                  <CommandItem
-                    key={task.id}
-                    value={task.title}
-                    keywords={[task.description || '', ...(task.tags || [])]}
-                    onSelect={() =>
-                      handleSelect(() => {
-                        router.push(`/tasks/${task.id}`)
+                        router.push(`/inbox?plan=${plan.id}`)
                       }, query)
                     }
                   >
                     <CheckSquare className="mr-2 h-4 w-4" />
                     <div className="flex flex-1 flex-col">
-                      <span>{task.title}</span>
-                      {task.description && <span className="text-muted-foreground text-xs">{task.description}</span>}
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-
-            {/* Events */}
-            {events.length > 0 && (
-              <CommandGroup heading="Events">
-                {events.slice(0, 5).map((event) => (
-                  <CommandItem
-                    key={event.id}
-                    value={event.title}
-                    keywords={[event.description || '', event.location || '']}
-                    onSelect={() =>
-                      handleSelect(() => {
-                        router.push(`/calendar?event=${event.id}`)
-                      }, query)
-                    }
-                  >
-                    <Calendar className="mr-2 h-4 w-4" />
-                    <div className="flex flex-1 flex-col">
-                      <span>{event.title}</span>
-                      {event.description && <span className="text-muted-foreground text-xs">{event.description}</span>}
+                      <span>{plan.title}</span>
+                      {plan.description && <span className="text-muted-foreground text-xs">{plan.description}</span>}
                     </div>
                   </CommandItem>
                 ))}
@@ -175,16 +131,16 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
             )}
 
             {/* Tags */}
-            {tags.length > 0 && (
-              <CommandGroup heading="Tags">
-                {tags.slice(0, 5).map((tag) => (
+            {filteredTags.length > 0 && (
+              <CommandGroup heading="タグ">
+                {filteredTags.map((tag) => (
                   <CommandItem
                     key={tag.id}
                     value={tag.name}
                     keywords={[tag.description || '', tag.path || '']}
                     onSelect={() =>
                       handleSelect(() => {
-                        router.push(`/tags/${tag.id}`)
+                        router.push(`/tags/${tag.tag_number}`)
                       }, query)
                     }
                   >

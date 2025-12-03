@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -15,9 +15,9 @@ import {
   CommandList,
 } from '@/components/ui/command'
 
+import { usePlans } from '@/features/plans/hooks'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { useDebounce } from '@/hooks/useDebounce'
-import { Task } from '@/types/unified'
 
 import { SearchResult } from '../config/command-palette'
 import { commandRegistry, registerDefaultCommands } from '../lib/command-registry'
@@ -33,8 +33,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
   const searchParams = useSearchParams()
 
   // Use stores directly as React hooks (hydration-safe with Zustand)
-  // const tasks = useTaskStore((state) => state.tasks ?? [])
-  const tasks: Task[] = useMemo(() => [], []) // TODO: Plans統合後に実装
+  const { data: plans = [] } = usePlans()
   const tags = useTagStore((state) => state.tags ?? [])
 
   // State
@@ -68,33 +67,14 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
     async (searchQuery: string) => {
       setIsLoading(true)
       try {
-        // Convert Task[] to common.Task[] for SearchEngine
-        const convertedTasks = (tasks as unknown as Task[]).map((task) => ({
-          id: task.id,
-          title: task.title,
-          description: task.description,
-          status: task.status,
-          priority: task.priority,
-          type: task.type,
-          tags: task.tags ? [] : [], // Convert tag IDs to Tag objects if needed
-          dueDate: task.planned_start,
-          createdAt: task.created_at,
-          updatedAt: task.updated_at,
-          selected: false, // Task type implementation tracked in Issue #84
-          userId: 'default', // Add missing property
-          created_at: task.created_at, // Add missing property
-          updated_at: task.updated_at, // Add missing property
-        }))
-
         const searchResults = await SearchEngine.search(
           {
             query: searchQuery,
             limit: 10,
           },
           {
-            tasks: convertedTasks as unknown as import('@/types/common').Task[],
-            tags: tags as unknown as import('@/types/common').Tag[],
-            smartFolders: [],
+            plans,
+            tags,
           }
         )
         setResults(searchResults)
@@ -105,7 +85,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
         setIsLoading(false)
       }
     },
-    [tasks, tags]
+    [plans, tags]
   )
 
   // Load initial results when opening
@@ -119,33 +99,29 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
         type: 'command' as const,
       }))
 
-      // Skip compass commands as they were removed
-
-      // Get recent tasks
-      const recentTasks = tasks.slice(0, 5) // Get 5 most recent tasks
-      const taskResults = recentTasks.map((task): SearchResult => {
+      // Get recent plans
+      const recentPlans = plans.slice(0, 5)
+      const planResults = recentPlans.map((plan): SearchResult => {
         const result: SearchResult = {
-          id: `task-${task.id}`,
-          title: task.title || 'Untitled Task',
-          description: task.description || '',
-          category: 'tasks',
-          type: 'task',
+          id: `plan-${plan.id}`,
+          title: plan.title || 'Untitled Plan',
+          description: plan.description || '',
+          category: 'plans',
+          type: 'plan',
           action: async () => {
-            // Navigate to task or show task details
-            console.log('Open task:', task)
+            router.push(`/inbox?plan=${plan.id}`)
           },
         }
-        // metadataは条件付きで追加
-        if (task.tags || task.status || task.planned_start) {
-          result.metadata = {}
-          if (task.tags) result.metadata.tags = Array.isArray(task.tags) ? task.tags : []
-          if (task.status) result.metadata.status = task.status
-          if (task.planned_start) result.metadata.dueDate = new Date(task.planned_start).toLocaleDateString()
+        result.metadata = {
+          status: plan.status,
+          dueDate: plan.due_date,
+          planNumber: plan.plan_number,
+          tags: plan.tags?.map((t) => t.name) || [],
         }
         return result
       })
 
-      const initialResults: SearchResult[] = [...commandResults, ...taskResults]
+      const initialResults: SearchResult[] = [...commandResults, ...planResults]
 
       setResults(initialResults)
     } catch (error) {
@@ -154,7 +130,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
     } finally {
       setIsLoading(false)
     }
-  }, [tasks])
+  }, [plans, router])
 
   // Search when debounced query changes
   useEffect(() => {
@@ -217,7 +193,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
     > = {
       navigation: { label: 'Navigation', icon: Navigation },
       create: { label: 'Actions', icon: Plus },
-      tasks: { label: 'Recent Items', icon: CheckSquare },
+      plans: { label: 'Plans', icon: CheckSquare },
       tags: { label: 'Tags', icon: Tag },
       ai: { label: 'AI', icon: Bot },
       compass: { label: 'Compass Docs', icon: BookOpen },

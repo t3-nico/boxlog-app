@@ -28,8 +28,8 @@ export const COMMAND_PALETTE_CONFIG = {
       priority: 2,
     },
     {
-      id: 'tasks',
-      label: 'Tasks',
+      id: 'plans',
+      label: 'Plans',
       icon: 'check-square',
       priority: 3,
     },
@@ -87,13 +87,13 @@ export interface SearchResult {
   description?: string
   category: string
   icon?: string
-  type: 'command' | 'task' | 'tag' | 'page'
+  type: 'command' | 'plan' | 'tag' | 'page'
   action: () => void | Promise<void>
   metadata?: {
     tags?: string[]
     status?: string
-    priority?: string
-    dueDate?: string
+    dueDate?: string | null
+    planNumber?: string
     path?: string[]
   }
 }

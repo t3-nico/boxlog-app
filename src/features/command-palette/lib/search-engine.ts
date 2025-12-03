@@ -1,5 +1,6 @@
 import { FuzzySearch } from '@/features/search'
-import { Tag, Task } from '@/types/common'
+import type { PlanWithTags } from '@/features/plans/types'
+import type { Tag } from '@/types/common'
 
 import { SearchOptions, SearchResult } from '../config/command-palette'
 
@@ -12,9 +13,8 @@ export class SearchEngine {
   static async search(
     options: SearchOptions,
     stores?: {
-      tasks?: Task[]
+      plans?: PlanWithTags[]
       tags?: Tag[]
-      smartFolders?: unknown[] // deprecated, kept for backward compatibility
     }
   ): Promise<SearchResult[]> {
     const { query, categories, limit = 10 } = options
@@ -37,10 +37,10 @@ export class SearchEngine {
 
     results.push(...commandResults)
 
-    // Search tasks if provided
-    if (stores?.tasks && (!categories || categories.includes('tasks'))) {
-      const taskResults = SearchEngine.searchTasks(query, stores.tasks)
-      results.push(...taskResults)
+    // Search plans if provided
+    if (stores?.plans && (!categories || categories.includes('plans'))) {
+      const planResults = SearchEngine.searchPlans(query, stores.plans)
+      results.push(...planResults)
     }
 
     // Search tags if provided
@@ -67,36 +67,40 @@ export class SearchEngine {
   }
 
   /**
-   * Search tasks from the task store
+   * Search plans
    */
-  static searchTasks(query: string, tasks: Task[]): SearchResult[] {
-    if (!tasks || tasks.length === 0) return []
+  static searchPlans(query: string, plans: PlanWithTags[]): SearchResult[] {
+    if (!plans || plans.length === 0) return []
 
-    const taskResults = FuzzySearch.search(tasks, query).map((task: Task): SearchResult => {
+    const searchablePlans = plans.map((plan) => ({
+      ...plan,
+      title: plan.title,
+      description: plan.description || '',
+      keywords: plan.tags?.map((t) => t.name) || [],
+    }))
+
+    const planResults = FuzzySearch.search(searchablePlans, query).map((plan): SearchResult => {
       const result: SearchResult = {
-        id: `task:${task.id}`,
-        title: task.title,
-        category: 'tasks',
+        id: `plan:${plan.id}`,
+        title: plan.title,
+        category: 'plans',
         icon: 'check-square',
-        type: 'task',
+        type: 'plan',
         action: () => {
-          // Navigation implementation tracked in Issue #86
-          console.log('Navigate to task:', task.id)
+          console.log('Navigate to plan:', plan.id)
         },
       }
-      if (task.description) result.description = task.description
-      // metadataは条件付きで追加
-      if (task.status || task.priority || task.planned_start || task.tags) {
-        result.metadata = {}
-        if (task.status) result.metadata.status = task.status
-        if (task.priority) result.metadata.priority = task.priority
-        if (task.planned_start) result.metadata.dueDate = task.planned_start
-        if (task.tags) result.metadata.tags = Array.isArray(task.tags) ? task.tags : []
+      if (plan.description) result.description = plan.description
+      result.metadata = {
+        status: plan.status,
+        dueDate: plan.due_date,
+        planNumber: plan.plan_number,
+        tags: plan.tags?.map((t) => t.name) || [],
       }
       return result
     })
 
-    return taskResults
+    return planResults
   }
 
   /**
@@ -122,7 +126,6 @@ export class SearchEngine {
         icon: 'tag',
         type: 'tag' as const,
         action: () => {
-          // Filtering implementation tracked in Issue #86
           console.log('Filter by tag:', tag.id)
         },
         metadata: {
@@ -138,8 +141,6 @@ export class SearchEngine {
    * Get recent items for empty search
    */
   static getRecentItems(): SearchResult[] {
-    // Recent items tracking tracked in Issue #86
-    // This could be stored in localStorage or a store
     return [
       {
         id: 'recent:calendar',
@@ -157,8 +158,6 @@ export class SearchEngine {
    * Get suggested actions based on context
    */
   static getSuggestions(): SearchResult[] {
-    // Context suggestions tracked in Issue #86
-    // Based on current page, time of day, recent actions, etc.
     return []
   }
 }
