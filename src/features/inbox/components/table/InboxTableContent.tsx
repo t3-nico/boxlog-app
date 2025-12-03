@@ -49,8 +49,9 @@ const TableHeaderSection = memo(function TableHeaderSection({
   someSelected: boolean
   onToggleAll: () => void
 }) {
-  // 列表示のみ監視
-  const visibleColumns = useInboxColumnStore((state) => state.getVisibleColumns())
+  // 列表示のみ監視（columnsを取得してuseMemoでフィルタリング）
+  const columns = useInboxColumnStore((state) => state.columns)
+  const visibleColumns = useMemo(() => columns.filter((col) => col.visible), [columns])
 
   return (
     <TableHeader className="bg-background sticky top-0 z-10">
@@ -106,7 +107,8 @@ const TableBodySection = memo(function TableBodySection({
   const pageSize = useInboxPaginationStore((state) => state.pageSize)
   const groupBy = useInboxGroupStore((state) => state.groupBy)
   const collapsedGroups = useInboxGroupStore((state) => state.collapsedGroups)
-  const visibleColumns = useInboxColumnStore((state) => state.getVisibleColumns())
+  const columns = useInboxColumnStore((state) => state.columns)
+  const visibleColumns = useMemo(() => columns.filter((col) => col.visible), [columns])
 
   // ソート適用
   const sortedItems = useMemo(() => {
