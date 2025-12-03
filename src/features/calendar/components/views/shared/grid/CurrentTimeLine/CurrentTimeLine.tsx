@@ -19,7 +19,8 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
   showDot = true,
   updateInterval = 60000,
   displayDates,
-  viewMode = 'day',
+  // viewModeはpropsとして受け取るが使用しない（将来の拡張用）
+  viewMode: _viewMode = 'day',
 }) {
   const currentTime = useCurrentTime({ updateInterval })
 
