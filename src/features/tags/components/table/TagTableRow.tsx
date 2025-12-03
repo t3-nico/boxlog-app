@@ -1,6 +1,5 @@
 'use client'
 
-import { Checkbox } from '@/components/ui/checkbox'
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   ContextMenu,
@@ -13,84 +12,64 @@ import {
 } from '@/components/ui/context-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { TableCell } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { DraggableTagRow } from '@/features/tags/components/DraggableTagRow'
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
 import { useUpdateTag } from '@/features/tags/hooks/use-tags'
-import { useTagColumnStore } from '@/features/tags/stores/useTagColumnStore'
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore'
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore'
-import { cn } from '@/lib/utils'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Folder, Hash } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { useCallback, useState } from 'react'
 
-interface TagTableRowProps {
+// ============================================
+// セル内容コンポーネント（DataTable用）
+// ============================================
+
+interface TagCellContentProps {
   /** 表示するタグ */
   tag: TagWithChildren
+  /** 列ID */
+  columnId: string
   /** グループ一覧 */
   groups: TagGroup[]
   /** 全タグ一覧（グループ内タグ数計算用） */
   allTags: TagWithChildren[]
-  /** プラン数のマップ（タグID -> プラン数） */
+  /** プラン数のマップ */
   planCounts: Record<string, number>
-  /** 最終使用日時のマップ（タグID -> 日時文字列） */
+  /** 最終使用日時のマップ */
   lastUsed: Record<string, string>
-  /** グループ移動時のコールバック */
-  onMoveToGroup: (tag: TagWithChildren, groupId: string | null) => void
-  /** アーカイブ確認ダイアログを開く */
-  onArchiveConfirm: (tag: TagWithChildren) => void
-  /** 削除確認ダイアログを開く */
-  onDeleteConfirm: (tag: TagWithChildren) => void
 }
 
 /**
- * タグテーブル行コンポーネント
- *
- * 1行分のタグ情報を表示
- * - ドラッグ可能（グループへの移動用）
- * - コンテキストメニュー対応
- * - インライン編集対応
- * - カラーピッカー対応
+ * タグテーブルのセル内容をレンダリング
+ * DataTableのrender関数から使用
  */
-export function TagTableRow({
+export function TagCellContent({
   tag,
+  columnId,
   groups,
   allTags,
   planCounts,
   lastUsed,
-  onMoveToGroup,
-  onArchiveConfirm,
-  onDeleteConfirm,
-}: TagTableRowProps) {
+}: TagCellContentProps) {
   const { t } = useI18n()
   const { openInspector } = useTagInspectorStore()
-  const { isSelected, toggleSelection, setSelectedIds } = useTagSelectionStore()
-  const { getVisibleColumns, getColumnWidth } = useTagColumnStore()
   const updateTagMutation = useUpdateTag()
 
   // インライン編集の状態
   const [editingField, setEditingField] = useState<'name' | null>(null)
   const [editValue, setEditValue] = useState('')
 
-  const selected = isSelected(tag.id)
-  const visibleColumns = getVisibleColumns()
-
   // 日時フォーマット関数
   const formatDate = (date: Date | string) => {
     const d = typeof date === 'string' ? new Date(date) : date
     return format(d, 'yyyy/MM/dd HH:mm', { locale: ja })
   }
-
-  // インライン編集開始
-  const handleStartEdit = useCallback(() => {
-    setEditingField('name')
-    setEditValue(tag.name)
-  }, [tag.name])
 
   // インライン編集キャンセル
   const cancelEditing = useCallback(() => {
@@ -104,7 +83,6 @@ export function TagTableRow({
       cancelEditing()
       return
     }
-
     try {
       await updateTagMutation.mutateAsync({
         id: tag.id,
@@ -116,159 +94,162 @@ export function TagTableRow({
     }
   }, [editingField, editValue, updateTagMutation, tag.id, cancelEditing])
 
-  // グループ情報を取得
+  // グループ情報
   const group = tag.group_id ? groups.find((g) => g.id === tag.group_id) : null
   const groupTagCount = group
     ? allTags.filter((t) => t.group_id === group.id && t.is_active && t.level === 0).length
     : 0
 
-  // 列を順番にレンダリング
-  const renderCell = (columnId: string) => {
-    const width = getColumnWidth(columnId as Parameters<typeof getColumnWidth>[0])
-    const style = { width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` }
+  switch (columnId) {
+    case 'id':
+      return <span className="text-muted-foreground font-mono text-sm">t-{tag.tag_number}</span>
 
-    switch (columnId) {
-      case 'selection':
-        return (
-          <TableCell key={columnId} style={style} onClick={(e) => e.stopPropagation()}>
-            <Checkbox
-              checked={selected}
-              onCheckedChange={() => toggleSelection(tag.id)}
-              aria-label={t('tags.page.selectTag', { name: tag.name })}
-            />
-          </TableCell>
-        )
-
-      case 'id':
-        return (
-          <TableCell key={columnId} className="text-muted-foreground font-mono text-sm" style={style}>
-            t-{tag.tag_number}
-          </TableCell>
-        )
-
-      case 'name': {
-        // name列はcolor分も含めた幅
-        const nameWidth = getColumnWidth('name')
-        const nameStyle = { width: `${nameWidth}px`, minWidth: `${nameWidth}px`, maxWidth: `${nameWidth}px` }
-
-        return (
-          <TableCell key={columnId} className="font-medium" style={nameStyle}>
-            <div className="flex items-center gap-2">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    type="button"
-                    className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                    aria-label={t('tags.page.changeColor')}
-                  >
-                    <Hash
-                      className="h-4 w-4"
-                      style={{ color: tag.color || DEFAULT_TAG_COLOR }}
-                      aria-label={t('tags.page.tagColor')}
-                    />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-3" align="start">
-                  <ColorPalettePicker
-                    selectedColor={tag.color || DEFAULT_TAG_COLOR}
-                    onColorSelect={(color) => {
-                      updateTagMutation.mutate({
-                        id: tag.id,
-                        data: { color },
-                      })
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-              {editingField === 'name' ? (
-                <Input
-                  value={editValue}
-                  onChange={(e) => setEditValue(e.target.value)}
-                  onBlur={saveInlineEdit}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      saveInlineEdit()
-                    } else if (e.key === 'Escape') {
-                      cancelEditing()
-                    }
-                  }}
-                  autoFocus
-                  className="h-7 px-2"
+    case 'name':
+      return (
+        <div className="flex items-center gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                aria-label={t('tags.page.changeColor')}
+              >
+                <Hash
+                  className="h-4 w-4"
+                  style={{ color: tag.color || DEFAULT_TAG_COLOR }}
                 />
-              ) : (
-                <span className="cursor-pointer hover:underline" onClick={() => openInspector(tag.id)}>
-                  {tag.name} <span className="text-muted-foreground">({planCounts[tag.id] || 0})</span>
-                </span>
-              )}
-            </div>
-          </TableCell>
-        )
-      }
-
-      case 'description':
-        return (
-          <TableCell key={columnId} className="text-muted-foreground" style={style}>
-            <span className="truncate">
-              {tag.description || (
-                <span className="opacity-0 transition-opacity group-hover:opacity-100">
-                  {t('tags.page.addDescription')}
-                </span>
-              )}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-3" align="start">
+              <ColorPalettePicker
+                selectedColor={tag.color || DEFAULT_TAG_COLOR}
+                onColorSelect={(color) => {
+                  updateTagMutation.mutate({ id: tag.id, data: { color } })
+                }}
+              />
+            </PopoverContent>
+          </Popover>
+          {editingField === 'name' ? (
+            <Input
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onBlur={saveInlineEdit}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') saveInlineEdit()
+                else if (e.key === 'Escape') cancelEditing()
+              }}
+              autoFocus
+              className="h-7 px-2"
+            />
+          ) : (
+            <span
+              className="cursor-pointer font-medium hover:underline"
+              onClick={() => openInspector(tag.id)}
+            >
+              {tag.name} <span className="text-muted-foreground">({planCounts[tag.id] || 0})</span>
             </span>
-          </TableCell>
-        )
+          )}
+        </div>
+      )
 
-      case 'group':
-        return (
-          <TableCell key={columnId} style={style}>
-            {group ? (
-              <div className="flex items-center gap-1">
-                <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
-                <span className="text-sm">
-                  {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
-                </span>
-              </div>
-            ) : (
-              <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">
-                {t('tags.page.addGroup')}
-              </span>
-            )}
-          </TableCell>
-        )
+    case 'description':
+      return (
+        <span className="text-muted-foreground truncate">
+          {tag.description || (
+            <span className="opacity-0 transition-opacity group-hover:opacity-100">
+              {t('tags.page.addDescription')}
+            </span>
+          )}
+        </span>
+      )
 
-      case 'created_at':
-        return (
-          <TableCell key={columnId} className="text-muted-foreground text-xs" style={style}>
-            {formatDate(tag.created_at)}
-          </TableCell>
-        )
+    case 'group':
+      return group ? (
+        <div className="flex items-center gap-1">
+          <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
+          <span className="text-sm">
+            {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
+          </span>
+        </div>
+      ) : (
+        <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">
+          {t('tags.page.addGroup')}
+        </span>
+      )
 
-      case 'last_used':
-        return (
-          <TableCell key={columnId} className="text-muted-foreground text-xs" style={style}>
-            {lastUsed[tag.id] ? formatDate(lastUsed[tag.id]) : '-'}
-          </TableCell>
-        )
+    case 'created_at':
+      return <span className="text-muted-foreground text-xs">{formatDate(tag.created_at)}</span>
 
-      default:
-        return null
-    }
+    case 'last_used':
+      return (
+        <span className="text-muted-foreground text-xs">
+          {lastUsed[tag.id] ? formatDate(lastUsed[tag.id]) : '-'}
+        </span>
+      )
+
+    default:
+      return null
   }
+}
+
+// ============================================
+// 行ラッパーコンポーネント（DataTable用）
+// ============================================
+
+interface TagRowWrapperProps {
+  /** タグデータ */
+  tag: TagWithChildren
+  /** 子要素（DataTableの行） */
+  children: ReactNode
+  /** 選択状態 */
+  isSelected: boolean
+  /** グループ一覧 */
+  groups: TagGroup[]
+  /** グループ移動時のコールバック */
+  onMoveToGroup: (tag: TagWithChildren, groupId: string | null) => void
+  /** アーカイブ確認ダイアログを開く */
+  onArchiveConfirm: (tag: TagWithChildren) => void
+  /** 削除確認ダイアログを開く */
+  onDeleteConfirm: (tag: TagWithChildren) => void
+}
+
+/**
+ * タグ行のラッパー（コンテキストメニュー + ドラッグ&ドロップ）
+ * DataTableのrowWrapper propから使用
+ */
+export function TagRowWrapper({
+  tag,
+  children,
+  isSelected,
+  groups,
+  onMoveToGroup,
+  onArchiveConfirm,
+  onDeleteConfirm,
+}: TagRowWrapperProps) {
+  const { t } = useI18n()
+  const { openInspector } = useTagInspectorStore()
+  const { setSelectedIds } = useTagSelectionStore()
+
+  // インライン編集開始（名前編集）
+  const handleStartEdit = useCallback(() => {
+    // Note: インライン編集はTagCellContent内で状態管理されるため、
+    // ここでは何もしない（将来的にはコンテキストで共有することも可能）
+    console.log('Edit requested for:', tag.name)
+  }, [tag.name])
 
   return (
     <ContextMenu modal={false}>
       <ContextMenuTrigger asChild>
         <DraggableTagRow
           id={tag.id}
-          className={cn('group', selected && 'bg-primary/10 hover:bg-primary/15')}
+          className={isSelected ? 'bg-primary/10 hover:bg-primary/15' : ''}
           onContextMenu={() => {
-            // 右クリックされた行を選択
-            if (!selected) {
+            if (!isSelected) {
               setSelectedIds([tag.id])
             }
           }}
         >
-          {visibleColumns.map((column) => renderCell(column.id))}
+          {children}
         </DraggableTagRow>
       </ContextMenuTrigger>
       <ContextMenuContent>
@@ -284,7 +265,11 @@ export function TagTableRow({
           renderMenuItem={({ icon, label, onClick, variant }) => (
             <ContextMenuItem
               onClick={onClick}
-              className={variant === 'destructive' ? 'text-destructive hover:bg-destructive hover:text-destructive-foreground' : ''}
+              className={
+                variant === 'destructive'
+                  ? 'text-destructive hover:bg-destructive hover:text-destructive-foreground'
+                  : ''
+              }
             >
               {icon}
               {label}

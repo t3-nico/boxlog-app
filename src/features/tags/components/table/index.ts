@@ -1,2 +1,2 @@
-export { TagTableRow } from './TagTableRow'
+export { TagCellContent, TagRowWrapper } from './TagTableRow'
 export { TagTableRowCreate, type TagTableRowCreateHandle } from './TagTableRowCreate'

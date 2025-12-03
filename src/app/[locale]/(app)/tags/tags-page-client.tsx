@@ -1,12 +1,12 @@
 'use client'
 
-import { ChevronDown, Filter, Hash, Plus, Settings2 } from 'lucide-react'
+import { Calendar, ChevronDown, FileText, Filter, Folder, Hash, Plus, Settings2 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
+import type { ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 
-import { ResizableTableHead, TablePagination } from '@/components/common/table'
+import { DataTable, type ColumnDef, type SortState } from '@/components/common/table'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -16,7 +16,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
@@ -25,7 +24,7 @@ import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
-import { TagTableRow, TagTableRowCreate, type TagTableRowCreateHandle } from '@/features/tags/components/table'
+import { TagCellContent, TagRowWrapper, TagTableRowCreate, type TagTableRowCreateHandle } from '@/features/tags/components/table'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
@@ -33,7 +32,7 @@ import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
 import { useTagColumnStore, type TagColumnId } from '@/features/tags/stores/useTagColumnStore'
 import { useTagPaginationStore } from '@/features/tags/stores/useTagPaginationStore'
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore'
-import { useTagSortStore, type TagSortField } from '@/features/tags/stores/useTagSortStore'
+import { useTagSortStore } from '@/features/tags/stores/useTagSortStore'
 import { api } from '@/lib/trpc'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 import { toast } from 'sonner'
@@ -58,11 +57,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const { tags, setTags, setIsLoading } = useTagsPageContext()
 
   // Zustand stores
-  const { selectedIds, toggleSelection, toggleAll, clearSelection, getSelectedIds, getSelectedCount } =
-    useTagSelectionStore()
-  const { sortField, sortDirection, setSortField } = useTagSortStore()
+  const { selectedIds, setSelectedIds, clearSelection, getSelectedIds, getSelectedCount } = useTagSelectionStore()
+  const { sortField, sortDirection, setSortField, setSortDirection } = useTagSortStore()
   const { currentPage, pageSize, setCurrentPage, setPageSize } = useTagPaginationStore()
-  const { getVisibleColumns, setColumnWidth, setColumnVisibility, getColumnWidth } = useTagColumnStore()
+  const { getVisibleColumns, setColumnWidth, setColumnVisibility } = useTagColumnStore()
 
   // タグ操作
   const updateTagMutation = useUpdateTag()
@@ -185,30 +183,47 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     return sorted
   }, [filteredTags, sortField, sortDirection, groups, tagLastUsed])
 
-  // ページネーション
-  const totalPages = Math.ceil(sortedTags.length / pageSize)
-  const startIndex = (currentPage - 1) * pageSize
-  const endIndex = startIndex + pageSize
-  const displayTags = sortedTags.slice(startIndex, endIndex)
-
   // ソート変更時にページ1に戻る
   useEffect(() => {
     setCurrentPage(1)
   }, [sortField, sortDirection, pageSize, setCurrentPage])
 
-  // 全選択状態
-  const currentPageIds = useMemo(() => displayTags.map((tag) => tag.id), [displayTags])
-  const selectedCountInPage = useMemo(
-    () => currentPageIds.filter((id) => selectedIds.has(id)).length,
-    [currentPageIds, selectedIds]
+  // DataTable用のソート状態
+  const sortState: SortState = useMemo(
+    () => ({
+      field: sortField,
+      direction: sortDirection,
+    }),
+    [sortField, sortDirection]
   )
-  const allSelected = selectedCountInPage === currentPageIds.length && currentPageIds.length > 0
-  const someSelected = selectedCountInPage > 0 && selectedCountInPage < currentPageIds.length
 
-  // 全選択ハンドラー
-  const handleToggleAll = useCallback(() => {
-    toggleAll(currentPageIds)
-  }, [toggleAll, currentPageIds])
+  // DataTable用のソート変更ハンドラー
+  const handleSortChange = useCallback(
+    (newSortState: SortState) => {
+      if (newSortState.field) {
+        setSortField(newSortState.field as typeof sortField)
+      }
+      setSortDirection(newSortState.direction)
+    },
+    [setSortField, setSortDirection]
+  )
+
+  // DataTable用の選択変更ハンドラー
+  const handleSelectionChange = useCallback(
+    (newSelectedIds: Set<string>) => {
+      setSelectedIds(Array.from(newSelectedIds))
+    },
+    [setSelectedIds]
+  )
+
+  // DataTable用のページネーション変更ハンドラー
+  const handlePaginationChange = useCallback(
+    (state: { currentPage: number; pageSize: number }) => {
+      setCurrentPage(state.currentPage)
+      setPageSize(state.pageSize)
+    },
+    [setCurrentPage, setPageSize]
+  )
 
   // ハンドラー: グループ移動
   const handleMoveToGroup = useCallback(
@@ -325,12 +340,147 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     }
   }, [deleteConfirmTag, handleDeleteTag, t])
 
-  // ソートハンドラー
-  const handleSort = useCallback(
-    (field: TagSortField) => {
-      setSortField(field)
-    },
-    [setSortField]
+  // DataTable用の列定義
+  const columns: ColumnDef<TagWithChildren>[] = useMemo(() => {
+    const allColumnDefs: ColumnDef<TagWithChildren>[] = [
+      {
+        id: 'id',
+        label: 'ID',
+        width: 80,
+        resizable: true,
+        sortKey: 'tag_number',
+        render: (tag) => (
+          <TagCellContent
+            tag={tag}
+            columnId="id"
+            groups={groups}
+            allTags={tags}
+            planCounts={tagPlanCounts}
+            lastUsed={tagLastUsed}
+          />
+        ),
+      },
+      {
+        id: 'name',
+        label: t('tags.page.name'),
+        width: 200,
+        resizable: true,
+        sortKey: 'name',
+        icon: Hash,
+        render: (tag) => (
+          <TagCellContent
+            tag={tag}
+            columnId="name"
+            groups={groups}
+            allTags={tags}
+            planCounts={tagPlanCounts}
+            lastUsed={tagLastUsed}
+          />
+        ),
+      },
+      {
+        id: 'description',
+        label: t('tags.page.description'),
+        width: 300,
+        resizable: true,
+        icon: FileText,
+        render: (tag) => (
+          <TagCellContent
+            tag={tag}
+            columnId="description"
+            groups={groups}
+            allTags={tags}
+            planCounts={tagPlanCounts}
+            lastUsed={tagLastUsed}
+          />
+        ),
+      },
+      {
+        id: 'group',
+        label: t('tags.sidebar.groups'),
+        width: 150,
+        resizable: true,
+        sortKey: 'group',
+        icon: Folder,
+        render: (tag) => (
+          <TagCellContent
+            tag={tag}
+            columnId="group"
+            groups={groups}
+            allTags={tags}
+            planCounts={tagPlanCounts}
+            lastUsed={tagLastUsed}
+          />
+        ),
+      },
+      {
+        id: 'created_at',
+        label: t('tags.page.createdAt'),
+        width: 150,
+        resizable: true,
+        sortKey: 'created_at',
+        icon: Calendar,
+        render: (tag) => (
+          <TagCellContent
+            tag={tag}
+            columnId="created_at"
+            groups={groups}
+            allTags={tags}
+            planCounts={tagPlanCounts}
+            lastUsed={tagLastUsed}
+          />
+        ),
+      },
+      {
+        id: 'last_used',
+        label: t('tags.page.lastUsed'),
+        width: 150,
+        resizable: true,
+        sortKey: 'last_used',
+        icon: Calendar,
+        render: (tag) => (
+          <TagCellContent
+            tag={tag}
+            columnId="last_used"
+            groups={groups}
+            allTags={tags}
+            planCounts={tagPlanCounts}
+            lastUsed={tagLastUsed}
+          />
+        ),
+      },
+    ]
+
+    // 表示列のみをフィルタリング
+    const visibleColumnIds = visibleColumns.filter((c) => c.id !== 'selection').map((c) => c.id)
+    return allColumnDefs.filter((col) => visibleColumnIds.includes(col.id))
+  }, [t, groups, tags, tagPlanCounts, tagLastUsed, visibleColumns])
+
+  // DataTable用の列幅マップ
+  const columnWidths = useMemo(() => {
+    const widths: Record<string, number> = {}
+    visibleColumns.forEach((col) => {
+      widths[col.id] = col.width
+    })
+    return widths
+  }, [visibleColumns])
+
+  // 行ラッパー
+  const rowWrapper = useCallback(
+    ({ item, children, isSelected }: { item: TagWithChildren; children: ReactNode; isSelected: boolean }) => (
+      <TagRowWrapper
+        key={item.id}
+        tag={item}
+        isSelected={isSelected}
+        groups={groups}
+        onMoveToGroup={handleMoveToGroup}
+        onArchiveConfirm={handleOpenArchiveConfirm}
+        onDeleteConfirm={handleOpenDeleteConfirm}
+      >
+        {children}
+      </TagRowWrapper>
+    ),
+    [groups, handleMoveToGroup, handleOpenArchiveConfirm, handleOpenDeleteConfirm]
   )
 
   // ローディング表示
@@ -432,108 +582,41 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       )}
 
       {/* テーブル */}
-      <div
-        className="flex flex-1 flex-col overflow-auto px-6 pt-4 pb-2"
-        onClick={(e) => {
-          if (e.target === e.currentTarget) {
-            clearSelection()
+      <div className="flex flex-1 flex-col overflow-auto px-6 pt-4 pb-2">
+        <DataTable
+          data={sortedTags}
+          columns={columns}
+          getRowKey={(tag) => tag.id}
+          selectable
+          selectedIds={selectedIds}
+          onSelectionChange={handleSelectionChange}
+          sortState={sortState}
+          onSortChange={handleSortChange}
+          showPagination
+          paginationState={{ currentPage, pageSize }}
+          onPaginationChange={handlePaginationChange}
+          pageSizeOptions={[10, 25, 50, 100]}
+          columnWidths={columnWidths}
+          onColumnWidthChange={setColumnWidth}
+          rowWrapper={rowWrapper}
+          onOutsideClick={clearSelection}
+          selectAllLabel={t('tags.page.selectAll')}
+          getSelectLabel={(tag) => t('tags.page.selectTag', { name: tag.name })}
+          extraRows={
+            <TagTableRowCreate ref={createRowRef} selectedGroupId={selectedGroupId} groups={groups} allTags={tags} />
           }
-        }}
-      >
-        {displayTags.length === 0 && !createRowRef.current?.isCreating ? (
-          <div className="border-border flex h-64 items-center justify-center rounded-xl border-2 border-dashed">
-            <div className="text-center">
-              <p className="text-muted-foreground mb-4">{t('tags.page.noTags')}</p>
-              <Button onClick={() => createRowRef.current?.startCreate()}>
-                <Plus className="mr-2 h-4 w-4" />
-                {t('tags.page.addFirstTag')}
-              </Button>
+          emptyState={
+            <div className="border-border flex h-64 items-center justify-center rounded-xl border-2 border-dashed">
+              <div className="text-center">
+                <p className="text-muted-foreground mb-4">{t('tags.page.noTags')}</p>
+                <Button onClick={() => createRowRef.current?.startCreate()}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t('tags.page.addFirstTag')}
+                </Button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <>
-            <div className="border-border overflow-x-auto rounded-xl border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    {visibleColumns.map((column) => {
-                      if (column.id === 'selection') {
-                        return (
-                          <TableHead key={column.id} style={{ width: `${column.width}px` }}>
-                            <Checkbox
-                              checked={allSelected ? true : someSelected ? 'indeterminate' : false}
-                              onCheckedChange={handleToggleAll}
-                              aria-label={t('tags.page.selectAll')}
-                            />
-                          </TableHead>
-                        )
-                      }
-
-                      // ソート可能な列
-                      const sortFieldMap: Record<string, TagSortField> = {
-                        id: 'tag_number',
-                        name: 'name',
-                        group: 'group',
-                        created_at: 'created_at',
-                        last_used: 'last_used',
-                      }
-                      const columnSortField = sortFieldMap[column.id]
-                      const isSorting = sortField === columnSortField
-
-                      return (
-                        <ResizableTableHead
-                          key={column.id}
-                          width={column.width}
-                          resizable={column.resizable}
-                          sortable={!!columnSortField}
-                          isSorting={isSorting}
-                          sortDirection={isSorting ? sortDirection : undefined}
-                          onSort={columnSortField ? () => handleSort(columnSortField) : undefined}
-                          onResize={(newWidth) => setColumnWidth(column.id, newWidth)}
-                          icon={column.id === 'name' ? Hash : undefined}
-                        >
-                          {column.label}
-                        </ResizableTableHead>
-                      )
-                    })}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {displayTags.map((tag) => (
-                    <TagTableRow
-                      key={tag.id}
-                      tag={tag}
-                      groups={groups}
-                      allTags={tags}
-                      planCounts={tagPlanCounts}
-                      lastUsed={tagLastUsed}
-                      onMoveToGroup={handleMoveToGroup}
-                      onArchiveConfirm={handleOpenArchiveConfirm}
-                      onDeleteConfirm={handleOpenDeleteConfirm}
-                    />
-                  ))}
-                  <TagTableRowCreate
-                    ref={createRowRef}
-                    selectedGroupId={selectedGroupId}
-                    groups={groups}
-                    allTags={tags}
-                  />
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* ページネーション */}
-            <TablePagination
-              totalItems={sortedTags.length}
-              currentPage={currentPage}
-              pageSize={pageSize}
-              onPageChange={setCurrentPage}
-              onPageSizeChange={setPageSize}
-              pageSizeOptions={[10, 25, 50, 100]}
-              showFirstLastButtons={false}
-            />
-          </>
-        )}
+          }
+        />
       </div>
 
       {/* モーダル */}

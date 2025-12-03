@@ -96,6 +96,8 @@ export interface DataTableProps<T> {
   selectAllLabel?: string
   /** 個別選択のラベル取得関数 */
   getSelectLabel?: (item: T) => string
+  /** テーブル末尾に追加する行（作成行など） */
+  extraRows?: ReactNode
 }
 
 /**
@@ -128,6 +130,7 @@ export function DataTable<T>({
   onOutsideClick,
   selectAllLabel = 'Select all',
   getSelectLabel,
+  extraRows,
 }: DataTableProps<T>) {
   // 内部の列幅状態（外部から提供されない場合）
   const [internalColumnWidths, setInternalColumnWidths] = useState<Record<string, number>>(() => {
@@ -240,8 +243,8 @@ export function DataTable<T>({
     [handleColumnWidthChange]
   )
 
-  // 空状態
-  if (paginatedData.length === 0 && emptyState) {
+  // 空状態（extraRowsがある場合はテーブルを表示）
+  if (paginatedData.length === 0 && emptyState && !extraRows) {
     return <>{emptyState}</>
   }
 
@@ -370,6 +373,7 @@ export function DataTable<T>({
 
               return rowContent
             })}
+            {extraRows}
           </TableBody>
         </Table>
       </div>
