@@ -1136,6 +1136,18 @@
       "cannotMergeSelf": "同じタグにはマージできません",
       "noTargetSelected": "マージ先タグを選択してください"
     },
+    "bulkMerge": {
+      "title": "タグを一括マージ",
+      "description": "{{count}}個のタグを1つのタグに統合します",
+      "selectedTags": "選択されたタグ",
+      "selectedTagsGroup": "選択されたタグ",
+      "otherTagsGroup": "その他のタグ",
+      "mergeTarget": "マージ先",
+      "deleteSourceDescription": "マージ後、{{count}}個のマージ元タグを削除します",
+      "warningDetail": "{{count}}個のタグがマージ先タグに統合されます",
+      "confirm": "{{count}}個のタグをマージ",
+      "success": "{{count}}個のタグを「{{target}}」にマージしました（{{associations}}件の関連付けを移行）"
+    },
     "validation": {
       "nameRequired": "タグ名は必須です",
       "nameEmpty": "タグ名を入力してください",

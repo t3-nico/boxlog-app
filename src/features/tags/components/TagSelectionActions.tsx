@@ -1,6 +1,6 @@
 'use client'
 
-import { Archive, Folder, FolderX, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Archive, Folder, FolderX, Merge, MoreHorizontal, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -25,6 +25,7 @@ interface TagSelectionActionsProps {
   onMoveToGroup: (tag: TagWithChildren, groupId: string | null) => void
   onArchive?: (tagIds: string[]) => Promise<void>
   onDelete: () => void
+  onMerge?: () => void
   onEdit?: (tag: TagWithChildren) => void
   onView?: (tag: TagWithChildren) => void
   onClearSelection: () => void
@@ -47,6 +48,7 @@ export function TagSelectionActions({
   onMoveToGroup,
   onArchive,
   onDelete,
+  onMerge,
   onEdit,
   onView,
   onClearSelection,
@@ -54,6 +56,7 @@ export function TagSelectionActions({
 }: TagSelectionActionsProps) {
   const hasGroups = groups.length > 0
   const isSingleSelection = selectedTagIds.length === 1
+  const isMultipleSelection = selectedTagIds.length >= 2
   const selectedTag = isSingleSelection ? tags.find((t) => t.id === selectedTagIds[0]) : null
 
   return (
@@ -118,6 +121,18 @@ export function TagSelectionActions({
             </Button>
           </TooltipTrigger>
           <TooltipContent>{t('tags.page.archive')}</TooltipContent>
+        </Tooltip>
+      )}
+
+      {/* 一括マージ（2つ以上選択時） */}
+      {isMultipleSelection && onMerge && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={onMerge} className="h-9 w-9">
+              <Merge className="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{t('tags.bulkMerge.title')}</TooltipContent>
         </Tooltip>
       )}
 

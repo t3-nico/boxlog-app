@@ -1141,6 +1141,18 @@
       "cannotMergeSelf": "Cannot merge a tag into itself",
       "noTargetSelected": "Please select a target tag"
     },
+    "bulkMerge": {
+      "title": "Bulk Merge Tags",
+      "description": "Merge {{count}} tags into one",
+      "selectedTags": "Selected Tags",
+      "selectedTagsGroup": "Selected Tags",
+      "otherTagsGroup": "Other Tags",
+      "mergeTarget": "merge target",
+      "deleteSourceDescription": "Delete {{count}} source tags after merge",
+      "warningDetail": "{{count}} tags will be merged into the target tag",
+      "confirm": "Merge {{count}} tags",
+      "success": "Merged {{count}} tags into \"{{target}}\" ({{associations}} associations migrated)"
+    },
     "validation": {
       "nameRequired": "Tag name is required",
       "nameEmpty": "Please enter a tag name",

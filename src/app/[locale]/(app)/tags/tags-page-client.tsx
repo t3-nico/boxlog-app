@@ -47,6 +47,7 @@ import { DraggableTagRow } from '@/features/tags/components/DraggableTagRow'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
+import { TagBulkMergeDialog } from '@/features/tags/components/TagBulkMergeDialog'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
@@ -102,6 +103,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const [editValue, setEditValue] = useState('')
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
+  const [bulkMergeTags, setBulkMergeTags] = useState<TagWithChildren[]>([])
 
   // 列の表示/非表示設定
   const [columnVisibility, setColumnVisibility] = useState({
@@ -497,6 +499,19 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     setSelectedTagIds([])
   }
 
+  // 一括マージダイアログを開く
+  const handleOpenBulkMerge = useCallback(() => {
+    if (selectedTagIds.length < 2) return
+    const selectedTags = tags.filter((t) => selectedTagIds.includes(t.id))
+    setBulkMergeTags(selectedTags)
+  }, [selectedTagIds, tags])
+
+  // 一括マージダイアログを閉じる
+  const handleCloseBulkMerge = useCallback(() => {
+    setBulkMergeTags([])
+    setSelectedTagIds([])
+  }, [])
+
   // リサイズハンドルコンポーネント
   const ResizeHandle = ({ columnId }: { columnId: keyof typeof columnWidths }) => {
     const [isResizing, setIsResizing] = useState(false)
@@ -598,6 +613,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                 }
               }}
               onDelete={handleBulkDelete}
+              onMerge={handleOpenBulkMerge}
               onEdit={handleEditTag}
               onView={(tag) => openInspector(tag.id)}
               onClearSelection={() => setSelectedTagIds([])}
@@ -1165,6 +1181,9 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
       {/* 削除確認ダイアログ */}
       <TagDeleteDialog tag={deleteConfirmTag} onClose={handleCloseDeleteConfirm} onConfirm={handleConfirmDelete} />
+
+      {/* 一括マージダイアログ */}
+      <TagBulkMergeDialog sourceTags={bulkMergeTags} onClose={handleCloseBulkMerge} />
     </div>
   )
 }
