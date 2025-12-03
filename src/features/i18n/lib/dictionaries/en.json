@@ -239,7 +239,7 @@
     "selectedCount": "{{count}} selected",
     "table": {
       "rowsPerPage": "Rows per page",
-      "items": "",
+      "items": "items",
       "total": "of ",
       "page": "Page",
       "firstPage": "First page",
