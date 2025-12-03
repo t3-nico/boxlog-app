@@ -4,6 +4,8 @@ import type { PlanWithTags } from '@/features/plans/types'
 
 import type { SearchOptions, SearchResult, SearchResultType } from '../types'
 
+import { commandRegistry } from './command-registry'
+
 // Simple fuzzy search implementation
 export class FuzzySearch {
   /**
@@ -101,6 +103,12 @@ export class SearchEngine {
     const { query, types, limit = 10 } = options
     const results: SearchResult[] = []
 
+    // Search commands if included
+    if (!types || types.includes('command')) {
+      const commandResults = SearchEngine.searchCommands(query)
+      results.push(...commandResults)
+    }
+
     // Search plans if provided
     if (stores?.plans && (!types || types.includes('plan'))) {
       const planResults = SearchEngine.searchPlans(query, stores.plans)
@@ -113,14 +121,13 @@ export class SearchEngine {
       results.push(...tagResults)
     }
 
-    // If no query, show recent/suggested items
-    if (!query.trim() && results.length < 5) {
-      const recentItems = SearchEngine.getRecentItems()
-      results.push(...recentItems)
-    }
-
-    // Sort by relevance score
+    // Sort by type priority (commands first) and then by score
     results.sort((a, b) => {
+      // Commands first
+      if (a.type === 'command' && b.type !== 'command') return -1
+      if (a.type !== 'command' && b.type === 'command') return 1
+
+      // Then by score
       const scoreA = a.score || 0
       const scoreB = b.score || 0
       return scoreB - scoreA
@@ -131,35 +138,50 @@ export class SearchEngine {
   }
 
   /**
+   * Search commands
+   */
+  static searchCommands(query: string): SearchResult[] {
+    const commands = commandRegistry.search(query)
+
+    return commands.map((command) => ({
+      id: `command:${command.id}`,
+      title: command.title,
+      description: command.description,
+      type: 'command' as SearchResultType,
+      category: command.category,
+      icon: command.icon,
+      action: command.action,
+    }))
+  }
+
+  /**
    * Search plans
    */
   static searchPlans(query: string, plans: PlanWithTags[]): SearchResult[] {
     if (!plans || plans.length === 0) return []
 
     const searchablePlans = plans.map((plan) => ({
+      ...plan,
       title: plan.title,
       description: plan.description || '',
-      keywords: plan.tags?.map((tag) => tag.name) || [],
-      originalPlan: plan,
+      keywords: plan.tags?.map((t) => t.name) || [],
     }))
 
-    const planResults = FuzzySearch.search(searchablePlans, query).map((result) => {
-      const plan = result.originalPlan
-      return {
-        id: `plan:${plan.id}`,
-        title: plan.title,
-        description: plan.description || undefined,
-        type: 'plan' as SearchResultType,
-        icon: 'check-square',
-        score: result.score,
-        metadata: {
-          status: plan.status,
-          dueDate: plan.due_date,
-          tags: plan.tags?.map((t) => t.name) || [],
-          planNumber: plan.plan_number,
-        },
-      }
-    })
+    const planResults = FuzzySearch.search(searchablePlans, query).map((plan) => ({
+      id: `plan:${plan.id}`,
+      title: plan.title,
+      description: plan.description || undefined,
+      type: 'plan' as SearchResultType,
+      category: 'plans',
+      icon: 'check-square',
+      score: plan.score,
+      metadata: {
+        status: plan.status,
+        dueDate: plan.due_date,
+        tags: plan.tags?.map((t) => t.name) || [],
+        planNumber: plan.plan_number,
+      },
+    }))
 
     return planResults
   }
@@ -184,31 +206,17 @@ export class SearchEngine {
         title: tag.name,
         description: tag.description || `Level ${tag.level} tag`,
         type: 'tag' as SearchResultType,
+        category: 'tags',
         icon: 'tag',
         score: result.score,
         metadata: {
           path: tag.path ? [tag.path] : [],
           color: tag.color,
+          tagNumber: tag.tag_number,
         },
       }
     })
 
     return tagResults
-  }
-
-  /**
-   * Get recent items for empty search
-   */
-  static getRecentItems(): SearchResult[] {
-    // TODO: LocalStorage から最近アクセスしたアイテムを取得
-    return []
-  }
-
-  /**
-   * Get suggested actions based on context
-   */
-  static getSuggestions(): SearchResult[] {
-    // TODO: コンテキストに基づくサジェスト
-    return []
   }
 }

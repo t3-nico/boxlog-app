@@ -5,17 +5,31 @@ import type { Tag } from '@/types/common'
 import type { PlanStatus, PlanWithTags } from '@/features/plans/types'
 
 // Search result types
-export type SearchResultType = 'plan' | 'tag'
+export type SearchResultType = 'command' | 'plan' | 'tag'
 
 export interface SearchResult {
   id: string
   title: string
   description?: string
   type: SearchResultType
+  category?: string
   icon?: string
   metadata?: Record<string, unknown>
   score?: number
-  action?: () => void
+  action?: () => void | Promise<void>
+}
+
+// Command interface
+export interface Command {
+  id: string
+  title: string
+  description?: string
+  category: string
+  icon?: string
+  shortcut?: string[]
+  keywords?: string[]
+  action: () => void | Promise<void>
+  condition?: () => boolean
 }
 
 // Search options and filters

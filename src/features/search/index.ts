@@ -13,6 +13,7 @@ export { useSearchHistory } from './hooks/use-search'
 
 // Lib
 export { FuzzySearch, SearchEngine } from './lib/search-engine'
+export { commandRegistry, registerDefaultCommands } from './lib/command-registry'
 
 // Re-export for convenience
-export type { SearchResultType } from './types'
+export type { Command, SearchResult, SearchResultType } from './types'

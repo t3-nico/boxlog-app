@@ -1,4 +1,4 @@
-import { Command } from '../config/command-palette'
+import type { Command } from '../types'
 
 class CommandRegistry {
   private commands = new Map<string, Command>()
@@ -125,81 +125,62 @@ export const registerDefaultCommands = (router: { push: (path: string) => void }
     // Navigation commands
     {
       id: 'nav:calendar',
-      title: 'Go to Calendar',
-      description: 'View tasks in calendar layout',
+      title: 'カレンダーを開く',
+      description: 'カレンダービューを表示',
       category: 'navigation',
       icon: 'calendar',
-      keywords: ['calendar', 'schedule', 'time', 'date'],
+      keywords: ['calendar', 'schedule', 'カレンダー', '予定'],
       action: () => router.push('/calendar'),
     },
     {
       id: 'nav:inbox',
-      title: 'Go to Inbox',
-      description: 'View tasks in board or table layout',
+      title: 'Inboxを開く',
+      description: 'タスク一覧を表示',
       category: 'navigation',
       icon: 'inbox',
-      keywords: ['inbox', 'board', 'kanban', 'table', 'list', 'tasks'],
+      keywords: ['inbox', 'board', 'kanban', 'タスク', '一覧'],
       action: () => router.push('/inbox'),
     },
     {
       id: 'nav:stats',
-      title: 'Go to Stats',
-      description: 'View productivity statistics',
+      title: '統計を開く',
+      description: '生産性の統計を表示',
       category: 'navigation',
-      icon: 'chart-bar',
-      keywords: ['stats', 'analytics', 'metrics', 'reports'],
+      icon: 'bar-chart',
+      keywords: ['stats', 'analytics', '統計', 'レポート'],
       action: () => router.push('/stats'),
+    },
+    {
+      id: 'nav:tags',
+      title: 'タグを開く',
+      description: 'タグ一覧を表示',
+      category: 'navigation',
+      icon: 'tag',
+      keywords: ['tags', 'タグ', 'ラベル'],
+      action: () => router.push('/tags'),
     },
 
     // Creation commands
     {
-      id: 'create:task',
-      title: 'Create New Task',
-      description: 'Add a new task to your list',
+      id: 'create:plan',
+      title: '新規プラン作成',
+      description: '新しいプランを追加',
       category: 'create',
       icon: 'plus',
-      shortcut: ['cmd+n', 'ctrl+n'],
-      keywords: ['new', 'add', 'create', 'task', 'todo'],
+      keywords: ['new', 'add', 'create', '新規', '作成', 'プラン'],
       action: () => {
-        // This will be implemented with the task creation modal
-        console.log('Create new task')
+        console.log('Create new plan')
       },
     },
     {
       id: 'create:tag',
-      title: 'Create New Tag',
-      description: 'Add a new tag for organization',
+      title: '新規タグ作成',
+      description: '新しいタグを追加',
       category: 'create',
       icon: 'tag',
-      keywords: ['new', 'add', 'create', 'tag', 'label'],
+      keywords: ['new', 'add', 'create', '新規', '作成', 'タグ'],
       action: () => {
-        // This will be implemented with the tag creation modal
         console.log('Create new tag')
-      },
-    },
-
-    // Settings commands
-    {
-      id: 'nav:settings',
-      title: 'Open Settings',
-      description: 'Configure application preferences',
-      category: 'navigation',
-      icon: 'cog',
-      keywords: ['settings', 'preferences', 'config', 'options'],
-      action: () => router.push('/settings'),
-    },
-
-    // Theme commands
-    {
-      id: 'action:toggle-theme',
-      title: 'Toggle Theme',
-      description: 'Switch between light and dark mode',
-      category: 'actions',
-      icon: 'moon',
-      keywords: ['theme', 'dark', 'light', 'mode'],
-      action: () => {
-        // This will be implemented with theme toggle
-        console.log('Toggle theme')
       },
     },
   ]

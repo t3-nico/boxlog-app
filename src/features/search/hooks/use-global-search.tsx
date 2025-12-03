@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 
 import { GlobalSearchModal } from '../components/global-search-modal'
 
@@ -24,26 +24,25 @@ export const GlobalSearchProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const open = useCallback(() => {
-    console.log('Global search open called')
     setIsOpen(true)
   }, [])
+
   const close = useCallback(() => {
-    console.log('Global search close called')
     setIsOpen(false)
   }, [])
 
-  // Keyboard shortcut disabled
-  // useEffect(() => {
-  //   const handleKeyDown = (e: KeyboardEvent) => {
-  //     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-  //       e.preventDefault()
-  //       open()
-  //     }
-  //   }
+  // Keyboard shortcut: Cmd/Ctrl + K
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        setIsOpen((prev) => !prev)
+      }
+    }
 
-  //   document.addEventListener('keydown', handleKeyDown)
-  //   return () => document.removeEventListener('keydown', handleKeyDown)
-  // }, [open])
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const contextValue = {
     open,
