@@ -28,7 +28,8 @@ interface DesktopLayoutProps {
  * - MainContent + Inspector
  */
 export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
-  const { isOpen } = useSidebarStore()
+  // selector化: isOpenのみ監視（toggle変更時の再レンダリングを防止）
+  const isOpen = useSidebarStore((state) => state.isOpen)
   const pathname = usePathname()
   const user = useAuthStore((state) => state.user)
   const isAuthenticated = !!user

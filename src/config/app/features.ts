@@ -4,7 +4,6 @@
 
 export const FEATURE_FLAGS = {
   enableAIChat: true,
-  enableSmartFolders: true,
   enableOfflineMode: false,
   enableAnalytics: true,
   enableLifeCounter: false,

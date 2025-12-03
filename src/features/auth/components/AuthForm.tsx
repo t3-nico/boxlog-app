@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import { getErrorMessage } from '@/lib/errors'
 import { createClient } from '@/lib/supabase/client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -98,7 +99,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         router.push('/auth/verify-email')
       }
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : 'An unknown error occurred')
+      setError(getErrorMessage(error, 'An unknown error occurred'))
     } finally {
       setIsLoading(false)
     }
@@ -120,7 +121,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         setError(oauthError.message)
       }
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : 'An unknown error occurred')
+      setError(getErrorMessage(error, 'An unknown error occurred'))
     } finally {
       setIsLoading(false)
     }

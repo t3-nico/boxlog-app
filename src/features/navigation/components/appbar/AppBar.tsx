@@ -39,7 +39,9 @@ export function AppBar() {
   const user = useAuthStore((state) => state.user)
   const { open: openGlobalSearch } = useGlobalSearch()
   const { resolvedTheme, setTheme } = useTheme()
-  const { isOpen, toggle } = useSidebarStore()
+  // selector化: 必要な値だけ監視（他の状態変更時の再レンダリングを防止）
+  const isOpen = useSidebarStore((state) => state.isOpen)
+  const toggle = useSidebarStore((state) => state.toggle)
 
   // URLから locale を抽出 (例: /ja/calendar -> ja)
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'

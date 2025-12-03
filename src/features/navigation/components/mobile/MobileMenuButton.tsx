@@ -21,7 +21,7 @@ import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
  * ```
  */
 export function MobileMenuButton({ className }: { className?: string }) {
-  const { toggle } = useSidebarStore()
+  const toggle = useSidebarStore((state) => state.toggle)
   const { t } = useI18n()
 
   return (

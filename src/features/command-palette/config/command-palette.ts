@@ -87,7 +87,7 @@ export interface SearchResult {
   description?: string
   category: string
   icon?: string
-  type: 'command' | 'task' | 'tag' | 'smart-folder' | 'page'
+  type: 'command' | 'task' | 'tag' | 'page'
   action: () => void | Promise<void>
   metadata?: {
     tags?: string[]

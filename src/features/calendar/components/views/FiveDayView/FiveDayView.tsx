@@ -45,7 +45,7 @@ export const FiveDayView = ({
   onNavigateNext: _onNavigateNext,
   onNavigateToday: _onNavigateToday,
 }: FiveDayViewProps) => {
-  const { timezone } = useCalendarSettingsStore()
+  const timezone = useCalendarSettingsStore((state) => state.timezone)
 
   // レスポンシブな時間高さ
   const HOUR_HEIGHT = useResponsiveHourHeight({

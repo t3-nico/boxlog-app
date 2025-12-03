@@ -18,22 +18,13 @@ export function useCurrentTime(options: UseCurrentTimeOptions = {}) {
   useEffect(() => {
     if (!enabled) return
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('useCurrentTime initialized:', currentTime.toLocaleTimeString())
-    }
-
     // 定期更新
     const interval = setInterval(() => {
-      const newTime = new Date()
-
-      setCurrentTime(newTime)
-      if (process.env.NODE_ENV === 'development') {
-        console.log('useCurrentTime updated:', newTime.toLocaleTimeString())
-      }
+      setCurrentTime(new Date())
     }, updateInterval)
 
     return () => clearInterval(interval)
-  }, [updateInterval, enabled, currentTime])
+  }, [updateInterval, enabled])
 
   return currentTime
 }

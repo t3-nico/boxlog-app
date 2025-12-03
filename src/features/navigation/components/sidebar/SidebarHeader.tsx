@@ -27,7 +27,7 @@ interface SidebarHeaderProps {
  * - 8pxグリッドシステム準拠
  */
 export function SidebarHeader({ title, className }: SidebarHeaderProps) {
-  const { toggle } = useSidebarStore()
+  const toggle = useSidebarStore((state) => state.toggle)
   const { t } = useI18n()
 
   return (

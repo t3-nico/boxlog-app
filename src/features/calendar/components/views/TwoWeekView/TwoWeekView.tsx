@@ -59,7 +59,7 @@ export const TwoWeekView = ({
   onNavigateNext: _onNavigateNext,
   onNavigateToday: _onNavigateToday,
 }: TwoWeekViewProps) => {
-  const { timezone } = useCalendarSettingsStore()
+  const timezone = useCalendarSettingsStore((state) => state.timezone)
 
   // レスポンシブな時間高さ
   const HOUR_HEIGHT = useResponsiveHourHeight({

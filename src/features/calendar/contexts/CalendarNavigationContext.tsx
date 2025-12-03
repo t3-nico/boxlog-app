@@ -35,16 +35,22 @@ export const CalendarNavigationProvider = ({
   // 現在のlocaleを取得（例: /ja/calendar/day -> ja）
   const locale = pathname?.split('/')[1] || 'ja'
 
-  // 初期値の変更を検知して状態を更新（一度だけ）
-  const [isInitialized, setIsInitialized] = React.useState(false)
+  // 初期値の変更を検知して状態を更新（初回マウント時のみ）
+  const initializedRef = React.useRef(false)
 
   React.useEffect(() => {
-    if (!isInitialized) {
-      setCurrentDate(initialDate)
-      setViewType(initialView)
-      setIsInitialized(true)
+    if (!initializedRef.current) {
+      initializedRef.current = true
+      // 初期値が現在値と異なる場合のみ更新
+      if (initialDate.getTime() !== currentDate.getTime()) {
+        setCurrentDate(initialDate)
+      }
+      if (initialView !== viewType) {
+        setViewType(initialView)
+      }
     }
-  }, [initialDate, initialView, isInitialized])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 初回マウント時のみ実行
+  }, [])
 
   const navigateToDate = useCallback(
     (date: Date, updateUrl = false) => {

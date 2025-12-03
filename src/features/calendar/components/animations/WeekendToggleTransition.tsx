@@ -14,7 +14,7 @@ interface WeekendToggleTransitionProps {
  * 週末表示切り替え時のスムーズなトランジション効果を提供
  */
 export const WeekendToggleTransition = ({ children, className }: WeekendToggleTransitionProps) => {
-  const { showWeekends } = useCalendarSettingsStore()
+  const showWeekends = useCalendarSettingsStore((state) => state.showWeekends)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [previousShowWeekends, setPreviousShowWeekends] = useState(showWeekends)
 
@@ -58,7 +58,7 @@ export const WeekendColumnTransition = ({
   isWeekendColumn?: boolean
   className?: string
 }) => {
-  const { showWeekends } = useCalendarSettingsStore()
+  const showWeekends = useCalendarSettingsStore((state) => state.showWeekends)
   const [isVisible, setIsVisible] = useState(showWeekends || !isWeekendColumn)
 
   useEffect(() => {
