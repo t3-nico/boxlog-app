@@ -1,8 +1,9 @@
 'use client'
 
+import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { ArrowDown, ArrowUp, ArrowUpDown, type LucideIcon } from 'lucide-react'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronRight, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useCallback, useMemo, useState } from 'react'
 
@@ -42,6 +43,20 @@ export interface SortState {
 export interface PaginationState {
   currentPage: number
   pageSize: number
+}
+
+/**
+ * グループ化されたデータ
+ */
+export interface GroupedData<T> {
+  /** グループのキー（一意な識別子） */
+  groupKey: string
+  /** グループの表示ラベル */
+  groupLabel: string
+  /** グループ内のアイテム */
+  items: T[]
+  /** アイテム数 */
+  count: number
 }
 
 /**
@@ -85,6 +100,16 @@ export interface DataTableProps<T> {
   /** 列幅変更時のコールバック */
   onColumnWidthChange?: (columnId: string, width: number) => void
 
+  // グループ化関連
+  /** グループ化されたデータ（指定時はdataの代わりにこちらを使用） */
+  groupedData?: GroupedData<T>[]
+  /** 折りたたまれたグループのSet */
+  collapsedGroups?: Set<string>
+  /** グループ折りたたみトグル時のコールバック */
+  onToggleGroupCollapse?: (groupKey: string) => void
+  /** カスタムグループヘッダーレンダラー */
+  renderGroupHeader?: (group: GroupedData<T>, columnCount: number, isCollapsed: boolean) => ReactNode
+
   // カスタマイズ
   /** 行のラッパーコンポーネント（ドラッグ&ドロップ、コンテキストメニュー用） */
   rowWrapper?: (props: { item: T; children: ReactNode; isSelected: boolean }) => ReactNode
@@ -98,6 +123,8 @@ export interface DataTableProps<T> {
   getSelectLabel?: (item: T) => string
   /** テーブル末尾に追加する行（作成行など） */
   extraRows?: ReactNode
+  /** ヘッダーを固定するか */
+  stickyHeader?: boolean
 }
 
 /**
@@ -125,13 +152,20 @@ export function DataTable<T>({
   pageSizeOptions = [10, 25, 50, 100],
   columnWidths: externalColumnWidths,
   onColumnWidthChange,
+  groupedData,
+  collapsedGroups = new Set(),
+  onToggleGroupCollapse,
+  renderGroupHeader,
   rowWrapper,
   emptyState,
   onOutsideClick,
   selectAllLabel = 'Select all',
   getSelectLabel,
   extraRows,
+  stickyHeader = false,
 }: DataTableProps<T>) {
+  // グループ化モードかどうか
+  const isGrouped = !!groupedData && groupedData.length > 0
   // 内部の列幅状態（外部から提供されない場合）
   const [internalColumnWidths, setInternalColumnWidths] = useState<Record<string, number>>(() => {
     const widths: Record<string, number> = {}
@@ -164,13 +198,14 @@ export function DataTable<T>({
     [onColumnWidthChange]
   )
 
-  // ページネーション適用後のデータ
+  // ページネーション適用後のデータ（グループ化時はページネーションなし）
   const paginatedData = useMemo(() => {
+    if (isGrouped) return data // グループ化時は全データ表示
     if (!showPagination) return data
     const { currentPage, pageSize } = paginationState
     const startIndex = (currentPage - 1) * pageSize
     return data.slice(startIndex, startIndex + pageSize)
-  }, [data, showPagination, paginationState])
+  }, [data, showPagination, paginationState, isGrouped])
 
   // 現在ページのID一覧
   const currentPageIds = useMemo(() => paginatedData.map(getRowKey), [paginatedData, getRowKey])
@@ -253,6 +288,76 @@ export function DataTable<T>({
     ? [{ id: '__selection__', label: '', width: 48, resizable: false } as const, ...columns]
     : columns
 
+  // 列数（選択列を含む）
+  const columnCount = selectable ? columns.length + 1 : columns.length
+
+  // デフォルトのグループヘッダーレンダラー
+  const defaultRenderGroupHeader = useCallback(
+    (group: GroupedData<T>, colCount: number, isCollapsed: boolean) => (
+      <TableRow
+        key={`group-${group.groupKey}`}
+        className="bg-muted/50 hover:bg-muted/70 cursor-pointer border-y"
+        onClick={() => onToggleGroupCollapse?.(group.groupKey)}
+      >
+        <TableCell colSpan={colCount} className="py-3">
+          <div className="flex items-center gap-2">
+            {isCollapsed ? <ChevronRight className="size-4" /> : <ChevronDown className="size-4" />}
+            <span className="font-semibold">{group.groupLabel}</span>
+            <Badge variant="secondary" className="ml-1">
+              {group.count}
+            </Badge>
+          </div>
+        </TableCell>
+      </TableRow>
+    ),
+    [onToggleGroupCollapse]
+  )
+
+  // 行をレンダリングする関数
+  const renderRow = useCallback(
+    (item: T, index: number) => {
+      const key = getRowKey(item)
+      const isSelected = selectedIds.has(key)
+
+      const rowContent = (
+        <TableRow key={key} className={isSelected ? 'bg-primary/10 hover:bg-primary/15' : ''}>
+          {selectable && (
+            <td
+              style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
+              className="p-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={() => handleToggleSelection(key)}
+                aria-label={getSelectLabel?.(item) ?? `Select row ${index + 1}`}
+              />
+            </td>
+          )}
+          {columns.map((col) => {
+            const width = getColumnWidth(col.id)
+            return (
+              <td
+                key={col.id}
+                style={{ width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` }}
+                className="p-4"
+              >
+                {col.render(item, index)}
+              </td>
+            )
+          })}
+        </TableRow>
+      )
+
+      if (rowWrapper) {
+        return rowWrapper({ item, children: rowContent, isSelected })
+      }
+
+      return rowContent
+    },
+    [columns, getColumnWidth, getRowKey, getSelectLabel, handleToggleSelection, rowWrapper, selectable, selectedIds]
+  )
+
   return (
     <div
       className="flex flex-1 flex-col"
@@ -262,9 +367,9 @@ export function DataTable<T>({
         }
       }}
     >
-      <div className="border-border overflow-x-auto rounded-xl border">
-        <Table>
-          <TableHeader>
+      <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border">
+        <Table className="w-full">
+          <TableHeader className={stickyHeader ? 'bg-background sticky top-0 z-10' : ''}>
             <TableRow>
               {allColumns.map((column) => {
                 const width = column.id === '__selection__' ? 48 : getColumnWidth(column.id)
@@ -333,53 +438,30 @@ export function DataTable<T>({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedData.map((item, index) => {
-              const key = getRowKey(item)
-              const isSelected = selectedIds.has(key)
+            {isGrouped
+              ? // グループ化表示
+                groupedData!.map((group) => {
+                  const isCollapsed = collapsedGroups.has(group.groupKey)
+                  const groupHeader = renderGroupHeader
+                    ? renderGroupHeader(group, columnCount, isCollapsed)
+                    : defaultRenderGroupHeader(group, columnCount, isCollapsed)
 
-              const rowContent = (
-                <TableRow key={key} className={isSelected ? 'bg-primary/10 hover:bg-primary/15' : ''}>
-                  {selectable && (
-                    <td
-                      style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
-                      className="p-4"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Checkbox
-                        checked={isSelected}
-                        onCheckedChange={() => handleToggleSelection(key)}
-                        aria-label={getSelectLabel?.(item) ?? `Select row ${index + 1}`}
-                      />
-                    </td>
-                  )}
-                  {columns.map((col) => {
-                    const width = getColumnWidth(col.id)
-                    return (
-                      <td
-                        key={col.id}
-                        style={{ width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` }}
-                        className="p-4"
-                      >
-                        {col.render(item, index)}
-                      </td>
-                    )
-                  })}
-                </TableRow>
-              )
-
-              if (rowWrapper) {
-                return rowWrapper({ item, children: rowContent, isSelected })
-              }
-
-              return rowContent
-            })}
-            {extraRows}
+                  return [
+                    groupHeader,
+                    ...(isCollapsed
+                      ? []
+                      : group.items.map((item, index) => renderRow(item, index))),
+                  ]
+                })
+              : // 通常表示
+                paginatedData.map((item, index) => renderRow(item, index))}
+            {!isGrouped && extraRows}
           </TableBody>
         </Table>
       </div>
 
-      {/* ページネーション */}
-      {showPagination && onPaginationChange && (
+      {/* ページネーション（グループ化時は非表示） */}
+      {showPagination && onPaginationChange && !isGrouped && (
         <TablePagination
           totalItems={data.length}
           currentPage={paginationState.currentPage}
