@@ -231,11 +231,9 @@ export function TagRowWrapper({
   const { setSelectedIds } = useTagSelectionStore()
 
   // インライン編集開始（名前編集）
-  const handleStartEdit = useCallback(() => {
-    // Note: インライン編集はTagCellContent内で状態管理されるため、
-    // ここでは何もしない（将来的にはコンテキストで共有することも可能）
-    console.log('Edit requested for:', tag.name)
-  }, [tag.name])
+  // Note: インライン編集はTagCellContent内で状態管理されるため、
+  // ここでは何もしない（将来的にはコンテキストで共有することも可能）
+  const handleStartEdit = useCallback(() => {}, [])
 
   return (
     <ContextMenu modal={false}>
