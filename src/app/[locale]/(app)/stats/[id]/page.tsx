@@ -10,9 +10,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { createTranslation, getDictionary } from '@/features/i18n/lib'
+import type { Locale } from '@/i18n/routing'
+import { getTranslations } from 'next-intl/server'
 import { getReview } from '@/lib/data'
-import type { Locale } from '@/types/i18n'
 
 import { RefundReview } from './refund'
 
@@ -45,8 +45,7 @@ export async function generateMetadata({
 const ReviewPage = async ({ params }: { params: Promise<{ id: string; locale?: Locale }> }) => {
   const { id, locale = 'ja' } = await params
   const review = (await getReview(id)) as Review | null
-  const dictionary = await getDictionary(locale)
-  const t = createTranslation(dictionary, locale)
+  const t = await getTranslations({ locale })
 
   if (!review) {
     notFound()

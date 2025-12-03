@@ -2,13 +2,11 @@
 
 import { useCallback, useState } from 'react'
 
-import { useRouter } from 'next/navigation'
-
 import { ChevronDownIcon, GlobeIcon } from 'lucide-react'
 
-import { setLocaleCookie } from '@/features/i18n/lib'
+import { useRouter } from '@/i18n/navigation'
+import type { Locale } from '@/i18n/routing'
 import { cn } from '@/lib/utils'
-import type { Locale } from '@/types/i18n'
 
 interface LanguageOption {
   code: Locale
@@ -43,10 +41,7 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
 
   const switchLanguage = useCallback(
     (locale: Locale): void => {
-      // 言語をクッキーに保存
-      setLocaleCookie(locale)
-
-      // 現在のパスを新しい言語でナビゲート
+      // next-intl's router handles locale switching and cookie storage automatically
       const currentPath = window.location.pathname
       const newPath = currentPath.replace(/^\/[a-z]{2}(\/|$)/, `/${locale}$1`)
 

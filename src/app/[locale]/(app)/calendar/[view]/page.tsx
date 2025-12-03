@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
 
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
-import { createTranslation, getDictionary } from '@/features/i18n/lib'
-import type { Locale } from '@/types/i18n'
+import type { Locale } from '@/i18n/routing'
+import { getTranslations } from 'next-intl/server'
 
 import { CalendarViewClient } from './client'
 
@@ -42,8 +42,7 @@ const CalendarViewPage = async ({ params, searchParams }: CalendarViewPageProps)
   }
 
   // サーバーサイドで翻訳辞書を取得
-  const dictionary = await getDictionary(locale)
-  const t = createTranslation(dictionary, locale)
+  const t = await getTranslations({ locale })
 
   // 翻訳テキストを抽出
   const translations = {

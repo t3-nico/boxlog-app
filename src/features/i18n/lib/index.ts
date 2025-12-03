@@ -1,43 +1,21 @@
 /**
  * i18n - 後方互換性のための再エクスポート
  *
- * 新しいコードでは @/lib/i18n を直接インポートしてください。
- * このファイルは既存のインポートパスとの互換性のために維持されています。
+ * next-intlへ完全移行済み。
+ * 新しいコードでは以下を直接インポートしてください：
+ * - Server Component: import { getTranslations } from 'next-intl/server'
+ * - Client Component: import { useTranslations } from 'next-intl'
+ * - ルーティング: import { routing, type Locale } from '@/i18n/routing'
  */
 
-// 新しいi18nライブラリから再エクスポート
-export {
-  // 型
-  type Dictionary,
-  type Locale,
-  type Namespace,
-  type NestedObject,
-  type PluralTranslation,
-  type TranslationFunction,
-  // 定数
-  ALL_NAMESPACES,
-  defaultLocale,
-  locales,
-  LOCALE_COOKIE,
-  // 辞書ロード関数
-  getDictionary,
-  getCachedDictionary,
-  loadNamespace,
-  loadNamespaces,
-  preloadDictionaries,
-  preloadNamespaces,
-  // ユーティリティ
-  getNestedValue,
-  interpolate,
-  detectBrowserLanguage,
-  setLocaleCookie,
-  getLocaleCookie,
-  // 複数形処理
-  getPluralCategory,
-  selectPluralTranslation,
-  pluralizeWithVariables,
-  formatICUPlural,
-  // 翻訳関数
-  createTranslation,
-  createSimpleTranslation,
-} from '@/lib/i18n'
+// next-intl routing からの再エクスポート
+export { routing, type Locale } from '@/i18n/routing'
+
+// next-intl server からの再エクスポート（Server Component用）
+export { getTranslations, getLocale, getMessages } from 'next-intl/server'
+
+// next-intl client からの再エクスポート（Client Component用）
+export { useTranslations, useLocale } from 'next-intl'
+
+// next-intl navigation からの再エクスポート
+export { Link, redirect, usePathname, useRouter, getPathname } from '@/i18n/navigation'

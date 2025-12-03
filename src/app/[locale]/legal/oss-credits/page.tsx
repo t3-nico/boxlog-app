@@ -1,5 +1,5 @@
-import { createTranslation, getDictionary } from '@/features/i18n/lib'
-import type { Locale } from '@/types/i18n'
+import type { Locale } from '@/i18n/routing'
+import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { readFileSync } from 'node:fs'
@@ -53,8 +53,7 @@ export default async function OSSCreditsPage({ params }: PageProps) {
   }
 
   // i18n翻訳取得
-  const dictionary = await getDictionary(locale)
-  const t = createTranslation(dictionary, locale)
+  const t = await getTranslations({ locale })
 
   // ライセンス統計を計算
   const licenseStats: Record<string, number> = {}
