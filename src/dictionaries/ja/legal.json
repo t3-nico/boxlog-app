@@ -1,0 +1,386 @@
+{
+  "legal": {
+    "title": "法的情報",
+    "description": "利用規約、プライバシーポリシー、その他の法的文書",
+    "lastUpdated": "最終更新日",
+    "effectiveDate": "施行日",
+    "cookieSettings": "Cookie設定",
+    "privacy": {
+      "title": "プライバシーポリシー",
+      "description": "BoxLogにおける個人情報の取り扱いについて",
+      "sections": {
+        "introduction": {
+          "title": "はじめに",
+          "content": "BoxLog（以下「当サービス」）は、ユーザーのプライバシーを尊重し、個人情報を適切に保護することをお約束します。本プライバシーポリシーは、当サービスがどのように個人情報を収集、使用、保護するかを説明します。"
+        },
+        "dataCollection": {
+          "title": "収集する情報",
+          "accountInfo": "アカウント情報（メールアドレス、名前、プロフィール画像）",
+          "usageData": "サービス利用データ（タスク、カレンダー、設定）",
+          "technicalData": "技術データ（IPアドレス、ブラウザ情報、デバイス情報）",
+          "cookies": "Cookie及び類似技術"
+        },
+        "dataUsage": {
+          "title": "情報の利用目的",
+          "serviceProvision": "サービスの提供・運営・改善",
+          "userSupport": "ユーザーサポートとお問い合わせ対応",
+          "security": "不正利用の防止とセキュリティ維持",
+          "analytics": "サービス分析と機能改善",
+          "communication": "重要なお知らせとサービス更新の通知"
+        },
+        "dataSharing": {
+          "title": "第三者提供",
+          "intro": "当サービスは以下のサービスプロバイダーと連携しています：",
+          "supabase": "Supabase（認証・データベース）",
+          "vercel": "Vercel（ホスティング）",
+          "sentry": "Sentry（エラー監視）",
+          "note": "これらのプロバイダーは、各社のプライバシーポリシーに基づいて情報を管理します。"
+        },
+        "dataRetention": {
+          "title": "データ保持期間",
+          "active": "アカウント有効期間中は保持します",
+          "deleted": "アカウント削除後30日以内に完全削除します",
+          "legal": "法令により保持が義務付けられる場合を除きます"
+        },
+        "userRights": {
+          "title": "ユーザーの権利",
+          "access": "個人情報へのアクセス権",
+          "correction": "個人情報の訂正権",
+          "deletion": "個人情報の削除権（忘れられる権利）",
+          "portability": "データポータビリティ権",
+          "objection": "処理への異議申し立て権",
+          "contact": "これらの権利を行使する場合は、設定ページまたはお問い合わせフォームからご連絡ください。"
+        },
+        "security": {
+          "title": "セキュリティ対策",
+          "measures": "当サービスは、個人情報を不正アクセス、紛失、破損、改ざん、漏洩から保護するため、業界標準のセキュリティ対策を実施しています。",
+          "encryption": "データ転送時のSSL/TLS暗号化",
+          "access": "アクセス制御と認証システム",
+          "monitoring": "定期的なセキュリティ監査"
+        },
+        "cookies": {
+          "title": "Cookieについて",
+          "intro": "当サービスは、ユーザー体験の向上のためにCookieを使用します。",
+          "essential": "必須Cookie（ログイン状態の維持）",
+          "analytics": "分析Cookie（利用状況の把握）",
+          "preference": "設定Cookie（ユーザー設定の保存）",
+          "control": "ブラウザ設定でCookieを無効化できますが、一部機能が制限される場合があります。"
+        },
+        "children": {
+          "title": "未成年者について",
+          "content": "当サービスは、13歳未満のお子様を対象としておらず、意図的に個人情報を収集することはありません。"
+        },
+        "changes": {
+          "title": "ポリシーの変更",
+          "content": "本プライバシーポリシーは、法令の変更や業務の見直しに伴い変更される場合があります。重要な変更がある場合は、事前にユーザーへ通知します。"
+        },
+        "contact": {
+          "title": "お問い合わせ",
+          "content": "プライバシーに関するご質問やご懸念は、以下までご連絡ください："
+        }
+      }
+    },
+    "terms": {
+      "title": "利用規約",
+      "description": "BoxLogサービスの利用に関する規約",
+      "sections": {
+        "introduction": {
+          "title": "はじめに",
+          "content": "本利用規約（以下「本規約」）は、BoxLog（以下「当サービス」）の利用条件を定めるものです。当サービスをご利用になる場合には、本規約に同意したものとみなされます。"
+        },
+        "serviceDescription": {
+          "title": "サービス内容",
+          "content": "当サービスは、タスク管理、カレンダー機能、生産性向上ツールを提供するWebアプリケーションです。"
+        },
+        "accountRegistration": {
+          "title": "アカウント登録",
+          "requirements": "正確かつ最新の情報を登録すること",
+          "responsibility": "アカウント情報の管理責任はユーザーにあります",
+          "security": "不正利用を発見した場合は速やかに通知すること",
+          "age": "13歳以上であること"
+        },
+        "userResponsibilities": {
+          "title": "ユーザーの責任",
+          "intro": "ユーザーは以下の行為を行ってはなりません：",
+          "illegal": "法令に違反する行為",
+          "harmful": "他のユーザーやサービスに害を与える行為",
+          "unauthorized": "不正アクセスやシステムへの妨害行為",
+          "impersonation": "他者になりすます行為",
+          "spam": "スパムや迷惑行為",
+          "content": "不適切なコンテンツの投稿"
+        },
+        "intellectualProperty": {
+          "title": "知的財産権",
+          "ownership": "当サービスに関するすべての知的財産権は、当社または正当な権利者に帰属します。",
+          "userContent": "ユーザーが作成したコンテンツの著作権はユーザーに帰属します。",
+          "license": "ただし、サービス提供のために必要な範囲で、当社にコンテンツの使用を許諾するものとします。"
+        },
+        "dataBackup": {
+          "title": "データのバックアップ",
+          "responsibility": "ユーザーは自己の責任において、重要なデータのバックアップを行ってください。",
+          "liability": "当社はデータの損失について一切の責任を負いません。"
+        },
+        "disclaimer": {
+          "title": "免責事項",
+          "availability": "当サービスの可用性、正確性、完全性を保証しません",
+          "interruption": "サービスの中断や障害について責任を負いません",
+          "damages": "サービス利用により生じた損害について責任を負いません",
+          "thirdParty": "第三者サービスとの連携に関する問題について責任を負いません"
+        },
+        "termination": {
+          "title": "アカウント停止・削除",
+          "userInitiated": "ユーザーは、設定ページからいつでもアカウントを削除できます。",
+          "serviceInitiated": "当社は、本規約違反や不正利用があった場合、事前通知なくアカウントを停止または削除できます。",
+          "dataRetention": "削除後、データは30日以内に完全削除されます。"
+        },
+        "modifications": {
+          "title": "規約の変更",
+          "content": "当社は、必要に応じて本規約を変更できます。重要な変更がある場合は、事前にユーザーへ通知します。"
+        },
+        "governingLaw": {
+          "title": "準拠法・管轄裁判所",
+          "law": "本規約は日本法に準拠します",
+          "jurisdiction": "本規約に関する紛争は、東京地方裁判所を第一審の専属的合意管轄裁判所とします"
+        },
+        "contact": {
+          "title": "お問い合わせ",
+          "content": "本規約に関するご質問は、以下までご連絡ください："
+        }
+      }
+    },
+    "contact": {
+      "email": "support@boxlog.app",
+      "website": "https://boxlog.app"
+    },
+    "navigation": {
+      "backToApp": "← BoxLogに戻る",
+      "privacy": "プライバシーポリシー",
+      "terms": "利用規約",
+      "security": "セキュリティ",
+      "cookies": "Cookie設定",
+      "ossCredits": "OSSライセンス"
+    },
+    "footer": {
+      "copyright": "© 2025 BoxLog. All rights reserved.",
+      "contact": "お問い合わせ: {{email}}"
+    },
+    "cookies": {
+      "title": "Cookie設定",
+      "description": "Cookieの使用と管理について",
+      "banner": {
+        "title": "Cookieの使用について",
+        "description": "当サイトは、サービスの向上と利用状況の分析のためにCookieを使用します。",
+        "learnMore": "詳しく見る",
+        "acceptAll": "すべて同意",
+        "rejectAll": "必須のみ",
+        "customize": "カスタマイズ"
+      },
+      "categories": {
+        "necessary": {
+          "title": "必須Cookie",
+          "description": "サイトの基本機能に必要なCookieです。無効にすることはできません。",
+          "cookies": {
+            "session": "セッションCookie（認証状態の維持）",
+            "csrf": "CSRFトークン（セキュリティ保護）",
+            "consent": "Cookie同意状態"
+          },
+          "ariaLabel": "必須Cookie（無効化不可）"
+        },
+        "analytics": {
+          "title": "分析Cookie",
+          "description": "サイトの利用状況を分析し、サービス改善に役立てるためのCookieです。",
+          "cookies": {
+            "sentry": "Sentry（エラー追跡・パフォーマンス監視・IPアドレス送信）",
+            "vercelNote": "注: Vercel AnalyticsはCookieを使用せず、同意不要です"
+          },
+          "ariaLabel": "分析Cookie"
+        },
+        "marketing": {
+          "title": "マーケティングCookie",
+          "description": "広告配信やマーケティング活動に使用されるCookieです。現在は使用していません。",
+          "ariaLabel": "マーケティングCookie",
+          "cookies": {
+            "none": "現在使用していません"
+          }
+        }
+      },
+      "settings": {
+        "title": "Cookie設定",
+        "description": "カテゴリ別にCookieの使用を管理できます。",
+        "enabled": "有効",
+        "disabled": "無効",
+        "alwaysActive": "常に有効",
+        "save": "設定を保存",
+        "saved": "Cookie設定を保存しました",
+        "acceptAll": "すべて受け入れ",
+        "rejectAll": "必須のみ",
+        "acceptedAll": "すべてのCookieを受け入れました",
+        "acceptedNecessaryOnly": "必須Cookieのみ受け入れました"
+      },
+      "page": {
+        "title": "Cookie設定",
+        "description": "Cookieの使用と管理について",
+        "whatAreCookies": {
+          "title": "Cookieとは？",
+          "content": "Cookieは、Webサイトがブラウザに保存する小さなテキストファイルです。Cookieを使用することで、ログイン状態の維持、設定の記憶、サイト利用状況の分析が可能になります。"
+        },
+        "howWeUse": {
+          "title": "Cookieの使用目的",
+          "content": "当サイトでは、以下の目的でCookieを使用しています：",
+          "purposes": {
+            "authentication": "認証とセキュリティ",
+            "preferences": "ユーザー設定の保存",
+            "analytics": "サイト利用状況の分析",
+            "security": "不正利用の防止"
+          }
+        },
+        "manageCookies": {
+          "title": "Cookie管理方法",
+          "content": "ブラウザ設定でCookieを管理できます。詳細は各ブラウザのヘルプをご確認ください。"
+        },
+        "browserWarning": "ブラウザ設定でCookieを無効にした場合、一部機能が正常に動作しない可能性があります。"
+      }
+    },
+    "security": {
+      "title": "セキュリティ",
+      "description": "BoxLog Security Policy, Vulnerability Disclosure Guidelines, and Security Measures",
+      "header": {
+        "title": "セキュリティ",
+        "description": "BoxLogは、ユーザーの皆様の情報を保護するために、最高水準のセキュリティ対策を実施しています。"
+      },
+      "policy": {
+        "title": "セキュリティポリシー",
+        "supportedVersions": {
+          "title": "サポート対象バージョン",
+          "version": "バージョン",
+          "status": "サポート状況",
+          "v1": "1.x.x",
+          "v1Status": "✅ セキュリティアップデート提供中",
+          "v0": "< 1.0",
+          "v0Status": "❌ サポート終了"
+        },
+        "measures": {
+          "title": "実装しているセキュリティ対策",
+          "https": "HTTPS強制: すべての通信をTLS 1.3で暗号化",
+          "mfa": "多要素認証 (MFA): TOTP（Time-based One-Time Password）対応",
+          "rateLimit": "レート制限: ブルートフォース攻撃防止",
+          "sqlInjection": "SQL インジェクション対策: Prisma ORM + パラメータ化クエリ",
+          "xss": "XSS対策: React自動エスケープ + Content Security Policy",
+          "csrf": "CSRF対策: SameSite Cookie + トークン検証",
+          "dependencies": "依存関係管理: Dependabot による週次チェック",
+          "monitoring": "エラー監視: Sentry によるリアルタイム監視"
+        }
+      },
+      "vulnerability": {
+        "title": "脆弱性の報告",
+        "warning": {
+          "title": "⚠️ セキュリティ脆弱性は公開のGitHub Issuesで報告しないでください",
+          "description": "脆弱性を公開することで、悪意ある第三者に悪用される可能性があります。セキュリティチームに直接ご連絡ください。"
+        },
+        "contacts": {
+          "title": "報告窓口",
+          "email": "Email",
+          "emailAddress": "security@boxlog.app",
+          "github": "GitHub Security Advisory",
+          "githubLink": "Create Advisory"
+        },
+        "includeInfo": {
+          "title": "報告に含めるべき情報",
+          "type": "脆弱性の種類（XSS, SQLインジェクション, 認証バイパス等）",
+          "affectedVersions": "影響を受けるバージョン",
+          "steps": "再現手順（詳細なステップ）",
+          "poc": "概念実証コード（Proof of Concept, 可能であれば）",
+          "impact": "潜在的な影響（データ漏洩、サービス停止等）",
+          "fix": "推奨される修正方法（任意）"
+        },
+        "timeline": {
+          "title": "対応タイムライン",
+          "severity": "深刻度",
+          "initialResponse": "初動確認",
+          "fixRelease": "修正リリース",
+          "critical": "Critical",
+          "criticalResponse": "24時間以内",
+          "criticalFix": "48時間以内",
+          "high": "High",
+          "highResponse": "48時間以内",
+          "highFix": "1週間以内",
+          "medium": "Medium",
+          "mediumResponse": "1週間以内",
+          "mediumFix": "2週間以内",
+          "low": "Low",
+          "lowResponse": "2週間以内",
+          "lowFix": "次回リリース"
+        }
+      },
+      "disclosure": {
+        "title": "責任ある開示（Responsible Disclosure）",
+        "safeHarbor": {
+          "title": "セーフハーバー（Safe Harbor）",
+          "description": "ガイドラインに従って行われたセキュリティ研究活動に対して、法的措置を取ることはありません。",
+          "allowed": {
+            "title": "✅ 許可される行為",
+            "ownAccount": "• 自身のアカウントでのテスト",
+            "research": "• 脆弱性の調査と報告",
+            "poc": "• 概念実証コードの作成"
+          },
+          "prohibited": {
+            "title": "❌ 禁止される行為",
+            "dos": "• DoS/DDoS攻撃",
+            "dataAccess": "• 他者のデータへのアクセス",
+            "disclosure": "• 公開前の第三者への開示"
+          }
+        }
+      },
+      "relatedDocs": {
+        "title": "関連ドキュメント",
+        "securityPolicy": {
+          "title": "Security Policy",
+          "description": "セキュリティポリシー詳細（GitHub）"
+        },
+        "vulnerabilityDisclosure": {
+          "title": "Vulnerability Disclosure",
+          "description": "脆弱性報告ガイドライン（GitHub）"
+        },
+        "incidentResponse": {
+          "title": "Incident Response Plan",
+          "description": "インシデント対応計画（GitHub）"
+        },
+        "privacyPolicy": {
+          "title": "Privacy Policy",
+          "description": "プライバシーポリシー"
+        }
+      },
+      "contact": {
+        "title": "お問い合わせ",
+        "securityTeam": "セキュリティチーム",
+        "securityEmail": "security@boxlog.app",
+        "general": "一般的なお問い合わせ",
+        "generalEmail": "support@boxlog.app",
+        "thankYou": "セキュリティ向上にご協力いただき、ありがとうございます。皆様の報告により、すべてのユーザーの安全性が向上します。"
+      },
+      "lastUpdated": "最終更新日: 2025-10-15"
+    }
+  },
+  "ossCredits": {
+    "title": "オープンソースライセンス",
+    "description": "このプロジェクトで使用しているオープンソースソフトウェアのライセンス情報",
+    "intro": "BoxLogは以下のオープンソースソフトウェアを使用しています。各プロジェクトのメンテナーと貢献者の皆様に深く感謝いたします。",
+    "totalPackages": "総パッケージ数",
+    "searchPlaceholder": "パッケージ名で検索...",
+    "license": "ライセンス",
+    "version": "バージョン",
+    "repository": "リポジトリ",
+    "publisher": "公開者",
+    "noRepository": "リポジトリ情報なし",
+    "noPublisher": "公開者情報なし",
+    "noResults": "検索結果が見つかりませんでした",
+    "loadingError": "ライセンス情報の読み込みに失敗しました",
+    "licenseDistribution": "ライセンス分布",
+    "packageList": "パッケージリスト（{{count}}件）",
+    "footer": {
+      "notice": "完全なライセンステキストとNOTICEファイルについては：",
+      "thirdPartyNotices": "THIRD_PARTY_NOTICES.txt",
+      "githubRepository": "GitHubリポジトリ"
+    }
+  }
+}

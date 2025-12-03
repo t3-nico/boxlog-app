@@ -1,0 +1,293 @@
+{
+  "stats": {
+    "title": "Stats View",
+    "description": "Statistics view coming soon",
+    "featureInDevelopment": "This feature is under development.",
+    "lifeVision": "Life Vision",
+    "identity": "Identity",
+    "goals": "Goals",
+    "value": "Value",
+    "antivalues": "AntiValues",
+    "purpose": "Purpose",
+    "principles": "Principles",
+    "connpass": "Connpass",
+    "reflect": {
+      "today": "Today",
+      "week": "Week",
+      "month": "Month",
+      "all": "All"
+    },
+    "act": {
+      "try": "Try",
+      "next": "Next"
+    },
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "overview": "Overview",
+      "analytics": "Analytics",
+      "tasks": "Tasks",
+      "time": "Time Analysis",
+      "categories": "Categories",
+      "tagAnalysis": "Tag Analysis",
+      "trends": "Trends",
+      "selfAnalysis": "Self Analysis",
+      "reflect": "Reflect",
+      "reflectToday": "Today",
+      "reflectWeek": "This Week",
+      "reflectMonth": "This Month",
+      "reflectAll": "All",
+      "actions": "Actions",
+      "actionTry": "Try",
+      "actionNext": "Next Actions"
+    },
+    "overview": {
+      "subtitle": "See your activity at a glance",
+      "completedTasks": "Completed Tasks",
+      "workHours": "Work Hours",
+      "achievementRate": "Achievement Rate",
+      "comparedToLastWeek": "from last week",
+      "weeklyTrend": "Weekly Trend",
+      "weeklyTrendDescription": "Last 6 months trend",
+      "viewDetails": "View details",
+      "quickAccess": "Quick Access",
+      "tasksDescription": "Analyze task completion and trends",
+      "timeDescription": "View work patterns by time of day",
+      "categoriesDescription": "Display category breakdown",
+      "tagAnalysisDescription": "Analyze tag usage trends",
+      "trendsDescription": "View long-term trends",
+      "goalsDescription": "Track goal achievement"
+    },
+    "toolbar": {
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "thisYear": "This Year",
+      "previous": "Previous period",
+      "next": "Next period",
+      "current": "Back to current",
+      "compare": "Compare",
+      "compareTooltip": "Compare with previous period",
+      "noCompare": "No comparison",
+      "previousPeriod": "Previous period",
+      "lastYear": "Same period last year",
+      "export": "Export",
+      "exportTooltip": "Export data"
+    }
+  },
+  "board": {
+    "title": "Board View",
+    "description": "Kanban style task management",
+    "columns": {
+      "todo": "Todo",
+      "inProgress": "In Progress",
+      "done": "Done"
+    },
+    "sample": {
+      "task1": {
+        "title": "Sample Task 1",
+        "description": "Task description"
+      },
+      "task2": {
+        "title": "Sample Task 2",
+        "description": "Task in progress"
+      },
+      "task3": {
+        "title": "Sample Task 3",
+        "description": "Completed task"
+      }
+    },
+    "kanban": {
+      "columnOptions": "Column options",
+      "markAllComplete": "Mark all complete",
+      "archiveAll": "Archive all",
+      "clearColumn": "Clear column",
+      "addNewPlan": "Add new plan",
+      "enterTitle": "Enter title...",
+      "addDate": "Add date",
+      "addTag": "Add tag",
+      "add": "Add",
+      "addNew": "Add new",
+      "recurrence": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "weekdays": "Weekdays"
+      }
+    },
+    "toolbar": {
+      "priority": "Priority",
+      "all": "All",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "sort": "Sort by",
+      "createdAtDesc": "Created (newest)",
+      "createdAtAsc": "Created (oldest)",
+      "updatedAtDesc": "Updated (newest)",
+      "updatedAtAsc": "Updated (oldest)",
+      "priorityDesc": "Priority (high first)",
+      "priorityAsc": "Priority (low first)",
+      "titleAsc": "Title (A-Z)",
+      "titleDesc": "Title (Z-A)",
+      "reset": "Reset",
+      "addCard": "Add card"
+    }
+  },
+  "table": {
+    "title": "Table View",
+    "description": "Display tasks in table format",
+    "comingSoon": "Task table component coming soon...",
+    "willDisplay": "This will display tasks in a table format",
+    "headers": {
+      "reviewNumber": "Review number",
+      "purchaseDate": "Purchase date",
+      "customer": "Customer",
+      "amount": "Amount"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit"
+    },
+    "stats": {
+      "totalRevenue": "Total revenue",
+      "plansSold": "plans sold",
+      "pageviews": "Pageviews"
+    },
+    "sections": {
+      "recentReviews": "Recent reviews"
+    },
+    "details": {
+      "summary": "Summary",
+      "paymentMethod": "Payment method",
+      "customer": "Customer",
+      "event": "Event",
+      "amount": "Amount",
+      "amountAfterExchange": "Amount after exchange rate",
+      "fee": "Fee",
+      "net": "Net",
+      "transactionId": "Transaction ID",
+      "cardNumber": "Card number",
+      "cardType": "Card type",
+      "cardExpiry": "Card expiry",
+      "owner": "Owner",
+      "emailAddress": "Email address",
+      "address": "Address",
+      "country": "Country",
+      "cvc": "CVC",
+      "cvcStatus": "Passed successfully"
+    },
+    "status": {
+      "successful": "Successful"
+    },
+    "buttons": {
+      "refund": "Refund",
+      "resendInvoice": "Resend Invoice"
+    },
+    "backLinks": {
+      "box": "Box",
+      "reviews": "Reviews"
+    }
+  },
+  "events": {
+    "trash": {
+      "title": "Trash",
+      "empty": {
+        "title": "Trash is empty",
+        "description": "No deleted events"
+      },
+      "stats": {
+        "deleted": "Deleted: {{count}} items",
+        "old": "Over 30 days old: {{count}} items"
+      },
+      "search": {
+        "placeholder": "Search events...",
+        "noResults": "No events match the criteria",
+        "noEvents": "No events"
+      },
+      "filter": {
+        "all": "All periods",
+        "today": "Today",
+        "week": "Within 1 week",
+        "month": "Within 1 month"
+      },
+      "actions": {
+        "clearOld": "Auto-delete old items",
+        "restore": "Restore",
+        "permanentDelete": "Permanently delete",
+        "batchRestore": "Batch restore",
+        "batchDelete": "Permanently delete",
+        "clearSelection": "Clear selection",
+        "selectAll": "Select all",
+        "selected": "{{count}} selected"
+      },
+      "metadata": {
+        "deletedDate": "Deleted: {{date}}",
+        "originalDate": "Original date: {{date}}",
+        "autoDeleteToday": "Auto-delete today",
+        "autoDeleteIn": "Auto-delete in {{days}} days"
+      },
+      "loading": {
+        "title": "Processing..."
+      },
+      "accessibility": {
+        "selectEvent": "Select event: {{title}}"
+      }
+    },
+    "create": {
+      "title": {
+        "placeholder": "What needs to be done?"
+      },
+      "charCount": "{{count}}/100",
+      "dateKeywords": {
+        "today": "today",
+        "tomorrow": "tomorrow",
+        "nextWeek": "next week"
+      }
+    },
+    "detail": {
+      "schedule": {
+        "title": "Schedule",
+        "titlePlaceholder": "Enter title...",
+        "endTimeNotSet": "Not set"
+      },
+      "actions": {
+        "notification": "Notification",
+        "repeat": "Repeat"
+      },
+      "tags": {
+        "title": "Tags",
+        "add": "Add tag"
+      },
+      "memo": {
+        "title": "Memo",
+        "placeholder": "Enter memo...",
+        "empty": "No memo"
+      },
+      "activity": {
+        "title": "Activity",
+        "createPlaceholder": "Activity will be displayed after creation",
+        "autoUpdate": "Automatic update by system"
+      },
+      "save": {
+        "autoSaving": "Auto-saving..."
+      },
+      "operations": {
+        "duplicate": "Duplicate",
+        "template": "Template",
+        "delete": "Delete"
+      },
+      "timeline": {
+        "demoStatus": {
+          "scheduled": "Scheduled",
+          "inProgress": "In Progress",
+          "completed": "Completed"
+        },
+        "demoTags": {
+          "important": "Important",
+          "urgent": "Urgent"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "navigation": {
+    "dashboard": "ダッシュボード",
+    "tasks": "タスク",
+    "calendar": "カレンダー",
+    "settings": "設定",
+    "profile": "プロフィール",
+    "more": "その他"
+  },
+  "appbar": {
+    "navigation": {
+      "calendar": "カレンダー",
+      "inbox": "Inbox",
+      "stats": "統計",
+      "settings": "設定"
+    },
+    "toggleSidebar": "サイドバーを開閉"
+  },
+  "sidebar": {
+    "views": "ビュー",
+    "quickCreate": "クイック作成",
+    "inbox": "受信箱",
+    "theme": "テーマ",
+    "getHelp": "ヘルプ",
+    "toggleSidebar": "サイドバーを開閉",
+    "closeSidebar": "サイドバーを閉じる",
+    "openSidebar": "サイドバーを開く",
+    "resize": "サイズを変更",
+    "navigation": {
+      "calendar": "カレンダー",
+      "inbox": "Inbox",
+      "tags": "タグ",
+      "stats": "統計",
+      "settings": "設定",
+      "search": "検索"
+    }
+  },
+  "navUser": {
+    "myAccount": "マイアカウント",
+    "account": "アカウント",
+    "upgradePlan": "プランをアップグレードする",
+    "personalize": "パーソナライズ",
+    "notifications": "通知設定",
+    "settings": "設定",
+    "help": "ヘルプ",
+    "helpSubmenu": {
+      "helpCenter": "ヘルプセンター",
+      "releaseNotes": "リリースノート",
+      "termsOfService": "利用規約",
+      "privacyPolicy": "プライバシーポリシー",
+      "security": "セキュリティ",
+      "contact": "お問い合わせ"
+    },
+    "logout": "ログアウト",
+    "loggingOut": "ログアウト中..."
+  }
+}
