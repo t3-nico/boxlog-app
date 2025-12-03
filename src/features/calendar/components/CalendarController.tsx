@@ -59,12 +59,16 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     [router]
   )
 
+  // 初期日付をメモ化して参照の安定性を保つ
+  const stableInitialDate = useMemo(() => initialDate || new Date(), [initialDate?.getTime()])
+
   // カレンダーレイアウト状態管理（Context が利用できない場合のフォールバック）
   const layoutHook = useCalendarLayout({
     initialViewType,
-    initialDate: initialDate || new Date(),
-    onViewChange: contextAvailable ? () => {} : (view) => updateURL(view, currentDate),
-    onDateChange: contextAvailable ? () => {} : (date) => updateURL(viewType, date),
+    initialDate: stableInitialDate,
+    // コールバックは layoutHook の状態を使用するので、ここでは参照しない
+    onViewChange: contextAvailable ? undefined : (view) => updateURL(view),
+    onDateChange: contextAvailable ? undefined : (date) => updateURL(initialViewType, date),
   })
 
   // Context が利用可能な場合はそれを使用、そうでない場合は layoutHook を使用
@@ -74,15 +78,17 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const changeView = contextAvailable ? calendarNavigation.changeView : layoutHook.changeView
   const navigateToDate = contextAvailable ? calendarNavigation.navigateToDate : layoutHook.navigateToDate
 
-  // デバッグ用ログ
+  // デバッグ用ログ（初回マウント時のみ）
+  const hasLoggedRef = React.useRef(false)
   useEffect(() => {
-    logger.log('📊 CalendarController state:', {
-      contextAvailable,
-      viewType,
-      currentDate,
-      initialDate,
-    })
-  }, [contextAvailable, viewType, currentDate, initialDate])
+    if (!hasLoggedRef.current) {
+      hasLoggedRef.current = true
+      logger.log('📊 CalendarController mounted:', {
+        contextAvailable,
+        viewType,
+      })
+    }
+  }, [])
 
   // コンテキストメニュー管理（フック化）
   const { contextMenuEvent, contextMenuPosition, handleEventContextMenu, handleCloseContextMenu } =
