@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors'
+import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import type { Plan } from '@/features/plans/types/plan'
@@ -20,6 +20,7 @@ import {
   ChevronDown,
   ChevronUp,
   FileText,
+  Folder,
   Merge,
   MoreHorizontal,
   Palette,
@@ -28,6 +29,7 @@ import {
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { TAG_PRESET_COLORS } from '../../constants/colors'
+import { useTagGroups } from '../../hooks/use-tag-groups'
 import { useTags, useUpdateTag, useDeleteTag, useUpdateTagColor } from '../../hooks/use-tags'
 import { useTagInspectorStore } from '../../stores/useTagInspectorStore'
 import type { TagWithChildren } from '@/types/tags'
@@ -48,6 +50,7 @@ export function TagInspector() {
 
   // タグデータ取得
   const { data: tags = [], isLoading } = useTags(true)
+  const { data: groups = [] } = useTagGroups()
 
   // 現在のタグを取得
   const tag = useMemo(() => {
@@ -116,6 +119,12 @@ export function TagInspector() {
     }
     return findTag(tags)
   }, [tags, tag])
+
+  // 所属グループ
+  const tagGroup = useMemo(() => {
+    if (!tag?.group_id) return null
+    return groups.find((g) => g.id === tag.group_id) || null
+  }, [groups, tag])
 
   // Mutations
   const updateTagMutation = useUpdateTag()
@@ -376,6 +385,19 @@ export function TagInspector() {
                   <span className="text-muted-foreground text-sm">t-{tag.tag_number}</span>
                 </div>
               </div>
+
+              {/* グループ */}
+              {tagGroup && (
+                <div className="border-border/50 border-t px-6 py-3">
+                  <div className="flex items-center gap-2">
+                    <Folder
+                      className="h-4 w-4 flex-shrink-0"
+                      style={{ color: tagGroup.color || DEFAULT_GROUP_COLOR }}
+                    />
+                    <span className="text-sm">{tagGroup.name}</span>
+                  </div>
+                </div>
+              )}
 
               {/* 説明 */}
               <div className="border-border/50 hover:bg-accent/50 min-h-[48px] border-t px-6 py-3 transition-colors">
