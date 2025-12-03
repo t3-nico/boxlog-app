@@ -10,7 +10,14 @@ import type { Locale } from '@/types/i18n'
 import type { TranslatedString } from '@/types/i18n-branded'
 import { markAsTranslated } from '@/types/i18n-branded'
 
-import { createTranslation, getDictionary, type Dictionary, type TranslationFunction } from './index'
+import {
+  createTranslation,
+  getCachedDictionary,
+  getDictionary,
+  preloadDictionaries,
+  type Dictionary,
+  type TranslationFunction,
+} from './index'
 import { getDirection, isRTL } from './rtl'
 
 // Re-export TranslationFunction for external use
@@ -238,10 +245,22 @@ export const useTranslation = () => {
 export const useI18n = (providedLocale?: 'en' | 'ja') => {
   const detectedLocale = useCurrentLocale()
   const locale = providedLocale || detectedLocale
-  const [dictionary, setDictionary] = useState<Dictionary | null>(null)
+
+  // キャッシュ済み辞書があれば即座に使用（フラッシュ防止）
+  const [dictionary, setDictionary] = useState<Dictionary | null>(() => getCachedDictionary(locale as 'en' | 'ja'))
 
   useEffect(() => {
-    getDictionary(locale as 'en' | 'ja').then(setDictionary)
+    const cached = getCachedDictionary(locale as 'en' | 'ja')
+    if (cached) {
+      // キャッシュがあれば即座に設定
+      setDictionary(cached)
+    } else {
+      // キャッシュがない場合のみ非同期ロード
+      getDictionary(locale as 'en' | 'ja').then(setDictionary)
+    }
+
+    // バックグラウンドで両言語をプリロード（言語切替時の遅延防止）
+    preloadDictionaries()
   }, [locale])
 
   const t: TranslationFunction = useMemo(() => {
