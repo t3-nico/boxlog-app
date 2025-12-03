@@ -16,7 +16,9 @@ import { useCallback, useState } from 'react'
 export function useTagOperations(tags: TagWithChildren[]) {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [showMergeModal, setShowMergeModal] = useState(false)
   const [selectedTag, setSelectedTag] = useState<TagWithChildren | null>(null)
+  const [mergeSourceTag, setMergeSourceTag] = useState<TagWithChildren | null>(null)
   const [createParentTag, setCreateParentTag] = useState<TagWithChildren | null>(null)
 
   // React Query mutations
@@ -163,11 +165,25 @@ export function useTagOperations(tags: TagWithChildren[]) {
     [renameTagMutation, updateTagOptimistically]
   )
 
+  // タグマージ
+  const handleMergeTag = useCallback((tag: TagWithChildren) => {
+    setMergeSourceTag(tag)
+    setShowMergeModal(true)
+  }, [])
+
+  // マージモーダルを閉じる
+  const handleCloseMergeModal = useCallback(() => {
+    setShowMergeModal(false)
+    setMergeSourceTag(null)
+  }, [])
+
   // モーダルを閉じる
   const handleCloseModals = useCallback(() => {
     setShowCreateModal(false)
     setShowEditModal(false)
+    setShowMergeModal(false)
     setSelectedTag(null)
+    setMergeSourceTag(null)
     setCreateParentTag(null)
   }, [])
 
@@ -175,7 +191,9 @@ export function useTagOperations(tags: TagWithChildren[]) {
     // State
     showCreateModal,
     showEditModal,
+    showMergeModal,
     selectedTag,
+    mergeSourceTag,
     createParentTag,
 
     // Handlers
@@ -186,6 +204,8 @@ export function useTagOperations(tags: TagWithChildren[]) {
     handleDeleteTag,
     handleMoveTag,
     handleRenameTag,
+    handleMergeTag,
+    handleCloseMergeModal,
     handleCloseModals,
   }
 }

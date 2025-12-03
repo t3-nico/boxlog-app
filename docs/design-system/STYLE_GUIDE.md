@@ -255,7 +255,8 @@ shadcn/uiは `hover:bg-accent hover:text-accent-foreground` パターンをデ�
 | 選択               | `bg-foreground/12`                   | サイドバー、リスト、タブ等 |
 | 塗りボタンホバー   | `hover:bg-primary/92`                | Primaryボタン              |
 | 破壊的ボタンホバー | `hover:bg-destructive/92`            | 削除ボタン                 |
-| 警告ボタン         | `bg-amber-600 hover:bg-amber-600/92` | アーカイブ等               |
+| 警告ボタンホバー   | `hover:bg-warning/92`                | アーカイブ等               |
+| 成功ボタンホバー   | `hover:bg-success/92`                | 完了・確認等               |
 | フォーカスリング   | `focus:ring-primary`                 | フォーカス表示             |
 | リンク             | `text-primary hover:underline`       | テキストリンク             |
 
@@ -303,6 +304,10 @@ shadcn/uiは `hover:bg-accent hover:text-accent-foreground` パターンをデ�
 /* 状態 */
 --destructive      /* 削除・エラー */
 --destructive-foreground
+--warning          /* 警告・注意（アーカイブ等） */
+--warning-foreground
+--success          /* 成功・完了 */
+--success-foreground
 
 /* ボーダー */
 --border           /* 境界線 */

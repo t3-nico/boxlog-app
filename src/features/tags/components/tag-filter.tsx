@@ -113,7 +113,7 @@ export const TagFilter = ({
         onClick={handleToggleOpen}
         className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors ${
           hasTagFilters
-            ? 'border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-600 dark:bg-blue-900/20 dark:text-blue-300'
+            ? 'border-primary/30 bg-primary/10 text-primary'
             : 'border-border hover:border-border bg-card text-foreground'
         }`}
       >
@@ -131,14 +131,14 @@ export const TagFilter = ({
           {selectedTags.map((tag) => (
             <span
               key={tag.id}
-              className="inline-flex items-center gap-1 rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+              className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium"
             >
               <TagIcon className="h-4 w-4" style={{ color: tag.color }} />
               {tag.name}
               <button
                 type="button"
                 onClick={createRemoveTagHandler(tag.id)}
-                className="ml-1 text-blue-500 hover:text-blue-700 dark:hover:text-blue-200"
+                className="text-primary/70 hover:text-primary ml-1"
                 aria-label={`Remove ${tag.name} filter`}
               >
                 <XMarkIcon className="h-4 w-4" />
@@ -167,11 +167,7 @@ export const TagFilter = ({
             <div className="border-border flex items-center justify-between border-b p-3">
               <h3 className="text-foreground text-sm font-medium">Filter by Tags</h3>
               {hasTagFilters === true && (
-                <button
-                  type="button"
-                  onClick={clearTags}
-                  className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
-                >
+                <button type="button" onClick={clearTags} className="text-primary hover:text-primary/80 text-xs">
                   Clear all
                 </button>
               )}

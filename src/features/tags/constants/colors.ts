@@ -26,6 +26,7 @@ export const TAG_COLOR_PALETTE = [
 
 // デフォルト値（フォールバック用）
 export const DEFAULT_TAG_COLOR = 'rgb(59 130 246)'
+export const DEFAULT_GROUP_COLOR = 'rgb(107 114 128)' // Gray
 
 // ヘルパー関数
 export function getTagPresetColor(index: number): string {

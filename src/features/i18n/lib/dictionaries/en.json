@@ -236,7 +236,17 @@
     "toast": {
       "eventDeleted": "Event deleted"
     },
-    "selectedCount": "{{count}} selected"
+    "selectedCount": "{{count}} selected",
+    "table": {
+      "rowsPerPage": "Rows per page",
+      "items": "items",
+      "total": "of ",
+      "page": "Page",
+      "firstPage": "First page",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "lastPage": "Last page"
+    }
   },
   "calendar": {
     "title": "Calendar",
@@ -1122,6 +1132,38 @@
       "deleting": "Deleting...",
       "permanentDelete": "Permanently Delete"
     },
+    "merge": {
+      "title": "Merge Tag",
+      "description": "Merge \"{{source}}\" into another tag",
+      "sourceTag": "Source Tag",
+      "targetTag": "Target Tag",
+      "selectTarget": "Select target tag",
+      "options": "Merge Options",
+      "mergeAssociations": "Migrate associations",
+      "mergeAssociationsDescription": "Move plans linked to source tag to target tag",
+      "deleteSource": "Delete source tag",
+      "deleteSourceDescription": "Delete source tag after merge is complete",
+      "warning": "This action cannot be undone",
+      "warningChildren": "Child tags of source tag will become children of target tag",
+      "confirm": "Merge",
+      "merging": "Merging...",
+      "success": "Tags merged ({{count}} associations migrated)",
+      "failed": "Failed to merge tags",
+      "cannotMergeSelf": "Cannot merge a tag into itself",
+      "noTargetSelected": "Please select a target tag"
+    },
+    "bulkMerge": {
+      "title": "Bulk Merge Tags",
+      "description": "Merge {{count}} tags into one",
+      "selectedTags": "Selected Tags",
+      "selectedTagsGroup": "Selected Tags",
+      "otherTagsGroup": "Other Tags",
+      "mergeTarget": "merge target",
+      "deleteSourceDescription": "Delete {{count}} source tags after merge",
+      "warningDetail": "{{count}} tags will be merged into the target tag",
+      "confirm": "Merge {{count}} tags",
+      "success": "Merged {{count}} tags into \"{{target}}\" ({{associations}} associations migrated)"
+    },
     "validation": {
       "nameRequired": "Tag name is required",
       "nameEmpty": "Please enter a tag name",
@@ -1201,7 +1243,10 @@
       "addDescription": "Add description...",
       "addGroup": "Add to group...",
       "changeColor": "Change color",
-      "tagColor": "Tag color"
+      "tagColor": "Tag color",
+      "columns": "Columns",
+      "columnSettings": "Column settings",
+      "lastUsed": "Last used"
     },
     "archive": {
       "restoreConfirm": "Restore tag \"{{name}}\"?\n\nRestored tags can be used for tagging again.",

@@ -236,7 +236,17 @@
     "toast": {
       "eventDeleted": "予定を削除しました"
     },
-    "selectedCount": "{{count}}件選択中"
+    "selectedCount": "{{count}}件選択中",
+    "table": {
+      "rowsPerPage": "表示件数",
+      "items": "件",
+      "total": "全",
+      "page": "ページ",
+      "firstPage": "最初のページ",
+      "previousPage": "前のページ",
+      "nextPage": "次のページ",
+      "lastPage": "最後のページ"
+    }
   },
   "calendar": {
     "title": "カレンダー",
@@ -1117,6 +1127,38 @@
       "deleting": "削除中...",
       "permanentDelete": "完全に削除"
     },
+    "merge": {
+      "title": "タグをマージ",
+      "description": "「{{source}}」を別のタグにマージします",
+      "sourceTag": "マージ元タグ",
+      "targetTag": "マージ先タグ",
+      "selectTarget": "マージ先のタグを選択",
+      "options": "マージオプション",
+      "mergeAssociations": "関連付けを移行する",
+      "mergeAssociationsDescription": "マージ元タグに紐づいているプランをマージ先タグに移行します",
+      "deleteSource": "マージ元タグを削除する",
+      "deleteSourceDescription": "マージ完了後にマージ元タグを削除します",
+      "warning": "この操作は取り消せません",
+      "warningChildren": "マージ元タグの子タグはマージ先タグの子タグになります",
+      "confirm": "マージする",
+      "merging": "マージ中...",
+      "success": "タグをマージしました（{{count}}件の関連付けを移行）",
+      "failed": "タグのマージに失敗しました",
+      "cannotMergeSelf": "同じタグにはマージできません",
+      "noTargetSelected": "マージ先タグを選択してください"
+    },
+    "bulkMerge": {
+      "title": "タグを一括マージ",
+      "description": "{{count}}個のタグを1つのタグに統合します",
+      "selectedTags": "選択されたタグ",
+      "selectedTagsGroup": "選択されたタグ",
+      "otherTagsGroup": "その他のタグ",
+      "mergeTarget": "マージ先",
+      "deleteSourceDescription": "マージ後、{{count}}個のマージ元タグを削除します",
+      "warningDetail": "{{count}}個のタグがマージ先タグに統合されます",
+      "confirm": "{{count}}個のタグをマージ",
+      "success": "{{count}}個のタグを「{{target}}」にマージしました（{{associations}}件の関連付けを移行）"
+    },
     "validation": {
       "nameRequired": "タグ名は必須です",
       "nameEmpty": "タグ名を入力してください",
@@ -1196,7 +1238,10 @@
       "addDescription": "説明を追加...",
       "addGroup": "グループを追加...",
       "changeColor": "カラーを変更",
-      "tagColor": "タグカラー"
+      "tagColor": "タグカラー",
+      "columns": "列",
+      "columnSettings": "列の表示設定",
+      "lastUsed": "最終使用日時"
     },
     "archive": {
       "restoreConfirm": "タグ「{{name}}」を復元しますか？\n\n復元されたタグは再び新規のタグ付けに使用できるようになります。",
