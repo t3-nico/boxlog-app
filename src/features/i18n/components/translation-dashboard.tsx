@@ -6,5 +6,10 @@
  * @see ./translation-dashboard/
  */
 
-export { TranslationDashboard } from './translation-dashboard'
-export type { TranslationHealth, TranslationKey, TranslationProgress, TranslationReport } from './translation-dashboard'
+export { TranslationDashboard } from './translation-dashboard/index'
+export type {
+  TranslationHealth,
+  TranslationKey,
+  TranslationProgress,
+  TranslationReport,
+} from './translation-dashboard/types'

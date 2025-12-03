@@ -1,4 +1,4 @@
-import { HOUR_HEIGHT } from '../../constants/grid.constants'
+import { HOUR_HEIGHT } from '../../../constants/grid.constants'
 
 /**
  * 15分単位でスナップする

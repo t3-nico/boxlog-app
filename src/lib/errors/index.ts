@@ -2,5 +2,14 @@
  * Error Utilities - Public API
  */
 
-export { getErrorMessage, normalizeError, getApiErrorMessage } from './get-error-message'
-export { SecureErrorHandler, type SecureErrorHandlerConfig } from './secure-error-handler'
+export { getApiErrorMessage, getErrorMessage, normalizeError } from './get-error-message'
+export {
+  formatErrorResponse,
+  hideInternalDetails,
+  logSecureError,
+  removeFilePaths,
+  removeStackTrace,
+  sanitizeDatabaseError,
+  sanitizeError,
+  type SecureErrorResponse,
+} from './secure-error-handler'

@@ -23,9 +23,10 @@ export function EmailSection() {
 
   return (
     <>
-      <SettingsCard title={t('settings.account.email')} description="ログインとアカウント回復に使用されます">
+      <SettingsCard title={t('settings.account.email')}>
         <div className="flex items-center justify-between">
           <div className="flex-1">
+            <p className="text-muted-foreground mb-2 text-xs">ログインとアカウント回復に使用されます</p>
             <p className="text-sm font-medium">{email}</p>
             <p className="text-muted-foreground text-xs">確認済み</p>
           </div>

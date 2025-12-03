@@ -10,8 +10,11 @@ import type { Locale } from '@/types/i18n'
 import type { TranslatedString } from '@/types/i18n-branded'
 import { markAsTranslated } from '@/types/i18n-branded'
 
-import { createTranslation, getDictionary, type Dictionary } from './index'
+import { createTranslation, getDictionary, type Dictionary, type TranslationFunction } from './index'
 import { getDirection, isRTL } from './rtl'
+
+// Re-export TranslationFunction for external use
+export type { TranslationFunction }
 
 // ブラウザの現在の言語を取得するフック（useSyncExternalStore使用）
 export const useCurrentLocale = (): Locale => {
@@ -241,10 +244,13 @@ export const useI18n = (providedLocale?: 'en' | 'ja') => {
     getDictionary(locale as 'en' | 'ja').then(setDictionary)
   }, [locale])
 
-  const t = useMemo(() => {
+  const t: TranslationFunction = useMemo(() => {
     if (!dictionary) {
-      // 辞書ロード中はキーをそのまま返す
-      return (key: string): TranslatedString => markAsTranslated(key)
+      // 辞書ロード中はキーをそのまま返す（TranslationFunctionの基本形を返す）
+      const fallback = ((key: string): TranslatedString => markAsTranslated(key)) as TranslationFunction
+      fallback.plural = (key: string, _count: number): TranslatedString => markAsTranslated(key)
+      fallback.icu = (message: string, _count: number): TranslatedString => markAsTranslated(message)
+      return fallback
     }
 
     return createTranslation(dictionary, locale as 'en' | 'ja')

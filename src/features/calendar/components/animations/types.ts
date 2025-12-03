@@ -113,8 +113,28 @@ export interface TaskCreateAnimationProps {
 
 export interface CalendarViewAnimationProps {
   children: ReactNode
-  viewType: 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
-  previousViewType?: 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
+  viewType:
+    | 'day'
+    | 'split-day'
+    | '3day'
+    | '5day'
+    | 'week'
+    | 'week-no-weekend'
+    | '2week'
+    | 'schedule'
+    | 'month'
+    | 'agenda'
+  previousViewType?:
+    | 'day'
+    | 'split-day'
+    | '3day'
+    | '5day'
+    | 'week'
+    | 'week-no-weekend'
+    | '2week'
+    | 'schedule'
+    | 'month'
+    | 'agenda'
 }
 
 export interface SkeletonAnimationProps {

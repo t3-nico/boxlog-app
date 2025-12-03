@@ -1,1 +1,1 @@
-export { useQualityReview } from './useQualityReview'
+export { useQualityReview, type UseQualityReviewProps } from './useQualityReview'

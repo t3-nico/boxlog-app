@@ -17,97 +17,91 @@
 
 // Components
 export {
+  GroupNameWithTooltip,
+  QuickTagCreateModal,
+  SortableGroupItem,
+  // Actions
+  TagActionMenuItems,
+  TagArchiveDialog,
+  TagBadge,
+  TagChip,
+  // Modals & Dialogs
+  TagCreateModal,
+  TagDeleteDialog,
+  TagEditDialog,
+  TagEditModal,
+  TagFilterChips,
+  TagFilter as TagFilterComponent,
+  TagGroupCreateModal,
+  TagGroupDeleteDialog,
+  // Groups
+  TagGroupsSection,
+  TagManagementModal,
+  TagSelectionActions,
+  // Selection & Display
+  TagSelector,
+  TagTreeView,
+  TagsList,
+  TagsPageHeader,
+  TagsSelectionBar,
   // Main
   TagsSidebar,
   TagsSidebarWrapper,
-  TagsPageHeader,
-  TagsSelectionBar,
-  // Selection & Display
-  TagSelector,
-  TagBadge,
-  TagsList,
-  TagTreeView,
-  TagFilter,
-  TagChip,
-  TagFilterChips,
-  // Groups
-  TagGroupsSection,
-  SortableGroupItem,
-  GroupNameWithTooltip,
-  // Modals & Dialogs
-  TagCreateModal,
-  TagEditModal,
-  TagEditDialog,
-  TagDeleteDialog,
-  TagArchiveDialog,
-  TagManagementModal,
-  QuickTagCreateModal,
-  TagGroupCreateModal,
-  TagGroupDeleteDialog,
-  // Actions
-  TagActionMenuItems,
-  TagSelectionActions,
 } from './components'
 
 export type { TagGroupsSectionRef } from './components'
 
 // Hooks
 export {
-  // Tags CRUD
-  useTags,
-  useTag,
-  useCreateTag,
-  useUpdateTag,
-  useDeleteTag,
-  useMoveTag,
-  useRenameTag,
-  useUpdateTagColor,
-  useOptimisticTagUpdate,
-  tagKeys,
-  // Tag Groups
-  useTagGroups,
-  useTagGroup,
-  useCreateTagGroup,
-  useUpdateTagGroup,
-  useDeleteTagGroup,
-  useReorderTagGroups,
+  itemTagsKeys,
   tagGroupKeys,
-  // Tag Group DnD
-  useTagGroupsDnd,
+  tagKeys,
+  tagStatsKeys,
+  useBatchUpdateItemTags,
+  useCreateItemTag,
+  useCreateTag,
+  useCreateTagGroup,
+  useDeleteItemTag,
+  useDeleteTag,
+  useDeleteTagGroup,
   // Item Tags
   useItemTags,
   useItemTagsByItem,
-  useItemsByTags,
-  useCreateItemTag,
-  useBatchUpdateItemTags,
-  useDeleteItemTag,
   useItemTagsOptimisticUpdate,
-  itemTagsKeys,
+  useItemsByTags,
+  useMoveTag,
+  useOptimisticTagUpdate,
+  useRenameTag,
+  useReorderTagGroups,
+  useSidebarTags,
+  useTag,
+  useTagExpandedState,
+  useTagGroup,
+  // Tag Groups
+  useTagGroups,
+  // Tag Group DnD
+  useTagGroupsDnd,
+  useTagItemAnimation,
   // Operations
   useTagOperations,
-  // Stats
-  useTagStats,
-  useTagUsageCounts,
-  useSidebarTags,
-  useTagExpandedState,
-  useTagItemAnimation,
-  useTagStatsDebug,
-  tagStatsKeys,
   // Realtime
   useTagRealtime,
+  // Stats
+  useTagStats,
+  useTagStatsDebug,
+  useTagUsageCounts,
+  // Tags CRUD
+  useTags,
+  useUpdateTag,
+  useUpdateTagColor,
+  useUpdateTagGroup,
 } from './hooks'
 
 // Stores
-export { useTagStore, tagColors, colorCategories } from './stores'
+export { colorCategories, tagColors, useTagStore } from './stores'
 
 // Constants
-export {
-  TAG_PRESET_COLORS,
-  TAG_COLOR_PALETTE,
-  DEFAULT_TAG_COLOR,
-  tagIconMapping,
-  tagIconCategories,
-} from './constants'
+export { DEFAULT_TAG_COLOR, TAG_COLOR_PALETTE, TAG_PRESET_COLORS, tagIconCategories, tagIconMapping } from './constants'
 
 export type { TagIconName } from './constants'
 
@@ -116,17 +110,17 @@ export { TagsPageProvider, useTagsPageContext } from './contexts/TagsPageContext
 
 // Types
 export type {
+  CreateTagInput,
   Tag,
-  TagWithChildren,
+  TagFilter,
   TagGroup,
   TagLevel,
-  CreateTagInput,
-  UpdateTagInput,
+  TagOption,
+  TagSortField,
+  TagSortOptions,
+  TagSortOrder,
   TagUsage,
   TagUsageStats,
-  TagOption,
-  TagFilter,
-  TagSortField,
-  TagSortOrder,
-  TagSortOptions,
+  TagWithChildren,
+  UpdateTagInput,
 } from './types'

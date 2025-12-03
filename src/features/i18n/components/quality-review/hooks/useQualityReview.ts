@@ -4,14 +4,14 @@ import { useCallback, useEffect, useState } from 'react'
 
 import type { QualityAssessment, QualityIssue, QualityMetrics, ReviewWorkflow } from '../types'
 
-interface UseQualityReviewProps {
+export interface UseQualityReviewProps {
   translationKey: string
   language: string
   originalText: string
   translatedText: string
-  initialWorkflow?: ReviewWorkflow
-  onReviewSubmit?: (assessment: QualityAssessment, comments: string) => void
-  onReviewUpdate?: (workflow: ReviewWorkflow) => void
+  initialWorkflow?: ReviewWorkflow | undefined
+  onReviewSubmit?: ((assessment: QualityAssessment, comments: string) => void) | undefined
+  onReviewUpdate?: ((workflow: ReviewWorkflow) => void) | undefined
 }
 
 export function useQualityReview({

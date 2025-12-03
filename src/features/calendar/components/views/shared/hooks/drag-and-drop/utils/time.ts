@@ -1,7 +1,7 @@
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
-import { HOUR_HEIGHT } from '../../constants/grid.constants'
-import { formatTimeRange } from '../../utils/dateHelpers'
+import { HOUR_HEIGHT } from '../../../constants/grid.constants'
+import { formatTimeRange } from '../../../utils/dateHelpers'
 
 import type { DragDataRef } from '../types'
 
@@ -139,11 +139,7 @@ export function calculateEventDuration(
 /**
  * 時間表示を更新する
  */
-export function updateTimeDisplay(
-  dragElement: HTMLElement | null,
-  previewStartTime: Date,
-  previewEndTime: Date
-): void {
+export function updateTimeDisplay(dragElement: HTMLElement | null, previewStartTime: Date, previewEndTime: Date): void {
   if (!dragElement) return
 
   const timeElement = dragElement.querySelector('.event-time')

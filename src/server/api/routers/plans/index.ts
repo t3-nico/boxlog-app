@@ -9,19 +9,9 @@ import { createTRPCRouter } from '@/server/api/trpc'
 
 import { activitiesProcedure, createActivityProcedure } from './activities'
 import { bulkDeleteProcedure, bulkUpdateProcedure } from './bulk'
-import {
-  createProcedure,
-  deleteProcedure,
-  getByIdProcedure,
-  listProcedure,
-  updateProcedure,
-} from './crud'
-import {
-  addTagProcedure,
-  getTagPlanCountsProcedure,
-  getTagsProcedure,
-  removeTagProcedure,
-} from './plan-tags'
+import { createProcedure, deleteProcedure, getByIdProcedure, listProcedure, updateProcedure } from './crud'
+import { createInstanceProcedure, deleteInstanceProcedure, getInstancesProcedure } from './instances'
+import { addTagProcedure, getTagPlanCountsProcedure, getTagsProcedure, removeTagProcedure } from './plan-tags'
 import { getStatsProcedure } from './statistics'
 import { tagsRouter } from './tags'
 
@@ -52,4 +42,9 @@ export const plansRouter = createTRPCRouter({
   // Activities
   activities: activitiesProcedure,
   createActivity: createActivityProcedure,
+
+  // Instances (exceptions for recurring plans)
+  getInstances: getInstancesProcedure,
+  createInstance: createInstanceProcedure,
+  deleteInstance: deleteInstanceProcedure,
 })

@@ -12,6 +12,7 @@ export {
   addBreakingChange,
   breakingChangeManager,
   BreakingChangeManager,
+  createMigrationPlan,
   findBreakingChanges,
   generateVersionSummary,
 } from './manager/index'
