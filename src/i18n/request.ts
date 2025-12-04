@@ -12,14 +12,14 @@ const NAMESPACES = [
   'board',
   'calendar',
   'common',
-  'errors',
+  'error',
   'legal',
   'navigation',
-  'notifications',
+  'notification',
   'settings',
   'stats',
   'table',
-  'tags',
+  'tag',
 ] as const
 
 /**

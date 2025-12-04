@@ -1,5 +1,5 @@
 {
-  "notifications": {
+  "notification": {
     "title": "Notifications",
     "tabs": {
       "all": "All",

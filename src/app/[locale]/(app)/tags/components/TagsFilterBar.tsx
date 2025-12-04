@@ -20,21 +20,21 @@ export function TagsFilterBar({ onCreateTag, t }: TagsFilterBarProps) {
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="h-8 gap-1">
               <Filter className="h-3.5 w-3.5" />
-              <span>{t('tags.page.filter.type')}</span>
+              <span>{t('tag.page.filter.type')}</span>
               <ChevronDown className="h-3.5 w-3.5 opacity-50" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
-            <DropdownMenuItem>{t('tags.page.filter.all')}</DropdownMenuItem>
-            <DropdownMenuItem>{t('tags.page.filter.unused')}</DropdownMenuItem>
-            <DropdownMenuItem>{t('tags.page.filter.frequentlyUsed')}</DropdownMenuItem>
+            <DropdownMenuItem>{t('tag.page.filter.all')}</DropdownMenuItem>
+            <DropdownMenuItem>{t('tag.page.filter.unused')}</DropdownMenuItem>
+            <DropdownMenuItem>{t('tag.page.filter.frequentlyUsed')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
       <div className="flex h-8 items-center">
         <Button onClick={onCreateTag} size="sm" className="h-8">
           <Plus className="mr-2 size-4" />
-          {t('tags.page.createTag')}
+          {t('tag.page.createTag')}
         </Button>
       </div>
     </div>

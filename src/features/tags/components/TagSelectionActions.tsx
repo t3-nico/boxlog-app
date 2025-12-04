@@ -68,7 +68,7 @@ export function TagSelectionActions({
                 </Button>
               </DropdownMenuTrigger>
             </TooltipTrigger>
-            <TooltipContent>{t('tags.page.moveToGroup')}</TooltipContent>
+            <TooltipContent>{t('tag.page.moveToGroup')}</TooltipContent>
           </Tooltip>
           <DropdownMenuContent className="min-w-48">
             <DropdownMenuItem
@@ -80,7 +80,7 @@ export function TagSelectionActions({
               }}
             >
               <FolderX className="mr-2 h-4 w-4 text-neutral-600 dark:text-neutral-400" />
-              {t('tags.page.noGroup')}
+              {t('tag.page.noGroup')}
             </DropdownMenuItem>
             {groups.map((group) => (
               <DropdownMenuItem
@@ -116,7 +116,7 @@ export function TagSelectionActions({
               <Archive className="size-4" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>{t('tags.page.archive')}</TooltipContent>
+          <TooltipContent>{t('tag.page.archive')}</TooltipContent>
         </Tooltip>
       )}
 
@@ -132,7 +132,7 @@ export function TagSelectionActions({
             <Trash2 className="size-4" />
           </Button>
         </TooltipTrigger>
-        <TooltipContent>{t('tags.page.delete')}</TooltipContent>
+        <TooltipContent>{t('tag.page.delete')}</TooltipContent>
       </Tooltip>
 
       {/* その他メニュー（単一選択時のみ有効） */}

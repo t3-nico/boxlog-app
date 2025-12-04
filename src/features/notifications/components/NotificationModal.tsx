@@ -25,24 +25,24 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
   const mockNotifications = [
     {
       id: '1',
-      title: t('notifications.messages.meetingReminder'),
-      message: t('notifications.messages.meetingStartsIn'),
+      title: t('notification.messages.meetingReminder'),
+      message: t('notification.messages.meetingStartsIn'),
       timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5分前
       read: false,
       type: 'reminder',
     },
     {
       id: '2',
-      title: t('notifications.messages.taskCompleted'),
-      message: t('notifications.messages.taskCompletedMessage'),
+      title: t('notification.messages.taskCompleted'),
+      message: t('notification.messages.taskCompletedMessage'),
       timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30分前
       read: true,
       type: 'task',
     },
     {
       id: '3',
-      title: t('notifications.messages.eventNotification'),
-      message: t('notifications.messages.eventAddedMessage'),
+      title: t('notification.messages.eventNotification'),
+      message: t('notification.messages.eventAddedMessage'),
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2時間前
       read: false,
       type: 'event',
@@ -64,7 +64,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
       onKeyDown={(e) => {
         if (e.key === 'Escape') onClose()
       }}
-      aria-label={t('notifications.aria.modalBackdrop')}
+      aria-label={t('notification.aria.modalBackdrop')}
     >
       {/* Backdrop */}
       <div
@@ -75,7 +75,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         onKeyDown={(e) => {
           if (e.key === 'Escape') onClose()
         }}
-        aria-label={t('notifications.aria.closeModal')}
+        aria-label={t('notification.aria.closeModal')}
       />
 
       {/* Modal */}
@@ -95,7 +95,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         <div className={cn('flex items-center justify-between', 'border-border border-b', 'p-4')}>
           <div className="flex items-center gap-2">
             <Bell className={cn('h-5 w-5', 'text-foreground')} />
-            <h1 className={cn('text-3xl font-bold tracking-tight', 'text-foreground')}>{t('notifications.title')}</h1>
+            <h1 className={cn('text-3xl font-bold tracking-tight', 'text-foreground')}>{t('notification.title')}</h1>
           </div>
 
           <div className="flex items-center gap-2">
@@ -137,7 +137,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               'transition-all duration-200'
             )}
           >
-            {t('notifications.tabs.all')}
+            {t('notification.tabs.all')}
           </button>
           <button
             type="button"
@@ -148,7 +148,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               'transition-all duration-200'
             )}
           >
-            {t('notifications.tabs.unread')}
+            {t('notification.tabs.unread')}
             {mockNotifications.filter((n) => !n.read).length > 0 && (
               <span
                 className={cn(
@@ -170,7 +170,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
             <div className={cn('flex flex-col items-center justify-center py-16', 'text-muted-foreground')}>
               <BellOff className={cn('h-6 w-6', 'mb-3')} />
               <p className="text-sm">
-                {activeTab === 'unread' ? t('notifications.empty.unread') : t('notifications.empty.all')}
+                {activeTab === 'unread' ? t('notification.empty.unread') : t('notification.empty.all')}
               </p>
             </div>
           ) : (
@@ -235,7 +235,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                 'transition-all duration-200'
               )}
             >
-              {t('notifications.actions.markAllAsRead')}
+              {t('notification.actions.markAllAsRead')}
             </button>
           </div>
         )}

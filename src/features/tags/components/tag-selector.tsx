@@ -157,7 +157,7 @@ export const TagSelector = ({
                 ))
               ) : (
                 <div className="p-2 text-center text-sm text-gray-500">
-                  {searchQuery ? t('tags.search.noTags') : t('tags.search.noMoreTags')}
+                  {searchQuery ? t('tag.search.noTags') : t('tag.search.noMoreTags')}
                 </div>
               )}
             </div>

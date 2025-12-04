@@ -31,24 +31,24 @@ function DefaultErrorFallback({ onRetry, onReload }: { onRetry: () => void; onRe
     <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-6">
       <div className="text-center">
         <div className="text-destructive mb-4 text-6xl">⚠️</div>
-        <h2 className="text-destructive mb-2 text-3xl font-bold tracking-tight">{t('errors.boundary.title')}</h2>
+        <h2 className="text-destructive mb-2 text-3xl font-bold tracking-tight">{t('error.boundary.title')}</h2>
         <p className="text-foreground mb-4">
-          {t('errors.boundary.description')}
+          {t('error.boundary.description')}
           <br />
-          {t('errors.boundary.autoReport')}
+          {t('error.boundary.autoReport')}
         </p>
         <div className="flex justify-center gap-2">
           <button
             onClick={onRetry}
             className="bg-primary text-primary-foreground hover:bg-primary/92 rounded px-4 py-2 transition-colors"
           >
-            {t('errors.boundary.retry')}
+            {t('error.boundary.retry')}
           </button>
           <button
             onClick={onReload}
             className="bg-muted text-muted-foreground hover:bg-muted/80 rounded px-4 py-2 transition-colors"
           >
-            {t('errors.boundary.reload')}
+            {t('error.boundary.reload')}
           </button>
         </div>
       </div>
@@ -64,11 +64,11 @@ function DevErrorFallback({ componentName }: { componentName?: string | undefine
 
   return (
     <div className="border-border bg-muted rounded-lg border p-6">
-      <h3 className="text-foreground mb-2 text-2xl font-bold tracking-tight">{t('errors.boundary.devTitle')}</h3>
+      <h3 className="text-foreground mb-2 text-2xl font-bold tracking-tight">{t('error.boundary.devTitle')}</h3>
       <p className="text-foreground mb-2">
-        {t('errors.boundary.component')}: {componentName || t('errors.boundary.unknown')}
+        {t('error.boundary.component')}: {componentName || t('error.boundary.unknown')}
       </p>
-      <p className="text-muted-foreground text-sm">{t('errors.boundary.checkConsole')}</p>
+      <p className="text-muted-foreground text-sm">{t('error.boundary.checkConsole')}</p>
     </div>
   )
 }
@@ -81,12 +81,12 @@ function FeatureErrorFallback({ featureName }: { featureName: string }) {
 
   return (
     <div className="border-border bg-muted rounded border p-4">
-      <p className="text-foreground text-center">{t('errors.boundary.featureError', { feature: featureName })}</p>
+      <p className="text-foreground text-center">{t('error.boundary.featureError', { feature: featureName })}</p>
       <button
         onClick={() => window.location.reload()}
         className="bg-primary text-primary-foreground hover:bg-primary/92 mx-auto mt-2 block rounded px-3 py-1 text-sm transition-colors"
       >
-        {t('errors.boundary.reload')}
+        {t('error.boundary.reload')}
       </button>
     </div>
   )

@@ -99,7 +99,7 @@ export function TagRow({
             <Checkbox
               checked={isSelected}
               onCheckedChange={() => onSelect(tag.id)}
-              aria-label={t('tags.page.selectTag', { name: tag.name })}
+              aria-label={t('tag.page.selectTag', { name: tag.name })}
             />
           </TableCell>
           <TableCell className="text-muted-foreground font-mono text-sm" style={{ width: `${columnWidths.id}px` }}>
@@ -112,12 +112,12 @@ export function TagRow({
                   <button
                     type="button"
                     className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                    aria-label={t('tags.page.changeColor')}
+                    aria-label={t('tag.page.changeColor')}
                   >
                     <Hash
                       className="h-4 w-4"
                       style={{ color: tag.color || DEFAULT_TAG_COLOR }}
-                      aria-label={t('tags.page.tagColor')}
+                      aria-label={t('tag.page.tagColor')}
                     />
                   </button>
                 </PopoverTrigger>
@@ -154,7 +154,7 @@ export function TagRow({
             <span className="truncate">
               {tag.description || (
                 <span className="opacity-0 transition-opacity group-hover:opacity-100">
-                  {t('tags.page.addDescription')}
+                  {t('tag.page.addDescription')}
                 </span>
               )}
             </span>
@@ -169,7 +169,7 @@ export function TagRow({
               </div>
             ) : (
               <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">
-                {t('tags.page.addGroup')}
+                {t('tag.page.addGroup')}
               </span>
             )}
           </TableCell>

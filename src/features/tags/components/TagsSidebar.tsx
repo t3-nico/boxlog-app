@@ -148,7 +148,7 @@ export function TagsSidebar({
       router.push(`/${locale}/tags/g-${result.group_number}`)
     } catch (error) {
       console.error('Failed to create tag group:', error)
-      toast.error(t('tags.toast.groupCreateFailed'))
+      toast.error(t('tag.toast.groupCreateFailed'))
     }
   }, [newGroupName, newGroupColor, createGroupMutation, router, pathname, setIsCreatingGroup, t])
 
@@ -158,7 +158,7 @@ export function TagsSidebar({
 
     try {
       await deleteGroupMutation.mutateAsync(deletingGroup.id)
-      toast.success(t('tags.toast.groupDeleted', { name: deletingGroup.name }))
+      toast.success(t('tag.toast.groupDeleted', { name: deletingGroup.name }))
       setDeletingGroup(null)
 
       // 削除したグループのページを表示中だったら、タグ一覧に戻る
@@ -188,7 +188,7 @@ export function TagsSidebar({
   const handleSaveEditing = useCallback(
     async (group: TagGroup) => {
       if (!editingGroupName.trim()) {
-        toast.error(t('tags.toast.groupNameRequired'))
+        toast.error(t('tag.toast.groupNameRequired'))
         return
       }
 
@@ -201,12 +201,12 @@ export function TagsSidebar({
             color: group.color,
           },
         })
-        toast.success(t('tags.toast.groupNameChanged', { name: editingGroupName }))
+        toast.success(t('tag.toast.groupNameChanged', { name: editingGroupName }))
         setEditingGroupId(null)
         setEditingGroupName('')
       } catch (error) {
         console.error('Failed to update tag group:', error)
-        toast.error(t('tags.toast.groupNameChangeFailed'))
+        toast.error(t('tag.toast.groupNameChangeFailed'))
       }
     },
     [editingGroupName, updateGroupMutation, t]
@@ -251,7 +251,7 @@ export function TagsSidebar({
         deleteGroupMutation
           .mutateAsync(group.id)
           .then(() => {
-            toast.success(t('tags.toast.groupDeleted', { name: group.name }))
+            toast.success(t('tag.toast.groupDeleted', { name: group.name }))
             // 削除したグループのページを表示中だったら、タグ一覧に戻る
             if (currentGroupNumber === group.group_number) {
               const locale = pathname?.split('/')[1] || 'ja'
@@ -260,7 +260,7 @@ export function TagsSidebar({
           })
           .catch((error) => {
             console.error('Failed to delete tag group:', error)
-            toast.error(t('tags.toast.groupDeleteFailed'))
+            toast.error(t('tag.toast.groupDeleteFailed'))
           })
       } else {
         // タグが1件以上の場合は確認ダイアログを表示
@@ -319,7 +319,7 @@ export function TagsSidebar({
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <FolderX className="h-4 w-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
-            <span>{t('tags.sidebar.uncategorized')}</span>
+            <span>{t('tag.sidebar.uncategorized')}</span>
           </div>
           <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>
         </div>
@@ -361,7 +361,7 @@ export function TagsSidebar({
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Tags className="h-4 w-4 shrink-0" />
-                <span>{t('tags.sidebar.allTags')}</span>
+                <span>{t('tag.sidebar.allTags')}</span>
               </div>
               <span className="text-muted-foreground text-xs">{activeTagsCount}</span>
             </div>
@@ -381,7 +381,7 @@ export function TagsSidebar({
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Archive className="h-4 w-4 shrink-0" />
-                <span>{t('tags.sidebar.archive')}</span>
+                <span>{t('tag.sidebar.archive')}</span>
               </div>
               <span className="text-muted-foreground text-xs">{archivedTagsCount}</span>
             </div>
@@ -389,7 +389,7 @@ export function TagsSidebar({
 
           {/* グループセクション */}
           <div className="text-muted-foreground mt-4 mb-1 flex items-center justify-between px-3 py-2">
-            <span className="text-xs font-semibold uppercase">{t('tags.sidebar.groups')}</span>
+            <span className="text-xs font-semibold uppercase">{t('tag.sidebar.groups')}</span>
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
@@ -403,14 +403,14 @@ export function TagsSidebar({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top" sideOffset={4}>
-                  <p>{t('tags.page.createGroup')}</p>
+                  <p>{t('tag.page.createGroup')}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
 
           {reorderedGroups.length === 0 && !isCreating ? (
-            <div className="text-muted-foreground px-3 py-2 text-xs">{t('tags.sidebar.noGroups')}</div>
+            <div className="text-muted-foreground px-3 py-2 text-xs">{t('tag.sidebar.noGroups')}</div>
           ) : (
             <>
               <DndContext
@@ -464,7 +464,7 @@ export function TagsSidebar({
                         <button
                           type="button"
                           className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                          aria-label={t('tags.sidebar.changeColor')}
+                          aria-label={t('tag.sidebar.changeColor')}
                         >
                           <Folder className="h-4 w-4 shrink-0" style={{ color: newGroupColor }} />
                         </button>
@@ -485,7 +485,7 @@ export function TagsSidebar({
                           handleCancelCreating()
                         }
                       }}
-                      placeholder={t('tags.sidebar.groupNamePlaceholder')}
+                      placeholder={t('tag.sidebar.groupNamePlaceholder')}
                       autoFocus
                       className="h-auto flex-1 border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
                     />

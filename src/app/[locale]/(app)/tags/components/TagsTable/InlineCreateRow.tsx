@@ -81,9 +81,9 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
               <button
                 type="button"
                 className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                aria-label={t('tags.page.changeColor')}
+                aria-label={t('tag.page.changeColor')}
               >
-                <Hash className="h-4 w-4" style={{ color: newTagColor }} aria-label={t('tags.page.tagColor')} />
+                <Hash className="h-4 w-4" style={{ color: newTagColor }} aria-label={t('tag.page.tagColor')} />
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-3" align="start">
@@ -94,7 +94,7 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
             value={newTagName}
             onChange={(e) => onNameChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={t('tags.page.name')}
+            placeholder={t('tag.page.name')}
             autoFocus
             className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
           />
@@ -105,7 +105,7 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
           value={newTagDescription}
           onChange={(e) => onDescriptionChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={t('tags.page.description')}
+          placeholder={t('tag.page.description')}
           className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
         />
       </TableCell>

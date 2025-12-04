@@ -52,7 +52,7 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
         />
         <div className="flex flex-col items-center gap-1">
           <NotificationDropdown />
-          <span className="text-center text-xs leading-tight">{t('notifications.title')}</span>
+          <span className="text-center text-xs leading-tight">{t('notification.title')}</span>
         </div>
         <Item icon={Search} label={t('actions.search')} url="#" isActive={false} onClick={handleSearchClick} />
         <Item

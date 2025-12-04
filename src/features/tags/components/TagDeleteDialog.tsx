@@ -76,14 +76,14 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
     <AlertDialog open={!!tag} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent className="max-w-3xl gap-0 p-6">
         <AlertDialogHeader className="mb-4">
-          <AlertDialogTitle>{t('tags.delete.confirmTitleWithName', { name: tag?.name || '' })}</AlertDialogTitle>
+          <AlertDialogTitle>{t('tag.delete.confirmTitleWithName', { name: tag?.name || '' })}</AlertDialogTitle>
         </AlertDialogHeader>
 
         <div className="space-y-3">
           {/* 警告 */}
           <div className="bg-destructive/10 text-destructive border-destructive/20 flex items-center gap-2 rounded-xl border p-3">
             <AlertTriangle className="h-4 w-4 shrink-0" />
-            <p className="text-sm font-medium">{t('tags.delete.warningIrreversible')}</p>
+            <p className="text-sm font-medium">{t('tag.delete.warningIrreversible')}</p>
           </div>
 
           {/* 使用状況 */}
@@ -93,31 +93,31 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
             </div>
           ) : usage ? (
             <div className="bg-muted rounded-xl p-4">
-              <p className="mb-2 text-sm font-medium">{t('tags.delete.affectedItems')}:</p>
+              <p className="mb-2 text-sm font-medium">{t('tag.delete.affectedItems')}:</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
                 <li>
-                  • {t('tags.delete.plans')}: {t('tags.delete.itemsCount', { count: usage.planCount })}
+                  • {t('tag.delete.plans')}: {t('tag.delete.itemsCount', { count: usage.planCount })}
                 </li>
                 <li>
-                  • {t('tags.delete.events')}: {t('tags.delete.itemsCount', { count: usage.eventCount })}
+                  • {t('tag.delete.events')}: {t('tag.delete.itemsCount', { count: usage.eventCount })}
                 </li>
                 <li>
-                  • {t('tags.delete.tasks')}: {t('tags.delete.itemsCount', { count: usage.taskCount })}
+                  • {t('tag.delete.tasks')}: {t('tag.delete.itemsCount', { count: usage.taskCount })}
                 </li>
               </ul>
               <p className="text-muted-foreground mt-2 text-sm font-medium">
-                {t('tags.delete.total')}: {t('tags.delete.itemsCount', { count: usage.totalCount })}
+                {t('tag.delete.total')}: {t('tag.delete.itemsCount', { count: usage.totalCount })}
               </p>
             </div>
           ) : null}
 
           {/* 削除後の処理 */}
           <div className="space-y-2">
-            <p className="text-sm font-medium">{t('tags.delete.afterDeletion')}:</p>
+            <p className="text-sm font-medium">{t('tag.delete.afterDeletion')}:</p>
             <ul className="text-muted-foreground space-y-1 text-sm">
-              <li>✓ {t('tags.delete.willBeDeleted', { number: tag?.tag_number || '' })}</li>
-              <li>✓ {t('tags.delete.willBeRemovedFromItems')}</li>
-              <li>✓ {t('tags.delete.willBeRemovedFromStats')}</li>
+              <li>✓ {t('tag.delete.willBeDeleted', { number: tag?.tag_number || '' })}</li>
+              <li>✓ {t('tag.delete.willBeRemovedFromItems')}</li>
+              <li>✓ {t('tag.delete.willBeRemovedFromStats')}</li>
             </ul>
           </div>
 
@@ -125,7 +125,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
           {requiresConfirmation && (
             <div className="space-y-2">
               <Label htmlFor="confirm-input" className="text-sm font-medium">
-                {t('tags.delete.confirmInputLabel', { name: tag?.name || '' })}
+                {t('tag.delete.confirmInputLabel', { name: tag?.name || '' })}
               </Label>
               <Input
                 id="confirm-input"
@@ -139,13 +139,13 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
         </div>
 
         <AlertDialogFooter className="mt-6">
-          <AlertDialogCancel disabled={isDeleting}>{t('tags.actions.cancel')}</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>{t('tag.actions.cancel')}</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={!canDelete || isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isDeleting ? t('tags.delete.deleting') : t('tags.delete.permanentDelete')}
+            {isDeleting ? t('tag.delete.deleting') : t('tag.delete.permanentDelete')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

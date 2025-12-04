@@ -1,5 +1,5 @@
 {
-  "tags": {
+  "tag": {
     "form": {
       "nameRequired": "Tag name is required",
       "nameMaxLength": "Tag name must be 50 characters or less",

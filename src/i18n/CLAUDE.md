@@ -26,7 +26,10 @@ src/i18n/
 | ルール | 例 |
 |--------|-----|
 | **1ファイル = 1ドメイン** | `calendar.json` → `calendar` ドメインのみ |
+| **単数形** | `tag.json` ✅ / `tags.json` ❌ |
 | **camelCase** | `aiChat.json` ✅ / `ai-chat.json` ❌ |
+
+**例外**: `settings`, `stats` は英語で複数形が自然なため許容
 
 ### キー構造
 
@@ -37,9 +40,14 @@ domain.section.key
 | 階層 | 説明 | 例 |
 |------|------|-----|
 | 1 | ドメイン（ファイル名と一致） | `calendar` |
-| 2 | セクション/機能 | `toolbar`, `events` |
+| 2 | 画面名 or UIセクション名 | `toolbar`, `modal`, `form` |
 | 3 | 具体的な意味 | `title`, `description` |
 | 4 | 特殊ケースのみ | `calendar.toolbar.view.month` |
+
+**section の許容値**:
+- 画面名: `login`, `dashboard`, `detail`, `list`
+- UIセクション: `header`, `sidebar`, `modal`, `form`, `toolbar`
+- 例外: `validation`, `errors`, `actions` は概念セクションとして許容
 
 ### 良い例 / 悪い例
 
@@ -111,14 +119,14 @@ t('toolbar.today')  // calendar.toolbar.today
 | `board` | ボード |
 | `calendar` | カレンダー |
 | `common` | 共通UI |
-| `errors` | エラーメッセージ |
+| `error` | エラーメッセージ |
 | `legal` | 法的文書 |
 | `navigation` | ナビゲーション |
-| `notifications` | 通知 |
-| `settings` | 設定 |
-| `stats` | 統計 |
+| `notification` | 通知 |
+| `settings` | 設定（例外: 複数形） |
+| `stats` | 統計（例外: 複数形） |
 | `table` | テーブル |
-| `tags` | タグ |
+| `tag` | タグ |
 
 ## 新規ネームスペース追加
 

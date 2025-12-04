@@ -69,21 +69,21 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
 
           {tag.description && (
             <div className="mb-6">
-              <h2 className="mb-2 text-lg font-semibold">{t('tags.detail.description')}</h2>
+              <h2 className="mb-2 text-lg font-semibold">{t('tag.detail.description')}</h2>
               <p className="text-muted-foreground">{tag.description}</p>
             </div>
           )}
 
           {/* プラン一覧 */}
           <div>
-            <h2 className="mb-4 text-lg font-semibold">{t('tags.detail.linkedPlans', { count: plans.length })}</h2>
+            <h2 className="mb-4 text-lg font-semibold">{t('tag.detail.linkedPlans', { count: plans.length })}</h2>
             {isLoadingPlans ? (
               <div className="flex h-32 items-center justify-center">
                 <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
               </div>
             ) : plans.length === 0 ? (
               <div className="border-border rounded-xl border p-6">
-                <p className="text-muted-foreground text-center">{t('tags.detail.noLinkedPlans')}</p>
+                <p className="text-muted-foreground text-center">{t('tag.detail.noLinkedPlans')}</p>
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

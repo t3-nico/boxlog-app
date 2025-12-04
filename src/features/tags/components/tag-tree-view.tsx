@@ -204,7 +204,7 @@ const TagTreeNode = ({
                     className="text-foreground hover:bg-foreground/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <PencilIcon className="h-4 w-4" data-slot="icon" />
-                    {t('tags.actions.edit')}
+                    {t('tag.actions.edit')}
                   </button>
                   <button
                     type="button"
@@ -212,7 +212,7 @@ const TagTreeNode = ({
                     className="text-foreground hover:bg-foreground/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <PencilIcon className="h-4 w-4" data-slot="icon" />
-                    {t('tags.actions.rename')}
+                    {t('tag.actions.rename')}
                   </button>
                   <button
                     type="button"
@@ -220,7 +220,7 @@ const TagTreeNode = ({
                     className="text-destructive hover:bg-destructive/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <TrashIcon className="h-4 w-4" data-slot="icon" />
-                    {t('tags.actions.delete')}
+                    {t('tag.actions.delete')}
                   </button>
                 </div>
               )}
@@ -295,14 +295,14 @@ export const TagTreeView = ({
     return (
       <div className="py-8 text-center">
         <TagIcon className="text-muted-foreground mx-auto mb-4 h-12 w-12" data-slot="icon" />
-        <p className="text-muted-foreground mb-4">{t('tags.messages.noTagsYet')}</p>
+        <p className="text-muted-foreground mb-4">{t('tag.messages.noTagsYet')}</p>
         <button
           type="button"
           onClick={handleCreateRootTag}
           className="bg-primary text-primary-foreground hover:bg-primary/92 inline-flex items-center gap-2 rounded-lg px-4 py-2 transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
-          {t('tags.actions.createFirst')}
+          {t('tag.actions.createFirst')}
         </button>
       </div>
     )
@@ -313,7 +313,7 @@ export const TagTreeView = ({
       {/* ヘッダー */}
       <div className="border-border flex items-center justify-between border-b px-3 py-2">
         <h3 className="text-foreground text-sm font-medium">
-          {t('tags.messages.tagList')} ({tags.length})
+          {t('tag.messages.tagList')} ({tags.length})
         </h3>
         <button
           type="button"
@@ -321,7 +321,7 @@ export const TagTreeView = ({
           className="text-primary hover:bg-foreground/8 inline-flex items-center gap-1 rounded px-2 py-1 text-sm transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
-          {t('tags.messages.newTag')}
+          {t('tag.messages.newTag')}
         </button>
       </div>
 

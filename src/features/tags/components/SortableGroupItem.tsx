@@ -122,7 +122,7 @@ export function SortableGroupItem({
                   e.stopPropagation()
                 }}
                 className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                aria-label={t('tags.sidebar.changeColorAria', { name: group.name })}
+                aria-label={t('tag.sidebar.changeColorAria', { name: group.name })}
               >
                 <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || '#6B7280' }} />
               </button>
@@ -179,12 +179,12 @@ export function SortableGroupItem({
                 }}
               >
                 <Edit className="mr-2 h-4 w-4" />
-                {t('tags.sidebar.editName')}
+                {t('tag.sidebar.editName')}
               </DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <Palette className="mr-2 h-4 w-4" />
-                  {t('tags.sidebar.changeColor')}
+                  {t('tag.sidebar.changeColor')}
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className="w-auto p-3">
                   <ColorPalettePicker
@@ -202,7 +202,7 @@ export function SortableGroupItem({
                 className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                {t('tags.sidebar.delete')}
+                {t('tag.sidebar.delete')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -30,9 +30,9 @@ export default function RootError({ error, reset }: ErrorProps) {
         className="aspect-video w-240 rounded-xl object-cover dark:invert"
       />
       <div className="text-center">
-        <h1 className="mb-4 text-3xl font-bold">{t('errors.500.title')}</h1>
-        <h2 className="mb-4 text-2xl font-semibold">{t('errors.500.heading')}</h2>
-        <p className="text-muted-foreground">{t('errors.500.description')}</p>
+        <h1 className="mb-4 text-3xl font-bold">{t('error.500.title')}</h1>
+        <h2 className="mb-4 text-2xl font-semibold">{t('error.500.heading')}</h2>
+        <p className="text-muted-foreground">{t('error.500.description')}</p>
         {process.env.NODE_ENV === 'development' && (
           <div className="border-border bg-muted mt-4 rounded-xl border p-4 text-left">
             <p className="text-destructive font-mono text-sm">{error.message}</p>
@@ -40,10 +40,10 @@ export default function RootError({ error, reset }: ErrorProps) {
         )}
         <div className="mt-6 flex items-center justify-center gap-4 md:mt-8">
           <Button className="cursor-pointer" onClick={() => reset()}>
-            {t('errors.common.reload')}
+            {t('error.common.reload')}
           </Button>
           <Button variant="outline" className="flex cursor-pointer items-center gap-1" onClick={() => router.push('/')}>
-            {t('errors.common.goHome')}
+            {t('error.common.goHome')}
           </Button>
         </div>
       </div>

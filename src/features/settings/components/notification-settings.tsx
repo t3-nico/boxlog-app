@@ -36,7 +36,7 @@ export function NotificationSettings() {
       await new Promise((resolve) => setTimeout(resolve, 500))
       console.log('Saving notification settings:', values)
     },
-    successMessage: t('notifications.settings.saveSuccess'),
+    successMessage: t('notification.settings.saveSuccess'),
     debounceMs: 800,
   })
 
@@ -83,15 +83,15 @@ export function NotificationSettings() {
         title={
           <div className="flex items-center gap-2">
             <Bell className="h-5 w-5" />
-            <span>{t('notifications.settings.deliverySettings.title')}</span>
+            <span>{t('notification.settings.deliverySettings.title')}</span>
           </div>
         }
         isSaving={notifications.isSaving}
       >
         <div className="space-y-4">
           <SettingField
-            label={t('notifications.settings.deliverySettings.email.label')}
-            description={t('notifications.settings.deliverySettings.email.description')}
+            label={t('notification.settings.deliverySettings.email.label')}
+            description={t('notification.settings.deliverySettings.email.description')}
           >
             <Switch
               checked={notifications.values.emailNotifications}
@@ -100,15 +100,15 @@ export function NotificationSettings() {
           </SettingField>
 
           <SettingField
-            label={t('notifications.settings.deliverySettings.push.label')}
-            description={t('notifications.settings.deliverySettings.push.description')}
+            label={t('notification.settings.deliverySettings.push.label')}
+            description={t('notification.settings.deliverySettings.push.description')}
           >
             <Switch checked={notifications.values.pushNotifications} onCheckedChange={handlePushNotificationsChange} />
           </SettingField>
 
           <SettingField
-            label={t('notifications.settings.deliverySettings.browser.label')}
-            description={t('notifications.settings.deliverySettings.browser.description')}
+            label={t('notification.settings.deliverySettings.browser.label')}
+            description={t('notification.settings.deliverySettings.browser.description')}
           >
             <Switch
               checked={notifications.values.browserNotifications}
@@ -119,18 +119,18 @@ export function NotificationSettings() {
       </SettingsCard>
 
       {/* コンテンツ通知 */}
-      <SettingsCard title={t('notifications.settings.contentSettings.title')} isSaving={notifications.isSaving}>
+      <SettingsCard title={t('notification.settings.contentSettings.title')} isSaving={notifications.isSaving}>
         <div className="space-y-4">
           <SettingField
-            label={t('notifications.settings.contentSettings.weeklyDigest.label')}
-            description={t('notifications.settings.contentSettings.weeklyDigest.description')}
+            label={t('notification.settings.contentSettings.weeklyDigest.label')}
+            description={t('notification.settings.contentSettings.weeklyDigest.description')}
           >
             <Switch checked={notifications.values.weeklyDigest} onCheckedChange={handleWeeklyDigestChange} />
           </SettingField>
 
           <SettingField
-            label={t('notifications.settings.contentSettings.system.label')}
-            description={t('notifications.settings.contentSettings.system.description')}
+            label={t('notification.settings.contentSettings.system.label')}
+            description={t('notification.settings.contentSettings.system.description')}
           >
             <Switch
               checked={notifications.values.systemNotifications}
@@ -142,7 +142,7 @@ export function NotificationSettings() {
 
       {/* ヒント情報 */}
       <div className="bg-muted/50 border-border rounded-lg border p-4">
-        <p className="text-muted-foreground text-sm">{t('notifications.settings.tip')}</p>
+        <p className="text-muted-foreground text-sm">{t('notification.settings.tip')}</p>
       </div>
     </div>
   )

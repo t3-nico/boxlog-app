@@ -89,10 +89,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   // ページタイトルを決定
   const pageTitle = useMemo(() => {
-    if (showUncategorizedOnly) return t('tags.sidebar.uncategorized')
-    if (pathname?.includes('/archive')) return t('tags.sidebar.archive')
+    if (showUncategorizedOnly) return t('tag.sidebar.uncategorized')
+    if (pathname?.includes('/archive')) return t('tag.sidebar.archive')
     if (selectedGroup) return selectedGroup.name
-    return t('tags.sidebar.allTags')
+    return t('tag.sidebar.allTags')
   }, [showUncategorizedOnly, pathname, selectedGroup, t])
 
   // アクティブなタグ数を計算
@@ -103,10 +103,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   // ページタイトルにタグ数を表示
   useEffect(() => {
     if (!showUncategorizedOnly && !initialGroupNumber) {
-      document.title = `${t('tags.page.title')} (${activeTagsCount})`
+      document.title = `${t('tag.page.title')} (${activeTagsCount})`
     }
     return () => {
-      document.title = t('tags.page.title')
+      document.title = t('tag.page.title')
     }
   }, [activeTagsCount, showUncategorizedOnly, initialGroupNumber, t])
 
@@ -200,11 +200,11 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         group_id: selectedGroupId,
         level: 0 as const,
       })
-      toast.success(t('tags.page.tagCreated', { name: newTagName }))
+      toast.success(t('tag.page.tagCreated', { name: newTagName }))
       handleCancelInlineCreation()
     } catch (error) {
       console.error('Failed to create tag:', error)
-      toast.error(t('tags.page.tagCreateFailed'))
+      toast.error(t('tag.page.tagCreateFailed'))
     }
   }, [newTagName, newTagDescription, newTagColor, selectedGroupId, createTagMutation, handleCancelInlineCreation, t])
 
@@ -268,11 +268,11 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           data: { group_id: groupId },
         })
         const group = groupId ? groups.find((g) => g.id === groupId) : null
-        const groupName = group?.name ?? t('tags.page.noGroup')
-        toast.success(t('tags.page.tagMoved', { name: tag.name, group: groupName }))
+        const groupName = group?.name ?? t('tag.page.noGroup')
+        toast.success(t('tag.page.tagMoved', { name: tag.name, group: groupName }))
       } catch (error) {
         console.error('Failed to move tag to group:', error)
-        toast.error(t('tags.page.tagMoveFailed'))
+        toast.error(t('tag.page.tagMoveFailed'))
       }
     },
     [updateTagMutation, groups, t]
@@ -300,11 +300,11 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         id: archiveConfirmTag.id,
         data: { is_active: false },
       })
-      toast.success(t('tags.page.tagArchived', { name: archiveConfirmTag.name }))
+      toast.success(t('tag.page.tagArchived', { name: archiveConfirmTag.name }))
       setArchiveConfirmTag(null)
     } catch (error) {
       console.error('Failed to archive tag:', error)
-      toast.error(t('tags.page.tagArchiveFailed'))
+      toast.error(t('tag.page.tagArchiveFailed'))
     }
   }, [archiveConfirmTag, updateTagMutation, t])
 
@@ -312,17 +312,17 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     if (!deleteConfirmTag) return
     try {
       await handleDeleteTag(deleteConfirmTag)
-      toast.success(t('tags.page.tagDeleted', { name: deleteConfirmTag.name }))
+      toast.success(t('tag.page.tagDeleted', { name: deleteConfirmTag.name }))
       setDeleteConfirmTag(null)
     } catch (error) {
       console.error('Failed to delete tag:', error)
-      toast.error(t('tags.page.tagDeleteFailed'))
+      toast.error(t('tag.page.tagDeleteFailed'))
     }
   }, [deleteConfirmTag, handleDeleteTag, t])
 
   const handleBulkDelete = async () => {
     if (selectedTagIds.length === 0) return
-    if (!confirm(t('tags.page.bulkDeleteConfirm', { count: selectedTagIds.length }))) return
+    if (!confirm(t('tag.page.bulkDeleteConfirm', { count: selectedTagIds.length }))) return
 
     for (const tagId of selectedTagIds) {
       const tag = displayTags.find((t) => t.id === tagId)
@@ -380,10 +380,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                       await updateTagMutation.mutateAsync({ id: tag.id, data: { is_active: false } })
                     }
                   }
-                  toast.success(t('tags.page.bulkArchived', { count: tagIds.length }))
+                  toast.success(t('tag.page.bulkArchived', { count: tagIds.length }))
                 } catch (error) {
                   console.error('Failed to archive tags:', error)
-                  toast.error(t('tags.page.bulkArchiveFailed'))
+                  toast.error(t('tag.page.bulkArchiveFailed'))
                 }
               }}
               onDelete={handleBulkDelete}
@@ -407,10 +407,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
         {displayTags.length === 0 ? (
           <div className="border-border flex h-64 items-center justify-center rounded-xl border-2 border-dashed">
             <div className="text-center">
-              <p className="text-muted-foreground mb-4">{t('tags.page.noTags')}</p>
+              <p className="text-muted-foreground mb-4">{t('tag.page.noTags')}</p>
               <Button onClick={handleStartInlineCreation}>
                 <Plus className="mr-2 h-4 w-4" />
-                {t('tags.page.addFirstTag')}
+                {t('tag.page.addFirstTag')}
               </Button>
             </div>
           </div>
@@ -434,7 +434,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                             setSelectedTagIds(displayTags.map((tag) => tag.id))
                           }
                         }}
-                        aria-label={t('tags.page.selectAll')}
+                        aria-label={t('tag.page.selectAll')}
                       />
                     </TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.id}px` }}>
@@ -443,7 +443,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                     </TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.color + columnWidths.name}px` }}>
                       <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="-ml-3">
-                        {t('tags.page.name')}
+                        {t('tag.page.name')}
                         {sortField === 'name' ? (
                           sortDirection === 'asc' ? (
                             <ArrowUp className="ml-1 h-4 w-4" />
@@ -457,7 +457,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                       <ResizeHandle columnId="name" currentWidth={columnWidths.name} onResize={handleColumnResize} />
                     </TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.description}px` }}>
-                      {t('tags.page.description')}
+                      {t('tag.page.description')}
                       <ResizeHandle
                         columnId="description"
                         currentWidth={columnWidths.description}
@@ -465,12 +465,12 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
                       />
                     </TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.group}px` }}>
-                      {t('tags.sidebar.groups')}
+                      {t('tag.sidebar.groups')}
                       <ResizeHandle columnId="group" currentWidth={columnWidths.group} onResize={handleColumnResize} />
                     </TableHead>
                     <TableHead className="relative" style={{ width: `${columnWidths.created_at}px` }}>
                       <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="-ml-3">
-                        {t('tags.page.createdAt')}
+                        {t('tag.page.createdAt')}
                         {sortField === 'created_at' ? (
                           sortDirection === 'asc' ? (
                             <ArrowUp className="ml-1 h-4 w-4" />

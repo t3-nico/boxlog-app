@@ -1,5 +1,5 @@
 {
-  "tags": {
+  "tag": {
     "form": {
       "nameRequired": "タグ名は必須です",
       "nameMaxLength": "タグ名は50文字以内で入力してください",

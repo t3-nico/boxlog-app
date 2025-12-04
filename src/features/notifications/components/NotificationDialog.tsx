@@ -102,7 +102,7 @@ export function NotificationDialog() {
   )
 
   const handleDeleteAllRead = useCallback(() => {
-    if (window.confirm(t('notifications.confirm.deleteAllRead'))) {
+    if (window.confirm(t('notification.confirm.deleteAllRead'))) {
       deleteAllRead.mutate()
     }
   }, [deleteAllRead, t])
@@ -152,12 +152,12 @@ export function NotificationDialog() {
           </span>
           <div className="flex gap-2">
             <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead} disabled={markAllAsRead.isPending}>
-              {t('notifications.actions.markAllAsRead')}
+              {t('notification.actions.markAllAsRead')}
             </Button>
             {showActions && (
               <Button variant="ghost" size="sm" onClick={handleDeleteAllRead} disabled={deleteAllRead.isPending}>
                 <Trash2 className="mr-1 h-4 w-4" />
-                {t('notifications.actions.deleteAllRead')}
+                {t('notification.actions.deleteAllRead')}
               </Button>
             )}
           </div>
@@ -200,15 +200,15 @@ export function NotificationDialog() {
     <Dialog open={isOpen} onOpenChange={(open) => !open && close()}>
       <DialogContent className="top-4 !left-20 max-w-xl !translate-x-0 !translate-y-0">
         <DialogHeader>
-          <DialogTitle>{t('notifications.title')}</DialogTitle>
+          <DialogTitle>{t('notification.title')}</DialogTitle>
         </DialogHeader>
 
         <Tabs defaultValue="all" className="w-full">
           {/* タブとフィルター */}
           <div className="flex items-center justify-between gap-4">
             <TabsList className="grid w-full max-w-[200px] grid-cols-2">
-              <TabsTrigger value="all">{t('notifications.tabs.all')}</TabsTrigger>
-              <TabsTrigger value="unread">{t('notifications.tabs.unread')}</TabsTrigger>
+              <TabsTrigger value="all">{t('notification.tabs.all')}</TabsTrigger>
+              <TabsTrigger value="unread">{t('notification.tabs.unread')}</TabsTrigger>
             </TabsList>
 
             {/* タイプフィルター */}
@@ -245,7 +245,7 @@ export function NotificationDialog() {
           className="text-muted-foreground hover:text-foreground flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-transparent"
         >
           <Settings className="h-4 w-4" />
-          {t('notifications.settings')}
+          {t('notification.settings')}
         </button>
       </DialogContent>
     </Dialog>

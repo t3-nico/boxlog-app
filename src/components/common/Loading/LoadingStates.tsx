@@ -78,7 +78,7 @@ export const LoadingOverlay = ({
   spinnerSize = 'md',
 }: LoadingOverlayProps) => {
   const { t } = useI18n()
-  const displayMessage = message ?? t('errors.loading.default')
+  const displayMessage = message ?? t('error.loading.default')
 
   return (
     <div className={cn('relative', className)}>
@@ -101,8 +101,8 @@ export const LoadingOverlay = ({
 
 export const LoadingCard = ({ title, message, className = '' }: LoadingCardProps) => {
   const { t } = useI18n()
-  const displayTitle = title ?? t('errors.loading.title')
-  const displayMessage = message ?? t('errors.loading.loadingData')
+  const displayTitle = title ?? t('error.loading.title')
+  const displayMessage = message ?? t('error.loading.loadingData')
 
   return (
     <div
@@ -263,9 +263,9 @@ export const DataLoading = ({
       <div className={cn('flex items-center justify-center p-8', className)}>
         {errorComponent || (
           <div className="text-center">
-            <p className="mb-2 text-red-600 dark:text-red-400">{t('errors.loading.loadFailed')}</p>
+            <p className="mb-2 text-red-600 dark:text-red-400">{t('error.loading.loadFailed')}</p>
             <button type="button" onClick={handleReload} className="text-blue-600 hover:underline dark:text-blue-400">
-              {t('errors.loading.retry')}
+              {t('error.loading.retry')}
             </button>
           </div>
         )}
@@ -276,7 +276,7 @@ export const DataLoading = ({
   if (isEmpty) {
     return (
       <div className={cn('flex items-center justify-center p-8', className)}>
-        {emptyComponent || <p className="text-neutral-600 dark:text-neutral-400">{t('errors.loading.noData')}</p>}
+        {emptyComponent || <p className="text-neutral-600 dark:text-neutral-400">{t('error.loading.noData')}</p>}
       </div>
     )
   }
@@ -291,7 +291,7 @@ function PageLoading() {
   const { t } = useI18n()
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <LoadingCard title={t('errors.loading.loadingPage')} message={t('errors.loading.pleaseWait')} />
+      <LoadingCard title={t('error.loading.loadingPage')} message={t('error.loading.pleaseWait')} />
     </div>
   )
 }

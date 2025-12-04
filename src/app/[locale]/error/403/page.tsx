@@ -19,19 +19,19 @@ export default function ForbiddenPage() {
         className="aspect-video w-240 rounded-xl object-cover dark:invert"
       />
       <div className="text-center">
-        <h1 className="mb-4 text-3xl font-bold">{t('errors.403.title')}</h1>
-        <h2 className="mb-4 text-2xl font-semibold">{t('errors.403.heading')}</h2>
-        <p className="text-muted-foreground">{t('errors.403.description')}</p>
+        <h1 className="mb-4 text-3xl font-bold">{t('error.403.title')}</h1>
+        <h2 className="mb-4 text-2xl font-semibold">{t('error.403.heading')}</h2>
+        <p className="text-muted-foreground">{t('error.403.description')}</p>
         <div className="mt-6 flex items-center justify-center gap-4 md:mt-8">
           <Button className="cursor-pointer" onClick={() => router.push('/')}>
-            {t('errors.403.action')}
+            {t('error.403.action')}
           </Button>
           <Button
             variant="outline"
             className="flex cursor-pointer items-center gap-1"
             onClick={() => (window.location.href = 'mailto:support@boxlog.com')}
           >
-            {t('errors.common.contactUs')}
+            {t('error.common.contactUs')}
           </Button>
         </div>
       </div>
