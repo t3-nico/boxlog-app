@@ -75,7 +75,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
       <SettingsCard title="データエクスポート">
         <div className="space-y-4">
           {/* エクスポート対象の説明 */}
-          <div className="bg-muted/50 rounded-xl p-4">
+          <div className="bg-muted rounded-xl p-4">
             <h4 className="mb-2 flex items-center gap-2 text-sm font-medium">
               <FileJson className="h-4 w-4" />
               エクスポートされるデータ
@@ -120,7 +120,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
           </SettingField>
 
           {autoBackup && (
-            <div className="bg-muted/50 rounded-xl p-4">
+            <div className="bg-muted rounded-xl p-4">
               <div className="flex items-center gap-2">
                 <History className="text-muted-foreground h-4 w-4" />
                 <span className="text-sm">最終バックアップ: 未実行</span>

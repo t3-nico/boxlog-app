@@ -162,7 +162,7 @@ export function ProfileSection() {
               ) : (
                 <label
                   htmlFor="avatar-upload"
-                  className="border-border bg-muted hover:bg-muted/80 flex h-20 w-20 cursor-pointer items-center justify-center rounded-full border-2 border-dashed transition-colors"
+                  className="border-border bg-muted hover:bg-muted flex h-20 w-20 cursor-pointer items-center justify-center rounded-full border-2 border-dashed transition-colors"
                 >
                   <span className="text-muted-foreground text-xs">+</span>
                 </label>

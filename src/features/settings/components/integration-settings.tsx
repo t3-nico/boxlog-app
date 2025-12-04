@@ -111,7 +111,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
           </SettingField>
 
           {syncEnabled && (
-            <div className="bg-muted/50 rounded-xl p-4">
+            <div className="bg-muted rounded-xl p-4">
               <p className="text-muted-foreground text-sm">
                 同期は5分ごとに自動実行されます。手動で同期する場合は各サービスの設定から実行できます。
               </p>
@@ -123,7 +123,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
       {/* API連携 */}
       <SettingsCard title="API連携">
         <div className="space-y-4">
-          <div className="bg-muted/50 rounded-xl p-4">
+          <div className="bg-muted rounded-xl p-4">
             <p className="text-muted-foreground text-sm">APIキーの発行やWebhookの設定は開発者ポータルから行えます。</p>
           </div>
           <Button variant="outline" disabled>
