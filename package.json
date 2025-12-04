@@ -144,6 +144,8 @@
     "breaking:validate": "node scripts/breaking-changes-tracker.js validate",
     "breaking:init": "node scripts/breaking-changes-tracker.js init",
     "breaking:check": "node scripts/breaking-changes-tracker.js detect HEAD~1 HEAD",
+    "i18n:check": "node scripts/i18n-check.js",
+    "i18n:unused": "node scripts/i18n-unused.js",
     "i18n:upload": "crowdin upload sources",
     "i18n:download": "crowdin download",
     "i18n:status": "crowdin status",
