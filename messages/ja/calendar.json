@@ -139,6 +139,9 @@
     "errors": {
       "loadFailed": "カレンダーの読み込みに失敗しました",
       "displayFailed": "カレンダーを表示できませんでした。ページをリロードしてください。"
+    },
+    "dateRange": {
+      "weekLabel": "第{weekNumber}週"
     }
   }
 }

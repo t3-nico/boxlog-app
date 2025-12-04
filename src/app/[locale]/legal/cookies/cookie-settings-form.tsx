@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { InfoIcon } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
@@ -122,8 +124,9 @@ export function CookieSettingsForm() {
           <ul className="list-inside list-disc space-y-1">
             <li>{t('legal.cookies.categories.analytics.cookies.sentry')}</li>
           </ul>
-          <p className="text-muted-foreground mt-3 text-xs">
-            ℹ️ {t('legal.cookies.categories.analytics.cookies.vercelNote')}
+          <p className="text-muted-foreground mt-3 flex items-start gap-1.5 text-xs">
+            <InfoIcon className="size-3.5 shrink-0" aria-hidden="true" />
+            {t('legal.cookies.categories.analytics.cookies.vercelNote')}
           </p>
         </CardContent>
       </Card>

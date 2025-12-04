@@ -3,5 +3,10 @@
   "buildCommand": "npm run build:fallback",
   "devCommand": "npm run dev:fallback",
   "installCommand": "npm ci",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  }
 }
