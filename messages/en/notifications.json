@@ -1,0 +1,52 @@
+{
+  "notifications": {
+    "title": "Notifications",
+    "tabs": {
+      "all": "All",
+      "unread": "Unread"
+    },
+    "messages": {
+      "meetingReminder": "Meeting Reminder",
+      "meetingStartsIn": "Starts in 5 minutes",
+      "taskCompleted": "Task Completed",
+      "taskCompletedMessage": "Your task has been completed",
+      "eventNotification": "Event Notification",
+      "eventAddedMessage": "A new event has been added"
+    },
+    "empty": {
+      "all": "No notifications",
+      "unread": "No unread notifications"
+    },
+    "actions": {
+      "markAllAsRead": "Mark all as read",
+      "viewAll": "View all notifications",
+      "deleteAllRead": "Delete read"
+    },
+    "count": {
+      "all": "{{count}} notifications",
+      "unread": "{{count}} unread notifications"
+    },
+    "confirm": {
+      "deleteAllRead": "Delete all read notifications?"
+    },
+    "errors": {
+      "notSupported": "This browser does not support notifications",
+      "permissionFailed": "Failed to obtain notification permission",
+      "displayFailed": "Failed to display browser notification"
+    },
+    "types": {
+      "all": "All",
+      "reminder": "Reminder",
+      "plan_created": "Created",
+      "plan_updated": "Updated",
+      "plan_deleted": "Deleted",
+      "plan_completed": "Completed",
+      "trash_warning": "Trash",
+      "system": "System"
+    },
+    "dateGroups": {
+      "older": "Older"
+    },
+    "settings": "Notification Settings"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "table": {
+    "title": "Table View",
+    "description": "Display tasks in table format",
+    "comingSoon": "Task table component coming soon...",
+    "willDisplay": "This will display tasks in a table format",
+    "headers": {
+      "reviewNumber": "Review number",
+      "purchaseDate": "Purchase date",
+      "customer": "Customer",
+      "amount": "Amount"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit"
+    },
+    "stats": {
+      "totalRevenue": "Total revenue",
+      "plansSold": "plans sold",
+      "pageviews": "Pageviews"
+    },
+    "sections": {
+      "recentReviews": "Recent reviews"
+    },
+    "details": {
+      "summary": "Summary",
+      "paymentMethod": "Payment method",
+      "customer": "Customer",
+      "event": "Event",
+      "amount": "Amount",
+      "amountAfterExchange": "Amount after exchange rate",
+      "fee": "Fee",
+      "net": "Net",
+      "transactionId": "Transaction ID",
+      "cardNumber": "Card number",
+      "cardType": "Card type",
+      "cardExpiry": "Card expiry",
+      "owner": "Owner",
+      "emailAddress": "Email address",
+      "address": "Address",
+      "country": "Country",
+      "cvc": "CVC",
+      "cvcStatus": "Passed successfully"
+    },
+    "status": {
+      "successful": "Successful"
+    },
+    "buttons": {
+      "refund": "Refund",
+      "resendInvoice": "Resend Invoice"
+    },
+    "backLinks": {
+      "box": "Box",
+      "reviews": "Reviews"
+    }
+  }
+}

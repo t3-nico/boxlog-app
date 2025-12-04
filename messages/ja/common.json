@@ -1,0 +1,87 @@
+{
+  "common": {
+    "dates": {
+      "format": "YYYY/MM/DD"
+    },
+    "reload": "ページをリロード",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "close": "閉じる",
+    "confirm": "確認",
+    "loading": "読み込み中...",
+    "noData": "データがありません",
+    "undo": "元に戻す",
+    "skipToMainContent": "メインコンテンツへスキップ",
+    "createNewEvent": "新しいイベントを作成",
+    "view": "表示",
+    "toast": {
+      "eventDeleted": "予定を削除しました"
+    },
+    "selectedCount": "{{count}}件選択中"
+  },
+  "actions": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "create": "作成",
+    "update": "更新",
+    "search": "検索",
+    "filter": "フィルター",
+    "sort": "並べ替え"
+  },
+  "aria": {
+    "clearSelection": "選択を解除",
+    "openMenu": "メニューを開く",
+    "closeSidebar": "サイドバーを閉じる",
+    "cardMenu": "カードメニュー",
+    "closeModal": "モーダルを閉じる",
+    "closeFilterMenu": "フィルターメニューを閉じる",
+    "changeColor": "カラーを変更",
+    "unread": "未読",
+    "notifications": "通知",
+    "close": "閉じる",
+    "previousPlan": "前のプラン",
+    "nextPlan": "次のプラン",
+    "options": "オプション",
+    "selectAll": "すべて選択",
+    "tagColor": "タグカラー",
+    "closeSettings": "設定を閉じる",
+    "weeklyCalendar": "週間カレンダー",
+    "previous": "前へ",
+    "next": "次へ"
+  },
+  "status": {
+    "loading": "読み込み中...",
+    "success": "成功",
+    "error": "エラー",
+    "warning": "警告",
+    "info": "情報"
+  },
+  "time": {
+    "today": "今日",
+    "yesterday": "昨日",
+    "tomorrow": "明日",
+    "thisWeek": "今週",
+    "nextWeek": "来週",
+    "thisMonth": "今月",
+    "nextMonth": "来月",
+    "daysAgo": "日前",
+    "weeksAgo": "週間前",
+    "monthsAgo": "ヶ月前"
+  },
+  "language": {
+    "current": "現在の言語",
+    "switch": "言語を変更",
+    "english": "英語",
+    "japanese": "日本語"
+  },
+  "search": {
+    "shortcut": "⌘K"
+  },
+  "theme": {
+    "light": "ライトモード",
+    "dark": "ダークモード"
+  }
+}

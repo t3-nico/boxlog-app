@@ -1,0 +1,7 @@
+{
+  "app": {
+    "name": "BoxLog",
+    "description": "タスク管理アプリケーション",
+    "version": "v1.0.0"
+  }
+}
