@@ -7,6 +7,8 @@ import { routing } from './routing'
  * messages/{locale}/{namespace}.json として配置
  */
 const NAMESPACES = [
+  'ai',
+  'aiChat',
   'app',
   'auth',
   'board',

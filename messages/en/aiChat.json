@@ -1,0 +1,63 @@
+{
+  "aiChat": {
+    "title": "AI Chat",
+    "assistant": "AI Assistant",
+    "newChat": "New Chat",
+    "detailOptions": "Detail Options",
+    "close": "Close",
+    "greeting": "Hello! I'm your AI assistant. How can I help you today?",
+    "simulatedResponse": "I received your message: \"{message}\". This is a simulated response.",
+    "input": {
+      "placeholder": "Ask me anything...",
+      "placeholderClaude": "Ask Claude...",
+      "placeholderAI": "Ask AI anything..."
+    },
+    "voiceRecognition": {
+      "notSupported": "Voice recognition not supported",
+      "start": "Start voice input",
+      "stop": "Stop voice input"
+    },
+    "status": {
+      "thinking": "Claude is thinking...",
+      "thinkingAI": "AI is thinking..."
+    },
+    "menu": {
+      "clearChat": "Clear chat",
+      "exportChat": "Export chat",
+      "clearConversation": "Clear conversation",
+      "exportConversation": "Export conversation"
+    },
+    "welcome": {
+      "greeting1": "Hi! I'm **Claude**, your AI assistant. I can help you with:",
+      "capabilities1": [
+        "**Task planning and organization**",
+        "**Answering questions**",
+        "**Code assistance**",
+        "**Writing and analysis**"
+      ],
+      "question1": "What would you like to know?",
+      "greeting2": "Welcome to **BoxLog**! I'm Claude, your AI assistant. I'm here to help you:",
+      "capabilities2": [
+        "**Organize your tasks** and projects",
+        "**Answer any questions** you might have",
+        "**Assist with coding** and technical issues",
+        "**Help with writing** and analysis"
+      ],
+      "question2": "How can I assist you today?",
+      "greeting3": "Hello! I'm **Claude**, ready to help you with BoxLog. My capabilities include:",
+      "capabilities3": [
+        "**Smart task management** suggestions",
+        "**Quick answers** to your questions",
+        "**Code assistance** and debugging",
+        "**Content creation** and analysis"
+      ],
+      "question3": "What would you like to work on?",
+      "greeting4": "Hi! I'm your AI assistant",
+      "description": "I can help you with productivity insights, task management, and answer questions about BoxLog."
+    },
+    "errors": {
+      "loadingFailed": "Failed to load AI Chat",
+      "sendingMessage": "Error sending message"
+    }
+  }
+}
