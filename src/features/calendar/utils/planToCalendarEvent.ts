@@ -11,18 +11,10 @@ export function setUserTimezone(timezone: string) {
 
 /**
  * PlanStatusをCalendarEventのstatusにマッピング
+ * 3段階ステータス: todo, doing, done（そのまま使用）
  */
 function mapPlanStatusToCalendarStatus(planStatus: PlanStatus): CalendarEvent['status'] {
-  const statusMap: Record<PlanStatus, CalendarEvent['status']> = {
-    backlog: 'inbox',
-    ready: 'planned',
-    active: 'in_progress',
-    wait: 'planned',
-    done: 'completed',
-    cancel: 'cancelled',
-  }
-
-  return statusMap[planStatus]
+  return planStatus // 3段階ステータスはそのまま
 }
 
 /**
@@ -30,12 +22,9 @@ function mapPlanStatusToCalendarStatus(planStatus: PlanStatus): CalendarEvent['s
  */
 function getColorForStatus(status: PlanStatus): string {
   const colorMap: Record<PlanStatus, string> = {
-    backlog: 'hsl(var(--muted))',
-    ready: 'hsl(var(--primary))',
-    active: 'hsl(var(--chart-2))',
-    wait: 'hsl(var(--chart-4))',
+    todo: 'hsl(var(--muted))',
+    doing: 'hsl(var(--primary))',
     done: 'hsl(var(--chart-3))',
-    cancel: 'hsl(var(--muted))',
   }
 
   return colorMap[status]
@@ -54,7 +43,7 @@ function getColorForStatus(status: PlanStatus): string {
  *   title: 'ミーティング',
  *   start_time: '2025-11-20T10:00:00Z',
  *   end_time: '2025-11-20T11:00:00Z',
- *   status: 'ready',
+ *   status: 'doing',
  *   tags: [{ id: '1', name: '重要', color: '#ff0000' }],
  *   // ...
  * }
@@ -62,7 +51,7 @@ function getColorForStatus(status: PlanStatus): string {
  * const event = planToCalendarEvent(plan)
  * // event.startDate: Date(2025-11-20 10:00)
  * // event.endDate: Date(2025-11-20 11:00)
- * // event.status: 'planned'
+ * // event.status: 'in_progress'
  * // event.tags: [{ id: '1', name: '重要', color: '#ff0000' }]
  * ```
  */

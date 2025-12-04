@@ -9,6 +9,9 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { calendarColors } from '@/features/calendar/theme'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
+import { getEffectiveStatus } from '@/features/plans/utils/status'
+import { CheckCircle2, Circle } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -33,6 +36,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   previewTime = null,
 }) {
   const { t } = useI18n()
+  const { updatePlan } = usePlanMutations()
   const [isHovered, setIsHovered] = useState(false)
 
   // すべてのプランは時間指定プラン
@@ -205,11 +209,42 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       aria-label={`plan: ${plan.title}`}
       aria-pressed={isSelected}
     >
+      {/* チェックボックス（十分な高さがある場合のみ表示） */}
+      {safePosition.height >= 40 && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            const effectiveStatus = getEffectiveStatus(plan)
+            const newStatus = effectiveStatus === 'done' ? 'todo' : 'done'
+            updatePlan.mutate({
+              id: plan.id,
+              data: { status: newStatus },
+            })
+          }}
+          className="absolute top-1 left-1 z-10 flex-shrink-0 rounded transition-colors hover:opacity-80"
+          aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
+        >
+          {(() => {
+            const status = getEffectiveStatus(plan)
+            if (status === 'done') {
+              return <CheckCircle2 className="text-success h-4 w-4" />
+            }
+            if (status === 'doing') {
+              return <Circle className="text-primary h-4 w-4" />
+            }
+            // todo
+            return <Circle className="text-muted-foreground h-4 w-4" />
+          })()}
+        </button>
+      )}
+
       <PlanCardContent
         plan={plan}
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}
+        hasCheckbox={safePosition.height >= 40}
       />
 
       {/* 下部リサイズハンドル */}

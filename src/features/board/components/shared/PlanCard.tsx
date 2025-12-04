@@ -23,11 +23,12 @@ import { useplanCacheStore } from '@/features/plans/stores/usePlanCacheStore'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { toLocalISOString } from '@/features/plans/utils/datetime'
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder'
+import { getEffectiveStatus } from '@/features/plans/utils/status'
 import { cn } from '@/lib/utils'
 import { useDraggable } from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Bell, Calendar as CalendarIcon, Plus, Tag, Trash2 } from 'lucide-react'
+import { Bell, Calendar as CalendarIcon, CheckCircle2, Circle, Plus, Tag, Trash2 } from 'lucide-react'
 
 import { useBoardFocusStore } from '../../stores/useBoardFocusStore'
 import { BoardActionMenuItems } from '../BoardActionMenuItems'
@@ -230,8 +231,35 @@ export function PlanCard({ item }: PlanCardProps) {
               isDragging && 'opacity-50'
             )}
           >
-            {/* 1. タイトル */}
+            {/* 1. タイトル + チェックボックス */}
             <div className="flex items-center gap-2 overflow-hidden">
+              {/* Done チェックボックス */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  const effectiveStatus = getEffectiveStatus(item)
+                  const newStatus = effectiveStatus === 'done' ? 'todo' : 'done'
+                  updatePlan.mutate({
+                    id: item.id,
+                    data: { status: newStatus },
+                  })
+                }}
+                className="flex-shrink-0 transition-colors hover:opacity-80"
+                aria-label={getEffectiveStatus(item) === 'done' ? '未完了に戻す' : '完了にする'}
+              >
+                {(() => {
+                  const status = getEffectiveStatus(item)
+                  if (status === 'done') {
+                    return <CheckCircle2 className="text-success h-4 w-4" />
+                  }
+                  if (status === 'doing') {
+                    return <Circle className="text-primary h-4 w-4" />
+                  }
+                  // todo
+                  return <Circle className="text-muted-foreground h-4 w-4" />
+                })()}
+              </button>
               <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold hover:underline">
                 {item.title}
               </h3>

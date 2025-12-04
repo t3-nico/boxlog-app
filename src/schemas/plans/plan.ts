@@ -2,14 +2,14 @@ import { z } from 'zod'
 
 // Plan用Zodスキーマ
 
-export const planStatusSchema = z.enum(['backlog', 'ready', 'active', 'wait', 'done', 'cancel'])
+export const planStatusSchema = z.enum(['todo', 'doing', 'done'])
 export const recurrenceTypeSchema = z.enum(['none', 'daily', 'weekly', 'monthly', 'yearly', 'weekdays'])
 
 export const createPlanSchema = z.object({
   title: z.string().min(1, 'タイトルは必須です').max(200, 'タイトルは200文字以内です'),
   description: z.string().max(10000, '説明は10000文字以内です').optional(), // Markdown対応のため拡張
   status: planStatusSchema,
-  due_date: z.string().optional(), // 日付（YYYY-MM-DD形式）
+  due_date: z.string().nullable().optional(), // 日付（YYYY-MM-DD形式）
   start_time: z.string().datetime().nullable().optional(), // 開始日時（ISO 8601形式）
   end_time: z.string().datetime().nullable().optional(), // 終了日時（ISO 8601形式）
   recurrence_type: recurrenceTypeSchema.optional(), // 繰り返しタイプ（シンプル版）

@@ -1,5 +1,6 @@
 'use client'
 
+import { X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 /**
@@ -308,10 +309,18 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
     setSkipFilter(false) // 選択後はフィルタリングを有効化
   }
 
+  // クリアハンドラー
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onChange('')
+    setInputValue('')
+    setIsOpen(false)
+  }
+
   return (
     <div className={label ? 'space-y-1' : ''}>
       {label && <label className="text-muted-foreground text-xs">{label}</label>}
-      <div className="relative" ref={containerRef}>
+      <div className="relative flex items-center" ref={containerRef}>
         <input
           ref={inputRef}
           type="text"
@@ -325,11 +334,22 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
           onKeyDown={handleInputKeyDown}
           onFocus={handleInputFocus}
           disabled={disabled}
-          placeholder="10:00"
+          placeholder="--:--"
           className={`flex h-8 w-12 bg-transparent px-0 py-1 text-center text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
             value ? 'text-foreground' : 'text-muted-foreground'
           } ${error ? 'text-destructive' : ''}`}
         />
+        {/* クリアボタン（値がある場合のみ表示） */}
+        {value && !disabled && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="text-muted-foreground hover:text-foreground -ml-1 flex h-4 w-4 items-center justify-center transition-colors"
+            aria-label="時刻をクリア"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        )}
         {error && (
           <div className="text-destructive absolute top-full left-0 mt-1 text-xs whitespace-nowrap">{error}</div>
         )}

@@ -89,7 +89,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
           {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
           <ResizablePanel className="overflow-hidden">
-            <div className="relative flex h-full flex-col">
+            <div className="relative flex h-full min-h-0 flex-col">
               <MainContentWrapper>{children}</MainContentWrapper>
             </div>
           </ResizablePanel>

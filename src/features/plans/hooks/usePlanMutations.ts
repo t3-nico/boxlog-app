@@ -18,7 +18,7 @@ import { usePlanInspectorStore } from '../stores/usePlanInspectorStore'
  * const { createPlan, updatePlan, deletePlan } = usePlanMutations()
  *
  * // 作成
- * createPlan.mutate({ title: 'New Plan', status: 'backlog' })
+ * createPlan.mutate({ title: 'New Plan', status: 'todo' })
  *
  * // 更新
  * updatePlan.mutate({ id: '123', data: { title: 'Updated' } })
@@ -135,10 +135,9 @@ export function usePlanMutations() {
       // 重要な更新のみtoast表示（status変更、タグ変更など）
       if (variables.data.status) {
         const statusMap: Record<string, string> = {
-          open: 'Open',
-          in_progress: 'In Progress',
-          completed: 'Completed',
-          cancelled: 'Cancelled',
+          todo: 'Todo',
+          doing: 'Doing',
+          done: 'Done',
         }
         const statusLabel = statusMap[variables.data.status] || variables.data.status
         toast.success(`ステータスを${statusLabel}に変更しました`)

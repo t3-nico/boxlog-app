@@ -13,7 +13,7 @@ describe('crossWeekPlanHelpers', () => {
           title: 'ミーティング',
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-15T11:00:00'),
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date('2024-06-15T10:00:00'),
           displayEndDate: new Date('2024-06-15T11:00:00'),
@@ -41,7 +41,7 @@ describe('crossWeekPlanHelpers', () => {
           title: '長期プラン',
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-17T18:00:00'),
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date('2024-06-15T10:00:00'),
           displayEndDate: new Date('2024-06-17T18:00:00'),
@@ -69,7 +69,7 @@ describe('crossWeekPlanHelpers', () => {
           title: '金曜から月曜',
           startDate: new Date('2024-06-14T10:00:00'), // 金曜
           endDate: new Date('2024-06-17T18:00:00'), // 月曜
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date('2024-06-14T10:00:00'),
           displayEndDate: new Date('2024-06-17T18:00:00'),
@@ -98,7 +98,7 @@ describe('crossWeekPlanHelpers', () => {
           title: 'プラン',
           startDate: null,
           endDate: null,
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date(),
           displayEndDate: new Date(),
@@ -127,7 +127,7 @@ describe('crossWeekPlanHelpers', () => {
           title: '金曜プラン',
           startDate: new Date('2024-06-14T10:00:00'), // 金曜
           endDate: new Date('2024-06-14T11:00:00'),
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date('2024-06-14T10:00:00'),
           displayEndDate: new Date('2024-06-14T11:00:00'),
@@ -143,7 +143,7 @@ describe('crossWeekPlanHelpers', () => {
           title: '土曜プラン',
           startDate: new Date('2024-06-15T10:00:00'), // 土曜（2024-06-15は土曜日）
           endDate: new Date('2024-06-15T11:00:00'),
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date('2024-06-15T10:00:00'),
           displayEndDate: new Date('2024-06-15T11:00:00'),
@@ -159,7 +159,7 @@ describe('crossWeekPlanHelpers', () => {
           title: '日曜プラン',
           startDate: new Date('2024-06-16T10:00:00'), // 日曜
           endDate: new Date('2024-06-16T11:00:00'),
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date('2024-06-16T10:00:00'),
           displayEndDate: new Date('2024-06-16T11:00:00'),
@@ -192,7 +192,7 @@ describe('crossWeekPlanHelpers', () => {
           title: 'プラン',
           startDate: null,
           endDate: null,
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date(),
           displayEndDate: new Date(),
@@ -224,7 +224,7 @@ describe('crossWeekPlanHelpers', () => {
           title: '金→月プラン',
           startDate: new Date('2024-06-14T10:00:00'), // 金曜（day=5）
           endDate: new Date('2024-06-17T18:00:00'), // 月曜（day=1）
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date('2024-06-14T10:00:00'),
           displayEndDate: new Date('2024-06-17T18:00:00'),
@@ -240,7 +240,7 @@ describe('crossWeekPlanHelpers', () => {
           title: '土→日プラン',
           startDate: new Date('2024-06-15T10:00:00'), // 土曜（day=6）
           endDate: new Date('2024-06-16T18:00:00'), // 日曜（day=0）
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date('2024-06-15T10:00:00'),
           displayEndDate: new Date('2024-06-16T18:00:00'),
@@ -266,7 +266,7 @@ describe('crossWeekPlanHelpers', () => {
           title: 'プラン',
           startDate: null,
           endDate: null,
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date(),
           displayEndDate: new Date(),
