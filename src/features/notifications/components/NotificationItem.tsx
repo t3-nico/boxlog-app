@@ -84,7 +84,7 @@ export function NotificationItem({
   return (
     <div
       className={`rounded-lg px-3 py-2.5 transition-colors ${
-        !isRead ? 'bg-accent' : 'hover:bg-accent/50'
+        !isRead ? 'bg-accent' : 'hover:bg-accent'
       } ${actionUrl ? 'cursor-pointer' : ''}`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
