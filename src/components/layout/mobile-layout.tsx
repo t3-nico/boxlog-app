@@ -30,7 +30,9 @@ interface MobileLayoutProps {
  * - エレベーション付き
  */
 export function MobileLayout({ children, locale }: MobileLayoutProps) {
-  const { isOpen, toggle } = useSidebarStore()
+  // selector化: 必要な値だけ監視（他の状態変更時の再レンダリングを防止）
+  const isOpen = useSidebarStore((state) => state.isOpen)
+  const toggle = useSidebarStore((state) => state.toggle)
   const pathname = usePathname()
 
   // ページごとにSidebarを切り替え

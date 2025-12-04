@@ -42,9 +42,8 @@ export function useRealtimeSubscription<T extends Record<string, unknown> = Reco
   const [channelManager, setChannelManager] = useState<RealtimeChannelManager | null>(null)
 
   // 最新のconfigを保持（クロージャ問題を回避）
-  useEffect(() => {
-    configRef.current = config
-  }, [config])
+  // 依存配列は空にして、常に最新のconfigを参照
+  configRef.current = config
 
   useEffect(() => {
     const { channelName, enabled = true } = configRef.current

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 
 import { getTranslation } from '@/features/calendar/lib/toast/get-translation'
+import { getErrorMessage } from '@/lib/errors'
 
 import {
   RestoreResult,
@@ -181,7 +182,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
       console.log('✅ Item restored:', item.title, `(${item.type})`)
     } catch (error) {
       console.error('❌ Failed to restore item:', error)
-      set({ error: error instanceof Error ? error.message : getTranslation('trash.errors.restoreFailed') })
+      set({ error: getErrorMessage(error, getTranslation('trash.errors.restoreFailed')) })
       throw error
     }
   },
@@ -212,7 +213,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
         console.log('✅ Item restored:', item.title, `(${item.type})`)
       } catch (error) {
         result.failed++
-        result.errors.push(`${item.title}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+        result.errors.push(`${item.title}: ${getErrorMessage(error)}`)
         console.error('❌ Failed to restore item:', item.title, error)
       }
     }
@@ -362,7 +363,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
     } catch (error) {
       set({
         loading: false,
-        error: error instanceof Error ? error.message : getTranslation('trash.errors.fetchFailed'),
+        error: getErrorMessage(error, getTranslation('trash.errors.fetchFailed')),
       })
     }
   },

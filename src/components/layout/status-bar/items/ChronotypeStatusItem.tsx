@@ -4,11 +4,24 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Dna } from 'lucide-react'
 
+import { cn } from '@/lib/utils'
+
 import { StatusBarItem } from '../StatusBarItem'
 
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'
+
+import type { ProductivityZone } from '@/types/chronotype'
+
+// ゾーンレベルに応じたアイコンの色
+const LEVEL_ICON_COLORS: Record<ProductivityZone['level'], string> = {
+  peak: 'text-green-500',
+  good: 'text-green-400',
+  moderate: 'text-blue-400',
+  low: 'text-gray-400',
+  sleep: 'text-indigo-400',
+}
 
 /**
  * クロノタイプ（現在の生産性ゾーン）をステータスバーに表示
@@ -19,7 +32,7 @@ import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronoty
  */
 export function ChronotypeStatusItem() {
   const [currentTime, setCurrentTime] = useState(() => new Date())
-  const { chronotype } = useCalendarSettingsStore()
+  const chronotype = useCalendarSettingsStore((state) => state.chronotype)
   const openSettingsDialog = useSettingsDialogStore((state) => state.openSettings)
 
   // 1分ごとに現在時刻を更新
@@ -81,9 +94,9 @@ export function ChronotypeStatusItem() {
     return `残り${mins}m`
   }, [])
 
-  // クリック時: 設定ダイアログを開く
+  // クリック時: 設定ダイアログを開き、クロノタイプ設定へスクロール
   const handleClick = useCallback(() => {
-    openSettingsDialog('personalization')
+    openSettingsDialog('personalization', 'chronotype')
   }, [openSettingsDialog])
 
   // ラベル生成
@@ -95,9 +108,12 @@ export function ChronotypeStatusItem() {
     return `${zoneInfo.label} (${formatRemaining(zoneInfo.remainingMinutes)})`
   }, [zoneInfo, formatRemaining])
 
+  // アイコンの色を決定
+  const iconColor = zoneInfo ? LEVEL_ICON_COLORS[zoneInfo.level] : 'text-muted-foreground'
+
   return (
     <StatusBarItem
-      icon={<Dna className="h-3 w-3" />}
+      icon={<Dna className={cn('h-3 w-3', iconColor)} />}
       label={label}
       onClick={handleClick}
       tooltip={zoneInfo ? '生産性ゾーン設定を開く' : 'クロノタイプを設定'}

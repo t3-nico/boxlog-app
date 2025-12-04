@@ -16,7 +16,7 @@ const columnColorClasses: Record<KanbanColumnColor, string> = {
   yellow: 'bg-yellow-50/50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800',
   orange: 'bg-orange-50/50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800',
   red: 'bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-800',
-  gray: 'bg-muted/30 border-border',
+  gray: 'bg-muted border-border',
 }
 
 interface KanbanColumnProps {
@@ -55,8 +55,8 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
       className={cn(
         'flex w-80 shrink-0 flex-col gap-3 rounded-xl border p-3 transition-colors',
         colorClass,
-        isOver && 'bg-primary/12 ring-primary/30 ring-2',
-        isOverWipLimit && 'ring-destructive/50 ring-2' // WIP制限超過時
+        isOver && 'bg-primary/12 ring-primary ring-2',
+        isOverWipLimit && 'ring-destructive ring-2' // WIP制限超過時
       )}
     >
       {/* カラムヘッダー */}
@@ -109,7 +109,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
 
         {/* 空状態 */}
         {column.cards.length === 0 && (
-          <div className="border-border/50 flex h-24 items-center justify-center rounded-xl border-2 border-dashed">
+          <div className="border-border flex h-24 items-center justify-center rounded-xl border-2 border-dashed">
             <p className="text-muted-foreground text-xs">ドロップしてカードを追加</p>
           </div>
         )}

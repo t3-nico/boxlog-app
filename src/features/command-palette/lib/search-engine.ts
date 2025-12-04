@@ -1,5 +1,5 @@
 import { FuzzySearch } from '@/features/search'
-import { SmartFolder, Tag, Task } from '@/types/common'
+import { Tag, Task } from '@/types/common'
 
 import { SearchOptions, SearchResult } from '../config/command-palette'
 
@@ -14,7 +14,7 @@ export class SearchEngine {
     stores?: {
       tasks?: Task[]
       tags?: Tag[]
-      smartFolders?: SmartFolder[]
+      smartFolders?: unknown[] // deprecated, kept for backward compatibility
     }
   ): Promise<SearchResult[]> {
     const { query, categories, limit = 10 } = options
@@ -47,12 +47,6 @@ export class SearchEngine {
     if (stores?.tags && (!categories || categories.includes('tags'))) {
       const tagResults = SearchEngine.searchTags(query, stores.tags)
       results.push(...tagResults)
-    }
-
-    // Search smart folders if provided
-    if (stores?.smartFolders && (!categories || categories.includes('navigation'))) {
-      const smartFolderResults = SearchEngine.searchSmartFolders(query, stores.smartFolders)
-      results.push(...smartFolderResults)
     }
 
     // If no query, show recent/suggested items
@@ -138,40 +132,6 @@ export class SearchEngine {
     })
 
     return tagResults
-  }
-
-  /**
-   * Search smart folders
-   */
-  static searchSmartFolders(query: string, smartFolders: SmartFolder[]): SearchResult[] {
-    if (!smartFolders || smartFolders.length === 0) return []
-
-    const searchableFolders = smartFolders.map((folder) => ({
-      title: folder.name,
-      description: folder.description || '',
-      keywords: [folder.name].filter((keyword): keyword is string => Boolean(keyword)),
-      originalFolder: folder,
-    }))
-
-    const folderResults = FuzzySearch.search(searchableFolders, query).map(
-      (result: { originalFolder: SmartFolder }) => {
-        const folder = result.originalFolder
-        return {
-          id: `smart-folder:${folder.id}`,
-          title: folder.name,
-          description: folder.description || 'Smart folder',
-          category: 'navigation',
-          icon: 'folder',
-          type: 'smart-folder' as const,
-          action: () => {
-            // Navigation implementation tracked in Issue #86
-            console.log('Navigate to smart folder:', folder.id)
-          },
-        }
-      }
-    )
-
-    return folderResults
   }
 
   /**

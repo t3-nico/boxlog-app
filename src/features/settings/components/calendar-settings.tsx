@@ -31,7 +31,17 @@ interface CalendarAutoSaveSettings {
 }
 
 export function CalendarSettings() {
-  const settings = useCalendarSettingsStore()
+  // selector化: 必要な値だけ監視
+  const timezone = useCalendarSettingsStore((state) => state.timezone)
+  const timeFormat = useCalendarSettingsStore((state) => state.timeFormat)
+  const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn)
+  const showWeekNumbers = useCalendarSettingsStore((state) => state.showWeekNumbers)
+  const showDeclinedEvents = useCalendarSettingsStore((state) => state.showDeclinedEvents)
+  const defaultDuration = useCalendarSettingsStore((state) => state.defaultDuration)
+  const snapInterval = useCalendarSettingsStore((state) => state.snapInterval)
+  const businessHours = useCalendarSettingsStore((state) => state.businessHours)
+  const updateSettings = useCalendarSettingsStore((state) => state.updateSettings)
+  const resetSettings = useCalendarSettingsStore((state) => state.resetSettings)
   const { t } = useI18n()
 
   const formatTimeWithSettings = (date: Date, timeFormat: '12h' | '24h') => {
@@ -42,21 +52,21 @@ export function CalendarSettings() {
   // 自動保存システム
   const autoSave = useAutoSaveSettings<CalendarAutoSaveSettings>({
     initialValues: {
-      timezone: settings.timezone,
-      timeFormat: settings.timeFormat,
-      weekStartsOn: settings.weekStartsOn,
-      showWeekNumbers: settings.showWeekNumbers,
-      showDeclinedEvents: settings.showDeclinedEvents,
-      defaultDuration: settings.defaultDuration,
-      snapInterval: settings.snapInterval,
-      businessHours: settings.businessHours,
+      timezone,
+      timeFormat,
+      weekStartsOn,
+      showWeekNumbers,
+      showDeclinedEvents,
+      defaultDuration,
+      snapInterval,
+      businessHours,
     },
     onSave: async (values) => {
       // カレンダー設定更新API呼び出しシミュレーション
       await new Promise((resolve) => setTimeout(resolve, 500))
       console.log('Saving calendar settings:', values)
       // 実際のstore更新
-      settings.updateSettings(values)
+      updateSettings(values)
     },
     successMessage: t('settings.calendar.settingsSaved'),
     debounceMs: 800,
@@ -65,7 +75,7 @@ export function CalendarSettings() {
   // jsx-no-bind optimization: Reset settings handler
   const handleResetSettings = useCallback(() => {
     if (confirm('カレンダー設定をすべてデフォルトに戻しますか？')) {
-      settings.resetSettings()
+      resetSettings()
       // 自動保存の値もリセット
       autoSave.updateValues({
         timezone: 'Asia/Tokyo',
@@ -78,7 +88,7 @@ export function CalendarSettings() {
         businessHours: { start: 9, end: 18 },
       })
     }
-  }, [settings, autoSave])
+  }, [resetSettings, autoSave])
 
   // Handler functions
   const handleTimezoneChange = useCallback(

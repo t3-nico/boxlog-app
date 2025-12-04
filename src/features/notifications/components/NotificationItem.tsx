@@ -33,11 +33,11 @@ const typeIcons: Record<NotificationType, React.ReactNode> = {
 
 const typeColors: Record<NotificationType, string> = {
   reminder: 'text-primary',
-  plan_created: 'text-green-600 dark:text-green-400',
-  plan_updated: 'text-blue-600 dark:text-blue-400',
+  plan_created: 'text-success',
+  plan_updated: 'text-primary',
   plan_deleted: 'text-destructive',
-  plan_completed: 'text-green-600 dark:text-green-400',
-  trash_warning: 'text-amber-600 dark:text-amber-400',
+  plan_completed: 'text-success',
+  trash_warning: 'text-warning',
   system: 'text-muted-foreground',
 }
 
@@ -84,7 +84,7 @@ export function NotificationItem({
   return (
     <div
       className={`rounded-lg px-3 py-2.5 transition-colors ${
-        !isRead ? 'bg-accent' : 'hover:bg-accent/50'
+        !isRead ? 'bg-accent' : 'hover:bg-accent'
       } ${actionUrl ? 'cursor-pointer' : ''}`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}

@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { toast } from 'sonner'
 
+import { getErrorMessage } from '@/lib/errors'
+
 interface UseAutoSaveSettingsOptions<T> {
   initialValues: T
   onSave: (values: T) => Promise<void>
@@ -68,7 +70,7 @@ export function useAutoSaveSettings<T>({
 
         // エラートースト
         toast.error(errorMessage, {
-          description: error instanceof Error ? error.message : undefined,
+          description: getErrorMessage(error),
         })
       } finally {
         setIsSaving(false)

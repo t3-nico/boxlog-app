@@ -19,7 +19,8 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
   showDot = true,
   updateInterval = 60000,
   displayDates,
-  viewMode = 'day',
+  // viewModeはpropsとして受け取るが使用しない（将来の拡張用）
+  viewMode: _viewMode = 'day',
 }) {
   const currentTime = useCurrentTime({ updateInterval })
 
@@ -40,7 +41,7 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
       d.setHours(0, 0, 0, 0)
       return d.getTime() === today.getTime()
     })
-  }, [displayDates, viewMode])
+  }, [displayDates])
 
   // 今日の列位置を計算（複数日表示の場合）
   const columnInfo = useMemo(() => {
@@ -94,13 +95,7 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
       }}
     >
       {/* 時刻線 */}
-      <div
-        className="bg-primary h-full w-full shadow-sm"
-        style={{
-          background: 'linear-gradient(90deg, rgba(239, 68, 68, 0.9) 0%, rgba(239, 68, 68, 0.7) 100%)',
-          boxShadow: '0 1px 3px rgba(239, 68, 68, 0.5)',
-        }}
-      />
+      <div className="bg-primary h-full w-full shadow-sm" />
 
       {/* ドット */}
       {showDot != null && (

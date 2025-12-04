@@ -84,9 +84,7 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
               type="button"
               onClick={() => handleViewClick(view.id)}
               className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                currentViewId === view.id
-                  ? 'bg-foreground/12 text-foreground'
-                  : 'text-muted-foreground hover:bg-foreground/8'
+                currentViewId === view.id ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
               }`}
             >
               <div className="flex items-center justify-between gap-2">

@@ -11,7 +11,7 @@ import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore'
  * Inboxコンテンツ（アーカイブ）
  */
 function InboxContent() {
-  const { displayMode } = useInboxViewStore()
+  const displayMode = useInboxViewStore((state) => state.displayMode)
 
   // 表示形式に応じて表示を切り替え
   if (displayMode === 'table') {

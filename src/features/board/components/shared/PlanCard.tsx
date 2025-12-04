@@ -225,9 +225,9 @@ export function PlanCard({ item }: PlanCardProps) {
             {...listeners}
             onClick={handleClick}
             className={cn(
-              'bg-card hover:bg-muted/50 border-border group flex cursor-pointer flex-col gap-2 rounded-xl border p-3 shadow-sm transition-colors',
+              'bg-card hover:bg-muted border-border group flex cursor-pointer flex-col gap-2 rounded-xl border p-3 shadow-sm transition-colors',
               isActive && 'border-primary',
-              isFocused && 'bg-primary/10 hover:bg-primary/15',
+              isFocused && 'bg-primary/12 hover:bg-primary/16',
               isDragging && 'opacity-50'
             )}
           >
@@ -270,7 +270,7 @@ export function PlanCard({ item }: PlanCardProps) {
             <Popover open={dateTimeOpen} onOpenChange={setDateTimeOpen}>
               <PopoverTrigger asChild>
                 <div
-                  className="text-foreground hover:bg-primary/10 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
+                  className="text-foreground hover:bg-primary/8 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
                   onClick={(e) => {
                     // カードクリックイベントの伝播を防止
                     e.stopPropagation()
@@ -436,7 +436,7 @@ export function PlanCard({ item }: PlanCardProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="hover:bg-primary/10 text-muted-foreground h-5 w-5 shrink-0"
+                    className="hover:bg-primary/8 text-muted-foreground h-5 w-5 shrink-0"
                   >
                     <Plus className="h-3 w-3" />
                   </Button>
@@ -444,7 +444,7 @@ export function PlanCard({ item }: PlanCardProps) {
               ) : (
                 /* タグなしの場合は「タグを追加」 */
                 <div
-                  className="hover:bg-primary/10 group/tags flex w-fit cursor-pointer flex-wrap gap-1 rounded py-0.5 transition-colors"
+                  className="hover:bg-primary/8 group/tags flex w-fit cursor-pointer flex-wrap gap-1 rounded py-0.5 transition-colors"
                   onClick={(e) => {
                     // カードクリックイベントの伝播を防止
                     e.stopPropagation()

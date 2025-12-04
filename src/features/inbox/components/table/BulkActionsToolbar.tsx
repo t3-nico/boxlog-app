@@ -116,7 +116,7 @@ export function BulkActionsToolbar() {
   }
 
   return (
-    <div className="bg-muted/50 border-border flex items-center justify-between border-b px-4 py-3 md:px-6">
+    <div className="bg-muted border-border flex items-center justify-between border-b px-4 py-3 md:px-6">
       {/* 左側: 選択数表示 */}
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium">{selectedCount}件選択中</span>

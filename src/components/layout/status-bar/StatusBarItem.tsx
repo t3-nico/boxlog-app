@@ -72,12 +72,12 @@ export function StatusBarItem({ icon, label, onClick, tooltip, className, disabl
         'text-muted-foreground',
         // トランジション
         'transition-colors duration-150',
-        // インタラクティブな場合（M3準拠）
+        // インタラクティブな場合
         isClickable && [
           'cursor-pointer',
-          'hover:text-foreground hover:bg-foreground/8',
-          'active:bg-foreground/12',
-          'focus-visible:text-foreground focus-visible:bg-foreground/12 focus-visible:outline-none',
+          'hover:text-foreground hover:bg-secondary',
+          'active:bg-secondary',
+          'focus-visible:text-foreground focus-visible:bg-secondary focus-visible:outline-none',
         ],
         // 無効状態
         disabled && 'cursor-not-allowed opacity-50',

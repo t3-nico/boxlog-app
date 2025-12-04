@@ -104,8 +104,8 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
                 onClick={() => handleLanguageChange(option.code)}
                 className={cn(
                   'flex w-full items-center justify-between px-4 py-3 text-left transition-colors',
-                  active && 'bg-foreground/8',
-                  option.code === currentLocale && 'bg-foreground/12'
+                  active && 'bg-muted',
+                  option.code === currentLocale && 'bg-muted'
                 )}
               >
                 <div className="flex items-center gap-3">

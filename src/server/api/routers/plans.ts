@@ -984,4 +984,49 @@ export const plansRouter = createTRPCRouter({
 
     return counts
   }),
+
+  // タグごとの最終使用日時を取得
+  getTagLastUsed: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase, userId } = ctx
+
+    // ユーザーのプランIDを取得
+    const { data: userPlans, error: plansError } = await supabase.from('plans').select('id').eq('user_id', userId)
+
+    if (plansError) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `プランの取得に失敗しました: ${plansError.message}`,
+      })
+    }
+
+    const planIds = userPlans.map((t) => t.id)
+
+    if (planIds.length === 0) {
+      return {}
+    }
+
+    // plan_tags からタグごとの最終使用日時を取得
+    const { data: tagUsages, error: usagesError } = await supabase
+      .from('plan_tags')
+      .select('tag_id, created_at')
+      .in('plan_id', planIds)
+      .order('created_at', { ascending: false })
+
+    if (usagesError) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `タグ使用日時の取得に失敗しました: ${usagesError.message}`,
+      })
+    }
+
+    // タグIDごとに最新の日時を記録（最初に見つかったものが最新）
+    const lastUsed: Record<string, string> = {}
+    tagUsages.forEach((item) => {
+      if (!lastUsed[item.tag_id] && item.created_at) {
+        lastUsed[item.tag_id] = item.created_at
+      }
+    })
+
+    return lastUsed
+  }),
 })

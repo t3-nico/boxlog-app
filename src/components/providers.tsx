@@ -1,18 +1,28 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useState } from 'react'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { httpBatchLink, loggerLink } from '@trpc/client'
 import superjson from 'superjson'
+
+// React Query DevTools: 本番環境では完全に除外（バンドルサイズ削減）
+const ReactQueryDevtools =
+  process.env.NODE_ENV === 'development'
+    ? dynamic(() => import('@tanstack/react-query-devtools').then((mod) => mod.ReactQueryDevtools), { ssr: false })
+    : () => null
 
 import { RealtimeProvider } from '@/components/providers/RealtimeProvider'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { AuthStoreInitializer } from '@/features/auth/stores/AuthStoreInitializer'
-import { GlobalSearchProvider } from '@/features/search'
 import { api } from '@/lib/trpc'
+
+// GlobalSearchProviderを遅延ロード（初回レンダリングをブロックしない）
+const GlobalSearchProvider = dynamic(() => import('@/features/search').then((mod) => mod.GlobalSearchProvider), {
+  ssr: false,
+})
 
 function getBaseUrl() {
   if (typeof window !== 'undefined') return '' // ブラウザではルート相対パス
@@ -99,8 +109,10 @@ export function Providers({ children }: ProvidersProps) {
             </TooltipProvider>
           </ThemeProvider>
         </RealtimeProvider>
-        {/* React Query DevTools（開発環境のみ、本番ビルドでは自動除外） */}
-        <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
+        {/* React Query DevTools（開発環境のみ） */}
+        {process.env.NODE_ENV === 'development' && (
+          <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
+        )}
       </api.Provider>
     </QueryClientProvider>
   )

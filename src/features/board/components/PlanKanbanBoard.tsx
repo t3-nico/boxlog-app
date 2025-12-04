@@ -13,7 +13,6 @@ import { RecurringIndicator } from '@/features/plans/components/shared/Recurring
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { reminderTypeToMinutes } from '@/features/plans/utils/reminder'
-import { getEffectiveStatus } from '@/features/plans/utils/status'
 import { cn } from '@/lib/utils'
 import {
   DndContext,
@@ -46,12 +45,14 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
   const { updatePlan } = usePlanMutations()
   const { isStatusVisible } = useBoardStatusFilterStore()
 
-  // Planデータをカラムごとに分類（実効ステータスで判定）
-  // DBには旧ステータス値が残っている可能性があるため、getEffectiveStatusで判定
+  // Planデータをカラムごとに分類
   const columns = {
-    todo: items.filter((item) => getEffectiveStatus(item) === 'todo'),
-    doing: items.filter((item) => getEffectiveStatus(item) === 'doing'),
-    done: items.filter((item) => getEffectiveStatus(item) === 'done'),
+    backlog: items.filter((item) => item.status === 'backlog'),
+    ready: items.filter((item) => item.status === 'ready'),
+    active: items.filter((item) => item.status === 'active'),
+    wait: items.filter((item) => item.status === 'wait'),
+    done: items.filter((item) => item.status === 'done'),
+    cancel: items.filter((item) => item.status === 'cancel'),
   }
 
   // ドラッグ中のカードを取得
@@ -85,29 +86,15 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
 
     // ドラッグ中のアイテムを取得
     const draggedItem = items.find((item) => item.id === active.id)
-    const currentEffectiveStatus = draggedItem ? getEffectiveStatus(draggedItem) : null
 
-    if (draggedItem && currentEffectiveStatus !== targetStatus) {
-      // todoに移動した場合、スケジュール（due_date, start_time, end_time）をクリア
-      if (targetStatus === 'todo') {
-        updatePlan.mutate({
-          id: draggedItem.id,
-          data: {
-            status: targetStatus,
-            due_date: null,
-            start_time: null,
-            end_time: null,
-          },
-        })
-      } else {
-        // doing/doneに移動した場合、ステータスのみ更新
-        updatePlan.mutate({
-          id: draggedItem.id,
-          data: {
-            status: targetStatus,
-          },
-        })
-      }
+    if (draggedItem && draggedItem.status !== targetStatus) {
+      // ステータスを更新
+      updatePlan.mutate({
+        id: draggedItem.id,
+        data: {
+          status: targetStatus,
+        },
+      })
     }
 
     setActiveId(null)
@@ -115,20 +102,38 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="flex h-[calc(100vh-8rem)] gap-4 overflow-x-auto px-4 pt-4">
-        {/* Todo カラム */}
-        {isStatusVisible('todo') && (
-          <KanbanColumn title="Todo" count={columns.todo.length} variant="todo" status="todo">
-            {columns.todo.map((item) => (
+      <div className="flex h-full gap-4 overflow-x-auto p-4">
+        {/* Backlog カラム */}
+        {isStatusVisible('backlog') && (
+          <KanbanColumn title="Backlog" count={columns.backlog.length} variant="default" status="backlog">
+            {columns.backlog.map((item) => (
               <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
         )}
 
-        {/* Doing カラム */}
-        {isStatusVisible('doing') && (
-          <KanbanColumn title="Doing" count={columns.doing.length} variant="doing" status="doing">
-            {columns.doing.map((item) => (
+        {/* Ready カラム */}
+        {isStatusVisible('ready') && (
+          <KanbanColumn title="Ready" count={columns.ready.length} variant="ready" status="ready">
+            {columns.ready.map((item) => (
+              <PlanCard key={item.id} item={item} />
+            ))}
+          </KanbanColumn>
+        )}
+
+        {/* Active カラム */}
+        {isStatusVisible('active') && (
+          <KanbanColumn title="Active" count={columns.active.length} variant="active" status="active">
+            {columns.active.map((item) => (
+              <PlanCard key={item.id} item={item} />
+            ))}
+          </KanbanColumn>
+        )}
+
+        {/* Wait カラム */}
+        {isStatusVisible('wait') && (
+          <KanbanColumn title="Wait" count={columns.wait.length} variant="wait" status="wait">
+            {columns.wait.map((item) => (
               <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
@@ -138,6 +143,15 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
         {isStatusVisible('done') && (
           <KanbanColumn title="Done" count={columns.done.length} variant="done" status="done">
             {columns.done.map((item) => (
+              <PlanCard key={item.id} item={item} />
+            ))}
+          </KanbanColumn>
+        )}
+
+        {/* Cancel カラム */}
+        {isStatusVisible('cancel') && (
+          <KanbanColumn title="Cancel" count={columns.cancel.length} variant="cancel" status="cancel">
+            {columns.cancel.map((item) => (
               <PlanCard key={item.id} item={item} />
             ))}
           </KanbanColumn>
@@ -210,8 +224,8 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
 interface KanbanColumnProps {
   title: string
   count: number
-  variant: 'todo' | 'doing' | 'done'
-  status: 'todo' | 'doing' | 'done'
+  variant: 'default' | 'ready' | 'active' | 'wait' | 'done' | 'cancel'
+  status: 'backlog' | 'ready' | 'active' | 'wait' | 'done' | 'cancel'
   children: React.ReactNode
 }
 
@@ -269,9 +283,12 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   })
 
   const bgColor = {
-    todo: 'bg-muted/50',
-    doing: 'bg-primary/5 dark:bg-primary/10',
-    done: 'bg-success/5 dark:bg-success/10',
+    default: 'bg-gray-100 dark:bg-gray-800/40',
+    ready: 'bg-blue-100 dark:bg-blue-900/30',
+    active: 'bg-purple-100 dark:bg-purple-900/30',
+    wait: 'bg-orange-100 dark:bg-orange-900/30',
+    done: 'bg-green-100 dark:bg-green-900/30',
+    cancel: 'bg-red-100 dark:bg-red-900/30',
   }[variant]
 
   const handleCreate = () => {
@@ -311,10 +328,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      className={cn('flex h-full min-h-0 min-w-72 flex-1 flex-col rounded-lg', isOver && 'ring-primary/30 ring-2')}
-    >
+    <div ref={setNodeRef} className={cn('flex min-w-72 flex-col rounded-lg', isOver && 'ring-primary ring-2')}>
       <div
         className={`${bgColor} flex items-center justify-between rounded-t-lg pt-2`}
         style={{ height: '48px', minHeight: '48px', maxHeight: '48px', paddingLeft: '16px', paddingRight: '16px' }}
@@ -326,7 +340,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
           {/* ドロップダウンメニュー */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-6 w-6">
+              <Button variant="ghost" size="icon" className="h-6 w-6" aria-label={t('board.kanban.columnOptions')}>
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -358,14 +372,14 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
           </TooltipProvider>
         </div>
       </div>
-      <div className={`${bgColor} min-h-0 flex-1 space-y-2 overflow-y-auto rounded-b-lg px-4 pt-4 pb-2`}>
+      <div className={`${bgColor} flex-1 space-y-2 overflow-y-auto rounded-b-lg px-4 pt-4 pb-2`}>
         {children}
 
         {/* 新規作成フォーム（入力中） */}
         {isAdding && (
           <div
             ref={formRef}
-            className="bg-card hover:bg-muted/50 border-border group flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors"
+            className="bg-card hover:bg-muted border-border group flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors"
           >
             {/* タイトル入力 */}
             <div
@@ -395,7 +409,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
             <Popover open={dateTimeOpen} onOpenChange={setDateTimeOpen}>
               <PopoverTrigger asChild>
                 <div
-                  className="text-foreground hover:bg-primary/10 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
+                  className="text-foreground hover:bg-primary/8 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {selectedDate || startTime || endTime ? (
@@ -478,7 +492,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
               onTagsChange={(tagIds) => setSelectedTagIds(tagIds)}
             >
               <div
-                className="text-muted-foreground hover:bg-primary/10 flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors"
+                className="text-muted-foreground hover:bg-primary/8 flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Tag className="size-3" />

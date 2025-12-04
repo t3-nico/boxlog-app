@@ -13,11 +13,14 @@ import { WebVitalsReporter } from '@/components/WebVitalsReporter'
 import { cn } from '@/lib/utils'
 
 // next/font による最適化されたフォント読み込み（Variable Font: optical size軸有効）
+// preload: true でLCP改善（デフォルトでtrueだが明示的に指定）
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
   axes: ['opsz'],
+  preload: true,
+  fallback: ['system-ui', 'sans-serif'],
 })
 
 // 日本語フォント（GAFA方針準拠: Google = Noto Sans JP）
@@ -26,6 +29,8 @@ const notoSansJP = Noto_Sans_JP({
   weight: ['400', '500', '700'],
   display: 'swap',
   variable: '--font-noto-jp',
+  preload: true,
+  fallback: ['Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'sans-serif'],
 })
 
 export const metadata: Metadata = {

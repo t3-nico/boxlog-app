@@ -10,8 +10,18 @@ import type { Locale } from '@/types/i18n'
 import type { TranslatedString } from '@/types/i18n-branded'
 import { markAsTranslated } from '@/types/i18n-branded'
 
-import { createTranslation, getDictionary, type Dictionary } from './index'
+import {
+  createTranslation,
+  getCachedDictionary,
+  getDictionary,
+  preloadDictionaries,
+  type Dictionary,
+  type TranslationFunction,
+} from './index'
 import { getDirection, isRTL } from './rtl'
+
+// Re-export TranslationFunction for external use
+export type { TranslationFunction }
 
 // ブラウザの現在の言語を取得するフック（useSyncExternalStore使用）
 export const useCurrentLocale = (): Locale => {
@@ -235,16 +245,31 @@ export const useTranslation = () => {
 export const useI18n = (providedLocale?: 'en' | 'ja') => {
   const detectedLocale = useCurrentLocale()
   const locale = providedLocale || detectedLocale
-  const [dictionary, setDictionary] = useState<Dictionary | null>(null)
+
+  // キャッシュ済み辞書があれば即座に使用（フラッシュ防止）
+  const [dictionary, setDictionary] = useState<Dictionary | null>(() => getCachedDictionary(locale as 'en' | 'ja'))
 
   useEffect(() => {
-    getDictionary(locale as 'en' | 'ja').then(setDictionary)
+    const cached = getCachedDictionary(locale as 'en' | 'ja')
+    if (cached) {
+      // キャッシュがあれば即座に設定
+      setDictionary(cached)
+    } else {
+      // キャッシュがない場合のみ非同期ロード
+      getDictionary(locale as 'en' | 'ja').then(setDictionary)
+    }
+
+    // バックグラウンドで両言語をプリロード（言語切替時の遅延防止）
+    preloadDictionaries()
   }, [locale])
 
-  const t = useMemo(() => {
+  const t: TranslationFunction = useMemo(() => {
     if (!dictionary) {
-      // 辞書ロード中はキーをそのまま返す
-      return (key: string): TranslatedString => markAsTranslated(key)
+      // 辞書ロード中はキーをそのまま返す（TranslationFunctionの基本形を返す）
+      const fallback = ((key: string): TranslatedString => markAsTranslated(key)) as TranslationFunction
+      fallback.plural = (key: string, _count: number): TranslatedString => markAsTranslated(key)
+      fallback.icu = (message: string, _count: number): TranslatedString => markAsTranslated(message)
+      return fallback
     }
 
     return createTranslation(dictionary, locale as 'en' | 'ja')

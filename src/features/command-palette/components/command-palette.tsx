@@ -15,7 +15,6 @@ import {
   CommandList,
 } from '@/components/ui/command'
 
-import { useSmartFolderStore } from '@/features/smart-folders/stores/useSmartFolderStore'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { useDebounce } from '@/hooks/useDebounce'
 import { Task } from '@/types/unified'
@@ -37,7 +36,6 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
   // const tasks = useTaskStore((state) => state.tasks ?? [])
   const tasks: Task[] = useMemo(() => [], []) // TODO: Plans統合後に実装
   const tags = useTagStore((state) => state.tags ?? [])
-  const smartFolders = useSmartFolderStore((state) => state.smartFolders ?? [])
 
   // State
   const [query, setQuery] = useState('')
@@ -96,7 +94,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
           {
             tasks: convertedTasks as unknown as import('@/types/common').Task[],
             tags: tags as unknown as import('@/types/common').Tag[],
-            smartFolders: smartFolders as unknown as import('@/types/common').SmartFolder[],
+            smartFolders: [],
           }
         )
         setResults(searchResults)
@@ -107,7 +105,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
         setIsLoading(false)
       }
     },
-    [tasks, tags, smartFolders]
+    [tasks, tags]
   )
 
   // Load initial results when opening

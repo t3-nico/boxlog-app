@@ -16,69 +16,72 @@ export interface ProductivityZone {
 }
 
 // プリセットのクロノタイプ定義
+// 参考: Dr. Michael Breus "The Power of When" (https://sleepdoctor.com/pages/chronotypes)
 export const CHRONOTYPE_PRESETS: Record<ChronotypeType, ChronotypeProfile> = {
   lion: {
     type: 'lion',
-    name: 'Lion (Super Early Bird)',
-    description: 'Most productive in early morning. Wake up at 5-6 AM and peak during morning hours.',
+    name: 'Lion',
+    description:
+      '目覚まし不要で早朝に自然と起きる超朝型。午前中にエネルギーがピークを迎え、夕方以降は早めに眠くなる。楽観的で規律正しく、目標志向。人口の約15-20%。',
     productivityZones: [
-      { startHour: 5, endHour: 7, level: 'good', label: 'Morning Prep', color: 'bg-yellow-300' },
-      { startHour: 7, endHour: 11, level: 'peak', label: 'Peak Time', color: 'bg-green-500' },
-      { startHour: 11, endHour: 14, level: 'good', label: 'Focus Time', color: 'bg-green-300' },
-      { startHour: 14, endHour: 17, level: 'moderate', label: 'Regular Time', color: 'bg-blue-200' },
-      { startHour: 17, endHour: 21, level: 'low', label: 'Low Energy', color: 'bg-gray-200' },
-      { startHour: 21, endHour: 5, level: 'sleep', label: 'Sleep Time', color: 'bg-indigo-500' },
+      { startHour: 6, endHour: 8, level: 'good', label: '準備時間', color: 'bg-yellow-300' },
+      { startHour: 8, endHour: 12, level: 'peak', label: 'ピーク', color: 'bg-green-500' },
+      { startHour: 12, endHour: 14, level: 'good', label: '集中時間', color: 'bg-green-300' },
+      { startHour: 14, endHour: 18, level: 'moderate', label: '通常', color: 'bg-blue-200' },
+      { startHour: 18, endHour: 22, level: 'low', label: '低調', color: 'bg-gray-200' },
+      { startHour: 22, endHour: 6, level: 'sleep', label: '睡眠', color: 'bg-indigo-500' },
     ],
   },
 
   bear: {
     type: 'bear',
-    name: 'Bear (Standard Type)',
-    description: 'Follows sun rhythm. Wake up around 7 AM, productive in morning and early afternoon.',
+    name: 'Bear',
+    description:
+      '太陽のリズムに沿った生活が自然にできる標準型。7時頃に起床し、午前中から午後前半にかけて生産性が高まる。9-5の生活スタイルに最も適応しやすい。人口の約55%。',
     productivityZones: [
-      { startHour: 7, endHour: 9, level: 'moderate', label: 'Morning Prep', color: 'bg-yellow-200' },
-      { startHour: 9, endHour: 12, level: 'peak', label: 'Peak Time', color: 'bg-green-500' },
-      { startHour: 12, endHour: 14, level: 'moderate', label: 'Post Lunch', color: 'bg-blue-200' },
-      { startHour: 14, endHour: 17, level: 'good', label: 'Second Peak', color: 'bg-green-300' },
-      { startHour: 17, endHour: 22, level: 'moderate', label: 'Evening', color: 'bg-blue-200' },
-      { startHour: 22, endHour: 7, level: 'sleep', label: 'Sleep Time', color: 'bg-indigo-500' },
+      { startHour: 7, endHour: 10, level: 'moderate', label: '準備時間', color: 'bg-yellow-200' },
+      { startHour: 10, endHour: 14, level: 'peak', label: 'ピーク', color: 'bg-green-500' },
+      { startHour: 14, endHour: 16, level: 'low', label: '低調', color: 'bg-gray-200' },
+      { startHour: 16, endHour: 21, level: 'moderate', label: '通常', color: 'bg-blue-200' },
+      { startHour: 21, endHour: 23, level: 'low', label: '就寝準備', color: 'bg-gray-200' },
+      { startHour: 23, endHour: 7, level: 'sleep', label: '睡眠', color: 'bg-indigo-500' },
     ],
   },
 
   wolf: {
     type: 'wolf',
-    name: 'Wolf (Night Owl)',
-    description: 'Most creative at night. Struggle in morning, productivity rises from afternoon to night.',
+    name: 'Wolf',
+    description:
+      '午前中は苦手で、夕方から夜にかけてエンジンがかかる夜型。深夜まで眠くならず、クリエイティブで感情豊か。アーティストやミュージシャンに多い。人口の約15%。',
     productivityZones: [
-      { startHour: 7, endHour: 11, level: 'low', label: 'Low Period', color: 'bg-gray-200' },
-      { startHour: 11, endHour: 14, level: 'moderate', label: 'Gradual Rise', color: 'bg-blue-200' },
-      { startHour: 14, endHour: 17, level: 'good', label: 'Focus Time', color: 'bg-green-300' },
-      { startHour: 17, endHour: 22, level: 'peak', label: 'Peak Time', color: 'bg-green-500' },
-      { startHour: 22, endHour: 2, level: 'good', label: 'Creative Time', color: 'bg-purple-300' },
-      { startHour: 2, endHour: 7, level: 'sleep', label: 'Sleep Time', color: 'bg-indigo-500' },
+      { startHour: 9, endHour: 12, level: 'low', label: '低調', color: 'bg-gray-200' },
+      { startHour: 12, endHour: 14, level: 'moderate', label: '準備時間', color: 'bg-yellow-200' },
+      { startHour: 14, endHour: 17, level: 'good', label: '集中時間', color: 'bg-green-300' },
+      { startHour: 17, endHour: 20, level: 'peak', label: 'ピーク', color: 'bg-green-500' },
+      { startHour: 20, endHour: 24, level: 'good', label: '創造時間', color: 'bg-purple-300' },
+      { startHour: 0, endHour: 9, level: 'sleep', label: '睡眠', color: 'bg-indigo-500' },
     ],
   },
 
   dolphin: {
     type: 'dolphin',
-    name: 'Dolphin (Irregular Type)',
-    description: 'Light sleep and irregular rhythm. Multiple short focus periods throughout the day.',
+    name: 'Dolphin',
+    description:
+      '睡眠が浅く不規則なパターンを持つ。午前中に集中力がピークを迎え、午後は低調になりやすい。知能が高く、慎重で完璧主義な傾向。人口の約10%。',
     productivityZones: [
-      { startHour: 6, endHour: 8, level: 'moderate', label: 'Wake Up', color: 'bg-blue-200' },
-      { startHour: 8, endHour: 10, level: 'good', label: 'Morning Focus', color: 'bg-green-300' },
-      { startHour: 10, endHour: 12, level: 'moderate', label: 'Regular', color: 'bg-blue-200' },
-      { startHour: 12, endHour: 14, level: 'low', label: 'Low Energy', color: 'bg-gray-200' },
-      { startHour: 14, endHour: 16, level: 'peak', label: 'Peak Time', color: 'bg-green-500' },
-      { startHour: 16, endHour: 18, level: 'good', label: 'Focus Time', color: 'bg-green-300' },
-      { startHour: 18, endHour: 22, level: 'moderate', label: 'Evening', color: 'bg-blue-200' },
-      { startHour: 22, endHour: 6, level: 'sleep', label: 'Sleep Time', color: 'bg-indigo-500' },
+      { startHour: 6, endHour: 8, level: 'moderate', label: '起床', color: 'bg-blue-200' },
+      { startHour: 8, endHour: 11, level: 'peak', label: 'ピーク', color: 'bg-green-500' },
+      { startHour: 11, endHour: 14, level: 'good', label: '創造時間', color: 'bg-green-300' },
+      { startHour: 14, endHour: 17, level: 'low', label: '低調', color: 'bg-gray-200' },
+      { startHour: 17, endHour: 22, level: 'moderate', label: '通常', color: 'bg-blue-200' },
+      { startHour: 22, endHour: 6, level: 'sleep', label: '睡眠', color: 'bg-indigo-500' },
     ],
   },
 
   custom: {
     type: 'custom',
     name: 'Custom',
-    description: 'Set your own personalized rhythm',
+    description: '自分だけのリズムを設定できます',
     productivityZones: [],
   },
 }

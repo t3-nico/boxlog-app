@@ -1,7 +1,7 @@
 'use client'
 
-import { DndContext, DragOverlay, closestCenter, useDroppable } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { useDroppable } from '@dnd-kit/core'
+import { SortableContext } from '@dnd-kit/sortable'
 import { Archive, Folder, FolderX, Plus, Tags } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -11,18 +11,13 @@ import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
-import {
-  useCreateTagGroup,
-  useDeleteTagGroup,
-  useTagGroups,
-  useUpdateTagGroup,
-} from '@/features/tags/hooks/use-tag-groups'
-import { useTagGroupsDnd } from '@/features/tags/hooks/use-tag-groups-dnd'
+import { useCreateTagGroup, useDeleteTagGroup, useUpdateTagGroup } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import type { TagGroup } from '@/types/tags'
 import { toast } from 'sonner'
@@ -50,20 +45,18 @@ export function TagsSidebar({
   const { t } = useI18n()
   const router = useRouter()
   const pathname = usePathname()
-  const { setIsCreatingGroup } = useTagsPageContext()
-  const { data: groups = [] as TagGroup[], isLoading: isLoadingGroups } = useTagGroups()
+  const { setIsCreatingGroup, reorderedGroups, sortableContextProps } = useTagsPageContext()
   const { data: allTags = [] } = useTags(true) // タグ数カウント用
   const createGroupMutation = useCreateTagGroup()
   const updateGroupMutation = useUpdateTagGroup()
   const deleteGroupMutation = useDeleteTagGroup()
 
-  // ドラッグアンドドロップ機能
-  const { sensors, activeGroup, handleDragStart, handleDragEnd, handleDragCancel, reorderedGroups } =
-    useTagGroupsDnd(groups)
+  // グループのローディング状態はContextから取得できるかどうかで判断
+  const isLoadingGroups = reorderedGroups.length === 0 && isLoading
 
   const [deletingGroup, setDeletingGroup] = useState<TagGroup | null>(null)
   const [newGroupName, setNewGroupName] = useState('')
-  const [newGroupColor, setNewGroupColor] = useState('#6B7280')
+  const [newGroupColor, setNewGroupColor] = useState(DEFAULT_GROUP_COLOR)
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null)
   const [editingGroupName, setEditingGroupName] = useState('')
 
@@ -85,14 +78,14 @@ export function TagsSidebar({
   const handleStartCreating = useCallback(() => {
     setIsCreatingGroup(true)
     setNewGroupName('')
-    setNewGroupColor('#6B7280')
+    setNewGroupColor(DEFAULT_GROUP_COLOR)
   }, [setIsCreatingGroup])
 
   // インライン作成をキャンセル
   const handleCancelCreating = useCallback(() => {
     setIsCreatingGroup(false)
     setNewGroupName('')
-    setNewGroupColor('#6B7280')
+    setNewGroupColor(DEFAULT_GROUP_COLOR)
   }, [setIsCreatingGroup])
 
   // クリックアウトサイド検知
@@ -141,7 +134,7 @@ export function TagsSidebar({
       toast.success(`グループ「${newGroupName}」を作成しました`)
       setIsCreatingGroup(false)
       setNewGroupName('')
-      setNewGroupColor('#6B7280')
+      setNewGroupColor(DEFAULT_GROUP_COLOR)
 
       // 作成したグループのページに遷移
       const locale = pathname?.split('/')[1] || 'ja'
@@ -334,7 +327,7 @@ export function TagsSidebar({
         <SidebarHeader title={t('sidebar.navigation.tags')} />
 
         <div className="flex flex-1 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+          <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
         </div>
       </aside>
     )
@@ -413,46 +406,26 @@ export function TagsSidebar({
             <div className="text-muted-foreground px-3 py-2 text-xs">{t('tags.sidebar.noGroups')}</div>
           ) : (
             <>
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-                onDragCancel={handleDragCancel}
-              >
-                <SortableContext items={reorderedGroups.map((g) => g.id)} strategy={verticalListSortingStrategy}>
-                  {reorderedGroups.map((group) => (
-                    <SortableGroupItem
-                      key={group.id}
-                      group={group}
-                      isActive={currentGroupNumber === group.group_number}
-                      tagCount={getGroupTagCount(group.id)}
-                      onGroupClick={handleGroupClick}
-                      onStartEdit={handleStartEditing}
-                      onCancelEdit={handleCancelEditing}
-                      onSaveEdit={handleSaveEditing}
-                      onUpdateColor={handleUpdateColor}
-                      onDelete={handleDeleteGroup}
-                      isEditing={editingGroupId === group.id}
-                      editingName={editingGroupName}
-                      setEditingName={setEditingGroupName}
-                    />
-                  ))}
-                </SortableContext>
-
-                {/* DragOverlay: ドラッグ中のグループを表示 */}
-                <DragOverlay>
-                  {activeGroup ? (
-                    <div className="bg-foreground/12 text-foreground w-full rounded-md px-3 py-2 text-left text-sm opacity-80 shadow-lg">
-                      <div className="flex items-center gap-2">
-                        <Folder className="h-4 w-4 shrink-0" style={{ color: activeGroup.color || '#6B7280' }} />
-                        <span className="flex-1 truncate">{activeGroup.name}</span>
-                        <span className="text-muted-foreground text-xs">{getGroupTagCount(activeGroup.id)}</span>
-                      </div>
-                    </div>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
+              {/* SortableContext - DndContextは親のTagsPageProviderで提供 */}
+              <SortableContext {...sortableContextProps}>
+                {reorderedGroups.map((group) => (
+                  <SortableGroupItem
+                    key={group.id}
+                    group={group}
+                    isActive={currentGroupNumber === group.group_number}
+                    tagCount={getGroupTagCount(group.id)}
+                    onGroupClick={handleGroupClick}
+                    onStartEdit={handleStartEditing}
+                    onCancelEdit={handleCancelEditing}
+                    onSaveEdit={handleSaveEditing}
+                    onUpdateColor={handleUpdateColor}
+                    onDelete={handleDeleteGroup}
+                    isEditing={editingGroupId === group.id}
+                    editingName={editingGroupName}
+                    setEditingName={setEditingGroupName}
+                  />
+                ))}
+              </SortableContext>
 
               {/* インライン作成フォーム */}
               {isCreating && (

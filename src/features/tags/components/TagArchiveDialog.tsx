@@ -72,7 +72,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
 
         <div className="space-y-3">
           {/* 警告 */}
-          <div className="flex items-center gap-2 rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-3 text-yellow-700 dark:text-yellow-400">
+          <div className="border-destructive/20 bg-destructive/10 text-destructive flex items-center gap-2 rounded-xl border p-3">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             <p className="text-sm font-medium">アーカイブされたタグは新規のタグ付けには使用できません</p>
           </div>
@@ -80,7 +80,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
           {/* 使用状況 */}
           {isLoading ? (
             <div className="bg-muted flex items-center justify-center rounded-xl p-4">
-              <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-blue-600"></div>
+              <div className="border-primary h-5 w-5 animate-spin rounded-full border-b-2"></div>
             </div>
           ) : usage ? (
             <div className="bg-muted rounded-xl p-4">
@@ -111,7 +111,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isArchiving}
-            className="bg-amber-600 text-white hover:bg-amber-600/92"
+            className="bg-warning text-warning-foreground hover:bg-warning/92"
           >
             {isArchiving ? 'アーカイブ中...' : 'アーカイブ'}
           </AlertDialogAction>

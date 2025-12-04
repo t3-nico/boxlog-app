@@ -84,7 +84,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
               <button
                 onClick={() => (window.location.href = '/')}
-                className="bg-muted text-foreground hover:bg-muted/80 w-full rounded-md px-4 py-3 transition-colors"
+                className="bg-muted text-foreground hover:bg-muted w-full rounded-md px-4 py-3 transition-colors"
               >
                 {t('errors.global.goHome')}
               </button>

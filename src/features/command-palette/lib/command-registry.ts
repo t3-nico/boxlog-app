@@ -177,18 +177,6 @@ export const registerDefaultCommands = (router: { push: (path: string) => void }
         console.log('Create new tag')
       },
     },
-    {
-      id: 'create:smart-folder',
-      title: 'Create Smart Folder',
-      description: 'Create a filtered view of tasks',
-      category: 'create',
-      icon: 'folder-plus',
-      keywords: ['new', 'add', 'create', 'smart', 'folder', 'filter'],
-      action: () => {
-        // This will be implemented with the smart folder creation modal
-        console.log('Create smart folder')
-      },
-    },
 
     // Settings commands
     {

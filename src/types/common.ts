@@ -10,8 +10,6 @@ export type {
   ApiError,
   ApiResponse,
   CreateTaskRequest,
-  SmartFolder,
-  SmartFolderRule,
   Tag,
   TagWithChildren,
   Task,
@@ -39,7 +37,7 @@ export interface Searchable {
 export interface OfflineActionData<T = unknown> {
   id: string
   type: 'create' | 'update' | 'delete'
-  entity: 'task' | 'record' | 'block' | 'tag' | 'smart-folder'
+  entity: 'task' | 'record' | 'block' | 'tag'
   data: T
   originalData?: T
   timestamp: Date

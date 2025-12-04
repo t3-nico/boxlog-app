@@ -11,18 +11,17 @@
  * - イベント（カレンダー表示）
  * - カレンダー（同期重要）
  *
- * Supabase Realtime購読により常に最新データを保持するため、staleTime=0に設定
- * （Realtime経由でinvalidateされたデータは即座に再フェッチ）
+ * Supabase Realtime購読により常に最新データを保持
+ * staleTime=30秒: ページ遷移時の再フェッチを抑制しつつ、Realtime経由の更新は即座に反映
  */
 export const realtimeCache = {
-  staleTime: 0, // 常にfresh（Realtime購読により即座に更新）
+  staleTime: 30 * 1000, // 30秒（Realtime購読で更新されるため長めでOK）
   gcTime: 2 * 60 * 1000, // 2分
 }
 
 /**
  * 通常のデータ（標準）
  * - タグ（頻繁に変更されない）
- * - スマートフォルダ（設定的な性質）
  * - タグ関連付け
  */
 export const standardCache = {
@@ -41,19 +40,31 @@ export const staticCache = {
 }
 
 /**
+ * 短期キャッシュ（1分）
+ * - タグ使用数（頻繁に更新される可能性）
+ * - プランアクティビティ（履歴は少し遅れてもOK）
+ */
+export const shortTermCache = {
+  staleTime: 60 * 1000, // 1分
+  gcTime: 5 * 60 * 1000, // 5分
+}
+
+/**
  * 機能別のキャッシュ戦略マトリクス
  */
 export const cacheStrategies = {
   events: realtimeCache,
   calendars: realtimeCache,
+  calendarViewState: standardCache, // ビュー状態はリアルタイム不要
   tags: standardCache,
   tagGroups: standardCache, // タググループは頻繁に変更されない
   itemTags: standardCache,
   tagStats: standardCache,
-  smartFolders: standardCache,
+  tagUsage: shortTermCache, // タグ使用数は頻繁に更新される
   userSettings: staticCache,
   inbox: realtimeCache, // Inboxデータはリアルタイム性が重要
   plans: realtimeCache, // プランもリアルタイム性が重要
+  planActivities: shortTermCache, // アクティビティ履歴は少し遅れてもOK
   sessions: realtimeCache, // セッションもリアルタイム性が重要
 } as const
 
