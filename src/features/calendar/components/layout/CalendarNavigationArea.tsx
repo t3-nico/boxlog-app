@@ -25,13 +25,13 @@ export function CalendarNavigationArea({ children }: CalendarNavigationAreaProps
     <div className="flex w-full items-center gap-4">
       {/* 左側: アイコンボタン */}
       <div className="flex items-center gap-1">
-        <Button variant="ghost" size="icon" className="h-8 w-8">
+        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="時間フィルター">
           <Clock className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
+        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="並び替え">
           <ArrowUpDown className="h-4 w-4" />
         </Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
+        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="フィルター">
           <ListFilter className="h-4 w-4" />
         </Button>
       </div>

@@ -1,15 +1,16 @@
 // Plan型定義
 
 /**
- * プランステータス（6段階）
- * - backlog: 準備中（未着手）
- * - ready: 配置済み（準備完了、開始待ち）
- * - active: 作業中
- * - wait: 待ち（ブロック中）
- * - done: 完了
- * - cancel: 中止
+ * プランステータス（3段階）
+ * - todo: 未着手
+ * - doing: 作業中（自動判定: カレンダー配置 or Log紐づけ）
+ * - done: 完了（手動）
+ *
+ * 注意: DBには 'done' かどうかのみ保存。
+ * 'doing' は start_time / log_id から計算で導出。
+ * 詳細は getEffectiveStatus() を参照。
  */
-export type PlanStatus = 'backlog' | 'ready' | 'active' | 'wait' | 'done' | 'cancel'
+export type PlanStatus = 'todo' | 'doing' | 'done'
 
 /**
  * 繰り返しタイプ（シンプル版）

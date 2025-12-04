@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { markAsTranslated } from '@/types/i18n-branded'
+import { useTranslations } from 'next-intl'
 
 import { handleActionKeys, handleArrowKeys, handleNavigationKeys, handlePlanDetailKeys } from './keyboardHandlers'
 
@@ -40,7 +41,7 @@ const TIME_SLOTS = Array.from({ length: 96 }, (_, i) => {
 })
 
 export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Date, callbacks: KeyboardCallbacks) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [navigationState, setNavigationState] = useState<NavigationState>({
     selectedDate: new Date(currentDate),
     selectedTime: '09:00',
@@ -291,7 +292,7 @@ export function useAccessibilityKeyboard(plans: CalendarPlan[], currentDate: Dat
           description?: string
         }>,
         TIME_SLOTS,
-        noDescriptionText: t('calendar.plan.noDescription'),
+        noDescriptionText: markAsTranslated(t('calendar.plan.noDescription')),
       }
 
       // ヘルパー関数を直接呼び出し

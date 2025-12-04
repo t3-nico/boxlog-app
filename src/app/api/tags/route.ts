@@ -251,6 +251,102 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ data })
       }
 
+      case 'merge': {
+        const { target_tag_id, merge_associations, delete_source } = updateData
+
+        // ターゲットタグのバリデーション
+        if (!target_tag_id) {
+          return NextResponse.json({ error: 'tags.validation.targetTagRequired' }, { status: 400 })
+        }
+
+        // 同じタグへのマージは不可
+        if (tag_id === target_tag_id) {
+          return NextResponse.json({ error: 'tags.validation.cannotMergeSameTag' }, { status: 400 })
+        }
+
+        // ターゲットタグの所有権チェック
+        const { data: targetTag, error: targetError } = await supabase
+          .from('tags')
+          .select('*')
+          .eq('id', target_tag_id)
+          .eq('user_id', user.id)
+          .single()
+
+        if (targetError || !targetTag) {
+          return NextResponse.json({ error: 'tags.errors.targetTagNotFound' }, { status: 404 })
+        }
+
+        let mergedAssociations = 0
+
+        // 関連付けのマージ
+        if (merge_associations !== false) {
+          // plan_tagsの関連付けを移行
+          // まず、ターゲットタグに既に関連付けられているplan_idを取得
+          const { data: existingPlanTags } = await supabase
+            .from('plan_tags')
+            .select('plan_id')
+            .eq('tag_id', target_tag_id)
+
+          const existingPlanIds = new Set((existingPlanTags || []).map((pt: { plan_id: string }) => pt.plan_id))
+
+          // ソースタグの関連付けを取得
+          const { data: sourcePlanTags } = await supabase.from('plan_tags').select('*').eq('tag_id', tag_id)
+
+          // 重複しない関連付けを移行
+          const tagsToMigrate = (sourcePlanTags || []).filter(
+            (pt: { plan_id: string }) => !existingPlanIds.has(pt.plan_id)
+          )
+
+          if (tagsToMigrate.length > 0) {
+            const { error: updateError } = await supabase
+              .from('plan_tags')
+              .update({ tag_id: target_tag_id })
+              .eq('tag_id', tag_id)
+              .in(
+                'plan_id',
+                tagsToMigrate.map((pt: { plan_id: string }) => pt.plan_id)
+              )
+
+            if (updateError) {
+              return NextResponse.json({ error: handleSupabaseError(updateError) }, { status: 500 })
+            }
+
+            mergedAssociations = tagsToMigrate.length
+          }
+
+          // 重複していた関連付けは削除（ソースタグから）
+          if (sourcePlanTags && sourcePlanTags.length > tagsToMigrate.length) {
+            await supabase.from('plan_tags').delete().eq('tag_id', tag_id)
+          }
+
+          // 子タグをターゲットタグに移動
+          const { error: moveChildrenError } = await supabase
+            .from('tags')
+            .update({ parent_id: target_tag_id })
+            .eq('parent_id', tag_id)
+            .eq('user_id', user.id)
+
+          if (moveChildrenError) {
+            console.error('Failed to move children tags:', moveChildrenError)
+          }
+        }
+
+        // ソースタグの削除
+        if (delete_source !== false) {
+          const { error: deleteError } = await supabase.from('tags').delete().eq('id', tag_id)
+
+          if (deleteError) {
+            return NextResponse.json({ error: handleSupabaseError(deleteError) }, { status: 500 })
+          }
+        }
+
+        return NextResponse.json({
+          success: true,
+          merged_associations: mergedAssociations,
+          target_tag: targetTag,
+        })
+      }
+
       default:
         return NextResponse.json({ error: 'tags.errors.invalidAction' }, { status: 400 })
     }

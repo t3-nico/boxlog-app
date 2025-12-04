@@ -4,9 +4,9 @@ import { format } from 'date-fns'
 import { Bell } from 'lucide-react'
 
 import { calendarColors } from '@/features/calendar/theme'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { RecurringIndicatorFromFlag } from '@/features/plans/components/shared/RecurringIndicator'
 import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
 
 import type { AgendaItemProps } from '../AgendaView.types'
 
@@ -19,7 +19,7 @@ import type { AgendaItemProps } from '../AgendaView.types'
  * - タイトル、タグ、アイコン表示
  */
 export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
-  const { locale } = useI18n()
+  const locale = useLocale()
   const scheduledColors = calendarColors.event.scheduled
 
   const handleClick = () => {

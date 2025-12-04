@@ -3,10 +3,10 @@
 import { AlertTriangle, ExternalLink, FileText, Lock, Mail, Shield } from 'lucide-react'
 import Link from 'next/link'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 export default function SecurityPage() {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   return (
     <div className="container mx-auto max-w-4xl p-4 md:p-8">
@@ -26,7 +26,7 @@ export default function SecurityPage() {
           <h2 className="text-2xl font-semibold">{t('legal.security.policy.title')}</h2>
         </div>
 
-        <div className="bg-muted/50 mb-6 rounded-xl p-6">
+        <div className="bg-muted mb-6 rounded-xl p-6">
           <h3 className="mb-4 text-lg font-semibold">{t('legal.security.policy.supportedVersions.title')}</h3>
           <table className="border-border w-full border">
             <thead className="bg-muted">
@@ -74,7 +74,7 @@ export default function SecurityPage() {
           <h2 className="text-2xl font-semibold">{t('legal.security.vulnerability.title')}</h2>
         </div>
 
-        <div className="bg-destructive/10 mb-6 rounded-xl p-6">
+        <div className="bg-destructive/12 mb-6 rounded-xl p-6">
           <p className="text-destructive-foreground mb-4 font-semibold">
             {t('legal.security.vulnerability.warning.title')}
           </p>
@@ -164,7 +164,7 @@ export default function SecurityPage() {
       <section className="mb-12">
         <h2 className="mb-4 text-2xl font-semibold">{t('legal.security.disclosure.title')}</h2>
 
-        <div className="bg-muted/50 rounded-xl p-6">
+        <div className="bg-muted rounded-xl p-6">
           <h3 className="mb-4 text-lg font-semibold">{t('legal.security.disclosure.safeHarbor.title')}</h3>
           <p className="text-foreground mb-4 leading-relaxed">
             {t('legal.security.disclosure.safeHarbor.description')}
@@ -250,7 +250,7 @@ export default function SecurityPage() {
       </section>
 
       {/* お問い合わせ */}
-      <section className="bg-muted/50 rounded-xl p-6">
+      <section className="bg-muted rounded-xl p-6">
         <h2 className="mb-4 text-xl font-semibold">{t('legal.security.contact.title')}</h2>
         <div className="space-y-2">
           <p className="flex items-center gap-2">

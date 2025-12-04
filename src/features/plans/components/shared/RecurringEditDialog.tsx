@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useLocale } from 'next-intl'
 
 export type RecurringEditScope = 'this' | 'thisAndFuture' | 'all'
 
@@ -38,7 +38,7 @@ export interface RecurringEditDialogProps {
  * - すべてのイベント
  */
 export function RecurringEditDialog({ open, onOpenChange, onConfirm, mode, planTitle }: RecurringEditDialogProps) {
-  const { locale } = useI18n()
+  const locale = useLocale()
   const [scope, setScope] = useState<RecurringEditScope>('this')
 
   const handleConfirm = useCallback(() => {

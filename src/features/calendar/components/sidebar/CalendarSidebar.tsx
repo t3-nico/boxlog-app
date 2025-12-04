@@ -3,14 +3,13 @@
 import { useMemo, useState } from 'react'
 
 import { endOfWeek, startOfWeek } from 'date-fns'
-import { usePathname } from 'next/navigation'
 
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { SidebarTabLayout } from '@/features/navigation/components/sidebar/SidebarTabLayout'
 import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
+import { useTranslations } from 'next-intl'
 
 import { InboxCardList } from './inbox/InboxCardList'
 import { InboxNavigation, type InboxFilter, type InboxSort } from './inbox/InboxNavigation'
@@ -24,9 +23,7 @@ import { InboxNavigation, type InboxFilter, type InboxSort } from './inbox/Inbox
  */
 export function CalendarSidebar() {
   const navigation = useCalendarNavigation()
-  const pathname = usePathname()
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t } = useI18n(localeFromPath)
+  const t = useTranslations()
 
   const [filter, setFilter] = useState<InboxFilter>('all')
   const [sort, setSort] = useState<InboxSort>('due')

@@ -7,12 +7,9 @@ import type { GroupByField, GroupedData } from '../types/group'
  * ステータスラベルマップ
  */
 const STATUS_LABELS: Record<PlanStatus, string> = {
-  backlog: '準備中',
-  ready: '配置済み',
-  active: '作業中',
-  wait: '待ち',
-  done: '完了',
-  cancel: '中止',
+  todo: 'Todo',
+  doing: 'Doing',
+  done: 'Done',
 }
 
 /**
@@ -28,8 +25,8 @@ const STATUS_LABELS: Record<PlanStatus, string> = {
  * ```typescript
  * const grouped = groupItems(items, 'status')
  * // => [
- * //   { groupKey: 'active', groupLabel: '作業中', items: [...], count: 5 },
- * //   { groupKey: 'ready', groupLabel: '配置済み', items: [...], count: 3 }
+ * //   { groupKey: 'doing', groupLabel: 'Doing', items: [...], count: 5 },
+ * //   { groupKey: 'todo', groupLabel: 'Todo', items: [...], count: 3 }
  * // ]
  * ```
  */
@@ -64,7 +61,7 @@ export function groupItems(items: InboxItem[], groupBy: GroupByField): GroupedDa
     .sort((a, b) => {
       // グループの並び順を定義
       if (groupBy === 'status') {
-        const statusOrder: PlanStatus[] = ['active', 'ready', 'backlog', 'wait', 'done', 'cancel']
+        const statusOrder: PlanStatus[] = ['doing', 'todo', 'done']
         return statusOrder.indexOf(a.groupKey as PlanStatus) - statusOrder.indexOf(b.groupKey as PlanStatus)
       }
 

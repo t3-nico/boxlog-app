@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Calendar, Copy, Edit2, ExternalLink, Link, Tag, Trash2 } from 'lucide-react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface PlanContextMenuProps {
   plan: CalendarPlan
@@ -33,7 +33,7 @@ export const EventContextMenu = ({
   onAddTag,
   onMoveToDate,
 }: PlanContextMenuProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const menuRef = useRef<HTMLDivElement>(null)
   const [adjustedPosition, setAdjustedPosition] = useState(position)
 

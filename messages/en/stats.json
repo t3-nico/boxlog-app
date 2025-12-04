@@ -1,0 +1,77 @@
+{
+  "stats": {
+    "title": "Stats View",
+    "description": "Statistics view coming soon",
+    "featureInDevelopment": "This feature is under development.",
+    "lifeVision": "Life Vision",
+    "identity": "Identity",
+    "goals": "Goals",
+    "value": "Value",
+    "antivalues": "AntiValues",
+    "purpose": "Purpose",
+    "principles": "Principles",
+    "connpass": "Connpass",
+    "reflect": {
+      "today": "Today",
+      "week": "Week",
+      "month": "Month",
+      "all": "All"
+    },
+    "act": {
+      "try": "Try",
+      "next": "Next"
+    },
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "overview": "Overview",
+      "analytics": "Analytics",
+      "tasks": "Tasks",
+      "time": "Time Analysis",
+      "categories": "Categories",
+      "tagAnalysis": "Tag Analysis",
+      "trends": "Trends",
+      "selfAnalysis": "Self Analysis",
+      "reflect": "Reflect",
+      "reflectToday": "Today",
+      "reflectWeek": "This Week",
+      "reflectMonth": "This Month",
+      "reflectAll": "All",
+      "actions": "Actions",
+      "actionTry": "Try",
+      "actionNext": "Next Actions"
+    },
+    "overview": {
+      "subtitle": "See your activity at a glance",
+      "completedTasks": "Completed Tasks",
+      "workHours": "Work Hours",
+      "achievementRate": "Achievement Rate",
+      "comparedToLastWeek": "from last week",
+      "weeklyTrend": "Weekly Trend",
+      "weeklyTrendDescription": "Last 6 months trend",
+      "viewDetails": "View details",
+      "quickAccess": "Quick Access",
+      "tasksDescription": "Analyze task completion and trends",
+      "timeDescription": "View work patterns by time of day",
+      "categoriesDescription": "Display category breakdown",
+      "tagAnalysisDescription": "Analyze tag usage trends",
+      "trendsDescription": "View long-term trends",
+      "goalsDescription": "Track goal achievement"
+    },
+    "toolbar": {
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "thisYear": "This Year",
+      "previous": "Previous period",
+      "next": "Next period",
+      "current": "Back to current",
+      "compare": "Compare",
+      "compareTooltip": "Compare with previous period",
+      "noCompare": "No comparison",
+      "previousPeriod": "Previous period",
+      "lastYear": "Same period last year",
+      "export": "Export",
+      "exportTooltip": "Export data"
+    }
+  }
+}

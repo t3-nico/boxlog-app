@@ -7,8 +7,8 @@ import type { DateRange } from 'react-day-picker'
 
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
 
 export interface MiniCalendarProps {
   selectedDate?: Date | undefined
@@ -75,7 +75,7 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
     popoverSide = 'bottom',
     onOpenChange,
   }) => {
-    const { locale } = useI18n()
+    const locale = useLocale()
     const [isMounted, setIsMounted] = useState(false)
     const [open, setOpen] = useState(false)
 

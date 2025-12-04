@@ -3,8 +3,8 @@
 import { Repeat } from 'lucide-react'
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
 
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
 
@@ -73,7 +73,7 @@ export function RecurringIndicator({
   showTooltip = false,
   className,
 }: RecurringIndicatorProps) {
-  const { locale } = useI18n()
+  const locale = useLocale()
 
   // 繰り返し設定がない場合は何も表示しない
   const hasRecurrence = recurrenceRule || (recurrenceType && recurrenceType !== 'none')
@@ -142,7 +142,7 @@ export function RecurringIndicatorFromFlag({
   size?: RecurringIndicatorSize
   className?: string
 }) {
-  const { locale } = useI18n()
+  const locale = useLocale()
 
   if (!isRecurring) {
     return null

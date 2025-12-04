@@ -19,9 +19,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
 import { GroupNameWithTooltip } from '@/features/tags/components/GroupNameWithTooltip'
 import type { TagGroup } from '@/types/tags'
+import { useTranslations } from 'next-intl'
 
 interface SortableGroupItemProps {
   group: TagGroup
@@ -55,7 +56,7 @@ export function SortableGroupItem({
   editingName,
   setEditingName,
 }: SortableGroupItemProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: group.id })
 
   // ドロップゾーンとして設定
@@ -124,12 +125,12 @@ export function SortableGroupItem({
                 className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
                 aria-label={t('tags.sidebar.changeColorAria', { name: group.name })}
               >
-                <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || '#6B7280' }} />
+                <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-3" align="start">
               <ColorPalettePicker
-                selectedColor={group.color || '#6B7280'}
+                selectedColor={group.color || DEFAULT_GROUP_COLOR}
                 onColorSelect={(color) => onUpdateColor(group.id, color)}
               />
             </PopoverContent>
@@ -188,7 +189,7 @@ export function SortableGroupItem({
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className="w-auto p-3">
                   <ColorPalettePicker
-                    selectedColor={group.color || '#6B7280'}
+                    selectedColor={group.color || DEFAULT_GROUP_COLOR}
                     onColorSelect={(color) => onUpdateColor(group.id, color)}
                   />
                 </DropdownMenuSubContent>

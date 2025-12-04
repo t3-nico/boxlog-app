@@ -1,7 +1,7 @@
 import { isThisMonth, isThisWeek, isToday, isYesterday } from 'date-fns'
 
-import { useTranslation } from '@/features/i18n/lib/hooks'
 import type { NotificationType } from '@/schemas/notifications'
+import { useTranslations } from 'next-intl'
 
 // 日付グループのキー
 export type DateGroupKey = 'today' | 'yesterday' | 'thisWeek' | 'thisMonth' | 'older'
@@ -53,7 +53,7 @@ export function groupNotificationsByDate<T extends { created_at: string }>(
     yesterday: t('time.yesterday'),
     thisWeek: t('time.thisWeek'),
     thisMonth: t('time.thisMonth'),
-    older: t('notifications.dateGroups.older'),
+    older: t('notification.dateGroups.older'),
   }
 
   const orderedKeys: DateGroupKey[] = ['today', 'yesterday', 'thisWeek', 'thisMonth', 'older']
@@ -97,24 +97,24 @@ export const getNotificationTypeColor = (type: string) => {
 }
 
 export const useNotificationTypeLabel = () => {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (type: string) => {
     switch (type) {
       case 'system':
-        return t('notifications.types.system')
+        return t('notification.types.system')
       case 'feature':
-        return t('notifications.types.feature')
+        return t('notification.types.feature')
       case 'important':
-        return t('notifications.types.important')
+        return t('notification.types.important')
       case 'reminder':
-        return t('notifications.types.reminder')
+        return t('notification.types.reminder')
       case 'task':
-        return t('notifications.types.task')
+        return t('notification.types.task')
       case 'event':
-        return t('notifications.types.event')
+        return t('notification.types.event')
       default:
-        return t('notifications.types.general')
+        return t('notification.types.general')
     }
   }
 }
@@ -132,7 +132,7 @@ export const checkBrowserNotificationSupport = (): boolean => {
 
 export const requestNotificationPermission = async (t?: (key: string) => string): Promise<NotificationPermission> => {
   if (!checkBrowserNotificationSupport()) {
-    const message = t ? t('notifications.errors.notSupported') : 'このブラウザは通知をサポートしていません'
+    const message = t ? t('notification.errors.notSupported') : 'このブラウザは通知をサポートしていません'
     console.warn(message)
     return 'denied'
   }
@@ -141,7 +141,7 @@ export const requestNotificationPermission = async (t?: (key: string) => string)
     const result = await Notification.requestPermission()
     return result
   } catch (error) {
-    const message = t ? t('notifications.errors.permissionFailed') : '通知許可の取得に失敗しました'
+    const message = t ? t('notification.errors.permissionFailed') : '通知許可の取得に失敗しました'
     console.error(message, error)
     return 'denied'
   }
@@ -167,7 +167,7 @@ export const showBrowserNotification = (title: string, options?: NotificationOpt
 
     return notification
   } catch (error) {
-    const message = t ? t('notifications.errors.displayFailed') : 'ブラウザ通知の表示に失敗しました'
+    const message = t ? t('notification.errors.displayFailed') : 'ブラウザ通知の表示に失敗しました'
     console.error(message, error)
     return null
   }

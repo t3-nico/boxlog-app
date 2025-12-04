@@ -61,7 +61,7 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopov
     defaultValues: {
       title: '',
       description: '',
-      status: 'backlog',
+      status: 'todo',
     },
   })
 

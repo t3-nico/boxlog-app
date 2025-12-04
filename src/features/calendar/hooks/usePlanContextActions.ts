@@ -131,7 +131,7 @@ export function usePlanContextActions() {
         const newPlan = await createPlan.mutateAsync({
           title: `${plan.title}のコピー`,
           description: plan.description ?? undefined,
-          status: 'backlog', // 複製時はbacklogにリセット
+          status: 'todo', // 複製時はtodoにリセット
           due_date: dueDate,
           start_time: startTime,
           end_time: endTime,

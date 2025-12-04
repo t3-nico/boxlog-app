@@ -98,12 +98,12 @@ export function TrashView({ className }: TrashViewProps) {
               <div className="text-muted-foreground text-sm">総アイテム数</div>
             </div>
 
-            <div className="bg-primary/10 rounded-md p-4">
+            <div className="bg-primary/12 rounded-md p-4">
               <div className="text-primary text-2xl font-bold">{stats.deletedToday}</div>
               <div className="text-primary text-sm">今日削除</div>
             </div>
 
-            <div className="bg-destructive/10 rounded-md p-4">
+            <div className="bg-destructive/12 rounded-md p-4">
               <div className="text-destructive text-2xl font-bold">{stats.expiredItems}</div>
               <div className="text-destructive text-sm">期限切れ</div>
             </div>
@@ -117,7 +117,7 @@ export function TrashView({ className }: TrashViewProps) {
 
         {/* エラー表示 */}
         {error != null && (
-          <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-4">
+          <div className="border-destructive bg-destructive/12 rounded-lg border p-4">
             <div className="flex items-start">
               <div className="flex-shrink-0">
                 <svg className="text-destructive h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -134,7 +134,7 @@ export function TrashView({ className }: TrashViewProps) {
                 <p className="text-destructive mt-1 text-sm">{error}</p>
               </div>
               <div className="ml-auto pl-3">
-                <button type="button" onClick={clearError} className="text-destructive hover:text-destructive/80">
+                <button type="button" onClick={clearError} className="text-destructive hover:text-destructive">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>

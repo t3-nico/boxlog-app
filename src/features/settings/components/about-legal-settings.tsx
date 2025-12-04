@@ -8,8 +8,8 @@ import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { getCookieConsent, setCookieConsent as saveCookieConsent, type CookieConsent } from '@/lib/cookie-consent'
+import { useLocale, useTranslations } from 'next-intl'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
@@ -26,7 +26,8 @@ const APP_VERSION = '0.4.0'
  * - 法的文書リンク集
  */
 export function AboutLegalSettings() {
-  const { t, locale } = useI18n()
+  const t = useTranslations()
+  const locale = useLocale()
   const [cookieConsent, setCookieConsent] = useState<CookieConsent | null>(null)
   const [isClient, setIsClient] = useState(false)
 
@@ -83,7 +84,7 @@ export function AboutLegalSettings() {
       {/* アプリ情報 */}
       <SettingsCard title="BoxLog について">
         <div className="flex items-center gap-4">
-          <div className="bg-primary/10 flex h-16 w-16 items-center justify-center rounded-xl">
+          <div className="bg-primary/12 flex h-16 w-16 items-center justify-center rounded-xl">
             <Box className="text-primary h-8 w-8" />
           </div>
           <div>
@@ -106,7 +107,7 @@ export function AboutLegalSettings() {
               <Info className="text-muted-foreground h-4 w-4" />
               <span className="text-sm">{t('settings.legal.cookies.current.necessary')}</span>
             </div>
-            <Badge variant="outline" className="bg-primary/10 text-primary">
+            <Badge variant="outline" className="bg-primary/12 text-primary">
               {t('settings.legal.cookies.current.necessaryStatus')}
             </Badge>
           </div>
@@ -154,7 +155,7 @@ export function AboutLegalSettings() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="hover:bg-muted/50 flex items-center justify-between px-4 py-3 transition-colors"
+                className="hover:bg-muted flex items-center justify-between px-4 py-3 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <Icon className="text-muted-foreground h-4 w-4" />

@@ -6,11 +6,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { AlertCircle, MoreHorizontal } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import type { KanbanCard as KanbanCardType } from '../../types'
 
 interface KanbanCardProps {
@@ -32,7 +32,7 @@ interface KanbanCardProps {
  * 4. 優先順位
  */
 export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging = false }: KanbanCardProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const {
     attributes,
     listeners,
@@ -63,9 +63,9 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
 
   // 優先度の色（M3準拠セマンティックトークン）
   const priorityColor: Record<'low' | 'medium' | 'high', string> = {
-    low: 'bg-primary/10 text-primary border-primary/30',
-    medium: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700',
-    high: 'bg-destructive/10 text-destructive border-destructive/30',
+    low: 'bg-primary/12 text-primary border-primary',
+    medium: 'bg-amber-500/12 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700',
+    high: 'bg-destructive/12 text-destructive border-destructive',
   }
 
   // 時間フォーマット関数
@@ -113,7 +113,7 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
     >
       {/* ブロック状態バナー */}
       {card.isBlocked && (
-        <div className="bg-destructive/10 flex items-center gap-1.5 rounded px-2 py-1">
+        <div className="bg-destructive/12 flex items-center gap-1.5 rounded px-2 py-1">
           <AlertCircle className="text-destructive size-3" />
           <span className="text-destructive text-xs font-medium">ブロック中</span>
           {card.blockedReason && <span className="text-muted-foreground text-xs">: {card.blockedReason}</span>}

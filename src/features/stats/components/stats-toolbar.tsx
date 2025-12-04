@@ -9,11 +9,11 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton'
 import type { ComparePeriod, PeriodType } from '@/features/stats/stores'
 import { useStatsPeriodStore } from '@/features/stats/stores'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 /**
  * 統計ページ用ツールバー
@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils'
 export function StatsToolbar() {
   const pathname = usePathname()
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t } = useI18n(localeFromPath)
+  const t = useTranslations()
   const dateLocale = localeFromPath === 'ja' ? ja : undefined
 
   const {
@@ -131,7 +131,7 @@ export function StatsToolbar() {
             <Button
               variant={compareEnabled ? 'secondary' : 'ghost'}
               size="sm"
-              className={cn('h-8 gap-1.5', compareEnabled && 'bg-foreground/12')}
+              className={cn('h-8 gap-1.5', compareEnabled && 'bg-muted')}
               onClick={() => setCompareEnabled(!compareEnabled)}
             >
               <GitCompareArrows className="size-4" />

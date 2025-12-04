@@ -5,13 +5,13 @@ import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
 import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime'
 import { SettingsDialog } from '@/features/settings/components/dialog'
 import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { Plus } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React from 'react'
 import { DesktopLayout } from './desktop-layout'
@@ -35,7 +35,7 @@ interface BaseLayoutContentProps {
 export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const pathname = usePathname() || '/'
   const localeFromPath = (pathname.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t } = useI18n(localeFromPath)
+  const t = useTranslations()
   const isMobile = useMediaQuery('(max-width: 768px)')
   const searchParams = useSearchParams()
   const { calendarProviderProps } = useCalendarProviderProps(pathname, searchParams || new URLSearchParams())

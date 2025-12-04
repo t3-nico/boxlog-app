@@ -8,9 +8,9 @@ import { toast } from 'sonner'
 
 import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
+import { useTranslations } from 'next-intl'
 
 import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
 import type { Task, ViewDateRange } from '../../../types/calendar.types'
@@ -59,7 +59,7 @@ export const WeekCalendarLayout = ({
   onDeletePlan,
   onRestorePlan,
 }: WeekCalendarLayoutProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const { openEventPopup } = useAddPopup()
   const { planRecordMode } = useCalendarSettingsStore()
   const { records: _records, fetchRecords } = useRecordsStore()

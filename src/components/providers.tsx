@@ -7,11 +7,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { httpBatchLink, loggerLink } from '@trpc/client'
 import superjson from 'superjson'
 
-// React Query DevToolsを動的インポート（本番環境では完全に除外）
-const ReactQueryDevtools = dynamic(
-  () => import('@tanstack/react-query-devtools').then((mod) => mod.ReactQueryDevtools),
-  { ssr: false }
-)
+// React Query DevTools: 本番環境では完全に除外（バンドルサイズ削減）
+const ReactQueryDevtools =
+  process.env.NODE_ENV === 'development'
+    ? dynamic(() => import('@tanstack/react-query-devtools').then((mod) => mod.ReactQueryDevtools), { ssr: false })
+    : () => null
 
 import { RealtimeProvider } from '@/components/providers/RealtimeProvider'
 import { TooltipProvider } from '@/components/ui/tooltip'

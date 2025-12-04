@@ -6,14 +6,14 @@ import { Download, FileJson, History, Upload } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
 
 export const DataExportSettings = memo(function DataExportSettings() {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [isExporting, setIsExporting] = useState(false)
   const [autoBackup, setAutoBackup] = useState(true)
 
@@ -75,7 +75,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
       <SettingsCard title="データエクスポート">
         <div className="space-y-4">
           {/* エクスポート対象の説明 */}
-          <div className="bg-muted/50 rounded-xl p-4">
+          <div className="bg-muted rounded-xl p-4">
             <h4 className="mb-2 flex items-center gap-2 text-sm font-medium">
               <FileJson className="h-4 w-4" />
               エクスポートされるデータ
@@ -120,7 +120,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
           </SettingField>
 
           {autoBackup && (
-            <div className="bg-muted/50 rounded-xl p-4">
+            <div className="bg-muted rounded-xl p-4">
               <div className="flex items-center gap-2">
                 <History className="text-muted-foreground h-4 w-4" />
                 <span className="text-sm">最終バックアップ: 未実行</span>

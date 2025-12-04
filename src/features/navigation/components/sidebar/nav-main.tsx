@@ -4,9 +4,9 @@ import { type LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 import type { TranslatedString } from '@/types/i18n-branded'
+import { useTranslations } from 'next-intl'
 
 export function NavMain({
   items,
@@ -18,8 +18,7 @@ export function NavMain({
   }[]
 }) {
   const pathname = usePathname()
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t } = useI18n(localeFromPath)
+  const t = useTranslations()
 
   return (
     <div className="flex flex-col gap-2">

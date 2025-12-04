@@ -6,8 +6,8 @@ import { useCallback, useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
+import { useTranslations } from 'next-intl'
 
 import { useInboxViewStore } from '../stores/useInboxViewStore'
 
@@ -23,7 +23,7 @@ interface InboxSidebarProps {
  * すべてのPlanとアーカイブ、保存済みビューを提供
  */
 export function InboxSidebar({ isLoading = false, activeplansCount = 0, archivedplansCount = 0 }: InboxSidebarProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const router = useRouter()
   const pathname = usePathname()
   const { views, activeViewId, setActiveView } = useInboxViewStore()
@@ -84,9 +84,7 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
               type="button"
               onClick={() => handleViewClick(view.id)}
               className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                currentViewId === view.id
-                  ? 'bg-foreground/12 text-foreground'
-                  : 'text-muted-foreground hover:bg-foreground/8'
+                currentViewId === view.id ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
               }`}
             >
               <div className="flex items-center justify-between gap-2">

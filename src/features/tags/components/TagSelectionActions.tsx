@@ -1,6 +1,6 @@
 'use client'
 
-import { Archive, Folder, FolderX, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Archive, Folder, FolderX, Merge, MoreHorizontal, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 
 import { TagActionMenuItems } from './TagActionMenuItems'
@@ -24,6 +25,7 @@ interface TagSelectionActionsProps {
   onMoveToGroup: (tag: TagWithChildren, groupId: string | null) => void
   onArchive?: (tagIds: string[]) => Promise<void>
   onDelete: () => void
+  onMerge?: () => void
   onEdit?: (tag: TagWithChildren) => void
   onView?: (tag: TagWithChildren) => void
   onClearSelection: () => void
@@ -46,6 +48,7 @@ export function TagSelectionActions({
   onMoveToGroup,
   onArchive,
   onDelete,
+  onMerge,
   onEdit,
   onView,
   onClearSelection,
@@ -53,6 +56,7 @@ export function TagSelectionActions({
 }: TagSelectionActionsProps) {
   const hasGroups = groups.length > 0
   const isSingleSelection = selectedTagIds.length === 1
+  const isMultipleSelection = selectedTagIds.length >= 2
   const selectedTag = isSingleSelection ? tags.find((t) => t.id === selectedTagIds[0]) : null
 
   return (
@@ -68,7 +72,7 @@ export function TagSelectionActions({
                 </Button>
               </DropdownMenuTrigger>
             </TooltipTrigger>
-            <TooltipContent>{t('tags.page.moveToGroup')}</TooltipContent>
+            <TooltipContent>{t('tag.page.moveToGroup')}</TooltipContent>
           </Tooltip>
           <DropdownMenuContent className="min-w-48">
             <DropdownMenuItem
@@ -80,7 +84,7 @@ export function TagSelectionActions({
               }}
             >
               <FolderX className="mr-2 h-4 w-4 text-neutral-600 dark:text-neutral-400" />
-              {t('tags.page.noGroup')}
+              {t('tag.page.noGroup')}
             </DropdownMenuItem>
             {groups.map((group) => (
               <DropdownMenuItem
@@ -92,7 +96,7 @@ export function TagSelectionActions({
                   })
                 }}
               >
-                <Folder className="mr-2 h-4 w-4" style={{ color: group.color || '#6B7280' }} />
+                <Folder className="mr-2 h-4 w-4" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
                 {group.name}
               </DropdownMenuItem>
             ))}
@@ -116,7 +120,19 @@ export function TagSelectionActions({
               <Archive className="size-4" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>{t('tags.page.archive')}</TooltipContent>
+          <TooltipContent>{t('tag.page.archive')}</TooltipContent>
+        </Tooltip>
+      )}
+
+      {/* 一括マージ（2つ以上選択時） */}
+      {isMultipleSelection && onMerge && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={onMerge} className="h-9 w-9">
+              <Merge className="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{t('tags.bulkMerge.title')}</TooltipContent>
         </Tooltip>
       )}
 
@@ -132,7 +148,7 @@ export function TagSelectionActions({
             <Trash2 className="size-4" />
           </Button>
         </TooltipTrigger>
-        <TooltipContent>{t('tags.page.delete')}</TooltipContent>
+        <TooltipContent>{t('tag.page.delete')}</TooltipContent>
       </Tooltip>
 
       {/* その他メニュー（単一選択時のみ有効） */}

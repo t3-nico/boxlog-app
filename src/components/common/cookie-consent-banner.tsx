@@ -3,8 +3,8 @@
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { acceptAllCookies, acceptNecessaryOnly, needsCookieConsent } from '@/lib/cookie-consent'
+import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 
 /**
@@ -34,7 +34,8 @@ const getInitialShowBanner = (): boolean => {
 }
 
 export function CookieConsentBanner() {
-  const { t, locale } = useI18n()
+  const t = useTranslations()
+  const locale = useLocale()
   // 遅延初期化でクッキー同意状態を確認
   const [showBanner, setShowBanner] = useState(getInitialShowBanner)
 
@@ -55,7 +56,7 @@ export function CookieConsentBanner() {
 
   return (
     <div
-      className="border-border bg-card/95 fixed inset-x-0 bottom-0 z-50 border-t p-4 backdrop-blur-sm sm:p-6"
+      className="border-border bg-card fixed inset-x-0 bottom-0 z-50 border-t p-4 backdrop-blur-sm sm:p-6"
       role="dialog"
       aria-labelledby="cookie-consent-title"
       aria-describedby="cookie-consent-description"

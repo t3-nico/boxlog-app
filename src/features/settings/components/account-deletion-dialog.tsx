@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 /**
@@ -29,7 +29,7 @@ import { toast } from 'sonner'
  * @see Issue #548 - データ削除リクエスト機能（忘れられる権利）
  */
 export function AccountDeletionDialog() {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [isOpen, setIsOpen] = useState(false)
   const [password, setPassword] = useState('')
   const [confirmText, setConfirmText] = useState('')
@@ -100,7 +100,7 @@ export function AccountDeletionDialog() {
 
   return (
     <>
-      <div className="border-destructive/30 bg-destructive/5 rounded-xl border">
+      <div className="border-destructive bg-destructive/12 rounded-xl border">
         <div className="flex items-start justify-between p-6">
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
@@ -140,7 +140,7 @@ export function AccountDeletionDialog() {
             <AlertDialogDescription className="space-y-4">
               <p>{t('settings.account.deletion.dialogDescription')}</p>
 
-              <div className="bg-muted/50 rounded-xl p-4">
+              <div className="bg-muted rounded-xl p-4">
                 <h4 className="text-foreground mb-2 text-sm font-semibold">
                   {t('settings.account.deletion.gracePeriodTitle')}
                 </h4>
@@ -183,7 +183,7 @@ export function AccountDeletionDialog() {
                 handleDelete()
               }}
               disabled={isDeleting || !password || confirmText !== 'DELETE'}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/92"
             >
               {isDeleting ? t('settings.account.deletion.deleting') : t('settings.account.deletion.confirm')}
             </AlertDialogAction>

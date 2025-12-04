@@ -4,10 +4,10 @@ import { type LucideIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import * as React from 'react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { cn } from '@/lib/utils'
 import type { TranslatedString } from '@/types/i18n-branded'
+import { useTranslations } from 'next-intl'
 
 export function NavSecondary({
   items,
@@ -21,8 +21,7 @@ export function NavSecondary({
   }[]
 } & React.ComponentPropsWithoutRef<'div'>) {
   const pathname = usePathname()
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t } = useI18n(localeFromPath)
+  const t = useTranslations()
   const openSettings = useSettingsDialogStore((state) => state.openSettings)
 
   const handleItemClick = React.useCallback(

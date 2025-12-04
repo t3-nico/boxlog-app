@@ -13,14 +13,14 @@ import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 export default function ResetPasswordPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const params = useParams()
   const locale = (params?.locale as string) || 'ja'
-  const { t } = useI18n(locale as 'en' | 'ja')
+  const t = useTranslations()
   const updatePassword = useAuthStore((state) => state.updatePassword)
 
   const [password, setPassword] = useState('')
@@ -92,7 +92,7 @@ export default function ResetPasswordPage() {
                 <div className="p-6 md:p-8">
                   <FieldGroup>
                     <div className="flex flex-col items-center gap-2 text-center">
-                      <div className="bg-primary/10 text-primary mb-2 flex h-12 w-12 items-center justify-center rounded-full">
+                      <div className="bg-primary/12 text-primary mb-2 flex h-12 w-12 items-center justify-center rounded-full">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="24"

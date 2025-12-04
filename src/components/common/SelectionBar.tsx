@@ -4,8 +4,8 @@ import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface SelectionBarProps {
   selectedCount: number
@@ -44,7 +44,7 @@ export function SelectionBar({
   actions,
   paddingX = 'px-4 md:px-6',
 }: SelectionBarProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   if (selectedCount === 0) return null
 

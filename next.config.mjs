@@ -1,5 +1,8 @@
 import { withSentryConfig } from '@sentry/nextjs'
 import bundleAnalyzer from '@next/bundle-analyzer'
+import createNextIntlPlugin from 'next-intl/plugin'
+
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -120,6 +123,36 @@ const nextConfig = {
           },
         ],
       },
+      // アイコン・マニフェスト等の静的アセット（1年キャッシュ）
+      {
+        source: '/:path(icon-*.png|apple-touch-icon.png|manifest.json)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // OG画像（1ヶ月キャッシュ）
+      {
+        source: '/og-image.png',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000, s-maxage=2592000, stale-while-revalidate=86400',
+          },
+        ],
+      },
+      // フォントファイル（1年キャッシュ）
+      {
+        source: '/:path*.woff2',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
     ]
   },
 
@@ -127,8 +160,8 @@ const nextConfig = {
   // Vercelデプロイ時はVercel側で画像最適化が行われるためsharp不要
   // ローカル開発時はomit=optional(.npmrc)によりsharpをスキップ
   images: {
-    formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 60,
+    formats: ['image/avif', 'image/webp'], // AVIFを優先（より高圧縮）
+    minimumCacheTTL: 2592000, // 30日（画像は変更頻度が低い）
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
@@ -215,6 +248,6 @@ const sentryOptions = {
   tunnelRoute: '/monitoring-tunnel', // CSP回避用トンネル（オプション）
 }
 
-// withBundleAnalyzer → withSentryConfig の順で適用
+// withNextIntl → withBundleAnalyzer → withSentryConfig の順で適用
 // 重要: Sentryが最後に適用されるようにする
-export default withSentryConfig(withBundleAnalyzer(nextConfig), sentryOptions)
+export default withSentryConfig(withBundleAnalyzer(withNextIntl(nextConfig)), sentryOptions)

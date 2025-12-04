@@ -3,7 +3,7 @@
 import React, { useCallback, useMemo } from 'react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import { useTrashStore } from '../stores/useTrashStore'
 import { TrashItem } from '../types/trash'
@@ -15,7 +15,7 @@ interface TrashTableProps {
 }
 
 export function TrashTable({ items, className }: TrashTableProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const {
     selectedIds,
     selectItem,
@@ -188,7 +188,7 @@ interface TrashItemRowProps {
 }
 
 function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanentDelete }: TrashItemRowProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const handleToggleSelect = useCallback(() => onToggleSelect(item.id), [onToggleSelect, item.id])
   const handleRestore = useCallback(() => onRestore(item.id), [onRestore, item.id])
   const handlePermanentDelete = useCallback(() => onPermanentDelete(item.id), [onPermanentDelete, item.id])
@@ -200,7 +200,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
   return (
     <div
       className={`border-border hover:bg-foreground/8 flex items-center border-b px-4 py-3 transition-colors ${
-        isSelected ? 'bg-foreground/12' : ''
+        isSelected ? 'bg-muted' : ''
       }`}
     >
       {/* 選択チェックボックス */}
@@ -251,7 +251,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
 
                 {/* 自動削除警告 */}
                 {isExpired || isExpiringSoon ? (
-                  <span className={`font-medium ${isExpired ? 'text-destructive' : 'text-destructive/80'}`}>
+                  <span className={`font-medium ${isExpired ? 'text-destructive' : 'text-destructive'}`}>
                     {isExpired
                       ? t('trash.status.expired')
                       : t('trash.time.daysUntilDelete', { days: daysUntilDelete.toString() })}
@@ -263,7 +263,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
               {item.metadata?.tags && item.metadata.tags.length > 0 ? (
                 <div className="mt-2 flex flex-wrap gap-1">
                   {trashOperations.formatTags(item.metadata.tags).visible.map((tag) => (
-                    <span key={tag} className="bg-primary/10 text-primary inline-block rounded-sm px-2 py-1 text-sm">
+                    <span key={tag} className="bg-primary/12 text-primary inline-block rounded-sm px-2 py-1 text-sm">
                       #{tag}
                     </span>
                   ))}
@@ -305,7 +305,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
 /**
  * 日付ヘッダーをフォーマット
  */
-function formatDateHeader(date: Date, t: ReturnType<typeof useI18n>['t']): string {
+function formatDateHeader(date: Date, t: ReturnType<typeof useTranslations>): string {
   const now = new Date()
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const yesterday = new Date(today)

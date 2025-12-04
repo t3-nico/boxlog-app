@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 
 import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import { HOUR_HEIGHT } from '@/features/calendar/components/views/shared/constants/grid.constants'
 
@@ -22,7 +22,7 @@ interface UseResizeHandlerProps {
 }
 
 export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setDragState }: UseResizeHandlerProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const calendarToast = useCalendarToast()
 
   // リサイズ処理

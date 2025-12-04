@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
-
 interface HighContrastColors {
   background: string
   foreground: string
@@ -315,7 +313,6 @@ const getStoredContrastTheme = (): string => {
 }
 
 export function useHighContrast() {
-  useI18n()
   // 遅延初期化でlocalStorageから読み込み
   const [isHighContrastEnabled, setIsHighContrastEnabled] = useState(getStoredHighContrast)
   const [currentTheme, setCurrentTheme] = useState<string>(getStoredContrastTheme)

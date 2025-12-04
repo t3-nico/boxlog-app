@@ -141,9 +141,7 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
     <TableCell onClick={(e) => e.stopPropagation()} className="text-muted-foreground text-sm" style={style}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <div className="hover:bg-muted/50 cursor-pointer rounded px-2 py-1 transition-colors">
-            {getDisplayContent()}
-          </div>
+          <div className="hover:bg-muted cursor-pointer rounded px-2 py-1 transition-colors">{getDisplayContent()}</div>
         </PopoverTrigger>
         <PopoverContent className="w-auto" align="start">
           <div className="space-y-4">

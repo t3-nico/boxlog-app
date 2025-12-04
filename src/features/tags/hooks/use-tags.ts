@@ -251,6 +251,54 @@ export function useUpdateTagColor() {
   })
 }
 
+// タグマージフック
+export function useMergeTag() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      sourceTagId,
+      targetTagId,
+      mergeAssociations = true,
+      deleteSource = true,
+    }: {
+      sourceTagId: string
+      targetTagId: string
+      mergeAssociations?: boolean
+      deleteSource?: boolean
+    }) => {
+      const response = await fetch('/api/tags', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tag_id: sourceTagId,
+          action: 'merge',
+          data: {
+            target_tag_id: targetTagId,
+            merge_associations: mergeAssociations,
+            delete_source: deleteSource,
+          },
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to merge tags')
+      }
+
+      return response.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: tagKeys.all })
+      // plansのキャッシュも無効化（タグ情報を含むため）
+      queryClient.invalidateQueries({ queryKey: ['plans'] })
+    },
+    onError: (error) => {
+      console.error('Tag merge failed:', error)
+    },
+  })
+}
+
 // 楽観的更新ヘルパー
 export function useOptimisticTagUpdate() {
   const queryClient = useQueryClient()

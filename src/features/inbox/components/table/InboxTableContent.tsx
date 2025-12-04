@@ -54,7 +54,7 @@ const TableHeaderSection = memo(function TableHeaderSection({
   const visibleColumns = useMemo(() => columns.filter((col) => col.visible), [columns])
 
   return (
-    <TableHeader className="bg-background sticky top-0 z-10">
+    <TableHeader className="bg-muted sticky top-0 z-10">
       <TableRow>
         {visibleColumns.map((column) => {
           if (column.id === 'selection') {

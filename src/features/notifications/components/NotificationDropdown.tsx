@@ -15,9 +15,9 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import type { NotificationType } from '@/schemas/notifications'
+import { useTranslations } from 'next-intl'
 
 import { useNotificationMutations, useNotificationsList, useUnreadCount } from '../hooks/useNotificationsData'
 import { groupNotificationsByDate } from '../utils/notification-helpers'
@@ -61,7 +61,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
   const pathname = usePathname()
   const router = useRouter()
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t } = useI18n(localeFromPath)
+  const t = useTranslations()
 
   const { openSettings } = useSettingsDialogStore()
 
@@ -119,7 +119,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
   )
 
   const handleDeleteAllRead = useCallback(() => {
-    if (window.confirm(t('notifications.confirm.deleteAllRead'))) {
+    if (window.confirm(t('notification.confirm.deleteAllRead'))) {
       deleteAllRead.mutate()
     }
   }, [deleteAllRead, t])
@@ -176,7 +176,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
               disabled={markAllAsRead.isPending}
             >
               <CheckCheck className="mr-1 h-3 w-3" />
-              {t('notifications.actions.markAllAsRead')}
+              {t('notification.actions.markAllAsRead')}
             </Button>
             {showDeleteAll && (
               <Button
@@ -231,7 +231,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
         <button
           type="button"
           className="hover:bg-foreground/8 data-[state=open]:bg-foreground/12 relative flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
-          aria-label={t('notifications.title')}
+          aria-label={t('notification.title')}
         >
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
@@ -245,7 +245,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
         {/* ヘッダー */}
         <DropdownMenuLabel className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold">{t('notifications.title')}</span>
+            <span className="text-sm font-semibold">{t('notification.title')}</span>
             {unreadCount > 0 && (
               <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">{unreadCount}</span>
             )}
@@ -258,11 +258,11 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
                 className="hover:bg-foreground/8 flex h-7 w-7 items-center justify-center rounded-md transition-colors"
               >
                 <Settings className="h-4 w-4" />
-                <span className="sr-only">{t('notifications.settings')}</span>
+                <span className="sr-only">{t('notification.settings')}</span>
               </button>
             </TooltipTrigger>
             <TooltipContent side="top">
-              <p>{t('notifications.settings')}</p>
+              <p>{t('notification.settings')}</p>
             </TooltipContent>
           </Tooltip>
         </DropdownMenuLabel>
@@ -278,13 +278,13 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
                   value="all"
                   className="data-[state=inactive]:hover:bg-foreground/8 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-md px-3 text-xs"
                 >
-                  {t('notifications.tabs.all')}
+                  {t('notification.tabs.all')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="unread"
                   className="data-[state=inactive]:hover:bg-foreground/8 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-md px-3 text-xs"
                 >
-                  {t('notifications.tabs.unread')}
+                  {t('notification.tabs.unread')}
                 </TabsTrigger>
               </TabsList>
 

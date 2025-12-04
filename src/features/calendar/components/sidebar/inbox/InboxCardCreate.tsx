@@ -9,12 +9,12 @@ interface InboxCardCreateProps {
 /**
  * InboxCardCreate - Calendar Sidebar Inbox用の新規作成ラッパー
  *
- * PlanQuickCreateを使用してbacklogステータスのプランを作成
+ * PlanQuickCreateを使用してtodoステータスのプランを作成
  */
 export function InboxCardCreate({ isCreating, onStartCreate, onFinishCreate }: InboxCardCreateProps) {
   return (
     <PlanQuickCreate
-      status="backlog"
+      status="todo"
       isCreating={isCreating}
       onStartCreate={onStartCreate}
       onFinishCreate={onFinishCreate}

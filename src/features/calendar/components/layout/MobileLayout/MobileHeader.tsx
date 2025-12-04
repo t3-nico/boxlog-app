@@ -6,8 +6,8 @@ import { format, getWeek } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { ChevronLeft, ChevronRight, Menu } from 'lucide-react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 import type { CalendarViewType } from '../../../types/calendar.types'
 
@@ -40,7 +40,7 @@ export const MobileHeader = ({
   onBack,
   className,
 }: MobileHeaderProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [isViewMenuOpen, setIsViewMenuOpen] = useState(false)
   const weekNumber = getWeek(currentDate, { weekStartsOn: 1 })
 

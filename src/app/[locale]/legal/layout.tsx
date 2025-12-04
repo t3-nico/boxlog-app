@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 interface LegalLayoutProps {
   children: ReactNode
@@ -16,7 +16,7 @@ interface LegalLayoutProps {
  * - i18n対応（日本語/英語）
  */
 export default function LegalLayout({ children }: LegalLayoutProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   return (
     <div className="bg-background min-h-screen">
@@ -55,7 +55,7 @@ export default function LegalLayout({ children }: LegalLayoutProps) {
       <main>{children}</main>
 
       {/* フッター */}
-      <footer className="border-t-border bg-muted/20 mt-16 border-t">
+      <footer className="border-t-border bg-muted mt-16 border-t">
         <div className="container mx-auto max-w-6xl px-4 py-8 md:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="text-muted-foreground text-sm">

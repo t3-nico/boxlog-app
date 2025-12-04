@@ -3,9 +3,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { HOUR_HEIGHT } from '@/features/calendar/constants/calendar-constants'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface EventResizeHandleProps {
   type: 'start' | 'end'
@@ -368,7 +368,7 @@ export const PlanResizeHandle = ({
   otherTime,
   className,
 }: EventResizeHandleProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const snapInterval = useCalendarSettingsStore((state) => state.snapInterval)
   const [resizeState, setResizeState] = useState<ResizeState>({
     isResizing: false,

@@ -1,31 +1,14 @@
 /**
  * LoadingStates テスト
+ *
+ * next-intl の useTranslations は src/test/setup.ts でモックされており、
+ * 翻訳キーをそのまま返します（例: 'error.loading.default'）
  */
 
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { LoadingButton, LoadingCard, LoadingOverlay, LoadingSpinner } from './LoadingStates'
-
-// i18n モック
-vi.mock('@/features/i18n/lib/hooks', () => ({
-  useI18n: () => ({
-    t: (key: string) => {
-      const translations: Record<string, string> = {
-        'errors.loading.default': '読み込み中...',
-        'errors.loading.title': '読み込み中',
-        'errors.loading.loadingData': 'データを取得しています...',
-        'errors.loading.loadFailed': 'データの読み込みに失敗しました',
-        'errors.loading.retry': '再試行',
-        'errors.loading.noData': 'データがありません',
-        'errors.loading.loadingPage': 'ページを読み込み中',
-        'errors.loading.pleaseWait': 'しばらくお待ちください',
-      }
-      return translations[key] ?? key
-    },
-    locale: 'ja',
-  }),
-}))
 
 describe('LoadingSpinner', () => {
   it('デフォルトサイズでレンダリング', () => {
@@ -48,7 +31,8 @@ describe('LoadingOverlay', () => {
       </LoadingOverlay>
     )
 
-    expect(screen.getByText('読み込み中...')).toBeInTheDocument()
+    // モックは翻訳キーをそのまま返す
+    expect(screen.getByText('error.loading.default')).toBeInTheDocument()
   })
 
   it('ローディング終了時は子要素のみ表示', () => {
@@ -59,7 +43,7 @@ describe('LoadingOverlay', () => {
     )
 
     expect(screen.getByText('コンテンツ')).toBeInTheDocument()
-    expect(screen.queryByText('読み込み中...')).not.toBeInTheDocument()
+    expect(screen.queryByText('error.loading.default')).not.toBeInTheDocument()
   })
 })
 

@@ -19,7 +19,7 @@ describe('planPositioning', () => {
     startDate: new Date(2025, 0, 15, startHour, startMinute),
     endDate: new Date(2025, 0, 15, endHour, endMinute),
     type: 'plan',
-    status: 'inbox',
+    status: 'todo',
     color: '#3b82f6',
     isRecurring: false,
     tags: [],

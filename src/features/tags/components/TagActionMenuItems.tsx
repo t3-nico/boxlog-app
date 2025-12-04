@@ -1,7 +1,8 @@
 'use client'
 
-import { Archive, Eye, Folder, FolderX, Pencil, Trash2 } from 'lucide-react'
+import { Archive, Eye, Folder, FolderX, GitMerge, Pencil, Trash2 } from 'lucide-react'
 
+import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 
 interface TagActionMenuItemsProps {
@@ -10,6 +11,7 @@ interface TagActionMenuItemsProps {
   onView?: (tag: TagWithChildren) => void
   onEdit?: (tag: TagWithChildren) => void
   onMoveToGroup: (tag: TagWithChildren, groupId: string | null) => void
+  onMerge?: (tag: TagWithChildren) => void
   onArchive?: (tag: TagWithChildren) => void
   onDelete: (tag: TagWithChildren) => void
   t: (key: string) => string
@@ -46,6 +48,7 @@ export function TagActionMenuItems({
   onView,
   onEdit,
   onMoveToGroup,
+  onMerge,
   onArchive,
   onDelete,
   t,
@@ -72,7 +75,7 @@ export function TagActionMenuItems({
       renderMenuItem({
         key: 'edit',
         icon: <Pencil className="mr-2 h-4 w-4" />,
-        label: t('tags.page.edit'),
+        label: t('tag.page.edit'),
         onClick: () => onEdit(tag),
       })
     )
@@ -84,22 +87,34 @@ export function TagActionMenuItems({
       renderSubMenu({
         trigger: {
           icon: <Folder className="mr-2 h-4 w-4" />,
-          label: t('tags.page.moveToGroup'),
+          label: t('tag.page.moveToGroup'),
         },
         items: [
           {
             key: 'no-group',
             icon: <FolderX className="mr-2 h-4 w-4 text-neutral-600 dark:text-neutral-400" />,
-            label: t('tags.page.noGroup'),
+            label: t('tag.page.noGroup'),
             onClick: () => onMoveToGroup(tag, null),
           },
           ...groups.map((group) => ({
             key: group.id,
-            icon: <Folder className="mr-2 h-4 w-4" style={{ color: group.color || '#6B7280' }} />,
+            icon: <Folder className="mr-2 h-4 w-4" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />,
             label: group.name,
             onClick: () => onMoveToGroup(tag, group.id),
           })),
         ],
+      })
+    )
+  }
+
+  // マージ
+  if (onMerge) {
+    menuItems.push(
+      renderMenuItem({
+        key: 'merge',
+        icon: <GitMerge className="mr-2 h-4 w-4" />,
+        label: t('tags.merge.title'),
+        onClick: () => onMerge(tag),
       })
     )
   }
@@ -110,7 +125,7 @@ export function TagActionMenuItems({
       renderMenuItem({
         key: 'archive',
         icon: <Archive className="mr-2 h-4 w-4" />,
-        label: t('tags.page.archive'),
+        label: t('tag.page.archive'),
         onClick: () => onArchive(tag),
       })
     )
@@ -121,7 +136,7 @@ export function TagActionMenuItems({
     renderMenuItem({
       key: 'delete',
       icon: <Trash2 className="mr-2 h-4 w-4" />,
-      label: t('tags.page.permanentDelete'),
+      label: t('tag.page.permanentDelete'),
       onClick: () => onDelete(tag),
       variant: 'destructive',
     })

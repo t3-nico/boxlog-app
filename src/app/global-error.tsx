@@ -11,7 +11,7 @@ import { useEffect } from 'react'
 
 import * as Sentry from '@sentry/nextjs'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useLocale, useTranslations } from 'next-intl'
 
 interface GlobalErrorProps {
   error: Error & { digest?: string }
@@ -19,7 +19,8 @@ interface GlobalErrorProps {
 }
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
-  const { t, locale } = useI18n()
+  const t = useTranslations()
+  const locale = useLocale()
 
   useEffect(() => {
     // Sentryにエラーを送信
@@ -50,14 +51,14 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
         <div className="bg-background flex min-h-screen items-center justify-center p-4">
           <div className="bg-card border-border w-full max-w-md rounded-xl border p-8 shadow-lg">
             <div className="mb-6">
-              <h1 className="text-destructive mb-2 text-2xl font-bold">{t('errors.global.title')}</h1>
-              <p className="text-muted-foreground">{t('errors.global.description')}</p>
+              <h1 className="text-destructive mb-2 text-2xl font-bold">{t('error.global.title')}</h1>
+              <p className="text-muted-foreground">{t('error.global.description')}</p>
             </div>
 
             {error.digest && (
               <div className="bg-muted mb-4 rounded p-3 text-xs">
                 <p className="text-muted-foreground">
-                  {t('errors.global.errorId')}: <code className="font-mono">{error.digest}</code>
+                  {t('error.global.errorId')}: <code className="font-mono">{error.digest}</code>
                 </p>
               </div>
             )}
@@ -65,7 +66,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             {process.env.NODE_ENV === 'development' && (
               <details className="mb-6">
                 <summary className="text-muted-foreground hover:bg-foreground/8 -mx-1 cursor-pointer rounded px-1 text-sm transition-colors">
-                  {t('errors.global.showDetails')}
+                  {t('error.global.showDetails')}
                 </summary>
                 <div className="bg-muted mt-3 rounded p-3">
                   <p className="mb-2 text-xs font-semibold">{error.name}</p>
@@ -79,18 +80,18 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 onClick={reset}
                 className="bg-primary text-primary-foreground hover:bg-primary/92 w-full rounded-md px-4 py-3 font-medium transition-colors"
               >
-                {t('errors.global.retry')}
+                {t('error.global.retry')}
               </button>
 
               <button
                 onClick={() => (window.location.href = '/')}
-                className="bg-muted text-foreground hover:bg-muted/80 w-full rounded-md px-4 py-3 transition-colors"
+                className="bg-muted text-foreground hover:bg-muted w-full rounded-md px-4 py-3 transition-colors"
               >
-                {t('errors.global.goHome')}
+                {t('error.global.goHome')}
               </button>
             </div>
 
-            <p className="text-muted-foreground mt-6 text-center text-xs">{t('errors.global.sentryReport')}</p>
+            <p className="text-muted-foreground mt-6 text-center text-xs">{t('error.global.sentryReport')}</p>
           </div>
         </div>
       </body>
