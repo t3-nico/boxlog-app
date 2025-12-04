@@ -209,11 +209,11 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
         <VisuallyHidden>
           <DialogTitle>グローバル検索</DialogTitle>
         </VisuallyHidden>
-        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground !rounded-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3">
+        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground !rounded-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-2">
           <div className="relative">
             <CommandInput placeholder="検索... (コマンド、プラン、タグ)" value={query} onValueChange={setQuery} />
             <div className="absolute top-1/2 right-3 flex -translate-y-1/2 items-center gap-1">
-              <kbd className="bg-muted text-muted-foreground inline-flex h-5 items-center gap-1 rounded border px-2 font-mono text-xs font-medium opacity-100 select-none">
+              <kbd className="bg-muted text-muted-foreground inline-flex h-6 items-center gap-1 rounded border px-2 font-mono text-xs font-medium opacity-100 select-none">
                 ESC
               </kbd>
             </div>
@@ -224,20 +224,20 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
             {/* Active Filters Indicator */}
             {parsedQuery.hasFilters && (
               <div className="border-border flex items-center gap-2 border-b px-4 py-2">
-                <Filter className="text-muted-foreground h-3 w-3" />
+                <Filter className="text-muted-foreground h-4 w-4" />
                 <span className="text-muted-foreground text-xs">フィルター適用中:</span>
                 {parsedQuery.filters.status && (
-                  <span className="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-xs">
+                  <span className="bg-primary/10 text-primary rounded px-2 py-1 text-xs">
                     status: {parsedQuery.filters.status.join(', ')}
                   </span>
                 )}
                 {parsedQuery.filters.tags && (
-                  <span className="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-xs">
+                  <span className="bg-primary/10 text-primary rounded px-2 py-1 text-xs">
                     #{parsedQuery.filters.tags.join(', #')}
                   </span>
                 )}
                 {parsedQuery.filters.dueDate && (
-                  <span className="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-xs">
+                  <span className="bg-primary/10 text-primary rounded px-2 py-1 text-xs">
                     due: {parsedQuery.filters.dueDate}
                   </span>
                 )}
@@ -251,11 +251,11 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                   <CommandItem
                     key={hint.syntax}
                     onSelect={() => setQuery(hint.syntax + ' ')}
-                    className="flex items-center gap-3"
+                    className="flex items-center gap-2"
                   >
                     <Filter className="h-4 w-4 shrink-0" />
                     <div className="flex min-w-0 flex-1 items-center gap-2">
-                      <code className="bg-muted rounded px-1.5 py-0.5 text-xs">{hint.syntax}</code>
+                      <code className="bg-muted rounded px-2 py-1 text-xs">{hint.syntax}</code>
                       <span className="text-muted-foreground text-xs">{hint.description}</span>
                     </div>
                   </CommandItem>
@@ -310,7 +310,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                       key={result.id}
                       value={result.title}
                       onSelect={() => handleSelect(result)}
-                      className="flex items-center gap-3"
+                      className="flex items-center gap-2"
                     >
                       <ResultIcon className="h-4 w-4 shrink-0" />
                       <div className="flex min-w-0 flex-1 flex-col">
@@ -328,7 +328,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                           {result.shortcut.map((key, index) => (
                             <kbd
                               key={index}
-                              className="bg-muted text-muted-foreground inline-flex h-5 min-w-5 items-center justify-center rounded border px-1.5 font-mono text-xs font-medium"
+                              className="bg-muted text-muted-foreground inline-flex h-6 min-w-6 items-center justify-center rounded border px-2 font-mono text-xs font-medium"
                             >
                               {key}
                             </kbd>

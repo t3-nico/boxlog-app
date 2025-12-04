@@ -94,7 +94,7 @@ export function HighlightedText({
   fuseMatches,
   fuseKey,
   className,
-  highlightClassName = 'bg-yellow-200 dark:bg-yellow-800 rounded-sm px-0.5',
+  highlightClassName = 'bg-primary/20 text-foreground rounded-sm',
 }: HighlightedTextProps) {
   if (!text) {
     return <span className={className}>{text}</span>
