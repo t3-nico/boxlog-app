@@ -1,4 +1,4 @@
-import Fuse from 'fuse.js'
+import Fuse, { type FuseOptionKey, type FuseResult, type IFuseOptions } from 'fuse.js'
 
 import type { Tag } from '@/types/common'
 
@@ -19,18 +19,46 @@ export interface FuseMatch {
 export interface FuseResultWithMatches<T> {
   item: T
   score?: number
-  matches?: FuseMatch[]
+  matches?: readonly FuseMatch[]
 }
 
 /**
  * Fuse.js wrapper for fuzzy search
  * Provides consistent interface and configuration with instance caching
  */
+/**
+ * FuzzySearch - simplified interface for quick searches
+ * Uses FuseSearch internally
+ */
+export class FuzzySearch {
+  /**
+   * Simple fuzzy search helper for basic use cases
+   */
+  static search<T extends Record<string, unknown>>(items: T[], query: string, limit = 10): T[] {
+    if (!query.trim()) {
+      return items.slice(0, limit)
+    }
+
+    const results = FuseSearch.search(
+      items,
+      query,
+      [
+        { name: 'title', weight: 2 },
+        { name: 'description', weight: 1 },
+        { name: 'keywords', weight: 1.5 },
+      ],
+      limit
+    )
+
+    return results.map((r) => r.item)
+  }
+}
+
 export class FuseSearch {
   /**
    * Default Fuse.js options optimized for Japanese + English search
    */
-  private static readonly defaultOptions: Fuse.IFuseOptions<unknown> = {
+  private static readonly defaultOptions: IFuseOptions<unknown> = {
     threshold: 0.4, // 0 = exact match, 1 = match anything
     distance: 100, // How far to search for match
     minMatchCharLength: 1,
@@ -57,7 +85,7 @@ export class FuseSearch {
   private static getOrCreateInstance<T extends Record<string, unknown>>(
     cacheKey: string,
     items: T[],
-    keys: Fuse.FuseOptionKey<T>[]
+    keys: FuseOptionKey<T>[]
   ): Fuse<T> {
     const itemsHash = FuseSearch.hashItems(items)
     const cached = FuseSearch.instanceCache.get(cacheKey)
@@ -82,7 +110,7 @@ export class FuseSearch {
   static search<T extends Record<string, unknown>>(
     items: T[],
     query: string,
-    keys: Fuse.FuseOptionKey<T>[],
+    keys: FuseOptionKey<T>[],
     limit = 10,
     cacheKey?: string
   ): FuseResultWithMatches<T>[] {
@@ -101,7 +129,14 @@ export class FuseSearch {
 
     const results = fuse.search(query, { limit })
 
-    return results as FuseResultWithMatches<T>[]
+    // Convert Fuse results to our interface
+    return results.map(
+      (result: FuseResult<T>): FuseResultWithMatches<T> => ({
+        item: result.item,
+        score: result.score ?? 0,
+        matches: (result.matches as readonly FuseMatch[] | undefined) ?? [],
+      })
+    )
   }
 
   /**
@@ -178,16 +213,25 @@ export class SearchEngine {
   static searchCommands(query: string): SearchResult[] {
     const commands = commandRegistry.search(query)
 
-    return commands.map((command) => ({
-      id: `command:${command.id}`,
-      title: command.title,
-      description: command.description,
-      type: 'command' as SearchResultType,
-      category: command.category,
-      icon: command.icon,
-      shortcut: command.shortcut,
-      action: command.action,
-    }))
+    return commands.map((command) => {
+      const result: SearchResult = {
+        id: `command:${command.id}`,
+        title: command.title,
+        type: 'command' as SearchResultType,
+        category: command.category,
+        action: command.action,
+      }
+      if (command.description) {
+        result.description = command.description
+      }
+      if (command.icon) {
+        result.icon = command.icon
+      }
+      if (command.shortcut) {
+        result.shortcut = command.shortcut
+      }
+      return result
+    })
   }
 
   /**
@@ -243,10 +287,26 @@ export class SearchEngine {
       })
     }
 
-    // Prepare searchable data
-    type SearchablePlan = PlanWithTags & { tagNames: string }
+    // Prepare searchable data with index signature for Fuse.js
+    interface SearchablePlan {
+      [key: string]: unknown
+      id: string
+      title: string
+      description: string | null
+      tagNames: string
+      status: string
+      due_date: string | null
+      plan_number: string
+      tags?: Array<{ id: string; name: string; color: string; description?: string }>
+    }
     const searchablePlans: SearchablePlan[] = filteredPlans.map((plan) => ({
-      ...plan,
+      id: plan.id,
+      title: plan.title,
+      description: plan.description,
+      status: plan.status,
+      due_date: plan.due_date,
+      plan_number: plan.plan_number,
+      tags: plan.tags,
       tagNames: plan.tags?.map((t) => t.name).join(' ') || '',
     }))
 
@@ -263,22 +323,29 @@ export class SearchEngine {
       'plans' // Cache key for plans search
     )
 
-    return fuseResults.map((result) => ({
-      id: `plan:${result.item.id}`,
-      title: result.item.title,
-      description: result.item.description || undefined,
-      type: 'plan' as SearchResultType,
-      category: 'plans',
-      icon: 'check-square',
-      score: FuseSearch.normalizeScore(result.score),
-      metadata: {
-        status: result.item.status,
-        dueDate: result.item.due_date,
-        tags: result.item.tags?.map((t) => t.name) || [],
-        planNumber: result.item.plan_number,
-        matches: result.matches, // Include matches for highlighting
-      },
-    }))
+    const results: SearchResult[] = fuseResults.map((result) => {
+      const searchResult: SearchResult = {
+        id: `plan:${result.item.id}`,
+        title: String(result.item.title),
+        type: 'plan' as SearchResultType,
+        category: 'plans',
+        icon: 'check-square',
+        score: FuseSearch.normalizeScore(result.score),
+        metadata: {
+          status: result.item.status,
+          dueDate: result.item.due_date,
+          tags: result.item.tags?.map((t) => t.name) || [],
+          planNumber: result.item.plan_number,
+          matches: result.matches,
+        },
+      }
+      if (result.item.description) {
+        searchResult.description = String(result.item.description)
+      }
+      return searchResult
+    })
+
+    return results
   }
 
   /**
@@ -288,16 +355,37 @@ export class SearchEngine {
     if (!tags || tags.length === 0) return []
 
     // If we have filter tags, prioritize matching those
-    let filteredTags = tags
+    let filteredTagsList = tags
     if (filterTags && filterTags.length > 0) {
-      filteredTags = tags.filter((tag) =>
+      filteredTagsList = tags.filter((tag) =>
         filterTags.some((filterTag) => tag.name.toLowerCase().includes(filterTag.toLowerCase()))
       )
     }
 
+    // Prepare searchable data with index signature for Fuse.js
+    interface SearchableTag {
+      [key: string]: unknown
+      id: string
+      name: string
+      description: string | null
+      path: string
+      level: number
+      color: string
+      tag_number: number
+    }
+    const searchableTags: SearchableTag[] = filteredTagsList.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+      description: tag.description,
+      path: tag.path,
+      level: tag.level,
+      color: tag.color,
+      tag_number: tag.tag_number,
+    }))
+
     // Search with Fuse.js (cached instance)
     const fuseResults = FuseSearch.search(
-      filteredTags,
+      searchableTags,
       query,
       [
         { name: 'name', weight: 2 },
@@ -310,14 +398,14 @@ export class SearchEngine {
 
     return fuseResults.map((result) => ({
       id: `tag:${result.item.id}`,
-      title: result.item.name,
-      description: result.item.description || `Level ${result.item.level} tag`,
+      title: String(result.item.name),
+      description: result.item.description ? String(result.item.description) : `Level ${result.item.level} tag`,
       type: 'tag' as SearchResultType,
       category: 'tags',
       icon: 'tag',
       score: FuseSearch.normalizeScore(result.score),
       metadata: {
-        path: result.item.path ? [result.item.path] : [],
+        path: result.item.path ? [String(result.item.path)] : [],
         color: result.item.color,
         tagNumber: result.item.tag_number,
         matches: result.matches, // Include matches for highlighting

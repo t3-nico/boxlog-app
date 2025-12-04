@@ -39,6 +39,7 @@ import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModal
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
+import type { PlanStatus, PlanWithTags } from '@/features/plans/types'
 import { useRecentPlans } from '../hooks/use-recent-plans'
 import { useSearchHistory } from '../hooks/use-search'
 import { registerDefaultCommands } from '../lib/command-registry'
@@ -46,6 +47,53 @@ import { HighlightedText } from '../lib/highlight-text'
 import { getFilterHints, parseSearchQuery } from '../lib/query-parser'
 import { SearchEngine } from '../lib/search-engine'
 import type { SearchResult } from '../types'
+
+// Helper function to convert plan_tags to tags format
+type PlanFromAPI = {
+  id: string
+  user_id: string
+  title: string
+  description: string | null
+  status: PlanStatus
+  due_date: string | null
+  start_time: string | null
+  end_time: string | null
+  plan_number: string
+  recurrence_type: string | null
+  recurrence_end_date: string | null
+  recurrence_rule: string | null
+  reminder_minutes: number | null
+  created_at: string | null
+  updated_at: string | null
+  plan_tags: Array<{
+    tag_id: string
+    tags: { id: string; name: string; color: string } | null
+  }>
+}
+
+function convertPlanToSearchFormat(plans: PlanFromAPI[]): PlanWithTags[] {
+  return plans.map((plan) => ({
+    id: plan.id,
+    user_id: plan.user_id,
+    title: plan.title,
+    description: plan.description,
+    status: plan.status,
+    due_date: plan.due_date,
+    start_time: plan.start_time,
+    end_time: plan.end_time,
+    plan_number: plan.plan_number,
+    recurrence_type: plan.recurrence_type as PlanWithTags['recurrence_type'],
+    recurrence_end_date: plan.recurrence_end_date,
+    recurrence_rule: plan.recurrence_rule,
+    reminder_minutes: plan.reminder_minutes,
+    created_at: plan.created_at,
+    updated_at: plan.updated_at,
+    tags:
+      plan.plan_tags
+        ?.map((pt) => pt.tags)
+        .filter((tag): tag is { id: string; name: string; color: string } => tag !== null) || [],
+  }))
+}
 
 interface GlobalSearchModalProps {
   isOpen: boolean
@@ -116,7 +164,12 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   // Perform search when debounced query changes
   useEffect(() => {
     const performSearch = async () => {
-      const searchResults = await SearchEngine.search({ query: debouncedQuery, limit: 15 }, { plans, tags })
+      // Convert plans from API format (plan_tags) to search format (tags)
+      const convertedPlans = convertPlanToSearchFormat(plans as unknown as PlanFromAPI[])
+      const searchResults = await SearchEngine.search(
+        { query: debouncedQuery, limit: 15 },
+        { plans: convertedPlans, tags }
+      )
       setResults(searchResults)
     }
 
@@ -163,12 +216,18 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   // Get icon for result
   const getResultIcon = (result: SearchResult): React.ElementType => {
     // Check icon name mapping first
-    if (result.icon && iconNameMap[result.icon]) {
-      return iconNameMap[result.icon]
+    if (result.icon) {
+      const iconFromName = iconNameMap[result.icon]
+      if (iconFromName) {
+        return iconFromName
+      }
     }
     // Check category icons
-    if (result.category && categoryIcons[result.category]) {
-      return categoryIcons[result.category]
+    if (result.category) {
+      const iconFromCategory = categoryIcons[result.category]
+      if (iconFromCategory) {
+        return iconFromCategory
+      }
     }
     // Default icon
     return CheckSquare

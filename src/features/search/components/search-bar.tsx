@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { CheckSquare, Search, Tag } from 'lucide-react'
 
@@ -14,6 +14,25 @@ import { cn } from '@/lib/utils'
 import { useSearchHistory } from '../hooks/use-search'
 import { FuzzySearch } from '../lib/search-engine'
 import type { SearchResultType } from '../types'
+
+// Helper function to get tags from plan_tags
+type PlanFromAPI = {
+  id: string
+  title: string
+  description: string | null
+  plan_tags?: Array<{
+    tag_id: string
+    tags: { id: string; name: string; color: string } | null
+  }>
+  [key: string]: unknown
+}
+
+function getTagsFromPlan(plan: PlanFromAPI): Array<{ id: string; name: string; color: string }> {
+  if (!plan.plan_tags) return []
+  return plan.plan_tags
+    .map((pt) => pt.tags)
+    .filter((tag): tag is { id: string; name: string; color: string } => tag !== null)
+}
 
 interface SearchBarProps {
   className?: string
@@ -36,21 +55,26 @@ export function SearchBar({
   const { data: plans = [] } = usePlans()
   const tags = useTagStore((state) => state.tags)
 
+  // Convert plans to searchable format
+  const searchablePlans = useMemo(() => {
+    return (plans as unknown as PlanFromAPI[]).map((plan) => {
+      const planTags = getTagsFromPlan(plan)
+      return {
+        ...plan,
+        title: plan.title,
+        description: plan.description || '',
+        keywords: planTags.map((t) => t.name),
+        tags: planTags,
+      }
+    })
+  }, [plans])
+
   // Filter data by types and query
   const filteredPlans =
     types.includes('plan') && query
-      ? FuzzySearch.search(
-          plans.map((plan) => ({
-            ...plan,
-            title: plan.title,
-            description: plan.description || '',
-            keywords: plan.tags?.map((t) => t.name) || [],
-          })),
-          query,
-          5
-        )
+      ? FuzzySearch.search(searchablePlans, query, 5)
       : types.includes('plan')
-        ? plans.slice(0, 5)
+        ? searchablePlans.slice(0, 5)
         : []
 
   const filteredTags =
@@ -110,7 +134,7 @@ export function SearchBar({
                   <CommandItem
                     key={plan.id}
                     value={plan.title}
-                    keywords={[plan.description || '', ...(plan.tags?.map((t) => t.name) || [])]}
+                    keywords={[plan.description || '', ...plan.tags.map((t: { name: string }) => t.name)]}
                     onSelect={() => handleSelect(plan.id, 'plan')}
                   >
                     <CheckSquare className="mr-2 h-4 w-4" />

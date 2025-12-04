@@ -26,9 +26,9 @@ const STATUS_MAP: Record<string, PlanStatus> = {
   complete: 'done',
   todo: 'todo',
   pending: 'todo',
-  in_progress: 'in_progress',
-  inprogress: 'in_progress',
-  doing: 'in_progress',
+  in_progress: 'doing',
+  inprogress: 'doing',
+  doing: 'doing',
 }
 
 const DUE_MAP: Record<string, SearchFilters['dueDate']> = {
@@ -52,7 +52,9 @@ export function parseSearchQuery(query: string): ParsedQuery {
   const tagMatches = query.matchAll(FILTER_PATTERNS.tag)
   const tags: string[] = []
   for (const match of tagMatches) {
-    tags.push(match[1])
+    if (match[1]) {
+      tags.push(match[1])
+    }
     text = text.replace(match[0], '')
   }
   if (tags.length > 0) {
@@ -63,10 +65,12 @@ export function parseSearchQuery(query: string): ParsedQuery {
   const statusMatches = query.matchAll(FILTER_PATTERNS.status)
   const statuses: PlanStatus[] = []
   for (const match of statusMatches) {
-    const statusKey = match[1].toLowerCase()
-    const mappedStatus = STATUS_MAP[statusKey]
-    if (mappedStatus) {
-      statuses.push(mappedStatus)
+    if (match[1]) {
+      const statusKey = match[1].toLowerCase()
+      const mappedStatus = STATUS_MAP[statusKey]
+      if (mappedStatus) {
+        statuses.push(mappedStatus)
+      }
     }
     text = text.replace(match[0], '')
   }
@@ -77,10 +81,12 @@ export function parseSearchQuery(query: string): ParsedQuery {
   // 期限フィルター抽出
   const dueMatches = query.matchAll(FILTER_PATTERNS.due)
   for (const match of dueMatches) {
-    const dueKey = match[1].toLowerCase()
-    const mappedDue = DUE_MAP[dueKey]
-    if (mappedDue) {
-      filters.dueDate = mappedDue
+    if (match[1]) {
+      const dueKey = match[1].toLowerCase()
+      const mappedDue = DUE_MAP[dueKey]
+      if (mappedDue) {
+        filters.dueDate = mappedDue
+      }
     }
     text = text.replace(match[0], '')
   }

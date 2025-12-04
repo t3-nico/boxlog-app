@@ -54,11 +54,16 @@ function mergeMatches(matches: HighlightMatch[]): HighlightMatch[] {
   if (matches.length === 0) return []
 
   const sorted = [...matches].sort((a, b) => a.start - b.start)
-  const merged: HighlightMatch[] = [sorted[0]]
+  const firstMatch = sorted[0]
+  if (!firstMatch) return []
+
+  const merged: HighlightMatch[] = [firstMatch]
 
   for (let i = 1; i < sorted.length; i++) {
     const current = sorted[i]
     const last = merged[merged.length - 1]
+
+    if (!current || !last) continue
 
     if (current.start <= last.end) {
       // Overlapping - extend the last match

@@ -1,8 +1,10 @@
 'use client'
 
+import { useCreateTag } from '../hooks/use-tags'
 import { useTagCreateModalStore } from '../stores/useTagCreateModalStore'
-import { useTagOperations } from '../hooks/use-tag-operations'
 import { TagCreateModal } from './tag-create-modal'
+
+import type { CreateTagInput } from '@/types/tags'
 
 /**
  * グローバルに配置するタグ作成モーダル
@@ -12,13 +14,11 @@ import { TagCreateModal } from './tag-create-modal'
 export function GlobalTagCreateModal() {
   const isOpen = useTagCreateModalStore((state) => state.isOpen)
   const closeModal = useTagCreateModalStore((state) => state.closeModal)
-  const { createTag } = useTagOperations()
+  const createTagMutation = useCreateTag()
 
-  return (
-    <TagCreateModal
-      isOpen={isOpen}
-      onClose={closeModal}
-      onSave={createTag}
-    />
-  )
+  const handleCreateTag = async (data: CreateTagInput) => {
+    await createTagMutation.mutateAsync(data)
+  }
+
+  return <TagCreateModal isOpen={isOpen} onClose={closeModal} onSave={handleCreateTag} />
 }
