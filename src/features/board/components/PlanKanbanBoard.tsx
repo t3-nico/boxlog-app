@@ -328,7 +328,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   }
 
   return (
-    <div ref={setNodeRef} className={cn('flex min-w-72 flex-col rounded-lg', isOver && 'ring-primary/30 ring-2')}>
+    <div ref={setNodeRef} className={cn('flex min-w-72 flex-col rounded-lg', isOver && 'ring-primary ring-2')}>
       <div
         className={`${bgColor} flex items-center justify-between rounded-t-lg pt-2`}
         style={{ height: '48px', minHeight: '48px', maxHeight: '48px', paddingLeft: '16px', paddingRight: '16px' }}
@@ -379,7 +379,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
         {isAdding && (
           <div
             ref={formRef}
-            className="bg-card hover:bg-muted/50 border-border group flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors"
+            className="bg-card hover:bg-muted border-border group flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors"
           >
             {/* タイトル入力 */}
             <div
@@ -409,7 +409,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
             <Popover open={dateTimeOpen} onOpenChange={setDateTimeOpen}>
               <PopoverTrigger asChild>
                 <div
-                  className="text-foreground hover:bg-primary/10 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
+                  className="text-foreground hover:bg-primary/8 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {selectedDate || startTime || endTime ? (
@@ -492,7 +492,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
               onTagsChange={(tagIds) => setSelectedTagIds(tagIds)}
             >
               <div
-                className="text-muted-foreground hover:bg-primary/10 flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors"
+                className="text-muted-foreground hover:bg-primary/8 flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Tag className="size-3" />
