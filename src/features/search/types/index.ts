@@ -86,4 +86,4 @@ export interface SearchHistoryItem {
 }
 
 // Export data source types
-export type { Tag, PlanWithTags }
+export type { PlanWithTags, Tag }
