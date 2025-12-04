@@ -1,77 +1,28 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
-import { ArrowRight, CheckCircle2, Clock, FolderKanban, Tag, Target, TrendingUp } from 'lucide-react'
+import { CheckCircle2, Clock, TrendingUp } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useTranslations } from 'next-intl'
 
-// LCP改善: Rechartsは重いため遅延ロード（約250KB削減）
-const LineChartMultiple = dynamic(
-  () => import('@/features/stats/components/charts').then((mod) => mod.LineChartMultiple),
-  {
-    ssr: false,
-    loading: () => <Skeleton className="h-[300px] w-full" />,
-  }
-)
+// LCP改善: 重いコンポーネントは遅延ロード
+const YearlyHeatmap = dynamic(() => import('@/features/stats/components/charts').then((mod) => mod.YearlyHeatmap), {
+  ssr: false,
+  loading: () => <Skeleton className="h-[200px] w-full" />,
+})
 
 /**
  * 統計ページ - 概要ダッシュボード
  *
- * サマリーカードと各セクションへのクイックアクセスを提供
+ * 年次グリッドとサマリーを表示
  */
 export default function StatsPage() {
-  const pathname = usePathname()
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const t = useTranslations()
-
-  const baseUrl = `/${localeFromPath}/stats`
-
-  // クイックアクセスカードの定義
-  const quickAccessCards = [
-    {
-      href: `${baseUrl}/tasks`,
-      title: t('stats.sidebar.tasks'),
-      description: t('stats.overview.tasksDescription'),
-      icon: <CheckCircle2 className="size-5" />,
-    },
-    {
-      href: `${baseUrl}/time`,
-      title: t('stats.sidebar.time'),
-      description: t('stats.overview.timeDescription'),
-      icon: <Clock className="size-5" />,
-    },
-    {
-      href: `${baseUrl}/categories`,
-      title: t('stats.sidebar.categories'),
-      description: t('stats.overview.categoriesDescription'),
-      icon: <FolderKanban className="size-5" />,
-    },
-    {
-      href: `${baseUrl}/tag-analysis`,
-      title: t('stats.sidebar.tagAnalysis'),
-      description: t('stats.overview.tagAnalysisDescription'),
-      icon: <Tag className="size-5" />,
-    },
-    {
-      href: `${baseUrl}/trends`,
-      title: t('stats.sidebar.trends'),
-      description: t('stats.overview.trendsDescription'),
-      icon: <TrendingUp className="size-5" />,
-    },
-    {
-      href: `${baseUrl}/goals`,
-      title: t('stats.goals'),
-      description: t('stats.overview.goalsDescription'),
-      icon: <Target className="size-5" />,
-    },
-  ]
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
@@ -80,6 +31,9 @@ export default function StatsPage() {
         <h1 className="text-2xl font-bold">{t('stats.sidebar.overview')}</h1>
         <p className="text-muted-foreground text-sm">{t('stats.overview.subtitle')}</p>
       </div>
+
+      {/* 年次グリッド */}
+      <YearlyHeatmap />
 
       {/* サマリーカード（情報表示系: 背景なし、ボーダーのみ） */}
       <div className="grid gap-4 md:grid-cols-3">
@@ -119,50 +73,6 @@ export default function StatsPage() {
             <Progress value={87} className="mt-2" />
           </CardContent>
         </Card>
-      </div>
-
-      {/* 週間トレンド（情報表示系: 背景なし、ボーダーのみ） */}
-      <Card className="bg-background">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>{t('stats.overview.weeklyTrend')}</CardTitle>
-              <CardDescription>{t('stats.overview.weeklyTrendDescription')}</CardDescription>
-            </div>
-            <Link
-              href={`${baseUrl}/trends`}
-              className="text-muted-foreground flex items-center gap-1 text-sm transition-colors hover:underline"
-            >
-              {t('stats.overview.viewDetails')}
-              <ArrowRight className="size-4" />
-            </Link>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <LineChartMultiple />
-        </CardContent>
-      </Card>
-
-      {/* クイックアクセス（クリック可能: カード背景あり） */}
-      <div>
-        <h2 className="mb-4 text-lg font-semibold">{t('stats.overview.quickAccess')}</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {quickAccessCards.map((card) => (
-            <Link key={card.href} href={card.href} prefetch={true}>
-              <Card className="hover:bg-foreground/8 h-full transition-colors">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="text-muted-foreground">{card.icon}</div>
-                    <CardTitle className="text-base">{card.title}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{card.description}</CardDescription>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
       </div>
     </div>
   )
