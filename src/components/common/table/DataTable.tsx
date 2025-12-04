@@ -291,7 +291,7 @@ export function DataTable<T>({
     (group: GroupedData<T>, colCount: number, isCollapsed: boolean) => (
       <TableRow
         key={`group-${group.groupKey}`}
-        className="bg-muted/50 hover:bg-muted/70 cursor-pointer border-y"
+        className="bg-muted hover:bg-muted cursor-pointer border-y"
         onClick={() => onToggleGroupCollapse?.(group.groupKey)}
       >
         <TableCell colSpan={colCount} className="py-3">
@@ -315,7 +315,7 @@ export function DataTable<T>({
       const isSelected = selectedIds.has(key)
 
       const rowContent = (
-        <TableRow key={key} className={isSelected ? 'bg-primary/10 hover:bg-primary/15' : ''}>
+        <TableRow key={key} className={isSelected ? 'bg-primary/12 hover:bg-primary/16' : ''}>
           {selectable && (
             <td
               style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
@@ -369,7 +369,7 @@ export function DataTable<T>({
     >
       <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border">
         <Table className="w-full">
-          <TableHeader className={stickyHeader ? 'bg-background sticky top-0 z-10' : ''}>
+          <TableHeader className={stickyHeader ? 'bg-muted sticky top-0 z-10' : 'bg-muted'}>
             <TableRow>
               {allColumns.map((column) => {
                 const width = column.id === '__selection__' ? 48 : getColumnWidth(column.id)
@@ -433,7 +433,7 @@ export function DataTable<T>({
                           e.preventDefault()
                           handleResizeStart(col.id, e.clientX, width)
                         }}
-                        className="hover:bg-primary/50 absolute top-0 right-0 h-full w-1 cursor-col-resize bg-transparent transition-colors"
+                        className="hover:bg-primary absolute top-0 right-0 h-full w-1 cursor-col-resize bg-transparent transition-colors"
                         style={{ userSelect: 'none' }}
                       />
                     )}
@@ -469,7 +469,6 @@ export function DataTable<T>({
           onPageChange={(page) => onPaginationChange({ ...paginationState, currentPage: page })}
           onPageSizeChange={(size) => onPaginationChange({ currentPage: 1, pageSize: size })}
           pageSizeOptions={pageSizeOptions}
-          showFirstLastButtons={false}
         />
       )}
     </div>

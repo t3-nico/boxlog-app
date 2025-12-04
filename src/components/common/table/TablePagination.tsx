@@ -60,12 +60,12 @@ export function TablePagination({
   }
 
   return (
-    <div className="flex items-center justify-between px-6 py-4">
+    <div className="flex items-center justify-between px-4 py-4">
       {/* 左側: 表示件数選択 */}
       <div className="flex items-center gap-2">
         <span className="text-muted-foreground text-sm">{t('common.table.rowsPerPage')}</span>
         <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
-          <SelectTrigger className="h-9 w-16">
+          <SelectTrigger className="h-8 w-[72px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -83,8 +83,7 @@ export function TablePagination({
         {totalItems > 0 ? (
           <>
             {startItem}〜{endItem}
-            {t('common.table.items')} / {t('common.table.total')}
-            {totalItems}
+            {t('common.table.items')} / {t('common.table.total')} {totalItems}
             {t('common.table.items')}
           </>
         ) : (
@@ -100,7 +99,7 @@ export function TablePagination({
             size="sm"
             onClick={goToFirstPage}
             disabled={currentPage === 1}
-            className="h-9 w-9 p-0"
+            className="size-8 p-0"
           >
             <ChevronsLeft className="size-4" />
             <span className="sr-only">{t('common.table.firstPage')}</span>
@@ -111,12 +110,12 @@ export function TablePagination({
           size="sm"
           onClick={goToPreviousPage}
           disabled={currentPage === 1}
-          className="h-9 w-9 p-0"
+          className="size-8 p-0"
         >
           <ChevronLeft className="size-4" />
           <span className="sr-only">{t('common.table.previousPage')}</span>
         </Button>
-        <div className="text-muted-foreground flex h-9 items-center px-3 text-sm">
+        <div className="text-muted-foreground flex h-8 items-center px-2 text-sm">
           {t('common.table.page')} {currentPage} / {totalPages}
         </div>
         <Button
@@ -124,7 +123,7 @@ export function TablePagination({
           size="sm"
           onClick={goToNextPage}
           disabled={currentPage === totalPages || totalPages === 0}
-          className="h-9 w-9 p-0"
+          className="size-8 p-0"
         >
           <ChevronRight className="size-4" />
           <span className="sr-only">{t('common.table.nextPage')}</span>
@@ -135,7 +134,7 @@ export function TablePagination({
             size="sm"
             onClick={goToLastPage}
             disabled={currentPage === totalPages || totalPages === 0}
-            className="h-9 w-9 p-0"
+            className="size-8 p-0"
           >
             <ChevronsRight className="size-4" />
             <span className="sr-only">{t('common.table.lastPage')}</span>
