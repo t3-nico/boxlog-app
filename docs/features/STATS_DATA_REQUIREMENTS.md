@@ -3,9 +3,9 @@
 ## 📋 目次
 
 1. [概要](#概要)
-2. [利用可能なデータソース](#利用可能なデータソース)
-3. [統計ページ別データ要件](#統計ページ別データ要件)
-4. [未実装エンティティ](#未実装エンティティ)
+2. [機能範囲の決定事項](#機能範囲の決定事項)
+3. [利用可能なデータソース](#利用可能なデータソース)
+4. [統計ページ別データ要件](#統計ページ別データ要件)
 5. [API実装計画](#api実装計画)
 
 ---
@@ -17,7 +17,56 @@ BoxLogアプリの統計機能で表示すべきデータと、その実装要�
 ### ステータス
 
 - **作成日**: 2025-12-04
+- **最終更新**: 2025-12-04
 - **ステータス**: 🚧 要件定義中
+
+---
+
+## 機能範囲の決定事項
+
+### ✅ 決定: Self Analysis系は統計から分離
+
+**方針**: Self Analysis系（Goals, Principles, Value等）は **Settings > Personalization** に移動
+
+| 移動先 | 項目 |
+|--------|------|
+| Settings > Personalization | Goals, Principles, Value, Life Vision, Identity, Purpose, AntiValues |
+
+**理由**:
+- 統計 = 数値データの可視化（何をどれだけやったか）
+- Self Analysis = ユーザー情報の言語化（自分は何者か）
+- コンテキストが異なるため分離
+- ChatGPTのパーソナライズ設定と同様のUXを提供
+
+### 統計ページの最終構成
+
+```
+Stats（統計）
+├── Dashboard（概要）
+├── Analytics
+│   ├── Tasks（タスク統計）
+│   ├── Time（時間分析）※sessions実装後
+│   ├── Tags（タグ分析）
+│   └── Trends（トレンド）
+└── Reflect（振り返り）
+    ├── Today（今日）
+    ├── Week（週間）
+    ├── Month（月間）
+    └── All（全期間）
+```
+
+### 削除対象ページ（統計サイドバーから）
+
+- `/stats/goals`
+- `/stats/principles`
+- `/stats/value`
+- `/stats/life-vision`
+- `/stats/identity`
+- `/stats/purpose`
+- `/stats/antivalues`
+- `/stats/connpass`（外部API連携、別途検討）
+- `/stats/act/try`（方針未定）
+- `/stats/act/next`（方針未定）
 
 ---
 
@@ -202,29 +251,21 @@ none | daily | weekly | monthly | yearly | weekdays
 
 ---
 
-## 未実装エンティティ
+## 未定義事項
 
-以下のページはデータモデルが未定義のため、要検討：
+### Actions（Try/Next）の扱い
 
-| ページ | 現状 | 対応案 |
+| ページ | 現状 | 検討案 |
 |--------|------|--------|
-| Goals（目標） | テーブルなし | 新規テーブル作成 or タグで代替 |
-| Principles（原則） | テーブルなし | 新規テーブル作成 or タグで代替 |
-| Value（価値観） | テーブルなし | 新規テーブル作成 |
-| Life Vision（人生ビジョン） | テーブルなし | 新規テーブル作成 |
-| Identity（アイデンティティ） | テーブルなし | 新規テーブル作成 |
-| Purpose（目的） | テーブルなし | 新規テーブル作成 |
-| AntiValues（反価値観） | テーブルなし | 新規テーブル作成 |
-| Actions - Try/Next | テーブルなし | plans のサブセット or 新規 |
-| Connpass | 外部API | 別途検討 |
+| `/stats/act/try` | テーブルなし | plansのサブセット？特定タグ？ |
+| `/stats/act/next` | テーブルなし | plansのサブセット？特定タグ？ |
 
-### 検討事項
+→ **要検討**: 統計に残すか、別機能にするか
 
-1. **Self Analysis系** は別のコンテキスト（自己分析・ライフデザイン）の機能
-   - 統計機能の範囲に含めるか？
-   - 別機能として切り出すか？
+### Time（時間分析）
 
-2. **Actions** はプランの特殊なビューとして実装可能か？
+- `sessions`テーブルが将来機能のため、現時点では実装不可
+- sessions実装後に対応
 
 ---
 
@@ -271,10 +312,21 @@ sessions.getTimeByTag  // 🆕 タグ別作業時間
 
 ## 次のステップ
 
-- [ ] Self Analysis系ページの方針決定
+- [x] Self Analysis系ページの方針決定 → **Settings > Personalization に移動**
+- [ ] Actions（Try/Next）の方針決定
+- [ ] 統計サイドバーからSelf Analysis系を削除
 - [ ] API実装の優先順位確定
 - [ ] 各APIの詳細仕様定義
 - [ ] UIコンポーネントとの紐付け
+
+---
+
+## 関連Issue/作業
+
+| 作業 | ステータス | 備考 |
+|------|----------|------|
+| 統計サイドバー整理 | 🔜 TODO | Self Analysis系の削除 |
+| Settings > Personalization設計 | 🔜 TODO | データモデル含む |
 
 ---
 
