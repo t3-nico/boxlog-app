@@ -106,16 +106,12 @@ t('toolbar.today')  // calendar.toolbar.today
 
 | ネームスペース | 用途 |
 |----------------|------|
-| `ai` | AI基本機能 |
-| `aiChat` | AIチャット |
-| `app` | アプリ全般 |
+| `app` | アプリ全般（メタデータ等） |
 | `auth` | 認証 |
 | `board` | ボード |
 | `calendar` | カレンダー |
 | `common` | 共通UI |
 | `errors` | エラーメッセージ |
-| `events` | イベント |
-| `help` | ヘルプ |
 | `legal` | 法的文書 |
 | `navigation` | ナビゲーション |
 | `notifications` | 通知 |
