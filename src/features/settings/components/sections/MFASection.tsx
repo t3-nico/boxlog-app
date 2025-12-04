@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import { useMFA } from '../../hooks/useMFA'
 import { SettingsCard } from '../SettingsCard'
@@ -13,7 +13,7 @@ import { SettingsCard } from '../SettingsCard'
  * TOTP認証の登録・管理UIを提供
  */
 export function MFASection() {
-  const { t } = useI18n()
+  const t = useTranslations()
   const {
     hasMFA,
     showMFASetup,

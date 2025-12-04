@@ -6,14 +6,14 @@ import { Download, FileJson, History, Upload } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
 
 export const DataExportSettings = memo(function DataExportSettings() {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [isExporting, setIsExporting] = useState(false)
   const [autoBackup, setAutoBackup] = useState(true)
 

@@ -5,8 +5,8 @@ import { useCallback } from 'react'
 import { Bell } from 'lucide-react'
 
 import { Switch } from '@/components/ui/switch'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+import { useTranslations } from 'next-intl'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
@@ -20,7 +20,7 @@ interface NotificationAutoSaveSettings {
 }
 
 export function NotificationSettings() {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   // 通知設定の自動保存
   const notifications = useAutoSaveSettings<NotificationAutoSaveSettings>({

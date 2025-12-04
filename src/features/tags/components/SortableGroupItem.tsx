@@ -20,9 +20,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { GroupNameWithTooltip } from '@/features/tags/components/GroupNameWithTooltip'
 import type { TagGroup } from '@/types/tags'
+import { useTranslations } from 'next-intl'
 
 interface SortableGroupItemProps {
   group: TagGroup
@@ -56,7 +56,7 @@ export function SortableGroupItem({
   editingName,
   setEditingName,
 }: SortableGroupItemProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: group.id })
 
   // ドロップゾーンとして設定

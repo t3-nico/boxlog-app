@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { TranslationFunction } from '@/features/i18n/lib/hooks'
+import type { useTranslations } from 'next-intl'
 
 interface TagsPaginationProps {
   currentPage: number
@@ -15,7 +15,7 @@ interface TagsPaginationProps {
   endIndex: number
   onPageChange: (page: number) => void
   onPageSizeChange: (size: number) => void
-  t: TranslationFunction
+  t: ReturnType<typeof useTranslations>
 }
 
 export function TagsPagination({
@@ -34,7 +34,7 @@ export function TagsPagination({
       <div className="flex items-center justify-between px-6 py-4">
         {/* 左側: 表示件数選択 */}
         <div className="flex items-center gap-2">
-          <span className="text-muted-foreground text-sm">{t('tags.page.rowsPerPage')}</span>
+          <span className="text-muted-foreground text-sm">{t('tag.page.rowsPerPage')}</span>
           <Select value={String(pageSize)} onValueChange={(value) => onPageSizeChange(Number(value))}>
             <SelectTrigger className="h-9 w-16">
               <SelectValue />
@@ -51,7 +51,7 @@ export function TagsPagination({
         {/* 中央: ページ情報 */}
         <div className="text-muted-foreground text-sm">
           {totalItems > 0
-            ? `${startIndex + 1}〜${Math.min(endIndex, totalItems)}件 ${t('tags.page.of')} ${totalItems}件`
+            ? `${startIndex + 1}〜${Math.min(endIndex, totalItems)}件 ${t('tag.page.of')} ${totalItems}件`
             : '0件'}
         </div>
 
@@ -65,10 +65,10 @@ export function TagsPagination({
             className="h-9 w-9 p-0"
           >
             <ChevronLeft className="size-4" />
-            <span className="sr-only">{t('tags.page.previous')}</span>
+            <span className="sr-only">{t('tag.page.previous')}</span>
           </Button>
           <div className="text-muted-foreground flex h-9 items-center px-3 text-sm">
-            {t('tags.page.page')} {currentPage} {t('tags.page.of')} {totalPages || 1}
+            {t('tag.page.page')} {currentPage} {t('tag.page.of')} {totalPages || 1}
           </div>
           <Button
             variant="outline"
@@ -78,7 +78,7 @@ export function TagsPagination({
             className="h-9 w-9 p-0"
           >
             <ChevronRight className="size-4" />
-            <span className="sr-only">{t('tags.page.next')}</span>
+            <span className="sr-only">{t('tag.page.next')}</span>
           </Button>
         </div>
       </div>

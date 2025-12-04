@@ -1,96 +1,110 @@
+import createMiddleware from 'next-intl/middleware'
 import { NextResponse, type NextRequest } from 'next/server'
 
-import { defaultLocale, LOCALE_COOKIE, locales } from '@/features/i18n/lib'
+import { routing } from '@/i18n/routing'
 import { updateSession } from '@/lib/supabase/middleware'
-import type { Locale } from '@/types/i18n'
 
-// 言語検出とリダイレクト処理
-function getLocaleFromRequest(request: NextRequest): Locale {
-  // 1. URLパスから言語を取得
-  const pathname = request.nextUrl.pathname
-  const pathLocale = locales.find((locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`)
+// next-intlのミドルウェアを作成
+const intlMiddleware = createMiddleware(routing)
 
-  if (pathLocale) {
-    return pathLocale
-  }
+// 認証が必要なパス
+const protectedPaths = [
+  '/tasks',
+  '/settings',
+  '/calendar',
+  '/box',
+  '/table',
+  '/board',
+  '/stats',
+  '/review',
+  '/notifications',
+  '/tags',
+  '/add',
+]
 
-  // 2. Cookieから言語を取得
-  const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value as Locale
-  if (cookieLocale && locales.includes(cookieLocale)) {
-    return cookieLocale
-  }
+// 認証ページのパス
+const authPaths = ['/login', '/signup', '/auth']
 
-  // 3. Accept-Languageヘッダーから言語を取得
-  const acceptLanguage = request.headers.get('accept-language')
-  if (acceptLanguage) {
-    const preferredLocale = acceptLanguage
-      .split(',')
-      .map((lang) => {
-        const parts = lang.split(';')[0]?.split('-')
-        return parts?.[0]?.trim() || ''
-      })
-      .find((lang) => locales.includes(lang as Locale)) as Locale
-
-    if (preferredLocale) {
-      return preferredLocale
+// 言語プレフィックスを除いたパスを取得
+// as-needed設定: デフォルト言語(en)はプレフィックスなし
+function getPathWithoutLocale(pathname: string): string {
+  // 非デフォルトロケール(ja)のみプレフィックスあり
+  for (const locale of routing.locales) {
+    if (locale === routing.defaultLocale) continue // デフォルトはスキップ
+    if (pathname.startsWith(`/${locale}/`)) {
+      return pathname.slice(locale.length + 1)
+    }
+    if (pathname === `/${locale}`) {
+      return '/'
     }
   }
-
-  return defaultLocale
+  // デフォルト言語またはプレフィックスなしの場合はそのまま返す
+  return pathname
 }
 
-function shouldRedirectToLocale(pathname: string): boolean {
-  // 既に言語プレフィックスがある場合はリダイレクト不要
-  if (locales.some((locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`)) {
-    return false
+// 現在の言語を取得
+// as-needed設定: プレフィックスなし = デフォルト言語(en)
+function getCurrentLocale(pathname: string): string {
+  for (const locale of routing.locales) {
+    if (locale === routing.defaultLocale) continue // デフォルトはスキップ
+    if (pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`) {
+      return locale
+    }
   }
-
-  // 静的ファイル、API、_nextファイルは除外
-  if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname.includes('.')) {
-    return false
-  }
-
-  // メンテナンスページは言語プレフィックスなし
-  if (pathname === '/maintenance') {
-    return false
-  }
-
-  return true
+  return routing.defaultLocale
 }
 
-async function middleware(request: NextRequest) {
+// ロケールプレフィックス付きパスを生成
+// as-needed設定: デフォルト言語(en)はプレフィックスなし
+function getLocalizedPath(path: string, locale: string): string {
+  if (locale === routing.defaultLocale) {
+    // デフォルト言語はプレフィックスなし
+    return path
+  }
+  // 非デフォルト言語はプレフィックス付き
+  return `/${locale}${path}`
+}
+
+export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
-  const locale = getLocaleFromRequest(request)
+
+  // 静的ファイル、API、_nextファイルはスキップ
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.includes('.') ||
+    pathname === '/monitoring-tunnel'
+  ) {
+    return NextResponse.next()
+  }
+
+  // メンテナンスページは言語処理をスキップ
+  if (pathname === '/maintenance') {
+    return NextResponse.next()
+  }
 
   // 言語プレフィックス付きメンテナンスページへのアクセスをリダイレクト
-  if (locales.some((locale) => pathname === `/${locale}/maintenance`)) {
-    return NextResponse.redirect(new URL('/maintenance', request.url))
+  for (const locale of routing.locales) {
+    if (pathname === `/${locale}/maintenance`) {
+      return NextResponse.redirect(new URL('/maintenance', request.url))
+    }
   }
 
   // メンテナンスモードチェック
   const isMaintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
-  const isMaintenancePage = pathname === '/maintenance'
-
-  if (isMaintenanceMode && !isMaintenancePage) {
+  if (isMaintenanceMode) {
     return NextResponse.redirect(new URL('/maintenance', request.url))
   }
 
-  // 言語リダイレクトの処理
-  if (shouldRedirectToLocale(pathname)) {
-    const redirectUrl = new URL(`/${locale}${pathname}`, request.url)
-    const response = NextResponse.redirect(redirectUrl)
+  // next-intlのミドルウェアを実行（言語検出とリダイレクト）
+  const intlResponse = intlMiddleware(request)
 
-    // 言語選択をCookieに保存
-    response.cookies.set(LOCALE_COOKIE, locale, {
-      path: '/',
-      maxAge: 31536000, // 1年
-      sameSite: 'lax',
-    })
-
-    return response
+  // リダイレクトレスポンスの場合はそのまま返す
+  if (intlResponse.status !== 200) {
+    return intlResponse
   }
 
-  // ⚠️ 重要: Supabaseセッションを最初に更新（トークンリフレッシュ）
+  // Supabaseセッションを更新
   const { response, supabase } = await updateSession(request)
 
   try {
@@ -103,73 +117,47 @@ async function middleware(request: NextRequest) {
     const skipAuth = process.env.SKIP_AUTH_IN_DEV === 'true' && process.env.NODE_ENV === 'development'
 
     if (skipAuth) {
+      // next-intlのヘッダーをコピー
+      intlResponse.headers.forEach((value, key) => {
+        response.headers.set(key, value)
+      })
       return response
     }
 
-    // 現在の言語を取得
-    const currentLocale = locales.find((locale) => pathname.startsWith(`/${locale}`)) || defaultLocale
-
-    // 言語プレフィックスを除いたパスを取得
-    const localePrefix = `/${currentLocale}`
-    const pathWithoutLocale = pathname.startsWith(localePrefix) ? pathname.slice(localePrefix.length) || '/' : pathname
-
-    // 認証が必要なパスの定義（言語プレフィックス除外）
-    const protectedPaths = [
-      '/tasks',
-      '/settings',
-      '/calendar',
-      '/box',
-      '/table',
-      '/board',
-      '/stats',
-      '/review',
-      '/notifications',
-      '/tags',
-      '/add',
-    ]
-    const authPaths = ['/login', '/signup', '/auth']
+    const currentLocale = getCurrentLocale(pathname)
+    const pathWithoutLocale = getPathWithoutLocale(pathname)
 
     const isProtectedPath = protectedPaths.some((path) => pathWithoutLocale.startsWith(path))
     const isAuthPath = authPaths.some((path) => pathWithoutLocale.startsWith(path))
 
     // 未認証でprotectedPathにアクセスした場合
     if (!user && isProtectedPath) {
-      console.log('[Middleware] Redirecting to login:', request.nextUrl.pathname)
-      // ログインページにリダイレクト（元のURLを保持）
-      const loginUrl = new URL(`/${currentLocale}/auth/login`, request.url)
+      const loginUrl = new URL(getLocalizedPath('/auth/login', currentLocale), request.url)
       loginUrl.searchParams.set('redirect', pathWithoutLocale)
       return NextResponse.redirect(loginUrl)
     }
 
     // 認証済みでauth系のパスにアクセスした場合
-    // ただし、MFA検証ページは除外（AAL1 → AAL2への昇格が必要）
+    // MFA検証ページは除外
     const isMFAVerifyPath = pathWithoutLocale === '/auth/mfa-verify'
 
     if (user && isAuthPath && !isMFAVerifyPath) {
-      console.log('[Middleware] Redirecting to calendar:', request.nextUrl.pathname)
-      return NextResponse.redirect(new URL(`/${currentLocale}/calendar`, request.url))
+      return NextResponse.redirect(new URL(getLocalizedPath('/calendar', currentLocale), request.url))
     }
+
+    // next-intlのヘッダーをコピー
+    intlResponse.headers.forEach((value, key) => {
+      response.headers.set(key, value)
+    })
 
     return response
   } catch (error) {
     console.error('Middleware error:', error)
 
-    // エラーが発生した場合は、静的ページ以外はログインにリダイレクト
-    const isStaticPath =
-      request.nextUrl.pathname.startsWith('/_next') ||
-      request.nextUrl.pathname.startsWith('/api') ||
-      request.nextUrl.pathname === '/login' ||
-      request.nextUrl.pathname === '/signup'
-
-    if (!isStaticPath) {
-      return NextResponse.redirect(new URL(`/${defaultLocale}/auth/login`, request.url))
-    }
-
-    return response
+    const currentLocale = getCurrentLocale(pathname)
+    return NextResponse.redirect(new URL(getLocalizedPath('/auth/login', currentLocale), request.url))
   }
 }
-
-export default middleware
 
 export const config = {
   matcher: [

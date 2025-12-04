@@ -10,15 +10,15 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { Spinner } from '@/components/ui/spinner'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslations } from 'next-intl'
 
 export default function MFAVerifyPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const params = useParams()
   const locale = (params?.locale as string) || 'ja'
-  const { t } = useI18n(locale as 'en' | 'ja')
+  const t = useTranslations()
   const supabase = createClient()
 
   const [verificationCode, setVerificationCode] = useState('')

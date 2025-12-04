@@ -3,9 +3,9 @@
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { SettingField, SettingsCard, SettingsLayout } from '@/features/settings/components'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+import { useTranslations } from 'next-intl'
 
 interface ProfileSettings {
   displayName: string
@@ -21,7 +21,7 @@ interface PrivacySettings {
 }
 
 export function AccountSettingsAutoSave() {
-  const { t } = useI18n()
+  const t = useTranslations()
   // プロフィール設定（自動保存）
   const profile = useAutoSaveSettings<ProfileSettings>({
     initialValues: {

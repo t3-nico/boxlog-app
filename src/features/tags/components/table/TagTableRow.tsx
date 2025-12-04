@@ -13,7 +13,6 @@ import {
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { DraggableTagRow } from '@/features/tags/components/DraggableTagRow'
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
 import { useUpdateTag } from '@/features/tags/hooks/use-tags'
@@ -23,6 +22,7 @@ import type { TagGroup, TagWithChildren } from '@/types/tags'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Folder, Hash } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 import { useCallback, useState } from 'react'
 
@@ -50,7 +50,7 @@ interface TagCellContentProps {
  * DataTableのrender関数から使用
  */
 export function TagCellContent({ tag, columnId, groups, allTags, planCounts, lastUsed }: TagCellContentProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const { openInspector } = useTagInspectorStore()
   const updateTagMutation = useUpdateTag()
 
@@ -211,7 +211,7 @@ export function TagRowWrapper({
   onArchiveConfirm,
   onDeleteConfirm,
 }: TagRowWrapperProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const { openInspector } = useTagInspectorStore()
   const { setSelectedIds } = useTagSelectionStore()
 

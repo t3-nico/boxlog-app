@@ -4,7 +4,7 @@ import { Download } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 /**
@@ -16,7 +16,7 @@ import { toast } from 'sonner'
  * @see Issue #548 - データ削除リクエスト機能（忘れられる権利）
  */
 export function DataExport() {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [isExporting, setIsExporting] = useState(false)
 
   const handleExport = async () => {

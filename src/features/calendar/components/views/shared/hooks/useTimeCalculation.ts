@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 
 import { format } from 'date-fns'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 
@@ -26,7 +26,7 @@ export interface UseTimeCalculationOptions {
  * @returns 位置→時刻計算関数
  */
 export function useTimeCalculation({ snapToMinutes = 15, maxHour = 23, minHour = 0 }: UseTimeCalculationOptions = {}) {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   /**
    * Y座標（ピクセル）から時刻を計算

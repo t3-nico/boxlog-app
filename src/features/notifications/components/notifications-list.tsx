@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { BellRing } from 'lucide-react'
 
-import { useTranslation } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import { useNotificationTypeLabel } from '../utils/notification-helpers'
 
@@ -20,24 +20,24 @@ interface SystemNotification {
 const getDefaultNotifications = (t: (key: string) => string): SystemNotification[] => [
   {
     id: 1,
-    title: t('notifications.list.sampleNotifications.maintenance.title'),
-    content: t('notifications.list.sampleNotifications.maintenance.content'),
+    title: t('notification.list.sampleNotifications.maintenance.title'),
+    content: t('notification.list.sampleNotifications.maintenance.content'),
     date: '2025-07-08',
     isRead: false,
     type: 'system',
   },
   {
     id: 2,
-    title: t('notifications.list.sampleNotifications.newFeature.title'),
-    content: t('notifications.list.sampleNotifications.newFeature.content'),
+    title: t('notification.list.sampleNotifications.newFeature.title'),
+    content: t('notification.list.sampleNotifications.newFeature.content'),
     date: '2025-07-05',
     isRead: true,
     type: 'feature',
   },
   {
     id: 3,
-    title: t('notifications.list.sampleNotifications.termsUpdate.title'),
-    content: t('notifications.list.sampleNotifications.termsUpdate.content'),
+    title: t('notification.list.sampleNotifications.termsUpdate.title'),
+    content: t('notification.list.sampleNotifications.termsUpdate.content'),
     date: '2025-07-01',
     isRead: true,
     type: 'important',
@@ -49,7 +49,7 @@ interface NotificationsListProps {
 }
 
 export function NotificationsList({ notifications }: NotificationsListProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const getTypeLabel = useNotificationTypeLabel()
   const defaultNotifications = getDefaultNotifications(t)
   const [notificationList, setNotificationList] = useState(notifications || defaultNotifications)
@@ -78,9 +78,9 @@ export function NotificationsList({ notifications }: NotificationsListProps) {
       <div>
         <div className="mb-2 flex items-center gap-3">
           <BellRing className="h-6 w-6 text-blue-600" />
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{t('notifications.list.title')}</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{t('notification.list.title')}</h2>
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-300">{t('notifications.list.description')}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300">{t('notification.list.description')}</p>
       </div>
 
       <div className="space-y-4">
@@ -103,7 +103,7 @@ export function NotificationsList({ notifications }: NotificationsListProps) {
                   </span>
                   {!notification.isRead && (
                     <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                      {t('notifications.list.badges.unread')}
+                      {t('notification.list.badges.unread')}
                     </span>
                   )}
                 </div>
@@ -117,7 +117,7 @@ export function NotificationsList({ notifications }: NotificationsListProps) {
                   onClick={() => markAsRead(notification.id)}
                   className="ml-4 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                 >
-                  {t('notifications.list.actions.markAsRead')}
+                  {t('notification.list.actions.markAsRead')}
                 </button>
               )}
             </div>
@@ -129,9 +129,9 @@ export function NotificationsList({ notifications }: NotificationsListProps) {
         <div className="py-12 text-center">
           <BellRing className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
-            {t('notifications.list.empty.title')}
+            {t('notification.list.empty.title')}
           </h3>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t('notifications.list.empty.description')}</p>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t('notification.list.empty.description')}</p>
         </div>
       )}
     </div>

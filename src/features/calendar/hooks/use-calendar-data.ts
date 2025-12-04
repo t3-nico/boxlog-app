@@ -4,8 +4,8 @@ import { useCallback, useMemo, useState } from 'react'
 
 import { addMinutes, isWithinInterval } from 'date-fns'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { Task } from '@/types/unified'
+import { useTranslations } from 'next-intl'
 
 import type { ViewDateRange } from '../types/calendar.types'
 
@@ -35,7 +35,7 @@ export function useCalendarData({
   onTaskCreate,
   onTaskDelete,
 }: UseCalendarDataOptions) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 

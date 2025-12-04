@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { formatHour } from '@/features/settings/utils/timezone-utils'
+import { useTranslations } from 'next-intl'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
@@ -42,7 +42,7 @@ export function CalendarSettings() {
   const businessHours = useCalendarSettingsStore((state) => state.businessHours)
   const updateSettings = useCalendarSettingsStore((state) => state.updateSettings)
   const resetSettings = useCalendarSettingsStore((state) => state.resetSettings)
-  const { t } = useI18n()
+  const t = useTranslations()
 
   const formatTimeWithSettings = (date: Date, timeFormat: '12h' | '24h') => {
     const formatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a'

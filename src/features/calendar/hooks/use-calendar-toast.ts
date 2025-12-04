@@ -4,12 +4,12 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { toast } from 'sonner'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import type { CalendarPlan } from '../types/calendar.types'
 
 export function useCalendarToast() {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   const eventCreated = (plan: CalendarPlan) => {
     toast.success(t('calendar.toast.created'), {

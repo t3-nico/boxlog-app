@@ -3,8 +3,8 @@
 import { isToday as checkIsToday, format, isTomorrow } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
 
 import type { AgendaDayGroupProps } from '../AgendaView.types'
 
@@ -16,7 +16,7 @@ import { AgendaItem } from './AgendaItem'
  * 日付ヘッダーと、その日のプランリストを表示
  */
 export function AgendaDayGroup({ date, plans, isToday, onPlanClick, onPlanContextMenu }: AgendaDayGroupProps) {
-  const { locale } = useI18n()
+  const locale = useLocale()
   const dateLocale = locale === 'ja' ? ja : undefined
 
   // 日付ラベルの生成

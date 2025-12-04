@@ -1,5 +1,8 @@
 import { withSentryConfig } from '@sentry/nextjs'
 import bundleAnalyzer from '@next/bundle-analyzer'
+import createNextIntlPlugin from 'next-intl/plugin'
+
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -245,6 +248,6 @@ const sentryOptions = {
   tunnelRoute: '/monitoring-tunnel', // CSP回避用トンネル（オプション）
 }
 
-// withBundleAnalyzer → withSentryConfig の順で適用
+// withNextIntl → withBundleAnalyzer → withSentryConfig の順で適用
 // 重要: Sentryが最後に適用されるようにする
-export default withSentryConfig(withBundleAnalyzer(nextConfig), sentryOptions)
+export default withSentryConfig(withBundleAnalyzer(withNextIntl(nextConfig)), sentryOptions)

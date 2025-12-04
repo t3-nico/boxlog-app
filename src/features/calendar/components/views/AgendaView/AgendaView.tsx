@@ -5,8 +5,8 @@ import { useMemo } from 'react'
 import { addDays, isSameDay, startOfDay } from 'date-fns'
 import { CalendarDays } from 'lucide-react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { EmptyState } from '../shared/components/EmptyState'
@@ -23,7 +23,7 @@ const AGENDA_DAYS = 14
  * **レイアウト**: 日付 | 時間 | タイトル# | タグ
  */
 export function AgendaView({ plans, currentDate, className, onPlanClick, onPlanContextMenu }: AgendaViewProps) {
-  const { locale } = useI18n()
+  const locale = useLocale()
 
   // 表示範囲の計算（currentDateから14日間）
   const dateRange = useMemo(() => {

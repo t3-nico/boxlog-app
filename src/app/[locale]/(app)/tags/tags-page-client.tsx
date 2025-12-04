@@ -3,7 +3,7 @@
 import { Calendar, ChevronDown, FileText, Filter, Folder, Hash, Plus, Settings2 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { DataTable, type ColumnDef, type SortState } from '@/components/common/table'
 import { Button } from '@/components/ui/button'
@@ -16,7 +16,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import {
   TagCellContent,
   TagRowWrapper,
@@ -40,7 +39,7 @@ import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStor
 import { useTagSortStore } from '@/features/tags/stores/useTagSortStore'
 import { api } from '@/lib/trpc'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
-import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 interface TagsPageClientProps {
@@ -49,7 +48,7 @@ interface TagsPageClientProps {
 }
 
 export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = false }: TagsPageClientProps = {}) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const pathname = usePathname()
 
   // データ取得

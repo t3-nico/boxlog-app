@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import { EmailChangeDialog } from '../email-change-dialog'
 import { SettingsCard } from '../SettingsCard'
@@ -16,7 +16,7 @@ import { SettingsCard } from '../SettingsCard'
  */
 export function EmailSection() {
   const user = useAuthStore((state) => state.user)
-  const { t } = useI18n()
+  const t = useTranslations()
   const [showEmailDialog, setShowEmailDialog] = useState(false)
 
   const email = user?.email || ''

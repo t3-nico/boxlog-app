@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent'
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
@@ -27,6 +26,7 @@ import {
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Bell, Calendar as CalendarIcon, MoreVertical, Plus, Tag } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 import { useBoardStatusFilterStore } from '../stores/useBoardStatusFilterStore'
 import { PlanCard } from './shared/PlanCard'
@@ -214,7 +214,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   const [dateTimeOpen, setDateTimeOpen] = useState(false)
   const { createPlan } = usePlanMutations()
   const formRef = useRef<HTMLDivElement>(null)
-  const { t } = useI18n()
+  const t = useTranslations()
 
   // 作成キャンセル
   const handleCancel = () => {

@@ -5,11 +5,11 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { useCreateTag } from '@/features/tags/hooks/use-tags'
 import { useTagColumnStore } from '@/features/tags/stores/useTagColumnStore'
 import type { TagGroup, TagWithChildren } from '@/types/tags'
 import { Folder, Hash } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -43,7 +43,7 @@ interface TagTableRowCreateProps {
  */
 export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRowCreateProps>(
   ({ selectedGroupId, groups, allTags, onCreated }, ref) => {
-    const { t } = useI18n()
+    const t = useTranslations()
     const { getVisibleColumns, getColumnWidth } = useTagColumnStore()
     const createTagMutation = useCreateTag()
 

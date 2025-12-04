@@ -6,11 +6,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { AlertCircle, MoreHorizontal } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import type { KanbanCard as KanbanCardType } from '../../types'
 
 interface KanbanCardProps {
@@ -32,7 +32,7 @@ interface KanbanCardProps {
  * 4. 優先順位
  */
 export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging = false }: KanbanCardProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const {
     attributes,
     listeners,

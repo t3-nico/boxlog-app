@@ -5,8 +5,8 @@ import { useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
+import { useTranslations } from 'next-intl'
 
 import { AboutLegalSettings } from '../about-legal-settings'
 import { AccountSettings } from '../account-settings'
@@ -34,7 +34,7 @@ import { TagsSettings } from '../tags-settings'
  */
 export function SettingsContent() {
   const { activeCategory, closeSettings, scrollToSection, clearScrollTarget } = useSettingsDialogStore()
-  const { t } = useI18n()
+  const t = useTranslations()
   const chronotypeRef = useRef<HTMLDivElement>(null)
 
   // スクロールターゲットへのスクロール処理

@@ -1,14 +1,13 @@
-import { createTranslation, getDictionary } from '@/features/i18n/lib'
-import type { Locale } from '@/types/i18n'
+import type { Locale } from '@/i18n/routing'
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
 /**
  * メタデータ生成（SEO対策・i18n対応）
  */
 export async function generateMetadata({ params }: { params: Promise<{ locale?: Locale }> }): Promise<Metadata> {
   const { locale = 'ja' } = await params
-  const dictionary = await getDictionary(locale)
-  const t = createTranslation(dictionary, locale)
+  const t = await getTranslations({ locale })
 
   return {
     title: `${t('legal.terms.title')} - BoxLog`,
@@ -26,8 +25,7 @@ interface PageProps {
 export default async function TermsOfServicePage({ params }: PageProps) {
   // i18n翻訳取得（URLからロケール取得、デフォルトはja）
   const { locale = 'ja' } = await params
-  const dictionary = await getDictionary(locale)
-  const t = createTranslation(dictionary, locale)
+  const t = await getTranslations({ locale })
 
   // 最終更新日（実際のプロジェクトでは、CMSや設定ファイルから取得）
   const lastUpdated = '2025-10-15'

@@ -2,16 +2,14 @@
 
 import { useCallback } from 'react'
 
-import { usePathname, useRouter } from 'next/navigation'
-
 import { Menu } from '@headlessui/react'
 import { Check, ChevronDown, Globe } from 'lucide-react'
 
-import { locales, setLocaleCookie } from '@/features/i18n/lib'
-import { useCurrentLocale } from '@/features/i18n/lib/hooks'
+import { usePathname, useRouter } from '@/i18n/navigation'
+import { routing, type Locale } from '@/i18n/routing'
 import { getAccessibilityLabels } from '@/lib/accessibility'
 import { cn } from '@/lib/utils'
-import type { Locale } from '@/types/i18n'
+import { useLocale } from 'next-intl'
 
 interface LanguageOption {
   code: Locale
@@ -41,7 +39,7 @@ interface LanguageSwitcherProps {
 }
 
 export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwitcherProps) => {
-  const currentLocale = useCurrentLocale()
+  const currentLocale = useLocale()
   const pathname = usePathname()
   const router = useRouter()
 
@@ -50,10 +48,10 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
 
   const handleLanguageChange = useCallback(
     (newLocale: Locale) => {
-      setLocaleCookie(newLocale)
-
+      // next-intl's router handles locale switching automatically
+      // It will update the cookie and navigate to the new locale path
       const segments = (pathname || '/').split('/')
-      const currentLocaleFromPath = locales.find((locale) => segments[1] === locale)
+      const currentLocaleFromPath = routing.locales.find((locale) => segments[1] === locale)
 
       let newPathname: string
       if (currentLocaleFromPath) {

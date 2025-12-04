@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
@@ -20,6 +19,7 @@ import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useCreateTagGroup, useDeleteTagGroup, useUpdateTagGroup } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import type { TagGroup } from '@/types/tags'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 interface TagsSidebarProps {
@@ -42,7 +42,7 @@ export function TagsSidebar({
   archivedTagsCount = 0,
   externalIsCreating = false,
 }: TagsSidebarProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const router = useRouter()
   const pathname = usePathname()
   const { setIsCreatingGroup, reorderedGroups, sortableContextProps } = useTagsPageContext()

@@ -11,9 +11,9 @@ import { AlertTriangle, Home, RefreshCw, Shield, Zap } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { createErrorToast, getUserFriendlyMessage, isAutoRecoverable } from '@/config/error-patterns'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { analyzeError, type ErrorAnalysis } from '@/lib/error-analysis'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 import { GlobalErrorBoundaryProps, GlobalErrorBoundaryState } from './types'
 
@@ -48,7 +48,7 @@ function ErrorDisplay({
   onGoHome,
   onToggleAutoRetry,
 }: ErrorDisplayProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const canRetry = retryCount < maxRetries
 
   return (
@@ -62,10 +62,10 @@ function ErrorDisplay({
             </div>
             <div className="min-w-0 flex-1">
               <h1 className="text-xl font-bold tracking-tight break-words text-neutral-900 sm:text-2xl md:text-3xl dark:text-neutral-100">
-                {t('errors.globalBoundary.title')}
+                {t('error.globalBoundary.title')}
               </h1>
               <p className="mt-1 text-xs break-all text-neutral-800 sm:text-sm dark:text-neutral-200">
-                {t('errors.globalBoundary.errorId')}: {errorId} • {t('errors.globalBoundary.severity')}:{' '}
+                {t('error.globalBoundary.errorId')}: {errorId} • {t('error.globalBoundary.severity')}:{' '}
                 {analysis.severity}
               </p>
             </div>
@@ -78,10 +78,10 @@ function ErrorDisplay({
             <RefreshCw className="h-5 w-5 flex-shrink-0 animate-spin text-blue-600 dark:text-blue-400" />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-blue-600 sm:text-base dark:text-blue-400">
-                {t('errors.globalBoundary.autoRecovering')}
+                {t('error.globalBoundary.autoRecovering')}
               </p>
               <p className="text-xs break-words text-blue-800 sm:text-sm dark:text-blue-300">
-                {t('errors.globalBoundary.pleaseWait')}（{t('errors.globalBoundary.retryCount')}: {retryCount + 1}/
+                {t('error.globalBoundary.pleaseWait')}（{t('error.globalBoundary.retryCount')}: {retryCount + 1}/
                 {maxRetries}）
               </p>
             </div>
@@ -91,7 +91,7 @@ function ErrorDisplay({
         {/* エラー分析・推奨アクション */}
         <div className="mb-4 sm:mb-6">
           <h3 className="mb-2 text-sm font-semibold text-neutral-900 sm:text-base dark:text-neutral-100">
-            {t('errors.globalBoundary.problemAndSolution')}
+            {t('error.globalBoundary.problemAndSolution')}
           </h3>
           <div className="rounded-md bg-neutral-200 p-3 sm:p-4 dark:bg-neutral-700">
             <div className="space-y-3">
@@ -108,13 +108,13 @@ function ErrorDisplay({
               {/* 技術詳細（簡略版） */}
               <div className="overflow-x-auto rounded-md bg-neutral-100 p-2 sm:p-3 dark:bg-neutral-900">
                 <p className="text-xs whitespace-nowrap text-neutral-800 sm:text-sm dark:text-neutral-200">
-                  <span className="font-semibold">{t('errors.globalBoundary.category')}:</span> {analysis.category}{' '}
-                  {t('errors.globalBoundary.system')} •{' '}
-                  <span className="font-semibold">{t('errors.globalBoundary.severity')}:</span> {analysis.severity} •{' '}
-                  <span className="font-semibold">{t('errors.globalBoundary.autoRecovery')}:</span>{' '}
+                  <span className="font-semibold">{t('error.globalBoundary.category')}:</span> {analysis.category}{' '}
+                  {t('error.globalBoundary.system')} •{' '}
+                  <span className="font-semibold">{t('error.globalBoundary.severity')}:</span> {analysis.severity} •{' '}
+                  <span className="font-semibold">{t('error.globalBoundary.autoRecovery')}:</span>{' '}
                   {analysis.autoRetryable
-                    ? `✅ ${t('errors.globalBoundary.possible')}`
-                    : `❌ ${t('errors.globalBoundary.manualRequired')}`}
+                    ? `✅ ${t('error.globalBoundary.possible')}`
+                    : `❌ ${t('error.globalBoundary.manualRequired')}`}
                 </p>
               </div>
             </div>
@@ -122,7 +122,7 @@ function ErrorDisplay({
             {/* 推奨アクション */}
             <div className="mt-3 sm:mt-4">
               <p className="mb-2 text-sm font-semibold text-neutral-900 sm:text-base dark:text-neutral-100">
-                {t('errors.globalBoundary.recommendedActions')}:
+                {t('error.globalBoundary.recommendedActions')}:
               </p>
               <ul className="space-y-2">
                 {analysis.suggestedActions.map((action, index) => (
@@ -144,7 +144,7 @@ function ErrorDisplay({
           <div className="flex items-center gap-2 sm:gap-3">
             <Shield className="h-4 w-4 flex-shrink-0 text-blue-600 sm:h-5 sm:w-5 dark:text-blue-400" />
             <span className="text-xs text-neutral-900 sm:text-sm dark:text-neutral-100">
-              {t('errors.globalBoundary.autoRecoverySystem')}
+              {t('error.globalBoundary.autoRecoverySystem')}
             </span>
           </div>
           <Button
@@ -153,7 +153,7 @@ function ErrorDisplay({
             size="sm"
             className="w-full sm:w-auto"
           >
-            {autoRetryEnabled ? t('errors.globalBoundary.enabled') : t('errors.globalBoundary.disabled')}
+            {autoRetryEnabled ? t('error.globalBoundary.enabled') : t('error.globalBoundary.disabled')}
           </Button>
         </div>
 
@@ -167,8 +167,8 @@ function ErrorDisplay({
             >
               <Zap className="mr-2 h-4 w-4 flex-shrink-0" />
               <span className="truncate">
-                {t('errors.globalBoundary.manualRetry')} (
-                {t('errors.globalBoundary.retriesLeft', { count: maxRetries - retryCount })})
+                {t('error.globalBoundary.manualRetry')} (
+                {t('error.globalBoundary.retriesLeft', { count: maxRetries - retryCount })})
               </span>
             </Button>
           ) : null}
@@ -176,12 +176,12 @@ function ErrorDisplay({
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
             <Button onClick={onReload} variant="outline" className="flex w-full items-center justify-center text-sm">
               <RefreshCw className="mr-2 h-4 w-4 flex-shrink-0" />
-              {t('errors.globalBoundary.reloadPage')}
+              {t('error.globalBoundary.reloadPage')}
             </Button>
 
             <Button onClick={onGoHome} variant="outline" className="flex w-full items-center justify-center text-sm">
               <Home className="mr-2 h-4 w-4 flex-shrink-0" />
-              {t('errors.globalBoundary.goHome')}
+              {t('error.globalBoundary.goHome')}
             </Button>
           </div>
         </div>
@@ -190,27 +190,27 @@ function ErrorDisplay({
         {process.env.NODE_ENV === 'development' && (
           <details className="mb-4 sm:mb-6">
             <summary className="cursor-pointer text-xs font-semibold text-neutral-800 hover:text-blue-600 sm:text-sm dark:text-neutral-200 dark:hover:text-blue-400">
-              {t('errors.globalBoundary.technicalDetails')}
+              {t('error.globalBoundary.technicalDetails')}
             </summary>
             <div className="mt-3 rounded-md bg-neutral-200 p-3 sm:p-4 dark:bg-neutral-700">
               <div className="space-y-2 overflow-x-auto text-xs sm:text-sm">
                 <p className="break-words">
-                  <strong>{t('errors.globalBoundary.error')}:</strong> {error.message}
+                  <strong>{t('error.globalBoundary.error')}:</strong> {error.message}
                 </p>
                 <p>
-                  <strong>{t('errors.globalBoundary.analysisCode')}:</strong> {analysis.code}
+                  <strong>{t('error.globalBoundary.analysisCode')}:</strong> {analysis.code}
                 </p>
                 <p>
-                  <strong>{t('errors.globalBoundary.categoryLabel')}:</strong> {analysis.category}
+                  <strong>{t('error.globalBoundary.categoryLabel')}:</strong> {analysis.category}
                 </p>
                 <p>
-                  <strong>{t('errors.globalBoundary.recoverable')}:</strong>{' '}
-                  {analysis.recoverable ? t('errors.globalBoundary.yes') : t('errors.globalBoundary.no')}
+                  <strong>{t('error.globalBoundary.recoverable')}:</strong>{' '}
+                  {analysis.recoverable ? t('error.globalBoundary.yes') : t('error.globalBoundary.no')}
                 </p>
                 {error.stack ? (
                   <details className="mt-2">
                     <summary className="cursor-pointer text-xs text-blue-600 sm:text-sm dark:text-blue-400">
-                      {t('errors.globalBoundary.stackTrace')}
+                      {t('error.globalBoundary.stackTrace')}
                     </summary>
                     <pre className="mt-2 max-h-40 overflow-auto rounded bg-neutral-100 p-2 text-[10px] break-all whitespace-pre-wrap sm:text-xs dark:bg-neutral-800">
                       {error.stack}

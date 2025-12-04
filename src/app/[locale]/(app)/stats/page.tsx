@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 // LCP改善: Rechartsは重いため遅延ロード（約250KB削減）
 const LineChartMultiple = dynamic(
@@ -29,7 +29,7 @@ const LineChartMultiple = dynamic(
 export default function StatsPage() {
   const pathname = usePathname()
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t } = useI18n(localeFromPath)
+  const t = useTranslations()
 
   const baseUrl = `/${localeFromPath}/stats`
 

@@ -1,15 +1,14 @@
 'use client'
 
 import { BarChart3, Calendar, Inbox, PanelLeftClose, PanelLeftOpen, Tag } from 'lucide-react'
-import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/contexts/theme-context'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
 import { useGlobalSearch } from '@/features/search'
+import { useLocale, useTranslations } from 'next-intl'
 
 import { Account } from './Account'
 import { Actions } from './Actions'
@@ -35,7 +34,6 @@ import type { AppBarNavItem } from './types'
  * ```
  */
 export function AppBar() {
-  const pathname = usePathname()
   const user = useAuthStore((state) => state.user)
   const { open: openGlobalSearch } = useGlobalSearch()
   const { resolvedTheme, setTheme } = useTheme()
@@ -43,9 +41,8 @@ export function AppBar() {
   const isOpen = useSidebarStore((state) => state.isOpen)
   const toggle = useSidebarStore((state) => state.toggle)
 
-  // URLから locale を抽出 (例: /ja/calendar -> ja)
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t, locale } = useI18n(localeFromPath)
+  const t = useTranslations()
+  const locale = useLocale() as 'ja' | 'en'
 
   const userData = {
     name: user?.user_metadata?.username || user?.email?.split('@')[0] || 'ユーザー',

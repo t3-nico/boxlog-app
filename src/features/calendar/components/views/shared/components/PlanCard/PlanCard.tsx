@@ -8,10 +8,10 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { calendarColors } from '@/features/calendar/theme'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { getEffectiveStatus } from '@/features/plans/utils/status'
 import { CheckCircle2, Circle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 import { cn } from '@/lib/utils'
 
@@ -35,7 +35,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   style = {},
   previewTime = null,
 }) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const { updatePlan } = usePlanMutations()
   const [isHovered, setIsHovered] = useState(false)
 

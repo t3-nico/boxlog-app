@@ -31,7 +31,7 @@ export interface SettingsCategoryMeta {
  * - カテゴリ数は7（認知負荷を軽減）
  *
  * @example
- * const { t } = useI18n()
+ * const t = useTranslations()
  * const menuItems = SETTINGS_CATEGORIES.map(cat => ({
  *   ...cat,
  *   label: t(cat.labelKey),

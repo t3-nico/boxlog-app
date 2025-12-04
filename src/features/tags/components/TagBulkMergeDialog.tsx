@@ -15,10 +15,10 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { useMergeTag, useTags } from '@/features/tags/hooks/use-tags'
 import type { TagWithChildren } from '@/types/tags'
 import { AlertTriangle, GitMerge } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 interface TagBulkMergeDialogProps {
@@ -33,7 +33,7 @@ interface TagBulkMergeDialogProps {
  * 選択された複数のタグを1つのタグに統合する
  */
 export function TagBulkMergeDialog({ sourceTags, onClose }: TagBulkMergeDialogProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [targetTagId, setTargetTagId] = useState<string>('')
   const [mergeAssociations, setMergeAssociations] = useState(true)
   const [deleteSource, setDeleteSource] = useState(true)

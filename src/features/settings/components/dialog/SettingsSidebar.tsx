@@ -1,11 +1,11 @@
 'use client'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { SETTINGS_CATEGORIES } from '@/features/settings/constants'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 /**
  * 設定ダイアログのサイドバー
@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils'
  * - 幅: 192px (w-48)
  */
 export function SettingsSidebar() {
-  const { t } = useI18n()
+  const t = useTranslations()
   const { activeCategory, setActiveCategory } = useSettingsDialogStore()
 
   return (

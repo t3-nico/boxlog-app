@@ -17,9 +17,9 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import type { TranslationFunction } from '@/features/i18n/lib/hooks'
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
 import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { useTranslations } from 'next-intl'
 
 interface ColumnWidths {
   select: number
@@ -54,7 +54,7 @@ interface TagRowProps {
   onArchive: (tag: TagWithChildren) => void
   onDelete: (tag: TagWithChildren) => void
   formatDate: (date: Date | string) => string
-  t: TranslationFunction
+  t: ReturnType<typeof useTranslations>
 }
 
 export function TagRow({
@@ -99,7 +99,7 @@ export function TagRow({
             <Checkbox
               checked={isSelected}
               onCheckedChange={() => onSelect(tag.id)}
-              aria-label={t('tags.page.selectTag', { name: tag.name })}
+              aria-label={t('tag.page.selectTag', { name: tag.name })}
             />
           </TableCell>
           <TableCell className="text-muted-foreground font-mono text-sm" style={{ width: `${columnWidths.id}px` }}>
@@ -112,12 +112,12 @@ export function TagRow({
                   <button
                     type="button"
                     className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                    aria-label={t('tags.page.changeColor')}
+                    aria-label={t('tag.page.changeColor')}
                   >
                     <Hash
                       className="h-4 w-4"
                       style={{ color: tag.color || DEFAULT_TAG_COLOR }}
-                      aria-label={t('tags.page.tagColor')}
+                      aria-label={t('tag.page.tagColor')}
                     />
                   </button>
                 </PopoverTrigger>
@@ -154,7 +154,7 @@ export function TagRow({
             <span className="truncate">
               {tag.description || (
                 <span className="opacity-0 transition-opacity group-hover:opacity-100">
-                  {t('tags.page.addDescription')}
+                  {t('tag.page.addDescription')}
                 </span>
               )}
             </span>
@@ -169,7 +169,7 @@ export function TagRow({
               </div>
             ) : (
               <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">
-                {t('tags.page.addGroup')}
+                {t('tag.page.addGroup')}
               </span>
             )}
           </TableCell>

@@ -1,1 +1,0 @@
-export { useTranslationData } from './useTranslationData'

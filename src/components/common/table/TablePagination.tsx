@@ -2,8 +2,8 @@
 
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface TablePaginationProps {
   /** 総件数 */
@@ -39,7 +39,7 @@ export function TablePagination({
   pageSizeOptions = [10, 25, 50, 100],
   showFirstLastButtons = true,
 }: TablePaginationProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   // 総ページ数
   const totalPages = Math.ceil(totalItems / pageSize) || 1

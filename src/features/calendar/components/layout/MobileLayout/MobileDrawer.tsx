@@ -6,8 +6,8 @@ import Image from 'next/image'
 
 import { Bell, Calendar, Download, Palette, Settings, Upload, User, X } from 'lucide-react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 export type DrawerMenuItem = {
   id: string
@@ -37,7 +37,7 @@ interface MobileDrawerProps {
  * 左側からスライドインするサイドメニュー
  */
 export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, className }: MobileDrawerProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const drawerRef = useRef<HTMLDivElement>(null)
 
   const defaultMenuItems: DrawerMenuItem[] = [
