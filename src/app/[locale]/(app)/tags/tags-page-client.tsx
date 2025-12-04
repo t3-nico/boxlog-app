@@ -20,7 +20,6 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import {
   TagCellContent,
   TagRowWrapper,
-  TagTableEmptyState,
   TagTableRowCreate,
   type TagTableRowCreateHandle,
 } from '@/features/tags/components/table'
@@ -620,7 +619,17 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           extraRows={
             <TagTableRowCreate ref={createRowRef} selectedGroupId={selectedGroupId} groups={groups} allTags={tags} />
           }
-          emptyState={<TagTableEmptyState onCreateClick={() => createRowRef.current?.startCreate()} />}
+          emptyState={
+            <div className="border-border flex h-64 items-center justify-center rounded-xl border-2 border-dashed">
+              <div className="text-center">
+                <p className="text-muted-foreground mb-4">{t('tags.page.noTags')}</p>
+                <Button onClick={() => createRowRef.current?.startCreate()}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t('tags.page.addFirstTag')}
+                </Button>
+              </div>
+            </div>
+          }
         />
       </div>
 
