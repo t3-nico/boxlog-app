@@ -163,7 +163,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
         {/* アクションバー */}
         <div className="mb-3 flex items-center justify-between px-1">
           <span className="text-muted-foreground text-xs">
-            {t(showDeleteAll ? 'notifications.count.all' : 'notifications.count.unread', {
+            {t(showDeleteAll ? 'notification.count.all' : 'notification.count.unread', {
               count: totalCount,
             })}
           </span>
@@ -305,12 +305,12 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
 
             {/* すべてタブ */}
             <TabsContent value="all" className="mt-0">
-              {renderNotificationList(groupedAllNotifications, isLoadingAll, 'notifications.empty.all', true)}
+              {renderNotificationList(groupedAllNotifications, isLoadingAll, 'notification.empty.all', true)}
             </TabsContent>
 
             {/* 未読タブ */}
             <TabsContent value="unread" className="mt-0">
-              {renderNotificationList(groupedUnreadNotifications, isLoadingUnread, 'notifications.empty.unread', false)}
+              {renderNotificationList(groupedUnreadNotifications, isLoadingUnread, 'notification.empty.unread', false)}
             </TabsContent>
           </Tabs>
         </div>
