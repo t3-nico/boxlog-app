@@ -27,6 +27,7 @@ export { TagGroupsSection } from './tag-groups-section'
 export type { TagGroupsSectionRef } from './tag-groups-section'
 
 // Modals & Dialogs
+export { GlobalTagCreateModal } from './GlobalTagCreateModal'
 export { QuickTagCreateModal } from './quick-tag-create-modal'
 export { TagCreateModal } from './tag-create-modal'
 export { TagEditDialog } from './tag-edit-dialog'

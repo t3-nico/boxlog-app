@@ -1,4 +1,4 @@
-import { Command } from '../config/command-palette'
+import type { Command } from '../types'
 
 class CommandRegistry {
   private commands = new Map<string, Command>()
@@ -119,88 +119,103 @@ class CommandRegistry {
 // Export singleton instance
 export const commandRegistry = new CommandRegistry()
 
+// Command actions interface
+interface CommandActions {
+  router: { push: (path: string) => void }
+  openPlanInspector: (planId: string | null) => void
+  openTagCreateModal: () => void
+  openSettings: () => void
+  toggleTheme: () => void
+}
+
 // Default commands that are always available
-export const registerDefaultCommands = (router: { push: (path: string) => void }) => {
+export const registerDefaultCommands = (actions: CommandActions) => {
+  const { router, openPlanInspector, openTagCreateModal, openSettings, toggleTheme } = actions
+
   const defaultCommands: Command[] = [
     // Navigation commands
     {
       id: 'nav:calendar',
-      title: 'Go to Calendar',
-      description: 'View tasks in calendar layout',
+      title: 'カレンダーを開く',
+      description: 'カレンダービューを表示',
       category: 'navigation',
       icon: 'calendar',
-      keywords: ['calendar', 'schedule', 'time', 'date'],
+      shortcut: ['G', 'C'],
+      keywords: ['calendar', 'schedule', 'カレンダー', '予定'],
       action: () => router.push('/calendar'),
     },
     {
       id: 'nav:inbox',
-      title: 'Go to Inbox',
-      description: 'View tasks in board or table layout',
+      title: 'Inboxを開く',
+      description: 'タスク一覧を表示',
       category: 'navigation',
       icon: 'inbox',
-      keywords: ['inbox', 'board', 'kanban', 'table', 'list', 'tasks'],
+      shortcut: ['G', 'I'],
+      keywords: ['inbox', 'board', 'kanban', 'タスク', '一覧'],
       action: () => router.push('/inbox'),
     },
     {
       id: 'nav:stats',
-      title: 'Go to Stats',
-      description: 'View productivity statistics',
+      title: '統計を開く',
+      description: '生産性の統計を表示',
       category: 'navigation',
-      icon: 'chart-bar',
-      keywords: ['stats', 'analytics', 'metrics', 'reports'],
+      icon: 'bar-chart',
+      shortcut: ['G', 'S'],
+      keywords: ['stats', 'analytics', '統計', 'レポート'],
       action: () => router.push('/stats'),
+    },
+    {
+      id: 'nav:tags',
+      title: 'タグを開く',
+      description: 'タグ一覧を表示',
+      category: 'navigation',
+      icon: 'tag',
+      shortcut: ['G', 'T'],
+      keywords: ['tags', 'タグ', 'ラベル'],
+      action: () => router.push('/tags'),
     },
 
     // Creation commands
     {
-      id: 'create:task',
-      title: 'Create New Task',
-      description: 'Add a new task to your list',
+      id: 'create:plan',
+      title: '新規プラン作成',
+      description: '新しいプランを追加',
       category: 'create',
       icon: 'plus',
-      shortcut: ['cmd+n', 'ctrl+n'],
-      keywords: ['new', 'add', 'create', 'task', 'todo'],
-      action: () => {
-        // This will be implemented with the task creation modal
-        console.log('Create new task')
-      },
+      shortcut: ['N'],
+      keywords: ['new', 'add', 'create', '新規', '作成', 'プラン'],
+      action: () => openPlanInspector(null),
     },
     {
       id: 'create:tag',
-      title: 'Create New Tag',
-      description: 'Add a new tag for organization',
+      title: '新規タグ作成',
+      description: '新しいタグを追加',
       category: 'create',
       icon: 'tag',
-      keywords: ['new', 'add', 'create', 'tag', 'label'],
-      action: () => {
-        // This will be implemented with the tag creation modal
-        console.log('Create new tag')
-      },
+      keywords: ['new', 'add', 'create', '新規', '作成', 'タグ'],
+      action: () => openTagCreateModal(),
     },
 
-    // Settings commands
+    // Settings & Theme commands
     {
       id: 'nav:settings',
-      title: 'Open Settings',
-      description: 'Configure application preferences',
+      title: '設定を開く',
+      description: 'アプリケーション設定',
       category: 'navigation',
-      icon: 'cog',
-      keywords: ['settings', 'preferences', 'config', 'options'],
-      action: () => router.push('/settings'),
+      icon: 'settings',
+      shortcut: ['⌘', ','],
+      keywords: ['settings', 'preferences', '設定', '環境設定'],
+      action: () => openSettings(),
     },
-
-    // Theme commands
     {
       id: 'action:toggle-theme',
-      title: 'Toggle Theme',
-      description: 'Switch between light and dark mode',
+      title: 'テーマを切り替え',
+      description: 'ライト/ダークモードを切り替え',
       category: 'actions',
       icon: 'moon',
-      keywords: ['theme', 'dark', 'light', 'mode'],
-      action: () => {
-        // This will be implemented with theme toggle
-        console.log('Toggle theme')
-      },
+      shortcut: ['⌘', 'D'],
+      keywords: ['theme', 'dark', 'light', 'テーマ', 'ダーク', 'ライト'],
+      action: () => toggleTheme(),
     },
   ]
 

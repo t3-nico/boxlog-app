@@ -24,6 +24,12 @@ const GlobalSearchProvider = dynamic(() => import('@/features/search').then((mod
   ssr: false,
 })
 
+// GlobalTagCreateModalを遅延ロード
+const GlobalTagCreateModal = dynamic(
+  () => import('@/features/tags/components').then((mod) => mod.GlobalTagCreateModal),
+  { ssr: false }
+)
+
 function getBaseUrl() {
   if (typeof window !== 'undefined') return '' // ブラウザではルート相対パス
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}` // SSR Vercel
@@ -105,7 +111,10 @@ export function Providers({ children }: ProvidersProps) {
         <RealtimeProvider>
           <ThemeProvider>
             <TooltipProvider delayDuration={300} skipDelayDuration={100}>
-              <GlobalSearchProvider>{children}</GlobalSearchProvider>
+              <GlobalSearchProvider>
+                {children}
+                <GlobalTagCreateModal />
+              </GlobalSearchProvider>
             </TooltipProvider>
           </ThemeProvider>
         </RealtimeProvider>

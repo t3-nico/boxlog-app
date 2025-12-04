@@ -7,4 +7,5 @@
  * ```
  */
 
+export { useTagCreateModalStore } from './useTagCreateModalStore'
 export { colorCategories, tagColors, useTagStore } from './useTagStore'

@@ -1,153 +1,203 @@
-// TODO(#621): Events削除後、plans/Sessionsに移行予定
-// import type { Event } from '@/features/events'
-import type { Tag, Task } from '@/types/common'
+import Fuse, { type FuseOptionKey, type FuseResult, type IFuseOptions } from 'fuse.js'
 
-import type { SearchOptions, SearchProvider, SearchResult, SearchResultType } from '../types'
+import type { Tag } from '@/types/common'
 
-// 一時的なEvent型定義（Sessions統合まで）
-interface Event {
-  id: string
-  title: string
-  description?: string
-  location?: string
-  startDate: Date
-  endDate: Date
-  status: string
+import type { PlanWithTags } from '@/features/plans/types'
+
+import type { SearchFilters, SearchOptions, SearchResult, SearchResultType } from '../types'
+
+import { commandRegistry } from './command-registry'
+import { parseSearchQuery } from './query-parser'
+
+// Fuse.js match interface
+export interface FuseMatch {
+  indices: readonly [number, number][]
+  key?: string
+  value?: string
 }
 
-// Simple fuzzy search implementation
+export interface FuseResultWithMatches<T> {
+  item: T
+  score?: number
+  matches?: readonly FuseMatch[]
+}
+
+/**
+ * Fuse.js wrapper for fuzzy search
+ * Provides consistent interface and configuration with instance caching
+ */
+/**
+ * FuzzySearch - simplified interface for quick searches
+ * Uses FuseSearch internally
+ */
 export class FuzzySearch {
   /**
-   * Calculate fuzzy match score between query and target
-   * Returns 0-1, where 1 is perfect match
+   * Simple fuzzy search helper for basic use cases
    */
-  static score(query: string, target: string): number {
-    if (!query || !target) return 0
-
-    query = query.toLowerCase()
-    target = target.toLowerCase()
-
-    // Exact match gets highest score
-    if (target === query) return 1
-
-    // Target contains query gets high score
-    if (target.includes(query)) {
-      const startMatch = target.startsWith(query)
-      const containsScore = query.length / target.length
-      return startMatch ? containsScore * 0.9 : containsScore * 0.7
+  static search<T extends Record<string, unknown>>(items: T[], query: string, limit = 10): T[] {
+    if (!query.trim()) {
+      return items.slice(0, limit)
     }
 
-    // Character-by-character fuzzy matching
-    let queryIndex = 0
-    let targetIndex = 0
-    let matches = 0
+    const results = FuseSearch.search(
+      items,
+      query,
+      [
+        { name: 'title', weight: 2 },
+        { name: 'description', weight: 1 },
+        { name: 'keywords', weight: 1.5 },
+      ],
+      limit
+    )
 
-    while (queryIndex < query.length && targetIndex < target.length) {
-      if (query[queryIndex] === target[targetIndex]) {
-        matches++
-        queryIndex++
-      }
-      targetIndex++
-    }
+    return results.map((r) => r.item)
+  }
+}
 
-    if (queryIndex === query.length) {
-      return (matches / query.length) * 0.5
-    }
+export class FuseSearch {
+  /**
+   * Default Fuse.js options optimized for Japanese + English search
+   */
+  private static readonly defaultOptions: IFuseOptions<unknown> = {
+    threshold: 0.4, // 0 = exact match, 1 = match anything
+    distance: 100, // How far to search for match
+    minMatchCharLength: 1,
+    includeScore: true,
+    includeMatches: true, // For highlighting
+    useExtendedSearch: false,
+    ignoreLocation: true, // Don't prioritize matches at start
+    findAllMatches: true,
+  }
 
-    return 0
+  // Instance cache for reusing Fuse instances
+  private static instanceCache = new Map<string, { fuse: Fuse<unknown>; itemsHash: number }>()
+
+  /**
+   * Generate a simple hash for cache invalidation
+   */
+  private static hashItems(items: unknown[]): number {
+    return items.length
   }
 
   /**
-   * Search and rank results by relevance
+   * Get or create a cached Fuse instance
    */
-  static search<T extends { title: string; description?: string; keywords?: string[] }>(
+  private static getOrCreateInstance<T extends Record<string, unknown>>(
+    cacheKey: string,
     items: T[],
-    query: string,
-    limit = 10
-  ): (T & { score: number })[] {
-    if (!query.trim()) return items.slice(0, limit).map((item) => ({ ...item, score: 1 }))
+    keys: FuseOptionKey<T>[]
+  ): Fuse<T> {
+    const itemsHash = FuseSearch.hashItems(items)
+    const cached = FuseSearch.instanceCache.get(cacheKey)
 
-    const results = items.map((item) => {
-      let maxScore = 0
+    if (cached && cached.itemsHash === itemsHash) {
+      return cached.fuse as Fuse<T>
+    }
 
-      // Score against title (highest weight)
-      const titleScore = FuzzySearch.score(query, item.title) * 2
-      maxScore = Math.max(maxScore, titleScore)
-
-      // Score against description (medium weight)
-      if (item.description) {
-        const descScore = FuzzySearch.score(query, item.description) * 1.5
-        maxScore = Math.max(maxScore, descScore)
-      }
-
-      // Score against keywords (medium weight)
-      if (item.keywords) {
-        for (const keyword of item.keywords) {
-          const keywordScore = FuzzySearch.score(query, keyword) * 1.3
-          maxScore = Math.max(maxScore, keywordScore)
-        }
-      }
-
-      return { ...item, score: maxScore }
+    const fuse = new Fuse(items, {
+      ...FuseSearch.defaultOptions,
+      keys,
     })
 
-    return results
-      .filter((result) => result.score > 0.1) // Filter out very low scores
-      .sort((a, b) => b.score - a.score) // Sort by score descending
-      .slice(0, limit)
+    FuseSearch.instanceCache.set(cacheKey, { fuse: fuse as Fuse<unknown>, itemsHash })
+
+    return fuse
+  }
+
+  /**
+   * Search items with Fuse.js (with instance caching)
+   */
+  static search<T extends Record<string, unknown>>(
+    items: T[],
+    query: string,
+    keys: FuseOptionKey<T>[],
+    limit = 10,
+    cacheKey?: string
+  ): FuseResultWithMatches<T>[] {
+    if (!query.trim()) {
+      // Return all items with default score when no query
+      return items.slice(0, limit).map((item) => ({
+        item,
+        score: 0,
+        matches: [],
+      }))
+    }
+
+    const fuse = cacheKey
+      ? FuseSearch.getOrCreateInstance(cacheKey, items, keys)
+      : new Fuse(items, { ...FuseSearch.defaultOptions, keys })
+
+    const results = fuse.search(query, { limit })
+
+    // Convert Fuse results to our interface
+    return results.map(
+      (result: FuseResult<T>): FuseResultWithMatches<T> => ({
+        item: result.item,
+        score: result.score ?? 0,
+        matches: (result.matches as readonly FuseMatch[] | undefined) ?? [],
+      })
+    )
+  }
+
+  /**
+   * Clear the instance cache (useful for testing or memory cleanup)
+   */
+  static clearCache(): void {
+    FuseSearch.instanceCache.clear()
+  }
+
+  /**
+   * Convert Fuse.js score (0 = best) to our score (1 = best)
+   */
+  static normalizeScore(fuseScore: number | undefined): number {
+    if (fuseScore === undefined) return 1
+    return 1 - fuseScore
   }
 }
 
 export class SearchEngine {
-  private static providers: Map<SearchResultType, SearchProvider> = new Map()
-
-  /**
-   * Register a search provider
-   */
-  static registerProvider(type: SearchResultType, provider: SearchProvider) {
-    SearchEngine.providers.set(type, provider)
-  }
-
   /**
    * Search across all available data sources
    */
   static async search(
     options: SearchOptions,
     stores?: {
-      tasks?: Task[]
+      plans?: PlanWithTags[]
       tags?: Tag[]
-      events?: Event[]
     }
   ): Promise<SearchResult[]> {
     const { query, types, limit = 10 } = options
     const results: SearchResult[] = []
 
-    // Search tasks if provided
-    if (stores?.tasks && (!types || types.includes('task'))) {
-      const taskResults = SearchEngine.searchTasks(query, stores.tasks)
-      results.push(...taskResults)
+    // Parse query for quick filters
+    const parsed = parseSearchQuery(query)
+
+    // Search commands if included (only when no filters applied)
+    if (!parsed.hasFilters && (!types || types.includes('command'))) {
+      const commandResults = SearchEngine.searchCommands(parsed.text)
+      results.push(...commandResults)
+    }
+
+    // Search plans if provided
+    if (stores?.plans && (!types || types.includes('plan'))) {
+      const planResults = SearchEngine.searchPlans(parsed.text, stores.plans, parsed.filters)
+      results.push(...planResults)
     }
 
     // Search tags if provided
     if (stores?.tags && (!types || types.includes('tag'))) {
-      const tagResults = SearchEngine.searchTags(query, stores.tags)
+      // If filtering by tag, search in tags as well
+      const tagResults = SearchEngine.searchTags(parsed.text, stores.tags, parsed.filters.tags)
       results.push(...tagResults)
     }
 
-    // Search events if provided
-    if (stores?.events && (!types || types.includes('event'))) {
-      const eventResults = SearchEngine.searchEvents(query, stores.events)
-      results.push(...eventResults)
-    }
-
-    // If no query, show recent/suggested items
-    if (!query.trim() && results.length < 5) {
-      const recentItems = SearchEngine.getRecentItems()
-      results.push(...recentItems)
-    }
-
-    // Sort by relevance score
+    // Sort by type priority (commands first) and then by score
     results.sort((a, b) => {
+      // Commands first
+      if (a.type === 'command' && b.type !== 'command') return -1
+      if (a.type !== 'command' && b.type === 'command') return 1
+
+      // Then by score
       const scoreA = a.score || 0
       const scoreB = b.score || 0
       return scoreB - scoreA
@@ -158,127 +208,208 @@ export class SearchEngine {
   }
 
   /**
-   * Search tasks from the task store
+   * Search commands
    */
-  static searchTasks(query: string, tasks: Task[]): SearchResult[] {
-    if (!tasks || tasks.length === 0) return []
+  static searchCommands(query: string): SearchResult[] {
+    const commands = commandRegistry.search(query)
 
-    const taskResults = FuzzySearch.search(tasks, query).map((task) => ({
-      id: `task:${task.id}`,
-      title: task.title,
-      description: task.description,
-      type: 'task' as SearchResultType,
-      icon: 'check-square',
-      action: () => {
-        // Navigation implementation tracked in Issue #86
-        console.log('Navigate to task:', task.id)
-      },
-      metadata: {
-        status: task.status,
-        priority: task.priority,
-        dueDate: task.planned_start,
-        tags: task.tags || [],
-      },
+    return commands.map((command) => {
+      const result: SearchResult = {
+        id: `command:${command.id}`,
+        title: command.title,
+        type: 'command' as SearchResultType,
+        category: command.category,
+        action: command.action,
+      }
+      if (command.description) {
+        result.description = command.description
+      }
+      if (command.icon) {
+        result.icon = command.icon
+      }
+      if (command.shortcut) {
+        result.shortcut = command.shortcut
+      }
+      return result
+    })
+  }
+
+  /**
+   * Search plans
+   */
+  static searchPlans(query: string, plans: PlanWithTags[], filters?: SearchFilters): SearchResult[] {
+    if (!plans || plans.length === 0) return []
+
+    // Apply filters first
+    let filteredPlans = plans
+
+    if (filters?.status && filters.status.length > 0) {
+      filteredPlans = filteredPlans.filter((plan) => filters.status!.includes(plan.status))
+    }
+
+    if (filters?.tags && filters.tags.length > 0) {
+      filteredPlans = filteredPlans.filter((plan) =>
+        filters.tags!.some((filterTag) =>
+          plan.tags?.some((planTag) => planTag.name.toLowerCase().includes(filterTag.toLowerCase()))
+        )
+      )
+    }
+
+    if (filters?.dueDate) {
+      const now = new Date()
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      const tomorrow = new Date(today)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      const weekEnd = new Date(today)
+      weekEnd.setDate(weekEnd.getDate() + 7)
+
+      filteredPlans = filteredPlans.filter((plan) => {
+        if (!plan.due_date) {
+          return filters.dueDate === 'no_due_date'
+        }
+
+        const dueDate = new Date(plan.due_date)
+
+        switch (filters.dueDate) {
+          case 'today':
+            return dueDate >= today && dueDate < tomorrow
+          case 'tomorrow':
+            return dueDate >= tomorrow && dueDate < new Date(tomorrow.getTime() + 86400000)
+          case 'this_week':
+            return dueDate >= today && dueDate < weekEnd
+          case 'overdue':
+            return dueDate < today && plan.status !== 'done'
+          case 'no_due_date':
+            return false
+          default:
+            return true
+        }
+      })
+    }
+
+    // Prepare searchable data with index signature for Fuse.js
+    interface SearchablePlan {
+      [key: string]: unknown
+      id: string
+      title: string
+      description: string | null
+      tagNames: string
+      status: string
+      due_date: string | null
+      plan_number: string
+      tags?: Array<{ id: string; name: string; color: string; description?: string }>
+    }
+    const searchablePlans: SearchablePlan[] = filteredPlans.map((plan) => ({
+      id: plan.id,
+      title: plan.title,
+      description: plan.description,
+      status: plan.status,
+      due_date: plan.due_date,
+      plan_number: plan.plan_number,
+      tags: plan.tags,
+      tagNames: plan.tags?.map((t) => t.name).join(' ') || '',
     }))
 
-    return taskResults as SearchResult[]
+    // Search with Fuse.js (cached instance)
+    const fuseResults = FuseSearch.search(
+      searchablePlans,
+      query,
+      [
+        { name: 'title', weight: 2 },
+        { name: 'description', weight: 1 },
+        { name: 'tagNames', weight: 1.5 },
+      ],
+      20,
+      'plans' // Cache key for plans search
+    )
+
+    const results: SearchResult[] = fuseResults.map((result) => {
+      const searchResult: SearchResult = {
+        id: `plan:${result.item.id}`,
+        title: String(result.item.title),
+        type: 'plan' as SearchResultType,
+        category: 'plans',
+        icon: 'check-square',
+        score: FuseSearch.normalizeScore(result.score),
+        metadata: {
+          status: result.item.status,
+          dueDate: result.item.due_date,
+          tags: result.item.tags?.map((t) => t.name) || [],
+          planNumber: result.item.plan_number,
+          matches: result.matches,
+        },
+      }
+      if (result.item.description) {
+        searchResult.description = String(result.item.description)
+      }
+      return searchResult
+    })
+
+    return results
   }
 
   /**
    * Search tags from the tag store
    */
-  static searchTags(query: string, tags: Tag[]): SearchResult[] {
+  static searchTags(query: string, tags: Tag[], filterTags?: string[]): SearchResult[] {
     if (!tags || tags.length === 0) return []
 
-    const searchableTags = tags.map((tag) => ({
-      title: tag.name,
-      description: tag.description || '',
-      keywords: [tag.name, tag.path].filter((keyword): keyword is string => Boolean(keyword)),
-      originalTag: tag,
+    // If we have filter tags, prioritize matching those
+    let filteredTagsList = tags
+    if (filterTags && filterTags.length > 0) {
+      filteredTagsList = tags.filter((tag) =>
+        filterTags.some((filterTag) => tag.name.toLowerCase().includes(filterTag.toLowerCase()))
+      )
+    }
+
+    // Prepare searchable data with index signature for Fuse.js
+    interface SearchableTag {
+      [key: string]: unknown
+      id: string
+      name: string
+      description: string | null
+      path: string
+      level: number
+      color: string
+      tag_number: number
+    }
+    const searchableTags: SearchableTag[] = filteredTagsList.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+      description: tag.description,
+      path: tag.path,
+      level: tag.level,
+      color: tag.color,
+      tag_number: tag.tag_number,
     }))
 
-    const tagResults = FuzzySearch.search(searchableTags, query).map((result) => {
-      const tag = result.originalTag
-      return {
-        id: `tag:${tag.id}`,
-        title: tag.name,
-        description: tag.description || `Level ${tag.level} tag`,
-        type: 'tag' as SearchResultType,
-        icon: 'tag',
-        action: () => {
-          // Filtering implementation tracked in Issue #86
-          console.log('Filter by tag:', tag.id)
-        },
-        metadata: {
-          path: tag.path ? [tag.path] : [],
-        },
-      }
-    })
+    // Search with Fuse.js (cached instance)
+    const fuseResults = FuseSearch.search(
+      searchableTags,
+      query,
+      [
+        { name: 'name', weight: 2 },
+        { name: 'description', weight: 1 },
+        { name: 'path', weight: 1.5 },
+      ],
+      20,
+      'tags' // Cache key for tags search
+    )
 
-    return tagResults
-  }
-
-  /**
-   * Search events
-   */
-  static searchEvents(query: string, events: Event[]): SearchResult[] {
-    if (!events || events.length === 0) return []
-
-    const searchableEvents = events.map((event) => ({
-      title: event.title,
-      description: event.description || '',
-      keywords: [event.title, event.location].filter((keyword): keyword is string => Boolean(keyword)),
-      originalEvent: event,
-    }))
-
-    const eventResults = FuzzySearch.search(searchableEvents, query).map((result) => {
-      const event = result.originalEvent
-      return {
-        id: `event:${event.id}`,
-        title: event.title,
-        description: event.description || 'Event',
-        type: 'event' as SearchResultType,
-        icon: 'calendar',
-        action: () => {
-          // Navigation implementation tracked in Issue #86
-          console.log('Navigate to event:', event.id)
-        },
-        metadata: {
-          startDate: event.startDate,
-          endDate: event.endDate,
-          status: event.status,
-        },
-        score: result.score,
-      }
-    })
-
-    return eventResults
-  }
-
-  /**
-   * Get recent items for empty search
-   */
-  static getRecentItems(): SearchResult[] {
-    // Recent items tracking tracked in Issue #86
-    // This could be stored in localStorage or a store
-    return [
-      {
-        id: 'recent:calendar',
-        title: 'Calendar View',
-        description: 'Recently visited',
-        type: 'task' as SearchResultType,
-        icon: 'calendar',
-        action: () => console.log('Navigate to calendar'),
+    return fuseResults.map((result) => ({
+      id: `tag:${result.item.id}`,
+      title: String(result.item.name),
+      description: result.item.description ? String(result.item.description) : `Level ${result.item.level} tag`,
+      type: 'tag' as SearchResultType,
+      category: 'tags',
+      icon: 'tag',
+      score: FuseSearch.normalizeScore(result.score),
+      metadata: {
+        path: result.item.path ? [String(result.item.path)] : [],
+        color: result.item.color,
+        tagNumber: result.item.tag_number,
+        matches: result.matches, // Include matches for highlighting
       },
-    ]
-  }
-
-  /**
-   * Get suggested actions based on context
-   */
-  static getSuggestions(): SearchResult[] {
-    // Context suggestions tracked in Issue #86
-    // Based on current page, time of day, recent actions, etc.
-    return []
+    }))
   }
 }

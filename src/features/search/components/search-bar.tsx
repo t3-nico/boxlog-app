@@ -1,19 +1,38 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
-import { Calendar, CheckSquare, Search, Tag } from 'lucide-react'
+import { CheckSquare, Search, Tag } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-// TODO(#621): Events/Tasks削除後、plans/Sessionsに移行予定
-// import { useEventStore } from '@/features/events'
+import { usePlans } from '@/features/plans/hooks'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { cn } from '@/lib/utils'
 
 import { useSearchHistory } from '../hooks/use-search'
+import { FuzzySearch } from '../lib/search-engine'
 import type { SearchResultType } from '../types'
+
+// Helper function to get tags from plan_tags
+type PlanFromAPI = {
+  id: string
+  title: string
+  description: string | null
+  plan_tags?: Array<{
+    tag_id: string
+    tags: { id: string; name: string; color: string } | null
+  }>
+  [key: string]: unknown
+}
+
+function getTagsFromPlan(plan: PlanFromAPI): Array<{ id: string; name: string; color: string }> {
+  if (!plan.plan_tags) return []
+  return plan.plan_tags
+    .map((pt) => pt.tags)
+    .filter((tag): tag is { id: string; name: string; color: string } => tag !== null)
+}
 
 interface SearchBarProps {
   className?: string
@@ -24,8 +43,8 @@ interface SearchBarProps {
 
 export function SearchBar({
   className,
-  placeholder = 'Search tasks, tags, events...',
-  types = ['task', 'tag', 'event'],
+  placeholder = 'プランやタグを検索...',
+  types = ['plan', 'tag'],
   onResultSelect,
 }: SearchBarProps) {
   const [open, setOpen] = useState(false)
@@ -33,21 +52,46 @@ export function SearchBar({
   const { addToHistory } = useSearchHistory()
 
   // Get data from stores
-  // const tasks = useTaskStore((state) => state.tasks)
+  const { data: plans = [] } = usePlans()
   const tags = useTagStore((state) => state.tags)
-  // const events = useEventStore((state) => state.events)
 
-  // TODO: Sessions統合後に実装
-  type TaskItem = { id: string; title: string; description?: string; tags?: string[] }
-  type EventItem = { id: string; title: string; description?: string; location?: string }
+  // Convert plans to searchable format
+  const searchablePlans = useMemo(() => {
+    return (plans as unknown as PlanFromAPI[]).map((plan) => {
+      const planTags = getTagsFromPlan(plan)
+      return {
+        ...plan,
+        title: plan.title,
+        description: plan.description || '',
+        keywords: planTags.map((t) => t.name),
+        tags: planTags,
+      }
+    })
+  }, [plans])
 
-  const tasks: TaskItem[] = []
-  const events: EventItem[] = []
+  // Filter data by types and query
+  const filteredPlans =
+    types.includes('plan') && query
+      ? FuzzySearch.search(searchablePlans, query, 5)
+      : types.includes('plan')
+        ? searchablePlans.slice(0, 5)
+        : []
 
-  // Filter data by types
-  const filteredTasks = types.includes('task') ? tasks : []
-  const filteredTags = types.includes('tag') ? tags : []
-  const filteredEvents = types.includes('event') ? events : []
+  const filteredTags =
+    types.includes('tag') && query
+      ? FuzzySearch.search(
+          tags.map((tag) => ({
+            ...tag,
+            title: tag.name,
+            description: tag.description || '',
+            keywords: [tag.name, tag.path].filter(Boolean) as string[],
+          })),
+          query,
+          5
+        )
+      : types.includes('tag')
+        ? tags.slice(0, 5)
+        : []
 
   // Handle selection
   const handleSelect = useCallback(
@@ -81,42 +125,22 @@ export function SearchBar({
         <Command>
           <CommandInput placeholder={placeholder} value={query} onValueChange={setQuery} />
           <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandEmpty>結果が見つかりませんでした</CommandEmpty>
 
-            {/* Tasks */}
-            {filteredTasks.length > 0 && (
-              <CommandGroup heading="Tasks">
-                {filteredTasks.slice(0, 5).map((task) => (
+            {/* Plans */}
+            {filteredPlans.length > 0 && (
+              <CommandGroup heading="プラン">
+                {filteredPlans.map((plan) => (
                   <CommandItem
-                    key={task.id}
-                    value={task.title}
-                    keywords={[task.description || '', ...(task.tags || [])]}
-                    onSelect={() => handleSelect(task.id, 'task')}
+                    key={plan.id}
+                    value={plan.title}
+                    keywords={[plan.description || '', ...plan.tags.map((t: { name: string }) => t.name)]}
+                    onSelect={() => handleSelect(plan.id, 'plan')}
                   >
                     <CheckSquare className="mr-2 h-4 w-4" />
                     <div className="flex flex-1 flex-col">
-                      <span>{task.title}</span>
-                      {task.description && <span className="text-muted-foreground text-xs">{task.description}</span>}
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-
-            {/* Events */}
-            {filteredEvents.length > 0 && (
-              <CommandGroup heading="Events">
-                {filteredEvents.slice(0, 5).map((event) => (
-                  <CommandItem
-                    key={event.id}
-                    value={event.title}
-                    keywords={[event.description || '', event.location || '']}
-                    onSelect={() => handleSelect(event.id, 'event')}
-                  >
-                    <Calendar className="mr-2 h-4 w-4" />
-                    <div className="flex flex-1 flex-col">
-                      <span>{event.title}</span>
-                      {event.description && <span className="text-muted-foreground text-xs">{event.description}</span>}
+                      <span>{plan.title}</span>
+                      {plan.description && <span className="text-muted-foreground text-xs">{plan.description}</span>}
                     </div>
                   </CommandItem>
                 ))}
@@ -125,8 +149,8 @@ export function SearchBar({
 
             {/* Tags */}
             {filteredTags.length > 0 && (
-              <CommandGroup heading="Tags">
-                {filteredTags.slice(0, 5).map((tag) => (
+              <CommandGroup heading="タグ">
+                {filteredTags.map((tag) => (
                   <CommandItem
                     key={tag.id}
                     value={tag.name}
@@ -157,7 +181,7 @@ export function CompactSearchBar({ className }: { className?: string }) {
     return (
       <Button variant="ghost" size="sm" onClick={() => setIsExpanded(true)} className={cn('h-8 w-8 p-0', className)}>
         <Search className="h-4 w-4" />
-        <span className="sr-only">Search</span>
+        <span className="sr-only">検索</span>
       </Button>
     )
   }
