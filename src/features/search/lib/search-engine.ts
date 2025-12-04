@@ -1,3 +1,5 @@
+import Fuse from 'fuse.js'
+
 import type { Tag } from '@/types/common'
 
 import type { PlanWithTags } from '@/features/plans/types'
@@ -7,86 +9,72 @@ import type { SearchFilters, SearchOptions, SearchResult, SearchResultType } fro
 import { commandRegistry } from './command-registry'
 import { parseSearchQuery } from './query-parser'
 
-// Simple fuzzy search implementation
-export class FuzzySearch {
+// Fuse.js match interface
+export interface FuseMatch {
+  indices: readonly [number, number][]
+  key?: string
+  value?: string
+}
+
+export interface FuseResultWithMatches<T> {
+  item: T
+  score?: number
+  matches?: FuseMatch[]
+}
+
+/**
+ * Fuse.js wrapper for fuzzy search
+ * Provides consistent interface and configuration
+ */
+export class FuseSearch {
   /**
-   * Calculate fuzzy match score between query and target
-   * Returns 0-1, where 1 is perfect match
+   * Default Fuse.js options optimized for Japanese + English search
    */
-  static score(query: string, target: string): number {
-    if (!query || !target) return 0
-
-    query = query.toLowerCase()
-    target = target.toLowerCase()
-
-    // Exact match gets highest score
-    if (target === query) return 1
-
-    // Target contains query gets high score
-    if (target.includes(query)) {
-      const startMatch = target.startsWith(query)
-      const containsScore = query.length / target.length
-      return startMatch ? containsScore * 0.9 : containsScore * 0.7
-    }
-
-    // Character-by-character fuzzy matching
-    let queryIndex = 0
-    let targetIndex = 0
-    let matches = 0
-
-    while (queryIndex < query.length && targetIndex < target.length) {
-      if (query[queryIndex] === target[targetIndex]) {
-        matches++
-        queryIndex++
-      }
-      targetIndex++
-    }
-
-    if (queryIndex === query.length) {
-      return (matches / query.length) * 0.5
-    }
-
-    return 0
+  private static readonly defaultOptions: Fuse.IFuseOptions<unknown> = {
+    threshold: 0.4, // 0 = exact match, 1 = match anything
+    distance: 100, // How far to search for match
+    minMatchCharLength: 1,
+    includeScore: true,
+    includeMatches: true, // For highlighting
+    useExtendedSearch: false,
+    ignoreLocation: true, // Don't prioritize matches at start
+    findAllMatches: true,
   }
 
   /**
-   * Search and rank results by relevance
+   * Search items with Fuse.js
    */
-  static search<T extends { title: string; description?: string; keywords?: string[] }>(
+  static search<T extends Record<string, unknown>>(
     items: T[],
     query: string,
+    keys: Fuse.FuseOptionKey<T>[],
     limit = 10
-  ): (T & { score: number })[] {
-    if (!query.trim()) return items.slice(0, limit).map((item) => ({ ...item, score: 1 }))
+  ): FuseResultWithMatches<T>[] {
+    if (!query.trim()) {
+      // Return all items with default score when no query
+      return items.slice(0, limit).map((item) => ({
+        item,
+        score: 0,
+        matches: [],
+      }))
+    }
 
-    const results = items.map((item) => {
-      let maxScore = 0
-
-      // Score against title (highest weight)
-      const titleScore = FuzzySearch.score(query, item.title) * 2
-      maxScore = Math.max(maxScore, titleScore)
-
-      // Score against description (medium weight)
-      if (item.description) {
-        const descScore = FuzzySearch.score(query, item.description) * 1.5
-        maxScore = Math.max(maxScore, descScore)
-      }
-
-      // Score against keywords (medium weight)
-      if (item.keywords) {
-        for (const keyword of item.keywords) {
-          const keywordScore = FuzzySearch.score(query, keyword) * 1.3
-          maxScore = Math.max(maxScore, keywordScore)
-        }
-      }
-
-      return { ...item, score: maxScore }
+    const fuse = new Fuse(items, {
+      ...FuseSearch.defaultOptions,
+      keys,
     })
 
-    return results
-      .filter((result) => result.score > 0.1) // Filter out very low scores
-      .sort((a, b) => b.score - a.score) // Sort by score descending
-      .slice(0, limit)
+    const results = fuse.search(query, { limit })
+
+    return results as FuseResultWithMatches<T>[]
+  }
+
+  /**
+   * Convert Fuse.js score (0 = best) to our score (1 = best)
+   */
+  static normalizeScore(fuseScore: number | undefined): number {
+    if (fuseScore === undefined) return 1
+    return 1 - fuseScore
   }
 }
 
@@ -213,30 +201,41 @@ export class SearchEngine {
       })
     }
 
-    const searchablePlans = filteredPlans.map((plan) => ({
+    // Prepare searchable data
+    type SearchablePlan = PlanWithTags & { tagNames: string }
+    const searchablePlans: SearchablePlan[] = filteredPlans.map((plan) => ({
       ...plan,
-      title: plan.title,
-      description: plan.description || '',
-      keywords: plan.tags?.map((t) => t.name) || [],
+      tagNames: plan.tags?.map((t) => t.name).join(' ') || '',
     }))
 
-    const planResults = FuzzySearch.search(searchablePlans, query).map((plan) => ({
-      id: `plan:${plan.id}`,
-      title: plan.title,
-      description: plan.description || undefined,
+    // Search with Fuse.js
+    const fuseResults = FuseSearch.search(
+      searchablePlans,
+      query,
+      [
+        { name: 'title', weight: 2 },
+        { name: 'description', weight: 1 },
+        { name: 'tagNames', weight: 1.5 },
+      ],
+      20
+    )
+
+    return fuseResults.map((result) => ({
+      id: `plan:${result.item.id}`,
+      title: result.item.title,
+      description: result.item.description || undefined,
       type: 'plan' as SearchResultType,
       category: 'plans',
       icon: 'check-square',
-      score: plan.score,
+      score: FuseSearch.normalizeScore(result.score),
       metadata: {
-        status: plan.status,
-        dueDate: plan.due_date,
-        tags: plan.tags?.map((t) => t.name) || [],
-        planNumber: plan.plan_number,
+        status: result.item.status,
+        dueDate: result.item.due_date,
+        tags: result.item.tags?.map((t) => t.name) || [],
+        planNumber: result.item.plan_number,
+        matches: result.matches, // Include matches for highlighting
       },
     }))
-
-    return planResults
   }
 
   /**
@@ -253,31 +252,32 @@ export class SearchEngine {
       )
     }
 
-    const searchableTags = filteredTags.map((tag) => ({
-      title: tag.name,
-      description: tag.description || '',
-      keywords: [tag.name, tag.path].filter((keyword): keyword is string => Boolean(keyword)),
-      originalTag: tag,
+    // Search with Fuse.js
+    const fuseResults = FuseSearch.search(
+      filteredTags,
+      query,
+      [
+        { name: 'name', weight: 2 },
+        { name: 'description', weight: 1 },
+        { name: 'path', weight: 1.5 },
+      ],
+      20
+    )
+
+    return fuseResults.map((result) => ({
+      id: `tag:${result.item.id}`,
+      title: result.item.name,
+      description: result.item.description || `Level ${result.item.level} tag`,
+      type: 'tag' as SearchResultType,
+      category: 'tags',
+      icon: 'tag',
+      score: FuseSearch.normalizeScore(result.score),
+      metadata: {
+        path: result.item.path ? [result.item.path] : [],
+        color: result.item.color,
+        tagNumber: result.item.tag_number,
+        matches: result.matches, // Include matches for highlighting
+      },
     }))
-
-    const tagResults = FuzzySearch.search(searchableTags, query).map((result) => {
-      const tag = result.originalTag
-      return {
-        id: `tag:${tag.id}`,
-        title: tag.name,
-        description: tag.description || `Level ${tag.level} tag`,
-        type: 'tag' as SearchResultType,
-        category: 'tags',
-        icon: 'tag',
-        score: result.score,
-        metadata: {
-          path: tag.path ? [tag.path] : [],
-          color: tag.color,
-          tagNumber: tag.tag_number,
-        },
-      }
-    })
-
-    return tagResults
   }
 }
