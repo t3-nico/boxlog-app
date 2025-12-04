@@ -5,6 +5,15 @@ import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 import { PlanCard } from './PlanCard'
 
+// usePlanMutations フックをモック
+vi.mock('@/features/plans/hooks/usePlanMutations', () => ({
+  usePlanMutations: () => ({
+    updatePlan: { mutate: vi.fn(), isPending: false },
+    createPlan: { mutate: vi.fn(), isPending: false },
+    deletePlan: { mutate: vi.fn(), isPending: false },
+  }),
+}))
+
 describe('PlanCard', () => {
   const mockEvent: CalendarPlan = {
     id: 'event-1',
@@ -12,7 +21,7 @@ describe('PlanCard', () => {
     description: 'テスト説明',
     startDate: new Date('2025-01-15T10:00:00'),
     endDate: new Date('2025-01-15T11:00:00'),
-    status: 'inbox',
+    status: 'todo',
     color: '#3b82f6',
     tags: [],
     createdAt: new Date(),
