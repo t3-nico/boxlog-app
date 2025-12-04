@@ -33,7 +33,7 @@ interface DesktopLayoutProps {
 
 // StatusBarアイテムのスケルトン（遅延ロード中の表示）
 function StatusBarItemSkeleton() {
-  return <div className="bg-muted/50 h-3 w-20 animate-pulse rounded" />
+  return <div className="bg-muted h-3 w-20 animate-pulse rounded" />
 }
 
 /**

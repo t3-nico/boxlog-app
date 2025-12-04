@@ -1246,7 +1246,16 @@
       "tagColor": "Tag color",
       "columns": "Columns",
       "columnSettings": "Column settings",
-      "lastUsed": "Last used"
+      "lastUsed": "Last used",
+      "emptyState": {
+        "searchTitle": "No search results found",
+        "searchDescription": "No tags match \"{{keyword}}\". Try a different keyword.",
+        "clearSearch": "Clear search",
+        "filterTitle": "No tags match filter criteria",
+        "filterDescription": "Try different criteria or clear the filter.",
+        "clearFilter": "Clear filter",
+        "noTagsDescription": "Create a new tag to start organizing your plans."
+      }
     },
     "archive": {
       "restoreConfirm": "Restore tag \"{{name}}\"?\n\nRestored tags can be used for tagging again.",

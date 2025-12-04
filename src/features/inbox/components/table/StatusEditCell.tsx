@@ -56,7 +56,7 @@ export function StatusEditCell({ status, width, onStatusChange }: StatusEditCell
   return (
     <TableCell
       onClick={(e) => e.stopPropagation()}
-      className="group hover:bg-muted/50 cursor-pointer transition-colors"
+      className="group hover:bg-muted cursor-pointer transition-colors"
       style={style}
     >
       <Popover open={open} onOpenChange={setOpen}>
@@ -74,7 +74,7 @@ export function StatusEditCell({ status, width, onStatusChange }: StatusEditCell
                 onClick={() => handleStatusSelect(option.value)}
                 className={cn(
                   'hover:bg-foreground/8 flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors',
-                  status === option.value && 'bg-foreground/12'
+                  status === option.value && 'bg-muted'
                 )}
               >
                 <div className="flex size-4 items-center justify-center">

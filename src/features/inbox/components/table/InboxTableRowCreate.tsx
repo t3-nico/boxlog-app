@@ -118,7 +118,7 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((_props
 
   return (
     <TableRow
-      className={cn('hover:bg-muted/30 cursor-pointer border-none transition-colors', isCreating && 'bg-muted/50')}
+      className={cn('hover:bg-muted cursor-pointer border-none transition-colors', isCreating && 'bg-muted')}
       onClick={handleStartCreate}
     >
       <TableCell colSpan={visibleColumns.length} className="h-10" style={{ paddingLeft: '64px' }}>

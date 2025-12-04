@@ -131,7 +131,7 @@ export function StatsToolbar() {
             <Button
               variant={compareEnabled ? 'secondary' : 'ghost'}
               size="sm"
-              className={cn('h-8 gap-1.5', compareEnabled && 'bg-foreground/12')}
+              className={cn('h-8 gap-1.5', compareEnabled && 'bg-muted')}
               onClick={() => setCompareEnabled(!compareEnabled)}
             >
               <GitCompareArrows className="size-4" />
