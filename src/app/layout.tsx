@@ -7,7 +7,6 @@ import type { Metadata } from 'next'
 import { Inter, Noto_Sans_JP } from 'next/font/google'
 import { Suspense } from 'react'
 
-import { CookieConsentBanner, GlobalErrorBoundary } from '@/components/common'
 import { Providers } from '@/components/providers'
 import { WebVitalsReporter } from '@/components/WebVitalsReporter'
 import { cn } from '@/lib/utils'
@@ -53,12 +52,7 @@ const RootLayout = async ({ children, params }: RootLayoutProps) => {
     <html lang={locale} suppressHydrationWarning className={`${inter.variable} ${notoSansJP.variable}`}>
       <body className={cn('bg-background')} suppressHydrationWarning>
         <Suspense fallback={null}>
-          <GlobalErrorBoundary maxRetries={3} retryDelay={1000}>
-            <Providers>
-              {children}
-              <CookieConsentBanner />
-            </Providers>
-          </GlobalErrorBoundary>
+          <Providers>{children}</Providers>
           <WebVitalsReporter />
           <SpeedInsights />
           <Analytics />
