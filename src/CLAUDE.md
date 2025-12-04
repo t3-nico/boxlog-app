@@ -151,21 +151,21 @@ export function MyComponent({ title, onClose }: Props) {
 
 **新規ページ作成時は必ずi18nを実装すること（ハードコード禁止）**
 
+**詳細ドキュメント**: [`src/i18n/CLAUDE.md`](./i18n/CLAUDE.md)
+
 #### 4.1 Server Component（推奨）
 
 ```tsx
 // src/app/[locale]/(app)/new-page/page.tsx
-import { createTranslation, getDictionary } from '@/lib/i18n'
-import type { Locale } from '@/types/i18n'
+import { getTranslations } from 'next-intl/server'
 
 interface PageProps {
-  params: Promise<{ locale?: Locale }>
+  params: Promise<{ locale: string }>
 }
 
-const NewPage = async ({ params }: PageProps) => {
-  const { locale = 'ja' } = await params
-  const dictionary = await getDictionary(locale)
-  const t = createTranslation(dictionary, locale)
+export default async function NewPage({ params }: PageProps) {
+  const { locale } = await params
+  const t = await getTranslations({ locale })
 
   return (
     <div>
@@ -174,8 +174,6 @@ const NewPage = async ({ params }: PageProps) => {
     </div>
   )
 }
-
-export default NewPage
 ```
 
 #### 4.2 Client Component
@@ -184,74 +182,67 @@ export default NewPage
 // src/features/new-feature/NewFeature.tsx
 'use client'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useTranslations } from 'next-intl'
 
-export const NewFeature = () => {
-  const { t } = useI18n()
+export function NewFeature() {
+  const t = useTranslations()
 
   return (
     <div>
       <h2>{t('newFeature.title')}</h2>
-      <button>{t('newFeature.buttons.submit')}</button>
+      <button>{t('newFeature.actions.submit')}</button>
     </div>
   )
 }
 ```
 
-#### 4.3 翻訳辞書の追加
+#### 4.3 翻訳ファイルの追加
+
+**命名規則**:
+- ファイル名 = ドメイン名（単数形）: `newPage.json`
+- キー構造: `domain.section.key`（3階層基本）
 
 ```json
-// src/lib/i18n/dictionaries/ja.json
+// messages/ja/newPage.json
 {
   "newPage": {
     "title": "新規ページ",
-    "description": "説明文"
+    "description": "説明文",
+    "actions": {
+      "submit": "送信"
+    }
   }
 }
 
-// src/lib/i18n/dictionaries/en.json
+// messages/en/newPage.json
 {
   "newPage": {
     "title": "New Page",
-    "description": "Description"
+    "description": "Description",
+    "actions": {
+      "submit": "Submit"
+    }
   }
 }
 ```
 
-#### 4.4 型安全性による翻訳漏れ防止
-
-**TypeScript Branded Types で ハードコード文字列を型レベルで禁止**
-
-```tsx
-import type { TranslatedString } from '@/types/i18n-branded'
-
-// ✅ OK: t()の戻り値（TranslatedString型）
-const title = t('page.title') // 型: TranslatedString
-
-// ❌ エラー: 生の文字列は型エラー
-const title: TranslatedString = 'こんにちは'
-// Type 'string' is not assignable to type 'TranslatedString'
-
-// ✅ OK: コンポーネントでTranslatedStringを要求
-interface Props {
-  title: TranslatedString // ← ハードコード禁止
-}
+**ネームスペース登録**（`src/i18n/request.ts`）:
+```typescript
+const NAMESPACES = [
+  // ... 既存
+  'newPage',  // 追加
+] as const
 ```
 
-**メリット:**
-
-- コード書いた瞬間にVS Codeで赤線表示
-- `npm run typecheck`でコンパイルエラー
-- 翻訳漏れを開発時に即座に検出
-
-#### 4.5 実装チェックリスト
+#### 4.4 実装チェックリスト
 
 - [ ] すべてのUI文字列を翻訳キーに置き換え
-- [ ] ja.json と en.json 両方に翻訳を追加
-- [ ] Server Component: `getDictionary()` + `createTranslation()` を使用
-- [ ] Client Component: `useI18n()` hookを使用
+- [ ] `messages/ja/` と `messages/en/` 両方に翻訳ファイルを追加
+- [ ] `src/i18n/request.ts` の `NAMESPACES` に追加
+- [ ] Server Component: `getTranslations()` を使用
+- [ ] Client Component: `useTranslations()` を使用
 - [ ] ハードコードされた日本語・英語が残っていないか確認
-- [ ] `TranslatedString`型を活用して型安全性を確保
+- [ ] `npm run i18n:check` で差分がないことを確認
 
 ### 5. バリデーション実装
 
@@ -837,9 +828,11 @@ export function InteractiveComponent() {
 
 ### i18n 実装パターン
 
+**詳細**: [`src/i18n/CLAUDE.md`](./i18n/CLAUDE.md)
+
 ```typescript
 // Server Component
-import { getI18n } from '@/features/i18n/lib/server'
+import { getTranslations } from 'next-intl/server'
 
 export default async function Page({
   params,
@@ -847,7 +840,7 @@ export default async function Page({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const t = await getI18n(locale)
+  const t = await getTranslations({ locale })
 
   return <h1>{t('page.title')}</h1>
 }
@@ -855,10 +848,10 @@ export default async function Page({
 // Client Component
 'use client'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 export function ClientComponent() {
-  const { t } = useI18n()
+  const t = useTranslations()
   return <p>{t('common.save')}</p>
 }
 ```

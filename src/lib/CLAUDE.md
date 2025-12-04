@@ -111,16 +111,19 @@ const invoices = await getInvoices(userId)
 **next-intlによる多言語対応**。
 
 ```tsx
+// Server Component
+import { getTranslations } from 'next-intl/server'
+const t = await getTranslations({ locale })
+
+// Client Component
 import { useTranslations } from 'next-intl'
+const t = useTranslations()
 
-// 翻訳の使用
-const t = useTranslations('Common')
-const title = t('title') // 言語に応じた文字列を取得
-
-// サポート言語: ja, en
+// 使用例
+t('common.save') // 言語に応じた文字列を取得
 ```
 
-**詳細**: コード内のJSDocコメント参照
+**詳細**: [`src/i18n/CLAUDE.md`](../i18n/CLAUDE.md)
 
 ### local-storage/ - LocalStorage管理
 
