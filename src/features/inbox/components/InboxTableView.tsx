@@ -3,6 +3,7 @@
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { useEffect, useRef } from 'react'
 
+import { TablePagination } from '@/components/common/table/TablePagination'
 import type { InboxItem } from '../hooks/useInboxData'
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
@@ -16,7 +17,6 @@ import { InboxSelectionActions } from './table/InboxSelectionActions'
 import { InboxSelectionBar } from './table/InboxSelectionBar'
 import { InboxTableContent } from './table/InboxTableContent'
 import { type InboxTableRowCreateHandle } from './table/InboxTableRowCreate'
-import { TablePagination } from './table/TablePagination'
 import { TableToolbar } from './table/TableToolbar'
 
 /**
@@ -50,6 +50,8 @@ export function InboxTableView() {
   const setSort = useInboxSortStore((state) => state.setSort)
 
   // ページネーション関連
+  const currentPage = useInboxPaginationStore((state) => state.currentPage)
+  const pageSize = useInboxPaginationStore((state) => state.pageSize)
   const setCurrentPage = useInboxPaginationStore((state) => state.setCurrentPage)
   const setPageSize = useInboxPaginationStore((state) => state.setPageSize)
 
@@ -143,7 +145,7 @@ export function InboxTableView() {
   if (error) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="border-destructive bg-destructive/10 text-destructive rounded-xl border p-4">
+        <div className="border-destructive bg-destructive/12 text-destructive rounded-xl border p-4">
           <p className="font-medium">エラーが発生しました</p>
           <p className="mt-1 text-sm">{error.message}</p>
         </div>
@@ -210,7 +212,13 @@ export function InboxTableView() {
         {/* フッター: グループ化なしの場合のみ */}
         {!groupBy && (
           <div className="shrink-0">
-            <TablePagination totalItems={items.length} />
+            <TablePagination
+              totalItems={items.length}
+              currentPage={currentPage}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setPageSize}
+            />
           </div>
         )}
       </div>

@@ -118,7 +118,7 @@ export function ResizableTableHead({
       {resizable && (
         <div
           onMouseDown={handleMouseDown}
-          className={`hover:bg-primary/50 absolute top-0 right-0 h-full w-1 cursor-col-resize transition-colors ${
+          className={`hover:bg-primary absolute top-0 right-0 h-full w-1 cursor-col-resize transition-colors ${
             isResizing ? 'bg-primary' : 'bg-transparent'
           }`}
           style={{ userSelect: 'none' }}
