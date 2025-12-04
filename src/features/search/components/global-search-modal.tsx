@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { useDebounce } from '@/hooks/useDebounce'
+
 import {
   BarChart3,
   Calendar,
@@ -79,6 +81,9 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
 
+  // Debounce search query (150ms delay for responsive feel)
+  const debouncedQuery = useDebounce(query, 150)
+
   // Parse query for active filters
   const parsedQuery = useMemo(() => parseSearchQuery(query), [query])
   const filterHints = useMemo(() => getFilterHints(), [])
@@ -108,15 +113,15 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
     })
   }, [router, openPlanInspector, openTagCreateModal, openSettings, toggleTheme])
 
-  // Perform search when query changes
+  // Perform search when debounced query changes
   useEffect(() => {
     const performSearch = async () => {
-      const searchResults = await SearchEngine.search({ query, limit: 15 }, { plans, tags })
+      const searchResults = await SearchEngine.search({ query: debouncedQuery, limit: 15 }, { plans, tags })
       setResults(searchResults)
     }
 
     performSearch()
-  }, [query, plans, tags])
+  }, [debouncedQuery, plans, tags])
 
   // Reset query when modal closes
   useEffect(() => {

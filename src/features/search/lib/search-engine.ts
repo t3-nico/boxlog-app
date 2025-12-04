@@ -24,7 +24,7 @@ export interface FuseResultWithMatches<T> {
 
 /**
  * Fuse.js wrapper for fuzzy search
- * Provides consistent interface and configuration
+ * Provides consistent interface and configuration with instance caching
  */
 export class FuseSearch {
   /**
@@ -41,14 +41,50 @@ export class FuseSearch {
     findAllMatches: true,
   }
 
+  // Instance cache for reusing Fuse instances
+  private static instanceCache = new Map<string, { fuse: Fuse<unknown>; itemsHash: number }>()
+
   /**
-   * Search items with Fuse.js
+   * Generate a simple hash for cache invalidation
+   */
+  private static hashItems(items: unknown[]): number {
+    return items.length
+  }
+
+  /**
+   * Get or create a cached Fuse instance
+   */
+  private static getOrCreateInstance<T extends Record<string, unknown>>(
+    cacheKey: string,
+    items: T[],
+    keys: Fuse.FuseOptionKey<T>[]
+  ): Fuse<T> {
+    const itemsHash = FuseSearch.hashItems(items)
+    const cached = FuseSearch.instanceCache.get(cacheKey)
+
+    if (cached && cached.itemsHash === itemsHash) {
+      return cached.fuse as Fuse<T>
+    }
+
+    const fuse = new Fuse(items, {
+      ...FuseSearch.defaultOptions,
+      keys,
+    })
+
+    FuseSearch.instanceCache.set(cacheKey, { fuse: fuse as Fuse<unknown>, itemsHash })
+
+    return fuse
+  }
+
+  /**
+   * Search items with Fuse.js (with instance caching)
    */
   static search<T extends Record<string, unknown>>(
     items: T[],
     query: string,
     keys: Fuse.FuseOptionKey<T>[],
-    limit = 10
+    limit = 10,
+    cacheKey?: string
   ): FuseResultWithMatches<T>[] {
     if (!query.trim()) {
       // Return all items with default score when no query
@@ -59,14 +95,20 @@ export class FuseSearch {
       }))
     }
 
-    const fuse = new Fuse(items, {
-      ...FuseSearch.defaultOptions,
-      keys,
-    })
+    const fuse = cacheKey
+      ? FuseSearch.getOrCreateInstance(cacheKey, items, keys)
+      : new Fuse(items, { ...FuseSearch.defaultOptions, keys })
 
     const results = fuse.search(query, { limit })
 
     return results as FuseResultWithMatches<T>[]
+  }
+
+  /**
+   * Clear the instance cache (useful for testing or memory cleanup)
+   */
+  static clearCache(): void {
+    FuseSearch.instanceCache.clear()
   }
 
   /**
@@ -208,7 +250,7 @@ export class SearchEngine {
       tagNames: plan.tags?.map((t) => t.name).join(' ') || '',
     }))
 
-    // Search with Fuse.js
+    // Search with Fuse.js (cached instance)
     const fuseResults = FuseSearch.search(
       searchablePlans,
       query,
@@ -217,7 +259,8 @@ export class SearchEngine {
         { name: 'description', weight: 1 },
         { name: 'tagNames', weight: 1.5 },
       ],
-      20
+      20,
+      'plans' // Cache key for plans search
     )
 
     return fuseResults.map((result) => ({
@@ -252,7 +295,7 @@ export class SearchEngine {
       )
     }
 
-    // Search with Fuse.js
+    // Search with Fuse.js (cached instance)
     const fuseResults = FuseSearch.search(
       filteredTags,
       query,
@@ -261,7 +304,8 @@ export class SearchEngine {
         { name: 'description', weight: 1 },
         { name: 'path', weight: 1.5 },
       ],
-      20
+      20,
+      'tags' // Cache key for tags search
     )
 
     return fuseResults.map((result) => ({
