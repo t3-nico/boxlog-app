@@ -81,7 +81,7 @@ export default async function OSSCreditsPage({ params }: PageProps) {
 
       {/* エラー表示 */}
       {loadError && (
-        <div className="bg-destructive/10 text-destructive border-destructive/20 mb-8 rounded-xl border p-6">
+        <div className="bg-destructive/12 text-destructive border-destructive mb-8 rounded-xl border p-6">
           <p className="font-semibold">{t('ossCredits.loadingError')}</p>
         </div>
       )}
@@ -119,7 +119,7 @@ export default async function OSSCreditsPage({ params }: PageProps) {
                     {credit.name}
                     <span className="text-muted-foreground ml-2 text-sm font-normal">v{credit.version}</span>
                   </h3>
-                  <span className="bg-primary/10 text-primary w-fit rounded px-3 py-1 text-sm font-medium">
+                  <span className="bg-primary/12 text-primary w-fit rounded px-3 py-1 text-sm font-medium">
                     {credit.license}
                   </span>
                 </div>

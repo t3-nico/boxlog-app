@@ -1241,7 +1241,16 @@
       "tagColor": "タグカラー",
       "columns": "列",
       "columnSettings": "列の表示設定",
-      "lastUsed": "最終使用日時"
+      "lastUsed": "最終使用日時",
+      "emptyState": {
+        "searchTitle": "検索結果が見つかりませんでした",
+        "searchDescription": "「{{keyword}}」に一致するタグがありません。別のキーワードで検索してください。",
+        "clearSearch": "検索をクリア",
+        "filterTitle": "フィルター条件に一致するタグがありません",
+        "filterDescription": "別の条件で絞り込むか、フィルターをクリアしてください。",
+        "clearFilter": "フィルターをクリア",
+        "noTagsDescription": "新しいタグを作成して、プランの整理を始めましょう。"
+      }
     },
     "archive": {
       "restoreConfirm": "タグ「{{name}}」を復元しますか？\n\n復元されたタグは再び新規のタグ付けに使用できるようになります。",
