@@ -44,7 +44,7 @@ function removeUndefinedFields<T extends Record<string, unknown>>(obj: T): Parti
  * 3. end_time が start_time より前の場合、start_time と同じ日の同じ時刻に修正
  */
 function normalizeDateTimeConsistency(data: {
-  due_date?: string
+  due_date?: string | null
   start_time?: string | null
   end_time?: string | null
 }): void {
@@ -331,7 +331,7 @@ export const plansRouter = createTRPCRouter({
 
     // 日付整合性を保証（必要なフィールドのみ抽出）
     const dateTimeData: {
-      due_date?: string
+      due_date?: string | null
       start_time?: string | null
       end_time?: string | null
     } = {}

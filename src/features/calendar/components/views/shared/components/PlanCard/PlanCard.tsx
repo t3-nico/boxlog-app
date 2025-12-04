@@ -228,13 +228,13 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
           {(() => {
             const status = getEffectiveStatus(plan)
             if (status === 'done') {
-              return <CheckCircle2 className="h-4 w-4 text-success" />
+              return <CheckCircle2 className="text-success h-4 w-4" />
             }
             if (status === 'doing') {
-              return <Circle className="h-4 w-4 text-primary" />
+              return <Circle className="text-primary h-4 w-4" />
             }
             // todo
-            return <Circle className="h-4 w-4 text-muted-foreground" />
+            return <Circle className="text-muted-foreground h-4 w-4" />
           })()}
         </button>
       )}
