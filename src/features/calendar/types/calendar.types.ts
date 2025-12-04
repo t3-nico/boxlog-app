@@ -81,7 +81,7 @@ export interface CalendarPlan {
   description?: string | undefined
   startDate: Date | null
   endDate: Date | null
-  status: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
+  status: 'todo' | 'doing' | 'done'
   color: string
   plan_number?: string | undefined // プラン番号（#123 形式）
   reminder_minutes?: number | null | undefined // 通知タイミング（開始時刻の何分前か）
@@ -237,7 +237,7 @@ export interface CreatePlanInput {
   plannedStart?: Date
   plannedEnd?: Date
   allDay?: boolean
-  status?: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
+  status?: 'todo' | 'doing' | 'done'
   priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional'
   color?: string
   location?: string

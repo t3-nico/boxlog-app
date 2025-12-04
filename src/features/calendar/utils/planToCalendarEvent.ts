@@ -11,15 +11,10 @@ export function setUserTimezone(timezone: string) {
 
 /**
  * PlanStatusをCalendarEventのstatusにマッピング
+ * 3段階ステータス: todo, doing, done（そのまま使用）
  */
 function mapPlanStatusToCalendarStatus(planStatus: PlanStatus): CalendarEvent['status'] {
-  const statusMap: Record<PlanStatus, CalendarEvent['status']> = {
-    todo: 'inbox',
-    doing: 'in_progress',
-    done: 'completed',
-  }
-
-  return statusMap[planStatus]
+  return planStatus // 3段階ステータスはそのまま
 }
 
 /**

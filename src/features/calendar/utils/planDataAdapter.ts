@@ -21,19 +21,18 @@ type TimedEvent = TimedPlan
 
 /**
  * データベースPlan型のステータスをCalendarPlan型のステータスに変換
+ * 3段階ステータス: todo, doing, done
  */
-function mapPlanStatusToCalendarStatus(
-  status: string
-): 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled' {
+function mapPlanStatusToCalendarStatus(status: string): 'todo' | 'doing' | 'done' {
   switch (status) {
     case 'todo':
-      return 'inbox'
+      return 'todo'
     case 'doing':
-      return 'in_progress'
+      return 'doing'
     case 'done':
-      return 'completed'
+      return 'done'
     default:
-      return 'inbox'
+      return 'todo'
   }
 }
 
@@ -92,7 +91,7 @@ export function planToTimedPlan(plan: CalendarPlan): TimedPlan {
     ...plan,
     start: plan.startDate || new Date(),
     end: plan.endDate || new Date(),
-    isReadOnly: plan.status === 'completed' || plan.status === 'cancelled',
+    isReadOnly: plan.status === 'done',
   }
 }
 
@@ -155,7 +154,7 @@ export function safePlanToTimedPlan(plan: Partial<CalendarPlan>): TimedPlan | nu
     color: plan.color || '#3b82f6',
     start: plan.startDate || now,
     end: plan.endDate || defaultEnd,
-    isReadOnly: plan.status === 'completed' || plan.status === 'cancelled',
+    isReadOnly: plan.status === 'done',
   } as TimedPlan
 }
 
