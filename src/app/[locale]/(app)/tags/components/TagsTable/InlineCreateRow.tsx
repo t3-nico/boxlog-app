@@ -69,7 +69,7 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
   }
 
   return (
-    <TableRow ref={ref} className="bg-muted/30">
+    <TableRow ref={ref} className="bg-muted">
       <TableCell style={{ width: `${columnWidths.select}px` }}></TableCell>
       <TableCell className="text-muted-foreground font-mono text-sm" style={{ width: `${columnWidths.id}px` }}>
         -
