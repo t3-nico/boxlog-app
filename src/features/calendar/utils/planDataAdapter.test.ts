@@ -20,7 +20,7 @@ describe('planDataAdapter', () => {
         color: '#3b82f6',
         startDate: new Date('2024-06-15T10:00:00'),
         endDate: new Date('2024-06-15T11:00:00'),
-        status: 'planned',
+        status: 'todo',
         displayStartDate: new Date('2024-06-15T10:00:00'),
         displayEndDate: new Date('2024-06-15T11:00:00'),
         duration: 60,
@@ -48,7 +48,7 @@ describe('planDataAdapter', () => {
         title: 'ミーティング',
         startDate: new Date(),
         endDate: new Date(),
-        status: 'completed',
+        status: 'done',
         color: '#3b82f6',
         displayStartDate: new Date(),
         displayEndDate: new Date(),
@@ -65,13 +65,13 @@ describe('planDataAdapter', () => {
       expect(result.isReadOnly).toBe(true)
     })
 
-    it('キャンセル済みイベントは読み取り専用になる', () => {
+    it('作業中（doing）のプランは読み取り専用ではない', () => {
       const event: Plan = {
         id: 'plan-1',
         title: 'ミーティング',
         startDate: new Date(),
         endDate: new Date(),
-        status: 'cancelled',
+        status: 'doing',
         color: '#3b82f6',
         displayStartDate: new Date(),
         displayEndDate: new Date(),
@@ -85,7 +85,7 @@ describe('planDataAdapter', () => {
 
       const result = eventToTimedEvent(event)
 
-      expect(result.isReadOnly).toBe(true)
+      expect(result.isReadOnly).toBe(false)
     })
 
     it('startDateがnullの場合は現在日時を使用する', () => {
@@ -94,7 +94,7 @@ describe('planDataAdapter', () => {
         title: 'ミーティング',
         startDate: null,
         endDate: null,
-        status: 'planned',
+        status: 'todo',
         color: '#3b82f6',
         displayStartDate: new Date(),
         displayEndDate: new Date(),
@@ -121,7 +121,7 @@ describe('planDataAdapter', () => {
           title: 'ミーティング1',
           startDate: new Date(),
           endDate: new Date(),
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date(),
           displayEndDate: new Date(),
@@ -137,7 +137,7 @@ describe('planDataAdapter', () => {
           title: 'ミーティング2',
           startDate: new Date(),
           endDate: new Date(),
-          status: 'planned',
+          status: 'todo',
           color: '#3b82f6',
           displayStartDate: new Date(),
           displayEndDate: new Date(),

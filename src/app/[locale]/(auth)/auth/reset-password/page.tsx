@@ -92,7 +92,7 @@ export default function ResetPasswordPage() {
                 <div className="p-6 md:p-8">
                   <FieldGroup>
                     <div className="flex flex-col items-center gap-2 text-center">
-                      <div className="bg-primary/10 text-primary mb-2 flex h-12 w-12 items-center justify-center rounded-full">
+                      <div className="bg-primary/12 text-primary mb-2 flex h-12 w-12 items-center justify-center rounded-full">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="24"

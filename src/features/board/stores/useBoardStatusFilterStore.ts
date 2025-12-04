@@ -9,7 +9,7 @@ interface BoardStatusFilterState {
   resetFilters: () => void
 }
 
-const defaultStatuses: PlanStatus[] = ['backlog', 'ready', 'active', 'wait', 'done', 'cancel']
+const defaultStatuses: PlanStatus[] = ['todo', 'doing', 'done']
 
 /**
  * Boardのステータスフィルター管理用Store

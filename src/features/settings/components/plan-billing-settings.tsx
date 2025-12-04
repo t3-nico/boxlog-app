@@ -63,7 +63,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
       <SettingsCard title="現在のプラン">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-xl">
+            <div className="bg-primary/12 flex h-12 w-12 items-center justify-center rounded-xl">
               <Zap className="text-primary h-6 w-6" />
             </div>
             <div>
@@ -109,7 +109,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
               className={cn(
                 'border-border relative rounded-xl border p-4',
                 plan.recommended && 'border-primary ring-primary/20 ring-2',
-                currentPlan === plan.id && 'bg-muted/50'
+                currentPlan === plan.id && 'bg-muted'
               )}
             >
               {plan.recommended && (

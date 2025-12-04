@@ -39,15 +39,12 @@ const DUE_DATE_OPTIONS: Array<{ value: DueDateFilter; label: string }> = [
  * ステータスラベル
  */
 const STATUS_LABELS: Record<PlanStatus, string> = {
-  backlog: 'Backlog',
-  ready: 'Ready',
-  active: 'Active',
-  wait: 'Wait',
+  todo: 'Todo',
+  doing: 'Doing',
   done: 'Done',
-  cancel: 'Cancel',
 }
 
-const STATUS_LIST: PlanStatus[] = ['backlog', 'ready', 'active', 'wait', 'done', 'cancel']
+const STATUS_LIST: PlanStatus[] = ['todo', 'doing', 'done']
 
 /**
  * Inbox Board用ツールバー

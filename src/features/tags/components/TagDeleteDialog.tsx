@@ -13,9 +13,9 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useTranslations } from 'next-intl'
 import type { TagUsage, TagWithChildren } from '@/types/tags'
 import { AlertTriangle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface TagDeleteDialogProps {
   tag: TagWithChildren | null
@@ -89,7 +89,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
           {/* 使用状況 */}
           {isLoading ? (
             <div className="bg-muted flex items-center justify-center rounded-xl p-4">
-              <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-blue-600"></div>
+              <div className="border-primary h-5 w-5 animate-spin rounded-full border-b-2"></div>
             </div>
           ) : usage ? (
             <div className="bg-muted rounded-xl p-4">

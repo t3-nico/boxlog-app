@@ -1,7 +1,7 @@
 'use client'
 
-import { DndContext, DragOverlay, closestCenter, useDroppable } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { useDroppable } from '@dnd-kit/core'
+import { SortableContext } from '@dnd-kit/sortable'
 import { Archive, Folder, FolderX, Plus, Tags } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -11,20 +11,15 @@ import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { useTranslations } from 'next-intl'
+import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
 import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
-import {
-  useCreateTagGroup,
-  useDeleteTagGroup,
-  useTagGroups,
-  useUpdateTagGroup,
-} from '@/features/tags/hooks/use-tag-groups'
-import { useTagGroupsDnd } from '@/features/tags/hooks/use-tag-groups-dnd'
+import { useCreateTagGroup, useDeleteTagGroup, useUpdateTagGroup } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import type { TagGroup } from '@/types/tags'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 interface TagsSidebarProps {
@@ -50,20 +45,18 @@ export function TagsSidebar({
   const t = useTranslations()
   const router = useRouter()
   const pathname = usePathname()
-  const { setIsCreatingGroup } = useTagsPageContext()
-  const { data: groups = [] as TagGroup[], isLoading: isLoadingGroups } = useTagGroups()
+  const { setIsCreatingGroup, reorderedGroups, sortableContextProps } = useTagsPageContext()
   const { data: allTags = [] } = useTags(true) // タグ数カウント用
   const createGroupMutation = useCreateTagGroup()
   const updateGroupMutation = useUpdateTagGroup()
   const deleteGroupMutation = useDeleteTagGroup()
 
-  // ドラッグアンドドロップ機能
-  const { sensors, activeGroup, handleDragStart, handleDragEnd, handleDragCancel, reorderedGroups } =
-    useTagGroupsDnd(groups)
+  // グループのローディング状態はContextから取得できるかどうかで判断
+  const isLoadingGroups = reorderedGroups.length === 0 && isLoading
 
   const [deletingGroup, setDeletingGroup] = useState<TagGroup | null>(null)
   const [newGroupName, setNewGroupName] = useState('')
-  const [newGroupColor, setNewGroupColor] = useState('#6B7280')
+  const [newGroupColor, setNewGroupColor] = useState(DEFAULT_GROUP_COLOR)
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null)
   const [editingGroupName, setEditingGroupName] = useState('')
 
@@ -85,14 +78,14 @@ export function TagsSidebar({
   const handleStartCreating = useCallback(() => {
     setIsCreatingGroup(true)
     setNewGroupName('')
-    setNewGroupColor('#6B7280')
+    setNewGroupColor(DEFAULT_GROUP_COLOR)
   }, [setIsCreatingGroup])
 
   // インライン作成をキャンセル
   const handleCancelCreating = useCallback(() => {
     setIsCreatingGroup(false)
     setNewGroupName('')
-    setNewGroupColor('#6B7280')
+    setNewGroupColor(DEFAULT_GROUP_COLOR)
   }, [setIsCreatingGroup])
 
   // クリックアウトサイド検知
@@ -141,14 +134,14 @@ export function TagsSidebar({
       toast.success(`グループ「${newGroupName}」を作成しました`)
       setIsCreatingGroup(false)
       setNewGroupName('')
-      setNewGroupColor('#6B7280')
+      setNewGroupColor(DEFAULT_GROUP_COLOR)
 
       // 作成したグループのページに遷移
       const locale = pathname?.split('/')[1] || 'ja'
       router.push(`/${locale}/tags/g-${result.group_number}`)
     } catch (error) {
       console.error('Failed to create tag group:', error)
-      toast.error(t('tag.toast.groupCreateFailed'))
+      toast.error(t('tags.toast.groupCreateFailed'))
     }
   }, [newGroupName, newGroupColor, createGroupMutation, router, pathname, setIsCreatingGroup, t])
 
@@ -158,7 +151,7 @@ export function TagsSidebar({
 
     try {
       await deleteGroupMutation.mutateAsync(deletingGroup.id)
-      toast.success(t('tag.toast.groupDeleted', { name: deletingGroup.name }))
+      toast.success(t('tags.toast.groupDeleted', { name: deletingGroup.name }))
       setDeletingGroup(null)
 
       // 削除したグループのページを表示中だったら、タグ一覧に戻る
@@ -188,7 +181,7 @@ export function TagsSidebar({
   const handleSaveEditing = useCallback(
     async (group: TagGroup) => {
       if (!editingGroupName.trim()) {
-        toast.error(t('tag.toast.groupNameRequired'))
+        toast.error(t('tags.toast.groupNameRequired'))
         return
       }
 
@@ -201,12 +194,12 @@ export function TagsSidebar({
             color: group.color,
           },
         })
-        toast.success(t('tag.toast.groupNameChanged', { name: editingGroupName }))
+        toast.success(t('tags.toast.groupNameChanged', { name: editingGroupName }))
         setEditingGroupId(null)
         setEditingGroupName('')
       } catch (error) {
         console.error('Failed to update tag group:', error)
-        toast.error(t('tag.toast.groupNameChangeFailed'))
+        toast.error(t('tags.toast.groupNameChangeFailed'))
       }
     },
     [editingGroupName, updateGroupMutation, t]
@@ -251,7 +244,7 @@ export function TagsSidebar({
         deleteGroupMutation
           .mutateAsync(group.id)
           .then(() => {
-            toast.success(t('tag.toast.groupDeleted', { name: group.name }))
+            toast.success(t('tags.toast.groupDeleted', { name: group.name }))
             // 削除したグループのページを表示中だったら、タグ一覧に戻る
             if (currentGroupNumber === group.group_number) {
               const locale = pathname?.split('/')[1] || 'ja'
@@ -260,7 +253,7 @@ export function TagsSidebar({
           })
           .catch((error) => {
             console.error('Failed to delete tag group:', error)
-            toast.error(t('tag.toast.groupDeleteFailed'))
+            toast.error(t('tags.toast.groupDeleteFailed'))
           })
       } else {
         // タグが1件以上の場合は確認ダイアログを表示
@@ -319,7 +312,7 @@ export function TagsSidebar({
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <FolderX className="h-4 w-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
-            <span>{t('tag.sidebar.uncategorized')}</span>
+            <span>{t('tags.sidebar.uncategorized')}</span>
           </div>
           <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>
         </div>
@@ -334,7 +327,7 @@ export function TagsSidebar({
         <SidebarHeader title={t('sidebar.navigation.tags')} />
 
         <div className="flex flex-1 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+          <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
         </div>
       </aside>
     )
@@ -361,7 +354,7 @@ export function TagsSidebar({
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Tags className="h-4 w-4 shrink-0" />
-                <span>{t('tag.sidebar.allTags')}</span>
+                <span>{t('tags.sidebar.allTags')}</span>
               </div>
               <span className="text-muted-foreground text-xs">{activeTagsCount}</span>
             </div>
@@ -381,7 +374,7 @@ export function TagsSidebar({
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Archive className="h-4 w-4 shrink-0" />
-                <span>{t('tag.sidebar.archive')}</span>
+                <span>{t('tags.sidebar.archive')}</span>
               </div>
               <span className="text-muted-foreground text-xs">{archivedTagsCount}</span>
             </div>
@@ -389,7 +382,7 @@ export function TagsSidebar({
 
           {/* グループセクション */}
           <div className="text-muted-foreground mt-4 mb-1 flex items-center justify-between px-3 py-2">
-            <span className="text-xs font-semibold uppercase">{t('tag.sidebar.groups')}</span>
+            <span className="text-xs font-semibold uppercase">{t('tags.sidebar.groups')}</span>
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
@@ -403,56 +396,36 @@ export function TagsSidebar({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top" sideOffset={4}>
-                  <p>{t('tag.page.createGroup')}</p>
+                  <p>{t('tags.page.createGroup')}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
 
           {reorderedGroups.length === 0 && !isCreating ? (
-            <div className="text-muted-foreground px-3 py-2 text-xs">{t('tag.sidebar.noGroups')}</div>
+            <div className="text-muted-foreground px-3 py-2 text-xs">{t('tags.sidebar.noGroups')}</div>
           ) : (
             <>
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-                onDragCancel={handleDragCancel}
-              >
-                <SortableContext items={reorderedGroups.map((g) => g.id)} strategy={verticalListSortingStrategy}>
-                  {reorderedGroups.map((group) => (
-                    <SortableGroupItem
-                      key={group.id}
-                      group={group}
-                      isActive={currentGroupNumber === group.group_number}
-                      tagCount={getGroupTagCount(group.id)}
-                      onGroupClick={handleGroupClick}
-                      onStartEdit={handleStartEditing}
-                      onCancelEdit={handleCancelEditing}
-                      onSaveEdit={handleSaveEditing}
-                      onUpdateColor={handleUpdateColor}
-                      onDelete={handleDeleteGroup}
-                      isEditing={editingGroupId === group.id}
-                      editingName={editingGroupName}
-                      setEditingName={setEditingGroupName}
-                    />
-                  ))}
-                </SortableContext>
-
-                {/* DragOverlay: ドラッグ中のグループを表示 */}
-                <DragOverlay>
-                  {activeGroup ? (
-                    <div className="bg-foreground/12 text-foreground w-full rounded-md px-3 py-2 text-left text-sm opacity-80 shadow-lg">
-                      <div className="flex items-center gap-2">
-                        <Folder className="h-4 w-4 shrink-0" style={{ color: activeGroup.color || '#6B7280' }} />
-                        <span className="flex-1 truncate">{activeGroup.name}</span>
-                        <span className="text-muted-foreground text-xs">{getGroupTagCount(activeGroup.id)}</span>
-                      </div>
-                    </div>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
+              {/* SortableContext - DndContextは親のTagsPageProviderで提供 */}
+              <SortableContext {...sortableContextProps}>
+                {reorderedGroups.map((group) => (
+                  <SortableGroupItem
+                    key={group.id}
+                    group={group}
+                    isActive={currentGroupNumber === group.group_number}
+                    tagCount={getGroupTagCount(group.id)}
+                    onGroupClick={handleGroupClick}
+                    onStartEdit={handleStartEditing}
+                    onCancelEdit={handleCancelEditing}
+                    onSaveEdit={handleSaveEditing}
+                    onUpdateColor={handleUpdateColor}
+                    onDelete={handleDeleteGroup}
+                    isEditing={editingGroupId === group.id}
+                    editingName={editingGroupName}
+                    setEditingName={setEditingGroupName}
+                  />
+                ))}
+              </SortableContext>
 
               {/* インライン作成フォーム */}
               {isCreating && (
@@ -464,7 +437,7 @@ export function TagsSidebar({
                         <button
                           type="button"
                           className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                          aria-label={t('tag.sidebar.changeColor')}
+                          aria-label={t('tags.sidebar.changeColor')}
                         >
                           <Folder className="h-4 w-4 shrink-0" style={{ color: newGroupColor }} />
                         </button>
@@ -485,7 +458,7 @@ export function TagsSidebar({
                           handleCancelCreating()
                         }
                       }}
-                      placeholder={t('tag.sidebar.groupNamePlaceholder')}
+                      placeholder={t('tags.sidebar.groupNamePlaceholder')}
                       autoFocus
                       className="h-auto flex-1 border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
                     />

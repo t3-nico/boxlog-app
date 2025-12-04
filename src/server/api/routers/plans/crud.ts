@@ -122,7 +122,7 @@ export const createProcedure = protectedProcedure.input(createPlanSchema).mutati
   const { supabase, userId } = ctx
 
   const dateTimeData: {
-    due_date?: string
+    due_date?: string | null
     start_time?: string | null
     end_time?: string | null
   } = {}

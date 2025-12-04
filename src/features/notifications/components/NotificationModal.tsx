@@ -5,8 +5,8 @@ import { useState } from 'react'
 import { Bell, BellOff, Calendar, Check, Clock, Settings, X } from 'lucide-react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useLocale, useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useLocale, useTranslations } from 'next-intl'
 
 // import { formatDistanceToNow } from 'date-fns'
 // import { ja } from 'date-fns/locale'
@@ -70,7 +70,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
       <div
         role="button"
         tabIndex={0}
-        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+        className="absolute inset-0 bg-black backdrop-blur-sm"
         onClick={onClose}
         onKeyDown={(e) => {
           if (e.key === 'Escape') onClose()
@@ -180,7 +180,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                   key={notification.id}
                   className={cn(
                     'flex gap-3 px-4 py-3',
-                    !notification.read && 'bg-foreground/5',
+                    !notification.read && 'bg-muted',
                     'hover:bg-foreground/8',
                     'transition-all duration-200',
                     'cursor-pointer'

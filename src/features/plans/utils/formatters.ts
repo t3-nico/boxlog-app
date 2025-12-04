@@ -18,12 +18,9 @@ export function formatplanNumber(planNumber: string): string {
  */
 export function formatplanStatus(status: PlanStatus): string {
   const statusMap: Record<PlanStatus, string> = {
-    backlog: '準備中',
-    ready: '配置済み',
-    active: '作業中',
-    wait: '待ち',
-    done: '完了',
-    cancel: '中止',
+    todo: 'Todo',
+    doing: 'Doing',
+    done: 'Done',
   }
   return statusMap[status]
 }

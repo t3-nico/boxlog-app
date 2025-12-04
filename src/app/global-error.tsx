@@ -11,7 +11,7 @@ import { useEffect } from 'react'
 
 import * as Sentry from '@sentry/nextjs'
 
-import { useTranslations, useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 interface GlobalErrorProps {
   error: Error & { digest?: string }
@@ -19,7 +19,8 @@ interface GlobalErrorProps {
 }
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
-  const t = useTranslations(); const locale = useLocale()
+  const t = useTranslations()
+  const locale = useLocale()
 
   useEffect(() => {
     // Sentryにエラーを送信
@@ -84,7 +85,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
               <button
                 onClick={() => (window.location.href = '/')}
-                className="bg-muted text-foreground hover:bg-muted/80 w-full rounded-md px-4 py-3 transition-colors"
+                className="bg-muted text-foreground hover:bg-muted w-full rounded-md px-4 py-3 transition-colors"
               >
                 {t('error.global.goHome')}
               </button>

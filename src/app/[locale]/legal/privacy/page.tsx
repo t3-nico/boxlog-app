@@ -1,6 +1,6 @@
 import type { Locale } from '@/i18n/routing'
-import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
 /**
  * メタデータ生成（SEO対策・i18n対応）
@@ -158,7 +158,7 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
       </div>
 
       {/* フッターノート */}
-      <div className="bg-muted/50 mt-12 rounded-xl p-6">
+      <div className="bg-muted mt-12 rounded-xl p-6">
         <p className="text-muted-foreground text-sm">
           ⚠️ <strong>重要:</strong>{' '}
           本プライバシーポリシーは、法的要件を満たすための基本的なテンプレートです。商用リリース前に、必ず弁護士によるレビューを受けてください。

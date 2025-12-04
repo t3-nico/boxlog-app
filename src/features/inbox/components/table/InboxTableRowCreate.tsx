@@ -62,7 +62,7 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((_props
       // 空のプランを作成（楽観的更新）
       const newplan = await createPlan.mutateAsync({
         title: '無題のプラン',
-        status: 'backlog',
+        status: 'todo',
       })
 
       if (newplan?.id) {
@@ -87,7 +87,7 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((_props
         // タイトルを更新
         await createPlan.mutateAsync({
           title: title.trim(),
-          status: 'backlog',
+          status: 'todo',
         })
       } else {
         // タイトルが空の場合は削除
@@ -118,7 +118,7 @@ export const InboxTableRowCreate = forwardRef<InboxTableRowCreateHandle>((_props
 
   return (
     <TableRow
-      className={cn('hover:bg-muted/30 cursor-pointer border-none transition-colors', isCreating && 'bg-muted/50')}
+      className={cn('hover:bg-muted cursor-pointer border-none transition-colors', isCreating && 'bg-muted')}
       onClick={handleStartCreate}
     >
       <TableCell colSpan={visibleColumns.length} className="h-10" style={{ paddingLeft: '64px' }}>

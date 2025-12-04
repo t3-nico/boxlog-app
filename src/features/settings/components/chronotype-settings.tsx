@@ -6,9 +6,9 @@ import { ExternalLink, Star } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
-import { useTranslations } from 'next-intl'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { useTranslations } from 'next-intl'
 
 import { SettingsCard } from './SettingsCard'
 
@@ -243,7 +243,7 @@ export function ChronotypeSettings() {
             </div>
 
             {/* ピーク時間のハイライト */}
-            <div className="flex items-center gap-2 rounded-lg bg-green-500/10 p-3">
+            <div className="flex items-center gap-2 rounded-lg bg-green-500/12 p-3">
               <Star className="h-4 w-4 text-green-600" />
               <div>
                 <span className="text-sm font-medium">{t('settings.chronotype.peakTime')}</span>

@@ -10,8 +10,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { Spinner } from '@/components/ui/spinner'
-import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslations } from 'next-intl'
 
 export default function MFAVerifyPage() {
   const router = useRouter()
@@ -130,7 +130,7 @@ export default function MFAVerifyPage() {
               <div className="p-6 md:p-8">
                 <FieldGroup>
                   <div className="flex flex-col items-center gap-2 text-center">
-                    <div className="bg-primary/10 text-primary mb-2 flex h-12 w-12 items-center justify-center rounded-full">
+                    <div className="bg-primary/12 text-primary mb-2 flex h-12 w-12 items-center justify-center rounded-full">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"

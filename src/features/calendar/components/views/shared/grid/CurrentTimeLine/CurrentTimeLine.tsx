@@ -95,13 +95,7 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
       }}
     >
       {/* 時刻線 */}
-      <div
-        className="bg-primary h-full w-full shadow-sm"
-        style={{
-          background: 'linear-gradient(90deg, rgba(239, 68, 68, 0.9) 0%, rgba(239, 68, 68, 0.7) 100%)',
-          boxShadow: '0 1px 3px rgba(239, 68, 68, 0.5)',
-        }}
-      />
+      <div className="bg-primary h-full w-full shadow-sm" />
 
       {/* ドット */}
       {showDot != null && (

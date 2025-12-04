@@ -76,7 +76,7 @@ export function StatusBarItem({ icon, label, onClick, tooltip, className, disabl
         isClickable && [
           'cursor-pointer',
           'hover:text-foreground hover:bg-secondary',
-          'active:bg-secondary/80',
+          'active:bg-secondary',
           'focus-visible:text-foreground focus-visible:bg-secondary focus-visible:outline-none',
         ],
         // 無効状態

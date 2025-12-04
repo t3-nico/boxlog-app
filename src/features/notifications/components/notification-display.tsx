@@ -27,7 +27,7 @@ export function NotificationDisplay({ notifications, onDismiss, onClearAll }: No
           variant="ghost"
           size="sm"
           onClick={onClearAll}
-          className="bg-background/80 ml-auto block border text-xs backdrop-blur-sm"
+          className="bg-background ml-auto block border text-xs backdrop-blur-sm"
         >
           すべてクリア
         </Button>
@@ -37,7 +37,7 @@ export function NotificationDisplay({ notifications, onDismiss, onClearAll }: No
       {notifications.map((notification) => (
         <div
           key={notification.id}
-          className="bg-background/95 border-border animate-in slide-in-from-right-5 rounded-xl border p-4 shadow-lg backdrop-blur-sm"
+          className="bg-background border-border animate-in slide-in-from-right-5 rounded-xl border p-4 shadow-lg backdrop-blur-sm"
         >
           <div className="flex items-start gap-3">
             <Bell className="text-primary mt-0.5 h-5 w-5 flex-shrink-0" />

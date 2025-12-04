@@ -1,5 +1,5 @@
 import { TagsPageClient } from '../tags-page-client'
-import { TagDetailPageClient } from './tag-detail-page-client'
+import { TagInspectorOpener } from './tag-inspector-opener'
 
 interface TagDetailPageProps {
   params: {
@@ -15,8 +15,13 @@ export default function TagDetailPage({ params }: TagDetailPageProps) {
     return <TagsPageClient initialGroupNumber={groupNumber} />
   }
 
-  // t-1 形式から数値を抽出
+  // t-1 形式から数値を抽出してタグ一覧 + Inspector表示
   const tagNumber = params.tagNumber.startsWith('t-') ? params.tagNumber.slice(2) : params.tagNumber
 
-  return <TagDetailPageClient tagNumber={tagNumber} />
+  return (
+    <>
+      <TagsPageClient />
+      <TagInspectorOpener tagNumber={tagNumber} />
+    </>
+  )
 }

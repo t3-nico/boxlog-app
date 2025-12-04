@@ -7,8 +7,8 @@
 import { Bell } from 'lucide-react'
 import { memo } from 'react'
 
-import { useTranslations } from 'next-intl'
 import { RecurringIndicatorFromFlag } from '@/features/plans/components/shared/RecurringIndicator'
+import { useTranslations } from 'next-intl'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { formatTimeRange } from '../../utils/dateHelpers'
@@ -19,6 +19,7 @@ interface PlanCardContentProps {
   showTime?: boolean
   timeFormat?: '12h' | '24h'
   previewTime?: { start: Date; end: Date } | null // ドラッグ中のプレビュー時間
+  hasCheckbox?: boolean // チェックボックスがある場合は左パディングを追加
 }
 
 // Helper function: Parse plan start date
@@ -43,6 +44,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   showTime = true,
   timeFormat = '24h',
   previewTime = null,
+  hasCheckbox = false,
 }) {
   const t = useTranslations()
 
@@ -66,7 +68,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
 
   // 通常表示：タイトル #番号 + 時間 + アイコン + タグの順番（優先度順）
   return (
-    <div className="relative flex h-full flex-col gap-0.5 overflow-hidden">
+    <div className={`relative flex h-full flex-col gap-0.5 overflow-hidden ${hasCheckbox ? 'pl-5' : ''}`}>
       {/* タイトル（最優先） */}
       <div className="flex flex-shrink-0 items-baseline gap-1 text-sm leading-tight font-medium">
         <span className={`${isCompact ? 'line-clamp-1' : 'line-clamp-2'} text-foreground`}>{plan.title}</span>

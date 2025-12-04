@@ -10,8 +10,8 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import type { useTranslations } from 'next-intl'
 import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { useTranslations } from 'next-intl'
 
 interface ColumnWidths {
   select: number
@@ -69,7 +69,7 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
   }
 
   return (
-    <TableRow ref={ref} className="bg-muted/30">
+    <TableRow ref={ref} className="bg-muted">
       <TableCell style={{ width: `${columnWidths.select}px` }}></TableCell>
       <TableCell className="text-muted-foreground font-mono text-sm" style={{ width: `${columnWidths.id}px` }}>
         -

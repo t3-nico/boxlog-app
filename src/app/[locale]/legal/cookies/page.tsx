@@ -1,6 +1,6 @@
 import type { Locale } from '@/i18n/routing'
-import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { CookieSettingsForm } from './cookie-settings-form'
 
 /**
@@ -64,7 +64,7 @@ export default async function CookieSettingsPage({ params }: PageProps) {
       </section>
 
       {/* 注意事項 */}
-      <div className="bg-muted/50 mt-8 rounded-xl p-6">
+      <div className="bg-muted mt-8 rounded-xl p-6">
         <p
           className="text-muted-foreground text-sm"
           dangerouslySetInnerHTML={{ __html: t('legal.cookies.page.browserWarning') }}

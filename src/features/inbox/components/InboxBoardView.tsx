@@ -32,7 +32,7 @@ export function InboxBoardView() {
   if (error) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="border-destructive bg-destructive/10 text-destructive rounded-xl border p-4">
+        <div className="border-destructive bg-destructive/12 text-destructive rounded-xl border p-4">
           <p className="font-medium">エラーが発生しました</p>
           <p className="mt-1 text-sm">{error.message}</p>
         </div>
@@ -48,7 +48,7 @@ export function InboxBoardView() {
       </div>
 
       {/* Kanbanボード: 残りのスペース */}
-      <div className="flex-1 overflow-hidden">
+      <div className="min-h-0 flex-1 overflow-hidden">
         {isLoading ? (
           <div className="flex h-full items-center justify-center">
             <div className="flex flex-col items-center gap-2">

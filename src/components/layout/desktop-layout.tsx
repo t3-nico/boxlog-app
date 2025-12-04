@@ -33,7 +33,7 @@ interface DesktopLayoutProps {
 
 // StatusBarアイテムのスケルトン（遅延ロード中の表示）
 function StatusBarItemSkeleton() {
-  return <div className="bg-muted/50 h-3 w-20 animate-pulse rounded" />
+  return <div className="bg-muted h-3 w-20 animate-pulse rounded" />
 }
 
 /**
@@ -89,7 +89,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
           {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
           <ResizablePanel className="overflow-hidden">
-            <div className="relative flex h-full flex-col">
+            <div className="relative flex h-full min-h-0 flex-col">
               <MainContentWrapper>{children}</MainContentWrapper>
             </div>
           </ResizablePanel>

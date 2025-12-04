@@ -23,11 +23,12 @@ import { useplanCacheStore } from '@/features/plans/stores/usePlanCacheStore'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { toLocalISOString } from '@/features/plans/utils/datetime'
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder'
+import { getEffectiveStatus } from '@/features/plans/utils/status'
 import { cn } from '@/lib/utils'
 import { useDraggable } from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Bell, Calendar as CalendarIcon, Plus, Tag, Trash2 } from 'lucide-react'
+import { Bell, Calendar as CalendarIcon, CheckCircle2, Circle, Plus, Tag, Trash2 } from 'lucide-react'
 
 import { useBoardFocusStore } from '../../stores/useBoardFocusStore'
 import { BoardActionMenuItems } from '../BoardActionMenuItems'
@@ -224,14 +225,41 @@ export function PlanCard({ item }: PlanCardProps) {
             {...listeners}
             onClick={handleClick}
             className={cn(
-              'bg-card hover:bg-muted/50 border-border group flex cursor-pointer flex-col gap-2 rounded-xl border p-3 shadow-sm transition-colors',
+              'bg-card hover:bg-muted border-border group flex cursor-pointer flex-col gap-2 rounded-xl border p-3 shadow-sm transition-colors',
               isActive && 'border-primary',
-              isFocused && 'bg-primary/10 hover:bg-primary/15',
+              isFocused && 'bg-primary/12 hover:bg-primary/16',
               isDragging && 'opacity-50'
             )}
           >
-            {/* 1. タイトル */}
+            {/* 1. タイトル + チェックボックス */}
             <div className="flex items-center gap-2 overflow-hidden">
+              {/* Done チェックボックス */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  const effectiveStatus = getEffectiveStatus(item)
+                  const newStatus = effectiveStatus === 'done' ? 'todo' : 'done'
+                  updatePlan.mutate({
+                    id: item.id,
+                    data: { status: newStatus },
+                  })
+                }}
+                className="flex-shrink-0 transition-colors hover:opacity-80"
+                aria-label={getEffectiveStatus(item) === 'done' ? '未完了に戻す' : '完了にする'}
+              >
+                {(() => {
+                  const status = getEffectiveStatus(item)
+                  if (status === 'done') {
+                    return <CheckCircle2 className="text-success h-4 w-4" />
+                  }
+                  if (status === 'doing') {
+                    return <Circle className="text-primary h-4 w-4" />
+                  }
+                  // todo
+                  return <Circle className="text-muted-foreground h-4 w-4" />
+                })()}
+              </button>
               <h3 className="text-foreground min-w-0 text-base leading-tight font-semibold hover:underline">
                 {item.title}
               </h3>
@@ -242,7 +270,7 @@ export function PlanCard({ item }: PlanCardProps) {
             <Popover open={dateTimeOpen} onOpenChange={setDateTimeOpen}>
               <PopoverTrigger asChild>
                 <div
-                  className="text-foreground hover:bg-primary/10 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
+                  className="text-foreground hover:bg-primary/8 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
                   onClick={(e) => {
                     // カードクリックイベントの伝播を防止
                     e.stopPropagation()
@@ -408,7 +436,7 @@ export function PlanCard({ item }: PlanCardProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="hover:bg-primary/10 text-muted-foreground h-5 w-5 shrink-0"
+                    className="hover:bg-primary/8 text-muted-foreground h-5 w-5 shrink-0"
                   >
                     <Plus className="h-3 w-3" />
                   </Button>
@@ -416,7 +444,7 @@ export function PlanCard({ item }: PlanCardProps) {
               ) : (
                 /* タグなしの場合は「タグを追加」 */
                 <div
-                  className="hover:bg-primary/10 group/tags flex w-fit cursor-pointer flex-wrap gap-1 rounded py-0.5 transition-colors"
+                  className="hover:bg-primary/8 group/tags flex w-fit cursor-pointer flex-wrap gap-1 rounded py-0.5 transition-colors"
                   onClick={(e) => {
                     // カードクリックイベントの伝播を防止
                     e.stopPropagation()

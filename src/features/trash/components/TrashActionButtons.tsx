@@ -52,7 +52,7 @@ export function TrashActionButtons({
         type="button"
         onClick={onEmptyTrash}
         disabled={stats.totalItems === 0 || loading}
-        className="disabled:bg-muted disabled:text-muted-foreground rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-amber-600/92"
+        className="disabled:bg-muted disabled:text-muted-foreground bg-warning text-warning-foreground hover:bg-warning/92 rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200"
       >
         <span className="mr-2">🧹</span>
         ゴミ箱を空にする
@@ -64,7 +64,7 @@ export function TrashActionButtons({
           type="button"
           onClick={onClearExpired}
           disabled={loading}
-          className="disabled:bg-muted disabled:text-muted-foreground bg-primary/10 text-primary hover:bg-primary/20 rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200"
+          className="disabled:bg-muted disabled:text-muted-foreground bg-primary/12 text-primary hover:bg-primary/16 rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200"
         >
           <span className="mr-2">⏰</span>
           期限切れ削除 ({expiredItems.length})

@@ -7,8 +7,8 @@
 
 import { Component, ErrorInfo, ReactNode } from 'react'
 
-import { useTranslations } from 'next-intl'
 import { handleReactError, SentryErrorHandler } from '@/lib/sentry'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   children: ReactNode
@@ -28,7 +28,7 @@ function DefaultErrorFallback({ onRetry, onReload }: { onRetry: () => void; onRe
   const t = useTranslations()
 
   return (
-    <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-6">
+    <div className="border-destructive bg-muted rounded-lg border p-6">
       <div className="text-center">
         <div className="text-destructive mb-4 text-6xl">⚠️</div>
         <h2 className="text-destructive mb-2 text-3xl font-bold tracking-tight">{t('error.boundary.title')}</h2>
@@ -46,7 +46,7 @@ function DefaultErrorFallback({ onRetry, onReload }: { onRetry: () => void; onRe
           </button>
           <button
             onClick={onReload}
-            className="bg-muted text-muted-foreground hover:bg-muted/80 rounded px-4 py-2 transition-colors"
+            className="bg-muted text-muted-foreground hover:bg-muted rounded px-4 py-2 transition-colors"
           >
             {t('error.boundary.reload')}
           </button>

@@ -7,10 +7,10 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useTranslations } from 'next-intl'
 import { getErrorMessage } from '@/lib/errors'
 import { createClient } from '@/lib/supabase/client'
 import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage'
+import { useTranslations } from 'next-intl'
 
 import { useAutoSaveSettings } from '../../hooks/useAutoSaveSettings'
 import { SettingField } from '../fields/SettingField'
@@ -162,7 +162,7 @@ export function ProfileSection() {
               ) : (
                 <label
                   htmlFor="avatar-upload"
-                  className="border-border bg-muted hover:bg-muted/80 flex h-20 w-20 cursor-pointer items-center justify-center rounded-full border-2 border-dashed transition-colors"
+                  className="border-border bg-muted hover:bg-muted flex h-20 w-20 cursor-pointer items-center justify-center rounded-full border-2 border-dashed transition-colors"
                 >
                   <span className="text-muted-foreground text-xs">+</span>
                 </label>

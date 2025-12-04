@@ -15,29 +15,17 @@ const STATUS_CONFIG: Record<
     className: string
   }
 > = {
-  backlog: {
-    label: '準備中',
-    className: 'bg-gray-100 text-gray-800 border-border dark:bg-gray-900/20 dark:text-gray-300',
+  todo: {
+    label: 'Todo',
+    className: 'bg-muted text-muted-foreground border-border',
   },
-  ready: {
-    label: '配置済み',
-    className: 'bg-blue-100 text-blue-800 border-border dark:bg-blue-900/20 dark:text-blue-300',
-  },
-  active: {
-    label: '作業中',
-    className: 'bg-yellow-100 text-yellow-800 border-border dark:bg-yellow-900/20 dark:text-yellow-300',
-  },
-  wait: {
-    label: '待ち',
-    className: 'bg-orange-100 text-orange-800 border-border dark:bg-orange-900/20 dark:text-orange-300',
+  doing: {
+    label: 'Doing',
+    className: 'bg-primary/10 text-primary border-primary/30',
   },
   done: {
-    label: '完了',
-    className: 'bg-green-100 text-green-800 border-border dark:bg-green-900/20 dark:text-green-300',
-  },
-  cancel: {
-    label: '中止',
-    className: 'bg-red-100 text-red-800 border-border dark:bg-red-900/20 dark:text-red-300',
+    label: 'Done',
+    className: 'bg-success/10 text-success border-success/30',
   },
 }
 
@@ -48,7 +36,8 @@ const SIZE_CLASSES = {
 }
 
 export function PlanStatusBadge({ status, size = 'sm' }: PlanStatusBadgeProps) {
-  const config = STATUS_CONFIG[status]
+  // フォールバック: 未知のステータスの場合はtodoとして扱う
+  const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.todo
 
   return (
     <Badge variant="outline" className={`${config.className} ${SIZE_CLASSES[size]} font-medium`}>
