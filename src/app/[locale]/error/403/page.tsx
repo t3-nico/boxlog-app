@@ -1,13 +1,13 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 export default function ForbiddenPage() {
   const router = useRouter()
-  const { t } = useI18n()
+  const t = useTranslations()
 
   return (
     <div className="mx-auto flex min-h-dvh flex-col items-center justify-center gap-8 p-8 md:gap-12 md:p-16">

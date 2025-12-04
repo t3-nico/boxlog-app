@@ -6,7 +6,7 @@ import { ExternalLink, Star } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 
@@ -137,7 +137,7 @@ function getPeakHours(zones: ProductivityZone[]): string {
  */
 export function ChronotypeSettings() {
   const settings = useCalendarSettingsStore()
-  const { t } = useI18n()
+  const t = useTranslations()
 
   // 選択可能なタイプ（customは除外）
   const selectableTypes: Exclude<ChronotypeType, 'custom'>[] = ['bear', 'lion', 'wolf', 'dolphin']

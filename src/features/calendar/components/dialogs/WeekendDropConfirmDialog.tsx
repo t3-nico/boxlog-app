@@ -15,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 interface WeekendDropConfirmDialogProps {
@@ -41,7 +41,7 @@ export const WeekendDropConfirmDialog = ({
   onCancel,
   onClose,
 }: WeekendDropConfirmDialogProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>

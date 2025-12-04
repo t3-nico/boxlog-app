@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { checkPasswordPwned } from '@/lib/auth/pwned-password'
 import { cn } from '@/lib/utils'
 
@@ -23,7 +23,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
   const params = useParams()
   const router = useRouter()
   const locale = (params?.locale as string) || 'ja'
-  const { t } = useI18n(locale as 'en' | 'ja')
+  const t = useTranslations()
   const signUp = useAuthStore((state) => state.signUp)
 
   const [email, setEmail] = useState('')

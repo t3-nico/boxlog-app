@@ -11,7 +11,7 @@ import { useEffect } from 'react'
 
 import * as Sentry from '@sentry/nextjs'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations, useLocale } from 'next-intl'
 
 interface GlobalErrorProps {
   error: Error & { digest?: string }
@@ -19,7 +19,7 @@ interface GlobalErrorProps {
 }
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
-  const { t, locale } = useI18n()
+  const t = useTranslations(); const locale = useLocale()
 
   useEffect(() => {
     // Sentryにエラーを送信

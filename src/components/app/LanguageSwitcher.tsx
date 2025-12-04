@@ -7,7 +7,7 @@ import { Check, ChevronDown, Globe } from 'lucide-react'
 
 import { routing, type Locale } from '@/i18n/routing'
 import { useRouter, usePathname } from '@/i18n/navigation'
-import { useCurrentLocale } from '@/features/i18n/lib/hooks'
+import { useLocale } from 'next-intl'
 import { getAccessibilityLabels } from '@/lib/accessibility'
 import { cn } from '@/lib/utils'
 
@@ -39,7 +39,7 @@ interface LanguageSwitcherProps {
 }
 
 export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwitcherProps) => {
-  const currentLocale = useCurrentLocale()
+  const currentLocale = useLocale()
   const pathname = usePathname()
   const router = useRouter()
 

@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations, useLocale } from 'next-intl'
 import { getCookieConsent, setCookieConsent as saveCookieConsent, type CookieConsent } from '@/lib/cookie-consent'
 
 import { SettingField } from './fields/SettingField'
@@ -26,7 +26,7 @@ const APP_VERSION = '0.4.0'
  * - 法的文書リンク集
  */
 export function AboutLegalSettings() {
-  const { t, locale } = useI18n()
+  const t = useTranslations(); const locale = useLocale()
   const [cookieConsent, setCookieConsent] = useState<CookieConsent | null>(null)
   const [isClient, setIsClient] = useState(false)
 

@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Bell, BellOff, Calendar, Check, Clock, Settings, X } from 'lucide-react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useCurrentLocale, useTranslation } from '@/features/i18n/lib/hooks'
+import { useLocale, useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 // import { formatDistanceToNow } from 'date-fns'
@@ -18,8 +18,8 @@ interface NotificationModalProps {
 
 export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
   const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all')
-  const { t } = useTranslation()
-  const locale = useCurrentLocale()
+  const t = useTranslations()
+  const locale = useLocale()
 
   // Mock data - 実際のデータは useNotifications から取得
   const mockNotifications = [

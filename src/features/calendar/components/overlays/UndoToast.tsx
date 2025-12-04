@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { RotateCcw, Undo2, X } from 'lucide-react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 interface UndoAction {
@@ -30,7 +30,7 @@ interface UndoToastProps {
 }
 
 export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: UndoToastProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [isVisible, setIsVisible] = useState(false)
   const [progress, setProgress] = useState(100)
 

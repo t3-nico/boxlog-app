@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { TranslationFunction } from '@/features/i18n/lib/hooks'
+import type { useTranslations } from 'next-intl'
 
 interface TagsPaginationProps {
   currentPage: number
@@ -15,7 +15,7 @@ interface TagsPaginationProps {
   endIndex: number
   onPageChange: (page: number) => void
   onPageSizeChange: (size: number) => void
-  t: TranslationFunction
+  t: ReturnType<typeof useTranslations>
 }
 
 export function TagsPagination({

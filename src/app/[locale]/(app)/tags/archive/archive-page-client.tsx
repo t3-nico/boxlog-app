@@ -22,7 +22,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
@@ -41,7 +41,7 @@ export function ArchivePageClient() {
   const { tags, setTags, setIsLoading } = useTagsPageContext()
   const router = useRouter()
   const pathname = usePathname()
-  const { t } = useI18n()
+  const t = useTranslations()
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [sortField, setSortField] = useState<SortField>('created_at')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')

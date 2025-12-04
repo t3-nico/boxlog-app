@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { Plus, X } from 'lucide-react'
 import { useKanbanStore } from '../stores/useKanbanStore'
 
@@ -21,7 +21,7 @@ import { useKanbanStore } from '../stores/useKanbanStore'
  */
 export function KanbanToolbar() {
   const { filter, setFilter, clearFilter, sort, setSort } = useKanbanStore()
-  const { t } = useI18n()
+  const t = useTranslations()
 
   const isFiltered = Object.keys(filter).length > 0
 

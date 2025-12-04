@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
 import { Tag } from '@/types/unified'
 
@@ -35,7 +35,7 @@ export const TagSelector = ({
   placeholder = 'Select tags...',
   enableCreate = true,
 }: TagSelectorProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [searchQuery, setSearchQuery] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const createTagMutation = useCreateTag()

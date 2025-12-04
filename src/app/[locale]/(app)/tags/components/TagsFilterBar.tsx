@@ -4,11 +4,11 @@ import { ChevronDown, Filter, Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import type { TranslationFunction } from '@/features/i18n/lib/hooks'
+import type { useTranslations } from 'next-intl'
 
 interface TagsFilterBarProps {
   onCreateTag: () => void
-  t: TranslationFunction
+  t: ReturnType<typeof useTranslations>
 }
 
 export function TagsFilterBar({ onCreateTag, t }: TagsFilterBarProps) {

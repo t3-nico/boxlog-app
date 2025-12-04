@@ -1,10 +1,10 @@
 'use client'
 
 import { Heading } from '@/components/app'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 const ReflectAllPage = () => {
-  const { t } = useI18n()
+  const t = useTranslations()
   return <Heading>{t('stats.reflect.all')}</Heading>
 }
 

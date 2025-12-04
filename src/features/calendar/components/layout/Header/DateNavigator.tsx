@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { buttonVariants } from '@/components/ui/button'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 export type NavigationDirection = 'prev' | 'next' | 'today'
@@ -37,7 +37,7 @@ export const DateNavigator = ({
   buttonClassName,
   arrowSize = 'md',
 }: DateNavigatorProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   return (
     <div className={cn('flex items-center gap-2', className)}>

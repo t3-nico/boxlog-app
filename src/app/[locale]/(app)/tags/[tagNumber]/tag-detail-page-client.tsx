@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
@@ -20,7 +20,7 @@ export function TagDetailPageClient({ tagNumber }: TagDetailPageClientProps) {
   const { data: tags = [], isLoading } = useTags(true)
   const router = useRouter()
   const { openInspector } = usePlanInspectorStore()
-  const { t } = useI18n()
+  const t = useTranslations()
 
   const tag = tags.find((t) => t.tag_number === Number(tagNumber))
 

@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { Plus, X } from 'lucide-react'
 
 // Tag interface
@@ -21,7 +21,7 @@ interface QuickTagCreateModalProps {
 export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCreateModalProps) => {
   const [tagName, setTagName] = useState('')
   const [selectedColor, setSelectedColor] = useState('#3b82f6')
-  const { t } = useI18n()
+  const t = useTranslations()
 
   // jsx-no-bind optimization: Event handlers
   const handleTagNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

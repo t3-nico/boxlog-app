@@ -4,7 +4,6 @@ import { useState } from 'react'
 
 import NextImage from 'next/image'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -12,13 +11,11 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 export function PasswordResetForm({ className, ...props }: React.ComponentProps<'div'>) {
-  const params = useParams()
-  const locale = (params?.locale as string) || 'ja'
-  const { t } = useI18n(locale as 'en' | 'ja')
+  const t = useTranslations()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

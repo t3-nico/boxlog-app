@@ -3,10 +3,10 @@
 import { AlertTriangle, ExternalLink, FileText, Lock, Mail, Shield } from 'lucide-react'
 import Link from 'next/link'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 export default function SecurityPage() {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   return (
     <div className="container mx-auto max-w-4xl p-4 md:p-8">

@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react'
 
 import { ChevronDown as ChevronDownIcon, Filter as FunnelIcon, Tag as TagIcon, X as XMarkIcon } from 'lucide-react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import type { TagWithChildren } from '@/types/tags'
 
@@ -67,7 +67,7 @@ export const TagFilter = ({
 }: TagFilterProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const { data: allTags = [], isLoading } = useTags(true)
-  const { t } = useI18n()
+  const t = useTranslations()
   // Use a simple local state for tag filtering for now
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const toggleTag = useCallback((tagId: string) => {

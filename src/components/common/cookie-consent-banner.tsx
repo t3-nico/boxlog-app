@@ -3,7 +3,7 @@
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations, useLocale } from 'next-intl'
 import { acceptAllCookies, acceptNecessaryOnly, needsCookieConsent } from '@/lib/cookie-consent'
 import Link from 'next/link'
 
@@ -34,7 +34,7 @@ const getInitialShowBanner = (): boolean => {
 }
 
 export function CookieConsentBanner() {
-  const { t, locale } = useI18n()
+  const t = useTranslations(); const locale = useLocale()
   // 遅延初期化でクッキー同意状態を確認
   const [showBanner, setShowBanner] = useState(getInitialShowBanner)
 

@@ -4,7 +4,7 @@ import { useCallback } from 'react'
 
 import { Calendar, Plus, Settings, User } from 'lucide-react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 export type MobileNavItem = {
@@ -37,7 +37,7 @@ export const MobileNavigation = ({
   onAddClick,
   className,
 }: MobileNavigationProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   const defaultItems: MobileNavItem[] = [
     {

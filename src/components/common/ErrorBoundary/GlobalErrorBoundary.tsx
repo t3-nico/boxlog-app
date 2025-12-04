@@ -11,7 +11,7 @@ import { AlertTriangle, Home, RefreshCw, Shield, Zap } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { createErrorToast, getUserFriendlyMessage, isAutoRecoverable } from '@/config/error-patterns'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { analyzeError, type ErrorAnalysis } from '@/lib/error-analysis'
 import { cn } from '@/lib/utils'
 
@@ -48,7 +48,7 @@ function ErrorDisplay({
   onGoHome,
   onToggleAutoRetry,
 }: ErrorDisplayProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const canRetry = retryCount < maxRetries
 
   return (

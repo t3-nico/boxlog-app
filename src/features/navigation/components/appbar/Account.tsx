@@ -28,7 +28,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 
 import { useUserAuth } from './hooks/useUserAuth'
@@ -48,7 +48,7 @@ interface AccountProps {
  * ユーザーアバターとドロップダウンメニュー（アカウント設定、ヘルプ、ログアウト）を表示
  */
 export function Account({ userData, locale }: AccountProps) {
-  const { t } = useI18n(locale)
+  const t = useTranslations()
   const openSettings = useSettingsDialogStore((state) => state.openSettings)
   const { handleLogout, isLoggingOut } = useUserAuth()
 

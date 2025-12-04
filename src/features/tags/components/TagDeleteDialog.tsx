@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import type { TagUsage, TagWithChildren } from '@/types/tags'
 import { AlertTriangle } from 'lucide-react'
 
@@ -24,7 +24,7 @@ interface TagDeleteDialogProps {
 }
 
 export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [confirmText, setConfirmText] = useState('')
   const [usage, setUsage] = useState<TagUsage | null>(null)
   const [isLoading, setIsLoading] = useState(false)

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
@@ -31,7 +31,7 @@ interface TagsPageClientProps {
 }
 
 export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = false }: TagsPageClientProps = {}) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
   const { data: groups = [] as TagGroup[] } = useTagGroups()
   const { tags, setTags, setIsLoading, isCreatingTag, setIsCreatingTag } = useTagsPageContext()

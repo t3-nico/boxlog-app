@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
 import { SettingField } from './fields/SettingField'
@@ -20,7 +20,7 @@ interface PreferencesSettingsData {
 }
 
 export function PreferencesSettings() {
-  const { t } = useI18n()
+  const t = useTranslations()
   // 設定の自動保存
   const preferences = useAutoSaveSettings<PreferencesSettingsData>({
     initialValues: {

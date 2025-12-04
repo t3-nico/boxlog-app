@@ -12,7 +12,7 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import type { TagWithChildren } from '@/types/tags'
 
 interface TagTreeViewProps {
@@ -47,7 +47,7 @@ const TagTreeNode = ({
   onDeleteTag,
   onRenameTag,
 }: TagTreeNodeProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [showMenu, setShowMenu] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState(tag.name)
@@ -261,7 +261,7 @@ export const TagTreeView = ({
   onToggleExpanded = () => {},
   isLoading = false,
 }: TagTreeViewProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [localExpandedNodes, setLocalExpandedNodes] = useState<Set<string>>(expandedNodes)
 
   const handleToggleExpanded = useCallback(

@@ -7,7 +7,7 @@
 
 import { Component, ErrorInfo, ReactNode } from 'react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { handleReactError, SentryErrorHandler } from '@/lib/sentry'
 
 interface Props {
@@ -25,7 +25,7 @@ interface State {
  * デフォルトのエラーフォールバックUI
  */
 function DefaultErrorFallback({ onRetry, onReload }: { onRetry: () => void; onReload: () => void }) {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   return (
     <div className="border-destructive/30 bg-destructive/10 rounded-lg border p-6">
@@ -60,7 +60,7 @@ function DefaultErrorFallback({ onRetry, onReload }: { onRetry: () => void; onRe
  * 開発環境用フォールバックUI
  */
 function DevErrorFallback({ componentName }: { componentName?: string | undefined }) {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   return (
     <div className="border-border bg-muted rounded-lg border p-6">
@@ -77,7 +77,7 @@ function DevErrorFallback({ componentName }: { componentName?: string | undefine
  * 機能エラー用フォールバックUI
  */
 function FeatureErrorFallback({ featureName }: { featureName: string }) {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   return (
     <div className="border-border bg-muted rounded border p-4">

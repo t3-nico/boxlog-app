@@ -14,7 +14,7 @@ import {
   UserCircle,
 } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -30,7 +30,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations, useLocale } from 'next-intl'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -45,13 +45,10 @@ export function NavUser({
   }
 }) {
   const router = useRouter()
-  const pathname = usePathname()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const openSettings = useSettingsDialogStore((state) => state.openSettings)
-
-  // URLから locale を抽出
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t, locale } = useI18n(localeFromPath)
+  const t = useTranslations()
+  const locale = useLocale()
 
   const handleLogout = async () => {
     setIsLoggingOut(true)

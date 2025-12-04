@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { Tag } from '@/types/tags'
 import { tagIconCategories, tagIconMapping, TagIconName } from '../constants/icons'
 
@@ -17,7 +17,7 @@ interface TagEditDialogProps {
 }
 
 export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [name, setName] = useState('')
   const [color, setColor] = useState('#6b7280')
   const [icon, setIcon] = useState<TagIconName>('TagIcon')

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 // TODO(#621): Inspector削除後の一時的な型エラー回避
@@ -30,7 +30,7 @@ interface BaseLayoutContentProps {
  * Client Componentとして分離
  */
 export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   // const { openCreateInspector } = useCreateEventInspector()
   const isMobile = useMediaQuery('(max-width: 768px)')
   const pathname = usePathname() || '/'

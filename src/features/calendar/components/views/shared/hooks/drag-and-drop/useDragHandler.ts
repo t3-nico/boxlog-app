@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 
 import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import type { DragDataRef, DragState } from './types'
 import {
@@ -41,7 +41,7 @@ export function useDragHandler({
   dragDataRef,
   setDragState,
 }: UseDragHandlerProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const calendarToast = useCalendarToast()
 
   // ドラッグ開始

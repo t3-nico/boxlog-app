@@ -8,7 +8,7 @@ import { Plus, Search } from 'lucide-react'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags } from '@/features/tags/hooks/use-tags'
 
@@ -30,7 +30,7 @@ const TagTreeView = dynamic(
 )
 
 export function TagsSettings() {
-  const { t } = useI18n()
+  const t = useTranslations()
   const [isMounted, setIsMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 

@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { getErrorMessage } from '@/lib/errors'
 import { createClient } from '@/lib/supabase/client'
 import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage'
@@ -29,7 +29,7 @@ interface ProfileSettings {
  */
 export function ProfileSection() {
   const user = useAuthStore((state) => state.user)
-  const { t } = useI18n()
+  const t = useTranslations()
   const supabase = createClient()
 
   const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null)

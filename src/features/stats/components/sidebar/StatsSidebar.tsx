@@ -24,7 +24,7 @@ import {
 } from 'lucide-react'
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { cn } from '@/lib/utils'
 
@@ -48,7 +48,7 @@ interface NavSection {
 export function StatsSidebar() {
   const pathname = usePathname()
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t } = useI18n(localeFromPath)
+  const t = useTranslations()
 
   const baseUrl = `/${localeFromPath}/stats`
 

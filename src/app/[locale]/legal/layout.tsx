@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 interface LegalLayoutProps {
   children: ReactNode
@@ -16,7 +16,7 @@ interface LegalLayoutProps {
  * - i18n対応（日本語/英語）
  */
 export default function LegalLayout({ children }: LegalLayoutProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   return (
     <div className="bg-background min-h-screen">

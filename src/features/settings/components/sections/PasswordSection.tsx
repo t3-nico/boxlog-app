@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { addPasswordToHistory, isPasswordReused } from '@/lib/auth/password-history'
 import { checkPasswordPwned } from '@/lib/auth/pwned-password'
 import { createClient } from '@/lib/supabase/client'
@@ -25,7 +25,7 @@ import { SettingsCard } from '../SettingsCard'
  */
 export function PasswordSection() {
   const user = useAuthStore((state) => state.user)
-  const { t } = useI18n()
+  const t = useTranslations()
   const supabase = createClient()
 
   const [currentPassword, setCurrentPassword] = useState('')

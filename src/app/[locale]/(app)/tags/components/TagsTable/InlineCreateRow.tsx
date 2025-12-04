@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import type { TranslationFunction } from '@/features/i18n/lib/hooks'
+import type { useTranslations } from 'next-intl'
 import type { TagGroup, TagWithChildren } from '@/features/tags/types'
 
 interface ColumnWidths {
@@ -36,7 +36,7 @@ interface InlineCreateRowProps {
   onColorChange: (color: string) => void
   onSave: () => void
   onCancel: () => void
-  t: TranslationFunction
+  t: ReturnType<typeof useTranslations>
 }
 
 export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowProps>(function InlineCreateRow(

@@ -8,7 +8,7 @@ import { useCallback } from 'react'
 
 import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import { HOUR_HEIGHT } from '../../constants/grid.constants'
 
@@ -19,7 +19,7 @@ interface UseEventUpdateProps {
 }
 
 export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdateProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   const calendarToast = useCalendarToast()
 
   const calculateEventDuration = useCallback(

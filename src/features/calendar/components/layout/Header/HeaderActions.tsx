@@ -2,7 +2,7 @@
 
 import { Download, MoreHorizontal, Settings, Upload } from 'lucide-react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 interface HeaderActionsProps {
@@ -26,7 +26,7 @@ export const HeaderActions = ({
   className,
   compact = false,
 }: HeaderActionsProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const buttonClass = cn(
     'rounded-md p-2 transition-colors',
     'hover:bg-foreground/8 text-muted-foreground',

@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { useTheme } from '@/contexts/theme-context'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations, useLocale } from 'next-intl'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import type { SettingsCategory } from '@/features/settings/types'
 import { createClient } from '@/lib/supabase/client'
@@ -35,10 +35,8 @@ import { toast } from 'sonner'
 export function MobileBottomNavigation() {
   const pathname = usePathname()
   const [isMoreOpen, setIsMoreOpen] = useState(false)
-
-  // URLから locale を抽出
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t, locale } = useI18n(localeFromPath)
+  const t = useTranslations()
+  const locale = useLocale() as 'ja' | 'en'
 
   // ナビゲーション項目
   const navItems = [
@@ -145,7 +143,7 @@ function MoreSheet({
   locale: 'ja' | 'en'
 }) {
   const router = useRouter()
-  const { t } = useI18n(locale)
+  const t = useTranslations()
   const { resolvedTheme, setTheme } = useTheme()
   const openSettings = useSettingsDialogStore((state) => state.openSettings)
   const user = useAuthStore((state) => state.user)

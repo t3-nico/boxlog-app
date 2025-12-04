@@ -1,6 +1,6 @@
 import { isThisMonth, isThisWeek, isToday, isYesterday } from 'date-fns'
 
-import { useTranslation } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import type { NotificationType } from '@/schemas/notifications'
 
 // 日付グループのキー
@@ -97,7 +97,7 @@ export const getNotificationTypeColor = (type: string) => {
 }
 
 export const useNotificationTypeLabel = () => {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (type: string) => {
     switch (type) {

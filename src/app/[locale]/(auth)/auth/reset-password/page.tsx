@@ -13,14 +13,14 @@ import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 export default function ResetPasswordPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const params = useParams()
   const locale = (params?.locale as string) || 'ja'
-  const { t } = useI18n(locale as 'en' | 'ja')
+  const t = useTranslations()
   const updatePassword = useAuthStore((state) => state.updatePassword)
 
   const [password, setPassword] = useState('')

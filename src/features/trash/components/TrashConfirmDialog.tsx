@@ -1,6 +1,6 @@
 'use client'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import type { ConfirmDialog } from '../hooks/useTrashActions'
 
@@ -10,7 +10,7 @@ interface TrashConfirmDialogProps {
 }
 
 export function TrashConfirmDialog({ dialog, onClose }: TrashConfirmDialogProps) {
-  const { t } = useI18n()
+  const t = useTranslations()
   if (!dialog) return null
 
   return (

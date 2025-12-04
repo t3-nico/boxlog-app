@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import { NavSecondary } from './nav-secondary'
 import { NavUser } from './nav-user'
@@ -25,10 +25,7 @@ import { SidebarHeader } from './SidebarHeader'
 export function AppSidebar() {
   const user = useAuthStore((state) => state.user)
   const pathname = usePathname()
-
-  // URLから locale を抽出 (例: /ja/calendar -> ja)
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t } = useI18n(localeFromPath)
+  const t = useTranslations()
 
   // 現在のページに応じたタイトルを取得
   const pageTitle = useMemo(() => {

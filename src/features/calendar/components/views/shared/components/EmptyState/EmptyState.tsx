@@ -6,7 +6,7 @@
 
 import { memo } from 'react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import type { EmptyStateProps } from '../../types/view.types'
 
@@ -18,7 +18,7 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
   hint,
   className = '',
 }) {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   // デフォルト値を翻訳から取得
   const displayTitle = title ?? t('calendar.emptyState.defaultTitle')

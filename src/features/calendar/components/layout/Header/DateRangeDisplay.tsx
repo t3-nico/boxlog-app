@@ -2,7 +2,7 @@
 
 import { format, getWeek } from 'date-fns'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 interface DateRangeDisplayProps {
@@ -126,7 +126,7 @@ export const DateRangeDisplay = ({
  * 週番号バッジ
  */
 const WeekBadge = ({ weekNumber, className }: { weekNumber: number; className?: string }) => {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   return (
     <span

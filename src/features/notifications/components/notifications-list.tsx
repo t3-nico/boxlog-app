@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { BellRing } from 'lucide-react'
 
-import { useTranslation } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 
 import { useNotificationTypeLabel } from '../utils/notification-helpers'
 
@@ -49,7 +49,7 @@ interface NotificationsListProps {
 }
 
 export function NotificationsList({ notifications }: NotificationsListProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const getTypeLabel = useNotificationTypeLabel()
   const defaultNotifications = getDefaultNotifications(t)
   const [notificationList, setNotificationList] = useState(notifications || defaultNotifications)

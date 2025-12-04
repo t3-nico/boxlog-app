@@ -7,7 +7,7 @@ import { ja } from 'date-fns/locale'
 import { Tag } from 'lucide-react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useLocale } from 'next-intl'
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
 import { usePlanTags } from '@/features/plans/hooks/usePlanTags'
 import { cn } from '@/lib/utils'
@@ -24,7 +24,7 @@ interface AgendaListItemProps {
  * レイアウト: 日付 | 時間 | タイトル# | タグ
  */
 export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemProps) {
-  const { locale } = useI18n()
+  const locale = useLocale()
   const dateLocale = locale === 'ja' ? ja : undefined
   const { addPlanTag, removePlanTag } = usePlanTags()
 

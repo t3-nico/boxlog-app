@@ -9,7 +9,7 @@ import React, { useCallback } from 'react'
 
 import { Loader2, RefreshCw } from 'lucide-react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 import { LoadingButtonProps, LoadingCardProps, LoadingOverlayProps, LoadingSpinnerProps } from './types'
@@ -77,7 +77,7 @@ export const LoadingOverlay = ({
   className = '',
   spinnerSize = 'md',
 }: LoadingOverlayProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const displayMessage = message ?? t('error.loading.default')
 
   return (
@@ -100,7 +100,7 @@ export const LoadingOverlay = ({
 // === ローディングカード ===
 
 export const LoadingCard = ({ title, message, className = '' }: LoadingCardProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const displayTitle = title ?? t('error.loading.title')
   const displayMessage = message ?? t('error.loading.loadingData')
 
@@ -246,7 +246,7 @@ export const DataLoading = ({
   emptyComponent,
   className = '',
 }: DataLoadingProps) => {
-  const { t } = useI18n()
+  const t = useTranslations()
   const handleReload = useCallback(() => {
     window.location.reload()
   }, [])
@@ -288,7 +288,7 @@ export const DataLoading = ({
 
 // ページローディング
 function PageLoading() {
-  const { t } = useI18n()
+  const t = useTranslations()
   return (
     <div className="flex min-h-screen items-center justify-center">
       <LoadingCard title={t('error.loading.loadingPage')} message={t('error.loading.pleaseWait')} />

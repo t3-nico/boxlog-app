@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import type { NotificationType } from '@/schemas/notifications'
 import { Loader2, Settings, Trash2 } from 'lucide-react'
@@ -44,7 +44,7 @@ export function NotificationDialog() {
   const pathname = usePathname()
   const router = useRouter()
   const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
-  const { t } = useI18n(localeFromPath)
+  const t = useTranslations()
 
   const { isOpen, close } = useNotificationDialogStore()
   const { openSettings } = useSettingsDialogStore()

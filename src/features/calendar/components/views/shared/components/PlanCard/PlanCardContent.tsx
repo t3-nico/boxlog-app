@@ -7,7 +7,7 @@
 import { Bell } from 'lucide-react'
 import { memo } from 'react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTranslations } from 'next-intl'
 import { RecurringIndicatorFromFlag } from '@/features/plans/components/shared/RecurringIndicator'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
@@ -44,7 +44,7 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   timeFormat = '24h',
   previewTime = null,
 }) {
-  const { t } = useI18n()
+  const t = useTranslations()
 
   // プランの開始・終了時刻をDateオブジェクトに変換
   const planStart = parseplanStartDate(plan)
