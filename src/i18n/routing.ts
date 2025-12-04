@@ -7,8 +7,9 @@ export const routing = defineRouting({
   // デフォルト言語
   defaultLocale: 'en',
 
-  // URLパス戦略: 常にプレフィックス付き（例: /en/about, /ja/about）
-  localePrefix: 'always',
+  // URLパス戦略: デフォルト言語(en)はプレフィックスなし
+  // 例: / → 英語, /ja → 日本語
+  localePrefix: 'as-needed',
 })
 
 export type Locale = (typeof routing.locales)[number]

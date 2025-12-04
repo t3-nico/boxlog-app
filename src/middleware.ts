@@ -26,8 +26,11 @@ const protectedPaths = [
 const authPaths = ['/login', '/signup', '/auth']
 
 // 言語プレフィックスを除いたパスを取得
+// as-needed設定: デフォルト言語(en)はプレフィックスなし
 function getPathWithoutLocale(pathname: string): string {
+  // 非デフォルトロケール(ja)のみプレフィックスあり
   for (const locale of routing.locales) {
+    if (locale === routing.defaultLocale) continue // デフォルトはスキップ
     if (pathname.startsWith(`/${locale}/`)) {
       return pathname.slice(locale.length + 1)
     }
@@ -35,17 +38,31 @@ function getPathWithoutLocale(pathname: string): string {
       return '/'
     }
   }
+  // デフォルト言語またはプレフィックスなしの場合はそのまま返す
   return pathname
 }
 
 // 現在の言語を取得
+// as-needed設定: プレフィックスなし = デフォルト言語(en)
 function getCurrentLocale(pathname: string): string {
   for (const locale of routing.locales) {
+    if (locale === routing.defaultLocale) continue // デフォルトはスキップ
     if (pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`) {
       return locale
     }
   }
   return routing.defaultLocale
+}
+
+// ロケールプレフィックス付きパスを生成
+// as-needed設定: デフォルト言語(en)はプレフィックスなし
+function getLocalizedPath(path: string, locale: string): string {
+  if (locale === routing.defaultLocale) {
+    // デフォルト言語はプレフィックスなし
+    return path
+  }
+  // 非デフォルト言語はプレフィックス付き
+  return `/${locale}${path}`
 }
 
 export async function middleware(request: NextRequest) {
@@ -115,7 +132,7 @@ export async function middleware(request: NextRequest) {
 
     // 未認証でprotectedPathにアクセスした場合
     if (!user && isProtectedPath) {
-      const loginUrl = new URL(`/${currentLocale}/auth/login`, request.url)
+      const loginUrl = new URL(getLocalizedPath('/auth/login', currentLocale), request.url)
       loginUrl.searchParams.set('redirect', pathWithoutLocale)
       return NextResponse.redirect(loginUrl)
     }
@@ -125,7 +142,7 @@ export async function middleware(request: NextRequest) {
     const isMFAVerifyPath = pathWithoutLocale === '/auth/mfa-verify'
 
     if (user && isAuthPath && !isMFAVerifyPath) {
-      return NextResponse.redirect(new URL(`/${currentLocale}/calendar`, request.url))
+      return NextResponse.redirect(new URL(getLocalizedPath('/calendar', currentLocale), request.url))
     }
 
     // next-intlのヘッダーをコピー
@@ -138,7 +155,7 @@ export async function middleware(request: NextRequest) {
     console.error('Middleware error:', error)
 
     const currentLocale = getCurrentLocale(pathname)
-    return NextResponse.redirect(new URL(`/${currentLocale}/auth/login`, request.url))
+    return NextResponse.redirect(new URL(getLocalizedPath('/auth/login', currentLocale), request.url))
   }
 }
 
