@@ -4,8 +4,8 @@ import { useCallback, useMemo, useState } from 'react'
 
 import { addMinutes, isWithinInterval } from 'date-fns'
 
-import { useTranslations } from 'next-intl'
 import { Task } from '@/types/unified'
+import { useTranslations } from 'next-intl'
 
 import type { ViewDateRange } from '../types/calendar.types'
 

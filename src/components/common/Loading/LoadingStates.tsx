@@ -9,8 +9,8 @@ import React, { useCallback } from 'react'
 
 import { Loader2, RefreshCw } from 'lucide-react'
 
-import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 import { LoadingButtonProps, LoadingCardProps, LoadingOverlayProps, LoadingSpinnerProps } from './types'
 

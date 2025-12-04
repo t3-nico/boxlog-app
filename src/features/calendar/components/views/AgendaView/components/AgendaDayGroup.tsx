@@ -3,8 +3,8 @@
 import { isToday as checkIsToday, format, isTomorrow } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
-import { useLocale } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
 
 import type { AgendaDayGroupProps } from '../AgendaView.types'
 

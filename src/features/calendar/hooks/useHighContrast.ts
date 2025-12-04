@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
-
 interface HighContrastColors {
   background: string
   foreground: string

@@ -3,8 +3,8 @@
 import { Menu } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { useTranslations } from 'next-intl'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
+import { useTranslations } from 'next-intl'
 
 /**
  * モバイル用ハンバーガーメニューボタン

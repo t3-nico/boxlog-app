@@ -8,9 +8,9 @@ import { toast } from 'sonner'
 
 import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useTranslations } from 'next-intl'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
+import { useTranslations } from 'next-intl'
 
 import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
 import type { Task, ViewDateRange } from '../../../types/calendar.types'

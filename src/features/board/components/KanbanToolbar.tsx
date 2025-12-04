@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useTranslations } from 'next-intl'
 import { Plus, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useKanbanStore } from '../stores/useKanbanStore'
 
 /**

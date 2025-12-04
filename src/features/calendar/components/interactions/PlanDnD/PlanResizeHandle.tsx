@@ -3,9 +3,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { HOUR_HEIGHT } from '@/features/calendar/constants/calendar-constants'
-import { useTranslations } from 'next-intl'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface EventResizeHandleProps {
   type: 'start' | 'end'

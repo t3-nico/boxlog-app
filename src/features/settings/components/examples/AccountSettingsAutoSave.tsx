@@ -3,9 +3,9 @@
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { useTranslations } from 'next-intl'
 import { SettingField, SettingsCard, SettingsLayout } from '@/features/settings/components'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+import { useTranslations } from 'next-intl'
 
 interface ProfileSettings {
   displayName: string

@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
-import { useTranslations } from 'next-intl'
 import {
   acceptAllCookies,
   acceptNecessaryOnly,
@@ -13,6 +12,7 @@ import {
   setCookieConsent,
   type CookieConsent,
 } from '@/lib/cookie-consent'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 // SSR対応の遅延初期化

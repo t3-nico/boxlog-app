@@ -4,9 +4,9 @@ import { format } from 'date-fns'
 import { Bell } from 'lucide-react'
 
 import { calendarColors } from '@/features/calendar/theme'
-import { useLocale } from 'next-intl'
 import { RecurringIndicatorFromFlag } from '@/features/plans/components/shared/RecurringIndicator'
 import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
 
 import type { AgendaItemProps } from '../AgendaView.types'
 

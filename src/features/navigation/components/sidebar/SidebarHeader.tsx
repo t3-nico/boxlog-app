@@ -3,9 +3,9 @@
 import { PanelLeftClose } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { useTranslations } from 'next-intl'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface SidebarHeaderProps {
   title?: string

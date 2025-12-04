@@ -2,8 +2,8 @@
 
 import { Download, MoreHorizontal, Settings, Upload } from 'lucide-react'
 
-import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface HeaderActionsProps {
   onSettings?: (() => void) | undefined

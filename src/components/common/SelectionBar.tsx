@@ -4,8 +4,8 @@ import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface SelectionBarProps {
   selectedCount: number

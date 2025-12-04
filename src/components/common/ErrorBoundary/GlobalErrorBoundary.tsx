@@ -11,9 +11,9 @@ import { AlertTriangle, Home, RefreshCw, Shield, Zap } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { createErrorToast, getUserFriendlyMessage, isAutoRecoverable } from '@/config/error-patterns'
-import { useTranslations } from 'next-intl'
 import { analyzeError, type ErrorAnalysis } from '@/lib/error-analysis'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 import { GlobalErrorBoundaryProps, GlobalErrorBoundaryState } from './types'
 

@@ -4,10 +4,10 @@ import { type LucideIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import * as React from 'react'
 
-import { useTranslations } from 'next-intl'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { cn } from '@/lib/utils'
 import type { TranslatedString } from '@/types/i18n-branded'
+import { useTranslations } from 'next-intl'
 
 export function NavSecondary({
   items,

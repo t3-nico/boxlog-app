@@ -2,8 +2,8 @@
 
 import { useCallback, useState } from 'react'
 
-import { useTranslations } from 'next-intl'
 import { Plus, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 // Tag interface
 interface Tag {

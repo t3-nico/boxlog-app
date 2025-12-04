@@ -3,8 +3,8 @@
 import { Repeat } from 'lucide-react'
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { useLocale } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
 
 import { configToReadable, ruleToConfig } from '../../utils/rrule'
 

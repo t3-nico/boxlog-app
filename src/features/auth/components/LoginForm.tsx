@@ -15,10 +15,10 @@ import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { checkLockoutStatus, recordLoginAttempt, resetLoginAttempts } from '@/features/auth/lib/account-lockout'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useTranslations } from 'next-intl'
 import { useRecaptchaV2, useRecaptchaV3 } from '@/lib/recaptcha'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const params = useParams()

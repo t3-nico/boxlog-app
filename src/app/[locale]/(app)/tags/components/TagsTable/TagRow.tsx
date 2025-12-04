@@ -17,9 +17,9 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import type { useTranslations } from 'next-intl'
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
 import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { useTranslations } from 'next-intl'
 
 interface ColumnWidths {
   select: number

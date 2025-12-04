@@ -4,8 +4,8 @@ import { useCallback } from 'react'
 
 import { Calendar, Plus, Settings, User } from 'lucide-react'
 
-import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 export type MobileNavItem = {
   id: string

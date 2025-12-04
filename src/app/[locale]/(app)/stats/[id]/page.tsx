@@ -11,8 +11,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import type { Locale } from '@/i18n/routing'
-import { getTranslations } from 'next-intl/server'
 import { getReview } from '@/lib/data'
+import { getTranslations } from 'next-intl/server'
 
 import { RefundReview } from './refund'
 

@@ -7,8 +7,8 @@ import type { DateRange } from 'react-day-picker'
 
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { useLocale } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
 
 export interface MiniCalendarProps {
   selectedDate?: Date | undefined

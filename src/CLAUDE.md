@@ -199,6 +199,7 @@ export function NewFeature() {
 #### 4.3 翻訳ファイルの追加
 
 **命名規則**:
+
 - ファイル名 = ドメイン名（単数形）: `newPage.json`
 - キー構造: `domain.section.key`（3階層基本）
 
@@ -227,10 +228,11 @@ export function NewFeature() {
 ```
 
 **ネームスペース登録**（`src/i18n/request.ts`）:
+
 ```typescript
 const NAMESPACES = [
   // ... 既存
-  'newPage',  // 追加
+  'newPage', // 追加
 ] as const
 ```
 

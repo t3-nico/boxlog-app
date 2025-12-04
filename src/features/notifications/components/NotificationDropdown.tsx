@@ -15,9 +15,9 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { useTranslations } from 'next-intl'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import type { NotificationType } from '@/schemas/notifications'
+import { useTranslations } from 'next-intl'
 
 import { useNotificationMutations, useNotificationsList, useUnreadCount } from '../hooks/useNotificationsData'
 import { groupNotificationsByDate } from '../utils/notification-helpers'

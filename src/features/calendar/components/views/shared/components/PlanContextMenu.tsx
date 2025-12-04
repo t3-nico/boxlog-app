@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Calendar, Copy, Edit2, ExternalLink, Link, Tag, Trash2 } from 'lucide-react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface PlanContextMenuProps {
   plan: CalendarPlan

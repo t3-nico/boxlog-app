@@ -5,8 +5,8 @@ import { useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { useTranslations } from 'next-intl'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
+import { useTranslations } from 'next-intl'
 
 import { AboutLegalSettings } from '../about-legal-settings'
 import { AccountSettings } from '../account-settings'

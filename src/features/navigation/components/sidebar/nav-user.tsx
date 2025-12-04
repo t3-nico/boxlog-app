@@ -30,9 +30,9 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useTranslations, useLocale } from 'next-intl'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { createClient } from '@/lib/supabase/client'
+import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 export function NavUser({

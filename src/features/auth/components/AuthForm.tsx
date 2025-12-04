@@ -10,15 +10,16 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { useTranslations, useLocale } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useLocale, useTranslations } from 'next-intl'
 
 interface AuthFormProps {
   mode: 'login' | 'signup'
 }
 
 export const AuthForm = ({ mode }: AuthFormProps) => {
-  const t = useTranslations(); const locale = useLocale()
+  const t = useTranslations()
+  const locale = useLocale()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

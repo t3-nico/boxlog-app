@@ -13,9 +13,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { useTranslations } from 'next-intl'
 import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
 import { Tag } from '@/types/unified'
+import { useTranslations } from 'next-intl'
 
 import { QuickTagCreateModal } from './quick-tag-create-modal'
 import { TagBadge } from './tag-badge'

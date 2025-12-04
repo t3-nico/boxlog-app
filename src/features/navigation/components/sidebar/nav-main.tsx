@@ -4,9 +4,9 @@ import { type LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import type { TranslatedString } from '@/types/i18n-branded'
+import { useTranslations } from 'next-intl'
 
 export function NavMain({
   items,

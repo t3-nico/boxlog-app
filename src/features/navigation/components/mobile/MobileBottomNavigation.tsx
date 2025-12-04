@@ -11,11 +11,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { useTheme } from '@/contexts/theme-context'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useTranslations, useLocale } from 'next-intl'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import type { SettingsCategory } from '@/features/settings/types'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
+import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 /**

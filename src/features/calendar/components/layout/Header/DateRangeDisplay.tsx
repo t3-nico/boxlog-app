@@ -2,8 +2,8 @@
 
 import { format, getWeek } from 'date-fns'
 
-import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface DateRangeDisplayProps {
   date: Date

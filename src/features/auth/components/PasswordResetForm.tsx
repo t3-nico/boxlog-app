@@ -11,8 +11,8 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 export function PasswordResetForm({ className, ...props }: React.ComponentProps<'div'>) {
   const t = useTranslations()

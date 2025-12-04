@@ -5,8 +5,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { RotateCcw, Undo2, X } from 'lucide-react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface UndoAction {
   id: string

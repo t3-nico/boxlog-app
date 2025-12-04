@@ -10,8 +10,8 @@ import { Button } from '@/components/ui/button'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
-import { useTranslations } from 'next-intl'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { useTranslations } from 'next-intl'
 
 // TODO(#621): Inspector削除後の一時的な型エラー回避
 // import { Inspector } from '@/features/inspector'

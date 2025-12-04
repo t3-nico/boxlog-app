@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-import { useTranslations } from 'next-intl'
 import { markAsTranslated } from '@/types/i18n-branded'
+import { useTranslations } from 'next-intl'
 
 import { handleActionKeys, handleArrowKeys, handleNavigationKeys, handlePlanDetailKeys } from './keyboardHandlers'
 

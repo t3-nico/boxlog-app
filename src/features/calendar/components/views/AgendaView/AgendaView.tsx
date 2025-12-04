@@ -5,8 +5,8 @@ import { useMemo } from 'react'
 import { addDays, isSameDay, startOfDay } from 'date-fns'
 import { CalendarDays } from 'lucide-react'
 
-import { useLocale } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { EmptyState } from '../shared/components/EmptyState'

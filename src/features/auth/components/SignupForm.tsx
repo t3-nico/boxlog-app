@@ -15,9 +15,9 @@ import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useTranslations } from 'next-intl'
 import { checkPasswordPwned } from '@/lib/auth/pwned-password'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
   const params = useParams()

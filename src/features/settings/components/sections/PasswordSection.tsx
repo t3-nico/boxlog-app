@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useTranslations } from 'next-intl'
 import { addPasswordToHistory, isPasswordReused } from '@/lib/auth/password-history'
 import { checkPasswordPwned } from '@/lib/auth/pwned-password'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslations } from 'next-intl'
 
 import { SettingsCard } from '../SettingsCard'
 

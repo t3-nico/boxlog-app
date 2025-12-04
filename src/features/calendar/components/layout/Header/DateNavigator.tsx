@@ -3,8 +3,8 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { buttonVariants } from '@/components/ui/button'
-import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 export type NavigationDirection = 'prev' | 'next' | 'today'
 

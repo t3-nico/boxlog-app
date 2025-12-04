@@ -28,8 +28,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useTranslations } from 'next-intl'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
+import { useTranslations } from 'next-intl'
 
 import { useUserAuth } from './hooks/useUserAuth'
 

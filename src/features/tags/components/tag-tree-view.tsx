@@ -12,8 +12,8 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react'
 
-import { useTranslations } from 'next-intl'
 import type { TagWithChildren } from '@/types/tags'
+import { useTranslations } from 'next-intl'
 
 interface TagTreeViewProps {
   tags: TagWithChildren[]

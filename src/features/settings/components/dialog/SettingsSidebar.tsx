@@ -1,11 +1,11 @@
 'use client'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useTranslations } from 'next-intl'
 import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { SETTINGS_CATEGORIES } from '@/features/settings/constants'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 /**
  * 設定ダイアログのサイドバー

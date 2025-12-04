@@ -3,8 +3,8 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, getTranslations } from 'next-intl/server'
 import Script from 'next/script'
 
-import { routing } from '@/i18n/routing'
 import type { Locale } from '@/i18n/routing'
+import { routing } from '@/i18n/routing'
 
 interface LocaleLayoutProps {
   children: React.ReactNode

@@ -6,10 +6,10 @@ import { endOfWeek, startOfWeek } from 'date-fns'
 
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
-import { useTranslations } from 'next-intl'
 import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
 import { SidebarTabLayout } from '@/features/navigation/components/sidebar/SidebarTabLayout'
 import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
+import { useTranslations } from 'next-intl'
 
 import { InboxCardList } from './inbox/InboxCardList'
 import { InboxNavigation, type InboxFilter, type InboxSort } from './inbox/InboxNavigation'

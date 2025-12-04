@@ -6,8 +6,8 @@ import Image from 'next/image'
 
 import { Bell, Calendar, Download, Palette, Settings, Upload, User, X } from 'lucide-react'
 
-import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 export type DrawerMenuItem = {
   id: string

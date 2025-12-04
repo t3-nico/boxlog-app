@@ -8,10 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useTranslations } from 'next-intl'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import type { NotificationType } from '@/schemas/notifications'
 import { Loader2, Settings, Trash2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 import { useNotificationMutations, useNotificationsList } from '../hooks/useNotificationsData'
 import { useNotificationDialogStore } from '../stores/useNotificationDialogStore'

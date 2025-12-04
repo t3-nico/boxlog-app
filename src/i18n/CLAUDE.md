@@ -23,11 +23,11 @@ src/i18n/
 
 ### ファイル名
 
-| ルール | 例 |
-|--------|-----|
+| ルール                    | 例                                        |
+| ------------------------- | ----------------------------------------- |
 | **1ファイル = 1ドメイン** | `calendar.json` → `calendar` ドメインのみ |
-| **単数形** | `tag.json` ✅ / `tags.json` ❌ |
-| **camelCase** | `aiChat.json` ✅ / `ai-chat.json` ❌ |
+| **単数形**                | `tag.json` ✅ / `tags.json` ❌            |
+| **camelCase**             | `aiChat.json` ✅ / `ai-chat.json` ❌      |
 
 **例外**: `settings`, `stats` は英語で複数形が自然なため許容
 
@@ -37,14 +37,15 @@ src/i18n/
 domain.section.key
 ```
 
-| 階層 | 説明 | 例 |
-|------|------|-----|
-| 1 | ドメイン（ファイル名と一致） | `calendar` |
-| 2 | 画面名 or UIセクション名 | `toolbar`, `modal`, `form` |
-| 3 | 具体的な意味 | `title`, `description` |
-| 4 | 特殊ケースのみ | `calendar.toolbar.view.month` |
+| 階層 | 説明                         | 例                            |
+| ---- | ---------------------------- | ----------------------------- |
+| 1    | ドメイン（ファイル名と一致） | `calendar`                    |
+| 2    | 画面名 or UIセクション名     | `toolbar`, `modal`, `form`    |
+| 3    | 具体的な意味                 | `title`, `description`        |
+| 4    | 特殊ケースのみ               | `calendar.toolbar.view.month` |
 
 **section の許容値**:
+
 - 画面名: `login`, `dashboard`, `detail`, `list`
 - UIセクション: `header`, `sidebar`, `modal`, `form`, `toolbar`
 - 例外: `validation`, `errors`, `actions` は概念セクションとして許容
@@ -107,26 +108,26 @@ export function CalendarToolbar() {
 ```typescript
 // 特定ネームスペースのみ使用
 const t = await getTranslations({ locale, namespace: 'calendar' })
-t('toolbar.today')  // calendar.toolbar.today
+t('toolbar.today') // calendar.toolbar.today
 ```
 
 ## ネームスペース一覧
 
-| ネームスペース | 用途 |
-|----------------|------|
-| `app` | アプリ全般（メタデータ等） |
-| `auth` | 認証 |
-| `board` | ボード |
-| `calendar` | カレンダー |
-| `common` | 共通UI |
-| `error` | エラーメッセージ |
-| `legal` | 法的文書 |
-| `navigation` | ナビゲーション |
-| `notification` | 通知 |
-| `settings` | 設定（例外: 複数形） |
-| `stats` | 統計（例外: 複数形） |
-| `table` | テーブル |
-| `tag` | タグ |
+| ネームスペース | 用途                       |
+| -------------- | -------------------------- |
+| `app`          | アプリ全般（メタデータ等） |
+| `auth`         | 認証                       |
+| `board`        | ボード                     |
+| `calendar`     | カレンダー                 |
+| `common`       | 共通UI                     |
+| `error`        | エラーメッセージ           |
+| `legal`        | 法的文書                   |
+| `navigation`   | ナビゲーション             |
+| `notification` | 通知                       |
+| `settings`     | 設定（例外: 複数形）       |
+| `stats`        | 統計（例外: 複数形）       |
+| `table`        | テーブル                   |
+| `tag`          | タグ                       |
 
 ## 新規ネームスペース追加
 
@@ -137,7 +138,7 @@ t('toolbar.today')  // calendar.toolbar.today
 ```typescript
 const NAMESPACES = [
   // ... 既存
-  'newNamespace',  // 追加
+  'newNamespace', // 追加
 ] as const
 ```
 
