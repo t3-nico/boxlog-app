@@ -46,10 +46,10 @@ const AccessibilityHeader = ({
       type="button"
       onClick={onClose}
       className={cn(
-        'text-muted-foreground hover:text-foreground hover:bg-foreground/8 rounded-md p-2',
+        'text-muted-foreground hover:text-foreground hover:bg-state-hover rounded-md p-2',
         'focus:ring-ring focus:ring-2 focus:outline-none',
         getContrastClassName(
-          'text-muted-foreground hover:bg-foreground/8 hover:text-foreground',
+          'text-muted-foreground hover:bg-state-hover hover:text-foreground',
           'contrast-text hover:contrast-selected focus:contrast-focus'
         )
       )}
@@ -201,14 +201,14 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
                     key={theme.key}
                     className={cn(
                       'relative flex cursor-pointer items-center rounded-lg border p-4',
-                      'focus-within:ring-ring hover:bg-foreground/8 focus-within:ring-2',
+                      'focus-within:ring-ring hover:bg-state-hover focus-within:ring-2',
                       selectedTheme === theme.key
                         ? getContrastClassName(
                             'border-blue-500 bg-blue-50',
                             'contrast-selected contrast-border border-2'
                           )
                         : getContrastClassName('border-border', 'contrast-border'),
-                      getContrastClassName('hover:bg-foreground/8', 'hover:contrast-selected')
+                      getContrastClassName('hover:bg-state-hover', 'hover:contrast-selected')
                     )}
                   >
                     <input
@@ -407,10 +407,10 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
               type="button"
               onClick={onClose}
               className={cn(
-                'border-border bg-background text-foreground rounded-md border px-4 py-2 text-sm font-medium',
-                'hover:bg-foreground/8 focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
+                'border-border bg-secondary text-secondary-foreground rounded-md border px-4 py-2 text-sm font-medium',
+                'hover:bg-state-hover focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
                 getContrastClassName(
-                  'border-border bg-background text-foreground hover:bg-muted',
+                  'border-border bg-secondary text-secondary-foreground hover:bg-state-hover',
                   'contrast-text contrast-bg contrast-border hover:contrast-selected focus:contrast-focus'
                 )
               )}

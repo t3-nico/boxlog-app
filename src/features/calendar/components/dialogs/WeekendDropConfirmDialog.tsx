@@ -99,7 +99,7 @@ export const WeekendDropConfirmDialog = ({
           </Button>
           <Button
             onClick={onConfirm}
-            className={cn('flex-1 sm:flex-none', 'bg-primary hover:bg-primary/92', 'text-primary-foreground')}
+            className={cn('flex-1 sm:flex-none', 'bg-primary hover:bg-primary-hover', 'text-primary-foreground')}
           >
             {t('calendar.weekendDropDialog.confirmButton')}
           </Button>

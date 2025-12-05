@@ -157,7 +157,7 @@ export const EventContextMenu = ({
               onClick={() => handleAction(item.action)}
               className={cn(
                 'flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left transition-colors',
-                item.dangerous ? 'text-destructive hover:bg-destructive/8' : 'text-foreground hover:bg-foreground/8'
+                item.dangerous ? 'text-destructive hover:bg-destructive/8' : 'text-foreground hover:bg-state-hover'
               )}
             >
               <IconComponent className="h-4 w-4 flex-shrink-0" />

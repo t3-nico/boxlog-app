@@ -45,7 +45,7 @@ const generateDateClassName = (
 
   // ホバー効果（当日以外のみ）
   if (onClick && !today) {
-    classes.push('cursor-pointer hover:bg-primary/10')
+    classes.push('cursor-pointer hover:bg-state-hover')
   }
 
   // クリック可能だが当日の場合

@@ -153,7 +153,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
             align="end"
             side="bottom"
           >
-            <div className="hover:bg-primary/10 flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors">
+            <div className="hover:bg-state-hover flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors">
               <div className="text-muted-foreground flex items-center gap-1">
                 <Tag className="size-3" />
                 <span>{locale === 'ja' ? 'タグを追加' : 'Add tag'}</span>
