@@ -393,7 +393,7 @@ export function TagInspector() {
                       <DropdownMenuSubContent className="w-48">
                         <DropdownMenuItem
                           onClick={() => handleChangeGroup(null)}
-                          className={!tagGroup ? 'bg-accent' : ''}
+                          className={!tagGroup ? 'bg-state-active' : ''}
                         >
                           <FolderX className="mr-2 h-4 w-4" />
                           グループなし
@@ -403,7 +403,7 @@ export function TagInspector() {
                           <DropdownMenuItem
                             key={group.id}
                             onClick={() => handleChangeGroup(group.id)}
-                            className={tagGroup?.id === group.id ? 'bg-accent' : ''}
+                            className={tagGroup?.id === group.id ? 'bg-state-active' : ''}
                           >
                             <Folder className="mr-2 h-4 w-4" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
                             {group.name}
@@ -512,7 +512,10 @@ export function TagInspector() {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-48">
-                    <DropdownMenuItem onClick={() => handleChangeGroup(null)} className={!tagGroup ? 'bg-accent' : ''}>
+                    <DropdownMenuItem
+                      onClick={() => handleChangeGroup(null)}
+                      className={!tagGroup ? 'bg-state-active' : ''}
+                    >
                       <FolderX className="mr-2 h-4 w-4" />
                       グループなし
                     </DropdownMenuItem>
@@ -521,7 +524,7 @@ export function TagInspector() {
                       <DropdownMenuItem
                         key={group.id}
                         onClick={() => handleChangeGroup(group.id)}
-                        className={tagGroup?.id === group.id ? 'bg-accent' : ''}
+                        className={tagGroup?.id === group.id ? 'bg-state-active' : ''}
                       >
                         <Folder className="mr-2 h-4 w-4" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
                         {group.name}
