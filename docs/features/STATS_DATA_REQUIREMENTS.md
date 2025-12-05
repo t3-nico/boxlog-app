@@ -17,7 +17,7 @@ BoxLogアプリの統計機能で表示すべきデータと、その実装要�
 ### ステータス
 
 - **作成日**: 2025-12-04
-- **最終更新**: 2025-12-04
+- **最終更新**: 2025-12-05
 - **ステータス**: 🚧 要件定義中
 
 ---
@@ -114,10 +114,10 @@ todo → doing → done
 
 ```typescript
 // 年次グリッド用
-plans.getDailyHours       // 🆕 日別の合計時間
+plans.getDailyHours       // ✅ 実装済み
 
 // タグ別時間用
-plans.getTimeByTag        // 🆕 タグ別の合計時間
+plans.getTimeByTag        // ✅ 実装済み
 
 // サマリー用
 plans.getTotalTime        // 🆕 累計時間
@@ -156,11 +156,11 @@ plans.getMonthComparison  // 🆕 前月比
 - [x] 設計アプローチの決定（欲しいものベース）
 - [x] Self Analysis系 → Settings へ移動決定
 - [x] 年次グリッドの実装（`YearlyHeatmap`コンポーネント）
-- [ ] タグ別時間の実装
+- [x] タグ別時間の実装（`TagTimeChart`コンポーネント）
 - [ ] サマリー（累計・今月・前月比）の実装
 - [ ] ページ構成の決定（実装後）
 
 ---
 
-**最終更新**: 2025-12-04
+**最終更新**: 2025-12-05
 **ステータス**: 🚧 要件定義中
