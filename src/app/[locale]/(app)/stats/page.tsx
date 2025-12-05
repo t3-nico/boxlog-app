@@ -16,6 +16,11 @@ const YearlyHeatmap = dynamic(() => import('@/features/stats/components/charts')
   loading: () => <Skeleton className="h-[200px] w-full" />,
 })
 
+const TagTimeChart = dynamic(() => import('@/features/stats/components/charts').then((mod) => mod.TagTimeChart), {
+  ssr: false,
+  loading: () => <Skeleton className="h-[300px] w-full" />,
+})
+
 /**
  * 統計ページ - 概要ダッシュボード
  *
@@ -34,6 +39,9 @@ export default function StatsPage() {
 
       {/* 年次グリッド */}
       <YearlyHeatmap />
+
+      {/* タグ別時間 */}
+      <TagTimeChart />
 
       {/* サマリーカード（情報表示系: 背景なし、ボーダーのみ） */}
       <div className="grid gap-4 md:grid-cols-3">

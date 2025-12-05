@@ -97,3 +97,88 @@ export const getDailyHoursProcedure = protectedProcedure
 
     return result
   })
+
+/**
+ * タグ別の合計時間を取得
+ */
+export const getTimeByTagProcedure = protectedProcedure.query(async ({ ctx }) => {
+  const { supabase, userId } = ctx
+
+  // プランとタグの紐付けを取得
+  const { data: planTags, error: planTagsError } = await supabase
+    .from('plan_tags')
+    .select('plan_id, tag_id')
+    .eq('user_id', userId)
+
+  if (planTagsError) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: `タグ情報の取得に失敗しました: ${planTagsError.message}`,
+    })
+  }
+
+  // タグ情報を取得
+  const { data: tags, error: tagsError } = await supabase
+    .from('tags')
+    .select('id, name, color')
+    .eq('user_id', userId)
+
+  if (tagsError) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: `タグ情報の取得に失敗しました: ${tagsError.message}`,
+    })
+  }
+
+  // プランの時間情報を取得
+  const { data: plans, error: plansError } = await supabase
+    .from('plans')
+    .select('id, start_time, end_time')
+    .eq('user_id', userId)
+    .not('start_time', 'is', null)
+    .not('end_time', 'is', null)
+
+  if (plansError) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: `プラン情報の取得に失敗しました: ${plansError.message}`,
+    })
+  }
+
+  // プランIDごとの時間を計算
+  const planHours: Record<string, number> = {}
+  for (const plan of plans) {
+    if (!plan.start_time || !plan.end_time) continue
+    const startTime = new Date(plan.start_time)
+    const endTime = new Date(plan.end_time)
+    const durationHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60)
+    if (durationHours > 0 && durationHours < 24) {
+      planHours[plan.id] = durationHours
+    }
+  }
+
+  // タグ別に集計
+  const tagHours: Record<string, number> = {}
+  for (const pt of planTags) {
+    const hours = planHours[pt.plan_id]
+    if (hours) {
+      tagHours[pt.tag_id] = (tagHours[pt.tag_id] ?? 0) + hours
+    }
+  }
+
+  // タグ情報とマージして返却
+  const tagsMap = new Map(tags.map((t) => [t.id, t]))
+  const result = Object.entries(tagHours)
+    .map(([tagId, hours]) => {
+      const tag = tagsMap.get(tagId)
+      return {
+        tagId,
+        name: tag?.name ?? 'Unknown',
+        color: tag?.color ?? '#888888',
+        hours: Math.round(hours * 10) / 10,
+      }
+    })
+    .sort((a, b) => b.hours - a.hours) // 時間順でソート
+
+  return result
+})

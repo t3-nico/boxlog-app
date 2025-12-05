@@ -12,7 +12,7 @@ import { bulkDeleteProcedure, bulkUpdateProcedure } from './bulk'
 import { createProcedure, deleteProcedure, getByIdProcedure, listProcedure, updateProcedure } from './crud'
 import { createInstanceProcedure, deleteInstanceProcedure, getInstancesProcedure } from './instances'
 import { addTagProcedure, getTagPlanCountsProcedure, getTagsProcedure, removeTagProcedure } from './plan-tags'
-import { getDailyHoursProcedure, getStatsProcedure } from './statistics'
+import { getDailyHoursProcedure, getStatsProcedure, getTimeByTagProcedure } from './statistics'
 import { tagsRouter } from './tags'
 
 export const plansRouter = createTRPCRouter({
@@ -39,6 +39,7 @@ export const plansRouter = createTRPCRouter({
   // Statistics
   getStats: getStatsProcedure,
   getDailyHours: getDailyHoursProcedure,
+  getTimeByTag: getTimeByTagProcedure,
 
   // Activities
   activities: activitiesProcedure,
