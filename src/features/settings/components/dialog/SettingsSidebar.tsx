@@ -37,7 +37,7 @@ export function SettingsSidebar() {
                 onClick={() => setActiveCategory(category.id)}
                 className={cn(
                   'flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm font-medium transition-colors',
-                  isActive ? 'bg-foreground/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
+                  isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
                 )}
               >
                 <Icon className="h-4 w-4" />

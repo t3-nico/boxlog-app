@@ -83,7 +83,7 @@ export function AppBar() {
 
   return (
     <aside
-      className="bg-sidebar text-sidebar-foreground flex h-full w-16 flex-col gap-0 py-2"
+      className="bg-muted text-foreground flex h-full w-16 flex-col gap-0 py-2"
       role="navigation"
       aria-label="Main navigation"
     >

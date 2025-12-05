@@ -36,7 +36,7 @@ export function NavMain({
                 prefetch={true}
                 className={cn(
                   'flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors',
-                  isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'hover:bg-sidebar-accent/50'
+                  isActive ? 'bg-accent text-accent-foreground' : 'hover:bg-state-hover'
                 )}
               >
                 {item.icon && <item.icon className="h-4 w-4" />}

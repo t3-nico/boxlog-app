@@ -70,7 +70,7 @@ export function NavUser({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="hover:bg-foreground/8 data-[state=open]:bg-foreground/12 flex w-fit items-center gap-2 rounded-md px-2 py-2 text-left text-sm outline-hidden"
+          className="hover:bg-state-hover data-[state=open]:bg-secondary flex w-fit items-center gap-2 rounded-md px-2 py-2 text-left text-sm outline-hidden"
         >
           <Avatar className="h-6 w-6 rounded-xl">
             {user.avatar ? <AvatarImage src={user.avatar} alt={user.name} /> : null}
