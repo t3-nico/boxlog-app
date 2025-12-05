@@ -7,17 +7,20 @@ import { expandRecurrence, getPlanRecurrenceConfig, isRecurringPlan } from './re
 // テスト用のモックプラン
 const createMockPlan = (overrides: Partial<Plan> = {}): Plan => ({
   id: 'plan-1',
+  user_id: 'user-1',
+  plan_number: '#1',
   title: 'テストプラン',
+  description: null,
   status: 'todo',
+  due_date: null,
   start_time: '2025-01-01T09:00:00Z',
   end_time: '2025-01-01T10:00:00Z',
-  due_date: null,
-  user_id: 'user-1',
+  recurrence_type: null,
+  recurrence_end_date: null,
+  recurrence_rule: null,
+  reminder_minutes: null,
   created_at: '2025-01-01T00:00:00Z',
   updated_at: '2025-01-01T00:00:00Z',
-  recurrence_type: null,
-  recurrence_rule: null,
-  recurrence_end_date: null,
   ...overrides,
 })
 
@@ -87,7 +90,8 @@ describe('recurrence', () => {
     })
 
     it('yearlyタイプは毎年繰り返しの設定を返す', () => {
-      const plan = createMockPlan({ recurrence_type: 'yearly' })
+      // NOTE: 'yearly'はRecurrenceType型に含まれていないが、内部実装はサポート
+      const plan = createMockPlan({ recurrence_type: 'yearly' as 'daily' })
       const config = getPlanRecurrenceConfig(plan)
 
       expect(config).toEqual({
@@ -98,7 +102,8 @@ describe('recurrence', () => {
     })
 
     it('weekdaysタイプは平日繰り返しの設定を返す', () => {
-      const plan = createMockPlan({ recurrence_type: 'weekdays' })
+      // NOTE: 'weekdays'はRecurrenceType型に含まれていないが、内部実装はサポート
+      const plan = createMockPlan({ recurrence_type: 'weekdays' as 'daily' })
       const config = getPlanRecurrenceConfig(plan)
 
       expect(config?.frequency).toBe('weekly')
@@ -153,8 +158,9 @@ describe('recurrence', () => {
     })
 
     it('weekdaysタイプは平日のみにオカレンスを生成する', () => {
+      // NOTE: 'weekdays'はRecurrenceType型に含まれていないが、内部実装はサポート
       const plan = createMockPlan({
-        recurrence_type: 'weekdays',
+        recurrence_type: 'weekdays' as 'daily',
         start_time: '2025-01-06T09:00:00Z', // 月曜日
         end_time: '2025-01-06T10:00:00Z',
       })
@@ -202,9 +208,7 @@ describe('recurrence', () => {
       const occurrences = expandRecurrence(plan, rangeStart, rangeEnd, exceptions)
 
       // 1/2がスキップされるので1つ少ない
-      const hasJan2 = occurrences.some(
-        (o) => o.date.toISOString().slice(0, 10) === '2025-01-02'
-      )
+      const hasJan2 = occurrences.some((o) => o.date.toISOString().slice(0, 10) === '2025-01-02')
       expect(hasJan2).toBe(false)
     })
 

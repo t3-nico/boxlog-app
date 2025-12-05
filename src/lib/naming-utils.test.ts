@@ -29,7 +29,7 @@ describe('naming-utils', () => {
   describe('分析イベント生成', () => {
     describe('createPageViewEvent', () => {
       it('ページビューイベントを生成できる', () => {
-        const event = createPageViewEvent('dashboard')
+        const event = createPageViewEvent('DASHBOARD')
 
         expect(event.name).toBeDefined()
         expect(event.screen).toBe('dashboard')
@@ -39,7 +39,7 @@ describe('naming-utils', () => {
       })
 
       it('追加プロパティを含めることができる', () => {
-        const event = createPageViewEvent('calendar', { source: 'sidebar' })
+        const event = createPageViewEvent('CALENDAR', { source: 'sidebar' })
 
         expect(event.properties?.source).toBe('sidebar')
       })
@@ -47,7 +47,7 @@ describe('naming-utils', () => {
 
     describe('createActionEvent', () => {
       it('アクションイベントを生成できる', () => {
-        const event = createActionEvent('task_create')
+        const event = createActionEvent('TASK_CREATE')
 
         expect(event.name).toBeDefined()
         expect(event.feature).toBe('task_create')
@@ -55,7 +55,7 @@ describe('naming-utils', () => {
       })
 
       it('画面情報を含めることができる', () => {
-        const event = createActionEvent('task_create', 'calendar')
+        const event = createActionEvent('TASK_CREATE', 'CALENDAR')
 
         expect(event.screen).toBe('calendar')
         expect(event.properties?.screen_name).toBe('calendar')
@@ -64,7 +64,7 @@ describe('naming-utils', () => {
 
     describe('createEngagementEvent', () => {
       it('エンゲージメントイベントを生成できる', () => {
-        const event = createEngagementEvent('click', 'button', 'dashboard')
+        const event = createEngagementEvent('click', 'button', 'DASHBOARD')
 
         expect(event.name).toBeDefined()
         expect(event.properties?.engagement_type).toBe('click')
@@ -74,7 +74,7 @@ describe('naming-utils', () => {
 
     describe('createErrorEvent', () => {
       it('エラーイベントを生成できる', () => {
-        const event = createErrorEvent('network', 'api_call', 'calendar')
+        const event = createErrorEvent('network', 'api_call', 'CALENDAR')
 
         expect(event.name).toBeDefined()
         expect(event.properties?.error_type).toBe('network')
@@ -84,7 +84,7 @@ describe('naming-utils', () => {
 
     describe('createPerformanceEvent', () => {
       it('パフォーマンスイベントを生成できる', () => {
-        const event = createPerformanceEvent('render_time', 'CalendarView', 150, 'calendar')
+        const event = createPerformanceEvent('render_time', 'CalendarView', 150, 'CALENDAR')
 
         expect(event.name).toBeDefined()
         expect(event.properties?.performance_metric).toBe('render_time')
@@ -97,30 +97,30 @@ describe('naming-utils', () => {
   describe('ルーティングヘルパー', () => {
     describe('navigateToScreen', () => {
       it('基本的な画面のルートを返す', () => {
-        expect(navigateToScreen('dashboard')).toBeDefined()
-        expect(navigateToScreen('calendar')).toBeDefined()
-        expect(navigateToScreen('settings')).toBeDefined()
+        expect(navigateToScreen('DASHBOARD')).toBeDefined()
+        expect(navigateToScreen('CALENDAR')).toBeDefined()
+        expect(navigateToScreen('SETTINGS')).toBeDefined()
       })
 
       it('認証系画面のルートを返す', () => {
-        expect(navigateToScreen('login')).toBeDefined()
-        expect(navigateToScreen('signup')).toBeDefined()
+        expect(navigateToScreen('LOGIN')).toBeDefined()
+        expect(navigateToScreen('SIGNUP')).toBeDefined()
       })
     })
 
     describe('getParameterizedRoute', () => {
       it('calendar_viewにパラメータを適用できる', () => {
-        const route = getParameterizedRoute('calendar_view', 'month')
+        const route = getParameterizedRoute('CALENDAR_VIEW', 'month')
         expect(route).toContain('month')
       })
 
-      it('table_detailにパラメータを適用できる', () => {
-        const route = getParameterizedRoute('table_detail', 'task-123')
+      it('stats_detailにパラメータを適用できる', () => {
+        const route = getParameterizedRoute('STATS_DETAIL', 'task-123')
         expect(route).toContain('task-123')
       })
 
       it('パラメータ不要な画面は通常のルートを返す', () => {
-        const route = getParameterizedRoute('dashboard', '')
+        const route = getParameterizedRoute('DASHBOARD', '')
         expect(route).toBeDefined()
       })
     })
@@ -129,7 +129,7 @@ describe('naming-utils', () => {
   describe('スタイリングヘルパー', () => {
     describe('getPageClassName', () => {
       it('ページクラス名を生成できる', () => {
-        const className = getPageClassName('dashboard')
+        const className = getPageClassName('DASHBOARD')
         expect(className).toBeDefined()
         expect(typeof className).toBe('string')
       })
@@ -156,25 +156,25 @@ describe('naming-utils', () => {
   describe('バリデーション関数', () => {
     describe('isValidScreen', () => {
       it('有効な画面名でtrueを返す', () => {
-        expect(isValidScreen('dashboard')).toBe(true)
-        expect(isValidScreen('calendar')).toBe(true)
-        expect(isValidScreen('settings')).toBe(true)
+        expect(isValidScreen('DASHBOARD')).toBe(true)
+        expect(isValidScreen('CALENDAR')).toBe(true)
+        expect(isValidScreen('SETTINGS')).toBe(true)
       })
 
       it('無効な画面名でfalseを返す', () => {
-        expect(isValidScreen('invalid_screen')).toBe(false)
+        expect(isValidScreen('INVALID_SCREEN')).toBe(false)
         expect(isValidScreen('')).toBe(false)
       })
     })
 
     describe('isValidFeature', () => {
       it('有効な機能名でtrueを返す', () => {
-        expect(isValidFeature('task_create')).toBe(true)
-        expect(isValidFeature('task_update')).toBe(true)
+        expect(isValidFeature('TASK_CREATE')).toBe(true)
+        expect(isValidFeature('TASK_UPDATE')).toBe(true)
       })
 
       it('無効な機能名でfalseを返す', () => {
-        expect(isValidFeature('invalid_feature')).toBe(false)
+        expect(isValidFeature('INVALID_FEATURE')).toBe(false)
       })
     })
 
@@ -202,14 +202,14 @@ describe('naming-utils', () => {
   describe('変換関数', () => {
     describe('getScreenValue', () => {
       it('画面名から画面値を取得できる', () => {
-        const value = getScreenValue('dashboard')
+        const value = getScreenValue('DASHBOARD')
         expect(value).toBe('dashboard')
       })
     })
 
     describe('getFeatureValue', () => {
       it('機能名から機能値を取得できる', () => {
-        const value = getFeatureValue('task_create')
+        const value = getFeatureValue('TASK_CREATE')
         expect(value).toBe('task_create')
       })
     })
@@ -217,21 +217,21 @@ describe('naming-utils', () => {
     describe('getScreenName', () => {
       it('画面値から画面名を取得できる', () => {
         const name = getScreenName('dashboard')
-        expect(name).toBeDefined()
+        expect(name).toBe('DASHBOARD')
       })
     })
 
     describe('getFeatureName', () => {
       it('機能値から機能名を取得できる', () => {
         const name = getFeatureName('task_create')
-        expect(name).toBeDefined()
+        expect(name).toBe('TASK_CREATE')
       })
     })
 
     describe('safeGetScreenName', () => {
       it('有効な値で画面名を返す', () => {
         const name = safeGetScreenName('dashboard')
-        expect(name).toBeDefined()
+        expect(name).toBe('DASHBOARD')
       })
 
       it('無効な値でundefinedを返す', () => {
@@ -243,7 +243,7 @@ describe('naming-utils', () => {
     describe('safeGetFeatureName', () => {
       it('有効な値で機能名を返す', () => {
         const name = safeGetFeatureName('task_create')
-        expect(name).toBeDefined()
+        expect(name).toBe('TASK_CREATE')
       })
 
       it('無効な値でundefinedを返す', () => {
@@ -268,9 +268,9 @@ describe('naming-utils', () => {
         })
       })
 
-      it('dashboardが含まれている', () => {
+      it('DASHBOARDが含まれている', () => {
         const screens = getAllScreens()
-        const dashboard = screens.find((s) => s.name === 'dashboard')
+        const dashboard = screens.find((s) => s.name === 'DASHBOARD')
         expect(dashboard).toBeDefined()
       })
     })
@@ -289,9 +289,9 @@ describe('naming-utils', () => {
         })
       })
 
-      it('task_createが含まれている', () => {
+      it('TASK_CREATEが含まれている', () => {
         const features = getAllFeatures()
-        const taskCreate = features.find((f) => f.name === 'task_create')
+        const taskCreate = features.find((f) => f.name === 'TASK_CREATE')
         expect(taskCreate).toBeDefined()
       })
     })
@@ -315,8 +315,8 @@ describe('naming-utils', () => {
 
   describe('イベントのタイムスタンプ', () => {
     it('全てのイベントにタイムスタンプが含まれる', () => {
-      const pageView = createPageViewEvent('dashboard')
-      const action = createActionEvent('task_create')
+      const pageView = createPageViewEvent('DASHBOARD')
+      const action = createActionEvent('TASK_CREATE')
       const engagement = createEngagementEvent('click', 'button')
       const error = createErrorEvent('network', 'api')
       const performance = createPerformanceEvent('render', 'Component', 100)
@@ -329,7 +329,7 @@ describe('naming-utils', () => {
     })
 
     it('タイムスタンプは数値である', () => {
-      const event = createPageViewEvent('dashboard')
+      const event = createPageViewEvent('DASHBOARD')
       expect(typeof event.properties?.timestamp).toBe('number')
     })
   })

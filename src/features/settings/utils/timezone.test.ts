@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import {
   formatTimezoneInfo,
@@ -48,12 +48,16 @@ describe('timezone', () => {
     it('エラー時はAsia/Tokyoにフォールバックする', () => {
       // Intl.DateTimeFormat をモック
       const originalIntl = globalThis.Intl
-      // @ts-expect-error - テスト用にIntlを一時的に無効化
-      globalThis.Intl = {
-        DateTimeFormat: () => {
-          throw new Error('Test error')
-        },
+      const mockIntl = {
+        ...originalIntl,
+        DateTimeFormat: Object.assign(
+          () => {
+            throw new Error('Test error')
+          },
+          { supportedLocalesOf: () => [] }
+        ),
       }
+      globalThis.Intl = mockIntl as unknown as typeof Intl
 
       const result = getBrowserTimezone()
       expect(result).toBe('Asia/Tokyo')

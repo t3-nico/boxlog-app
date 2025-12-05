@@ -1,6 +1,28 @@
 import { describe, expect, it } from 'vitest'
 
+import type { Plan } from '../types/plan'
+
 import { canRevertToTodo, getEffectiveStatus, isOverdue } from './status'
+
+// テスト用のモックプラン作成ヘルパー
+const createMockPlan = (overrides: Partial<Plan>): Plan => ({
+  id: 'plan-1',
+  user_id: 'user-1',
+  plan_number: '#1',
+  title: 'テスト',
+  description: null,
+  status: 'todo',
+  due_date: null,
+  start_time: null,
+  end_time: null,
+  recurrence_type: null,
+  recurrence_end_date: null,
+  recurrence_rule: null,
+  reminder_minutes: null,
+  created_at: '2025-01-01T00:00:00Z',
+  updated_at: '2025-01-01T00:00:00Z',
+  ...overrides,
+})
 
 describe('status', () => {
   describe('getEffectiveStatus', () => {
@@ -85,102 +107,67 @@ describe('status', () => {
 
   describe('canRevertToTodo', () => {
     it('start_timeがなければtrueを返す', () => {
-      const plan = {
-        id: 'plan-1',
-        title: 'テスト',
-        status: 'doing' as const,
+      const plan = createMockPlan({
+        status: 'doing',
         start_time: null,
         end_time: null,
-        user_id: 'user-1',
-        created_at: '2025-01-01T00:00:00Z',
-        updated_at: '2025-01-01T00:00:00Z',
-      }
+      })
       expect(canRevertToTodo(plan)).toBe(true)
     })
 
     it('start_timeがあればfalseを返す', () => {
-      const plan = {
-        id: 'plan-1',
-        title: 'テスト',
-        status: 'doing' as const,
+      const plan = createMockPlan({
+        status: 'doing',
         start_time: '2025-01-01T09:00:00Z',
         end_time: '2025-01-01T10:00:00Z',
-        user_id: 'user-1',
-        created_at: '2025-01-01T00:00:00Z',
-        updated_at: '2025-01-01T00:00:00Z',
-      }
+      })
       expect(canRevertToTodo(plan)).toBe(false)
     })
   })
 
   describe('isOverdue', () => {
     it('doneステータスはfalseを返す', () => {
-      const plan = {
-        id: 'plan-1',
-        title: 'テスト',
-        status: 'done' as const,
+      const plan = createMockPlan({
+        status: 'done',
         start_time: null,
         end_time: '2020-01-01T10:00:00Z', // 過去
-        user_id: 'user-1',
-        created_at: '2025-01-01T00:00:00Z',
-        updated_at: '2025-01-01T00:00:00Z',
-      }
+      })
       expect(isOverdue(plan)).toBe(false)
     })
 
     it('end_timeがなければfalseを返す', () => {
-      const plan = {
-        id: 'plan-1',
-        title: 'テスト',
-        status: 'todo' as const,
+      const plan = createMockPlan({
+        status: 'todo',
         start_time: null,
         end_time: null,
-        user_id: 'user-1',
-        created_at: '2025-01-01T00:00:00Z',
-        updated_at: '2025-01-01T00:00:00Z',
-      }
+      })
       expect(isOverdue(plan)).toBe(false)
     })
 
     it('end_timeが過去で未完了ならtrueを返す', () => {
-      const plan = {
-        id: 'plan-1',
-        title: 'テスト',
-        status: 'todo' as const,
+      const plan = createMockPlan({
+        status: 'todo',
         start_time: null,
         end_time: '2020-01-01T10:00:00Z', // 過去
-        user_id: 'user-1',
-        created_at: '2025-01-01T00:00:00Z',
-        updated_at: '2025-01-01T00:00:00Z',
-      }
+      })
       expect(isOverdue(plan)).toBe(true)
     })
 
     it('end_timeが未来で未完了ならfalseを返す', () => {
-      const plan = {
-        id: 'plan-1',
-        title: 'テスト',
-        status: 'todo' as const,
+      const plan = createMockPlan({
+        status: 'todo',
         start_time: null,
         end_time: '2099-01-01T10:00:00Z', // 未来
-        user_id: 'user-1',
-        created_at: '2025-01-01T00:00:00Z',
-        updated_at: '2025-01-01T00:00:00Z',
-      }
+      })
       expect(isOverdue(plan)).toBe(false)
     })
 
     it('旧ステータス（backlog）でも正しく判定する', () => {
-      const plan = {
-        id: 'plan-1',
-        title: 'テスト',
+      const plan = createMockPlan({
         status: 'backlog' as unknown as 'todo',
         start_time: null,
         end_time: '2020-01-01T10:00:00Z', // 過去
-        user_id: 'user-1',
-        created_at: '2025-01-01T00:00:00Z',
-        updated_at: '2025-01-01T00:00:00Z',
-      }
+      })
       expect(isOverdue(plan)).toBe(true)
     })
   })

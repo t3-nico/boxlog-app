@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { ErrorHandler, type NotificationConfig } from './error-handler'
+import { ErrorHandler } from './error-handler'
 
 // error-patternsのモック
 vi.mock('@/config/error-patterns/index', () => ({

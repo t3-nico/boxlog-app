@@ -122,6 +122,7 @@ describe('useKanbanStore', () => {
         status: 'todo',
         priority: 'medium',
         tags: [],
+        isBlocked: false,
       }
 
       act(() => {
@@ -146,6 +147,7 @@ describe('useKanbanStore', () => {
           status: 'todo',
           priority: 'low',
           tags: [],
+          isBlocked: false,
         })
         cardId = card.id
       })
@@ -172,6 +174,7 @@ describe('useKanbanStore', () => {
           status: 'todo',
           priority: 'medium',
           tags: [],
+          isBlocked: false,
         })
         cardId = card.id
       })
@@ -198,6 +201,7 @@ describe('useKanbanStore', () => {
           status: 'todo',
           priority: 'high',
           tags: [],
+          isBlocked: false,
         })
         cardId = card.id
       })
@@ -223,6 +227,7 @@ describe('useKanbanStore', () => {
           status: 'todo',
           priority: 'medium',
           tags: [],
+          isBlocked: false,
         })
         useKanbanStore.getState().selectCard(card.id)
       })
@@ -251,18 +256,21 @@ describe('useKanbanStore', () => {
           status: 'todo',
           priority: 'high',
           tags: [],
+          isBlocked: false,
         })
         useKanbanStore.getState().addCard(todoColumnId, {
           title: 'Todo 2',
           status: 'todo',
           priority: 'low',
           tags: [],
+          isBlocked: false,
         })
         useKanbanStore.getState().addCard(doingColumnId, {
           title: 'Doing 1',
           status: 'in_progress',
           priority: 'medium',
           tags: [],
+          isBlocked: false,
         })
       })
     })
