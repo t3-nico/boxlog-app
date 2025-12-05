@@ -69,7 +69,7 @@ const DialogContent = ({
               'absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100',
               'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
               'disabled:pointer-events-none',
-              'data-[state=open]:bg-foreground/12',
+              'data-[state=open]:bg-state-selected',
               '[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4'
             )}
           >
