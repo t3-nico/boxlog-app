@@ -112,7 +112,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         setCaptchaV2Token(token)
       })
     }
-     
   }, [showCaptchaV2, isV2Ready])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -371,7 +370,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-muted relative hidden md:block">
+          <div className="bg-surface-container relative hidden md:block">
             <Image
               src="/placeholder.svg"
               alt="Image"

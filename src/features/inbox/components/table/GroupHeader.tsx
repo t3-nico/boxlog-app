@@ -37,7 +37,7 @@ export function GroupHeader({ groupKey, groupLabel, count, columnCount }: GroupH
 
   return (
     <TableRow
-      className="bg-muted hover:bg-state-hover cursor-pointer border-y"
+      className="bg-surface-container hover:bg-state-hover cursor-pointer border-y"
       onClick={() => toggleGroupCollapse(groupKey)}
     >
       <TableCell colSpan={columnCount} className="py-3">

@@ -291,7 +291,7 @@ export function DataTable<T>({
     (group: GroupedData<T>, colCount: number, isCollapsed: boolean) => (
       <TableRow
         key={`group-${group.groupKey}`}
-        className="bg-muted hover:bg-state-hover cursor-pointer border-y"
+        className="bg-surface-container hover:bg-state-hover cursor-pointer border-y"
         onClick={() => onToggleGroupCollapse?.(group.groupKey)}
       >
         <TableCell colSpan={colCount} className="py-3">
@@ -369,7 +369,7 @@ export function DataTable<T>({
     >
       <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border">
         <Table className="w-full">
-          <TableHeader className={stickyHeader ? 'bg-muted sticky top-0 z-10' : 'bg-muted'}>
+          <TableHeader className={stickyHeader ? 'bg-surface-container sticky top-0 z-10' : 'bg-surface-container'}>
             <TableRow>
               {allColumns.map((column) => {
                 const width = column.id === '__selection__' ? 48 : getColumnWidth(column.id)

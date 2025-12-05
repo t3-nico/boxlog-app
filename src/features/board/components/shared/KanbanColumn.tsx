@@ -16,7 +16,7 @@ const columnColorClasses: Record<KanbanColumnColor, string> = {
   yellow: 'bg-yellow-50/50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800',
   orange: 'bg-orange-50/50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800',
   red: 'bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-800',
-  gray: 'bg-muted border-border',
+  gray: 'bg-surface-container border-border',
 }
 
 interface KanbanColumnProps {
@@ -72,7 +72,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
               'flex size-5 items-center justify-center rounded-full text-xs font-medium',
               isOverWipLimit && 'bg-destructive text-destructive-foreground',
               wipWarning && 'bg-yellow-500 text-white',
-              !isOverWipLimit && !wipWarning && 'bg-muted text-muted-foreground'
+              !isOverWipLimit && !wipWarning && 'bg-surface-container text-muted-foreground'
             )}
           >
             {column.cards.length}

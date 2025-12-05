@@ -99,7 +99,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
   return (
     <div className={`border-border bg-card overflow-hidden rounded-xl border ${className}`}>
       {/* テーブルヘッダー */}
-      <div className="border-border bg-muted border-b px-4 py-3">
+      <div className="border-border bg-surface-container border-b px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <label className="flex items-center">
@@ -155,7 +155,7 @@ export function TrashTable({ items, className }: TrashTableProps) {
         {Object.entries(groupedItems).map(([dateString, dayItems]) => (
           <div key={dateString}>
             {/* 日付ヘッダー */}
-            <div className="border-border bg-muted sticky top-0 border-b px-4 py-2">
+            <div className="border-border bg-surface-container sticky top-0 border-b px-4 py-2">
               <h4 className="text-foreground text-sm font-medium">
                 {formatDateHeader(new Date(dateString), t)} ({dayItems.length}件)
               </h4>
@@ -200,7 +200,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
   return (
     <div
       className={`border-border hover:bg-state-hover flex items-center border-b px-4 py-3 transition-colors ${
-        isSelected ? 'bg-muted' : ''
+        isSelected ? 'bg-surface-container' : ''
       }`}
     >
       {/* 選択チェックボックス */}
@@ -228,7 +228,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
                 <h4 className="text-foreground truncate text-sm font-medium">
                   {trashOperations.truncateTitle(item.title)}
                 </h4>
-                <span className="bg-muted text-muted-foreground flex-shrink-0 rounded-sm px-2 py-1 text-sm">
+                <span className="bg-surface-container text-muted-foreground flex-shrink-0 rounded-sm px-2 py-1 text-sm">
                   {typeConfig.label}
                 </span>
               </div>
@@ -268,7 +268,7 @@ function TrashItemRow({ item, isSelected, onToggleSelect, onRestore, onPermanent
                     </span>
                   ))}
                   {trashOperations.formatTags(item.metadata.tags).hidden > 0 && (
-                    <span className="bg-muted text-muted-foreground inline-block rounded-sm px-2 py-1 text-sm">
+                    <span className="bg-surface-container text-muted-foreground inline-block rounded-sm px-2 py-1 text-sm">
                       +{trashOperations.formatTags(item.metadata.tags).hidden}
                     </span>
                   )}

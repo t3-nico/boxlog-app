@@ -71,7 +71,7 @@ export function StatusEditCell({ status, width, onStatusChange }: StatusEditCell
                 onClick={() => handleStatusSelect(option.value)}
                 className={cn(
                   'hover:bg-state-hover flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors',
-                  status === option.value && 'bg-muted'
+                  status === option.value && 'bg-surface-container'
                 )}
               >
                 <div className="flex size-4 items-center justify-center">

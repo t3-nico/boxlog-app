@@ -29,7 +29,7 @@ export function Item({ icon: Icon, label, url, isActive, onClick }: ItemProps) {
       href={url}
       {...(onClick && { onClick })}
       {...(isActive && { 'aria-current': 'page' as const })}
-      className="flex flex-col items-center gap-1"
+      className="flex flex-col items-center"
     >
       {/* アイコン（ハイライト対象） */}
       <div

@@ -61,7 +61,7 @@ export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }
           </div>
 
           {/* タグ数表示 */}
-          <div className="bg-muted rounded-xl p-4">
+          <div className="bg-surface-container rounded-xl p-4">
             <p className="mb-2 text-sm font-medium">このグループに属するタグ:</p>
             <p className="text-muted-foreground text-sm">{tagCount}件のタグが属しています</p>
           </div>

@@ -420,7 +420,7 @@ export function PlanTagSelectDialogEnhanced({
                     {/* 選択済みセクション */}
                     {selectedTags.length > 0 && (
                       <>
-                        <TableRow className="bg-muted/30 hover:bg-state-hover">
+                        <TableRow className="bg-surface-container/30 hover:bg-state-hover">
                           <TableCell colSpan={4} className="py-2 text-xs font-semibold">
                             選択中 ({selectedTags.length})
                           </TableCell>
@@ -475,7 +475,7 @@ export function PlanTagSelectDialogEnhanced({
                     {/* 未選択セクション */}
                     {unselectedTags.length > 0 && (
                       <>
-                        <TableRow className="bg-muted/30 hover:bg-state-hover">
+                        <TableRow className="bg-surface-container/30 hover:bg-state-hover">
                           <TableCell colSpan={4} className="py-2 text-xs font-semibold">
                             その他
                           </TableCell>

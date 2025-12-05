@@ -42,15 +42,21 @@ export const ThemeToggle = () => {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-32">
-          <DropdownMenuItem onClick={() => setTheme('light')} className={theme === 'light' ? 'bg-muted' : ''}>
+          <DropdownMenuItem
+            onClick={() => setTheme('light')}
+            className={theme === 'light' ? 'bg-surface-container' : ''}
+          >
             <SunIcon className="mr-2 h-4 w-4" />
             Light
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme('dark')} className={theme === 'dark' ? 'bg-muted' : ''}>
+          <DropdownMenuItem onClick={() => setTheme('dark')} className={theme === 'dark' ? 'bg-surface-container' : ''}>
             <MoonIcon className="mr-2 h-4 w-4" />
             Dark
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme('system')} className={theme === 'system' ? 'bg-muted' : ''}>
+          <DropdownMenuItem
+            onClick={() => setTheme('system')}
+            className={theme === 'system' ? 'bg-surface-container' : ''}
+          >
             <ComputerDesktopIcon className="mr-2 h-4 w-4" />
             System
           </DropdownMenuItem>
@@ -72,7 +78,7 @@ export const ThemeToggle = () => {
             <DropdownMenuItem
               key={scheme.value}
               onClick={() => setColorScheme(scheme.value)}
-              className={`flex items-center justify-between ${colorScheme === scheme.value ? 'bg-muted' : ''}`}
+              className={`flex items-center justify-between ${colorScheme === scheme.value ? 'bg-surface-container' : ''}`}
             >
               <div className="flex items-center space-x-2">
                 <div className={`h-4 w-4 rounded-full ${scheme.color}`} />

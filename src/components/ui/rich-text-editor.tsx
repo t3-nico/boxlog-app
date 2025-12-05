@@ -122,7 +122,7 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={() => toggleHeading(1)}
-            className={cn('h-8 w-8 p-0', editor.isActive('heading', { level: 1 }) && 'bg-muted')}
+            className={cn('h-8 w-8 p-0', editor.isActive('heading', { level: 1 }) && 'bg-surface-container')}
           >
             <Heading1 className="h-4 w-4" />
           </Button>
@@ -131,7 +131,7 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={() => toggleHeading(2)}
-            className={cn('h-8 w-8 p-0', editor.isActive('heading', { level: 2 }) && 'bg-muted')}
+            className={cn('h-8 w-8 p-0', editor.isActive('heading', { level: 2 }) && 'bg-surface-container')}
           >
             <Heading2 className="h-4 w-4" />
           </Button>
@@ -140,7 +140,7 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={() => toggleHeading(3)}
-            className={cn('h-8 w-8 p-0', editor.isActive('heading', { level: 3 }) && 'bg-muted')}
+            className={cn('h-8 w-8 p-0', editor.isActive('heading', { level: 3 }) && 'bg-surface-container')}
           >
             <Heading3 className="h-4 w-4" />
           </Button>
@@ -154,7 +154,7 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={toggleBold}
-            className={cn('h-8 w-8 p-0', editor.isActive('bold') && 'bg-muted')}
+            className={cn('h-8 w-8 p-0', editor.isActive('bold') && 'bg-surface-container')}
           >
             <Bold className="h-4 w-4" />
           </Button>
@@ -163,7 +163,7 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={toggleItalic}
-            className={cn('h-8 w-8 p-0', editor.isActive('italic') && 'bg-muted')}
+            className={cn('h-8 w-8 p-0', editor.isActive('italic') && 'bg-surface-container')}
           >
             <Italic className="h-4 w-4" />
           </Button>
@@ -177,7 +177,7 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={toggleBulletList}
-            className={cn('h-8 w-8 p-0', editor.isActive('bulletList') && 'bg-muted')}
+            className={cn('h-8 w-8 p-0', editor.isActive('bulletList') && 'bg-surface-container')}
           >
             <List className="h-4 w-4" />
           </Button>
@@ -186,7 +186,7 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={toggleOrderedList}
-            className={cn('h-8 w-8 p-0', editor.isActive('orderedList') && 'bg-muted')}
+            className={cn('h-8 w-8 p-0', editor.isActive('orderedList') && 'bg-surface-container')}
           >
             <ListOrdered className="h-4 w-4" />
           </Button>
@@ -200,7 +200,7 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={toggleBlockquote}
-            className={cn('h-8 w-8 p-0', editor.isActive('blockquote') && 'bg-muted')}
+            className={cn('h-8 w-8 p-0', editor.isActive('blockquote') && 'bg-surface-container')}
           >
             <Quote className="h-4 w-4" />
           </Button>

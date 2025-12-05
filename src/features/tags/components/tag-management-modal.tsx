@@ -280,7 +280,7 @@ export const TagManagementModal = ({
                 type="button"
                 onClick={handleCreateTag}
                 disabled={!newTagName.trim()}
-                className="bg-primary text-primary-foreground hover:bg-primary-hover disabled:bg-muted disabled:text-muted-foreground flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 transition-colors disabled:cursor-not-allowed"
+                className="bg-primary text-primary-foreground hover:bg-primary-hover disabled:bg-surface-container disabled:text-muted-foreground flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 transition-colors disabled:cursor-not-allowed"
               >
                 <Plus className="h-4 w-4" />
                 Create Tag
@@ -300,7 +300,10 @@ export const TagManagementModal = ({
             ) : (
               <div className="max-h-64 space-y-2 overflow-y-auto">
                 {tags.map((tag) => (
-                  <div key={tag.id} className="border-border bg-muted flex items-center gap-3 rounded-lg border p-3">
+                  <div
+                    key={tag.id}
+                    className="border-border bg-surface-container flex items-center gap-3 rounded-lg border p-3"
+                  >
                     {editingTag === tag.id ? (
                       <>
                         {/* Edit Mode */}

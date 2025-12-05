@@ -399,7 +399,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
         <div
           className={cn(
             'border-t bg-gray-50 px-6 py-4',
-            getContrastClassName('border-border bg-muted', 'contrast-border contrast-bg')
+            getContrastClassName('border-border bg-surface-container', 'contrast-border contrast-bg')
           )}
         >
           <div className="flex justify-end space-x-3">

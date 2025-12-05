@@ -26,10 +26,10 @@ export default function SecurityPage() {
           <h2 className="text-2xl font-semibold">{t('legal.security.policy.title')}</h2>
         </div>
 
-        <div className="bg-muted mb-6 rounded-xl p-6">
+        <div className="bg-surface-container mb-6 rounded-xl p-6">
           <h3 className="mb-4 text-lg font-semibold">{t('legal.security.policy.supportedVersions.title')}</h3>
           <table className="border-border w-full border">
-            <thead className="bg-muted">
+            <thead className="bg-surface-container">
               <tr>
                 <th className="border-border border p-3 text-left">
                   {t('legal.security.policy.supportedVersions.version')}
@@ -117,7 +117,7 @@ export default function SecurityPage() {
 
           <h3 className="mt-6 text-lg font-semibold">{t('legal.security.vulnerability.timeline.title')}</h3>
           <table className="border-border w-full border">
-            <thead className="bg-muted">
+            <thead className="bg-surface-container">
               <tr>
                 <th className="border-border border p-3 text-left">
                   {t('legal.security.vulnerability.timeline.severity')}
@@ -164,7 +164,7 @@ export default function SecurityPage() {
       <section className="mb-12">
         <h2 className="mb-4 text-2xl font-semibold">{t('legal.security.disclosure.title')}</h2>
 
-        <div className="bg-muted rounded-xl p-6">
+        <div className="bg-surface-container rounded-xl p-6">
           <h3 className="mb-4 text-lg font-semibold">{t('legal.security.disclosure.safeHarbor.title')}</h3>
           <p className="text-foreground mb-4 leading-relaxed">
             {t('legal.security.disclosure.safeHarbor.description')}
@@ -250,7 +250,7 @@ export default function SecurityPage() {
       </section>
 
       {/* お問い合わせ */}
-      <section className="bg-muted rounded-xl p-6">
+      <section className="bg-surface-container rounded-xl p-6">
         <h2 className="mb-4 text-xl font-semibold">{t('legal.security.contact.title')}</h2>
         <div className="space-y-2">
           <p className="flex items-center gap-2">

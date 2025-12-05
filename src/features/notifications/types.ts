@@ -127,9 +127,9 @@ export const NOTIFICATION_PRIORITY_CONFIG = {
     badgeColor: 'bg-primary',
   },
   low: {
-    color: 'bg-muted',
+    color: 'bg-surface-container',
     textColor: 'text-muted-foreground',
-    badgeColor: 'bg-muted-foreground',
+    badgeColor: 'bg-surface-container-foreground',
   },
 } as const
 

@@ -100,7 +100,9 @@ export function SaveViewDialog({ open, onOpenChange, onSave, currentFilters }: S
           {/* フィルタープレビュー */}
           <div className="grid gap-2">
             <Label>保存される設定</Label>
-            <div className="bg-muted text-muted-foreground rounded-md p-3 text-sm">{getFilterPreview()}</div>
+            <div className="bg-surface-container text-muted-foreground rounded-md p-3 text-sm">
+              {getFilterPreview()}
+            </div>
           </div>
         </div>
 

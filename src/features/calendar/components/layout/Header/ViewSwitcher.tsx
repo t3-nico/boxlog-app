@@ -89,7 +89,7 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
               {currentView === option.value && <Check className="text-primary h-4 w-4" />}
             </div>
             {option.shortcut && (
-              <span className="bg-muted text-muted-foreground rounded px-1.5 py-0.5 font-mono text-xs">
+              <span className="bg-surface-container text-muted-foreground rounded px-1.5 py-0.5 font-mono text-xs">
                 {option.shortcut}
               </span>
             )}

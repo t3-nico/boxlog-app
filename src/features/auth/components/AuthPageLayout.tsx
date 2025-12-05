@@ -63,7 +63,7 @@ export function AuthPageLayout({
       </div>
 
       {/* 右側: 背景エリア（PC時のみ表示） */}
-      <div className="bg-muted relative hidden lg:block">
+      <div className="bg-surface-container relative hidden lg:block">
         <div className={cn('absolute inset-0', backgroundGradient)}>
           <div className="flex h-full items-center justify-center p-8">
             <div className="space-y-4 text-center">

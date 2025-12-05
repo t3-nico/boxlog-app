@@ -180,7 +180,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                   key={notification.id}
                   className={cn(
                     'flex gap-3 px-4 py-3',
-                    !notification.read && 'bg-muted',
+                    !notification.read && 'bg-surface-container',
                     'hover:bg-state-hover',
                     'transition-all duration-200',
                     'cursor-pointer'

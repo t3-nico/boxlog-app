@@ -1,7 +1,7 @@
 'use client'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
+import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
 import { SETTINGS_CATEGORIES } from '@/features/settings/constants'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { cn } from '@/lib/utils'
@@ -20,10 +20,7 @@ export function SettingsSidebar() {
   const { activeCategory, setActiveCategory } = useSettingsDialogStore()
 
   return (
-    <aside className="bg-muted border-border flex w-48 flex-shrink-0 flex-col border-r">
-      {/* ヘッダー（48px - SidebarHeaderと同じ） */}
-      <SidebarHeader title={t('settings.dialog.title')} className="bg-muted" />
-
+    <SidebarShell title={t('settings.dialog.title')} className="border-border w-48 flex-shrink-0 border-r">
       {/* カテゴリメニュー（8pxグリッド準拠） */}
       <ScrollArea className="flex-1">
         <nav className="flex flex-col gap-1 p-2">
@@ -47,6 +44,6 @@ export function SettingsSidebar() {
           })}
         </nav>
       </ScrollArea>
-    </aside>
+    </SidebarShell>
   )
 }

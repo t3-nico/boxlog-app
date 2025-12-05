@@ -201,7 +201,7 @@ export const AccessibleCalendarGrid = ({
         {/* ヘッダー行（日付） */}
         <div role="row" aria-rowindex={1} className="flex border-b">
           {/* 時間列のヘッダー */}
-          <div role="columnheader" aria-colindex={1} className="bg-muted w-16 p-2 text-sm font-medium">
+          <div role="columnheader" aria-colindex={1} className="bg-surface-container w-16 p-2 text-sm font-medium">
             <span className="sr-only">時間</span>
           </div>
 
@@ -212,7 +212,7 @@ export const AccessibleCalendarGrid = ({
               role="columnheader"
               aria-colindex={dateIndex + 2}
               className={cn(
-                'bg-muted flex-1 p-2 text-center text-sm font-medium',
+                'bg-surface-container flex-1 p-2 text-center text-sm font-medium',
                 date.toDateString() === new Date().toDateString() && 'bg-primary/12'
               )}
             >

@@ -6,7 +6,7 @@ import { useCallback, useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
+import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
 import { useTranslations } from 'next-intl'
 
 import { useInboxViewStore } from '../stores/useInboxViewStore'
@@ -60,20 +60,16 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
 
   if (isLoading) {
     return (
-      <aside className="bg-background text-foreground flex h-full w-full flex-col">
-        <SidebarHeader title={t('sidebar.navigation.inbox')} />
+      <SidebarShell title={t('sidebar.navigation.inbox')}>
         <div className="flex flex-1 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+          <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
         </div>
-      </aside>
+      </SidebarShell>
     )
   }
 
   return (
-    <aside className="bg-background text-foreground flex h-full w-full flex-col">
-      {/* Header - ページタイトル */}
-      <SidebarHeader title={t('sidebar.navigation.inbox')} />
-
+    <SidebarShell title={t('sidebar.navigation.inbox')}>
       {/* コンテンツ */}
       <nav className="flex-1 overflow-y-auto px-2 py-2">
         <div className="space-y-1">
@@ -149,6 +145,6 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
           )}
         </div>
       </nav>
-    </aside>
+    </SidebarShell>
   )
 }
