@@ -119,10 +119,8 @@ plans.getDailyHours       // ✅ 実装済み
 // タグ別時間用
 plans.getTimeByTag        // ✅ 実装済み
 
-// サマリー用
-plans.getTotalTime        // 🆕 累計時間
-plans.getMonthlyTime      // 🆕 今月の時間
-plans.getMonthComparison  // 🆕 前月比
+// サマリー用（統合エンドポイント）
+plans.getSummary          // ✅ 実装済み（累計時間・今月時間・前月比・完了タスク数）
 ```
 
 ---
@@ -157,7 +155,7 @@ plans.getMonthComparison  // 🆕 前月比
 - [x] Self Analysis系 → Settings へ移動決定
 - [x] 年次グリッドの実装（`YearlyHeatmap`コンポーネント）
 - [x] タグ別時間の実装（`TagTimeChart`コンポーネント）
-- [ ] サマリー（累計・今月・前月比）の実装
+- [x] サマリー（累計・今月・前月比）の実装（`StatsSummary`コンポーネント）
 - [ ] ページ構成の決定（実装後）
 
 ---
