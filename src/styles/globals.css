@@ -57,7 +57,7 @@
 
   /* Borders & Inputs */
   --border: oklch(0.9 0.006 264.54);
-  --input: oklch(0.9 0.006 264.54);
+  --input: var(--surface-bright);
   --ring: oklch(0.6231 0.188 259.8145);
 
   /* Charts */
@@ -110,7 +110,7 @@
 
   /* Borders & Inputs */
   --border: oklch(0.3715 0 0);
-  --input: oklch(0.3715 0 0);
+  --input: var(--surface-bright);
   --ring: oklch(0.6231 0.188 259.8145);
 
   /* Charts */
