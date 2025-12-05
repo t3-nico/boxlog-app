@@ -1,9 +1,10 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import { useTranslations } from 'next-intl'
+import { StatsPageHeader } from '@/features/stats/components/StatsPageHeader'
 
 // LCP改善: 重いコンポーネントは遅延ロード
 const YearlyHeatmap = dynamic(() => import('@/features/stats/components/charts').then((mod) => mod.YearlyHeatmap), {
@@ -65,33 +66,43 @@ export default function StatsPage() {
   const t = useTranslations()
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
-      {/* ページタイトル */}
-      <div>
-        <h1 className="text-2xl font-bold">{t('stats.sidebar.overview')}</h1>
-        <p className="text-muted-foreground text-sm">{t('stats.overview.subtitle')}</p>
+    <div className="flex min-h-0 flex-1 flex-col">
+      {/* 1. ヘッダー：タイトル */}
+      <StatsPageHeader />
+
+      {/* 2. ナビゲーション：セクション名 */}
+      <div className="flex h-12 shrink-0 items-center border-b px-4">
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-medium">{t('stats.sidebar.overview')}</h2>
+          <span className="text-muted-foreground text-xs">— {t('stats.overview.subtitle')}</span>
+        </div>
       </div>
 
-      {/* サマリーカード */}
-      <StatsSummary />
+      {/* 3. コンテンツ：スクロール可能エリア */}
+      <div className="flex-1 overflow-auto p-4">
+        <div className="mx-auto max-w-7xl space-y-6">
+          {/* サマリーカード */}
+          <StatsSummary />
 
-      {/* ストリーク + 時間帯別（2カラム） */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <StreakCard />
-        <HourlyDistributionChart />
+          {/* ストリーク + 時間帯別（2カラム） */}
+          <div className="grid gap-4 md:grid-cols-2">
+            <StreakCard />
+            <HourlyDistributionChart />
+          </div>
+
+          {/* 曜日別 + 月次トレンド（2カラム） */}
+          <div className="grid gap-4 md:grid-cols-2">
+            <DayOfWeekChart />
+            <MonthlyTrendChart />
+          </div>
+
+          {/* 年次グリッド */}
+          <YearlyHeatmap />
+
+          {/* タグ別時間 */}
+          <TagTimeChart />
+        </div>
       </div>
-
-      {/* 曜日別 + 月次トレンド（2カラム） */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <DayOfWeekChart />
-        <MonthlyTrendChart />
-      </div>
-
-      {/* 年次グリッド */}
-      <YearlyHeatmap />
-
-      {/* タグ別時間 */}
-      <TagTimeChart />
     </div>
   )
 }

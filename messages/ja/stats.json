@@ -1,6 +1,9 @@
 {
   "stats": {
     "title": "統計ビュー",
+    "page": {
+      "title": "統計"
+    },
     "description": "統計ビューは近日公開予定",
     "featureInDevelopment": "この機能は開発中です。",
     "lifeVision": "人生のビジョン",

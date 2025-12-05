@@ -1,6 +1,9 @@
 {
   "stats": {
     "title": "Stats View",
+    "page": {
+      "title": "Statistics"
+    },
     "description": "Statistics view coming soon",
     "featureInDevelopment": "This feature is under development.",
     "lifeVision": "Life Vision",
