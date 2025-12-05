@@ -27,6 +27,19 @@ const StatsSummary = dynamic(() => import('@/features/stats/components/charts').
   ),
 })
 
+const StreakCard = dynamic(() => import('@/features/stats/components/charts').then((mod) => mod.StreakCard), {
+  ssr: false,
+  loading: () => <Skeleton className="h-[180px] w-full" />,
+})
+
+const HourlyDistributionChart = dynamic(
+  () => import('@/features/stats/components/charts').then((mod) => mod.HourlyDistributionChart),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[300px] w-full" />,
+  }
+)
+
 /**
  * 統計ページ - 概要ダッシュボード
  *
@@ -45,6 +58,12 @@ export default function StatsPage() {
 
       {/* サマリーカード */}
       <StatsSummary />
+
+      {/* ストリーク + 時間帯別（2カラム） */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <StreakCard />
+        <HourlyDistributionChart />
+      </div>
 
       {/* 年次グリッド */}
       <YearlyHeatmap />
