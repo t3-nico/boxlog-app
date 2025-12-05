@@ -346,7 +346,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
         {isAdding && (
           <div
             ref={formRef}
-            className="bg-card hover:bg-muted border-border group flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors"
+            className="bg-secondary text-secondary-foreground hover:bg-state-hover border-border group flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors"
           >
             {/* タイトル入力 */}
             <div
@@ -480,7 +480,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
         {!isAdding && (
           <button
             onClick={() => setIsAdding(true)}
-            className="text-muted-foreground hover:bg-foreground/8 flex w-full items-center gap-2 rounded-lg p-3 text-sm transition-colors"
+            className="text-muted-foreground hover:bg-state-hover flex w-full items-center gap-2 rounded-lg p-3 text-sm transition-colors"
           >
             <Plus className="h-4 w-4" />
             <span>{t('board.kanban.addNew')}</span>

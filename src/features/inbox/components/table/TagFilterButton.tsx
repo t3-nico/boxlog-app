@@ -1,6 +1,7 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
 import { Tag } from 'lucide-react'
 import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
@@ -30,10 +31,7 @@ export function TagFilterButton() {
       side="bottom"
       sideOffset={8}
     >
-      <button
-        type="button"
-        className="focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-input bg-background hover:bg-foreground/8 active:bg-foreground/12 dark:bg-input/30 dark:border-input dark:hover:bg-input/50 inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-md border px-2.5 text-sm font-medium whitespace-nowrap shadow-xs transition-all outline-none focus-visible:ring-[3px] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
-      >
+      <Button variant="outline" size="default">
         <Tag />
         タグ
         {tagFilterCount > 0 && (
@@ -41,7 +39,7 @@ export function TagFilterButton() {
             {tagFilterCount}
           </Badge>
         )}
-      </button>
+      </Button>
     </PlanTagSelectDialogEnhanced>
   )
 }

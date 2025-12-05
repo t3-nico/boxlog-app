@@ -145,7 +145,7 @@ describe('InboxViewTabs', () => {
 
       const tableTab = screen.getByRole('tab', { name: 'Table' })
       // pill形式: 非アクティブ時のホバーでbg-foreground/8
-      expect(tableTab.className).toContain('data-[state=inactive]:hover:bg-foreground/8')
+      expect(tableTab.className).toContain('data-[state=inactive]:hover:bg-state-hover')
     })
   })
 })

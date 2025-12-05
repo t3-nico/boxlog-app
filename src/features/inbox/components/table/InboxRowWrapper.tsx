@@ -84,7 +84,7 @@ export function InboxRowWrapper({ item, children, isSelected }: InboxRowWrapperP
         <div
           ref={wrapperRef}
           className={cn(
-            'hover:bg-muted cursor-pointer transition-colors',
+            'hover:bg-state-hover cursor-pointer transition-colors',
             isSelected && 'bg-primary/12 hover:bg-primary/16',
             isFocused && 'ring-primary ring-2 ring-inset'
           )}

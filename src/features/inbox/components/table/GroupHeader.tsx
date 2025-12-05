@@ -36,7 +36,10 @@ export function GroupHeader({ groupKey, groupLabel, count, columnCount }: GroupH
   const isCollapsed = collapsedGroups.has(groupKey)
 
   return (
-    <TableRow className="bg-muted hover:bg-muted cursor-pointer border-y" onClick={() => toggleGroupCollapse(groupKey)}>
+    <TableRow
+      className="bg-muted hover:bg-state-hover cursor-pointer border-y"
+      onClick={() => toggleGroupCollapse(groupKey)}
+    >
       <TableCell colSpan={columnCount} className="py-3">
         <div className="flex items-center gap-2">
           {isCollapsed ? <ChevronRight className="size-4" /> : <ChevronDown className="size-4" />}

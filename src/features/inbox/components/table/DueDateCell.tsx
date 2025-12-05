@@ -72,7 +72,7 @@ export function DueDateCell({ dueDate, width, onDueDateChange }: DueDateCellProp
         onDateSelect={handleDateSelect}
         popoverAlign="start"
         popoverTrigger={
-          <div className="hover:bg-muted cursor-pointer rounded px-2 py-1 transition-colors">
+          <div className="hover:bg-state-hover cursor-pointer rounded px-2 py-1 transition-colors">
             <span className="truncate">{displayText}</span>
           </div>
         }
