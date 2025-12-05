@@ -15,7 +15,9 @@ import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { checkLockoutStatus, recordLoginAttempt, resetLoginAttempts } from '@/features/auth/lib/account-lockout'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
+import { useRecaptchaV3 } from '@/lib/recaptcha'
 import { createClient } from '@/lib/supabase/client'
+import { trpc } from '@/lib/trpc/client'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
@@ -25,6 +27,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const locale = (params?.locale as string) || 'ja'
   const t = useTranslations()
   const signIn = useAuthStore((state) => state.signIn)
+
+  // reCAPTCHA v3
+  const { generateToken, isReady: isRecaptchaReady } = useRecaptchaV3('login')
+  const verifyRecaptcha = trpc.auth.verifyRecaptcha.useMutation()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -43,6 +49,23 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     const supabase = createClient()
 
     try {
+      // ステップ0: reCAPTCHA v3 検証（設定されている場合のみ）
+      if (isRecaptchaReady) {
+        const token = await generateToken()
+        if (token) {
+          const recaptchaResult = await verifyRecaptcha.mutateAsync({
+            token,
+            action: 'login',
+          })
+
+          if (recaptchaResult.isBot) {
+            setError(t('auth.errors.botDetected'))
+            setIsLoading(false)
+            return
+          }
+        }
+      }
+
       // ステップ1: ロックアウトステータスをチェック
       const lockoutStatus = await checkLockoutStatus(supabase, email)
 
