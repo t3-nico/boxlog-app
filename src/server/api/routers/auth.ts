@@ -1,11 +1,12 @@
 /**
  * 認証関連 tRPC ルーター
- * @description reCAPTCHA検証などの認証補助機能
+ * @description reCAPTCHA検証、IPレート制限などの認証補助機能
  */
 
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
+import { checkIpRateLimit } from '@/features/auth/lib/ip-rate-limit'
 import { RECAPTCHA_CONFIG, verifyRecaptchaV3 } from '@/lib/recaptcha'
 
 import { createTRPCRouter, publicProcedure } from '../trpc'
@@ -16,6 +17,13 @@ import { createTRPCRouter, publicProcedure } from '../trpc'
 const verifyRecaptchaInput = z.object({
   token: z.string().min(1, 'reCAPTCHAトークンが必要です'),
   action: z.enum(['login', 'signup', 'password_reset']),
+})
+
+/**
+ * IPレート制限チェックの入力スキーマ
+ */
+const checkIpRateLimitInput = z.object({
+  // クライアントからは送信しない（サーバー側でIPを取得）
 })
 
 /**
@@ -71,4 +79,84 @@ export const authRouter = createTRPCRouter({
       })
     }
   }),
+
+  /**
+   * IPレート制限をチェック
+   * @description ログイン試行前にIP単位のレート制限を確認
+   */
+  checkIpRateLimit: publicProcedure.input(checkIpRateLimitInput).query(async ({ ctx }) => {
+    // クライアントIPを取得
+    const forwarded = ctx.req?.headers?.['x-forwarded-for']
+    const remoteAddress = ctx.req?.socket?.remoteAddress
+    const firstForwarded = typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined
+    const ipAddress = firstForwarded?.trim() ?? remoteAddress ?? null
+
+    if (!ipAddress) {
+      return {
+        isBlocked: false,
+        remainingMinutes: 0,
+        failedAttempts: 0,
+      }
+    }
+
+    try {
+      const status = await checkIpRateLimit(ctx.supabase, ipAddress)
+
+      return {
+        isBlocked: status.isBlocked,
+        remainingMinutes: status.remainingMinutes,
+        failedAttempts: status.failedAttempts,
+        ipAddress, // デバッグ用（本番では削除可）
+      }
+    } catch (error) {
+      console.error('[Auth] IP rate limit check error:', error)
+      // エラー時はブロックしない（可用性優先）
+      return {
+        isBlocked: false,
+        remainingMinutes: 0,
+        failedAttempts: 0,
+      }
+    }
+  }),
+
+  /**
+   * ログイン試行を記録（IP付き）
+   * @description サーバー側でIPアドレスを確実に取得して記録
+   */
+  recordLoginAttempt: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        isSuccessful: z.boolean(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { email, isSuccessful } = input
+
+      // クライアントIPを取得
+      const forwarded = ctx.req?.headers?.['x-forwarded-for']
+      const remoteAddress = ctx.req?.socket?.remoteAddress
+      const firstForwarded = typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined
+      const ipAddress = firstForwarded?.trim() ?? remoteAddress ?? null
+      const userAgent = ctx.req?.headers?.['user-agent'] ?? null
+
+      try {
+        const { error } = await ctx.supabase.from('login_attempts').insert({
+          email: email.toLowerCase(),
+          attempt_time: new Date().toISOString(),
+          is_successful: isSuccessful,
+          ip_address: ipAddress || null,
+          user_agent: userAgent,
+        })
+
+        if (error) {
+          console.error('[Auth] Failed to record login attempt:', error)
+        }
+
+        return { success: !error }
+      } catch (error) {
+        console.error('[Auth] Exception recording login attempt:', error)
+        return { success: false }
+      }
+    }),
 })

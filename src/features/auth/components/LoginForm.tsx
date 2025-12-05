@@ -13,7 +13,7 @@ import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from 
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { checkLockoutStatus, recordLoginAttempt, resetLoginAttempts } from '@/features/auth/lib/account-lockout'
+import { checkLockoutStatus } from '@/features/auth/lib/account-lockout'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useRecaptchaV3 } from '@/lib/recaptcha'
 import { createClient } from '@/lib/supabase/client'
@@ -32,6 +32,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const { generateToken, isReady: isRecaptchaReady } = useRecaptchaV3('login')
   const verifyRecaptcha = trpc.auth.verifyRecaptcha.useMutation()
 
+  // IP単位レート制限
+  const recordLoginAttemptApi = trpc.auth.recordLoginAttempt.useMutation()
+  const { data: ipRateLimitData } = trpc.auth.checkIpRateLimit.useQuery({})
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -41,6 +45,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const [lockoutMinutes, setLockoutMinutes] = useState(0)
   const [failedAttempts, setFailedAttempts] = useState(0)
 
+  // IPブロック状態を監視
+  const ipBlocked = ipRateLimitData?.isBlocked ?? false
+  const ipBlockedMinutes = ipRateLimitData?.remainingMinutes ?? 0
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -49,7 +57,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     const supabase = createClient()
 
     try {
-      // ステップ0: reCAPTCHA v3 検証（設定されている場合のみ）
+      // ステップ0a: IP単位レート制限チェック
+      if (ipBlocked) {
+        setError(t('auth.errors.ipBlocked', { minutes: ipBlockedMinutes.toString() }))
+        setIsLoading(false)
+        return
+      }
+
+      // ステップ0b: reCAPTCHA v3 検証（設定されている場合のみ）
       if (isRecaptchaReady) {
         const token = await generateToken()
         if (token) {
@@ -86,8 +101,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       const { error, data } = await signIn(email, password)
 
       if (error) {
-        // ログイン失敗を記録（非同期、待たない）
-        recordLoginAttempt(supabase, email, false).catch(console.error)
+        // ログイン失敗を記録（サーバー側でIPを取得）
+        recordLoginAttemptApi.mutate({ email, isSuccessful: false })
 
         // 新しいロックアウトステータスを取得
         const newStatus = await checkLockoutStatus(supabase, email)
@@ -105,8 +120,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
           setError(error.message)
         }
       } else if (data) {
-        // ログイン成功を記録（非同期、待たない）
-        resetLoginAttempts(supabase, email).catch(console.error)
+        // ログイン成功を記録（サーバー側でIPを取得）
+        recordLoginAttemptApi.mutate({ email, isSuccessful: true })
 
         // MFAが有効かチェック（AALレベルで判断）
         await new Promise((resolve) => setTimeout(resolve, 100))
@@ -126,8 +141,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       console.error('Login error:', err)
       setError('An unexpected error occurred')
 
-      // エラーでも失敗として記録（非同期、待たない）
-      recordLoginAttempt(supabase, email, false).catch(console.error)
+      // エラーでも失敗として記録（サーバー側でIPを取得）
+      recordLoginAttemptApi.mutate({ email, isSuccessful: false })
     } finally {
       setIsLoading(false)
     }
@@ -144,17 +159,19 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 <p className="text-muted-foreground text-balance">{t('auth.loginForm.loginToAccount')}</p>
               </div>
 
-              {isLocked && (
+              {(isLocked || ipBlocked) && (
                 <div className="bg-destructive/10 border-destructive/50 text-destructive flex items-start gap-3 rounded-md border p-4">
                   <ShieldAlert className="mt-0.5 h-5 w-5 flex-shrink-0" />
                   <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium">{t('auth.errors.accountLockedTitle')}</p>
-                    <p className="text-sm">
-                      {t('auth.errors.accountLocked', {
-                        minutes: lockoutMinutes.toString(),
-                      })}
+                    <p className="text-sm font-medium">
+                      {ipBlocked ? t('auth.errors.ipBlockedTitle') : t('auth.errors.accountLockedTitle')}
                     </p>
-                    {failedAttempts > 0 && (
+                    <p className="text-sm">
+                      {ipBlocked
+                        ? t('auth.errors.ipBlocked', { minutes: ipBlockedMinutes.toString() })
+                        : t('auth.errors.accountLocked', { minutes: lockoutMinutes.toString() })}
+                    </p>
+                    {!ipBlocked && failedAttempts > 0 && (
                       <p className="text-xs opacity-80">
                         {t('auth.errors.failedAttempts', {
                           count: failedAttempts.toString(),
@@ -165,7 +182,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 </div>
               )}
 
-              {error && !isLocked && (
+              {error && !isLocked && !ipBlocked && (
                 <div className="text-destructive text-center text-sm" role="alert">
                   {error}
                 </div>
@@ -223,7 +240,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               </Field>
 
               <Field>
-                <Button type="submit" disabled={isLoading || isLocked} className="w-full">
+                <Button type="submit" disabled={isLoading || isLocked || ipBlocked} className="w-full">
                   {isLoading && <Spinner className="mr-2" />}
                   {t('auth.loginForm.loginButton')}
                 </Button>
