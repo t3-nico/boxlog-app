@@ -15,29 +15,52 @@
 
 /* ライトモード（CSS変数定義） */
 :root {
-  --background: oklch(1 0 0);
+  /* ============================================
+   * Background & Surface（M3準拠）
+   * background: 最背面（1種類のみ）
+   * surface: 段階的レイヤー（dim → bright）
+   * ============================================ */
+  --background: oklch(0.99 0 0);                  /* 最背面（ほぼ純白、眩しさ軽減） */
   --foreground: oklch(0.3211 0 0);
-  --card: inherit;
+
+  /* Surface 段階的レイヤー（明るい順） */
+  --surface-bright: oklch(0.98 0 0);              /* ポップオーバー、ドロップダウン */
+  --surface: oklch(0.97 0 0);                     /* カード、ダイアログ */
+  --surface-container: oklch(0.96 0 0);           /* セクション区切り */
+  --surface-container-high: oklch(0.94 0 0);      /* 強調コンテナ */
+  --surface-dim: oklch(0.93 0 0);                 /* サイドバー、ヘッダー（最暗） */
+
+  /* 互換性エイリアス（既存コード用） */
+  --card: var(--surface);
   --card-foreground: oklch(0.3211 0 0);
-  --popover: oklch(0.97 0.002 264.54);
+  --popover: var(--surface-bright);
   --popover-foreground: oklch(0.3211 0 0);
+  --secondary: var(--surface-container);
+  --secondary-foreground: oklch(0.25 0 0);
+  --muted-foreground: oklch(0.45 0.02 264.54);
+
+  /* Primary */
   --primary: oklch(0.6231 0.188 259.8145);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.9612 0.0044 264.54);
-  --secondary-foreground: oklch(0.25 0 0);
-  --muted: oklch(0.97 0.002 264.54);
-  --muted-foreground: oklch(0.45 0.02 264.54);
+
+  /* Accent */
   --accent: oklch(0.9514 0.025 236.8242);
   --accent-foreground: oklch(0.3791 0.1378 265.5222);
+
+  /* Semantic Colors */
   --destructive: oklch(0.6368 0.2078 25.3313);
   --destructive-foreground: oklch(1 0 0);
   --warning: oklch(0.7039 0.1555 68.04);
   --warning-foreground: oklch(1 0 0);
   --success: oklch(0.5859 0.1684 149.2);
   --success-foreground: oklch(1 0 0);
+
+  /* Borders & Inputs */
   --border: oklch(0.9 0.006 264.54);
   --input: oklch(0.9 0.006 264.54);
   --ring: oklch(0.6231 0.188 259.8145);
+
+  /* Charts */
   --chart-1: oklch(0.6231 0.188 259.8145);
   --chart-2: oklch(0.5461 0.2152 262.8809);
   --chart-3: oklch(0.4882 0.2172 264.3763);
@@ -47,29 +70,50 @@
 
 /* ダークモード（CSS変数上書き） */
 .dark {
-  --background: oklch(0.2046 0 0);
+  /* ============================================
+   * Background & Surface（M3準拠）
+   * ============================================ */
+  --background: oklch(0.26 0 0);                  /* 最背面（最明） */
   --foreground: oklch(0.9219 0 0);
-  --card: inherit;
+
+  /* Surface 段階的レイヤー（暗い順） */
+  --surface-bright: oklch(0.24 0 0);              /* ポップオーバー、ドロップダウン */
+  --surface: oklch(0.22 0 0);                     /* カード、ダイアログ */
+  --surface-container: oklch(0.20 0 0);           /* セクション区切り */
+  --surface-container-high: oklch(0.18 0 0);      /* 強調コンテナ */
+  --surface-dim: oklch(0.16 0 0);                 /* サイドバー、ヘッダー（最暗） */
+
+  /* 互換性エイリアス（既存コード用） */
+  --card: var(--surface);
   --card-foreground: oklch(0.9219 0 0);
-  --popover: oklch(0.25 0 0);
+  --popover: var(--surface-bright);
   --popover-foreground: oklch(0.9219 0 0);
+  --secondary: var(--surface-container);
+  --secondary-foreground: oklch(0.95 0 0);
+  --muted-foreground: oklch(0.78 0 0);
+
+  /* Primary */
   --primary: oklch(0.6231 0.188 259.8145);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.2387 0 0);
-  --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.25 0 0);
-  --muted-foreground: oklch(0.78 0 0);
+
+  /* Accent */
   --accent: oklch(0.3791 0.1378 265.5222);
   --accent-foreground: oklch(0.8823 0.0571 254.1284);
+
+  /* Semantic Colors */
   --destructive: oklch(0.6368 0.2078 25.3313);
   --destructive-foreground: oklch(1 0 0);
   --warning: oklch(0.7039 0.1555 68.04);
   --warning-foreground: oklch(1 0 0);
   --success: oklch(0.5859 0.1684 149.2);
   --success-foreground: oklch(1 0 0);
+
+  /* Borders & Inputs */
   --border: oklch(0.3715 0 0);
   --input: oklch(0.3715 0 0);
   --ring: oklch(0.6231 0.188 259.8145);
+
+  /* Charts */
   --chart-1: oklch(0.7137 0.1434 254.624);
   --chart-2: oklch(0.6231 0.188 259.8145);
   --chart-3: oklch(0.5461 0.2152 262.8809);
@@ -96,6 +140,32 @@
   --color-warning-hover: oklch(from var(--warning) l c h / 90%);
   --color-success-hover: oklch(from var(--success) l c h / 90%);
 
+  /* ============================================
+   * Primaryベースのステートレイヤー
+   * 「新規追加」ボタン等、primary強調したい要素用
+   * ============================================ */
+  --color-primary-state-hover: oklch(from var(--primary) l c h / 10%);
+  --color-primary-state-selected: oklch(from var(--primary) l c h / 12%);
+
+  /* ============================================
+   * Container トークン（M3準拠）
+   * バッジ、アイコン背景、今日ハイライト等の装飾的背景
+   * bg-primary/10, /12 を統一
+   * ============================================ */
+  --color-primary-container: oklch(from var(--primary) l c h / 12%);
+  --color-on-primary-container: var(--primary);
+
+  /* ============================================
+   * Surface トークン（M3準拠）
+   * background: 最背面（1種類）
+   * surface: 段階的レイヤー（dim → bright）
+   * ============================================ */
+  --color-surface-dim: var(--surface-dim);
+  --color-surface: var(--surface);
+  --color-surface-bright: var(--surface-bright);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -106,7 +176,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
+  --color-muted: var(--surface-dim);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
