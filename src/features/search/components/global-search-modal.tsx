@@ -136,8 +136,8 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const parsedQuery = useMemo(() => parseSearchQuery(query), [query])
   const filterHints = useMemo(() => getFilterHints(), [])
 
-  // Get data from stores
-  const { data: plans = [] } = usePlans()
+  // Get data from stores - only fetch when modal is open to prevent 401 errors on unauthenticated pages
+  const { data: plans = [] } = usePlans(undefined, { enabled: isOpen })
   const tags = useTagStore((state) => state.tags)
 
   // Get actions from stores

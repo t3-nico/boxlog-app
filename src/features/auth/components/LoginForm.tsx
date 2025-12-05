@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Eye, EyeOff, Shield, ShieldAlert } from 'lucide-react'
 import Image from 'next/image'
@@ -15,7 +15,8 @@ import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { checkLockoutStatus, recordLoginAttempt, resetLoginAttempts } from '@/features/auth/lib/account-lockout'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useRecaptchaV2, useRecaptchaV3 } from '@/lib/recaptcha'
+import { useDebounce } from '@/hooks/useDebounce'
+// import { useRecaptchaV2, useRecaptchaV3 } from '@/lib/recaptcha'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
@@ -28,6 +29,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const signIn = useAuthStore((state) => state.signIn)
 
   const [email, setEmail] = useState('')
+  const debouncedEmail = useDebounce(email, 500) // ロックアウトチェック用にデバウンス
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -39,52 +41,79 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const [captchaV2Token, setCaptchaV2Token] = useState<string | null>(null)
 
   // reCAPTCHA v3フック（3回失敗後から使用）
-  const { generateToken: generateV3Token, isReady: isV3Ready } = useRecaptchaV3('login')
+  // 一時的に無効化してフリーズ問題を切り分け
+  // const { generateToken: generateV3Token, isReady: isV3Ready } = useRecaptchaV3('login')
+  const generateV3Token = async () => null
+  const isV3Ready = false
 
   // reCAPTCHA v2フック（ロックアウト解除後に使用）
-  const { isReady: isV2Ready, renderWidget: renderV2Widget, execute: executeV2 } = useRecaptchaV2()
+  // 一時的に無効化してフリーズ問題を切り分け
+  // const { isReady: isV2Ready, renderWidget: renderV2Widget, execute: executeV2 } = useRecaptchaV2()
+  const isV2Ready = false
+  const renderV2Widget = (_containerId: string, _callback: (token: string) => void) => {}
+  const executeV2 = () => {}
   const recaptchaV2ContainerRef = useRef<HTMLDivElement>(null)
 
-  // ロックアウトステータスをチェック
-  const checkLockout = useCallback(async () => {
-    if (!email) return
+  // ロックアウトステータスをチェック（デバウンスされたメールアドレスで実行）
+  useEffect(() => {
+    if (!debouncedEmail || !debouncedEmail.includes('@')) return
 
-    const supabase = createClient()
-    const status = await checkLockoutStatus(supabase, email)
+    let isMounted = true
 
-    setIsLocked(status.isLocked)
-    setLockoutMinutes(status.remainingMinutes)
-    setFailedAttempts(status.failedAttempts)
+    const checkLockout = async () => {
+      try {
+        const supabase = createClient()
+        const status = await checkLockoutStatus(supabase, debouncedEmail)
 
-    if (status.isLocked) {
+        if (!isMounted) return
+
+        setIsLocked(status.isLocked)
+        setLockoutMinutes(status.remainingMinutes)
+        setFailedAttempts(status.failedAttempts)
+
+        // ロックアウトが解除されていて、過去に失敗履歴があればCAPTCHA v2を表示
+        if (!status.isLocked && status.failedAttempts >= 5) {
+          setShowCaptchaV2(true)
+        }
+      } catch (err) {
+        console.error('[LoginForm] Lockout check failed:', err)
+      }
+    }
+
+    checkLockout()
+
+    return () => {
+      isMounted = false
+    }
+  }, [debouncedEmail])
+
+  // isLockedが変わったときにエラーメッセージを設定
+  // 注意: tはuseTranslationsから返される関数で、参照安定性が保証されていないため依存配列から除外
+  useEffect(() => {
+    if (isLocked && lockoutMinutes > 0) {
       setError(
         t('auth.errors.accountLocked', {
-          minutes: status.remainingMinutes.toString(),
+          minutes: lockoutMinutes.toString(),
         })
       )
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLocked, lockoutMinutes])
 
-    // ロックアウトが解除されていて、過去に失敗履歴があればCAPTCHA v2を表示
-    if (!status.isLocked && status.failedAttempts >= 5) {
-      setShowCaptchaV2(true)
-    }
-  }, [email, t])
+  // reCAPTCHA v2ウィジェット初期化用のRef（一度だけ実行）
+  const v2WidgetInitializedRef = useRef(false)
 
-  // メールアドレス変更時にロックアウトステータスをチェック
+  // reCAPTCHA v2ウィジェットを初期化（ロックアウト解除後、一度だけ）
   useEffect(() => {
-    if (email && email.includes('@')) {
-      checkLockout()
-    }
-  }, [email, checkLockout])
-
-  // reCAPTCHA v2ウィジェットを初期化（ロックアウト解除後）
-  useEffect(() => {
+    if (v2WidgetInitializedRef.current) return
     if (showCaptchaV2 && isV2Ready && recaptchaV2ContainerRef.current) {
+      v2WidgetInitializedRef.current = true
       renderV2Widget('recaptcha-v2-container', (token) => {
         setCaptchaV2Token(token)
       })
     }
-  }, [showCaptchaV2, isV2Ready, renderV2Widget])
+     
+  }, [showCaptchaV2, isV2Ready])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

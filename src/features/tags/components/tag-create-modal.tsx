@@ -33,8 +33,8 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // タググループ取得
-  const { data: groups = [] as TagGroup[] } = useTagGroups()
+  // タググループ取得 - モーダルが開いている時だけフェッチ（未認証ページでの401エラー防止）
+  const { data: groups = [] as TagGroup[] } = useTagGroups({ enabled: isOpen })
 
   // モーダルが開いたらリセット
   useEffect(() => {
