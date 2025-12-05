@@ -120,6 +120,57 @@ Material Design 3のState Layer方式を採用。背景色を変えるのでは�
 | **Warning Hover**     | `bg-warning-hover`     | 警告ボタン    |
 | **Success Hover**     | `bg-success-hover`     | 成功ボタン    |
 
+#### Primaryベースのステートレイヤー（primary強調用）
+
+「新規追加」ボタンなど、primary色で強調したい要素に使用。
+
+| 状態         | Tailwindクラス              | 値  | 用途                  |
+| ------------ | --------------------------- | --- | --------------------- |
+| **Hover**    | `bg-primary-state-hover`    | 10% | Primary強調のホバー   |
+| **Selected** | `bg-primary-state-selected` | 12% | Primary強調の選択状態 |
+
+```tsx
+// ✅ 使用例: Board の「新規追加」ボタン
+className = 'text-primary hover:bg-primary-state-hover'
+
+// ✅ 使用例: Primary強調のリストアイテム
+isActive ? 'bg-primary-state-selected text-primary' : 'text-muted-foreground hover:bg-primary-state-hover'
+```
+
+#### Containerトークン（M3準拠 - 装飾的背景用）
+
+バッジ、アイコン背景、今日ハイライトなど、**インタラクション以外の装飾的背景**に使用。
+`bg-primary/10`, `bg-primary/12` を統一。
+
+| トークン                 | Tailwindクラス              | 用途                                 |
+| ------------------------ | --------------------------- | ------------------------------------ |
+| **Primary Container**    | `bg-primary-container`      | バッジ、アイコン背景、今日ハイライト |
+| **On Primary Container** | `text-on-primary-container` | Container上のテキスト色（= primary） |
+
+```tsx
+// ✅ 使用例: ステータスバッジ
+className = 'bg-primary-container text-on-primary-container'
+
+// ✅ 使用例: アイコン背景
+<div className="bg-primary-container rounded-full p-2">
+  <Icon className="text-on-primary-container" />
+</div>
+
+// ✅ 使用例: 今日ハイライト（カレンダー）
+className = 'bg-primary-container text-on-primary-container'
+
+// ❌ 禁止（ハードコード）
+className = 'bg-primary/10'
+className = 'bg-primary/12'
+```
+
+**State Layer vs Container の使い分け**:
+| 種類 | 用途 | 例 |
+|------|------|-----|
+| **State Layer** | インタラクション（hover/focus/selected） | `hover:bg-state-hover`, `bg-state-selected` |
+| **Primary State Layer** | Primary強調のインタラクション | `hover:bg-primary-state-hover` |
+| **Container** | 装飾的背景（静的） | `bg-primary-container` |
+
 #### 無効状態（手動指定）
 
 | 状態         | クラス                      | 値  | 用途             |
@@ -299,30 +350,76 @@ shadcn/uiは `hover:bg-accent hover:text-accent-foreground` パターンをデ�
 
 ## 🎨 カラーシステム
 
+### Background & Surface（M3準拠）
+
+Material Design 3のSurfaceシステムを採用。背景は1種類、Surfaceは段階的レイヤーで構成。
+
+#### Background（最背面 - 1種類のみ）
+
+```css
+--background       /* ページ最背面 */
+--foreground       /* テキスト色 */
+```
+
+#### Surface（段階的レイヤー）
+
+backgroundが最も明るく、surface-dimが最も暗くなる構造。**ライト/ダーク両方で同じ階層構造**を維持。
+
+| トークン                   | Tailwindクラス              | 用途                           | ライト (L値) | ダーク (L値) |
+| -------------------------- | --------------------------- | ------------------------------ | ------------ | ------------ |
+| **background**             | `bg-background`             | 最背面                         | 0.99 (最明)  | 0.26 (最明)  |
+| **surface-bright**         | `bg-surface-bright`         | ポップオーバー、ドロップダウン | 0.98         | 0.24         |
+| **surface**                | `bg-surface`                | カード、ダイアログ             | 0.97         | 0.22         |
+| **surface-container**      | `bg-surface-container`      | セクション区切り、ボタン       | 0.96         | 0.20         |
+| **surface-container-high** | `bg-surface-container-high` | 強調コンテナ                   | 0.94         | 0.18         |
+| **surface-dim**            | `bg-surface-dim`            | サイドバー、ヘッダー           | 0.93 (最暗)  | 0.16 (最暗)  |
+
+```tsx
+// ✅ 推奨：Surface トークンを直接使用
+<aside className="bg-surface-dim">           // サイドバー
+<Card className="bg-surface">                // カード
+<Popover className="bg-surface-bright">      // ポップオーバー
+<section className="bg-surface-container">   // セクション区切り
+<Button className="bg-surface-container">    // ボタン背景
+
+// ✅ 互換性エイリアス（既存コードも動作）
+<Card className="bg-card">                   // = bg-surface
+<Popover className="bg-popover">             // = bg-surface-bright
+<Button className="bg-secondary">            // = bg-surface-container
+```
+
+**互換性エイリアス一覧**:
+
+| 旧トークン    | 新トークン                 | 説明              |
+| ------------- | -------------------------- | ----------------- |
+| `--card`      | `var(--surface)`           | カード背景        |
+| `--popover`   | `var(--surface-bright)`    | ポップオーバー    |
+| `--secondary` | `var(--surface-container)` | セクション/ボタン |
+
 ### セマンティックトークン（globals.css）
 
 ```css
-/* 背景 */
---background       /* ページ背景 */
---foreground       /* テキスト色 */
+/* 背景 & Surface（M3準拠） */
+--background             /* ページ最背面 */
+--foreground             /* テキスト色 */
+--surface-dim            /* サイドバー、ヘッダー */
+--surface                /* カード、ダイアログ */
+--surface-bright         /* ポップオーバー、ドロップダウン */
+--surface-container      /* セクション区切り */
+--surface-container-high /* 強調コンテナ */
 
-/* UI要素 */
---card             /* カード背景 */
+/* 互換性エイリアス */
+--card             /* → var(--surface) */
 --card-foreground  /* カード内テキスト */
---popover          /* ポップオーバー背景 */
+--popover          /* → var(--surface-bright) */
 --popover-foreground
+--secondary        /* → var(--surface-container) */
+--secondary-foreground
+--muted-foreground /* 控えめなテキスト */
 
 /* プライマリ */
 --primary          /* ブランドカラー */
 --primary-foreground
-
-/* セカンダリ */
---secondary
---secondary-foreground
-
-/* ミュート */
---muted            /* 控えめな背景 */
---muted-foreground /* 控えめなテキスト */
 
 /* アクセント（⚠️ ホバー状態には使用しない） */
 --accent           /* shadcn/uiデフォルト用（このプロジェクトでは非推奨） */
@@ -429,12 +526,13 @@ xl: 1280px  // デスクトップ
 
 ---
 
-**最終更新**: 2025-11-28
-**バージョン**: v1.2
+**最終更新**: 2025-12-05
+**バージョン**: v1.3
 **管理**: BoxLog デザインシステムチーム
 
 ### 更新履歴
 
+- **v1.3** (2025-12-05): M3 Surfaceシステム導入（surface-dim/surface/surface-bright/surface-container/surface-container-high）、Primary Containerトークン追加、既存トークンを互換性エイリアス化
 - **v1.2** (2025-11-28): ChatGPT/Claude方式に統一（ホバー・選択ともにforegroundベース）、統一ルール早見表追加
 - **v1.1** (2025-11-27): hover:bg-accent禁止ルール追加、shadcn/ui修正ガイド追加
 - **v1.0** (2025-10-22): 初版
