@@ -266,12 +266,24 @@ export const authRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const userId = ctx.userId
-      const result = await getAuditLogs(ctx.supabase, userId, {
-        eventTypes: input.eventTypes as AuthAuditEventType[],
-        startDate: input.startDate ? new Date(input.startDate) : undefined,
-        endDate: input.endDate ? new Date(input.endDate) : undefined,
-        limit: input.limit,
-      })
+      const options: {
+        eventTypes?: AuthAuditEventType[]
+        startDate?: Date
+        endDate?: Date
+        limit?: number
+      } = { limit: input.limit }
+
+      if (input.eventTypes) {
+        options.eventTypes = input.eventTypes as AuthAuditEventType[]
+      }
+      if (input.startDate) {
+        options.startDate = new Date(input.startDate)
+      }
+      if (input.endDate) {
+        options.endDate = new Date(input.endDate)
+      }
+
+      const result = await getAuditLogs(ctx.supabase, userId, options)
 
       if (result.error) {
         throw new TRPCError({
