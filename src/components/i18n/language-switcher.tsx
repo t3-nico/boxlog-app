@@ -130,8 +130,8 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
                   'flex w-full items-center gap-3 px-4 py-2 text-left transition-colors duration-150',
                   'focus:outline-none',
                   language.code === currentLocale
-                    ? 'bg-blue-500 text-white'
-                    : 'text-neutral-900 hover:bg-neutral-200 focus:bg-neutral-200 dark:text-neutral-100 hover:dark:bg-neutral-700 focus:dark:bg-neutral-700'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-foreground hover:bg-state-hover focus:bg-secondary/80'
                 )}
                 role="option"
                 aria-selected={language.code === currentLocale}

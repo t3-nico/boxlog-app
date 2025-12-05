@@ -14,14 +14,14 @@ interface SettingFieldProps {
 
 /**
  * 設定画面用のフィールドコンポーネント
- * shadcn/ui Field コンポーネントのラッパー
+ * ChatGPT風の横並びレイアウト（左: ラベル/説明、右: コントロール）
  */
 export const SettingField = ({
   label,
   description,
   children,
   required,
-  orientation = 'vertical',
+  orientation = 'horizontal',
 }: SettingFieldProps) => {
   return (
     <Field orientation={orientation}>

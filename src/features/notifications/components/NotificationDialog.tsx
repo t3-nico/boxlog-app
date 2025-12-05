@@ -31,13 +31,13 @@ interface NotificationData {
 
 // フィルターの選択肢
 const TYPE_FILTER_OPTIONS: Array<{ value: NotificationType | 'all'; labelKey: string }> = [
-  { value: 'all', labelKey: 'notifications.types.all' },
-  { value: 'reminder', labelKey: 'notifications.types.reminder' },
-  { value: 'plan_created', labelKey: 'notifications.types.plan_created' },
-  { value: 'plan_updated', labelKey: 'notifications.types.plan_updated' },
-  { value: 'plan_completed', labelKey: 'notifications.types.plan_completed' },
-  { value: 'trash_warning', labelKey: 'notifications.types.trash_warning' },
-  { value: 'system', labelKey: 'notifications.types.system' },
+  { value: 'all', labelKey: 'notification.types.all' },
+  { value: 'reminder', labelKey: 'notification.types.reminder' },
+  { value: 'plan_created', labelKey: 'notification.types.plan_created' },
+  { value: 'plan_updated', labelKey: 'notification.types.plan_updated' },
+  { value: 'plan_completed', labelKey: 'notification.types.plan_completed' },
+  { value: 'trash_warning', labelKey: 'notification.types.trash_warning' },
+  { value: 'system', labelKey: 'notification.types.system' },
 ]
 
 export function NotificationDialog() {

@@ -337,7 +337,7 @@ export function ArchivePageClient() {
                     {displayTags.map((tag) => (
                       <TableRow
                         key={tag.id}
-                        className="hover:bg-foreground/8 cursor-pointer"
+                        className="hover:bg-state-hover cursor-pointer"
                         onClick={() => {
                           const locale = pathname?.split('/')[1] || 'ja'
                           router.push(`/${locale}/tags/t-${tag.tag_number}`)

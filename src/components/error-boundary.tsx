@@ -28,7 +28,7 @@ function DefaultErrorFallback({ onRetry, onReload }: { onRetry: () => void; onRe
   const t = useTranslations()
 
   return (
-    <div className="border-destructive bg-muted rounded-lg border p-6">
+    <div className="border-destructive bg-surface-container rounded-lg border p-6">
       <div className="text-center">
         <div className="text-destructive mb-4 text-6xl">⚠️</div>
         <h2 className="text-destructive mb-2 text-3xl font-bold tracking-tight">{t('error.boundary.title')}</h2>
@@ -40,13 +40,13 @@ function DefaultErrorFallback({ onRetry, onReload }: { onRetry: () => void; onRe
         <div className="flex justify-center gap-2">
           <button
             onClick={onRetry}
-            className="bg-primary text-primary-foreground hover:bg-primary/92 rounded px-4 py-2 transition-colors"
+            className="bg-primary text-primary-foreground hover:bg-primary-hover rounded px-4 py-2 transition-colors"
           >
             {t('error.boundary.retry')}
           </button>
           <button
             onClick={onReload}
-            className="bg-muted text-muted-foreground hover:bg-muted rounded px-4 py-2 transition-colors"
+            className="bg-surface-container text-muted-foreground hover:bg-state-hover rounded px-4 py-2 transition-colors"
           >
             {t('error.boundary.reload')}
           </button>
@@ -63,7 +63,7 @@ function DevErrorFallback({ componentName }: { componentName?: string | undefine
   const t = useTranslations()
 
   return (
-    <div className="border-border bg-muted rounded-lg border p-6">
+    <div className="border-border bg-surface-container rounded-lg border p-6">
       <h3 className="text-foreground mb-2 text-2xl font-bold tracking-tight">{t('error.boundary.devTitle')}</h3>
       <p className="text-foreground mb-2">
         {t('error.boundary.component')}: {componentName || t('error.boundary.unknown')}
@@ -80,11 +80,11 @@ function FeatureErrorFallback({ featureName }: { featureName: string }) {
   const t = useTranslations()
 
   return (
-    <div className="border-border bg-muted rounded border p-4">
+    <div className="border-border bg-surface-container rounded border p-4">
       <p className="text-foreground text-center">{t('error.boundary.featureError', { feature: featureName })}</p>
       <button
         onClick={() => window.location.reload()}
-        className="bg-primary text-primary-foreground hover:bg-primary/92 mx-auto mt-2 block rounded px-3 py-1 text-sm transition-colors"
+        className="bg-primary text-primary-foreground hover:bg-primary-hover mx-auto mt-2 block rounded px-3 py-1 text-sm transition-colors"
       >
         {t('error.boundary.reload')}
       </button>

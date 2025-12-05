@@ -141,7 +141,7 @@ export function NotificationSettings() {
       </SettingsCard>
 
       {/* ヒント情報 */}
-      <div className="bg-muted border-border rounded-lg border p-4">
+      <div className="bg-surface-container border-border rounded-lg border p-4">
         <p className="text-muted-foreground text-sm">{t('notifications.settings.tip')}</p>
       </div>
     </div>

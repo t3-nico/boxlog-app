@@ -56,7 +56,7 @@ export function DueDateEditCell({ dueDate, width, onDueDateChange }: DueDateEdit
   return (
     <TableCell
       onClick={(e) => e.stopPropagation()}
-      className="group hover:bg-muted cursor-pointer transition-colors"
+      className="group hover:bg-state-hover cursor-pointer transition-colors"
       style={style}
     >
       <Popover open={open} onOpenChange={setOpen}>

@@ -220,7 +220,7 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
         {children}
         <DragOverlay>
           {draggingTag && (
-            <div className="bg-card border-border flex items-center gap-2 rounded-md border px-3 py-2 shadow-lg">
+            <div className="bg-popover border-border flex items-center gap-2 rounded-md border px-3 py-2 shadow-lg">
               <span
                 className="h-3 w-3 rounded-full"
                 style={{ backgroundColor: draggingTag.color || DEFAULT_TAG_COLOR }}
@@ -229,7 +229,7 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
             </div>
           )}
           {activeGroup && (
-            <div className="bg-foreground/12 text-foreground w-48 rounded-md px-3 py-2 text-left text-sm opacity-80 shadow-lg">
+            <div className="bg-state-selected text-foreground w-48 rounded-md px-3 py-2 text-left text-sm opacity-80 shadow-lg">
               <div className="flex items-center gap-2">
                 <Folder className="h-4 w-4 shrink-0" style={{ color: activeGroup.color || DEFAULT_GROUP_COLOR }} />
                 <span className="flex-1 truncate">{activeGroup.name}</span>

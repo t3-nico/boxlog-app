@@ -13,8 +13,16 @@ interface SettingsCardProps {
   actions?: React.ReactNode
   noPadding?: boolean
   isSaving?: boolean
+  /** 最後のセクションの場合はセパレーターを非表示 */
+  isLast?: boolean
 }
 
+/**
+ * 設定セクションコンポーネント（フラット + セパレーター方式）
+ *
+ * カード風UIではなく、セパレーターで区切るフラットなスタイル。
+ * ChatGPT設定画面風のシンプルなデザイン。
+ */
 export const SettingsCard = ({
   title,
   children,
@@ -22,17 +30,13 @@ export const SettingsCard = ({
   actions,
   noPadding = false,
   isSaving = false,
+  isLast = false,
 }: SettingsCardProps) => {
   return (
-    <div
-      className={cn(
-        'border-border bg-muted text-foreground rounded-xl border',
-        'transition-all duration-200',
-        isSaving && 'border-primary/30',
-        className
-      )}
+    <section
+      className={cn('text-foreground', !isLast && 'border-border border-b pb-6', isSaving && 'opacity-70', className)}
     >
-      <div className={cn(noPadding ? '' : 'p-4')}>
+      <div className={cn(noPadding ? '' : '')}>
         {(title || actions || isSaving) && (
           <div className="mb-4 flex items-center justify-between">
             {title ? <h3 className="text-foreground text-base font-medium">{title}</h3> : <div />}
@@ -49,6 +53,6 @@ export const SettingsCard = ({
         )}
         <div className="text-sm">{children}</div>
       </div>
-    </div>
+    </section>
   )
 }

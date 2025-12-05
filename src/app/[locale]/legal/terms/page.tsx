@@ -139,7 +139,7 @@ export default async function TermsOfServicePage({ params }: PageProps) {
         <section>
           <h2 className="mb-4 text-2xl font-semibold">{t('legal.terms.sections.contact.title')}</h2>
           <p className="text-foreground mb-4 leading-relaxed">{t('legal.terms.sections.contact.content')}</p>
-          <div className="bg-muted rounded-xl p-4">
+          <div className="bg-surface-container rounded-xl p-4">
             <p className="text-foreground">
               <strong>Email:</strong> {t('legal.contact.email')}
             </p>
@@ -151,7 +151,7 @@ export default async function TermsOfServicePage({ params }: PageProps) {
       </div>
 
       {/* フッターノート */}
-      <div className="bg-muted mt-12 rounded-xl p-6">
+      <div className="bg-surface-container mt-12 rounded-xl p-6">
         <p className="text-muted-foreground text-sm">
           ⚠️ <strong>重要:</strong>{' '}
           本利用規約は、法的要件を満たすための基本的なテンプレートです。商用リリース前に、必ず弁護士によるレビューを受けてください。

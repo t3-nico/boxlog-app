@@ -23,7 +23,7 @@ interface SidebarHeaderProps {
  * - 上パディング: 8px（pt-2）
  * - コンテナ: 40px（h-10）
  * - 左右パディング: 16px（px-4）
- * - 背景: bg-background
+ * - 背景: bg-surface-container
  * - 8pxグリッドシステム準拠
  */
 export function SidebarHeader({ title, className }: SidebarHeaderProps) {
@@ -31,7 +31,7 @@ export function SidebarHeader({ title, className }: SidebarHeaderProps) {
   const t = useTranslations()
 
   return (
-    <div className={cn('bg-background flex h-12 items-end px-4 pt-2', className)}>
+    <div className={cn('bg-surface-container flex h-12 items-end px-4 pt-2', className)}>
       {/* タイトルコンテナ（40px） */}
       <div className="flex h-10 flex-1 items-center">
         <h2 className="text-base font-semibold">{title}</h2>

@@ -318,7 +318,7 @@ const VirtualDayColumn = React.memo(function VirtualDayColumn({
       role="button"
       tabIndex={0}
       aria-label={`Time slot for ${format(date, 'MMM d')} at ${hour}:00`}
-      className="border-border hover:bg-muted/50 relative flex-1 cursor-pointer border-r"
+      className="border-border hover:bg-state-hover/50 relative flex-1 cursor-pointer border-r"
       onClick={handleClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {

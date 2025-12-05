@@ -52,7 +52,7 @@ export function PillSwitcher<T extends string = string>({
             value={option.value}
             className={cn(
               'h-7 rounded-md px-3 text-xs',
-              'data-[state=inactive]:hover:bg-foreground/8',
+              'data-[state=inactive]:hover:bg-state-hover',
               'data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground',
               option.icon && 'gap-1.5'
             )}

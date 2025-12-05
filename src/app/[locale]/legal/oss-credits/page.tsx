@@ -70,7 +70,7 @@ export default async function OSSCreditsPage({ params }: PageProps) {
       </div>
 
       {/* イントロダクション */}
-      <div className="bg-muted mb-8 rounded-xl p-6">
+      <div className="bg-surface-container mb-8 rounded-xl p-6">
         <p className="text-foreground mb-4">{t('ossCredits.intro')}</p>
         <div className="flex items-center gap-2">
           <span className="text-muted-foreground text-sm">{t('ossCredits.totalPackages')}:</span>
@@ -150,7 +150,7 @@ export default async function OSSCreditsPage({ params }: PageProps) {
       )}
 
       {/* フッター - 詳細情報へのリンク */}
-      <div className="bg-muted mt-12 rounded-xl p-6 text-center">
+      <div className="bg-surface-container mt-12 rounded-xl p-6 text-center">
         <p className="text-muted-foreground mb-4 text-sm">{t('ossCredits.footer.notice')}</p>
         <div className="flex flex-col gap-2 md:flex-row md:justify-center md:gap-4">
           <Link href="/THIRD_PARTY_NOTICES.txt" target="_blank" className="text-primary hover:underline">

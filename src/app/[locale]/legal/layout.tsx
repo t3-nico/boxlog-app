@@ -55,7 +55,7 @@ export default function LegalLayout({ children }: LegalLayoutProps) {
       <main>{children}</main>
 
       {/* フッター */}
-      <footer className="border-t-border bg-muted mt-16 border-t">
+      <footer className="border-t-border bg-surface-container mt-16 border-t">
         <div className="container mx-auto max-w-6xl px-4 py-8 md:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="text-muted-foreground text-sm">

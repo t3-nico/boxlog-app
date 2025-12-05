@@ -133,9 +133,9 @@ export const LoadingButton = ({
     'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
 
   const variantClasses = {
-    default: 'bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88',
-    outline: 'border border-input bg-background hover:bg-foreground/8 active:bg-foreground/12',
-    ghost: 'hover:bg-foreground/8 active:bg-foreground/12',
+    default: 'bg-primary text-primary-foreground hover:bg-primary-hover active:bg-state-pressed',
+    outline: 'border border-border bg-secondary text-secondary-foreground hover:bg-state-hover active:bg-state-pressed',
+    ghost: 'hover:bg-state-hover active:bg-state-pressed',
   }
 
   const sizeClasses = 'h-10 px-4 py-2'

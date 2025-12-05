@@ -234,7 +234,7 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
     }
 
     return (
-      <TableRow ref={rowRef} className="bg-muted/30">
+      <TableRow ref={rowRef} className="bg-surface-container/30">
         {visibleColumns.map((column) => renderCell(column.id))}
       </TableRow>
     )

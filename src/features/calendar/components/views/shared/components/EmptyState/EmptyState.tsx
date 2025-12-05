@@ -51,7 +51,7 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const IconComponent = icon as React.ComponentType<any>
       return (
-        <div className="bg-muted mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        <div className="bg-surface-container mb-4 flex h-16 w-16 items-center justify-center rounded-full">
           <IconComponent className="text-muted-foreground h-8 w-8" />
         </div>
       )

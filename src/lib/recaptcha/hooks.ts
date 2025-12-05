@@ -5,24 +5,78 @@
 
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
-
-import { useReCaptcha } from 'next-recaptcha-v3'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { RECAPTCHA_CONFIG } from './config'
 
+// 設定値は静的なので、コンポーネント外で一度だけ計算
+const IS_V3_CONFIGURED = Boolean(RECAPTCHA_CONFIG.SITE_KEY_V3)
+const IS_V2_CONFIGURED = Boolean(RECAPTCHA_CONFIG.SITE_KEY_V2)
+
 /**
  * reCAPTCHA v3トークン生成フック
+ * @description reCAPTCHA v3が設定されていない場合は無効化されたステートを返す
  */
 export function useRecaptchaV3(action: string) {
-  const { executeRecaptcha } = useReCaptcha()
   const [isReady, setIsReady] = useState(false)
+  const [executeRecaptcha, setExecuteRecaptcha] = useState<((action: string) => Promise<string>) | null>(null)
+  const initializedRef = useRef(false)
 
   useEffect(() => {
-    setIsReady(Boolean(executeRecaptcha))
-  }, [executeRecaptcha])
+    // 初期化済みの場合はスキップ
+    if (initializedRef.current) return
+    initializedRef.current = true
+
+    // reCAPTCHAが設定されていない場合は何もしない
+    if (!IS_V3_CONFIGURED) {
+      console.warn('[reCAPTCHA] v3 not configured, skipping initialization')
+      return
+    }
+
+    let isMounted = true
+
+    // grecaptcha.enterprise または grecaptcha が利用可能になるまで待機
+    const checkRecaptcha = () => {
+      if (!isMounted) return
+
+      const grecaptcha = window.grecaptcha
+      if (grecaptcha && typeof grecaptcha.execute === 'function') {
+        setExecuteRecaptcha(() => async (actionName: string) => {
+          return new Promise<string>((resolve, reject) => {
+            grecaptcha.ready(() => {
+              grecaptcha.execute(RECAPTCHA_CONFIG.SITE_KEY_V3, { action: actionName }).then(resolve).catch(reject)
+            })
+          })
+        })
+        setIsReady(true)
+        clearInterval(interval)
+        clearTimeout(timeout)
+      }
+    }
+
+    // 既にロード済みならすぐにチェック
+    checkRecaptcha()
+
+    // ロードを待つためのインターバル
+    const interval = setInterval(checkRecaptcha, 100)
+    const timeout = setTimeout(() => {
+      clearInterval(interval)
+      console.warn('[reCAPTCHA] v3 initialization timeout')
+    }, 5000)
+
+    return () => {
+      isMounted = false
+      clearInterval(interval)
+      clearTimeout(timeout)
+    }
+  }, [])
 
   const generateToken = useCallback(async (): Promise<string | null> => {
+    if (!IS_V3_CONFIGURED) {
+      console.warn('[reCAPTCHA] v3 not configured, skipping token generation')
+      return null
+    }
+
     if (!executeRecaptcha) {
       console.warn('[reCAPTCHA] executeRecaptcha not ready')
       return null
@@ -39,7 +93,7 @@ export function useRecaptchaV3(action: string) {
 
   return {
     generateToken,
-    isReady,
+    isReady: IS_V3_CONFIGURED && isReady,
   }
 }
 
@@ -49,8 +103,19 @@ export function useRecaptchaV3(action: string) {
 export function useRecaptchaV2() {
   const [isReady, setIsReady] = useState(false)
   const [widgetId, setWidgetId] = useState<number | null>(null)
+  const initializedRef = useRef(false)
 
   useEffect(() => {
+    // 初期化済みの場合はスキップ
+    if (initializedRef.current) return
+    initializedRef.current = true
+
+    // reCAPTCHA v2が設定されていない場合は何もしない
+    if (!IS_V2_CONFIGURED) {
+      console.warn('[reCAPTCHA] v2 not configured, skipping script load')
+      return
+    }
+
     // reCAPTCHA v2スクリプトをロード
     const script = document.createElement('script')
     script.src = 'https://www.google.com/recaptcha/api.js?render=explicit'
@@ -62,12 +127,20 @@ export function useRecaptchaV2() {
     document.head.appendChild(script)
 
     return () => {
-      document.head.removeChild(script)
+      // スクリプトがまだドキュメントに存在するかチェック
+      if (script.parentNode) {
+        document.head.removeChild(script)
+      }
     }
   }, [])
 
   const renderWidget = useCallback(
     (containerId: string, callback: (token: string) => void) => {
+      if (!IS_V2_CONFIGURED) {
+        console.warn('[reCAPTCHA] v2 not configured')
+        return
+      }
+
       if (!isReady || !window.grecaptcha) {
         console.warn('[reCAPTCHA] v2 not ready')
         return
@@ -102,7 +175,7 @@ export function useRecaptchaV2() {
   }, [isReady, widgetId])
 
   return {
-    isReady,
+    isReady: IS_V2_CONFIGURED && isReady,
     renderWidget,
     execute,
     reset,
@@ -121,7 +194,7 @@ declare global {
           callback: (token: string) => void
         }
       ) => number
-      execute: (widgetId: number) => void
+      execute: (siteKeyOrWidgetId: string | number, options?: { action: string }) => Promise<string>
       reset: (widgetId: number) => void
       ready: (callback: () => void) => void
     }

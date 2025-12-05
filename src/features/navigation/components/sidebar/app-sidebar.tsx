@@ -62,7 +62,7 @@ export function AppSidebar() {
   }
 
   return (
-    <aside className="bg-background text-foreground flex h-full w-full flex-col">
+    <aside className="bg-surface-container text-foreground flex h-full w-full flex-col">
       {/* Header - ページタイトル */}
       <SidebarHeader title={pageTitle} />
 

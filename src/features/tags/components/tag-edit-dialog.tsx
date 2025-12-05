@@ -121,7 +121,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
 
               {/* 現在選択されているアイコンのプレビュー */}
               <div
-                className="border-border bg-muted mb-3 flex items-center gap-3 rounded-lg border p-3"
+                className="border-border bg-surface-container mb-3 flex items-center gap-3 rounded-lg border p-3"
                 style={{ '--tag-color': color } as React.CSSProperties}
               >
                 {(() => {
@@ -152,7 +152,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                             className={`rounded-md p-2 transition-all ${
                               icon === iconName
                                 ? 'border-primary bg-primary/12 border-2'
-                                : 'border-border bg-card hover:bg-foreground/8 border'
+                                : 'border-border bg-secondary text-secondary-foreground hover:bg-state-hover border'
                             }`}
                             title={iconName}
                           >

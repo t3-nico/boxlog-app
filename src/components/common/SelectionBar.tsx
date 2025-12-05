@@ -22,7 +22,7 @@ interface SelectionBarProps {
  *
  * 構造:
  * - 高さ: 48px固定（8px top padding + 40px container）
- * - 背景: bg-muted（選択状態を視覚的に示す）
+ * - 背景: bg-surface-container（選択状態を視覚的に示す）
  *
  * 構成:
  * - 左側: 選択解除ボタン（×）
@@ -51,7 +51,7 @@ export function SelectionBar({
   return (
     <div className={cn('flex h-12 shrink-0 items-end pt-2', paddingX)}>
       {/* 選択コンテナ（40px） */}
-      <div className="bg-muted flex h-10 flex-1 items-center gap-2 rounded-md px-2">
+      <div className="bg-surface-container flex h-10 flex-1 items-center gap-2 rounded-md px-2">
         {/* 選択解除ボタン（左端） */}
         <Button
           variant="ghost"

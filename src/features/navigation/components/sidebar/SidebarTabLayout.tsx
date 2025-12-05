@@ -10,6 +10,7 @@ import type { SidebarTabLayoutProps } from './types'
  *
  * ページ固有のSidebarコンテンツを表示するための汎用レイアウト。
  * 2〜4タブまで柔軟に対応。
+ * SidebarShellのchildren として使用する。
  *
  * **デザイン仕様**:
  * - 8pxグリッドシステム準拠（py-2, px-4）
@@ -19,21 +20,21 @@ import type { SidebarTabLayoutProps } from './types'
  *
  * @example
  * ```tsx
- * <SidebarTabLayout
- *   tabs={[
- *     { value: 'events', label: 'Events', content: <EventsList /> },
- *     { value: 'tasks', label: 'Tasks', content: <TasksList /> },
- *     { value: 'view', label: 'View', content: <ViewSettings /> },
- *   ]}
- *   defaultTab="events"
- * />
+ * <SidebarShell title="カレンダー">
+ *   <SidebarTabLayout
+ *     tabs={[
+ *       { value: 'inbox', label: 'Inbox', content: <InboxList /> },
+ *       { value: 'view', label: 'View', content: <ViewSettings /> },
+ *     ]}
+ *     defaultTab="inbox"
+ *   />
+ * </SidebarShell>
  * ```
  */
 export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
-  const initialTab = defaultTab || tabs[0]?.value || tabs[0]?.value || ''
+  const initialTab = defaultTab || tabs[0]?.value || ''
   return (
-    <aside className="flex h-full w-full flex-col pt-2">
-      {/* Tabs */}
+    <div className="flex min-h-0 flex-1 flex-col pt-2">
       <Tabs defaultValue={initialTab} className="flex flex-1 flex-col overflow-hidden">
         {/* TabsList - Slack風アンダーラインデザイン */}
         <TabsList
@@ -60,6 +61,6 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
           </TabsContent>
         ))}
       </Tabs>
-    </aside>
+    </div>
   )
 }

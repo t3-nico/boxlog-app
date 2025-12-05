@@ -131,7 +131,7 @@ const WeekBadge = ({ weekNumber, className }: { weekNumber: number; className?: 
   return (
     <span
       className={cn('text-muted-foreground inline-flex items-center text-sm font-normal', className)}
-      aria-label={t('calendar.dateRange.weekLabel').replace('{weekNumber}', String(weekNumber))}
+      aria-label={t('calendar.dateRange.weekLabel', { weekNumber })}
     >
       week{weekNumber}
     </span>

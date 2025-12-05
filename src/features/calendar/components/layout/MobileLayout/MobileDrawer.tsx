@@ -169,7 +169,7 @@ export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, classNam
           <button
             type="button"
             onClick={onClose}
-            className="hover:bg-foreground/8 -mr-2 rounded-full p-2 transition-colors"
+            className="hover:bg-state-hover -mr-2 rounded-full p-2 transition-colors"
             aria-label={t('calendar.mobile.drawer.closeMenu')}
           >
             <X className="h-5 w-5" />
@@ -220,7 +220,7 @@ export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, classNam
                   disabled={item.disabled}
                   className={cn(
                     'flex w-full items-center gap-3 px-4 py-3 text-left',
-                    'hover:bg-foreground/8 transition-colors',
+                    'hover:bg-state-hover transition-colors',
                     'disabled:cursor-not-allowed disabled:opacity-50'
                   )}
                 >

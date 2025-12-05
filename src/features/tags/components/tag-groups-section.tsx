@@ -216,7 +216,9 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
               <div
                 key={group.id}
                 className={`flex items-center justify-between p-4 transition-colors ${
-                  selectedGroupId === group.id ? 'bg-foreground/12' : 'hover:bg-foreground/8 cursor-pointer'
+                  selectedGroupId === group.id
+                    ? 'bg-state-selected text-foreground'
+                    : 'hover:bg-state-hover cursor-pointer'
                 }`}
                 onClick={(e) => {
                   e.preventDefault()
@@ -353,7 +355,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
 
             {/* インライン作成フォーム（最下部） */}
             {isCreating && (
-              <div className="hover:bg-foreground/8 flex items-center gap-3 p-4 transition-colors">
+              <div className="hover:bg-state-hover flex items-center gap-3 p-4 transition-colors">
                 {/* カラーアイコン（左側） */}
                 <Popover>
                   <PopoverTrigger asChild>

@@ -140,7 +140,7 @@ export function AccountDeletionDialog() {
             <AlertDialogDescription className="space-y-4">
               <p>{t('settings.account.deletion.dialogDescription')}</p>
 
-              <div className="bg-muted rounded-xl p-4">
+              <div className="bg-surface-container rounded-xl p-4">
                 <h4 className="text-foreground mb-2 text-sm font-semibold">
                   {t('settings.account.deletion.gracePeriodTitle')}
                 </h4>
@@ -183,7 +183,7 @@ export function AccountDeletionDialog() {
                 handleDelete()
               }}
               disabled={isDeleting || !password || confirmText !== 'DELETE'}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/92"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive-hover"
             >
               {isDeleting ? t('settings.account.deletion.deleting') : t('settings.account.deletion.confirm')}
             </AlertDialogAction>

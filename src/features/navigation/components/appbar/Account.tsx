@@ -53,12 +53,12 @@ export function Account({ userData, locale }: AccountProps) {
   const { handleLogout, isLoggingOut } = useUserAuth()
 
   return (
-    <div className="bg-sidebar flex flex-col items-center justify-center px-2 pt-4">
+    <div className="flex flex-col items-center justify-center px-2 pt-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="hover:bg-foreground/8 data-[state=open]:bg-foreground/12 flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
+            className="hover:bg-state-hover data-[state=open]:bg-secondary flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
           >
             <Avatar className="h-8 w-8 rounded-xl">
               {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}

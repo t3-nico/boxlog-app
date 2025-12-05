@@ -109,12 +109,14 @@ export const tagGroupKeys = {
 
 /**
  * 全タググループ取得
+ * @param options - React Query オプション（enabledなど）
  */
-export function useTagGroups() {
+export function useTagGroups(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: tagGroupKeys.list(),
     queryFn: () => tagGroupAPI.fetchTagGroups(),
     ...cacheStrategies.tagGroups,
+    ...options,
   })
 }
 

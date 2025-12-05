@@ -139,6 +139,9 @@
     "errors": {
       "loadFailed": "Failed to load calendar",
       "displayFailed": "Could not display the calendar. Please reload the page."
+    },
+    "dateRange": {
+      "weekLabel": "Week {weekNumber}"
     }
   }
 }

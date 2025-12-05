@@ -34,7 +34,7 @@ export default function RootError({ error, reset }: ErrorProps) {
         <h2 className="mb-4 text-2xl font-semibold">{t('error.500.heading')}</h2>
         <p className="text-muted-foreground">{t('error.500.description')}</p>
         {process.env.NODE_ENV === 'development' && (
-          <div className="border-border bg-muted mt-4 rounded-xl border p-4 text-left">
+          <div className="border-border bg-surface-container mt-4 rounded-xl border p-4 text-left">
             <p className="text-destructive font-mono text-sm">{error.message}</p>
           </div>
         )}

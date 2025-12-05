@@ -230,7 +230,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
         role="button"
         tabIndex={0}
         aria-label="Navigate to calendar view"
-        className="bg-secondary border-secondary hover:bg-secondary/80 cursor-pointer rounded-lg border p-4 transition-colors"
+        className="bg-secondary text-secondary-foreground border-secondary hover:bg-state-hover cursor-pointer rounded-lg border p-4 transition-colors"
         onClick={handleNoEventClick}
         onKeyDown={handleNoEventKeyDown}
       >
@@ -249,7 +249,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
       role="button"
       tabIndex={0}
       aria-label={`Current event: ${currentEvent.title}`}
-      className="bg-secondary hover:bg-secondary/80 flex cursor-pointer flex-col rounded-lg p-4 transition-colors"
+      className="bg-secondary text-secondary-foreground hover:bg-state-hover flex cursor-pointer flex-col rounded-lg p-4 transition-colors"
       style={{
         border: `2px solid ${borderColor}`,
         gap: '8px',

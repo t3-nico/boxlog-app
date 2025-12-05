@@ -104,7 +104,7 @@ export function StatsToolbar() {
         </div>
 
         {/* 日付範囲表示 */}
-        <div className="bg-muted text-foreground flex h-8 items-center gap-2 rounded-md px-3 text-sm font-medium">
+        <div className="bg-surface-container text-foreground flex h-8 items-center gap-2 rounded-md px-3 text-sm font-medium">
           <Calendar className="text-muted-foreground size-4" />
           <span>{formatDateRange()}</span>
         </div>
@@ -131,7 +131,7 @@ export function StatsToolbar() {
             <Button
               variant={compareEnabled ? 'secondary' : 'ghost'}
               size="sm"
-              className={cn('h-8 gap-1.5', compareEnabled && 'bg-muted')}
+              className={cn('h-8 gap-1.5', compareEnabled && 'bg-surface-container')}
               onClick={() => setCompareEnabled(!compareEnabled)}
             >
               <GitCompareArrows className="size-4" />

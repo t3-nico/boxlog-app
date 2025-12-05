@@ -36,13 +36,13 @@ interface NotificationData {
 
 // フィルターの選択肢
 const TYPE_FILTER_OPTIONS: Array<{ value: NotificationType | 'all'; labelKey: string }> = [
-  { value: 'all', labelKey: 'notifications.types.all' },
-  { value: 'reminder', labelKey: 'notifications.types.reminder' },
-  { value: 'plan_created', labelKey: 'notifications.types.plan_created' },
-  { value: 'plan_updated', labelKey: 'notifications.types.plan_updated' },
-  { value: 'plan_completed', labelKey: 'notifications.types.plan_completed' },
-  { value: 'trash_warning', labelKey: 'notifications.types.trash_warning' },
-  { value: 'system', labelKey: 'notifications.types.system' },
+  { value: 'all', labelKey: 'notification.types.all' },
+  { value: 'reminder', labelKey: 'notification.types.reminder' },
+  { value: 'plan_created', labelKey: 'notification.types.plan_created' },
+  { value: 'plan_updated', labelKey: 'notification.types.plan_updated' },
+  { value: 'plan_completed', labelKey: 'notification.types.plan_completed' },
+  { value: 'trash_warning', labelKey: 'notification.types.trash_warning' },
+  { value: 'system', labelKey: 'notification.types.system' },
 ]
 
 interface NotificationDropdownProps {
@@ -163,7 +163,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
         {/* アクションバー */}
         <div className="mb-3 flex items-center justify-between px-1">
           <span className="text-muted-foreground text-xs">
-            {t(showDeleteAll ? 'notifications.count.all' : 'notifications.count.unread', {
+            {t(showDeleteAll ? 'notification.count.all' : 'notification.count.unread', {
               count: totalCount,
             })}
           </span>
@@ -230,7 +230,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="hover:bg-foreground/8 data-[state=open]:bg-foreground/12 relative flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
+          className="hover:bg-state-hover data-[state=open]:bg-state-selected relative flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
           aria-label={t('notification.title')}
         >
           <Bell className="h-5 w-5" />
@@ -255,7 +255,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
               <button
                 type="button"
                 onClick={handleOpenSettings}
-                className="hover:bg-foreground/8 flex h-7 w-7 items-center justify-center rounded-md transition-colors"
+                className="hover:bg-state-hover flex h-7 w-7 items-center justify-center rounded-md transition-colors"
               >
                 <Settings className="h-4 w-4" />
                 <span className="sr-only">{t('notification.settings')}</span>
@@ -276,13 +276,13 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
               <TabsList className="h-8 rounded-lg bg-transparent p-0.5">
                 <TabsTrigger
                   value="all"
-                  className="data-[state=inactive]:hover:bg-foreground/8 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-md px-3 text-xs"
+                  className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-md px-3 text-xs"
                 >
                   {t('notification.tabs.all')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="unread"
-                  className="data-[state=inactive]:hover:bg-foreground/8 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-md px-3 text-xs"
+                  className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-md px-3 text-xs"
                 >
                   {t('notification.tabs.unread')}
                 </TabsTrigger>
@@ -305,12 +305,12 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
 
             {/* すべてタブ */}
             <TabsContent value="all" className="mt-0">
-              {renderNotificationList(groupedAllNotifications, isLoadingAll, 'notifications.empty.all', true)}
+              {renderNotificationList(groupedAllNotifications, isLoadingAll, 'notification.empty.all', true)}
             </TabsContent>
 
             {/* 未読タブ */}
             <TabsContent value="unread" className="mt-0">
-              {renderNotificationList(groupedUnreadNotifications, isLoadingUnread, 'notifications.empty.unread', false)}
+              {renderNotificationList(groupedUnreadNotifications, isLoadingUnread, 'notification.empty.unread', false)}
             </TabsContent>
           </Tabs>
         </div>

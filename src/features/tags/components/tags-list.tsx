@@ -128,7 +128,7 @@ const TagItem = ({
     <div className="space-y-2">
       {/* タグアイテム */}
       <div
-        className="hover:bg-foreground/8 flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 transition-colors duration-150"
+        className="hover:bg-state-hover flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 transition-colors duration-150"
         style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={handleSelectTag}
         onKeyDown={handleKeyDown}
@@ -217,7 +217,7 @@ const TagItem = ({
                 <button
                   type="button"
                   onClick={handleEditTag}
-                  className="text-foreground hover:bg-foreground/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                  className="text-foreground hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                 >
                   <PencilIcon className="h-4 w-4" />
                   編集
@@ -354,7 +354,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
         <button
           type="button"
           onClick={handleToggleExpansion}
-          className="text-muted-foreground hover:bg-foreground/8 section-header-toggle mb-2 flex items-center gap-1 rounded px-2 text-xs/6 font-medium transition-colors"
+          className="text-muted-foreground hover:bg-state-hover section-header-toggle mb-2 flex items-center gap-1 rounded px-2 text-xs/6 font-medium transition-colors"
         >
           {isExpanded ? (
             <ChevronDownIcon className="text-muted-foreground h-4 w-4" />
@@ -372,7 +372,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
         <button
           type="button"
           onClick={handleCreateNewTag}
-          className="hover:bg-foreground/8 section-header-button rounded p-1 transition-colors"
+          className="hover:bg-state-hover section-header-button rounded p-1 transition-colors"
         >
           <PlusIcon className="text-muted-foreground h-4 w-4" />
         </button>
@@ -406,7 +406,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
               <button
                 type="button"
                 onClick={handleCreateNewTagCollapsed}
-                className="text-primary hover:bg-foreground/8 inline-flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors"
+                className="text-primary hover:bg-state-hover inline-flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors"
               >
                 <PlusIcon className="h-4 w-4" />
                 作成

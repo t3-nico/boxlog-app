@@ -82,7 +82,7 @@ export function SettingsContent() {
   )
 
   return (
-    <main className="bg-muted flex min-h-0 flex-1 flex-col overflow-hidden">
+    <main className="bg-surface-bright flex min-h-0 flex-1 flex-col overflow-hidden">
       <SettingsLayout title={title} actions={closeButton}>
         {/* General: 言語、テーマ、起動画面（既存のPreferencesSettingsを再利用） */}
         {activeCategory === 'general' && <PreferencesSettings />}
