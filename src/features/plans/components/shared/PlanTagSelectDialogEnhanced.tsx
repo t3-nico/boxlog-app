@@ -215,7 +215,7 @@ export function PlanTagSelectDialogEnhanced({
     <Popover modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent
-        className="!border-border bg-card dark:bg-card flex flex-col gap-0 !border p-0"
+        className="!border-border bg-popover dark:bg-popover flex flex-col gap-0 !border p-0"
         style={{ width: '720px', maxWidth: 'calc(100vw - 160px)', height: '50vh', maxHeight: '80vh' }}
         align={align}
         side={side}
@@ -309,7 +309,9 @@ export function PlanTagSelectDialogEnhanced({
                       setShowArchived(false)
                     }}
                     className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
-                      !selectedGroupId && !showArchived ? 'bg-foreground/12 text-foreground' : 'hover:bg-foreground/8'
+                      !selectedGroupId && !showArchived
+                        ? 'bg-state-selected text-foreground'
+                        : 'text-muted-foreground hover:bg-state-hover'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -328,8 +330,8 @@ export function PlanTagSelectDialogEnhanced({
                     }}
                     className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
                       selectedGroupId === 'uncategorized' && !showArchived
-                        ? 'bg-foreground/12 text-foreground'
-                        : 'hover:bg-foreground/8'
+                        ? 'bg-state-selected text-foreground'
+                        : 'text-muted-foreground hover:bg-state-hover'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -347,7 +349,7 @@ export function PlanTagSelectDialogEnhanced({
                       setShowArchived(true)
                     }}
                     className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
-                      showArchived ? 'bg-foreground/12 text-foreground' : 'hover:bg-foreground/8'
+                      showArchived ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -375,8 +377,8 @@ export function PlanTagSelectDialogEnhanced({
                             }}
                             className={`w-full rounded-md px-3 py-2 text-left text-xs transition-colors ${
                               selectedGroupId === group.id && !showArchived
-                                ? 'bg-foreground/12 text-foreground'
-                                : 'hover:bg-foreground/8'
+                                ? 'bg-state-selected text-foreground'
+                                : 'text-muted-foreground hover:bg-state-hover'
                             }`}
                           >
                             <div className="flex items-center gap-2">
@@ -418,7 +420,7 @@ export function PlanTagSelectDialogEnhanced({
                     {/* 選択済みセクション */}
                     {selectedTags.length > 0 && (
                       <>
-                        <TableRow className="bg-muted/30 hover:bg-muted/30">
+                        <TableRow className="bg-muted/30 hover:bg-state-hover">
                           <TableCell colSpan={4} className="py-2 text-xs font-semibold">
                             選択中 ({selectedTags.length})
                           </TableCell>
@@ -473,7 +475,7 @@ export function PlanTagSelectDialogEnhanced({
                     {/* 未選択セクション */}
                     {unselectedTags.length > 0 && (
                       <>
-                        <TableRow className="bg-muted/30 hover:bg-muted/30">
+                        <TableRow className="bg-muted/30 hover:bg-state-hover">
                           <TableCell colSpan={4} className="py-2 text-xs font-semibold">
                             その他
                           </TableCell>

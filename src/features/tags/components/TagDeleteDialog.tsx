@@ -143,7 +143,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={!canDelete || isDeleting}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive-hover"
           >
             {isDeleting ? t('tag.delete.deleting') : t('tag.delete.permanentDelete')}
           </AlertDialogAction>

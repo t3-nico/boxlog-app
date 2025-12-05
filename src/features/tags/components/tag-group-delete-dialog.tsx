@@ -98,7 +98,7 @@ export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={!canDelete || isDeleting}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive-hover"
           >
             {isDeleting ? '削除中...' : '削除'}
           </AlertDialogAction>

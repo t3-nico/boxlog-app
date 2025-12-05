@@ -302,7 +302,7 @@ export function TagsSidebar({
         type="button"
         onClick={handleUncategorizedClick}
         className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-          isUncategorizedPage ? 'bg-foreground/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
+          isUncategorizedPage ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
         }`}
         style={{
           backgroundColor: isOver ? 'rgba(59, 130, 246, 0.1)' : undefined,
@@ -347,8 +347,8 @@ export function TagsSidebar({
             onClick={onAllTagsClick}
             className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
               !isArchivePage && !isUncategorizedPage && !currentGroupNumber
-                ? 'bg-foreground/12 text-foreground'
-                : 'text-muted-foreground hover:bg-foreground/8'
+                ? 'bg-state-selected text-foreground'
+                : 'text-muted-foreground hover:bg-state-hover'
             }`}
           >
             <div className="flex items-center justify-between gap-2">
@@ -368,7 +368,7 @@ export function TagsSidebar({
             type="button"
             onClick={handleArchiveClick}
             className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-              isArchivePage ? 'bg-foreground/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
+              isArchivePage ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
             }`}
           >
             <div className="flex items-center justify-between gap-2">
@@ -390,7 +390,7 @@ export function TagsSidebar({
                     variant="ghost"
                     size="sm"
                     onClick={handleStartCreating}
-                    className="hover:bg-foreground/8 h-5 w-5 p-0"
+                    className="hover:bg-state-hover h-5 w-5 p-0"
                   >
                     <Plus className="h-3 w-3" />
                   </Button>

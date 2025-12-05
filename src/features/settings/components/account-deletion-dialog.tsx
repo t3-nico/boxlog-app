@@ -183,7 +183,7 @@ export function AccountDeletionDialog() {
                 handleDelete()
               }}
               disabled={isDeleting || !password || confirmText !== 'DELETE'}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/92"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive-hover"
             >
               {isDeleting ? t('settings.account.deletion.deleting') : t('settings.account.deletion.confirm')}
             </AlertDialogAction>

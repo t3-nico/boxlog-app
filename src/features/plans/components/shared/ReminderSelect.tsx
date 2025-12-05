@@ -70,7 +70,7 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
               setShowPopover(!showPopover)
             }
           }}
-          className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 dark:hover:bg-input/50 flex h-9 w-fit items-center gap-1 rounded-md border bg-transparent px-2 py-0 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+          className="border-border bg-secondary text-secondary-foreground hover:bg-state-hover focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-fit items-center gap-1 rounded-md border px-2 py-0 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span>{getDisplayLabel()}</span>
           <svg
@@ -114,7 +114,7 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
                 {index === 1 && <div key="separator" className="border-border my-1 border-t" />}
                 <button
                   key={option.value}
-                  className="hover:bg-foreground/8 w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                  className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
                   onClick={() => {
                     onChange(option.value)
                     setShowPopover(false)

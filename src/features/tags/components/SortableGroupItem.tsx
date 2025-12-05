@@ -106,7 +106,7 @@ export function SortableGroupItem({
       type="button"
       onClick={() => onGroupClick(group.group_number)}
       className={`group w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-        isActive ? 'bg-foreground/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
+        isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
       }`}
       style={style}
       {...attributes}
@@ -164,7 +164,7 @@ export function SortableGroupItem({
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="hover:bg-foreground/8 flex h-6 w-6 shrink-0 items-center justify-center rounded p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                className="hover:bg-state-hover flex h-6 w-6 shrink-0 items-center justify-center rounded p-0 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={(e) => {
                   e.stopPropagation()
                 }}

@@ -30,7 +30,7 @@ export function TrashActionButtons({
         type="button"
         onClick={onRestore}
         disabled={selectedCount === 0 || loading}
-        className="disabled:bg-muted disabled:text-muted-foreground bg-primary text-primary-foreground hover:bg-primary/92 rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200"
+        className="disabled:bg-muted disabled:text-muted-foreground bg-primary text-primary-foreground hover:bg-primary-hover rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200"
       >
         <span className="mr-2">↩️</span>
         復元 ({selectedCount})
@@ -41,7 +41,7 @@ export function TrashActionButtons({
         type="button"
         onClick={onPermanentDelete}
         disabled={selectedCount === 0 || loading}
-        className="disabled:bg-muted disabled:text-muted-foreground bg-destructive text-destructive-foreground hover:bg-destructive/92 rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200"
+        className="disabled:bg-muted disabled:text-muted-foreground bg-destructive text-destructive-foreground hover:bg-destructive-hover rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200"
       >
         <span className="mr-2">🗑️</span>
         完全削除 ({selectedCount})

@@ -54,7 +54,7 @@ export function TrashView({ className }: TrashViewProps) {
               type="button"
               onClick={() => fetchItems()}
               disabled={loading}
-              className="border-input text-foreground hover:bg-muted flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors disabled:opacity-50"
+              className="border-input text-foreground hover:bg-state-hover flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors disabled:opacity-50"
             >
               {loading ? (
                 <>

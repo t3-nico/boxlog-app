@@ -490,7 +490,7 @@ export function TagInspector() {
                   <DropdownMenuTrigger asChild>
                     <button
                       type="button"
-                      className="hover:bg-accent/50 flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 transition-colors"
+                      className="hover:bg-state-hover flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 transition-colors"
                     >
                       <div className="flex items-center gap-2">
                         {tagGroup ? (
@@ -532,7 +532,7 @@ export function TagInspector() {
               </div>
 
               {/* 説明 */}
-              <div className="border-border/50 hover:bg-accent/50 min-h-[48px] border-t px-6 py-3 transition-colors">
+              <div className="border-border/50 hover:bg-state-hover min-h-[48px] border-t px-6 py-3 transition-colors">
                 <div className="flex items-start gap-2">
                   <FileText className="text-muted-foreground mt-0.5 h-4 w-4 flex-shrink-0" />
                   <span
@@ -556,7 +556,7 @@ export function TagInspector() {
                       <button
                         key={childTag.id}
                         onClick={() => openInspector(childTag.id)}
-                        className="hover:bg-accent flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition-colors"
+                        className="hover:bg-state-hover flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition-colors"
                       >
                         <span
                           className="h-2 w-2 rounded-full"

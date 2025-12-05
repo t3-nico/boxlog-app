@@ -77,10 +77,10 @@ export function NotificationsList({ notifications }: NotificationsListProps) {
     <div className="space-y-6">
       <div>
         <div className="mb-2 flex items-center gap-3">
-          <BellRing className="h-6 w-6 text-blue-600" />
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{t('notification.list.title')}</h2>
+          <BellRing className="text-primary h-6 w-6" />
+          <h2 className="text-foreground text-xl font-semibold">{t('notification.list.title')}</h2>
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-300">{t('notification.list.description')}</p>
+        <p className="text-muted-foreground text-sm">{t('notification.list.description')}</p>
       </div>
 
       <div className="space-y-4">
@@ -107,9 +107,9 @@ export function NotificationsList({ notifications }: NotificationsListProps) {
                     </span>
                   )}
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">{notification.title}</h3>
-                <p className="mb-3 text-gray-700 dark:text-gray-300">{notification.content}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{notification.date}</p>
+                <h3 className="text-foreground mb-2 text-lg font-semibold">{notification.title}</h3>
+                <p className="text-foreground mb-3">{notification.content}</p>
+                <p className="text-muted-foreground text-sm">{notification.date}</p>
               </div>
               {!notification.isRead && (
                 <button
@@ -127,11 +127,9 @@ export function NotificationsList({ notifications }: NotificationsListProps) {
 
       {notificationList.length === 0 && (
         <div className="py-12 text-center">
-          <BellRing className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
-            {t('notification.list.empty.title')}
-          </h3>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t('notification.list.empty.description')}</p>
+          <BellRing className="text-muted-foreground mx-auto h-12 w-12" />
+          <h3 className="text-foreground mt-2 text-sm font-medium">{t('notification.list.empty.title')}</h3>
+          <p className="text-muted-foreground mt-2 text-sm">{t('notification.list.empty.description')}</p>
         </div>
       )}
     </div>

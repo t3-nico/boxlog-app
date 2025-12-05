@@ -152,7 +152,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                             className={`rounded-md p-2 transition-all ${
                               icon === iconName
                                 ? 'border-primary bg-primary/12 border-2'
-                                : 'border-border bg-card hover:bg-foreground/8 border'
+                                : 'border-border bg-secondary text-secondary-foreground hover:bg-state-hover border'
                             }`}
                             title={iconName}
                           >

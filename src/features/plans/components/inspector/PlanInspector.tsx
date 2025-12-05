@@ -308,7 +308,7 @@ export function PlanInspector() {
                       }}
                       onMouseEnter={() => setIsHoveringSort(true)}
                       onMouseLeave={() => setIsHoveringSort(false)}
-                      className="hover:bg-foreground/8 cursor-pointer rounded p-0.5 transition-colors"
+                      className="hover:bg-state-hover cursor-pointer rounded p-0.5 transition-colors"
                       aria-label={activityOrder === 'desc' ? '古い順に変更' : '最新順に変更'}
                     >
                       {activityOrder === 'desc' ? (
@@ -496,7 +496,7 @@ export function PlanInspector() {
                 />
 
                 {/* Description */}
-                <div className="border-border/50 hover:bg-accent/50 max-h-[232px] min-h-[48px] border-t px-6 py-2 transition-colors">
+                <div className="border-border/50 hover:bg-state-hover max-h-[232px] min-h-[48px] border-t px-6 py-2 transition-colors">
                   <div className="flex h-full items-start gap-2">
                     <FileText className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
                     <div className="min-w-0 flex-1 overflow-hidden">

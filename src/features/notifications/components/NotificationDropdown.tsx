@@ -230,7 +230,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="hover:bg-foreground/8 data-[state=open]:bg-foreground/12 relative flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
+          className="hover:bg-state-hover data-[state=open]:bg-state-selected relative flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
           aria-label={t('notification.title')}
         >
           <Bell className="h-5 w-5" />
@@ -255,7 +255,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
               <button
                 type="button"
                 onClick={handleOpenSettings}
-                className="hover:bg-foreground/8 flex h-7 w-7 items-center justify-center rounded-md transition-colors"
+                className="hover:bg-state-hover flex h-7 w-7 items-center justify-center rounded-md transition-colors"
               >
                 <Settings className="h-4 w-4" />
                 <span className="sr-only">{t('notification.settings')}</span>
@@ -276,13 +276,13 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
               <TabsList className="h-8 rounded-lg bg-transparent p-0.5">
                 <TabsTrigger
                   value="all"
-                  className="data-[state=inactive]:hover:bg-foreground/8 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-md px-3 text-xs"
+                  className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-md px-3 text-xs"
                 >
                   {t('notification.tabs.all')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="unread"
-                  className="data-[state=inactive]:hover:bg-foreground/8 data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-md px-3 text-xs"
+                  className="data-[state=inactive]:hover:bg-state-hover data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground h-7 rounded-md px-3 text-xs"
                 >
                   {t('notification.tabs.unread')}
                 </TabsTrigger>

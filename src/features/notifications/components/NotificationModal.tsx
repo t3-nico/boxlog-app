@@ -103,7 +103,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               type="button"
               className={cn(
                 'flex h-8 w-8 items-center justify-center',
-                'hover:bg-foreground/8',
+                'hover:bg-state-hover',
                 'rounded-sm',
                 'transition-all duration-200'
               )}
@@ -116,7 +116,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               onClick={onClose}
               className={cn(
                 'flex h-8 w-8 items-center justify-center',
-                'hover:bg-foreground/8',
+                'hover:bg-state-hover',
                 'rounded-sm',
                 'transition-all duration-200'
               )}
@@ -181,7 +181,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                   className={cn(
                     'flex gap-3 px-4 py-3',
                     !notification.read && 'bg-muted',
-                    'hover:bg-foreground/8',
+                    'hover:bg-state-hover',
                     'transition-all duration-200',
                     'cursor-pointer'
                   )}
@@ -230,7 +230,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               className={cn(
                 'w-full py-2 text-sm',
                 'text-foreground',
-                'hover:bg-foreground/8',
+                'hover:bg-state-hover',
                 'rounded-md',
                 'transition-all duration-200'
               )}

@@ -134,7 +134,7 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopov
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="hover:bg-foreground/8 absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100"
+              className="hover:bg-state-hover absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100"
             >
               <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M18 6L6 18" />
