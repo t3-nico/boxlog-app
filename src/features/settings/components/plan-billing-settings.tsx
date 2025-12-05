@@ -81,7 +81,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
       <SettingsCard
         title="プランを選択"
         actions={
-          <div className="bg-muted flex gap-1 rounded-xl p-1">
+          <div className="bg-surface-container flex gap-1 rounded-xl p-1">
             <Button
               variant={billingPeriod === 'month' ? 'default' : 'ghost'}
               size="sm"
@@ -109,7 +109,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
               className={cn(
                 'border-border relative rounded-xl border p-4',
                 plan.recommended && 'border-primary ring-primary/20 ring-2',
-                currentPlan === plan.id && 'bg-muted'
+                currentPlan === plan.id && 'bg-surface-container'
               )}
             >
               {plan.recommended && (
@@ -159,7 +159,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
         <div className="space-y-4">
           <div className="border-border flex items-center justify-between rounded-xl border p-4">
             <div className="flex items-center gap-4">
-              <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-xl">
+              <div className="bg-surface-container flex h-10 w-10 items-center justify-center rounded-xl">
                 <CreditCard className="text-muted-foreground h-5 w-5" />
               </div>
               <div>

@@ -158,7 +158,7 @@ export function TagsSettings() {
         </SettingsCard>
 
         {/* ヒント */}
-        <div className="bg-muted rounded-lg p-4">
+        <div className="bg-surface-container rounded-lg p-4">
           <p className="text-muted-foreground text-sm">
             💡 タグは最大3階層まで作成できます。親タグを右クリックして子タグを追加できます。
           </p>

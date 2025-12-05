@@ -6,7 +6,7 @@ import { endOfWeek, startOfWeek } from 'date-fns'
 
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
-import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
+import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
 import { SidebarTabLayout } from '@/features/navigation/components/sidebar/SidebarTabLayout'
 import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
 import { useTranslations } from 'next-intl'
@@ -16,6 +16,9 @@ import { InboxNavigation, type InboxFilter, type InboxSort } from './inbox/Inbox
 
 /**
  * CalendarSidebar - カレンダーページ専用サイドバー
+ *
+ * SidebarShellを使用して共通の外枠を提供し、
+ * SidebarTabLayoutでタブUIを実装。
  *
  * **タブ構成**:
  * - Inbox: フィルターナビゲーション
@@ -100,14 +103,8 @@ export function CalendarSidebar() {
   ]
 
   return (
-    <div className="bg-background text-foreground flex h-full w-full flex-col">
-      {/* Header - ページタイトル */}
-      <SidebarHeader title={t('sidebar.navigation.calendar')} />
-
-      {/* タブレイアウト */}
-      <div className="flex-1 overflow-hidden">
-        <SidebarTabLayout tabs={tabs} defaultTab="inbox" />
-      </div>
-    </div>
+    <SidebarShell title={t('sidebar.navigation.calendar')}>
+      <SidebarTabLayout tabs={tabs} defaultTab="inbox" />
+    </SidebarShell>
   )
 }

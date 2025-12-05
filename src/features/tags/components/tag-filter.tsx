@@ -33,7 +33,7 @@ const TagFilterItem = ({ tag, level, isSelected, onToggle }: TagFilterItemProps)
   return (
     <div>
       <label
-        className={`hover:bg-foreground/8 flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors`}
+        className={`hover:bg-state-hover flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors`}
         style={{ paddingLeft: `${paddingLeft}px` }}
       >
         <input
@@ -120,7 +120,9 @@ export const TagFilter = ({
         <FunnelIcon className="h-4 w-4" />
         {showTitle ? <span className={compact ? 'hidden sm:inline' : ''}>Tags</span> : null}
         {showSelectedCount && selectedTagIds.length > 0 ? (
-          <span className="bg-muted text-muted-foreground rounded px-2 py-1 text-xs">{selectedTagIds.length}</span>
+          <span className="bg-surface-container text-muted-foreground rounded px-2 py-1 text-xs">
+            {selectedTagIds.length}
+          </span>
         ) : null}
         <ChevronDownIcon className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
@@ -201,7 +203,7 @@ export const TagFilter = ({
 
             {/* フッター */}
             {hasTagFilters === true && (
-              <div className="border-border bg-muted border-t p-3">
+              <div className="border-border bg-surface-container border-t p-3">
                 <p className="text-muted-foreground text-xs">
                   {selectedTagIds.length} tag{selectedTagIds.length !== 1 ? 's' : ''} selected
                 </p>
@@ -236,7 +238,7 @@ export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
       className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
         isSelected
           ? 'border-primary/30 bg-primary/10 text-primary border'
-          : 'border-border bg-muted text-foreground hover:bg-foreground/8 border'
+          : 'border-border bg-surface-container text-foreground hover:bg-state-hover border'
       }`}
     >
       <TagIcon className="h-4 w-4" style={{ color: tag.color }} />

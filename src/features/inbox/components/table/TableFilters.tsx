@@ -70,10 +70,7 @@ export function TableFilters() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button
-          type="button"
-          className="focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-input bg-background hover:bg-foreground/8 active:bg-foreground/12 dark:bg-input/30 dark:border-input dark:hover:bg-input/50 inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-md border px-2.5 text-sm font-medium whitespace-nowrap shadow-xs transition-all outline-none focus-visible:ring-[3px] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
-        >
+        <Button variant="outline" size="default">
           <Filter />
           フィルター
           {filterCount > 0 && (
@@ -81,7 +78,7 @@ export function TableFilters() {
               {filterCount}
             </Badge>
           )}
-        </button>
+        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-72" align="start">
         <div className="space-y-4">
@@ -104,7 +101,7 @@ export function TableFilters() {
               {DUE_DATE_OPTIONS.map((option) => (
                 <div
                   key={option.value}
-                  className="hover:bg-foreground/8 flex items-center space-x-2 rounded-sm px-2 py-1.5"
+                  className="hover:bg-state-hover flex items-center space-x-2 rounded-sm px-2 py-1.5"
                 >
                   <RadioGroupItem value={option.value} id={`due-date-${option.value}`} />
                   <Label htmlFor={`due-date-${option.value}`} className="flex-1 cursor-pointer text-sm font-normal">
@@ -124,7 +121,7 @@ export function TableFilters() {
               {STATUS_OPTIONS.map((option) => (
                 <div
                   key={option.value}
-                  className="hover:bg-foreground/8 flex items-center space-x-2 rounded-sm px-2 py-1.5"
+                  className="hover:bg-state-hover flex items-center space-x-2 rounded-sm px-2 py-1.5"
                 >
                   <Checkbox
                     id={`status-${option.value}`}

@@ -23,7 +23,7 @@ export function SkeletonAnimation({ show, count = 3, height = 'h-8', className =
       {Array.from({ length: count }, (_, index) => (
         <div
           key={`skeleton-${Date.now()}-${index}`}
-          className={`${height} bg-muted animate-pulse rounded`}
+          className={`${height} bg-surface-container animate-pulse rounded`}
           style={{
             animationDelay: `${index * 0.1}s`,
           }}

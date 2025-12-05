@@ -97,30 +97,101 @@ p-[15px]
 
 Material Design 3のState Layer方式を採用。背景色を変えるのではなく、**コンテンツ色の半透明オーバーレイ**を重ねます。
 
-### Opacity値（globals.css定義済み）
+### セマンティックトークン（globals.css定義済み）
 
-| 状態          | CSS変数                      | 値  | 用途                       |
-| ------------- | ---------------------------- | --- | -------------------------- |
-| **Hover**     | `--state-hover`              | 8%  | マウスオーバー             |
-| **Focus**     | `--state-focus`              | 12% | キーボードフォーカス       |
-| **Pressed**   | `--state-pressed`            | 12% | クリック/タップ中          |
-| **Dragged**   | `--state-dragged`            | 16% | ドラッグ中                 |
-| **Selected**  | `--state-selected`           | 12% | 選択状態                   |
-| **Activated** | `--state-activated`          | 12% | アクティブ状態（入力中等） |
-| **Disabled**  | `--state-disabled-content`   | 38% | 無効状態（コンテンツ）     |
-|               | `--state-disabled-container` | 12% | 無効状態（背景）           |
+すべてのステート表現は**セマンティックトークン**を使用。`/10%`や`/12%`などのハードコードは禁止。
+
+#### ステートレイヤートークン（foregroundベース）
+
+| 状態         | Tailwindクラス      | 値  | 用途                 |
+| ------------ | ------------------- | --- | -------------------- |
+| **Hover**    | `bg-state-hover`    | 10% | マウスオーバー       |
+| **Focus**    | `bg-state-focus`    | 12% | キーボードフォーカス |
+| **Pressed**  | `bg-state-pressed`  | 12% | クリック/タップ中    |
+| **Selected** | `bg-state-selected` | 12% | 選択状態             |
+| **Dragged**  | `bg-state-dragged`  | 16% | ドラッグ中           |
+
+#### 塗りボタン用ホバートークン（各色90%）
+
+| 状態                  | Tailwindクラス         | 用途          |
+| --------------------- | ---------------------- | ------------- |
+| **Primary Hover**     | `bg-primary-hover`     | Primaryボタン |
+| **Destructive Hover** | `bg-destructive-hover` | 削除ボタン    |
+| **Warning Hover**     | `bg-warning-hover`     | 警告ボタン    |
+| **Success Hover**     | `bg-success-hover`     | 成功ボタン    |
+
+#### Primaryベースのステートレイヤー（primary強調用）
+
+「新規追加」ボタンなど、primary色で強調したい要素に使用。
+
+| 状態         | Tailwindクラス              | 値  | 用途                  |
+| ------------ | --------------------------- | --- | --------------------- |
+| **Hover**    | `bg-primary-state-hover`    | 10% | Primary強調のホバー   |
+| **Selected** | `bg-primary-state-selected` | 12% | Primary強調の選択状態 |
+
+```tsx
+// ✅ 使用例: Board の「新規追加」ボタン
+className = 'text-primary hover:bg-primary-state-hover'
+
+// ✅ 使用例: Primary強調のリストアイテム
+isActive ? 'bg-primary-state-selected text-primary' : 'text-muted-foreground hover:bg-primary-state-hover'
+```
+
+#### Containerトークン（M3準拠 - 装飾的背景用）
+
+バッジ、アイコン背景、今日ハイライトなど、**インタラクション以外の装飾的背景**に使用。
+`bg-primary/10`, `bg-primary/12` を統一。
+
+| トークン                 | Tailwindクラス              | 用途                                 |
+| ------------------------ | --------------------------- | ------------------------------------ |
+| **Primary Container**    | `bg-primary-container`      | バッジ、アイコン背景、今日ハイライト |
+| **On Primary Container** | `text-on-primary-container` | Container上のテキスト色（= primary） |
+
+```tsx
+// ✅ 使用例: ステータスバッジ
+className = 'bg-primary-container text-on-primary-container'
+
+// ✅ 使用例: アイコン背景
+<div className="bg-primary-container rounded-full p-2">
+  <Icon className="text-on-primary-container" />
+</div>
+
+// ✅ 使用例: 今日ハイライト（カレンダー）
+className = 'bg-primary-container text-on-primary-container'
+
+// ❌ 禁止（ハードコード）
+className = 'bg-primary/10'
+className = 'bg-primary/12'
+```
+
+**State Layer vs Container の使い分け**:
+| 種類 | 用途 | 例 |
+|------|------|-----|
+| **State Layer** | インタラクション（hover/focus/selected） | `hover:bg-state-hover`, `bg-state-selected` |
+| **Primary State Layer** | Primary強調のインタラクション | `hover:bg-primary-state-hover` |
+| **Container** | 装飾的背景（静的） | `bg-primary-container` |
+
+#### 無効状態（手動指定）
+
+| 状態         | クラス                      | 値  | 用途             |
+| ------------ | --------------------------- | --- | ---------------- |
+| **Disabled** | `disabled:opacity-[0.38]`   | 38% | コンテンツ透明度 |
+|              | `disabled:bg-foreground/12` | 12% | 背景透明度       |
 
 ### 実装パターン
 
 #### パターン1: 塗り潰しボタン（Primary/Destructive）
 
-背景色のOpacityを下げる（100% - 8% = 92%）
+セマンティックトークンを使用（90%不透明度）
 
 ```tsx
-// ✅ 推奨
-className = 'bg-primary text-primary-foreground hover:bg-primary/92 active:bg-primary/88'
+// ✅ 推奨（セマンティックトークン使用）
+className = 'bg-primary text-primary-foreground hover:bg-primary-hover'
+className = 'bg-destructive text-white hover:bg-destructive-hover'
+className = 'bg-warning text-warning-foreground hover:bg-warning-hover'
+className = 'bg-success text-success-foreground hover:bg-success-hover'
 
-// ❌ 非推奨（バラバラなOpacity値）
+// ❌ 禁止（ハードコード値）
 className = 'bg-primary hover:bg-primary/90'
 className = 'bg-primary hover:bg-primary/80'
 ```
@@ -131,10 +202,10 @@ className = 'bg-primary hover:bg-primary/80'
 
 ```tsx
 // ✅ 推奨
-className = 'hover:bg-foreground/8 focus-visible:bg-foreground/12 active:bg-foreground/12'
+className = 'hover:bg-state-hover focus-visible:bg-state-selected active:bg-state-selected'
 
 // テキスト色も変える場合
-className = 'text-muted-foreground hover:text-foreground hover:bg-foreground/8'
+className = 'text-muted-foreground hover:text-foreground hover:bg-state-hover'
 ```
 
 #### パターン3: テーブル行/リスト
@@ -143,7 +214,7 @@ muted-foregroundでオーバーレイ
 
 ```tsx
 // ✅ 推奨
-className = 'hover:bg-muted-foreground/8 transition-colors'
+className = 'hover:bg-state-hover transition-colors'
 ```
 
 #### パターン4: リンク
@@ -162,14 +233,14 @@ foreground色で12%オーバーレイ（ChatGPT/Claude方式 - ニュートラ�
 
 ```tsx
 // ✅ 推奨（統一ルール）
-className = 'data-[state=selected]:bg-foreground/12'
-className = 'aria-selected:bg-foreground/12'
+className = 'data-[state=selected]:bg-state-selected'
+className = 'aria-selected:bg-state-selected'
 
 // hover + selected の組み合わせ
-className = 'hover:bg-foreground/8 data-[state=selected]:bg-foreground/12'
+className = 'hover:bg-state-hover data-[state=selected]:bg-state-selected'
 
 // サイドバー・リストアイテムの選択
-isActive ? 'bg-foreground/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
+isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
 ```
 
 **注意**: primary色は選択状態に使用しない（ホバーと選択の両方がforegroundベースで統一）
@@ -214,9 +285,9 @@ className = 'bg-green-600 hover:bg-green-700'
 className = 'text-red-500 hover:text-red-400'
 
 // ❌ accent トークンをホバー状態に使用（M3違反）
-className = 'hover:bg-accent' // → hover:bg-foreground/8
-className = 'hover:bg-accent/50' // → hover:bg-foreground/8
-className = 'hover:bg-accent hover:text-accent-foreground' // → hover:bg-foreground/8（テキスト変更なし）
+className = 'hover:bg-accent' // → hover:bg-state-hover
+className = 'hover:bg-accent/50' // → hover:bg-state-hover
+className = 'hover:bg-accent hover:text-accent-foreground' // → hover:bg-state-hover（テキスト変更なし）
 
 // ❌ ホバー時のテキスト色変更（State Layerはオーバーレイのみ）
 className = 'hover:text-accent-foreground' // 削除
@@ -236,13 +307,18 @@ shadcn/uiは `hover:bg-accent hover:text-accent-foreground` パターンをデ�
 
 ```tsx
 // shadcn/ui デフォルト → BoxLog修正後
-"hover:bg-accent hover:text-accent-foreground"  →  "hover:bg-foreground/8"
-"hover:bg-accent"                               →  "hover:bg-foreground/8"
-"data-[state=open]:bg-accent"                   →  "data-[state=open]:bg-foreground/12"
-"aria-selected:bg-accent"                       →  "aria-selected:bg-foreground/12"
-"data-[state=selected]:bg-accent"               →  "data-[state=selected]:bg-foreground/12"
-"bg-primary/12"                                 →  "bg-foreground/12" (選択状態)
-"hover:bg-primary/8"                            →  "hover:bg-foreground/8"
+"hover:bg-accent hover:text-accent-foreground"  →  "hover:bg-state-hover"
+"hover:bg-accent"                               →  "hover:bg-state-hover"
+"data-[state=open]:bg-accent"                   →  "data-[state=open]:bg-state-selected"
+"aria-selected:bg-accent"                       →  "aria-selected:bg-state-selected"
+"data-[state=selected]:bg-accent"               →  "data-[state=selected]:bg-state-selected"
+"bg-primary/12"                                 →  "bg-state-selected" (選択状態)
+"hover:bg-primary/10"                           →  "hover:bg-state-hover"
+"hover:bg-primary/90"                           →  "hover:bg-primary-hover"
+"hover:bg-destructive/90"                       →  "hover:bg-destructive-hover"
+"bg-foreground/10"                              →  "bg-state-hover"
+"bg-foreground/12"                              →  "bg-state-selected"
+"hover:bg-secondary/80"                         →  "hover:bg-state-hover"
 ```
 
 **対象コンポーネント例**: `button.tsx`, `toggle.tsx`, `dropdown-menu.tsx`, `command.tsx`, `calendar.tsx` など
@@ -251,12 +327,14 @@ shadcn/uiは `hover:bg-accent hover:text-accent-foreground` パターンをデ�
 
 | 状態               | パターン                       | 用途                       |
 | ------------------ | ------------------------------ | -------------------------- |
-| ホバー             | `hover:bg-foreground/8`        | **すべての要素**           |
-| 選択               | `bg-foreground/12`             | サイドバー、リスト、タブ等 |
-| 塗りボタンホバー   | `hover:bg-primary/92`          | Primaryボタン              |
-| 破壊的ボタンホバー | `hover:bg-destructive/92`      | 削除ボタン                 |
-| 警告ボタンホバー   | `hover:bg-warning/92`          | アーカイブ等               |
-| 成功ボタンホバー   | `hover:bg-success/92`          | 完了・確認等               |
+| ホバー             | `hover:bg-state-hover`         | **すべての要素**           |
+| 選択               | `bg-state-selected`            | サイドバー、リスト、タブ等 |
+| フォーカス         | `bg-state-focus`               | キーボードフォーカス時     |
+| ドラッグ           | `bg-state-dragged`             | ドラッグ中                 |
+| 塗りボタンホバー   | `hover:bg-primary-hover`       | Primaryボタン              |
+| 破壊的ボタンホバー | `hover:bg-destructive-hover`   | 削除ボタン                 |
+| 警告ボタンホバー   | `hover:bg-warning-hover`       | アーカイブ等               |
+| 成功ボタンホバー   | `hover:bg-success-hover`       | 完了・確認等               |
 | フォーカスリング   | `focus:ring-primary`           | フォーカス表示             |
 | リンク             | `text-primary hover:underline` | テキストリンク             |
 
@@ -272,30 +350,76 @@ shadcn/uiは `hover:bg-accent hover:text-accent-foreground` パターンをデ�
 
 ## 🎨 カラーシステム
 
+### Background & Surface（M3準拠）
+
+Material Design 3のSurfaceシステムを採用。背景は1種類、Surfaceは段階的レイヤーで構成。
+
+#### Background（最背面 - 1種類のみ）
+
+```css
+--background       /* ページ最背面 */
+--foreground       /* テキスト色 */
+```
+
+#### Surface（段階的レイヤー）
+
+backgroundが最も明るく、surface-dimが最も暗くなる構造。**ライト/ダーク両方で同じ階層構造**を維持。
+
+| トークン                   | Tailwindクラス              | 用途                           | ライト (L値) | ダーク (L値) |
+| -------------------------- | --------------------------- | ------------------------------ | ------------ | ------------ |
+| **background**             | `bg-background`             | 最背面                         | 0.99 (最明)  | 0.26 (最明)  |
+| **surface-bright**         | `bg-surface-bright`         | ポップオーバー、ドロップダウン | 0.98         | 0.24         |
+| **surface**                | `bg-surface`                | カード、ダイアログ             | 0.97         | 0.22         |
+| **surface-container**      | `bg-surface-container`      | セクション区切り、ボタン       | 0.96         | 0.20         |
+| **surface-container-high** | `bg-surface-container-high` | 強調コンテナ                   | 0.94         | 0.18         |
+| **surface-dim**            | `bg-surface-dim`            | サイドバー、ヘッダー           | 0.93 (最暗)  | 0.16 (最暗)  |
+
+```tsx
+// ✅ 推奨：Surface トークンを直接使用
+<aside className="bg-surface-dim">           // サイドバー
+<Card className="bg-surface">                // カード
+<Popover className="bg-surface-bright">      // ポップオーバー
+<section className="bg-surface-container">   // セクション区切り
+<Button className="bg-surface-container">    // ボタン背景
+
+// ✅ 互換性エイリアス（既存コードも動作）
+<Card className="bg-card">                   // = bg-surface
+<Popover className="bg-popover">             // = bg-surface-bright
+<Button className="bg-secondary">            // = bg-surface-container
+```
+
+**互換性エイリアス一覧**:
+
+| 旧トークン    | 新トークン                 | 説明              |
+| ------------- | -------------------------- | ----------------- |
+| `--card`      | `var(--surface)`           | カード背景        |
+| `--popover`   | `var(--surface-bright)`    | ポップオーバー    |
+| `--secondary` | `var(--surface-container)` | セクション/ボタン |
+
 ### セマンティックトークン（globals.css）
 
 ```css
-/* 背景 */
---background       /* ページ背景 */
---foreground       /* テキスト色 */
+/* 背景 & Surface（M3準拠） */
+--background             /* ページ最背面 */
+--foreground             /* テキスト色 */
+--surface-dim            /* サイドバー、ヘッダー */
+--surface                /* カード、ダイアログ */
+--surface-bright         /* ポップオーバー、ドロップダウン */
+--surface-container      /* セクション区切り */
+--surface-container-high /* 強調コンテナ */
 
-/* UI要素 */
---card             /* カード背景 */
+/* 互換性エイリアス */
+--card             /* → var(--surface) */
 --card-foreground  /* カード内テキスト */
---popover          /* ポップオーバー背景 */
+--popover          /* → var(--surface-bright) */
 --popover-foreground
+--secondary        /* → var(--surface-container) */
+--secondary-foreground
+--muted-foreground /* 控えめなテキスト */
 
 /* プライマリ */
 --primary          /* ブランドカラー */
 --primary-foreground
-
-/* セカンダリ */
---secondary
---secondary-foreground
-
-/* ミュート */
---muted            /* 控えめな背景 */
---muted-foreground /* 控えめなテキスト */
 
 /* アクセント（⚠️ ホバー状態には使用しない） */
 --accent           /* shadcn/uiデフォルト用（このプロジェクトでは非推奨） */
@@ -402,12 +526,13 @@ xl: 1280px  // デスクトップ
 
 ---
 
-**最終更新**: 2025-11-28
-**バージョン**: v1.2
+**最終更新**: 2025-12-05
+**バージョン**: v1.3
 **管理**: BoxLog デザインシステムチーム
 
 ### 更新履歴
 
+- **v1.3** (2025-12-05): M3 Surfaceシステム導入（surface-dim/surface/surface-bright/surface-container/surface-container-high）、Primary Containerトークン追加、既存トークンを互換性エイリアス化
 - **v1.2** (2025-11-28): ChatGPT/Claude方式に統一（ホバー・選択ともにforegroundベース）、統一ルール早見表追加
 - **v1.1** (2025-11-27): hover:bg-accent禁止ルール追加、shadcn/ui修正ガイド追加
 - **v1.0** (2025-10-22): 初版

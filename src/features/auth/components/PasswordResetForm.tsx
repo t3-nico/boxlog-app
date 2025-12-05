@@ -62,7 +62,7 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
                 </Field>
               </FieldGroup>
             </div>
-            <div className="bg-muted relative hidden md:block">
+            <div className="bg-surface-container relative hidden md:block">
               <NextImage
                 src="/placeholder.svg"
                 alt="Image"
@@ -110,7 +110,7 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-muted relative hidden md:block">
+          <div className="bg-surface-container relative hidden md:block">
             <NextImage
               src="/placeholder.svg"
               alt="Image"

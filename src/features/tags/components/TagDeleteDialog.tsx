@@ -88,11 +88,11 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
 
           {/* 使用状況 */}
           {isLoading ? (
-            <div className="bg-muted flex items-center justify-center rounded-xl p-4">
+            <div className="bg-surface-container flex items-center justify-center rounded-xl p-4">
               <div className="border-primary h-5 w-5 animate-spin rounded-full border-b-2"></div>
             </div>
           ) : usage ? (
-            <div className="bg-muted rounded-xl p-4">
+            <div className="bg-surface-container rounded-xl p-4">
               <p className="mb-2 text-sm font-medium">{t('tag.delete.affectedItems')}:</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
                 <li>
@@ -143,7 +143,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={!canDelete || isDeleting}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive-hover"
           >
             {isDeleting ? t('tag.delete.deleting') : t('tag.delete.permanentDelete')}
           </AlertDialogAction>

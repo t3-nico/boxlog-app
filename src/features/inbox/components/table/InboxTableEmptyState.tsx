@@ -91,7 +91,7 @@ export function InboxTableEmptyState({ columnCount, totalItems: _totalItems }: I
       <TableCell colSpan={columnCount} className="h-[28rem]">
         <div className="flex h-full items-center justify-center">
           <div className="mx-auto flex max-w-md flex-col items-center justify-center text-center">
-            <div className="bg-muted flex size-20 items-center justify-center rounded-full">
+            <div className="bg-surface-container flex size-20 items-center justify-center rounded-full">
               <Icon className="text-muted-foreground size-10" />
             </div>
             <h3 className="mt-6 text-lg font-semibold">{title}</h3>

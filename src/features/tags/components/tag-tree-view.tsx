@@ -123,14 +123,14 @@ const TagTreeNode = ({
     <div className="relative">
       {/* タグノード */}
       <div
-        className={`hover:bg-foreground/8 group flex items-center gap-2 rounded-lg px-3 py-2 transition-colors ${indentClass}`}
+        className={`hover:bg-state-hover group flex items-center gap-2 rounded-lg px-3 py-2 transition-colors ${indentClass}`}
         style={{ paddingLeft: `${level * 20 + 12}px` }}
       >
         {/* 展開/折りたたみアイコン */}
         <button
           type="button"
           onClick={handleToggleExpanded}
-          className={`hover:bg-foreground/8 flex-shrink-0 rounded p-1 transition-colors ${
+          className={`hover:bg-state-hover flex-shrink-0 rounded p-1 transition-colors ${
             hasChildren ? 'visible' : 'invisible'
           }`}
         >
@@ -179,7 +179,7 @@ const TagTreeNode = ({
             <button
               type="button"
               onClick={handleCreateChildTag}
-              className="text-muted-foreground hover:bg-foreground/8 hover:text-foreground rounded p-1 transition-colors"
+              className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded p-1 transition-colors"
               title="タグを追加"
             >
               <PlusIcon className="h-4 w-4" data-slot="icon" />
@@ -190,7 +190,7 @@ const TagTreeNode = ({
               <button
                 type="button"
                 onClick={handleToggleMenu}
-                className="text-muted-foreground hover:bg-foreground/8 hover:text-foreground rounded p-1 transition-colors"
+                className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded p-1 transition-colors"
               >
                 <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
               </button>
@@ -201,7 +201,7 @@ const TagTreeNode = ({
                   <button
                     type="button"
                     onClick={handleEditTag}
-                    className="text-foreground hover:bg-foreground/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                    className="text-foreground hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <PencilIcon className="h-4 w-4" data-slot="icon" />
                     {t('tag.actions.edit')}
@@ -209,7 +209,7 @@ const TagTreeNode = ({
                   <button
                     type="button"
                     onClick={handleStartEdit}
-                    className="text-foreground hover:bg-foreground/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                    className="text-foreground hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <PencilIcon className="h-4 w-4" data-slot="icon" />
                     {t('tag.actions.rename')}
@@ -299,7 +299,7 @@ export const TagTreeView = ({
         <button
           type="button"
           onClick={handleCreateRootTag}
-          className="bg-primary text-primary-foreground hover:bg-primary/92 inline-flex items-center gap-2 rounded-lg px-4 py-2 transition-colors"
+          className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex items-center gap-2 rounded-lg px-4 py-2 transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
           {t('tag.actions.createFirst')}
@@ -318,7 +318,7 @@ export const TagTreeView = ({
         <button
           type="button"
           onClick={handleCreateRootTag}
-          className="text-primary hover:bg-foreground/8 inline-flex items-center gap-1 rounded px-2 py-1 text-sm transition-colors"
+          className="text-primary hover:bg-state-hover inline-flex items-center gap-1 rounded px-2 py-1 text-sm transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
           {t('tag.messages.newTag')}

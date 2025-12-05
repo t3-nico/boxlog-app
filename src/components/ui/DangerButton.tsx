@@ -12,11 +12,11 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 const dangerButtonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*="size-"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-destructive focus-visible:ring-destructive/20 focus-visible:ring-[3px] bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/92',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*="size-"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-destructive focus-visible:ring-destructive/20 focus-visible:ring-[3px] bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive-hover',
   {
     variants: {
       intent: {
-        delete: 'bg-destructive hover:bg-destructive/92 focus-visible:ring-destructive/20',
+        delete: 'bg-destructive hover:bg-destructive-hover focus-visible:ring-destructive/20',
         warning: 'bg-destructive/80 hover:bg-destructive/70 focus-visible:ring-destructive/20',
       },
     },

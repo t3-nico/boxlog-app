@@ -155,7 +155,7 @@ export function AboutLegalSettings() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="hover:bg-muted flex items-center justify-between px-4 py-3 transition-colors"
+                className="hover:bg-state-hover flex items-center justify-between px-4 py-3 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <Icon className="text-muted-foreground h-4 w-4" />

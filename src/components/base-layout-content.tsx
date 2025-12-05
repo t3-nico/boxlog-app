@@ -71,7 +71,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
           {/* L2: Main Content + Inspector - Floating */}
           <ResizablePanel defaultSize={80}>
-            <div className="bg-muted m-2 ml-0 flex h-[calc(100%-1rem)] flex-1 flex-col overflow-hidden rounded-xl shadow-lg">
+            <div className="bg-surface-container m-2 ml-0 flex h-[calc(100%-1rem)] flex-1 flex-col overflow-hidden rounded-xl shadow-lg">
               {/* Main Content Area */}
               <div className="flex flex-1 overflow-hidden">
                 <div className="relative z-10 flex flex-1">

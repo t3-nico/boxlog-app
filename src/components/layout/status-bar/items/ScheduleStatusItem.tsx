@@ -163,7 +163,7 @@ export function ScheduleStatusItem() {
       {/* 進行中の予定がある場合のみプログレスバーを表示 */}
       {progressPercent !== null && (
         <div className="flex items-center gap-1.5" title={`${progressPercent}% 経過`}>
-          <div className="bg-muted h-1 w-16 overflow-hidden rounded-full">
+          <div className="bg-surface-container h-1 w-16 overflow-hidden rounded-full">
             <div
               className={cn(
                 'h-full rounded-full transition-all duration-300',

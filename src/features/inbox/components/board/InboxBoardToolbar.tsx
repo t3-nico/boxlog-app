@@ -103,10 +103,7 @@ export function InboxBoardToolbar() {
           side="bottom"
           sideOffset={8}
         >
-          <button
-            type="button"
-            className="focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-input bg-background hover:bg-foreground/8 active:bg-foreground/12 dark:bg-input/30 dark:border-input dark:hover:bg-input/50 inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md border px-3 text-sm font-medium whitespace-nowrap shadow-xs transition-all outline-none focus-visible:ring-[3px] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
-          >
+          <Button variant="outline" size="default">
             <Tag />
             タグ
             {tagFilterCount > 0 && (
@@ -114,7 +111,7 @@ export function InboxBoardToolbar() {
                 {tagFilterCount}
               </Badge>
             )}
-          </button>
+          </Button>
         </PlanTagSelectDialogEnhanced>
 
         {/* フィルターリセット */}
@@ -128,13 +125,10 @@ export function InboxBoardToolbar() {
         {/* 列設定 */}
         <Popover>
           <PopoverTrigger asChild>
-            <button
-              type="button"
-              className="focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border-input bg-background hover:bg-foreground/8 active:bg-foreground/12 dark:bg-input/30 dark:border-input dark:hover:bg-input/50 inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md border px-3 text-sm font-medium whitespace-nowrap shadow-xs transition-all outline-none focus-visible:ring-[3px] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
-            >
+            <Button variant="outline" size="default">
               <Settings2 />
               列設定
-            </button>
+            </Button>
           </PopoverTrigger>
           <PopoverContent className="w-72" align="end">
             <div className="space-y-4">
@@ -151,10 +145,7 @@ export function InboxBoardToolbar() {
               {/* 列の表示/非表示切り替え */}
               <div className="space-y-1">
                 {STATUS_LIST.map((status) => (
-                  <div
-                    key={status}
-                    className="hover:bg-foreground/8 flex items-center space-x-2 rounded-sm px-2 py-1.5"
-                  >
+                  <div key={status} className="hover:bg-state-hover flex items-center space-x-2 rounded-sm px-2 py-1.5">
                     <Checkbox
                       id={`status-${status}`}
                       checked={isStatusVisible(status)}

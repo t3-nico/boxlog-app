@@ -136,8 +136,8 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   const parsedQuery = useMemo(() => parseSearchQuery(query), [query])
   const filterHints = useMemo(() => getFilterHints(), [])
 
-  // Get data from stores
-  const { data: plans = [] } = usePlans()
+  // Get data from stores - only fetch when modal is open to prevent 401 errors on unauthenticated pages
+  const { data: plans = [] } = usePlans(undefined, { enabled: isOpen })
   const tags = useTagStore((state) => state.tags)
 
   // Get actions from stores
@@ -272,7 +272,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
           <div className="relative">
             <CommandInput placeholder="検索... (コマンド、プラン、タグ)" value={query} onValueChange={setQuery} />
             <div className="absolute top-1/2 right-3 flex -translate-y-1/2 items-center gap-1">
-              <kbd className="bg-muted text-muted-foreground inline-flex h-6 items-center gap-1 rounded border px-2 font-mono text-xs font-medium opacity-100 select-none">
+              <kbd className="bg-surface-container text-muted-foreground inline-flex h-6 items-center gap-1 rounded border px-2 font-mono text-xs font-medium opacity-100 select-none">
                 ESC
               </kbd>
             </div>
@@ -314,7 +314,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                   >
                     <Filter className="h-4 w-4 shrink-0" />
                     <div className="flex min-w-0 flex-1 items-center gap-2">
-                      <code className="bg-muted rounded px-2 py-1 text-xs">{hint.syntax}</code>
+                      <code className="bg-surface-container rounded px-2 py-1 text-xs">{hint.syntax}</code>
                       <span className="text-muted-foreground text-xs">{hint.description}</span>
                     </div>
                   </CommandItem>
@@ -387,7 +387,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                           {result.shortcut.map((key, index) => (
                             <kbd
                               key={index}
-                              className="bg-muted text-muted-foreground inline-flex h-6 min-w-6 items-center justify-center rounded border px-2 font-mono text-xs font-medium"
+                              className="bg-surface-container text-muted-foreground inline-flex h-6 min-w-6 items-center justify-center rounded border px-2 font-mono text-xs font-medium"
                             >
                               {key}
                             </kbd>

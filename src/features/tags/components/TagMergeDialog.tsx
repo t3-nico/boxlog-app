@@ -95,7 +95,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
           {/* ソースタグ表示 */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">{t('tags.merge.sourceTag')}</Label>
-            <div className="bg-muted flex items-center gap-2 rounded-lg border px-3 py-2">
+            <div className="bg-surface-container flex items-center gap-2 rounded-lg border px-3 py-2">
               <div
                 className="h-3 w-3 shrink-0 rounded-full"
                 style={{ backgroundColor: tag?.color || DEFAULT_TAG_COLOR }}

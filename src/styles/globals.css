@@ -15,86 +15,172 @@
 
 /* ライトモード（CSS変数定義） */
 :root {
-  --background: oklch(1 0 0);
+  /* ============================================
+   * Background & Surface（M3準拠）
+   * background: 最背面（1種類のみ）
+   * surface: 段階的レイヤー（dim → bright）
+   * ============================================ */
+  --background: oklch(0.99 0 0);                  /* 最背面（ほぼ純白、眩しさ軽減） */
   --foreground: oklch(0.3211 0 0);
-  --card: oklch(1 0 0);
+
+  /* Surface 段階的レイヤー（明るい順） */
+  --surface-bright: oklch(0.98 0 0);              /* ポップオーバー、ドロップダウン */
+  --surface: oklch(0.97 0 0);                     /* カード、ダイアログ */
+  --surface-container: oklch(0.96 0 0);           /* セクション区切り */
+  --surface-container-high: oklch(0.94 0 0);      /* 強調コンテナ */
+  --surface-dim: oklch(0.93 0 0);                 /* サイドバー、ヘッダー（最暗） */
+
+  /* 互換性エイリアス（既存コード用） */
+  --card: var(--surface);
   --card-foreground: oklch(0.3211 0 0);
-  --popover: oklch(0.97 0.002 264.54);
+  --popover: var(--surface-bright);
   --popover-foreground: oklch(0.3211 0 0);
+  --secondary: var(--surface-container);
+  --secondary-foreground: oklch(0.25 0 0);
+  --muted-foreground: oklch(0.45 0.02 264.54);
+
+  /* Primary */
   --primary: oklch(0.6231 0.188 259.8145);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.92 0.003 264.54);
-  --secondary-foreground: oklch(0.3211 0 0);
-  --muted: oklch(0.97 0.002 264.54);
-  --muted-foreground: oklch(0.45 0.02 264.54);
-  --accent: oklch(0.9514 0.025 236.8242);
-  --accent-foreground: oklch(0.3791 0.1378 265.5222);
+
+  /* State: Active（選択中・アクティブ状態） */
+  --state-active: oklch(0.9514 0.025 236.8242);
+  --state-active-foreground: oklch(0.3791 0.1378 265.5222);
+
+  /* shadcn/ui互換エイリアス（accent → state-active） */
+  --accent: var(--state-active);
+  --accent-foreground: var(--state-active-foreground);
+
+  /* Semantic Colors */
   --destructive: oklch(0.6368 0.2078 25.3313);
   --destructive-foreground: oklch(1 0 0);
   --warning: oklch(0.7039 0.1555 68.04);
   --warning-foreground: oklch(1 0 0);
   --success: oklch(0.5859 0.1684 149.2);
   --success-foreground: oklch(1 0 0);
+  --info: oklch(0.5851 0.1538 241.9);
+  --info-foreground: oklch(1 0 0);
+
+  /* Borders & Inputs */
   --border: oklch(0.9 0.006 264.54);
-  --input: oklch(0.9 0.006 264.54);
+  --input: var(--surface-bright);
   --ring: oklch(0.6231 0.188 259.8145);
+
+  /* Charts */
   --chart-1: oklch(0.6231 0.188 259.8145);
   --chart-2: oklch(0.5461 0.2152 262.8809);
   --chart-3: oklch(0.4882 0.2172 264.3763);
   --chart-4: oklch(0.4244 0.1809 265.6377);
   --chart-5: oklch(0.3791 0.1378 265.5222);
-  --sidebar: oklch(0.9811 0.002 264.54);
-  --sidebar-foreground: oklch(0.3211 0 0);
-  --sidebar-primary: oklch(0.6231 0.188 259.8145);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.9514 0.025 236.8242);
-  --sidebar-accent-foreground: oklch(0.3791 0.1378 265.5222);
-  --sidebar-border: oklch(0.9 0.006 264.54);
-  --sidebar-ring: oklch(0.6231 0.188 259.8145);
 }
 
 /* ダークモード（CSS変数上書き） */
 .dark {
-  --background: oklch(0.2046 0 0);
+  /* ============================================
+   * Background & Surface（M3準拠）
+   * ============================================ */
+  --background: oklch(0.26 0 0);                  /* 最背面（最明） */
   --foreground: oklch(0.9219 0 0);
-  --card: oklch(0.2046 0 0);
+
+  /* Surface 段階的レイヤー（暗い順） */
+  --surface-bright: oklch(0.24 0 0);              /* ポップオーバー、ドロップダウン */
+  --surface: oklch(0.22 0 0);                     /* カード、ダイアログ */
+  --surface-container: oklch(0.20 0 0);           /* セクション区切り */
+  --surface-container-high: oklch(0.18 0 0);      /* 強調コンテナ */
+  --surface-dim: oklch(0.16 0 0);                 /* サイドバー、ヘッダー（最暗） */
+
+  /* 互換性エイリアス（既存コード用） */
+  --card: var(--surface);
   --card-foreground: oklch(0.9219 0 0);
-  --popover: oklch(0.25 0 0);
+  --popover: var(--surface-bright);
   --popover-foreground: oklch(0.9219 0 0);
+  --secondary: var(--surface-container);
+  --secondary-foreground: oklch(0.95 0 0);
+  --muted-foreground: oklch(0.78 0 0);
+
+  /* Primary */
   --primary: oklch(0.6231 0.188 259.8145);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.32 0 0);
-  --secondary-foreground: oklch(0.9219 0 0);
-  --muted: oklch(0.25 0 0);
-  --muted-foreground: oklch(0.78 0 0);
-  --accent: oklch(0.3791 0.1378 265.5222);
-  --accent-foreground: oklch(0.8823 0.0571 254.1284);
+
+  /* State: Active（選択中・アクティブ状態） */
+  --state-active: oklch(0.3791 0.1378 265.5222);
+  --state-active-foreground: oklch(0.8823 0.0571 254.1284);
+
+  /* shadcn/ui互換エイリアス（accent → state-active） */
+  --accent: var(--state-active);
+  --accent-foreground: var(--state-active-foreground);
+
+  /* Semantic Colors */
   --destructive: oklch(0.6368 0.2078 25.3313);
   --destructive-foreground: oklch(1 0 0);
   --warning: oklch(0.7039 0.1555 68.04);
   --warning-foreground: oklch(1 0 0);
   --success: oklch(0.5859 0.1684 149.2);
   --success-foreground: oklch(1 0 0);
+  --info: oklch(0.5851 0.1538 241.9);
+  --info-foreground: oklch(1 0 0);
+
+  /* Borders & Inputs */
   --border: oklch(0.3715 0 0);
-  --input: oklch(0.3715 0 0);
+  --input: var(--surface-bright);
   --ring: oklch(0.6231 0.188 259.8145);
+
+  /* Charts */
   --chart-1: oklch(0.7137 0.1434 254.624);
   --chart-2: oklch(0.6231 0.188 259.8145);
   --chart-3: oklch(0.5461 0.2152 262.8809);
   --chart-4: oklch(0.4882 0.2172 264.3763);
   --chart-5: oklch(0.4244 0.1809 265.6377);
-  --sidebar: oklch(0.2393 0 0);
-  --sidebar-foreground: oklch(0.9219 0 0);
-  --sidebar-primary: oklch(0.6231 0.188 259.8145);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.3791 0.1378 265.5222);
-  --sidebar-accent-foreground: oklch(0.8823 0.0571 254.1284);
-  --sidebar-border: oklch(0.3715 0 0);
-  --sidebar-ring: oklch(0.6231 0.188 259.8145);
 }
 
 /* Tailwindへのマッピング（@theme inline） */
 @theme inline {
+  /* ============================================
+   * ステートレイヤー（M3準拠）
+   * foregroundベースの半透明オーバーレイ
+   * 一箇所変更で全体に反映
+   * ============================================ */
+  --color-state-hover: oklch(from var(--foreground) l c h / 10%);
+  --color-state-focus: oklch(from var(--foreground) l c h / 12%);
+  --color-state-pressed: oklch(from var(--foreground) l c h / 12%);
+  --color-state-selected: oklch(from var(--foreground) l c h / 12%);
+  --color-state-dragged: oklch(from var(--foreground) l c h / 16%);
+  --color-state-active: var(--state-active);
+  --color-state-active-foreground: var(--state-active-foreground);
+
+  /* 塗りボタン用ホバー（背景色を暗くする方式） */
+  --color-primary-hover: oklch(from var(--primary) l c h / 90%);
+  --color-destructive-hover: oklch(from var(--destructive) l c h / 90%);
+  --color-warning-hover: oklch(from var(--warning) l c h / 90%);
+  --color-success-hover: oklch(from var(--success) l c h / 90%);
+  --color-info-hover: oklch(from var(--info) l c h / 90%);
+
+  /* ============================================
+   * Primaryベースのステートレイヤー
+   * 「新規追加」ボタン等、primary強調したい要素用
+   * ============================================ */
+  --color-primary-state-hover: oklch(from var(--primary) l c h / 10%);
+  --color-primary-state-selected: oklch(from var(--primary) l c h / 12%);
+
+  /* ============================================
+   * Container トークン（M3準拠）
+   * バッジ、アイコン背景、今日ハイライト等の装飾的背景
+   * bg-primary/10, /12 を統一
+   * ============================================ */
+  --color-primary-container: oklch(from var(--primary) l c h / 12%);
+  --color-on-primary-container: var(--primary);
+
+  /* ============================================
+   * Surface トークン（M3準拠）
+   * background: 最背面（1種類）
+   * surface: 段階的レイヤー（dim → bright）
+   * ============================================ */
+  --color-surface-dim: var(--surface-dim);
+  --color-surface: var(--surface);
+  --color-surface-bright: var(--surface-bright);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -105,7 +191,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
+  --color-muted: var(--surface-dim);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
@@ -115,6 +201,8 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -123,14 +211,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 @theme {
@@ -804,7 +884,7 @@ html.dark {
  * ============================================ */
 .rdp {
   --rdp-accent-color: var(--color-primary);
-  --rdp-background-color: var(--color-accent);
+  --rdp-background-color: var(--color-state-active);
   --rdp-accent-background-color: var(--color-primary);
   --rdp-outline: 2px solid var(--color-ring);
   --rdp-outline-selected: 2px solid var(--color-primary);
@@ -840,10 +920,10 @@ html.dark {
   box-shadow: none !important;
 }
 
-/* 選択された日付（今日以外） - accent色の背景 + 角丸 */
+/* 選択された日付（今日以外） - state-active色の背景 + 角丸 */
 .rdp-day_button[data-selected-single='true']:not([data-today='true']) {
-  background-color: var(--color-accent) !important;
-  color: var(--color-accent-foreground) !important;
+  background-color: var(--color-state-active) !important;
+  color: var(--color-state-active-foreground) !important;
   border-radius: 0.375rem !important;
 }
 
@@ -856,8 +936,8 @@ html.dark {
 
 /* ホバー時 */
 .rdp-day_button:hover:not([data-today='true']):not([aria-disabled='true']) {
-  background-color: var(--color-accent) !important;
-  color: var(--color-accent-foreground) !important;
+  background-color: var(--color-state-active) !important;
+  color: var(--color-state-active-foreground) !important;
   border-radius: 0.375rem !important;
 }
 
@@ -898,7 +978,7 @@ html.dark {
 
 .rdp-button_previous:hover,
 .rdp-button_next:hover {
-  background-color: var(--color-accent);
+  background-color: var(--color-state-active);
 }
 
 /* 無効な日付 */

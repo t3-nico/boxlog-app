@@ -286,7 +286,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
               </FieldDescription>
             </FieldGroup>
           </form>
-          <div className="bg-muted relative hidden md:block">
+          <div className="bg-surface-container relative hidden md:block">
             <NextImage
               src="/placeholder.svg"
               alt="Image"

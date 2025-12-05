@@ -85,7 +85,7 @@ export function MFASection() {
               {secret && (
                 <div>
                   <p className="mb-2 text-sm font-medium">またはこのコードを手動で入力:</p>
-                  <code className="bg-muted block rounded p-2 text-xs">{secret}</code>
+                  <code className="bg-surface-container block rounded p-2 text-xs">{secret}</code>
                 </div>
               )}
 

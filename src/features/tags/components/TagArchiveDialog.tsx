@@ -79,11 +79,11 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
 
           {/* 使用状況 */}
           {isLoading ? (
-            <div className="bg-muted flex items-center justify-center rounded-xl p-4">
+            <div className="bg-surface-container flex items-center justify-center rounded-xl p-4">
               <div className="border-primary h-5 w-5 animate-spin rounded-full border-b-2"></div>
             </div>
           ) : usage ? (
-            <div className="bg-muted rounded-xl p-4">
+            <div className="bg-surface-container rounded-xl p-4">
               <p className="mb-2 text-sm font-medium">現在の使用状況:</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
                 <li>• Plans: {usage.planCount}件</li>

@@ -239,7 +239,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
         <TableRow
           ref={rowRef}
           className={cn(
-            'hover:bg-muted cursor-pointer transition-colors',
+            'hover:bg-state-hover cursor-pointer transition-colors',
             selected && 'bg-primary/12 hover:bg-primary/16',
             isFocused && 'ring-primary ring-2 ring-inset'
           )}

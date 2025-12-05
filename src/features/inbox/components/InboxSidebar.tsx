@@ -6,7 +6,7 @@ import { useCallback, useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
+import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
 import { useTranslations } from 'next-intl'
 
 import { useInboxViewStore } from '../stores/useInboxViewStore'
@@ -60,20 +60,16 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
 
   if (isLoading) {
     return (
-      <aside className="bg-background text-foreground flex h-full w-full flex-col">
-        <SidebarHeader title={t('sidebar.navigation.inbox')} />
+      <SidebarShell title={t('sidebar.navigation.inbox')}>
         <div className="flex flex-1 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
+          <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
         </div>
-      </aside>
+      </SidebarShell>
     )
   }
 
   return (
-    <aside className="bg-background text-foreground flex h-full w-full flex-col">
-      {/* Header - ページタイトル */}
-      <SidebarHeader title={t('sidebar.navigation.inbox')} />
-
+    <SidebarShell title={t('sidebar.navigation.inbox')}>
       {/* コンテンツ */}
       <nav className="flex-1 overflow-y-auto px-2 py-2">
         <div className="space-y-1">
@@ -84,7 +80,9 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
               type="button"
               onClick={() => handleViewClick(view.id)}
               className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                currentViewId === view.id ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
+                currentViewId === view.id
+                  ? 'bg-state-selected text-foreground'
+                  : 'text-muted-foreground hover:bg-state-hover'
               }`}
             >
               <div className="flex items-center justify-between gap-2">
@@ -115,7 +113,7 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
                         variant="ghost"
                         size="sm"
                         onClick={handleCreateView}
-                        className="hover:bg-foreground/8 h-5 w-5 p-0"
+                        className="hover:bg-state-hover h-5 w-5 p-0"
                       >
                         <Plus className="h-3 w-3" />
                       </Button>
@@ -134,8 +132,8 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
                   onClick={() => handleViewClick(view.id)}
                   className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
                     currentViewId === view.id
-                      ? 'bg-foreground/12 text-foreground'
-                      : 'text-muted-foreground hover:bg-foreground/8'
+                      ? 'bg-state-selected text-foreground'
+                      : 'text-muted-foreground hover:bg-state-hover'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -147,6 +145,6 @@ export function InboxSidebar({ isLoading = false, activeplansCount = 0, archived
           )}
         </div>
       </nav>
-    </aside>
+    </SidebarShell>
   )
 }

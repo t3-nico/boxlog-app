@@ -45,7 +45,7 @@ export function GroupBySelector() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="h-9">
+        <Button variant="outline" size="default">
           <Group className="size-4" />
           グループ化: {activeOption?.label || 'なし'}
           {groupBy && (

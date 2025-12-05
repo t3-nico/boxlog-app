@@ -36,7 +36,7 @@ export function ActivityTab({ planId, order }: ActivityTabProps) {
           return (
             <div key={activity.id} className="flex gap-3">
               <div className="relative flex flex-col items-center">
-                <div className="bg-muted relative z-10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
+                <div className="bg-surface-container relative z-10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
                   <IconComponent className="h-4 w-4" />
                 </div>
                 {!isLast && <div className="bg-border absolute top-8 left-1/2 h-full w-px -translate-x-1/2" />}

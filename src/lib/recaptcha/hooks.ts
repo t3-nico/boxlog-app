@@ -5,9 +5,13 @@
 
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { RECAPTCHA_CONFIG } from './config'
+
+// 設定値は静的なので、コンポーネント外で一度だけ計算
+const IS_V3_CONFIGURED = Boolean(RECAPTCHA_CONFIG.SITE_KEY_V3)
+const IS_V2_CONFIGURED = Boolean(RECAPTCHA_CONFIG.SITE_KEY_V2)
 
 /**
  * reCAPTCHA v3トークン生成フック
@@ -16,18 +20,25 @@ import { RECAPTCHA_CONFIG } from './config'
 export function useRecaptchaV3(action: string) {
   const [isReady, setIsReady] = useState(false)
   const [executeRecaptcha, setExecuteRecaptcha] = useState<((action: string) => Promise<string>) | null>(null)
-
-  const isConfigured = Boolean(RECAPTCHA_CONFIG.SITE_KEY_V3)
+  const initializedRef = useRef(false)
 
   useEffect(() => {
+    // 初期化済みの場合はスキップ
+    if (initializedRef.current) return
+    initializedRef.current = true
+
     // reCAPTCHAが設定されていない場合は何もしない
-    if (!isConfigured) {
+    if (!IS_V3_CONFIGURED) {
       console.warn('[reCAPTCHA] v3 not configured, skipping initialization')
       return
     }
 
+    let isMounted = true
+
     // grecaptcha.enterprise または grecaptcha が利用可能になるまで待機
     const checkRecaptcha = () => {
+      if (!isMounted) return
+
       const grecaptcha = window.grecaptcha
       if (grecaptcha && typeof grecaptcha.execute === 'function') {
         setExecuteRecaptcha(() => async (actionName: string) => {
@@ -38,6 +49,8 @@ export function useRecaptchaV3(action: string) {
           })
         })
         setIsReady(true)
+        clearInterval(interval)
+        clearTimeout(timeout)
       }
     }
 
@@ -48,19 +61,18 @@ export function useRecaptchaV3(action: string) {
     const interval = setInterval(checkRecaptcha, 100)
     const timeout = setTimeout(() => {
       clearInterval(interval)
-      if (!isReady) {
-        console.warn('[reCAPTCHA] v3 initialization timeout')
-      }
+      console.warn('[reCAPTCHA] v3 initialization timeout')
     }, 5000)
 
     return () => {
+      isMounted = false
       clearInterval(interval)
       clearTimeout(timeout)
     }
-  }, [isConfigured, isReady])
+  }, [])
 
   const generateToken = useCallback(async (): Promise<string | null> => {
-    if (!isConfigured) {
+    if (!IS_V3_CONFIGURED) {
       console.warn('[reCAPTCHA] v3 not configured, skipping token generation')
       return null
     }
@@ -77,11 +89,11 @@ export function useRecaptchaV3(action: string) {
       console.error('[reCAPTCHA] Token generation error:', error)
       return null
     }
-  }, [executeRecaptcha, action, isConfigured])
+  }, [executeRecaptcha, action])
 
   return {
     generateToken,
-    isReady: isConfigured && isReady,
+    isReady: IS_V3_CONFIGURED && isReady,
   }
 }
 
@@ -91,12 +103,15 @@ export function useRecaptchaV3(action: string) {
 export function useRecaptchaV2() {
   const [isReady, setIsReady] = useState(false)
   const [widgetId, setWidgetId] = useState<number | null>(null)
-
-  const isConfigured = Boolean(RECAPTCHA_CONFIG.SITE_KEY_V2)
+  const initializedRef = useRef(false)
 
   useEffect(() => {
+    // 初期化済みの場合はスキップ
+    if (initializedRef.current) return
+    initializedRef.current = true
+
     // reCAPTCHA v2が設定されていない場合は何もしない
-    if (!isConfigured) {
+    if (!IS_V2_CONFIGURED) {
       console.warn('[reCAPTCHA] v2 not configured, skipping script load')
       return
     }
@@ -117,11 +132,11 @@ export function useRecaptchaV2() {
         document.head.removeChild(script)
       }
     }
-  }, [isConfigured])
+  }, [])
 
   const renderWidget = useCallback(
     (containerId: string, callback: (token: string) => void) => {
-      if (!isConfigured) {
+      if (!IS_V2_CONFIGURED) {
         console.warn('[reCAPTCHA] v2 not configured')
         return
       }
@@ -139,7 +154,7 @@ export function useRecaptchaV2() {
 
       setWidgetId(id)
     },
-    [isReady, isConfigured]
+    [isReady]
   )
 
   const execute = useCallback(() => {
@@ -160,7 +175,7 @@ export function useRecaptchaV2() {
   }, [isReady, widgetId])
 
   return {
-    isReady: isConfigured && isReady,
+    isReady: IS_V2_CONFIGURED && isReady,
     renderWidget,
     execute,
     reset,

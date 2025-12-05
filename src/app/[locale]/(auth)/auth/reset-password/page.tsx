@@ -84,7 +84,7 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
+      <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
         <div className="w-full md:max-w-5xl">
           <div className="flex flex-col gap-6">
             <Card className="overflow-hidden p-0">
@@ -112,7 +112,7 @@ export default function ResetPasswordPage() {
                     </div>
                   </FieldGroup>
                 </div>
-                <div className="bg-muted relative hidden md:block">
+                <div className="bg-surface-container relative hidden md:block">
                   <Image
                     src="/placeholder.svg"
                     alt="Image"
@@ -129,7 +129,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
+    <div className="bg-surface-container flex min-h-svh flex-col items-center justify-center p-4 md:p-10">
       <div className="w-full md:max-w-5xl">
         <div className="flex flex-col gap-6">
           <Card className="overflow-hidden p-0">
@@ -225,7 +225,7 @@ export default function ResetPasswordPage() {
                   </FieldDescription>
                 </FieldGroup>
               </form>
-              <div className="bg-muted relative hidden md:block">
+              <div className="bg-surface-container relative hidden md:block">
                 <Image
                   src="/placeholder.svg"
                   alt="Image"

@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
+import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
 import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
@@ -302,7 +302,7 @@ export function TagsSidebar({
         type="button"
         onClick={handleUncategorizedClick}
         className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-          isUncategorizedPage ? 'bg-foreground/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
+          isUncategorizedPage ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
         }`}
         style={{
           backgroundColor: isOver ? 'rgba(59, 130, 246, 0.1)' : undefined,
@@ -322,22 +322,16 @@ export function TagsSidebar({
 
   if (isLoading || isLoadingGroups) {
     return (
-      <aside className="bg-background text-foreground flex h-full w-full flex-col">
-        {/* Header - ページタイトル */}
-        <SidebarHeader title={t('sidebar.navigation.tags')} />
-
+      <SidebarShell title={t('sidebar.navigation.tags')}>
         <div className="flex flex-1 items-center justify-center">
           <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
         </div>
-      </aside>
+      </SidebarShell>
     )
   }
 
   return (
-    <aside className="bg-background text-foreground flex h-full w-full flex-col">
-      {/* Header - ページタイトル */}
-      <SidebarHeader title={t('sidebar.navigation.tags')} />
-
+    <SidebarShell title={t('sidebar.navigation.tags')}>
       {/* コンテンツ */}
       <nav className="flex-1 overflow-y-auto px-2 py-2">
         <div className="space-y-1">
@@ -347,8 +341,8 @@ export function TagsSidebar({
             onClick={onAllTagsClick}
             className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
               !isArchivePage && !isUncategorizedPage && !currentGroupNumber
-                ? 'bg-foreground/12 text-foreground'
-                : 'text-muted-foreground hover:bg-foreground/8'
+                ? 'bg-state-selected text-foreground'
+                : 'text-muted-foreground hover:bg-state-hover'
             }`}
           >
             <div className="flex items-center justify-between gap-2">
@@ -368,7 +362,7 @@ export function TagsSidebar({
             type="button"
             onClick={handleArchiveClick}
             className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-              isArchivePage ? 'bg-foreground/12 text-foreground' : 'text-muted-foreground hover:bg-foreground/8'
+              isArchivePage ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
             }`}
           >
             <div className="flex items-center justify-between gap-2">
@@ -390,7 +384,7 @@ export function TagsSidebar({
                     variant="ghost"
                     size="sm"
                     onClick={handleStartCreating}
-                    className="hover:bg-foreground/8 h-5 w-5 p-0"
+                    className="hover:bg-state-hover h-5 w-5 p-0"
                   >
                     <Plus className="h-3 w-3" />
                   </Button>
@@ -477,6 +471,6 @@ export function TagsSidebar({
         onClose={() => setDeletingGroup(null)}
         onConfirm={handleConfirmDelete}
       />
-    </aside>
+    </SidebarShell>
   )
 }

@@ -205,7 +205,9 @@ export function ChronotypeSettings() {
                   onClick={() => handleTypeSelect(type)}
                   className={cn(
                     'flex items-center gap-2 rounded-lg border p-3 text-left transition-colors outline-none',
-                    isSelected ? 'border-foreground bg-secondary' : 'border-border hover:bg-secondary'
+                    isSelected
+                      ? 'border-foreground bg-secondary text-secondary-foreground'
+                      : 'border-border hover:bg-secondary'
                   )}
                 >
                   <span className="text-xl">{CHRONOTYPE_EMOJI[type]}</span>

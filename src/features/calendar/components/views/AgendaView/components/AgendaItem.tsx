@@ -49,7 +49,7 @@ export function AgendaItem({ plan, onClick, onContextMenu }: AgendaItemProps) {
       type="button"
       className={cn(
         'group flex w-full items-start gap-3 rounded-lg p-3',
-        'hover:bg-accent/50 focus-visible:bg-accent/50',
+        'hover:bg-state-hover focus-visible:bg-state-active/50',
         'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:outline-none',
         'transition-colors duration-150',
         'cursor-pointer text-left'

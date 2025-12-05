@@ -139,7 +139,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           className={cn(
             'border-border flex w-full items-center justify-center gap-3 rounded-md border',
             'bg-card text-muted-foreground px-4 py-2 text-sm font-medium',
-            'hover:bg-foreground/8 shadow-sm',
+            'hover:bg-state-hover shadow-sm',
             'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
             'disabled:cursor-not-allowed disabled:opacity-50'
           )}
@@ -172,7 +172,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           className={cn(
             'border-border flex w-full items-center justify-center gap-3 rounded-md border',
             'bg-foreground text-background px-4 py-2 text-sm font-medium',
-            'hover:bg-foreground/92 shadow-sm',
+            'shadow-sm hover:opacity-90',
             'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
             'disabled:cursor-not-allowed disabled:opacity-50'
           )}
@@ -232,7 +232,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         <button
           type="submit"
           disabled={isLoading}
-          className="text-primary-foreground bg-primary hover:bg-primary/92 focus:ring-ring flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium shadow-sm focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="text-primary-foreground bg-primary hover:bg-primary-hover focus:ring-ring flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium shadow-sm focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading ? 'Loading...' : mode === 'login' ? 'Sign in' : 'Create account'}
         </button>

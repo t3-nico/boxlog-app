@@ -30,7 +30,7 @@ export function TrashStatsDisplay({ stats, selectedCount, expiredItems, onDesele
 
       {/* 選択解除 */}
       {selectedCount > 0 && (
-        <button type="button" onClick={onDeselectAll} className="text-muted-foreground hover:bg-muted text-sm">
+        <button type="button" onClick={onDeselectAll} className="text-muted-foreground hover:bg-state-hover text-sm">
           選択解除
         </button>
       )}

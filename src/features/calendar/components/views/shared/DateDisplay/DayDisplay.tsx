@@ -22,7 +22,7 @@ const generateHeaderClasses = (
   const baseClasses = 'flex items-center justify-center py-2 px-1 text-center transition-colors rounded-xl'
 
   const hoverClasses =
-    onClick && !isToday ? 'cursor-pointer hover:bg-primary/10' : onClick && isToday ? 'cursor-pointer' : ''
+    onClick && !isToday ? 'cursor-pointer hover:bg-state-hover' : onClick && isToday ? 'cursor-pointer' : ''
 
   const statusClasses = isToday
     ? 'bg-primary text-primary-foreground font-semibold'

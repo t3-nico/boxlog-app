@@ -156,7 +156,7 @@ export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCre
       {isCreating && (
         <div
           ref={formRef}
-          className="bg-card hover:bg-muted/50 border-border group flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors"
+          className="bg-secondary text-secondary-foreground hover:bg-state-hover border-border group flex flex-col gap-2 rounded-lg border p-3 shadow-sm transition-colors"
         >
           {/* タイトル入力 */}
           <div
@@ -173,7 +173,7 @@ export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCre
           <Popover open={dateTimeOpen} onOpenChange={setDateTimeOpen}>
             <PopoverTrigger asChild>
               <div
-                className="text-foreground hover:bg-primary/10 group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
+                className="text-foreground hover:bg-state-hover group/date flex w-fit cursor-pointer items-center gap-2 rounded py-0.5 text-sm transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
                 {selectedDate || startTime || endTime ? (
@@ -269,7 +269,7 @@ export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCre
             onTagsChange={(tagIds) => setSelectedTagIds(tagIds)}
           >
             <div
-              className="text-muted-foreground hover:bg-primary/10 flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors"
+              className="text-muted-foreground hover:bg-state-hover flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
               <Tag className="size-3" />
@@ -290,7 +290,7 @@ export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCre
       {!isCreating && (
         <button
           onClick={onStartCreate}
-          className="text-muted-foreground hover:bg-foreground/8 flex w-full items-center gap-2 rounded-lg p-3 text-sm transition-colors"
+          className="text-muted-foreground hover:bg-state-hover flex w-full items-center gap-2 rounded-lg p-3 text-sm transition-colors"
         >
           <Plus className="h-4 w-4" />
           <span>新規追加</span>

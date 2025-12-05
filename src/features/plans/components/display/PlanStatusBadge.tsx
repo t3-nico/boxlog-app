@@ -17,7 +17,7 @@ const STATUS_CONFIG: Record<
 > = {
   todo: {
     label: 'Todo',
-    className: 'bg-muted text-muted-foreground border-border',
+    className: 'bg-surface-container text-muted-foreground border-border',
   },
   doing: {
     label: 'Doing',

@@ -13,7 +13,10 @@ export const PlanTitleInput = forwardRef<HTMLInputElement, PlanTitleInputProps>(
     <Input
       {...props}
       ref={ref}
-      className={cn('bg-popover border-0 px-0 font-bold shadow-none focus-visible:ring-0', className)}
+      className={cn(
+        'bg-popover focus-visible:ring-ring/50 border-0 px-0 font-bold shadow-none focus-visible:ring-2',
+        className
+      )}
       style={{ fontSize: 'var(--font-size-xl)' }}
     />
   )
