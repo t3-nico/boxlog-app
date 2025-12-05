@@ -277,3 +277,178 @@ export const getSummaryProcedure = protectedProcedure.query(async ({ ctx }) => {
     thisWeekCompleted,
   }
 })
+
+/**
+ * 連続日数（ストリーク）を取得
+ */
+export const getStreakProcedure = protectedProcedure.query(async ({ ctx }) => {
+  const { supabase, userId } = ctx
+
+  // 過去1年分のプランを取得
+  const oneYearAgo = new Date()
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
+
+  const { data: plans, error } = await supabase
+    .from('plans')
+    .select('start_time')
+    .eq('user_id', userId)
+    .not('start_time', 'is', null)
+    .gte('start_time', oneYearAgo.toISOString())
+    .order('start_time', { ascending: false })
+
+  if (error) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: `ストリーク情報の取得に失敗しました: ${error.message}`,
+    })
+  }
+
+  // 日付ごとにグループ化
+  const datesWithActivity = new Set<string>()
+  for (const plan of plans) {
+    if (plan.start_time) {
+      const date = new Date(plan.start_time).toISOString().split('T')[0]
+      if (date) datesWithActivity.add(date)
+    }
+  }
+
+  // 現在のストリークを計算
+  let currentStreak = 0
+  let longestStreak = 0
+  let tempStreak = 0
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  // 今日から遡ってストリークを計算
+  const checkDate = new Date(today)
+
+  // 今日のアクティビティがあるかチェック
+  const todayStr = checkDate.toISOString().split('T')[0] ?? ''
+  if (datesWithActivity.has(todayStr)) {
+    currentStreak = 1
+    checkDate.setDate(checkDate.getDate() - 1)
+
+    // 連続日数をカウント
+    while (true) {
+      const dateStr = checkDate.toISOString().split('T')[0] ?? ''
+      if (datesWithActivity.has(dateStr)) {
+        currentStreak++
+        checkDate.setDate(checkDate.getDate() - 1)
+      } else {
+        break
+      }
+    }
+  } else {
+    // 昨日からチェック
+    checkDate.setDate(checkDate.getDate() - 1)
+    const yesterdayStr = checkDate.toISOString().split('T')[0] ?? ''
+    if (datesWithActivity.has(yesterdayStr)) {
+      currentStreak = 1
+      checkDate.setDate(checkDate.getDate() - 1)
+
+      while (true) {
+        const dateStr = checkDate.toISOString().split('T')[0] ?? ''
+        if (datesWithActivity.has(dateStr)) {
+          currentStreak++
+          checkDate.setDate(checkDate.getDate() - 1)
+        } else {
+          break
+        }
+      }
+    }
+  }
+
+  // 最長ストリークを計算
+  const sortedDates = Array.from(datesWithActivity).sort()
+  for (let i = 0; i < sortedDates.length; i++) {
+    const currentDate = new Date(sortedDates[i] ?? '')
+    if (i === 0) {
+      tempStreak = 1
+    } else {
+      const prevDate = new Date(sortedDates[i - 1] ?? '')
+      const diffDays = Math.round((currentDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24))
+      if (diffDays === 1) {
+        tempStreak++
+      } else {
+        tempStreak = 1
+      }
+    }
+    longestStreak = Math.max(longestStreak, tempStreak)
+  }
+
+  // 今日アクティビティがあるか
+  const hasActivityToday = datesWithActivity.has(todayStr)
+
+  return {
+    currentStreak,
+    longestStreak,
+    hasActivityToday,
+    totalActiveDays: datesWithActivity.size,
+  }
+})
+
+/**
+ * 時間帯別の作業時間分布を取得
+ */
+export const getHourlyDistributionProcedure = protectedProcedure.query(async ({ ctx }) => {
+  const { supabase, userId } = ctx
+
+  // 全プランを取得
+  const { data: plans, error } = await supabase
+    .from('plans')
+    .select('start_time, end_time')
+    .eq('user_id', userId)
+    .not('start_time', 'is', null)
+    .not('end_time', 'is', null)
+
+  if (error) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: `時間帯別分布の取得に失敗しました: ${error.message}`,
+    })
+  }
+
+  // 時間帯別に集計（3時間ごと）
+  const hourlyHours: Record<string, number> = {
+    '00-03': 0,
+    '03-06': 0,
+    '06-09': 0,
+    '09-12': 0,
+    '12-15': 0,
+    '15-18': 0,
+    '18-21': 0,
+    '21-24': 0,
+  }
+
+  for (const plan of plans) {
+    if (!plan.start_time || !plan.end_time) continue
+
+    const startTime = new Date(plan.start_time)
+    const endTime = new Date(plan.end_time)
+    const durationHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60)
+
+    if (durationHours <= 0 || durationHours >= 24) continue
+
+    // 開始時間の時間帯に割り当て
+    const hour = startTime.getHours()
+    let slot: string
+    if (hour < 3) slot = '00-03'
+    else if (hour < 6) slot = '03-06'
+    else if (hour < 9) slot = '06-09'
+    else if (hour < 12) slot = '09-12'
+    else if (hour < 15) slot = '12-15'
+    else if (hour < 18) slot = '15-18'
+    else if (hour < 21) slot = '18-21'
+    else slot = '21-24'
+
+    hourlyHours[slot] = (hourlyHours[slot] ?? 0) + durationHours
+  }
+
+  // 配列形式に変換
+  const result = Object.entries(hourlyHours).map(([timeSlot, hours]) => ({
+    timeSlot,
+    hours: Math.round(hours * 10) / 10,
+  }))
+
+  return result
+})

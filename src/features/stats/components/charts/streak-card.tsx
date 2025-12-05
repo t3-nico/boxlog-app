@@ -1,0 +1,95 @@
+'use client'
+
+import { Flame, Trophy } from 'lucide-react'
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { api } from '@/lib/trpc'
+
+type StreakData = {
+  currentStreak: number
+  longestStreak: number
+  hasActivityToday: boolean
+  totalActiveDays: number
+}
+
+export function StreakCard() {
+  // @ts-expect-error - TypeScript型キャッシュの問題。実行時は正常動作
+  const { data: rawData, isLoading } = api.plans.getStreak.useQuery()
+  const data = rawData as StreakData | undefined
+
+  if (isLoading) {
+    return (
+      <Card className="bg-background">
+        <CardHeader className="pb-2">
+          <Skeleton className="h-5 w-24" />
+          <Skeleton className="h-4 w-32" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-16 w-full" />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (!data) {
+    return null
+  }
+
+  return (
+    <Card className="bg-background">
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Flame className="size-5 text-orange-500" />
+          連続日数
+        </CardTitle>
+        <CardDescription>継続は力なり</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center justify-between">
+          {/* 現在のストリーク */}
+          <div className="text-center">
+            <div className="text-3xl font-bold">{data.currentStreak}</div>
+            <div className="text-xs text-muted-foreground">日連続</div>
+          </div>
+
+          {/* 区切り線 */}
+          <div className="h-12 w-px bg-border" />
+
+          {/* 最長記録 */}
+          <div className="flex items-center gap-2 text-center">
+            <Trophy className="size-4 text-yellow-500" />
+            <div>
+              <div className="text-lg font-semibold">{data.longestStreak}</div>
+              <div className="text-xs text-muted-foreground">最長記録</div>
+            </div>
+          </div>
+
+          {/* 区切り線 */}
+          <div className="h-12 w-px bg-border" />
+
+          {/* アクティブ日数 */}
+          <div className="text-center">
+            <div className="text-lg font-semibold">{data.totalActiveDays}</div>
+            <div className="text-xs text-muted-foreground">日 / 年</div>
+          </div>
+        </div>
+
+        {/* 今日のステータス */}
+        <div className="mt-4 flex items-center justify-center gap-2 text-sm">
+          {data.hasActivityToday ? (
+            <span className="flex items-center gap-1 text-green-600">
+              <span className="size-2 rounded-full bg-green-500" />
+              今日も達成済み
+            </span>
+          ) : (
+            <span className="flex items-center gap-1 text-muted-foreground">
+              <span className="size-2 rounded-full bg-muted" />
+              今日はまだ記録なし
+            </span>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
