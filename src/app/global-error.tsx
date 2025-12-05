@@ -74,7 +74,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
             {process.env.NODE_ENV === 'development' && (
               <details className="mb-6">
-                <summary className="text-muted-foreground hover:bg-foreground/8 -mx-1 cursor-pointer rounded px-1 text-sm transition-colors">
+                <summary className="text-muted-foreground hover:bg-state-hover -mx-1 cursor-pointer rounded px-1 text-sm transition-colors">
                   {ERROR_TEXT.showDetails}
                 </summary>
                 <div className="bg-muted mt-3 rounded p-3">
@@ -87,14 +87,14 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             <div className="space-y-3">
               <button
                 onClick={reset}
-                className="bg-primary text-primary-foreground hover:bg-primary/92 w-full rounded-md px-4 py-3 font-medium transition-colors"
+                className="bg-primary text-primary-foreground hover:bg-primary-hover w-full rounded-md px-4 py-3 font-medium transition-colors"
               >
                 {ERROR_TEXT.retry}
               </button>
 
               <button
                 onClick={() => (window.location.href = '/')}
-                className="bg-muted text-foreground hover:bg-muted w-full rounded-md px-4 py-3 transition-colors"
+                className="bg-muted text-foreground hover:bg-state-hover w-full rounded-md px-4 py-3 transition-colors"
               >
                 {ERROR_TEXT.goHome}
               </button>
