@@ -7,8 +7,8 @@ import CalendarHeatmap from 'react-calendar-heatmap'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
 import { api } from '@/lib/trpc'
+import { cn } from '@/lib/utils'
 
 import 'react-calendar-heatmap/dist/styles.css'
 
@@ -100,14 +100,14 @@ export function YearlyHeatmap() {
         </div>
 
         {/* 凡例 */}
-        <div className="mt-4 flex items-center justify-end gap-2 text-xs text-muted-foreground">
+        <div className="text-muted-foreground mt-4 flex items-center justify-end gap-2 text-xs">
           <span>Less</span>
           <div className="flex gap-1">
-            <div className={cn('size-3 rounded-sm bg-muted')} />
-            <div className={cn('size-3 rounded-sm bg-primary/20')} />
-            <div className={cn('size-3 rounded-sm bg-primary/40')} />
-            <div className={cn('size-3 rounded-sm bg-primary/60')} />
-            <div className={cn('size-3 rounded-sm bg-primary/80')} />
+            <div className={cn('bg-muted size-3 rounded-sm')} />
+            <div className={cn('bg-primary/20 size-3 rounded-sm')} />
+            <div className={cn('bg-primary/40 size-3 rounded-sm')} />
+            <div className={cn('bg-primary/60 size-3 rounded-sm')} />
+            <div className={cn('bg-primary/80 size-3 rounded-sm')} />
           </div>
           <span>More</span>
         </div>

@@ -118,10 +118,7 @@ export const getTimeByTagProcedure = protectedProcedure.query(async ({ ctx }) =>
   }
 
   // タグ情報を取得
-  const { data: tags, error: tagsError } = await supabase
-    .from('tags')
-    .select('id, name, color')
-    .eq('user_id', userId)
+  const { data: tags, error: tagsError } = await supabase.from('tags').select('id, name, color').eq('user_id', userId)
 
   if (tagsError) {
     throw new TRPCError({
@@ -264,9 +261,12 @@ export const getSummaryProcedure = protectedProcedure.query(async ({ ctx }) => {
   }
 
   // 前月比（パーセント）
-  const monthComparison = lastMonthHours > 0
-    ? Math.round(((thisMonthHours - lastMonthHours) / lastMonthHours) * 100)
-    : thisMonthHours > 0 ? 100 : 0
+  const monthComparison =
+    lastMonthHours > 0
+      ? Math.round(((thisMonthHours - lastMonthHours) / lastMonthHours) * 100)
+      : thisMonthHours > 0
+        ? 100
+        : 0
 
   return {
     totalHours: Math.round(totalHours * 10) / 10,

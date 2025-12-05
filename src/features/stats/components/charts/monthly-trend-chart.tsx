@@ -54,9 +54,7 @@ export function MonthlyTrendChart() {
           <CardDescription>過去12ヶ月の推移</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex h-32 items-center justify-center text-muted-foreground">
-            データがありません
-          </div>
+          <div className="text-muted-foreground flex h-32 items-center justify-center">データがありません</div>
         </CardContent>
       </Card>
     )
@@ -85,11 +83,7 @@ export function MonthlyTrendChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <AreaChart
-            accessibilityLayer
-            data={data}
-            margin={{ left: 0, right: 16, top: 10, bottom: 0 }}
-          >
+          <AreaChart accessibilityLayer data={data} margin={{ left: 0, right: 16, top: 10, bottom: 0 }}>
             <XAxis
               dataKey="label"
               tickLine={false}
@@ -113,20 +107,12 @@ export function MonthlyTrendChart() {
                 <stop offset="95%" stopColor="var(--color-hours)" stopOpacity={0.1} />
               </linearGradient>
             </defs>
-            <Area
-              dataKey="hours"
-              type="monotone"
-              fill="url(#fillHours)"
-              stroke="var(--color-hours)"
-              strokeWidth={2}
-            />
+            <Area dataKey="hours" type="monotone" fill="url(#fillHours)" stroke="var(--color-hours)" strokeWidth={2} />
           </AreaChart>
         </ChartContainer>
 
         {/* 年間合計 */}
-        <div className="mt-2 text-center text-xs text-muted-foreground">
-          年間合計: {formatHours(totalHours)}
-        </div>
+        <div className="text-muted-foreground mt-2 text-center text-xs">年間合計: {formatHours(totalHours)}</div>
       </CardContent>
     </Card>
   )

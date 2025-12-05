@@ -24,9 +24,7 @@ export function StatsPageHeader({ title, subtitle }: StatsPageHeaderProps) {
       {/* タイトルコンテナ（40px） */}
       <div className="flex h-10 flex-1 items-center gap-2 overflow-hidden">
         <h1 className="truncate text-base font-semibold">{title}</h1>
-        {subtitle && (
-          <span className="text-muted-foreground truncate text-sm">{subtitle}</span>
-        )}
+        {subtitle && <span className="text-muted-foreground truncate text-sm">{subtitle}</span>}
       </div>
     </div>
   )

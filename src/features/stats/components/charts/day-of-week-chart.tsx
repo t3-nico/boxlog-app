@@ -53,9 +53,7 @@ export function DayOfWeekChart() {
           <CardDescription>どの曜日に多く作業しているか</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex h-32 items-center justify-center text-muted-foreground">
-            データがありません
-          </div>
+          <div className="text-muted-foreground flex h-32 items-center justify-center">データがありません</div>
         </CardContent>
       </Card>
     )
@@ -63,9 +61,7 @@ export function DayOfWeekChart() {
 
   // 最も作業時間が多い曜日を見つける
   const firstItem = data[0]
-  const maxDay = firstItem
-    ? data.reduce((max, item) => (item.hours > max.hours ? item : max), firstItem)
-    : undefined
+  const maxDay = firstItem ? data.reduce((max, item) => (item.hours > max.hours ? item : max), firstItem) : undefined
 
   // 平日と週末の合計
   const weekdayHours = data.slice(0, 5).reduce((sum, item) => sum + item.hours, 0)
@@ -81,33 +77,19 @@ export function DayOfWeekChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart
-            accessibilityLayer
-            data={data}
-            margin={{ left: 0, right: 16 }}
-          >
-            <XAxis
-              dataKey="day"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-            />
+          <BarChart accessibilityLayer data={data} margin={{ left: 0, right: 16 }}>
+            <XAxis dataKey="day" tickLine={false} tickMargin={10} axisLine={false} />
             <YAxis hide />
             <ChartTooltip
               cursor={false}
-              content={
-                <ChartTooltipContent
-                  formatter={(value) => formatHours(Number(value))}
-                  hideLabel
-                />
-              }
+              content={<ChartTooltipContent formatter={(value) => formatHours(Number(value))} hideLabel />}
             />
             <Bar dataKey="hours" fill="var(--color-hours)" radius={5} />
           </BarChart>
         </ChartContainer>
 
         {/* 平日 vs 週末 */}
-        <div className="mt-2 flex justify-center gap-4 text-xs text-muted-foreground">
+        <div className="text-muted-foreground mt-2 flex justify-center gap-4 text-xs">
           <span>平日: {formatHours(weekdayHours)}</span>
           <span>週末: {formatHours(weekendHours)}</span>
         </div>

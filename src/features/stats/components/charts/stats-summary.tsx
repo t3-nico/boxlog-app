@@ -81,9 +81,7 @@ export function StatsSummary() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{data.completedTasks}</div>
-          <p className="text-muted-foreground text-xs">
-            今週 {data.thisWeekCompleted} 件完了
-          </p>
+          <p className="text-muted-foreground text-xs">今週 {data.thisWeekCompleted} 件完了</p>
         </CardContent>
       </Card>
 
@@ -97,13 +95,9 @@ export function StatsSummary() {
           <div className="text-2xl font-bold">{formatHours(data.thisMonthHours)}</div>
           <p className="text-muted-foreground text-xs">
             {isPositive ? (
-              <Badge className="bg-green-600 hover:bg-green-700">
-                +{data.monthComparison}%
-              </Badge>
+              <Badge className="bg-green-600 hover:bg-green-700">+{data.monthComparison}%</Badge>
             ) : (
-              <Badge variant="destructive">
-                {data.monthComparison}%
-              </Badge>
+              <Badge variant="destructive">{data.monthComparison}%</Badge>
             )}{' '}
             前月比
           </p>
@@ -122,9 +116,7 @@ export function StatsSummary() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatHours(data.totalHours)}</div>
-          <p className="text-muted-foreground text-xs">
-            先月 {formatHours(data.lastMonthHours)}
-          </p>
+          <p className="text-muted-foreground text-xs">先月 {formatHours(data.lastMonthHours)}</p>
         </CardContent>
       </Card>
     </div>

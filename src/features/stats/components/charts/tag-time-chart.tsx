@@ -54,9 +54,7 @@ export function TagTimeChart() {
           <CardDescription>タグごとの作業時間</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex h-32 items-center justify-center text-muted-foreground">
-            データがありません
-          </div>
+          <div className="text-muted-foreground flex h-32 items-center justify-center">データがありません</div>
         </CardContent>
       </Card>
     )
@@ -73,16 +71,13 @@ export function TagTimeChart() {
   const totalHours = data.reduce((sum: number, item: TagTimeData) => sum + item.hours, 0)
 
   // ChartConfigを動的に生成
-  const chartConfig = chartData.reduce(
-    (config: ChartConfig, item: ChartDataItem) => {
-      config[item.name] = {
-        label: item.name,
-        color: item.fill,
-      }
-      return config
-    },
-    {} as ChartConfig
-  )
+  const chartConfig = chartData.reduce((config: ChartConfig, item: ChartDataItem) => {
+    config[item.name] = {
+      label: item.name,
+      color: item.fill,
+    }
+    return config
+  }, {} as ChartConfig)
 
   return (
     <Card className="bg-background">
@@ -94,12 +89,7 @@ export function TagTimeChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart
-            accessibilityLayer
-            data={chartData}
-            layout="vertical"
-            margin={{ left: 0, right: 16 }}
-          >
+          <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{ left: 0, right: 16 }}>
             <YAxis
               dataKey="name"
               type="category"
@@ -112,12 +102,7 @@ export function TagTimeChart() {
             <XAxis dataKey="hours" type="number" hide />
             <ChartTooltip
               cursor={false}
-              content={
-                <ChartTooltipContent
-                  formatter={(value) => formatHours(Number(value))}
-                  hideLabel
-                />
-              }
+              content={<ChartTooltipContent formatter={(value) => formatHours(Number(value))} hideLabel />}
             />
             <Bar dataKey="hours" radius={5} />
           </BarChart>

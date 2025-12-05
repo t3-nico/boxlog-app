@@ -50,28 +50,28 @@ export function StreakCard() {
           {/* 現在のストリーク */}
           <div className="text-center">
             <div className="text-3xl font-bold">{data.currentStreak}</div>
-            <div className="text-xs text-muted-foreground">日連続</div>
+            <div className="text-muted-foreground text-xs">日連続</div>
           </div>
 
           {/* 区切り線 */}
-          <div className="h-12 w-px bg-border" />
+          <div className="bg-border h-12 w-px" />
 
           {/* 最長記録 */}
           <div className="flex items-center gap-2 text-center">
             <Trophy className="size-4 text-yellow-500" />
             <div>
               <div className="text-lg font-semibold">{data.longestStreak}</div>
-              <div className="text-xs text-muted-foreground">最長記録</div>
+              <div className="text-muted-foreground text-xs">最長記録</div>
             </div>
           </div>
 
           {/* 区切り線 */}
-          <div className="h-12 w-px bg-border" />
+          <div className="bg-border h-12 w-px" />
 
           {/* アクティブ日数 */}
           <div className="text-center">
             <div className="text-lg font-semibold">{data.totalActiveDays}</div>
-            <div className="text-xs text-muted-foreground">日 / 年</div>
+            <div className="text-muted-foreground text-xs">日 / 年</div>
           </div>
         </div>
 
@@ -83,8 +83,8 @@ export function StreakCard() {
               今日も達成済み
             </span>
           ) : (
-            <span className="flex items-center gap-1 text-muted-foreground">
-              <span className="size-2 rounded-full bg-muted" />
+            <span className="text-muted-foreground flex items-center gap-1">
+              <span className="bg-muted size-2 rounded-full" />
               今日はまだ記録なし
             </span>
           )}
