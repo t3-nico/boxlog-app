@@ -72,7 +72,7 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
       <Menu.Button
         className={cn(
           'flex items-center gap-2 rounded-lg p-2 transition-colors',
-          'hover:bg-foreground/8',
+          'hover:bg-state-hover',
           'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none'
         )}
         aria-label={a11yLabels.languageSwitch}

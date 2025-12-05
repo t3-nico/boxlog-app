@@ -140,7 +140,7 @@ export const TableColumnHeader = <TData, TValue>({
     <div className={cn('flex items-center space-x-2', className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="data-[state=open]:bg-foreground/12 -ml-3 h-8" size="sm" variant="ghost">
+          <Button className="data-[state=open]:bg-state-selected -ml-3 h-8" size="sm" variant="ghost">
             <span>{title}</span>
             {column.getIsSorted() === 'desc' ? (
               <ArrowDownIcon className="ml-2 h-4 w-4" />
