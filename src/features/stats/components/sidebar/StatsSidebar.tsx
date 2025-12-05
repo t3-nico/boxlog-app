@@ -202,7 +202,7 @@ export function StatsSidebar() {
               key={section.title}
               {...(section.defaultOpen !== undefined && { defaultOpen: section.defaultOpen })}
             >
-              <CollapsibleTrigger className="text-muted-foreground hover:bg-foreground/8 flex w-full items-center justify-between rounded-md px-3 py-2 text-xs font-semibold uppercase transition-colors">
+              <CollapsibleTrigger className="text-muted-foreground hover:bg-state-hover flex w-full items-center justify-between rounded-md px-3 py-2 text-xs font-semibold uppercase transition-colors">
                 {section.title}
                 <ChevronDown className="size-3 transition-transform duration-200 [[data-state=open]>svg]:rotate-180" />
               </CollapsibleTrigger>
@@ -216,8 +216,8 @@ export function StatsSidebar() {
                         className={cn(
                           'flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors',
                           isActive(item.href)
-                            ? 'bg-muted text-foreground'
-                            : 'text-muted-foreground hover:bg-foreground/8'
+                            ? 'bg-state-selected text-foreground'
+                            : 'text-muted-foreground hover:bg-state-hover'
                         )}
                       >
                         {item.icon}
