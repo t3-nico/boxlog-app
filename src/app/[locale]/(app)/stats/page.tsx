@@ -67,15 +67,12 @@ export default function StatsPage() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      {/* 1. ヘッダー：タイトル */}
-      <StatsPageHeader />
+      {/* 1. ヘッダー：セクション名 */}
+      <StatsPageHeader title={t('stats.sidebar.overview')} subtitle={t('stats.overview.subtitle')} />
 
-      {/* 2. ナビゲーション：セクション名 */}
+      {/* 2. ナビゲーション */}
       <div className="flex h-12 shrink-0 items-center border-b px-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-medium">{t('stats.sidebar.overview')}</h2>
-          <span className="text-muted-foreground text-xs">— {t('stats.overview.subtitle')}</span>
-        </div>
+        {/* 将来的にタブやフィルターを追加 */}
       </div>
 
       {/* 3. コンテンツ：スクロール可能エリア */}
