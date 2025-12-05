@@ -182,3 +182,98 @@ export const getTimeByTagProcedure = protectedProcedure.query(async ({ ctx }) =>
 
   return result
 })
+
+/**
+ * サマリー統計を取得（累計時間、今月の時間、前月比、完了タスク数）
+ */
+export const getSummaryProcedure = protectedProcedure.query(async ({ ctx }) => {
+  const { supabase, userId } = ctx
+
+  const now = new Date()
+  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+  const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+  const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59)
+
+  // 全プランを取得
+  const { data: allPlans, error: allPlansError } = await supabase
+    .from('plans')
+    .select('id, status, start_time, end_time')
+    .eq('user_id', userId)
+
+  if (allPlansError) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: `統計情報の取得に失敗しました: ${allPlansError.message}`,
+    })
+  }
+
+  // 時間計算用のヘルパー
+  const calculateHours = (startTime: string, endTime: string): number => {
+    const start = new Date(startTime)
+    const end = new Date(endTime)
+    const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60)
+    return hours > 0 && hours < 24 ? hours : 0
+  }
+
+  // 累計時間
+  let totalHours = 0
+  // 今月の時間
+  let thisMonthHours = 0
+  // 前月の時間
+  let lastMonthHours = 0
+  // 完了タスク数
+  let completedTasks = 0
+  // 今週の完了タスク数
+  let thisWeekCompleted = 0
+
+  // 今週の開始日（月曜日）
+  const today = new Date()
+  const dayOfWeek = today.getDay()
+  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+  const thisWeekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() + mondayOffset)
+
+  for (const plan of allPlans) {
+    // 完了タスク
+    if (plan.status === 'done') {
+      completedTasks++
+    }
+
+    // 時間計算
+    if (plan.start_time && plan.end_time) {
+      const hours = calculateHours(plan.start_time, plan.end_time)
+      const startDate = new Date(plan.start_time)
+
+      // 累計
+      totalHours += hours
+
+      // 今月
+      if (startDate >= thisMonthStart) {
+        thisMonthHours += hours
+      }
+
+      // 前月
+      if (startDate >= lastMonthStart && startDate <= lastMonthEnd) {
+        lastMonthHours += hours
+      }
+
+      // 今週の完了
+      if (plan.status === 'done' && startDate >= thisWeekStart) {
+        thisWeekCompleted++
+      }
+    }
+  }
+
+  // 前月比（パーセント）
+  const monthComparison = lastMonthHours > 0
+    ? Math.round(((thisMonthHours - lastMonthHours) / lastMonthHours) * 100)
+    : thisMonthHours > 0 ? 100 : 0
+
+  return {
+    totalHours: Math.round(totalHours * 10) / 10,
+    thisMonthHours: Math.round(thisMonthHours * 10) / 10,
+    lastMonthHours: Math.round(lastMonthHours * 10) / 10,
+    monthComparison,
+    completedTasks,
+    thisWeekCompleted,
+  }
+})
