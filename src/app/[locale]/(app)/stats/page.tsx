@@ -40,6 +40,22 @@ const HourlyDistributionChart = dynamic(
   }
 )
 
+const DayOfWeekChart = dynamic(
+  () => import('@/features/stats/components/charts').then((mod) => mod.DayOfWeekChart),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[300px] w-full" />,
+  }
+)
+
+const MonthlyTrendChart = dynamic(
+  () => import('@/features/stats/components/charts').then((mod) => mod.MonthlyTrendChart),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[300px] w-full" />,
+  }
+)
+
 /**
  * 統計ページ - 概要ダッシュボード
  *
@@ -63,6 +79,12 @@ export default function StatsPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <StreakCard />
         <HourlyDistributionChart />
+      </div>
+
+      {/* 曜日別 + 月次トレンド（2カラム） */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <DayOfWeekChart />
+        <MonthlyTrendChart />
       </div>
 
       {/* 年次グリッド */}

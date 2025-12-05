@@ -452,3 +452,112 @@ export const getHourlyDistributionProcedure = protectedProcedure.query(async ({ 
 
   return result
 })
+
+/**
+ * 曜日別の作業時間分布を取得
+ */
+export const getDayOfWeekDistributionProcedure = protectedProcedure.query(async ({ ctx }) => {
+  const { supabase, userId } = ctx
+
+  // 全プランを取得
+  const { data: plans, error } = await supabase
+    .from('plans')
+    .select('start_time, end_time')
+    .eq('user_id', userId)
+    .not('start_time', 'is', null)
+    .not('end_time', 'is', null)
+
+  if (error) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: `曜日別分布の取得に失敗しました: ${error.message}`,
+    })
+  }
+
+  // 曜日別に集計
+  const dayHours: number[] = [0, 0, 0, 0, 0, 0, 0]
+
+  for (const plan of plans) {
+    if (!plan.start_time || !plan.end_time) continue
+
+    const startTime = new Date(plan.start_time)
+    const endTime = new Date(plan.end_time)
+    const durationHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60)
+
+    if (durationHours <= 0 || durationHours >= 24) continue
+
+    const dayOfWeek = startTime.getDay()
+    dayHours[dayOfWeek] = (dayHours[dayOfWeek] ?? 0) + durationHours
+  }
+
+  // 月曜始まりで配列を並び替え（日→土 を 月→日 に）
+  const mondayFirst = [
+    { day: '月', hours: Math.round((dayHours[1] ?? 0) * 10) / 10 },
+    { day: '火', hours: Math.round((dayHours[2] ?? 0) * 10) / 10 },
+    { day: '水', hours: Math.round((dayHours[3] ?? 0) * 10) / 10 },
+    { day: '木', hours: Math.round((dayHours[4] ?? 0) * 10) / 10 },
+    { day: '金', hours: Math.round((dayHours[5] ?? 0) * 10) / 10 },
+    { day: '土', hours: Math.round((dayHours[6] ?? 0) * 10) / 10 },
+    { day: '日', hours: Math.round((dayHours[0] ?? 0) * 10) / 10 },
+  ]
+
+  return mondayFirst
+})
+
+/**
+ * 月次トレンドを取得（過去12ヶ月）
+ */
+export const getMonthlyTrendProcedure = protectedProcedure.query(async ({ ctx }) => {
+  const { supabase, userId } = ctx
+
+  // 過去12ヶ月分のプランを取得
+  const now = new Date()
+  const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1)
+
+  const { data: plans, error } = await supabase
+    .from('plans')
+    .select('start_time, end_time')
+    .eq('user_id', userId)
+    .not('start_time', 'is', null)
+    .not('end_time', 'is', null)
+    .gte('start_time', twelveMonthsAgo.toISOString())
+
+  if (error) {
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: `月次トレンドの取得に失敗しました: ${error.message}`,
+    })
+  }
+
+  // 月別に集計
+  const monthlyHours: Record<string, number> = {}
+
+  for (const plan of plans) {
+    if (!plan.start_time || !plan.end_time) continue
+
+    const startTime = new Date(plan.start_time)
+    const endTime = new Date(plan.end_time)
+    const durationHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60)
+
+    if (durationHours <= 0 || durationHours >= 24) continue
+
+    // YYYY-MM 形式のキー
+    const monthKey = `${startTime.getFullYear()}-${String(startTime.getMonth() + 1).padStart(2, '0')}`
+    monthlyHours[monthKey] = (monthlyHours[monthKey] ?? 0) + durationHours
+  }
+
+  // 過去12ヶ月分の配列を生成（データがない月も0で埋める）
+  const result: { month: string; label: string; hours: number }[] = []
+  for (let i = 11; i >= 0; i--) {
+    const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+    const label = `${date.getMonth() + 1}月`
+    result.push({
+      month: monthKey,
+      label,
+      hours: Math.round((monthlyHours[monthKey] ?? 0) * 10) / 10,
+    })
+  }
+
+  return result
+})

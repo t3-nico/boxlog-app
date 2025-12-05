@@ -14,7 +14,9 @@ import { createInstanceProcedure, deleteInstanceProcedure, getInstancesProcedure
 import { addTagProcedure, getTagPlanCountsProcedure, getTagsProcedure, removeTagProcedure } from './plan-tags'
 import {
   getDailyHoursProcedure,
+  getDayOfWeekDistributionProcedure,
   getHourlyDistributionProcedure,
+  getMonthlyTrendProcedure,
   getStatsProcedure,
   getStreakProcedure,
   getSummaryProcedure,
@@ -50,6 +52,8 @@ export const plansRouter = createTRPCRouter({
   getSummary: getSummaryProcedure,
   getStreak: getStreakProcedure,
   getHourlyDistribution: getHourlyDistributionProcedure,
+  getDayOfWeekDistribution: getDayOfWeekDistributionProcedure,
+  getMonthlyTrend: getMonthlyTrendProcedure,
 
   // Activities
   activities: activitiesProcedure,
