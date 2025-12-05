@@ -33,7 +33,7 @@ interface DesktopLayoutProps {
 
 // StatusBarアイテムのスケルトン（遅延ロード中の表示）
 function StatusBarItemSkeleton() {
-  return <div className="bg-muted h-3 w-20 animate-pulse rounded" />
+  return <div className="bg-surface-container h-3 w-20 animate-pulse rounded" />
 }
 
 /**
@@ -66,51 +66,53 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   }
 
   return (
-    <div className="flex h-full">
-      {/* AppBar（64px、固定幅、常に表示） */}
-      <div className="w-16 shrink-0">
-        <AppBar />
+    <div className="flex h-full flex-col overflow-hidden">
+      {/* 上部エリア（AppBar + サイドバー + コンテンツ） */}
+      <div className="flex min-h-0 flex-1">
+        {/* AppBar（56px、固定幅、常に表示） */}
+        <div className="w-14 shrink-0">
+          <AppBar />
+        </div>
+
+        {/* サイドバー + コンテンツ */}
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <ResizablePanelGroup direction="horizontal" className="min-h-0 flex-1">
+            {/* Sidebar（240px、開閉可能）← ページごとに動的切り替え */}
+            {/* Inboxページでは非表示 */}
+            {isOpen && !isInboxPage && (
+              <>
+                <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
+                  {renderSidebar()}
+                </ResizablePanel>
+                <ResizableHandle className="hover:bg-state-hover w-0 transition-colors" />
+              </>
+            )}
+
+            {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
+            <ResizablePanel className="overflow-hidden">
+              <div className="relative flex h-full min-h-0 flex-col">
+                <MainContentWrapper>{children}</MainContentWrapper>
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </div>
       </div>
 
-      {/* メインエリア（サイドバー + コンテンツ + ステータスバー） */}
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        {/* 上部: サイドバー + コンテンツ */}
-        <ResizablePanelGroup direction="horizontal" className="min-h-0 flex-1">
-          {/* Sidebar（240px、開閉可能）← ページごとに動的切り替え */}
-          {/* Inboxページでは非表示 */}
-          {isOpen && !isInboxPage && (
-            <>
-              <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
-                {renderSidebar()}
-              </ResizablePanel>
-              <ResizableHandle className="border-border hover:bg-state-hover w-1 border-r transition-colors" />
-            </>
-          )}
-
-          {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
-          <ResizablePanel className="overflow-hidden">
-            <div className="relative flex h-full min-h-0 flex-col">
-              <MainContentWrapper>{children}</MainContentWrapper>
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-
-        {/* ステータスバー（サイドバー〜コンテンツ全幅、ログイン後のみ表示） */}
-        {isAuthenticated ? (
-          <StatusBar>
-            <StatusBar.Left>
-              <Suspense fallback={<StatusBarItemSkeleton />}>
-                <ScheduleStatusItem />
-              </Suspense>
-            </StatusBar.Left>
-            <StatusBar.Right>
-              <Suspense fallback={<StatusBarItemSkeleton />}>
-                <ChronotypeStatusItem />
-              </Suspense>
-            </StatusBar.Right>
-          </StatusBar>
-        ) : null}
-      </div>
+      {/* ステータスバー（全幅、AppBarの下まで伸びる、ログイン後のみ表示） */}
+      {isAuthenticated ? (
+        <StatusBar>
+          <StatusBar.Left>
+            <Suspense fallback={<StatusBarItemSkeleton />}>
+              <ScheduleStatusItem />
+            </Suspense>
+          </StatusBar.Left>
+          <StatusBar.Right>
+            <Suspense fallback={<StatusBarItemSkeleton />}>
+              <ChronotypeStatusItem />
+            </Suspense>
+          </StatusBar.Right>
+        </StatusBar>
+      ) : null}
     </div>
   )
 }

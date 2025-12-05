@@ -24,7 +24,7 @@ import {
 } from 'lucide-react'
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { SidebarHeader } from '@/features/navigation/components/sidebar/SidebarHeader'
+import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
@@ -190,10 +190,7 @@ export function StatsSidebar() {
   ]
 
   return (
-    <div className="bg-background text-foreground flex h-full w-full flex-col">
-      {/* Header */}
-      <SidebarHeader title={t('sidebar.navigation.stats')} />
-
+    <SidebarShell title={t('sidebar.navigation.stats')}>
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-2 py-2">
         <div className="space-y-4">
@@ -231,6 +228,6 @@ export function StatsSidebar() {
           ))}
         </div>
       </nav>
-    </div>
+    </SidebarShell>
   )
 }
