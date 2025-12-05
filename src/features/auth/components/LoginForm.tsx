@@ -36,6 +36,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const recordLoginAttemptApi = trpc.auth.recordLoginAttempt.useMutation()
   const { data: ipRateLimitData } = trpc.auth.checkIpRateLimit.useQuery({})
 
+  // 監査ログ
+  const recordAuditLogApi = trpc.auth.recordAuditLog.useMutation()
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -122,6 +125,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       } else if (data) {
         // ログイン成功を記録（サーバー側でIPを取得）
         recordLoginAttemptApi.mutate({ email, isSuccessful: true })
+
+        // 監査ログに成功ログインを記録
+        recordAuditLogApi.mutate({ eventType: 'login_success' })
 
         // MFAが有効かチェック（AALレベルで判断）
         await new Promise((resolve) => setTimeout(resolve, 100))

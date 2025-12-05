@@ -6,10 +6,17 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
+import {
+  type AuthAuditEventType,
+  getAuditLogs,
+  getRecentLogins,
+  parseUserAgent,
+  recordAuthAuditLog,
+} from '@/features/auth/lib/audit-log'
 import { checkIpRateLimit } from '@/features/auth/lib/ip-rate-limit'
 import { RECAPTCHA_CONFIG, verifyRecaptchaV3 } from '@/lib/recaptcha'
 
-import { createTRPCRouter, publicProcedure } from '../trpc'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 
 /**
  * reCAPTCHA検証の入力スキーマ
@@ -158,5 +165,121 @@ export const authRouter = createTRPCRouter({
         console.error('[Auth] Exception recording login attempt:', error)
         return { success: false }
       }
+    }),
+
+  /**
+   * 監査ログを記録
+   * @description 認証イベントを監査ログに記録（認証済みユーザーのみ）
+   */
+  recordAuditLog: protectedProcedure
+    .input(
+      z.object({
+        eventType: z.enum([
+          'login_success',
+          'logout',
+          'mfa_enabled',
+          'mfa_disabled',
+          'password_changed',
+          'session_extended',
+          'account_recovery',
+        ]),
+        metadata: z.record(z.unknown()).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { eventType, metadata } = input
+      const userId = ctx.userId
+
+      // クライアントIPとUser-Agentを取得
+      const forwarded = ctx.req?.headers?.['x-forwarded-for']
+      const remoteAddress = ctx.req?.socket?.remoteAddress
+      const firstForwarded = typeof forwarded === 'string' ? forwarded.split(',')[0] : undefined
+      const ipAddress = firstForwarded?.trim() ?? remoteAddress ?? null
+      const userAgent = ctx.req?.headers?.['user-agent'] ?? null
+
+      // User-Agentを解析
+      const { device, browser } = parseUserAgent(userAgent)
+
+      const result = await recordAuthAuditLog(ctx.supabase, {
+        userId,
+        eventType: eventType as AuthAuditEventType,
+        ipAddress,
+        userAgent,
+        metadata: {
+          ...metadata,
+          device,
+          browser,
+        },
+      })
+
+      return result
+    }),
+
+  /**
+   * 最近のログイン履歴を取得
+   * @description 認証済みユーザーの最近のログイン成功履歴を取得
+   */
+  getRecentLogins: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(50).default(10),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.userId
+      const result = await getRecentLogins(ctx.supabase, userId, input.limit)
+
+      if (result.error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: result.error,
+        })
+      }
+
+      return result.logins
+    }),
+
+  /**
+   * 監査ログを取得
+   * @description 認証済みユーザーの監査ログを取得（フィルタリング可能）
+   */
+  getAuditLogs: protectedProcedure
+    .input(
+      z.object({
+        eventTypes: z
+          .array(
+            z.enum([
+              'login_success',
+              'logout',
+              'mfa_enabled',
+              'mfa_disabled',
+              'password_changed',
+              'session_extended',
+              'account_recovery',
+            ])
+          )
+          .optional(),
+        startDate: z.string().datetime().optional(),
+        endDate: z.string().datetime().optional(),
+        limit: z.number().min(1).max(100).default(50),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.userId
+      const result = await getAuditLogs(ctx.supabase, userId, {
+        eventTypes: input.eventTypes as AuthAuditEventType[],
+        startDate: input.startDate ? new Date(input.startDate) : undefined,
+        endDate: input.endDate ? new Date(input.endDate) : undefined,
+        limit: input.limit,
+      })
+
+      if (result.error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: result.error,
+        })
+      }
+
+      return result.logs
     }),
 })
