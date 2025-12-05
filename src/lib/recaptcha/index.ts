@@ -12,3 +12,6 @@ export type { RecaptchaVerifyResponse } from './verify'
 
 // クライアントサイドフック
 export { useRecaptchaV2, useRecaptchaV3 } from './hooks'
+
+// コンポーネント
+export { RecaptchaScript } from './RecaptchaScript'

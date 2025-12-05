@@ -39,7 +39,7 @@ export interface AuthPageLayoutProps {
  */
 export function AuthPageLayout({
   logo,
-  backgroundGradient = 'bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-cyan-600/20',
+  backgroundGradient = 'bg-gradient-to-br from-primary/20 via-primary/10 to-primary/20',
   emoji,
   title,
   description,
