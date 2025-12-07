@@ -5,11 +5,27 @@ import type { KanbanCardInput } from '../types'
 
 import { useKanbanStore } from './useKanbanStore'
 
+/**
+ * ストアを完全にリセットするヘルパー
+ * clearAllDataは同じdefaultBoardオブジェクトを再利用するため、
+ * カードが残る問題がある。このヘルパーはカードも含めてリセットする。
+ */
+function resetStore() {
+  useKanbanStore.getState().clearAllData()
+  // カードをクリア（initialStateのdefaultBoardは参照を共有しているため）
+  const { activeBoard } = useKanbanStore.getState()
+  if (activeBoard) {
+    activeBoard.columns.forEach((col) => {
+      col.cards = []
+    })
+  }
+}
+
 describe('useKanbanStore', () => {
   beforeEach(() => {
     // ストアをリセット
     act(() => {
-      useKanbanStore.getState().clearAllData()
+      resetStore()
     })
   })
 

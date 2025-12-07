@@ -121,10 +121,7 @@ describe('grouping', () => {
       })
 
       it('タグがない場合は「タグなし」グループに分類される', () => {
-        const items = [
-          createMockItem({ id: '1', tags: undefined }),
-          createMockItem({ id: '2', tags: [] }),
-        ]
+        const items = [createMockItem({ id: '1', tags: undefined }), createMockItem({ id: '2', tags: [] })]
 
         const result = groupItems(items, 'tags')
 
@@ -145,10 +142,7 @@ describe('grouping', () => {
       })
 
       it('期限なしは「no-due-date」グループになる', () => {
-        const items = [
-          createMockItem({ id: '1', due_date: null }),
-          createMockItem({ id: '2', due_date: undefined }),
-        ]
+        const items = [createMockItem({ id: '1', due_date: null }), createMockItem({ id: '2', due_date: undefined })]
 
         const result = groupItems(items, 'due_date')
 

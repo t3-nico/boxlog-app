@@ -17,23 +17,13 @@ describe('search-engine', () => {
       ]
 
       it('空のクエリですべてのアイテムを返す', () => {
-        const results = FuseSearch.search(
-          testItems,
-          '',
-          [{ name: 'title', weight: 1 }],
-          10
-        )
+        const results = FuseSearch.search(testItems, '', [{ name: 'title', weight: 1 }], 10)
 
         expect(results).toHaveLength(4)
       })
 
       it('タイトルで検索できる', () => {
-        const results = FuseSearch.search(
-          testItems,
-          'ミーティング',
-          [{ name: 'title', weight: 1 }],
-          10
-        )
+        const results = FuseSearch.search(testItems, 'ミーティング', [{ name: 'title', weight: 1 }], 10)
 
         expect(results.length).toBeGreaterThan(0)
         expect(results[0]?.item.title).toBe('ミーティング準備')
@@ -55,47 +45,27 @@ describe('search-engine', () => {
       })
 
       it('ファジー検索で部分一致する', () => {
-        const results = FuseSearch.search(
-          testItems,
-          'レビュ',
-          [{ name: 'title', weight: 1 }],
-          10
-        )
+        const results = FuseSearch.search(testItems, 'レビュ', [{ name: 'title', weight: 1 }], 10)
 
         expect(results.length).toBeGreaterThan(0)
         expect(results[0]?.item.title).toBe('コードレビュー')
       })
 
       it('limitで結果数を制限できる', () => {
-        const results = FuseSearch.search(
-          testItems,
-          '',
-          [{ name: 'title', weight: 1 }],
-          2
-        )
+        const results = FuseSearch.search(testItems, '', [{ name: 'title', weight: 1 }], 2)
 
         expect(results).toHaveLength(2)
       })
 
       it('スコアが含まれる', () => {
-        const results = FuseSearch.search(
-          testItems,
-          'ミーティング',
-          [{ name: 'title', weight: 1 }],
-          10
-        )
+        const results = FuseSearch.search(testItems, 'ミーティング', [{ name: 'title', weight: 1 }], 10)
 
         expect(results[0]?.score).toBeDefined()
         expect(typeof results[0]?.score).toBe('number')
       })
 
       it('マッチ情報が含まれる', () => {
-        const results = FuseSearch.search(
-          testItems,
-          'ミーティング',
-          [{ name: 'title', weight: 1 }],
-          10
-        )
+        const results = FuseSearch.search(testItems, 'ミーティング', [{ name: 'title', weight: 1 }], 10)
 
         expect(results[0]?.matches).toBeDefined()
         expect(Array.isArray(results[0]?.matches)).toBe(true)
@@ -103,22 +73,10 @@ describe('search-engine', () => {
 
       it('キャッシュキーを使用してインスタンスを再利用できる', () => {
         // 最初の検索
-        const results1 = FuseSearch.search(
-          testItems,
-          'ミーティング',
-          [{ name: 'title', weight: 1 }],
-          10,
-          'test-cache'
-        )
+        const results1 = FuseSearch.search(testItems, 'ミーティング', [{ name: 'title', weight: 1 }], 10, 'test-cache')
 
         // 2回目の検索（キャッシュされたインスタンスを使用）
-        const results2 = FuseSearch.search(
-          testItems,
-          'コード',
-          [{ name: 'title', weight: 1 }],
-          10,
-          'test-cache'
-        )
+        const results2 = FuseSearch.search(testItems, 'コード', [{ name: 'title', weight: 1 }], 10, 'test-cache')
 
         expect(results1.length).toBeGreaterThan(0)
         expect(results2.length).toBeGreaterThan(0)
@@ -148,25 +106,13 @@ describe('search-engine', () => {
         const testItems = [{ id: '1', title: 'テスト' }]
 
         // キャッシュを作成
-        FuseSearch.search(
-          testItems,
-          'テスト',
-          [{ name: 'title', weight: 1 }],
-          10,
-          'test-cache'
-        )
+        FuseSearch.search(testItems, 'テスト', [{ name: 'title', weight: 1 }], 10, 'test-cache')
 
         // キャッシュをクリア
         FuseSearch.clearCache()
 
         // エラーなく再検索できることを確認
-        const results = FuseSearch.search(
-          testItems,
-          'テスト',
-          [{ name: 'title', weight: 1 }],
-          10,
-          'test-cache'
-        )
+        const results = FuseSearch.search(testItems, 'テスト', [{ name: 'title', weight: 1 }], 10, 'test-cache')
 
         expect(results.length).toBeGreaterThan(0)
       })
