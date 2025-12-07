@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  Building,
   ExternalLink,
   FileText,
   HelpCircle,
@@ -129,6 +130,12 @@ export function Account({ userData, locale }: AccountProps) {
                   <Link href={`/${locale}/legal/privacy`}>
                     <FileText />
                     {t('navUser.helpSubmenu.privacyPolicy')}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={`/${locale}/legal/tokushoho`}>
+                    <Building />
+                    {t('navUser.helpSubmenu.tokushoho')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

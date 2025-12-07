@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  Building,
   ChevronDown,
   FileText,
   HelpCircle,
@@ -147,6 +148,12 @@ export function NavUser({
                 <Link href={`/${locale}/legal/privacy`}>
                   <FileText />
                   {t('navUser.helpSubmenu.privacyPolicy')}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href={`/${locale}/legal/tokushoho`}>
+                  <Building />
+                  {t('navUser.helpSubmenu.tokushoho')}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
