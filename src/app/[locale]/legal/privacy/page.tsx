@@ -157,12 +157,19 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
         </section>
       </div>
 
-      {/* フッターノート */}
-      <div className="bg-surface-container mt-12 rounded-xl p-6">
-        <p className="text-muted-foreground text-sm">
-          ⚠️ <strong>重要:</strong>{' '}
-          本プライバシーポリシーは、法的要件を満たすための基本的なテンプレートです。商用リリース前に、必ず弁護士によるレビューを受けてください。
-        </p>
+      {/* 法的レビュー警告 */}
+      <div className="bg-destructive/10 border-destructive mt-12 rounded-xl border-2 p-6">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">⚠️</span>
+          <div>
+            <p className="text-destructive font-bold">{t('legal.reviewWarning.title')}</p>
+            <p className="text-muted-foreground mt-1 text-sm">{t('legal.reviewWarning.description')}</p>
+            <ul className="text-muted-foreground mt-2 list-inside list-disc text-sm">
+              <li>{t('legal.reviewWarning.items.lawyer')}</li>
+              <li>{t('legal.reviewWarning.items.update')}</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   )
