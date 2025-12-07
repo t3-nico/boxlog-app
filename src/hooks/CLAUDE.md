@@ -2,7 +2,7 @@
 
 BoxLogカスタムReact Hooks実装ガイドライン。
 
-## 📁 現在のフック一覧（8個）
+## 📁 現在のフック一覧（7個）
 
 ### 保持されている共通フック
 
@@ -12,7 +12,6 @@ src/hooks/
 ├── useAddPopup.ts               # ポップアップ追加
 ├── useAutoRetry.ts              # 自動リトライ
 ├── useDebounce.ts               # デバウンス処理
-├── useDelete.ts                 # 削除処理
 ├── useMediaQuery.ts             # レスポンシブ対応
 ├── useOfflineSync.tsx           # オフライン同期
 └── usePerformanceMonitor.ts     # パフォーマンス監視
