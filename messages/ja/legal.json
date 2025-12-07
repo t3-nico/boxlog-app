@@ -445,7 +445,7 @@
     "noResults": "検索結果が見つかりませんでした",
     "loadingError": "ライセンス情報の読み込みに失敗しました",
     "licenseDistribution": "ライセンス分布",
-    "packageList": "パッケージリスト（{{count}}件）",
+    "packageList": "パッケージリスト（{count}件）",
     "footer": {
       "notice": "完全なライセンステキストとNOTICEファイルについては：",
       "thirdPartyNotices": "THIRD_PARTY_NOTICES.txt",
