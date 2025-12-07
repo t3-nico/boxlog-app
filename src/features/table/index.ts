@@ -2,22 +2,70 @@
  * Table Feature
  *
  * 汎用テーブル機能を提供するfeature
- * - Store: 列設定、ソート、グループ化、ページネーション、選択、フォーカス
- * - Types: 列、ソート、グループの型定義
+ *
+ * ## Factory パターン（推奨）
+ *
+ * 各ドメインで独自のテーブル store を作成する場合：
  *
  * @example
  * ```tsx
- * import { useTableColumnStore, useTableSortStore, type SortField } from '@/features/table'
+ * import { createTableColumnStore, createTableSortStore } from '@/features/table'
+ *
+ * // Inbox用の列定義
+ * type InboxColumnId = 'selection' | 'title' | 'status' | 'tags'
+ *
+ * export const useInboxColumnStore = createTableColumnStore<InboxColumnId>({
+ *   defaultColumns: [
+ *     { id: 'selection', label: '', visible: true, width: 50, resizable: false },
+ *     { id: 'title', label: 'タイトル', visible: true, width: 300, resizable: true },
+ *   ],
+ *   persistKey: 'inbox-column-store-v9',
+ *   alwaysVisibleColumns: ['selection'],
+ * })
+ * ```
+ *
+ * ## 具象 Store（後方互換性）
+ *
+ * デフォルトの Inbox 用 store を直接使用する場合：
+ *
+ * @example
+ * ```tsx
+ * import { useTableColumnStore } from '@/features/table'
  *
  * function MyTable() {
  *   const { columns } = useTableColumnStore()
- *   const { sortField, setSortField } = useTableSortStore()
- *   // ...
  * }
  * ```
  */
 
-// Stores
+// Factory functions
+export {
+  createTableColumnStore,
+  createTableFocusStore,
+  createTablePaginationStore,
+  createTableSelectionStore,
+  createTableSortStore,
+} from './stores'
+
+// Factory types
+export type {
+  ColumnConfig,
+  CreateTableColumnStoreConfig,
+  CreateTableFocusStoreConfig,
+  CreateTablePaginationStoreConfig,
+  CreateTableSelectionStoreConfig,
+  CreateTableSortStoreConfig,
+  SortDirection,
+  SortDirectionNullable,
+  TableColumnState,
+  TableFocusState,
+  TablePaginationState,
+  TableSelectionState,
+  TableSortState,
+  TableSortStateNullable,
+} from './stores'
+
+// Concrete stores (後方互換性のため維持)
 export {
   useTableColumnStore,
   useTableFocusStore,
@@ -25,7 +73,7 @@ export {
   useTablePaginationStore,
   useTableSelectionStore,
   useTableSortStore,
-  // 後方互換性のためのエイリアス
+  // エイリアス
   useInboxColumnStore,
   useInboxFocusStore,
   useInboxGroupStore,
@@ -34,7 +82,7 @@ export {
   useInboxSortStore,
 } from './stores'
 
-// Types
-export type { ColumnConfig, ColumnId } from './types/column'
+// Legacy types (後方互換性のため維持)
+export type { ColumnId } from './types/column'
 export type { GroupByField, GroupConfig, GroupedData } from './types/group'
-export type { SortDirection, SortField } from './types/sort'
+export type { SortField } from './types/sort'
