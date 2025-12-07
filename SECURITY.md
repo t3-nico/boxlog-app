@@ -20,7 +20,7 @@
 以下のいずれかの方法で報告してください:
 
 1. **Email**: security@boxlog.app
-2. **GitHub Security Advisory**: [Create Advisory](https://github.com/yourusername/boxlog-app/security/advisories/new)
+2. **GitHub Security Advisory**: [Create Advisory](https://github.com/t3-nico/boxlog-app/security/advisories/new)
 
 ### 報告に含めるべき情報
 
