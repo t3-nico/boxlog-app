@@ -3,6 +3,7 @@
  * 全APIルーターの統合とエクスポート
  */
 
+import { authRouter } from './routers/auth'
 import { notificationsRouter } from './routers/notifications'
 import { plansRouter } from './routers/plans'
 import { profileRouter } from './routers/profile'
@@ -13,14 +14,11 @@ import { createTRPCRouter } from './trpc'
  * メインAPIルーター
  */
 export const appRouter = createTRPCRouter({
+  auth: authRouter,
   tasks: tasksRouter,
   profile: profileRouter,
   plans: plansRouter,
   notifications: notificationsRouter,
-  // 他のルーターをここに追加
-  // auth: authRouter,
-  // users: usersRouter,
-  // projects: projectsRouter,
 })
 
 /**

@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 
-import { Eye, EyeOff, Shield, ShieldAlert } from 'lucide-react'
+import { Eye, EyeOff, ShieldAlert } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -13,11 +13,11 @@ import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from 
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { checkLockoutStatus, recordLoginAttempt, resetLoginAttempts } from '@/features/auth/lib/account-lockout'
+import { checkLockoutStatus } from '@/features/auth/lib/account-lockout'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useDebounce } from '@/hooks/useDebounce'
-// import { useRecaptchaV2, useRecaptchaV3 } from '@/lib/recaptcha'
+import { useRecaptchaV3 } from '@/lib/recaptcha'
 import { createClient } from '@/lib/supabase/client'
+import { trpc } from '@/lib/trpc/client'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
@@ -28,8 +28,18 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const t = useTranslations()
   const signIn = useAuthStore((state) => state.signIn)
 
+  // reCAPTCHA v3
+  const { generateToken, isReady: isRecaptchaReady } = useRecaptchaV3('login')
+  const verifyRecaptcha = trpc.auth.verifyRecaptcha.useMutation()
+
+  // IP単位レート制限
+  const recordLoginAttemptApi = trpc.auth.recordLoginAttempt.useMutation()
+  const { data: ipRateLimitData } = trpc.auth.checkIpRateLimit.useQuery({})
+
+  // 監査ログ
+  const recordAuditLogApi = trpc.auth.recordAuditLog.useMutation()
+
   const [email, setEmail] = useState('')
-  const debouncedEmail = useDebounce(email, 500) // ロックアウトチェック用にデバウンス
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -37,82 +47,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const [isLocked, setIsLocked] = useState(false)
   const [lockoutMinutes, setLockoutMinutes] = useState(0)
   const [failedAttempts, setFailedAttempts] = useState(0)
-  const [showCaptchaV2, setShowCaptchaV2] = useState(false)
-  const [captchaV2Token, setCaptchaV2Token] = useState<string | null>(null)
 
-  // reCAPTCHA v3フック（3回失敗後から使用）
-  // 一時的に無効化してフリーズ問題を切り分け
-  // const { generateToken: generateV3Token, isReady: isV3Ready } = useRecaptchaV3('login')
-  const generateV3Token = async () => null
-  const isV3Ready = false
-
-  // reCAPTCHA v2フック（ロックアウト解除後に使用）
-  // 一時的に無効化してフリーズ問題を切り分け
-  // const { isReady: isV2Ready, renderWidget: renderV2Widget, execute: executeV2 } = useRecaptchaV2()
-  const isV2Ready = false
-  const renderV2Widget = (_containerId: string, _callback: (token: string) => void) => {}
-  const executeV2 = () => {}
-  const recaptchaV2ContainerRef = useRef<HTMLDivElement>(null)
-
-  // ロックアウトステータスをチェック（デバウンスされたメールアドレスで実行）
-  useEffect(() => {
-    if (!debouncedEmail || !debouncedEmail.includes('@')) return
-
-    let isMounted = true
-
-    const checkLockout = async () => {
-      try {
-        const supabase = createClient()
-        const status = await checkLockoutStatus(supabase, debouncedEmail)
-
-        if (!isMounted) return
-
-        setIsLocked(status.isLocked)
-        setLockoutMinutes(status.remainingMinutes)
-        setFailedAttempts(status.failedAttempts)
-
-        // ロックアウトが解除されていて、過去に失敗履歴があればCAPTCHA v2を表示
-        if (!status.isLocked && status.failedAttempts >= 5) {
-          setShowCaptchaV2(true)
-        }
-      } catch (err) {
-        console.error('[LoginForm] Lockout check failed:', err)
-      }
-    }
-
-    checkLockout()
-
-    return () => {
-      isMounted = false
-    }
-  }, [debouncedEmail])
-
-  // isLockedが変わったときにエラーメッセージを設定
-  // 注意: tはuseTranslationsから返される関数で、参照安定性が保証されていないため依存配列から除外
-  useEffect(() => {
-    if (isLocked && lockoutMinutes > 0) {
-      setError(
-        t('auth.errors.accountLocked', {
-          minutes: lockoutMinutes.toString(),
-        })
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLocked, lockoutMinutes])
-
-  // reCAPTCHA v2ウィジェット初期化用のRef（一度だけ実行）
-  const v2WidgetInitializedRef = useRef(false)
-
-  // reCAPTCHA v2ウィジェットを初期化（ロックアウト解除後、一度だけ）
-  useEffect(() => {
-    if (v2WidgetInitializedRef.current) return
-    if (showCaptchaV2 && isV2Ready && recaptchaV2ContainerRef.current) {
-      v2WidgetInitializedRef.current = true
-      renderV2Widget('recaptcha-v2-container', (token) => {
-        setCaptchaV2Token(token)
-      })
-    }
-  }, [showCaptchaV2, isV2Ready])
+  // IPブロック状態を監視
+  const ipBlocked = ipRateLimitData?.isBlocked ?? false
+  const ipBlockedMinutes = ipRateLimitData?.remainingMinutes ?? 0
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -122,12 +60,37 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     const supabase = createClient()
 
     try {
+      // ステップ0a: IP単位レート制限チェック
+      if (ipBlocked) {
+        setError(t('auth.errors.ipBlocked', { minutes: ipBlockedMinutes.toString() }))
+        setIsLoading(false)
+        return
+      }
+
+      // ステップ0b: reCAPTCHA v3 検証（設定されている場合のみ）
+      if (isRecaptchaReady) {
+        const token = await generateToken()
+        if (token) {
+          const recaptchaResult = await verifyRecaptcha.mutateAsync({
+            token,
+            action: 'login',
+          })
+
+          if (recaptchaResult.isBot) {
+            setError(t('auth.errors.botDetected'))
+            setIsLoading(false)
+            return
+          }
+        }
+      }
+
       // ステップ1: ロックアウトステータスをチェック
       const lockoutStatus = await checkLockoutStatus(supabase, email)
 
       if (lockoutStatus.isLocked) {
         setIsLocked(true)
         setLockoutMinutes(lockoutStatus.remainingMinutes)
+        setFailedAttempts(lockoutStatus.failedAttempts)
         setError(
           t('auth.errors.accountLocked', {
             minutes: lockoutStatus.remainingMinutes.toString(),
@@ -137,34 +100,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         return
       }
 
-      // ステップ2: reCAPTCHA検証（段階的）
-      // 2a. ロックアウト解除後 → reCAPTCHA v2必須
-      if (showCaptchaV2) {
-        if (!captchaV2Token) {
-          // v2トークンがない場合、実行を試みる
-          executeV2()
-          setError(t('auth.errors.captchaRequired'))
-          setIsLoading(false)
-          return
-        }
-        // TODO: サーバーサイドでv2トークンを検証（API Route経由）
-      }
-
-      // 2b. 3回以上失敗 → reCAPTCHA v3（バックグラウンド）
-      if (lockoutStatus.failedAttempts >= 3 && isV3Ready) {
-        const v3Token = await generateV3Token()
-        if (v3Token) {
-          // TODO: サーバーサイドでv3スコアを検証（API Route経由）
-          console.log('[reCAPTCHA] v3 token generated for verification')
-        }
-      }
-
-      // ステップ3: ログイン試行
+      // ステップ2: ログイン試行
       const { error, data } = await signIn(email, password)
 
       if (error) {
-        // ログイン失敗を記録
-        await recordLoginAttempt(supabase, email, false)
+        // ログイン失敗を記録（サーバー側でIPを取得）
+        recordLoginAttemptApi.mutate({ email, isSuccessful: false })
 
         // 新しいロックアウトステータスを取得
         const newStatus = await checkLockoutStatus(supabase, email)
@@ -182,24 +123,22 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
           setError(error.message)
         }
       } else if (data) {
-        // ログイン成功を記録してカウンターリセット
-        await resetLoginAttempts(supabase, email)
-        setFailedAttempts(0)
+        // ログイン成功を記録（サーバー側でIPを取得）
+        recordLoginAttemptApi.mutate({ email, isSuccessful: true })
+
+        // 監査ログに成功ログインを記録
+        recordAuditLogApi.mutate({ eventType: 'login_success' })
 
         // MFAが有効かチェック（AALレベルで判断）
-        // セッション確立を待つ
         await new Promise((resolve) => setTimeout(resolve, 100))
 
         const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
         console.log('Login - AAL check:', aalData)
 
-        // currentLevel が aal1 で nextLevel が aal2 の場合、MFAが必要
         if (aalData?.currentLevel === 'aal1' && aalData?.nextLevel === 'aal2') {
-          // MFAが有効な場合、MFA検証ページへリダイレクト
           console.log('MFA required, redirecting to mfa-verify')
           router.push(`/${locale}/auth/mfa-verify`)
         } else {
-          // MFAが無効な場合、直接カレンダーへ
           console.log('No MFA required, redirecting to calendar')
           router.push(`/${locale}/calendar`)
         }
@@ -208,8 +147,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       console.error('Login error:', err)
       setError('An unexpected error occurred')
 
-      // エラーでも失敗として記録
-      await recordLoginAttempt(supabase, email, false)
+      // エラーでも失敗として記録（サーバー側でIPを取得）
+      recordLoginAttemptApi.mutate({ email, isSuccessful: false })
     } finally {
       setIsLoading(false)
     }
@@ -226,17 +165,19 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 <p className="text-muted-foreground text-balance">{t('auth.loginForm.loginToAccount')}</p>
               </div>
 
-              {isLocked && (
+              {(isLocked || ipBlocked) && (
                 <div className="bg-destructive/10 border-destructive/50 text-destructive flex items-start gap-3 rounded-md border p-4">
                   <ShieldAlert className="mt-0.5 h-5 w-5 flex-shrink-0" />
                   <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium">{t('auth.errors.accountLockedTitle')}</p>
-                    <p className="text-sm">
-                      {t('auth.errors.accountLocked', {
-                        minutes: lockoutMinutes.toString(),
-                      })}
+                    <p className="text-sm font-medium">
+                      {ipBlocked ? t('auth.errors.ipBlockedTitle') : t('auth.errors.accountLockedTitle')}
                     </p>
-                    {failedAttempts > 0 && (
+                    <p className="text-sm">
+                      {ipBlocked
+                        ? t('auth.errors.ipBlocked', { minutes: ipBlockedMinutes.toString() })
+                        : t('auth.errors.accountLocked', { minutes: lockoutMinutes.toString() })}
+                    </p>
+                    {!ipBlocked && failedAttempts > 0 && (
                       <p className="text-xs opacity-80">
                         {t('auth.errors.failedAttempts', {
                           count: failedAttempts.toString(),
@@ -247,7 +188,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 </div>
               )}
 
-              {error && !isLocked && (
+              {error && !isLocked && !ipBlocked && (
                 <div className="text-destructive text-center text-sm" role="alert">
                   {error}
                 </div>
@@ -304,28 +245,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 </div>
               </Field>
 
-              {/* reCAPTCHA v3保護インジケーター（3回以上失敗時） */}
-              {failedAttempts >= 3 && !isLocked && !showCaptchaV2 && (
-                <div className="bg-primary/10 border-primary/20 text-primary flex items-center gap-2 rounded-md border px-3 py-2 text-xs">
-                  <Shield className="h-3.5 w-3.5" />
-                  <span>{t('auth.info.captchaProtectionActive')}</span>
-                </div>
-              )}
-
-              {/* reCAPTCHA v2コンテナ（ロックアウト解除後） */}
-              {showCaptchaV2 && (
-                <div className="flex flex-col items-center gap-2">
-                  <div id="recaptcha-v2-container" ref={recaptchaV2ContainerRef} />
-                  <p className="text-muted-foreground text-center text-xs">{t('auth.info.captchaV2Required')}</p>
-                </div>
-              )}
-
               <Field>
-                <Button
-                  type="submit"
-                  disabled={isLoading || isLocked || (showCaptchaV2 && !captchaV2Token)}
-                  className="w-full"
-                >
+                <Button type="submit" disabled={isLoading || isLocked || ipBlocked} className="w-full">
                   {isLoading && <Spinner className="mr-2" />}
                   {t('auth.loginForm.loginButton')}
                 </Button>
