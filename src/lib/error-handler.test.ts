@@ -269,7 +269,7 @@ describe('ErrorHandler', () => {
     it('duplicateエラーをDUPLICATE_KEYとして処理', async () => {
       vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      const dbError = new Error('Duplicate key violation')
+      const dbError = new Error('duplicate key value violates unique constraint')
       const error = await errorHandler.handleDatabaseError(dbError, 'insert')
 
       expect(error.code).toBe('DUPLICATE_KEY')
@@ -278,7 +278,7 @@ describe('ErrorHandler', () => {
     it('foreign keyエラーをFOREIGN_KEY_VIOLATIONとして処理', async () => {
       vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      const dbError = new Error('Foreign key constraint violation')
+      const dbError = new Error('violates foreign key constraint')
       const error = await errorHandler.handleDatabaseError(dbError, 'insert')
 
       expect(error.code).toBe('FOREIGN_KEY_VIOLATION')
@@ -307,7 +307,7 @@ describe('ErrorHandler', () => {
     it('authエラーをEXTERNAL_AUTH_FAILEDとして処理', async () => {
       vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      const serviceError = new Error('Authentication failed')
+      const serviceError = new Error('auth token invalid')
       const error = await errorHandler.handleExternalServiceError('github', serviceError)
 
       expect(error.code).toBe('EXTERNAL_AUTH_FAILED')

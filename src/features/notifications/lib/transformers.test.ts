@@ -30,7 +30,7 @@ describe('transformers', () => {
 
       expect(result.id).toBe('notif-1')
       expect(result.type).toBe('reminder')
-      expect(result.priority).toBe('normal')
+      expect(result.priority).toBe('medium')
       expect(result.title).toBe('テスト通知')
       expect(result.message).toBe('これはテストです')
       expect(result.relatedEventId).toBe('event-1')

@@ -196,11 +196,11 @@ export function navigateToScreen(screen: ScreenName): string {
  */
 export function getParameterizedRoute(screen: ScreenName, parameter: string): string {
   switch (screen) {
-    case 'calendar_view':
+    case 'CALENDAR_VIEW':
       return ROUTES.calendarView(parameter)
-    case 'table_detail':
+    case 'TABLE_DETAIL':
       return ROUTES.tableDetail(parameter)
-    case 'stats_detail':
+    case 'STATS_DETAIL':
       return ROUTES.statsDetail(parameter)
     default:
       return navigateToScreen(screen)
