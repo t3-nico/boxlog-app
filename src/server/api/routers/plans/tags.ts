@@ -1,5 +1,6 @@
 /**
- * Plans Router - Tags CRUD
+ * Tags Subrouter
+ * Tag CRUD operations
  */
 
 import { TRPCError } from '@trpc/server'
@@ -21,7 +22,7 @@ export const tagsRouter = createTRPCRouter({
     if (error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `タグ一覧の取得に失敗しました: ${error.message}`,
+        message: `Failed to fetch tags: ${error.message}`,
       })
     }
 
@@ -45,7 +46,7 @@ export const tagsRouter = createTRPCRouter({
     if (error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `タグの作成に失敗しました: ${error.message}`,
+        message: `Failed to create tag: ${error.message}`,
       })
     }
 
@@ -57,7 +58,7 @@ export const tagsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { supabase, userId } = ctx
 
-      // undefinedを除外してSupabaseに渡す
+      // Remove undefined to pass to Supabase
       const updateData: Record<string, string | null> = {}
       if (input.data.name !== undefined) updateData.name = input.data.name
       if (input.data.color !== undefined) updateData.color = input.data.color
@@ -74,7 +75,7 @@ export const tagsRouter = createTRPCRouter({
       if (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: `タグの更新に失敗しました: ${error.message}`,
+          message: `Failed to update tag: ${error.message}`,
         })
       }
 
@@ -89,7 +90,7 @@ export const tagsRouter = createTRPCRouter({
     if (error) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: `タグの削除に失敗しました: ${error.message}`,
+        message: `Failed to delete tag: ${error.message}`,
       })
     }
 
