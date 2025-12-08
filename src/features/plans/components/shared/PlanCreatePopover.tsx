@@ -25,12 +25,40 @@ import { ReminderSelect } from './ReminderSelect'
 interface PlanCreatePopoverProps {
   triggerElement: React.ReactNode
   onSuccess?: () => void
+  /** 初期日付 */
+  initialDate?: Date
+  /** 初期開始時刻（HH:mm形式） */
+  initialStartTime?: string
+  /** 初期終了時刻（HH:mm形式） */
+  initialEndTime?: string
+  /** 外部から開閉状態を制御する場合 */
+  open?: boolean
+  /** 開閉状態変更時のコールバック */
+  onOpenChange?: (open: boolean) => void
 }
 
-export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopoverProps) {
+export function PlanCreatePopover({
+  triggerElement,
+  onSuccess,
+  initialDate,
+  initialStartTime,
+  initialEndTime,
+  open: controlledOpen,
+  onOpenChange,
+}: PlanCreatePopoverProps) {
   const titleInputRef = useRef<HTMLInputElement | null>(null)
 
-  const [isOpen, setIsOpen] = useState(false)
+  // 制御/非制御モード対応
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isControlled = controlledOpen !== undefined
+  const isOpen = isControlled ? controlledOpen : internalOpen
+  const setIsOpen = (value: boolean) => {
+    if (isControlled) {
+      onOpenChange?.(value)
+    } else {
+      setInternalOpen(value)
+    }
+  }
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date>()
   const [startTime, setStartTime] = useState('')
@@ -44,9 +72,20 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopov
   const { createPlan } = usePlanMutations()
   const { addplanTag } = useplanTags()
 
-  // ポップアップが開いたときにタイトル入力欄にフォーカス
+  // ポップアップが開いたときに初期値を設定してフォーカス
   useEffect(() => {
     if (isOpen) {
+      // 初期値を設定
+      if (initialDate) {
+        setSelectedDate(initialDate)
+      }
+      if (initialStartTime) {
+        setStartTime(initialStartTime)
+      }
+      if (initialEndTime) {
+        setEndTime(initialEndTime)
+      }
+
       // Popoverのアニメーション完了を待つ
       const timer = setTimeout(() => {
         titleInputRef.current?.focus()
@@ -54,7 +93,7 @@ export function PlanCreatePopover({ triggerElement, onSuccess }: PlanCreatePopov
       return () => clearTimeout(timer)
     }
     return undefined
-  }, [isOpen])
+  }, [isOpen, initialDate, initialStartTime, initialEndTime])
 
   const form = useForm<CreatePlanInput>({
     resolver: zodResolver(createPlanSchema),

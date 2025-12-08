@@ -33,6 +33,13 @@ const statisticsAliasRouter = createTRPCRouter({
   getTagPlanCounts: statisticsRouter.getTagPlanCounts,
   getTagLastUsed: statisticsRouter.getTagLastUsed,
   getTotalTime: statisticsRouter.getTotalTime,
+  getSummary: statisticsRouter.getSummary,
+  getStreak: statisticsRouter.getStreak,
+  getTimeByTag: statisticsRouter.getTimeByTag,
+  getDailyHours: statisticsRouter.getDailyHours,
+  getHourlyDistribution: statisticsRouter.getHourlyDistribution,
+  getDayOfWeekDistribution: statisticsRouter.getDayOfWeekDistribution,
+  getMonthlyTrend: statisticsRouter.getMonthlyTrend,
 })
 
 const activitiesAliasRouter = createTRPCRouter({
