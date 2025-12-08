@@ -51,7 +51,9 @@ export function useCalendarToast() {
 
   const eventMoved = (plan: CalendarPlan) => {
     toast.success(t('calendar.toast.moved'), {
-      description: `${format(plan.displayStartDate, 'MM/dd HH:mm', { locale: ja })} に変更`,
+      description: t('calendar.toast.movedTo', {
+        date: format(plan.displayStartDate, 'MM/dd HH:mm', { locale: ja }),
+      }),
       duration: 2000,
     })
   }
@@ -59,19 +61,27 @@ export function useCalendarToast() {
   const eventResized = (plan: CalendarPlan) => {
     const durationHours = Math.floor(plan.duration / 60)
     const durationMinutes = plan.duration % 60
-    const durationText =
-      durationHours > 0
-        ? `${durationHours}時間${durationMinutes > 0 ? `${durationMinutes}分` : ''}`
-        : `${durationMinutes}分`
+
+    let durationText: string
+    if (durationHours > 0 && durationMinutes > 0) {
+      durationText = t('calendar.toast.durationHoursMinutes', {
+        hours: durationHours,
+        minutes: durationMinutes,
+      })
+    } else if (durationHours > 0) {
+      durationText = t('calendar.toast.durationHours', { hours: durationHours })
+    } else {
+      durationText = t('calendar.toast.durationMinutes', { minutes: durationMinutes })
+    }
 
     toast.success(t('calendar.toast.resized'), {
-      description: `${durationText}に変更`,
+      description: t('calendar.toast.resizedTo', { duration: durationText }),
       duration: 2000,
     })
   }
 
   const eventDuplicated = (count: number) => {
-    toast.success(`${count}${t('calendar.toast.duplicated')}`, {
+    toast.success(t('calendar.toast.duplicated', { count }), {
       duration: 2000,
     })
   }
@@ -97,8 +107,8 @@ export function useCalendarToast() {
   }
 
   const batchOperation = (operation: string, count: number) => {
-    toast.success(`${operation}${t('calendar.toast.batchComplete')}`, {
-      description: `${count}${t('calendar.toast.batchDescription')}`,
+    toast.success(t('calendar.toast.batchComplete', { operation }), {
+      description: t('calendar.toast.batchDescription', { count }),
       duration: 3000,
     })
   }
@@ -113,11 +123,11 @@ export function useCalendarToast() {
   const reminderSet = (plan: CalendarPlan, minutes: number) => {
     const reminderText =
       minutes >= 60
-        ? `${Math.floor(minutes / 60)}${t('calendar.toast.hoursBefore')}`
-        : `${minutes}${t('calendar.toast.minutesBefore')}`
+        ? t('calendar.toast.hoursBefore', { hours: Math.floor(minutes / 60) })
+        : t('calendar.toast.minutesBefore', { minutes })
 
     toast.success(t('calendar.toast.reminderSet'), {
-      description: `${plan.title} - ${reminderText}`,
+      description: t('calendar.toast.reminderDescription', { title: plan.title, time: reminderText }),
       duration: 2000,
     })
   }

@@ -13,6 +13,7 @@ import {
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { Archive, Calendar, Trash2, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useInboxSelectionStore } from '../../stores/useInboxSelectionStore'
@@ -35,6 +36,7 @@ import { BulkDatePickerDialog } from './BulkDatePickerDialog'
  * ```
  */
 export function BulkActionsToolbar() {
+  const t = useTranslations()
   const { getSelectedCount, getSelectedIds, clearSelection } = useInboxSelectionStore()
   const { bulkUpdatePlan, bulkDeletePlan } = usePlanMutations()
   const selectedCount = getSelectedCount()
@@ -56,10 +58,10 @@ export function BulkActionsToolbar() {
         data: { status },
       })
 
-      toast.success(`${selectedIds.length}件のプランのステータスを変更しました`)
+      toast.success(t('common.inbox.statusChangedCount', { count: selectedIds.length }))
       clearSelection()
     } catch (error) {
-      toast.error('ステータスの変更に失敗しました')
+      toast.error(t('common.inbox.statusChangeFailed'))
       console.error('Bulk status change error:', error)
     } finally {
       setIsProcessing(false)
@@ -81,10 +83,10 @@ export function BulkActionsToolbar() {
         data: { status: 'done' }, // アーカイブ = 完了ステータスに変更
       })
 
-      toast.success(`${selectedIds.length}件のプランをアーカイブしました`)
+      toast.success(t('common.inbox.archivedCount', { count: selectedIds.length }))
       clearSelection()
     } catch (error) {
-      toast.error('アーカイブに失敗しました')
+      toast.error(t('common.inbox.archiveFailed'))
       console.error('Bulk archive error:', error)
     } finally {
       setIsProcessing(false)
@@ -94,7 +96,7 @@ export function BulkActionsToolbar() {
   // 削除ハンドラー
   const handleDelete = async () => {
     // 確認ダイアログ
-    if (!window.confirm(`${selectedCount}件のプランを削除しますか？この操作は取り消せません。`)) {
+    if (!window.confirm(t('common.inbox.deleteConfirm', { count: selectedCount }))) {
       return
     }
 
@@ -105,10 +107,10 @@ export function BulkActionsToolbar() {
         ids: selectedIds,
       })
 
-      toast.success(`${selectedIds.length}件のプランを削除しました`)
+      toast.success(t('common.inbox.deletedCount', { count: selectedIds.length }))
       clearSelection()
     } catch (error) {
-      toast.error('削除に失敗しました')
+      toast.error(t('common.inbox.deleteFailed'))
       console.error('Bulk delete error:', error)
     } finally {
       setIsProcessing(false)
@@ -119,10 +121,10 @@ export function BulkActionsToolbar() {
     <div className="bg-surface-container border-border flex items-center justify-between border-b px-4 py-3 md:px-6">
       {/* 左側: 選択数表示 */}
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium">{selectedCount}件選択中</span>
+        <span className="text-sm font-medium">{t('common.inbox.selected', { count: selectedCount })}</span>
         <Button variant="ghost" size="sm" onClick={clearSelection} className="h-8">
           <X className="mr-1 size-4" />
-          クリア
+          {t('common.inbox.clear')}
         </Button>
       </div>
 
@@ -131,17 +133,17 @@ export function BulkActionsToolbar() {
         {/* ステータス変更 */}
         <Select onValueChange={(value) => handleStatusChange(value as PlanStatus)} disabled={isProcessing}>
           <SelectTrigger className="h-8 w-36">
-            <SelectValue placeholder="ステータス変更" />
+            <SelectValue placeholder={t('common.inbox.changeStatus')} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>ステータス</SelectLabel>
-              <SelectItem value="backlog">準備中</SelectItem>
-              <SelectItem value="ready">配置済み</SelectItem>
-              <SelectItem value="active">作業中</SelectItem>
-              <SelectItem value="wait">待ち</SelectItem>
-              <SelectItem value="done">完了</SelectItem>
-              <SelectItem value="cancel">中止</SelectItem>
+              <SelectLabel>{t('common.inbox.status')}</SelectLabel>
+              <SelectItem value="backlog">{t('common.inbox.statusBacklog')}</SelectItem>
+              <SelectItem value="ready">{t('common.inbox.statusReady')}</SelectItem>
+              <SelectItem value="active">{t('common.inbox.statusActive')}</SelectItem>
+              <SelectItem value="wait">{t('common.inbox.statusWait')}</SelectItem>
+              <SelectItem value="done">{t('common.inbox.statusDone')}</SelectItem>
+              <SelectItem value="cancel">{t('common.inbox.statusCancel')}</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -149,19 +151,19 @@ export function BulkActionsToolbar() {
         {/* 期限設定 */}
         <Button variant="outline" size="sm" onClick={handleOpenDateDialog} disabled={isProcessing} className="h-8">
           <Calendar className="mr-1 size-4" />
-          期限
+          {t('common.inbox.dueDate')}
         </Button>
 
         {/* アーカイブ */}
         <Button variant="outline" size="sm" onClick={handleArchive} disabled={isProcessing} className="h-8">
           <Archive className="mr-1 size-4" />
-          アーカイブ
+          {t('common.inbox.archive')}
         </Button>
 
         {/* 削除 */}
         <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isProcessing} className="h-8">
           <Trash2 className="mr-1 size-4" />
-          削除
+          {t('common.inbox.delete')}
         </Button>
       </div>
 

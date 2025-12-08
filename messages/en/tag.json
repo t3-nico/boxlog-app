@@ -103,6 +103,7 @@
     },
     "toast": {
       "groupNameRequired": "Please enter a group name",
+      "groupCreated": "Created group \"{{name}}\"",
       "groupNameChanged": "Changed group name to \"{{name}}\"",
       "groupNameChangeFailed": "Failed to change group name",
       "colorChanged": "Color changed",
