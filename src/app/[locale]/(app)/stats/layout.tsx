@@ -1,5 +1,6 @@
 'use client'
 
+import { StatsPageHeader } from '@/features/stats/components/StatsPageHeader'
 import { StatsToolbar } from '@/features/stats/components/stats-toolbar'
 
 interface StatsLayoutProps {
@@ -10,7 +11,8 @@ interface StatsLayoutProps {
  * 統計ページ専用レイアウト
  *
  * 構成:
- * - 共通ツールバー（期間選択・フィルタ・エクスポート + モバイルメニュー）
+ * - ページヘッダー（タイトル + モバイルメニュー）
+ * - 共通ツールバー（期間選択・フィルタ・エクスポート）
  * - スクロール可能なメインコンテンツ
  *
  * サイドバーナビゲーションは上位レイアウト（DesktopLayout/MobileLayout）で管理
@@ -18,6 +20,9 @@ interface StatsLayoutProps {
 export default function StatsLayout({ children }: StatsLayoutProps) {
   return (
     <div className="flex h-full flex-col">
+      {/* ページヘッダー */}
+      <StatsPageHeader />
+
       {/* ツールバー（PC・モバイル共通） */}
       <StatsToolbar />
 

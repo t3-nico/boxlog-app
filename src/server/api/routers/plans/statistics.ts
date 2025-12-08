@@ -9,6 +9,53 @@ import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 
 export const statisticsRouter = createTRPCRouter({
   /**
+   * Get total time from all plans
+   */
+  getTotalTime: protectedProcedure.query(async ({ ctx }) => {
+    const { supabase, userId } = ctx
+
+    // Get all plans with start_time and end_time
+    const { data: plans, error } = await supabase
+      .from('plans')
+      .select('start_time, end_time')
+      .eq('user_id', userId)
+      .not('start_time', 'is', null)
+      .not('end_time', 'is', null)
+
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch plans: ${error.message}`,
+      })
+    }
+
+    // Calculate total hours
+    let totalMinutes = 0
+    let planCount = 0
+
+    for (const plan of plans) {
+      if (plan.start_time && plan.end_time) {
+        const start = new Date(plan.start_time)
+        const end = new Date(plan.end_time)
+        const diffMs = end.getTime() - start.getTime()
+        if (diffMs > 0) {
+          totalMinutes += diffMs / (1000 * 60)
+          planCount++
+        }
+      }
+    }
+
+    const totalHours = totalMinutes / 60
+    const avgHoursPerPlan = planCount > 0 ? totalHours / planCount : 0
+
+    return {
+      totalHours,
+      planCount,
+      avgHoursPerPlan,
+    }
+  }),
+
+  /**
    * Get plan statistics
    */
   getStats: protectedProcedure.query(async ({ ctx }) => {
