@@ -1,22 +1,18 @@
 import type { CSSProperties } from 'react'
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import type { CalendarPlan, CalendarViewType, ViewDateRange } from '@/features/calendar/types/calendar.types'
 
-import type { CalendarViewType, Task, ViewDateRange } from '../../../types/calendar.types'
 import type { DateTimeSelection, TimeSlot } from '../shared'
-import type { CreateRecordInput, CreateTaskInput } from '../shared/types/base.types'
 
 // OldDayViewのPropsを統合した完全版
 export interface DayViewProps {
   dateRange: ViewDateRange
-  tasks: Task[]
   plans: CalendarPlan[]
   currentDate: Date
   showWeekends?: boolean | undefined // 週末の表示/非表示（デフォルト: true）
   className?: string | undefined
 
   // Plan handlers
-  onTaskClick?: ((task: CalendarPlan) => void) | undefined
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined
   onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined
   onCreatePlan?: ((date: Date, time?: string) => void) | undefined
@@ -25,11 +21,6 @@ export interface DayViewProps {
   onRestorePlan?: ((plan: CalendarPlan) => Promise<void>) | undefined
   onEmptyClick?: ((date: Date, time: string) => void) | undefined
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined
-
-  // Task handlers
-  onTaskDrag?: ((taskId: string, newDate: Date) => void) | undefined
-  onCreateTask?: ((task: CreateTaskInput) => void) | undefined
-  onCreateRecord?: ((record: CreateRecordInput) => void) | undefined
 
   // Navigation handlers
   onViewChange?: ((viewType: CalendarViewType) => void) | undefined

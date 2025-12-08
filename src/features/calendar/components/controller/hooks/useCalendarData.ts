@@ -25,7 +25,6 @@ type PlansApiResult = ReturnType<typeof usePlans>['data']
 
 interface UseCalendarDataResult {
   viewDateRange: ViewDateRange
-  filteredTasks: never[]
   filteredEvents: CalendarPlan[]
   plansData: PlansApiResult
 }
@@ -50,28 +49,8 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
 
   // ビューに応じた期間計算
   const viewDateRange = useMemo(() => {
-    const dateRange = calculateViewDateRange(viewType, currentDate)
-
-    // TwoWeekView診断ログ
-    if (viewType === '2week') {
-      logger.log('[useCalendarData] 2week範囲計算:', {
-        viewType,
-        currentDate: currentDate.toDateString(),
-        calculatedRange: {
-          start: dateRange.start.toDateString(),
-          end: dateRange.end.toDateString(),
-          dayCount: dateRange.days.length,
-        },
-      })
-    }
-
-    return dateRange
+    return calculateViewDateRange(viewType, currentDate)
   }, [viewType, currentDate])
-
-  // 表示範囲のタスクを取得
-  const filteredTasks = useMemo(() => {
-    return []
-  }, [])
 
   // 表示範囲のイベントを取得してCalendarPlan型に変換（削除済みを除外）
   const filteredEvents = useMemo(() => {
@@ -149,7 +128,6 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
 
   return {
     viewDateRange,
-    filteredTasks,
     filteredEvents,
     plansData,
   }

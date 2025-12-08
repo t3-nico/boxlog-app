@@ -21,8 +21,6 @@ export type {
   CreateTicketInput,
   EventInstance,
   PlanInstance,
-  RecordAdjustments,
-  RecordStats,
   RecurrencePattern,
   TicketInstance,
   UpdateCalendarInput,
@@ -44,4 +42,4 @@ export * from './hooks'
 
 // Calendar Utils/Lib (excluding conflicting exports)
 export { isValidViewType } from './lib/calendar-helpers'
-export { calculateViewDateRange, filterTasksForDateRange, getNextPeriod, getPreviousPeriod } from './lib/view-helpers'
+export { calculateViewDateRange, getNextPeriod, getPreviousPeriod } from './lib/view-helpers'

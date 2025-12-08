@@ -3,7 +3,7 @@
  *
  * GDPR "Right to Data Portability" 準拠のデータエクスポート機能
  * - ユーザープロフィール
- * - タスクデータ
+ * - プランデータ
  * - スマートフィルター
  * - ユーザー設定
  *
@@ -22,7 +22,7 @@ interface ExportDataResponse {
   userId: string
   data: {
     profile: unknown
-    tasks: unknown[]
+    plans: unknown[]
     smartFilters: unknown[]
     userValues: unknown
   }
@@ -64,9 +64,9 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     })
 
     // データ取得
-    const [profileResult, tasksResult, smartFiltersResult, userValuesResult] = await Promise.all([
+    const [profileResult, plansResult, smartFiltersResult, userValuesResult] = await Promise.all([
       supabase.from('profiles').select('*').eq('id', user.id).single(),
-      supabase.from('tasks').select('*').eq('user_id', user.id),
+      supabase.from('plans').select('*').eq('user_id', user.id),
       supabase.from('smart_filters').select('*').eq('user_id', user.id),
       supabase.from('user_values').select('*').eq('user_id', user.id).single(),
     ])
@@ -75,8 +75,8 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     if (profileResult.error && profileResult.error.code !== 'PGRST116') {
       throw new Error(`Profile fetch error: ${profileResult.error.message}`)
     }
-    if (tasksResult.error) {
-      throw new Error(`Tasks fetch error: ${tasksResult.error.message}`)
+    if (plansResult.error) {
+      throw new Error(`Plans fetch error: ${plansResult.error.message}`)
     }
     if (smartFiltersResult.error) {
       throw new Error(`Smart filters fetch error: ${smartFiltersResult.error.message}`)
@@ -88,7 +88,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       userId: user.id,
       data: {
         profile: profileResult.data || null,
-        tasks: tasksResult.data || [],
+        plans: plansResult.data || [],
         smartFilters: smartFiltersResult.data || [],
         userValues: userValuesResult.data || null,
       },
@@ -99,7 +99,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       userId: user.id,
       dataSize: {
         profile: profileResult.data ? 1 : 0,
-        tasks: tasksResult.data?.length || 0,
+        plans: plansResult.data?.length || 0,
         smartFilters: smartFiltersResult.data?.length || 0,
         userValues: userValuesResult.data ? 1 : 0,
       },

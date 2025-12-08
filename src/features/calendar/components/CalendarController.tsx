@@ -146,21 +146,16 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   }, [timezone, updateSettings])
 
   // カレンダーデータ取得（フック化）
-  const { viewDateRange, filteredTasks, filteredEvents } = useCalendarData({
+  const { viewDateRange, filteredEvents } = useCalendarData({
     viewType,
     currentDate,
   })
 
   // カレンダーハンドラー（フック化）
-  const {
-    handleTaskClick,
-    handleEventClick,
-    handleCreateEvent,
-    handleCreateTask,
-    handleCreateRecord,
-    handleEmptyClick,
-    handleDateTimeRangeSelect,
-  } = useCalendarHandlers({ viewType, currentDate })
+  const { handleEventClick, handleCreateEvent, handleEmptyClick, handleDateTimeRangeSelect } = useCalendarHandlers({
+    viewType,
+    currentDate,
+  })
 
   // ナビゲーションハンドラー（フック化）
   const {
@@ -192,12 +187,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const commonProps = useMemo(
     () => ({
       dateRange: viewDateRange,
-      tasks: filteredTasks,
       events: filteredEvents,
       currentDate,
-      onCreateTask: handleCreateTask,
-      onCreateRecord: handleCreateRecord,
-      onTaskClick: handleTaskClick,
       onEventClick: handleEventClick,
       onEventContextMenu: handleEventContextMenu,
       onCreateEvent: handleCreateEvent,
@@ -213,12 +204,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     }),
     [
       viewDateRange,
-      filteredTasks,
       filteredEvents,
       currentDate,
-      handleCreateTask,
-      handleCreateRecord,
-      handleTaskClick,
       handleEventClick,
       handleEventContextMenu,
       handleCreateEvent,

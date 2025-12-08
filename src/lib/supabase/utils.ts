@@ -58,7 +58,7 @@ export function isSupabaseError(error: unknown): error is PostgrestError {
  * テーブル名の検証
  */
 export function validateTableName(tableName: string): boolean {
-  const validTables = ['profiles', 'tasks', 'user_values', 'smart_filters']
+  const validTables = ['profiles', 'plans', 'tags', 'tag_groups', 'notifications', 'user_values', 'smart_filters']
   return validTables.includes(tableName)
 }
 
@@ -84,10 +84,10 @@ export function isValidUUID(uuid: string): boolean {
 }
 
 /**
- * タスクステータスのバリデーション
+ * プランステータスのバリデーション
  */
-export function isValidTaskStatus(status: string): boolean {
-  const validStatuses = ['backlog', 'scheduled', 'completed', 'rescheduled', 'stopped', 'delegated']
+export function isValidPlanStatus(status: string): boolean {
+  const validStatuses = ['todo', 'doing', 'done']
   return validStatuses.includes(status)
 }
 

@@ -19,11 +19,6 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   const { openInspector } = usePlanInspectorStore()
   const { createPlan } = usePlanMutations()
 
-  // タスククリックハンドラー
-  const handleTaskClick = useCallback(() => {
-    // Task click functionality removed - not used in current implementation
-  }, [])
-
   // イベント関連のハンドラー
   const handleEventClick = useCallback(
     (plan: CalendarPlan) => {
@@ -103,40 +98,6 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
     [viewType, currentDate, createPlan, openInspector]
   )
 
-  // タスク作成ハンドラー
-  const handleCreateTask = useCallback(
-    (_taskData: {
-      title: string
-      planned_start: Date
-      planned_duration: number
-      status: 'pending' | 'in_progress' | 'completed'
-      priority: 'low' | 'medium' | 'high'
-      description?: string
-      tags?: string[]
-    }) => {
-      // noop - Plans統合後に実装予定
-    },
-    []
-  )
-
-  // 記録作成ハンドラー
-  const handleCreateRecord = useCallback(
-    (_recordData: {
-      title: string
-      actual_start: Date
-      actual_end: Date
-      actual_duration: number
-      satisfaction?: number
-      focus_level?: number
-      energy_level?: number
-      memo?: string
-      interruptions?: number
-    }) => {
-      // Record creation tracked in Issue #89
-    },
-    []
-  )
-
   // 空き時間クリック用のハンドラー
   const handleEmptyClick = useCallback(
     (date: Date, time: string) => {
@@ -197,11 +158,8 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   )
 
   return {
-    handleTaskClick,
     handleEventClick,
     handleCreateEvent,
-    handleCreateTask,
-    handleCreateRecord,
     handleEmptyClick,
     handleDateTimeRangeSelect,
   }

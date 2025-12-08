@@ -14,12 +14,10 @@ import { useDayView } from './hooks/useDayView'
 
 export const DayView = ({
   dateRange: _dateRange,
-  tasks: _tasks,
   plans,
   currentDate,
   showWeekends: _showWeekends = true,
   className,
-  onTaskClick: _onTaskClick,
   onPlanClick,
   onPlanContextMenu,
   onCreatePlan: _onCreatePlan,
@@ -28,9 +26,6 @@ export const DayView = ({
   onRestorePlan: _onRestorePlan,
   onEmptyClick,
   onTimeRangeSelect,
-  onTaskDrag: _onTaskDrag,
-  onCreateTask: _onCreateTask,
-  onCreateRecord: _onCreateRecord,
   onViewChange: _onViewChange,
   onNavigatePrev: _onNavigatePrev,
   onNavigateNext: _onNavigateNext,
