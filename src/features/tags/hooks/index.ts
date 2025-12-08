@@ -63,3 +63,6 @@ export {
 
 // Realtime
 export { useTagRealtime } from './useTagRealtime'
+
+// Table Columns
+export { useTagTableColumns, getTagColumnSettings } from './useTagTableColumns'
