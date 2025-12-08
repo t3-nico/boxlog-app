@@ -70,9 +70,7 @@ export const instancesRouter = createTRPCRouter({
       if (error) {
         // Return empty array if table doesn't exist (for migration compatibility)
         if (error.message.includes('does not exist')) {
-          console.warn(
-            '[plans.instances.list] plan_instances table does not exist. Please run migration.'
-          )
+          console.warn('[plans.instances.list] plan_instances table does not exist. Please run migration.')
           return []
         }
         throw new TRPCError({

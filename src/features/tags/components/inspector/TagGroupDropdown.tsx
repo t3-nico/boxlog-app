@@ -16,17 +16,10 @@ interface TagGroupMenuItemsProps {
  * タググループ選択メニューアイテム
  * DropdownMenuContent / DropdownMenuSubContent の中で使用
  */
-export function TagGroupMenuItems({
-  groups,
-  currentGroupId,
-  onSelect,
-}: TagGroupMenuItemsProps) {
+export function TagGroupMenuItems({ groups, currentGroupId, onSelect }: TagGroupMenuItemsProps) {
   return (
     <>
-      <DropdownMenuItem
-        onClick={() => onSelect(null)}
-        className={!currentGroupId ? 'bg-state-active' : ''}
-      >
+      <DropdownMenuItem onClick={() => onSelect(null)} className={!currentGroupId ? 'bg-state-active' : ''}>
         <FolderX className="mr-2 h-4 w-4" />
         グループなし
       </DropdownMenuItem>

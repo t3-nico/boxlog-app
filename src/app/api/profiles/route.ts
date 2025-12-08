@@ -7,9 +7,9 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
+import type { Database } from '@/lib/database.types'
 import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError, isValidUUID } from '@/lib/supabase/utils'
-import type { Database } from '@/lib/database.types'
 
 // プロフィールの取得 (GET)
 export async function GET(request: NextRequest) {

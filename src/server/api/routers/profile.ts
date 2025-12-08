@@ -6,9 +6,9 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
+import type { Database } from '@/lib/database.types'
 import { createClient } from '@/lib/supabase/server'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
-import type { Database } from '@/lib/database.types'
 
 export const profileRouter = createTRPCRouter({
   /**

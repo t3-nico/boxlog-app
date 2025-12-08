@@ -4,7 +4,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
 
-import type { CreateTagInput, Tag, TagWithChildren, TagWithChildrenResponse, UpdateTagInput } from '@/features/tags/types'
+import type {
+  CreateTagInput,
+  Tag,
+  TagWithChildren,
+  TagWithChildrenResponse,
+  UpdateTagInput,
+} from '@/features/tags/types'
 
 // API関数群
 const tagAPI = {

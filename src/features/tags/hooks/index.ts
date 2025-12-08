@@ -65,4 +65,4 @@ export {
 export { useTagRealtime } from './useTagRealtime'
 
 // Table Columns
-export { useTagTableColumns, getTagColumnSettings } from './useTagTableColumns'
+export { getTagColumnSettings, useTagTableColumns } from './useTagTableColumns'

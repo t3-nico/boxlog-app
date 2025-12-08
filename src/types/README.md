@@ -9,25 +9,25 @@ Feature-specific types should be colocated with their features.
 
 ## File Structure
 
-| File | Lines | Purpose | Key Types |
-|------|-------|---------|-----------|
-| **index.ts** | ~100 | Core entities | Task, TaskStatus, Profile |
-| **api.ts** | ~100 | API types | ApiResponse, ApiError, PaginationParams |
-| **global.d.ts** | ~20 | Global type extensions | BatteryManager |
+| File            | Lines | Purpose                | Key Types                               |
+| --------------- | ----- | ---------------------- | --------------------------------------- |
+| **index.ts**    | ~100  | Core entities          | Task, TaskStatus, Profile               |
+| **api.ts**      | ~100  | API types              | ApiResponse, ApiError, PaginationParams |
+| **global.d.ts** | ~20   | Global type extensions | BatteryManager                          |
 
 **Total**: ~220 lines (3 files)
 
 ## Type Placement Rules
 
-| Type Category | Location |
-|--------------|----------|
-| **Core entities** (Task, Profile) | `@/types` |
-| **API types** (ApiResponse) | `@/types` (via api.ts) |
-| **Feature types** (Tag, CalendarPlan) | `features/*/types.ts` |
-| **DB types** (Database) | `lib/database.types.ts` |
-| **i18n types** (Locale, TranslatedString) | `lib/i18n/types.ts` |
-| **Settings types** (Chronotype) | `features/settings/types/` |
-| **Offline types** (OfflineAction) | `features/offline/types.ts` |
+| Type Category                             | Location                    |
+| ----------------------------------------- | --------------------------- |
+| **Core entities** (Task, Profile)         | `@/types`                   |
+| **API types** (ApiResponse)               | `@/types` (via api.ts)      |
+| **Feature types** (Tag, CalendarPlan)     | `features/*/types.ts`       |
+| **DB types** (Database)                   | `lib/database.types.ts`     |
+| **i18n types** (Locale, TranslatedString) | `lib/i18n/types.ts`         |
+| **Settings types** (Chronotype)           | `features/settings/types/`  |
+| **Offline types** (OfflineAction)         | `features/offline/types.ts` |
 
 ## Usage
 
@@ -69,6 +69,7 @@ features/
 ### 2. Shared Types Minimal
 
 Only truly shared types belong in `@/types`:
+
 - Used in 3+ locations across different features
 - Infrastructure-level (API responses, pagination)
 - Core domain entities (Task, Profile)
@@ -83,7 +84,7 @@ import type { Tag } from '@/features/tags/types'
 import type { Database } from '@/lib/database.types'
 
 // Bad - unnecessary indirection
-import type { Tag } from '@/types/tags'  // Don't do this
+import type { Tag } from '@/types/tags' // Don't do this
 ```
 
 ## Key Types
@@ -162,7 +163,7 @@ export interface ApiError {
 // Bad - any is forbidden
 export interface ApiError {
   message: string
-  details?: any  // NG
+  details?: any // NG
 }
 ```
 
@@ -171,15 +172,18 @@ export interface ApiError {
 This directory was refactored to follow the colocation principle:
 
 ### Moved to Feature Directories
+
 - `tags.ts` -> `features/tags/types.ts`
 - `chronotype.ts` -> `features/settings/types/chronotype.ts`
 - Offline types -> `features/offline/types.ts`
 
 ### Moved to lib/
+
 - `i18n.ts`, `i18n-branded.ts` -> `lib/i18n/types.ts`
 - `supabase.ts` -> use `lib/database.types.ts` directly
 
 ### Deleted (unused)
+
 - `task/` directory
 - `trash.ts`
 - `sidebar.ts`
