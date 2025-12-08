@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
-import { Box, ChevronRight, Cookie, ExternalLink, FileText, Info, Shield } from 'lucide-react'
+import { Box, Building, ChevronRight, Cookie, ExternalLink, FileText, Info, Shield } from 'lucide-react'
 import Link from 'next/link'
 
 import { Badge } from '@/components/ui/badge'
@@ -74,6 +74,7 @@ export function AboutLegalSettings() {
   const legalLinks = [
     { href: `/${locale}/legal/privacy`, label: t('settings.legal.links.privacy'), icon: Shield },
     { href: `/${locale}/legal/terms`, label: t('settings.legal.links.terms'), icon: FileText },
+    { href: `/${locale}/legal/tokushoho`, label: t('settings.legal.links.tokushoho'), icon: Building },
     { href: `/${locale}/legal/security`, label: t('settings.legal.links.security'), icon: Shield },
     { href: `/${locale}/legal/cookies`, label: t('settings.legal.links.cookies'), icon: Cookie },
     { href: `/${locale}/legal/oss-credits`, label: t('settings.legal.links.ossCredits'), icon: Box },

@@ -1,3 +1,20 @@
+/**
+ * 法的文書ページ用レイアウト
+ *
+ * @description
+ * 法的文書ページ（/legal/privacy, /legal/terms等）で使用。
+ * 軽量なPublicProvidersのみを適用し、tRPC、Realtime購読等の
+ * 重い機能は含まない。
+ *
+ * これにより、DB接続やAPI接続に問題があっても
+ * 法的文書ページは正常に表示される。
+ *
+ * Provider階層:
+ * 1. PublicProviders（Theme, Tooltip のみ）
+ * 2. LegalLayoutContent（ナビゲーション、フッター）
+ *
+ * @see src/components/providers/PublicProviders.tsx - 軽量Providers定義
+ */
 'use client'
 
 import Link from 'next/link'
@@ -5,17 +22,27 @@ import type { ReactNode } from 'react'
 
 import { useTranslations } from 'next-intl'
 
+import { PublicProviders } from '@/components/providers/PublicProviders'
+
 interface LegalLayoutProps {
   children: ReactNode
 }
 
+export default function LegalLayout({ children }: LegalLayoutProps) {
+  return (
+    <PublicProviders>
+      <LegalLayoutContent>{children}</LegalLayoutContent>
+    </PublicProviders>
+  )
+}
+
 /**
- * 法的文書ページ共通レイアウト
+ * 法的文書ページ共通コンテンツ
  * - Privacy Policy、Terms of Service、OSS Creditsで共有
  * - ナビゲーションリンク、最終更新日時を表示
  * - i18n対応（日本語/英語）
  */
-export default function LegalLayout({ children }: LegalLayoutProps) {
+function LegalLayoutContent({ children }: LegalLayoutProps) {
   const t = useTranslations()
 
   return (
@@ -33,6 +60,9 @@ export default function LegalLayout({ children }: LegalLayoutProps) {
               </Link>
               <Link href="/legal/terms" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.terms')}
+              </Link>
+              <Link href="/legal/tokushoho" className="text-muted-foreground text-sm transition-colors hover:underline">
+                {t('legal.navigation.tokushoho')}
               </Link>
               <Link href="/legal/security" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.security')}
@@ -68,6 +98,9 @@ export default function LegalLayout({ children }: LegalLayoutProps) {
               </Link>
               <Link href="/legal/terms" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.terms')}
+              </Link>
+              <Link href="/legal/tokushoho" className="text-muted-foreground text-sm transition-colors hover:underline">
+                {t('legal.navigation.tokushoho')}
               </Link>
               <Link href="/legal/security" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.security')}

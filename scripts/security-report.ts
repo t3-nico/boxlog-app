@@ -465,7 +465,7 @@ function generateFooter(): string {
 
 ## 🔗 関連ドキュメント
 
-- [Issue #487: OWASP準拠のセキュリティ強化](https://github.com/your-org/boxlog-app/issues/487)
+- [Issue #487: OWASP準拠のセキュリティ強化](https://github.com/t3-nico/boxlog-app/issues/487)
 - [docs/security/CSRF_PROTECTION.md](../docs/security/CSRF_PROTECTION.md)
 - [src/lib/auth/session-config.ts](../src/lib/auth/session-config.ts)
 
