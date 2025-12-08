@@ -11,8 +11,9 @@ import type { DueDateFilter } from '../stores/useInboxFilterStore'
 /**
  * APIから返されるプランデータの型
  * plan_tagsはJOINで取得される中間テーブル形式
+ * @internal テスト用にエクスポート
  */
-type PlanWithPlanTags = Plan & {
+export type PlanWithPlanTags = Plan & {
   plan_tags?: Array<{
     tag_id: string
     tags: {
@@ -58,8 +59,9 @@ export interface InboxFilters {
 
 /**
  * 期限フィルターの判定
+ * @internal テスト用にエクスポート
  */
-function matchesDueDateFilter(dueDate: string | null | undefined, filter: DueDateFilter): boolean {
+export function matchesDueDateFilter(dueDate: string | null | undefined, filter: DueDateFilter): boolean {
   if (filter === 'all') return true
 
   const today = new Date()
@@ -110,8 +112,9 @@ function matchesDueDateFilter(dueDate: string | null | undefined, filter: DueDat
 
 /**
  * PlanをInboxItemに変換
+ * @internal テスト用にエクスポート
  */
-function planToInboxItem(plan: PlanWithPlanTags): InboxItem {
+export function planToInboxItem(plan: PlanWithPlanTags): InboxItem {
   // plan_tags から tags を抽出
   const tags =
     plan.plan_tags
