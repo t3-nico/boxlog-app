@@ -1,17 +1,15 @@
 'use client'
 
 import { PageHeader } from '@/components/common/PageHeader'
-
-interface StatsPageHeaderProps {
-  title: string
-  subtitle?: string
-}
+import { useTranslations } from 'next-intl'
 
 /**
- * 統計ページメインコンテンツヘッダー
+ * 統計ページヘッダー
  *
- * @deprecated PageHeader を直接使用することを推奨
+ * レイアウトの一番上に配置し、タイトルとモバイルメニューを表示
  */
-export function StatsPageHeader({ title, subtitle }: StatsPageHeaderProps) {
-  return <PageHeader title={title} {...(subtitle !== undefined && { subtitle })} />
+export function StatsPageHeader() {
+  const t = useTranslations()
+
+  return <PageHeader title={t('stats.sidebar.overview')} />
 }

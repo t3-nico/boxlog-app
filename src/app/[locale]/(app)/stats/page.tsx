@@ -3,7 +3,6 @@
 import dynamic from 'next/dynamic'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import { useTranslations } from 'next-intl'
 
 // LCP改善: Rechartsは重いため遅延ロード（約250KB削減）
 const YearlyHeatmap = dynamic(() => import('@/features/stats/components/charts').then((mod) => mod.YearlyHeatmap), {
@@ -59,16 +58,8 @@ const MonthlyTrendChart = dynamic(
  * 年次グリッド、サマリー、ストリーク、タグ別時間などを表示
  */
 export default function StatsPage() {
-  const t = useTranslations()
-
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      {/* ページタイトル */}
-      <div>
-        <h1 className="text-2xl font-bold">{t('stats.sidebar.overview')}</h1>
-        <p className="text-muted-foreground text-sm">{t('stats.overview.subtitle')}</p>
-      </div>
-
       {/* サマリーカード（完了タスク、今月の作業時間、累計時間） */}
       <StatsSummary />
 
