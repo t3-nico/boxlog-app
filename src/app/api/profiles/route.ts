@@ -1,4 +1,3 @@
-// @ts-nocheck - TODO: Supabase型定義の修正が必要 (#734)
 /**
  * プロフィール管理API エンドポイント (Route Handler)
  * @description Supabase を使用したユーザープロフィール管理

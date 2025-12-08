@@ -1,4 +1,3 @@
-// @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 /**
  * タグ個別操作API エンドポイント
  * @description 特定タグのGET/PATCH/DELETE操作
