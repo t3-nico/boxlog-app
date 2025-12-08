@@ -10,7 +10,7 @@ import {
   useRenameTag,
   useUpdateTag,
 } from '@/features/tags/hooks/use-tags'
-import type { CreateTagInput, Tag, TagWithChildren, UpdateTagInput } from '@/types/tags'
+import type { CreateTagInput, Tag, TagWithChildren, UpdateTagInput } from '@/features/tags/types'
 import { useCallback, useState } from 'react'
 
 export function useTagOperations(tags: TagWithChildren[]) {

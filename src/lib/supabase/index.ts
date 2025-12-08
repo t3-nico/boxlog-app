@@ -25,4 +25,4 @@ export { useAuth, useProfile } from './hooks'
 export * from './utils'
 
 // 型定義
-export type { Database, Json } from '@/types/supabase'
+export type { Database, Json } from '@/lib/database.types'

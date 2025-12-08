@@ -10,7 +10,7 @@ import type {
   TagGroupsResponse,
   TagGroupWithTags,
   UpdateTagGroupInput,
-} from '@/types/tags'
+} from '@/features/tags/types'
 
 // API関数群
 const tagGroupAPI = {

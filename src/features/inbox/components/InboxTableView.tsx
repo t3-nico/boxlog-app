@@ -3,7 +3,7 @@
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { useEffect, useRef } from 'react'
 
-import { TablePagination } from '@/components/common/table/TablePagination'
+import { TablePagination } from '@/features/table'
 import type { InboxItem } from '../hooks/useInboxData'
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'

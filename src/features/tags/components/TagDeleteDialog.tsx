@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import type { TagUsage, TagWithChildren } from '@/types/tags'
+import type { TagUsage, TagWithChildren } from '@/features/tags/types'
 import { AlertTriangle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 

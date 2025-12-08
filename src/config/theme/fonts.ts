@@ -3,7 +3,7 @@
  * 国際化対応のフォント管理
  */
 
-import type { Locale } from '@/types/i18n'
+import type { Locale } from '@/lib/i18n'
 
 type FontType = 'sans' | 'mono'
 

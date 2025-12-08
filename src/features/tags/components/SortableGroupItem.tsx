@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
 import { GroupNameWithTooltip } from '@/features/tags/components/GroupNameWithTooltip'
-import type { TagGroup } from '@/types/tags'
+import type { TagGroup } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 
 interface SortableGroupItemProps {

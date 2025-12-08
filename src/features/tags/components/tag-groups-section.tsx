@@ -25,7 +25,7 @@ import {
   useUpdateTagGroup,
 } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import type { TagGroup } from '@/types/tags'
+import type { TagGroup } from '@/features/tags/types'
 import { toast } from 'sonner'
 
 interface TagGroupsSectionProps {

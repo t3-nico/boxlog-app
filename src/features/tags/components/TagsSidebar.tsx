@@ -18,7 +18,7 @@ import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delet
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useCreateTagGroup, useDeleteTagGroup, useUpdateTagGroup } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import type { TagGroup } from '@/types/tags'
+import type { TagGroup } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 

@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/ui/badge'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import { Tag as TagType } from '@/types/unified'
+import type { Tag as TagType } from '@/features/tags/types'
 import { Plus, Tag, X } from 'lucide-react'
 
 import { PlanTagSelectDialogEnhanced } from './PlanTagSelectDialogEnhanced'

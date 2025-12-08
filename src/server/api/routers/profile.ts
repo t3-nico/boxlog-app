@@ -1,4 +1,3 @@
-// @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 /**
  * tRPC Router: Profile
  * ユーザープロフィール管理API
@@ -7,9 +6,9 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
+import type { Database } from '@/lib/database.types'
 import { createClient } from '@/lib/supabase/server'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
-import type { Database } from '@/types/supabase'
 
 export const profileRouter = createTRPCRouter({
   /**

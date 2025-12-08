@@ -37,7 +37,8 @@ export interface Searchable {
 export interface OfflineActionData<T = unknown> {
   id: string
   type: 'create' | 'update' | 'delete'
-  entity: 'task' | 'record' | 'block' | 'tag'
+  /** 同期対象エンティティ（PWA対応時に拡張予定） */
+  entity: 'plans' | 'tags' | 'tag_groups'
   data: T
   originalData?: T
   timestamp: Date

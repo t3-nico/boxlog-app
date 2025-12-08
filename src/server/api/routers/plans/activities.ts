@@ -1,63 +1,62 @@
 /**
- * Plans Router - Activities Procedures (アクティビティ履歴)
+ * Activities Subrouter
+ * Plan activity history management
  */
 
 import { TRPCError } from '@trpc/server'
 
 import type { PlanActivity } from '@/features/plans/types/activity'
 import { createPlanActivitySchema, getPlanActivitiesSchema } from '@/schemas/plans/activity'
-import { protectedProcedure } from '@/server/api/trpc'
+import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 
-/**
- * アクティビティ一覧取得
- */
-export const activitiesProcedure = protectedProcedure.input(getPlanActivitiesSchema).query(async ({ ctx, input }) => {
-  const { supabase, userId } = ctx
-  const { plan_id, limit, offset, order } = input
+export const activitiesRouter = createTRPCRouter({
+  /**
+   * Get activity list
+   */
+  list: protectedProcedure.input(getPlanActivitiesSchema).query(async ({ ctx, input }) => {
+    const { supabase, userId } = ctx
+    const { plan_id, limit, offset, order } = input
 
-  // プランの所有権確認
-  const { data: plan, error: planError } = await supabase
-    .from('plans')
-    .select('id')
-    .eq('id', plan_id)
-    .eq('user_id', userId)
-    .single()
+    // Verify plan ownership
+    const { data: plan, error: planError } = await supabase
+      .from('plans')
+      .select('id')
+      .eq('id', plan_id)
+      .eq('user_id', userId)
+      .single()
 
-  if (planError || !plan) {
-    throw new TRPCError({
-      code: 'NOT_FOUND',
-      message: 'Plan not found or access denied',
-    })
-  }
+    if (planError || !plan) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Plan not found or access denied',
+      })
+    }
 
-  // アクティビティ取得（order: desc=最新順, asc=古い順）
-  const { data: activities, error } = await supabase
-    .from('plan_activities')
-    .select('*')
-    .eq('plan_id', plan_id)
-    .order('created_at', { ascending: order === 'asc' })
-    .range(offset, offset + limit - 1)
+    // Get activities (order: desc=newest first, asc=oldest first)
+    const { data: activities, error } = await supabase
+      .from('plan_activities')
+      .select('*')
+      .eq('plan_id', plan_id)
+      .order('created_at', { ascending: order === 'asc' })
+      .range(offset, offset + limit - 1)
 
-  if (error) {
-    throw new TRPCError({
-      code: 'INTERNAL_SERVER_ERROR',
-      message: `Failed to fetch activities: ${error.message}`,
-    })
-  }
+    if (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to fetch activities: ${error.message}`,
+      })
+    }
 
-  // Supabaseの型を厳密なPlanActivity型にキャスト
-  return (activities ?? []) as PlanActivity[]
-})
+    return (activities ?? []) as PlanActivity[]
+  }),
 
-/**
- * アクティビティ作成
- */
-export const createActivityProcedure = protectedProcedure
-  .input(createPlanActivitySchema)
-  .mutation(async ({ ctx, input }) => {
+  /**
+   * Create activity
+   */
+  create: protectedProcedure.input(createPlanActivitySchema).mutation(async ({ ctx, input }) => {
     const { supabase, userId } = ctx
 
-    // プランの所有権確認
+    // Verify plan ownership
     const { data: plan, error: planError } = await supabase
       .from('plans')
       .select('id')
@@ -72,7 +71,7 @@ export const createActivityProcedure = protectedProcedure
       })
     }
 
-    // アクティビティ作成（undefinedを除外）
+    // Create activity (remove undefined)
     const activityData: Record<string, unknown> = {
       plan_id: input.plan_id,
       user_id: userId,
@@ -96,6 +95,6 @@ export const createActivityProcedure = protectedProcedure
       })
     }
 
-    // Supabaseの型を厳密なPlanActivity型にキャスト
     return activity as PlanActivity
-  })
+  }),
+})

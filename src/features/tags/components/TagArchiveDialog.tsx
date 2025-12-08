@@ -11,7 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import type { TagUsage, TagWithChildren } from '@/types/tags'
+import type { TagUsage, TagWithChildren } from '@/features/tags/types'
 import { AlertTriangle } from 'lucide-react'
 
 interface TagArchiveDialogProps {

@@ -1,9 +1,10 @@
 /**
- * Plans Router - Utility Functions
+ * Plans Router Utilities
+ * Helper functions for plan operations
  */
 
 /**
- * undefined を除外したオブジェクトを返す（exactOptionalPropertyTypes対応）
+ * Remove undefined fields from an object (for exactOptionalPropertyTypes)
  */
 export function removeUndefinedFields<T extends Record<string, unknown>>(obj: T): Partial<T> {
   const result: Partial<T> = {}
@@ -16,19 +17,19 @@ export function removeUndefinedFields<T extends Record<string, unknown>>(obj: T)
 }
 
 /**
- * プランの日付整合性を保証する
+ * Normalize date-time consistency for plans
  *
- * ルール:
- * 1. start_time と end_time の日付部分は必ず同じ
- * 2. due_date は start_time の日付と同じ
- * 3. end_time が start_time より前の場合、start_time と同じ日の同じ時刻に修正
+ * Rules:
+ * 1. start_time and end_time must have the same date portion
+ * 2. due_date must match start_time's date
+ * 3. If end_time is before start_time, adjust to same date/time as start_time
  */
 export function normalizeDateTimeConsistency(data: {
   due_date?: string | null
   start_time?: string | null
   end_time?: string | null
 }): void {
-  // start_time と end_time が両方存在する場合のみ処理
+  // Only process if both start_time and end_time exist
   if (!data.start_time || !data.end_time) {
     return
   }
@@ -36,7 +37,7 @@ export function normalizeDateTimeConsistency(data: {
   const startDate = new Date(data.start_time)
   const endDate = new Date(data.end_time)
 
-  // 日付部分を取得（ローカルタイムゾーン基準）
+  // Get date parts (local timezone)
   const startYear = startDate.getFullYear()
   const startMonth = startDate.getMonth()
   const startDay = startDate.getDate()
@@ -45,15 +46,15 @@ export function normalizeDateTimeConsistency(data: {
   const endMonth = endDate.getMonth()
   const endDay = endDate.getDate()
 
-  // 期待されるdue_date
+  // Expected due_date
   const expectedDueDate = `${startYear}-${String(startMonth + 1).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`
 
-  // 整合性チェック: 既に一致している場合はスキップ
+  // Consistency check: skip if already consistent
   const datesMatch = startYear === endYear && startMonth === endMonth && startDay === endDay
   const dueDateMatches = data.due_date === expectedDueDate
   const endAfterStart = endDate.getTime() >= startDate.getTime()
 
-  console.debug('[normalizeDateTimeConsistency] チェック:', {
+  console.debug('[normalizeDateTimeConsistency] Check:', {
     startDate: startDate.toISOString(),
     endDate: endDate.toISOString(),
     startLocalDate: `${startYear}-${String(startMonth + 1).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`,
@@ -66,16 +67,16 @@ export function normalizeDateTimeConsistency(data: {
   })
 
   if (datesMatch && dueDateMatches && endAfterStart) {
-    console.debug('[normalizeDateTimeConsistency] 既に整合性が取れているため、スキップ')
+    console.debug('[normalizeDateTimeConsistency] Already consistent, skipping')
     return
   }
 
-  console.debug('[normalizeDateTimeConsistency] 整合性の問題を検出 - 正規化を実行')
+  console.debug('[normalizeDateTimeConsistency] Inconsistency detected - normalizing')
 
-  // 1. due_date を start_time の日付に合わせる
+  // 1. Align due_date with start_time's date
   data.due_date = expectedDueDate
 
-  // 2. end_time の日付を start_time と同じにする（時刻は維持）
+  // 2. Align end_time's date with start_time (preserve time)
   if (!datesMatch) {
     const newEndDate = new Date(endDate)
     newEndDate.setFullYear(startYear)
@@ -84,14 +85,14 @@ export function normalizeDateTimeConsistency(data: {
     data.end_time = newEndDate.toISOString()
   }
 
-  // 3. end_time が start_time より前の場合、start_time と同じ時刻にする
+  // 3. If end_time is before start_time, set to same time as start_time
   const finalEndDate = new Date(data.end_time)
   if (finalEndDate.getTime() < startDate.getTime()) {
     const fixedEndDate = new Date(startDate)
     data.end_time = fixedEndDate.toISOString()
   }
 
-  console.debug('[normalizeDateTimeConsistency] 正規化完了:', {
+  console.debug('[normalizeDateTimeConsistency] Normalized:', {
     due_date: data.due_date,
     start_time: data.start_time,
     end_time: data.end_time,

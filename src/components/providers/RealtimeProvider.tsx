@@ -11,7 +11,12 @@
  * 2. ユーザーIDが存在する場合のみ購読を有効化
  * 3. 各機能のRealtime購読フックを呼び出し
  *
+ * 注意:
+ * このProviderは認証必須ページ専用。
+ * 公開ページでは使用しないこと（PublicProvidersを使用）。
+ *
  * @see /CLAUDE.md - プロバイダー階層の詳細
+ * @see src/components/providers/PublicProviders.tsx - 公開ページ用
  */
 
 'use client'
@@ -38,12 +43,18 @@ interface RealtimeProviderProps {
  */
 export function RealtimeProvider({ children }: RealtimeProviderProps) {
   const userId = useAuthStore((state) => state.user?.id)
+  const loading = useAuthStore((state) => state.loading)
   const [isReady, setIsReady] = useState(false)
 
-  console.debug('[RealtimeProvider] userId:', userId, 'isReady:', isReady)
+  console.debug('[RealtimeProvider] userId:', userId, 'isReady:', isReady, 'loading:', loading)
 
   // AuthStoreの初期化を待つ
   useEffect(() => {
+    // loadingがfalseになるまで待つ（AuthStoreの初期化完了を待つ）
+    if (loading) {
+      return
+    }
+
     // 少し遅延させてAuthStoreの初期化を確実に待つ
     const timer = setTimeout(() => {
       setIsReady(true)
@@ -51,13 +62,18 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
     }, 100)
 
     return () => clearTimeout(timer)
-  }, [userId])
+  }, [userId, loading])
+
+  // 購読を有効化する条件
+  // - 初期化が完了している
+  // - ユーザーIDが存在する
+  const shouldSubscribe = isReady && !!userId
 
   // 各機能のRealtime購読
-  useCalendarRealtime(userId, { enabled: isReady && !!userId })
-  usePlanRealtime(userId, { enabled: isReady && !!userId })
-  useTagRealtime(userId, { enabled: isReady && !!userId })
-  useNotificationRealtime(userId, isReady && !!userId)
+  useCalendarRealtime(userId, { enabled: shouldSubscribe })
+  usePlanRealtime(userId, { enabled: shouldSubscribe })
+  useTagRealtime(userId, { enabled: shouldSubscribe })
+  useNotificationRealtime(userId, shouldSubscribe)
 
   return <>{children}</>
 }

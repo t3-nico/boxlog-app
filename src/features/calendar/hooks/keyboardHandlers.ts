@@ -1,4 +1,4 @@
-import type { TranslatedString } from '@/types/i18n-branded'
+import type { TranslatedString } from '@/lib/i18n'
 import { NavigationState } from './useAccessibilityKeyboard'
 
 export interface KeyboardHandlerProps {
