@@ -14,6 +14,7 @@ import {
 } from '@dnd-kit/core'
 import { arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Folder } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import { toast } from 'sonner'
 
@@ -57,6 +58,7 @@ interface TagsPageProviderProps {
 }
 
 export function TagsPageProvider({ children }: TagsPageProviderProps) {
+  const t = useTranslations()
   const [tags, setTags] = useState<TagWithChildren[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isCreatingGroup, setIsCreatingGroup] = useState(false)
@@ -142,11 +144,11 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
                 data: { group_id: groupId },
               })
               const targetGroup = groupId ? localGroups.find((g) => g.id === groupId) : null
-              const groupName = targetGroup?.name ?? '未分類'
-              toast.success(`「${tag.name}」を${groupName}に移動しました`)
+              const groupName = targetGroup?.name ?? t('tag.sidebar.uncategorized')
+              toast.success(t('tag.page.tagMoved', { name: tag.name, group: groupName }))
             } catch (error) {
               console.error('Failed to move tag:', error)
-              toast.error('タグの移動に失敗しました')
+              toast.error(t('tag.page.tagMoveFailed'))
             }
           }
         }
@@ -178,7 +180,7 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
         })
       }
     },
-    [draggingTag, activeGroup, tags, localGroups, groups, updateTagMutation, reorderMutation]
+    [draggingTag, activeGroup, tags, localGroups, groups, updateTagMutation, reorderMutation, t]
   )
 
   // ドラッグキャンセル

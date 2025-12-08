@@ -57,12 +57,12 @@ export function NavUser({
     try {
       const supabase = createClient()
       await supabase.auth.signOut()
-      toast.success('ログアウトしました')
+      toast.success(t('navUser.logoutSuccess'))
       router.push('/auth/login')
       router.refresh()
     } catch (error) {
       console.error('Logout error:', error)
-      toast.error('ログアウトに失敗しました')
+      toast.error(t('navUser.logoutFailed'))
     } finally {
       setIsLoggingOut(false)
     }

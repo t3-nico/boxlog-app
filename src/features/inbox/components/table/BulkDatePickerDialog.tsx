@@ -14,6 +14,7 @@ import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Calendar as CalendarIcon, Loader2, X } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -47,6 +48,7 @@ interface BulkDatePickerDialogProps {
  * ```
  */
 export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSuccess }: BulkDatePickerDialogProps) {
+  const t = useTranslations()
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { bulkUpdatePlan } = usePlanMutations()
@@ -54,7 +56,7 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
   // 送信ハンドラー（期限設定）
   const handleSubmit = async () => {
     if (!selectedDate) {
-      toast.error('日付を選択してください')
+      toast.error(t('common.inbox.selectDate'))
       return
     }
 
@@ -67,10 +69,10 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
         },
       })
 
-      toast.success(`${selectedIds.length}件のプランの期限を設定しました`)
+      toast.success(t('common.inbox.dueDateSetCount', { count: selectedIds.length }))
       onSuccess?.()
     } catch (error) {
-      toast.error('期限の設定に失敗しました')
+      toast.error(t('common.inbox.dueDateSetFailed'))
       console.error('Bulk date update error:', error)
     } finally {
       setIsSubmitting(false)
@@ -88,10 +90,10 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
         },
       })
 
-      toast.success(`${selectedIds.length}件のプランの期限をクリアしました`)
+      toast.success(t('common.inbox.dueDateClearedCount', { count: selectedIds.length }))
       onSuccess?.()
     } catch (error) {
-      toast.error('期限のクリアに失敗しました')
+      toast.error(t('common.inbox.dueDateClearFailed'))
       console.error('Bulk date clear error:', error)
     } finally {
       setIsSubmitting(false)
@@ -108,8 +110,10 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>期限一括設定</DialogTitle>
-          <DialogDescription>{selectedIds.length}件のプランに期限を設定します</DialogDescription>
+          <DialogTitle>{t('common.inbox.bulkDueDate')}</DialogTitle>
+          <DialogDescription>
+            {t('common.inbox.bulkDueDateDescription', { count: selectedIds.length })}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -135,17 +139,13 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
 
           {/* 説明テキスト */}
           <div className="text-muted-foreground text-sm">
-            {selectedDate ? (
-              <p>選択した日付をプランの期限として設定します</p>
-            ) : (
-              <p>カレンダーから日付を選択してください</p>
-            )}
+            {selectedDate ? <p>{t('common.inbox.dateSelected')}</p> : <p>{t('common.inbox.selectDateHint')}</p>}
           </div>
         </div>
 
         <DialogFooter className="flex flex-col gap-2 sm:flex-row">
           <Button variant="outline" onClick={handleClose} disabled={isSubmitting} className="w-full sm:w-auto">
-            キャンセル
+            {t('common.inbox.cancel')}
           </Button>
           <Button
             variant="destructive"
@@ -156,12 +156,12 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />
-                処理中...
+                {t('common.inbox.processing')}
               </>
             ) : (
               <>
                 <X className="mr-2 size-4" />
-                期限をクリア
+                {t('common.inbox.clearDueDate')}
               </>
             )}
           </Button>
@@ -173,12 +173,12 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />
-                処理中...
+                {t('common.inbox.processing')}
               </>
             ) : (
               <>
                 <CalendarIcon className="mr-2 size-4" />
-                期限を設定
+                {t('common.inbox.setDueDate')}
               </>
             )}
           </Button>

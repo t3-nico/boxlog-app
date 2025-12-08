@@ -16,6 +16,7 @@
       "profilePicture": "Profile Picture",
       "profilePictureDesc": "JPG, PNG, GIF max 2MB",
       "profilePictureAlt": "Profile Picture",
+      "avatarDeleteConfirm": "Delete profile picture?",
       "usingCustomImage": "Using custom image",
       "usingEmojiIcon": "Using emoji icon",
       "uploading": "Uploading...",

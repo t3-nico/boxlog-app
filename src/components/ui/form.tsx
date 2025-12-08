@@ -13,6 +13,8 @@ import {
   type FieldValues,
 } from 'react-hook-form'
 
+import { useTranslations } from 'next-intl'
+
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
@@ -122,7 +124,23 @@ function FormDescription({ className, ...props }: React.ComponentProps<'p'>) {
 
 function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   const { error, formMessageId } = useFormField()
-  const body = error ? String(error?.message ?? '') : props.children
+  const t = useTranslations()
+
+  // エラーメッセージを取得
+  const rawMessage = error ? String(error?.message ?? '') : props.children
+
+  // 翻訳キー（"validation."で始まる）の場合は翻訳する
+  const body = React.useMemo(() => {
+    if (typeof rawMessage === 'string' && rawMessage.startsWith('validation.')) {
+      try {
+        return t(rawMessage)
+      } catch {
+        // 翻訳キーが見つからない場合はそのまま返す
+        return rawMessage
+      }
+    }
+    return rawMessage
+  }, [rawMessage, t])
 
   if (!body) {
     return null

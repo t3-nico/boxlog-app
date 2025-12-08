@@ -1,5 +1,6 @@
 import { api } from '@/lib/trpc'
 import type { UpdatePlanInput } from '@/schemas/plans/plan'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { usePlanCacheStore } from '../stores/usePlanCacheStore'
 import { usePlanInspectorStore } from '../stores/usePlanInspectorStore'
@@ -28,6 +29,7 @@ import { usePlanInspectorStore } from '../stores/usePlanInspectorStore'
  * ```
  */
 export function usePlanMutations() {
+  const t = useTranslations()
   const utils = api.useUtils()
   const { closeInspector, openInspector } = usePlanInspectorStore()
   const { updateCache, setIsMutating } = usePlanCacheStore()
@@ -36,9 +38,9 @@ export function usePlanMutations() {
   const createPlan = api.plans.create.useMutation({
     onSuccess: (newPlan) => {
       // 1. Toast通知
-      toast.success(`Plan "${newPlan.title}" を作成しました`, {
+      toast.success(t('common.plan.created', { title: newPlan.title }), {
         action: {
-          label: '開く',
+          label: t('common.plan.open'),
           onClick: () => {
             openInspector(newPlan.id)
           },
@@ -50,7 +52,7 @@ export function usePlanMutations() {
       void utils.plans.getById.invalidate({ id: newPlan.id }, { refetchType: 'active' })
     },
     onError: (error) => {
-      toast.error(`作成に失敗しました: ${error.message}`)
+      toast.error(t('common.plan.createFailed', { error: error.message }))
     },
   })
 
@@ -140,12 +142,12 @@ export function usePlanMutations() {
           done: 'Done',
         }
         const statusLabel = statusMap[variables.data.status] || variables.data.status
-        toast.success(`ステータスを${statusLabel}に変更しました`)
+        toast.success(t('common.plan.statusChanged', { status: statusLabel }))
       }
       // その他の自動保存（title、description、日時など）はtoast非表示
     },
     onError: (_err, _variables, context) => {
-      toast.error('更新に失敗しました')
+      toast.error(t('common.plan.updateFailed'))
 
       // エラー時: 楽観的更新をロールバック
       if (context?.previousPlans) {
@@ -165,37 +167,37 @@ export function usePlanMutations() {
   // ✨ 削除
   const deletePlan = api.plans.delete.useMutation({
     onSuccess: (_, { id }) => {
-      toast.success('削除しました')
+      toast.success(t('common.plan.deleted'))
 
       closeInspector() // Inspectorが開いていたら閉じる
       void utils.plans.list.invalidate(undefined, { refetchType: 'active' })
       void utils.plans.getById.invalidate({ id }, { refetchType: 'active' })
     },
     onError: (error) => {
-      toast.error(`削除に失敗しました: ${error.message}`)
+      toast.error(t('common.plan.deleteFailed', { error: error.message }))
     },
   })
 
   // ✨ 一括更新
   const bulkUpdatePlan = api.plans.bulkUpdate.useMutation({
     onSuccess: (result) => {
-      toast.success(`${result.count}件のプランを更新しました`)
+      toast.success(t('common.plan.bulkUpdated', { count: result.count }))
       void utils.plans.list.invalidate(undefined, { refetchType: 'active' })
     },
     onError: (error) => {
-      toast.error(`一括更新に失敗しました: ${error.message}`)
+      toast.error(t('common.plan.bulkUpdateFailed', { error: error.message }))
     },
   })
 
   // ✨ 一括削除
   const bulkDeletePlan = api.plans.bulkDelete.useMutation({
     onSuccess: (result) => {
-      toast.success(`${result.count}件のプランを削除しました`)
+      toast.success(t('common.plan.bulkDeleted', { count: result.count }))
       closeInspector()
       void utils.plans.list.invalidate(undefined, { refetchType: 'active' })
     },
     onError: (error) => {
-      toast.error(`一括削除に失敗しました: ${error.message}`)
+      toast.error(t('common.plan.bulkDeleteFailed', { error: error.message }))
     },
   })
 

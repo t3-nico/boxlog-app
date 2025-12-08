@@ -53,6 +53,8 @@
       "contact": "お問い合わせ"
     },
     "logout": "ログアウト",
-    "loggingOut": "ログアウト中..."
+    "loggingOut": "ログアウト中...",
+    "logoutSuccess": "ログアウトしました",
+    "logoutFailed": "ログアウトに失敗しました"
   }
 }
