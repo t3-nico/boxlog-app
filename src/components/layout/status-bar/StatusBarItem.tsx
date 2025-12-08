@@ -16,6 +16,8 @@ interface StatusBarItemProps {
   className?: string
   /** 無効状態 */
   disabled?: boolean
+  /** 強制的にクリック可能なスタイルを適用（Popoverのトリガーなど外部でクリックを処理する場合） */
+  forceClickable?: boolean
 }
 
 /**
@@ -36,7 +38,15 @@ interface StatusBarItemProps {
  * />
  * ```
  */
-export function StatusBarItem({ icon, label, onClick, tooltip, className, disabled = false }: StatusBarItemProps) {
+export function StatusBarItem({
+  icon,
+  label,
+  onClick,
+  tooltip,
+  className,
+  disabled = false,
+  forceClickable = false,
+}: StatusBarItemProps) {
   const handleClick = useCallback(() => {
     if (!disabled && onClick) {
       onClick()
@@ -53,7 +63,7 @@ export function StatusBarItem({ icon, label, onClick, tooltip, className, disabl
     [disabled, onClick]
   )
 
-  const isClickable = !!onClick && !disabled
+  const isClickable = (!!onClick || forceClickable) && !disabled
 
   return (
     <div
