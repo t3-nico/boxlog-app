@@ -35,19 +35,16 @@
  */
 
 // Store factories
-export {
-  createInspectorStore,
-  createExtendedInspectorStore,
-} from './stores'
+export { createExtendedInspectorStore, createInspectorStore } from './stores'
 
 // Types
 export type {
-  CreateInspectorStoreConfig,
   CreateExtendedInspectorStoreConfig,
-  InspectorState,
-  InspectorActions,
-  InspectorStore,
-  ExtendedInspectorState,
+  CreateInspectorStoreConfig,
   ExtendedInspectorActions,
+  ExtendedInspectorState,
   ExtendedInspectorStore,
+  InspectorActions,
+  InspectorState,
+  InspectorStore,
 } from './stores'

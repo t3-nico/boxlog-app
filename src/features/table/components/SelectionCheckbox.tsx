@@ -26,18 +26,10 @@ export interface SelectionHeaderProps {
  * />
  * ```
  */
-export function SelectionHeader({
-  allSelected,
-  someSelected,
-  onToggleAll,
-  width = 50,
-}: SelectionHeaderProps) {
+export function SelectionHeader({ allSelected, someSelected, onToggleAll, width = 50 }: SelectionHeaderProps) {
   return (
     <TableHead style={{ width: `${width}px`, minWidth: `${width}px` }}>
-      <Checkbox
-        checked={allSelected ? true : someSelected ? 'indeterminate' : false}
-        onCheckedChange={onToggleAll}
-      />
+      <Checkbox checked={allSelected ? true : someSelected ? 'indeterminate' : false} onCheckedChange={onToggleAll} />
     </TableHead>
   )
 }
@@ -64,11 +56,6 @@ export interface SelectionCellProps {
  */
 export function SelectionCell({ selected, onToggle, disabled = false }: SelectionCellProps) {
   return (
-    <Checkbox
-      checked={selected}
-      onCheckedChange={onToggle}
-      disabled={disabled}
-      onClick={(e) => e.stopPropagation()}
-    />
+    <Checkbox checked={selected} onCheckedChange={onToggle} disabled={disabled} onClick={(e) => e.stopPropagation()} />
   )
 }

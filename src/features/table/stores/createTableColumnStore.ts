@@ -67,16 +67,8 @@ export interface CreateTableColumnStoreConfig<TColumnId extends string> {
  * })
  * ```
  */
-export function createTableColumnStore<TColumnId extends string>(
-  config: CreateTableColumnStoreConfig<TColumnId>
-) {
-  const {
-    defaultColumns,
-    persistKey,
-    storeName = persistKey,
-    alwaysVisibleColumns = [],
-    minWidth = 50,
-  } = config
+export function createTableColumnStore<TColumnId extends string>(config: CreateTableColumnStoreConfig<TColumnId>) {
+  const { defaultColumns, persistKey, storeName = persistKey, alwaysVisibleColumns = [], minWidth = 50 } = config
 
   return create<TableColumnState<TColumnId>>()(
     devtools(
@@ -87,9 +79,7 @@ export function createTableColumnStore<TColumnId extends string>(
           setColumnWidth: (id, width) => {
             const newWidth = Math.max(minWidth, width)
             set({
-              columns: get().columns.map((col) =>
-                col.id === id ? { ...col, width: newWidth } : col
-              ),
+              columns: get().columns.map((col) => (col.id === id ? { ...col, width: newWidth } : col)),
             })
           },
 
@@ -97,9 +87,7 @@ export function createTableColumnStore<TColumnId extends string>(
             // 常に表示する列は切り替え不可
             if (alwaysVisibleColumns.includes(id)) return
             set({
-              columns: get().columns.map((col) =>
-                col.id === id ? { ...col, visible: !col.visible } : col
-              ),
+              columns: get().columns.map((col) => (col.id === id ? { ...col, visible: !col.visible } : col)),
             })
           },
 
@@ -107,9 +95,7 @@ export function createTableColumnStore<TColumnId extends string>(
             // 常に表示する列は切り替え不可
             if (alwaysVisibleColumns.includes(id)) return
             set({
-              columns: get().columns.map((col) =>
-                col.id === id ? { ...col, visible } : col
-              ),
+              columns: get().columns.map((col) => (col.id === id ? { ...col, visible } : col)),
             })
           },
 

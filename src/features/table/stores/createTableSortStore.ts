@@ -68,9 +68,7 @@ export interface CreateTableSortStoreConfig<TSortField extends string> {
  * })
  * ```
  */
-export function createTableSortStore<TSortField extends string>(
-  config: CreateTableSortStoreConfig<TSortField>
-) {
+export function createTableSortStore<TSortField extends string>(config: CreateTableSortStoreConfig<TSortField>) {
   const {
     defaultSortField,
     defaultSortDirection,
@@ -111,15 +109,8 @@ export function createTableSortStore<TSortField extends string>(
   })
 
   if (persistKey) {
-    return create<StoreState>()(
-      devtools(
-        persist(storeCreator, { name: persistKey }),
-        { name: storeName }
-      )
-    )
+    return create<StoreState>()(devtools(persist(storeCreator, { name: persistKey }), { name: storeName }))
   }
 
-  return create<StoreState>()(
-    devtools(storeCreator, { name: storeName })
-  )
+  return create<StoreState>()(devtools(storeCreator, { name: storeName }))
 }

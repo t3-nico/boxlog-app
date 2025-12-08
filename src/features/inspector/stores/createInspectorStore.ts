@@ -52,9 +52,7 @@ export interface CreateInspectorStoreConfig {
  * openInspector('tag-123')
  * ```
  */
-export function createInspectorStore<TId extends string = string>(
-  config: CreateInspectorStoreConfig = {}
-) {
+export function createInspectorStore<TId extends string = string>(config: CreateInspectorStoreConfig = {}) {
   const { storeName = 'inspector-store' } = config
 
   return create<InspectorStore<TId>>()(
@@ -63,19 +61,9 @@ export function createInspectorStore<TId extends string = string>(
         isOpen: false,
         entityId: null,
 
-        openInspector: (entityId) =>
-          set(
-            { isOpen: true, entityId },
-            false,
-            'openInspector'
-          ),
+        openInspector: (entityId) => set({ isOpen: true, entityId }, false, 'openInspector'),
 
-        closeInspector: () =>
-          set(
-            { isOpen: false, entityId: null },
-            false,
-            'closeInspector'
-          ),
+        closeInspector: () => set({ isOpen: false, entityId: null }, false, 'closeInspector'),
       }),
       { name: storeName }
     )
@@ -104,8 +92,11 @@ export interface ExtendedInspectorActions<TId extends string = string, TInitialD
 /**
  * 拡張 Inspector Store 型
  */
-export type ExtendedInspectorStore<TId extends string = string, TInitialData = unknown> =
-  ExtendedInspectorState<TId, TInitialData> & ExtendedInspectorActions<TId, TInitialData>
+export type ExtendedInspectorStore<TId extends string = string, TInitialData = unknown> = ExtendedInspectorState<
+  TId,
+  TInitialData
+> &
+  ExtendedInspectorActions<TId, TInitialData>
 
 /**
  * createExtendedInspectorStore の設定

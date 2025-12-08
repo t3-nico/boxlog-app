@@ -42,15 +42,9 @@ export function TableEmptyState({
         <div className="flex flex-col items-center justify-center gap-2">
           <Inbox className="text-muted-foreground size-8" />
           <p className="text-muted-foreground text-sm">{message}</p>
-          {subMessage && (
-            <p className="text-muted-foreground text-xs">{subMessage}</p>
-          )}
+          {subMessage && <p className="text-muted-foreground text-xs">{subMessage}</p>}
           {isFiltered && onResetFilter && (
-            <button
-              type="button"
-              onClick={onResetFilter}
-              className="text-primary text-sm hover:underline"
-            >
+            <button type="button" onClick={onResetFilter} className="text-primary text-sm hover:underline">
               フィルターをリセット
             </button>
           )}

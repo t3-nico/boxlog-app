@@ -1,12 +1,12 @@
 export {
-  createInspectorStore,
   createExtendedInspectorStore,
-  type CreateInspectorStoreConfig,
+  createInspectorStore,
   type CreateExtendedInspectorStoreConfig,
-  type InspectorState,
-  type InspectorActions,
-  type InspectorStore,
-  type ExtendedInspectorState,
+  type CreateInspectorStoreConfig,
   type ExtendedInspectorActions,
+  type ExtendedInspectorState,
   type ExtendedInspectorStore,
+  type InspectorActions,
+  type InspectorState,
+  type InspectorStore,
 } from './createInspectorStore'

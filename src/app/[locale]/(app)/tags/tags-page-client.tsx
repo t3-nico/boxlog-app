@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { DataTable, type ColumnDef, type SortState } from '@/features/table'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -16,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { DataTable, type ColumnDef, type SortState } from '@/features/table'
 import {
   TagCellContent,
   TagRowWrapper,

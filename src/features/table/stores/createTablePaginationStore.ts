@@ -42,11 +42,7 @@ export interface CreateTablePaginationStoreConfig {
  * ```
  */
 export function createTablePaginationStore(config: CreateTablePaginationStoreConfig = {}) {
-  const {
-    defaultPageSize = 25,
-    persistKey,
-    storeName = persistKey ?? 'table-pagination-store',
-  } = config
+  const { defaultPageSize = 25, persistKey, storeName = persistKey ?? 'table-pagination-store' } = config
 
   const storeCreator: StateCreator<TablePaginationState> = (set) => ({
     currentPage: 1,
@@ -58,15 +54,8 @@ export function createTablePaginationStore(config: CreateTablePaginationStoreCon
   })
 
   if (persistKey) {
-    return create<TablePaginationState>()(
-      devtools(
-        persist(storeCreator, { name: persistKey }),
-        { name: storeName }
-      )
-    )
+    return create<TablePaginationState>()(devtools(persist(storeCreator, { name: persistKey }), { name: storeName }))
   }
 
-  return create<TablePaginationState>()(
-    devtools(storeCreator, { name: storeName })
-  )
+  return create<TablePaginationState>()(devtools(storeCreator, { name: storeName }))
 }

@@ -50,15 +50,15 @@
 export {
   // DataTable - 汎用テーブル
   DataTable,
-  type ColumnDef,
-  type DataTableProps,
-  type GroupedData as DataTableGroupedData,
-  type PaginationState,
-  type SortState,
-  // TablePagination - ページネーション（i18n対応）
-  TablePagination,
   // ResizableTableHead - リサイズ・ソート対応ヘッダー
   ResizableTableHead,
+  // TablePagination - ページネーション（i18n対応）
+  TablePagination,
+  type ColumnDef,
+  type GroupedData as DataTableGroupedData,
+  type DataTableProps,
+  type PaginationState,
+  type SortState,
 } from '@/components/common/table'
 
 // ============================================
@@ -74,12 +74,7 @@ export {
   TableEmptyState,
 } from './components'
 
-export type {
-  SelectionCellProps,
-  SelectionHeaderProps,
-  SortableHeaderProps,
-  TableEmptyStateProps,
-} from './components'
+export type { SelectionCellProps, SelectionHeaderProps, SortableHeaderProps, TableEmptyStateProps } from './components'
 
 // ============================================
 // Store Factories
@@ -113,12 +108,6 @@ export type {
 // Concrete Stores (後方互換性のため維持)
 // ============================================
 export {
-  useTableColumnStore,
-  useTableFocusStore,
-  useTableGroupStore,
-  useTablePaginationStore,
-  useTableSelectionStore,
-  useTableSortStore,
   // エイリアス
   useInboxColumnStore,
   useInboxFocusStore,
@@ -126,6 +115,12 @@ export {
   useInboxPaginationStore,
   useInboxSelectionStore,
   useInboxSortStore,
+  useTableColumnStore,
+  useTableFocusStore,
+  useTableGroupStore,
+  useTablePaginationStore,
+  useTableSelectionStore,
+  useTableSortStore,
 } from './stores'
 
 // ============================================

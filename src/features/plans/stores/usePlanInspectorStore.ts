@@ -38,10 +38,7 @@ interface PlanInspectorState {
  */
 interface PlanInspectorActions {
   /** Inspector を開く */
-  openInspector: (
-    planId: string | null,
-    options?: { initialData?: PlanInitialData; instanceDate?: string }
-  ) => void
+  openInspector: (planId: string | null, options?: { initialData?: PlanInitialData; instanceDate?: string }) => void
   /** Inspector を閉じる */
   closeInspector: () => void
 }
@@ -72,11 +69,7 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
         ),
 
       closeInspector: () =>
-        set(
-          { isOpen: false, planId: null, instanceDate: null, initialData: undefined },
-          false,
-          'closeInspector'
-        ),
+        set({ isOpen: false, planId: null, instanceDate: null, initialData: undefined }, false, 'closeInspector'),
     }),
     { name: 'plan-inspector-store' }
   )
