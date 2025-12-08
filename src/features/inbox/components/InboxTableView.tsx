@@ -16,6 +16,7 @@ import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'
 import { useInboxSortStore } from '../stores/useInboxSortStore'
 import { useInboxViewStore } from '../stores/useInboxViewStore'
 import { BulkDatePickerDialog } from './table/BulkDatePickerDialog'
+import { BulkTagSelectDialog } from './table/BulkTagSelectDialog'
 import { GroupBySelector } from './table/GroupBySelector'
 import { InboxSelectionActions } from './table/InboxSelectionActions'
 import { InboxSelectionBar } from './table/InboxSelectionBar'
@@ -74,6 +75,8 @@ export function InboxTableView() {
 
   // 期限一括変更ダイアログの状態
   const [showDateDialog, setShowDateDialog] = useState(false)
+  // タグ一括追加ダイアログの状態
+  const [showTagDialog, setShowTagDialog] = useState(false)
 
   // データ取得
   const { items, isLoading, error } = useInboxData({
@@ -142,10 +145,9 @@ export function InboxTableView() {
     }
   }
 
-  // アクションハンドラー: タグ一括追加
+  // アクションハンドラー: タグ一括追加（ダイアログを開く）
   const handleAddTags = () => {
-    // TODO: タグ一括追加機能実装（タグ選択ダイアログが必要）
-    console.log('Add tags to:', Array.from(selectedIds))
+    setShowTagDialog(true)
   }
 
   // アクションハンドラー: 期限一括変更（ダイアログを開く）
@@ -274,6 +276,17 @@ export function InboxTableView() {
         onSuccess={() => {
           clearSelection()
           setShowDateDialog(false)
+        }}
+      />
+
+      {/* タグ一括追加ダイアログ */}
+      <BulkTagSelectDialog
+        open={showTagDialog}
+        onOpenChange={setShowTagDialog}
+        selectedPlanIds={Array.from(selectedIds)}
+        onSuccess={() => {
+          clearSelection()
+          setShowTagDialog(false)
         }}
       />
     </div>

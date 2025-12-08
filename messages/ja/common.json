@@ -30,6 +30,8 @@
       "bulkUpdateFailed": "一括更新に失敗しました: {{error}}",
       "bulkDeleted": "{{count}}件のプランを削除しました",
       "bulkDeleteFailed": "一括削除に失敗しました: {{error}}",
+      "tagsAdded": "タグを追加しました",
+      "tagsAddFailed": "タグの追加に失敗しました: {{error}}",
       "statusChanged": "ステータスを{{status}}に変更しました",
       "open": "開く"
     },
@@ -66,7 +68,13 @@
       "cancel": "キャンセル",
       "processing": "処理中...",
       "clearDueDate": "期限をクリア",
-      "setDueDate": "期限を設定"
+      "setDueDate": "期限を設定",
+      "bulkAddTags": "タグ一括追加",
+      "bulkAddTagsDescription": "{{count}}件のプランにタグを追加します",
+      "searchTags": "タグを検索...",
+      "noTagsFound": "タグが見つかりません",
+      "noTags": "タグがありません",
+      "addTags": "タグを追加"
     }
   },
   "actions": {
