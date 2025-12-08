@@ -30,7 +30,7 @@ interface PlanInspectorState {
   /** 繰り返しプランの特定インスタンス日付（YYYY-MM-DD形式） */
   instanceDate: string | null
   /** 新規作成時の初期データ */
-  initialData?: PlanInitialData
+  initialData?: PlanInitialData | undefined
 }
 
 /**

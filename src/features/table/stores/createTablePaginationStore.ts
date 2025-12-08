@@ -1,3 +1,4 @@
+import type { StateCreator } from 'zustand'
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
@@ -47,7 +48,7 @@ export function createTablePaginationStore(config: CreateTablePaginationStoreCon
     storeName = persistKey ?? 'table-pagination-store',
   } = config
 
-  const storeCreator = (set: (partial: Partial<TablePaginationState>) => void) => ({
+  const storeCreator: StateCreator<TablePaginationState> = (set) => ({
     currentPage: 1,
     pageSize: defaultPageSize,
 

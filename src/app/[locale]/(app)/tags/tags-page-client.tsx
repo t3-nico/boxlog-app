@@ -274,8 +274,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   // ハンドラー: 一括削除
   const handleBulkDelete = useCallback(async () => {
     const ids = selectedTagIds
-    if (ids.length === 0) return
-    if (!confirm(t('tags.page.bulkDeleteConfirm', { count: ids.length }))) return
+    if (ids.size === 0) return
+    if (!confirm(t('tags.page.bulkDeleteConfirm', { count: ids.size }))) return
 
     for (const tagId of ids) {
       const tag = sortedTags.find((item) => item.id === tagId)
@@ -289,8 +289,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   // ハンドラー: 一括マージダイアログを開く
   const handleOpenBulkMerge = useCallback(() => {
     const ids = selectedTagIds
-    if (ids.length < 2) return
-    const selectedTags = tags.filter((t) => ids.includes(t.id))
+    if (ids.size < 2) return
+    const selectedTags = tags.filter((t) => ids.has(t.id))
     setBulkMergeTags(selectedTags)
   }, [selectedTagIds, tags])
 
@@ -526,7 +526,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           onClearSelection={clearSelection}
           actions={
             <TagSelectionActions
-              selectedTagIds={selectedTagIds}
+              selectedTagIds={Array.from(selectedTagIds)}
               tags={tags}
               groups={groups}
               onMoveToGroup={handleMoveToGroup}

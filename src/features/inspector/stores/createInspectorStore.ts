@@ -88,7 +88,7 @@ export function createInspectorStore<TId extends string = string>(
 export interface ExtendedInspectorState<TId extends string = string, TInitialData = unknown>
   extends InspectorState<TId> {
   /** 新規作成時の初期データ */
-  initialData?: TInitialData
+  initialData?: TInitialData | undefined
 }
 
 /**
@@ -147,26 +147,30 @@ export function createExtendedInspectorStore<TId extends string = string, TIniti
       (set) => ({
         isOpen: false,
         entityId: null,
-        initialData: undefined,
+        initialData: undefined as TInitialData | undefined,
 
-        openInspector: (entityId, options) =>
-          set(
-            {
-              isOpen: true,
-              entityId,
-              // 新規作成時のみ initialData を設定
-              initialData: entityId === null ? options?.initialData : undefined,
-            },
-            false,
-            'openInspector'
-          ),
+        openInspector: (entityId, options) => {
+          const newState: Partial<ExtendedInspectorStore<TId, TInitialData>> = {
+            isOpen: true,
+            entityId,
+          }
+          // 新規作成時のみ initialData を設定
+          if (entityId === null && options?.initialData !== undefined) {
+            newState.initialData = options.initialData
+          } else {
+            newState.initialData = undefined as TInitialData | undefined
+          }
+          set(newState, false, 'openInspector')
+        },
 
-        closeInspector: () =>
-          set(
-            { isOpen: false, entityId: null, initialData: undefined },
-            false,
-            'closeInspector'
-          ),
+        closeInspector: () => {
+          const newState: Partial<ExtendedInspectorStore<TId, TInitialData>> = {
+            isOpen: false,
+            entityId: null,
+            initialData: undefined as TInitialData | undefined,
+          }
+          set(newState, false, 'closeInspector')
+        },
       }),
       { name: storeName }
     )

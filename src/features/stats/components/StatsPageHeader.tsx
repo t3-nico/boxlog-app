@@ -13,5 +13,5 @@ interface StatsPageHeaderProps {
  * @deprecated PageHeader を直接使用することを推奨
  */
 export function StatsPageHeader({ title, subtitle }: StatsPageHeaderProps) {
-  return <PageHeader title={title} subtitle={subtitle} />
+  return <PageHeader title={title} {...(subtitle !== undefined && { subtitle })} />
 }

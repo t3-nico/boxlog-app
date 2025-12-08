@@ -69,14 +69,6 @@ export interface CreateTableSortStoreConfig<TSortField extends string> {
  * ```
  */
 export function createTableSortStore<TSortField extends string>(
-  config: CreateTableSortStoreConfig<TSortField> & { allowClearSort: true }
-): ReturnType<typeof create<TableSortStateNullable<TSortField>>>
-
-export function createTableSortStore<TSortField extends string>(
-  config: CreateTableSortStoreConfig<TSortField> & { allowClearSort?: false }
-): ReturnType<typeof create<TableSortState<TSortField>>>
-
-export function createTableSortStore<TSortField extends string>(
   config: CreateTableSortStoreConfig<TSortField>
 ) {
   const {
@@ -87,49 +79,39 @@ export function createTableSortStore<TSortField extends string>(
     allowClearSort = false,
   } = config
 
-  const storeCreator = (set: (partial: Partial<TableSortStateNullable<TSortField>>) => void, get: () => TableSortStateNullable<TSortField>) => {
-    const baseState = {
-      sortField: defaultSortField as TSortField | null,
-      sortDirection: defaultSortDirection as SortDirectionNullable,
+  type StoreState = TableSortState<TSortField>
 
-      setSortField: (field: TSortField) => {
-        const { sortField, sortDirection } = get()
+  const storeCreator = (set: (partial: Partial<StoreState>) => void, get: () => StoreState): StoreState => ({
+    sortField: defaultSortField,
+    sortDirection: defaultSortDirection,
 
-        if (sortField === field) {
-          if (allowClearSort) {
-            // asc → desc → null
-            set({
-              sortDirection: sortDirection === 'asc' ? 'desc' : sortDirection === 'desc' ? null : 'asc',
-              sortField: sortDirection === 'desc' ? null : field,
-            })
-          } else {
-            // asc ↔ desc
-            set({
-              sortDirection: sortDirection === 'asc' ? 'desc' : 'asc',
-            })
-          }
+    setSortField: (field: TSortField) => {
+      const { sortField, sortDirection } = get()
+
+      if (sortField === field) {
+        if (allowClearSort) {
+          // asc → desc → asc（解除はUI層で実装）
+          set({
+            sortDirection: sortDirection === 'asc' ? 'desc' : 'asc',
+          })
         } else {
-          set({ sortField: field, sortDirection: 'asc' })
+          // asc ↔ desc
+          set({
+            sortDirection: sortDirection === 'asc' ? 'desc' : 'asc',
+          })
         }
-      },
-
-      setSort: (field: TSortField, direction: SortDirection) => {
-        set({ sortField: field, sortDirection: direction })
-      },
-    }
-
-    if (allowClearSort) {
-      return {
-        ...baseState,
-        clearSort: () => set({ sortField: null, sortDirection: null }),
+      } else {
+        set({ sortField: field, sortDirection: 'asc' })
       }
-    }
+    },
 
-    return baseState
-  }
+    setSort: (field: TSortField, direction: SortDirection) => {
+      set({ sortField: field, sortDirection: direction })
+    },
+  })
 
   if (persistKey) {
-    return create<TableSortStateNullable<TSortField>>()(
+    return create<StoreState>()(
       devtools(
         persist(storeCreator, { name: persistKey }),
         { name: storeName }
@@ -137,7 +119,7 @@ export function createTableSortStore<TSortField extends string>(
     )
   }
 
-  return create<TableSortStateNullable<TSortField>>()(
+  return create<StoreState>()(
     devtools(storeCreator, { name: storeName })
   )
 }

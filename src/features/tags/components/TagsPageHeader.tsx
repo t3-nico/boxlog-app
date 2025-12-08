@@ -16,5 +16,5 @@ interface TagsPageHeaderProps {
  * @deprecated PageHeader を直接使用することを推奨
  */
 export function TagsPageHeader({ title, count, actions }: TagsPageHeaderProps) {
-  return <PageHeader title={title} count={count} actions={actions} />
+  return <PageHeader title={title} {...(count !== undefined && { count })} actions={actions} />
 }
