@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -53,9 +54,17 @@ interface ProvidersProps {
  * 7. GlobalSearchProvider（機能層）
  * 8. ReactQueryDevtools（開発ツール - 本番環境では自動除外）
  *
+ * 認証ページ（/auth/）では軽量モードで動作し、
+ * tRPC、Realtime購読、GlobalSearch等の重い機能をスキップする。
+ *
  * @see https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#moving-client-components-down-the-tree
  */
 export function Providers({ children }: ProvidersProps) {
+  const pathname = usePathname()
+
+  // 認証ページかどうかを判定
+  const isAuthPage = pathname?.includes('/auth/')
+
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -104,6 +113,18 @@ export function Providers({ children }: ProvidersProps) {
     })
   )
 
+  // 認証ページでは軽量モード：ThemeとTooltipのみ
+  if (isAuthPage) {
+    return (
+      <ThemeProvider>
+        <TooltipProvider delayDuration={300} skipDelayDuration={100}>
+          {children}
+        </TooltipProvider>
+      </ThemeProvider>
+    )
+  }
+
+  // 通常ページではフルProvidersツリー
   return (
     <QueryClientProvider client={queryClient}>
       <api.Provider client={trpcClient} queryClient={queryClient}>

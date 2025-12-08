@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { Eye, EyeOff, ShieldAlert } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -13,14 +13,19 @@ import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from 
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { checkLockoutStatus } from '@/features/auth/lib/account-lockout'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { useRecaptchaV3 } from '@/lib/recaptcha'
 import { createClient } from '@/lib/supabase/client'
-import { trpc } from '@/lib/trpc/client'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
+/**
+ * LoginForm - 堅牢なログインフォームコンポーネント
+ *
+ * 設計原則:
+ * 1. 最小依存: メール・パスワードでのログインは外部サービス（tRPC, reCAPTCHA）なしで動作
+ * 2. グレースフルデグラデーション: DB/APIエラー時もフォーム表示・送信は可能
+ * 3. オプショナル強化: ロックアウト・reCAPTCHA等は追加機能として後から有効化可能
+ */
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const params = useParams()
   const router = useRouter()
@@ -28,127 +33,48 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const t = useTranslations()
   const signIn = useAuthStore((state) => state.signIn)
 
-  // reCAPTCHA v3
-  const { generateToken, isReady: isRecaptchaReady } = useRecaptchaV3('login')
-  const verifyRecaptcha = trpc.auth.verifyRecaptcha.useMutation()
-
-  // IP単位レート制限
-  const recordLoginAttemptApi = trpc.auth.recordLoginAttempt.useMutation()
-  const { data: ipRateLimitData } = trpc.auth.checkIpRateLimit.useQuery({})
-
-  // 監査ログ
-  const recordAuditLogApi = trpc.auth.recordAuditLog.useMutation()
-
+  // 基本フォーム状態
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [isLocked, setIsLocked] = useState(false)
-  const [lockoutMinutes, setLockoutMinutes] = useState(0)
-  const [failedAttempts, setFailedAttempts] = useState(0)
-
-  // IPブロック状態を監視
-  const ipBlocked = ipRateLimitData?.isBlocked ?? false
-  const ipBlockedMinutes = ipRateLimitData?.remainingMinutes ?? 0
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
 
-    const supabase = createClient()
-
     try {
-      // ステップ0a: IP単位レート制限チェック
-      if (ipBlocked) {
-        setError(t('auth.errors.ipBlocked', { minutes: ipBlockedMinutes.toString() }))
-        setIsLoading(false)
-        return
-      }
+      // ステップ1: ログイン試行（最小依存で実行）
+      const { error: signInError, data } = await signIn(email, password)
 
-      // ステップ0b: reCAPTCHA v3 検証（設定されている場合のみ）
-      if (isRecaptchaReady) {
-        const token = await generateToken()
-        if (token) {
-          const recaptchaResult = await verifyRecaptcha.mutateAsync({
-            token,
-            action: 'login',
-          })
+      if (signInError) {
+        // ログイン失敗時のエラー表示
+        setError(signInError.message)
+      } else if (data) {
+        // ログイン成功
 
-          if (recaptchaResult.isBot) {
-            setError(t('auth.errors.botDetected'))
-            setIsLoading(false)
+        // MFAチェック（オプショナル - エラー時はスキップ）
+        try {
+          const supabase = createClient()
+          await new Promise((resolve) => setTimeout(resolve, 100))
+          const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+
+          if (aalData?.currentLevel === 'aal1' && aalData?.nextLevel === 'aal2') {
+            router.push(`/${locale}/auth/mfa-verify`)
             return
           }
+        } catch (mfaError) {
+          // MFAチェック失敗時は通常遷移
+          console.warn('[LoginForm] MFA check failed, proceeding without MFA:', mfaError)
         }
-      }
 
-      // ステップ1: ロックアウトステータスをチェック
-      const lockoutStatus = await checkLockoutStatus(supabase, email)
-
-      if (lockoutStatus.isLocked) {
-        setIsLocked(true)
-        setLockoutMinutes(lockoutStatus.remainingMinutes)
-        setFailedAttempts(lockoutStatus.failedAttempts)
-        setError(
-          t('auth.errors.accountLocked', {
-            minutes: lockoutStatus.remainingMinutes.toString(),
-          })
-        )
-        setIsLoading(false)
-        return
-      }
-
-      // ステップ2: ログイン試行
-      const { error, data } = await signIn(email, password)
-
-      if (error) {
-        // ログイン失敗を記録（サーバー側でIPを取得）
-        recordLoginAttemptApi.mutate({ email, isSuccessful: false })
-
-        // 新しいロックアウトステータスを取得
-        const newStatus = await checkLockoutStatus(supabase, email)
-        setFailedAttempts(newStatus.failedAttempts)
-
-        if (newStatus.isLocked) {
-          setIsLocked(true)
-          setLockoutMinutes(newStatus.remainingMinutes)
-          setError(
-            t('auth.errors.accountLocked', {
-              minutes: newStatus.remainingMinutes.toString(),
-            })
-          )
-        } else {
-          setError(error.message)
-        }
-      } else if (data) {
-        // ログイン成功を記録（サーバー側でIPを取得）
-        recordLoginAttemptApi.mutate({ email, isSuccessful: true })
-
-        // 監査ログに成功ログインを記録
-        recordAuditLogApi.mutate({ eventType: 'login_success' })
-
-        // MFAが有効かチェック（AALレベルで判断）
-        await new Promise((resolve) => setTimeout(resolve, 100))
-
-        const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
-        console.log('Login - AAL check:', aalData)
-
-        if (aalData?.currentLevel === 'aal1' && aalData?.nextLevel === 'aal2') {
-          console.log('MFA required, redirecting to mfa-verify')
-          router.push(`/${locale}/auth/mfa-verify`)
-        } else {
-          console.log('No MFA required, redirecting to calendar')
-          router.push(`/${locale}/calendar`)
-        }
+        router.push(`/${locale}/calendar`)
       }
     } catch (err) {
-      console.error('Login error:', err)
-      setError('An unexpected error occurred')
-
-      // エラーでも失敗として記録（サーバー側でIPを取得）
-      recordLoginAttemptApi.mutate({ email, isSuccessful: false })
+      console.error('[LoginForm] Unexpected error:', err)
+      setError(t('auth.errors.unexpectedError') || 'An unexpected error occurred')
     } finally {
       setIsLoading(false)
     }
@@ -165,30 +91,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 <p className="text-muted-foreground text-balance">{t('auth.loginForm.loginToAccount')}</p>
               </div>
 
-              {(isLocked || ipBlocked) && (
-                <div className="bg-destructive/10 border-destructive/50 text-destructive flex items-start gap-3 rounded-md border p-4">
-                  <ShieldAlert className="mt-0.5 h-5 w-5 flex-shrink-0" />
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium">
-                      {ipBlocked ? t('auth.errors.ipBlockedTitle') : t('auth.errors.accountLockedTitle')}
-                    </p>
-                    <p className="text-sm">
-                      {ipBlocked
-                        ? t('auth.errors.ipBlocked', { minutes: ipBlockedMinutes.toString() })
-                        : t('auth.errors.accountLocked', { minutes: lockoutMinutes.toString() })}
-                    </p>
-                    {!ipBlocked && failedAttempts > 0 && (
-                      <p className="text-xs opacity-80">
-                        {t('auth.errors.failedAttempts', {
-                          count: failedAttempts.toString(),
-                        })}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {error && !isLocked && !ipBlocked && (
+              {error && (
                 <div className="text-destructive text-center text-sm" role="alert">
                   {error}
                 </div>
@@ -246,7 +149,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               </Field>
 
               <Field>
-                <Button type="submit" disabled={isLoading || isLocked || ipBlocked} className="w-full">
+                <Button type="submit" disabled={isLoading} className="w-full">
                   {isLoading && <Spinner className="mr-2" />}
                   {t('auth.loginForm.loginButton')}
                 </Button>
