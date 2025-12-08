@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import type { TagLevel } from '@/types/tags'
-import type { Task } from '@/types/unified'
+import type { TagLevel } from '@/features/tags/types'
+import type { Task } from '@/types'
 
 import { useTagStore } from './useTagStore'
 

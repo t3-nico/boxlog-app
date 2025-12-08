@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
-import { Tag } from '@/types/unified'
+import type { Tag } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 
 import { QuickTagCreateModal } from './quick-tag-create-modal'

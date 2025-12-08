@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
 import { getCacheStrategy } from '@/lib/tanstack-query/cache-config'
-import type { TagUsageStats, TagWithChildren } from '@/types/tags'
+import type { TagUsageStats, TagWithChildren } from '@/features/tags/types'
 
 interface TagWithUsage extends TagWithChildren {
   usage_count: number

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
-import type { ChronotypeType, ProductivityZone } from '@/types/chronotype'
+import type { ChronotypeType, ProductivityZone } from '@/features/settings/types/chronotype'
 
 import { listenToTimezoneChange } from '../utils/timezone'
 

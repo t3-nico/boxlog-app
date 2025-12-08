@@ -12,7 +12,7 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react'
 
-import type { TagWithChildren } from '@/types/tags'
+import type { TagWithChildren } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 
 interface TagTreeViewProps {

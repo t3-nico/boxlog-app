@@ -1,5 +1,4 @@
-import { ConflictData } from '@/types/common'
-import type { ConflictResolution, OfflineAction, OfflineManagerStatus, SyncResult } from '../types'
+import type { ConflictData, ConflictResolution, OfflineAction, OfflineManagerStatus, SyncResult } from '../types'
 
 // Generate a unique ID
 const generateId = (): string => {

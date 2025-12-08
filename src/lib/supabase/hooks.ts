@@ -12,7 +12,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import type { AuthError, Session, User } from '@supabase/supabase-js'
 
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/lib/database.types'
 
 import { createClient } from './client'
 

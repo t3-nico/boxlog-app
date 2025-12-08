@@ -12,7 +12,7 @@ import { z } from 'zod'
 import { createAppError, ERROR_CODES } from '@/config/error-patterns'
 import { trackError } from '@/lib/analytics/vercel-analytics'
 
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/lib/database.types'
 
 /**
  * リクエストコンテキストの型定義

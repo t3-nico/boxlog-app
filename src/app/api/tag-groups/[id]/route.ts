@@ -10,7 +10,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError } from '@/lib/supabase/utils'
-import type { UpdateTagGroupInput } from '@/types/tags'
+import type { UpdateTagGroupInput } from '@/features/tags/types'
 
 /**
  * 個別タググループ取得 (GET)

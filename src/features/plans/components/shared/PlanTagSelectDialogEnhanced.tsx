@@ -15,7 +15,7 @@ import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
 import { api } from '@/lib/trpc'
-import type { Tag as TagType } from '@/types/unified'
+import type { Tag as TagType } from '@/features/tags/types'
 
 interface PlanTagSelectDialogEnhancedProps {
   children: React.ReactNode

@@ -1,4 +1,4 @@
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/lib/database.types'
 import { expect, test } from '@playwright/test'
 import { createClient } from '@supabase/supabase-js'
 

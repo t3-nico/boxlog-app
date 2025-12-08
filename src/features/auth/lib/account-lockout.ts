@@ -14,7 +14,7 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/lib/database.types'
 
 type BrowserSupabaseClient = ReturnType<typeof createClient>
 

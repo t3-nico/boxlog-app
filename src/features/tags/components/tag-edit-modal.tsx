@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
-import type { TagGroup, TagWithChildren, UpdateTagInput } from '@/types/tags'
+import type { TagGroup, TagWithChildren, UpdateTagInput } from '@/features/tags/types'
 
 interface TagEditModalProps {
   isOpen: boolean

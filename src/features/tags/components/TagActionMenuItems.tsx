@@ -3,7 +3,7 @@
 import { Archive, Eye, Folder, FolderX, GitMerge, Pencil, Trash2 } from 'lucide-react'
 
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import type { TagGroup, TagWithChildren } from '@/types/tags'
+import type { TagGroup, TagWithChildren } from '@/features/tags/types'
 
 interface TagActionMenuItemsProps {
   tag: TagWithChildren

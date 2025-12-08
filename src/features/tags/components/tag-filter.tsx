@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react'
 import { ChevronDown as ChevronDownIcon, Filter as FunnelIcon, Tag as TagIcon, X as XMarkIcon } from 'lucide-react'
 
 import { useTags } from '@/features/tags/hooks/use-tags'
-import type { TagWithChildren } from '@/types/tags'
+import type { TagWithChildren } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 
 interface TagFilterProps {

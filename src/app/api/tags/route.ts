@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError } from '@/lib/supabase/utils'
-import type { CreateTagInput, Tag, TagWithChildren } from '@/types/tags'
+import type { CreateTagInput, Tag, TagWithChildren } from '@/features/tags/types'
 
 /**
  * タグ一覧取得 (GET)

@@ -1,6 +1,29 @@
 // Offline Feature Types
 
-import { ConflictData, OfflineActionData } from '@/types/common'
+/**
+ * オフラインアクションの基本データ
+ */
+export interface OfflineActionData<T = unknown> {
+  id: string
+  type: 'create' | 'update' | 'delete'
+  entity: 'task' | 'record' | 'block' | 'tag'
+  data: T
+  originalData?: T
+  timestamp: Date
+  userId?: string
+}
+
+/**
+ * 同期コンフリクトのデータ
+ */
+export interface ConflictData<T = unknown> {
+  localData: T
+  serverData: T
+  localTimestamp: Date
+  serverTimestamp: Date
+  field: string
+  conflictType: 'value_mismatch' | 'delete_conflict' | 'parent_conflict'
+}
 
 export interface OfflineAction<T = unknown> extends OfflineActionData<T> {
   syncStatus: 'pending' | 'syncing' | 'completed' | 'conflict'

@@ -1,6 +1,6 @@
 // Search Feature Types
 
-import type { Tag } from '@/types/common'
+import type { Tag } from '@/features/tags/types'
 
 import type { PlanStatus, PlanWithTags } from '@/features/plans/types'
 

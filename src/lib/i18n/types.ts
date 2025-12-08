@@ -1,11 +1,21 @@
 /**
- * i18n文字列のブランド型定義
+ * 国際化（i18n）関連の型定義
  *
- * TypeScript公式のBranded Types パターンを使用して、
- * 翻訳済み文字列と生の文字列を型レベルで区別します。
- *
- * 参考: https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates
+ * このファイルはi18nインフラで使用される型を集約しています。
  */
+
+// ============================================
+// ロケール
+// ============================================
+
+/**
+ * 対応言語
+ */
+export type Locale = 'en' | 'ja'
+
+// ============================================
+// ブランド型（翻訳済み文字列）
+// ============================================
 
 /**
  * 翻訳済み文字列を表すブランド型
@@ -16,10 +26,10 @@
  *
  * @example
  * ```tsx
- * // ✅ OK: t()の戻り値
+ * // OK: t()の戻り値
  * const title: TranslatedString = t('page.title')
  *
- * // ❌ エラー: 生の文字列は型エラー
+ * // エラー: 生の文字列は型エラー
  * const title: TranslatedString = 'こんにちは'  // Type 'string' is not assignable
  * ```
  */
@@ -61,7 +71,5 @@ export function joinTranslated(strings: TranslatedString[], separator: string = 
  * 実行時には常にtrueを返しますが、TypeScriptの型推論に使用します。
  */
 export function isTranslated(_str: string): _str is TranslatedString {
-  // ブランド型は実行時には存在しないため、常にtrueを返す
-  // この関数は型推論のためにのみ使用される
   return true
 }

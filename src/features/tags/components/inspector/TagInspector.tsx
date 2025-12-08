@@ -18,7 +18,7 @@ import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import type { Plan } from '@/features/plans/types/plan'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors'
-import type { TagWithChildren } from '@/types/tags'
+import type { TagWithChildren } from '@/features/tags/types'
 import {
   Archive,
   ChevronDown,

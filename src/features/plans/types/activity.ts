@@ -1,5 +1,5 @@
 import type { ActivityActionType } from '@/schemas/plans/activity'
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/lib/database.types'
 
 // アクション種別を再エクスポート
 export type { ActivityActionType }

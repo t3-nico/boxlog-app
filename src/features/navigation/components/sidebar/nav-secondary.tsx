@@ -6,7 +6,7 @@ import * as React from 'react'
 
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { cn } from '@/lib/utils'
-import type { TranslatedString } from '@/types/i18n-branded'
+import type { TranslatedString } from '@/lib/i18n'
 import { useTranslations } from 'next-intl'
 
 export function NavSecondary({

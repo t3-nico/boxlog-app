@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError } from '@/lib/supabase/utils'
-import type { CreateTagGroupInput } from '@/types/tags'
+import type { CreateTagGroupInput } from '@/features/tags/types'
 
 /**
  * タググループ一覧取得 (GET)

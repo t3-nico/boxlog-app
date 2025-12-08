@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
-import type { TranslatedString } from '@/types/i18n-branded'
+import type { TranslatedString } from '@/lib/i18n'
 import { useTranslations } from 'next-intl'
 
 export function NavMain({

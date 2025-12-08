@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/client'
 import { getCacheStrategy } from '@/lib/tanstack-query/cache-config'
 import { api } from '@/lib/trpc'
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/lib/database.types'
 import type { RealtimePostgresInsertPayload } from '@supabase/supabase-js'
 import { useQueryClient } from '@tanstack/react-query'
 import { getQueryKey } from '@trpc/react-query'

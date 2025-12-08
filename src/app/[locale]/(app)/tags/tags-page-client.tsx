@@ -38,7 +38,7 @@ import { useTagPaginationStore } from '@/features/tags/stores/useTagPaginationSt
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore'
 import { useTagSortStore } from '@/features/tags/stores/useTagSortStore'
 import { api } from '@/lib/trpc'
-import type { TagGroup, TagWithChildren } from '@/types/tags'
+import type { TagGroup, TagWithChildren } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
