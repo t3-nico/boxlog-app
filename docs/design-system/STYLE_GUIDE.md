@@ -517,6 +517,75 @@ xl: 1280px  // デスクトップ
 
 ---
 
+## 🧩 共通コンポーネントパターン
+
+shadcn/ui を「デスク」として活用し、薄いラッパーで統一感を出す。
+
+### components/common/ で提供
+
+| コンポーネント | 用途 | インポート |
+|---------------|------|-----------|
+| `PageHeader` | ページヘッダー（48px固定） | `@/components/common` |
+| `SelectionBar` | 選択バー（Google Drive風） | `@/components/common` |
+| `WarningBox` | 警告・注意メッセージ | `@/components/common` |
+| `InfoBox` | 情報・説明ボックス | `@/components/common` |
+| `ActionMenuItems` | コンテキストメニュー項目 | `@/components/common` |
+
+### WarningBox
+
+破壊的操作の警告などに使用。
+
+```tsx
+import { WarningBox } from '@/components/common'
+import { AlertTriangle, Info } from 'lucide-react'
+
+// 基本（AlertTriangle アイコン）
+<WarningBox>この操作は取り消せません</WarningBox>
+
+// カスタムアイコン
+<WarningBox icon={Info}>補足情報</WarningBox>
+```
+
+### InfoBox
+
+使用状況、説明、詳細情報などに使用。
+
+```tsx
+import { InfoBox } from '@/components/common'
+
+<InfoBox>
+  <p className="mb-2 text-sm font-medium">使用状況:</p>
+  <ul className="text-muted-foreground space-y-1 text-sm">
+    <li>• Plans: 10件</li>
+    <li>• Events: 5件</li>
+  </ul>
+</InfoBox>
+```
+
+### AlertDialog パターン
+
+shadcn/ui の AlertDialog を直接使用。共通スタイル：
+
+```tsx
+<AlertDialogContent className="max-w-2xl gap-0 p-6">
+  <AlertDialogHeader className="mb-4">
+    <AlertDialogTitle>タイトル</AlertDialogTitle>
+  </AlertDialogHeader>
+
+  <div className="space-y-3">
+    <WarningBox>警告メッセージ</WarningBox>
+    <InfoBox>詳細情報</InfoBox>
+  </div>
+
+  <AlertDialogFooter className="mt-6">
+    <AlertDialogCancel>キャンセル</AlertDialogCancel>
+    <AlertDialogAction>実行</AlertDialogAction>
+  </AlertDialogFooter>
+</AlertDialogContent>
+```
+
+---
+
 ## 🔗 関連ドキュメント
 
 - **セマンティックトークン定義**: `/src/styles/globals.css`
