@@ -57,7 +57,7 @@ export function CalendarSidebar() {
   const tabs: SidebarTab[] = [
     {
       value: 'inbox',
-      label: 'Inbox',
+      label: t('calendar.sidebar.tabs.inbox'),
       content: (
         <>
           {/* ナビゲーションコンテナ: 高さ48px（内部32px + 上padding 8px + 下padding 8px） */}
@@ -82,7 +82,7 @@ export function CalendarSidebar() {
     },
     {
       value: 'view',
-      label: 'View',
+      label: t('calendar.sidebar.tabs.view'),
       content: (
         <div className="px-4 pt-4">
           <MiniCalendar

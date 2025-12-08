@@ -150,6 +150,12 @@
     },
     "dateRange": {
       "weekLabel": "Week {weekNumber}"
+    },
+    "sidebar": {
+      "tabs": {
+        "inbox": "Inbox",
+        "view": "View"
+      }
     }
   }
 }
