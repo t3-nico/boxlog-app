@@ -10,16 +10,39 @@
       "namePlaceholder": "Enter tag name",
       "rootLevel": "Root Level (No Parent)",
       "tagName": "Tag Name",
+      "tagNameRequired": "Tag Name *",
       "parentTag": "Parent Tag",
       "color": "Color",
-      "description": "Description (Optional)",
-      "descriptionPlaceholder": "Enter tag description or purpose...",
+      "description": "Description",
+      "descriptionOptional": "Description (Optional)",
+      "descriptionPlaceholder": "Tag description (optional)",
       "maxLevelNote": "Maximum 3 levels can be created",
       "customColor": "Custom Color",
       "preview": "Preview",
       "tagNamePlaceholder": "(Tag Name)",
       "parentTagPrefix": "Parent Tag:",
-      "examplePlaceholder": "e.g., Work, Project A"
+      "examplePlaceholder": "e.g., Development",
+      "group": "Group",
+      "selectGroupPlaceholder": "Select group (optional)"
+    },
+    "modal": {
+      "createTitle": "Create New Tag",
+      "createDescription": "Create a new tag",
+      "editTitle": "Edit Tag",
+      "updating": "Updating...",
+      "update": "Update"
+    },
+    "group": {
+      "createTitle": "Create New Group",
+      "createDescription": "Create a new group",
+      "nameRequired": "Group Name *",
+      "namePlaceholder": "e.g., Project"
+    },
+    "selector": {
+      "placeholder": "Select tags...",
+      "searchPlaceholder": "Search tags...",
+      "tagsSelected": "{{count}} tag(s) selected",
+      "tagsCount": "{{current}} / {{max}} tags selected"
     },
     "actions": {
       "addChild": "Add child tag",
@@ -159,6 +182,16 @@
       "tagColor": "Tag color"
     },
     "archive": {
+      "confirmTitle": "Archive tag \"{{name}}\"?",
+      "warning": "Archived tags cannot be used for new tagging",
+      "currentUsage": "Current usage:",
+      "afterArchive": "After archiving:",
+      "noNewTagging": "Cannot be used for new tagging",
+      "existingItemsStillShown": "Will still appear on existing items",
+      "statsStillIncluded": "Will still be included in statistics",
+      "canRestoreAnytime": "Can be restored anytime from archive page",
+      "archiving": "Archiving...",
+      "archiveButton": "Archive",
       "restoreConfirm": "Restore tag \"{{name}}\"?\n\nRestored tags can be used for tagging again.",
       "restoreSuccess": "Tag \"{{name}}\" has been restored",
       "restoreFailed": "Failed to restore tag",
@@ -341,6 +374,16 @@
       "tagColor": "Tag color"
     },
     "archive": {
+      "confirmTitle": "Archive tag \"{{name}}\"?",
+      "warning": "Archived tags cannot be used for new tagging",
+      "currentUsage": "Current usage:",
+      "afterArchive": "After archiving:",
+      "noNewTagging": "Cannot be used for new tagging",
+      "existingItemsStillShown": "Will still appear on existing items",
+      "statsStillIncluded": "Will still be included in statistics",
+      "canRestoreAnytime": "Can be restored anytime from archive page",
+      "archiving": "Archiving...",
+      "archiveButton": "Archive",
       "restoreConfirm": "Restore tag \"{{name}}\"?\n\nRestored tags can be used for tagging again.",
       "restoreSuccess": "Tag \"{{name}}\" has been restored",
       "restoreFailed": "Failed to restore tag",

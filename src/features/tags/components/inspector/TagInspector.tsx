@@ -518,7 +518,7 @@ export function TagInspector() {
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={(e) => autoSave('description', e.currentTarget.textContent || '')}
-                    className="text-muted-foreground min-h-[20px] flex-1 text-sm outline-none empty:before:text-gray-400 empty:before:content-['説明を追加...']"
+                    className="text-muted-foreground min-h-[20px] flex-1 text-sm outline-none empty:before:text-muted-foreground/60 empty:before:content-['説明を追加...']"
                   >
                     {tag.description || ''}
                   </span>

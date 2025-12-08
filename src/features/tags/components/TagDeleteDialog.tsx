@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import {
   AlertDialog,
@@ -13,7 +13,8 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import type { TagUsage, TagWithChildren } from '@/features/tags/types'
+import { useTagUsage } from '@/features/tags/hooks'
+import type { TagWithChildren } from '@/features/tags/types'
 import { AlertTriangle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
@@ -26,39 +27,10 @@ interface TagDeleteDialogProps {
 export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProps) {
   const t = useTranslations()
   const [confirmText, setConfirmText] = useState('')
-  const [usage, setUsage] = useState<TagUsage | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  // タグの使用状況を取得
-  useEffect(() => {
-    if (!tag) {
-      setUsage(null)
-      setConfirmText('')
-      return
-    }
-
-    const fetchUsage = async () => {
-      setIsLoading(true)
-      try {
-        const response = await fetch(`/api/tags/${tag.id}?usage=true`)
-        if (response.ok) {
-          const data = await response.json()
-          setUsage(data.usage || { planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
-        } else {
-          // エラー時はデフォルト値
-          setUsage({ planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
-        }
-      } catch (error) {
-        console.error('Failed to fetch tag usage:', error)
-        setUsage({ planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchUsage()
-  }, [tag])
+  // TanStack Queryでタグ使用状況を取得
+  const { data: usage, isLoading } = useTagUsage(tag?.id)
 
   const handleConfirm = async () => {
     setIsDeleting(true)
@@ -69,11 +41,18 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
     }
   }
 
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setConfirmText('')
+      onClose()
+    }
+  }
+
   const requiresConfirmation = (usage?.totalCount || 0) > 50
   const canDelete = !requiresConfirmation || confirmText === tag?.name
 
   return (
-    <AlertDialog open={!!tag} onOpenChange={(open) => !open && onClose()}>
+    <AlertDialog open={!!tag} onOpenChange={handleOpenChange}>
       <AlertDialogContent className="max-w-3xl gap-0 p-6">
         <AlertDialogHeader className="mb-4">
           <AlertDialogTitle>{t('tag.delete.confirmTitleWithName', { name: tag?.name || '' })}</AlertDialogTitle>

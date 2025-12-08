@@ -17,6 +17,7 @@ export {
   useRenameTag,
   useTag,
   useTags,
+  useTagUsage,
   useUpdateTag,
   useUpdateTagColor,
 } from './use-tags'

@@ -10,16 +10,39 @@
       "namePlaceholder": "タグ名を入力",
       "rootLevel": "ルートレベル（親なし）",
       "tagName": "タグ名",
+      "tagNameRequired": "タグ名 *",
       "parentTag": "親タグ",
       "color": "カラー",
-      "description": "説明（任意）",
-      "descriptionPlaceholder": "このタグの用途や説明を入力...",
-      "maxLevelNote": "最大3階層���で作成できます",
+      "description": "説明",
+      "descriptionOptional": "説明（任意）",
+      "descriptionPlaceholder": "タグの説明（任意）",
+      "maxLevelNote": "最大3階層まで作成できます",
       "customColor": "カスタムカラー",
       "preview": "プレビュー",
       "tagNamePlaceholder": "（タグ名）",
       "parentTagPrefix": "親タグ:",
-      "examplePlaceholder": "例: 仕事、プロジェクトA"
+      "examplePlaceholder": "例: 開発",
+      "group": "グループ",
+      "selectGroupPlaceholder": "グループを選択（任意）"
+    },
+    "modal": {
+      "createTitle": "新規タグ作成",
+      "createDescription": "新しいタグを作成します",
+      "editTitle": "タグを編集",
+      "updating": "更新中...",
+      "update": "更新"
+    },
+    "group": {
+      "createTitle": "新規グループ作成",
+      "createDescription": "新しいグループを作成します",
+      "nameRequired": "グループ名 *",
+      "namePlaceholder": "例: プロジェクト"
+    },
+    "selector": {
+      "placeholder": "タグを選択...",
+      "searchPlaceholder": "タグを検索...",
+      "tagsSelected": "{{count}}件選択中",
+      "tagsCount": "{{current}} / {{max}}件選択"
     },
     "actions": {
       "addChild": "子タグを追加",
@@ -159,6 +182,16 @@
       "tagColor": "タグカラー"
     },
     "archive": {
+      "confirmTitle": "タグ「{{name}}」をアーカイブしますか？",
+      "warning": "アーカイブされたタグは新規のタグ付けには使用できません",
+      "currentUsage": "現在の使用状況:",
+      "afterArchive": "アーカイブすると:",
+      "noNewTagging": "新規のタグ付けには使用できなくなります",
+      "existingItemsStillShown": "既存のアイテムには引き続き表示されます",
+      "statsStillIncluded": "統計データにも引き続き含まれます",
+      "canRestoreAnytime": "アーカイブページからいつでも復元できます",
+      "archiving": "アーカイブ中...",
+      "archiveButton": "アーカイブ",
       "restoreConfirm": "タグ「{{name}}」を復元しますか？\n\n復元されたタグは再び新規のタグ付けに使用できるようになります。",
       "restoreSuccess": "タグ「{{name}}」を復元しました",
       "restoreFailed": "タグの復元に失敗しました",
@@ -341,6 +374,16 @@
       "tagColor": "タグカラー"
     },
     "archive": {
+      "confirmTitle": "タグ「{{name}}」をアーカイブしますか？",
+      "warning": "アーカイブされたタグは新規のタグ付けには使用できません",
+      "currentUsage": "現在の使用状況:",
+      "afterArchive": "アーカイブすると:",
+      "noNewTagging": "新規のタグ付けには使用できなくなります",
+      "existingItemsStillShown": "既存のアイテムには引き続き表示されます",
+      "statsStillIncluded": "統計データにも引き続き含まれます",
+      "canRestoreAnytime": "アーカイブページからいつでも復元できます",
+      "archiving": "アーカイブ中...",
+      "archiveButton": "アーカイブ",
       "restoreConfirm": "タグ「{{name}}」を復元しますか？\n\n復元されたタグは再び新規のタグ付けに使用できるようになります。",
       "restoreSuccess": "タグ「{{name}}」を復元しました",
       "restoreFailed": "タグの復元に失敗しました",

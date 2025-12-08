@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import type { CreateTagInput, TagGroup, TagLevel } from '@/features/tags/types'
+import { useTranslations } from 'next-intl'
 
 interface TagCreateModalProps {
   isOpen: boolean
@@ -26,6 +27,7 @@ interface TagCreateModalProps {
 }
 
 export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps) => {
+  const t = useTranslations()
   const [name, setName] = useState('')
   const [color, setColor] = useState('#3B82F6')
   const [description, setDescription] = useState('')
@@ -53,7 +55,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
       setError('')
 
       if (!name.trim()) {
-        setError('タグ名を入力してください')
+        setError(t('tag.validation.nameEmpty'))
         return
       }
 
@@ -82,48 +84,54 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
           errorMessage.includes('重複') ||
           errorMessage.includes('既に存在')
         ) {
-          setError(`タグ名「${name.trim()}」は既に使用されています`)
+          setError(t('tag.form.duplicateName'))
         } else {
-          setError('タグの作成に失敗しました')
+          setError(t('tag.errors.createFailed'))
         }
       } finally {
         setIsLoading(false)
       }
     },
-    [name, color, description, groupId, onSave, onClose]
+    [name, color, description, groupId, onSave, onClose, t]
   )
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>新規タグ作成</DialogTitle>
-          <DialogDescription>新しいタグを作成します</DialogDescription>
+          <DialogTitle>{t('tag.modal.createTitle')}</DialogTitle>
+          <DialogDescription>{t('tag.modal.createDescription')}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             {/* タグ名 */}
             <div className="grid gap-2">
-              <Label htmlFor="name">タグ名 *</Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="例: 開発" required />
+              <Label htmlFor="name">{t('tag.form.tagNameRequired')}</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={t('tag.form.examplePlaceholder')}
+                required
+              />
             </div>
 
             {/* カラー */}
             <div className="grid gap-2">
-              <Label htmlFor="color">カラー</Label>
+              <Label htmlFor="color">{t('tag.form.color')}</Label>
               <ColorPalettePicker selectedColor={color} onColorSelect={setColor} />
             </div>
 
             {/* グループ */}
             <div className="grid gap-2">
-              <Label htmlFor="group">グループ</Label>
+              <Label htmlFor="group">{t('tag.form.group')}</Label>
               <Select value={groupId ?? undefined} onValueChange={(value) => setGroupId(value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="グループを選択（任意）" />
+                  <SelectValue placeholder={t('tag.form.selectGroupPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="__none__">未分類</SelectItem>
+                  <SelectItem value="__none__">{t('tag.sidebar.uncategorized')}</SelectItem>
                   {groups.map((group) => (
                     <SelectItem key={group.id} value={group.id}>
                       {group.name}
@@ -135,12 +143,12 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
 
             {/* 説明 */}
             <div className="grid gap-2">
-              <Label htmlFor="description">説明</Label>
+              <Label htmlFor="description">{t('tag.form.description')}</Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="タグの説明（任意）"
+                placeholder={t('tag.form.descriptionPlaceholder')}
                 rows={3}
               />
             </div>
@@ -151,10 +159,10 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
-              キャンセル
+              {t('tag.actions.cancel')}
             </Button>
             <Button type="submit" disabled={isLoading || !name.trim()}>
-              {isLoading ? '作成中...' : '作成'}
+              {isLoading ? t('tag.actions.creating') : t('tag.actions.create')}
             </Button>
           </DialogFooter>
         </form>

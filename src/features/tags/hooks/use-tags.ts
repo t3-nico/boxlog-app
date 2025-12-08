@@ -7,6 +7,7 @@ import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
 import type {
   CreateTagInput,
   Tag,
+  TagUsage,
   TagWithChildren,
   TagWithChildrenResponse,
   UpdateTagInput,
@@ -128,15 +129,25 @@ const tagAPI = {
     const data = await response.json()
     return data.data
   },
+
+  // タグ使用状況取得
+  async getTagUsage(id: string): Promise<TagUsage> {
+    const response = await fetch(`/api/tags/${id}?usage=true`)
+    if (!response.ok) throw new Error('Failed to fetch tag usage')
+
+    const data = await response.json()
+    return data.usage || { planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 }
+  },
 }
 
 // クエリキー
 export const tagKeys = {
   all: ['tags'] as const,
   lists: () => [...tagKeys.all, 'list'] as const,
-  list: (filters: Record<string, unknown>) => [...tagKeys.lists(), { filters }] as const,
+  list: (filters: { includeChildren?: boolean }) => [...tagKeys.lists(), { filters }] as const,
   details: () => [...tagKeys.all, 'detail'] as const,
   detail: (id: string) => [...tagKeys.details(), id] as const,
+  usage: (id: string) => [...tagKeys.all, 'usage', id] as const,
 }
 
 // タグ一覧取得フック
@@ -155,6 +166,16 @@ export function useTag(id: string) {
     queryFn: () => tagAPI.getTag(id),
     enabled: !!id,
     ...cacheStrategies.tags, // 標準キャッシュ（5分）
+  })
+}
+
+// タグ使用状況取得フック
+export function useTagUsage(id: string | undefined) {
+  return useQuery({
+    queryKey: tagKeys.usage(id || ''),
+    queryFn: () => tagAPI.getTagUsage(id!),
+    enabled: !!id,
+    staleTime: 30 * 1000, // 30秒（ダイアログ表示中は再取得しない）
   })
 }
 
