@@ -127,6 +127,10 @@ export function AppBar() {
       </div>
 
       <Navigation navItems={navItems} />
+
+      {/* スペーサー: Actions/Accountを下に配置 */}
+      <div className="flex-1" />
+
       <Actions onSearch={openGlobalSearch} onToggleTheme={setTheme} resolvedTheme={resolvedTheme} t={t} />
       <Account userData={userData} locale={locale} />
     </aside>

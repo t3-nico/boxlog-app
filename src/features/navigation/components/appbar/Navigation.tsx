@@ -17,7 +17,7 @@ export function Navigation({ navItems }: NavigationProps) {
   const pathname = usePathname()
 
   return (
-    <nav className="flex flex-1 flex-col items-center gap-1 px-2 pt-2" onClick={(e) => e.stopPropagation()}>
+    <nav className="flex flex-col items-center gap-1 px-2 pt-2" onClick={(e) => e.stopPropagation()}>
       {navItems.map((item) => (
         <Item
           key={item.id}
