@@ -1,4 +1,3 @@
-// @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 'use client'
 
 import { Button } from '@/components/ui/button'
