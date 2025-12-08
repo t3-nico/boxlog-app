@@ -15,22 +15,38 @@ import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { checkPasswordPwned } from '@/lib/auth/pwned-password'
-import { useRecaptchaV3 } from '@/lib/recaptcha'
-import { trpc } from '@/lib/trpc/client'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
+/**
+ * 漏洩パスワードチェック（オプショナル）
+ * Have I Been Pwned APIが利用できない場合はfalseを返す
+ */
+async function safeCheckPasswordPwned(password: string): Promise<boolean> {
+  try {
+    // 動的インポートでエラーハンドリングを強化
+    const { checkPasswordPwned } = await import('@/lib/auth/pwned-password')
+    return await checkPasswordPwned(password)
+  } catch (err) {
+    console.warn('[SignupForm] Pwned password check failed, skipping:', err)
+    return false
+  }
+}
+
+/**
+ * SignupForm - 堅牢なサインアップフォームコンポーネント
+ *
+ * 設計原則:
+ * 1. 最小依存: メール・パスワードでのサインアップは外部サービスなしで動作
+ * 2. グレースフルデグラデーション: Have I Been Pwned API等が失敗してもサインアップ可能
+ * 3. クライアントサイドバリデーション: パスワード長・一致確認
+ */
 export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
   const params = useParams()
   const router = useRouter()
   const locale = (params?.locale as string) || 'ja'
   const t = useTranslations()
   const signUp = useAuthStore((state) => state.signUp)
-
-  // reCAPTCHA v3
-  const { generateToken, isReady: isRecaptchaReady } = useRecaptchaV3('signup')
-  const verifyRecaptcha = trpc.auth.verifyRecaptcha.useMutation()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -50,28 +66,6 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
     setIsLoading(true)
     setError(null)
 
-    // reCAPTCHA v3 検証（設定されている場合のみ）
-    if (isRecaptchaReady) {
-      const token = await generateToken()
-      if (token) {
-        try {
-          const recaptchaResult = await verifyRecaptcha.mutateAsync({
-            token,
-            action: 'signup',
-          })
-
-          if (recaptchaResult.isBot) {
-            setError(t('auth.errors.botDetected'))
-            setIsLoading(false)
-            return
-          }
-        } catch {
-          // reCAPTCHA検証エラーは無視して続行（開発環境対応）
-          console.warn('[Signup] reCAPTCHA verification failed, continuing')
-        }
-      }
-    }
-
     // パスワード確認
     if (password !== confirmPassword) {
       setError(t('auth.errors.passwordMismatch'))
@@ -86,8 +80,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
       return
     }
 
-    // 漏洩パスワードチェック（Have I Been Pwned API）
-    const isPwned = await checkPasswordPwned(password)
+    // 漏洩パスワードチェック（オプショナル - Have I Been Pwned API）
+    const isPwned = await safeCheckPasswordPwned(password)
     if (isPwned) {
       setError(t('auth.errors.pwnedPassword'))
       setIsLoading(false)
@@ -212,11 +206,11 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                   {password && (
                     <div className="flex items-center gap-2 text-sm">
                       {isPasswordValid ? (
-                        <Check className="text-success h-4 w-4" />
+                        <Check className="h-4 w-4 text-green-600" />
                       ) : (
                         <X className="text-muted-foreground h-4 w-4" />
                       )}
-                      <span className={cn(isPasswordValid ? 'text-success' : 'text-muted-foreground')}>
+                      <span className={cn(isPasswordValid ? 'text-green-600' : 'text-muted-foreground')}>
                         {password.length} / {minPasswordLength}
                         {t('auth.passwordStrength.minCharacters')}
                       </span>
@@ -225,11 +219,11 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                   {confirmPassword && (
                     <div className="flex items-center gap-2 text-sm">
                       {isPasswordMatching ? (
-                        <Check className="text-success h-4 w-4" />
+                        <Check className="h-4 w-4 text-green-600" />
                       ) : (
                         <X className="text-muted-foreground h-4 w-4" />
                       )}
-                      <span className={cn(isPasswordMatching ? 'text-success' : 'text-muted-foreground')}>
+                      <span className={cn(isPasswordMatching ? 'text-green-600' : 'text-muted-foreground')}>
                         {isPasswordMatching
                           ? t('auth.signupForm.passwordMatch')
                           : t('auth.signupForm.passwordMismatch')}
