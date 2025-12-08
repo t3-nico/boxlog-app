@@ -2,7 +2,7 @@
 
 OWASP準拠のセキュリティ監視とレポート生成システム
 
-**関連Issue**: [#487 - OWASP準拠のセキュリティ強化](https://github.com/your-org/boxlog-app/issues/487)
+**関連Issue**: [#487 - OWASP準拠のセキュリティ強化](https://github.com/t3-nico/boxlog-app/issues/487)
 
 ---
 
@@ -287,7 +287,7 @@ LIMIT 20;
 - [Session Management](../../src/lib/auth/session-config.ts)
 - [Rate Limiting](../../src/lib/rate-limit/upstash.ts)
 - [Error Handling](../../src/lib/errors/secure-error-handler.ts)
-- [Issue #487](https://github.com/your-org/boxlog-app/issues/487)
+- [Issue #487](https://github.com/t3-nico/boxlog-app/issues/487)
 
 ---
 

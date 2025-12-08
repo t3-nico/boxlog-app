@@ -34,6 +34,9 @@ export default function LegalLayout({ children }: LegalLayoutProps) {
               <Link href="/legal/terms" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.terms')}
               </Link>
+              <Link href="/legal/tokushoho" className="text-muted-foreground text-sm transition-colors hover:underline">
+                {t('legal.navigation.tokushoho')}
+              </Link>
               <Link href="/legal/security" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.security')}
               </Link>
@@ -68,6 +71,9 @@ export default function LegalLayout({ children }: LegalLayoutProps) {
               </Link>
               <Link href="/legal/terms" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.terms')}
+              </Link>
+              <Link href="/legal/tokushoho" className="text-muted-foreground text-sm transition-colors hover:underline">
+                {t('legal.navigation.tokushoho')}
               </Link>
               <Link href="/legal/security" className="text-muted-foreground text-sm transition-colors hover:underline">
                 {t('legal.navigation.security')}
