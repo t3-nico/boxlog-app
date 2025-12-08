@@ -22,6 +22,21 @@ interface SidebarTagsOptions {
   minUsageCount?: number
 }
 
+/** API レスポンス型 */
+interface TagStatsResponse {
+  data: Array<{
+    id: string
+    name: string
+    path: string | null
+    level: number
+    color: string | null
+    plan_count: number
+    total_count: number
+    last_used_at: string | null
+  }>
+  count: number
+}
+
 // タグ使用統計API
 const tagStatsAPI = {
   // タグ使用統計取得
@@ -29,29 +44,33 @@ const tagStatsAPI = {
     const response = await fetch('/api/tags/stats')
     if (!response.ok) throw new Error('Failed to fetch tag stats')
 
-    const data = await response.json()
-    return data.data
+    const json: TagStatsResponse = await response.json()
+    // API レスポンスを TagUsageStats 型に変換
+    return json.data.map((item) => ({
+      id: item.id,
+      name: item.name,
+      path: item.path ?? '',
+      level: item.level as 0 | 1 | 2,
+      color: item.color ?? '#3B82F6',
+      usage_count: item.total_count,
+      task_count: 0, // 現在未実装
+      event_count: 0, // 現在未実装
+      record_count: 0, // 現在未実装
+      last_used_at: item.last_used_at ? new Date(item.last_used_at) : null,
+    }))
   },
 
-  // タグ使用数カウント（モック実装）
+  // タグ使用数カウント（タグID -> 使用数のマップ）
   async fetchTagUsageCounts(): Promise<Record<string, number>> {
-    // 実際の実装では、tag_associations テーブルから集計
-    // 今回はモックデータを返す
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          // ダミーデータ
-          'tag-1': 45,
-          'tag-2': 28,
-          'tag-3': 15,
-          'tag-4': 23,
-          'tag-5': 22,
-          'tag-6': 8,
-          'tag-7': 12,
-          'tag-8': 5,
-        })
-      }, 100)
+    const response = await fetch('/api/tags/stats')
+    if (!response.ok) throw new Error('Failed to fetch tag usage counts')
+
+    const json: TagStatsResponse = await response.json()
+    const counts: Record<string, number> = {}
+    json.data.forEach((item) => {
+      counts[item.id] = item.total_count
     })
+    return counts
   },
 }
 
