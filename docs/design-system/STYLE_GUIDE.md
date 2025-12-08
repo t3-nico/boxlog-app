@@ -523,13 +523,13 @@ shadcn/ui を「デスク」として活用し、薄いラッパーで統一感�
 
 ### components/common/ で提供
 
-| コンポーネント | 用途 | インポート |
-|---------------|------|-----------|
-| `PageHeader` | ページヘッダー（48px固定） | `@/components/common` |
-| `SelectionBar` | 選択バー（Google Drive風） | `@/components/common` |
-| `WarningBox` | 警告・注意メッセージ | `@/components/common` |
-| `InfoBox` | 情報・説明ボックス | `@/components/common` |
-| `ActionMenuItems` | コンテキストメニュー項目 | `@/components/common` |
+| コンポーネント    | 用途                       | インポート            |
+| ----------------- | -------------------------- | --------------------- |
+| `PageHeader`      | ページヘッダー（48px固定） | `@/components/common` |
+| `SelectionBar`    | 選択バー（Google Drive風） | `@/components/common` |
+| `WarningBox`      | 警告・注意メッセージ       | `@/components/common` |
+| `InfoBox`         | 情報・説明ボックス         | `@/components/common` |
+| `ActionMenuItems` | コンテキストメニュー項目   | `@/components/common` |
 
 ### WarningBox
 
@@ -553,7 +553,7 @@ import { AlertTriangle, Info } from 'lucide-react'
 ```tsx
 import { InfoBox } from '@/components/common'
 
-<InfoBox>
+;<InfoBox>
   <p className="mb-2 text-sm font-medium">使用状況:</p>
   <ul className="text-muted-foreground space-y-1 text-sm">
     <li>• Plans: 10件</li>

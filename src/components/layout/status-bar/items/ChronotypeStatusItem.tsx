@@ -10,9 +10,9 @@ import { StatusBarItem } from '../StatusBarItem'
 
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
-import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'
+import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/features/settings/types/chronotype'
 
-import type { ProductivityZone } from '@/types/chronotype'
+import type { ProductivityZone } from '@/features/settings/types/chronotype'
 
 // ゾーンレベルに応じたアイコンの色
 const LEVEL_ICON_COLORS: Record<ProductivityZone['level'], string> = {

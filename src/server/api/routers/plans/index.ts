@@ -1,66 +1,62 @@
 /**
- * tRPC Router: Plans
- * プラン・セッション・タグ管理API
+ * Plans Router
+ * Aggregates all plan-related subrouters
  *
- * 分割されたプロシージャを統合
+ * This router maintains backward compatibility with the original flat API structure
+ * while organizing code into logical subrouter files.
  */
 
-import { createTRPCRouter } from '@/server/api/trpc'
+import { createTRPCRouter, mergeRouters } from '@/server/api/trpc'
 
-import { activitiesProcedure, createActivityProcedure } from './activities'
-import { bulkDeleteProcedure, bulkUpdateProcedure } from './bulk'
-import { createProcedure, deleteProcedure, getByIdProcedure, listProcedure, updateProcedure } from './crud'
-import { createInstanceProcedure, deleteInstanceProcedure, getInstancesProcedure } from './instances'
-import { addTagProcedure, getTagPlanCountsProcedure, getTagsProcedure, removeTagProcedure } from './plan-tags'
-import {
-  getDailyHoursProcedure,
-  getDayOfWeekDistributionProcedure,
-  getHourlyDistributionProcedure,
-  getMonthlyTrendProcedure,
-  getStatsProcedure,
-  getStreakProcedure,
-  getSummaryProcedure,
-  getTimeByTagProcedure,
-} from './statistics'
+import { activitiesRouter } from './activities'
+import { bulkRouter } from './bulk'
+import { plansCrudRouter } from './crud'
+import { instancesRouter } from './instances'
+import { planTagsRouter } from './plan-tags'
+import { statisticsRouter } from './statistics'
 import { tagsRouter } from './tags'
 
-export const plansRouter = createTRPCRouter({
-  // Tags CRUD (nested router)
-  tags: tagsRouter,
-
-  // Plans CRUD
-  list: listProcedure,
-  getById: getByIdProcedure,
-  create: createProcedure,
-  update: updateProcedure,
-  delete: deleteProcedure,
-
-  // Plan Tags Management
-  addTag: addTagProcedure,
-  removeTag: removeTagProcedure,
-  getTags: getTagsProcedure,
-  getTagPlanCounts: getTagPlanCountsProcedure,
-
-  // Bulk Operations
-  bulkUpdate: bulkUpdateProcedure,
-  bulkDelete: bulkDeleteProcedure,
-
-  // Statistics
-  getStats: getStatsProcedure,
-  getDailyHours: getDailyHoursProcedure,
-  getTimeByTag: getTimeByTagProcedure,
-  getSummary: getSummaryProcedure,
-  getStreak: getStreakProcedure,
-  getHourlyDistribution: getHourlyDistributionProcedure,
-  getDayOfWeekDistribution: getDayOfWeekDistributionProcedure,
-  getMonthlyTrend: getMonthlyTrendProcedure,
-
-  // Activities
-  activities: activitiesProcedure,
-  createActivity: createActivityProcedure,
-
-  // Instances (exceptions for recurring plans)
-  getInstances: getInstancesProcedure,
-  createInstance: createInstanceProcedure,
-  deleteInstance: deleteInstanceProcedure,
+// Re-export subrouters with renamed procedures to maintain original API
+const planTagsAliasRouter = createTRPCRouter({
+  addTag: planTagsRouter.add,
+  removeTag: planTagsRouter.remove,
+  getTags: planTagsRouter.get,
 })
+
+const bulkAliasRouter = createTRPCRouter({
+  bulkUpdate: bulkRouter.update,
+  bulkDelete: bulkRouter.delete,
+})
+
+const statisticsAliasRouter = createTRPCRouter({
+  getStats: statisticsRouter.getStats,
+  getTagPlanCounts: statisticsRouter.getTagPlanCounts,
+  getTagLastUsed: statisticsRouter.getTagLastUsed,
+})
+
+const activitiesAliasRouter = createTRPCRouter({
+  activities: activitiesRouter.list,
+  createActivity: activitiesRouter.create,
+})
+
+const instancesAliasRouter = createTRPCRouter({
+  getInstances: instancesRouter.list,
+  createInstance: instancesRouter.create,
+  deleteInstance: instancesRouter.delete,
+})
+
+// Base router with nested tags
+const baseRouter = createTRPCRouter({
+  tags: tagsRouter,
+})
+
+// Merge all routers to create final plansRouter
+export const plansRouter = mergeRouters(
+  baseRouter,
+  plansCrudRouter,
+  planTagsAliasRouter,
+  bulkAliasRouter,
+  statisticsAliasRouter,
+  activitiesAliasRouter,
+  instancesAliasRouter
+)

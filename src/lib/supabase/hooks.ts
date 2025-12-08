@@ -1,4 +1,3 @@
-// @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 /**
  * Supabase 認証フック
  * @description React hooks for Supabase authentication
@@ -12,7 +11,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import type { AuthError, Session, User } from '@supabase/supabase-js'
 
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/lib/database.types'
 
 import { createClient } from './client'
 

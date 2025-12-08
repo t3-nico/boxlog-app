@@ -1,6 +1,9 @@
 // Offline Feature Types
 
-import { ConflictData, OfflineActionData } from '@/types/common'
+import type { ConflictData, OfflineActionData } from '@/types/common'
+
+// Re-export for consumers
+export type { ConflictData, OfflineActionData }
 
 export interface OfflineAction<T = unknown> extends OfflineActionData<T> {
   syncStatus: 'pending' | 'syncing' | 'completed' | 'conflict'

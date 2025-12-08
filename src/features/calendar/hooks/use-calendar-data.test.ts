@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { Task } from '@/types/unified'
+import type { Task } from '@/types'
 
 import type { ViewDateRange } from '../types/calendar.types'
 import { constrainTaskDuration, detectTimeConflicts, useCalendarData } from './use-calendar-data'

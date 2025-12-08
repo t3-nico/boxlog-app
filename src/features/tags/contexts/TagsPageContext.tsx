@@ -20,7 +20,7 @@ import { toast } from 'sonner'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useReorderTagGroups, useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useUpdateTag } from '@/features/tags/hooks/use-tags'
-import type { TagGroup, TagWithChildren } from '@/types/tags'
+import type { TagGroup, TagWithChildren } from '@/features/tags/types'
 
 interface TagsPageContextValue {
   tags: TagWithChildren[]

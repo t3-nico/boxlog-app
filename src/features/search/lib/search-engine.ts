@@ -1,6 +1,6 @@
 import Fuse, { type FuseOptionKey, type FuseResult, type IFuseOptions } from 'fuse.js'
 
-import type { Tag } from '@/types/common'
+import type { Tag } from '@/features/tags/types'
 
 import type { PlanWithTags } from '@/features/plans/types'
 

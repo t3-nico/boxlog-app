@@ -18,7 +18,7 @@ import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItem
 import { useUpdateTag } from '@/features/tags/hooks/use-tags'
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore'
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore'
-import type { TagGroup, TagWithChildren } from '@/types/tags'
+import type { TagGroup, TagWithChildren } from '@/features/tags/types'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Folder, Hash } from 'lucide-react'

@@ -2,7 +2,7 @@
 
 import { useTags } from '@/features/tags/hooks/use-tags'
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore'
-import type { TagWithChildren } from '@/types/tags'
+import type { TagWithChildren } from '@/features/tags/types'
 import { useEffect } from 'react'
 
 interface TagInspectorOpenerProps {

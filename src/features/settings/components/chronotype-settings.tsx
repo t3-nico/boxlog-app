@@ -12,8 +12,8 @@ import { useTranslations } from 'next-intl'
 
 import { SettingsCard } from './SettingsCard'
 
-import type { ChronotypeType, ProductivityZone } from '@/types/chronotype'
-import { CHRONOTYPE_PRESETS } from '@/types/chronotype'
+import type { ChronotypeType, ProductivityZone } from '@/features/settings/types/chronotype'
+import { CHRONOTYPE_PRESETS } from '@/features/settings/types/chronotype'
 
 // クロノタイプごとの絵文字アイコン
 const CHRONOTYPE_EMOJI: Record<Exclude<ChronotypeType, 'custom'>, string> = {
