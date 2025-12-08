@@ -1,8 +1,14 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
+
+import { planToCalendarPlan } from '@/features/calendar/utils/planDataAdapter'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useplans } from '@/features/plans/hooks/usePlans'
+import type { Plan } from '@/features/plans/types/plan'
 
 import { useInboxData } from '../hooks/useInboxData'
+
 import { InboxSidebar } from './InboxSidebar'
 
 /**
@@ -12,6 +18,8 @@ import { InboxSidebar } from './InboxSidebar'
  */
 export function InboxSidebarWrapper() {
   const { items, isLoading } = useInboxData()
+  const { data: plansData } = useplans()
+  const { updatePlan } = usePlanMutations()
 
   // アクティブなPlan数とアーカイブ数を計算
   const { activePlansCount, archivedPlansCount } = useMemo(() => {
@@ -26,7 +34,51 @@ export function InboxSidebarWrapper() {
     }
   }, [items])
 
+  // カレンダー表示用のプラン（start_time/end_timeが設定されているもの）
+  const calendarPlans = useMemo(() => {
+    if (!plansData) return []
+
+    return plansData
+      .filter((plan) => plan.start_time && plan.end_time)
+      .map((plan) => {
+        // planToCalendarPlanはPlan型を期待するため、型アサーションで変換
+        // APIレスポンスの型はPlanと互換性があるが、厳密な型チェックのためキャスト必要
+        return planToCalendarPlan(plan as unknown as Plan)
+      })
+  }, [plansData])
+
+  // プランのスケジュール設定ハンドラー
+  const handleSchedulePlan = useCallback(
+    (planId: string, date: Date, time: string) => {
+      // 時間文字列をパース（例: "09:00"）
+      const [hours, minutes] = time.split(':').map(Number)
+      const startTime = new Date(date)
+      startTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
+
+      // デフォルト1時間の予定
+      const endTime = new Date(startTime)
+      endTime.setHours(endTime.getHours() + 1)
+
+      // プランを更新
+      updatePlan.mutate({
+        id: planId,
+        data: {
+          start_time: startTime.toISOString(),
+          end_time: endTime.toISOString(),
+          due_date: date.toISOString().split('T')[0],
+        },
+      })
+    },
+    [updatePlan]
+  )
+
   return (
-    <InboxSidebar isLoading={isLoading} activeplansCount={activePlansCount} archivedplansCount={archivedPlansCount} />
+    <InboxSidebar
+      isLoading={isLoading}
+      activeplansCount={activePlansCount}
+      archivedplansCount={archivedPlansCount}
+      calendarPlans={calendarPlans}
+      onSchedulePlan={handleSchedulePlan}
+    />
   )
 }
