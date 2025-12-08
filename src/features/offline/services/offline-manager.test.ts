@@ -43,7 +43,7 @@ describe.skip('OfflineManager', () => {
     it('should record action with pending status', async () => {
       const action = {
         type: 'create' as const,
-        entity: 'task' as const,
+        entity: 'plans' as const,
         data: { title: 'Test Task' },
       }
 
@@ -58,7 +58,7 @@ describe.skip('OfflineManager', () => {
 
       const action = {
         type: 'update' as const,
-        entity: 'task' as const,
+        entity: 'plans' as const,
         data: { id: '1', title: 'Updated Task' },
       }
 
@@ -77,13 +77,13 @@ describe.skip('OfflineManager', () => {
     it('should return pending actions after recording', async () => {
       await manager.recordAction({
         type: 'create' as const,
-        entity: 'task' as const,
+        entity: 'plans' as const,
         data: { title: 'Task 1' },
       })
 
       await manager.recordAction({
         type: 'create' as const,
-        entity: 'task' as const,
+        entity: 'plans' as const,
         data: { title: 'Task 2' },
       })
 
