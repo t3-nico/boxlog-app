@@ -1,4 +1,3 @@
-// @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 /**
  * Tag Groups Reorder API
  * PATCH: タググループの並び順を一括更新
