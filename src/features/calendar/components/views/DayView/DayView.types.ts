@@ -12,30 +12,30 @@ export interface DayViewProps {
   tasks: Task[]
   plans: CalendarPlan[]
   currentDate: Date
-  showWeekends?: boolean // 週末の表示/非表示（デフォルト: true）
-  className?: string
+  showWeekends?: boolean | undefined // 週末の表示/非表示（デフォルト: true）
+  className?: string | undefined
 
   // Plan handlers
-  onTaskClick?: (task: CalendarPlan) => void
-  onPlanClick?: (plan: CalendarPlan) => void
-  onPlanContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
-  onCreatePlan?: (date: Date, time?: string) => void
-  onUpdatePlan?: (plan: CalendarPlan) => void
-  onDeletePlan?: (planId: string) => void
-  onRestorePlan?: (plan: CalendarPlan) => Promise<void>
-  onEmptyClick?: (date: Date, time: string) => void
-  onTimeRangeSelect?: (selection: DateTimeSelection) => void
+  onTaskClick?: ((task: CalendarPlan) => void) | undefined
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined
+  onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined
+  onCreatePlan?: ((date: Date, time?: string) => void) | undefined
+  onUpdatePlan?: ((plan: CalendarPlan) => void) | undefined
+  onDeletePlan?: ((planId: string) => void) | undefined
+  onRestorePlan?: ((plan: CalendarPlan) => Promise<void>) | undefined
+  onEmptyClick?: ((date: Date, time: string) => void) | undefined
+  onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined
 
   // Task handlers
-  onTaskDrag?: (taskId: string, newDate: Date) => void
-  onCreateTask?: (task: CreateTaskInput) => void
-  onCreateRecord?: (record: CreateRecordInput) => void
+  onTaskDrag?: ((taskId: string, newDate: Date) => void) | undefined
+  onCreateTask?: ((task: CreateTaskInput) => void) | undefined
+  onCreateRecord?: ((record: CreateRecordInput) => void) | undefined
 
   // Navigation handlers
-  onViewChange?: (viewType: CalendarViewType) => void
-  onNavigatePrev?: () => void
-  onNavigateNext?: () => void
-  onNavigateToday?: () => void
+  onViewChange?: ((viewType: CalendarViewType) => void) | undefined
+  onNavigatePrev?: (() => void) | undefined
+  onNavigateNext?: (() => void) | undefined
+  onNavigateToday?: (() => void) | undefined
 }
 
 // シンプル版のProps（後方互換性のため）

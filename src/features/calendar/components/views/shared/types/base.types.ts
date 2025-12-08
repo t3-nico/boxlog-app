@@ -5,13 +5,11 @@
 
 // CalendarPlanの型定義（外部からも使用されるため再エクスポート）
 export type { CalendarPlan } from './plan.types'
+import type { ViewDateRange } from '../../../../types/calendar.types'
 import type { CalendarPlan } from './plan.types'
 
-// 基本的なビューの共通型（他ファイルから参照のため互換性考慮）
-export type ViewDateRange = {
-  start: Date
-  end: Date
-}
+// ViewDateRange を calendar.types.ts から再エクスポート
+export type { ViewDateRange } from '../../../../types/calendar.types'
 
 export interface Task {
   id: string
@@ -76,29 +74,29 @@ export interface BaseViewProps {
   currentDate: Date
 
   // Display options
-  showWeekends?: boolean
-  className?: string
+  showWeekends?: boolean | undefined
+  className?: string | undefined
 
   // Plan handlers (完全に共通)
-  onTaskClick?: (task: Task) => void
-  onEventClick?: (plan: CalendarPlan) => void
-  onEventContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
-  onCreateEvent?: (date: Date, time?: string) => void
-  onUpdateEvent?: (plan: CalendarPlan) => void
-  onDeleteEvent?: (eventId: string) => void
-  onRestoreEvent?: (plan: CalendarPlan) => Promise<void>
-  onEmptyClick?: (date: Date, time: string) => void
+  onTaskClick?: ((task: CalendarPlan) => void) | undefined
+  onEventClick?: ((plan: CalendarPlan) => void) | undefined
+  onEventContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined
+  onCreateEvent?: ((date: Date, time?: string) => void) | undefined
+  onUpdateEvent?: ((plan: CalendarPlan) => void) | undefined
+  onDeleteEvent?: ((eventId: string) => void) | undefined
+  onRestoreEvent?: ((plan: CalendarPlan) => Promise<void>) | undefined
+  onEmptyClick?: ((date: Date, time: string) => void) | undefined
 
   // Task handlers (完全に共通)
-  onTaskDrag?: (taskId: string, newDate: Date) => void
-  onCreateTask?: (task: CreateTaskInput) => void
-  onCreateRecord?: (record: CreateRecordInput) => void
+  onTaskDrag?: ((taskId: string, newDate: Date) => void) | undefined
+  onCreateTask?: ((task: CreateTaskInput) => void) | undefined
+  onCreateRecord?: ((record: CreateRecordInput) => void) | undefined
 
   // Navigation handlers (完全に共通)
-  onViewChange?: (viewType: CalendarViewType) => void
-  onNavigatePrev?: () => void
-  onNavigateNext?: () => void
-  onNavigateToday?: () => void
+  onViewChange?: ((viewType: CalendarViewType) => void) | undefined
+  onNavigatePrev?: (() => void) | undefined
+  onNavigateNext?: (() => void) | undefined
+  onNavigateToday?: (() => void) | undefined
 }
 
 /**

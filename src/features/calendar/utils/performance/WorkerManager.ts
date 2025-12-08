@@ -1,13 +1,15 @@
-// @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 /**
  * WorkerManager - Web Worker の管理とタスクスケジューリング
  */
+
+import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 interface WorkerTask {
   id: string
   type: string
   payload: unknown
-  resolve: (result: unknown) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  resolve: (result: any) => void
   reject: (error: Error) => void
   priority: number
   timestamp: number
@@ -153,7 +155,13 @@ export class WorkerManager {
     this.activeTasks.set(task.id, task)
 
     // 最も負荷の少ないワーカーを選択（簡易実装）
-    const worker = this.workers[(this.activeTasks.size % this.workers.length) as keyof typeof workers]
+    const workerIndex = this.activeTasks.size % this.workers.length
+    const worker = this.workers[workerIndex]
+
+    if (!worker) {
+      console.error('No available worker')
+      return
+    }
 
     worker.postMessage({
       id: task.id,
@@ -292,36 +300,10 @@ export class WorkerManager {
     this.processingTimes.length = 0
   }
 
-  /**
-   * メインスレッドでのプラン処理（フォールバック）
-   */
-  private processPlansMainThread(plans: CalendarPlan[], _options: Record<string, unknown> = {}) {
-    // 基本的な処理のみ実装
-    const processed = plans
-      .filter((plan) => plan.startDate && plan.title)
-      .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime())
-
-    return {
-      plans: processed,
-      totalProcessed: processed.length,
-      uniqueCount: processed.length,
-      duplicatesRemoved: 0,
-    }
-  }
-
-  /**
-   * メインスレッドでの検索（フォールバック）
-   */
-  private searchPlansMainThread(plans: CalendarPlan[], query: string, _options: Record<string, unknown> = {}) {
-    const normalizedQuery = query.toLowerCase()
-
-    return plans.filter(
-      (plan) =>
-        plan.title.toLowerCase().includes(normalizedQuery) ||
-        plan.description?.toLowerCase().includes(normalizedQuery) ||
-        plan.location?.toLowerCase().includes(normalizedQuery)
-    )
-  }
+  // NOTE: フォールバック用メソッド（Web Worker が使えない環境用）
+  // 必要になった時に再実装する
+  // - _processPlansMainThread: メインスレッドでのプラン処理
+  // - _searchPlansMainThread: メインスレッドでの検索
 }
 
 // シングルトンインスタンス

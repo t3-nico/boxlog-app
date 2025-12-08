@@ -10,9 +10,9 @@ import type { CalendarViewType } from '../../types/calendar.types'
 import { CalendarNavigationArea } from './CalendarNavigationArea'
 import { CalendarHeader } from './Header'
 
-interface CalendarLayoutProps {
+export interface CalendarLayoutProps {
   children: React.ReactNode
-  className?: string
+  className?: string | undefined
 
   // Header props
   viewType: CalendarViewType
@@ -21,23 +21,25 @@ interface CalendarLayoutProps {
   onViewChange: (view: CalendarViewType) => void
 
   // Header actions
-  onSettings?: () => void
-  onExport?: () => void
-  onImport?: () => void
-  showHeaderActions?: boolean
+  onSettings?: (() => void) | undefined
+  onExport?: (() => void) | undefined
+  onImport?: (() => void) | undefined
+  showHeaderActions?: boolean | undefined
 
   // Date selection for mini calendar
-  selectedDate?: Date
-  onDateSelect?: (date: Date) => void
+  selectedDate?: Date | undefined
+  onDateSelect?: ((date: Date) => void) | undefined
 
   // Display range for mini calendar highlight
-  displayRange?: {
-    start: Date
-    end: Date
-  }
+  displayRange?:
+    | {
+        start: Date
+        end: Date
+      }
+    | undefined
 
   // Navigation area content
-  navigationContent?: React.ReactNode
+  navigationContent?: React.ReactNode | undefined
 }
 
 /**

@@ -2,7 +2,6 @@
 
 import React, { useMemo } from 'react'
 
-// import { eventSelectors, useEventStore } from '@/features/events/stores/useEventStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 
@@ -38,11 +37,6 @@ export const DayView = ({
   onNavigateToday,
 }: DayViewProps) => {
   const { timezone } = useCalendarSettingsStore()
-  // TODO(#621): Events削除後、plans/Sessions統合後に再実装
-  // const { updateEvent } = useEventStore()
-
-  // イベントストアから最新のデータを取得
-  // const storeEvents = useEventStore(eventSelectors.getEvents)
 
   // 表示する日付
   const displayDates = useMemo(() => {
@@ -57,20 +51,10 @@ export const DayView = ({
     throw new Error('Display date is undefined')
   }
 
-  // ドラッグイベント用のハンドラー
-  // TODO(#621): Events削除後、plans/Sessions統合後に再実装
+  // ドラッグイベント用のハンドラー（プラン時間更新）
   const handleEventTimeUpdate = React.useCallback(
     async (_eventId: string, _updates: { startTime: Date; endTime: Date }) => {
-      console.log('TODO: Sessions統合後に実装')
-      // if (!event.startDate || !event.endDate) return
-
-      // void updateEvent({ ...event, startDate: event.startDate, endDate: event.endDate })
-      //   .then(() => {
-      //     console.log('Event time updated via drag & drop:', event.id)
-      //   })
-      //   .catch((error) => {
-      //     console.error('Failed to update event time:', error)
-      //   })
+      // プランの時間更新はonUpdatePlanで処理
     },
     []
   )

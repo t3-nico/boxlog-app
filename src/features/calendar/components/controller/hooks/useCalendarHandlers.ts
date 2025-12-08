@@ -1,5 +1,3 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
 import { useCallback } from 'react'
@@ -156,7 +154,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
       createPlan.mutate(
         {
           title: '新規プラン',
-          status: 'backlog',
+          status: 'todo',
           due_date: format(selection.date, 'yyyy-MM-dd'),
           start_time: startTime.toISOString(),
           end_time: endTime.toISOString(),

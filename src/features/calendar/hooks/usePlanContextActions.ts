@@ -1,4 +1,3 @@
-// TODO(#621): Plans/Sessions統合後に型エラー解消
 'use client'
 
 import { useCallback, useState } from 'react'
