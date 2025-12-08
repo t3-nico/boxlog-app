@@ -29,7 +29,7 @@ import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
-import type { TagWithChildren } from '@/types/tags'
+import type { TagWithChildren } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 

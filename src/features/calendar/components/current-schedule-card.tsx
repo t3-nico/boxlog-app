@@ -8,7 +8,11 @@ import { ArrowRight, Calendar } from 'lucide-react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { CHRONOTYPE_PRESETS, getProductivityZoneForHour, PRODUCTIVITY_COLORS } from '@/types/chronotype'
+import {
+  CHRONOTYPE_PRESETS,
+  getProductivityZoneForHour,
+  PRODUCTIVITY_COLORS,
+} from '@/features/settings/types/chronotype'
 
 interface CurrentScheduleCardProps {
   collapsed?: boolean

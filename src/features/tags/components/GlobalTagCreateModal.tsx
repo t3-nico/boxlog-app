@@ -4,7 +4,7 @@ import { useCreateTag } from '../hooks/use-tags'
 import { useTagCreateModalStore } from '../stores/useTagCreateModalStore'
 import { TagCreateModal } from './tag-create-modal'
 
-import type { CreateTagInput } from '@/types/tags'
+import type { CreateTagInput } from '@/features/tags/types'
 
 /**
  * グローバルに配置するタグ作成モーダル

@@ -18,7 +18,56 @@
     "toast": {
       "eventDeleted": "予定を削除しました"
     },
-    "selectedCount": "{{count}}件選択中"
+    "selectedCount": "{{count}}件選択中",
+    "plan": {
+      "created": "「{{title}}」を作成しました",
+      "createFailed": "作成に失敗しました: {{error}}",
+      "updated": "更新しました",
+      "updateFailed": "更新に失敗しました",
+      "deleted": "削除しました",
+      "deleteFailed": "削除に失敗しました: {{error}}",
+      "bulkUpdated": "{{count}}件のプランを更新しました",
+      "bulkUpdateFailed": "一括更新に失敗しました: {{error}}",
+      "bulkDeleted": "{{count}}件のプランを削除しました",
+      "bulkDeleteFailed": "一括削除に失敗しました: {{error}}",
+      "statusChanged": "ステータスを{{status}}に変更しました",
+      "open": "開く"
+    },
+    "inbox": {
+      "selected": "{{count}}件選択中",
+      "clear": "クリア",
+      "changeStatus": "ステータス変更",
+      "status": "ステータス",
+      "statusBacklog": "準備中",
+      "statusReady": "配置済み",
+      "statusActive": "作業中",
+      "statusWait": "待ち",
+      "statusDone": "完了",
+      "statusCancel": "中止",
+      "dueDate": "期限",
+      "archive": "アーカイブ",
+      "delete": "削除",
+      "statusChangedCount": "{{count}}件のプランのステータスを変更しました",
+      "statusChangeFailed": "ステータスの変更に失敗しました",
+      "archivedCount": "{{count}}件のプランをアーカイブしました",
+      "archiveFailed": "アーカイブに失敗しました",
+      "deleteConfirm": "{{count}}件のプランを削除しますか？この操作は取り消せません。",
+      "deletedCount": "{{count}}件のプランを削除しました",
+      "deleteFailed": "削除に失敗しました",
+      "selectDate": "日付を選択してください",
+      "dueDateSetCount": "{{count}}件のプランの期限を設定しました",
+      "dueDateSetFailed": "期限の設定に失敗しました",
+      "dueDateClearedCount": "{{count}}件のプランの期限をクリアしました",
+      "dueDateClearFailed": "期限のクリアに失敗しました",
+      "bulkDueDate": "期限一括設定",
+      "bulkDueDateDescription": "{{count}}件のプランに期限を設定します",
+      "dateSelected": "選択した日付をプランの期限として設定します",
+      "selectDateHint": "カレンダーから日付を選択してください",
+      "cancel": "キャンセル",
+      "processing": "処理中...",
+      "clearDueDate": "期限をクリア",
+      "setDueDate": "期限を設定"
+    }
   },
   "actions": {
     "save": "保存",
@@ -83,5 +132,94 @@
   "theme": {
     "light": "ライトモード",
     "dark": "ダークモード"
+  },
+  "validation": {
+    "required": "この項目は必須です",
+    "invalidUuid": "正しいIDを指定してください",
+    "invalidEmail": "有効なメールアドレスを入力してください",
+    "invalidUrl": "有効なURLを指定してください",
+    "invalidColorCode": "有効な色コード（#RRGGBB）を指定してください",
+    "futureDate": "未来の日付を指定してください",
+    "title": {
+      "required": "タイトルは必須です",
+      "maxLength": "タイトルは{{max}}文字以内で入力してください",
+      "noNewlines": "タイトルに改行や空白のみは使用できません"
+    },
+    "description": {
+      "maxLength": "説明は{{max}}文字以内で入力してください"
+    },
+    "password": {
+      "minLength": "パスワードは{{min}}文字以上で入力してください",
+      "maxLength": "パスワードは{{max}}文字以内で入力してください",
+      "lowercase": "小文字を含める必要があります",
+      "uppercase": "大文字を含める必要があります",
+      "number": "数字を含める必要があります"
+    },
+    "email": {
+      "maxLength": "メールアドレスが長すぎます"
+    },
+    "pagination": {
+      "pageMin": "ページ番号は1以上を指定してください",
+      "limitMin": "取得件数は1以上を指定してください",
+      "limitMax": "取得件数は{{max}}以下を指定してください"
+    },
+    "search": {
+      "maxLength": "検索クエリは{{max}}文字以内で入力してください"
+    },
+    "file": {
+      "maxSize": "ファイルサイズは{{max}}MB以下にしてください"
+    },
+    "tag": {
+      "nameRequired": "タグ名は必須です",
+      "nameMaxLength": "タグ名は{{max}}文字以内です"
+    },
+    "recaptcha": {
+      "required": "reCAPTCHAトークンが必要です"
+    },
+    "username": {
+      "required": "ユーザー名は必須です",
+      "maxLength": "ユーザー名は{{max}}文字以内で入力してください"
+    }
+  },
+  "errors": {
+    "generic": "エラーが発生しました",
+    "storage": {
+      "imageOnly": "画像ファイルのみアップロード可能です",
+      "fileTooLarge": "ファイルサイズは5MB以下にしてください",
+      "uploadFailed": "アップロードに失敗しました",
+      "listFailed": "ファイル一覧の取得に失敗しました",
+      "deleteFailed": "削除に失敗しました"
+    },
+    "mfa": {
+      "enrollFailed": "登録エラー",
+      "dataNotFound": "MFAデータが取得できませんでした",
+      "setupFailed": "2段階認証の設定開始に失敗しました",
+      "enterCode": "6桁のコードを入力してください",
+      "codeLength": "コードは6桁で入力してください",
+      "challengeFailed": "チャレンジエラー",
+      "verifyFailed": "検証エラー",
+      "codeInvalid": "コードが正しくありません。もう一度お試しください。",
+      "verificationFailed": "コードの検証に失敗しました。もう一度お試しください",
+      "factorListFailed": "ファクター取得エラー",
+      "noFactorFound": "有効なMFAファクターが見つかりません",
+      "noVerifiedFactor": "検証済みのMFAファクターが見つかりません",
+      "disableFailed": "無効化エラー",
+      "disableGeneralFailed": "2段階認証の無効化に失敗しました",
+      "disablePrompt": "2段階認証を無効にするには、認証アプリの6桁のコードを入力してください:",
+      "enabled": "2段階認証が有効になりました！",
+      "disabled": "2段階認証を無効にしました"
+    },
+    "auth": {
+      "wrongPassword": "パスワードが正しくありません",
+      "emailUpdateFailed": "メールアドレスの更新に失敗しました",
+      "emailNotFound": "メールアドレスが見つかりません",
+      "userIdNotFound": "ユーザーIDが見つかりません",
+      "profileUpdateFailed": "プロフィールの更新に失敗しました"
+    },
+    "calendar": {
+      "invalidDateFormat": "日付形式が不正です",
+      "invalidTimeFormat": "時刻形式が不正です",
+      "timeOutOfRange": "時刻が範囲外です"
+    }
   }
 }

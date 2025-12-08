@@ -1,44 +1,32 @@
 'use client'
 
-import { Calendar, ChevronDown, FileText, Filter, Folder, Hash, Plus, Settings2 } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { DataTable, type ColumnDef, type SortState } from '@/components/common/table'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  TagCellContent,
-  TagRowWrapper,
-  TagTableRowCreate,
-  type TagTableRowCreateHandle,
-} from '@/features/tags/components/table'
+import { DataTable, type SortState } from '@/features/table'
+import { TagRowWrapper, TagTableRowCreate, type TagTableRowCreateHandle } from '@/features/tags/components/table'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
 import { TagBulkMergeDialog } from '@/features/tags/components/TagBulkMergeDialog'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions'
+import { TagsFilterBar } from '@/features/tags/components/TagsFilterBar'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
+import { getTagColumnSettings, useTagTableColumns } from '@/features/tags/hooks/useTagTableColumns'
 import { useTagColumnStore, type TagColumnId } from '@/features/tags/stores/useTagColumnStore'
 import { useTagPaginationStore } from '@/features/tags/stores/useTagPaginationStore'
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore'
 import { useTagSortStore } from '@/features/tags/stores/useTagSortStore'
+import type { TagGroup, TagWithChildren } from '@/features/tags/types'
 import { api } from '@/lib/trpc'
-import type { TagGroup, TagWithChildren } from '@/types/tags'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
@@ -274,8 +262,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   // ハンドラー: 一括削除
   const handleBulkDelete = useCallback(async () => {
     const ids = selectedTagIds
-    if (ids.length === 0) return
-    if (!confirm(t('tags.page.bulkDeleteConfirm', { count: ids.length }))) return
+    if (ids.size === 0) return
+    if (!confirm(t('tags.page.bulkDeleteConfirm', { count: ids.size }))) return
 
     for (const tagId of ids) {
       const tag = sortedTags.find((item) => item.id === tagId)
@@ -289,8 +277,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   // ハンドラー: 一括マージダイアログを開く
   const handleOpenBulkMerge = useCallback(() => {
     const ids = selectedTagIds
-    if (ids.length < 2) return
-    const selectedTags = tags.filter((t) => ids.includes(t.id))
+    if (ids.size < 2) return
+    const selectedTags = tags.filter((t) => ids.has(t.id))
     setBulkMergeTags(selectedTags)
   }, [selectedTagIds, tags])
 
@@ -353,121 +341,18 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     [setColumnWidth]
   )
 
-  // DataTable用の列定義
-  const columns: ColumnDef<TagWithChildren>[] = useMemo(() => {
-    const allColumnDefs: ColumnDef<TagWithChildren>[] = [
-      {
-        id: 'id',
-        label: 'ID',
-        width: 80,
-        resizable: true,
-        sortKey: 'tag_number',
-        render: (tag) => (
-          <TagCellContent
-            tag={tag}
-            columnId="id"
-            groups={groups}
-            allTags={tags}
-            planCounts={tagPlanCounts}
-            lastUsed={tagLastUsed}
-          />
-        ),
-      },
-      {
-        id: 'name',
-        label: t('tags.page.name'),
-        width: 200,
-        resizable: true,
-        sortKey: 'name',
-        icon: Hash,
-        render: (tag) => (
-          <TagCellContent
-            tag={tag}
-            columnId="name"
-            groups={groups}
-            allTags={tags}
-            planCounts={tagPlanCounts}
-            lastUsed={tagLastUsed}
-          />
-        ),
-      },
-      {
-        id: 'description',
-        label: t('tags.page.description'),
-        width: 300,
-        resizable: true,
-        icon: FileText,
-        render: (tag) => (
-          <TagCellContent
-            tag={tag}
-            columnId="description"
-            groups={groups}
-            allTags={tags}
-            planCounts={tagPlanCounts}
-            lastUsed={tagLastUsed}
-          />
-        ),
-      },
-      {
-        id: 'group',
-        label: t('tags.sidebar.groups'),
-        width: 150,
-        resizable: true,
-        sortKey: 'group',
-        icon: Folder,
-        render: (tag) => (
-          <TagCellContent
-            tag={tag}
-            columnId="group"
-            groups={groups}
-            allTags={tags}
-            planCounts={tagPlanCounts}
-            lastUsed={tagLastUsed}
-          />
-        ),
-      },
-      {
-        id: 'created_at',
-        label: t('tags.page.createdAt'),
-        width: 150,
-        resizable: true,
-        sortKey: 'created_at',
-        icon: Calendar,
-        render: (tag) => (
-          <TagCellContent
-            tag={tag}
-            columnId="created_at"
-            groups={groups}
-            allTags={tags}
-            planCounts={tagPlanCounts}
-            lastUsed={tagLastUsed}
-          />
-        ),
-      },
-      {
-        id: 'last_used',
-        label: t('tags.page.lastUsed'),
-        width: 150,
-        resizable: true,
-        sortKey: 'last_used',
-        icon: Calendar,
-        render: (tag) => (
-          <TagCellContent
-            tag={tag}
-            columnId="last_used"
-            groups={groups}
-            allTags={tags}
-            planCounts={tagPlanCounts}
-            lastUsed={tagLastUsed}
-          />
-        ),
-      },
-    ]
+  // DataTable用の列定義 (extracted to hook)
+  const columns = useTagTableColumns({
+    groups,
+    allTags: tags,
+    planCounts: tagPlanCounts,
+    lastUsed: tagLastUsed,
+    visibleColumns,
+    t,
+  })
 
-    // 表示列のみをフィルタリング
-    const visibleColumnIds = visibleColumns.filter((c) => c.id !== 'selection').map((c) => c.id)
-    return allColumnDefs.filter((col) => visibleColumnIds.includes(col.id as TagColumnId))
-  }, [t, groups, tags, tagPlanCounts, tagLastUsed, visibleColumns])
+  // 列の表示設定用
+  const columnSettings = useMemo(() => getTagColumnSettings(t), [t])
 
   // DataTable用の列幅マップ
   const columnWidths = useMemo(() => {
@@ -505,15 +390,6 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     )
   }
 
-  // 列の表示設定用
-  const columnSettings: { id: TagColumnId; label: string }[] = [
-    { id: 'id', label: 'ID' },
-    { id: 'description', label: t('tags.page.description') },
-    { id: 'group', label: t('tags.sidebar.groups') },
-    { id: 'created_at', label: t('tags.page.createdAt') },
-    { id: 'last_used', label: t('tags.page.lastUsed') },
-  ]
-
   return (
     <div className="flex h-full flex-col">
       {/* ヘッダー */}
@@ -526,7 +402,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           onClearSelection={clearSelection}
           actions={
             <TagSelectionActions
-              selectedTagIds={selectedTagIds}
+              selectedTagIds={Array.from(selectedTagIds)}
               tags={tags}
               groups={groups}
               onMoveToGroup={handleMoveToGroup}
@@ -539,59 +415,13 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           }
         />
       ) : (
-        <div className="flex h-12 shrink-0 items-center justify-between px-6 py-2">
-          <div className="flex h-8 items-center gap-2">
-            {/* フィルタータイプドロップダウン */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1">
-                  <Filter className="h-3.5 w-3.5" />
-                  <span>{t('tags.page.filter.type')}</span>
-                  <ChevronDown className="h-3.5 w-3.5 opacity-50" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem>{t('tags.page.filter.all')}</DropdownMenuItem>
-                <DropdownMenuItem>{t('tags.page.filter.unused')}</DropdownMenuItem>
-                <DropdownMenuItem>{t('tags.page.filter.frequentlyUsed')}</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* 列設定ドロップダウン */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1">
-                  <Settings2 className="h-3.5 w-3.5" />
-                  <span>{t('tags.page.columns')}</span>
-                  <ChevronDown className="h-3.5 w-3.5 opacity-50" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuLabel>{t('tags.page.columnSettings')}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {columnSettings.map((col) => {
-                  const column = visibleColumns.find((c) => c.id === col.id)
-                  const isVisible = !!column
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={col.id}
-                      checked={isVisible}
-                      onCheckedChange={(checked) => setColumnVisibility(col.id, checked)}
-                    >
-                      {col.label}
-                    </DropdownMenuCheckboxItem>
-                  )
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <div className="flex h-8 items-center">
-            <Button onClick={() => createRowRef.current?.startCreate()} size="sm" className="h-8">
-              <Plus className="mr-2 size-4" />
-              {t('tags.page.createTag')}
-            </Button>
-          </div>
-        </div>
+        <TagsFilterBar
+          columnSettings={columnSettings}
+          visibleColumns={visibleColumns}
+          onColumnVisibilityChange={setColumnVisibility}
+          onCreateClick={() => createRowRef.current?.startCreate()}
+          t={t}
+        />
       )}
 
       {/* テーブル */}

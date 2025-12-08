@@ -11,7 +11,7 @@ import {
 import { arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useEffect, useRef, useState } from 'react'
 
-import type { TagGroup } from '@/types/tags'
+import type { TagGroup } from '@/features/tags/types'
 import { useReorderTagGroups } from './use-tag-groups'
 
 /**

@@ -100,6 +100,7 @@ export type * from './types/base.types'
 export type * from './types/grid.types'
 export type { TimeSlot } from './types/grid.types'
 // plan.types から EventGroup を除外（calendar-specific/layout/plan-layout.ts と競合するため）
+// @deprecated lowercase aliases も削除済み
 export type {
   CalendarPlan,
   EventBlockProps,
@@ -112,10 +113,5 @@ export type {
   PlanInteractionHandler,
   TimedEvent,
   TimedPlan,
-  planCardPosition,
-  planCardProps,
-  planColumn,
-  planGroup,
-  planInteractionHandler,
 } from './types/plan.types'
 export type * from './types/view.types'

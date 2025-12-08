@@ -18,7 +18,7 @@ import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delet
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useCreateTagGroup, useDeleteTagGroup, useUpdateTagGroup } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import type { TagGroup } from '@/types/tags'
+import type { TagGroup } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
@@ -112,7 +112,7 @@ export function TagsSidebar({
   // インライン作成を保存
   const handleSaveNewGroup = useCallback(async () => {
     if (!newGroupName.trim()) {
-      toast.error('グループ名を入力してください')
+      toast.error(t('tag.toast.groupNameRequired'))
       return
     }
 
@@ -131,7 +131,7 @@ export function TagsSidebar({
         description: null,
         color: newGroupColor || null,
       })
-      toast.success(`グループ「${newGroupName}」を作成しました`)
+      toast.success(t('tag.toast.groupCreated', { name: newGroupName }))
       setIsCreatingGroup(false)
       setNewGroupName('')
       setNewGroupColor(DEFAULT_GROUP_COLOR)
@@ -161,7 +161,7 @@ export function TagsSidebar({
       }
     } catch (error) {
       console.error('Failed to delete tag group:', error)
-      toast.error('グループの削除に失敗しました')
+      toast.error(t('tag.toast.groupDeleteFailed'))
     }
   }, [deletingGroup, deleteGroupMutation, currentGroupNumber, router, pathname, t])
 

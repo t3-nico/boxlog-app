@@ -1,4 +1,3 @@
-// @ts-nocheck - TODO: Supabase型定義の修正が必要 (#734)
 /**
  * プロフィール管理API エンドポイント (Route Handler)
  * @description Supabase を使用したユーザープロフィール管理
@@ -8,9 +7,9 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
+import type { Database } from '@/lib/database.types'
 import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError, isValidUUID } from '@/lib/supabase/utils'
-import type { Database } from '@/types/supabase'
 
 // プロフィールの取得 (GET)
 export async function GET(request: NextRequest) {

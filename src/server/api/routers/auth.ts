@@ -22,7 +22,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
  * reCAPTCHA検証の入力スキーマ
  */
 const verifyRecaptchaInput = z.object({
-  token: z.string().min(1, 'reCAPTCHAトークンが必要です'),
+  token: z.string().min(1, 'validation.recaptcha.required'),
   action: z.enum(['login', 'signup', 'password_reset']),
 })
 

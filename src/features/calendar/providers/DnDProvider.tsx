@@ -6,6 +6,7 @@ import type { DragEndEvent, DragMoveEvent, DragStartEvent, Over } from '@dnd-kit
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { fromZonedTime } from 'date-fns-tz'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
@@ -35,6 +36,7 @@ interface DnDProviderProps {
  * - 重複プラン → 既存の時間幅を保持
  */
 export const DnDProvider = ({ children }: DnDProviderProps) => {
+  const t = useTranslations()
   const { updatePlan } = usePlanMutations()
   const { timezone } = useCalendarSettingsStore()
   const [activeId, setActiveId] = useState<string | null>(null)
@@ -106,7 +108,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
       const dropData = over.data?.current
       if (!dropData || !dropData.date) {
         console.warn('[DnDProvider] ドロップ先データが不正:', dropData)
-        toast.error('ドロップ先が無効です')
+        toast.error(t('calendar.toast.dropInvalid'))
         setActiveId(null)
         return
       }
@@ -124,7 +126,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           // 文字列の場合、そのまま使用
           due_date = dropData.date
         } else {
-          throw new Error('日付形式が不正です')
+          throw new Error(t('errors.calendar.invalidDateFormat'))
         }
 
         // 3. 時刻を取得
@@ -135,7 +137,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           // 時間指定あり（例: "14:30"）
           const timeMatch = dropData.time.match(/^(\d{1,2}):(\d{2})$/)
           if (!timeMatch) {
-            throw new Error('時刻形式が不正です')
+            throw new Error(t('errors.calendar.invalidTimeFormat'))
           }
 
           const [, hourStr, minuteStr] = timeMatch
@@ -144,7 +146,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
 
           // 時刻の妥当性チェック
           if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-            throw new Error('時刻が範囲外です')
+            throw new Error(t('errors.calendar.timeOutOfRange'))
           }
 
           // ユーザーのタイムゾーンでDateオブジェクトを作成
@@ -184,14 +186,14 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
         })
       } catch (error) {
         console.error('[DnDProvider] ドロップ処理エラー:', error)
-        toast.error(error instanceof Error ? error.message : 'ドロップに失敗しました')
+        toast.error(error instanceof Error ? error.message : t('calendar.toast.dropFailed'))
       } finally {
         // ドラッグ終了時にactiveIdをクリア
         setActiveId(null)
         setDragPreviewTime(null)
       }
     },
-    [updatePlan, timezone]
+    [updatePlan, timezone, t]
   )
 
   /**

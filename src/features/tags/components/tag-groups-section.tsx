@@ -1,6 +1,7 @@
 'use client'
 
 import { Folder, MoreHorizontal, Palette, Plus, Trash2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { usePathname, useRouter } from 'next/navigation'
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react'
 
@@ -24,7 +25,7 @@ import {
   useUpdateTagGroup,
 } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import type { TagGroup } from '@/types/tags'
+import type { TagGroup } from '@/features/tags/types'
 import { toast } from 'sonner'
 
 interface TagGroupsSectionProps {
@@ -44,6 +45,7 @@ export interface TagGroupsSectionRef {
  */
 export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSectionProps>(
   ({ onSelectGroup: _onSelectGroup, selectedGroupId, onClose }, ref) => {
+    const t = useTranslations()
     const { data: groups = [] as TagGroup[], isLoading } = useTagGroups()
     const { data: allTags = [] } = useTags(true) // タグ数カウント用
     const createGroupMutation = useCreateTagGroup()
@@ -81,7 +83,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
     // インライン作成を保存
     const handleSaveNewGroup = useCallback(async () => {
       if (!newGroupName.trim()) {
-        toast.error('グループ名を入力してください')
+        toast.error(t('tag.toast.groupNameRequired'))
         return
       }
 
@@ -100,7 +102,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
           description: null,
           color: newGroupColor || null,
         })
-        toast.success(`グループ「${newGroupName}」を作成しました`)
+        toast.success(t('tag.toast.groupCreated', { name: newGroupName }))
         setIsCreating(false)
         setNewGroupName('')
         setNewGroupColor(DEFAULT_GROUP_COLOR)
@@ -110,9 +112,9 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
         router.push(`/${locale}/tags/g-${result.group_number}`)
       } catch (error) {
         console.error('Failed to create tag group:', error)
-        toast.error('グループの作成に失敗しました')
+        toast.error(t('tag.toast.groupCreateFailed'))
       }
-    }, [newGroupName, newGroupColor, createGroupMutation, router, pathname])
+    }, [newGroupName, newGroupColor, createGroupMutation, router, pathname, t])
 
     // インライン編集を開始
     const handleStartEditing = useCallback((group: TagGroup) => {
@@ -130,7 +132,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
     const handleSaveEditing = useCallback(
       async (group: TagGroup) => {
         if (!editingGroupName.trim()) {
-          toast.error('グループ名を入力してください')
+          toast.error(t('tag.toast.groupNameRequired'))
           return
         }
 
@@ -143,15 +145,15 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
               color: group.color,
             },
           })
-          toast.success(`グループ名を「${editingGroupName}」に変更しました`)
+          toast.success(t('tag.toast.groupNameChanged', { name: editingGroupName }))
           setEditingGroupId(null)
           setEditingGroupName('')
         } catch (error) {
           console.error('Failed to update tag group:', error)
-          toast.error('グループ名の変更に失敗しました')
+          toast.error(t('tag.toast.groupNameChangeFailed'))
         }
       },
-      [editingGroupName, updateGroupMutation]
+      [editingGroupName, updateGroupMutation, t]
     )
 
     // グループ削除
@@ -160,13 +162,13 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
 
       try {
         await deleteGroupMutation.mutateAsync(deletingGroup.id)
-        toast.success(`グループ「${deletingGroup.name}」を削除しました`)
+        toast.success(t('tag.toast.groupDeleted', { name: deletingGroup.name }))
         setDeletingGroup(null)
       } catch (error) {
         console.error('Failed to delete tag group:', error)
-        toast.error('グループの削除に失敗しました')
+        toast.error(t('tag.toast.groupDeleteFailed'))
       }
-    }, [deletingGroup, deleteGroupMutation])
+    }, [deletingGroup, deleteGroupMutation, t])
 
     // グループごとのタグ数をカウント
     const getGroupTagCount = useCallback(
@@ -323,7 +325,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                       }}
                     >
                       <Palette className="mr-2 h-4 w-4" />
-                      名前を変更
+                      {t('tag.sidebar.editName')}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -333,10 +335,10 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                         if (tagCount === 0) {
                           try {
                             await deleteGroupMutation.mutateAsync(group.id)
-                            toast.success(`グループ「${group.name}」を削除しました`)
+                            toast.success(t('tag.toast.groupDeleted', { name: group.name }))
                           } catch (error) {
                             console.error('Failed to delete tag group:', error)
-                            toast.error('グループの削除に失敗しました')
+                            toast.error(t('tag.toast.groupDeleteFailed'))
                           }
                         } else {
                           // タグが1件以上の場合は確認ダイアログを表示
@@ -346,7 +348,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                       className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
-                      削除
+                      {t('tag.sidebar.delete')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -362,7 +364,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                     <button
                       type="button"
                       className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
-                      aria-label="カラーを変更"
+                      aria-label={t('tag.sidebar.changeColor')}
                     >
                       <Folder className="h-5 w-5" style={{ color: newGroupColor }} fill={newGroupColor} />
                     </button>
@@ -383,7 +385,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                       handleCancelCreating()
                     }
                   }}
-                  placeholder="グループ名を入力"
+                  placeholder={t('tag.sidebar.groupNamePlaceholder')}
                   autoFocus
                   className="h-auto flex-1 border-0 bg-transparent p-0 text-base shadow-none focus-visible:ring-0"
                 />

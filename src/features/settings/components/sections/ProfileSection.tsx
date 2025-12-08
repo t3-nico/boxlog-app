@@ -43,7 +43,7 @@ export function ProfileSection() {
     },
     onSave: async (values) => {
       if (!user?.id) {
-        throw new Error('ユーザーIDが見つかりません')
+        throw new Error(t('errors.auth.userIdNotFound'))
       }
 
       const { error: profileError } = await supabase
@@ -56,7 +56,7 @@ export function ProfileSection() {
         .eq('id', user.id)
 
       if (profileError) {
-        throw new Error(`プロフィールの更新に失敗しました: ${profileError.message}`)
+        throw new Error(`${t('errors.auth.profileUpdateFailed')}: ${profileError.message}`)
       }
 
       const { error: authError } = await supabase.auth.updateUser({
@@ -99,18 +99,18 @@ export function ProfileSection() {
         profile.updateValue('uploadedAvatar', publicUrl)
       } catch (error) {
         console.error('Avatar upload error:', error)
-        alert(getErrorMessage(error, 'アバター画像のアップロードに失敗しました'))
+        alert(getErrorMessage(error, t('errors.storage.uploadFailed')))
       } finally {
         setIsUploading(false)
       }
     },
-    [profile, user?.id]
+    [profile, user?.id, t]
   )
 
   const handleAvatarRemove = useCallback(async () => {
     if (!user?.id) return
 
-    const confirmed = window.confirm('アバター画像を削除しますか？')
+    const confirmed = window.confirm(t('settings.account.avatarDeleteConfirm'))
     if (!confirmed) return
 
     setIsUploading(true)
@@ -120,11 +120,11 @@ export function ProfileSection() {
       profile.updateValue('uploadedAvatar', null)
     } catch (error) {
       console.error('Avatar delete error:', error)
-      alert(getErrorMessage(error, 'アバター画像の削除に失敗しました'))
+      alert(getErrorMessage(error, t('errors.storage.deleteFailed')))
     } finally {
       setIsUploading(false)
     }
-  }, [profile, user?.id])
+  }, [profile, user?.id, t])
 
   const handleUsernameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -246,8 +246,8 @@ Running 11 tests using 1 worker
 
 ## 🔗 関連ドキュメント
 
-- [Issue #615 - E2E テスト追加（RLS 検証）](https://github.com/your-org/boxlog-app/issues/615)
-- [Issue #611 - RLS 完全実装](https://github.com/your-org/boxlog-app/issues/611)
+- [Issue #615 - E2E テスト追加（RLS 検証）](https://github.com/t3-nico/boxlog-app/issues/615)
+- [Issue #611 - RLS 完全実装](https://github.com/t3-nico/boxlog-app/issues/611)
 - [Playwright Documentation](https://playwright.dev/)
 - [Supabase RLS Guide](https://supabase.com/docs/guides/auth/row-level-security)
 

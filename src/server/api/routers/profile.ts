@@ -1,4 +1,3 @@
-// @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 /**
  * tRPC Router: Profile
  * ユーザープロフィール管理API
@@ -7,9 +6,9 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
+import type { Database } from '@/lib/database.types'
 import { createClient } from '@/lib/supabase/server'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
-import type { Database } from '@/types/supabase'
 
 export const profileRouter = createTRPCRouter({
   /**
@@ -18,7 +17,7 @@ export const profileRouter = createTRPCRouter({
   update: protectedProcedure
     .input(
       z.object({
-        username: z.string().min(1, 'ユーザー名は必須です').max(50, 'ユーザー名は50文字以内で入力してください'),
+        username: z.string().min(1, 'validation.username.required').max(50, 'validation.username.maxLength'),
         avatarUrl: z.string().url().nullable().optional(),
       })
     )

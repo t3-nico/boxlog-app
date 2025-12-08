@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { useTranslations } from 'next-intl'
+
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -22,6 +24,7 @@ interface EmailChangeDialogProps {
 }
 
 export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailChangeDialogProps) {
+  const t = useTranslations()
   const [newEmail, setNewEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -43,7 +46,7 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
       })
 
       if (signInError) {
-        throw new Error('パスワードが正しくありません')
+        throw new Error(t('errors.auth.wrongPassword'))
       }
 
       // 2. メールアドレス更新（確認メール送信）
@@ -55,13 +58,13 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
       )
 
       if (updateError) {
-        throw new Error(`メールアドレスの更新に失敗しました: ${updateError.message}`)
+        throw new Error(`${t('errors.auth.emailUpdateFailed')}: ${updateError.message}`)
       }
 
       // 成功
       setSuccess(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'エラーが発生しました')
+      setError(err instanceof Error ? err.message : t('errors.generic'))
     } finally {
       setIsLoading(false)
     }

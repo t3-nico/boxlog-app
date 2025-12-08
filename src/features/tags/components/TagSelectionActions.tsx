@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import type { TagGroup, TagWithChildren } from '@/types/tags'
+import type { TagGroup, TagWithChildren } from '@/features/tags/types'
 
 import { TagActionMenuItems } from './TagActionMenuItems'
 

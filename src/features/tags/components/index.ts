@@ -41,3 +41,6 @@ export { TagDeleteDialog } from './TagDeleteDialog'
 // Actions
 export { TagActionMenuItems } from './TagActionMenuItems'
 export { TagSelectionActions } from './TagSelectionActions'
+
+// Filter Bar
+export { TagsFilterBar } from './TagsFilterBar'

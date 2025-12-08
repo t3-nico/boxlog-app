@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
@@ -9,6 +10,7 @@ import { toast } from 'sonner'
  * @returns {Object} - ログアウト処理とログアウト状態
  */
 export const useUserAuth = () => {
+  const t = useTranslations()
   const router = useRouter()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
@@ -17,16 +19,16 @@ export const useUserAuth = () => {
     try {
       const supabase = createClient()
       await supabase.auth.signOut()
-      toast.success('ログアウトしました')
+      toast.success(t('navUser.logoutSuccess'))
       router.push('/auth/login')
       router.refresh()
     } catch (error) {
       console.error('Logout error:', error)
-      toast.error('ログアウトに失敗しました')
+      toast.error(t('navUser.logoutFailed'))
     } finally {
       setIsLoggingOut(false)
     }
-  }, [router])
+  }, [router, t])
 
   return { handleLogout, isLoggingOut }
 }

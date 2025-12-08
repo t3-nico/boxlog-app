@@ -16,8 +16,8 @@ import {
 
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
+import { Tag } from '@/features/tags/types'
 import { useActiveState } from '@/hooks/useActiveState'
-import { Tag } from '@/types/tags'
 import { tagIconMapping, TagIconName } from '../constants/icons'
 
 import { TagEditDialog } from './tag-edit-dialog'

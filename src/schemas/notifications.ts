@@ -21,7 +21,7 @@ export const notificationIconSchema = z.enum(['bell', 'calendar', 'trash', 'aler
 export const createNotificationSchema = z.object({
   type: notificationTypeSchema,
   priority: notificationPrioritySchema.default('medium'),
-  title: z.string().min(1, 'タイトルは必須です').max(200),
+  title: z.string().min(1, 'validation.title.required').max(200),
   message: z.string().max(1000).optional(),
   related_plan_id: z.string().uuid().nullable().optional(),
   related_tag_id: z.string().uuid().nullable().optional(),
@@ -39,7 +39,7 @@ export const updateNotificationSchema = z.object({
 
 // 通知ID
 export const notificationIdSchema = z.object({
-  id: z.string().uuid('正しいIDを指定してください'),
+  id: z.string().uuid('validation.invalidUuid'),
 })
 
 // 通知一覧取得オプション

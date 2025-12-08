@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
-import { CreateTagInput, Tag, UpdateTagInput } from '@/types/tags'
-import { Task } from '@/types/unified'
+import { CreateTagInput, Tag, UpdateTagInput } from '@/features/tags/types'
+import type { Task } from '@/types'
 
 interface TagStore {
   tags: Tag[]

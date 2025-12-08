@@ -2,7 +2,7 @@
 
 import type { LucideIcon } from 'lucide-react'
 
-import type { TranslatedString } from '@/types/i18n-branded'
+import type { TranslatedString } from '@/lib/i18n'
 
 // ========================================
 // Settings Dialog Types
