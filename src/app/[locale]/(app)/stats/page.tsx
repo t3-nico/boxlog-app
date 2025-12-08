@@ -31,6 +31,11 @@ const TagTimeChart = dynamic(() => import('@/features/stats/components/charts').
   loading: () => <Skeleton className="h-[300px] w-full" />,
 })
 
+const TotalTimeCard = dynamic(() => import('@/features/stats/components/charts').then((mod) => mod.TotalTimeCard), {
+  ssr: false,
+  loading: () => <Skeleton className="h-[160px] w-full" />,
+})
+
 const HourlyDistributionChart = dynamic(
   () => import('@/features/stats/components/charts').then((mod) => mod.HourlyDistributionChart),
   {
@@ -66,9 +71,12 @@ export default function StatsPage() {
       {/* 年次グリッド（GitHub風ヒートマップ） */}
       <YearlyHeatmap />
 
-      {/* ストリーク + タグ別時間 */}
+      {/* ストリーク */}
+      <StreakCard />
+
+      {/* 予定合計時間 + タグ別時間 */}
       <div className="grid gap-4 lg:grid-cols-2">
-        <StreakCard />
+        <TotalTimeCard />
         <TagTimeChart />
       </div>
 
