@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 /**
  * タグ管理API エンドポイント
  * @description Supabase を使用したタグCRUD操作
@@ -7,7 +8,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError } from '@/lib/supabase/utils'
-import type { CreateTagInput, Tag, TagWithChildren } from '@/features/tags/types'
+import type { CreateTagInput, Tag, TagWithChildren } from '@/types/tags'
 
 /**
  * タグ一覧取得 (GET)

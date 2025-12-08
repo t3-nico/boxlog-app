@@ -1,42 +1,45 @@
 /**
- * BoxLog Shared Type Definitions
+ * BoxLog 統一型定義
  *
- * This directory contains only basic type definitions
- * used across the application.
+ * TypeScript公式ベストプラクティス準拠:
+ * - any型禁止
+ * - interface優先（拡張可能性）
+ * - type使用可（Union Types）
  *
- * Placement rules:
- * - Feature-specific types: features/X/types.ts (colocation)
- * - DB types: lib/database.types.ts (auto-generated)
- * - i18n types: lib/i18n/types.ts
- * - API common types: types/api.ts
+ * 参考: .claude/code-standards.md
  */
 
 // ============================================
-// Basic Type Definitions
+// 1. 基本型定義（Union Types）
 // ============================================
 
 /**
- * Task status
+ * タスクステータス（TypeScript公式: Union Type使用）
  */
 export type TaskStatus =
-  | 'backlog'
-  | 'scheduled'
-  | 'in_progress'
-  | 'completed'
-  | 'stopped'
+  | 'backlog' // バックログ
+  | 'scheduled' // スケジュール済み
+  | 'in_progress' // 進行中
+  | 'completed' // 完了
+  | 'stopped' // 停止
 
 /**
- * Task priority
+ * タスク優先度（TypeScript公式: Union Type使用）
  */
 export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
 
+// ============================================
+// 2. メインエンティティ（interface優先）
+// ============================================
+
 /**
- * Task type (for development management)
+ * タスクの種別（開発管理用の詳細タイプ）
  */
 export type TaskType = 'feature' | 'bug' | 'improvement' | 'maintenance' | 'documentation'
 
 /**
- * Task entity
+ * タスク（BoxLog統一型）
+ * TypeScript公式: interface優先（拡張可能性）
  */
 export interface Task {
   id: string
@@ -44,17 +47,17 @@ export interface Task {
   description?: string
   status: TaskStatus
   priority: TaskPriority
-  type?: TaskType
-  planned_start: string
-  planned_duration: number
+  type?: TaskType // タスク種別（オプショナル）
+  planned_start: string // ISO 8601
+  planned_duration: number // 分単位
   tags?: string[]
-  created_at: string
-  updated_at: string
+  created_at: string // ISO 8601
+  updated_at: string // ISO 8601
   user_id: string
 }
 
 /**
- * User profile
+ * ユーザープロフィール
  */
 export interface Profile {
   id: string
@@ -66,7 +69,7 @@ export interface Profile {
 }
 
 /**
- * User values (key-value settings)
+ * ユーザー設定値
  */
 export interface UserValues {
   id: string
@@ -76,26 +79,38 @@ export interface UserValues {
 }
 
 // ============================================
-// Data Operation Types (Utility Types)
+// 3. データ操作型（TypeScript公式: Utility Types活用）
 // ============================================
 
 /**
- * Task insert input
+ * タスク作成入力
+ * TypeScript公式: Omitユーティリティ型活用
  */
 export type TaskInsert = Omit<Task, 'id' | 'created_at' | 'updated_at'>
 
 /**
- * Task update input
+ * タスク更新入力
+ * TypeScript公式: Partialユーティリティ型活用
  */
 export type TaskUpdate = Partial<Omit<Task, 'id' | 'user_id' | 'created_at'>>
 
 /**
- * Profile update input
+ * プロフィール更新入力
  */
 export type ProfileUpdate = Partial<Omit<Profile, 'id' | 'created_at'>>
 
 // ============================================
-// API Types Export
+// 4. 他モジュールからの再エクスポート
 // ============================================
 
-export * from './api'
+// 共通型
+export * from './chronotype'
+export * from './common'
+export * from './tags'
+export * from './trash'
+
+// 統一型（unified.tsから移行済みのためコメントアウト）
+// export * from './unified'
+
+// タスク型（task.tsから移行済みのためコメントアウト予定）
+// export * from './task'

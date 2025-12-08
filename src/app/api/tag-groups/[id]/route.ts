@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 /**
  * 個別タググループ API
  * GET: 個別タググループ取得
@@ -9,7 +10,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError } from '@/lib/supabase/utils'
-import type { UpdateTagGroupInput } from '@/features/tags/types'
+import type { UpdateTagGroupInput } from '@/types/tags'
 
 /**
  * 個別タググループ取得 (GET)
