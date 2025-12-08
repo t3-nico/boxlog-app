@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import QRCode from 'qrcode'
+import { useTranslations } from 'next-intl'
 
 import { createClient } from '@/lib/supabase/client'
 
@@ -32,6 +33,7 @@ interface UseMFAReturn extends MFAState {
  * Supabase MFA APIを使用して、TOTP認証の登録・検証・無効化を行う
  */
 export function useMFA(): UseMFAReturn {
+  const t = useTranslations()
   const [hasMFA, setHasMFA] = useState(false)
   const [showMFASetup, setShowMFASetup] = useState(false)
   const [qrCode, setQrCode] = useState<string | null>(null)
@@ -75,7 +77,7 @@ export function useMFA(): UseMFAReturn {
       })
 
       if (enrollError) {
-        throw new Error(`登録エラー: ${enrollError.message}`)
+        throw new Error(`${t('errors.mfa.enrollFailed')}: ${enrollError.message}`)
       }
 
       if (data) {
@@ -85,26 +87,26 @@ export function useMFA(): UseMFAReturn {
         setQrCode(qrCodeDataUrl)
         setShowMFASetup(true)
       } else {
-        throw new Error('MFAデータが取得できませんでした')
+        throw new Error(t('errors.mfa.dataNotFound'))
       }
     } catch (err) {
       console.error('MFA enrollment error:', err)
-      const errorMessage = err instanceof Error ? err.message : '2段階認証の設定開始に失敗しました'
+      const errorMessage = err instanceof Error ? err.message : t('errors.mfa.setupFailed')
       setError(errorMessage)
     } finally {
       setIsLoading(false)
     }
-  }, [supabase])
+  }, [supabase, t])
 
   // MFA検証
   const verifyMFA = useCallback(async () => {
     if (!factorId || !verificationCode) {
-      setError('6桁のコードを入力してください')
+      setError(t('errors.mfa.enterCode'))
       return
     }
 
     if (verificationCode.length !== 6) {
-      setError('コードは6桁で入力してください')
+      setError(t('errors.mfa.codeLength'))
       return
     }
 
@@ -118,7 +120,7 @@ export function useMFA(): UseMFAReturn {
       })
 
       if (challengeError) {
-        throw new Error(`チャレンジエラー: ${challengeError.message}`)
+        throw new Error(`${t('errors.mfa.challengeFailed')}: ${challengeError.message}`)
       }
 
       const { error: verifyError } = await supabase.auth.mfa.verify({
@@ -128,7 +130,7 @@ export function useMFA(): UseMFAReturn {
       })
 
       if (verifyError) {
-        throw new Error(`検証エラー: ${verifyError.message}`)
+        throw new Error(`${t('errors.mfa.verifyFailed')}: ${verifyError.message}`)
       }
 
       // セッションを更新（AAL2に昇格）
@@ -137,7 +139,7 @@ export function useMFA(): UseMFAReturn {
         await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
       }
 
-      setSuccess('2段階認証が有効になりました！')
+      setSuccess(t('errors.mfa.enabled'))
       setHasMFA(true)
       setShowMFASetup(false)
       setVerificationCode('')
@@ -148,19 +150,19 @@ export function useMFA(): UseMFAReturn {
       await checkMFAStatus()
     } catch (err) {
       console.error('MFA verification error:', err)
-      const errorMessage = err instanceof Error ? err.message : 'コードの検証に失敗しました。もう一度お試しください'
+      const errorMessage = err instanceof Error ? err.message : t('errors.mfa.verificationFailed')
       setError(errorMessage)
       setVerificationCode('')
     } finally {
       setIsLoading(false)
     }
-  }, [factorId, verificationCode, supabase, checkMFAStatus])
+  }, [factorId, verificationCode, supabase, checkMFAStatus, t])
 
   // MFA無効化
   const disableMFA = useCallback(async () => {
-    const code = window.prompt('2段階認証を無効にするには、認証アプリの6桁のコードを入力してください:')
+    const code = window.prompt(t('errors.mfa.disablePrompt'))
     if (!code || code.length !== 6) {
-      setError('6桁のコードを入力してください')
+      setError(t('errors.mfa.enterCode'))
       return
     }
 
@@ -172,18 +174,18 @@ export function useMFA(): UseMFAReturn {
       const { data: factors, error: listError } = await supabase.auth.mfa.listFactors()
 
       if (listError) {
-        throw new Error(`ファクター取得エラー: ${listError.message}`)
+        throw new Error(`${t('errors.mfa.factorListFailed')}: ${listError.message}`)
       }
 
       if (!factors || factors.totp.length === 0) {
-        setError('有効なMFAファクターが見つかりません')
+        setError(t('errors.mfa.noFactorFound'))
         return
       }
 
       const verifiedFactor = factors.totp.find((f) => f.status === 'verified')
 
       if (!verifiedFactor) {
-        setError('検証済みのMFAファクターが見つかりません')
+        setError(t('errors.mfa.noVerifiedFactor'))
         return
       }
 
@@ -193,7 +195,7 @@ export function useMFA(): UseMFAReturn {
       })
 
       if (challengeError) {
-        throw new Error(`チャレンジエラー: ${challengeError.message}`)
+        throw new Error(`${t('errors.mfa.challengeFailed')}: ${challengeError.message}`)
       }
 
       // チャレンジを検証してAAL2に昇格
@@ -204,7 +206,7 @@ export function useMFA(): UseMFAReturn {
       })
 
       if (verifyError) {
-        throw new Error('コードが正しくありません。もう一度お試しください。')
+        throw new Error(t('errors.mfa.codeInvalid'))
       }
 
       // AAL2セッションでMFA無効化
@@ -213,21 +215,21 @@ export function useMFA(): UseMFAReturn {
       })
 
       if (unenrollError) {
-        throw new Error(`無効化エラー: ${unenrollError.message}`)
+        throw new Error(`${t('errors.mfa.disableFailed')}: ${unenrollError.message}`)
       }
 
-      setSuccess('2段階認証を無効にしました')
+      setSuccess(t('errors.mfa.disabled'))
       setHasMFA(false)
 
       await checkMFAStatus()
     } catch (err) {
       console.error('MFA disable error:', err)
-      const errorMessage = err instanceof Error ? err.message : '2段階認証の無効化に失敗しました'
+      const errorMessage = err instanceof Error ? err.message : t('errors.mfa.disableGeneralFailed')
       setError(errorMessage)
     } finally {
       setIsLoading(false)
     }
-  }, [supabase, checkMFAStatus])
+  }, [supabase, checkMFAStatus, t])
 
   // セットアップキャンセル
   const cancelSetup = useCallback(() => {

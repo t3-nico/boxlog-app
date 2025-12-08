@@ -57,7 +57,7 @@ export function PasswordSection() {
       try {
         // ステップ1: 現在のパスワードで再認証
         if (!user?.email) {
-          throw new Error('メールアドレスが見つかりません')
+          throw new Error(t('errors.auth.emailNotFound'))
         }
 
         const { error: reAuthError } = await supabase.auth.signInWithPassword({
@@ -71,7 +71,7 @@ export function PasswordSection() {
 
         // ステップ2: パスワード履歴チェック（OWASP推奨）
         if (!user?.id) {
-          throw new Error('ユーザーIDが見つかりません')
+          throw new Error(t('errors.auth.userIdNotFound'))
         }
 
         const isReused = await isPasswordReused(user.id, newPassword)

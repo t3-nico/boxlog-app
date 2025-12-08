@@ -180,5 +180,46 @@
       "required": "ユーザー名は必須です",
       "maxLength": "ユーザー名は{{max}}文字以内で入力してください"
     }
+  },
+  "errors": {
+    "generic": "エラーが発生しました",
+    "storage": {
+      "imageOnly": "画像ファイルのみアップロード可能です",
+      "fileTooLarge": "ファイルサイズは5MB以下にしてください",
+      "uploadFailed": "アップロードに失敗しました",
+      "listFailed": "ファイル一覧の取得に失敗しました",
+      "deleteFailed": "削除に失敗しました"
+    },
+    "mfa": {
+      "enrollFailed": "登録エラー",
+      "dataNotFound": "MFAデータが取得できませんでした",
+      "setupFailed": "2段階認証の設定開始に失敗しました",
+      "enterCode": "6桁のコードを入力してください",
+      "codeLength": "コードは6桁で入力してください",
+      "challengeFailed": "チャレンジエラー",
+      "verifyFailed": "検証エラー",
+      "codeInvalid": "コードが正しくありません。もう一度お試しください。",
+      "verificationFailed": "コードの検証に失敗しました。もう一度お試しください",
+      "factorListFailed": "ファクター取得エラー",
+      "noFactorFound": "有効なMFAファクターが見つかりません",
+      "noVerifiedFactor": "検証済みのMFAファクターが見つかりません",
+      "disableFailed": "無効化エラー",
+      "disableGeneralFailed": "2段階認証の無効化に失敗しました",
+      "disablePrompt": "2段階認証を無効にするには、認証アプリの6桁のコードを入力してください:",
+      "enabled": "2段階認証が有効になりました！",
+      "disabled": "2段階認証を無効にしました"
+    },
+    "auth": {
+      "wrongPassword": "パスワードが正しくありません",
+      "emailUpdateFailed": "メールアドレスの更新に失敗しました",
+      "emailNotFound": "メールアドレスが見つかりません",
+      "userIdNotFound": "ユーザーIDが見つかりません",
+      "profileUpdateFailed": "プロフィールの更新に失敗しました"
+    },
+    "calendar": {
+      "invalidDateFormat": "日付形式が不正です",
+      "invalidTimeFormat": "時刻形式が不正です",
+      "timeOutOfRange": "時刻が範囲外です"
+    }
   }
 }

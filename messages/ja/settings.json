@@ -16,6 +16,7 @@
       "profilePicture": "プロフィール画像",
       "profilePictureDesc": "JPG, PNG, GIF 最大2MB",
       "profilePictureAlt": "プロフィール画像",
+      "avatarDeleteConfirm": "アバター画像を削除しますか？",
       "usingCustomImage": "カスタム画像を使用",
       "usingEmojiIcon": "絵文字アイコンを使用",
       "uploading": "アップロード中...",

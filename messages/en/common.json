@@ -180,5 +180,46 @@
       "required": "Username is required",
       "maxLength": "Username must be {{max}} characters or less"
     }
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "storage": {
+      "imageOnly": "Only image files can be uploaded",
+      "fileTooLarge": "File size must be 5MB or less",
+      "uploadFailed": "Upload failed",
+      "listFailed": "Failed to get file list",
+      "deleteFailed": "Failed to delete"
+    },
+    "mfa": {
+      "enrollFailed": "Enrollment error",
+      "dataNotFound": "Could not retrieve MFA data",
+      "setupFailed": "Failed to start 2FA setup",
+      "enterCode": "Please enter a 6-digit code",
+      "codeLength": "Code must be 6 digits",
+      "challengeFailed": "Challenge error",
+      "verifyFailed": "Verification error",
+      "codeInvalid": "Invalid code. Please try again.",
+      "verificationFailed": "Code verification failed. Please try again",
+      "factorListFailed": "Factor retrieval error",
+      "noFactorFound": "No valid MFA factor found",
+      "noVerifiedFactor": "No verified MFA factor found",
+      "disableFailed": "Disable error",
+      "disableGeneralFailed": "Failed to disable 2FA",
+      "disablePrompt": "Enter your 6-digit authenticator code to disable 2FA:",
+      "enabled": "2FA has been enabled!",
+      "disabled": "2FA has been disabled"
+    },
+    "auth": {
+      "wrongPassword": "Incorrect password",
+      "emailUpdateFailed": "Failed to update email address",
+      "emailNotFound": "Email address not found",
+      "userIdNotFound": "User ID not found",
+      "profileUpdateFailed": "Failed to update profile"
+    },
+    "calendar": {
+      "invalidDateFormat": "Invalid date format",
+      "invalidTimeFormat": "Invalid time format",
+      "timeOutOfRange": "Time is out of range"
+    }
   }
 }
