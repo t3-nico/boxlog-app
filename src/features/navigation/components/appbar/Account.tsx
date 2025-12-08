@@ -54,7 +54,7 @@ export function Account({ userData, locale }: AccountProps) {
   const { handleLogout, isLoggingOut } = useUserAuth()
 
   return (
-    <div className="flex flex-col items-center justify-center px-2 pt-4">
+    <div className="flex flex-col items-center justify-center px-2 py-2" onClick={(e) => e.stopPropagation()}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button

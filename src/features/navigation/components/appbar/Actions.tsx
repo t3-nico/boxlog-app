@@ -39,7 +39,7 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
 
   return (
     <>
-      <div className="flex flex-col items-center gap-1 px-2">
+      <div className="flex flex-col items-center gap-1 px-2" onClick={(e) => e.stopPropagation()}>
         <PlanCreatePopover
           triggerElement={
             <button className="flex flex-col items-center" type="button">

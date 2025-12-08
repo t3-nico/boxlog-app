@@ -1,10 +1,8 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { useEffect, useMemo, type ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 
-import { InboxSidebar } from '@/features/inbox/components/InboxSidebar'
-import { useInboxData } from '@/features/inbox/hooks/useInboxData'
 import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore'
 
 interface InboxLayoutProps {
@@ -14,31 +12,12 @@ interface InboxLayoutProps {
 /**
  * Inbox共通レイアウト
  *
- * Sidebar + メインコンテンツの2カラムレイアウト
  * URLパスからactiveViewIdを同期
- *
- * モバイルではSidebarはMobileLayoutのSheetで表示されるため、
- * ここではデスクトップのみ表示
+ * サイドバーはDesktopLayoutで共通管理
  */
 export default function InboxLayout({ children }: InboxLayoutProps) {
   const pathname = usePathname()
   const setActiveView = useInboxViewStore((state) => state.setActiveView)
-
-  // 全Planデータを取得
-  const { items } = useInboxData()
-
-  // アクティブなPlan数とアーカイブ数を計算
-  const { activePlansCount, archivedPlansCount } = useMemo(() => {
-    // TODO: アーカイブフラグがある場合はそれで判定
-    // 現状はアーカイブ機能がないため、全てアクティブとして扱う
-    const active = items.length
-    const archived = 0
-
-    return {
-      activePlansCount: active,
-      archivedPlansCount: archived,
-    }
-  }, [items])
 
   // URLパスからviewIdへのマッピング
   useEffect(() => {
@@ -62,15 +41,5 @@ export default function InboxLayout({ children }: InboxLayoutProps) {
     setActiveView(viewId)
   }, [pathname, setActiveView])
 
-  return (
-    <div className="flex h-full">
-      {/* 左: Sidebar（デスクトップのみ表示） */}
-      <div className="border-border hidden w-64 shrink-0 border-r md:block">
-        <InboxSidebar activeplansCount={activePlansCount} archivedplansCount={archivedPlansCount} />
-      </div>
-
-      {/* 右: メインコンテンツ */}
-      <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
-    </div>
-  )
+  return <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">{children}</div>
 }
