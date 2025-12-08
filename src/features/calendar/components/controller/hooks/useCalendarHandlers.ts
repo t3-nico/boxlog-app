@@ -77,9 +77,30 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
         }
       }
 
-      console.log('TODO: Plans統合後に実装', { startTime, endTime, date })
+      // プランを作成してInspectorで編集
+      if (startTime && endTime && date) {
+        createPlan.mutate(
+          {
+            title: '新規プラン',
+            status: 'todo',
+            due_date: format(date, 'yyyy-MM-dd'),
+            start_time: startTime.toISOString(),
+            end_time: endTime.toISOString(),
+          },
+          {
+            onSuccess: (newPlan) => {
+              openInspector(newPlan.id)
+              logger.log('✅ Created plan:', {
+                planId: newPlan.id,
+                title: newPlan.title,
+                dueDate: newPlan.due_date,
+              })
+            },
+          }
+        )
+      }
     },
-    [viewType, currentDate]
+    [viewType, currentDate, createPlan, openInspector]
   )
 
   // タスク作成ハンドラー
@@ -171,8 +192,6 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
           },
         }
       )
-
-      console.log('TODO: Plans統合後に実装', { startTime, endTime, selection })
     },
     [createPlan, openInspector]
   )

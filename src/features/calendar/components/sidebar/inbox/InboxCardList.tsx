@@ -80,9 +80,9 @@ export function InboxCardList({
       })
     }
 
-    // 3. 優先度フィルター（Priority情報がある場合のみ）
-    // TODO: InboxItem に priority フィールドを追加する必要あり
-    // 現在は priority フィールドがないため、この処理はスキップ
+    // 3. 優先度フィルター
+    // NOTE: Plan/InboxItem には現在 priority フィールドが存在しない
+    // 将来の機能追加時に実装予定（DBスキーマ変更が必要）
 
     // 4. ソート（CalendarNavigationからのソートを優先）
     result.sort((a, b) => {
@@ -103,8 +103,8 @@ export function InboxCardList({
         // タイムゾーン問題を回避: YYYY-MM-DD をローカル日付として解釈
         return parseDateString(a.due_date).getTime() - parseDateString(b.due_date).getTime()
       } else if (sort === 'priority') {
-        // TODO: priority フィールド実装後に対応
-        return 0
+        // NOTE: priority フィールド未実装のため、作成日順でソート
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       } else if (sort === 'created') {
         // 作成日順（新しい順）
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()

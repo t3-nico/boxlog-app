@@ -28,7 +28,7 @@ export type { CalendarView, SlideDirection } from './types'
 
 export { AnimatedEventCard } from './AnimatedPlanCard'
 export {
-  // tailwindAnimations, // TODO(#389): EventAnimations.tsxで定義されていない
+  // NOTE: tailwindAnimations はPlanAnimations.tsxで未定義のため除外
   AnimatedEventItem,
   CreatingEventPreview,
   DeletingEvent,
