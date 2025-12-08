@@ -16,7 +16,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import type { Plan } from '@/features/plans/types/plan'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors'
 import type { TagWithChildren } from '@/features/tags/types'
 import {
@@ -112,10 +111,9 @@ export function TagInspector() {
   const hasNext = currentIndex >= 0 && currentIndex < flatTags.length - 1
 
   // タグに紐づくプランを取得
-  const { data: plansData = [], isLoading: isLoadingPlans } = usePlans(tag?.id ? { tagId: tag.id } : {}, {
+  const { data: plans = [], isLoading: isLoadingPlans } = usePlans(tag?.id ? { tagId: tag.id } : {}, {
     enabled: !!tag?.id,
   })
-  const plans = plansData as unknown as Plan[]
 
   // 子タグ
   const childTags = useMemo(() => {

@@ -20,7 +20,9 @@ import { Tag } from '@/features/tags/types'
 import { useActiveState } from '@/hooks/useActiveState'
 import { tagIconMapping, TagIconName } from '../constants/icons'
 
+import { TagDeleteDialog } from './TagDeleteDialog'
 import { TagEditDialog } from './tag-edit-dialog'
+import type { TagWithChildren } from '@/features/tags/types'
 
 interface TagsListProps {
   collapsed?: boolean
@@ -294,6 +296,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
   )
 
   const [editingTag, setEditingTag] = useState<Tag | null>(null)
+  const [deletingTag, setDeletingTag] = useState<Tag | null>(null)
   const updateTag = useTagStore((state) => state.updateTag)
   const deleteTag = useTagStore((state) => state.deleteTag)
 
@@ -301,16 +304,19 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
     setEditingTag(tag)
   }, [])
 
-  const handleDeleteTag = useCallback(
-    (tag: Tag) => {
-      // TODO: タグの使用状況チェック（タスク、イベント、記録での使用数）
-      // 現在は直接削除を許可（サーバー側でバリデーション想定）
-      if (confirm(`タグ「${tag.name}」を削除しますか？`)) {
-        deleteTag(tag.id)
-      }
-    },
-    [deleteTag]
-  )
+  const handleDeleteTag = useCallback((tag: Tag) => {
+    setDeletingTag(tag)
+  }, [])
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!deletingTag) return
+    deleteTag(deletingTag.id)
+    setDeletingTag(null)
+  }, [deletingTag, deleteTag])
+
+  const handleCloseDeleteDialog = useCallback(() => {
+    setDeletingTag(null)
+  }, [])
 
   const handleSaveTag = useCallback(
     (updatedTag: Partial<Tag>) => {
@@ -418,6 +424,13 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
 
       {/* タグ編集ダイアログ */}
       <TagEditDialog tag={editingTag} open={!!editingTag} onClose={handleCloseEditDialog} onSave={handleSaveTag} />
+
+      {/* タグ削除ダイアログ（使用状況チェック付き） */}
+      <TagDeleteDialog
+        tag={deletingTag ? ({ ...deletingTag, children: [] } as TagWithChildren) : null}
+        onClose={handleCloseDeleteDialog}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   )
 }

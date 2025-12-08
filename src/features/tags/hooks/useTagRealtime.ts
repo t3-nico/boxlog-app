@@ -58,8 +58,6 @@ export function useTagRealtime(userId: string | undefined, options: UseTagRealti
       const newRecord = payload.new as { id: string } | undefined
       const oldRecord = payload.old as { id: string } | undefined
 
-      console.debug('[Tag Realtime] Event detected:', payload.eventType, newRecord?.id)
-
       // TanStack Queryキャッシュを無効化 → 自動で再フェッチ
       // tagKeys.all を無効化することで、全てのタグ関連クエリを再フェッチ
       queryClient.invalidateQueries({ queryKey: tagKeys.all })
