@@ -1,7 +1,30 @@
+/**
+ * 認証必須ページ用フルProviders
+ *
+ * @description
+ * 認証が必要なページ（/inbox, /calendar, /tags, /stats等）で使用。
+ * tRPC、Realtime購読、GlobalSearch等の全機能を提供する。
+ *
+ * プロバイダー階層（CLAUDE.md準拠）:
+ * 1. QueryClientProvider（データ層）
+ * 2. tRPC Provider（API層）
+ * 3. AuthStoreInitializer（認証層 - Zustand）
+ * 4. RealtimeProvider（リアルタイム購読層 - Supabase）
+ * 5. ThemeProvider（UI層）
+ * 6. TooltipProvider（UI層）
+ * 7. GlobalSearchProvider（機能層）
+ * 8. ReactQueryDevtools（開発ツール - 本番環境では自動除外）
+ *
+ * 公開ページ（/auth/、/legal/、/error/）では、このProvidersではなく
+ * 軽量なPublicProvidersを使用すること。
+ *
+ * @see src/components/providers/PublicProviders.tsx - 公開ページ用軽量Providers
+ * @see src/app/[locale]/(app)/layout.tsx - 使用箇所
+ * @see https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#moving-client-components-down-the-tree
+ */
 'use client'
 
 import dynamic from 'next/dynamic'
-import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -41,30 +64,7 @@ interface ProvidersProps {
   children: React.ReactNode
 }
 
-/**
- * アプリケーション全体のProviderツリー
- *
- * プロバイダー階層（CLAUDE.md準拠）:
- * 1. QueryClientProvider（データ層）
- * 2. tRPC Provider（API層）
- * 3. AuthStoreInitializer（認証層 - Zustand）
- * 4. RealtimeProvider（リアルタイム購読層 - Supabase）
- * 5. ThemeProvider（UI層）
- * 6. TooltipProvider（UI層）
- * 7. GlobalSearchProvider（機能層）
- * 8. ReactQueryDevtools（開発ツール - 本番環境では自動除外）
- *
- * 認証ページ（/auth/）では軽量モードで動作し、
- * tRPC、Realtime購読、GlobalSearch等の重い機能をスキップする。
- *
- * @see https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#moving-client-components-down-the-tree
- */
 export function Providers({ children }: ProvidersProps) {
-  const pathname = usePathname()
-
-  // 認証ページかどうかを判定
-  const isAuthPage = pathname?.includes('/auth/')
-
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -113,18 +113,6 @@ export function Providers({ children }: ProvidersProps) {
     })
   )
 
-  // 認証ページでは軽量モード：ThemeとTooltipのみ
-  if (isAuthPage) {
-    return (
-      <ThemeProvider>
-        <TooltipProvider delayDuration={300} skipDelayDuration={100}>
-          {children}
-        </TooltipProvider>
-      </ThemeProvider>
-    )
-  }
-
-  // 通常ページではフルProvidersツリー
   return (
     <QueryClientProvider client={queryClient}>
       <api.Provider client={trpcClient} queryClient={queryClient}>
