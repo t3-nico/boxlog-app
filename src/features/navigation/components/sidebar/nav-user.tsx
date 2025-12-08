@@ -1,7 +1,9 @@
 'use client'
 
 import {
+  Building,
   ChevronDown,
+  ExternalLink,
   FileText,
   HelpCircle,
   LogOut,
@@ -138,21 +140,31 @@ export function NavUser({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href={`/${locale}/legal/terms`}>
+                <Link href={`/${locale}/legal/terms`} target="_blank" rel="noopener noreferrer">
                   <FileText />
-                  {t('navUser.helpSubmenu.termsOfService')}
+                  <span className="flex-1">{t('navUser.helpSubmenu.termsOfService')}</span>
+                  <ExternalLink className="text-muted-foreground size-3" />
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`/${locale}/legal/privacy`}>
+                <Link href={`/${locale}/legal/privacy`} target="_blank" rel="noopener noreferrer">
                   <FileText />
-                  {t('navUser.helpSubmenu.privacyPolicy')}
+                  <span className="flex-1">{t('navUser.helpSubmenu.privacyPolicy')}</span>
+                  <ExternalLink className="text-muted-foreground size-3" />
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`/${locale}/legal/security`}>
+                <Link href={`/${locale}/legal/tokushoho`} target="_blank" rel="noopener noreferrer">
+                  <Building />
+                  <span className="flex-1">{t('navUser.helpSubmenu.tokushoho')}</span>
+                  <ExternalLink className="text-muted-foreground size-3" />
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href={`/${locale}/legal/security`} target="_blank" rel="noopener noreferrer">
                   <Shield />
-                  {t('navUser.helpSubmenu.security')}
+                  <span className="flex-1">{t('navUser.helpSubmenu.security')}</span>
+                  <ExternalLink className="text-muted-foreground size-3" />
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

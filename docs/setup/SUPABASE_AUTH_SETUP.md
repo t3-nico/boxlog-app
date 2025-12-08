@@ -225,5 +225,5 @@ npm run dev
 ## 🔗 参考リンク
 
 - [Supabase公式: Next.js Auth Guide](https://supabase.com/docs/guides/auth/server-side/nextjs)
-- [Issue #531](https://github.com/your-org/boxlog-app/issues/531)
+- [Issue #531](https://github.com/t3-nico/boxlog-app/issues/531)
 - [認証実装: src/lib/supabase/](../../src/lib/supabase/)

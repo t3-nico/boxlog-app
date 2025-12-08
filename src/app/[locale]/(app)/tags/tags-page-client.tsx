@@ -5,8 +5,8 @@ import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { DataTable, type SortState } from '@/components/common/table'
 import { Button } from '@/components/ui/button'
+import { DataTable, type SortState } from '@/features/table'
 import { TagRowWrapper, TagTableRowCreate, type TagTableRowCreateHandle } from '@/features/tags/components/table'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
@@ -20,13 +20,13 @@ import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
-import { useTagTableColumns, getTagColumnSettings } from '@/features/tags/hooks/useTagTableColumns'
+import { getTagColumnSettings, useTagTableColumns } from '@/features/tags/hooks/useTagTableColumns'
 import { useTagColumnStore, type TagColumnId } from '@/features/tags/stores/useTagColumnStore'
 import { useTagPaginationStore } from '@/features/tags/stores/useTagPaginationStore'
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore'
 import { useTagSortStore } from '@/features/tags/stores/useTagSortStore'
-import { api } from '@/lib/trpc'
 import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import { api } from '@/lib/trpc'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
@@ -262,8 +262,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   // ハンドラー: 一括削除
   const handleBulkDelete = useCallback(async () => {
     const ids = selectedTagIds
-    if (ids.length === 0) return
-    if (!confirm(t('tags.page.bulkDeleteConfirm', { count: ids.length }))) return
+    if (ids.size === 0) return
+    if (!confirm(t('tags.page.bulkDeleteConfirm', { count: ids.size }))) return
 
     for (const tagId of ids) {
       const tag = sortedTags.find((item) => item.id === tagId)
@@ -277,8 +277,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   // ハンドラー: 一括マージダイアログを開く
   const handleOpenBulkMerge = useCallback(() => {
     const ids = selectedTagIds
-    if (ids.length < 2) return
-    const selectedTags = tags.filter((t) => ids.includes(t.id))
+    if (ids.size < 2) return
+    const selectedTags = tags.filter((t) => ids.has(t.id))
     setBulkMergeTags(selectedTags)
   }, [selectedTagIds, tags])
 
@@ -402,7 +402,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           onClearSelection={clearSelection}
           actions={
             <TagSelectionActions
-              selectedTagIds={selectedTagIds}
+              selectedTagIds={Array.from(selectedTagIds)}
               tags={tags}
               groups={groups}
               onMoveToGroup={handleMoveToGroup}

@@ -48,13 +48,27 @@ export const useAuthStore = create<AuthState>()(
 
       // Initialize authentication state
       initialize: async () => {
+        // タイムアウト付きでセッション取得（フリーズ防止）
+        const TIMEOUT_MS = 5000
+
         try {
           const supabase = createClient()
-          const { data, error } = await supabase.auth.getSession()
+
+          // タイムアウト付きでgetSession実行
+          const sessionPromise = supabase.auth.getSession()
+          const timeoutPromise = new Promise<{ data: { session: null }; error: null }>((resolve) => {
+            setTimeout(() => {
+              console.warn('[AuthStore] Session retrieval timed out, proceeding without session')
+              resolve({ data: { session: null }, error: null })
+            }, TIMEOUT_MS)
+          })
+
+          const { data, error } = await Promise.race([sessionPromise, timeoutPromise])
 
           if (error) {
-            console.error('Session retrieval error:', error)
-            set({ error: error.message, loading: false })
+            console.error('[AuthStore] Session retrieval error:', error)
+            // エラー時もloadingをfalseにして画面表示を許可
+            set({ error: null, loading: false, user: null, session: null })
             return
           }
 
@@ -65,27 +79,32 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           })
 
-          // Listen to auth state changes
-          const {
-            data: { subscription },
-          } = supabase.auth.onAuthStateChange((_event, session) => {
-            console.log('Auth state changed:', _event)
-            set({
-              session,
-              user: session?.user ?? null,
+          // Auth state changeリスナーは非同期で設定（ブロックしない）
+          try {
+            const {
+              data: { subscription },
+            } = supabase.auth.onAuthStateChange((_event, session) => {
+              console.log('[AuthStore] Auth state changed:', _event)
+              set({
+                session,
+                user: session?.user ?? null,
+              })
             })
-          })
 
-          // Cleanup subscription on unmount
-          if (typeof window !== 'undefined') {
-            window.addEventListener('beforeunload', () => {
-              subscription.unsubscribe()
-            })
+            // Cleanup subscription on unmount
+            if (typeof window !== 'undefined') {
+              window.addEventListener('beforeunload', () => {
+                subscription.unsubscribe()
+              })
+            }
+          } catch (listenerError) {
+            console.warn('[AuthStore] Failed to set up auth state listener:', listenerError)
+            // リスナー設定失敗は致命的ではない
           }
         } catch (err) {
-          console.error('Initialization error:', err)
-          const errorMessage = err instanceof Error ? err.message : 'Failed to initialize auth'
-          set({ error: errorMessage, loading: false })
+          console.error('[AuthStore] Initialization error:', err)
+          // エラー時もloadingをfalseにして画面表示を許可
+          set({ error: null, loading: false, user: null, session: null })
         }
       },
 

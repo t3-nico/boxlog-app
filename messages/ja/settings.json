@@ -234,6 +234,7 @@
         "description": "当サービスの法的文書を確認できます",
         "privacy": "プライバシーポリシー",
         "terms": "利用規約",
+        "tokushoho": "特定商取引法に基づく表記",
         "security": "セキュリティポリシー",
         "cookies": "Cookie設定",
         "ossCredits": "オープンソースライセンス"

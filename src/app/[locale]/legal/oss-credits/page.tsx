@@ -157,7 +157,7 @@ export default async function OSSCreditsPage({ params }: PageProps) {
             {t('ossCredits.footer.thirdPartyNotices')}
           </Link>
           <Link
-            href="https://github.com/your-org/boxlog-app"
+            href="https://github.com/t3-nico/boxlog-app"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:underline"
