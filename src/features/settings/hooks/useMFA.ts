@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
-import QRCode from 'qrcode'
 import { useTranslations } from 'next-intl'
+import QRCode from 'qrcode'
 
 import { createClient } from '@/lib/supabase/client'
 

@@ -47,10 +47,7 @@ export const descriptionSchema = z.string().max(2000, 'validation.description.ma
 /**
  * メールアドレス
  */
-export const emailSchema = z
-  .string()
-  .email('validation.invalidEmail')
-  .max(320, 'validation.email.maxLength')
+export const emailSchema = z.string().email('validation.invalidEmail').max(320, 'validation.email.maxLength')
 
 /**
  * パスワード
@@ -76,9 +73,7 @@ export const statusSchema = z.enum(['todo', 'in_progress', 'done', 'archived'])
 /**
  * 色
  */
-export const colorSchema = z
-  .string()
-  .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'validation.invalidColorCode')
+export const colorSchema = z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'validation.invalidColorCode')
 
 /**
  * タグ

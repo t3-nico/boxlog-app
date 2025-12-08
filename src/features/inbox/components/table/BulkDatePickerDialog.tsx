@@ -111,7 +111,9 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>{t('common.inbox.bulkDueDate')}</DialogTitle>
-          <DialogDescription>{t('common.inbox.bulkDueDateDescription', { count: selectedIds.length })}</DialogDescription>
+          <DialogDescription>
+            {t('common.inbox.bulkDueDateDescription', { count: selectedIds.length })}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -137,11 +139,7 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
 
           {/* 説明テキスト */}
           <div className="text-muted-foreground text-sm">
-            {selectedDate ? (
-              <p>{t('common.inbox.dateSelected')}</p>
-            ) : (
-              <p>{t('common.inbox.selectDateHint')}</p>
-            )}
+            {selectedDate ? <p>{t('common.inbox.dateSelected')}</p> : <p>{t('common.inbox.selectDateHint')}</p>}
           </div>
         </div>
 
