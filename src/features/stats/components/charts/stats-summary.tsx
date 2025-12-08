@@ -7,15 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/lib/trpc'
 
-type SummaryData = {
-  totalHours: number
-  thisMonthHours: number
-  lastMonthHours: number
-  monthComparison: number
-  completedTasks: number
-  thisWeekCompleted: number
-}
-
 function formatHours(hours: number): string {
   if (hours < 1) {
     return `${Math.round(hours * 60)}m`
@@ -24,9 +15,7 @@ function formatHours(hours: number): string {
 }
 
 export function StatsSummary() {
-  // @ts-expect-error - TypeScript型キャッシュの問題。実行時は正常動作
-  const { data: rawData, isLoading } = api.plans.getSummary.useQuery()
-  const data = rawData as SummaryData | undefined
+  const { data, isLoading } = api.plans.getSummary.useQuery()
 
   if (isLoading) {
     return (

@@ -28,7 +28,6 @@ export function YearlyHeatmap() {
   const currentYear = new Date().getFullYear()
   const [year, setYear] = useState(currentYear)
 
-  // @ts-expect-error - TypeScript型キャッシュの問題。実行時は正常動作
   const { data, isLoading } = api.plans.getDailyHours.useQuery({ year })
 
   const startDate = new Date(year, 0, 1)

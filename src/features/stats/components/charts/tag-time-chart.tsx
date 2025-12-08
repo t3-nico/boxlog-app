@@ -28,9 +28,7 @@ function formatHours(hours: number): string {
 }
 
 export function TagTimeChart() {
-  // @ts-expect-error - TypeScript型キャッシュの問題。実行時は正常動作
-  const { data: rawData, isLoading } = api.plans.getTimeByTag.useQuery()
-  const data = rawData as TagTimeData[] | undefined
+  const { data, isLoading } = api.plans.getTimeByTag.useQuery()
 
   if (isLoading) {
     return (

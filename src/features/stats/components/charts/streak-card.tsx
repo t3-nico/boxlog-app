@@ -6,17 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/lib/trpc'
 
-type StreakData = {
-  currentStreak: number
-  longestStreak: number
-  hasActivityToday: boolean
-  totalActiveDays: number
-}
-
 export function StreakCard() {
-  // @ts-expect-error - TypeScript型キャッシュの問題。実行時は正常動作
-  const { data: rawData, isLoading } = api.plans.getStreak.useQuery()
-  const data = rawData as StreakData | undefined
+  const { data, isLoading } = api.plans.getStreak.useQuery()
 
   if (isLoading) {
     return (

@@ -7,12 +7,6 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/lib/trpc'
 
-type MonthData = {
-  month: string
-  label: string
-  hours: number
-}
-
 const chartConfig = {
   hours: {
     label: '作業時間',
@@ -28,9 +22,7 @@ function formatHours(hours: number): string {
 }
 
 export function MonthlyTrendChart() {
-  // @ts-expect-error - TypeScript型キャッシュの問題。実行時は正常動作
-  const { data: rawData, isLoading } = api.plans.getMonthlyTrend.useQuery()
-  const data = rawData as MonthData[] | undefined
+  const { data, isLoading } = api.plans.getMonthlyTrend.useQuery()
 
   if (isLoading) {
     return (

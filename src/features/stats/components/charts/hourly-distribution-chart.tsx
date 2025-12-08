@@ -7,11 +7,6 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/lib/trpc'
 
-type HourlyData = {
-  timeSlot: string
-  hours: number
-}
-
 const chartConfig = {
   hours: {
     label: '作業時間',
@@ -27,9 +22,7 @@ function formatHours(hours: number): string {
 }
 
 export function HourlyDistributionChart() {
-  // @ts-expect-error - TypeScript型キャッシュの問題。実行時は正常動作
-  const { data: rawData, isLoading } = api.plans.getHourlyDistribution.useQuery()
-  const data = rawData as HourlyData[] | undefined
+  const { data, isLoading } = api.plans.getHourlyDistribution.useQuery()
 
   if (isLoading) {
     return (
