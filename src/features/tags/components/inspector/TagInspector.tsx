@@ -51,7 +51,7 @@ import { TagMergeDialog } from '../TagMergeDialog'
  * - 各フィールド変更時に自動保存（デバウンス処理あり）
  */
 export function TagInspector() {
-  const { isOpen, tagId, closeInspector: closeInspectorStore, openInspector } = useTagInspectorStore()
+  const { isOpen, entityId: tagId, closeInspector: closeInspectorStore, openInspector } = useTagInspectorStore()
   const { openInspector: openPlanInspector } = usePlanInspectorStore()
   const router = useRouter()
   const pathname = usePathname()

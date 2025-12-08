@@ -1,5 +1,4 @@
-import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
+import { createTableColumnStore, type ColumnConfig } from '@/features/table'
 
 /**
  * タグテーブル列ID
@@ -7,15 +6,9 @@ import { devtools, persist } from 'zustand/middleware'
 export type TagColumnId = 'selection' | 'id' | 'name' | 'description' | 'group' | 'created_at' | 'last_used'
 
 /**
- * 列設定
+ * タグ列設定
  */
-export interface TagColumnConfig {
-  id: TagColumnId
-  label: string
-  visible: boolean
-  width: number
-  resizable: boolean
-}
+export type TagColumnConfig = ColumnConfig<TagColumnId>
 
 /**
  * デフォルト列設定
@@ -31,68 +24,15 @@ const DEFAULT_COLUMNS: TagColumnConfig[] = [
 ]
 
 /**
- * タグ列設定状態
- */
-interface TagColumnState {
-  columns: TagColumnConfig[]
-  setColumnWidth: (id: TagColumnId, width: number) => void
-  toggleColumnVisibility: (id: TagColumnId) => void
-  setColumnVisibility: (id: TagColumnId, visible: boolean) => void
-  resetColumns: () => void
-  getVisibleColumns: () => TagColumnConfig[]
-  getColumnWidth: (id: TagColumnId) => number
-}
-
-/**
  * タグ列設定ストア
  *
- * テーブルの列幅と表示/非表示を管理
+ * features/table の createTableColumnStore を使用
+ * - selection と name は常に表示（alwaysVisibleColumns）
  * - localStorageに永続化
- * - 列幅の調整（最小50px）
- * - 列の表示/非表示切り替え
  */
-export const useTagColumnStore = create<TagColumnState>()(
-  devtools(
-    persist(
-      (set, get) => ({
-        columns: DEFAULT_COLUMNS,
-
-        setColumnWidth: (id, width) => {
-          const newWidth = Math.max(50, width)
-          set({
-            columns: get().columns.map((col) => (col.id === id ? { ...col, width: newWidth } : col)),
-          })
-        },
-
-        toggleColumnVisibility: (id) => {
-          // selection と name は常に表示
-          if (id === 'selection' || id === 'name') return
-          set({
-            columns: get().columns.map((col) => (col.id === id ? { ...col, visible: !col.visible } : col)),
-          })
-        },
-
-        setColumnVisibility: (id, visible) => {
-          // selection と name は常に表示
-          if (id === 'selection' || id === 'name') return
-          set({
-            columns: get().columns.map((col) => (col.id === id ? { ...col, visible } : col)),
-          })
-        },
-
-        resetColumns: () => set({ columns: DEFAULT_COLUMNS }),
-
-        getVisibleColumns: () => get().columns.filter((col) => col.visible),
-
-        getColumnWidth: (id) => {
-          const col = get().columns.find((c) => c.id === id)
-          return col?.width ?? 100
-        },
-      }),
-      {
-        name: 'tag-column-store-v1',
-      }
-    ),
-    { name: 'tag-column-store' }
-  )
-)
+export const useTagColumnStore = createTableColumnStore<TagColumnId>({
+  defaultColumns: DEFAULT_COLUMNS,
+  persistKey: 'tag-column-store-v1',
+  storeName: 'tag-column-store',
+  alwaysVisibleColumns: ['selection', 'name'],
+})
