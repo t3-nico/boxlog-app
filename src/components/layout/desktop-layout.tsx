@@ -7,6 +7,7 @@ import { Suspense } from 'react'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar'
+import { InboxSidebarWrapper } from '@/features/inbox/components/InboxSidebarWrapper'
 import { AppBar } from '@/features/navigation/components/appbar'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
@@ -60,6 +61,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   // サイドバーコンポーネントを決定
   const renderSidebar = () => {
     if (isCalendarPage) return <CalendarSidebar />
+    if (isInboxPage) return <InboxSidebarWrapper />
     if (isTagsPage) return <TagsSidebarWrapper />
     if (isStatsPage) return <StatsSidebar />
     return <AppSidebar />
@@ -78,8 +80,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           <ResizablePanelGroup direction="horizontal" className="min-h-0 flex-1">
             {/* Sidebar（240px、開閉可能）← ページごとに動的切り替え */}
-            {/* Inboxページでは非表示 */}
-            {isOpen && !isInboxPage && (
+            {isOpen && (
               <>
                 <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
                   {renderSidebar()}
