@@ -7,7 +7,7 @@ import type { CalendarPlan } from '../types/plan.types'
 
 /**
  * イベントを時刻順でソート（基本パターン）
- * WeekView, TwoWeekView, ThreeDayView で使用
+ * WeekView, ThreeDayView, FiveDayView で使用
  */
 export function sortEventsByTime(events: CalendarPlan[]): CalendarPlan[] {
   return [...events].sort((a, b) => {

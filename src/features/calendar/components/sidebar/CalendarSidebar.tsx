@@ -39,7 +39,7 @@ export function CalendarSidebar() {
     if (!navigation?.currentDate || !navigation?.viewType) return undefined
 
     // 週表示の場合のみハイライト
-    const weekViewTypes = ['week', 'week-no-weekend', '2week']
+    const weekViewTypes = ['week', 'week-no-weekend']
     if (!weekViewTypes.includes(navigation.viewType)) return undefined
 
     const start = startOfWeek(navigation.currentDate, { weekStartsOn: 1 })

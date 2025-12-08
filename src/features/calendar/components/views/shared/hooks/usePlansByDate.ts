@@ -28,7 +28,7 @@ export interface UseEventsByDateReturn {
  *
  * @description
  * 以前は各ビューで80-90行の重複ロジックがあったが、これで統一
- * - WeekView, TwoWeekView, ThreeDayView, AgendaView で共通使用
+ * - WeekView, ThreeDayView, FiveDayView, AgendaView で共通使用
  * - マルチデイイベント対応
  * - 無効イベントの自動フィルタリング
  * - 時刻ソート（標準 or Agenda用）

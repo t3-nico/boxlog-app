@@ -59,13 +59,12 @@ export function AdvancedViewTransition({
           initial: { ...baseAnimation.initial, x: -20 },
           exit: { ...baseAnimation.exit, x: 20 },
         }
-      case 'month':
+      case 'agenda':
         return {
           ...baseAnimation,
-          initial: { ...baseAnimation.initial, scale: 0.9 },
-          exit: { ...baseAnimation.exit, scale: 1.1 },
+          initial: { ...baseAnimation.initial, y: -20 },
+          exit: { ...baseAnimation.exit, y: 20 },
         }
-      case '2week':
       case 'schedule':
         return {
           ...baseAnimation,
@@ -109,11 +108,11 @@ export function CalendarViewAnimation({ children, viewType, previousViewType }: 
     if (!previousViewType) return ''
 
     // ズーム系の切り替え
-    if ((previousViewType === 'month' && viewType === 'week') || (previousViewType === 'week' && viewType === 'day')) {
+    if (previousViewType === 'week' && viewType === 'day') {
       return 'calendar-zoom-in'
     }
 
-    if ((previousViewType === 'day' && viewType === 'week') || (previousViewType === 'week' && viewType === 'month')) {
+    if (previousViewType === 'day' && viewType === 'week') {
       return 'calendar-zoom-out'
     }
 

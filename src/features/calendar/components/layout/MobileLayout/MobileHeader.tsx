@@ -49,8 +49,6 @@ export const MobileHeader = ({
     '3day': t('calendar.mobile.header.viewLabels.3day'),
     '5day': t('calendar.mobile.header.viewLabels.5day'),
     week: t('calendar.mobile.header.viewLabels.week'),
-    '2week': t('calendar.mobile.header.viewLabels.2week'),
-    month: t('calendar.mobile.header.viewLabels.month'),
     agenda: t('calendar.mobile.header.viewLabels.agenda'),
   }
 
@@ -94,10 +92,9 @@ export const MobileHeader = ({
       case 'day':
         return format(currentDate, 'M/d (E)', { locale: ja })
       case 'week':
-      case '2week':
         return `${format(currentDate, 'M月')} W${weekNumber}`
       default:
-        return format(currentDate, 'M月 yyyy')
+        return format(currentDate, 'M/d (E)', { locale: ja })
     }
   }
 
