@@ -8,25 +8,25 @@ import { z } from 'zod'
 /**
  * 基本的なID型
  */
-export const idSchema = z.string().uuid('有効なUUIDを指定してください')
+export const idSchema = z.string().uuid('validation.invalidUuid')
 
 /**
  * 日付関連
  */
 export const dateSchema = z.date()
 
-export const futureDateSchema = dateSchema.refine((date) => date > new Date(), '未来の日付を指定してください')
+export const futureDateSchema = dateSchema.refine((date) => date > new Date(), 'validation.futureDate')
 
 /**
  * 文字列関連
  */
-export const requiredStringSchema = z.string().min(1, 'この項目は必須です')
+export const requiredStringSchema = z.string().min(1, 'validation.required')
 
 export const trimmedStringSchema = z.string().transform((val) => val.trim())
 
 export const nonEmptyStringSchema = z
   .string()
-  .min(1, 'この項目は必須です')
+  .min(1, 'validation.required')
   .transform((val) => val.trim())
 
 /**
@@ -34,34 +34,34 @@ export const nonEmptyStringSchema = z
  */
 export const titleSchema = z
   .string()
-  .min(1, 'タイトルは必須です')
-  .max(200, 'タイトルは200文字以内で入力してください')
+  .min(1, 'validation.title.required')
+  .max(200, 'validation.title.maxLength')
   .transform((val) => val.trim())
-  .refine((val) => !val.match(/^\s+$/) && !val.includes('\n'), 'タイトルに改行や空白のみは使用できません')
+  .refine((val) => !val.match(/^\s+$/) && !val.includes('\n'), 'validation.title.noNewlines')
 
 /**
  * 説明文用（最大2000文字）
  */
-export const descriptionSchema = z.string().max(2000, '説明は2000文字以内で入力してください').optional()
+export const descriptionSchema = z.string().max(2000, 'validation.description.maxLength').optional()
 
 /**
  * メールアドレス
  */
 export const emailSchema = z
   .string()
-  .email('有効なメールアドレスを入力してください')
-  .max(320, 'メールアドレスが長すぎます')
+  .email('validation.invalidEmail')
+  .max(320, 'validation.email.maxLength')
 
 /**
  * パスワード
  */
 export const passwordSchema = z
   .string()
-  .min(8, 'パスワードは8文字以上で入力してください')
-  .max(128, 'パスワードは128文字以内で入力してください')
-  .refine((password) => /[a-z]/.test(password), '小文字を含める必要があります')
-  .refine((password) => /[A-Z]/.test(password), '大文字を含める必要があります')
-  .refine((password) => /\d/.test(password), '数字を含める必要があります')
+  .min(8, 'validation.password.minLength')
+  .max(128, 'validation.password.maxLength')
+  .refine((password) => /[a-z]/.test(password), 'validation.password.lowercase')
+  .refine((password) => /[A-Z]/.test(password), 'validation.password.uppercase')
+  .refine((password) => /\d/.test(password), 'validation.password.number')
 
 /**
  * 優先度
@@ -78,7 +78,7 @@ export const statusSchema = z.enum(['todo', 'in_progress', 'done', 'archived'])
  */
 export const colorSchema = z
   .string()
-  .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, '有効な色コード（#RRGGBB）を指定してください')
+  .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'validation.invalidColorCode')
 
 /**
  * タグ
@@ -95,12 +95,12 @@ export const tagSchema = z.object({
  * ページネーション
  */
 export const paginationInputSchema = z.object({
-  page: z.number().int().min(1, 'ページ番号は1以上を指定してください').default(1),
+  page: z.number().int().min(1, 'validation.pagination.pageMin').default(1),
   limit: z
     .number()
     .int()
-    .min(1, '取得件数は1以上を指定してください')
-    .max(100, '取得件数は100以下を指定してください')
+    .min(1, 'validation.pagination.limitMin')
+    .max(100, 'validation.pagination.limitMax')
     .default(20),
   sortBy: z.string().optional(),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
@@ -119,7 +119,7 @@ export const paginationOutputSchema = z.object({
  * 検索
  */
 export const searchInputSchema = z.object({
-  query: z.string().max(100, '検索クエリは100文字以内で入力してください').optional(),
+  query: z.string().max(100, 'validation.search.maxLength').optional(),
   filters: z.record(z.string(), z.any()).optional(),
   ...paginationInputSchema.shape,
 })
@@ -158,9 +158,9 @@ export const apiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
  */
 export const fileSchema = z.object({
   name: z.string(),
-  size: z.number().max(10 * 1024 * 1024, 'ファイルサイズは10MB以下にしてください'),
+  size: z.number().max(10 * 1024 * 1024, 'validation.file.maxSize'),
   type: z.string(),
-  url: z.string().url('有効なURLを指定してください'),
+  url: z.string().url('validation.invalidUrl'),
 })
 
 /**
@@ -194,19 +194,19 @@ export function createValidatedInput<T extends z.ZodSchema>(schema: T) {
   return (input: unknown): z.infer<T> => {
     const result = schema.safeParse(input)
     if (!result.success) {
-      throw new Error(`バリデーションエラー: ${result.error.message}`)
+      throw new Error(`Validation error: ${result.error.message}`)
     }
     return result.data
   }
 }
 
 /**
- * 複数のバリデーションエラーを日本語でフォーマット
+ * 複数のバリデーションエラーをフォーマット
+ * Note: エラーメッセージは翻訳キーとして返されるため、表示時に翻訳が必要
  */
 export function formatValidationErrors(error: z.ZodError): string[] {
   return error.issues.map((err) => {
     const path = err.path.join('.')
-    const pathLabel = path || '入力値'
-    return `${pathLabel}: ${err.message}`
+    return path ? `${path}: ${err.message}` : err.message
   })
 }

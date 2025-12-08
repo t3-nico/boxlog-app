@@ -18,7 +18,7 @@ export const profileRouter = createTRPCRouter({
   update: protectedProcedure
     .input(
       z.object({
-        username: z.string().min(1, 'ユーザー名は必須です').max(50, 'ユーザー名は50文字以内で入力してください'),
+        username: z.string().min(1, 'validation.username.required').max(50, 'validation.username.maxLength'),
         avatarUrl: z.string().url().nullable().optional(),
       })
     )

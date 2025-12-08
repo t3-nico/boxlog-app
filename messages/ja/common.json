@@ -132,5 +132,53 @@
   "theme": {
     "light": "ライトモード",
     "dark": "ダークモード"
+  },
+  "validation": {
+    "required": "この項目は必須です",
+    "invalidUuid": "正しいIDを指定してください",
+    "invalidEmail": "有効なメールアドレスを入力してください",
+    "invalidUrl": "有効なURLを指定してください",
+    "invalidColorCode": "有効な色コード（#RRGGBB）を指定してください",
+    "futureDate": "未来の日付を指定してください",
+    "title": {
+      "required": "タイトルは必須です",
+      "maxLength": "タイトルは{{max}}文字以内で入力してください",
+      "noNewlines": "タイトルに改行や空白のみは使用できません"
+    },
+    "description": {
+      "maxLength": "説明は{{max}}文字以内で入力してください"
+    },
+    "password": {
+      "minLength": "パスワードは{{min}}文字以上で入力してください",
+      "maxLength": "パスワードは{{max}}文字以内で入力してください",
+      "lowercase": "小文字を含める必要があります",
+      "uppercase": "大文字を含める必要があります",
+      "number": "数字を含める必要があります"
+    },
+    "email": {
+      "maxLength": "メールアドレスが長すぎます"
+    },
+    "pagination": {
+      "pageMin": "ページ番号は1以上を指定してください",
+      "limitMin": "取得件数は1以上を指定してください",
+      "limitMax": "取得件数は{{max}}以下を指定してください"
+    },
+    "search": {
+      "maxLength": "検索クエリは{{max}}文字以内で入力してください"
+    },
+    "file": {
+      "maxSize": "ファイルサイズは{{max}}MB以下にしてください"
+    },
+    "tag": {
+      "nameRequired": "タグ名は必須です",
+      "nameMaxLength": "タグ名は{{max}}文字以内です"
+    },
+    "recaptcha": {
+      "required": "reCAPTCHAトークンが必要です"
+    },
+    "username": {
+      "required": "ユーザー名は必須です",
+      "maxLength": "ユーザー名は{{max}}文字以内で入力してください"
+    }
   }
 }

@@ -132,5 +132,53 @@
   "theme": {
     "light": "Light Mode",
     "dark": "Dark Mode"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidUuid": "Please enter a valid ID",
+    "invalidEmail": "Please enter a valid email address",
+    "invalidUrl": "Please enter a valid URL",
+    "invalidColorCode": "Please enter a valid color code (#RRGGBB)",
+    "futureDate": "Please enter a future date",
+    "title": {
+      "required": "Title is required",
+      "maxLength": "Title must be {{max}} characters or less",
+      "noNewlines": "Title cannot contain only newlines or spaces"
+    },
+    "description": {
+      "maxLength": "Description must be {{max}} characters or less"
+    },
+    "password": {
+      "minLength": "Password must be at least {{min}} characters",
+      "maxLength": "Password must be {{max}} characters or less",
+      "lowercase": "Password must contain a lowercase letter",
+      "uppercase": "Password must contain an uppercase letter",
+      "number": "Password must contain a number"
+    },
+    "email": {
+      "maxLength": "Email address is too long"
+    },
+    "pagination": {
+      "pageMin": "Page number must be at least 1",
+      "limitMin": "Limit must be at least 1",
+      "limitMax": "Limit must be {{max}} or less"
+    },
+    "search": {
+      "maxLength": "Search query must be {{max}} characters or less"
+    },
+    "file": {
+      "maxSize": "File size must be {{max}}MB or less"
+    },
+    "tag": {
+      "nameRequired": "Tag name is required",
+      "nameMaxLength": "Tag name must be {{max}} characters or less"
+    },
+    "recaptcha": {
+      "required": "reCAPTCHA token is required"
+    },
+    "username": {
+      "required": "Username is required",
+      "maxLength": "Username must be {{max}} characters or less"
+    }
   }
 }
