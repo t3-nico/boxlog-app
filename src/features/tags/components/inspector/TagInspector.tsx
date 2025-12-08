@@ -41,6 +41,7 @@ import { useDeleteTag, useTags, useUpdateTag, useUpdateTagColor } from '../../ho
 import { useTagInspectorStore } from '../../stores/useTagInspectorStore'
 import { TagArchiveDialog } from '../TagArchiveDialog'
 import { TagMergeDialog } from '../TagMergeDialog'
+import { TagGroupMenuItems } from './TagGroupDropdown'
 
 /**
  * Tag Inspector（タグ詳細Sheet）
@@ -391,24 +392,11 @@ export function TagInspector() {
                         グループを変更
                       </DropdownMenuSubTrigger>
                       <DropdownMenuSubContent className="w-48">
-                        <DropdownMenuItem
-                          onClick={() => handleChangeGroup(null)}
-                          className={!tagGroup ? 'bg-state-active' : ''}
-                        >
-                          <FolderX className="mr-2 h-4 w-4" />
-                          グループなし
-                        </DropdownMenuItem>
-                        {groups.length > 0 && <DropdownMenuSeparator />}
-                        {groups.map((group) => (
-                          <DropdownMenuItem
-                            key={group.id}
-                            onClick={() => handleChangeGroup(group.id)}
-                            className={tagGroup?.id === group.id ? 'bg-state-active' : ''}
-                          >
-                            <Folder className="mr-2 h-4 w-4" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
-                            {group.name}
-                          </DropdownMenuItem>
-                        ))}
+                        <TagGroupMenuItems
+                          groups={groups}
+                          currentGroupId={tagGroup?.id ?? null}
+                          onSelect={handleChangeGroup}
+                        />
                       </DropdownMenuSubContent>
                     </DropdownMenuSub>
                     <DropdownMenuItem onClick={handleMerge}>
@@ -512,24 +500,11 @@ export function TagInspector() {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-48">
-                    <DropdownMenuItem
-                      onClick={() => handleChangeGroup(null)}
-                      className={!tagGroup ? 'bg-state-active' : ''}
-                    >
-                      <FolderX className="mr-2 h-4 w-4" />
-                      グループなし
-                    </DropdownMenuItem>
-                    {groups.length > 0 && <DropdownMenuSeparator />}
-                    {groups.map((group) => (
-                      <DropdownMenuItem
-                        key={group.id}
-                        onClick={() => handleChangeGroup(group.id)}
-                        className={tagGroup?.id === group.id ? 'bg-state-active' : ''}
-                      >
-                        <Folder className="mr-2 h-4 w-4" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
-                        {group.name}
-                      </DropdownMenuItem>
-                    ))}
+                    <TagGroupMenuItems
+                      groups={groups}
+                      currentGroupId={tagGroup?.id ?? null}
+                      onSelect={handleChangeGroup}
+                    />
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
