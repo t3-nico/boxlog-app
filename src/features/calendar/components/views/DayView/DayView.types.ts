@@ -16,7 +16,9 @@ export interface DayViewProps {
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined
   onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined
   onCreatePlan?: ((date: Date, time?: string) => void) | undefined
-  onUpdatePlan?: ((plan: CalendarPlan) => void) | undefined
+  onUpdatePlan?:
+    | ((planIdOrPlan: string | CalendarPlan, updates?: { startTime: Date; endTime: Date }) => void | Promise<void>)
+    | undefined
   onDeletePlan?: ((planId: string) => void) | undefined
   onRestorePlan?: ((plan: CalendarPlan) => Promise<void>) | undefined
   onEmptyClick?: ((date: Date, time: string) => void) | undefined
@@ -43,17 +45,17 @@ export interface SimpleDayViewProps {
 
 export interface DayContentProps {
   date: Date
-  plans?: CalendarPlan[]
-  events?: CalendarPlan[] // eventsはplansのエイリアス（後方互換性のため）
-  planStyles?: Record<string, CSSProperties>
-  eventStyles?: Record<string, CSSProperties> // eventStylesはplanStylesのエイリアス（後方互換性のため）
-  onPlanClick?: (plan: CalendarPlan) => void
-  onPlanContextMenu?: (plan: CalendarPlan, mouseEvent: React.MouseEvent) => void
-  onEmptyClick?: (date: Date, time: string) => void
-  onPlanUpdate?: (plan: CalendarPlan) => void
-  onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> // D&D用
-  onTimeRangeSelect?: (selection: DateTimeSelection) => void
-  className?: string
+  plans?: CalendarPlan[] | undefined
+  events?: CalendarPlan[] | undefined // eventsはplansのエイリアス（後方互換性のため）
+  planStyles?: Record<string, CSSProperties> | undefined
+  eventStyles?: Record<string, CSSProperties> | undefined // eventStylesはplanStylesのエイリアス（後方互換性のため）
+  onPlanClick?: ((plan: CalendarPlan) => void) | undefined
+  onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined
+  onEmptyClick?: ((date: Date, time: string) => void) | undefined
+  onPlanUpdate?: ((plan: CalendarPlan) => void) | undefined
+  onEventUpdate?: ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void>) | undefined // D&D用
+  onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined
+  className?: string | undefined
 }
 
 export interface UseDayViewOptions {

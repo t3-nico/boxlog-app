@@ -6,6 +6,10 @@ import type { DragState } from '../hooks/useDragAndDrop'
  * ドラッグ中プランのゴースト表示用スタイル計算
  * 全カレンダービューで共通利用
  *
+ * Googleカレンダー/iCal的な動作:
+ * - ドラッグ中: 元の位置に薄いゴースト + スナップされた位置にプレビュー表示
+ * - リサイズ中: サイズをリアルタイム調整
+ *
  * @param originalStyle 元のプランスタイル
  * @param eventId プランID
  * @param dragState ドラッグ状態
@@ -21,12 +25,18 @@ export function calculatePlanGhostStyle(
 
   let adjustedStyle = { ...originalStyle }
 
-  if (isDragging) {
-    // ドラッグ中：元の位置に通常表示（EventBlockのactiveカラーで表示）
-    // 透明化は行わず、EventBlockのisActiveプロパティでカラー変更
+  if (isDragging && dragState.snappedPosition) {
+    // ドラッグ中：スナップされた位置にプレビュー表示（Googleカレンダー的動作）
     adjustedStyle = {
       ...adjustedStyle,
-      // 位置やサイズの変更はしない（元位置でのゴースト表示）
+      top: `${dragState.snappedPosition.top}px`,
+      // 日付間移動がある場合は水平位置も更新
+      ...(dragState.snappedPosition.left !== undefined && {
+        left: `${dragState.snappedPosition.left}%`,
+      }),
+      opacity: 0.7,
+      zIndex: 1000,
+      transition: 'top 0.05s ease-out, left 0.05s ease-out', // スムーズなスナップ
     }
   } else if (isResizing && dragState.snappedPosition?.height) {
     // リサイズ中：サイズをリアルタイム調整
@@ -45,17 +55,17 @@ export function calculatePlanGhostStyle(
 export const calculateEventGhostStyle = calculatePlanGhostStyle
 
 /**
- * リサイズ中のプレビュー時間計算
+ * ドラッグ/リサイズ中のプレビュー時間計算
  * 全カレンダービューで共通利用
  *
  * @param eventId プランID
  * @param dragState ドラッグ状態
- * @returns プレビュー時間（リサイズ中のみ）
+ * @returns プレビュー時間（ドラッグ中またはリサイズ中）
  */
 export function calculatePreviewTime(eventId: string, dragState: DragState): { start: Date; end: Date } | null {
   const isDragging = dragState.draggedEventId === eventId && dragState.isDragging
   const isResizing = dragState.isResizing && dragState.draggedEventId === eventId
 
-  // リサイズ中かつドラッグ中でない場合のみプレビュー時間を表示
-  return isResizing && !isDragging ? dragState.previewTime : null
+  // ドラッグ中またはリサイズ中の場合プレビュー時間を表示
+  return isDragging || isResizing ? dragState.previewTime : null
 }

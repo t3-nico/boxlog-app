@@ -48,10 +48,12 @@ export const DayView = ({
 
   // ドラッグイベント用のハンドラー（プラン時間更新）
   const handleEventTimeUpdate = React.useCallback(
-    async (_eventId: string, _updates: { startTime: Date; endTime: Date }) => {
-      // プランの時間更新はonUpdatePlanで処理
+    async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
+      if (onUpdatePlan) {
+        await onUpdatePlan(eventId, updates)
+      }
     },
-    []
+    [onUpdatePlan]
   )
 
   // DayView専用ロジック（CalendarControllerから渡されたプランデータを使用）
@@ -119,11 +121,11 @@ export const DayView = ({
             date={date}
             events={dayEvents}
             eventStyles={eventStyles}
-            {...(onPlanClick && { onPlanClick })}
-            {...(onPlanContextMenu && { onPlanContextMenu })}
-            {...(onEmptyClick && { onEmptyClick })}
-            {...(handleEventTimeUpdate && { onEventUpdate: handleEventTimeUpdate })}
-            {...(onTimeRangeSelect && { onTimeRangeSelect })}
+            onPlanClick={onPlanClick}
+            onPlanContextMenu={onPlanContextMenu}
+            onEmptyClick={onEmptyClick}
+            onEventUpdate={handleEventTimeUpdate}
+            onTimeRangeSelect={onTimeRangeSelect}
             className="absolute inset-y-0 right-0 left-0"
           />
         </ScrollableCalendarLayout>

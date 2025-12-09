@@ -2,6 +2,10 @@ import { calendarColors } from '@/features/calendar/theme'
 
 /**
  * ドラッグ要素を作成する（position: fixed で自由移動）
+ *
+ * Googleカレンダー的動作:
+ * - dragElementはマウス追従用（非表示、位置計算のみに使用）
+ * - 実際の表示はスナップ位置でのプレビュー（calculatePlanGhostStyleで処理）
  */
 export function createDragElement(originalElement: HTMLElement): { dragElement: HTMLElement; initialRect: DOMRect } {
   const rect = originalElement.getBoundingClientRect()
@@ -20,7 +24,9 @@ export function createDragElement(originalElement: HTMLElement): { dragElement: 
   dragElement.style.top = `${rect.top}px`
   dragElement.style.width = `${rect.width}px`
   dragElement.style.height = `${rect.height}px`
-  dragElement.style.opacity = '0.9'
+  // Googleカレンダー的動作: マウス追従要素は非表示
+  // スナップ位置でのプレビュー表示のみを使用
+  dragElement.style.opacity = '0'
   dragElement.style.pointerEvents = 'none'
   dragElement.style.zIndex = '9999'
   dragElement.style.transition = 'none'
@@ -66,15 +72,14 @@ export function updateDragElementPosition(
 
 /**
  * ドラッグ要素をクリーンアップする
+ *
+ * 注意: 元要素の透明度はReact状態で管理されるため、ここでは変更しない
  */
-export function cleanupDragElements(dragElement: HTMLElement | null, originalElement: HTMLElement | null): void {
+export function cleanupDragElements(dragElement: HTMLElement | null, _originalElement: HTMLElement | null): void {
   if (dragElement) {
     dragElement.remove()
   }
-
-  if (originalElement) {
-    originalElement.style.opacity = '1'
-  }
+  // 元要素の透明度はReact状態（dragState）で管理
 }
 
 /**

@@ -5,6 +5,7 @@ import { useCallback } from 'react'
 
 import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { logger } from '@/lib/logger'
 import { useTranslations } from 'next-intl'
 
 import type { DragDataRef, DragState } from './types'
@@ -70,7 +71,8 @@ export function useDragHandler({
         const result = createDragElement(originalElement)
         dragElement = result.dragElement
         initialRect = result.initialRect
-        originalElement.style.opacity = '0.3'
+        // 注意: 元要素の透明度はReact状態で管理（calculatePlanGhostStyle）
+        // 直接DOM操作は行わない
       }
 
       dragDataRef.current = {
@@ -191,11 +193,6 @@ export function useDragHandler({
       const timeChanged = Math.abs(newStartTime.getTime() - previousStartTime.getTime()) > 1000
 
       if (!timeChanged) {
-        console.log('🔧 時間変更なし - Toast表示をスキップ:', {
-          previousTime: previousStartTime.toISOString(),
-          newTime: newStartTime.toISOString(),
-          timeDifference: Math.abs(newStartTime.getTime() - previousStartTime.getTime()),
-        })
         return
       }
 
@@ -245,7 +242,7 @@ export function useDragHandler({
             })
           })
           .catch((error: unknown) => {
-            console.error('Failed to update event time:', error)
+            logger.error('Failed to update event time:', error)
             calendarToast.error(t('calendar.event.moveFailed'))
           })
       } else {
@@ -265,7 +262,7 @@ export function useDragHandler({
       const { event, durationMs } = calculateEventDuration(events, dragDataRef.current.eventId, dragDataRef.current)
 
       if (!event) {
-        console.warn('Plan not found for update')
+        logger.warn('Plan not found for update')
         return
       }
 
@@ -276,12 +273,6 @@ export function useDragHandler({
       }
 
       try {
-        console.log('🚀 プラン更新実行:', {
-          eventId: dragDataRef.current.eventId,
-          newStartTime: newStartTime.toISOString(),
-          newEndTime: newEndTime.toISOString(),
-        })
-
         const result = eventUpdateHandler(dragDataRef.current.eventId, {
           startTime: newStartTime,
           endTime: newEndTime,
@@ -289,7 +280,7 @@ export function useDragHandler({
 
         await handleEventUpdateToast(Promise.resolve(result), event, newStartTime, durationMs)
       } catch (error) {
-        console.error('Failed to update event time:', error)
+        logger.error('Failed to update event time:', error)
         calendarToast.error(t('calendar.event.moveFailed'))
       }
     },

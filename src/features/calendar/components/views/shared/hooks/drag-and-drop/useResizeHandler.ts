@@ -5,6 +5,7 @@ import { useCallback } from 'react'
 
 import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { logger } from '@/lib/logger'
 import { useTranslations } from 'next-intl'
 
 import { HOUR_HEIGHT } from '@/features/calendar/components/views/shared/constants/grid.constants'
@@ -64,11 +65,6 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
         return
       }
 
-      console.log('🟡 リサイズ終了:', {
-        eventId: dragDataRef.current.eventId,
-        newHeight: snappedHeight,
-      })
-
       if (!eventUpdateHandler || !dragDataRef.current?.hasMoved) {
         return
       }
@@ -120,14 +116,14 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
               calendarToast.eventUpdated(eventData)
             })
             .catch((error: unknown) => {
-              console.error('Failed to resize event:', error)
+              logger.error('Failed to resize event:', error)
               calendarToast.error(t('calendar.event.resizeFailed'))
             })
         } else {
           calendarToast.eventUpdated(eventData)
         }
       } catch (error) {
-        console.error('Failed to resize event:', error)
+        logger.error('Failed to resize event:', error)
         calendarToast.error(t('calendar.event.resizeFailed'))
       }
     },
@@ -143,8 +139,6 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
       originalPosition: { top: number; left: number; width: number; height: number }
     ) => {
       if (e.button !== 0) return
-
-      console.log('🟡 リサイズ開始:', { eventId, direction: _direction, originalPosition })
 
       const startPosition = { x: e.clientX, y: e.clientY }
 
