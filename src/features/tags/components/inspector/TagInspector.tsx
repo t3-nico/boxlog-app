@@ -39,6 +39,7 @@ import { useTagGroups } from '../../hooks/use-tag-groups'
 import { useDeleteTag, useTags, useUpdateTag, useUpdateTagColor } from '../../hooks/use-tags'
 import { useTagInspectorStore } from '../../stores/useTagInspectorStore'
 import { TagArchiveDialog } from '../TagArchiveDialog'
+import { TagDeleteDialog } from '../TagDeleteDialog'
 import { TagMergeDialog } from '../TagMergeDialog'
 import { TagGroupMenuItems } from './TagGroupDropdown'
 
@@ -150,6 +151,7 @@ export function TagInspector() {
 
   // ローカル状態
   const [showColorPicker, setShowColorPicker] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [showMergeDialog, setShowMergeDialog] = useState(false)
 
@@ -212,13 +214,8 @@ export function TagInspector() {
 
   // 削除ハンドラー
   const handleDelete = useCallback(() => {
-    if (!tagId || !tag) return
-
-    if (confirm(`タグ「${tag.name}」を削除しますか？`)) {
-      deleteTagMutation.mutate(tagId)
-      closeInspector()
-    }
-  }, [tagId, tag, deleteTagMutation, closeInspector])
+    setShowDeleteDialog(true)
+  }, [])
 
   // アーカイブハンドラー
   const handleArchive = useCallback(() => {
@@ -295,7 +292,7 @@ export function TagInspector() {
   return (
     <>
       <Sheet open={isOpen} onOpenChange={(open) => !open && closeInspector()} modal={false}>
-        <SheetContent className="gap-0 overflow-y-auto" style={{ width: '480px' }} showCloseButton={false}>
+        <SheetContent className="w-[480px] gap-0 overflow-y-auto" showCloseButton={false}>
           <SheetTitle className="sr-only">{tag?.name || 'タグの詳細'}</SheetTitle>
 
           {isLoading ? (
@@ -571,6 +568,18 @@ export function TagInspector() {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* 削除ダイアログ */}
+      <TagDeleteDialog
+        tag={showDeleteDialog ? tag : null}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={async () => {
+          if (!tagId) return
+          await deleteTagMutation.mutateAsync(tagId)
+          setShowDeleteDialog(false)
+          closeInspector()
+        }}
+      />
 
       {/* アーカイブダイアログ */}
       <TagArchiveDialog

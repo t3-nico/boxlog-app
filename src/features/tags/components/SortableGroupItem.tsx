@@ -72,8 +72,6 @@ export function SortableGroupItem({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    backgroundColor: isOver ? 'rgba(59, 130, 246, 0.1)' : undefined,
-    border: isOver ? '2px dashed rgba(59, 130, 246, 0.5)' : undefined,
   }
 
   const handleSave = useCallback(() => {
@@ -107,7 +105,7 @@ export function SortableGroupItem({
       onClick={() => onGroupClick(group.group_number)}
       className={`group w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
         isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
-      }`}
+      } ${isOver ? 'bg-primary/10 border-2 border-dashed border-primary/50' : ''}`}
       style={style}
       {...attributes}
       {...listeners}

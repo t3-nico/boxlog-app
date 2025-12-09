@@ -92,7 +92,7 @@ export function TagActionMenuItems({
         items: [
           {
             key: 'no-group',
-            icon: <FolderX className="mr-2 h-4 w-4 text-neutral-600 dark:text-neutral-400" />,
+            icon: <FolderX className="mr-2 h-4 w-4 text-muted-foreground" />,
             label: t('tag.page.noGroup'),
             onClick: () => onMoveToGroup(tag, null),
           },

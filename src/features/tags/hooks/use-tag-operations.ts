@@ -106,11 +106,9 @@ export function useTagOperations(tags: TagWithChildren[]) {
     [selectedTag, updateTagMutation, updateTagOptimistically]
   )
 
-  // タグ削除
+  // タグ削除（確認は呼び出し元のTagDeleteDialogで実施済み）
   const handleDeleteTag = useCallback(
     async (tag: TagWithChildren) => {
-      if (!confirm(`タグ「${tag.name}」を削除しますか？`)) return
-
       try {
         // 楽観的更新
         removeTagOptimistically(tag.id)

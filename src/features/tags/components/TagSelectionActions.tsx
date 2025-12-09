@@ -83,7 +83,7 @@ export function TagSelectionActions({
                 })
               }}
             >
-              <FolderX className="mr-2 h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+              <FolderX className="mr-2 h-4 w-4 text-muted-foreground" />
               {t('tag.page.noGroup')}
             </DropdownMenuItem>
             {groups.map((group) => (
