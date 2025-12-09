@@ -17,6 +17,7 @@ export * from './stores/useCalendarSettingsStore'
 
 // Hooks
 export * from './hooks/useFormattedTime'
+export * from './hooks/useUserSettings'
 
 // Utils
 export * from './utils/timezone-utils'

@@ -64,10 +64,10 @@ export type Database = {
           default_reminder_minutes: number | null
           enable_browser_notifications: boolean
           enable_email_notifications: boolean
+          enable_plan_updates: boolean
           enable_push_notifications: boolean
           enable_reminders: boolean
           enable_system_notifications: boolean
-          enable_plan_updates: boolean
           enable_trash_warnings: boolean
           id: string
           updated_at: string
@@ -78,10 +78,10 @@ export type Database = {
           default_reminder_minutes?: number | null
           enable_browser_notifications?: boolean
           enable_email_notifications?: boolean
+          enable_plan_updates?: boolean
           enable_push_notifications?: boolean
           enable_reminders?: boolean
           enable_system_notifications?: boolean
-          enable_plan_updates?: boolean
           enable_trash_warnings?: boolean
           id?: string
           updated_at?: string
@@ -92,10 +92,10 @@ export type Database = {
           default_reminder_minutes?: number | null
           enable_browser_notifications?: boolean
           enable_email_notifications?: boolean
+          enable_plan_updates?: boolean
           enable_push_notifications?: boolean
           enable_reminders?: boolean
           enable_system_notifications?: boolean
-          enable_plan_updates?: boolean
           enable_trash_warnings?: boolean
           id?: string
           updated_at?: string
@@ -115,8 +115,8 @@ export type Database = {
           message: string | null
           priority: string
           read_at: string | null
-          related_tag_id: string | null
           related_plan_id: string | null
+          related_tag_id: string | null
           title: string
           type: string
           updated_at: string
@@ -133,8 +133,8 @@ export type Database = {
           message?: string | null
           priority?: string
           read_at?: string | null
-          related_tag_id?: string | null
           related_plan_id?: string | null
+          related_tag_id?: string | null
           title: string
           type: string
           updated_at?: string
@@ -151,8 +151,8 @@ export type Database = {
           message?: string | null
           priority?: string
           read_at?: string | null
-          related_tag_id?: string | null
           related_plan_id?: string | null
+          related_tag_id?: string | null
           title?: string
           type?: string
           updated_at?: string
@@ -160,17 +160,17 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'notifications_related_tag_id_fkey'
-            columns: ['related_tag_id']
-            isOneToOne: false
-            referencedRelation: 'tags'
-            referencedColumns: ['id']
-          },
-          {
             foreignKeyName: 'notifications_related_plan_id_fkey'
             columns: ['related_plan_id']
             isOneToOne: false
             referencedRelation: 'plans'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'notifications_related_tag_id_fkey'
+            columns: ['related_tag_id']
+            isOneToOne: false
+            referencedRelation: 'tags'
             referencedColumns: ['id']
           },
         ]
@@ -219,6 +219,56 @@ export type Database = {
           },
         ]
       }
+      plan_instances: {
+        Row: {
+          created_at: string
+          exception_type: string | null
+          id: string
+          instance_date: string
+          instance_end: string | null
+          instance_start: string | null
+          is_exception: boolean
+          original_date: string | null
+          overrides: Json | null
+          plan_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          exception_type?: string | null
+          id?: string
+          instance_date: string
+          instance_end?: string | null
+          instance_start?: string | null
+          is_exception?: boolean
+          original_date?: string | null
+          overrides?: Json | null
+          plan_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          exception_type?: string | null
+          id?: string
+          instance_date?: string
+          instance_end?: string | null
+          instance_start?: string | null
+          is_exception?: boolean
+          original_date?: string | null
+          overrides?: Json | null
+          plan_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'plan_instances_plan_id_fkey'
+            columns: ['plan_id']
+            isOneToOne: false
+            referencedRelation: 'plans'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       plan_tags: {
         Row: {
           created_at: string | null
@@ -243,17 +293,17 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'plan_tags_tag_id_fkey'
-            columns: ['tag_id']
-            isOneToOne: false
-            referencedRelation: 'tags'
-            referencedColumns: ['id']
-          },
-          {
             foreignKeyName: 'plan_tags_plan_id_fkey'
             columns: ['plan_id']
             isOneToOne: false
             referencedRelation: 'plans'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'plan_tags_tag_id_fkey'
+            columns: ['tag_id']
+            isOneToOne: false
+            referencedRelation: 'tags'
             referencedColumns: ['id']
           },
         ]
@@ -390,104 +440,90 @@ export type Database = {
         }
         Relationships: []
       }
-      smart_filters: {
+      user_settings: {
         Row: {
           id: string
           user_id: string
-          name: string
-          filter_config: Json | null
-          created_at: string | null
-          updated_at: string | null
+          timezone: string
+          show_utc_offset: boolean
+          time_format: string
+          week_starts_on: number
+          show_weekends: boolean
+          show_week_numbers: boolean
+          default_duration: number
+          snap_interval: number
+          business_hours_start: number
+          business_hours_end: number
+          show_declined_events: boolean
+          chronotype_enabled: boolean
+          chronotype_type: string
+          chronotype_custom_zones: Json | null
+          chronotype_display_mode: string
+          chronotype_opacity: number
+          plan_record_mode: string
+          theme: string
+          color_scheme: string
+          created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
           user_id: string
-          name: string
-          filter_config?: Json | null
-          created_at?: string | null
-          updated_at?: string | null
+          timezone?: string
+          show_utc_offset?: boolean
+          time_format?: string
+          week_starts_on?: number
+          show_weekends?: boolean
+          show_week_numbers?: boolean
+          default_duration?: number
+          snap_interval?: number
+          business_hours_start?: number
+          business_hours_end?: number
+          show_declined_events?: boolean
+          chronotype_enabled?: boolean
+          chronotype_type?: string
+          chronotype_custom_zones?: Json | null
+          chronotype_display_mode?: string
+          chronotype_opacity?: number
+          plan_record_mode?: string
+          theme?: string
+          color_scheme?: string
+          created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
           user_id?: string
-          name?: string
-          filter_config?: Json | null
-          created_at?: string | null
-          updated_at?: string | null
+          timezone?: string
+          show_utc_offset?: boolean
+          time_format?: string
+          week_starts_on?: number
+          show_weekends?: boolean
+          show_week_numbers?: boolean
+          default_duration?: number
+          snap_interval?: number
+          business_hours_start?: number
+          business_hours_end?: number
+          show_declined_events?: boolean
+          chronotype_enabled?: boolean
+          chronotype_type?: string
+          chronotype_custom_zones?: Json | null
+          chronotype_display_mode?: string
+          chronotype_opacity?: number
+          plan_record_mode?: string
+          theme?: string
+          color_scheme?: string
+          created_at?: string
+          updated_at?: string
         }
-        Relationships: []
-      }
-      tasks: {
-        Row: {
-          id: string
-          user_id: string
-          title: string
-          status: string
-          planned_start: string | null
-          planned_duration: number | null
-          actual_start: string | null
-          actual_end: string | null
-          satisfaction: number | null
-          tags: string[] | null
-          memo: string | null
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          title: string
-          status?: string
-          planned_start?: string | null
-          planned_duration?: number | null
-          actual_start?: string | null
-          actual_end?: string | null
-          satisfaction?: number | null
-          tags?: string[] | null
-          memo?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          title?: string
-          status?: string
-          planned_start?: string | null
-          planned_duration?: number | null
-          actual_start?: string | null
-          actual_end?: string | null
-          satisfaction?: number | null
-          tags?: string[] | null
-          memo?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      user_values: {
-        Row: {
-          id: string
-          user_id: string
-          values: Json | null
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          values?: Json | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          values?: Json | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: 'user_settings_user_id_fkey'
+            columns: ['user_id']
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
       }
       tags: {
         Row: {

@@ -125,23 +125,6 @@ t('common.save') // 言語に応じた文字列を取得
 
 **詳細**: [`src/i18n/CLAUDE.md`](../i18n/CLAUDE.md)
 
-### local-storage/ - LocalStorage管理
-
-**型安全なLocalStorage操作**。
-
-```tsx
-import { storage } from '@/lib/local-storage'
-
-// データ保存
-storage.set('user-settings', { theme: 'dark', locale: 'ja' })
-
-// データ取得
-const settings = storage.get('user-settings')
-
-// データ削除
-storage.remove('user-settings')
-```
-
 ### logger/ - ログシステム
 
 **構造化ログ出力**。

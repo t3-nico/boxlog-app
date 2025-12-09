@@ -7,6 +7,7 @@ import { authRouter } from './routers/auth'
 import { notificationsRouter } from './routers/notifications'
 import { plansRouter } from './routers/plans'
 import { profileRouter } from './routers/profile'
+import { userSettingsRouter } from './routers/userSettings'
 import { createTRPCRouter } from './trpc'
 
 /**
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
   profile: profileRouter,
   plans: plansRouter,
   notifications: notificationsRouter,
+  userSettings: userSettingsRouter,
 })
 
 /**

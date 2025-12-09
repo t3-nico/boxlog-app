@@ -4,7 +4,7 @@
  * GDPR "Right to Data Portability" 準拠のデータエクスポート機能
  * - ユーザープロフィール
  * - プランデータ
- * - スマートフィルター
+ * - タグ・タググループ
  * - ユーザー設定
  *
  * @see Issue #548 - データ削除リクエスト機能（忘れられる権利）
@@ -23,8 +23,9 @@ interface ExportDataResponse {
   data: {
     profile: unknown
     plans: unknown[]
-    smartFilters: unknown[]
-    userValues: unknown
+    tags: unknown[]
+    tagGroups: unknown[]
+    userSettings: unknown
   }
 }
 
@@ -64,24 +65,28 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
     })
 
     // データ取得
-    const [profileResult, plansResult, smartFiltersResult, userValuesResult] = await Promise.all([
+    const [profileResult, plansResult, tagsResult, tagGroupsResult, userSettingsResult] = await Promise.all([
       supabase.from('profiles').select('*').eq('id', user.id).single(),
       supabase.from('plans').select('*').eq('user_id', user.id),
-      supabase.from('smart_filters').select('*').eq('user_id', user.id),
-      supabase.from('user_values').select('*').eq('user_id', user.id).single(),
+      supabase.from('tags').select('*').eq('user_id', user.id),
+      supabase.from('tag_groups').select('*').eq('user_id', user.id),
+      supabase.from('user_settings').select('*').eq('user_id', user.id).single(),
     ])
 
-    // エラーチェック
+    // エラーチェック（PGRST116 = no rows returned はOK）
     if (profileResult.error && profileResult.error.code !== 'PGRST116') {
       throw new Error(`Profile fetch error: ${profileResult.error.message}`)
     }
     if (plansResult.error) {
       throw new Error(`Plans fetch error: ${plansResult.error.message}`)
     }
-    if (smartFiltersResult.error) {
-      throw new Error(`Smart filters fetch error: ${smartFiltersResult.error.message}`)
+    if (tagsResult.error) {
+      throw new Error(`Tags fetch error: ${tagsResult.error.message}`)
     }
-    // user_valuesはオプショナル（存在しない場合もある）
+    if (tagGroupsResult.error) {
+      throw new Error(`Tag groups fetch error: ${tagGroupsResult.error.message}`)
+    }
+    // user_settingsはオプショナル（存在しない場合もある）
 
     const exportData: ExportDataResponse = {
       exportedAt: new Date().toISOString(),
@@ -89,8 +94,9 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       data: {
         profile: profileResult.data || null,
         plans: plansResult.data || [],
-        smartFilters: smartFiltersResult.data || [],
-        userValues: userValuesResult.data || null,
+        tags: tagsResult.data || [],
+        tagGroups: tagGroupsResult.data || [],
+        userSettings: userSettingsResult.data || null,
       },
     }
 
@@ -100,8 +106,9 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
       dataSize: {
         profile: profileResult.data ? 1 : 0,
         plans: plansResult.data?.length || 0,
-        smartFilters: smartFiltersResult.data?.length || 0,
-        userValues: userValuesResult.data ? 1 : 0,
+        tags: tagsResult.data?.length || 0,
+        tagGroups: tagGroupsResult.data?.length || 0,
+        userSettings: userSettingsResult.data ? 1 : 0,
       },
     })
 
