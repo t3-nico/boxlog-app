@@ -1,6 +1,6 @@
 'use client'
 
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
+import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 

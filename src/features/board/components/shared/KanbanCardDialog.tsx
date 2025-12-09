@@ -1,6 +1,7 @@
 // @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 'use client'
 
+import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -15,7 +16,6 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Calendar } from 'lucide-react'

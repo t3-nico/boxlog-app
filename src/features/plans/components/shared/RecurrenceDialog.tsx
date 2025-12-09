@@ -5,12 +5,12 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { useEffect, useRef, useState } from 'react'
 
+import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 
 import type { RecurrenceConfig } from '../../types/plan'
 import { configToRRule, ruleToConfig } from '../../utils/rrule'

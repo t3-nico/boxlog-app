@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 
 import { addDays, endOfWeek, startOfWeek } from 'date-fns'
 
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
+import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
 import { SidebarTabLayout } from '@/features/navigation/components/sidebar/SidebarTabLayout'

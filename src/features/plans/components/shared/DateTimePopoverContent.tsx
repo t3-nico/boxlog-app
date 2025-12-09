@@ -1,7 +1,7 @@
 'use client'
 
+import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { RecurrencePopover } from '@/features/plans/components/shared/RecurrencePopover'
 import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
 import { TimeSelect } from '@/features/plans/components/shared/TimeSelect'
