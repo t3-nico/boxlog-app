@@ -529,16 +529,12 @@ export type Database = {
         Row: {
           color: string | null
           created_at: string | null
-          depth: number | null
           description: string | null
           group_id: string | null
           icon: string | null
           id: string
           is_active: boolean
-          level: number
           name: string
-          parent_id: string | null
-          path: string | null
           tag_number: number
           updated_at: string | null
           user_id: string | null
@@ -546,16 +542,12 @@ export type Database = {
         Insert: {
           color?: string | null
           created_at?: string | null
-          depth?: number | null
           description?: string | null
           group_id?: string | null
           icon?: string | null
           id?: string
           is_active?: boolean
-          level?: number
           name: string
-          parent_id?: string | null
-          path?: string | null
           tag_number?: number
           updated_at?: string | null
           user_id?: string | null
@@ -563,16 +555,12 @@ export type Database = {
         Update: {
           color?: string | null
           created_at?: string | null
-          depth?: number | null
           description?: string | null
           group_id?: string | null
           icon?: string | null
           id?: string
           is_active?: boolean
-          level?: number
           name?: string
-          parent_id?: string | null
-          path?: string | null
           tag_number?: number
           updated_at?: string | null
           user_id?: string | null
@@ -583,13 +571,6 @@ export type Database = {
             columns: ['group_id']
             isOneToOne: false
             referencedRelation: 'tag_groups'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'tags_parent_id_fkey'
-            columns: ['parent_id']
-            isOneToOne: false
-            referencedRelation: 'tags'
             referencedColumns: ['id']
           },
         ]
