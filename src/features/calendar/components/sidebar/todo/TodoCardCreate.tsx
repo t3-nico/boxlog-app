@@ -1,17 +1,17 @@
 import { PlanQuickCreate } from '@/features/plans/components/shared/PlanQuickCreate'
 
-interface InboxCardCreateProps {
+interface TodoCardCreateProps {
   isCreating: boolean
   onStartCreate: () => void
   onFinishCreate: () => void
 }
 
 /**
- * InboxCardCreate - Calendar Sidebar Inbox用の新規作成ラッパー
+ * TodoCardCreate - Calendar Sidebar Todo用の新規作成ラッパー
  *
  * PlanQuickCreateを使用してtodoステータスのプランを作成
  */
-export function InboxCardCreate({ isCreating, onStartCreate, onFinishCreate }: InboxCardCreateProps) {
+export function TodoCardCreate({ isCreating, onStartCreate, onFinishCreate }: TodoCardCreateProps) {
   return (
     <PlanQuickCreate
       status="todo"

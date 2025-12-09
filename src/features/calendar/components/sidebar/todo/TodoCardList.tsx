@@ -7,12 +7,12 @@ import { parseDateString } from '@/features/calendar/utils/dateUtils'
 import { useInboxData } from '@/features/inbox/hooks/useInboxData'
 
 import type { CalendarSortType } from '../../navigation/CalendarNavigation'
-import { InboxCardCreate } from './InboxCardCreate'
-import type { InboxFilter, InboxSort } from './InboxNavigation'
+import { TodoCardCreate } from './TodoCardCreate'
+import type { TodoFilter, TodoSort } from './TodoNavigation'
 
-interface InboxCardListProps {
-  filter: InboxFilter
-  sort: InboxSort
+interface TodoCardListProps {
+  filter: TodoFilter
+  sort: TodoSort
   showHigh: boolean
   showMedium: boolean
   showLow: boolean
@@ -23,7 +23,7 @@ interface InboxCardListProps {
 }
 
 /**
- * InboxCardList - Calendar Sidebar用カードリスト
+ * TodoCardList - Calendar Sidebar用カードリスト（status: todoのプラン）
  *
  * **機能**:
  * - useInboxData でデータ取得
@@ -33,7 +33,7 @@ interface InboxCardListProps {
  * **Note**: PlanCard の useDraggable は既に実装済みなので、
  * DndContext 内に配置すれば自動的にドラッグ可能になる
  */
-export function InboxCardList({
+export function TodoCardList({
   filter,
   sort,
   showHigh: _showHigh,
@@ -43,8 +43,9 @@ export function InboxCardList({
   selectedTags,
   triggerCreate,
   onCreateFinish,
-}: InboxCardListProps) {
-  const { items, isLoading, error } = useInboxData()
+}: TodoCardListProps) {
+  // status: 'todo' のプランのみ取得
+  const { items, isLoading, error } = useInboxData({ status: 'todo' })
   const [isCreating, setIsCreating] = useState(false)
 
   // フィルタリング・ソート処理
@@ -95,7 +96,7 @@ export function InboxCardList({
         }
       }
 
-      // InboxNavigationからのソート
+      // TodoNavigationからのソート
       if (sort === 'due') {
         // 期限日順（期限なしは最後）
         if (!a.due_date) return 1
@@ -160,7 +161,7 @@ export function InboxCardList({
       ))}
 
       {/* 新規作成カード（最後） */}
-      <InboxCardCreate
+      <TodoCardCreate
         isCreating={isCreating}
         onStartCreate={() => setIsCreating(true)}
         onFinishCreate={() => {

@@ -11,8 +11,8 @@ import { SidebarTabLayout } from '@/features/navigation/components/sidebar/Sideb
 import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
 import { useTranslations } from 'next-intl'
 
-import { InboxCardList } from './inbox/InboxCardList'
-import { InboxNavigation, type InboxFilter, type InboxSort } from './inbox/InboxNavigation'
+import { TodoCardList } from './todo/TodoCardList'
+import { TodoNavigation, type TodoFilter, type TodoSort } from './todo/TodoNavigation'
 
 /**
  * CalendarSidebar - カレンダーページ専用サイドバー
@@ -21,15 +21,15 @@ import { InboxNavigation, type InboxFilter, type InboxSort } from './inbox/Inbox
  * SidebarTabLayoutでタブUIを実装。
  *
  * **タブ構成**:
- * - Inbox: フィルターナビゲーション
+ * - Todo: フィルターナビゲーション（ステータス: todo のプラン一覧）
  * - View: ミニカレンダー（日付選択・月移動）
  */
 export function CalendarSidebar() {
   const navigation = useCalendarNavigation()
   const t = useTranslations()
 
-  const [filter, setFilter] = useState<InboxFilter>('all')
-  const [sort, setSort] = useState<InboxSort>('due')
+  const [filter, setFilter] = useState<TodoFilter>('all')
+  const [sort, setSort] = useState<TodoSort>('due')
   const [showHigh, setShowHigh] = useState(true)
   const [showMedium, setShowMedium] = useState(true)
   const [showLow, setShowLow] = useState(true)
@@ -77,13 +77,13 @@ export function CalendarSidebar() {
 
   const tabs: SidebarTab[] = [
     {
-      value: 'inbox',
-      label: t('calendar.sidebar.tabs.inbox'),
+      value: 'todo',
+      label: t('calendar.sidebar.tabs.todo'),
       content: (
         <>
           {/* ナビゲーションコンテナ: 高さ48px（内部32px + 上padding 8px + 下padding 8px） */}
           <div className="h-12 shrink-0 px-4 pt-2">
-            <InboxNavigation
+            <TodoNavigation
               filter={filter}
               onFilterChange={setFilter}
               sort={sort}
@@ -96,7 +96,7 @@ export function CalendarSidebar() {
           </div>
           {/* カードリストコンテナ */}
           <div className="flex-1 overflow-hidden px-4">
-            <InboxCardList filter={filter} sort={sort} showHigh={showHigh} showMedium={showMedium} showLow={showLow} />
+            <TodoCardList filter={filter} sort={sort} showHigh={showHigh} showMedium={showMedium} showLow={showLow} />
           </div>
         </>
       ),
@@ -105,7 +105,7 @@ export function CalendarSidebar() {
       value: 'view',
       label: t('calendar.sidebar.tabs.view'),
       content: (
-        <div className="p-2">
+        <div className="px-2 pt-4">
           <MiniCalendar
             selectedDate={navigation?.currentDate}
             displayRange={displayRange}
@@ -123,7 +123,7 @@ export function CalendarSidebar() {
 
   return (
     <SidebarShell title={t('sidebar.navigation.calendar')}>
-      <SidebarTabLayout tabs={tabs} defaultTab="inbox" />
+      <SidebarTabLayout tabs={tabs} defaultTab="todo" />
     </SidebarShell>
   )
 }
