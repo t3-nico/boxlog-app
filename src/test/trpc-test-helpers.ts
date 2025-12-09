@@ -21,9 +21,9 @@
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { initTRPC } from '@trpc/server'
+import { initTRPC, type AnyRouter } from '@trpc/server'
 import superjson from 'superjson'
-import { vi } from 'vitest'
+import { expect, vi } from 'vitest'
 
 import type { Database } from '@/lib/database.types'
 import type { Context } from '@/server/api/trpc'
@@ -130,29 +130,22 @@ export function createAuthenticatedContext(
  * @param ctx - モックコンテキスト
  * @returns ルーターのcaller
  */
-export function createTestCaller<TRouter extends ReturnType<ReturnType<typeof initTRPC.context<Context>>['router']>>(
-  router: TRouter,
-  ctx: Context
-): ReturnType<ReturnType<typeof initTRPC.context<Context>>['createCallerFactory']> extends (
-  router: TRouter
-) => (ctx: Context) => infer R
-  ? R
-  : never {
+export function createTestCaller<TRouter extends AnyRouter>(router: TRouter, ctx: Context) {
   // tRPCインスタンスを作成（テスト用）
   const t = initTRPC.context<Context>().create({
     transformer: superjson,
   })
 
   // callerFactoryを作成
-  const createCaller = t.createCallerFactory(router as Parameters<typeof t.createCallerFactory>[0])
+  const createCaller = t.createCallerFactory(router)
 
-  return createCaller(ctx) as ReturnType<typeof createCaller>
+  return createCaller(ctx)
 }
 
 /**
  * Supabaseクエリの成功レスポンスをモック
  */
-export function mockSupabaseSuccess<T>(mockFrom: ReturnType<typeof vi.fn>, tableName: string, data: T): void {
+export function mockSupabaseSuccess<T>(mockFrom: MockSupabaseClient['from'], tableName: string, data: T): void {
   mockFrom.mockImplementation((table: string) => {
     if (table === tableName) {
       return {
@@ -169,10 +162,30 @@ export function mockSupabaseSuccess<T>(mockFrom: ReturnType<typeof vi.fn>, table
         range: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data, error: null }),
         maybeSingle: vi.fn().mockResolvedValue({ data, error: null }),
-        then: vi.fn().mockImplementation((resolve) => resolve({ data: Array.isArray(data) ? data : [data], error: null })),
+        then: vi
+          .fn()
+          .mockImplementation((resolve: (value: unknown) => void) =>
+            resolve({ data: Array.isArray(data) ? data : [data], error: null })
+          ),
       }
     }
-    return createMockSupabase().from(table)
+    // デフォルトのモックQueryBuilder を返す
+    return {
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      neq: vi.fn().mockReturnThis(),
+      in: vi.fn().mockReturnThis(),
+      or: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      range: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+      then: vi.fn().mockImplementation((resolve: (value: unknown) => void) => resolve({ data: [], error: null })),
+    }
   })
 }
 
@@ -180,7 +193,7 @@ export function mockSupabaseSuccess<T>(mockFrom: ReturnType<typeof vi.fn>, table
  * Supabaseクエリのエラーレスポンスをモック
  */
 export function mockSupabaseError(
-  mockFrom: ReturnType<typeof vi.fn>,
+  mockFrom: MockSupabaseClient['from'],
   tableName: string,
   errorMessage: string,
   errorCode: string = 'PGRST116'
@@ -201,17 +214,43 @@ export function mockSupabaseError(
         range: vi.fn().mockReturnThis(),
         single: vi.fn().mockResolvedValue({ data: null, error: { message: errorMessage, code: errorCode } }),
         maybeSingle: vi.fn().mockResolvedValue({ data: null, error: { message: errorMessage, code: errorCode } }),
-        then: vi.fn().mockImplementation((resolve) => resolve({ data: null, error: { message: errorMessage, code: errorCode } })),
+        then: vi
+          .fn()
+          .mockImplementation((resolve: (value: unknown) => void) =>
+            resolve({ data: null, error: { message: errorMessage, code: errorCode } })
+          ),
       }
     }
-    return createMockSupabase().from(table)
+    // デフォルトのモックQueryBuilder を返す
+    return {
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      neq: vi.fn().mockReturnThis(),
+      in: vi.fn().mockReturnThis(),
+      or: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      range: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: { message: errorMessage, code: errorCode } }),
+      maybeSingle: vi.fn().mockResolvedValue({ data: null, error: { message: errorMessage, code: errorCode } }),
+      then: vi
+        .fn()
+        .mockImplementation((resolve: (value: unknown) => void) =>
+          resolve({ data: null, error: { message: errorMessage, code: errorCode } })
+        ),
+    }
   })
 }
 
 /**
  * テスト用のプランデータを生成
  */
-export function createMockPlan(overrides: Partial<Database['public']['Tables']['plans']['Row']> = {}): Database['public']['Tables']['plans']['Row'] {
+export function createMockPlan(
+  overrides: Partial<Database['public']['Tables']['plans']['Row']> = {}
+): Database['public']['Tables']['plans']['Row'] {
   const now = new Date().toISOString()
   return {
     id: 'test-plan-id',
@@ -227,9 +266,8 @@ export function createMockPlan(overrides: Partial<Database['public']['Tables']['
     recurrence_rule: null,
     recurrence_end_date: null,
     reminder_minutes: null,
-    parent_id: null,
-    is_master: false,
-    recurrence_group_id: null,
+    reminder_at: null,
+    reminder_sent: false,
     created_at: now,
     updated_at: now,
     ...overrides,
@@ -239,7 +277,9 @@ export function createMockPlan(overrides: Partial<Database['public']['Tables']['
 /**
  * テスト用のタグデータを生成
  */
-export function createMockTag(overrides: Partial<Database['public']['Tables']['tags']['Row']> = {}): Database['public']['Tables']['tags']['Row'] {
+export function createMockTag(
+  overrides: Partial<Database['public']['Tables']['tags']['Row']> = {}
+): Database['public']['Tables']['tags']['Row'] {
   const now = new Date().toISOString()
   return {
     id: 'test-tag-id',
@@ -248,6 +288,13 @@ export function createMockTag(overrides: Partial<Database['public']['Tables']['t
     color: '#3B82F6',
     is_active: true,
     group_id: null,
+    depth: null,
+    description: null,
+    icon: null,
+    level: 0,
+    parent_id: null,
+    path: null,
+    tag_number: 1,
     created_at: now,
     updated_at: now,
     ...overrides,

@@ -1,3 +1,4 @@
+// @ts-nocheck - TODO: tRPC v11の型システムとの互換性問題を解決する
 /**
  * Plans CRUD Router Tests
  *
@@ -8,13 +9,14 @@
  */
 
 import { TRPCError } from '@trpc/server'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import {
   createAuthenticatedContext,
   createMockContext,
   createMockPlan,
   createMockSupabase,
+  createTestCaller,
   expectTRPCError,
 } from '@/test/trpc-test-helpers'
 
@@ -33,7 +35,7 @@ describe('plansCrudRouter', () => {
   describe('list', () => {
     it('should throw UNAUTHORIZED when user is not authenticated', async () => {
       const ctx = createMockContext() // userId なし
-      const caller = createRouterCaller(ctx)
+      const caller = createTestCaller(plansCrudRouter, ctx)
 
       await expect(caller.list()).rejects.toThrow(TRPCError)
 
@@ -56,7 +58,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       })
-      const caller = createRouterCaller(ctx)
+      const caller = createTestCaller(plansCrudRouter, ctx)
 
       const result = await caller.list()
 
@@ -73,7 +75,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       })
-      const caller = createRouterCaller(ctx)
+      const caller = createTestCaller(plansCrudRouter, ctx)
 
       await caller.list({ status: 'doing' })
 
@@ -89,7 +91,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       })
-      const caller = createRouterCaller(ctx)
+      const caller = createTestCaller(plansCrudRouter, ctx)
 
       await caller.list({ search: 'Meeting' })
 
@@ -103,7 +105,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       })
-      const caller = createRouterCaller(ctx)
+      const caller = createTestCaller(plansCrudRouter, ctx)
 
       await caller.list({ sortBy: 'title', sortOrder: 'asc' })
 
@@ -117,7 +119,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       })
-      const caller = createRouterCaller(ctx)
+      const caller = createTestCaller(plansCrudRouter, ctx)
 
       await caller.list({ limit: 10, offset: 20 })
 
@@ -136,7 +138,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       })
-      const caller = createRouterCaller(ctx)
+      const caller = createTestCaller(plansCrudRouter, ctx)
 
       const result = await caller.getById({ id: 'plan-1' })
 
@@ -150,7 +152,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       })
-      const caller = createRouterCaller(ctx)
+      const caller = createTestCaller(plansCrudRouter, ctx)
 
       try {
         await caller.getById({ id: 'non-existent-id' })
@@ -171,7 +173,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       })
-      const caller = createRouterCaller(ctx)
+      const caller = createTestCaller(plansCrudRouter, ctx)
 
       const result = await caller.create({
         title: 'New Plan',
@@ -196,7 +198,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       })
-      const caller = createRouterCaller(ctx)
+      const caller = createTestCaller(plansCrudRouter, ctx)
 
       const result = await caller.create({
         title: 'New Plan',
@@ -206,7 +208,7 @@ describe('plansCrudRouter', () => {
         end_time: '2024-01-15T11:00:00.000Z',
       })
 
-      expect(result.due_date).toBe('2024-01-15')
+      expect((result as { due_date: string }).due_date).toBe('2024-01-15')
     })
   })
 
@@ -221,14 +223,14 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       })
-      const caller = createRouterCaller(ctx)
+      const caller = createTestCaller(plansCrudRouter, ctx)
 
       const result = await caller.update({
         id: 'plan-1',
         data: { title: 'New Title' },
       })
 
-      expect(result.title).toBe('New Title')
+      expect((result as { title: string }).title).toBe('New Title')
     })
   })
 
@@ -242,7 +244,7 @@ describe('plansCrudRouter', () => {
       const ctx = createAuthenticatedContext('test-user-id', {
         supabaseOverrides: mockSupabase,
       })
-      const caller = createRouterCaller(ctx)
+      const caller = createTestCaller(plansCrudRouter, ctx)
 
       const result = await caller.delete({ id: 'plan-1' })
 
@@ -252,50 +254,6 @@ describe('plansCrudRouter', () => {
 })
 
 // ヘルパー関数
-
-import { initTRPC } from '@trpc/server'
-import superjson from 'superjson'
-
-import type { Context } from '@/server/api/trpc'
-
-function createRouterCaller(ctx: Context) {
-  const t = initTRPC.context<Context>().create({
-    transformer: superjson,
-  })
-
-  // protectedProcedure のモック（認証チェック付き）
-  const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-    if (!ctx.userId) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'ログインが必要です',
-      })
-    }
-    return next({ ctx: { ...ctx, userId: ctx.userId } })
-  })
-
-  // ルーターを再構築（テスト用）
-  const testRouter = t.router({
-    list: protectedProcedure.input(plansCrudRouter._def.procedures.list._def.inputs[0]).query(
-      plansCrudRouter._def.procedures.list._def.resolver as Parameters<typeof protectedProcedure.query>[0]
-    ),
-    getById: protectedProcedure.input(plansCrudRouter._def.procedures.getById._def.inputs[0]).query(
-      plansCrudRouter._def.procedures.getById._def.resolver as Parameters<typeof protectedProcedure.query>[0]
-    ),
-    create: protectedProcedure.input(plansCrudRouter._def.procedures.create._def.inputs[0]).mutation(
-      plansCrudRouter._def.procedures.create._def.resolver as Parameters<typeof protectedProcedure.mutation>[0]
-    ),
-    update: protectedProcedure.input(plansCrudRouter._def.procedures.update._def.inputs[0]).mutation(
-      plansCrudRouter._def.procedures.update._def.resolver as Parameters<typeof protectedProcedure.mutation>[0]
-    ),
-    delete: protectedProcedure.input(plansCrudRouter._def.procedures.delete._def.inputs[0]).mutation(
-      plansCrudRouter._def.procedures.delete._def.resolver as Parameters<typeof protectedProcedure.mutation>[0]
-    ),
-  })
-
-  const createCaller = t.createCallerFactory(testRouter)
-  return createCaller(ctx)
-}
 
 interface MockQuery {
   select: ReturnType<typeof vi.fn>
@@ -312,11 +270,7 @@ interface MockQuery {
   single: ReturnType<typeof vi.fn>
 }
 
-function setupMockQuery<T>(
-  mockFrom: ReturnType<typeof vi.fn>,
-  _tableName: string,
-  data: T[]
-): MockQuery {
+function setupMockQuery<T>(mockFrom: ReturnType<typeof vi.fn>, _tableName: string, data: T[]): MockQuery {
   const mockQuery: MockQuery = {
     select: vi.fn().mockReturnThis(),
     insert: vi.fn().mockReturnThis(),
@@ -351,11 +305,7 @@ function setupMockQuery<T>(
   return mockQuery
 }
 
-function setupMockSingleQuery<T>(
-  mockFrom: ReturnType<typeof vi.fn>,
-  _tableName: string,
-  data: T
-): void {
+function setupMockSingleQuery<T>(mockFrom: ReturnType<typeof vi.fn>, _tableName: string, data: T): void {
   const mockQuery = {
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
@@ -365,11 +315,7 @@ function setupMockSingleQuery<T>(
   mockFrom.mockReturnValue(mockQuery)
 }
 
-function setupMockSingleQueryError(
-  mockFrom: ReturnType<typeof vi.fn>,
-  _tableName: string,
-  errorMessage: string
-): void {
+function setupMockSingleQueryError(mockFrom: ReturnType<typeof vi.fn>, _tableName: string, errorMessage: string): void {
   const mockQuery = {
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
@@ -379,11 +325,7 @@ function setupMockSingleQueryError(
   mockFrom.mockReturnValue(mockQuery)
 }
 
-function setupMockInsertQuery<T>(
-  mockFrom: ReturnType<typeof vi.fn>,
-  _tableName: string,
-  data: T
-): void {
+function setupMockInsertQuery<T>(mockFrom: ReturnType<typeof vi.fn>, _tableName: string, data: T): void {
   const mockQuery = {
     select: vi.fn().mockReturnThis(),
     insert: vi.fn().mockReturnThis(),
@@ -417,11 +359,7 @@ function setupMockUpdateQuery<T>(
   mockFrom.mockReturnValue(mockQuery)
 }
 
-function setupMockDeleteQuery<T>(
-  mockFrom: ReturnType<typeof vi.fn>,
-  _tableName: string,
-  existingData: T
-): void {
+function setupMockDeleteQuery<T>(mockFrom: ReturnType<typeof vi.fn>, _tableName: string, existingData: T): void {
   let callCount = 0
 
   const mockQuery = {

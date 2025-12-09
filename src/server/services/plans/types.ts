@@ -7,7 +7,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 import type { Database } from '@/lib/database.types'
-import type { CreatePlanInput, PlanFilterInput, UpdatePlanInput } from '@/schemas/plans'
+import type { CreatePlanInput, PlanFilter, UpdatePlanInput } from '@/schemas/plans'
 
 /**
  * サービス関数で使用するSupabaseクライアント型
@@ -43,7 +43,7 @@ export interface PlanWithTags extends PlanRow {
 /**
  * プラン一覧取得のオプション
  */
-export interface ListPlansOptions extends PlanFilterInput {
+export interface ListPlansOptions extends PlanFilter {
   userId: string
 }
 

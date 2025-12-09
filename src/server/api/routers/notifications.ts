@@ -30,13 +30,15 @@ export const notificationsRouter = createTRPCRouter({
     const service = createNotificationService(ctx.supabase)
 
     try {
-      return await service.list({
+      const options: Parameters<typeof service.list>[0] = {
         userId: ctx.userId,
-        isRead: input?.is_read,
-        type: input?.type,
-        limit: input?.limit,
-        offset: input?.offset,
-      })
+      }
+      if (input?.is_read !== undefined) options.isRead = input.is_read
+      if (input?.type !== undefined) options.type = input.type
+      if (input?.limit !== undefined) options.limit = input.limit
+      if (input?.offset !== undefined) options.offset = input.offset
+
+      return await service.list(options)
     } catch (error) {
       handleServiceError(error)
     }
@@ -75,19 +77,23 @@ export const notificationsRouter = createTRPCRouter({
     const service = createNotificationService(ctx.supabase)
 
     try {
-      return await service.create({
+      const options: Parameters<typeof service.create>[0] = {
         userId: ctx.userId,
         type: input.type,
         priority: input.priority,
         title: input.title,
-        message: input.message,
-        relatedPlanId: input.related_plan_id,
-        relatedTagId: input.related_tag_id,
-        actionUrl: input.action_url,
-        icon: input.icon,
-        data: input.data as Record<string, unknown> | undefined,
-        expiresAt: input.expires_at,
-      })
+      }
+      if (input.message !== undefined && input.message !== null) options.message = input.message
+      if (input.related_plan_id !== undefined && input.related_plan_id !== null)
+        options.relatedPlanId = input.related_plan_id
+      if (input.related_tag_id !== undefined && input.related_tag_id !== null)
+        options.relatedTagId = input.related_tag_id
+      if (input.action_url !== undefined && input.action_url !== null) options.actionUrl = input.action_url
+      if (input.icon !== undefined && input.icon !== null) options.icon = input.icon
+      if (input.data !== undefined) options.data = input.data as Record<string, unknown>
+      if (input.expires_at !== undefined && input.expires_at !== null) options.expiresAt = input.expires_at
+
+      return await service.create(options)
     } catch (error) {
       handleServiceError(error)
     }
@@ -107,12 +113,14 @@ export const notificationsRouter = createTRPCRouter({
       const service = createNotificationService(ctx.supabase)
 
       try {
-        return await service.update({
+        const options: Parameters<typeof service.update>[0] = {
           userId: ctx.userId,
           notificationId: input.id,
-          isRead: input.data.is_read,
-          readAt: input.data.read_at,
-        })
+        }
+        if (input.data.is_read !== undefined) options.isRead = input.data.is_read
+        if (input.data.read_at !== undefined) options.readAt = input.data.read_at
+
+        return await service.update(options)
       } catch (error) {
         handleServiceError(error)
       }
@@ -138,10 +146,12 @@ export const notificationsRouter = createTRPCRouter({
     const service = createNotificationService(ctx.supabase)
 
     try {
-      return await service.markAllAsRead({
+      const options: Parameters<typeof service.markAllAsRead>[0] = {
         userId: ctx.userId,
-        type: input?.type,
-      })
+      }
+      if (input?.type !== undefined) options.type = input.type
+
+      return await service.markAllAsRead(options)
     } catch (error) {
       handleServiceError(error)
     }

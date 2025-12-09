@@ -103,22 +103,30 @@ export class PlanService {
   async getById(options: GetPlanByIdOptions): Promise<PlanWithTags> {
     const { userId, planId, includeTags } = options
 
-    const selectQuery = includeTags ? '*, plan_tags(tag_id, tags(*))' : '*'
+    if (includeTags) {
+      const { data, error } = await this.supabase
+        .from('plans')
+        .select('*, plan_tags(tag_id, tags(*))')
+        .eq('id', planId)
+        .eq('user_id', userId)
+        .single()
+
+      if (error) {
+        throw new PlanServiceError('NOT_FOUND', `Plan not found: ${error.message}`)
+      }
+
+      return this.formatPlanWithTags(data as unknown as PlanWithTags)
+    }
 
     const { data, error } = await this.supabase
       .from('plans')
-      .select(selectQuery)
+      .select('*')
       .eq('id', planId)
       .eq('user_id', userId)
       .single()
 
     if (error) {
       throw new PlanServiceError('NOT_FOUND', `Plan not found: ${error.message}`)
-    }
-
-    // タグデータのフォーマット
-    if (includeTags && data) {
-      return this.formatPlanWithTags(data as PlanWithTags)
     }
 
     return data as PlanWithTags
@@ -250,14 +258,13 @@ export class PlanService {
   /**
    * 日時フィールドを正規化
    */
-  private normalizeDateTimeFields<T extends { due_date?: string | null; start_time?: string | null; end_time?: string | null }>(
-    input: T
-  ): T {
+  private normalizeDateTimeFields<T extends Record<string, unknown>>(input: T): T {
     const dateTimeData: { due_date?: string | null; start_time?: string | null; end_time?: string | null } = {}
 
-    if (input.due_date !== undefined) dateTimeData.due_date = input.due_date
-    if (input.start_time !== undefined) dateTimeData.start_time = input.start_time
-    if (input.end_time !== undefined) dateTimeData.end_time = input.end_time
+    const typedInput = input as { due_date?: string | null; start_time?: string | null; end_time?: string | null }
+    if (typedInput.due_date !== undefined) dateTimeData.due_date = typedInput.due_date
+    if (typedInput.start_time !== undefined) dateTimeData.start_time = typedInput.start_time
+    if (typedInput.end_time !== undefined) dateTimeData.end_time = typedInput.end_time
 
     normalizeDateTimeConsistency(dateTimeData)
 
@@ -270,11 +277,12 @@ export class PlanService {
   /**
    * 更新時の日時フィールドを正規化（既存データとマージ）
    */
-  private normalizeDateTimeFieldsForUpdate<T extends { due_date?: string | null; start_time?: string | null; end_time?: string | null }>(
+  private normalizeDateTimeFieldsForUpdate<T extends Record<string, unknown>>(
     input: T,
     existingData: PlanRow | null
   ): T {
-    const hasDateTimeUpdate = !!(input.due_date || input.start_time || input.end_time)
+    const typedInput = input as { due_date?: string | null; start_time?: string | null; end_time?: string | null }
+    const hasDateTimeUpdate = !!(typedInput.due_date || typedInput.start_time || typedInput.end_time)
 
     if (!hasDateTimeUpdate || !existingData) {
       return input
@@ -282,28 +290,28 @@ export class PlanService {
 
     const mergedData: { due_date?: string | null; start_time?: string | null; end_time?: string | null } = {}
 
-    const dueDateValue = input.due_date ?? existingData.due_date
+    const dueDateValue = typedInput.due_date ?? existingData.due_date
     if (dueDateValue) mergedData.due_date = dueDateValue
 
-    const startTimeValue = input.start_time ?? existingData.start_time
+    const startTimeValue = typedInput.start_time ?? existingData.start_time
     if (startTimeValue !== undefined) mergedData.start_time = startTimeValue
 
-    const endTimeValue = input.end_time ?? existingData.end_time
+    const endTimeValue = typedInput.end_time ?? existingData.end_time
     if (endTimeValue !== undefined) mergedData.end_time = endTimeValue
 
     normalizeDateTimeConsistency(mergedData)
 
-    const result = { ...input }
+    const result = { ...input } as Record<string, unknown>
 
-    if (input.start_time !== undefined || input.end_time !== undefined) {
-      if (mergedData.due_date !== undefined) result.due_date = mergedData.due_date as T['due_date']
-      if (mergedData.start_time !== undefined) result.start_time = mergedData.start_time as T['start_time']
-      if (mergedData.end_time !== undefined) result.end_time = mergedData.end_time as T['end_time']
-    } else if (input.due_date !== undefined) {
-      if (mergedData.due_date !== undefined) result.due_date = mergedData.due_date as T['due_date']
+    if (typedInput.start_time !== undefined || typedInput.end_time !== undefined) {
+      if (mergedData.due_date !== undefined) result.due_date = mergedData.due_date
+      if (mergedData.start_time !== undefined) result.start_time = mergedData.start_time
+      if (mergedData.end_time !== undefined) result.end_time = mergedData.end_time
+    } else if (typedInput.due_date !== undefined) {
+      if (mergedData.due_date !== undefined) result.due_date = mergedData.due_date
     }
 
-    return result
+    return result as T
   }
 
   /**

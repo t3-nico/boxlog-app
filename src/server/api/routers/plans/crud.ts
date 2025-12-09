@@ -67,11 +67,13 @@ export const plansCrudRouter = createTRPCRouter({
     const service = createPlanService(supabase)
 
     try {
-      return await service.getById({
+      const options: Parameters<typeof service.getById>[0] = {
         userId,
         planId: input.id,
-        includeTags: input.include?.tags,
-      })
+      }
+      if (input.include?.tags !== undefined) options.includeTags = input.include.tags
+
+      return await service.getById(options)
     } catch (error) {
       handleServiceError(error)
     }
