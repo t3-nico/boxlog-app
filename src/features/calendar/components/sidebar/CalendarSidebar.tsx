@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 
-import { addDays, endOfWeek, startOfWeek, subDays } from 'date-fns'
+import { addDays, endOfWeek, startOfDay, startOfWeek, subDays } from 'date-fns'
 
 import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
@@ -39,25 +39,27 @@ export function CalendarSidebar() {
     if (!navigation?.currentDate || !navigation?.viewType) return undefined
 
     const { currentDate, viewType } = navigation
+    // 時刻部分を正規化（00:00:00に統一）してisWithinIntervalの比較を正確にする
+    const normalizedDate = startOfDay(currentDate)
 
     switch (viewType) {
       case 'day':
         // 日表示: 1日のみ
-        return { start: currentDate, end: currentDate }
+        return { start: normalizedDate, end: normalizedDate }
 
       case '3day':
         // 3日表示: 当日を中央として前後1日（合計3日間）
-        return { start: subDays(currentDate, 1), end: addDays(currentDate, 1) }
+        return { start: subDays(normalizedDate, 1), end: addDays(normalizedDate, 1) }
 
       case '5day':
         // 5日表示: 当日を中央として前後2日（合計5日間）
-        return { start: subDays(currentDate, 2), end: addDays(currentDate, 2) }
+        return { start: subDays(normalizedDate, 2), end: addDays(normalizedDate, 2) }
 
       case 'week':
         // 週表示: 月曜から日曜
         return {
-          start: startOfWeek(currentDate, { weekStartsOn: 1 }),
-          end: endOfWeek(currentDate, { weekStartsOn: 1 }),
+          start: startOfWeek(normalizedDate, { weekStartsOn: 1 }),
+          end: endOfWeek(normalizedDate, { weekStartsOn: 1 }),
         }
 
       case 'agenda':
