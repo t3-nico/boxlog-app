@@ -19,7 +19,7 @@ export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda'
 export interface BaseViewProps {
   // Core data
   dateRange: ViewDateRange
-  events: CalendarPlan[]
+  plans: CalendarPlan[]
   currentDate: Date
 
   // Display options
@@ -28,13 +28,17 @@ export interface BaseViewProps {
 
   // Plan handlers
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined
-  onEventClick?: ((plan: CalendarPlan) => void) | undefined
-  onEventContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined
-  onCreateEvent?: ((date: Date, time?: string) => void) | undefined
-  onUpdateEvent?: ((plan: CalendarPlan) => void) | undefined
-  onDeleteEvent?: ((eventId: string) => void) | undefined
-  onRestoreEvent?: ((plan: CalendarPlan) => Promise<void>) | undefined
+  onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined
+  onCreatePlan?: ((date: Date, time?: string) => void) | undefined
+  onUpdatePlan?:
+    | ((planIdOrPlan: string | CalendarPlan, updates?: { startTime: Date; endTime: Date }) => void | Promise<void>)
+    | undefined
+  onDeletePlan?: ((planId: string) => void) | undefined
+  onRestorePlan?: ((plan: CalendarPlan) => Promise<void>) | undefined
   onEmptyClick?: ((date: Date, time: string) => void) | undefined
+  onTimeRangeSelect?:
+    | ((selection: { date: Date; startHour: number; startMinute: number; endHour: number; endMinute: number }) => void)
+    | undefined
 
   // Navigation handlers
   onViewChange?: ((viewType: CalendarViewType) => void) | undefined

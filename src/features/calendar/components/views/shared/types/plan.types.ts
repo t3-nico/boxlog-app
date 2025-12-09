@@ -71,10 +71,6 @@ export interface PlanGroup {
   columns: PlanColumn[]
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use PlanGroup instead */
-export type EventGroup = PlanGroup
-
 export interface PlanColumn {
   plans: CalendarPlan[]
   columnIndex: number

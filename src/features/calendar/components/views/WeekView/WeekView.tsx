@@ -22,7 +22,7 @@ import type { WeekViewProps } from './WeekView.types'
  * 2. shared/grid/TimeColumn で時間軸
  * 3. shared/grid/TimeGrid でグリッド
  * 4. 7つの shared/components/DayColumn を横並び
- * 5. shared/components/EventBlock でイベント
+ * 5. shared/components/PlanCard でプラン表示
  * 6. shared/grid/CurrentTimeLine で現在時刻
  *
  * レイアウト:
@@ -31,19 +31,19 @@ import type { WeekViewProps } from './WeekView.types'
  * │    │ 日 │ 月 │ 火 │ 水 │ 木 │ 金 │ 土 │ ← DateDisplay
  * │    │    │    │    │ ● │    │    │    │ ← 今日マーカー
  * ├────┼────┼────┼────┼────┼────┼────┼────┤
- * │ 9  │    │ EV │    │    │ EV │    │    │
- * │10  │    │    │ EV │    │    │    │    │
+ * │ 9  │    │ PL │    │    │ PL │    │    │
+ * │10  │    │    │ PL │    │    │    │    │
  * └────┴────┴────┴────┴────┴────┴────┴────┘
  */
 export const WeekView = ({
   dateRange,
-  events,
+  plans,
   showWeekends = true,
   weekStartsOn = 1, // 0: 日曜始まり, 1: 月曜始まり
   className,
-  onEventClick,
-  onEventContextMenu,
-  onUpdateEvent,
+  onPlanClick,
+  onPlanContextMenu,
+  onUpdatePlan,
   onEmptyClick,
   onTimeRangeSelect,
 }: WeekViewProps) => {
@@ -57,7 +57,7 @@ export const WeekView = ({
   // WeekView専用ロジック
   const { weekDates, eventsByDate, todayIndex } = useWeekView({
     startDate: weekStartDate,
-    events,
+    events: plans,
     weekStartsOn,
   })
 
@@ -72,16 +72,16 @@ export const WeekView = ({
     <CalendarViewAnimation viewType="week">
       <WeekGrid
         weekDates={displayDates}
-        events={events}
+        events={plans}
         eventsByDate={eventsByDate}
         todayIndex={todayIndex}
         timezone={timezone}
-        onEventClick={onEventClick}
-        onEventContextMenu={onEventContextMenu}
+        onEventClick={onPlanClick}
+        onEventContextMenu={onPlanContextMenu}
         onEmptyClick={(date, time) => {
           onEmptyClick?.(date, time)
         }}
-        onEventUpdate={onUpdateEvent}
+        onEventUpdate={onUpdatePlan}
         onTimeRangeSelect={onTimeRangeSelect}
         className={className}
       />

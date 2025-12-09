@@ -1,11 +1,10 @@
 import type { CSSProperties } from 'react'
 
-import type { BaseViewProps, CalendarPlan, DateTimeSelection } from '../shared'
+import type { BaseViewProps, CalendarPlan } from '../shared'
 
 // FiveDayViewの固有Props（BaseViewPropsを継承）
 export interface FiveDayViewProps extends BaseViewProps {
   centerDate?: Date // 中央に表示する日付（指定がない場合はcurrentDateを使用）
-  onTimeRangeSelect?: (selection: DateTimeSelection) => void
 }
 
 // useFiveDayViewフックのオプション

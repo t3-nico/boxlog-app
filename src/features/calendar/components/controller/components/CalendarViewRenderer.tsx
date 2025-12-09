@@ -53,26 +53,12 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
   commonProps,
 }: CalendarViewRendererProps) {
   // LCP改善: ビューをメモ化して不要な再生成を防止
-  // DayView と AgendaView は異なるprop名を使用するため、マッピングが必要
   const viewContent = useMemo(() => {
-    // DayView/AgendaView用のprops変換
-    // - events → plans
-    // - onEventClick → onPlanClick
-    // - onEventContextMenu → onPlanContextMenu
-    // - onUpdateEvent → onUpdatePlan
-    const dayAgendaProps = {
-      ...commonProps,
-      plans: commonProps.events,
-      onPlanClick: commonProps.onEventClick,
-      onPlanContextMenu: commonProps.onEventContextMenu,
-      onUpdatePlan: commonProps.onUpdateEvent,
-    }
-
     switch (viewType) {
       case 'day':
         return (
           <Suspense fallback={<ViewLoadingSkeleton />}>
-            <DayView {...dayAgendaProps} showWeekends={showWeekends} />
+            <DayView {...commonProps} showWeekends={showWeekends} />
           </Suspense>
         )
       case '3day':
@@ -96,13 +82,13 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
       case 'agenda':
         return (
           <Suspense fallback={<ViewLoadingSkeleton />}>
-            <AgendaView {...dayAgendaProps} showWeekends={showWeekends} />
+            <AgendaView {...commonProps} showWeekends={showWeekends} />
           </Suspense>
         )
       default:
         return (
           <Suspense fallback={<ViewLoadingSkeleton />}>
-            <DayView {...dayAgendaProps} showWeekends={showWeekends} />
+            <DayView {...commonProps} showWeekends={showWeekends} />
           </Suspense>
         )
     }

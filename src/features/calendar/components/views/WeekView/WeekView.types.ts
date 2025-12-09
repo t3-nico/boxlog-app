@@ -5,7 +5,6 @@ import type { BasePlanPosition, BaseViewProps, CalendarPlan, DateTimeSelection }
 // WeekViewの固有Props（BaseViewPropsを継承して95%削減）
 export interface WeekViewProps extends BaseViewProps {
   weekStartsOn?: 0 | 1 // 0: 日曜始まり, 1: 月曜始まり
-  onTimeRangeSelect?: (selection: DateTimeSelection) => void
 }
 
 // WeekGridコンポーネントのProps

@@ -19,8 +19,8 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   const { openInspector } = usePlanInspectorStore()
   const { createPlan } = usePlanMutations()
 
-  // イベント関連のハンドラー
-  const handleEventClick = useCallback(
+  // プラン関連のハンドラー
+  const handlePlanClick = useCallback(
     (plan: CalendarPlan) => {
       // プランIDでplan Inspectorを開く
       openInspector(plan.id)
@@ -29,9 +29,9 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
     [openInspector]
   )
 
-  const handleCreateEvent = useCallback(
+  const handleCreatePlan = useCallback(
     (date?: Date, time?: string) => {
-      logger.log('➕ Create event requested:', {
+      logger.log('➕ Create plan requested:', {
         date: date?.toISOString(),
         dateString: date?.toDateString(),
         time,
@@ -102,9 +102,9 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   const handleEmptyClick = useCallback(
     (date: Date, time: string) => {
       logger.log('🖱️ Empty time clicked:', { date, time })
-      handleCreateEvent(date, time)
+      handleCreatePlan(date, time)
     },
-    [handleCreateEvent]
+    [handleCreatePlan]
   )
 
   // 統一された時間範囲選択ハンドラー（全ビュー共通）
@@ -158,8 +158,8 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   )
 
   return {
-    handleEventClick,
-    handleCreateEvent,
+    handlePlanClick,
+    handleCreatePlan,
     handleEmptyClick,
     handleDateTimeRangeSelect,
   }

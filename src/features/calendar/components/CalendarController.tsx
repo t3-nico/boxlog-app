@@ -152,7 +152,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   })
 
   // カレンダーハンドラー（フック化）
-  const { handleEventClick, handleCreateEvent, handleEmptyClick, handleDateTimeRangeSelect } = useCalendarHandlers({
+  const { handlePlanClick, handleCreatePlan, handleEmptyClick, handleDateTimeRangeSelect } = useCalendarHandlers({
     viewType,
     currentDate,
   })
@@ -187,14 +187,14 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const commonProps = useMemo(
     () => ({
       dateRange: viewDateRange,
-      events: filteredEvents,
+      plans: filteredEvents,
       currentDate,
-      onEventClick: handleEventClick,
-      onEventContextMenu: handleEventContextMenu,
-      onCreateEvent: handleCreateEvent,
-      onUpdateEvent: handleUpdatePlan,
-      onDeleteEvent: deletePlan,
-      onRestoreEvent: handlePlanRestore,
+      onPlanClick: handlePlanClick,
+      onPlanContextMenu: handleEventContextMenu,
+      onCreatePlan: handleCreatePlan,
+      onUpdatePlan: handleUpdatePlan,
+      onDeletePlan: deletePlan,
+      onRestorePlan: handlePlanRestore,
       onEmptyClick: handleEmptyClick,
       onTimeRangeSelect: handleDateTimeRangeSelect,
       onViewChange: handleViewChange,
@@ -206,9 +206,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       viewDateRange,
       filteredEvents,
       currentDate,
-      handleEventClick,
+      handlePlanClick,
       handleEventContextMenu,
-      handleCreateEvent,
+      handleCreatePlan,
       handleUpdatePlan,
       deletePlan,
       handlePlanRestore,
