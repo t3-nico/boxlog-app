@@ -238,6 +238,11 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
       <ContextMenuTrigger asChild>
         <TableRow
           ref={rowRef}
+          draggable
+          onDragStart={(e) => {
+            e.dataTransfer.setData('text/plain', item.id)
+            e.dataTransfer.effectAllowed = 'move'
+          }}
           className={cn(
             'hover:bg-state-hover cursor-pointer transition-colors',
             selected && 'bg-primary/12 hover:bg-primary/16',
