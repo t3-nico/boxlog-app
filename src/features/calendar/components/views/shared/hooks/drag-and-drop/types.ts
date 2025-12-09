@@ -45,7 +45,7 @@ export interface UseDragAndDropProps {
   date: Date
   events: CalendarPlan[]
   displayDates?: Date[] | undefined
-  viewMode?: 'day' | 'week' | '2week' | '3day' | '5day' | undefined
+  viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda' | undefined
 }
 
 export interface DragDataRef {

@@ -1,4 +1,3 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 /**
  * プラン表示カードコンポーネント
  */
@@ -98,10 +97,15 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     (e: React.MouseEvent) => {
       if (e.button === 0) {
         // 左クリックのみ
-        onDragStart?.(plan)
+        onDragStart?.(plan, e, {
+          top: safePosition.top,
+          left: safePosition.left,
+          width: safePosition.width,
+          height: safePosition.height,
+        })
       }
     },
-    [onDragStart, plan]
+    [onDragStart, plan, safePosition]
   )
 
   const handleMouseUp = useCallback(() => {

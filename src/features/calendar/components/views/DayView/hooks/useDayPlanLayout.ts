@@ -1,9 +1,7 @@
 import { useMemo } from 'react'
 
-import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
-
 import { useEventPositioning, type EventPositionInfo } from '../../shared/hooks/usePlanPositioning'
-import type { EventPosition } from '../../shared/types/plan.types'
+import type { CalendarPlan, EventPosition } from '../../shared/types/plan.types'
 
 interface UseDayEventLayoutOptions {
   date: Date
@@ -31,14 +29,14 @@ export function useDayEventLayout({
     maxConcurrentEvents,
   } = useEventPositioning({
     date,
-    events: events as unknown as Parameters<typeof useEventPositioning>[0]['events'], // TODO(#389): CalendarPlan型の統一が必要
+    events,
     viewType: 'day',
   })
 
   // DayView固有のEventPosition形式に変換
   const eventPositions = useMemo(() => {
     return positionsInfo.map((info: EventPositionInfo) => ({
-      event: info.event as unknown as CalendarPlan, // TODO(#389): CalendarPlan型の統一が必要
+      event: info.event as CalendarPlan,
       top: info.top,
       height: info.height,
       left: info.left,

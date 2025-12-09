@@ -27,7 +27,7 @@ export interface EventPositionInfo {
 interface UseEventPositioningOptions {
   date: Date
   events: CalendarPlan[] // CalendarPlan型（startDate/endDateを持つ）
-  viewType?: 'day' | 'week' | 'month'
+  viewType?: 'day' | 'week'
 }
 
 /**

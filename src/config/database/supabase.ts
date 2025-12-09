@@ -9,11 +9,11 @@ export const SUPABASE_CONFIG = {
 } as const
 
 export const DATABASE_TABLES = {
-  tasks: 'tasks',
-  events: 'events',
+  plans: 'plans',
   tags: 'tags',
-  smart_folders: 'smart_folders',
-  user_profiles: 'user_profiles',
+  tag_groups: 'tag_groups',
+  profiles: 'profiles',
+  notifications: 'notifications',
 } as const
 
 export const RLS_POLICIES = {

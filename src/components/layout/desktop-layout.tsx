@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import { Suspense } from 'react'
 
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar'
 import { InboxSidebarWrapper } from '@/features/inbox/components/InboxSidebarWrapper'
@@ -78,24 +77,17 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
 
         {/* サイドバー + コンテンツ */}
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-          <ResizablePanelGroup direction="horizontal" className="min-h-0 flex-1">
-            {/* Sidebar（240px、開閉可能）← ページごとに動的切り替え */}
-            {isOpen && (
-              <>
-                <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
-                  {renderSidebar()}
-                </ResizablePanel>
-                <ResizableHandle className="hover:bg-state-hover w-0 transition-colors" />
-              </>
-            )}
+          <div className="flex min-h-0 flex-1">
+            {/* Sidebar（240px固定、開閉可能）← ページごとに動的切り替え */}
+            {isOpen && <div className="h-full w-60 shrink-0">{renderSidebar()}</div>}
 
             {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
-            <ResizablePanel className="overflow-hidden">
+            <div className="min-w-0 flex-1 overflow-hidden">
               <div className="relative flex h-full min-h-0 flex-col">
                 <MainContentWrapper>{children}</MainContentWrapper>
               </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+            </div>
+          </div>
         </div>
       </div>
 

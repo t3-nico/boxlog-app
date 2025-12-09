@@ -34,12 +34,12 @@ export function CalendarSidebar() {
   const [showMedium, setShowMedium] = useState(true)
   const [showLow, setShowLow] = useState(true)
 
-  // 現在表示している週の範囲を計算（週番号のハイライト表示用）
+  // 週表示の場合、表示中の週の範囲を計算
   const displayRange = useMemo(() => {
     if (!navigation?.currentDate || !navigation?.viewType) return undefined
 
     // 週表示の場合のみハイライト
-    const weekViewTypes = ['week', 'week-no-weekend', '2week']
+    const weekViewTypes = ['week', 'week-no-weekend']
     if (!weekViewTypes.includes(navigation.viewType)) return undefined
 
     const start = startOfWeek(navigation.currentDate, { weekStartsOn: 1 })
@@ -57,7 +57,7 @@ export function CalendarSidebar() {
   const tabs: SidebarTab[] = [
     {
       value: 'inbox',
-      label: 'Inbox',
+      label: t('calendar.sidebar.tabs.inbox'),
       content: (
         <>
           {/* ナビゲーションコンテナ: 高さ48px（内部32px + 上padding 8px + 下padding 8px） */}
@@ -82,20 +82,18 @@ export function CalendarSidebar() {
     },
     {
       value: 'view',
-      label: 'View',
+      label: t('calendar.sidebar.tabs.view'),
       content: (
-        <div className="px-4 pt-4">
+        <div className="p-2">
           <MiniCalendar
             selectedDate={navigation?.currentDate}
-            month={navigation?.currentDate}
+            displayRange={displayRange}
             onDateSelect={(date) => {
               if (date && navigation) {
                 navigation.navigateToDate(date, true)
               }
             }}
-            showWeekNumbers={true}
-            displayRange={displayRange}
-            className="border-input w-full rounded-lg border"
+            className="w-full bg-transparent p-0"
           />
         </div>
       ),

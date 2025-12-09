@@ -343,11 +343,7 @@ export function useAsyncMemoizedComputation<T>(
 }
 
 // カレンダー専用のメモ化フック
-export function useMemoizedCalendarData(
-  events: CalendarPlan[],
-  viewDate: Date,
-  viewType: 'day' | 'week' | 'month' = 'week'
-) {
+export function useMemoizedCalendarData(events: CalendarPlan[], viewDate: Date, viewType: 'day' | 'week' = 'week') {
   const { startDate, endDate } = useMemo(() => {
     const date = new Date(viewDate)
 
@@ -359,6 +355,7 @@ export function useMemoizedCalendarData(
         }
 
       case 'week':
+      default: {
         const weekStart = new Date(date)
         weekStart.setDate(date.getDate() - date.getDay()) // 日曜日開始
         weekStart.setHours(0, 0, 0, 0)
@@ -368,15 +365,7 @@ export function useMemoizedCalendarData(
         weekEnd.setHours(23, 59, 59, 999)
 
         return { startDate: weekStart, endDate: weekEnd }
-
-      case 'month':
-        const monthStart = new Date(date.getFullYear(), date.getMonth(), 1)
-        const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999)
-
-        return { startDate: monthStart, endDate: monthEnd }
-
-      default:
-        return { startDate: date, endDate: date }
+      }
     }
   }, [viewDate, viewType])
 

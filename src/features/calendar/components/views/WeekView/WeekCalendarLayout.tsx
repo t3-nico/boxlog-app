@@ -6,20 +6,18 @@ import { format, isSameDay, isToday } from 'date-fns'
 import { X } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
 import { useTranslations } from 'next-intl'
 
 import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
-import type { Task, ViewDateRange } from '../../../types/calendar.types'
+import type { ViewDateRange } from '../../../types/calendar.types'
 
 import { TimeColumn } from '../shared/grid/TimeColumn'
 
 interface WeekCalendarLayoutProps {
   dates: Date[]
-  tasks: Task[]
   events: CalendarPlan[]
   dateRange: ViewDateRange
   onPlanClick?: (plan: CalendarPlan) => void
@@ -50,9 +48,8 @@ const CurrentTimeLine = ({ day }: { day: Date }) => {
 
 export const WeekCalendarLayout = ({
   dates,
-  tasks: _tasks,
   events = [],
-  dateRange,
+  dateRange: _dateRange,
   onPlanClick,
   onCreatePlan,
   onUpdatePlan: _onUpdatePlan,
@@ -62,16 +59,8 @@ export const WeekCalendarLayout = ({
   const t = useTranslations()
   const { openEventPopup } = useAddPopup()
   const { planRecordMode } = useCalendarSettingsStore()
-  const { records: _records, fetchRecords } = useRecordsStore()
   const containerRef = useRef<HTMLDivElement>(null)
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
-
-  // Records取得
-  useEffect(() => {
-    if (planRecordMode === 'record' || planRecordMode === 'both') {
-      fetchRecords(dateRange)
-    }
-  }, [planRecordMode, dateRange, fetchRecords])
 
   // 削除処理関数（トースト機能付き）
   const handleDeletePlan = useCallback(

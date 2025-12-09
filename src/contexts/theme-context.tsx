@@ -1,6 +1,8 @@
 'use client'
 
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+
+import { api } from '@/lib/trpc'
 
 type Theme = 'light' | 'dark' | 'system'
 type ColorScheme = 'blue' | 'green' | 'purple' | 'orange' | 'red'
@@ -11,6 +13,7 @@ interface ThemeContextType {
   setTheme: (theme: Theme) => void
   setColorScheme: (colorScheme: ColorScheme) => void
   resolvedTheme: 'light' | 'dark'
+  isLoading: boolean
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null)
@@ -42,7 +45,7 @@ function applyColorScheme(scheme: ColorScheme, _currentTheme: 'light' | 'dark') 
   // RGB値での上書きは行わない
 }
 
-// localStorageから安全に値を取得（SSR対応）
+// localStorageから安全に値を取得（SSR対応・フォールバック用）
 const getStoredTheme = (): Theme => {
   if (typeof window === 'undefined') return 'system'
   return (localStorage.getItem('theme') as Theme) || 'system'
@@ -54,18 +57,70 @@ const getStoredColorScheme = (): ColorScheme => {
 }
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
-  // 遅延初期化でlocalStorageから読み込み（useEffect内のsetStateを回避）
-  const [theme, setTheme] = useState<Theme>(getStoredTheme)
-  const [colorScheme, setColorScheme] = useState<ColorScheme>(getStoredColorScheme)
+  // 初期値はlocalStorageから（SSR対応・DB取得前のフォールバック）
+  const [theme, setThemeState] = useState<Theme>(getStoredTheme)
+  const [colorScheme, setColorSchemeState] = useState<ColorScheme>(getStoredColorScheme)
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
+
+  const utils = api.useUtils()
+
+  // DBから設定を取得
+  const { data: dbSettings, isLoading } = api.userSettings.get.useQuery(undefined, {
+    staleTime: 1000 * 60 * 5, // 5分間キャッシュ
+    refetchOnWindowFocus: false,
+    retry: false, // 認証エラー時はリトライしない
+  })
+
+  // DB更新用mutation
+  const updateMutation = api.userSettings.update.useMutation({
+    onSuccess: () => {
+      utils.userSettings.get.invalidate()
+    },
+  })
+
+  // DBから取得した設定を反映
+  useEffect(() => {
+    if (dbSettings && !isLoading) {
+      if (dbSettings.theme) {
+        setThemeState(dbSettings.theme)
+      }
+      if (dbSettings.colorScheme) {
+        setColorSchemeState(dbSettings.colorScheme)
+      }
+    }
+  }, [dbSettings, isLoading])
+
+  // テーマ設定（DB保存 + ローカル状態更新）
+  const setTheme = useCallback(
+    (newTheme: Theme) => {
+      setThemeState(newTheme)
+      // localStorageにも保存（フォールバック用）
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('theme', newTheme)
+      }
+      // DBに保存（認証済みの場合）
+      updateMutation.mutate({ theme: newTheme })
+    },
+    [updateMutation]
+  )
+
+  // カラースキーム設定（DB保存 + ローカル状態更新）
+  const setColorScheme = useCallback(
+    (newColorScheme: ColorScheme) => {
+      setColorSchemeState(newColorScheme)
+      // localStorageにも保存（フォールバック用）
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('colorScheme', newColorScheme)
+      }
+      // DBに保存（認証済みの場合）
+      updateMutation.mutate({ colorScheme: newColorScheme })
+    },
+    [updateMutation]
+  )
 
   // Handle theme changes
   useEffect(() => {
     const root = window.document.documentElement
-
-    // Save to localStorage
-    localStorage.setItem('theme', theme)
-    localStorage.setItem('colorScheme', colorScheme)
 
     // Remove existing theme classes
     root.classList.remove('light', 'dark')
@@ -116,6 +171,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
         setTheme,
         setColorScheme,
         resolvedTheme,
+        isLoading,
       }}
     >
       {children}

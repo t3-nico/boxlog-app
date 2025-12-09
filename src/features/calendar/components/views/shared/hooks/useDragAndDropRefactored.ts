@@ -20,7 +20,7 @@ interface UseDragAndDropRefactoredProps {
   date: Date
   events: CalendarPlan[]
   displayDates?: Date[]
-  viewMode?: 'day' | 'week' | '2week' | '3day' | '5day'
+  viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda'
 }
 
 export function useDragAndDropRefactored({

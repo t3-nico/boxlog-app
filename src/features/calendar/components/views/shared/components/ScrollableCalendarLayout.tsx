@@ -26,7 +26,7 @@ interface ScrollableCalendarLayoutProps {
   timeColumnWidth?: number | undefined
   onTimeClick?: ((hour: number, minute: number) => void) | undefined
   displayDates?: Date[] | undefined
-  viewMode?: 'day' | '3day' | '5day' | 'week' | '2week' | undefined
+  viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda' | undefined
 
   // スクロール機能の追加
   enableKeyboardNavigation?: boolean | undefined

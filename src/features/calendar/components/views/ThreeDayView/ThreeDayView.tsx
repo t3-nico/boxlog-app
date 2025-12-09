@@ -22,13 +22,11 @@ import type { ThreeDayViewProps } from './ThreeDayView.types'
  */
 export const ThreeDayView = ({
   dateRange: _dateRange,
-  tasks: _tasks,
   events,
   currentDate,
   centerDate: _centerDate,
   showWeekends = true,
   className,
-  onTaskClick: _onTaskClick,
   onEventClick,
   onEventContextMenu,
   onCreateEvent,
@@ -36,9 +34,6 @@ export const ThreeDayView = ({
   onDeleteEvent: _onDeleteEvent,
   onRestoreEvent: _onRestoreEvent,
   onEmptyClick,
-  onTaskDrag: _onTaskDrag,
-  onCreateTask: _onCreateTask,
-  onCreateRecord: _onCreateRecord,
   onViewChange: _onViewChange,
   onNavigatePrev: _onNavigatePrev,
   onNavigateNext: _onNavigateNext,

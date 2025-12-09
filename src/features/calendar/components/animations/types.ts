@@ -1,16 +1,7 @@
 import { ReactNode } from 'react'
 
 // ビュータイプの定義
-export type CalendarView =
-  | 'day'
-  | 'split-day'
-  | '3day'
-  | '5day'
-  | 'week'
-  | 'week-no-weekend'
-  | '2week'
-  | 'schedule'
-  | 'month'
+export type CalendarView = 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | 'schedule' | 'agenda'
 
 // 方向の定義
 export type SlideDirection = 'left' | 'right' | 'up' | 'down'
@@ -113,28 +104,8 @@ export interface TaskCreateAnimationProps {
 
 export interface CalendarViewAnimationProps {
   children: ReactNode
-  viewType:
-    | 'day'
-    | 'split-day'
-    | '3day'
-    | '5day'
-    | 'week'
-    | 'week-no-weekend'
-    | '2week'
-    | 'schedule'
-    | 'month'
-    | 'agenda'
-  previousViewType?:
-    | 'day'
-    | 'split-day'
-    | '3day'
-    | '5day'
-    | 'week'
-    | 'week-no-weekend'
-    | '2week'
-    | 'schedule'
-    | 'month'
-    | 'agenda'
+  viewType: 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | 'schedule' | 'agenda'
+  previousViewType?: 'day' | 'split-day' | '3day' | '5day' | 'week' | 'week-no-weekend' | 'schedule' | 'agenda'
 }
 
 export interface SkeletonAnimationProps {

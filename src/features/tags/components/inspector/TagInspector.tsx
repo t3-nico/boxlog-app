@@ -30,7 +30,7 @@ import {
   Merge,
   MoreHorizontal,
   Palette,
-  PanelRight,
+  PanelRightClose,
   Trash2,
 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
@@ -323,7 +323,7 @@ export function TagInspector() {
                           onClick={() => closeInspector()}
                           aria-label="閉じる"
                         >
-                          <PanelRight className="h-4 w-4" />
+                          <PanelRightClose className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">

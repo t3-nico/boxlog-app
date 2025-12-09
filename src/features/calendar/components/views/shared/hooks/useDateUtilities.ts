@@ -9,7 +9,7 @@ import { addDays, startOfWeek, subDays } from 'date-fns'
 
 export interface UseDateUtilitiesOptions {
   referenceDate: Date
-  viewType: 'week' | 'twoweek' | 'threeday' | 'fiveday' | 'agenda'
+  viewType: 'week' | 'threeday' | 'fiveday' | 'agenda'
   weekStartsOn?: 0 | 1
   showWeekends?: boolean
   agendaDays?: number // AgendaView用の表示日数
@@ -29,7 +29,6 @@ export interface UseDateUtilitiesReturn {
  * 全てのビューで「完全な日付配列を生成→週末フィルタリング」の統一アプローチを採用
  * これにより週末表示設定に関係なく一貫した動作を保証
  * - WeekView: 週の7日間
- * - TwoWeekView: 2週間14日間
  * - ThreeDayView: 中央日±1日の3日間
  * - FiveDayView: 中央日±2日の5日間
  * - AgendaView: 指定日数分の連続日付
@@ -50,13 +49,6 @@ export function useDateUtilities({
         // 週の開始日を計算して7日間すべて生成
         const weekStart = startOfWeek(referenceDate, { weekStartsOn })
         fullDates = Array.from({ length: 7 }, (_, index) => addDays(weekStart, index))
-        break
-      }
-
-      case 'twoweek': {
-        // 2週間の開始日を計算して14日間すべて生成
-        const twoWeekStart = startOfWeek(referenceDate, { weekStartsOn })
-        fullDates = Array.from({ length: 14 }, (_, index) => addDays(twoWeekStart, index))
         break
       }
 

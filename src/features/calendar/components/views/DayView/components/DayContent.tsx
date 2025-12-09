@@ -113,6 +113,7 @@ export const DayContent = ({
                   role="button"
                   tabIndex={0}
                   aria-label={`Drag event: ${event.title}`}
+                  data-event-block="true"
                   onMouseDown={(e) => {
                     // 左クリックのみドラッグ開始
                     if (e.button === 0) {

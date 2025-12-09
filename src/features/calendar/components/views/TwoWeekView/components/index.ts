@@ -1,1 +1,0 @@
-export { TwoWeekContent } from './TwoWeekContent'

@@ -1,10 +1,9 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
 import React, { Suspense, useMemo } from 'react'
 
 import type { CalendarViewType } from '../../../types/calendar.types'
+import type { BaseViewProps } from '../../views/shared/types/base.types'
 
 import { CalendarViewSkeleton } from './CalendarViewSkeleton'
 
@@ -29,7 +28,7 @@ const AgendaView = React.lazy(() =>
 interface CalendarViewRendererProps {
   viewType: CalendarViewType
   showWeekends: boolean
-  commonProps: Record<string, unknown>
+  commonProps: BaseViewProps
 }
 
 // LCP改善: 軽量なインラインスケルトン（個別ビュー用）
@@ -54,12 +53,26 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
   commonProps,
 }: CalendarViewRendererProps) {
   // LCP改善: ビューをメモ化して不要な再生成を防止
+  // DayView と AgendaView は異なるprop名を使用するため、マッピングが必要
   const viewContent = useMemo(() => {
+    // DayView/AgendaView用のprops変換
+    // - events → plans
+    // - onEventClick → onPlanClick
+    // - onEventContextMenu → onPlanContextMenu
+    // - onUpdateEvent → onUpdatePlan
+    const dayAgendaProps = {
+      ...commonProps,
+      plans: commonProps.events,
+      onPlanClick: commonProps.onEventClick,
+      onPlanContextMenu: commonProps.onEventContextMenu,
+      onUpdatePlan: commonProps.onUpdateEvent,
+    }
+
     switch (viewType) {
       case 'day':
         return (
           <Suspense fallback={<ViewLoadingSkeleton />}>
-            <DayView {...commonProps} showWeekends={showWeekends} />
+            <DayView {...dayAgendaProps} showWeekends={showWeekends} />
           </Suspense>
         )
       case '3day':
@@ -83,13 +96,13 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
       case 'agenda':
         return (
           <Suspense fallback={<ViewLoadingSkeleton />}>
-            <AgendaView {...commonProps} showWeekends={showWeekends} />
+            <AgendaView {...dayAgendaProps} showWeekends={showWeekends} />
           </Suspense>
         )
       default:
         return (
           <Suspense fallback={<ViewLoadingSkeleton />}>
-            <DayView {...commonProps} showWeekends={showWeekends} />
+            <DayView {...dayAgendaProps} showWeekends={showWeekends} />
           </Suspense>
         )
     }

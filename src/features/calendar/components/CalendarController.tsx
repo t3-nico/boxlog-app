@@ -1,5 +1,3 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
 import React, { useCallback, useEffect, useMemo } from 'react'
@@ -9,7 +7,6 @@ import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
 
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
-import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone, setUserTimezone } from '@/features/settings/utils/timezone'
 import { logger } from '@/lib/logger'
@@ -42,7 +39,6 @@ interface CalendarViewExtendedProps extends CalendarViewProps {
 export const CalendarController = ({ className, initialViewType = 'day', initialDate }: CalendarViewExtendedProps) => {
   const router = useRouter()
   const calendarNavigation = useCalendarNavigation()
-  const { openInspector } = usePlanInspectorStore()
 
   // Context が利用可能な場合はそれを使用、そうでない場合は useCalendarLayout を使用
   const contextAvailable = calendarNavigation !== null
@@ -150,21 +146,16 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   }, [timezone, updateSettings])
 
   // カレンダーデータ取得（フック化）
-  const { viewDateRange, filteredTasks, filteredEvents } = useCalendarData({
+  const { viewDateRange, filteredEvents } = useCalendarData({
     viewType,
     currentDate,
   })
 
   // カレンダーハンドラー（フック化）
-  const {
-    handleTaskClick,
-    handleEventClick,
-    handleCreateEvent,
-    handleCreateTask,
-    handleCreateRecord,
-    handleEmptyClick,
-    handleDateTimeRangeSelect,
-  } = useCalendarHandlers({ viewType, currentDate })
+  const { handleEventClick, handleCreateEvent, handleEmptyClick, handleDateTimeRangeSelect } = useCalendarHandlers({
+    viewType,
+    currentDate,
+  })
 
   // ナビゲーションハンドラー（フック化）
   const {
@@ -196,12 +187,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const commonProps = useMemo(
     () => ({
       dateRange: viewDateRange,
-      tasks: filteredTasks,
       events: filteredEvents,
       currentDate,
-      onCreateTask: handleCreateTask,
-      onCreateRecord: handleCreateRecord,
-      onTaskClick: handleTaskClick,
       onEventClick: handleEventClick,
       onEventContextMenu: handleEventContextMenu,
       onCreateEvent: handleCreateEvent,
@@ -217,12 +204,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     }),
     [
       viewDateRange,
-      filteredTasks,
       filteredEvents,
       currentDate,
-      handleCreateTask,
-      handleCreateRecord,
-      handleTaskClick,
       handleEventClick,
       handleEventContextMenu,
       handleCreateEvent,
@@ -247,14 +230,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         onNavigate={handleNavigate}
         onViewChange={handleViewChange}
         showHeaderActions={false}
-        selectedDate={currentDate}
         onDateSelect={handleDateSelect}
-        onCreateEvent={handleCreateEvent}
-        onGoToToday={handleNavigateToday}
-        showMiniCalendar={true}
-        showCalendarList={false}
-        showTagFilter={false}
-        showQuickActions={true}
         displayRange={{
           start: viewDateRange.start,
           end: viewDateRange.end,
@@ -265,13 +241,13 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
       {contextMenuEvent && contextMenuPosition ? (
         <EventContextMenu
-          event={contextMenuEvent}
+          plan={contextMenuEvent}
           position={contextMenuPosition}
           onClose={handleCloseContextMenu}
           onEdit={handleEditPlan}
           onDelete={handleDeletePlan}
           onDuplicate={handleDuplicatePlan}
-          onViewDetails={handleViewDetails}
+          onOpen={handleViewDetails}
         />
       ) : null}
     </DnDProvider>

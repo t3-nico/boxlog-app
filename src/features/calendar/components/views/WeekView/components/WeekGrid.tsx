@@ -62,12 +62,7 @@ export const WeekGrid = ({
   })
 
   // CurrentTimeLine表示のための日付配列（weekDatesをそのまま使用）
-  const currentTimeDisplayDates = React.useMemo(() => {
-    console.log('🔧 WeekGrid: displayDatesを設定', {
-      weekDates: weekDates.map((d) => d.toDateString()),
-    })
-    return weekDates
-  }, [weekDates])
+  const currentTimeDisplayDates = React.useMemo(() => weekDates, [weekDates])
 
   const headerComponent = (
     <div className="bg-background flex h-16 flex-1">
@@ -116,14 +111,6 @@ export const WeekGrid = ({
           const dateKey = getDateKey(date)
           const dayEvents = eventsByDate[dateKey] || []
 
-          console.log('🔧 WeekGrid日付処理:', {
-            date: date.toDateString(),
-            dayOfWeek: date.getDay(), // 0=日曜, 1=月曜, 2=火曜, 3=水曜...
-            dayIndex,
-            dateKey,
-            dayEventsCount: dayEvents.length,
-          })
-
           return (
             <div
               key={date.toISOString()}
@@ -141,16 +128,7 @@ export const WeekGrid = ({
                 onPlanContextMenu={onEventContextMenu}
                 onEmptyClick={onEmptyClick}
                 onPlanUpdate={handlePlanUpdate}
-                onTimeRangeSelect={(selection) => {
-                  // 時間範囲選択時の処理: そのまま渡す（DayViewと同じ方式）
-                  console.log('🔧 WeekGrid: 直接渡し:', {
-                    selectionDate: selection.date.toDateString(),
-                    startHour: selection.startHour,
-                    startMinute: selection.startMinute,
-                  })
-
-                  onTimeRangeSelect?.(selection)
-                }}
+                onTimeRangeSelect={onTimeRangeSelect}
                 className="h-full"
                 dayIndex={dayIndex}
                 displayDates={weekDates}

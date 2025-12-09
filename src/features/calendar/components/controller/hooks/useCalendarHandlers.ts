@@ -1,5 +1,3 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
 import { useCallback } from 'react'
@@ -20,11 +18,6 @@ interface UseCalendarHandlersOptions {
 export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandlersOptions) {
   const { openInspector } = usePlanInspectorStore()
   const { createPlan } = usePlanMutations()
-
-  // タスククリックハンドラー
-  const handleTaskClick = useCallback(() => {
-    // Task click functionality removed - not used in current implementation
-  }, [])
 
   // イベント関連のハンドラー
   const handleEventClick = useCallback(
@@ -79,43 +72,30 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
         }
       }
 
-      console.log('TODO: Plans統合後に実装', { startTime, endTime, date })
+      // プランを作成してInspectorで編集
+      if (startTime && endTime && date) {
+        createPlan.mutate(
+          {
+            title: '新規プラン',
+            status: 'todo',
+            due_date: format(date, 'yyyy-MM-dd'),
+            start_time: startTime.toISOString(),
+            end_time: endTime.toISOString(),
+          },
+          {
+            onSuccess: (newPlan) => {
+              openInspector(newPlan.id)
+              logger.log('✅ Created plan:', {
+                planId: newPlan.id,
+                title: newPlan.title,
+                dueDate: newPlan.due_date,
+              })
+            },
+          }
+        )
+      }
     },
-    [viewType, currentDate]
-  )
-
-  // タスク作成ハンドラー
-  const handleCreateTask = useCallback(
-    (_taskData: {
-      title: string
-      planned_start: Date
-      planned_duration: number
-      status: 'pending' | 'in_progress' | 'completed'
-      priority: 'low' | 'medium' | 'high'
-      description?: string
-      tags?: string[]
-    }) => {
-      // noop - Plans統合後に実装予定
-    },
-    []
-  )
-
-  // 記録作成ハンドラー
-  const handleCreateRecord = useCallback(
-    (_recordData: {
-      title: string
-      actual_start: Date
-      actual_end: Date
-      actual_duration: number
-      satisfaction?: number
-      focus_level?: number
-      energy_level?: number
-      memo?: string
-      interruptions?: number
-    }) => {
-      // Record creation tracked in Issue #89
-    },
-    []
+    [viewType, currentDate, createPlan, openInspector]
   )
 
   // 空き時間クリック用のハンドラー
@@ -156,7 +136,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
       createPlan.mutate(
         {
           title: '新規プラン',
-          status: 'backlog',
+          status: 'todo',
           due_date: format(selection.date, 'yyyy-MM-dd'),
           start_time: startTime.toISOString(),
           end_time: endTime.toISOString(),
@@ -173,18 +153,13 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
           },
         }
       )
-
-      console.log('TODO: Plans統合後に実装', { startTime, endTime, selection })
     },
     [createPlan, openInspector]
   )
 
   return {
-    handleTaskClick,
     handleEventClick,
     handleCreateEvent,
-    handleCreateTask,
-    handleCreateRecord,
     handleEmptyClick,
     handleDateTimeRangeSelect,
   }

@@ -97,7 +97,6 @@ export const CalendarDragSelection = ({
     (e: React.MouseEvent) => {
       // 無効化されている場合は何もしない
       if (disabled) {
-        console.log('❌ CalendarDragSelection が無効になっています')
         e.preventDefault()
         e.stopPropagation()
         return

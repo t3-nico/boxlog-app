@@ -12,14 +12,14 @@ import { getTodayIndex } from '../utils/dateHelpers'
 export interface UseCurrentPeriodOptions {
   dates: Date[]
   referenceDate?: Date | undefined // 基準日（デフォルト: 今日）
-  periodType: 'day' | 'week' | 'twoweek' | 'threeday' | 'fiveday' | 'agenda'
+  periodType: 'day' | 'week' | 'threeday' | 'fiveday' | 'agenda'
   weekStartsOn?: 0 | 1 | undefined // 週の開始日
 }
 
 export interface UseCurrentPeriodReturn {
   isCurrentPeriod: boolean
   todayIndex: number // -1 if not in period
-  currentWeekIndex?: number | undefined // TwoWeekViewでのみ使用
+  currentWeekIndex?: number | undefined // 複数週ビューでのみ使用
   relativeDayIndex?: number | undefined // ThreeDayViewでのみ使用（-1=昨日, 0=今日, 1=明日）
 }
 
@@ -54,7 +54,6 @@ export function useCurrentPeriod({
       case 'week':
         return dates.some((date) => isSameWeek(date, today, { weekStartsOn }))
 
-      case 'twoweek':
       case 'threeday':
       case 'fiveday':
       case 'agenda':
@@ -66,11 +65,11 @@ export function useCurrentPeriod({
     }
   }, [dates, referenceDate, periodType, weekStartsOn])
 
-  // TwoWeekView用: 今日がある週のインデックス（0: 第1週, 1: 第2週）
+  // 複数週ビュー用: 今日がある週のインデックス（0: 第1週, 1: 第2週）
   const currentWeekIndex = useMemo(() => {
-    if (periodType !== 'twoweek' || todayIndex === -1) return undefined
+    if (todayIndex === -1) return undefined
     return Math.floor(todayIndex / 7)
-  }, [todayIndex, periodType])
+  }, [todayIndex])
 
   // ThreeDayView用: 中央日を基準とした相対インデックス
   const relativeDayIndex = useMemo(() => {

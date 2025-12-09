@@ -22,13 +22,11 @@ import { useFiveDayView } from './hooks/useFiveDayView'
  */
 export const FiveDayView = ({
   dateRange: _dateRange,
-  tasks: _tasks,
   events,
   currentDate,
   centerDate: _centerDate,
   showWeekends = true,
   className,
-  onTaskClick: _onTaskClick,
   onEventClick,
   onEventContextMenu,
   onCreateEvent: _onCreateEvent,
@@ -37,9 +35,6 @@ export const FiveDayView = ({
   onRestoreEvent: _onRestoreEvent,
   onEmptyClick,
   onTimeRangeSelect,
-  onTaskDrag: _onTaskDrag,
-  onCreateTask: _onCreateTask,
-  onCreateRecord: _onCreateRecord,
   onViewChange: _onViewChange,
   onNavigatePrev: _onNavigatePrev,
   onNavigateNext: _onNavigateNext,
