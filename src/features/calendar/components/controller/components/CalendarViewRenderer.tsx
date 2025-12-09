@@ -53,9 +53,20 @@ export const CalendarViewRenderer = React.memo(function CalendarViewRenderer({
   commonProps,
 }: CalendarViewRendererProps) {
   // LCP改善: ビューをメモ化して不要な再生成を防止
-  // DayView と AgendaView は `plans` プロパティを要求するため、events を plans としても渡す
+  // DayView と AgendaView は異なるprop名を使用するため、マッピングが必要
   const viewContent = useMemo(() => {
-    const dayAgendaProps = { ...commonProps, plans: commonProps.events }
+    // DayView/AgendaView用のprops変換
+    // - events → plans
+    // - onEventClick → onPlanClick
+    // - onEventContextMenu → onPlanContextMenu
+    // - onUpdateEvent → onUpdatePlan
+    const dayAgendaProps = {
+      ...commonProps,
+      plans: commonProps.events,
+      onPlanClick: commonProps.onEventClick,
+      onPlanContextMenu: commonProps.onEventContextMenu,
+      onUpdatePlan: commonProps.onUpdateEvent,
+    }
 
     switch (viewType) {
       case 'day':

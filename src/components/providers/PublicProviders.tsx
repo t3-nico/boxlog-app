@@ -6,7 +6,7 @@
  * tRPC、Realtime購読、GlobalSearch等の重い機能を含まない。
  *
  * 含まれるProvider:
- * - ThemeProvider（テーマ切替）
+ * - PublicThemeProvider（テーマ切替 - tRPC不使用）
  * - TooltipProvider（ツールチップ）
  *
  * @see /CLAUDE.md - プロバイダー階層の詳細
@@ -15,7 +15,7 @@
 'use client'
 
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { ThemeProvider } from '@/contexts/theme-context'
+import { PublicThemeProvider } from '@/contexts/public-theme-context'
 
 interface PublicProvidersProps {
   children: React.ReactNode
@@ -23,10 +23,10 @@ interface PublicProvidersProps {
 
 export function PublicProviders({ children }: PublicProvidersProps) {
   return (
-    <ThemeProvider>
+    <PublicThemeProvider>
       <TooltipProvider delayDuration={300} skipDelayDuration={100}>
         {children}
       </TooltipProvider>
-    </ThemeProvider>
+    </PublicThemeProvider>
   )
 }

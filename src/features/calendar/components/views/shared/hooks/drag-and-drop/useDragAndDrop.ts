@@ -27,7 +27,9 @@ export function useDragAndDrop({
   const eventClickHandler = onEventClick || onPlanClick
 
   // eventClickHandler の最新参照を保持（クロージャー問題を回避）
+  // 重要: useRef の初期値として eventClickHandler を設定し、毎回の render で同期更新も行う
   const eventClickHandlerRef = useRef(eventClickHandler)
+  // 同期的に毎レンダリングで最新値に更新（useEffect は非同期なので遅れる可能性がある）
   eventClickHandlerRef.current = eventClickHandler
 
   // events の最新参照を保持
@@ -121,10 +123,6 @@ export function useDragAndDrop({
         dragData.hasMoved = true
       }
 
-      if (Math.abs(deltaX) > 30) {
-        console.log('🔧 水平移動検出:', { deltaX, columnWidth: dragData.columnWidth })
-      }
-
       const targetDateIndex = calculateTargetDateIndex(
         constrainedX,
         dragData.originalDateIndex,
@@ -209,19 +207,19 @@ export function useDragAndDrop({
       handleMouseDown(eventId, e, originalPosition, dateIndex)
 
       // mouseup リスナーを即座に登録（クリック検出用）
+      // 重要: このコールバックで使う eventClickHandler を mouseDown 時点でキャプチャ
+      const capturedClickHandler = eventClickHandler
+      const capturedEvents = events
+
       const onMouseUp = () => {
         document.removeEventListener('mouseup', onMouseUp)
         mouseUpListenerRef.current = null
 
-        // ref から最新の値を取得
-        const currentClickHandler = eventClickHandlerRef.current
-        const currentEvents = eventsRef.current
-
         // クリック判定（hasMoved が false の場合のみ）
-        if (dragDataRef.current && !dragDataRef.current.hasMoved && currentClickHandler) {
-          const eventToClick = currentEvents.find((ev) => ev.id === dragDataRef.current!.eventId)
+        if (dragDataRef.current && !dragDataRef.current.hasMoved && capturedClickHandler) {
+          const eventToClick = capturedEvents.find((ev) => ev.id === dragDataRef.current!.eventId)
           if (eventToClick) {
-            currentClickHandler(eventToClick)
+            capturedClickHandler(eventToClick)
           }
         }
       }
@@ -229,7 +227,7 @@ export function useDragAndDrop({
       document.addEventListener('mouseup', onMouseUp, { once: true })
       mouseUpListenerRef.current = onMouseUp
     },
-    [handleMouseDown]
+    [handleMouseDown, eventClickHandler, events]
   )
 
   // マウスイベントリスナーを設定（ドラッグ/リサイズ用）
