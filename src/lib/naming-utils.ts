@@ -25,7 +25,7 @@ import {
 /**
  * ページビューイベント生成
  */
-export function createPageViewEvent(screen: ScreenName, properties?: Record<string, any>): AnalyticsEvent {
+export function createPageViewEvent(screen: ScreenName, properties?: Record<string, unknown>): AnalyticsEvent {
   return {
     name: ANALYTICS_EVENTS.page_view(screen),
     screen: SCREENS[screen],
@@ -43,7 +43,7 @@ export function createPageViewEvent(screen: ScreenName, properties?: Record<stri
 export function createActionEvent(
   feature: FeatureName,
   screen?: ScreenName,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ): AnalyticsEvent {
   return {
     name: ANALYTICS_EVENTS.action(feature),
@@ -65,7 +65,7 @@ export function createEngagementEvent(
   type: string,
   details: string,
   screen?: ScreenName,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ): AnalyticsEvent {
   return {
     name: ANALYTICS_EVENTS.engagement(type, details),
@@ -87,7 +87,7 @@ export function createErrorEvent(
   errorType: string,
   context: string,
   screen?: ScreenName,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ): AnalyticsEvent {
   return {
     name: ANALYTICS_EVENTS.error(errorType, context),
@@ -110,7 +110,7 @@ export function createPerformanceEvent(
   component: string,
   value: number,
   screen?: ScreenName,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ): AnalyticsEvent {
   return {
     name: ANALYTICS_EVENTS.performance(metric, component),
