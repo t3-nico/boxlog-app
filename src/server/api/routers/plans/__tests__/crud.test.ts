@@ -129,8 +129,11 @@ describe('plansCrudRouter', () => {
   })
 
   describe('getById', () => {
+    const validPlanId = '550e8400-e29b-41d4-a716-446655440000'
+    const nonExistentId = '550e8400-e29b-41d4-a716-446655440001'
+
     it('should return a plan by id', async () => {
-      const mockPlan = createMockPlan({ id: 'plan-1', title: 'Test Plan' })
+      const mockPlan = createMockPlan({ id: validPlanId, title: 'Test Plan' })
 
       const mockSupabase = createMockSupabase()
       setupMockSingleQuery(mockSupabase.from, 'plans', mockPlan)
@@ -140,7 +143,7 @@ describe('plansCrudRouter', () => {
       })
       const caller = createTestCaller(plansCrudRouter, ctx)
 
-      const result = await caller.getById({ id: 'plan-1' })
+      const result = await caller.getById({ id: validPlanId })
 
       expect(result).toEqual(mockPlan)
     })
@@ -155,7 +158,7 @@ describe('plansCrudRouter', () => {
       const caller = createTestCaller(plansCrudRouter, ctx)
 
       try {
-        await caller.getById({ id: 'non-existent-id' })
+        await caller.getById({ id: nonExistentId })
         expect.fail('Should have thrown an error')
       } catch (error) {
         expectTRPCError(error, 'NOT_FOUND')
@@ -213,9 +216,11 @@ describe('plansCrudRouter', () => {
   })
 
   describe('update', () => {
+    const validPlanId = '550e8400-e29b-41d4-a716-446655440000'
+
     it('should update an existing plan', async () => {
-      const existingPlan = createMockPlan({ id: 'plan-1', title: 'Old Title' })
-      const updatedPlan = createMockPlan({ id: 'plan-1', title: 'New Title' })
+      const existingPlan = createMockPlan({ id: validPlanId, title: 'Old Title' })
+      const updatedPlan = createMockPlan({ id: validPlanId, title: 'New Title' })
 
       const mockSupabase = createMockSupabase()
       setupMockUpdateQuery(mockSupabase.from, 'plans', existingPlan, updatedPlan)
@@ -226,7 +231,7 @@ describe('plansCrudRouter', () => {
       const caller = createTestCaller(plansCrudRouter, ctx)
 
       const result = await caller.update({
-        id: 'plan-1',
+        id: validPlanId,
         data: { title: 'New Title' },
       })
 
@@ -235,8 +240,10 @@ describe('plansCrudRouter', () => {
   })
 
   describe('delete', () => {
+    const validPlanId = '550e8400-e29b-41d4-a716-446655440000'
+
     it('should delete a plan', async () => {
-      const existingPlan = createMockPlan({ id: 'plan-1', title: 'To Delete' })
+      const existingPlan = createMockPlan({ id: validPlanId, title: 'To Delete' })
 
       const mockSupabase = createMockSupabase()
       setupMockDeleteQuery(mockSupabase.from, 'plans', existingPlan)
@@ -246,7 +253,7 @@ describe('plansCrudRouter', () => {
       })
       const caller = createTestCaller(plansCrudRouter, ctx)
 
-      const result = await caller.delete({ id: 'plan-1' })
+      const result = await caller.delete({ id: validPlanId })
 
       expect(result).toEqual({ success: true })
     })
@@ -270,70 +277,89 @@ interface MockQuery {
   single: ReturnType<typeof vi.fn>
 }
 
-function setupMockQuery<T>(mockFrom: ReturnType<typeof vi.fn>, _tableName: string, data: T[]): MockQuery {
-  const mockQuery: MockQuery = {
-    select: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    update: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    neq: vi.fn().mockReturnThis(),
-    in: vi.fn().mockReturnThis(),
-    or: vi.fn().mockReturnThis(),
-    order: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    range: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({ data: data[0] || null, error: null }),
+/**
+ * 複数テーブルに対応するモッククエリビルダーを作成
+ */
+function createChainableMockQuery<T>(data: T | T[] | null, error: { message: string; code: string } | null = null) {
+  const mockQuery: Record<string, ReturnType<typeof vi.fn>> = {
+    select: vi.fn(),
+    insert: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    eq: vi.fn(),
+    neq: vi.fn(),
+    in: vi.fn(),
+    or: vi.fn(),
+    order: vi.fn(),
+    limit: vi.fn(),
+    range: vi.fn(),
+    single: vi.fn().mockResolvedValue({
+      data: Array.isArray(data) ? data[0] : data,
+      error,
+    }),
+    then: vi.fn().mockImplementation((resolve) =>
+      resolve({
+        data: Array.isArray(data) ? data : data ? [data] : [],
+        error,
+      })
+    ),
   }
 
-  // チェーン可能なモックを設定
+  // 全メソッドをチェーン可能に
   Object.keys(mockQuery).forEach((key) => {
-    const fn = mockQuery[key as keyof MockQuery]
-    if (key !== 'single') {
-      fn.mockReturnValue(mockQuery)
+    if (key !== 'single' && key !== 'then') {
+      mockQuery[key].mockReturnValue(mockQuery)
     }
   })
-
-  // then を追加（await 対応）
-  const mockQueryWithThen = {
-    ...mockQuery,
-    then: vi.fn().mockImplementation((resolve) => resolve({ data, error: null })),
-  }
-
-  mockFrom.mockReturnValue(mockQueryWithThen)
 
   return mockQuery
 }
 
-function setupMockSingleQuery<T>(mockFrom: ReturnType<typeof vi.fn>, _tableName: string, data: T): void {
-  const mockQuery = {
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({ data, error: null }),
-  }
+function setupMockQuery<T>(mockFrom: ReturnType<typeof vi.fn>, _tableName: string, data: T[]): MockQuery {
+  const mockQuery = createChainableMockQuery(data)
 
-  mockFrom.mockReturnValue(mockQuery)
+  // 複数テーブル対応: plans以外のテーブルにも対応
+  mockFrom.mockImplementation((table: string) => {
+    if (table === 'plan_activities' || table === 'plan_tags') {
+      return createChainableMockQuery(null)
+    }
+    return mockQuery
+  })
+
+  return mockQuery as unknown as MockQuery
+}
+
+function setupMockSingleQuery<T>(mockFrom: ReturnType<typeof vi.fn>, _tableName: string, data: T): void {
+  const mockQuery = createChainableMockQuery(data)
+
+  mockFrom.mockImplementation((table: string) => {
+    if (table === 'plan_activities' || table === 'plan_tags') {
+      return createChainableMockQuery(null)
+    }
+    return mockQuery
+  })
 }
 
 function setupMockSingleQueryError(mockFrom: ReturnType<typeof vi.fn>, _tableName: string, errorMessage: string): void {
-  const mockQuery = {
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({ data: null, error: { message: errorMessage, code: 'PGRST116' } }),
-  }
+  const errorQuery = createChainableMockQuery(null, { message: errorMessage, code: 'PGRST116' })
 
-  mockFrom.mockReturnValue(mockQuery)
+  mockFrom.mockImplementation((table: string) => {
+    if (table === 'plan_activities' || table === 'plan_tags') {
+      return createChainableMockQuery(null)
+    }
+    return errorQuery
+  })
 }
 
 function setupMockInsertQuery<T>(mockFrom: ReturnType<typeof vi.fn>, _tableName: string, data: T): void {
-  const mockQuery = {
-    select: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({ data, error: null }),
-  }
+  const mockQuery = createChainableMockQuery(data)
 
-  mockFrom.mockReturnValue(mockQuery)
+  mockFrom.mockImplementation((table: string) => {
+    if (table === 'plan_activities' || table === 'plan_tags') {
+      return createChainableMockQuery(null)
+    }
+    return mockQuery
+  })
 }
 
 function setupMockUpdateQuery<T>(
@@ -342,37 +368,81 @@ function setupMockUpdateQuery<T>(
   existingData: T,
   updatedData: T
 ): void {
-  let callCount = 0
+  const callCounts: Record<string, number> = {}
 
-  const mockQuery = {
-    select: vi.fn().mockReturnThis(),
-    update: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    single: vi.fn().mockImplementation(() => {
-      callCount++
-      // 1回目: 既存データ取得、2回目: 更新後データ
-      const data = callCount === 1 ? existingData : updatedData
-      return Promise.resolve({ data, error: null })
-    }),
-  }
+  mockFrom.mockImplementation((table: string) => {
+    if (table === 'plan_activities' || table === 'plan_tags') {
+      return createChainableMockQuery(null)
+    }
 
-  mockFrom.mockReturnValue(mockQuery)
+    callCounts[table] = (callCounts[table] || 0) + 1
+    const count = callCounts[table]
+
+    const mockQuery: Record<string, ReturnType<typeof vi.fn>> = {
+      select: vi.fn(),
+      insert: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      eq: vi.fn(),
+      neq: vi.fn(),
+      in: vi.fn(),
+      or: vi.fn(),
+      order: vi.fn(),
+      limit: vi.fn(),
+      range: vi.fn(),
+      single: vi.fn().mockResolvedValue({
+        // 1回目: 既存データ取得、2回目: 更新後データ
+        data: count === 1 ? existingData : updatedData,
+        error: null,
+      }),
+    }
+
+    Object.keys(mockQuery).forEach((key) => {
+      if (key !== 'single') {
+        mockQuery[key].mockReturnValue(mockQuery)
+      }
+    })
+
+    return mockQuery
+  })
 }
 
 function setupMockDeleteQuery<T>(mockFrom: ReturnType<typeof vi.fn>, _tableName: string, existingData: T): void {
-  let callCount = 0
+  const callCounts: Record<string, number> = {}
 
-  const mockQuery = {
-    select: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    delete: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    single: vi.fn().mockImplementation(() => {
-      callCount++
-      return Promise.resolve({ data: callCount === 1 ? existingData : null, error: null })
-    }),
-    then: vi.fn().mockImplementation((resolve) => resolve({ data: null, error: null })),
-  }
+  mockFrom.mockImplementation((table: string) => {
+    if (table === 'plan_activities') {
+      return createChainableMockQuery(null)
+    }
 
-  mockFrom.mockReturnValue(mockQuery)
+    callCounts[table] = (callCounts[table] || 0) + 1
+    const count = callCounts[table]
+
+    const mockQuery: Record<string, ReturnType<typeof vi.fn>> = {
+      select: vi.fn(),
+      insert: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      eq: vi.fn(),
+      neq: vi.fn(),
+      in: vi.fn(),
+      or: vi.fn(),
+      order: vi.fn(),
+      limit: vi.fn(),
+      range: vi.fn(),
+      single: vi.fn().mockResolvedValue({
+        data: count === 1 ? existingData : null,
+        error: null,
+      }),
+      then: vi.fn().mockImplementation((resolve) => resolve({ data: null, error: null })),
+    }
+
+    Object.keys(mockQuery).forEach((key) => {
+      if (key !== 'single' && key !== 'then') {
+        mockQuery[key].mockReturnValue(mockQuery)
+      }
+    })
+
+    return mockQuery
+  })
 }

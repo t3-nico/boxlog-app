@@ -17,7 +17,7 @@ import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
 export function useItems(filters?: ItemFilters, options?: { enabled?: boolean }) {
   return api.items.list.useQuery(filters, {
     ...cacheStrategies.items, // キャッシュ戦略を適用
-    retry: 1,                  // リトライ設定
+    retry: 1, // リトライ設定
     ...options,
   })
 }
@@ -60,12 +60,12 @@ export function useItemMutations() {
 
 ## キャッシュ戦略の選択
 
-| データ種別 | 戦略 | staleTime |
-|-----------|------|-----------|
-| リアルタイム性が重要 | `realtimeCache` | 30秒 |
-| 通常のデータ | `standardCache` | 5分 |
-| 短期キャッシュ | `shortTermCache` | 1分 |
-| 静的データ | `staticCache` | 1時間 |
+| データ種別           | 戦略             | staleTime |
+| -------------------- | ---------------- | --------- |
+| リアルタイム性が重要 | `realtimeCache`  | 30秒      |
+| 通常のデータ         | `standardCache`  | 5分       |
+| 短期キャッシュ       | `shortTermCache` | 1分       |
+| 静的データ           | `staticCache`    | 1時間     |
 
 ## ファイル命名規則
 

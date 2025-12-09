@@ -164,23 +164,23 @@ src/server/services/{domain}/
 
 ### 命名規則
 
-| 種類 | 命名 | 例 |
-|------|------|-----|
-| サービスクラス | `{Domain}Service` | `NotificationService` |
-| エラークラス | `{Domain}ServiceError` | `NotificationServiceError` |
-| ファクトリ | `create{Domain}Service` | `createNotificationService` |
-| 型ファイル | `types.ts` | - |
+| 種類           | 命名                    | 例                          |
+| -------------- | ----------------------- | --------------------------- |
+| サービスクラス | `{Domain}Service`       | `NotificationService`       |
+| エラークラス   | `{Domain}ServiceError`  | `NotificationServiceError`  |
+| ファクトリ     | `create{Domain}Service` | `createNotificationService` |
+| 型ファイル     | `types.ts`              | -                           |
 
 ---
 
 ## 🔧 プロシージャの種類
 
-| プロシージャ | 用途 | 認証 |
-|-------------|------|------|
-| `publicProcedure` | 公開API | 不要 |
-| `protectedProcedure` | 認証必須API | 必要 |
-| `adminProcedure` | 管理者API | 必要（管理者） |
-| `rateLimitedProcedure` | レート制限API | 不要 |
+| プロシージャ           | 用途          | 認証           |
+| ---------------------- | ------------- | -------------- |
+| `publicProcedure`      | 公開API       | 不要           |
+| `protectedProcedure`   | 認証必須API   | 必要           |
+| `adminProcedure`       | 管理者API     | 必要（管理者） |
+| `rateLimitedProcedure` | レート制限API | 不要           |
 
 ```typescript
 // 使用例

@@ -2,7 +2,7 @@
  * Notification Service Module
  */
 
-export { createNotificationService, NotificationService, NotificationServiceError } from './notification-service'
+export { NotificationService, NotificationServiceError, createNotificationService } from './notification-service'
 export type {
   CreateNotificationOptions,
   DeleteNotificationsOptions,

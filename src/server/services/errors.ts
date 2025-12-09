@@ -25,7 +25,10 @@ export class ServiceError extends Error {
 /**
  * エラーコードとTRPCエラーコードのマッピング
  */
-const ERROR_CODE_MAP: Record<string, 'INTERNAL_SERVER_ERROR' | 'NOT_FOUND' | 'BAD_REQUEST' | 'FORBIDDEN' | 'UNAUTHORIZED'> = {
+const ERROR_CODE_MAP: Record<
+  string,
+  'INTERNAL_SERVER_ERROR' | 'NOT_FOUND' | 'BAD_REQUEST' | 'FORBIDDEN' | 'UNAUTHORIZED'
+> = {
   // 共通エラー
   FETCH_FAILED: 'INTERNAL_SERVER_ERROR',
   NOT_FOUND: 'NOT_FOUND',
