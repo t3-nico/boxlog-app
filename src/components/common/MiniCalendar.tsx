@@ -35,11 +35,11 @@ export interface MiniCalendarProps {
 }
 
 /**
- * MiniCalendar - レスポンシブ対応のカレンダーコンポーネント
+ * MiniCalendar - 固定幅カレンダーコンポーネント
  *
  * **特徴**:
  * - ✅ shadcn/ui公式Calendarベース
- * - ✅ 親要素の幅に合わせてレスポンシブに伸縮
+ * - ✅ 固定幅240px（8の倍数準拠）
  * - ✅ 月/年のドロップダウン選択
  * - ✅ デザイントークン完全適用
  * - ✅ 日本語/英語対応
@@ -48,7 +48,7 @@ export interface MiniCalendarProps {
  *
  * **使い方**:
  * ```tsx
- * // 直接表示（親要素の幅に合わせる）
+ * // 直接表示
  * <MiniCalendar selectedDate={date} onDateSelect={...} />
  *
  * // Popover版
@@ -102,19 +102,8 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
       onOpenChange?.(newOpen)
     }
 
-    // レスポンシブ対応のスタイル
-    const responsiveClassName = cn(
-      // 親要素の幅に合わせて伸縮
-      'w-full',
-      // カレンダー内部のセルサイズを可変に
-      '[&_.rdp]:w-full',
-      '[&_.rdp-month]:w-full',
-      '[&_.rdp-table]:w-full',
-      '[&_.rdp-tbody]:w-full',
-      '[&_.rdp-row]:w-full',
-      '[&_.rdp-cell]:flex-1',
-      className
-    )
+    // 固定幅スタイル（240px = 8の倍数）
+    const fixedWidthClassName = cn('w-60', className)
 
     // カレンダー本体のレンダリング
     const renderCalendar = () => {
@@ -143,7 +132,7 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
             weekStartsOn={1}
             startMonth={new Date(2020, 0)}
             endMonth={new Date(2050, 11)}
-            className={responsiveClassName}
+            className={fixedWidthClassName}
           />
         )
       }
@@ -163,7 +152,7 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
           weekStartsOn={1}
           startMonth={new Date(2020, 0)}
           endMonth={new Date(2050, 11)}
-          className={responsiveClassName}
+          className={fixedWidthClassName}
         />
       )
     }

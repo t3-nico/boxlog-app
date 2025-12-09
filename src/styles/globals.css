@@ -881,10 +881,11 @@ html.dark {
 
 /* ============================================
  * react-day-picker カスタムスタイル
+ * スタイルガイド準拠: セマンティックトークンのみ使用
  * ============================================ */
 .rdp {
   --rdp-accent-color: var(--color-primary);
-  --rdp-background-color: var(--color-state-active);
+  --rdp-background-color: var(--color-state-hover);
   --rdp-accent-background-color: var(--color-primary);
   --rdp-outline: 2px solid var(--color-ring);
   --rdp-outline-selected: 2px solid var(--color-primary);
@@ -920,24 +921,23 @@ html.dark {
   box-shadow: none !important;
 }
 
-/* 選択された日付（今日以外） - state-active色の背景 + 角丸 */
+/* 選択された日付（今日以外） - primary色の背景 + 角丸 */
 .rdp-day_button[data-selected-single='true']:not([data-today='true']) {
-  background-color: var(--color-state-active) !important;
-  color: var(--color-state-active-foreground) !important;
+  background-color: var(--color-primary) !important;
+  color: var(--color-primary-foreground) !important;
   border-radius: 0.375rem !important;
 }
 
-/* 今日の日付 - primary色の背景 + 白文字 + 角丸（選択されても継続） */
+/* 今日の日付 - primary色の背景 + primary-foreground + 角丸 */
 .rdp-day_button[data-today='true'] {
   background-color: var(--color-primary) !important;
-  color: oklch(1 0 0) !important;
+  color: var(--color-primary-foreground) !important;
   border-radius: 0.375rem !important;
 }
 
-/* ホバー時 */
+/* ホバー時 - state-hover */
 .rdp-day_button:hover:not([data-today='true']):not([aria-disabled='true']) {
-  background-color: var(--color-state-active) !important;
-  color: var(--color-state-active-foreground) !important;
+  background-color: var(--color-state-hover) !important;
   border-radius: 0.375rem !important;
 }
 
@@ -947,12 +947,8 @@ html.dark {
   box-shadow: none !important;
 }
 
-/* ドロップダウン（月・年選択） */
-.rdp-dropdowns select,
-.rdp-dropdown_root {
-  color: var(--color-foreground);
-  border-color: var(--color-input);
-}
+/* ドロップダウン（月・年選択）- shadcn/ui Selectに置き換え済み
+ * スタイルはcalendar.tsxのCalendarDropdownコンポーネントで定義 */
 
 /* 月表示ラベル */
 .rdp-month_caption,
@@ -965,20 +961,27 @@ html.dark {
   color: var(--color-muted-foreground);
 }
 
-/* ナビゲーションボタン */
+/* ナビゲーションボタン（borderなし） */
 .rdp-button_previous,
 .rdp-button_next {
-  color: oklch(1 0 0);
+  color: var(--color-muted-foreground);
+  border: none;
+  border-radius: 0.375rem;
 }
 
 .rdp-button_previous svg,
 .rdp-button_next svg {
-  color: oklch(1 0 0);
+  color: var(--color-muted-foreground);
 }
 
 .rdp-button_previous:hover,
 .rdp-button_next:hover {
-  background-color: var(--color-state-active);
+  background-color: var(--color-state-hover);
+}
+
+.rdp-button_previous:hover svg,
+.rdp-button_next:hover svg {
+  color: var(--color-foreground);
 }
 
 /* 無効な日付 */

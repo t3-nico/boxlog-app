@@ -84,7 +84,7 @@ export function CalendarSidebar() {
       value: 'view',
       label: t('calendar.sidebar.tabs.view'),
       content: (
-        <div className="px-4 pt-4">
+        <div className="p-2">
           <MiniCalendar
             selectedDate={navigation?.currentDate}
             month={navigation?.currentDate}
@@ -95,7 +95,7 @@ export function CalendarSidebar() {
             }}
             showWeekNumbers={true}
             displayRange={displayRange}
-            className="border-input w-full rounded-lg border"
+            className="w-full bg-transparent p-0"
           />
         </div>
       ),
