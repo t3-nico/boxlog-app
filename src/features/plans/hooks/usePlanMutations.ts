@@ -133,7 +133,7 @@ export function usePlanMutations() {
         return oldData.map((plan) => {
           if (plan.id === variables.id) {
             // 既存のplan_tagsを保持しつつ、サーバーデータで更新
-            return { ...updatedPlan, plan_tags: plan.plan_tags }
+            return { ...updatedPlan, plan_tags: plan.plan_tags ?? [] }
           }
           return plan
         })
