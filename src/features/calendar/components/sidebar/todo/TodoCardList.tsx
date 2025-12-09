@@ -1,13 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import { PlanCard } from '@/features/board/components/shared/PlanCard'
 import { parseDateString } from '@/features/calendar/utils/dateUtils'
 import { useInboxData } from '@/features/inbox/hooks/useInboxData'
 
-import type { CalendarSortType } from '../../navigation/CalendarNavigation'
-import { TodoCardCreate } from './TodoCardCreate'
 import type { TodoFilter, TodoSort } from './TodoNavigation'
 
 interface TodoCardListProps {
@@ -16,10 +14,6 @@ interface TodoCardListProps {
   showHigh: boolean
   showMedium: boolean
   showLow: boolean
-  calendarSort?: CalendarSortType
-  selectedTags?: string[]
-  triggerCreate?: boolean
-  onCreateFinish?: () => void
 }
 
 /**
@@ -39,14 +33,9 @@ export function TodoCardList({
   showHigh: _showHigh,
   showMedium: _showMedium,
   showLow: _showLow,
-  calendarSort,
-  selectedTags,
-  triggerCreate,
-  onCreateFinish,
 }: TodoCardListProps) {
   // status: 'todo' のプランのみ取得
   const { items, isLoading, error } = useInboxData({ status: 'todo' })
-  const [isCreating, setIsCreating] = useState(false)
 
   // フィルタリング・ソート処理
   const filteredAndSortedItems = useMemo(() => {
@@ -73,30 +62,12 @@ export function TodoCardList({
       })
     }
 
-    // 2. タグフィルター（CalendarNavigationから）
-    if (selectedTags && selectedTags.length > 0) {
-      result = result.filter((item) => {
-        const itemTagIds = item.tags?.map((tag) => tag.id) ?? []
-        return selectedTags.some((tagId) => itemTagIds.includes(tagId))
-      })
-    }
-
-    // 3. 優先度フィルター
+    // 2. 優先度フィルター
     // NOTE: Plan/InboxItem には現在 priority フィールドが存在しない
     // 将来の機能追加時に実装予定（DBスキーマ変更が必要）
 
-    // 4. ソート（CalendarNavigationからのソートを優先）
+    // 3. ソート
     result.sort((a, b) => {
-      // CalendarNavigationからのソートがある場合はそちらを優先
-      if (calendarSort) {
-        if (calendarSort === 'updated-desc') {
-          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-        } else if (calendarSort === 'updated-asc') {
-          return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()
-        }
-      }
-
-      // TodoNavigationからのソート
       if (sort === 'due') {
         // 期限日順（期限なしは最後）
         if (!a.due_date) return 1
@@ -114,14 +85,7 @@ export function TodoCardList({
     })
 
     return result
-  }, [items, filter, sort, calendarSort, selectedTags])
-
-  // 新規作成トリガー監視
-  useEffect(() => {
-    if (triggerCreate && !isCreating) {
-      setIsCreating(true)
-    }
-  }, [triggerCreate, isCreating])
+  }, [items, filter, sort])
 
   // ローディング表示
   if (isLoading) {
@@ -155,20 +119,9 @@ export function TodoCardList({
   // カードリスト表示（PlanCardを再利用）
   return (
     <div className="flex flex-col gap-2 overflow-y-auto pt-4 pb-4">
-      {/* 既存カード */}
       {filteredAndSortedItems.map((item) => (
         <PlanCard key={item.id} item={item} />
       ))}
-
-      {/* 新規作成カード（最後） */}
-      <TodoCardCreate
-        isCreating={isCreating}
-        onStartCreate={() => setIsCreating(true)}
-        onFinishCreate={() => {
-          setIsCreating(false)
-          onCreateFinish?.()
-        }}
-      />
     </div>
   )
 }
