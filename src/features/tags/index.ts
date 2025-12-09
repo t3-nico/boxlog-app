@@ -114,7 +114,6 @@ export type {
   Tag,
   TagFilter,
   TagGroup,
-  TagLevel,
   TagOption,
   TagSortField,
   TagSortOptions,

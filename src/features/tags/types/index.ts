@@ -250,16 +250,3 @@ export interface TagMergeResult {
 // 後方互換性のための型エイリアス（段階的に削除予定）
 /** @deprecated フラット構造に移行。Tagを直接使用してください */
 export type TagWithChildren = Tag
-/** @deprecated フラット構造に移行。不要です */
-export type TagLevel = 0 | 1
-/** @deprecated フラット構造に移行。不要です */
-export interface TagHierarchy {
-  id: string
-  name: string
-  color: string
-}
-/** @deprecated フラット構造に移行。不要です */
-export interface TagTreeNode {
-  tag: Tag
-  isExpanded?: boolean
-}

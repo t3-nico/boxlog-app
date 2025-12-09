@@ -95,7 +95,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>{t('tag.modal.editTitle')}</DialogTitle>
-          <DialogDescription>{tag.path}</DialogDescription>
+          <DialogDescription>{tag.name}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>

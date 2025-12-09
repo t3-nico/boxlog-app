@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
-import type { CreateTagInput, TagGroup, TagLevel } from '@/features/tags/types'
+import type { CreateTagInput, TagGroup } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 
 interface TagCreateModalProps {
@@ -61,16 +61,10 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
 
       setIsLoading(true)
       try {
-        // シンプルにLevel 0のタグとして作成（parent_idはnull）
-        const level: TagLevel = 0
-        const parent_id = null
-
         await onSave({
           name: name.trim(),
           color,
           description: description.trim() || null,
-          parent_id,
-          level,
           group_id: groupId && groupId !== '__none__' ? groupId : null,
         })
         onClose()
