@@ -22,7 +22,6 @@ import { tagIconMapping, TagIconName } from '../constants/icons'
 
 import { TagDeleteDialog } from './TagDeleteDialog'
 import { TagEditDialog } from './tag-edit-dialog'
-import type { TagWithChildren } from '@/features/tags/types'
 
 interface TagsListProps {
   collapsed?: boolean

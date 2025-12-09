@@ -24,12 +24,12 @@ export function TagsSidebarWrapper() {
 
   // アクティブなタグの数をカウント（is_active = true のみ）
   const activeTagsCount = useMemo(() => {
-    return tags.filter((tag) => tag.is_active && tag.level === 0).length
+    return tags.filter((tag) => tag.is_active).length
   }, [tags])
 
   // アーカイブされたタグの数をカウント（is_active = false）
   const archivedTagsCount = useMemo(() => {
-    return tags.filter((tag) => !tag.is_active && tag.level === 0).length
+    return tags.filter((tag) => !tag.is_active).length
   }, [tags])
 
   return (

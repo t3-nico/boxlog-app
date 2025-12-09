@@ -173,7 +173,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
     // グループごとのタグ数をカウント
     const getGroupTagCount = useCallback(
       (groupId: string) => {
-        return allTags.filter((tag) => tag.group_id === groupId && tag.is_active && tag.level === 0).length
+        return allTags.filter((tag) => tag.group_id === groupId && tag.is_active).length
       },
       [allTags]
     )
