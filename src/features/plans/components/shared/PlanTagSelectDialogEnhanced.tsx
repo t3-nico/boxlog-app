@@ -49,24 +49,7 @@ export function PlanTagSelectDialogEnhanced({
   const createTagMutation = useCreateTag()
   const { data: tagplanCounts = {} } = api.plans.getTagPlanCounts.useQuery()
 
-  // TagWithChildren[] を Tag[] に変換（階層を平坦化）
-  const flattenTags = (tags: typeof tagsData): TagType[] => {
-    if (!tags) return []
-    const result: TagType[] = []
-    const flatten = (tagList: typeof tagsData) => {
-      if (!tagList) return
-      tagList.forEach((tag) => {
-        result.push(tag)
-        if (tag.children && tag.children.length > 0) {
-          flatten(tag.children)
-        }
-      })
-    }
-    flatten(tags)
-    return result
-  }
-
-  const allTags = flattenTags(tagsData)
+  const allTags = tagsData ?? []
 
   // フィルタリング
   const filteredTags = useMemo(() => {
@@ -153,7 +136,6 @@ export function PlanTagSelectDialogEnhanced({
         name: newTagName.trim(),
         color: DEFAULT_TAG_COLOR,
         description: undefined,
-        level: 0,
         group_id: selectedGroupId && selectedGroupId !== 'uncategorized' ? selectedGroupId : undefined,
       })
 
@@ -182,17 +164,17 @@ export function PlanTagSelectDialogEnhanced({
 
   // グループごとのタグ数
   const getGroupTagCount = (groupId: string) => {
-    return allTags.filter((tag) => tag.group_id === groupId && tag.is_active && tag.level === 0).length
+    return allTags.filter((tag) => tag.group_id === groupId && tag.is_active).length
   }
 
   // 未分類タグ数
-  const uncategorizedCount = allTags.filter((tag) => !tag.group_id && tag.is_active && tag.level === 0).length
+  const uncategorizedCount = allTags.filter((tag) => !tag.group_id && tag.is_active).length
 
   // アーカイブ数
-  const archivedCount = allTags.filter((tag) => !tag.is_active && tag.level === 0).length
+  const archivedCount = allTags.filter((tag) => !tag.is_active).length
 
   // アクティブタグ数
-  const activeCount = allTags.filter((tag) => tag.is_active && tag.level === 0).length
+  const activeCount = allTags.filter((tag) => tag.is_active).length
 
   // Popoverを閉じた時に状態をリセット
   useEffect(() => {

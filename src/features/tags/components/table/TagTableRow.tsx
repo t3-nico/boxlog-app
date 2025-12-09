@@ -18,7 +18,7 @@ import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItem
 import { useUpdateTag } from '@/features/tags/hooks/use-tags'
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore'
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore'
-import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { Tag, TagGroup } from '@/features/tags/types'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Folder, Hash } from 'lucide-react'
@@ -32,13 +32,13 @@ import { useCallback, useState } from 'react'
 
 interface TagCellContentProps {
   /** 表示するタグ */
-  tag: TagWithChildren
+  tag: Tag
   /** 列ID */
   columnId: string
   /** グループ一覧 */
   groups: TagGroup[]
   /** 全タグ一覧（グループ内タグ数計算用） */
-  allTags: TagWithChildren[]
+  allTags: Tag[]
   /** プラン数のマップ */
   planCounts: Record<string, number>
   /** 最終使用日時のマップ */
@@ -89,9 +89,7 @@ export function TagCellContent({ tag, columnId, groups, allTags, planCounts, las
 
   // グループ情報
   const group = tag.group_id ? groups.find((g) => g.id === tag.group_id) : null
-  const groupTagCount = group
-    ? allTags.filter((t) => t.group_id === group.id && t.is_active && t.level === 0).length
-    : 0
+  const groupTagCount = group ? allTags.filter((t) => t.group_id === group.id && t.is_active).length : 0
 
   switch (columnId) {
     case 'id':
@@ -183,7 +181,7 @@ export function TagCellContent({ tag, columnId, groups, allTags, planCounts, las
 
 interface TagRowWrapperProps {
   /** タグデータ */
-  tag: TagWithChildren
+  tag: Tag
   /** 子要素（DataTableの行） */
   children: ReactNode
   /** 選択状態 */
@@ -191,11 +189,11 @@ interface TagRowWrapperProps {
   /** グループ一覧 */
   groups: TagGroup[]
   /** グループ移動時のコールバック */
-  onMoveToGroup: (tag: TagWithChildren, groupId: string | null) => void
+  onMoveToGroup: (tag: Tag, groupId: string | null) => void
   /** アーカイブ確認ダイアログを開く */
-  onArchiveConfirm: (tag: TagWithChildren) => void
+  onArchiveConfirm: (tag: Tag) => void
   /** 削除確認ダイアログを開く */
-  onDeleteConfirm: (tag: TagWithChildren) => void
+  onDeleteConfirm: (tag: Tag) => void
 }
 
 /**

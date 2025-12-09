@@ -16,14 +16,14 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useMergeTag, useTags } from '@/features/tags/hooks/use-tags'
-import type { TagWithChildren } from '@/features/tags/types'
+import type { Tag } from '@/features/tags/types'
 import { AlertTriangle, GitMerge } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 interface TagBulkMergeDialogProps {
   /** マージ対象のタグ（2つ以上） */
-  sourceTags: TagWithChildren[]
+  sourceTags: Tag[]
   onClose: () => void
 }
 
@@ -39,23 +39,14 @@ export function TagBulkMergeDialog({ sourceTags, onClose }: TagBulkMergeDialogPr
   const [deleteSource, setDeleteSource] = useState(true)
   const [isMerging, setIsMerging] = useState(false)
 
-  const { data: tags = [] } = useTags()
+  const { data: allTags = [] } = useTags()
   const mergeTagMutation = useMergeTag()
 
   const isOpen = sourceTags.length >= 2
 
-  // 選択されたタグ以外のすべてのタグ + 選択されたタグ自身（マージ先として選択可能）
-  const availableTags = flattenTags(tags).filter((t) => {
-    // 選択されたタグの子孫は除外（循環を防ぐ）
-    for (const sourceTag of sourceTags) {
-      if (isDescendant(sourceTag, t.id)) return false
-    }
-    return true
-  })
-
   // 選択されたタグをマージ先候補として優先表示
   const selectedTagsAsTargets = sourceTags
-  const otherTags = availableTags.filter((t) => !sourceTags.some((s) => s.id === t.id))
+  const otherTags = allTags.filter((t) => !sourceTags.some((s) => s.id === t.id))
 
   const handleMerge = async () => {
     if (!targetTagId || sourceTags.length < 2) {
@@ -80,7 +71,7 @@ export function TagBulkMergeDialog({ sourceTags, onClose }: TagBulkMergeDialogPr
         totalMerged += result.merged_associations || 0
       }
 
-      const targetTag = availableTags.find((t) => t.id === targetTagId)
+      const targetTag = allTags.find((t) => t.id === targetTagId)
       toast.success(
         t('tags.bulkMerge.success', {
           count: tagsToMerge.length,
@@ -182,15 +173,14 @@ export function TagBulkMergeDialog({ sourceTags, onClose }: TagBulkMergeDialogPr
                     <div className="text-muted-foreground mt-1 px-2 py-1 text-xs font-medium">
                       {t('tags.bulkMerge.otherTagsGroup')}
                     </div>
-                    {otherTags.map((t) => (
-                      <SelectItem key={t.id} value={t.id}>
+                    {otherTags.map((tag) => (
+                      <SelectItem key={tag.id} value={tag.id}>
                         <div className="flex items-center gap-2">
                           <div
                             className="h-3 w-3 shrink-0 rounded-full"
-                            style={{ backgroundColor: t.color || DEFAULT_TAG_COLOR }}
+                            style={{ backgroundColor: tag.color || DEFAULT_TAG_COLOR }}
                           />
-                          <span>{t.name}</span>
-                          {t.path && <span className="text-muted-foreground text-xs">{t.path}</span>}
+                          <span>{tag.name}</span>
                         </div>
                       </SelectItem>
                     ))}
@@ -256,33 +246,4 @@ export function TagBulkMergeDialog({ sourceTags, onClose }: TagBulkMergeDialogPr
       </AlertDialogContent>
     </AlertDialog>
   )
-}
-
-// タグツリーをフラットな配列に変換
-function flattenTags(tags: TagWithChildren[]): TagWithChildren[] {
-  const result: TagWithChildren[] = []
-
-  function traverse(tagList: TagWithChildren[]) {
-    for (const tag of tagList) {
-      result.push(tag)
-      if (tag.children && tag.children.length > 0) {
-        traverse(tag.children)
-      }
-    }
-  }
-
-  traverse(tags)
-  return result
-}
-
-// 指定されたIDがタグの子孫かどうかをチェック
-function isDescendant(tag: TagWithChildren, targetId: string): boolean {
-  if (!tag.children) return false
-
-  for (const child of tag.children) {
-    if (child.id === targetId) return true
-    if (isDescendant(child, targetId)) return true
-  }
-
-  return false
 }

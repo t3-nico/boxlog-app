@@ -253,39 +253,15 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
     setExpandedTags((prev) => (prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]))
   }, [])
 
-  // 表示するタグリストを計算（階層構造）
+  // 表示するタグリストを計算（フラット構造）
   const displayTags = useCallback(() => {
-    const result: Array<{
-      tag: Tag
-      level: number
-      hasChildren: boolean
-      isExpanded: boolean
-    }> = []
-
-    const addTagsRecursively = (parentId: string | null, level: number = 0) => {
-      const childTags = tags.filter((tag) => tag.parent_id === parentId)
-
-      childTags.forEach((tag) => {
-        const hasChildren = tags.some((t) => t.parent_id === tag.id)
-        const isExpanded = expandedTags.includes(tag.id)
-
-        result.push({
-          tag,
-          level,
-          hasChildren,
-          isExpanded,
-        })
-
-        // 展開されている場合のみ子タグを追加
-        if (isExpanded) {
-          addTagsRecursively(tag.id, level + 1)
-        }
-      })
-    }
-
-    addTagsRecursively(null)
-    return result
-  }, [tags, expandedTags])
+    return tags.map((tag) => ({
+      tag,
+      level: 0,
+      hasChildren: false,
+      isExpanded: false,
+    }))
+  }, [tags])
 
   const handleToggleExpanded = useCallback(
     (tagId: string) => {
@@ -425,11 +401,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
       <TagEditDialog tag={editingTag} open={!!editingTag} onClose={handleCloseEditDialog} onSave={handleSaveTag} />
 
       {/* タグ削除ダイアログ（使用状況チェック付き） */}
-      <TagDeleteDialog
-        tag={deletingTag ? ({ ...deletingTag, children: [] } as TagWithChildren) : null}
-        onClose={handleCloseDeleteDialog}
-        onConfirm={handleConfirmDelete}
-      />
+      <TagDeleteDialog tag={deletingTag} onClose={handleCloseDeleteDialog} onConfirm={handleConfirmDelete} />
     </div>
   )
 }

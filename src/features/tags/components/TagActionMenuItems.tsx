@@ -3,17 +3,17 @@
 import { Archive, Eye, Folder, FolderX, GitMerge, Pencil, Trash2 } from 'lucide-react'
 
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { Tag, TagGroup } from '@/features/tags/types'
 
 interface TagActionMenuItemsProps {
-  tag: TagWithChildren
+  tag: Tag
   groups: TagGroup[]
-  onView?: (tag: TagWithChildren) => void
-  onEdit?: (tag: TagWithChildren) => void
-  onMoveToGroup: (tag: TagWithChildren, groupId: string | null) => void
-  onMerge?: (tag: TagWithChildren) => void
-  onArchive?: (tag: TagWithChildren) => void
-  onDelete: (tag: TagWithChildren) => void
+  onView?: (tag: Tag) => void
+  onEdit?: (tag: Tag) => void
+  onMoveToGroup: (tag: Tag, groupId: string | null) => void
+  onMerge?: (tag: Tag) => void
+  onArchive?: (tag: Tag) => void
+  onDelete: (tag: Tag) => void
   t: (key: string) => string
   /** メニュー項目をレンダリングするための関数 */
   renderMenuItem: (props: {

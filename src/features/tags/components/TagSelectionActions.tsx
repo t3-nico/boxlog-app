@@ -14,20 +14,20 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { Tag, TagGroup } from '@/features/tags/types'
 
 import { TagActionMenuItems } from './TagActionMenuItems'
 
 interface TagSelectionActionsProps {
   selectedTagIds: string[]
-  tags: TagWithChildren[]
+  tags: Tag[]
   groups: TagGroup[]
-  onMoveToGroup: (tag: TagWithChildren, groupId: string | null) => void
+  onMoveToGroup: (tag: Tag, groupId: string | null) => void
   onArchive?: (tagIds: string[]) => Promise<void>
   onDelete: () => void
   onMerge?: () => void
-  onEdit?: (tag: TagWithChildren) => void
-  onView?: (tag: TagWithChildren) => void
+  onEdit?: (tag: Tag) => void
+  onView?: (tag: Tag) => void
   onClearSelection: () => void
   t: (key: string) => string
 }
