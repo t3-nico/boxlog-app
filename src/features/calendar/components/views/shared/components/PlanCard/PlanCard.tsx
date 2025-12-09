@@ -226,7 +226,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
               data: { status: newStatus },
             })
           }}
-          className="absolute top-1 left-1 z-10 flex-shrink-0 rounded transition-colors hover:opacity-80"
+          className="absolute top-2 left-2 z-10 flex-shrink-0 rounded transition-colors hover:opacity-80"
           aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
         >
           {(() => {

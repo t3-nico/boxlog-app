@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 
-import { addDays, endOfWeek, startOfWeek } from 'date-fns'
+import { addDays, endOfWeek, startOfWeek, subDays } from 'date-fns'
 
 import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
@@ -46,12 +46,12 @@ export function CalendarSidebar() {
         return { start: currentDate, end: currentDate }
 
       case '3day':
-        // 3日表示: 当日から3日間
-        return { start: currentDate, end: addDays(currentDate, 2) }
+        // 3日表示: 当日を中央として前後1日（合計3日間）
+        return { start: subDays(currentDate, 1), end: addDays(currentDate, 1) }
 
       case '5day':
-        // 5日表示: 当日から5日間
-        return { start: currentDate, end: addDays(currentDate, 4) }
+        // 5日表示: 当日を中央として前後2日（合計5日間）
+        return { start: subDays(currentDate, 2), end: addDays(currentDate, 2) }
 
       case 'week':
         // 週表示: 月曜から日曜

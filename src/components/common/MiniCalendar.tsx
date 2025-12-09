@@ -301,9 +301,9 @@ export const MiniCalendar = memo<MiniCalendarProps>(
                       'flex size-8 items-center justify-center text-sm transition-colors',
                       // 現在の月以外は薄く
                       !isCurrentMonth && 'text-muted-foreground',
-                      // ホバー
-                      'hover:bg-state-hover hover:rounded-md',
-                      // 今日: primary
+                      // ホバー（今日以外）
+                      !isToday && 'hover:bg-state-hover hover:rounded-md',
+                      // 今日: primary（ホバーの影響を受けない）
                       isToday && 'bg-primary text-primary-foreground rounded-md font-semibold',
                       // 範囲内（今日以外）
                       isInRange && !isToday && 'bg-state-hover text-foreground',
