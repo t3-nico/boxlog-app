@@ -26,6 +26,14 @@ export function useDragAndDrop({
   const eventUpdateHandler = onEventUpdate || onPlanUpdate
   const eventClickHandler = onEventClick || onPlanClick
 
+  // eventClickHandler の最新参照を保持（クロージャー問題を回避）
+  const eventClickHandlerRef = useRef(eventClickHandler)
+  eventClickHandlerRef.current = eventClickHandler
+
+  // events の最新参照を保持
+  const eventsRef = useRef(events)
+  eventsRef.current = events
+
   const [dragState, setDragState] = useState<DragState>(initialDragState)
   const dragDataRef = useRef<DragDataRef | null>(null)
 
@@ -185,7 +193,46 @@ export function useDragAndDrop({
     completeDragOperation,
   ])
 
-  // マウスイベントリスナーを設定
+  // mouseup リスナー（即座にクリック検出用）
+  // handleMouseDown で dragDataRef がセットされた瞬間から mouseup を検出
+  const mouseUpListenerRef = useRef<((e: MouseEvent) => void) | null>(null)
+
+  // handleMouseDown をラップして、mouseup リスナーを即座に登録
+  const wrappedHandleMouseDown = useCallback(
+    (
+      eventId: string,
+      e: React.MouseEvent,
+      originalPosition: { top: number; left: number; width: number; height: number },
+      dateIndex?: number
+    ) => {
+      // 元の handleMouseDown を呼び出し
+      handleMouseDown(eventId, e, originalPosition, dateIndex)
+
+      // mouseup リスナーを即座に登録（クリック検出用）
+      const onMouseUp = () => {
+        document.removeEventListener('mouseup', onMouseUp)
+        mouseUpListenerRef.current = null
+
+        // ref から最新の値を取得
+        const currentClickHandler = eventClickHandlerRef.current
+        const currentEvents = eventsRef.current
+
+        // クリック判定（hasMoved が false の場合のみ）
+        if (dragDataRef.current && !dragDataRef.current.hasMoved && currentClickHandler) {
+          const eventToClick = currentEvents.find((ev) => ev.id === dragDataRef.current!.eventId)
+          if (eventToClick) {
+            currentClickHandler(eventToClick)
+          }
+        }
+      }
+
+      document.addEventListener('mouseup', onMouseUp, { once: true })
+      mouseUpListenerRef.current = onMouseUp
+    },
+    [handleMouseDown]
+  )
+
+  // マウスイベントリスナーを設定（ドラッグ/リサイズ用）
   useEffect(() => {
     if (dragState.isDragging || dragState.isResizing) {
       document.addEventListener('mousemove', handleMouseMove, { passive: false })
@@ -202,7 +249,7 @@ export function useDragAndDrop({
   return {
     dragState,
     handlers: {
-      handleMouseDown,
+      handleMouseDown: wrappedHandleMouseDown,
       handleMouseMove,
       handleMouseUp,
       handleEventDrop,
