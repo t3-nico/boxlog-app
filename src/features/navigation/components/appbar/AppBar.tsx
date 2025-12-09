@@ -85,7 +85,7 @@ export function AppBar() {
 
   return (
     <aside
-      className={`border-border bg-surface-dim text-foreground flex h-full w-14 flex-col gap-0 border-r py-2 pb-4 ${isOpen ? 'cursor-w-resize' : 'cursor-e-resize'}`}
+      className={`border-border bg-surface-dim text-foreground flex h-full w-14 flex-col gap-0 border-r ${isOpen ? 'cursor-w-resize' : 'cursor-e-resize'}`}
       role="navigation"
       aria-label="Main navigation"
       onMouseEnter={() => setIsAppBarHovered(true)}
@@ -93,7 +93,7 @@ export function AppBar() {
       onClick={toggle}
     >
       {/* Logo / Sidebar Toggle */}
-      <div className="flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+      <div className="flex items-center justify-center pt-2" onClick={(e) => e.stopPropagation()}>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -119,7 +119,7 @@ export function AppBar() {
                 </Button>
               )}
             </TooltipTrigger>
-            <TooltipContent side="right">
+            <TooltipContent side="right" className="pointer-events-none">
               {isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')}
             </TooltipContent>
           </Tooltip>

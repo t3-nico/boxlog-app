@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
 import type { ItemProps } from './types'
@@ -9,7 +10,7 @@ import type { ItemProps } from './types'
 /**
  * AppBarの個別アイテムコンポーネント
  *
- * - アイコン（24px）+ 名前（11px）の縦型レイアウト
+ * - アイコンのみ表示（ラベルはTooltipで表示）
  * - 8pxグリッド準拠のスペーシング
  * - ホバー・アクティブ状態のビジュアルフィードバック
  *
@@ -25,26 +26,31 @@ import type { ItemProps } from './types'
  */
 export function Item({ icon: Icon, label, url, isActive, onClick }: ItemProps) {
   return (
-    <Link
-      href={url}
-      {...(onClick && { onClick })}
-      {...(isActive && { 'aria-current': 'page' as const })}
-      className="flex flex-col items-center"
-    >
-      {/* アイコン（ハイライト対象） */}
-      <div
-        className={cn(
-          'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
-          'hover:bg-state-hover',
-          'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
-          isActive && 'bg-state-selected text-foreground'
-        )}
-      >
-        <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
-      </div>
-
-      {/* 名前（ハイライトなし） */}
-      <span className={cn('text-center text-xs leading-tight break-words', isActive && 'font-semibold')}>{label}</span>
-    </Link>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Link
+            href={url}
+            {...(onClick && { onClick })}
+            {...(isActive && { 'aria-current': 'page' as const })}
+            className="flex items-center justify-center"
+          >
+            <div
+              className={cn(
+                'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
+                'hover:bg-state-hover',
+                'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+                isActive && 'bg-state-selected text-foreground'
+              )}
+            >
+              <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+            </div>
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent side="right" className="pointer-events-none">
+          {label}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }
