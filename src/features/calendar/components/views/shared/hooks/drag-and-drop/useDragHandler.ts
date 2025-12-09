@@ -58,7 +58,10 @@ export function useDragHandler({
       e.stopPropagation()
 
       const startPosition = { x: e.clientX, y: e.clientY }
-      const originalElement = (e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement
+      // data-event-wrapper（外側のポジショニング用div）を優先、なければdata-event-blockを使用
+      const originalElement =
+        ((e.target as HTMLElement).closest('[data-event-wrapper="true"]') as HTMLElement) ||
+        ((e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement)
       const columnWidth = calculateColumnWidth(originalElement, viewMode, displayDates)
 
       let dragElement: HTMLElement | null = null

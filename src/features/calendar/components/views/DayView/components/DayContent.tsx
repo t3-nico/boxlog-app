@@ -105,7 +105,7 @@ export const DayContent = ({
                 key={event.id}
                 style={adjustedStyle}
                 className="pointer-events-none absolute"
-                data-event-block="true"
+                data-event-wrapper="true"
               >
                 {/* EventBlockの内容部分のみクリック可能 */}
                 <div
