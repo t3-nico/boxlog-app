@@ -2,11 +2,14 @@
 
 import { InspectorHeader } from '@/components/common/InspectorHeader'
 import {
+  DropdownMenu,
+  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { PlanCard } from '@/features/plans/components/display/PlanCard'
@@ -155,19 +158,19 @@ export function TagInspector() {
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   // ナビゲーション
-  const goToPrevious = () => {
+  const goToPrevious = useCallback(() => {
     if (hasPrevious) {
       const prevTag = flatTags[currentIndex - 1]
       if (prevTag) openInspector(prevTag.id)
     }
-  }
+  }, [hasPrevious, flatTags, currentIndex, openInspector])
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     if (hasNext) {
       const nextTag = flatTags[currentIndex + 1]
       if (nextTag) openInspector(nextTag.id)
     }
-  }
+  }, [hasNext, flatTags, currentIndex, openInspector])
 
   // 自動保存関数（デバウンス処理付き）
   const autoSave = useCallback(
