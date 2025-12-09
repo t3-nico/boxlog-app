@@ -1,20 +1,16 @@
-// タグシステムの型定義（Level 0, 1, 2 の3階層）
-
-export type TagLevel = 0 | 1 | 2
+// タグシステムの型定義（フラット構造：グループ → タグ）
 
 export interface Tag {
   id: string
   name: string
-  parent_id: string | null
   user_id: string
   color: string
-  level: TagLevel
-  path: string
   tag_number: number
   description: string | null
   icon: string | null
   is_active: boolean
   group_id: string | null
+  sort_order: number
   created_at: Date
   updated_at: Date
 }
@@ -33,34 +29,12 @@ export interface TagGroup {
   updated_at: Date
 }
 
-// 子タグを含む階層構造
-export interface TagWithChildren extends Tag {
-  children: TagWithChildren[]
-  parent?: Tag | null
-}
-
-// 階層表示用（breadcrumb等で使用）
-export interface TagHierarchy {
-  id: string
-  name: string
-  level: TagLevel
-  path: string
-  color: string
-  hierarchy_names: string[]
-  hierarchy_ids: string[]
-  depth: number
-  root_name: string
-  level1_name: string | null
-}
-
 // タグ作成用入力型
 export interface CreateTagInput {
   name: string
   color: string
   description?: string | null | undefined
   icon?: string | null | undefined
-  parent_id?: string | null | undefined
-  level: TagLevel
   group_id?: string | null | undefined
 }
 
@@ -70,10 +44,9 @@ export interface UpdateTagInput {
   color?: string | undefined
   description?: string | null | undefined
   icon?: string | null | undefined
-  parent_id?: string | null | undefined
-  level?: TagLevel | undefined
   is_active?: boolean | undefined
   group_id?: string | null | undefined
+  sort_order?: number | undefined
 }
 
 // タググループ作成用入力型
@@ -124,8 +97,6 @@ export interface CreateTagAssociationInput {
 export interface TagUsageStats {
   id: string
   name: string
-  path: string
-  level: TagLevel
   color: string
   usage_count: number
   task_count: number
@@ -138,32 +109,20 @@ export interface TagUsageStats {
 export interface TagOption {
   value: string
   label: string
-  path: string
-  level: TagLevel
   color: string
+  groupId?: string | null
   disabled?: boolean
-}
-
-// タグツリー表示用
-export interface TagTreeNode {
-  tag: Tag
-  children: TagTreeNode[]
-  isExpanded?: boolean
-  hasChildren: boolean
-  depth: number
 }
 
 // タグフィルター用
 export interface TagFilter {
-  levels?: TagLevel[]
-  parent_id?: string | null
+  group_id?: string | null
   search?: string
   is_active?: boolean
-  include_children?: boolean
 }
 
 // タグ並び替え用
-export type TagSortField = 'name' | 'created_at' | 'usage_count' | 'level'
+export type TagSortField = 'name' | 'created_at' | 'usage_count' | 'sort_order'
 export type TagSortOrder = 'asc' | 'desc'
 
 export interface TagSortOptions {
@@ -182,16 +141,6 @@ export interface TagsResponse {
   data: Tag[]
   count: number
   has_more: boolean
-}
-
-export interface TagWithChildrenResponse {
-  data: TagWithChildren[]
-  count: number
-}
-
-export interface TagHierarchyResponse {
-  data: TagHierarchy[]
-  count: number
 }
 
 export interface TagGroupsResponse {
@@ -220,10 +169,9 @@ export interface TagMutationResult {
 
 // バルク操作用
 export interface BulkTagOperation {
-  action: 'create' | 'update' | 'delete' | 'move'
+  action: 'create' | 'update' | 'delete'
   tag_ids?: string[]
   data?: Partial<Tag>
-  new_parent_id?: string | null
 }
 
 export interface BulkTagResult {
@@ -259,7 +207,6 @@ export interface TagSearchResult {
   matches: {
     name: boolean
     description: boolean
-    path: boolean
   }
   score: number
 }
@@ -267,18 +214,16 @@ export interface TagSearchResult {
 // タグ提案用
 export interface TagSuggestion {
   tag: Tag
-  reason: 'frequently_used' | 'similar_context' | 'hierarchy_completion'
+  reason: 'frequently_used' | 'similar_context'
   confidence: number
 }
 
 // タグ統計情報
 export interface TagStatistics {
   total_tags: number
-  tags_by_level: Record<TagLevel, number>
   most_used_tags: TagUsageStats[]
   recent_tags: Tag[]
   inactive_tags: Tag[]
-  orphaned_tags: Tag[]
 }
 
 // タグバリデーション結果
@@ -300,4 +245,21 @@ export interface TagMergeResult {
   success: boolean
   merged_associations: number
   errors: TagError[]
+}
+
+// 後方互換性のための型エイリアス（段階的に削除予定）
+/** @deprecated フラット構造に移行。Tagを直接使用してください */
+export type TagWithChildren = Tag
+/** @deprecated フラット構造に移行。不要です */
+export type TagLevel = 0 | 1
+/** @deprecated フラット構造に移行。不要です */
+export interface TagHierarchy {
+  id: string
+  name: string
+  color: string
+}
+/** @deprecated フラット構造に移行。不要です */
+export interface TagTreeNode {
+  tag: Tag
+  isExpanded?: boolean
 }

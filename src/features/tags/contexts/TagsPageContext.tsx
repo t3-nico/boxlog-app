@@ -21,11 +21,11 @@ import { toast } from 'sonner'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useReorderTagGroups, useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useUpdateTag } from '@/features/tags/hooks/use-tags'
-import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { Tag, TagGroup } from '@/features/tags/types'
 
 interface TagsPageContextValue {
-  tags: TagWithChildren[]
-  setTags: (tags: TagWithChildren[]) => void
+  tags: Tag[]
+  setTags: (tags: Tag[]) => void
   isLoading: boolean
   setIsLoading: (loading: boolean) => void
   isCreatingGroup: boolean
@@ -33,7 +33,7 @@ interface TagsPageContextValue {
   isCreatingTag: boolean
   setIsCreatingTag: (creating: boolean) => void
   // ドラッグ中のタグ
-  draggingTag: TagWithChildren | null
+  draggingTag: Tag | null
   // グループソート用
   activeGroup: TagGroup | null
   reorderedGroups: TagGroup[]
@@ -59,11 +59,11 @@ interface TagsPageProviderProps {
 
 export function TagsPageProvider({ children }: TagsPageProviderProps) {
   const t = useTranslations()
-  const [tags, setTags] = useState<TagWithChildren[]>([])
+  const [tags, setTags] = useState<Tag[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isCreatingGroup, setIsCreatingGroup] = useState(false)
   const [isCreatingTag, setIsCreatingTag] = useState(false)
-  const [draggingTag, setDraggingTag] = useState<TagWithChildren | null>(null)
+  const [draggingTag, setDraggingTag] = useState<Tag | null>(null)
 
   // グループソート用の状態
   const { data: groups = [] as TagGroup[] } = useTagGroups()

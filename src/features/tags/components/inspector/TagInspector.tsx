@@ -16,17 +16,8 @@ import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors'
-import type { TagWithChildren } from '@/features/tags/types'
-import {
-  Archive,
-  ChevronRight,
-  FileText,
-  Folder,
-  FolderX,
-  Merge,
-  Palette,
-  Trash2,
-} from 'lucide-react'
+import type { Tag } from '@/features/tags/types'
+import { Archive, ChevronRight, FileText, Folder, FolderX, Merge, Palette, Trash2 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { TAG_PRESET_COLORS } from '../../constants/colors'
@@ -62,76 +53,33 @@ export function TagInspector() {
     }
   }, [closeInspectorStore, pathname, router])
 
-  // タグデータ取得
-  const { data: tags = [], isLoading } = useTags(true)
+  // タグデータ取得（フラット）
+  const { data: tags = [], isLoading } = useTags()
   const { data: groups = [] } = useTagGroups()
 
-  // 現在のタグを取得
+  // 現在のタグを取得（フラット検索）
   const tag = useMemo(() => {
     if (!tagId) return null
-    // フラット化して検索
-    const findTag = (tags: TagWithChildren[]): TagWithChildren | null => {
-      for (const t of tags) {
-        if (t.id === tagId) return t
-        if (t.children) {
-          const found = findTag(t.children)
-          if (found) return found
-        }
-      }
-      return null
-    }
-    return findTag(tags)
+    return tags.find((t) => t.id === tagId) ?? null
   }, [tags, tagId])
 
-  // フラット化したタグリスト（ナビゲーション用）
-  const flatTags = useMemo(() => {
-    const result: TagWithChildren[] = []
-    const flatten = (tags: TagWithChildren[]) => {
-      for (const t of tags) {
-        if (t.is_active) {
-          result.push(t)
-          if (t.children) flatten(t.children)
-        }
-      }
-    }
-    flatten(tags)
-    return result
+  // アクティブなタグリスト（ナビゲーション用）
+  const activeTags = useMemo(() => {
+    return tags.filter((t) => t.is_active)
   }, [tags])
 
   // 現在のタグのインデックス
   const currentIndex = useMemo(() => {
-    return flatTags.findIndex((t) => t.id === tagId)
-  }, [flatTags, tagId])
+    return activeTags.findIndex((t) => t.id === tagId)
+  }, [activeTags, tagId])
 
   const hasPrevious = currentIndex > 0
-  const hasNext = currentIndex >= 0 && currentIndex < flatTags.length - 1
+  const hasNext = currentIndex >= 0 && currentIndex < activeTags.length - 1
 
   // タグに紐づくプランを取得
   const { data: plans = [], isLoading: isLoadingPlans } = usePlans(tag?.id ? { tagId: tag.id } : {}, {
     enabled: !!tag?.id,
   })
-
-  // 子タグ
-  const childTags = useMemo(() => {
-    if (!tag) return []
-    return tags.filter((t) => t.parent_id === tag.id && t.is_active)
-  }, [tags, tag])
-
-  // 親タグ
-  const parentTag = useMemo(() => {
-    if (!tag?.parent_id) return null
-    const findTag = (tags: TagWithChildren[]): TagWithChildren | null => {
-      for (const t of tags) {
-        if (t.id === tag.parent_id) return t
-        if (t.children) {
-          const found = findTag(t.children)
-          if (found) return found
-        }
-      }
-      return null
-    }
-    return findTag(tags)
-  }, [tags, tag])
 
   // 所属グループ
   const tagGroup = useMemo(() => {
@@ -160,17 +108,17 @@ export function TagInspector() {
   // ナビゲーション
   const goToPrevious = useCallback(() => {
     if (hasPrevious) {
-      const prevTag = flatTags[currentIndex - 1]
+      const prevTag = activeTags[currentIndex - 1]
       if (prevTag) openInspector(prevTag.id)
     }
-  }, [hasPrevious, flatTags, currentIndex, openInspector])
+  }, [hasPrevious, activeTags, currentIndex, openInspector])
 
   const goToNext = useCallback(() => {
     if (hasNext) {
-      const nextTag = flatTags[currentIndex + 1]
+      const nextTag = activeTags[currentIndex + 1]
       if (nextTag) openInspector(nextTag.id)
     }
-  }, [hasNext, flatTags, currentIndex, openInspector])
+  }, [hasNext, activeTags, currentIndex, openInspector])
 
   // 自動保存関数（デバウンス処理付き）
   const autoSave = useCallback(
@@ -347,21 +295,6 @@ export function TagInspector() {
 
               {/* タグ情報 */}
               <div className="px-6 pt-4 pb-2">
-                {/* 親タグへの導線 */}
-                {parentTag && (
-                  <button
-                    onClick={() => openInspector(parentTag.id)}
-                    className="text-muted-foreground hover:text-foreground mb-2 flex items-center gap-1 text-sm transition-colors"
-                  >
-                    <span
-                      className="h-2 w-2 rounded-full"
-                      style={{ backgroundColor: parentTag.color || DEFAULT_TAG_COLOR }}
-                    />
-                    {parentTag.name}
-                    <span className="text-muted-foreground/50">/</span>
-                  </button>
-                )}
-
                 {/* タグ名とカラー */}
                 <div className="flex items-center gap-3">
                   <div className="relative">
@@ -453,28 +386,6 @@ export function TagInspector() {
                   </span>
                 </div>
               </div>
-
-              {/* 子タグ */}
-              {childTags.length > 0 && (
-                <div className="border-border/50 border-t px-6 py-4">
-                  <h3 className="text-muted-foreground mb-3 text-sm font-medium">子タグ ({childTags.length})</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {childTags.map((childTag) => (
-                      <button
-                        key={childTag.id}
-                        onClick={() => openInspector(childTag.id)}
-                        className="hover:bg-state-hover flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition-colors"
-                      >
-                        <span
-                          className="h-2 w-2 rounded-full"
-                          style={{ backgroundColor: childTag.color || DEFAULT_TAG_COLOR }}
-                        />
-                        {childTag.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* 紐づくプラン */}
               <div className="border-border/50 border-t px-6 py-4">
