@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 
-import { endOfWeek, startOfWeek } from 'date-fns'
+import { addDays, endOfWeek, startOfWeek } from 'date-fns'
 
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
@@ -34,18 +34,39 @@ export function CalendarSidebar() {
   const [showMedium, setShowMedium] = useState(true)
   const [showLow, setShowLow] = useState(true)
 
-  // 週表示の場合、表示中の週の範囲を計算
+  // ビュータイプに応じた表示範囲を計算
   const displayRange = useMemo(() => {
     if (!navigation?.currentDate || !navigation?.viewType) return undefined
 
-    // 週表示の場合のみハイライト
-    const weekViewTypes = ['week', 'week-no-weekend']
-    if (!weekViewTypes.includes(navigation.viewType)) return undefined
+    const { currentDate, viewType } = navigation
 
-    const start = startOfWeek(navigation.currentDate, { weekStartsOn: 1 })
-    const end = endOfWeek(navigation.currentDate, { weekStartsOn: 1 })
+    switch (viewType) {
+      case 'day':
+        // 日表示: 1日のみ
+        return { start: currentDate, end: currentDate }
 
-    return { start, end }
+      case '3day':
+        // 3日表示: 当日から3日間
+        return { start: currentDate, end: addDays(currentDate, 2) }
+
+      case '5day':
+        // 5日表示: 当日から5日間
+        return { start: currentDate, end: addDays(currentDate, 4) }
+
+      case 'week':
+        // 週表示: 月曜から日曜
+        return {
+          start: startOfWeek(currentDate, { weekStartsOn: 1 }),
+          end: endOfWeek(currentDate, { weekStartsOn: 1 }),
+        }
+
+      case 'agenda':
+        // アジェンダ表示: 範囲なし（単一日付選択のみ）
+        return undefined
+
+      default:
+        return undefined
+    }
   }, [navigation?.currentDate, navigation?.viewType])
 
   const handlePriorityToggle = (priority: 'high' | 'medium' | 'low') => {
