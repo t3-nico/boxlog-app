@@ -49,12 +49,6 @@ export const WeekContent = ({
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onPlanUpdate) return
 
-      console.log('🔧 WeekContent: プラン更新要求:', {
-        planId,
-        startTime: updates.startTime.toISOString(),
-        endTime: updates.endTime.toISOString(),
-      })
-
       // handleUpdatePlan形式で呼び出し
       await onPlanUpdate(planId, {
         startDate: updates.startTime,
@@ -244,14 +238,6 @@ export const WeekContent = ({
               // そのため、親コンポーネントから渡されるplans配列から探す
               // 現在はplansには当日のプランのみ含まれているため、
               // WeekGridから全プランを渡すよう修正が必要
-
-              // 一時的な解決策として、コンソールログで状況を確認
-              console.log('🔧 他日付カラムでのドラッグプラン表示試行:', {
-                draggedEventId: dragState.draggedEventId,
-                targetDateIndex: dragState.targetDateIndex,
-                currentDayIndex: dayIndex,
-                hasSnappedPosition: !!dragState.snappedPosition,
-              })
 
               // Implementation tracked in Issue #89
               return null

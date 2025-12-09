@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-@import 'react-day-picker/style.css';
 
 /* Tailwind Plugins */
 @plugin '@tailwindcss/typography';
@@ -880,122 +879,8 @@ html.dark {
 }
 
 /* ============================================
- * react-day-picker カスタムスタイル
+ * 時刻input内部のWebKit要素のギャップ削除
  * ============================================ */
-.rdp {
-  --rdp-accent-color: var(--color-primary);
-  --rdp-background-color: var(--color-state-active);
-  --rdp-accent-background-color: var(--color-primary);
-  --rdp-outline: 2px solid var(--color-ring);
-  --rdp-outline-selected: 2px solid var(--color-primary);
-
-  /* セルサイズを32pxに統一 */
-  --rdp-day-height: 2rem;
-  --rdp-day-width: 2rem;
-  --rdp-day_button-height: 2rem;
-  --rdp-day_button-width: 2rem;
-}
-
-/* セルサイズを強制的に32pxに */
-.rdp-day {
-  width: 2rem !important;
-  height: 2rem !important;
-  min-width: 2rem !important;
-  min-height: 2rem !important;
-  max-width: 2rem !important;
-  max-height: 2rem !important;
-}
-
-.rdp-day_button {
-  width: 2rem !important;
-  height: 2rem !important;
-  min-width: 2rem !important;
-  min-height: 2rem !important;
-  max-width: 2rem !important;
-  max-height: 2rem !important;
-  font-size: 14px !important;
-  font-weight: normal !important;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* 選択された日付（今日以外） - state-active色の背景 + 角丸 */
-.rdp-day_button[data-selected-single='true']:not([data-today='true']) {
-  background-color: var(--color-state-active) !important;
-  color: var(--color-state-active-foreground) !important;
-  border-radius: 0.375rem !important;
-}
-
-/* 今日の日付 - primary色の背景 + 白文字 + 角丸（選択されても継続） */
-.rdp-day_button[data-today='true'] {
-  background-color: var(--color-primary) !important;
-  color: oklch(1 0 0) !important;
-  border-radius: 0.375rem !important;
-}
-
-/* ホバー時 */
-.rdp-day_button:hover:not([data-today='true']):not([aria-disabled='true']) {
-  background-color: var(--color-state-active) !important;
-  color: var(--color-state-active-foreground) !important;
-  border-radius: 0.375rem !important;
-}
-
-/* フォーカス時 - リングなし */
-.rdp-day_button:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* ドロップダウン（月・年選択） */
-.rdp-dropdowns select,
-.rdp-dropdown_root {
-  color: var(--color-foreground);
-  border-color: var(--color-input);
-}
-
-/* 月表示ラベル */
-.rdp-month_caption,
-.rdp-caption_label {
-  color: var(--color-foreground);
-}
-
-/* 曜日ヘッダー */
-.rdp-weekday {
-  color: var(--color-muted-foreground);
-}
-
-/* ナビゲーションボタン */
-.rdp-button_previous,
-.rdp-button_next {
-  color: oklch(1 0 0);
-}
-
-.rdp-button_previous svg,
-.rdp-button_next svg {
-  color: oklch(1 0 0);
-}
-
-.rdp-button_previous:hover,
-.rdp-button_next:hover {
-  background-color: var(--color-state-active);
-}
-
-/* 無効な日付 */
-.rdp-day_button[aria-disabled='true'] {
-  color: var(--color-muted-foreground);
-  opacity: 0.5;
-}
-
-/* ============================================
- * react-day-picker gap削除（時刻入力のスペース問題修正）
- * ============================================ */
-/* .rdp-month の gap-4 を強制的に削除 */
-.rdp-month {
-  gap: 0 !important;
-}
-
-/* 時刻input内部のWebKit要素のギャップ削除 */
 input[type='time']::-webkit-datetime-edit-fields-wrapper {
   gap: 0 !important;
 }

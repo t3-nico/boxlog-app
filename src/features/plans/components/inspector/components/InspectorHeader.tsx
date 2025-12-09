@@ -7,7 +7,7 @@ import {
   ExternalLink,
   Link,
   MoreHorizontal,
-  PanelRight,
+  PanelRightClose,
   Save,
   Trash2,
 } from 'lucide-react'
@@ -73,7 +73,7 @@ export function InspectorHeader({
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose} aria-label="閉じる">
-                <PanelRight className="h-4 w-4" />
+                <PanelRightClose className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">

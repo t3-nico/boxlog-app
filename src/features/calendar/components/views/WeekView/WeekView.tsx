@@ -66,18 +66,6 @@ export const WeekView = ({
     return showWeekends ? weekDates : weekDates.filter((day) => !isWeekend(day))
   }, [weekDates, showWeekends])
 
-  // WeekView診断ログ
-  console.log('[WeekView] コンポーネント受信データ:', {
-    receivedEventsCount: events?.length || 0,
-    startDate: weekStartDate.toDateString(),
-    generatedDatesCount: weekDates.length,
-    eventsByDateKeys: Object.keys(eventsByDate),
-    eventsByDateCounts: Object.entries(eventsByDate).map(([key, events]) => ({
-      date: key,
-      count: events.length,
-    })),
-  })
-
   // 初期スクロールはScrollableCalendarLayoutに委譲
 
   return (

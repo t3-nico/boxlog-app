@@ -8,40 +8,15 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { useUserSettings } from '@/features/settings/hooks/useUserSettings'
 import { formatHour } from '@/features/settings/utils/timezone-utils'
 import { useTranslations } from 'next-intl'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
 
-interface CalendarAutoSaveSettings {
-  timezone: string
-  timeFormat: '12h' | '24h'
-  weekStartsOn: 0 | 1 | 6
-  showWeekNumbers: boolean
-  showDeclinedEvents: boolean
-  defaultDuration: number
-  snapInterval: 5 | 10 | 15 | 30
-  businessHours: {
-    start: number
-    end: number
-  }
-}
-
 export function CalendarSettings() {
-  // selector化: 必要な値だけ監視
-  const timezone = useCalendarSettingsStore((state) => state.timezone)
-  const timeFormat = useCalendarSettingsStore((state) => state.timeFormat)
-  const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn)
-  const showWeekNumbers = useCalendarSettingsStore((state) => state.showWeekNumbers)
-  const showDeclinedEvents = useCalendarSettingsStore((state) => state.showDeclinedEvents)
-  const defaultDuration = useCalendarSettingsStore((state) => state.defaultDuration)
-  const snapInterval = useCalendarSettingsStore((state) => state.snapInterval)
-  const businessHours = useCalendarSettingsStore((state) => state.businessHours)
-  const updateSettings = useCalendarSettingsStore((state) => state.updateSettings)
-  const resetSettings = useCalendarSettingsStore((state) => state.resetSettings)
+  const { settings, saveSettings, isSaving, isLoading } = useUserSettings()
   const t = useTranslations()
 
   const formatTimeWithSettings = (date: Date, timeFormat: '12h' | '24h') => {
@@ -49,35 +24,11 @@ export function CalendarSettings() {
     return format(date, formatString)
   }
 
-  // 自動保存システム
-  const autoSave = useAutoSaveSettings<CalendarAutoSaveSettings>({
-    initialValues: {
-      timezone,
-      timeFormat,
-      weekStartsOn,
-      showWeekNumbers,
-      showDeclinedEvents,
-      defaultDuration,
-      snapInterval,
-      businessHours,
-    },
-    onSave: async (values) => {
-      // カレンダー設定更新API呼び出しシミュレーション
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      console.log('Saving calendar settings:', values)
-      // 実際のstore更新
-      updateSettings(values)
-    },
-    successMessage: t('settings.calendar.settingsSaved'),
-    debounceMs: 800,
-  })
-
   // jsx-no-bind optimization: Reset settings handler
   const handleResetSettings = useCallback(() => {
     if (confirm('カレンダー設定をすべてデフォルトに戻しますか？')) {
-      resetSettings()
-      // 自動保存の値もリセット
-      autoSave.updateValues({
+      settings.resetSettings()
+      saveSettings({
         timezone: 'Asia/Tokyo',
         timeFormat: '24h',
         weekStartsOn: 1,
@@ -88,85 +39,93 @@ export function CalendarSettings() {
         businessHours: { start: 9, end: 18 },
       })
     }
-  }, [resetSettings, autoSave])
+  }, [settings, saveSettings])
 
   // Handler functions
   const handleTimezoneChange = useCallback(
     (value: string) => {
-      autoSave.updateValue('timezone', value)
+      saveSettings({ timezone: value })
     },
-    [autoSave]
+    [saveSettings]
   )
 
   const handleTimeFormatChange = useCallback(
     (value: string) => {
-      autoSave.updateValue('timeFormat', value as '12h' | '24h')
+      saveSettings({ timeFormat: value as '12h' | '24h' })
     },
-    [autoSave]
+    [saveSettings]
   )
 
   const handleWeekStartsOnChange = useCallback(
     (value: string) => {
-      autoSave.updateValue('weekStartsOn', Number(value) as 0 | 1 | 6)
+      saveSettings({ weekStartsOn: Number(value) as 0 | 1 | 6 })
     },
-    [autoSave]
+    [saveSettings]
   )
 
   const handleShowWeekNumbersChange = useCallback(
     (checked: boolean) => {
-      autoSave.updateValue('showWeekNumbers', checked)
+      saveSettings({ showWeekNumbers: checked })
     },
-    [autoSave]
+    [saveSettings]
   )
 
   const handleShowDeclinedEventsChange = useCallback(
     (checked: boolean) => {
-      autoSave.updateValue('showDeclinedEvents', checked)
+      saveSettings({ showDeclinedEvents: checked })
     },
-    [autoSave]
+    [saveSettings]
   )
 
   const handleDefaultDurationChange = useCallback(
     (value: string) => {
-      autoSave.updateValue('defaultDuration', Number(value))
+      saveSettings({ defaultDuration: Number(value) })
     },
-    [autoSave]
+    [saveSettings]
   )
 
   const handleSnapIntervalChange = useCallback(
     (value: string) => {
-      autoSave.updateValue('snapInterval', Number(value) as 5 | 10 | 15 | 30)
+      saveSettings({ snapInterval: Number(value) as 5 | 10 | 15 | 30 })
     },
-    [autoSave]
+    [saveSettings]
   )
 
   const handleBusinessHoursStartChange = useCallback(
     (value: string) => {
-      autoSave.updateValue('businessHours', {
-        ...autoSave.values.businessHours,
-        start: Number(value),
+      saveSettings({
+        businessHours: {
+          ...settings.businessHours,
+          start: Number(value),
+        },
       })
     },
-    [autoSave]
+    [saveSettings, settings.businessHours]
   )
 
   const handleBusinessHoursEndChange = useCallback(
     (value: string) => {
-      autoSave.updateValue('businessHours', {
-        ...autoSave.values.businessHours,
-        end: Number(value),
+      saveSettings({
+        businessHours: {
+          ...settings.businessHours,
+          end: Number(value),
+        },
       })
     },
-    [autoSave]
+    [saveSettings, settings.businessHours]
   )
+
+  if (isLoading) {
+    return <div className="animate-pulse space-y-6">Loading...</div>
+  }
 
   return (
     <div className="space-y-6">
       {/* Time & Timezone Section */}
-      <SettingsCard title={t('settings.calendar.timeAndTimezone')} isSaving={autoSave.isSaving}>
+      <SettingsCard title={t('settings.calendar.timeAndTimezone')} isSaving={isSaving}>
         <div className="space-y-4">
           <SettingField label={t('settings.calendar.timezone')}>
-            <Select value={autoSave.values.timezone} onValueChange={handleTimezoneChange}>
+            <Select value={settings.timezone} onValueChange={handleTimezoneChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectTimezone')} />
               </SelectTrigger>
@@ -180,7 +139,7 @@ export function CalendarSettings() {
           </SettingField>
 
           <SettingField label={t('settings.calendar.timeFormat')}>
-            <Select value={autoSave.values.timeFormat} onValueChange={handleTimeFormatChange}>
+            <Select value={settings.timeFormat} onValueChange={handleTimeFormatChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectTimeFormat')} />
               </SelectTrigger>
@@ -197,7 +156,7 @@ export function CalendarSettings() {
             <div className="space-y-1">
               <p className="font-medium">
                 {t('settings.calendar.currentTime', {
-                  time: formatTimeWithSettings(new Date(), autoSave.values.timeFormat),
+                  time: formatTimeWithSettings(new Date(), settings.timeFormat),
                 })}
               </p>
               <p className="text-muted-foreground text-sm">
@@ -209,10 +168,10 @@ export function CalendarSettings() {
       </SettingsCard>
 
       {/* Week & Calendar Display Section */}
-      <SettingsCard title={t('settings.calendar.weekAndCalendar')} isSaving={autoSave.isSaving}>
+      <SettingsCard title={t('settings.calendar.weekAndCalendar')} isSaving={isSaving}>
         <div className="space-y-4">
           <SettingField label={t('settings.calendar.weekStartsOn')}>
-            <Select value={String(autoSave.values.weekStartsOn)} onValueChange={handleWeekStartsOnChange}>
+            <Select value={String(settings.weekStartsOn)} onValueChange={handleWeekStartsOnChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectStartDay')} />
               </SelectTrigger>
@@ -225,20 +184,20 @@ export function CalendarSettings() {
           </SettingField>
 
           <SettingField label={t('settings.calendar.showWeekNumbers')}>
-            <Switch checked={autoSave.values.showWeekNumbers} onCheckedChange={handleShowWeekNumbersChange} />
+            <Switch checked={settings.showWeekNumbers} onCheckedChange={handleShowWeekNumbersChange} />
           </SettingField>
 
           <SettingField label={t('settings.calendar.showDeclinedEvents')}>
-            <Switch checked={autoSave.values.showDeclinedEvents} onCheckedChange={handleShowDeclinedEventsChange} />
+            <Switch checked={settings.showDeclinedEvents} onCheckedChange={handleShowDeclinedEventsChange} />
           </SettingField>
         </div>
       </SettingsCard>
 
       {/* Default Task Settings Section */}
-      <SettingsCard title={t('settings.calendar.defaultTaskSettings')} isSaving={autoSave.isSaving}>
+      <SettingsCard title={t('settings.calendar.defaultTaskSettings')} isSaving={isSaving}>
         <div className="space-y-4">
           <SettingField label={t('settings.calendar.defaultDuration')}>
-            <Select value={String(autoSave.values.defaultDuration)} onValueChange={handleDefaultDurationChange}>
+            <Select value={String(settings.defaultDuration)} onValueChange={handleDefaultDurationChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectDuration')} />
               </SelectTrigger>
@@ -253,7 +212,7 @@ export function CalendarSettings() {
           </SettingField>
 
           <SettingField label={t('settings.calendar.snapInterval')}>
-            <Select value={String(autoSave.values.snapInterval)} onValueChange={handleSnapIntervalChange}>
+            <Select value={String(settings.snapInterval)} onValueChange={handleSnapIntervalChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectInterval')} />
               </SelectTrigger>
@@ -269,17 +228,17 @@ export function CalendarSettings() {
       </SettingsCard>
 
       {/* Business Hours Section */}
-      <SettingsCard title={t('settings.calendar.businessHours')} isSaving={autoSave.isSaving}>
+      <SettingsCard title={t('settings.calendar.businessHours')} isSaving={isSaving}>
         <div className="space-y-4">
           <SettingField label={t('settings.calendar.businessHoursStart')}>
-            <Select value={String(autoSave.values.businessHours.start)} onValueChange={handleBusinessHoursStartChange}>
+            <Select value={String(settings.businessHours.start)} onValueChange={handleBusinessHoursStartChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectStartTime')} />
               </SelectTrigger>
               <SelectContent>
                 {Array.from({ length: 24 }, (_, i) => (
                   <SelectItem key={i} value={String(i)}>
-                    {formatHour(i, autoSave.values.timeFormat)}
+                    {formatHour(i, settings.timeFormat)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -287,14 +246,14 @@ export function CalendarSettings() {
           </SettingField>
 
           <SettingField label={t('settings.calendar.businessHoursEnd')}>
-            <Select value={String(autoSave.values.businessHours.end)} onValueChange={handleBusinessHoursEndChange}>
+            <Select value={String(settings.businessHours.end)} onValueChange={handleBusinessHoursEndChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectEndTime')} />
               </SelectTrigger>
               <SelectContent>
                 {Array.from({ length: 24 }, (_, i) => (
                   <SelectItem key={i} value={String(i)}>
-                    {formatHour(i, autoSave.values.timeFormat)}
+                    {formatHour(i, settings.timeFormat)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -305,8 +264,8 @@ export function CalendarSettings() {
           <div className="bg-surface-container rounded-lg p-4">
             <p className="text-muted-foreground mb-2 text-sm">{t('settings.calendar.businessHoursPreview')}</p>
             <p className="font-medium">
-              {formatHour(autoSave.values.businessHours.start, autoSave.values.timeFormat)} -{' '}
-              {formatHour(autoSave.values.businessHours.end, autoSave.values.timeFormat)}
+              {formatHour(settings.businessHours.start, settings.timeFormat)} -{' '}
+              {formatHour(settings.businessHours.end, settings.timeFormat)}
             </p>
           </div>
         </div>

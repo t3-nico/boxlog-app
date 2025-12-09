@@ -1,10 +1,9 @@
-// @ts-nocheck
-// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
 import { useEffect, useMemo } from 'react'
 
-import { useplans } from '@/features/plans/hooks/usePlans'
+import { usePlans } from '@/features/plans/hooks/usePlans'
+import type { Plan } from '@/features/plans/types/plan'
 import { logger } from '@/lib/logger'
 
 import { calculateViewDateRange } from '../../../lib/view-helpers'
@@ -17,16 +16,22 @@ interface UseCalendarDataOptions {
   currentDate: Date
 }
 
+interface PlanWithPlanTags extends Plan {
+  plan_tags?: Array<{ tag_id: string; tags: { id: string; name: string; color: string } | null }>
+}
+
+// tRPCから返る型（API定義から推論される）
+type PlansApiResult = ReturnType<typeof usePlans>['data']
+
 interface UseCalendarDataResult {
   viewDateRange: ViewDateRange
-  filteredTasks: never[]
   filteredEvents: CalendarPlan[]
-  plansData: unknown
+  plansData: PlansApiResult
 }
 
 export function useCalendarData({ viewType, currentDate }: UseCalendarDataOptions): UseCalendarDataResult {
   // plansを取得（リアルタイム性最優化済み）
-  const { data: plansData } = useplans()
+  const { data: plansData } = usePlans()
 
   // デバッグ: plansDataの更新を検知
   useEffect(() => {
@@ -44,28 +49,8 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
 
   // ビューに応じた期間計算
   const viewDateRange = useMemo(() => {
-    const dateRange = calculateViewDateRange(viewType, currentDate)
-
-    // TwoWeekView診断ログ
-    if (viewType === '2week') {
-      logger.log('[useCalendarData] 2week範囲計算:', {
-        viewType,
-        currentDate: currentDate.toDateString(),
-        calculatedRange: {
-          start: dateRange.start.toDateString(),
-          end: dateRange.end.toDateString(),
-          dayCount: dateRange.days.length,
-        },
-      })
-    }
-
-    return dateRange
+    return calculateViewDateRange(viewType, currentDate)
   }, [viewType, currentDate])
-
-  // 表示範囲のタスクを取得
-  const filteredTasks = useMemo(() => {
-    return []
-  }, [])
 
   // 表示範囲のイベントを取得してCalendarPlan型に変換（削除済みを除外）
   const filteredEvents = useMemo(() => {
@@ -75,12 +60,10 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
     }
 
     // plan_tags を tags に変換
-    const plansWithTags = (
-      plansData as unknown as Array<plan & { plan_tags?: Array<{ tag_id: string; tags: unknown }> }>
-    ).map((plan) => {
-      const tags = plan.plan_tags?.map((tt) => tt.tags).filter(Boolean) ?? []
-      const { plan_tags, ...planData } = plan
-      return { ...planData, tags } as plan & { tags: unknown[] }
+    const plansWithTags = (plansData as PlanWithPlanTags[]).map((plan) => {
+      const tags = plan.plan_tags?.map((pt) => pt.tags).filter(Boolean) ?? []
+      const { plan_tags: _plan_tags, ...planData } = plan
+      return { ...planData, tags } as Plan & { tags: Array<{ id: string; name: string; color: string }> }
     })
 
     // start_time/end_timeが設定されているplanのみを抽出
@@ -89,7 +72,9 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
     })
 
     // planをCalendarPlanに変換
-    const calendarEvents = plansToCalendarPlans(plansWithTime as plan[])
+    const calendarEvents = plansToCalendarPlans(
+      plansWithTime as Array<Plan & { tags: Array<{ id: string; name: string; color: string }> }>
+    )
 
     // 表示範囲内のイベントのみをフィルタリング
     const startDateOnly = new Date(
@@ -104,6 +89,10 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
     )
 
     const filtered = calendarEvents.filter((event) => {
+      // startDate/endDate が null の場合はスキップ
+      if (!event.startDate || !event.endDate) {
+        return false
+      }
       const eventStartDateOnly = new Date(
         event.startDate.getFullYear(),
         event.startDate.getMonth(),
@@ -128,8 +117,8 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
       },
       sampleEvents: filtered.slice(0, 3).map((e) => ({
         title: e.title,
-        startDate: e.startDate.toISOString(),
-        endDate: e.endDate.toISOString(),
+        startDate: e.startDate?.toISOString() ?? null,
+        endDate: e.endDate?.toISOString() ?? null,
         tags: e.tags,
       })),
     })
@@ -139,7 +128,6 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
 
   return {
     viewDateRange,
-    filteredTasks,
     filteredEvents,
     plansData,
   }

@@ -6,20 +6,7 @@
  */
 
 // 統一された型定義を再エクスポート
-export type {
-  ApiError,
-  ApiResponse,
-  CreateTaskRequest,
-  Tag,
-  TagWithChildren,
-  Task,
-  TaskPriority,
-  TaskStatus,
-  UpdateTaskRequest,
-} from './unified'
-
-// TaskTypeはtask/core.tsから再エクスポート
-export type { TaskType } from './task/core'
+export type { ApiError, ApiResponse, Tag, TagWithChildren } from './unified'
 
 // 検索可能な共通インターフェース
 export interface Searchable {
@@ -112,8 +99,8 @@ export interface PaginatedResponse<T = unknown> {
 // フィルター関連の型
 export interface FilterOptions {
   tags?: string[]
-  status?: import('./unified').TaskStatus[]
-  priority?: import('./unified').TaskPriority[]
+  status?: string[]
+  priority?: string[]
   dateRange?: {
     start: Date
     end: Date

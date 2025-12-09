@@ -1,4 +1,4 @@
-export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | '2week' | 'month' | 'agenda'
+export type CalendarViewType = 'day' | '3day' | '5day' | 'week' | 'agenda'
 
 export interface CalendarViewProps {
   className?: string
@@ -20,58 +20,6 @@ export interface CalendarHeaderProps {
 export interface ViewSelectorProps {
   value: CalendarViewType
   onChange: (view: CalendarViewType) => void
-}
-
-// 古い型定義（将来削除予定 - useRecordsStoreで使用中）
-export interface Task {
-  id: string
-  title: string
-  planned_start: Date | null
-  planned_duration: number
-  status: 'pending' | 'in_progress' | 'completed'
-  priority: 'low' | 'medium' | 'high'
-  description?: string
-  tags?: string[]
-  created_at: Date
-  updated_at: Date
-  planned_end?: string
-  memo?: string
-  record_id?: string
-}
-
-export interface TaskRecord {
-  id: string
-  user_id: string
-  task_id?: string
-  title: string
-  actual_start: string
-  actual_end: string
-  actual_duration: number
-  satisfaction?: 1 | 2 | 3 | 4 | 5
-  tags?: string[]
-  memo?: string
-  interruptions?: number
-  focus_level?: 1 | 2 | 3 | 4 | 5
-  energy_level?: 1 | 2 | 3 | 4 | 5
-  created_at: string
-  updated_at: string
-}
-
-export interface RecordAdjustments {
-  actualStart?: Date
-  actualEnd?: Date
-  satisfaction?: number
-  focusLevel?: number
-  energyLevel?: number
-  interruptions?: number
-}
-
-export interface RecordStats {
-  plannedHours: number
-  actualHours: number
-  completionRate: number
-  avgSatisfaction: number
-  unplannedTasks: number
 }
 
 // Calendar Plan type (プランデータ)

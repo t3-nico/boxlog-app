@@ -2,7 +2,6 @@ import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
 import { CreateTagInput, Tag, UpdateTagInput } from '@/features/tags/types'
-import type { Task } from '@/types'
 
 interface TagStore {
   tags: Tag[]
@@ -22,10 +21,6 @@ interface TagStore {
   getTagHierarchy: () => Tag[]
   getTagPath: (tagId: string) => string
   canAddChild: (parentId: string) => boolean
-
-  // Usage helpers
-  getTaskCount: (tasks: Task[], tagId: string) => number
-  getUsedTags: (tasks: Task[]) => Tag[]
 }
 
 const generateId = (): string => {
@@ -243,23 +238,6 @@ export const useTagStore = create<TagStore>()(
         getAllTags: () => {
           const { tags } = get()
           return tags
-        },
-
-        getTaskCount: (tasks, tagId) => {
-          return tasks.filter((task) => task.tags && task.tags.includes(tagId)).length
-        },
-
-        getUsedTags: (tasks) => {
-          const { tags } = get()
-          const usedTagIds = new Set<string>()
-
-          tasks.forEach((task) => {
-            if (task.tags) {
-              task.tags.forEach((tagId) => usedTagIds.add(tagId))
-            }
-          })
-
-          return tags.filter((tag) => usedTagIds.has(tag.id))
         },
 
         // Hierarchy helpers

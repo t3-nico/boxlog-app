@@ -7,13 +7,12 @@ import {
   isSameDay,
   isToday,
   isWeekend,
-  isWithinInterval,
   startOfWeek,
   subDays,
   subWeeks,
 } from 'date-fns'
 
-import type { CalendarViewType, Task, ViewDateRange } from '../types/calendar.types'
+import type { CalendarViewType, ViewDateRange } from '../types/calendar.types'
 
 import type { CalendarTask } from './time-grid-helpers'
 
@@ -306,19 +305,4 @@ export function getPreviousPeriod(viewType: CalendarViewType, currentDate: Date)
     default:
       return subDays(currentDate, 1)
   }
-}
-
-/**
- * 日付範囲内のタスクをフィルタリング
- */
-export function filterTasksForDateRange(tasks: Task[], dateRange: ViewDateRange): Task[] {
-  return tasks.filter((task) => {
-    if (!task.planned_start) return false
-
-    const taskDate = new Date(task.planned_start)
-    return isWithinInterval(taskDate, {
-      start: dateRange.start,
-      end: dateRange.end,
-    })
-  })
 }

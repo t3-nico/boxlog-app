@@ -1,8 +1,10 @@
 // Calendar UI hooks
 export { useCalendarLayout } from './useCalendarLayout'
-// Note: useEventPosition and useTimeGrid modules not found - commented out
-// export { useEventPosition } from './usePlanPosition'
-// export { useTimeGrid } from './useTimeGrid'
+
+// NOTE: usePlanPosition, useTimeGrid は views/shared/hooks/ に移動済み
+// 必要な場合は以下からインポート:
+// - @/features/calendar/components/views/shared/hooks/usePlanPosition
+// - @/features/calendar/components/views/shared/hooks/useTimeGrid
 
 // Types
 export type { Breakpoint, LayoutMode, SidebarWidth } from './useCalendarLayout'

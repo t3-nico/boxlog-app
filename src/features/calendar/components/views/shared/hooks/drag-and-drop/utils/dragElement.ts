@@ -62,15 +62,6 @@ export function updateDragElementPosition(
 
   dragElement.style.left = `${newLeft}px`
   dragElement.style.top = `${newTop}px`
-
-  console.log('🎯 ドラッグ要素移動:', {
-    deltaX,
-    deltaY,
-    newLeft,
-    newTop,
-    originalLeft: initialRect.left,
-    originalTop: initialRect.top,
-  })
 }
 
 /**

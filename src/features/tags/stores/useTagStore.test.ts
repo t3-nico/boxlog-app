@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import type { TagLevel } from '@/features/tags/types'
-import type { Task } from '@/types'
 
 import { useTagStore } from './useTagStore'
 
@@ -290,99 +289,6 @@ describe('useTagStore', () => {
 
       expect(level1Tags).toHaveLength(2)
       expect(level2Tags).toHaveLength(1)
-    })
-  })
-
-  describe('getTaskCount', () => {
-    it('タグが使用されているタスク数を取得できる', async () => {
-      await useTagStore.getState().addTag({
-        name: '仕事',
-        color: '#3b82f6',
-        level: 1,
-      })
-
-      const tagId = useTagStore.getState().tags[0]!.id
-
-      const tasks: Task[] = [
-        {
-          id: 'task-1',
-          title: 'タスク1',
-          status: 'scheduled',
-          priority: 'medium',
-          planned_start: new Date().toISOString(),
-          planned_duration: 60,
-          tags: [tagId],
-          user_id: 'user-1',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 'task-2',
-          title: 'タスク2',
-          status: 'scheduled',
-          priority: 'medium',
-          planned_start: new Date().toISOString(),
-          planned_duration: 60,
-          tags: [tagId],
-          user_id: 'user-1',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 'task-3',
-          title: 'タスク3',
-          status: 'scheduled',
-          priority: 'medium',
-          planned_start: new Date().toISOString(),
-          planned_duration: 60,
-          tags: [],
-          user_id: 'user-1',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ]
-
-      const count = useTagStore.getState().getTaskCount(tasks, tagId)
-
-      expect(count).toBe(2)
-    })
-  })
-
-  describe('getUsedTags', () => {
-    it('使用されているタグのみ取得できる', async () => {
-      await useTagStore.getState().addTag({
-        name: '仕事',
-        color: '#3b82f6',
-        level: 1,
-      })
-
-      await useTagStore.getState().addTag({
-        name: '個人',
-        color: '#22c55e',
-        level: 1,
-      })
-
-      const [tag1] = useTagStore.getState().tags
-
-      const tasks: Task[] = [
-        {
-          id: 'task-1',
-          title: 'タスク1',
-          status: 'scheduled',
-          priority: 'medium',
-          planned_start: new Date().toISOString(),
-          planned_duration: 60,
-          tags: [tag1!.id],
-          user_id: 'user-1',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ]
-
-      const usedTags = useTagStore.getState().getUsedTags(tasks)
-
-      expect(usedTags).toHaveLength(1)
-      expect(usedTags[0]!.id).toBe(tag1!.id)
     })
   })
 

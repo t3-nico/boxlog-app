@@ -1,13 +1,14 @@
-import type { Tag, Task } from './unified'
+import type { Plan } from '@/features/plans/types/plan'
+
+import type { Tag } from './unified'
 
 // 削除されたアイテムのデータ型
-// 注: Event型とSmartFolder型は削除済み
-export type DeletedItemData = Task | Tag
+export type DeletedItemData = Plan | Tag
 
 export interface DeletedItem {
   id: string
   originalId: string
-  type: 'task' | 'event' | 'tag'
+  type: 'plan' | 'tag'
   data: DeletedItemData
   deletedAt: Date
   deletedBy: string

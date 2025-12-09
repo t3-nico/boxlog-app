@@ -35,8 +35,8 @@ export function useCalendarLayout(options?: {
   initialDate?: Date
   persistSidebarState?: boolean
   sidebarStorageKey?: string
-  onViewChange?: (viewType: CalendarViewType) => void
-  onDateChange?: (date: Date) => void
+  onViewChange?: ((viewType: CalendarViewType) => void) | undefined
+  onDateChange?: ((date: Date) => void) | undefined
 }) {
   const {
     sidebarDefaultOpen = true,

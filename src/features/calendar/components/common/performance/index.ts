@@ -63,7 +63,6 @@ export function useIntegratedPerformanceOptimization() {
 
     // パフォーマンス閾値超過時の自動メモリクリーンアップ
     performanceMonitorInstance.onMetric('thresholdExceeded', (data: unknown) => {
-      // TODO(#389): dataの型を適切に定義する
       const typedData = data as { metric?: string; severity?: string }
       if (typedData.metric === 'memoryUsage' || typedData.severity === 'critical') {
         memoryOptimizerInstance.triggerCleanup('warning' as 'warning' | 'manual' | 'gc')

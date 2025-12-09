@@ -26,6 +26,16 @@ export function useDragAndDrop({
   const eventUpdateHandler = onEventUpdate || onPlanUpdate
   const eventClickHandler = onEventClick || onPlanClick
 
+  // eventClickHandler の最新参照を保持（クロージャー問題を回避）
+  // 重要: useRef の初期値として eventClickHandler を設定し、毎回の render で同期更新も行う
+  const eventClickHandlerRef = useRef(eventClickHandler)
+  // 同期的に毎レンダリングで最新値に更新（useEffect は非同期なので遅れる可能性がある）
+  eventClickHandlerRef.current = eventClickHandler
+
+  // events の最新参照を保持
+  const eventsRef = useRef(events)
+  eventsRef.current = events
+
   const [dragState, setDragState] = useState<DragState>(initialDragState)
   const dragDataRef = useRef<DragDataRef | null>(null)
 
@@ -113,10 +123,6 @@ export function useDragAndDrop({
         dragData.hasMoved = true
       }
 
-      if (Math.abs(deltaX) > 30) {
-        console.log('🔧 水平移動検出:', { deltaX, columnWidth: dragData.columnWidth })
-      }
-
       const targetDateIndex = calculateTargetDateIndex(
         constrainedX,
         dragData.originalDateIndex,
@@ -185,7 +191,46 @@ export function useDragAndDrop({
     completeDragOperation,
   ])
 
-  // マウスイベントリスナーを設定
+  // mouseup リスナー（即座にクリック検出用）
+  // handleMouseDown で dragDataRef がセットされた瞬間から mouseup を検出
+  const mouseUpListenerRef = useRef<((e: MouseEvent) => void) | null>(null)
+
+  // handleMouseDown をラップして、mouseup リスナーを即座に登録
+  const wrappedHandleMouseDown = useCallback(
+    (
+      eventId: string,
+      e: React.MouseEvent,
+      originalPosition: { top: number; left: number; width: number; height: number },
+      dateIndex?: number
+    ) => {
+      // 元の handleMouseDown を呼び出し
+      handleMouseDown(eventId, e, originalPosition, dateIndex)
+
+      // mouseup リスナーを即座に登録（クリック検出用）
+      // 重要: このコールバックで使う eventClickHandler を mouseDown 時点でキャプチャ
+      const capturedClickHandler = eventClickHandler
+      const capturedEvents = events
+
+      const onMouseUp = () => {
+        document.removeEventListener('mouseup', onMouseUp)
+        mouseUpListenerRef.current = null
+
+        // クリック判定（hasMoved が false の場合のみ）
+        if (dragDataRef.current && !dragDataRef.current.hasMoved && capturedClickHandler) {
+          const eventToClick = capturedEvents.find((ev) => ev.id === dragDataRef.current!.eventId)
+          if (eventToClick) {
+            capturedClickHandler(eventToClick)
+          }
+        }
+      }
+
+      document.addEventListener('mouseup', onMouseUp, { once: true })
+      mouseUpListenerRef.current = onMouseUp
+    },
+    [handleMouseDown, eventClickHandler, events]
+  )
+
+  // マウスイベントリスナーを設定（ドラッグ/リサイズ用）
   useEffect(() => {
     if (dragState.isDragging || dragState.isResizing) {
       document.addEventListener('mousemove', handleMouseMove, { passive: false })
@@ -202,7 +247,7 @@ export function useDragAndDrop({
   return {
     dragState,
     handlers: {
-      handleMouseDown,
+      handleMouseDown: wrappedHandleMouseDown,
       handleMouseMove,
       handleMouseUp,
       handleEventDrop,

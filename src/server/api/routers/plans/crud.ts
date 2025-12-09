@@ -147,6 +147,8 @@ export const plansCrudRouter = createTRPCRouter({
       ...removeUndefinedFields(input),
     }
 
+    console.log('[plans.create] Insert data:', JSON.stringify(insertData, null, 2))
+
     const { data, error } = await supabase
       .from('plans')
       .insert(insertData as never)
@@ -154,6 +156,7 @@ export const plansCrudRouter = createTRPCRouter({
       .single()
 
     if (error) {
+      console.error('[plans.create] Supabase error:', error)
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: `Failed to create plan: ${error.message}`,

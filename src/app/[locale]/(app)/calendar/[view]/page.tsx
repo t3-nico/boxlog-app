@@ -18,7 +18,7 @@ interface CalendarViewPageProps {
 
 // 有効なビュータイプかチェック
 function isValidViewType(view: string): view is CalendarViewType {
-  const validTypes: CalendarViewType[] = ['day', '3day', '5day', 'week', '2week', 'agenda']
+  const validTypes: CalendarViewType[] = ['day', '3day', '5day', 'week', 'agenda']
 
   return validTypes.includes(view as CalendarViewType)
 }

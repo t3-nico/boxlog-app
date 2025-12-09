@@ -3,29 +3,6 @@
  * 重複する型定義をここで統一し、他のファイルから参照する
  */
 
-// === 基本的な型定義 ===
-// TaskStatus, TaskPriority, Task等の基本型は src/types/index.ts に統一
-// ここでは再エクスポートのみ
-import type { Task, TaskPriority, TaskStatus } from './index'
-
-export type { Task, TaskPriority, TaskStatus }
-
-// === API関連 ===
-
-export interface CreateTaskRequest {
-  title: string
-  description?: string
-  priority: TaskPriority
-  planned_start: string
-  planned_duration: number
-  tags?: string[]
-}
-
-export interface UpdateTaskRequest extends Partial<CreateTaskRequest> {
-  id: string
-  status?: TaskStatus
-}
-
 // === エラーハンドリング ===
 
 export interface ApiError {

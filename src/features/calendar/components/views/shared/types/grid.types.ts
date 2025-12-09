@@ -64,7 +64,7 @@ export interface CurrentTimeLineProps {
   updateInterval?: number | undefined // 更新間隔（ミリ秒）
   // 複数日ビュー用の新しいProps
   displayDates?: Date[] | undefined // 表示している日付の配列
-  viewMode?: 'day' | '3day' | 'week' | '2week' | undefined
+  viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda' | undefined
 }
 
 export interface TimeRange {

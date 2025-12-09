@@ -52,7 +52,12 @@ export function usePlanMutations() {
       void utils.plans.getById.invalidate({ id: newPlan.id }, { refetchType: 'active' })
     },
     onError: (error) => {
-      toast.error(t('common.plan.createFailed', { error: error.message }))
+      console.error('[usePlanMutations] Create error:', error)
+      // エラーメッセージがZodバリデーションエラーの翻訳キー形式の場合、直接表示
+      const errorMessage = error.message.includes('validation.')
+        ? t(error.message as Parameters<typeof t>[0])
+        : error.message
+      toast.error(t('common.plan.createFailed', { error: errorMessage }))
     },
   })
 

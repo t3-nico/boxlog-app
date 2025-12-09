@@ -150,6 +150,12 @@
     },
     "dateRange": {
       "weekLabel": "第{weekNumber}週"
+    },
+    "sidebar": {
+      "tabs": {
+        "inbox": "Inbox",
+        "view": "View"
+      }
     }
   }
 }
