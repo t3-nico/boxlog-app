@@ -124,7 +124,17 @@ describe('PlanCard', () => {
       const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i })
       fireEvent.mouseDown(eventBlock, { button: 0 })
 
-      expect(onDragStart).toHaveBeenCalledWith(mockEvent)
+      // onDragStartは (plan, event, position) の3引数で呼ばれる
+      expect(onDragStart).toHaveBeenCalledWith(
+        mockEvent,
+        expect.any(Object), // MouseEvent
+        expect.objectContaining({
+          top: mockPosition.top,
+          left: mockPosition.left,
+          width: mockPosition.width,
+          height: mockPosition.height,
+        })
+      )
     })
 
     it('ドラッグ中の状態が正しく反映される', () => {
