@@ -34,7 +34,7 @@ export function CalendarSidebar() {
   const [showMedium, setShowMedium] = useState(true)
   const [showLow, setShowLow] = useState(true)
 
-  // 現在表示している週の範囲を計算（週番号のハイライト表示用）
+  // 週表示の場合、表示中の週の範囲を計算
   const displayRange = useMemo(() => {
     if (!navigation?.currentDate || !navigation?.viewType) return undefined
 
@@ -87,14 +87,12 @@ export function CalendarSidebar() {
         <div className="p-2">
           <MiniCalendar
             selectedDate={navigation?.currentDate}
-            month={navigation?.currentDate}
+            displayRange={displayRange}
             onDateSelect={(date) => {
               if (date && navigation) {
                 navigation.navigateToDate(date, true)
               }
             }}
-            showWeekNumbers={true}
-            displayRange={displayRange}
             className="w-full bg-transparent p-0"
           />
         </div>
