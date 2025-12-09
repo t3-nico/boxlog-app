@@ -16,13 +16,13 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useMergeTag, useTags } from '@/features/tags/hooks/use-tags'
-import type { TagWithChildren } from '@/features/tags/types'
+import type { Tag } from '@/features/tags/types'
 import { AlertTriangle, GitMerge } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 interface TagMergeDialogProps {
-  tag: TagWithChildren | null
+  tag: Tag | null
   onClose: () => void
 }
 
@@ -35,13 +35,13 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
   const { data: tags = [] } = useTags()
   const mergeTagMutation = useMergeTag()
 
-  // ソースタグと同じタグ、およびソースタグの子タグを除外
-  const availableTags = flattenTags(tags).filter((t) => {
+  // ソースタグを除外（フラット構造なので自分自身のみ除外）
+  const availableTags = tags.filter((t) => {
     if (!tag) return false
     // 自分自身は除外
     if (t.id === tag.id) return false
-    // 子タグも除外（循環を防ぐ）
-    if (isDescendant(tag, t.id)) return false
+    // アクティブなタグのみ
+    if (!t.is_active) return false
     return true
   })
 
@@ -76,8 +76,6 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
     }
   }
 
-  const hasChildren = tag && tag.children && tag.children.length > 0
-
   return (
     <AlertDialog open={!!tag} onOpenChange={handleOpenChange}>
       <AlertDialogContent className="max-w-md gap-0 p-6">
@@ -101,7 +99,6 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                 style={{ backgroundColor: tag?.color || DEFAULT_TAG_COLOR }}
               />
               <span className="text-sm font-medium">{tag?.name}</span>
-              <span className="text-muted-foreground text-xs">{tag?.path}</span>
             </div>
           </div>
 
@@ -121,7 +118,6 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                         style={{ backgroundColor: t.color || DEFAULT_TAG_COLOR }}
                       />
                       <span>{t.name}</span>
-                      <span className="text-muted-foreground text-xs">{t.path}</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -167,10 +163,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
           {/* 警告 */}
           <div className="bg-destructive/10 text-destructive border-destructive/20 flex items-start gap-2 rounded-lg border p-3">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-            <div className="space-y-1">
-              <p className="text-sm font-medium">{t('tags.merge.warning')}</p>
-              {hasChildren && <p className="text-xs opacity-80">{t('tags.merge.warningChildren')}</p>}
-            </div>
+            <p className="text-sm font-medium">{t('tags.merge.warning')}</p>
           </div>
         </div>
 
@@ -187,33 +180,4 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
       </AlertDialogContent>
     </AlertDialog>
   )
-}
-
-// タグツリーをフラットな配列に変換
-function flattenTags(tags: TagWithChildren[]): TagWithChildren[] {
-  const result: TagWithChildren[] = []
-
-  function traverse(tagList: TagWithChildren[]) {
-    for (const tag of tagList) {
-      result.push(tag)
-      if (tag.children && tag.children.length > 0) {
-        traverse(tag.children)
-      }
-    }
-  }
-
-  traverse(tags)
-  return result
-}
-
-// 指定されたIDがタグの子孫かどうかをチェック
-function isDescendant(tag: TagWithChildren, targetId: string): boolean {
-  if (!tag.children) return false
-
-  for (const child of tag.children) {
-    if (child.id === targetId) return true
-    if (isDescendant(child, targetId)) return true
-  }
-
-  return false
 }

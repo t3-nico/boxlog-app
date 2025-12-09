@@ -14,12 +14,12 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useTagUsage } from '@/features/tags/hooks'
-import type { TagWithChildren } from '@/features/tags/types'
+import type { Tag } from '@/features/tags/types'
 import { AlertTriangle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 interface TagDeleteDialogProps {
-  tag: TagWithChildren | null
+  tag: Tag | null
   onClose: () => void
   onConfirm: () => Promise<void>
 }

@@ -12,12 +12,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { useTagUsage } from '@/features/tags/hooks'
-import type { TagWithChildren } from '@/features/tags/types'
+import type { Tag } from '@/features/tags/types'
 import { AlertTriangle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 interface TagArchiveDialogProps {
-  tag: TagWithChildren | null
+  tag: Tag | null
   onClose: () => void
   onConfirm: () => Promise<void>
 }
