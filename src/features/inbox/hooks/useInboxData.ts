@@ -6,6 +6,7 @@
 
 import { useplans } from '@/features/plans/hooks/usePlans'
 import type { Plan, PlanStatus } from '@/features/plans/types/plan'
+import { getEffectiveStatus } from '@/features/plans/utils/status'
 import type { DueDateFilter } from '../stores/useInboxFilterStore'
 
 /**
@@ -125,7 +126,7 @@ export function planToInboxItem(plan: PlanWithPlanTags): InboxItem {
     id: plan.id,
     type: 'plan',
     title: plan.title,
-    status: plan.status,
+    status: getEffectiveStatus(plan),
     created_at: plan.created_at ?? new Date().toISOString(),
     updated_at: plan.updated_at ?? new Date().toISOString(),
     plan_number: plan.plan_number,

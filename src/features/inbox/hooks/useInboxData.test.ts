@@ -158,6 +158,34 @@ describe('useInboxData', () => {
       expect(result.description).toBe('説明文')
     })
 
+    it('start_timeがあるプランはdoingとして変換される', () => {
+      const plan = createMockPlan({
+        id: 'plan-2',
+        title: 'スケジュール済みタスク',
+        status: 'todo', // DBではtodoだが
+        start_time: '2025-01-20T09:00:00Z', // start_timeがあるので
+        end_time: '2025-01-20T10:00:00Z',
+      })
+
+      const result = planToInboxItem(plan)
+
+      expect(result.status).toBe('doing') // doingとして計算される
+    })
+
+    it('doneのプランはstart_timeに関係なくdoneのまま', () => {
+      const plan = createMockPlan({
+        id: 'plan-3',
+        title: '完了済みタスク',
+        status: 'done',
+        start_time: '2025-01-20T09:00:00Z',
+        end_time: '2025-01-20T10:00:00Z',
+      })
+
+      const result = planToInboxItem(plan)
+
+      expect(result.status).toBe('done')
+    })
+
     it('plan_tagsからtagsを抽出できる', () => {
       const plan = createMockPlan({
         id: 'plan-1',
