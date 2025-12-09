@@ -1,18 +1,14 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { InspectorHeader } from '@/components/common/InspectorHeader'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
@@ -20,16 +16,12 @@ import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/features/tags/constant
 import type { TagWithChildren } from '@/features/tags/types'
 import {
   Archive,
-  ChevronDown,
   ChevronRight,
-  ChevronUp,
   FileText,
   Folder,
   FolderX,
   Merge,
-  MoreHorizontal,
   Palette,
-  PanelRightClose,
   Trash2,
 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
@@ -306,77 +298,16 @@ export function TagInspector() {
           ) : (
             <>
               {/* ヘッダー */}
-              <div className="flex h-10 items-center justify-between pt-2">
-                <TooltipProvider>
-                  <div className="flex items-center gap-1">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => closeInspector()}
-                          aria-label="閉じる"
-                        >
-                          <PanelRightClose className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom">
-                        <p>閉じる</p>
-                      </TooltipContent>
-                    </Tooltip>
-                    <div className="flex items-center">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={goToPrevious}
-                            disabled={!hasPrevious}
-                            aria-label="前のタグ"
-                          >
-                            <ChevronUp className="h-6 w-6" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom">
-                          <p>前のタグ</p>
-                        </TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={goToNext}
-                            disabled={!hasNext}
-                            aria-label="次のタグ"
-                          >
-                            <ChevronDown className="h-6 w-6" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom">
-                          <p>次のタグ</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                  </div>
-                </TooltipProvider>
-
-                {/* オプションメニュー */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 focus-visible:ring-0"
-                      aria-label="オプション"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
+              <InspectorHeader
+                hasPrevious={hasPrevious}
+                hasNext={hasNext}
+                onClose={closeInspector}
+                onPrevious={goToPrevious}
+                onNext={goToNext}
+                previousLabel="前のタグ"
+                nextLabel="次のタグ"
+                menuContent={
+                  <>
                     <DropdownMenuItem onClick={() => setShowColorPicker(true)}>
                       <Palette className="mr-2 h-4 w-4" />
                       カラー変更
@@ -407,9 +338,9 @@ export function TagInspector() {
                       <Trash2 className="mr-2 h-4 w-4" />
                       削除
                     </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+                  </>
+                }
+              />
 
               {/* タグ情報 */}
               <div className="px-6 pt-4 pb-2">
