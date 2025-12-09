@@ -8,7 +8,6 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { cn } from '@/lib/utils'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
@@ -158,10 +157,10 @@ export const CompactDayView = memo(function CompactDayView({
       })
       .map((plan) => {
         const start = new Date(plan.startDate!)
-        const end = plan.endDate ? new Date(plan.endDate) : new Date(start.getTime() + 60 * 60 * 1000) // デフォルト1時間
+        const end = plan.endDate ? new Date(plan.endDate) : new Date(start.getTime() + 60 * 60 * 1000)
         const startHour = start.getHours() + start.getMinutes() / 60
         const endHour = end.getHours() + end.getMinutes() / 60
-        const duration = Math.max(endHour - startHour, 0.5) // 最低30分
+        const duration = Math.max(endHour - startHour, 0.5)
 
         return {
           plan,
@@ -175,24 +174,12 @@ export const CompactDayView = memo(function CompactDayView({
     <div className={cn('flex h-full flex-col', className)}>
       {/* ヘッダー: 日付 + ナビゲーション */}
       <div className="border-border flex shrink-0 items-center justify-between border-b px-2 py-2">
-        <MiniCalendar
-          asPopover
-          selectedDate={date}
-          onDateSelect={(d) => d && onDateChange(d)}
-          popoverTrigger={
-            <button
-              type="button"
-              className="hover:bg-state-hover flex items-center gap-1 rounded px-2 py-1 text-sm font-medium"
-            >
-              <span>{format(date, 'M月d日', locale === 'ja' ? { locale: ja } : {})}</span>
-              <span className="text-muted-foreground">
-                ({format(date, 'E', locale === 'ja' ? { locale: ja } : {})})
-              </span>
-            </button>
-          }
-          popoverAlign="start"
-          popoverSide="bottom"
-        />
+        <div className="flex items-center gap-1 text-sm font-medium">
+          <span>{format(date, 'M月d日', locale === 'ja' ? { locale: ja } : {})}</span>
+          <span className="text-muted-foreground">
+            ({format(date, 'E', locale === 'ja' ? { locale: ja } : {})})
+          </span>
+        </div>
 
         <div className="flex items-center gap-1">
           <Button

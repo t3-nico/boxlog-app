@@ -7,32 +7,16 @@ import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { useplans } from '@/features/plans/hooks/usePlans'
 import type { Plan } from '@/features/plans/types/plan'
 
-import { useInboxData } from '../hooks/useInboxData'
-
 import { InboxSidebar } from './InboxSidebar'
 
 /**
  * InboxSidebarWrapper - データを取得してInboxSidebarに渡す
  *
- * DesktopLayoutから呼び出され、InboxDataを使用する
+ * DesktopLayoutから呼び出され、カレンダープランデータを提供
  */
 export function InboxSidebarWrapper() {
-  const { items, isLoading } = useInboxData()
-  const { data: plansData } = useplans()
+  const { data: plansData, isLoading } = useplans()
   const { updatePlan } = usePlanMutations()
-
-  // アクティブなPlan数とアーカイブ数を計算
-  const { activePlansCount, archivedPlansCount } = useMemo(() => {
-    // TODO: アーカイブフラグがある場合はそれで判定
-    // 現状はアーカイブ機能がないため、全てアクティブとして扱う
-    const active = items.length
-    const archived = 0
-
-    return {
-      activePlansCount: active,
-      archivedPlansCount: archived,
-    }
-  }, [items])
 
   // カレンダー表示用のプラン（start_time/end_timeが設定されているもの）
   const calendarPlans = useMemo(() => {
@@ -42,7 +26,6 @@ export function InboxSidebarWrapper() {
       .filter((plan) => plan.start_time && plan.end_time)
       .map((plan) => {
         // planToCalendarPlanはPlan型を期待するため、型アサーションで変換
-        // APIレスポンスの型はPlanと互換性があるが、厳密な型チェックのためキャスト必要
         return planToCalendarPlan(plan as unknown as Plan)
       })
   }, [plansData])
@@ -75,8 +58,6 @@ export function InboxSidebarWrapper() {
   return (
     <InboxSidebar
       isLoading={isLoading}
-      activeplansCount={activePlansCount}
-      archivedplansCount={archivedPlansCount}
       calendarPlans={calendarPlans}
       onSchedulePlan={handleSchedulePlan}
     />
