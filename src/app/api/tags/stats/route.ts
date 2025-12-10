@@ -5,17 +5,12 @@
 
 import { NextResponse } from 'next/server'
 
-import type { Database } from '@/lib/database.types'
 import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError } from '@/lib/supabase/utils'
-
-type TagRow = Database['public']['Tables']['tags']['Row']
 
 interface TagUsageStats {
   id: string
   name: string
-  path: string | null
-  level: number
   color: string | null
   plan_count: number
   total_count: number
@@ -42,7 +37,7 @@ export async function GET() {
     // ユーザーの全タグを取得
     const { data: tags, error: tagsError } = await supabase
       .from('tags')
-      .select('id, name, path, level, color')
+      .select('id, name, color')
       .eq('user_id', user.id)
       .eq('is_active', true)
 
@@ -91,8 +86,6 @@ export async function GET() {
       return {
         id: tag.id,
         name: tag.name,
-        path: tag.path,
-        level: tag.level,
         color: tag.color,
         plan_count: planCount,
         total_count: planCount, // 現在はプランのみ

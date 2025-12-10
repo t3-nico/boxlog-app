@@ -14,7 +14,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
-import type { Tag as TagType } from '@/features/tags/types'
 import { api } from '@/lib/trpc'
 
 interface PlanTagSelectDialogEnhancedProps {
@@ -216,7 +215,7 @@ export function PlanTagSelectDialogEnhanced({
                 placeholder="タグを検索..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-9 bg-surface-container pl-9"
+                className="bg-surface-container h-9 pl-9"
               />
             </div>
 
@@ -255,7 +254,7 @@ export function PlanTagSelectDialogEnhanced({
                 onChange={(e) => setNewTagName(e.target.value)}
                 onKeyDown={handleKeyDown}
                 autoFocus
-                className="flex-1 bg-surface-container"
+                className="bg-surface-container flex-1"
               />
               <Button size="sm" onClick={handleCreateTag} disabled={!newTagName.trim()}>
                 作成

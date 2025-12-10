@@ -248,7 +248,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
   // Zustandストアからデータを取得
   const tags = useTagStore((state) => state.tags)
   // State management tracked in Issue #89
-  const [expandedTags, setExpandedTags] = useState<string[]>([])
+  const [_expandedTags, setExpandedTags] = useState<string[]>([])
   const toggleTagExpansion = useCallback((tagId: string) => {
     setExpandedTags((prev) => (prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]))
   }, [])

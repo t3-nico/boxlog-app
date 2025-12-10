@@ -78,16 +78,30 @@ describe('InboxBoardView', () => {
   describe('エラー状態', () => {
     it('エラー時はエラーメッセージが表示される', () => {
       const errorMessage = 'データ取得に失敗しました'
+      // TRPCClientErrorBaseをモック（unknown経由でキャスト）
       const mockError = {
         message: errorMessage,
-        shape: null,
-        data: null,
+        shape: {
+          message: errorMessage,
+          code: -32600,
+          data: {
+            stack: undefined,
+            code: 'INTERNAL_SERVER_ERROR' as const,
+            httpStatus: 500,
+          },
+        },
+        data: {
+          stack: undefined,
+          code: 'INTERNAL_SERVER_ERROR' as const,
+          httpStatus: 500,
+        },
+        name: 'TRPCClientError',
       }
       vi.spyOn(useInboxDataModule, 'useInboxData').mockReturnValue({
         items: [],
         plans: [],
         isLoading: false,
-        error: mockError as unknown as Error,
+        error: mockError as unknown as ReturnType<typeof useInboxDataModule.useInboxData>['error'],
       })
 
       render(<InboxBoardView />)

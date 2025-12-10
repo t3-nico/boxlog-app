@@ -368,8 +368,6 @@ export class SearchEngine {
       id: string
       name: string
       description: string | null
-      path: string
-      level: number
       color: string
       tag_number: number
     }
@@ -377,8 +375,6 @@ export class SearchEngine {
       id: tag.id,
       name: tag.name,
       description: tag.description,
-      path: tag.path,
-      level: tag.level,
       color: tag.color,
       tag_number: tag.tag_number,
     }))
@@ -390,7 +386,6 @@ export class SearchEngine {
       [
         { name: 'name', weight: 2 },
         { name: 'description', weight: 1 },
-        { name: 'path', weight: 1.5 },
       ],
       20,
       'tags' // Cache key for tags search
@@ -399,13 +394,12 @@ export class SearchEngine {
     return fuseResults.map((result) => ({
       id: `tag:${result.item.id}`,
       title: String(result.item.name),
-      description: result.item.description ? String(result.item.description) : `Level ${result.item.level} tag`,
+      description: result.item.description ? String(result.item.description) : 'Tag',
       type: 'tag' as SearchResultType,
       category: 'tags',
       icon: 'tag',
       score: FuseSearch.normalizeScore(result.score),
       metadata: {
-        path: result.item.path ? [String(result.item.path)] : [],
         color: result.item.color,
         tagNumber: result.item.tag_number,
         matches: result.matches, // Include matches for highlighting

@@ -125,7 +125,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
  * タググループ削除 (DELETE)
  * @description グループを削除（グループ内のタグのgroup_idはNULLになる）
  */
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient()
     const { id } = await params

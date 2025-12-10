@@ -16,7 +16,6 @@ import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors'
-import type { Tag } from '@/features/tags/types'
 import { Archive, ChevronRight, FileText, Folder, FolderX, Merge, Palette, Trash2 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -380,7 +379,7 @@ export function TagInspector() {
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={(e) => autoSave('description', e.currentTarget.textContent || '')}
-                    className="text-muted-foreground min-h-[20px] flex-1 text-sm outline-none empty:before:text-muted-foreground/60 empty:before:content-['説明を追加...']"
+                    className="text-muted-foreground empty:before:text-muted-foreground/60 min-h-[20px] flex-1 text-sm outline-none empty:before:content-['説明を追加...']"
                   >
                     {tag.description || ''}
                   </span>
@@ -401,7 +400,8 @@ export function TagInspector() {
                 ) : (
                   <div className="grid gap-3">
                     {plans.slice(0, 10).map((plan) => (
-                      <PlanCard key={plan.id} plan={plan} onClick={(p) => openPlanInspector(p.id)} />
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      <PlanCard key={plan.id} plan={plan as any} onClick={(p) => openPlanInspector(p.id)} />
                     ))}
                     {plans.length > 10 && (
                       <p className="text-muted-foreground text-center text-sm">他 {plans.length - 10} 件のプラン</p>
