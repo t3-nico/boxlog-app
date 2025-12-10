@@ -58,11 +58,17 @@ export function useDragHandler({
       e.stopPropagation()
 
       const startPosition = { x: e.clientX, y: e.clientY }
-      // data-event-wrapper（外側のポジショニング用div）を優先、なければdata-event-blockを使用
+      // 外側のポジショニング用divを優先して取得
+      // DayView: data-event-wrapper / data-event-block
+      // WeekView/ThreeDayView/FiveDayView: data-plan-block
       const originalElement =
         ((e.target as HTMLElement).closest('[data-event-wrapper="true"]') as HTMLElement) ||
+        ((e.target as HTMLElement).closest('[data-plan-block="true"]') as HTMLElement) ||
         ((e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement)
       const columnWidth = calculateColumnWidth(originalElement, viewMode, displayDates)
+
+      // mousedown時点での元要素の位置を保存（ゴースト位置計算用）
+      const originalElementRect = originalElement?.getBoundingClientRect() ?? null
 
       // 注意: ゴースト要素（dragElement）は5px移動後に作成する
       // mousedown時点では作成しない（クリックと区別するため）
@@ -79,6 +85,7 @@ export function useDragHandler({
         columnWidth,
         dragElement: null, // 5px移動後に作成
         initialRect: null, // 5px移動後に設定
+        originalElementRect, // mousedown時点の位置
       }
 
       setDragState({
@@ -120,7 +127,9 @@ export function useDragHandler({
         displayDates
       )
 
-      updateDragElementPosition(dragData.dragElement || null, dragData.initialRect || null, deltaX, deltaY)
+      // originalElementRect（mousedown時点の位置）を基準に計算
+      // initialRectは5px移動後に取得されるため、deltaX/deltaYとずれる
+      updateDragElementPosition(dragData.dragElement || null, dragData.originalElementRect || null, deltaX, deltaY)
 
       const { previewStartTime, previewEndTime } = calculatePreviewTime(
         events,

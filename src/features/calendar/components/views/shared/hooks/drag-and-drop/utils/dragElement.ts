@@ -24,13 +24,13 @@ export function createDragElement(originalElement: HTMLElement): { dragElement: 
   dragElement.style.top = `${rect.top}px`
   dragElement.style.width = `${rect.width}px`
   dragElement.style.height = `${rect.height}px`
-  // Googleカレンダー的動作: マウス追従要素は非表示
-  // スナップ位置でのプレビュー表示のみを使用
-  dragElement.style.opacity = '0'
+  // ドラッグ要素を表示（日付間移動のため）
+  dragElement.style.opacity = '0.8'
   dragElement.style.pointerEvents = 'none'
   dragElement.style.zIndex = '9999'
   dragElement.style.transition = 'none'
-  dragElement.style.boxShadow = 'none'
+  dragElement.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)'
+  dragElement.style.cursor = 'grabbing'
   dragElement.classList.add('dragging-element')
 
   document.body.appendChild(dragElement)
@@ -39,18 +39,28 @@ export function createDragElement(originalElement: HTMLElement): { dragElement: 
 }
 
 /**
- * ドラッグ要素の位置を更新する
+ * ドラッグ要素の位置を更新する（マウス追従用）
+ *
+ * Googleカレンダー的動作:
+ * - ゴースト（元の位置）は固定で薄く表示
+ * - dragElementはマウスに追従して自由移動
+ *
+ * @param dragElement - ドラッグ中の要素（マウス追従）
+ * @param originalElementRect - mousedown時点での元要素の位置（基準点）
+ * @param deltaX - mousedown時点からのX方向移動量
+ * @param deltaY - mousedown時点からのY方向移動量
  */
 export function updateDragElementPosition(
   dragElement: HTMLElement | null,
-  initialRect: DOMRect | null,
+  originalElementRect: DOMRect | null,
   deltaX: number,
   deltaY: number
 ): void {
-  if (!dragElement || !initialRect) return
+  if (!dragElement || !originalElementRect) return
 
-  let newLeft = initialRect.left + deltaX
-  let newTop = initialRect.top + deltaY
+  // mousedown時点の位置 + 移動量 = 現在位置
+  let newLeft = originalElementRect.left + deltaX
+  let newTop = originalElementRect.top + deltaY
 
   const calendarContainer =
     (document.querySelector('[data-calendar-main]') as HTMLElement) ||

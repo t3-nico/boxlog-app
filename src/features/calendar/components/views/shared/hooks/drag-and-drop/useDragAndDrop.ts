@@ -187,7 +187,9 @@ export function useDragAndDrop({
 
       if (dragState.isResizing) {
         handleResizing(constrainedX, constrainedY, deltaY)
-      } else if (dragState.isDragging) {
+      } else if (dragState.isDragging || dragData.hasMoved) {
+        // dragState.isDragging がまだ false でも hasMoved が true ならドラッグ処理を実行
+        // （isPending → isDragging 遷移直後は dragState がまだ更新されていないため）
         handleDragging(constrainedX, constrainedY, deltaX, deltaY, targetDateIndex)
       }
     },

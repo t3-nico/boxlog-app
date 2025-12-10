@@ -64,6 +64,8 @@ export interface DragDataRef {
   columnWidth?: number
   dragElement?: HTMLElement | null
   initialRect?: DOMRect | null
+  /** mousedown時点での元要素のBoundingClientRect（ゴースト位置計算用） */
+  originalElementRect?: DOMRect | null
 }
 
 export const initialDragState: DragState = {
