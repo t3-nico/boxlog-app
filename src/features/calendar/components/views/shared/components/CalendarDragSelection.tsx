@@ -26,7 +26,6 @@ interface CalendarDragSelectionProps {
   date: Date // 必須：この列が担当する日付
   className?: string | undefined
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined
-  onSingleClick?: ((date: Date, timeString: string) => void) | undefined // 単一クリック処理
   children?: React.ReactNode | undefined
   disabled?: boolean | undefined // ドラッグ選択を無効にする
 }
@@ -35,13 +34,13 @@ interface CalendarDragSelectionProps {
  * 日付を知るドラッグ選択レイヤー
  * - 各カレンダー列が担当する日付を明確に持つ
  * - 全ビュー共通のドラッグ選択動作を提供
+ * - ドラッグ操作のみでプラン作成（シングルクリックでは作成しない）
  * - 統一されたDateTimeSelectionを出力
  */
 export const CalendarDragSelection = ({
   date,
   className,
   onTimeRangeSelect,
-  onSingleClick,
   children,
   disabled = false,
 }: CalendarDragSelectionProps) => {
@@ -226,7 +225,7 @@ export const CalendarDragSelection = ({
 
       if (selection) {
         if (isDragging.current && onTimeRangeSelect) {
-          // ドラッグした場合：時間範囲選択
+          // ドラッグした場合のみ：時間範囲選択でプラン作成
           const dateTimeSelection: DateTimeSelection = {
             date,
             startHour: selection.startHour,
@@ -236,11 +235,8 @@ export const CalendarDragSelection = ({
           }
 
           onTimeRangeSelect(dateTimeSelection)
-        } else if (!isDragging.current && selectionStart && onSingleClick) {
-          // ドラッグしなかった場合：シングルクリック処理
-          const timeString = formatTime(selectionStart.hour, selectionStart.minute)
-          onSingleClick(date, timeString)
         }
+        // シングルクリックではプランを作成しない（Inspectorを閉じる際の誤操作防止）
       }
 
       clearSelectionState()
@@ -262,17 +258,7 @@ export const CalendarDragSelection = ({
       document.removeEventListener('mouseup', handleGlobalMouseUp)
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [
-    isSelecting,
-    selectionStart,
-    selection,
-    pixelsToTime,
-    onTimeRangeSelect,
-    date,
-    disabled,
-    onSingleClick,
-    formatTime,
-  ])
+  }, [isSelecting, selectionStart, selection, pixelsToTime, onTimeRangeSelect, date, disabled, formatTime])
 
   // モーダルキャンセル時のカスタムイベントリスナー
   useEffect(() => {

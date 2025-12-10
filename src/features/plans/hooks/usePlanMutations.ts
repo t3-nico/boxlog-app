@@ -32,7 +32,7 @@ export function usePlanMutations() {
   const t = useTranslations()
   const utils = api.useUtils()
   const { closeInspector, openInspector } = usePlanInspectorStore()
-  const { updateCache, setIsMutating } = usePlanCacheStore()
+  const { updateCache, clearCache, setIsMutating } = usePlanCacheStore()
 
   // ✨ 作成
   const createPlan = api.plans.create.useMutation({
@@ -171,15 +171,56 @@ export function usePlanMutations() {
 
   // ✨ 削除
   const deletePlan = api.plans.delete.useMutation({
+    onMutate: async ({ id }) => {
+      // mutation開始フラグを設定（Realtime二重更新防止）
+      setIsMutating(true)
+
+      // 進行中のクエリをキャンセル（競合回避）
+      await utils.plans.list.cancel()
+      await utils.plans.getById.cancel({ id })
+
+      // 現在のデータをスナップショット（ロールバック用）
+      const previousPlans = utils.plans.list.getData()
+      const previousPlan = utils.plans.getById.getData({ id })
+
+      // 楽観的更新: リストから即座に削除
+      utils.plans.list.setData(undefined, (oldData) => {
+        if (!oldData) return oldData
+        return oldData.filter((plan) => plan.id !== id)
+      })
+
+      utils.plans.list.setData({}, (oldData) => {
+        if (!oldData) return oldData
+        return oldData.filter((plan) => plan.id !== id)
+      })
+
+      // Zustandキャッシュからも削除
+      clearCache(id)
+
+      return { id, previousPlans, previousPlan }
+    },
     onSuccess: (_, { id }) => {
       toast.success(t('common.plan.deleted'))
-
       closeInspector() // Inspectorが開いていたら閉じる
-      void utils.plans.list.invalidate(undefined, { refetchType: 'active' })
-      void utils.plans.getById.invalidate({ id }, { refetchType: 'active' })
+
+      // キャッシュ無効化（全キャッシュを対象）
+      void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
+      void utils.plans.getById.invalidate({ id }, { refetchType: 'all' })
     },
-    onError: (error) => {
+    onError: (error, { id }, context) => {
       toast.error(t('common.plan.deleteFailed', { error: error.message }))
+
+      // エラー時: 楽観的更新をロールバック
+      if (context?.previousPlans) {
+        utils.plans.list.setData(undefined, context.previousPlans)
+      }
+      if (context?.previousPlan) {
+        utils.plans.getById.setData({ id }, context.previousPlan)
+      }
+    },
+    onSettled: () => {
+      // mutation完了後にフラグをリセット
+      setIsMutating(false)
     },
   })
 
@@ -196,13 +237,48 @@ export function usePlanMutations() {
 
   // ✨ 一括削除
   const bulkDeletePlan = api.plans.bulkDelete.useMutation({
+    onMutate: async ({ ids }) => {
+      // mutation開始フラグを設定（Realtime二重更新防止）
+      setIsMutating(true)
+
+      // 進行中のクエリをキャンセル
+      await utils.plans.list.cancel()
+
+      // 現在のデータをスナップショット（ロールバック用）
+      const previousPlans = utils.plans.list.getData()
+
+      // 楽観的更新: リストから即座に削除
+      utils.plans.list.setData(undefined, (oldData) => {
+        if (!oldData) return oldData
+        return oldData.filter((plan) => !ids.includes(plan.id))
+      })
+
+      utils.plans.list.setData({}, (oldData) => {
+        if (!oldData) return oldData
+        return oldData.filter((plan) => !ids.includes(plan.id))
+      })
+
+      // Zustandキャッシュからも削除
+      ids.forEach((id) => clearCache(id))
+
+      return { previousPlans }
+    },
     onSuccess: (result) => {
       toast.success(t('common.plan.bulkDeleted', { count: result.count }))
       closeInspector()
-      void utils.plans.list.invalidate(undefined, { refetchType: 'active' })
+      void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
       toast.error(t('common.plan.bulkDeleteFailed', { error: error.message }))
+
+      // エラー時: 楽観的更新をロールバック
+      if (context?.previousPlans) {
+        utils.plans.list.setData(undefined, context.previousPlans)
+      }
+    },
+    onSettled: () => {
+      // mutation完了後にフラグをリセット
+      setIsMutating(false)
     },
   })
 

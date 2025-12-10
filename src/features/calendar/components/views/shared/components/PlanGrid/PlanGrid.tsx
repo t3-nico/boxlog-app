@@ -118,7 +118,7 @@ export const PlanGrid = ({
 
   return (
     <div className={cn('bg-background relative flex-1 overflow-hidden', className)}>
-      {/* 背景選択レイヤー */}
+      {/* CalendarDragSelectionを使用（ドラッグ操作のみでプラン作成） */}
       <CalendarDragSelection
         date={date}
         className="absolute inset-0"
@@ -133,7 +133,6 @@ export const PlanGrid = ({
               }
             : undefined
         }
-        onSingleClick={onEmptyClick}
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
       >
         {/* 時間グリッド */}

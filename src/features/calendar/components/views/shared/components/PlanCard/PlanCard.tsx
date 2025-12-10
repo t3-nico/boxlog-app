@@ -30,6 +30,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   onResizeStart,
   isDragging = false,
   isSelected = false,
+  isActive = false,
   className = '',
   style = {},
   previewTime = null,
@@ -176,7 +177,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   // CSSクラスを組み立て（colors.tsのscheduledを参照）
   const planCardClasses = cn(
     // 基本スタイル
-    'overflow-hidden rounded-md shadow-sm',
+    'overflow-hidden rounded-md shadow-sm border',
     'focus:outline-none focus:ring-2 focus:ring-offset-1',
     // colors.tsのscheduledカラーを参照（ドラッグ中はactive）
     isDragging ? scheduledColors.active : scheduledColors.background,
@@ -184,6 +185,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     // 状態別スタイル
     isDragging ? 'cursor-grabbing' : 'cursor-pointer',
     isSelected && 'ring-primary ring-2 ring-offset-1',
+    // Inspectorで開いているプランのハイライト（Board/Inboxと同様にborder-primary）
+    isActive ? 'border-primary border-2' : 'border-transparent',
     // サイズ別スタイル（上下左右に8pxのpadding = p-2）
     safePosition.height < 30 ? 'p-2 text-xs' : 'p-2 text-sm',
     className

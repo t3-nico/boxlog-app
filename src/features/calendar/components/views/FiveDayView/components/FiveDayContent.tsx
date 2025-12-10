@@ -3,6 +3,7 @@
 import React, { useCallback } from 'react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { cn } from '@/lib/utils'
 
 import {
@@ -46,6 +47,10 @@ export const FiveDayContent = ({
   displayDates,
   disabledPlanId,
 }: FiveDayContentProps) => {
+  // Inspectorで開いているプランのIDを取得
+  const inspectorPlanId = usePlanInspectorStore((state) => state.planId)
+  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen)
+
   // ドラッグ&ドロップ機能用にonPlanUpdateを変換
   const handlePlanUpdate = useCallback(
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
@@ -97,12 +102,11 @@ export const FiveDayContent = ({
 
   return (
     <div className={cn('bg-background relative h-full flex-1 overflow-hidden', className)} data-calendar-grid>
-      {/* CalendarDragSelectionを使用 */}
+      {/* CalendarDragSelectionを使用（ドラッグ操作のみでプラン作成） */}
       <CalendarDragSelection
         date={date}
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
-        onSingleClick={onEmptyClick}
         disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
       >
         {/* 背景グリッド（DayViewと同じパターン） */}
@@ -185,6 +189,7 @@ export const FiveDayContent = ({
                   }
                   isDragging={isDragging}
                   isResizing={isResizingThis}
+                  isActive={isInspectorOpen && inspectorPlanId === plan.id}
                   previewTime={calculatePreviewTime(plan.id, dragState)}
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />

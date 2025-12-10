@@ -11,6 +11,7 @@ import {
   Save,
   Trash2,
 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -20,7 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 import type { Plan } from '../../../types/plan'
 
@@ -45,6 +46,8 @@ export function InspectorHeader({
   onNext,
   onDelete,
 }: InspectorHeaderProps) {
+  const t = useTranslations()
+
   const handleCopyId = () => {
     navigator.clipboard.writeText(planId)
   }
@@ -68,56 +71,54 @@ export function InspectorHeader({
 
   return (
     <div className="flex h-10 items-center justify-between pt-2">
-      <TooltipProvider>
-        <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose} aria-label={t('actions.close')}>
+              <PanelRightClose className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p>{t('actions.close')}</p>
+          </TooltipContent>
+        </Tooltip>
+        <div className="flex items-center">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose} aria-label="閉じる">
-                <PanelRightClose className="h-4 w-4" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={onPrevious}
+                disabled={!hasPrevious}
+                aria-label={t('aria.previous')}
+              >
+                <ChevronUp className="h-6 w-6" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>閉じる</p>
+              <p>{t('aria.previous')}</p>
             </TooltipContent>
           </Tooltip>
-          <div className="flex items-center">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={onPrevious}
-                  disabled={!hasPrevious}
-                  aria-label="前のプラン"
-                >
-                  <ChevronUp className="h-6 w-6" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>前のプラン</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={onNext}
-                  disabled={!hasNext}
-                  aria-label="次のプラン"
-                >
-                  <ChevronDown className="h-6 w-6" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>次のプラン</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={onNext}
+                disabled={!hasNext}
+                aria-label={t('aria.next')}
+              >
+                <ChevronDown className="h-6 w-6" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>{t('aria.next')}</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
-      </TooltipProvider>
+      </div>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

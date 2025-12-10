@@ -45,6 +45,8 @@ export interface PlanCardProps {
   isDragging?: boolean | undefined
   isSelected?: boolean | undefined
   isResizing?: boolean | undefined
+  /** Inspectorで開いているプランかどうか */
+  isActive?: boolean | undefined
   className?: string | undefined
   style?: React.CSSProperties | undefined
   previewTime?: ({ start: Date; end: Date } | null) | undefined
