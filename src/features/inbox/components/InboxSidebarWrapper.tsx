@@ -1,32 +1,59 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
-import { useInboxData } from '../hooks/useInboxData'
+import { planToCalendarPlan } from '@/features/calendar/utils/planDataAdapter'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
+import { useplans } from '@/features/plans/hooks/usePlans'
+import type { Plan } from '@/features/plans/types/plan'
+
 import { InboxSidebar } from './InboxSidebar'
 
 /**
  * InboxSidebarWrapper - データを取得してInboxSidebarに渡す
  *
- * DesktopLayoutから呼び出され、InboxDataを使用する
+ * DesktopLayoutから呼び出され、カレンダープランデータを提供
  */
 export function InboxSidebarWrapper() {
-  const { items, isLoading } = useInboxData()
+  const { data: plansData, isLoading } = useplans()
+  const { updatePlan } = usePlanMutations()
 
-  // アクティブなPlan数とアーカイブ数を計算
-  const { activePlansCount, archivedPlansCount } = useMemo(() => {
-    // TODO: アーカイブフラグがある場合はそれで判定
-    // 現状はアーカイブ機能がないため、全てアクティブとして扱う
-    const active = items.length
-    const archived = 0
+  // カレンダー表示用のプラン（start_time/end_timeが設定されているもの）
+  const calendarPlans = useMemo(() => {
+    if (!plansData) return []
 
-    return {
-      activePlansCount: active,
-      archivedPlansCount: archived,
-    }
-  }, [items])
+    return plansData
+      .filter((plan) => plan.start_time && plan.end_time)
+      .map((plan) => {
+        // planToCalendarPlanはPlan型を期待するため、型アサーションで変換
+        return planToCalendarPlan(plan as unknown as Plan)
+      })
+  }, [plansData])
 
-  return (
-    <InboxSidebar isLoading={isLoading} activeplansCount={activePlansCount} archivedplansCount={archivedPlansCount} />
+  // プランのスケジュール設定ハンドラー
+  const handleSchedulePlan = useCallback(
+    (planId: string, date: Date, time: string) => {
+      // 時間文字列をパース（例: "09:00"）
+      const [hours, minutes] = time.split(':').map(Number)
+      const startTime = new Date(date)
+      startTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
+
+      // デフォルト1時間の予定
+      const endTime = new Date(startTime)
+      endTime.setHours(endTime.getHours() + 1)
+
+      // プランを更新
+      updatePlan.mutate({
+        id: planId,
+        data: {
+          start_time: startTime.toISOString(),
+          end_time: endTime.toISOString(),
+          due_date: date.toISOString().split('T')[0],
+        },
+      })
+    },
+    [updatePlan]
   )
+
+  return <InboxSidebar isLoading={isLoading} calendarPlans={calendarPlans} onSchedulePlan={handleSchedulePlan} />
 }

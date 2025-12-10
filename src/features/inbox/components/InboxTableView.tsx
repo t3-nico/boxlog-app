@@ -1,9 +1,12 @@
 'use client'
 
 import type { PlanStatus } from '@/features/plans/types/plan'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { TablePagination } from '@/features/table'
+import { useTranslations } from 'next-intl'
 import type { InboxItem } from '../hooks/useInboxData'
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
@@ -12,6 +15,8 @@ import { useInboxPaginationStore } from '../stores/useInboxPaginationStore'
 import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'
 import { useInboxSortStore } from '../stores/useInboxSortStore'
 import { useInboxViewStore } from '../stores/useInboxViewStore'
+import { BulkDatePickerDialog } from './table/BulkDatePickerDialog'
+import { BulkTagSelectDialog } from './table/BulkTagSelectDialog'
 import { GroupBySelector } from './table/GroupBySelector'
 import { InboxSelectionActions } from './table/InboxSelectionActions'
 import { InboxSelectionBar } from './table/InboxSelectionBar'
@@ -38,6 +43,9 @@ import { TableToolbar } from './table/TableToolbar'
  * ```
  */
 export function InboxTableView() {
+  const t = useTranslations()
+  const { bulkUpdatePlan, bulkDeletePlan, createPlan } = usePlanMutations()
+
   // フィルター関連：必要な値のみselectorで取得
   const filterStatus = useInboxFilterStore((state) => state.status)
   const filterSearch = useInboxFilterStore((state) => state.search)
@@ -65,6 +73,11 @@ export function InboxTableView() {
   // グループ化関連（ページネーション表示判定用）
   const groupBy = useInboxGroupStore((state) => state.groupBy)
 
+  // 期限一括変更ダイアログの状態
+  const [showDateDialog, setShowDateDialog] = useState(false)
+  // タグ一括追加ダイアログの状態
+  const [showTagDialog, setShowTagDialog] = useState(false)
+
   // データ取得
   const { items, isLoading, error } = useInboxData({
     status: filterStatus[0] as PlanStatus | undefined,
@@ -79,35 +92,67 @@ export function InboxTableView() {
   // 選択数
   const selectedCount = selectedIds.size
 
-  // アクションハンドラー
-  const handleArchive = () => {
-    // TODO: アーカイブ機能実装
-    console.log('Archive:', Array.from(selectedIds))
+  // アクションハンドラー: アーカイブ（status を 'done' に変更）
+  const handleArchive = async () => {
+    const ids = Array.from(selectedIds)
+    if (ids.length === 0) return
+
+    try {
+      await bulkUpdatePlan.mutateAsync({
+        ids,
+        data: { status: 'done' },
+      })
+      clearSelection()
+    } catch (error) {
+      console.error('Archive error:', error)
+    }
   }
 
-  const handleDelete = () => {
-    // TODO: 削除機能実装
-    console.log('Delete:', Array.from(selectedIds))
+  // アクションハンドラー: 削除（確認ダイアログ付き）
+  const handleDelete = async () => {
+    const ids = Array.from(selectedIds)
+    if (ids.length === 0) return
+
+    // 確認ダイアログ
+    if (!window.confirm(t('common.inbox.deleteConfirm', { count: ids.length }))) {
+      return
+    }
+
+    try {
+      await bulkDeletePlan.mutateAsync({ ids })
+      clearSelection()
+    } catch (error) {
+      console.error('Delete error:', error)
+    }
   }
 
+  // アクションハンドラー: 編集（Inspectorを開く）
   const handleEdit = (item: InboxItem) => {
-    // TODO: 編集機能実装（Inspectorを開く）
-    console.log('Edit:', item.id)
+    usePlanInspectorStore.getState().openInspector(item.id)
   }
 
-  const handleDuplicate = (item: InboxItem) => {
-    // TODO: 複製機能実装
-    console.log('Duplicate:', item.id)
+  // アクションハンドラー: 複製
+  const handleDuplicate = async (item: InboxItem) => {
+    try {
+      await createPlan.mutateAsync({
+        title: `${item.title} (copy)`,
+        status: item.status,
+        description: item.description || undefined,
+        due_date: item.due_date || undefined,
+      })
+    } catch (error) {
+      console.error('Duplicate error:', error)
+    }
   }
 
+  // アクションハンドラー: タグ一括追加（ダイアログを開く）
   const handleAddTags = () => {
-    // TODO: タグ一括追加機能実装
-    console.log('Add tags to:', Array.from(selectedIds))
+    setShowTagDialog(true)
   }
 
+  // アクションハンドラー: 期限一括変更（ダイアログを開く）
   const handleChangeDueDate = () => {
-    // TODO: 期限一括変更機能実装
-    console.log('Change due date for:', Array.from(selectedIds))
+    setShowDateDialog(true)
   }
 
   // アクティブなビューを取得
@@ -222,6 +267,28 @@ export function InboxTableView() {
           </div>
         )}
       </div>
+
+      {/* 期限一括設定ダイアログ */}
+      <BulkDatePickerDialog
+        open={showDateDialog}
+        onOpenChange={setShowDateDialog}
+        selectedIds={Array.from(selectedIds)}
+        onSuccess={() => {
+          clearSelection()
+          setShowDateDialog(false)
+        }}
+      />
+
+      {/* タグ一括追加ダイアログ */}
+      <BulkTagSelectDialog
+        open={showTagDialog}
+        onOpenChange={setShowTagDialog}
+        selectedPlanIds={Array.from(selectedIds)}
+        onSuccess={() => {
+          clearSelection()
+          setShowTagDialog(false)
+        }}
+      />
     </div>
   )
 }

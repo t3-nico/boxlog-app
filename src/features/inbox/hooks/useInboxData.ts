@@ -6,7 +6,24 @@
 
 import { useplans } from '@/features/plans/hooks/usePlans'
 import type { Plan, PlanStatus } from '@/features/plans/types/plan'
+import { getEffectiveStatus } from '@/features/plans/utils/status'
 import type { DueDateFilter } from '../stores/useInboxFilterStore'
+
+/**
+ * APIから返されるプランデータの型
+ * plan_tagsはJOINで取得される中間テーブル形式
+ * @internal テスト用にエクスポート
+ */
+export type PlanWithPlanTags = Plan & {
+  plan_tags?: Array<{
+    tag_id: string
+    tags: {
+      id: string
+      name: string
+      color?: string
+    } | null
+  }> | null
+}
 
 /**
  * Inboxアイテム（Plan型のエイリアス）
@@ -43,8 +60,9 @@ export interface InboxFilters {
 
 /**
  * 期限フィルターの判定
+ * @internal テスト用にエクスポート
  */
-function matchesDueDateFilter(dueDate: string | null | undefined, filter: DueDateFilter): boolean {
+export function matchesDueDateFilter(dueDate: string | null | undefined, filter: DueDateFilter): boolean {
   if (filter === 'all') return true
 
   const today = new Date()
@@ -95,21 +113,20 @@ function matchesDueDateFilter(dueDate: string | null | undefined, filter: DueDat
 
 /**
  * PlanをInboxItemに変換
+ * @internal テスト用にエクスポート
  */
-function planToInboxItem(
-  plan: Plan & { plan_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
-): InboxItem {
+export function planToInboxItem(plan: PlanWithPlanTags): InboxItem {
   // plan_tags から tags を抽出
   const tags =
     plan.plan_tags
-      ?.map((tt) => tt.tags)
+      ?.map((pt) => pt.tags)
       .filter((tag): tag is { id: string; name: string; color?: string } => tag !== null && tag !== undefined) || []
 
   return {
     id: plan.id,
     type: 'plan',
     title: plan.title,
-    status: plan.status,
+    status: getEffectiveStatus(plan),
     created_at: plan.created_at ?? new Date().toISOString(),
     updated_at: plan.updated_at ?? new Date().toISOString(),
     plan_number: plan.plan_number,
@@ -159,13 +176,8 @@ export function useInboxData(filters: InboxFilters = {}) {
   })
 
   // PlanをInboxItemに変換
-  // APIレスポンスは部分的な型なので、unknown経由でキャスト
-  let items: InboxItem[] =
-    plansData?.map((t) =>
-      planToInboxItem(
-        t as unknown as Plan & { plan_tags?: Array<{ tags: { id: string; name: string; color?: string } }> }
-      )
-    ) || []
+  // APIレスポンスの型はPlanWithPlanTagsと互換性がある
+  let items: InboxItem[] = plansData?.map((plan) => planToInboxItem(plan as PlanWithPlanTags)) || []
 
   // タグフィルタリング（クライアント側）
   if (filters.tags && filters.tags.length > 0) {
