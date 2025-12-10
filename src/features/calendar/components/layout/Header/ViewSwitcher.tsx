@@ -25,6 +25,9 @@ interface ViewSwitcherProps {
 /**
  * ビュー切り替えドロップダウン
  * shadcn/ui公式DropdownMenuを使用
+ *
+ * **デザイン仕様**:
+ * - ボタン: 32px（size: 'sm'、8pxグリッド準拠）
  */
 export const ViewSwitcher = ({ options, currentView, onChange, className }: ViewSwitcherProps) => {
   const currentOption = options.find((opt) => opt.value === currentView)
@@ -70,7 +73,9 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={cn(buttonVariants({ variant: 'outline' }), 'justify-start gap-0', className)}>
+      <DropdownMenuTrigger
+        className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'justify-start gap-0', className)}
+      >
         {currentOption?.icon}
         <span>{currentOption?.label || 'Day'}</span>
         <ChevronDown className="ml-2 h-4 w-4" />

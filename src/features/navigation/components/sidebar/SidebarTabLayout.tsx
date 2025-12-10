@@ -13,7 +13,10 @@ import type { SidebarTabLayoutProps } from './types'
  * SidebarShellのchildren として使用する。
  *
  * **デザイン仕様**:
- * - 8pxグリッドシステム準拠（py-2, px-4）
+ * - 全体の高さ: 48px固定（h-12）
+ * - 上下パディング: 8px（py-2）
+ * - タブ高さ: 32px（h-8）
+ * - 8pxグリッドシステム準拠
  * - Slack風アンダーラインタブ（選択時のみ下部ボーダー表示）
  * - セマンティックトークン使用（globals.css）
  * - AppBarとの視覚的一貫性
@@ -36,9 +39,9 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <Tabs defaultValue={initialTab} className="flex flex-1 flex-col overflow-hidden">
-        {/* TabsList - Slack風アンダーラインデザイン */}
+        {/* TabsList - Slack風アンダーラインデザイン（48px = 8px + 32px + 8px） */}
         <TabsList
-          className="border-border grid h-12 w-full shrink-0 rounded-none border-b bg-transparent px-4 pt-2"
+          className="grid h-12 w-full shrink-0 rounded-none bg-transparent p-0 py-2"
           style={{
             gridTemplateColumns: `repeat(${tabs.length}, 1fr)`,
           }}
@@ -47,7 +50,7 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className="data-[state=active]:border-foreground hover:border-foreground/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              className="border-border data-[state=active]:border-foreground hover:border-foreground/50 h-8 rounded-none border-b-2 p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
             >
               {tab.label}
             </TabsTrigger>

@@ -40,8 +40,14 @@ const viewOptions = [
 ]
 
 /**
- * カレンダーヘッダー
+ * カレンダーヘッダー（ナビゲーション部分）
  * 共通コンポーネントを組み合わせたカレンダーヘッダー
+ *
+ * **デザイン仕様**:
+ * - 全体の高さ: 48px固定（h-12）
+ * - 上下パディング: 8px（py-2）
+ * - コンテナ: 32px（h-8）
+ * - 8pxグリッドシステム準拠
  */
 export const CalendarHeader = ({
   viewType,
@@ -58,8 +64,8 @@ export const CalendarHeader = ({
   displayRange,
 }: CalendarHeaderProps) => {
   return (
-    <header className="bg-background relative h-12 px-4 pt-2">
-      <div className="flex h-full items-center justify-between">
+    <header className="bg-background relative h-12 px-4 py-2">
+      <div className="flex h-8 items-center justify-between">
         {/* 左側: カスタムスロット + ナビゲーションコントロールと日付 */}
         <div className="flex items-center gap-4">
           {/* カスタムスロット（モバイルメニューボタンなど） */}

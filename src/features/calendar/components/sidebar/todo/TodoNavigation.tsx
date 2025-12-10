@@ -46,8 +46,8 @@ export function TodoNavigation({
       {/* 期間フィルター */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Clock className="h-4 w-4" />
+          <Button variant="ghost" size="icon-sm">
+            <Clock className="size-4" />
             <span className="sr-only">Time filter</span>
           </Button>
         </PopoverTrigger>
@@ -82,8 +82,8 @@ export function TodoNavigation({
       {/* ソート順 */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <ArrowUpDown className="h-4 w-4" />
+          <Button variant="ghost" size="icon-sm">
+            <ArrowUpDown className="size-4" />
             <span className="sr-only">Sort order</span>
           </Button>
         </PopoverTrigger>
@@ -118,8 +118,8 @@ export function TodoNavigation({
       {/* 優先度フィルター */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <ListFilter className="h-4 w-4" />
+          <Button variant="ghost" size="icon-sm">
+            <ListFilter className="size-4" />
             <span className="sr-only">Priority filter</span>
           </Button>
         </PopoverTrigger>

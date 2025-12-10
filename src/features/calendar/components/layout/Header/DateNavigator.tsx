@@ -20,13 +20,17 @@ interface DateNavigatorProps {
 
 const arrowSizes = {
   sm: 'size-4',
-  md: 'size-6',
-  lg: 'size-6',
+  md: 'size-4',
+  lg: 'size-5',
 }
 
 /**
  * 日付ナビゲーション
  * 前後移動と今日への移動を提供
+ *
+ * **デザイン仕様**:
+ * - ボタン: 32px（8pxグリッド準拠）
+ * - アイコン: 16px（size-4）
  */
 export const DateNavigator = ({
   onNavigate,
@@ -41,26 +45,26 @@ export const DateNavigator = ({
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      {/* 今日ボタン - 40px（8pxグリッド準拠） */}
+      {/* 今日ボタン - 32px（8pxグリッド準拠） */}
       {showTodayButton != null ? (
         <button
           type="button"
           onClick={() => onNavigate('today')}
-          className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), buttonClassName)}
+          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), buttonClassName)}
           title={t('calendar.actions.goToToday')}
         >
           <span>{todayLabel}</span>
         </button>
       ) : null}
 
-      {/* 前後ナビゲーション */}
+      {/* 前後ナビゲーション - 32px（8pxグリッド準拠） */}
       {showArrows != null ? (
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={() => onNavigate('prev')}
             className={cn(
-              'flex size-10 items-center justify-center rounded-full transition-colors',
+              'flex size-8 items-center justify-center rounded-full transition-colors',
               'hover:bg-state-hover',
               'text-muted-foreground'
             )}
@@ -73,7 +77,7 @@ export const DateNavigator = ({
             type="button"
             onClick={() => onNavigate('next')}
             className={cn(
-              'flex size-10 items-center justify-center rounded-full transition-colors',
+              'flex size-8 items-center justify-center rounded-full transition-colors',
               'hover:bg-state-hover',
               'text-muted-foreground'
             )}

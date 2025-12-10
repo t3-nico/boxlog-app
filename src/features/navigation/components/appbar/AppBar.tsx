@@ -92,30 +92,30 @@ export function AppBar() {
       onMouseLeave={() => setIsAppBarHovered(false)}
       onClick={toggle}
     >
-      {/* Logo / Sidebar Toggle */}
-      <div className="flex items-center justify-center pt-2" onClick={(e) => e.stopPropagation()}>
+      {/* Logo / Sidebar Toggle - 48px (8px padding + 32px button + 8px padding) */}
+      <div className="flex items-center justify-center py-2" onClick={(e) => e.stopPropagation()}>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               {isOpen ? (
                 <Button
                   onClick={toggle}
-                  size="icon"
+                  size="icon-sm"
                   variant="ghost"
                   aria-label={t('sidebar.closeSidebar')}
-                  className="text-muted-foreground size-10 shrink-0"
+                  className="text-muted-foreground size-8 shrink-0"
                 >
-                  <PanelLeftClose className="size-5" />
+                  <PanelLeftClose className="size-4" />
                 </Button>
               ) : (
                 <Button
                   onClick={toggle}
-                  size="icon"
+                  size="icon-sm"
                   variant="ghost"
                   aria-label={t('sidebar.openSidebar')}
-                  className="text-foreground size-10 shrink-0"
+                  className="text-foreground size-8 shrink-0"
                 >
-                  {isAppBarHovered ? <PanelLeftOpen className="size-5" /> : <Box className="size-5" />}
+                  {isAppBarHovered ? <PanelLeftOpen className="size-4" /> : <Box className="size-4" />}
                 </Button>
               )}
             </TooltipTrigger>

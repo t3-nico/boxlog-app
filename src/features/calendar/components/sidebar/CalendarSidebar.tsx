@@ -82,7 +82,7 @@ export function CalendarSidebar() {
       value: 'todo',
       label: t('calendar.sidebar.tabs.todo'),
       content: (
-        <div className="pt-2">
+        <div>
           {/* ナビゲーションコンテナ: 高さ40px（内部32px + 下padding 8px） */}
           <div className="h-10 shrink-0 px-4 pb-2">
             <TodoNavigation
