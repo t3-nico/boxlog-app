@@ -206,11 +206,23 @@ export function usePlanMutations() {
     },
   })
 
+  // ✨ 一括タグ追加
+  const bulkAddTags = api.plans.bulkAddTags.useMutation({
+    onSuccess: () => {
+      toast.success(t('common.plan.tagsAdded'))
+      void utils.plans.list.invalidate(undefined, { refetchType: 'active' })
+    },
+    onError: (error) => {
+      toast.error(t('common.plan.tagsAddFailed', { error: error.message }))
+    },
+  })
+
   return {
     createPlan,
     updatePlan,
     deletePlan,
     bulkUpdatePlan,
     bulkDeletePlan,
+    bulkAddTags,
   }
 }
