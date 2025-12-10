@@ -18,7 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { TableCell, TableRow } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
-import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { Tag, TagGroup } from '@/features/tags/types'
 import type { useTranslations } from 'next-intl'
 
 interface ColumnWidths {
@@ -33,9 +33,9 @@ interface ColumnWidths {
 }
 
 interface TagRowProps {
-  tag: TagWithChildren
+  tag: Tag
   groups: TagGroup[]
-  tags: TagWithChildren[]
+  tags: Tag[]
   columnWidths: ColumnWidths
   isSelected: boolean
   isEditing: boolean
@@ -45,14 +45,14 @@ interface TagRowProps {
   onSelect: (tagId: string) => void
   onContextSelect: (tagId: string) => void
   onColorChange: (tagId: string, color: string) => void
-  onEditStart: (tag: TagWithChildren) => void
+  onEditStart: (tag: Tag) => void
   onEditChange: (value: string) => void
   onEditSave: (tagId: string) => void
   onEditCancel: () => void
-  onView: (tag: TagWithChildren) => void
-  onMoveToGroup: (tag: TagWithChildren, groupId: string | null) => void
-  onArchive: (tag: TagWithChildren) => void
-  onDelete: (tag: TagWithChildren) => void
+  onView: (tag: Tag) => void
+  onMoveToGroup: (tag: Tag, groupId: string | null) => void
+  onArchive: (tag: Tag) => void
+  onDelete: (tag: Tag) => void
   formatDate: (date: Date | string) => string
   t: ReturnType<typeof useTranslations>
 }
@@ -82,7 +82,7 @@ export function TagRow({
   t,
 }: TagRowProps) {
   const group = tag.group_id ? groups.find((g) => g.id === tag.group_id) : null
-  const groupTagCount = group ? tags.filter((t) => t.group_id === group.id && t.is_active && t.level === 0).length : 0
+  const groupTagCount = group ? tags.filter((t) => t.group_id === group.id && t.is_active).length : 0
 
   return (
     <ContextMenu modal={false}>

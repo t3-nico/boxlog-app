@@ -1,4 +1,3 @@
-// @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 /**
  * タグ個別操作API エンドポイント
  * @description 特定タグのGET/PATCH/DELETE操作
@@ -62,31 +61,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         // テーブルが存在しない場合は0のまま
       }
 
-      // event_tagsテーブルが存在する場合
-      try {
-        const { count: eventCount } = await supabase
-          .from('event_tags')
-          .select('*', { count: 'exact', head: true })
-          .eq('tag_id', id)
-
-        usage.eventCount = eventCount || 0
-      } catch {
-        // テーブルが存在しない場合は0のまま
-      }
-
-      // task_tagsテーブルが存在する場合
-      try {
-        const { count: taskCount } = await supabase
-          .from('task_tags')
-          .select('*', { count: 'exact', head: true })
-          .eq('tag_id', id)
-
-        usage.taskCount = taskCount || 0
-      } catch {
-        // テーブルが存在しない場合は0のまま
-      }
-
-      usage.totalCount = usage.planCount + usage.eventCount + usage.taskCount
+      // 合計カウント（現在はplan_tagsのみ）
+      usage.totalCount = usage.planCount
 
       return NextResponse.json({ data, usage })
     }
@@ -159,14 +135,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       updateData.icon = body.icon
     }
 
-    if (body.parent_id !== undefined) {
-      updateData.parent_id = body.parent_id
-    }
-
-    if (body.level !== undefined) {
-      updateData.level = body.level
-    }
-
     if (body.is_active !== undefined) {
       updateData.is_active = body.is_active
     }
@@ -194,7 +162,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
  * タグ削除 (DELETE)
  * @description 特定のタグを削除
  */
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient()
     const { id } = await params

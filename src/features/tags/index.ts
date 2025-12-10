@@ -81,14 +81,12 @@ export {
   useTagGroups,
   // Tag Group DnD
   useTagGroupsDnd,
-  useTagItemAnimation,
   // Operations
   useTagOperations,
   // Realtime
   useTagRealtime,
   // Stats
   useTagStats,
-  useTagStatsDebug,
   useTagUsageCounts,
   // Tags CRUD
   useTags,
@@ -114,7 +112,6 @@ export type {
   Tag,
   TagFilter,
   TagGroup,
-  TagLevel,
   TagOption,
   TagSortField,
   TagSortOptions,

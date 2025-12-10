@@ -15,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { CreateTagGroupInput } from '@/features/tags/types'
+import { useTranslations } from 'next-intl'
 
 interface TagGroupCreateModalProps {
   isOpen: boolean
@@ -23,6 +24,7 @@ interface TagGroupCreateModalProps {
 }
 
 export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateModalProps) => {
+  const t = useTranslations()
   const [name, setName] = useState('')
   const [color, setColor] = useState('#3B82F6')
   const [isLoading, setIsLoading] = useState(false)
@@ -43,7 +45,7 @@ export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateM
       setError('')
 
       if (!name.trim()) {
-        setError('グループ名を入力してください')
+        setError(t('tag.toast.groupNameRequired'))
         return
       }
 
@@ -58,52 +60,52 @@ export const TagGroupCreateModal = ({ isOpen, onClose, onSave }: TagGroupCreateM
         onClose()
       } catch (err) {
         console.error('Tag group creation failed:', err)
-        setError('グループの作成に失敗しました')
+        setError(t('tag.toast.groupCreateFailed'))
       } finally {
         setIsLoading(false)
       }
     },
-    [name, color, onSave, onClose]
+    [name, color, onSave, onClose, t]
   )
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>新規グループ作成</DialogTitle>
-          <DialogDescription>新しいタググループを作成します</DialogDescription>
+          <DialogTitle>{t('tag.group.createTitle')}</DialogTitle>
+          <DialogDescription>{t('tag.group.createDescription')}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             {/* グループ名 */}
             <div className="grid gap-2">
-              <Label htmlFor="name">グループ名 *</Label>
+              <Label htmlFor="name">{t('tag.group.nameRequired')}</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="例: プロジェクト"
+                placeholder={t('tag.group.namePlaceholder')}
                 required
               />
             </div>
 
             {/* カラー */}
             <div className="grid gap-2">
-              <Label htmlFor="color">カラー</Label>
+              <Label htmlFor="color">{t('tag.form.color')}</Label>
               <ColorPalettePicker selectedColor={color} onColorSelect={setColor} />
             </div>
 
             {/* エラー表示 */}
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="text-destructive text-sm">{error}</p>}
           </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
-              キャンセル
+              {t('tag.actions.cancel')}
             </Button>
             <Button type="submit" disabled={isLoading || !name.trim()}>
-              {isLoading ? '作成中...' : '作成'}
+              {isLoading ? t('tag.actions.creating') : t('tag.actions.create')}
             </Button>
           </DialogFooter>
         </form>

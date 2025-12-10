@@ -20,6 +20,7 @@ import { Tag } from '@/features/tags/types'
 import { useActiveState } from '@/hooks/useActiveState'
 import { tagIconMapping, TagIconName } from '../constants/icons'
 
+import { TagDeleteDialog } from './TagDeleteDialog'
 import { TagEditDialog } from './tag-edit-dialog'
 
 interface TagsListProps {
@@ -247,44 +248,20 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
   // Zustandストアからデータを取得
   const tags = useTagStore((state) => state.tags)
   // State management tracked in Issue #89
-  const [expandedTags, setExpandedTags] = useState<string[]>([])
+  const [_expandedTags, setExpandedTags] = useState<string[]>([])
   const toggleTagExpansion = useCallback((tagId: string) => {
     setExpandedTags((prev) => (prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]))
   }, [])
 
-  // 表示するタグリストを計算（階層構造）
+  // 表示するタグリストを計算（フラット構造）
   const displayTags = useCallback(() => {
-    const result: Array<{
-      tag: Tag
-      level: number
-      hasChildren: boolean
-      isExpanded: boolean
-    }> = []
-
-    const addTagsRecursively = (parentId: string | null, level: number = 0) => {
-      const childTags = tags.filter((tag) => tag.parent_id === parentId)
-
-      childTags.forEach((tag) => {
-        const hasChildren = tags.some((t) => t.parent_id === tag.id)
-        const isExpanded = expandedTags.includes(tag.id)
-
-        result.push({
-          tag,
-          level,
-          hasChildren,
-          isExpanded,
-        })
-
-        // 展開されている場合のみ子タグを追加
-        if (isExpanded) {
-          addTagsRecursively(tag.id, level + 1)
-        }
-      })
-    }
-
-    addTagsRecursively(null)
-    return result
-  }, [tags, expandedTags])
+    return tags.map((tag) => ({
+      tag,
+      level: 0,
+      hasChildren: false,
+      isExpanded: false,
+    }))
+  }, [tags])
 
   const handleToggleExpanded = useCallback(
     (tagId: string) => {
@@ -294,6 +271,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
   )
 
   const [editingTag, setEditingTag] = useState<Tag | null>(null)
+  const [deletingTag, setDeletingTag] = useState<Tag | null>(null)
   const updateTag = useTagStore((state) => state.updateTag)
   const deleteTag = useTagStore((state) => state.deleteTag)
 
@@ -301,16 +279,19 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
     setEditingTag(tag)
   }, [])
 
-  const handleDeleteTag = useCallback(
-    (tag: Tag) => {
-      // TODO: タグの使用状況チェック（タスク、イベント、記録での使用数）
-      // 現在は直接削除を許可（サーバー側でバリデーション想定）
-      if (confirm(`タグ「${tag.name}」を削除しますか？`)) {
-        deleteTag(tag.id)
-      }
-    },
-    [deleteTag]
-  )
+  const handleDeleteTag = useCallback((tag: Tag) => {
+    setDeletingTag(tag)
+  }, [])
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!deletingTag) return
+    deleteTag(deletingTag.id)
+    setDeletingTag(null)
+  }, [deletingTag, deleteTag])
+
+  const handleCloseDeleteDialog = useCallback(() => {
+    setDeletingTag(null)
+  }, [])
 
   const handleSaveTag = useCallback(
     (updatedTag: Partial<Tag>) => {
@@ -418,6 +399,9 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
 
       {/* タグ編集ダイアログ */}
       <TagEditDialog tag={editingTag} open={!!editingTag} onClose={handleCloseEditDialog} onSave={handleSaveTag} />
+
+      {/* タグ削除ダイアログ（使用状況チェック付き） */}
+      <TagDeleteDialog tag={deletingTag} onClose={handleCloseDeleteDialog} onConfirm={handleConfirmDelete} />
     </div>
   )
 }

@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react'
 import { ChevronDown as ChevronDownIcon, Filter as FunnelIcon, Tag as TagIcon, X as XMarkIcon } from 'lucide-react'
 
 import { useTags } from '@/features/tags/hooks/use-tags'
-import type { TagWithChildren } from '@/features/tags/types'
+import type { Tag } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 
 interface TagFilterProps {
@@ -16,46 +16,28 @@ interface TagFilterProps {
 }
 
 interface TagFilterItemProps {
-  tag: TagWithChildren
-  level: number
+  tag: Tag
   isSelected: boolean
   onToggle: (tagId: string) => void
 }
 
-const TagFilterItem = ({ tag, level, isSelected, onToggle }: TagFilterItemProps) => {
-  const paddingLeft = level * 16 + 8
-
+const TagFilterItem = ({ tag, isSelected, onToggle }: TagFilterItemProps) => {
   // jsx-no-bind optimization: Toggle handler
   const handleToggle = useCallback(() => {
     onToggle(tag.id)
   }, [onToggle, tag.id])
 
   return (
-    <div>
-      <label
-        className={`hover:bg-state-hover flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors`}
-        style={{ paddingLeft: `${paddingLeft}px` }}
-      >
-        <input
-          type="checkbox"
-          checked={isSelected}
-          onChange={handleToggle}
-          className="border-border text-primary focus:ring-primary rounded"
-        />
-        <TagIcon className="h-4 w-4 flex-shrink-0" style={{ color: tag.color }} />
-        <span className="flex-1 truncate">{tag.name}</span>
-        {tag.path && level > 0 ? <span className="text-muted-foreground truncate text-xs">{tag.path}</span> : null}
-      </label>
-
-      {/* 子タグ */}
-      {tag.children && tag.children.length > 0 ? (
-        <div>
-          {tag.children.map((child) => (
-            <TagFilterItem key={child.id} tag={child} level={level + 1} isSelected={isSelected} onToggle={onToggle} />
-          ))}
-        </div>
-      ) : null}
-    </div>
+    <label className="hover:bg-state-hover flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors">
+      <input
+        type="checkbox"
+        checked={isSelected}
+        onChange={handleToggle}
+        className="border-border text-primary focus:ring-primary rounded"
+      />
+      <TagIcon className="h-4 w-4 flex-shrink-0" style={{ color: tag.color }} />
+      <span className="flex-1 truncate">{tag.name}</span>
+    </label>
   )
 }
 
@@ -101,9 +83,6 @@ export const TagFilter = ({
 
   // 選択されたタグ
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
-
-  // トップレベルタグのみ表示
-  const topLevelTags = allTags.filter((tag) => tag.level === 0)
 
   return (
     <div className={`relative ${className}`}>
@@ -181,13 +160,12 @@ export const TagFilter = ({
                 <div className="flex items-center justify-center py-8">
                   <div className="border-primary h-6 w-6 animate-spin rounded-full border-b-2"></div>
                 </div>
-              ) : topLevelTags.length > 0 ? (
+              ) : allTags.length > 0 ? (
                 <div className="py-2">
-                  {topLevelTags.map((tag) => (
+                  {allTags.map((tag) => (
                     <TagFilterItem
                       key={tag.id}
                       tag={tag}
-                      level={0}
                       isSelected={selectedTagIds.includes(tag.id)}
                       onToggle={toggleTag}
                     />
@@ -220,7 +198,7 @@ export const TagFilter = ({
  * シンプルなタグ選択チップ
  */
 interface TagChipProps {
-  tag: TagWithChildren
+  tag: Tag
   isSelected: boolean
   onToggle: (tagId: string) => void
 }
@@ -258,9 +236,7 @@ export const TagFilterChips = ({ className = '' }: { className?: string }) => {
   }
 
   // 使用頻度が高いタグを表示（最大10個）
-  const popularTags = allTags
-    .filter((tag) => tag.level === 0) // トップレベルのみ
-    .slice(0, 10)
+  const popularTags = allTags.slice(0, 10)
 
   if (isLoading || popularTags.length === 0) {
     return null

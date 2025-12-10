@@ -32,46 +32,24 @@ export const TagSelector = ({
   selectedTagIds,
   onTagsChange,
   maxTags,
-  placeholder = 'Select tags...',
+  placeholder,
   enableCreate = true,
 }: TagSelectorProps) => {
   const t = useTranslations()
+  const effectivePlaceholder = placeholder ?? t('tag.selector.placeholder')
   const [searchQuery, setSearchQuery] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const createTagMutation = useCreateTag()
 
   // データベースからタグを取得
-  const { data: tagsData } = useTags(true)
-
-  // TagWithChildren[] を Tag[] に変換（階層を平坦化）
-  const flattenTags = (tags: typeof tagsData): Tag[] => {
-    if (!tags) return []
-    const result: Tag[] = []
-    const flatten = (tagList: typeof tagsData) => {
-      if (!tagList) return
-      tagList.forEach((tag) => {
-        result.push(tag)
-        if (tag.children && tag.children.length > 0) {
-          flatten(tag.children)
-        }
-      })
-    }
-    flatten(tags)
-    return result
-  }
-
-  const allTags = flattenTags(tagsData)
+  const { data: allTags = [] } = useTags(true)
   // アクティブなタグのみを使用（アーカイブ済みタグを除外）
   const activeTags = allTags.filter((tag) => tag.is_active)
   const selectedTags = activeTags.filter((tag) => selectedTagIds.includes(tag.id))
   const availableTags = activeTags.filter((tag) => !selectedTagIds.includes(tag.id))
 
   const filteredTags = searchQuery
-    ? availableTags.filter(
-        (tag) =>
-          tag.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          tag.path.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+    ? availableTags.filter((tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()))
     : availableTags
 
   const handleTagAdd = (tag: Tag) => {
@@ -90,7 +68,6 @@ export const TagSelector = ({
         name: newTag.name,
         color: newTag.color,
         description: undefined,
-        level: 0,
       })
 
       // 作成されたタグを自動的に選択
@@ -126,8 +103,8 @@ export const TagSelector = ({
             >
               <span className="text-left">
                 {selectedTags.length > 0
-                  ? `${selectedTags.length} tag${selectedTags.length !== 1 ? 's' : ''} selected`
-                  : placeholder}
+                  ? t('tag.selector.tagsSelected', { count: selectedTags.length })
+                  : effectivePlaceholder}
               </span>
               <ChevronDownIcon className="h-4 w-4" />
             </Button>
@@ -135,7 +112,7 @@ export const TagSelector = ({
           <DropdownMenuContent className="w-64 p-0">
             <div className="p-2">
               <Input
-                placeholder="Search tags..."
+                placeholder={t('tag.selector.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-8"
@@ -147,16 +124,16 @@ export const TagSelector = ({
                   <DropdownMenuItem
                     key={tag.id}
                     onClick={() => handleTagAdd(tag)}
-                    className={`flex items-center space-x-2 p-2 ${tag.level > 1 ? `ml-${(tag.level - 1) * 4}` : ''}`}
+                    className="flex items-center space-x-2 p-2"
                   >
-                    <TagBadge tag={tag} showIcon={true} showPath={tag.level > 1} />
+                    <TagBadge tag={tag} showIcon={true} />
                     {tag.description != null && (
-                      <span className="truncate text-xs text-gray-500">{tag.description}</span>
+                      <span className="text-muted-foreground truncate text-xs">{tag.description}</span>
                     )}
                   </DropdownMenuItem>
                 ))
               ) : (
-                <div className="p-2 text-center text-sm text-gray-500">
+                <div className="text-muted-foreground p-2 text-center text-sm">
                   {searchQuery ? t('tag.search.noTags') : t('tag.search.noMoreTags')}
                 </div>
               )}
@@ -166,7 +143,7 @@ export const TagSelector = ({
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setShowCreateModal(true)} className="p-2">
                   <Plus className="mr-2 h-4 w-4" />
-                  Create New Tag
+                  {t('tag.actions.createNew')}
                 </DropdownMenuItem>
               </>
             )}
@@ -174,8 +151,8 @@ export const TagSelector = ({
         </DropdownMenu>
 
         {maxTags != null && (
-          <div className="text-xs text-gray-500">
-            {selectedTagIds.length} / {maxTags} tags selected
+          <div className="text-muted-foreground text-xs">
+            {t('tag.selector.tagsCount', { current: selectedTagIds.length, max: maxTags })}
           </div>
         )}
       </div>

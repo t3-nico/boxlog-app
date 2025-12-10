@@ -6,11 +6,11 @@ import { useMemo } from 'react'
 import type { ColumnDef } from '@/components/common/table'
 import { TagCellContent } from '@/features/tags/components/table'
 import type { TagColumnId } from '@/features/tags/stores/useTagColumnStore'
-import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { Tag, TagGroup } from '@/features/tags/types'
 
 interface UseTagTableColumnsParams {
   groups: TagGroup[]
-  allTags: TagWithChildren[]
+  allTags: Tag[]
   planCounts: Record<string, number>
   lastUsed: Record<string, string>
   visibleColumns: { id: string; width: number }[]
@@ -27,9 +27,9 @@ export function useTagTableColumns({
   lastUsed,
   visibleColumns,
   t,
-}: UseTagTableColumnsParams): ColumnDef<TagWithChildren>[] {
+}: UseTagTableColumnsParams): ColumnDef<Tag>[] {
   return useMemo(() => {
-    const allColumnDefs: ColumnDef<TagWithChildren>[] = [
+    const allColumnDefs: ColumnDef<Tag>[] = [
       {
         id: 'id',
         label: 'ID',

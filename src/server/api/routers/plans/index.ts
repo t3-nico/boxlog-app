@@ -12,16 +12,7 @@ import { activitiesRouter } from './activities'
 import { bulkRouter } from './bulk'
 import { plansCrudRouter } from './crud'
 import { instancesRouter } from './instances'
-import { planTagsRouter } from './plan-tags'
 import { statisticsRouter } from './statistics'
-import { tagsRouter } from './tags'
-
-// Re-export subrouters with renamed procedures to maintain original API
-const planTagsAliasRouter = createTRPCRouter({
-  addTag: planTagsRouter.add,
-  removeTag: planTagsRouter.remove,
-  getTags: planTagsRouter.get,
-})
 
 const bulkAliasRouter = createTRPCRouter({
   bulkUpdate: bulkRouter.update,
@@ -54,16 +45,10 @@ const instancesAliasRouter = createTRPCRouter({
   deleteInstance: instancesRouter.delete,
 })
 
-// Base router with nested tags
-const baseRouter = createTRPCRouter({
-  tags: tagsRouter,
-})
-
 // Merge all routers to create final plansRouter
+// Note: Tags are managed via REST API (/api/tags) not tRPC
 export const plansRouter = mergeRouters(
-  baseRouter,
   plansCrudRouter,
-  planTagsAliasRouter,
   bulkAliasRouter,
   statisticsAliasRouter,
   activitiesAliasRouter,

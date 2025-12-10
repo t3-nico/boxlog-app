@@ -14,20 +14,20 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { Tag, TagGroup } from '@/features/tags/types'
 
 import { TagActionMenuItems } from './TagActionMenuItems'
 
 interface TagSelectionActionsProps {
   selectedTagIds: string[]
-  tags: TagWithChildren[]
+  tags: Tag[]
   groups: TagGroup[]
-  onMoveToGroup: (tag: TagWithChildren, groupId: string | null) => void
+  onMoveToGroup: (tag: Tag, groupId: string | null) => void
   onArchive?: (tagIds: string[]) => Promise<void>
   onDelete: () => void
   onMerge?: () => void
-  onEdit?: (tag: TagWithChildren) => void
-  onView?: (tag: TagWithChildren) => void
+  onEdit?: (tag: Tag) => void
+  onView?: (tag: Tag) => void
   onClearSelection: () => void
   t: (key: string) => string
 }
@@ -83,7 +83,7 @@ export function TagSelectionActions({
                 })
               }}
             >
-              <FolderX className="mr-2 h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+              <FolderX className="text-muted-foreground mr-2 h-4 w-4" />
               {t('tag.page.noGroup')}
             </DropdownMenuItem>
             {groups.map((group) => (

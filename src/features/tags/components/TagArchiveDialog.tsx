@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import {
   AlertDialog,
@@ -11,48 +11,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import type { TagUsage, TagWithChildren } from '@/features/tags/types'
+import { useTagUsage } from '@/features/tags/hooks'
+import type { Tag } from '@/features/tags/types'
 import { AlertTriangle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface TagArchiveDialogProps {
-  tag: TagWithChildren | null
+  tag: Tag | null
   onClose: () => void
   onConfirm: () => Promise<void>
 }
 
 export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogProps) {
-  const [usage, setUsage] = useState<TagUsage | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const t = useTranslations()
   const [isArchiving, setIsArchiving] = useState(false)
 
-  // タグの使用状況を取得
-  useEffect(() => {
-    if (!tag) {
-      setUsage(null)
-      return
-    }
-
-    const fetchUsage = async () => {
-      setIsLoading(true)
-      try {
-        const response = await fetch(`/api/tags/${tag.id}?usage=true`)
-        if (response.ok) {
-          const data = await response.json()
-          setUsage(data.usage || { planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
-        } else {
-          // エラー時はデフォルト値
-          setUsage({ planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
-        }
-      } catch (error) {
-        console.error('Failed to fetch tag usage:', error)
-        setUsage({ planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 })
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchUsage()
-  }, [tag])
+  // TanStack Queryでタグ使用状況を取得
+  const { data: usage, isLoading } = useTagUsage(tag?.id)
 
   const handleConfirm = async () => {
     setIsArchiving(true)
@@ -67,14 +42,14 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
     <AlertDialog open={!!tag} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent className="max-w-2xl gap-0 p-6">
         <AlertDialogHeader className="mb-4">
-          <AlertDialogTitle>タグ「{tag?.name}」をアーカイブしますか？</AlertDialogTitle>
+          <AlertDialogTitle>{t('tag.archive.confirmTitle', { name: tag?.name || '' })}</AlertDialogTitle>
         </AlertDialogHeader>
 
         <div className="space-y-3">
           {/* 警告 */}
           <div className="border-destructive/20 bg-destructive/10 text-destructive flex items-center gap-2 rounded-xl border p-3">
             <AlertTriangle className="h-4 w-4 shrink-0" />
-            <p className="text-sm font-medium">アーカイブされたタグは新規のタグ付けには使用できません</p>
+            <p className="text-sm font-medium">{t('tag.archive.warning')}</p>
           </div>
 
           {/* 使用状況 */}
@@ -84,36 +59,44 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
             </div>
           ) : usage ? (
             <div className="bg-surface-container rounded-xl p-4">
-              <p className="mb-2 text-sm font-medium">現在の使用状況:</p>
+              <p className="mb-2 text-sm font-medium">{t('tag.archive.currentUsage')}</p>
               <ul className="text-muted-foreground space-y-1 text-sm">
-                <li>• Plans: {usage.planCount}件</li>
-                <li>• Events: {usage.eventCount}件</li>
-                <li>• Tasks: {usage.taskCount}件</li>
+                <li>
+                  • {t('tag.delete.plans')}: {t('tag.delete.itemsCount', { count: usage.planCount })}
+                </li>
+                <li>
+                  • {t('tag.delete.events')}: {t('tag.delete.itemsCount', { count: usage.eventCount })}
+                </li>
+                <li>
+                  • {t('tag.delete.tasks')}: {t('tag.delete.itemsCount', { count: usage.taskCount })}
+                </li>
               </ul>
-              <p className="text-muted-foreground mt-2 text-sm font-medium">合計: {usage.totalCount}件</p>
+              <p className="text-muted-foreground mt-2 text-sm font-medium">
+                {t('tag.delete.total')}: {t('tag.delete.itemsCount', { count: usage.totalCount })}
+              </p>
             </div>
           ) : null}
 
           {/* アーカイブ後の処理 */}
           <div className="space-y-2">
-            <p className="text-sm font-medium">アーカイブすると:</p>
+            <p className="text-sm font-medium">{t('tag.archive.afterArchive')}</p>
             <ul className="text-muted-foreground space-y-1 text-sm">
-              <li>✓ 新規のタグ付けには使用できなくなります</li>
-              <li>✓ 既存のアイテムには引き続き表示されます</li>
-              <li>✓ 統計データにも引き続き含まれます</li>
-              <li>✓ アーカイブページからいつでも復元できます</li>
+              <li>✓ {t('tag.archive.noNewTagging')}</li>
+              <li>✓ {t('tag.archive.existingItemsStillShown')}</li>
+              <li>✓ {t('tag.archive.statsStillIncluded')}</li>
+              <li>✓ {t('tag.archive.canRestoreAnytime')}</li>
             </ul>
           </div>
         </div>
 
         <AlertDialogFooter className="mt-6">
-          <AlertDialogCancel disabled={isArchiving}>キャンセル</AlertDialogCancel>
+          <AlertDialogCancel disabled={isArchiving}>{t('tag.actions.cancel')}</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isArchiving}
             className="bg-warning text-warning-foreground hover:bg-warning/92"
           >
-            {isArchiving ? 'アーカイブ中...' : 'アーカイブ'}
+            {isArchiving ? t('tag.archive.archiving') : t('tag.archive.archiveButton')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

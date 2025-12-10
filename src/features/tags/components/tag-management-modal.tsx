@@ -4,6 +4,17 @@ import { useCallback, useState } from 'react'
 
 import { Check, Edit2, Plus, Trash2, X } from 'lucide-react'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+
 // Tag interface
 interface Tag {
   id: string
@@ -37,6 +48,7 @@ export const TagManagementModal = ({
   const [editName, setEditName] = useState('')
   const [editColor, setEditColor] = useState('')
   const [editParentId, setEditParentId] = useState<string | null>(null)
+  const [deletingTag, setDeletingTag] = useState<Tag | null>(null)
 
   const presetColors = [
     '#ef4444', // red
@@ -164,13 +176,20 @@ export const TagManagementModal = ({
   const handleDeleteClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       const tagId = event.currentTarget.dataset.tagId
-      const tagName = event.currentTarget.dataset.tagName
-      if (tagId && tagName && confirm(`Delete tag "${tagName}"? This will remove it from all events.`)) {
-        onDeleteTag(tagId)
+      const tag = tags.find((t) => t.id === tagId)
+      if (tag) {
+        setDeletingTag(tag)
       }
     },
-    [onDeleteTag]
+    [tags]
   )
+
+  const handleConfirmDelete = useCallback(() => {
+    if (deletingTag) {
+      onDeleteTag(deletingTag.id)
+      setDeletingTag(null)
+    }
+  }, [deletingTag, onDeleteTag])
 
   // 親タグとして選択可能なタグを取得（循環参照を防ぐ）
   const getAvailableParentTags = (excludeId?: string) => {
@@ -414,6 +433,24 @@ export const TagManagementModal = ({
           </button>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deletingTag} onOpenChange={(open) => !open && setDeletingTag(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Tag</AlertDialogTitle>
+            <AlertDialogDescription>
+              Delete tag &quot;{deletingTag?.name}&quot;? This will remove it from all events.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

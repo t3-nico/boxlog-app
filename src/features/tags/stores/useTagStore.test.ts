@@ -1,7 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import type { TagLevel } from '@/features/tags/types'
-
 import { useTagStore } from './useTagStore'
 
 describe('useTagStore', () => {
@@ -11,87 +9,42 @@ describe('useTagStore', () => {
   })
 
   describe('addTag', () => {
-    it('ルートレベルのタグを追加できる', async () => {
+    it('タグを追加できる', async () => {
       const result = await useTagStore.getState().addTag({
         name: '仕事',
         color: '#3b82f6',
-        level: 1,
       })
 
       expect(result).toBe(true)
       const tags = useTagStore.getState().tags
       expect(tags).toHaveLength(1)
       expect(tags[0]!.name).toBe('仕事')
-      expect(tags[0]!.level).toBe(1)
-      expect(tags[0]!.path).toBe('仕事')
-      expect(tags[0]!.parent_id).toBeNull()
+      expect(tags[0]!.color).toBe('#3b82f6')
+      expect(tags[0]!.is_active).toBe(true)
     })
 
-    it('子タグを追加できる', async () => {
-      // 親タグを追加
-      await useTagStore.getState().addTag({
-        name: '仕事',
-        color: '#3b82f6',
-        level: 1,
-      })
-
-      const parentId = useTagStore.getState().tags[0]!.id
-
-      // 子タグを追加
+    it('グループ付きのタグを追加できる', async () => {
       const result = await useTagStore.getState().addTag({
         name: 'プロジェクトA',
         color: '#22c55e',
-        level: 2,
-        parent_id: parentId,
+        group_id: 'group-1',
       })
 
       expect(result).toBe(true)
       const tags = useTagStore.getState().tags
-      expect(tags).toHaveLength(2)
-      expect(tags[1]!.name).toBe('プロジェクトA')
-      expect(tags[1]!.parent_id).toBe(parentId)
-      expect(tags[1]!.path).toBe('仕事/プロジェクトA')
+      expect(tags[0]!.group_id).toBe('group-1')
     })
 
-    it('レベル2を超えるタグは追加できない', async () => {
+    it('説明付きのタグを追加できる', async () => {
       const result = await useTagStore.getState().addTag({
-        name: 'レベル3タグ',
-        color: '#3b82f6',
-        level: 3 as TagLevel, // 意図的に無効な値でバリデーションをテスト
-      })
-
-      expect(result).toBe(false)
-    })
-
-    it('レベル2タグに子タグは追加できない', async () => {
-      // レベル1タグを追加
-      await useTagStore.getState().addTag({
-        name: '仕事',
-        color: '#3b82f6',
-        level: 1,
-      })
-
-      const level1Id = useTagStore.getState().tags[0]!.id
-
-      // レベル2タグを追加
-      await useTagStore.getState().addTag({
-        name: 'プロジェクトA',
-        color: '#22c55e',
-        level: 2,
-        parent_id: level1Id,
-      })
-
-      const level2Id = useTagStore.getState().tags[1]!.id
-
-      // レベル3タグを追加しようとする
-      const result = await useTagStore.getState().addTag({
-        name: 'サブタスク',
+        name: 'テストタグ',
         color: '#ef4444',
-        level: 3 as TagLevel, // 意図的に無効な値でバリデーションをテスト
-        parent_id: level2Id,
+        description: 'テスト用のタグです',
       })
 
-      expect(result).toBe(false)
+      expect(result).toBe(true)
+      const tags = useTagStore.getState().tags
+      expect(tags[0]!.description).toBe('テスト用のタグです')
     })
   })
 
@@ -100,7 +53,6 @@ describe('useTagStore', () => {
       await useTagStore.getState().addTag({
         name: '仕事',
         color: '#3b82f6',
-        level: 1,
       })
 
       const tagId = useTagStore.getState().tags[0]!.id
@@ -114,6 +66,24 @@ describe('useTagStore', () => {
       const tags = useTagStore.getState().tags
       expect(tags[0]!.name).toBe('仕事（更新）')
       expect(tags[0]!.color).toBe('#22c55e')
+    })
+
+    it('グループを変更できる', async () => {
+      await useTagStore.getState().addTag({
+        name: '仕事',
+        color: '#3b82f6',
+        group_id: 'group-1',
+      })
+
+      const tagId = useTagStore.getState().tags[0]!.id
+
+      const result = await useTagStore.getState().updateTag(tagId, {
+        group_id: 'group-2',
+      })
+
+      expect(result).toBe(true)
+      const tags = useTagStore.getState().tags
+      expect(tags[0]!.group_id).toBe('group-2')
     })
 
     it('存在しないタグは更新できない', async () => {
@@ -130,7 +100,6 @@ describe('useTagStore', () => {
       await useTagStore.getState().addTag({
         name: '仕事',
         color: '#3b82f6',
-        level: 1,
       })
 
       const tagId = useTagStore.getState().tags[0]!.id
@@ -154,7 +123,6 @@ describe('useTagStore', () => {
       await useTagStore.getState().addTag({
         name: '仕事',
         color: '#3b82f6',
-        level: 1,
       })
 
       const tagId = useTagStore.getState().tags[0]!.id
@@ -176,13 +144,11 @@ describe('useTagStore', () => {
       await useTagStore.getState().addTag({
         name: '仕事',
         color: '#3b82f6',
-        level: 1,
       })
 
       await useTagStore.getState().addTag({
         name: '個人',
         color: '#22c55e',
-        level: 1,
       })
 
       const tagIds = useTagStore.getState().tags.map((t) => t.id)
@@ -195,7 +161,6 @@ describe('useTagStore', () => {
       await useTagStore.getState().addTag({
         name: '仕事',
         color: '#3b82f6',
-        level: 1,
       })
 
       const tagId = useTagStore.getState().tags[0]!.id
@@ -205,151 +170,71 @@ describe('useTagStore', () => {
     })
   })
 
-  describe('getRootTags', () => {
-    it('ルートレベルのタグのみ取得できる', async () => {
+  describe('getTagsByGroup', () => {
+    it('グループに属するタグを取得できる', async () => {
       await useTagStore.getState().addTag({
-        name: '仕事',
+        name: '仕事1',
         color: '#3b82f6',
-        level: 1,
+        group_id: 'group-1',
       })
 
-      const parentId = useTagStore.getState().tags[0]!.id
-
       await useTagStore.getState().addTag({
-        name: 'プロジェクトA',
+        name: '仕事2',
         color: '#22c55e',
-        level: 2,
-        parent_id: parentId,
-      })
-
-      const rootTags = useTagStore.getState().getRootTags()
-
-      expect(rootTags).toHaveLength(1)
-      expect(rootTags[0]!.name).toBe('仕事')
-    })
-  })
-
-  describe('getChildTags', () => {
-    it('指定した親の子タグを取得できる', async () => {
-      await useTagStore.getState().addTag({
-        name: '仕事',
-        color: '#3b82f6',
-        level: 1,
-      })
-
-      const parentId = useTagStore.getState().tags[0]!.id
-
-      await useTagStore.getState().addTag({
-        name: 'プロジェクトA',
-        color: '#22c55e',
-        level: 2,
-        parent_id: parentId,
+        group_id: 'group-1',
       })
 
       await useTagStore.getState().addTag({
-        name: 'プロジェクトB',
+        name: '個人',
         color: '#ef4444',
-        level: 2,
-        parent_id: parentId,
+        group_id: 'group-2',
       })
 
-      const childTags = useTagStore.getState().getChildTags(parentId)
+      const group1Tags = useTagStore.getState().getTagsByGroup('group-1')
 
-      expect(childTags).toHaveLength(2)
-      expect(childTags[0]!.name).toBe('プロジェクトA')
-      expect(childTags[1]!.name).toBe('プロジェクトB')
+      expect(group1Tags).toHaveLength(2)
+      expect(group1Tags[0]!.name).toBe('仕事1')
+      expect(group1Tags[1]!.name).toBe('仕事2')
+    })
+
+    it('グループなしのタグを取得できる', async () => {
+      await useTagStore.getState().addTag({
+        name: 'タグ1',
+        color: '#3b82f6',
+      })
+
+      await useTagStore.getState().addTag({
+        name: 'タグ2',
+        color: '#22c55e',
+        group_id: 'group-1',
+      })
+
+      const ungroupedTags = useTagStore.getState().getTagsByGroup(null)
+
+      expect(ungroupedTags).toHaveLength(1)
+      expect(ungroupedTags[0]!.name).toBe('タグ1')
     })
   })
 
-  describe('getTagsByLevel', () => {
-    it('指定したレベルのタグを取得できる', async () => {
+  describe('getActiveTags', () => {
+    it('アクティブなタグのみ取得できる', async () => {
       await useTagStore.getState().addTag({
         name: '仕事',
         color: '#3b82f6',
-        level: 1,
       })
 
       await useTagStore.getState().addTag({
         name: '個人',
         color: '#22c55e',
-        level: 1,
-      })
-
-      const parentId = useTagStore.getState().tags[0]!.id
-
-      await useTagStore.getState().addTag({
-        name: 'プロジェクトA',
-        color: '#ef4444',
-        level: 2,
-        parent_id: parentId,
-      })
-
-      const level1Tags = useTagStore.getState().getTagsByLevel(1)
-      const level2Tags = useTagStore.getState().getTagsByLevel(2)
-
-      expect(level1Tags).toHaveLength(2)
-      expect(level2Tags).toHaveLength(1)
-    })
-  })
-
-  describe('getTagPath', () => {
-    it('タグのパスを取得できる', async () => {
-      await useTagStore.getState().addTag({
-        name: '仕事',
-        color: '#3b82f6',
-        level: 1,
-      })
-
-      const parentId = useTagStore.getState().tags[0]!.id
-
-      await useTagStore.getState().addTag({
-        name: 'プロジェクトA',
-        color: '#22c55e',
-        level: 2,
-        parent_id: parentId,
-      })
-
-      const childId = useTagStore.getState().tags[1]!.id
-      const path = useTagStore.getState().getTagPath(childId)
-
-      expect(path).toBe('仕事/プロジェクトA')
-    })
-  })
-
-  describe('canAddChild', () => {
-    it('レベル1タグには子を追加できる', async () => {
-      await useTagStore.getState().addTag({
-        name: '仕事',
-        color: '#3b82f6',
-        level: 1,
       })
 
       const tagId = useTagStore.getState().tags[0]!.id
-      const canAdd = useTagStore.getState().canAddChild(tagId)
+      await useTagStore.getState().updateTag(tagId, { is_active: false })
 
-      expect(canAdd).toBe(true)
-    })
+      const activeTags = useTagStore.getState().getActiveTags()
 
-    it('レベル2タグには子を追加できない', async () => {
-      await useTagStore.getState().addTag({
-        name: '仕事',
-        color: '#3b82f6',
-        level: 1,
-      })
-
-      const parentId = useTagStore.getState().tags[0]!.id
-
-      await useTagStore.getState().addTag({
-        name: 'プロジェクトA',
-        color: '#22c55e',
-        level: 2,
-        parent_id: parentId,
-      })
-
-      const level2Id = useTagStore.getState().tags[1]!.id
-      const canAdd = useTagStore.getState().canAddChild(level2Id)
-
-      expect(canAdd).toBe(true) // level < 3 なので true（実装上の注意点）
+      expect(activeTags).toHaveLength(1)
+      expect(activeTags[0]!.name).toBe('個人')
     })
   })
 })

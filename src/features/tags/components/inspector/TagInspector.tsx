@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { InspectorHeader } from '@/components/common/InspectorHeader'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,27 +12,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import type { Plan } from '@/features/plans/types/plan'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors'
-import type { TagWithChildren } from '@/features/tags/types'
-import {
-  Archive,
-  ChevronDown,
-  ChevronRight,
-  ChevronUp,
-  FileText,
-  Folder,
-  FolderX,
-  Merge,
-  MoreHorizontal,
-  Palette,
-  PanelRightClose,
-  Trash2,
-} from 'lucide-react'
+import { Archive, ChevronRight, FileText, Folder, FolderX, Merge, Palette, Trash2 } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { TAG_PRESET_COLORS } from '../../constants/colors'
@@ -40,6 +24,7 @@ import { useTagGroups } from '../../hooks/use-tag-groups'
 import { useDeleteTag, useTags, useUpdateTag, useUpdateTagColor } from '../../hooks/use-tags'
 import { useTagInspectorStore } from '../../stores/useTagInspectorStore'
 import { TagArchiveDialog } from '../TagArchiveDialog'
+import { TagDeleteDialog } from '../TagDeleteDialog'
 import { TagMergeDialog } from '../TagMergeDialog'
 import { TagGroupMenuItems } from './TagGroupDropdown'
 
@@ -67,77 +52,33 @@ export function TagInspector() {
     }
   }, [closeInspectorStore, pathname, router])
 
-  // タグデータ取得
-  const { data: tags = [], isLoading } = useTags(true)
+  // タグデータ取得（フラット）
+  const { data: tags = [], isLoading } = useTags()
   const { data: groups = [] } = useTagGroups()
 
-  // 現在のタグを取得
+  // 現在のタグを取得（フラット検索）
   const tag = useMemo(() => {
     if (!tagId) return null
-    // フラット化して検索
-    const findTag = (tags: TagWithChildren[]): TagWithChildren | null => {
-      for (const t of tags) {
-        if (t.id === tagId) return t
-        if (t.children) {
-          const found = findTag(t.children)
-          if (found) return found
-        }
-      }
-      return null
-    }
-    return findTag(tags)
+    return tags.find((t) => t.id === tagId) ?? null
   }, [tags, tagId])
 
-  // フラット化したタグリスト（ナビゲーション用）
-  const flatTags = useMemo(() => {
-    const result: TagWithChildren[] = []
-    const flatten = (tags: TagWithChildren[]) => {
-      for (const t of tags) {
-        if (t.is_active) {
-          result.push(t)
-          if (t.children) flatten(t.children)
-        }
-      }
-    }
-    flatten(tags)
-    return result
+  // アクティブなタグリスト（ナビゲーション用）
+  const activeTags = useMemo(() => {
+    return tags.filter((t) => t.is_active)
   }, [tags])
 
   // 現在のタグのインデックス
   const currentIndex = useMemo(() => {
-    return flatTags.findIndex((t) => t.id === tagId)
-  }, [flatTags, tagId])
+    return activeTags.findIndex((t) => t.id === tagId)
+  }, [activeTags, tagId])
 
   const hasPrevious = currentIndex > 0
-  const hasNext = currentIndex >= 0 && currentIndex < flatTags.length - 1
+  const hasNext = currentIndex >= 0 && currentIndex < activeTags.length - 1
 
   // タグに紐づくプランを取得
-  const { data: plansData = [], isLoading: isLoadingPlans } = usePlans(tag?.id ? { tagId: tag.id } : {}, {
+  const { data: plans = [], isLoading: isLoadingPlans } = usePlans(tag?.id ? { tagId: tag.id } : {}, {
     enabled: !!tag?.id,
   })
-  const plans = plansData as unknown as Plan[]
-
-  // 子タグ
-  const childTags = useMemo(() => {
-    if (!tag) return []
-    return tags.filter((t) => t.parent_id === tag.id && t.is_active)
-  }, [tags, tag])
-
-  // 親タグ
-  const parentTag = useMemo(() => {
-    if (!tag?.parent_id) return null
-    const findTag = (tags: TagWithChildren[]): TagWithChildren | null => {
-      for (const t of tags) {
-        if (t.id === tag.parent_id) return t
-        if (t.children) {
-          const found = findTag(t.children)
-          if (found) return found
-        }
-      }
-      return null
-    }
-    return findTag(tags)
-  }, [tags, tag])
 
   // 所属グループ
   const tagGroup = useMemo(() => {
@@ -152,6 +93,7 @@ export function TagInspector() {
 
   // ローカル状態
   const [showColorPicker, setShowColorPicker] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showArchiveDialog, setShowArchiveDialog] = useState(false)
   const [showMergeDialog, setShowMergeDialog] = useState(false)
 
@@ -163,19 +105,19 @@ export function TagInspector() {
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   // ナビゲーション
-  const goToPrevious = () => {
+  const goToPrevious = useCallback(() => {
     if (hasPrevious) {
-      const prevTag = flatTags[currentIndex - 1]
+      const prevTag = activeTags[currentIndex - 1]
       if (prevTag) openInspector(prevTag.id)
     }
-  }
+  }, [hasPrevious, activeTags, currentIndex, openInspector])
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     if (hasNext) {
-      const nextTag = flatTags[currentIndex + 1]
+      const nextTag = activeTags[currentIndex + 1]
       if (nextTag) openInspector(nextTag.id)
     }
-  }
+  }, [hasNext, activeTags, currentIndex, openInspector])
 
   // 自動保存関数（デバウンス処理付き）
   const autoSave = useCallback(
@@ -214,13 +156,8 @@ export function TagInspector() {
 
   // 削除ハンドラー
   const handleDelete = useCallback(() => {
-    if (!tagId || !tag) return
-
-    if (confirm(`タグ「${tag.name}」を削除しますか？`)) {
-      deleteTagMutation.mutate(tagId)
-      closeInspector()
-    }
-  }, [tagId, tag, deleteTagMutation, closeInspector])
+    setShowDeleteDialog(true)
+  }, [])
 
   // アーカイブハンドラー
   const handleArchive = useCallback(() => {
@@ -297,7 +234,7 @@ export function TagInspector() {
   return (
     <>
       <Sheet open={isOpen} onOpenChange={(open) => !open && closeInspector()} modal={false}>
-        <SheetContent className="gap-0 overflow-y-auto" style={{ width: '480px' }} showCloseButton={false}>
+        <SheetContent className="w-[480px] gap-0 overflow-y-auto" showCloseButton={false}>
           <SheetTitle className="sr-only">{tag?.name || 'タグの詳細'}</SheetTitle>
 
           {isLoading ? (
@@ -311,77 +248,16 @@ export function TagInspector() {
           ) : (
             <>
               {/* ヘッダー */}
-              <div className="flex h-10 items-center justify-between pt-2">
-                <TooltipProvider>
-                  <div className="flex items-center gap-1">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => closeInspector()}
-                          aria-label="閉じる"
-                        >
-                          <PanelRightClose className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom">
-                        <p>閉じる</p>
-                      </TooltipContent>
-                    </Tooltip>
-                    <div className="flex items-center">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={goToPrevious}
-                            disabled={!hasPrevious}
-                            aria-label="前のタグ"
-                          >
-                            <ChevronUp className="h-6 w-6" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom">
-                          <p>前のタグ</p>
-                        </TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={goToNext}
-                            disabled={!hasNext}
-                            aria-label="次のタグ"
-                          >
-                            <ChevronDown className="h-6 w-6" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom">
-                          <p>次のタグ</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                  </div>
-                </TooltipProvider>
-
-                {/* オプションメニュー */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 focus-visible:ring-0"
-                      aria-label="オプション"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
+              <InspectorHeader
+                hasPrevious={hasPrevious}
+                hasNext={hasNext}
+                onClose={closeInspector}
+                onPrevious={goToPrevious}
+                onNext={goToNext}
+                previousLabel="前のタグ"
+                nextLabel="次のタグ"
+                menuContent={
+                  <>
                     <DropdownMenuItem onClick={() => setShowColorPicker(true)}>
                       <Palette className="mr-2 h-4 w-4" />
                       カラー変更
@@ -412,27 +288,12 @@ export function TagInspector() {
                       <Trash2 className="mr-2 h-4 w-4" />
                       削除
                     </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+                  </>
+                }
+              />
 
               {/* タグ情報 */}
               <div className="px-6 pt-4 pb-2">
-                {/* 親タグへの導線 */}
-                {parentTag && (
-                  <button
-                    onClick={() => openInspector(parentTag.id)}
-                    className="text-muted-foreground hover:text-foreground mb-2 flex items-center gap-1 text-sm transition-colors"
-                  >
-                    <span
-                      className="h-2 w-2 rounded-full"
-                      style={{ backgroundColor: parentTag.color || DEFAULT_TAG_COLOR }}
-                    />
-                    {parentTag.name}
-                    <span className="text-muted-foreground/50">/</span>
-                  </button>
-                )}
-
                 {/* タグ名とカラー */}
                 <div className="flex items-center gap-3">
                   <div className="relative">
@@ -518,34 +379,12 @@ export function TagInspector() {
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={(e) => autoSave('description', e.currentTarget.textContent || '')}
-                    className="text-muted-foreground min-h-[20px] flex-1 text-sm outline-none empty:before:text-gray-400 empty:before:content-['説明を追加...']"
+                    className="text-muted-foreground empty:before:text-muted-foreground/60 min-h-[20px] flex-1 text-sm outline-none empty:before:content-['説明を追加...']"
                   >
                     {tag.description || ''}
                   </span>
                 </div>
               </div>
-
-              {/* 子タグ */}
-              {childTags.length > 0 && (
-                <div className="border-border/50 border-t px-6 py-4">
-                  <h3 className="text-muted-foreground mb-3 text-sm font-medium">子タグ ({childTags.length})</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {childTags.map((childTag) => (
-                      <button
-                        key={childTag.id}
-                        onClick={() => openInspector(childTag.id)}
-                        className="hover:bg-state-hover flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition-colors"
-                      >
-                        <span
-                          className="h-2 w-2 rounded-full"
-                          style={{ backgroundColor: childTag.color || DEFAULT_TAG_COLOR }}
-                        />
-                        {childTag.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* 紐づくプラン */}
               <div className="border-border/50 border-t px-6 py-4">
@@ -561,7 +400,8 @@ export function TagInspector() {
                 ) : (
                   <div className="grid gap-3">
                     {plans.slice(0, 10).map((plan) => (
-                      <PlanCard key={plan.id} plan={plan} onClick={(p) => openPlanInspector(p.id)} />
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      <PlanCard key={plan.id} plan={plan as any} onClick={(p) => openPlanInspector(p.id)} />
                     ))}
                     {plans.length > 10 && (
                       <p className="text-muted-foreground text-center text-sm">他 {plans.length - 10} 件のプラン</p>
@@ -573,6 +413,18 @@ export function TagInspector() {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* 削除ダイアログ */}
+      <TagDeleteDialog
+        tag={showDeleteDialog ? tag : null}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={async () => {
+          if (!tagId) return
+          await deleteTagMutation.mutateAsync(tagId)
+          setShowDeleteDialog(false)
+          closeInspector()
+        }}
+      />
 
       {/* アーカイブダイアログ */}
       <TagArchiveDialog

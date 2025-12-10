@@ -2,7 +2,6 @@
 
 import { Badge } from '@/components/ui/badge'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import type { Tag as TagType } from '@/features/tags/types'
 import { Plus, Tag, X } from 'lucide-react'
 
 import { PlanTagSelectDialogEnhanced } from './PlanTagSelectDialogEnhanced'
@@ -29,26 +28,8 @@ export function PlanTagsSection({
   popoverSideOffset,
 }: PlanTagsSectionProps) {
   // データベースからタグを取得
-  const { data: tagsData } = useTags(true)
+  const { data: allTags = [] } = useTags(true)
 
-  // TagWithChildren[] を Tag[] に変換（階層を平坦化）
-  const flattenTags = (tags: typeof tagsData): TagType[] => {
-    if (!tags) return []
-    const result: TagType[] = []
-    const flatten = (tagList: typeof tagsData) => {
-      if (!tagList) return
-      tagList.forEach((tag) => {
-        result.push(tag)
-        if (tag.children && tag.children.length > 0) {
-          flatten(tag.children)
-        }
-      })
-    }
-    flatten(tags)
-    return result
-  }
-
-  const allTags = flattenTags(tagsData)
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
 
   return (

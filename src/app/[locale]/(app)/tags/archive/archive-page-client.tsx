@@ -29,7 +29,7 @@ import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
-import type { TagWithChildren } from '@/features/tags/types'
+import type { Tag } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
@@ -50,7 +50,7 @@ export function ArchivePageClient() {
   const [editingTagId, setEditingTagId] = useState<string | null>(null)
   const [editingField, setEditingField] = useState<'name' | 'description' | null>(null)
   const [editValue, setEditValue] = useState('')
-  const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
+  const [deleteConfirmTag, setDeleteConfirmTag] = useState<Tag | null>(null)
 
   const { handleDeleteTag, handleEditTag } = useTagOperations(tags)
 
@@ -114,7 +114,7 @@ export function ArchivePageClient() {
 
   // 復元ハンドラー（is_active = true）
   const handleRestoreTag = useCallback(
-    async (tag: TagWithChildren) => {
+    async (tag: Tag) => {
       if (!confirm(t('tag.archive.restoreConfirm', { name: tag.name }))) {
         return
       }
@@ -134,7 +134,7 @@ export function ArchivePageClient() {
   )
 
   // 削除確認ダイアログを開く
-  const handleOpenDeleteConfirm = useCallback((tag: TagWithChildren) => {
+  const handleOpenDeleteConfirm = useCallback((tag: Tag) => {
     setDeleteConfirmTag(tag)
   }, [])
 
@@ -158,7 +158,7 @@ export function ArchivePageClient() {
   }, [deleteConfirmTag, handleDeleteTag, t])
 
   // アーカイブされたタグのみを取得（is_active = false）
-  const baseTags = tags.filter((tag) => tag.level === 0 && !tag.is_active)
+  const baseTags = tags.filter((tag) => !tag.is_active)
 
   // ソート適用
   const sortedTags = useMemo(() => {

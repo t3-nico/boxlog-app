@@ -1,9 +1,9 @@
-// @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { offlineManager, type OfflineAction } from '@/features/offline/services/offline-manager'
+import { offlineManager } from '@/features/offline/services/offline-manager'
+import type { OfflineAction } from '@/features/offline/types'
 
 interface ToastOptions {
   title: string
@@ -47,8 +47,8 @@ export function useOfflineSync() {
   })
 
   const [currentConflict, setCurrentConflict] = useState<ConflictContext | null>(null)
-  const [isConflictModalOpen, setIsConflictModalOpen] = useState(false)
-  const updateTimeoutRef = useRef<NodeJS.Timeout>()
+  const [_isConflictModalOpen, setIsConflictModalOpen] = useState(false)
+  const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // 状態の更新
   const updateState = useCallback(async () => {
@@ -155,13 +155,14 @@ export function useOfflineSync() {
       conflicts: unknown[]
       conflictId: string
     }) => {
+      const firstConflict = conflictData.conflicts[0] as { serverData?: unknown; serverTimestamp?: Date } | undefined
       setCurrentConflict({
         actionId: conflictData.action.id,
         entity: conflictData.action.entity,
         localData: conflictData.action.data,
-        serverData: conflictData.conflicts[0]?.serverData || {},
+        serverData: firstConflict?.serverData ?? {},
         localTimestamp: conflictData.action.timestamp,
-        serverTimestamp: new Date(conflictData.conflicts[0]?.serverTimestamp || Date.now()),
+        serverTimestamp: new Date(firstConflict?.serverTimestamp ?? Date.now()),
         conflicts: conflictData.conflicts,
       })
       setIsConflictModalOpen(true)
@@ -224,7 +225,7 @@ export function useOfflineSync() {
 
   // アクションの記録
   const recordAction = useCallback(
-    async (type: 'create' | 'update' | 'delete', entity: 'task' | 'record' | 'block' | 'tag', data: unknown) => {
+    async (type: 'create' | 'update' | 'delete', entity: 'plans' | 'tags' | 'tag_groups', data: unknown) => {
       try {
         const actionId = await offlineManager.recordAction({ type, entity, data })
         debouncedUpdateState()
@@ -342,7 +343,7 @@ export function useOfflineSync() {
 
 // 特定のエンティティのオフライン操作用カスタムフック
 export function useOfflineEntity<T extends Record<string, unknown>>(
-  entity: 'task' | 'record' | 'block' | 'tag',
+  entity: 'plans' | 'tags' | 'tag_groups',
   initialData: T[] = []
 ) {
   const [data, setData] = useState<T[]>(initialData)

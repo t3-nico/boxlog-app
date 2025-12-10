@@ -7,12 +7,11 @@ interface TagBadgeProps {
   tag: Tag
   size?: 'sm' | 'md' | 'lg'
   showIcon?: boolean
-  showPath?: boolean
   onClick?: () => void
   onRemove?: () => void
 }
 
-export const TagBadge = ({ tag, size = 'sm', showIcon = true, showPath = false, onClick, onRemove }: TagBadgeProps) => {
+export const TagBadge = ({ tag, size = 'sm', showIcon = true, onClick, onRemove }: TagBadgeProps) => {
   const sizeClasses = {
     sm: 'text-xs px-2 py-1',
     md: 'text-sm px-3 py-2',
@@ -30,7 +29,7 @@ export const TagBadge = ({ tag, size = 'sm', showIcon = true, showPath = false, 
       onClick={onClick}
     >
       {showIcon && tag.icon ? <span className="text-xs">{tag.icon}</span> : null}
-      <span>{showPath ? tag.path : tag.name}</span>
+      <span>{tag.name}</span>
       {onRemove != null && (
         <button
           type="button"

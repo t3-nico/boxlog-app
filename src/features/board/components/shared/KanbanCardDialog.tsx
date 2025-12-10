@@ -1,4 +1,3 @@
-// @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 'use client'
 
 import { Button } from '@/components/ui/button'
@@ -107,7 +106,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             {/* タイトル */}
             <FormField
-              control={form.control as FormControl}
+              control={form.control as unknown as FormControl}
               name="title"
               render={({ field }) => (
                 <FormItem>
@@ -122,7 +121,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
 
             {/* 説明 */}
             <FormField
-              control={form.control as FormControl}
+              control={form.control as unknown as FormControl}
               name="description"
               render={({ field }) => (
                 <FormItem>
@@ -138,7 +137,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
             {/* ステータス・優先度 */}
             <div className="grid grid-cols-2 gap-4">
               <FormField
-                control={form.control as FormControl}
+                control={form.control as unknown as FormControl}
                 name="status"
                 render={({ field }) => (
                   <FormItem>
@@ -161,7 +160,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
               />
 
               <FormField
-                control={form.control as FormControl}
+                control={form.control as unknown as FormControl}
                 name="priority"
                 render={({ field }) => (
                   <FormItem>
@@ -187,7 +186,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
             {/* 担当者・期限 */}
             <div className="grid grid-cols-2 gap-4">
               <FormField
-                control={form.control as FormControl}
+                control={form.control as unknown as FormControl}
                 name="assignee"
                 render={({ field }) => (
                   <FormItem>
@@ -201,7 +200,7 @@ export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus 
               />
 
               <FormField
-                control={form.control as FormControl}
+                control={form.control as unknown as FormControl}
                 name="dueDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
