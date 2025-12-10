@@ -1,5 +1,9 @@
 {
   "tags": {
+    "page": {
+      "bulkDeleteConfirmTitle": "{count}件のタグを削除しますか？",
+      "bulkDeleteConfirmDescription": "選択した{count}件のタグを完全に削除します。この操作は取り消せません。"
+    },
     "form": {
       "nameRequired": "タグ名は必須です",
       "nameMaxLength": "タグ名は50文字以内で入力してください",
@@ -41,8 +45,8 @@
     "selector": {
       "placeholder": "タグを選択...",
       "searchPlaceholder": "タグを検索...",
-      "tagsSelected": "{{count}}件選択中",
-      "tagsCount": "{{current}} / {{max}}件選択"
+      "tagsSelected": "{count}件選択中",
+      "tagsCount": "{current} / {max}件選択"
     },
     "actions": {
       "addChild": "子タグを追加",
@@ -62,7 +66,7 @@
       "required": "*",
       "parentTagNote": "親タグ:",
       "icon": "アイコン",
-      "selectColor": "色を選択: {{color}}"
+      "selectColor": "色を選択: {color}"
     },
     "search": {
       "noTags": "タグが見つかりません",
@@ -80,22 +84,22 @@
     },
     "delete": {
       "confirmTitle": "タグを削除しますか？",
-      "confirmMessage": "「{{name}}」を削除します。この操作は取り消せません。",
-      "childWarning": "⚠️ このタグには {{count}} 個の子タグがあります。 削除するには先に子タグを削除または移動してください。",
+      "confirmMessage": "「{name}」を削除します。この操作は取り消せません。",
+      "childWarning": "⚠️ このタグには {count} 個の子タグがあります。 削除するには先に子タグを削除または移動してください。",
       "confirmButton": "削除する",
-      "confirmTitleWithName": "「{{name}}」を削除しますか？",
+      "confirmTitleWithName": "「{name}」を削除しますか？",
       "warningIrreversible": "この操作は取り消せません",
       "affectedItems": "影響を受けるアイテム",
       "plans": "プラン",
       "events": "イベント",
       "tasks": "タスク",
-      "itemsCount": "{{count}}件",
+      "itemsCount": "{count}件",
       "total": "合計",
       "afterDeletion": "削除後の処理",
-      "willBeDeleted": "タグ #{{number}} が削除されます",
+      "willBeDeleted": "タグ #{number} が削除されます",
       "willBeRemovedFromItems": "すべてのアイテムからタグが削除されます",
       "willBeRemovedFromStats": "統計情報からタグが削除されます",
-      "confirmInputLabel": "削除を確定するには「{{name}}」と入力してください",
+      "confirmInputLabel": "削除を確定するには「{name}」と入力してください",
       "deleting": "削除中...",
       "permanentDelete": "完全に削除"
     },
@@ -121,17 +125,17 @@
       "editName": "名前を変更",
       "changeColor": "カラーを変更",
       "delete": "削除",
-      "colorLabel": "カラー {{color}}",
-      "changeColorAria": "{{name}}のカラーを変更"
+      "colorLabel": "カラー {color}",
+      "changeColorAria": "{name}のカラーを変更"
     },
     "toast": {
       "groupNameRequired": "グループ名を入力してください",
-      "groupCreated": "グループ「{{name}}」を作成しました",
-      "groupNameChanged": "グループ名を「{{name}}」に変更しました",
+      "groupCreated": "グループ「{name}」を作成しました",
+      "groupNameChanged": "グループ名を「{name}」に変更しました",
       "groupNameChangeFailed": "グループ名の変更に失敗しました",
       "colorChanged": "カラーを変更しました",
       "colorChangeFailed": "カラーの変更に失敗しました",
-      "groupDeleted": "グループ「{{name}}」を削除しました",
+      "groupDeleted": "グループ「{name}」を削除しました",
       "groupDeleteFailed": "グループの削除に失敗しました",
       "groupCreateFailed": "グループの作成に失敗しました"
     },
@@ -143,7 +147,7 @@
       "noTags": "タグがありません",
       "addFirstTag": "最初のタグを追加",
       "selectAll": "すべて選択",
-      "selectTag": "{{name}}を選択",
+      "selectTag": "{name}を選択",
       "name": "名前",
       "description": "説明",
       "createdAt": "作成日時",
@@ -159,13 +163,13 @@
       "moveToGroup": "グループに移動",
       "noGroup": "グループなし",
       "permanentDelete": "完全に削除",
-      "tagCreated": "タグ「{{name}}」を作成しました",
+      "tagCreated": "タグ「{name}」を作成しました",
       "tagCreateFailed": "タグの作成に失敗しました",
-      "tagArchived": "タグ「{{name}}」をアーカイブしました",
+      "tagArchived": "タグ「{name}」をアーカイブしました",
       "tagArchiveFailed": "タグのアーカイブに失敗しました",
-      "tagDeleted": "タグ「{{name}}」を完全に削除しました",
+      "tagDeleted": "タグ「{name}」を完全に削除しました",
       "tagDeleteFailed": "タグの削除に失敗しました",
-      "tagMoved": "タグ「{{name}}」を{{group}}に移動しました",
+      "tagMoved": "タグ「{name}」を{group}に移動しました",
       "tagMoveFailed": "タグの移動に失敗しました",
       "filter": {
         "type": "タイプ",
@@ -173,16 +177,36 @@
         "unused": "未使用",
         "frequentlyUsed": "よく使う"
       },
-      "bulkDeleteConfirm": "選択した{{count}}件のタグを削除しますか？",
-      "bulkArchived": "{{count}}件のタグをアーカイブしました",
+      "bulkDeleteConfirm": "選択した{count}件のタグを削除しますか？",
+      "bulkArchived": "{count}件のタグをアーカイブしました",
       "bulkArchiveFailed": "タグのアーカイブに失敗しました",
       "addDescription": "説明を追加...",
       "addGroup": "グループを追加...",
       "changeColor": "カラーを変更",
-      "tagColor": "タグカラー"
+      "tagColor": "タグカラー",
+      "lastUsed": "最終使用",
+      "columns": "表示カラム",
+      "columnSettings": "カラム設定"
+    },
+    "bulkMerge": {
+      "title": "タグを統合",
+      "description": "選択したタグを1つのタグに統合します",
+      "selectedTags": "選択中のタグ",
+      "confirm": "統合する",
+      "warningDetail": "統合後、元のタグは削除されます",
+      "deleteSourceDescription": "統合元のタグを削除する"
+    },
+    "merge": {
+      "targetTag": "統合先タグ",
+      "selectTarget": "統合先を選択...",
+      "options": "オプション",
+      "mergeAssociations": "関連付けを統合",
+      "mergeAssociationsDescription": "プランへの紐付けを統合先に移行",
+      "deleteSource": "元のタグを削除",
+      "warning": "注意"
     },
     "archive": {
-      "confirmTitle": "タグ「{{name}}」をアーカイブしますか？",
+      "confirmTitle": "タグ「{name}」をアーカイブしますか？",
       "warning": "アーカイブされたタグは新規のタグ付けには使用できません",
       "currentUsage": "現在の使用状況:",
       "afterArchive": "アーカイブすると:",
@@ -192,31 +216,39 @@
       "canRestoreAnytime": "アーカイブページからいつでも復元できます",
       "archiving": "アーカイブ中...",
       "archiveButton": "アーカイブ",
-      "restoreConfirm": "タグ「{{name}}」を復元しますか？\n\n復元されたタグは再び新規のタグ付けに使用できるようになります。",
-      "restoreSuccess": "タグ「{{name}}」を復元しました",
+      "restoreConfirm": "タグ「{name}」を復元しますか？\n\n復元されたタグは再び新規のタグ付けに使用できるようになります。",
+      "restoreSuccess": "タグ「{name}」を復元しました",
       "restoreFailed": "タグの復元に失敗しました",
-      "deleteSuccess": "タグ「{{name}}」を完全に削除しました",
+      "deleteSuccess": "タグ「{name}」を完全に削除しました",
       "deleteFailed": "タグの削除に失敗しました",
-      "bulkDeleteConfirm": "選択した{{count}}件のタグを完全に削除しますか？",
+      "bulkDeleteConfirm": "選択した{count}件のタグを完全に削除しますか？",
       "noArchivedTags": "アーカイブされたタグはありません",
       "restore": "復元",
       "permanentDelete": "完全に削除",
       "view": "表示",
-      "showing": "{{start}}〜{{end}}件 / 全{{total}}件",
+      "showing": "{start}〜{end}件 / 全{total}件",
       "noItems": "0件",
       "previousPage": "前のページ",
       "nextPage": "次のページ",
-      "pageOf": "ページ {{current}} / {{total}}"
+      "pageOf": "ページ {current} / {total}"
     },
     "detail": {
       "description": "説明",
-      "linkedPlans": "紐づいたプラン ({{count}})",
+      "linkedPlans": "紐づいたプラン ({count})",
       "noLinkedPlans": "このタグに紐づくプランはありません"
     }
   },
   "tag": {
+    "modal": {
+      "createTitle": "新規タグ作成",
+      "createDescription": "新しいタグを作成します",
+      "editTitle": "タグを編集",
+      "updating": "更新中...",
+      "update": "更新"
+    },
     "form": {
       "nameRequired": "タグ名は必須です",
+      "tagNameRequired": "タグ名 *",
       "nameMaxLength": "タグ名は50文字以内で入力してください",
       "noSlash": "タグ名にスラッシュ（/）は使用できません",
       "noHashPrefix": "タグ名は#で始めることはできません",
@@ -228,13 +260,16 @@
       "parentTag": "親タグ",
       "color": "カラー",
       "description": "説明（任意）",
+      "descriptionOptional": "説明（任意）",
       "descriptionPlaceholder": "このタグの用途や説明を入力...",
       "maxLevelNote": "最大3階層まで作成できます",
       "customColor": "カスタムカラー",
       "preview": "プレビュー",
       "tagNamePlaceholder": "（タグ名）",
       "parentTagPrefix": "親タグ:",
-      "examplePlaceholder": "例: 仕事、プロジェクトA"
+      "examplePlaceholder": "例: 仕事、プロジェクトA",
+      "group": "グループ",
+      "selectGroupPlaceholder": "グループを選択（任意）"
     },
     "actions": {
       "addChild": "子タグを追加",
@@ -254,7 +289,7 @@
       "required": "*",
       "parentTagNote": "親タグ:",
       "icon": "アイコン",
-      "selectColor": "色を選択: {{color}}"
+      "selectColor": "色を選択: {color}"
     },
     "search": {
       "noTags": "タグが見つかりません",
@@ -272,22 +307,22 @@
     },
     "delete": {
       "confirmTitle": "タグを削除しますか？",
-      "confirmMessage": "「{{name}}」を削除します。この操作は取り消せません。",
-      "childWarning": "このタグには {{count}} 個の子タグがあります。削除するには先に子タグを削除または移動してください。",
+      "confirmMessage": "「{name}」を削除します。この操作は取り消せません。",
+      "childWarning": "このタグには {count} 個の子タグがあります。削除するには先に子タグを削除または移動してください。",
       "confirmButton": "削除する",
-      "confirmTitleWithName": "「{{name}}」を削除しますか？",
+      "confirmTitleWithName": "「{name}」を削除しますか？",
       "warningIrreversible": "この操作は取り消せません",
       "affectedItems": "影響を受けるアイテム",
       "plans": "プラン",
       "events": "イベント",
       "tasks": "タスク",
-      "itemsCount": "{{count}}件",
+      "itemsCount": "{count}件",
       "total": "合計",
       "afterDeletion": "削除後の処理",
-      "willBeDeleted": "タグ #{{number}} が削除されます",
+      "willBeDeleted": "タグ #{number} が削除されます",
       "willBeRemovedFromItems": "すべてのアイテムからタグが削除されます",
       "willBeRemovedFromStats": "統計情報からタグが削除されます",
-      "confirmInputLabel": "削除を確定するには「{{name}}」と入力してください",
+      "confirmInputLabel": "削除を確定するには「{name}」と入力してください",
       "deleting": "削除中...",
       "permanentDelete": "完全に削除"
     },
@@ -313,17 +348,17 @@
       "editName": "名前を変更",
       "changeColor": "カラーを変更",
       "delete": "削除",
-      "colorLabel": "カラー {{color}}",
-      "changeColorAria": "{{name}}のカラーを変更"
+      "colorLabel": "カラー {color}",
+      "changeColorAria": "{name}のカラーを変更"
     },
     "toast": {
       "groupNameRequired": "グループ名を入力してください",
-      "groupCreated": "グループ「{{name}}」を作成しました",
-      "groupNameChanged": "グループ名を「{{name}}」に変更しました",
+      "groupCreated": "グループ「{name}」を作成しました",
+      "groupNameChanged": "グループ名を「{name}」に変更しました",
       "groupNameChangeFailed": "グループ名の変更に失敗しました",
       "colorChanged": "カラーを変更しました",
       "colorChangeFailed": "カラーの変更に失敗しました",
-      "groupDeleted": "グループ「{{name}}」を削除しました",
+      "groupDeleted": "グループ「{name}」を削除しました",
       "groupDeleteFailed": "グループの削除に失敗しました",
       "groupCreateFailed": "グループの作成に失敗しました"
     },
@@ -335,7 +370,7 @@
       "noTags": "タグがありません",
       "addFirstTag": "最初のタグを追加",
       "selectAll": "すべて選択",
-      "selectTag": "{{name}}を選択",
+      "selectTag": "{name}を選択",
       "name": "名前",
       "description": "説明",
       "createdAt": "作成日時",
@@ -351,13 +386,13 @@
       "moveToGroup": "グループに移動",
       "noGroup": "グループなし",
       "permanentDelete": "完全に削除",
-      "tagCreated": "タグ「{{name}}」を作成しました",
+      "tagCreated": "タグ「{name}」を作成しました",
       "tagCreateFailed": "タグの作成に失敗しました",
-      "tagArchived": "タグ「{{name}}」をアーカイブしました",
+      "tagArchived": "タグ「{name}」をアーカイブしました",
       "tagArchiveFailed": "タグのアーカイブに失敗しました",
-      "tagDeleted": "タグ「{{name}}」を完全に削除しました",
+      "tagDeleted": "タグ「{name}」を完全に削除しました",
       "tagDeleteFailed": "タグの削除に失敗しました",
-      "tagMoved": "タグ「{{name}}」を{{group}}に移動しました",
+      "tagMoved": "タグ「{name}」を{group}に移動しました",
       "tagMoveFailed": "タグの移動に失敗しました",
       "filter": {
         "type": "タイプ",
@@ -365,16 +400,36 @@
         "unused": "未使用",
         "frequentlyUsed": "よく使う"
       },
-      "bulkDeleteConfirm": "選択した{{count}}件のタグを削除しますか？",
-      "bulkArchived": "{{count}}件のタグをアーカイブしました",
+      "bulkDeleteConfirm": "選択した{count}件のタグを削除しますか？",
+      "bulkArchived": "{count}件のタグをアーカイブしました",
       "bulkArchiveFailed": "タグのアーカイブに失敗しました",
       "addDescription": "説明を追加...",
       "addGroup": "グループを追加...",
       "changeColor": "カラーを変更",
-      "tagColor": "タグカラー"
+      "tagColor": "タグカラー",
+      "lastUsed": "最終使用",
+      "columns": "表示カラム",
+      "columnSettings": "カラム設定"
+    },
+    "bulkMerge": {
+      "title": "タグを統合",
+      "description": "選択したタグを1つのタグに統合します",
+      "selectedTags": "選択中のタグ",
+      "confirm": "統合する",
+      "warningDetail": "統合後、元のタグは削除されます",
+      "deleteSourceDescription": "統合元のタグを削除する"
+    },
+    "merge": {
+      "targetTag": "統合先タグ",
+      "selectTarget": "統合先を選択...",
+      "options": "オプション",
+      "mergeAssociations": "関連付けを統合",
+      "mergeAssociationsDescription": "プランへの紐付けを統合先に移行",
+      "deleteSource": "元のタグを削除",
+      "warning": "注意"
     },
     "archive": {
-      "confirmTitle": "タグ「{{name}}」をアーカイブしますか？",
+      "confirmTitle": "タグ「{name}」をアーカイブしますか？",
       "warning": "アーカイブされたタグは新規のタグ付けには使用できません",
       "currentUsage": "現在の使用状況:",
       "afterArchive": "アーカイブすると:",
@@ -384,25 +439,29 @@
       "canRestoreAnytime": "アーカイブページからいつでも復元できます",
       "archiving": "アーカイブ中...",
       "archiveButton": "アーカイブ",
-      "restoreConfirm": "タグ「{{name}}」を復元しますか？\n\n復元されたタグは再び新規のタグ付けに使用できるようになります。",
-      "restoreSuccess": "タグ「{{name}}」を復元しました",
+      "restoreConfirm": "タグ「{name}」を復元しますか？\n\n復元されたタグは再び新規のタグ付けに使用できるようになります。",
+      "restoreConfirmTitle": "タグ「{name}」を復元しますか？",
+      "restoreConfirmDescription": "復元されたタグは再び新規のタグ付けに使用できるようになります。",
+      "restoreSuccess": "タグ「{name}」を復元しました",
       "restoreFailed": "タグの復元に失敗しました",
-      "deleteSuccess": "タグ「{{name}}」を完全に削除しました",
+      "deleteSuccess": "タグ「{name}」を完全に削除しました",
       "deleteFailed": "タグの削除に失敗しました",
-      "bulkDeleteConfirm": "選択した{{count}}件のタグを完全に削除しますか？",
+      "bulkDeleteConfirm": "選択した{count}件のタグを完全に削除しますか？",
+      "bulkDeleteConfirmTitle": "{count}件のタグを完全に削除しますか？",
+      "bulkDeleteConfirmDescription": "選択した{count}件のタグを完全に削除します。この操作は取り消せません。",
       "noArchivedTags": "アーカイブされたタグはありません",
       "restore": "復元",
       "permanentDelete": "完全に削除",
       "view": "表示",
-      "showing": "{{start}}〜{{end}}件 / 全{{total}}件",
+      "showing": "{start}〜{end}件 / 全{total}件",
       "noItems": "0件",
       "previousPage": "前のページ",
       "nextPage": "次のページ",
-      "pageOf": "ページ {{current}} / {{total}}"
+      "pageOf": "ページ {current} / {total}"
     },
     "detail": {
       "description": "説明",
-      "linkedPlans": "紐づいたプラン ({{count}})",
+      "linkedPlans": "紐づいたプラン ({count})",
       "noLinkedPlans": "このタグに紐づくプランはありません"
     }
   }
