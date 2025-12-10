@@ -1,7 +1,7 @@
 'use client'
 
 import { MiniCalendar } from '@/components/common/MiniCalendar'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { RecurrencePopover } from '@/features/plans/components/shared/RecurrencePopover'
 import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
 import { TimeSelect } from '@/features/plans/components/shared/TimeSelect'
@@ -102,25 +102,23 @@ export function DateTimePopoverContent({
           <Bell className="mr-2 size-4" />
           <span>通知</span>
         </div>
-        <TooltipProvider>
-          <Tooltip delayDuration={300}>
-            <TooltipTrigger asChild>
-              <div>
-                <ReminderSelect
-                  value={reminderType}
-                  onChange={onReminderChange}
-                  variant="button"
-                  disabled={isReminderDisabled}
-                />
-              </div>
-            </TooltipTrigger>
-            {isReminderDisabled && (
-              <TooltipContent>
-                <p className="text-xs">日付と開始時刻を先に設定してください</p>
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <ReminderSelect
+                value={reminderType}
+                onChange={onReminderChange}
+                variant="button"
+                disabled={isReminderDisabled}
+              />
+            </div>
+          </TooltipTrigger>
+          {isReminderDisabled && (
+            <TooltipContent>
+              <p className="text-xs">日付と開始時刻を先に設定してください</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
       </div>
 
       {/* 繰り返し設定 */}
@@ -129,72 +127,70 @@ export function DateTimePopoverContent({
           <Repeat className="mr-2 size-4" />
           <span>繰り返し</span>
         </div>
-        <TooltipProvider>
-          <Tooltip delayDuration={300}>
-            <TooltipTrigger asChild>
-              <div className="relative" ref={recurrenceTriggerRef}>
-                <button
-                  type="button"
-                  disabled={isRecurrenceDisabled}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    if (!isRecurrenceDisabled) {
-                      setRecurrencePopoverOpen(!recurrencePopoverOpen)
-                    }
-                  }}
-                  className="border-border bg-secondary text-secondary-foreground hover:bg-state-hover focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-fit items-center gap-1 rounded-md border px-2 py-0 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="relative" ref={recurrenceTriggerRef}>
+              <button
+                type="button"
+                disabled={isRecurrenceDisabled}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (!isRecurrenceDisabled) {
+                    setRecurrencePopoverOpen(!recurrencePopoverOpen)
+                  }
+                }}
+                className="border-border bg-secondary text-secondary-foreground hover:bg-state-hover focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-fit items-center gap-1 rounded-md border px-2 py-0 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <span>
+                  {recurrenceRule
+                    ? 'カスタム'
+                    : recurrenceType === 'daily'
+                      ? '毎日'
+                      : recurrenceType === 'weekly'
+                        ? '毎週'
+                        : recurrenceType === 'monthly'
+                          ? '毎月'
+                          : recurrenceType === 'yearly'
+                            ? '毎年'
+                            : recurrenceType === 'weekdays'
+                              ? '平日'
+                              : 'なし'}
+                </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-4 w-4 opacity-50"
                 >
-                  <span>
-                    {recurrenceRule
-                      ? 'カスタム'
-                      : recurrenceType === 'daily'
-                        ? '毎日'
-                        : recurrenceType === 'weekly'
-                          ? '毎週'
-                          : recurrenceType === 'monthly'
-                            ? '毎月'
-                            : recurrenceType === 'yearly'
-                              ? '毎年'
-                              : recurrenceType === 'weekdays'
-                                ? '平日'
-                                : 'なし'}
-                  </span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-4 w-4 opacity-50"
-                  >
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
-                </button>
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
 
-                {!isRecurrenceDisabled && (
-                  <RecurrencePopover
-                    open={recurrencePopoverOpen}
-                    onOpenChange={setRecurrencePopoverOpen}
-                    triggerRef={recurrenceTriggerRef}
-                    recurrenceRule={recurrenceRule ?? null}
-                    placement="right"
-                    onRepeatTypeChange={onRepeatTypeChange}
-                    onRecurrenceRuleChange={onRecurrenceRuleChange}
-                  />
-                )}
-              </div>
-            </TooltipTrigger>
-            {isRecurrenceDisabled && (
-              <TooltipContent>
-                <p className="text-xs">日付を先に設定してください</p>
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
+              {!isRecurrenceDisabled && (
+                <RecurrencePopover
+                  open={recurrencePopoverOpen}
+                  onOpenChange={setRecurrencePopoverOpen}
+                  triggerRef={recurrenceTriggerRef}
+                  recurrenceRule={recurrenceRule ?? null}
+                  placement="right"
+                  onRepeatTypeChange={onRepeatTypeChange}
+                  onRecurrenceRuleChange={onRecurrenceRuleChange}
+                />
+              )}
+            </div>
+          </TooltipTrigger>
+          {isRecurrenceDisabled && (
+            <TooltipContent>
+              <p className="text-xs">日付を先に設定してください</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
       </div>
     </div>
   )
