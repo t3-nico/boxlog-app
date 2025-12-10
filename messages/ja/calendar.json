@@ -130,6 +130,10 @@
       "view": "表示",
       "goToToday": "今日へ移動"
     },
+    "navigation": {
+      "previous": "前へ",
+      "next": "次へ"
+    },
     "performance": {
       "notCalculated": "未計測",
       "memoryLeakDetected": "継続的なメモリ増加を検出",

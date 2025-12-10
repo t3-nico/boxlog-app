@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { buttonVariants } from '@/components/ui/button'
+import { SimpleTooltip } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
@@ -47,45 +48,48 @@ export const DateNavigator = ({
     <div className={cn('flex items-center gap-2', className)}>
       {/* 今日ボタン - 32px（8pxグリッド準拠） */}
       {showTodayButton != null ? (
-        <button
-          type="button"
-          onClick={() => onNavigate('today')}
-          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), buttonClassName)}
-          title={t('calendar.actions.goToToday')}
-        >
-          <span>{todayLabel}</span>
-        </button>
+        <SimpleTooltip content={t('calendar.actions.goToToday')}>
+          <button
+            type="button"
+            onClick={() => onNavigate('today')}
+            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), buttonClassName)}
+          >
+            <span>{todayLabel}</span>
+          </button>
+        </SimpleTooltip>
       ) : null}
 
       {/* 前後ナビゲーション - 32px（8pxグリッド準拠） */}
       {showArrows != null ? (
         <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={() => onNavigate('prev')}
-            className={cn(
-              'flex size-8 items-center justify-center rounded-full transition-colors',
-              'hover:bg-state-hover',
-              'text-muted-foreground'
-            )}
-            title="Previous period"
-            aria-label="Previous"
-          >
-            <ChevronLeft className={arrowSizes[arrowSize]} />
-          </button>
-          <button
-            type="button"
-            onClick={() => onNavigate('next')}
-            className={cn(
-              'flex size-8 items-center justify-center rounded-full transition-colors',
-              'hover:bg-state-hover',
-              'text-muted-foreground'
-            )}
-            title="Next period"
-            aria-label="Next"
-          >
-            <ChevronRight className={arrowSizes[arrowSize]} />
-          </button>
+          <SimpleTooltip content={t('calendar.navigation.previous')}>
+            <button
+              type="button"
+              onClick={() => onNavigate('prev')}
+              className={cn(
+                'flex size-8 items-center justify-center rounded-full transition-colors',
+                'hover:bg-state-hover',
+                'text-muted-foreground'
+              )}
+              aria-label={t('calendar.navigation.previous')}
+            >
+              <ChevronLeft className={arrowSizes[arrowSize]} />
+            </button>
+          </SimpleTooltip>
+          <SimpleTooltip content={t('calendar.navigation.next')}>
+            <button
+              type="button"
+              onClick={() => onNavigate('next')}
+              className={cn(
+                'flex size-8 items-center justify-center rounded-full transition-colors',
+                'hover:bg-state-hover',
+                'text-muted-foreground'
+              )}
+              aria-label={t('calendar.navigation.next')}
+            >
+              <ChevronRight className={arrowSizes[arrowSize]} />
+            </button>
+          </SimpleTooltip>
         </div>
       ) : null}
     </div>
