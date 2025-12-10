@@ -36,7 +36,7 @@ export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>
 // === 再エクスポート（統一のため） ===
 
 // tags.tsから最新の定義を再エクスポート
-export type { CreateTagInput, Tag, TagLevel, TagWithChildren, UpdateTagInput } from './tags'
+export type { CreateTagInput, Tag, TagWithChildren, UpdateTagInput } from './tags'
 
 // 注: events型定義は削除済み（plans機能に移行）
 // src/features/plans/types/plan.tsを使用してください

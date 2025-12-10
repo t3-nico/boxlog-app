@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
-import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { Tag, TagGroup } from '@/features/tags/types'
 import type { useTranslations } from 'next-intl'
 
 interface ColumnWidths {
@@ -30,7 +30,7 @@ interface InlineCreateRowProps {
   newTagDescription: string
   newTagColor: string
   selectedGroup: TagGroup | null
-  tags: TagWithChildren[]
+  tags: Tag[]
   onNameChange: (value: string) => void
   onDescriptionChange: (value: string) => void
   onColorChange: (color: string) => void
@@ -56,9 +56,7 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
   },
   ref
 ) {
-  const groupTagCount = selectedGroup
-    ? tags.filter((t) => t.group_id === selectedGroup.id && t.is_active && t.level === 0).length
-    : 0
+  const groupTagCount = selectedGroup ? tags.filter((t) => t.group_id === selectedGroup.id && t.is_active).length : 0
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {

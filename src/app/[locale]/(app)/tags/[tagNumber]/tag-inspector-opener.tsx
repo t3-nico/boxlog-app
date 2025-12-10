@@ -2,7 +2,6 @@
 
 import { useTags } from '@/features/tags/hooks/use-tags'
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore'
-import type { TagWithChildren } from '@/features/tags/types'
 import { useEffect } from 'react'
 
 interface TagInspectorOpenerProps {
@@ -19,19 +18,8 @@ export function TagInspectorOpener({ tagNumber }: TagInspectorOpenerProps) {
   useEffect(() => {
     if (isLoading || tags.length === 0) return
 
-    // タグ番号からタグを検索
-    const findTagByNumber = (tags: TagWithChildren[], number: number): TagWithChildren | null => {
-      for (const tag of tags) {
-        if (tag.tag_number === number) return tag
-        if (tag.children) {
-          const found = findTagByNumber(tag.children, number)
-          if (found) return found
-        }
-      }
-      return null
-    }
-
-    const targetTag = findTagByNumber(tags, Number(tagNumber))
+    // タグ番号からタグを検索（フラット構造）
+    const targetTag = tags.find((tag) => tag.tag_number === Number(tagNumber))
     if (targetTag && !isOpen) {
       openInspector(targetTag.id)
     }

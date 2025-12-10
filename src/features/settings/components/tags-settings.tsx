@@ -60,11 +60,7 @@ export function TagsSettings() {
   const filteredTags = tags.filter((tag) => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
-      return (
-        tag.name.toLowerCase().includes(query) ||
-        tag.path?.toLowerCase().includes(query) ||
-        tag.description?.toLowerCase().includes(query)
-      )
+      return tag.name.toLowerCase().includes(query) || tag.description?.toLowerCase().includes(query)
     }
     return true
   })

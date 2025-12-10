@@ -25,7 +25,7 @@ import { useTagColumnStore, type TagColumnId } from '@/features/tags/stores/useT
 import { useTagPaginationStore } from '@/features/tags/stores/useTagPaginationStore'
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore'
 import { useTagSortStore } from '@/features/tags/stores/useTagSortStore'
-import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { Tag, TagGroup } from '@/features/tags/types'
 import { api } from '@/lib/trpc'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
@@ -60,9 +60,9 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   // ローカル状態
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
-  const [deleteConfirmTag, setDeleteConfirmTag] = useState<TagWithChildren | null>(null)
-  const [archiveConfirmTag, setArchiveConfirmTag] = useState<TagWithChildren | null>(null)
-  const [bulkMergeTags, setBulkMergeTags] = useState<TagWithChildren[]>([])
+  const [deleteConfirmTag, setDeleteConfirmTag] = useState<Tag | null>(null)
+  const [archiveConfirmTag, setArchiveConfirmTag] = useState<Tag | null>(null)
+  const [bulkMergeTags, setBulkMergeTags] = useState<Tag[]>([])
   const createRowRef = useRef<TagTableRowCreateHandle>(null)
 
   // 表示列
@@ -110,7 +110,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   // アクティブなタグ数を計算
   const activeTagsCount = useMemo(() => {
-    return tags.filter((tag) => tag.level === 0 && tag.is_active).length
+    return tags.filter((tag) => tag.is_active).length
   }, [tags])
 
   // ページタイトルにタグ数を表示
@@ -123,9 +123,9 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     }
   }, [activeTagsCount, showUncategorizedOnly, initialGroupNumber, t])
 
-  // すべてのLevel 0タグ（ルートタグ）を直接取得
+  // すべてのアクティブなタグを取得
   const baseTags = useMemo(() => {
-    return tags.filter((tag) => tag.level === 0 && tag.is_active)
+    return tags.filter((tag) => tag.is_active)
   }, [tags])
 
   // 検索とグループフィルタ適用
@@ -220,7 +220,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   // ハンドラー: グループ移動
   const handleMoveToGroup = useCallback(
-    async (tag: TagWithChildren, groupId: string | null) => {
+    async (tag: Tag, groupId: string | null) => {
       try {
         await updateTagMutation.mutateAsync({
           id: tag.id,
@@ -289,7 +289,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   }, [clearSelection])
 
   // ハンドラー: アーカイブ確認ダイアログ
-  const handleOpenArchiveConfirm = useCallback((tag: TagWithChildren) => {
+  const handleOpenArchiveConfirm = useCallback((tag: Tag) => {
     setArchiveConfirmTag(tag)
   }, [])
 
@@ -313,7 +313,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   }, [archiveConfirmTag, updateTagMutation, t])
 
   // ハンドラー: 削除確認ダイアログ
-  const handleOpenDeleteConfirm = useCallback((tag: TagWithChildren) => {
+  const handleOpenDeleteConfirm = useCallback((tag: Tag) => {
     setDeleteConfirmTag(tag)
   }, [])
 
@@ -365,7 +365,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   // 行ラッパー
   const rowWrapper = useCallback(
-    ({ item, children, isSelected }: { item: TagWithChildren; children: ReactNode; isSelected: boolean }) => (
+    ({ item, children, isSelected }: { item: Tag; children: ReactNode; isSelected: boolean }) => (
       <TagRowWrapper
         key={item.id}
         tag={item}

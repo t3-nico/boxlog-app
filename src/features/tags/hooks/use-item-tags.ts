@@ -90,11 +90,18 @@ const itemTagsAPI = {
   },
 }
 
+// クエリフィルター型
+interface ItemTagsListFilters {
+  item_id?: string
+  item_type?: ItemType
+  tag_ids?: string[]
+}
+
 // クエリキー
 export const itemTagsKeys = {
   all: ['item-tags'] as const,
   lists: () => [...itemTagsKeys.all, 'list'] as const,
-  list: (filters: Record<string, unknown>) => [...itemTagsKeys.lists(), filters] as const,
+  list: (filters: ItemTagsListFilters) => [...itemTagsKeys.lists(), filters] as const,
   details: () => [...itemTagsKeys.all, 'detail'] as const,
   detail: (id: string) => [...itemTagsKeys.details(), id] as const,
 }

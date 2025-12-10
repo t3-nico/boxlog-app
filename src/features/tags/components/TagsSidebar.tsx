@@ -230,7 +230,7 @@ export function TagsSidebar({
   // グループごとのタグ数をカウント
   const getGroupTagCount = useCallback(
     (groupId: string) => {
-      return allTags.filter((tag) => tag.group_id === groupId && tag.is_active && tag.level === 0).length
+      return allTags.filter((tag) => tag.group_id === groupId && tag.is_active).length
     },
     [allTags]
   )
@@ -265,7 +265,7 @@ export function TagsSidebar({
 
   // 未分類タグ数をカウント
   const uncategorizedTagsCount = useMemo(() => {
-    return allTags.filter((tag) => !tag.group_id && tag.is_active && tag.level === 0).length
+    return allTags.filter((tag) => !tag.group_id && tag.is_active).length
   }, [allTags])
 
   const handleArchiveClick = useCallback(() => {
@@ -303,15 +303,11 @@ export function TagsSidebar({
         onClick={handleUncategorizedClick}
         className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
           isUncategorizedPage ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
-        }`}
-        style={{
-          backgroundColor: isOver ? 'rgba(59, 130, 246, 0.1)' : undefined,
-          border: isOver ? '2px dashed rgba(59, 130, 246, 0.5)' : undefined,
-        }}
+        } ${isOver ? 'bg-primary/10 border-primary/50 border-2 border-dashed' : ''}`}
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <FolderX className="h-4 w-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
+            <FolderX className="text-muted-foreground h-4 w-4 shrink-0" />
             <span>{t('tags.sidebar.uncategorized')}</span>
           </div>
           <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>

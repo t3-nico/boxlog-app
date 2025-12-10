@@ -1,4 +1,3 @@
-// @ts-nocheck - TODO: 型エラーの修正が必要 (#734)
 /**
  * タグ管理API エンドポイント
  * @description Supabase を使用したタグCRUD操作
@@ -8,11 +7,22 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError } from '@/lib/supabase/utils'
-import type { CreateTagInput, Tag, TagWithChildren } from '@/types/tags'
+import type { CreateTagInput } from '@/types/tags'
+
+/** PATCH リクエストボディの型 */
+type TagPatchRequest =
+  | { tag_id: string; action: 'move'; data: { new_group_id: string | null } }
+  | { tag_id: string; action: 'rename'; data: { name: string } }
+  | { tag_id: string; action: 'update_color'; data: { color: string } }
+  | {
+      tag_id: string
+      action: 'merge'
+      data: { target_tag_id: string; merge_associations?: boolean; delete_source?: boolean }
+    }
 
 /**
  * タグ一覧取得 (GET)
- * @description 認証ユーザーのタグを階層構造で取得
+ * @description 認証ユーザーのタグをフラットに取得
  */
 export async function GET(request: NextRequest) {
   try {
@@ -29,50 +39,25 @@ export async function GET(request: NextRequest) {
     }
 
     // クエリパラメータ
-    const includeChildren = searchParams.get('include_children') === 'true'
-    const sortField = searchParams.get('sort_field') || 'name'
+    const sortFieldParam = searchParams.get('sort_field')
     const sortOrder = searchParams.get('sort_order') || 'asc'
 
-    // ベースクエリ: ユーザーのタグのみ取得
-    let query = supabase
+    // ソート可能なカラムを制限
+    const validSortFields = ['name', 'created_at', 'updated_at', 'tag_number', 'sort_order'] as const
+    type ValidSortField = (typeof validSortFields)[number]
+    const sortField: ValidSortField = validSortFields.includes(sortFieldParam as ValidSortField)
+      ? (sortFieldParam as ValidSortField)
+      : 'name'
+
+    // ベースクエリ: ユーザーのタグのみ取得（フラット）
+    const { data, error } = await supabase
       .from('tags')
       .select('*')
       .eq('user_id', user.id)
       .order(sortField, { ascending: sortOrder === 'asc' })
 
-    const { data, error } = await query
-
     if (error) {
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
-    }
-
-    // 階層構造の構築
-    if (includeChildren) {
-      const tagsMap = new Map<string, TagWithChildren>()
-      const rootTags: TagWithChildren[] = []
-
-      // 全タグをMapに登録
-      data.forEach((tag: Tag) => {
-        tagsMap.set(tag.id, { ...tag, children: [] })
-      })
-
-      // 親子関係を構築
-      data.forEach((tag: Tag) => {
-        const tagWithChildren = tagsMap.get(tag.id)!
-        if (tag.parent_id) {
-          const parent = tagsMap.get(tag.parent_id)
-          if (parent) {
-            parent.children.push(tagWithChildren)
-          }
-        } else {
-          rootTags.push(tagWithChildren)
-        }
-      })
-
-      return NextResponse.json({
-        data: rootTags,
-        count: data.length,
-      })
     }
 
     return NextResponse.json({
@@ -90,7 +75,7 @@ export async function GET(request: NextRequest) {
 
 /**
  * タグ作成 (POST)
- * @description 新しいタグを作成
+ * @description 新しいタグを作成（フラット構造）
  */
 export async function POST(request: NextRequest) {
   try {
@@ -106,7 +91,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body: CreateTagInput = await request.json()
-    const { name, color, description, icon, parent_id, level, group_id } = body
+    const { name, color, description, icon, group_id } = body
 
     // バリデーション
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
@@ -117,32 +102,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'tags.validation.nameMaxLength' }, { status: 400 })
     }
 
-    // pathの計算
-    let path = `#${name.trim()}`
-    if (parent_id) {
-      const { data: parentTag, error: parentError } = await supabase
-        .from('tags')
-        .select('path')
-        .eq('id', parent_id)
-        .single()
-
-      if (parentError || !parentTag) {
-        return NextResponse.json({ error: 'tags.errors.parentNotFound' }, { status: 404 })
-      }
-
-      path = `${parentTag.path}/${name.trim()}`
-    }
-
-    // タグデータ作成
+    // タグデータ作成（フラット構造: parent_id, level, path はDBトリガーで設定）
     const tagData = {
       user_id: user.id,
       name: name.trim(),
       color: color || '#3B82F6',
       description: description?.trim() || null,
       icon: icon || null,
-      parent_id: parent_id || null,
-      level: level || 0,
-      path,
       is_active: true,
       group_id: group_id || null,
     }
@@ -179,7 +145,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json()
+    const body = (await request.json()) as TagPatchRequest
     const { tag_id, action, data: updateData } = body
 
     if (!tag_id || !action) {
@@ -201,10 +167,11 @@ export async function PATCH(request: NextRequest) {
     // アクション別処理
     switch (action) {
       case 'move': {
-        const { new_parent_id } = updateData
+        // フラット構造: グループ間の移動
+        const { new_group_id } = updateData
         const { data, error } = await supabase
           .from('tags')
-          .update({ parent_id: new_parent_id || null })
+          .update({ group_id: new_group_id || null })
           .eq('id', tag_id)
           .select()
           .single()
@@ -287,15 +254,13 @@ export async function PATCH(request: NextRequest) {
             .select('plan_id')
             .eq('tag_id', target_tag_id)
 
-          const existingPlanIds = new Set((existingPlanTags || []).map((pt: { plan_id: string }) => pt.plan_id))
+          const existingPlanIds = new Set((existingPlanTags ?? []).map((pt) => pt.plan_id))
 
           // ソースタグの関連付けを取得
           const { data: sourcePlanTags } = await supabase.from('plan_tags').select('*').eq('tag_id', tag_id)
 
           // 重複しない関連付けを移行
-          const tagsToMigrate = (sourcePlanTags || []).filter(
-            (pt: { plan_id: string }) => !existingPlanIds.has(pt.plan_id)
-          )
+          const tagsToMigrate = (sourcePlanTags ?? []).filter((pt) => !existingPlanIds.has(pt.plan_id))
 
           if (tagsToMigrate.length > 0) {
             const { error: updateError } = await supabase
@@ -304,7 +269,7 @@ export async function PATCH(request: NextRequest) {
               .eq('tag_id', tag_id)
               .in(
                 'plan_id',
-                tagsToMigrate.map((pt: { plan_id: string }) => pt.plan_id)
+                tagsToMigrate.map((pt) => pt.plan_id)
               )
 
             if (updateError) {
@@ -317,17 +282,6 @@ export async function PATCH(request: NextRequest) {
           // 重複していた関連付けは削除（ソースタグから）
           if (sourcePlanTags && sourcePlanTags.length > tagsToMigrate.length) {
             await supabase.from('plan_tags').delete().eq('tag_id', tag_id)
-          }
-
-          // 子タグをターゲットタグに移動
-          const { error: moveChildrenError } = await supabase
-            .from('tags')
-            .update({ parent_id: target_tag_id })
-            .eq('parent_id', tag_id)
-            .eq('user_id', user.id)
-
-          if (moveChildrenError) {
-            console.error('Failed to move children tags:', moveChildrenError)
           }
         }
 

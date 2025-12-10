@@ -84,7 +84,7 @@ export function SearchBar({
             ...tag,
             title: tag.name,
             description: tag.description || '',
-            keywords: [tag.name, tag.path].filter(Boolean) as string[],
+            keywords: [tag.name, tag.description].filter(Boolean) as string[],
           })),
           query,
           5
@@ -154,7 +154,7 @@ export function SearchBar({
                   <CommandItem
                     key={tag.id}
                     value={tag.name}
-                    keywords={[tag.description || '', tag.path || '']}
+                    keywords={[tag.description || '']}
                     onSelect={() => handleSelect(tag.id, 'tag')}
                   >
                     <Tag className="mr-2 h-4 w-4" />
