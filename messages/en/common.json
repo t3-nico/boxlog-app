@@ -30,6 +30,8 @@
       "bulkUpdateFailed": "Failed to bulk update: {error}",
       "bulkDeleted": "{count} plans deleted",
       "bulkDeleteFailed": "Failed to bulk delete: {error}",
+      "tagsAdded": "Tags added",
+      "tagsAddFailed": "Failed to add tags: {error}",
       "statusChanged": "Status changed to {status}",
       "open": "Open",
       "delete": {
@@ -80,6 +82,12 @@
       "processing": "Processing...",
       "clearDueDate": "Clear Due Date",
       "setDueDate": "Set Due Date",
+      "bulkAddTags": "Add Tags",
+      "bulkAddTagsDescription": "Add tags to {count} plans",
+      "searchTags": "Search tags...",
+      "noTagsFound": "No tags found",
+      "noTags": "No tags available",
+      "addTags": "Add Tags",
       "view": {
         "edit": "Edit",
         "delete": "Delete",

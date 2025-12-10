@@ -17,6 +17,7 @@ import { statisticsRouter } from './statistics'
 const bulkAliasRouter = createTRPCRouter({
   bulkUpdate: bulkRouter.update,
   bulkDelete: bulkRouter.delete,
+  bulkAddTags: bulkRouter.addTags,
 })
 
 const statisticsAliasRouter = createTRPCRouter({
