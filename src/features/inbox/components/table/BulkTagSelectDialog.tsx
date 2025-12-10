@@ -18,7 +18,6 @@ import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { useTags } from '@/features/tags/hooks/use-tags'
-import type { Tag } from '@/features/tags/types'
 
 interface BulkTagSelectDialogProps {
   /** ダイアログの開閉状態 */
@@ -48,12 +47,7 @@ interface BulkTagSelectDialogProps {
  * />
  * ```
  */
-export function BulkTagSelectDialog({
-  open,
-  onOpenChange,
-  selectedPlanIds,
-  onSuccess,
-}: BulkTagSelectDialogProps) {
+export function BulkTagSelectDialog({ open, onOpenChange, selectedPlanIds, onSuccess }: BulkTagSelectDialogProps) {
   const t = useTranslations()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
@@ -61,42 +55,21 @@ export function BulkTagSelectDialog({
   const { bulkAddTags } = usePlanMutations()
   const { data: tagsData } = useTags(true)
 
-  // TagWithChildren[] を Tag[] に変換（階層を平坦化）
-  const flattenTags = (tags: typeof tagsData): Tag[] => {
-    if (!tags) return []
-    const result: Tag[] = []
-    const flatten = (tagList: typeof tagsData) => {
-      if (!tagList) return
-      tagList.forEach((tag) => {
-        result.push(tag)
-        if (tag.children && tag.children.length > 0) {
-          flatten(tag.children)
-        }
-      })
-    }
-    flatten(tags)
-    return result
-  }
-
-  const allTags = flattenTags(tagsData)
-  // アクティブなタグのみを使用
-  const activeTags = allTags.filter((tag) => tag.is_active)
+  // フラット構造のタグデータからアクティブなタグのみを抽出
+  const activeTags = useMemo(() => {
+    if (!tagsData) return []
+    return tagsData.filter((tag) => tag.is_active)
+  }, [tagsData])
 
   // 検索フィルタリング
   const filteredTags = useMemo(() => {
     if (!searchQuery) return activeTags
-    return activeTags.filter((tag) =>
-      tag.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    return activeTags.filter((tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase()))
   }, [activeTags, searchQuery])
 
   // タグの選択/解除
   const handleToggleTag = (tagId: string) => {
-    setSelectedTagIds((prev) =>
-      prev.includes(tagId)
-        ? prev.filter((id) => id !== tagId)
-        : [...prev, tagId]
-    )
+    setSelectedTagIds((prev) => (prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]))
   }
 
   // 送信ハンドラー
@@ -166,10 +139,7 @@ export function BulkTagSelectDialog({
                       key={tagId}
                       className="bg-background flex items-center gap-1 rounded-md border px-2 py-1 text-sm"
                     >
-                      <Hash
-                        className="h-3 w-3"
-                        style={{ color: tag.color || '#3B82F6' }}
-                      />
+                      <Hash className="h-3 w-3" style={{ color: tag.color || '#3B82F6' }} />
                       <span>{tag.name}</span>
                       <button
                         type="button"
@@ -201,16 +171,11 @@ export function BulkTagSelectDialog({
                       type="button"
                       onClick={() => handleToggleTag(tag.id)}
                       className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                        isSelected
-                          ? 'bg-primary/10 text-foreground'
-                          : 'hover:bg-state-hover text-muted-foreground'
+                        isSelected ? 'bg-primary/10 text-foreground' : 'hover:bg-state-hover text-muted-foreground'
                       }`}
                     >
                       <Checkbox checked={isSelected} className="pointer-events-none" />
-                      <Hash
-                        className="h-4 w-4 shrink-0"
-                        style={{ color: tag.color || '#3B82F6' }}
-                      />
+                      <Hash className="h-4 w-4 shrink-0" style={{ color: tag.color || '#3B82F6' }} />
                       <span className="flex-1 truncate">{tag.name}</span>
                     </button>
                   )
@@ -221,12 +186,7 @@ export function BulkTagSelectDialog({
         </div>
 
         <DialogFooter className="flex flex-col gap-2 sm:flex-row">
-          <Button
-            variant="outline"
-            onClick={handleClose}
-            disabled={isSubmitting}
-            className="w-full sm:w-auto"
-          >
+          <Button variant="outline" onClick={handleClose} disabled={isSubmitting} className="w-full sm:w-auto">
             {t('common.inbox.cancel')}
           </Button>
           <Button
