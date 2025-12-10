@@ -12,6 +12,7 @@ import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/
 
 import { usePlan } from '../../hooks/usePlan'
 import { usePlanTags } from '../../hooks/usePlanTags'
+import { useDeleteConfirmStore } from '../../stores/useDeleteConfirmStore'
 import { usePlanCacheStore } from '../../stores/usePlanCacheStore'
 import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore'
 import type { Plan } from '../../types/plan'
@@ -33,6 +34,9 @@ export function PlanInspector() {
   const planId = usePlanInspectorStore((state) => state.planId)
   const initialData = usePlanInspectorStore((state) => state.initialData)
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector)
+
+  // 削除確認ダイアログ（ストア経由で制御）
+  const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog)
 
   const { data: planData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId })
   const plan = (planData ?? null) as unknown as Plan | null
@@ -199,11 +203,11 @@ export function PlanInspector() {
 
   const handleDelete = useCallback(() => {
     if (!planId) return
-    if (confirm('このプランを削除しますか？')) {
-      deletePlan.mutate({ id: planId })
+    openDeleteDialog(planId, plan?.title ?? null, async () => {
+      await deletePlan.mutateAsync({ id: planId })
       closeInspector()
-    }
-  }, [planId, deletePlan, closeInspector])
+    })
+  }, [planId, plan?.title, openDeleteDialog, deletePlan, closeInspector])
 
   const handleDateChange = useCallback(
     (date: Date | undefined) => {

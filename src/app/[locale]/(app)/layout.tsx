@@ -17,7 +17,7 @@ import { BaseLayout } from '@/components/layout/base-layout'
 import { Providers } from '@/components/providers'
 import { Toaster } from '@/components/ui/sonner'
 import { SessionMonitorProvider } from '@/features/auth/components/SessionMonitorProvider'
-import { PlanInspector } from '@/features/plans/components'
+import { PlanDeleteConfirmDialog, PlanInspector } from '@/features/plans/components'
 import { TagInspector } from '@/features/tags/components/inspector'
 
 const AppLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -27,6 +27,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
         <BaseLayout>
           {children}
           <PlanInspector />
+          <PlanDeleteConfirmDialog />
           <TagInspector />
           <Toaster />
         </BaseLayout>
