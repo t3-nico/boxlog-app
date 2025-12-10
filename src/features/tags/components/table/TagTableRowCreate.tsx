@@ -7,7 +7,7 @@ import { TableCell, TableRow } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useCreateTag } from '@/features/tags/hooks/use-tags'
 import { useTagColumnStore } from '@/features/tags/stores/useTagColumnStore'
-import type { TagGroup, TagWithChildren } from '@/features/tags/types'
+import type { Tag, TagGroup } from '@/features/tags/types'
 import { Folder, Hash } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
@@ -28,7 +28,7 @@ interface TagTableRowCreateProps {
   /** グループ一覧 */
   groups: TagGroup[]
   /** 全タグ一覧（グループ内タグ数計算用） */
-  allTags: TagWithChildren[]
+  allTags: Tag[]
   /** 作成完了時のコールバック */
   onCreated?: () => void
 }
@@ -85,7 +85,6 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
           description: newTagDescription.trim() || null,
           color: newTagColor,
           group_id: selectedGroupId,
-          level: 0 as const,
         })
         toast.success(t('tags.page.tagCreated', { name: newTagName }))
         setIsCreating(false)
@@ -130,7 +129,7 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
     // グループ情報
     const selectedGroup = selectedGroupId ? groups.find((g) => g.id === selectedGroupId) : null
     const groupTagCount = selectedGroup
-      ? allTags.filter((t) => t.group_id === selectedGroup.id && t.is_active && t.level === 0).length
+      ? allTags.filter((t) => t.group_id === selectedGroup.id && t.is_active).length
       : 0
 
     if (!isCreating) return null

@@ -16,6 +16,7 @@ export {
   useOptimisticTagUpdate,
   useRenameTag,
   useTag,
+  useTagUsage,
   useTags,
   useUpdateTag,
   useUpdateTagColor,
@@ -51,15 +52,7 @@ export {
 export { useTagOperations } from './use-tag-operations'
 
 // Tag Stats
-export {
-  tagStatsKeys,
-  useSidebarTags,
-  useTagExpandedState,
-  useTagItemAnimation,
-  useTagStats,
-  useTagStatsDebug,
-  useTagUsageCounts,
-} from './use-tag-stats'
+export { tagStatsKeys, useSidebarTags, useTagExpandedState, useTagStats, useTagUsageCounts } from './use-tag-stats'
 
 // Realtime
 export { useTagRealtime } from './useTagRealtime'

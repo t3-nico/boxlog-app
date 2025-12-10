@@ -3,8 +3,6 @@
 import { useCallback, useState } from 'react'
 
 import {
-  ChevronDown as ChevronDownIcon,
-  ChevronRight as ChevronRightIcon,
   MoreHorizontal as EllipsisHorizontalIcon,
   Pencil as PencilIcon,
   Plus as PlusIcon,
@@ -12,54 +10,30 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react'
 
-import type { TagWithChildren } from '@/features/tags/types'
+import type { Tag } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 
 interface TagTreeViewProps {
-  tags: TagWithChildren[]
-  onCreateTag: (parentId?: string) => void
-  onEditTag: (tag: TagWithChildren) => void
-  onDeleteTag: (tag: TagWithChildren) => void
-  onRenameTag: (tag: TagWithChildren, newName: string) => void
-  expandedNodes?: Set<string>
-  onToggleExpanded?: (tagId: string) => void
+  tags: Tag[]
+  onCreateTag: () => void
+  onEditTag: (tag: Tag) => void
+  onDeleteTag: (tag: Tag) => void
+  onRenameTag: (tag: Tag, newName: string) => void
   isLoading?: boolean
 }
 
 interface TagTreeNodeProps {
-  tag: TagWithChildren
-  level: number
-  isExpanded: boolean
-  onToggleExpanded: (tagId: string) => void
-  onCreateTag: (parentId?: string) => void
-  onEditTag: (tag: TagWithChildren) => void
-  onDeleteTag: (tag: TagWithChildren) => void
-  onRenameTag: (tag: TagWithChildren, newName: string) => void
+  tag: Tag
+  onEditTag: (tag: Tag) => void
+  onDeleteTag: (tag: Tag) => void
+  onRenameTag: (tag: Tag, newName: string) => void
 }
 
-const TagTreeNode = ({
-  tag,
-  level,
-  isExpanded,
-  onToggleExpanded,
-  onCreateTag,
-  onEditTag,
-  onDeleteTag,
-  onRenameTag,
-}: TagTreeNodeProps) => {
+const TagTreeNode = ({ tag, onEditTag, onDeleteTag, onRenameTag }: TagTreeNodeProps) => {
   const t = useTranslations()
   const [showMenu, setShowMenu] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState(tag.name)
-
-  const hasChildren = tag.children && tag.children.length > 0
-  const isGroup = tag.level === 0 // Level 0 はグループ
-
-  const handleToggleExpanded = useCallback(() => {
-    if (hasChildren) {
-      onToggleExpanded(tag.id)
-    }
-  }, [hasChildren, onToggleExpanded, tag.id])
 
   const handleStartEdit = useCallback(() => {
     setIsEditing(true)
@@ -95,11 +69,6 @@ const TagTreeNode = ({
     setEditName(e.target.value)
   }, [])
 
-  // jsx-no-bind optimization: Create child tag handler
-  const handleCreateChildTag = useCallback(() => {
-    onCreateTag(tag.id)
-  }, [onCreateTag, tag.id])
-
   // jsx-no-bind optimization: Toggle menu handler
   const handleToggleMenu = useCallback(() => {
     setShowMenu(!showMenu)
@@ -117,30 +86,10 @@ const TagTreeNode = ({
     setShowMenu(false)
   }, [onDeleteTag, tag])
 
-  const indentClass = `ml-${level * 4}`
-
   return (
     <div className="relative">
       {/* タグノード */}
-      <div
-        className={`hover:bg-state-hover group flex items-center gap-2 rounded-lg px-3 py-2 transition-colors ${indentClass}`}
-        style={{ paddingLeft: `${level * 20 + 12}px` }}
-      >
-        {/* 展開/折りたたみアイコン */}
-        <button
-          type="button"
-          onClick={handleToggleExpanded}
-          className={`hover:bg-state-hover flex-shrink-0 rounded p-1 transition-colors ${
-            hasChildren ? 'visible' : 'invisible'
-          }`}
-        >
-          {hasChildren && isExpanded ? (
-            <ChevronDownIcon className="text-muted-foreground h-4 w-4" data-slot="icon" />
-          ) : (
-            <ChevronRightIcon className="text-muted-foreground h-4 w-4" data-slot="icon" />
-          )}
-        </button>
-
+      <div className="hover:bg-state-hover group flex items-center gap-2 rounded-lg px-3 py-2 transition-colors">
         {/* タグアイコン */}
         <div className="flex-shrink-0">
           <TagIcon className="h-4 w-4" style={{ color: tag.color }} data-slot="icon" />
@@ -169,84 +118,49 @@ const TagTreeNode = ({
           )}
         </div>
 
-        {/* パス表示 */}
-        <div className="text-muted-foreground flex-shrink-0 text-xs">{tag.path}</div>
-
         {/* アクションボタン */}
         <div className="flex flex-shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-          {/* グループ（Level 0）: 子タグ追加ボタンのみ */}
-          {isGroup ? (
+          <div className="relative">
             <button
               type="button"
-              onClick={handleCreateChildTag}
+              onClick={handleToggleMenu}
               className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded p-1 transition-colors"
-              title="タグを追加"
             >
-              <PlusIcon className="h-4 w-4" data-slot="icon" />
+              <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
             </button>
-          ) : (
-            /* タグ（Level 1）: 編集・削除メニュー */
-            <div className="relative">
-              <button
-                type="button"
-                onClick={handleToggleMenu}
-                className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded p-1 transition-colors"
-              >
-                <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
-              </button>
 
-              {/* コンテキストメニュー */}
-              {showMenu != null && (
-                <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-10 mt-1 min-w-32 rounded-lg border shadow-lg">
-                  <button
-                    type="button"
-                    onClick={handleEditTag}
-                    className="text-foreground hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
-                  >
-                    <PencilIcon className="h-4 w-4" data-slot="icon" />
-                    {t('tag.actions.edit')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleStartEdit}
-                    className="text-foreground hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
-                  >
-                    <PencilIcon className="h-4 w-4" data-slot="icon" />
-                    {t('tag.actions.rename')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleDeleteTag}
-                    className="text-destructive hover:bg-destructive/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
-                  >
-                    <TrashIcon className="h-4 w-4" data-slot="icon" />
-                    {t('tag.actions.delete')}
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+            {/* コンテキストメニュー */}
+            {showMenu && (
+              <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-10 mt-1 min-w-32 rounded-lg border shadow-lg">
+                <button
+                  type="button"
+                  onClick={handleEditTag}
+                  className="text-foreground hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                >
+                  <PencilIcon className="h-4 w-4" data-slot="icon" />
+                  {t('tag.actions.edit')}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleStartEdit}
+                  className="text-foreground hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                >
+                  <PencilIcon className="h-4 w-4" data-slot="icon" />
+                  {t('tag.actions.rename')}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteTag}
+                  className="text-destructive hover:bg-destructive/8 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                >
+                  <TrashIcon className="h-4 w-4" data-slot="icon" />
+                  {t('tag.actions.delete')}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
-      {/* 子タグ */}
-      {hasChildren && isExpanded ? (
-        <div className="space-y-1">
-          {tag.children.map((child) => (
-            <TagTreeNode
-              key={child.id}
-              tag={child}
-              level={level + 1}
-              isExpanded={false} // 簡略化のため、デフォルトは折りたたみ
-              onToggleExpanded={onToggleExpanded}
-              onCreateTag={onCreateTag}
-              onEditTag={onEditTag}
-              onDeleteTag={onDeleteTag}
-              onRenameTag={onRenameTag}
-            />
-          ))}
-        </div>
-      ) : null}
     </div>
   )
 }
@@ -257,29 +171,12 @@ export const TagTreeView = ({
   onEditTag,
   onDeleteTag,
   onRenameTag,
-  expandedNodes = new Set(),
-  onToggleExpanded = () => {},
   isLoading = false,
 }: TagTreeViewProps) => {
   const t = useTranslations()
-  const [localExpandedNodes, setLocalExpandedNodes] = useState<Set<string>>(expandedNodes)
 
-  const handleToggleExpanded = useCallback(
-    (tagId: string) => {
-      const newExpanded = new Set(localExpandedNodes)
-      if (newExpanded.has(tagId)) {
-        newExpanded.delete(tagId)
-      } else {
-        newExpanded.add(tagId)
-      }
-      setLocalExpandedNodes(newExpanded)
-      onToggleExpanded(tagId)
-    },
-    [localExpandedNodes, onToggleExpanded]
-  )
-
-  // jsx-no-bind optimization: Create root tag handler
-  const handleCreateRootTag = useCallback(() => {
+  // jsx-no-bind optimization: Create tag handler
+  const handleCreateTag = useCallback(() => {
     onCreateTag()
   }, [onCreateTag])
 
@@ -298,7 +195,7 @@ export const TagTreeView = ({
         <p className="text-muted-foreground mb-4">{t('tag.messages.noTagsYet')}</p>
         <button
           type="button"
-          onClick={handleCreateRootTag}
+          onClick={handleCreateTag}
           className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex items-center gap-2 rounded-lg px-4 py-2 transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
@@ -317,7 +214,7 @@ export const TagTreeView = ({
         </h3>
         <button
           type="button"
-          onClick={handleCreateRootTag}
+          onClick={handleCreateTag}
           className="text-primary hover:bg-state-hover inline-flex items-center gap-1 rounded px-2 py-1 text-sm transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
@@ -325,16 +222,12 @@ export const TagTreeView = ({
         </button>
       </div>
 
-      {/* ツリー */}
+      {/* タグリスト（フラット） */}
       <div className="space-y-1">
         {tags.map((tag) => (
           <TagTreeNode
             key={tag.id}
             tag={tag}
-            level={0}
-            isExpanded={localExpandedNodes.has(tag.id)}
-            onToggleExpanded={handleToggleExpanded}
-            onCreateTag={onCreateTag}
             onEditTag={onEditTag}
             onDeleteTag={onDeleteTag}
             onRenameTag={onRenameTag}

@@ -14,13 +14,9 @@ interface TagStore {
   getTagsByIds: (ids: string[]) => Tag[]
   getAllTags: () => Tag[]
 
-  // Hierarchy helpers
-  getRootTags: () => Tag[]
-  getChildTags: (parentId: string) => Tag[]
-  getTagsByLevel: (level: number) => Tag[]
-  getTagHierarchy: () => Tag[]
-  getTagPath: (tagId: string) => string
-  canAddChild: (parentId: string) => boolean
+  // Group helpers
+  getTagsByGroup: (groupId: string | null) => Tag[]
+  getActiveTags: () => Tag[]
 }
 
 const generateId = (): string => {
@@ -118,10 +114,8 @@ export const colorCategories = {
   tech: ['#1f2937', '#111827', '#0c4a6e', '#075985', '#0369a1'],
 }
 
-// 3階層対応の初期タグデータ (Type migration tracked in Issue #84)
-const initialTags: Tag[] = [
-  // 一時的に空にしてビルドエラーを回避
-]
+// フラット構造の初期タグデータ
+const initialTags: Tag[] = []
 
 export const useTagStore = create<TagStore>()(
   devtools(
@@ -132,33 +126,18 @@ export const useTagStore = create<TagStore>()(
         addTag: async (tagData) => {
           try {
             const { tags } = get()
-            const parentTag = tagData.parent_id ? tags.find((t) => t.id === tagData.parent_id) : null
-
-            // Validate hierarchy level
-            if (tagData.level > 2) {
-              throw new Error('Maximum hierarchy level is 2')
-            }
-
-            if (parentTag && parentTag.level >= 2) {
-              throw new Error('Cannot add child to level 2 tag')
-            }
-
-            // Generate path
-            const path = parentTag ? `${parentTag.path}/${tagData.name}` : tagData.name
 
             const newTag: Tag = {
               id: generateId(),
               name: tagData.name,
-              parent_id: tagData.parent_id || null,
               user_id: 'current-user', // Auth integration tracked in Issue #87
               color: tagData.color,
-              level: tagData.level,
-              path,
               tag_number: 0, // 仮の値、実際の値はサーバー側で自動採番される
               description: tagData.description || null,
               icon: tagData.icon || null,
               is_active: true,
-              group_id: null,
+              group_id: tagData.group_id || null,
+              sort_order: tags.length,
               created_at: new Date(),
               updated_at: new Date(),
             }
@@ -189,10 +168,9 @@ export const useTagStore = create<TagStore>()(
                     ...(updates.color !== undefined && { color: updates.color }),
                     ...(updates.description !== undefined && { description: updates.description }),
                     ...(updates.icon !== undefined && { icon: updates.icon }),
-                    ...(updates.parent_id !== undefined && { parent_id: updates.parent_id }),
-                    ...(updates.level !== undefined && { level: updates.level }),
                     ...(updates.is_active !== undefined && { is_active: updates.is_active }),
                     ...(updates.group_id !== undefined && { group_id: updates.group_id }),
+                    ...(updates.sort_order !== undefined && { sort_order: updates.sort_order }),
                     updated_at: new Date(),
                   } as Tag
                 }
@@ -240,43 +218,15 @@ export const useTagStore = create<TagStore>()(
           return tags
         },
 
-        // Hierarchy helpers
-        getRootTags: () => {
+        // Group helpers
+        getTagsByGroup: (groupId) => {
           const { tags } = get()
-          return tags.filter((tag) => tag.level === 1)
+          return tags.filter((tag) => tag.group_id === groupId && tag.is_active)
         },
 
-        getChildTags: (parentId) => {
+        getActiveTags: () => {
           const { tags } = get()
-          return tags.filter((tag) => tag.parent_id === parentId)
-        },
-
-        getTagsByLevel: (level) => {
-          const { tags } = get()
-          return tags.filter((tag) => tag.level === level)
-        },
-
-        getTagHierarchy: () => {
-          const { tags } = get()
-          return tags.sort((a, b) => {
-            // Sort by level first, then by path
-            if (a.level !== b.level) {
-              return a.level - b.level
-            }
-            return a.path.localeCompare(b.path)
-          })
-        },
-
-        getTagPath: (tagId) => {
-          const { tags } = get()
-          const tag = tags.find((t) => t.id === tagId)
-          return tag ? tag.path : ''
-        },
-
-        canAddChild: (parentId) => {
-          const { tags } = get()
-          const parent = tags.find((t) => t.id === parentId)
-          return parent ? parent.level < 3 : false
+          return tags.filter((tag) => tag.is_active)
         },
       }),
       {

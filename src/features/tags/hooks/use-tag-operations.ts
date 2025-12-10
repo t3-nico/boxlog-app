@@ -10,16 +10,16 @@ import {
   useRenameTag,
   useUpdateTag,
 } from '@/features/tags/hooks/use-tags'
-import type { CreateTagInput, Tag, TagWithChildren, UpdateTagInput } from '@/features/tags/types'
+import type { CreateTagInput, Tag, UpdateTagInput } from '@/features/tags/types'
 import { useCallback, useState } from 'react'
 
-export function useTagOperations(tags: TagWithChildren[]) {
+export function useTagOperations(tags: Tag[]) {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showMergeModal, setShowMergeModal] = useState(false)
-  const [selectedTag, setSelectedTag] = useState<TagWithChildren | null>(null)
-  const [mergeSourceTag, setMergeSourceTag] = useState<TagWithChildren | null>(null)
-  const [createParentTag, setCreateParentTag] = useState<TagWithChildren | null>(null)
+  const [selectedTag, setSelectedTag] = useState<Tag | null>(null)
+  const [mergeSourceTag, setMergeSourceTag] = useState<Tag | null>(null)
+  const [createGroupId, setCreateGroupId] = useState<string | null>(null)
 
   // React Query mutations
   const createTagMutation = useCreateTag()
@@ -31,56 +31,48 @@ export function useTagOperations(tags: TagWithChildren[]) {
   // 楽観的更新
   const { updateTagOptimistically, addTagOptimistically, removeTagOptimistically } = useOptimisticTagUpdate()
 
-  // タグ作成
-  const handleCreateTag = useCallback(
-    (parentId?: string) => {
-      const parentTag = parentId
-        ? tags.find((t) => t.id === parentId) || tags.flatMap((t) => t.children || []).find((t) => t.id === parentId)
-        : null
-
-      setCreateParentTag(parentTag || null)
-      setShowCreateModal(true)
-    },
-    [tags]
-  )
+  // タグ作成（グループを指定して作成）
+  const handleCreateTag = useCallback((groupId?: string | null) => {
+    setCreateGroupId(groupId ?? null)
+    setShowCreateModal(true)
+  }, [])
 
   const handleSaveNewTag = useCallback(
     async (data: CreateTagInput) => {
       try {
         // 楽観的更新
-        const tempTag: TagWithChildren = {
+        const tempTag: Tag = {
           id: `temp-${Date.now()}`,
           name: data.name,
-          parent_id: data.parent_id || null,
           user_id: 'current-user',
           color: data.color || '#3B82F6',
-          level: (createParentTag ? Math.min(createParentTag.level + 1, 1) : 1) as 0 | 1,
-          path: createParentTag ? `${createParentTag.path}/${data.name}` : `#${data.name}`,
           tag_number: 0, // 仮の値、実際の値はサーバー側で自動採番される
           description: data.description || null,
           icon: null,
           is_active: true,
-          group_id: null,
+          group_id: data.group_id ?? createGroupId,
+          sort_order: tags.length,
           created_at: new Date(),
           updated_at: new Date(),
-          children: [],
-          parent: createParentTag,
         }
 
-        addTagOptimistically(tempTag, data.parent_id)
+        addTagOptimistically(tempTag)
 
         // 実際の作成
-        await createTagMutation.mutateAsync(data)
+        await createTagMutation.mutateAsync({
+          ...data,
+          group_id: data.group_id ?? createGroupId,
+        })
       } catch (error) {
         console.error('Failed to create tag:', error)
         throw error
       }
     },
-    [createTagMutation, addTagOptimistically, createParentTag]
+    [createTagMutation, addTagOptimistically, createGroupId, tags.length]
   )
 
   // タグ編集
-  const handleEditTag = useCallback((tag: TagWithChildren) => {
+  const handleEditTag = useCallback((tag: Tag) => {
     setSelectedTag(tag)
     setShowEditModal(true)
   }, [])
@@ -106,11 +98,9 @@ export function useTagOperations(tags: TagWithChildren[]) {
     [selectedTag, updateTagMutation, updateTagOptimistically]
   )
 
-  // タグ削除
+  // タグ削除（確認は呼び出し元のTagDeleteDialogで実施済み）
   const handleDeleteTag = useCallback(
-    async (tag: TagWithChildren) => {
-      if (!confirm(`タグ「${tag.name}」を削除しますか？`)) return
-
+    async (tag: Tag) => {
       try {
         // 楽観的更新
         removeTagOptimistically(tag.id)
@@ -125,17 +115,17 @@ export function useTagOperations(tags: TagWithChildren[]) {
     [deleteTagMutation, removeTagOptimistically]
   )
 
-  // タグ移動
-  const handleMoveTag = useCallback(
-    async (tag: TagWithChildren, newParentId: string | null) => {
+  // タグのグループ移動
+  const handleMoveTagToGroup = useCallback(
+    async (tag: Tag, newGroupId: string | null) => {
       try {
         // 楽観的更新
-        updateTagOptimistically(tag.id, { parent_id: newParentId })
+        updateTagOptimistically(tag.id, { group_id: newGroupId })
 
         // 実際の移動
         await moveTagMutation.mutateAsync({
           id: tag.id,
-          newParentId,
+          newGroupId,
         })
       } catch (error) {
         console.error('Failed to move tag:', error)
@@ -147,7 +137,7 @@ export function useTagOperations(tags: TagWithChildren[]) {
 
   // タグリネーム
   const handleRenameTag = useCallback(
-    async (tag: TagWithChildren, newName: string) => {
+    async (tag: Tag, newName: string) => {
       try {
         // 楽観的更新
         updateTagOptimistically(tag.id, { name: newName })
@@ -166,7 +156,7 @@ export function useTagOperations(tags: TagWithChildren[]) {
   )
 
   // タグマージ
-  const handleMergeTag = useCallback((tag: TagWithChildren) => {
+  const handleMergeTag = useCallback((tag: Tag) => {
     setMergeSourceTag(tag)
     setShowMergeModal(true)
   }, [])
@@ -184,7 +174,7 @@ export function useTagOperations(tags: TagWithChildren[]) {
     setShowMergeModal(false)
     setSelectedTag(null)
     setMergeSourceTag(null)
-    setCreateParentTag(null)
+    setCreateGroupId(null)
   }, [])
 
   return {
@@ -194,7 +184,9 @@ export function useTagOperations(tags: TagWithChildren[]) {
     showMergeModal,
     selectedTag,
     mergeSourceTag,
-    createParentTag,
+    createGroupId,
+    // @deprecated - 後方互換性のため残すが、フラット構造では使用しない
+    createParentTag: null,
 
     // Handlers
     handleCreateTag,
@@ -202,7 +194,9 @@ export function useTagOperations(tags: TagWithChildren[]) {
     handleEditTag,
     handleSaveTag,
     handleDeleteTag,
-    handleMoveTag,
+    handleMoveTagToGroup,
+    // @deprecated - handleMoveTagToGroup を使用してください
+    handleMoveTag: handleMoveTagToGroup,
     handleRenameTag,
     handleMergeTag,
     handleCloseMergeModal,
