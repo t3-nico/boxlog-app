@@ -60,18 +60,25 @@ function TooltipContent({
 interface SimpleTooltipProps {
   content: string
   children: React.ReactNode
-  side?: 'top' | 'bottom'
+  side?: 'top' | 'bottom' | 'left' | 'right'
   className?: string
 }
 
 function SimpleTooltip({ content, children, side = 'bottom', className }: SimpleTooltipProps) {
+  const positionClasses = {
+    top: 'bottom-full left-1/2 -translate-x-1/2 mb-1',
+    bottom: 'top-full left-1/2 -translate-x-1/2 mt-1',
+    left: 'right-full top-1/2 -translate-y-1/2 mr-1',
+    right: 'left-full top-1/2 -translate-y-1/2 ml-1',
+  }
+
   return (
     <span className={cn('group relative inline-flex', className)}>
       {children}
       <span
         className={cn(
-          'bg-foreground text-background pointer-events-none absolute left-1/2 z-50 -translate-x-1/2 rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity group-hover:opacity-100',
-          side === 'top' ? 'bottom-full mb-1' : 'top-full mt-1'
+          'bg-foreground text-background pointer-events-none absolute z-50 rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity group-hover:opacity-100',
+          positionClasses[side]
         )}
       >
         {content}

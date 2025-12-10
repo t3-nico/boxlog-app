@@ -1,6 +1,6 @@
 'use client'
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { SimpleTooltip } from '@/components/ui/tooltip'
 import { NotificationDropdown } from '@/features/notifications'
 import { PlanCreatePopover } from '@/features/plans/components'
 import { Moon, Plus, Search, Sun } from 'lucide-react'
@@ -39,49 +39,33 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
   )
 
   return (
-    <>
-      <div className="flex flex-col items-center gap-1 px-2" onClick={(e) => e.stopPropagation()}>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <PlanCreatePopover
-                  triggerElement={
-                    <button className="flex items-center justify-center" type="button">
-                      <div className="hover:bg-state-hover focus-visible:ring-ring flex h-10 w-10 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none">
-                        <Plus className="h-5 w-5 shrink-0" aria-hidden="true" />
-                      </div>
-                    </button>
-                  }
-                />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="right" className="pointer-events-none">
-              {t('actions.create')}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex items-center justify-center">
-                <NotificationDropdown />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="right" className="pointer-events-none">
-              {t('notification.title')}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <Item icon={Search} label={t('actions.search')} url="#" isActive={false} onClick={handleSearchClick} />
-        <Item
-          icon={resolvedTheme === 'light' ? Moon : Sun}
-          label={t('sidebar.theme')}
-          url="#"
-          isActive={false}
-          onClick={handleThemeClick}
-        />
-      </div>
-    </>
+    <div className="flex flex-col items-center gap-1 px-2" onClick={(e) => e.stopPropagation()}>
+      <SimpleTooltip content={t('actions.create')} side="right">
+        <div>
+          <PlanCreatePopover
+            triggerElement={
+              <button className="flex items-center justify-center" type="button">
+                <div className="hover:bg-state-hover focus-visible:ring-ring flex h-10 w-10 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none">
+                  <Plus className="h-5 w-5 shrink-0" aria-hidden="true" />
+                </div>
+              </button>
+            }
+          />
+        </div>
+      </SimpleTooltip>
+      <SimpleTooltip content={t('notification.title')} side="right">
+        <div className="flex items-center justify-center">
+          <NotificationDropdown />
+        </div>
+      </SimpleTooltip>
+      <Item icon={Search} label={t('actions.search')} url="#" isActive={false} onClick={handleSearchClick} />
+      <Item
+        icon={resolvedTheme === 'light' ? Moon : Sun}
+        label={t('sidebar.theme')}
+        url="#"
+        isActive={false}
+        onClick={handleThemeClick}
+      />
+    </div>
   )
 }
