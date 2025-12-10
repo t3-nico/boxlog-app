@@ -216,7 +216,7 @@ export function PlanTagSelectDialogEnhanced({
                 placeholder="タグを検索..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-9 pl-9"
+                className="h-9 bg-surface-container pl-9"
               />
             </div>
 
@@ -255,7 +255,7 @@ export function PlanTagSelectDialogEnhanced({
                 onChange={(e) => setNewTagName(e.target.value)}
                 onKeyDown={handleKeyDown}
                 autoFocus
-                className="flex-1"
+                className="flex-1 bg-surface-container"
               />
               <Button size="sm" onClick={handleCreateTag} disabled={!newTagName.trim()}>
                 作成
