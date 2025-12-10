@@ -13,11 +13,10 @@ import { api } from '@/lib/trpc'
 import { cn } from '@/lib/utils'
 
 /**
- * 現在の予定/次の予定をステータスバーに表示
+ * 現在の予定をステータスバーに表示
  *
  * 表示パターン:
  * - 現在進行中: "ミーティング (14:00-15:00)" + プログレスバー
- * - 次の予定あり: "次: 打ち合わせ (16:00〜)"
  * - 予定なし: "予定なし"（クリックで新規作成ポップオーバーを表示）
  */
 export function ScheduleStatusItem() {
@@ -81,19 +80,6 @@ export function ScheduleStatusItem() {
     })
   }, [todayPlans, currentTime])
 
-  // 次の予定を取得
-  const nextPlan = useMemo(() => {
-    if (currentPlan) return null
-
-    const now = currentTime.getTime()
-
-    return todayPlans.find((plan) => {
-      if (!plan.start_time) return false
-      const start = new Date(plan.start_time).getTime()
-      return start > now
-    })
-  }, [todayPlans, currentPlan, currentTime])
-
   // 時刻フォーマット（HH:MM）
   const formatTime = useCallback((dateStr: string) => {
     const date = new Date(dateStr)
@@ -104,14 +90,13 @@ export function ScheduleStatusItem() {
     })
   }, [])
 
-  // クリック時: 予定があればインスペクターを開く、なければ新規作成は別途Popoverで処理
+  // クリック時: 現在の予定があればインスペクターを開く、なければ新規作成は別途Popoverで処理
   const handleClick = useCallback(() => {
-    const activePlan = currentPlan || nextPlan
-    if (activePlan) {
-      openInspector(activePlan.id)
+    if (currentPlan) {
+      openInspector(currentPlan.id)
     }
     // 予定がない場合は何もしない（PlanCreatePopoverのトリガーとして動作）
-  }, [currentPlan, nextPlan, openInspector])
+  }, [currentPlan, openInspector])
 
   // 進捗率を計算（0〜100）
   const progressPercent = useMemo(() => {
@@ -139,20 +124,14 @@ export function ScheduleStatusItem() {
       return `${currentPlan.title}${timeRange}`
     }
 
-    if (nextPlan) {
-      const startTime = nextPlan.start_time ? formatTime(nextPlan.start_time) : ''
-      const timeStr = startTime ? ` (${startTime}〜)` : ''
-      return `次: ${nextPlan.title}${timeStr}`
-    }
-
     return '予定なし'
-  }, [currentPlan, nextPlan, formatTime])
+  }, [currentPlan, formatTime])
 
   // アイコン（ローディング時はスピナー）
   const icon = isLoading ? <Spinner className="h-3 w-3" /> : <Calendar className="h-3 w-3" />
 
   // ツールチップ
-  const tooltip = currentPlan || nextPlan ? '予定を開く' : '新規プラン作成'
+  const tooltip = currentPlan ? '予定を開く' : '新規プラン作成'
 
   // 予定がない場合の初期値を計算
   const initialDate = useMemo(() => new Date(), [])
@@ -167,8 +146,8 @@ export function ScheduleStatusItem() {
     return `${endHours.toString().padStart(2, '0')}:00`
   }, [])
 
-  // 予定がある場合は通常のStatusBarItem、ない場合はPlanCreatePopoverでラップ
-  const hasActivePlan = currentPlan || nextPlan
+  // 現在の予定がある場合は通常のStatusBarItem、ない場合はPlanCreatePopoverでラップ
+  const hasActivePlan = !!currentPlan
 
   const statusBarContent = (
     <>
