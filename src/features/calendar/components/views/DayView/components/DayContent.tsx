@@ -78,7 +78,7 @@ export const DayContent = ({
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
         onSingleClick={onEmptyClick}
-        disabled={dragState.isDragging || dragState.isResizing} // ドラッグ・リサイズ中は背景クリックを無効化
+        disabled={dragState.isPending || dragState.isDragging || dragState.isResizing} // ドラッグ・リサイズ中は背景クリックを無効化
       >
         {/* 背景グリッド（CalendarDragSelectionが全イベントを処理） */}
         <div className={`absolute inset-0`} style={{ height: 24 * HOUR_HEIGHT }}>
@@ -86,8 +86,8 @@ export const DayContent = ({
         </div>
       </CalendarDragSelection>
 
-      {/* イベント表示エリア */}
-      <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
+      {/* イベント表示エリア - CalendarDragSelectionより上にz-indexを設定 */}
+      <div className="pointer-events-none absolute inset-0 z-20" style={{ height: 24 * HOUR_HEIGHT }}>
         {events &&
           Array.isArray(events) &&
           events.map((event) => {

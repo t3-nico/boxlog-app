@@ -36,6 +36,11 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
       const { snappedTop: snappedHeight } = snapToQuarterHour(newHeight)
       const finalHeight = Math.max(HOUR_HEIGHT / 4, snappedHeight)
 
+      // サイズが変更されたらhasMovedをtrueに設定（リサイズ完了時の更新に必要）
+      if (Math.abs(deltaY) > 5) {
+        dragData.hasMoved = true
+      }
+
       const event = events.find((e) => e.id === dragData.eventId)
       let previewTime = null
 

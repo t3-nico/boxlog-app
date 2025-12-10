@@ -115,7 +115,7 @@ export const DayView = ({
           {...(isToday && { scrollToHour: 8 })}
           displayDates={displayDates}
           viewMode="day"
-          onTimeClick={handleEmptySlotClick}
+          // onTimeClickは削除: CalendarDragSelectionがクリック処理を担当
         >
           {/* 日のコンテンツ */}
           <DayContent

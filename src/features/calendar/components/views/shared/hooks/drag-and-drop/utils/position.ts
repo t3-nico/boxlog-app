@@ -5,13 +5,19 @@ import { HOUR_HEIGHT } from '../../../constants/grid.constants'
  */
 export function snapToQuarterHour(yPosition: number): { snappedTop: number; hour: number; minute: number } {
   const hourDecimal = yPosition / HOUR_HEIGHT
-  const hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)))
+  let hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)))
   const minuteDecimal = (hourDecimal - hour) * 60
-  const minute = Math.round(minuteDecimal / 15) * 15
+  let minute = Math.round(minuteDecimal / 15) * 15
+
+  // 60分になった場合は時間を繰り上げる
+  if (minute >= 60) {
+    minute = 0
+    hour = Math.min(23, hour + 1)
+  }
 
   const snappedTop = (hour + minute / 60) * HOUR_HEIGHT
 
-  return { snappedTop, hour, minute: Math.min(minute, 59) }
+  return { snappedTop, hour, minute }
 }
 
 /**

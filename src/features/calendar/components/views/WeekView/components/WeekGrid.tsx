@@ -100,11 +100,7 @@ export const WeekGrid = ({
         scrollToHour={todayIndex !== -1 ? undefined : 8}
         displayDates={currentTimeDisplayDates}
         viewMode="week"
-        onTimeClick={(hour, minute) => {
-          // WeekViewでは週の最初の日付を使用（日付は後でWeekContentで決定）
-          const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-          onEmptyClick?.(weekDates[0]!, timeString)
-        }}
+        // onTimeClickは削除: CalendarDragSelectionがクリック処理を担当
         enableKeyboardNavigation={true}
       >
         {/* 7日分のグリッド */}

@@ -103,8 +103,10 @@ export const CalendarDragSelection = ({
       }
 
       // イベントブロック上のクリックは無視
+      // data-event-block: DayView用
+      // data-plan-block: WeekView/ThreeDayView/FiveDayView用
       const target = e.target as HTMLElement
-      const eventBlock = target.closest('[data-event-block]')
+      const eventBlock = target.closest('[data-event-block]') || target.closest('[data-plan-block]')
 
       if (eventBlock) {
         return
@@ -170,7 +172,12 @@ export const CalendarDragSelection = ({
       const y = e.clientY - rect.top
       const currentTime = pixelsToTime(y)
 
-      isDragging.current = true
+      // 5px以上の移動があった場合のみドラッグとして扱う
+      const startY = (selectionStart.hour * 60 + selectionStart.minute) * (HOUR_HEIGHT / 60)
+      const deltaY = Math.abs(y - startY)
+      if (deltaY > 5) {
+        isDragging.current = true
+      }
 
       let startHour, startMinute, endHour, endMinute
 
@@ -318,6 +325,10 @@ export const CalendarDragSelection = ({
       tabIndex={0}
       aria-label="Calendar drag selection area"
       onMouseDown={handleMouseDown}
+      onClick={(e) => {
+        // クリックイベントの伝播を停止して、ScrollableCalendarLayoutのonClickが呼ばれないようにする
+        e.stopPropagation()
+      }}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()

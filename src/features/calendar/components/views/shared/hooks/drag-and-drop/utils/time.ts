@@ -80,8 +80,14 @@ export function calculateNewTime(
   dragDataRef: DragDataRef | null
 ): Date {
   const hourDecimal = newTop / HOUR_HEIGHT
-  const hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)))
-  const minute = Math.round(Math.max(0, ((hourDecimal - hour) * 60) / 15)) * 15
+  let hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)))
+  let minute = Math.round(Math.max(0, ((hourDecimal - hour) * 60) / 15)) * 15
+
+  // 60分になった場合は時間を繰り上げる
+  if (minute >= 60) {
+    minute = 0
+    hour = Math.min(23, hour + 1)
+  }
 
   const targetDate = calculateTargetDate(targetDateIndex, date, viewMode, displayDates, dragDataRef)
 

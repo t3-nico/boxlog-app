@@ -155,11 +155,7 @@ export const FiveDayView = ({
           scrollToHour={isCurrentDay ? undefined : 8}
           displayDates={displayDates}
           viewMode="5day"
-          onTimeClick={(hour, minute) => {
-            // FiveDayViewでは最初にクリックされた日付を使用
-            const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-            onEmptyClick?.(displayDates[0]!, timeString)
-          }}
+          // onTimeClickは削除: CalendarDragSelectionがクリック処理を担当
           enableKeyboardNavigation={true}
         >
           {/* 5日分のグリッド */}

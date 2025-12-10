@@ -153,11 +153,7 @@ export const ThreeDayView = ({
           scrollToHour={isCurrentDay ? undefined : 8}
           displayDates={displayDates}
           viewMode="3day"
-          onTimeClick={(hour, minute) => {
-            // ThreeDayViewでは最初にクリックされた日付を使用
-            const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-            onEmptyClick?.(displayDates[0]!, timeString)
-          }}
+          // onTimeClickは削除: CalendarDragSelectionがクリック処理を担当
           enableKeyboardNavigation={true}
         >
           {/* 3日分のグリッド */}

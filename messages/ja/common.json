@@ -18,23 +18,23 @@
     "toast": {
       "eventDeleted": "予定を削除しました"
     },
-    "selectedCount": "{{count}}件選択中",
+    "selectedCount": "{count}件選択中",
     "plan": {
-      "created": "「{{title}}」を作成しました",
-      "createFailed": "作成に失敗しました: {{error}}",
+      "created": "「{title}」を作成しました",
+      "createFailed": "作成に失敗しました: {error}",
       "updated": "更新しました",
       "updateFailed": "更新に失敗しました",
       "deleted": "削除しました",
-      "deleteFailed": "削除に失敗しました: {{error}}",
-      "bulkUpdated": "{{count}}件のプランを更新しました",
-      "bulkUpdateFailed": "一括更新に失敗しました: {{error}}",
-      "bulkDeleted": "{{count}}件のプランを削除しました",
-      "bulkDeleteFailed": "一括削除に失敗しました: {{error}}",
-      "statusChanged": "ステータスを{{status}}に変更しました",
+      "deleteFailed": "削除に失敗しました: {error}",
+      "bulkUpdated": "{count}件のプランを更新しました",
+      "bulkUpdateFailed": "一括更新に失敗しました: {error}",
+      "bulkDeleted": "{count}件のプランを削除しました",
+      "bulkDeleteFailed": "一括削除に失敗しました: {error}",
+      "statusChanged": "ステータスを{status}に変更しました",
       "open": "開く"
     },
     "inbox": {
-      "selected": "{{count}}件選択中",
+      "selected": "{count}件選択中",
       "clear": "クリア",
       "changeStatus": "ステータス変更",
       "status": "ステータス",
@@ -47,20 +47,20 @@
       "dueDate": "期限",
       "archive": "アーカイブ",
       "delete": "削除",
-      "statusChangedCount": "{{count}}件のプランのステータスを変更しました",
+      "statusChangedCount": "{count}件のプランのステータスを変更しました",
       "statusChangeFailed": "ステータスの変更に失敗しました",
-      "archivedCount": "{{count}}件のプランをアーカイブしました",
+      "archivedCount": "{count}件のプランをアーカイブしました",
       "archiveFailed": "アーカイブに失敗しました",
-      "deleteConfirm": "{{count}}件のプランを削除しますか？この操作は取り消せません。",
-      "deletedCount": "{{count}}件のプランを削除しました",
+      "deleteConfirm": "{count}件のプランを削除しますか？この操作は取り消せません。",
+      "deletedCount": "{count}件のプランを削除しました",
       "deleteFailed": "削除に失敗しました",
       "selectDate": "日付を選択してください",
-      "dueDateSetCount": "{{count}}件のプランの期限を設定しました",
+      "dueDateSetCount": "{count}件のプランの期限を設定しました",
       "dueDateSetFailed": "期限の設定に失敗しました",
-      "dueDateClearedCount": "{{count}}件のプランの期限をクリアしました",
+      "dueDateClearedCount": "{count}件のプランの期限をクリアしました",
       "dueDateClearFailed": "期限のクリアに失敗しました",
       "bulkDueDate": "期限一括設定",
-      "bulkDueDateDescription": "{{count}}件のプランに期限を設定します",
+      "bulkDueDateDescription": "{count}件のプランに期限を設定します",
       "dateSelected": "選択した日付をプランの期限として設定します",
       "selectDateHint": "カレンダーから日付を選択してください",
       "cancel": "キャンセル",
@@ -79,6 +79,15 @@
     "search": "検索",
     "filter": "フィルター",
     "sort": "並べ替え"
+  },
+  "table": {
+    "rowsPerPage": "表示件数",
+    "items": "{start}〜{end}件 / 全{total}件",
+    "firstPage": "最初のページ",
+    "previousPage": "前のページ",
+    "page": "{current} / {total}ページ",
+    "nextPage": "次のページ",
+    "lastPage": "最後のページ"
   },
   "aria": {
     "clearSelection": "選択を解除",
@@ -142,15 +151,15 @@
     "futureDate": "未来の日付を指定してください",
     "title": {
       "required": "タイトルは必須です",
-      "maxLength": "タイトルは{{max}}文字以内で入力してください",
+      "maxLength": "タイトルは{max}文字以内で入力してください",
       "noNewlines": "タイトルに改行や空白のみは使用できません"
     },
     "description": {
-      "maxLength": "説明は{{max}}文字以内で入力してください"
+      "maxLength": "説明は{max}文字以内で入力してください"
     },
     "password": {
-      "minLength": "パスワードは{{min}}文字以上で入力してください",
-      "maxLength": "パスワードは{{max}}文字以内で入力してください",
+      "minLength": "パスワードは{min}文字以上で入力してください",
+      "maxLength": "パスワードは{max}文字以内で入力してください",
       "lowercase": "小文字を含める必要があります",
       "uppercase": "大文字を含める必要があります",
       "number": "数字を含める必要があります"
@@ -161,24 +170,24 @@
     "pagination": {
       "pageMin": "ページ番号は1以上を指定してください",
       "limitMin": "取得件数は1以上を指定してください",
-      "limitMax": "取得件数は{{max}}以下を指定してください"
+      "limitMax": "取得件数は{max}以下を指定してください"
     },
     "search": {
-      "maxLength": "検索クエリは{{max}}文字以内で入力してください"
+      "maxLength": "検索クエリは{max}文字以内で入力してください"
     },
     "file": {
-      "maxSize": "ファイルサイズは{{max}}MB以下にしてください"
+      "maxSize": "ファイルサイズは{max}MB以下にしてください"
     },
     "tag": {
       "nameRequired": "タグ名は必須です",
-      "nameMaxLength": "タグ名は{{max}}文字以内です"
+      "nameMaxLength": "タグ名は{max}文字以内です"
     },
     "recaptcha": {
       "required": "reCAPTCHAトークンが必要です"
     },
     "username": {
       "required": "ユーザー名は必須です",
-      "maxLength": "ユーザー名は{{max}}文字以内で入力してください"
+      "maxLength": "ユーザー名は{max}文字以内で入力してください"
     }
   },
   "errors": {

@@ -209,22 +209,14 @@ export function useDragAndDrop({
   const handleMouseUp = useCallback(async () => {
     cleanupDrag()
 
-    // isPending状態（移動なし）の場合はクリックとして処理
+    // isPending状態（5px未移動）の場合はクリックとして処理
     if (dragState.isPending && !dragState.isDragging && !dragState.isResizing) {
-      if (handleEventClick()) {
-        resetDragState()
-        return
-      }
-      // クリックハンドラーがなくてもリセット
+      handleEventClick()
       resetDragState()
       return
     }
 
-    if (handleEventClick()) {
-      resetDragState()
-      return
-    }
-
+    // ドラッグ/リサイズ中でない場合はリセットのみ
     if (
       (!dragState.isDragging && !dragState.isResizing) ||
       !dragDataRef.current ||
@@ -235,6 +227,7 @@ export function useDragAndDrop({
       return
     }
 
+    // リサイズ完了処理（クリック処理は行わない）
     if (dragState.isResizing) {
       handleResizeComplete()
       return

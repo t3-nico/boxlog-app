@@ -106,7 +106,7 @@ export const ThreeDayContent = ({
           onTimeRangeSelect?.(date, startTime, endTime)
         }}
         onSingleClick={onEmptyClick}
-        disabled={dragState.isDragging || dragState.isResizing}
+        disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
       >
         {/* 背景グリッド（DayViewと同じパターン） */}
         <div className="absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
@@ -114,8 +114,8 @@ export const ThreeDayContent = ({
         </div>
       </CalendarDragSelection>
 
-      {/* プラン表示エリア */}
-      <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
+      {/* プラン表示エリア - CalendarDragSelectionより上にz-indexを設定 */}
+      <div className="pointer-events-none absolute inset-0 z-20" style={{ height: 24 * HOUR_HEIGHT }}>
         {plans.map((plan) => {
           const style = planStyles[plan.id]
           if (!style) return null
@@ -136,6 +136,7 @@ export const ThreeDayContent = ({
                 role="button"
                 tabIndex={0}
                 aria-label={`Drag plan: ${plan.title}`}
+                data-plan-block="true"
                 onMouseDown={(e) => {
                   // 左クリックのみドラッグ開始
                   if (e.button === 0) {

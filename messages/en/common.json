@@ -18,23 +18,23 @@
     "toast": {
       "eventDeleted": "Event deleted"
     },
-    "selectedCount": "{{count}} selected",
+    "selectedCount": "{count} selected",
     "plan": {
-      "created": "\"{{title}}\" created",
-      "createFailed": "Failed to create: {{error}}",
+      "created": "\"{title}\" created",
+      "createFailed": "Failed to create: {error}",
       "updated": "Updated",
       "updateFailed": "Failed to update",
       "deleted": "Deleted",
-      "deleteFailed": "Failed to delete: {{error}}",
-      "bulkUpdated": "{{count}} plans updated",
-      "bulkUpdateFailed": "Failed to bulk update: {{error}}",
-      "bulkDeleted": "{{count}} plans deleted",
-      "bulkDeleteFailed": "Failed to bulk delete: {{error}}",
-      "statusChanged": "Status changed to {{status}}",
+      "deleteFailed": "Failed to delete: {error}",
+      "bulkUpdated": "{count} plans updated",
+      "bulkUpdateFailed": "Failed to bulk update: {error}",
+      "bulkDeleted": "{count} plans deleted",
+      "bulkDeleteFailed": "Failed to bulk delete: {error}",
+      "statusChanged": "Status changed to {status}",
       "open": "Open"
     },
     "inbox": {
-      "selected": "{{count}} selected",
+      "selected": "{count} selected",
       "clear": "Clear",
       "changeStatus": "Change Status",
       "status": "Status",
@@ -47,20 +47,20 @@
       "dueDate": "Due Date",
       "archive": "Archive",
       "delete": "Delete",
-      "statusChangedCount": "Status changed for {{count}} plans",
+      "statusChangedCount": "Status changed for {count} plans",
       "statusChangeFailed": "Failed to change status",
-      "archivedCount": "{{count}} plans archived",
+      "archivedCount": "{count} plans archived",
       "archiveFailed": "Failed to archive",
-      "deleteConfirm": "Delete {{count}} plans? This action cannot be undone.",
-      "deletedCount": "{{count}} plans deleted",
+      "deleteConfirm": "Delete {count} plans? This action cannot be undone.",
+      "deletedCount": "{count} plans deleted",
       "deleteFailed": "Failed to delete",
       "selectDate": "Please select a date",
-      "dueDateSetCount": "Due date set for {{count}} plans",
+      "dueDateSetCount": "Due date set for {count} plans",
       "dueDateSetFailed": "Failed to set due date",
-      "dueDateClearedCount": "Due date cleared for {{count}} plans",
+      "dueDateClearedCount": "Due date cleared for {count} plans",
       "dueDateClearFailed": "Failed to clear due date",
       "bulkDueDate": "Set Due Date",
-      "bulkDueDateDescription": "Set due date for {{count}} plans",
+      "bulkDueDateDescription": "Set due date for {count} plans",
       "dateSelected": "Selected date will be set as the due date",
       "selectDateHint": "Select a date from the calendar",
       "cancel": "Cancel",
@@ -79,6 +79,15 @@
     "search": "Search",
     "filter": "Filter",
     "sort": "Sort"
+  },
+  "table": {
+    "rowsPerPage": "Rows per page",
+    "items": "{start}-{end} of {total} items",
+    "firstPage": "First page",
+    "previousPage": "Previous page",
+    "page": "Page {current} of {total}",
+    "nextPage": "Next page",
+    "lastPage": "Last page"
   },
   "aria": {
     "clearSelection": "Clear selection",
@@ -142,15 +151,15 @@
     "futureDate": "Please enter a future date",
     "title": {
       "required": "Title is required",
-      "maxLength": "Title must be {{max}} characters or less",
+      "maxLength": "Title must be {max} characters or less",
       "noNewlines": "Title cannot contain only newlines or spaces"
     },
     "description": {
-      "maxLength": "Description must be {{max}} characters or less"
+      "maxLength": "Description must be {max} characters or less"
     },
     "password": {
-      "minLength": "Password must be at least {{min}} characters",
-      "maxLength": "Password must be {{max}} characters or less",
+      "minLength": "Password must be at least {min} characters",
+      "maxLength": "Password must be {max} characters or less",
       "lowercase": "Password must contain a lowercase letter",
       "uppercase": "Password must contain an uppercase letter",
       "number": "Password must contain a number"
@@ -161,24 +170,24 @@
     "pagination": {
       "pageMin": "Page number must be at least 1",
       "limitMin": "Limit must be at least 1",
-      "limitMax": "Limit must be {{max}} or less"
+      "limitMax": "Limit must be {max} or less"
     },
     "search": {
-      "maxLength": "Search query must be {{max}} characters or less"
+      "maxLength": "Search query must be {max} characters or less"
     },
     "file": {
-      "maxSize": "File size must be {{max}}MB or less"
+      "maxSize": "File size must be {max}MB or less"
     },
     "tag": {
       "nameRequired": "Tag name is required",
-      "nameMaxLength": "Tag name must be {{max}} characters or less"
+      "nameMaxLength": "Tag name must be {max} characters or less"
     },
     "recaptcha": {
       "required": "reCAPTCHA token is required"
     },
     "username": {
       "required": "Username is required",
-      "maxLength": "Username must be {{max}} characters or less"
+      "maxLength": "Username must be {max} characters or less"
     }
   },
   "errors": {
