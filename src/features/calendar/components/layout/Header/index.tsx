@@ -48,6 +48,10 @@ const viewOptions = [
  * - 上下パディング: 8px（py-2）
  * - コンテナ: 32px（h-8）
  * - 8pxグリッドシステム準拠
+ *
+ * **レイアウト**:
+ * - 左側: モバイルメニュー + 日付表示
+ * - 右側: Today + ナビゲーション矢印 + ViewSwitcher + アクション
  */
 export const CalendarHeader = ({
   viewType,
@@ -66,13 +70,10 @@ export const CalendarHeader = ({
   return (
     <header className="bg-background relative h-12 px-4 py-2">
       <div className="flex h-8 items-center justify-between">
-        {/* 左側: カスタムスロット + ナビゲーションコントロールと日付 */}
+        {/* 左側: カスタムスロット + 日付表示 */}
         <div className="flex items-center gap-4">
           {/* カスタムスロット（モバイルメニューボタンなど） */}
           {leftSlot}
-
-          {/* 日付ナビゲーション */}
-          <DateNavigator onNavigate={onNavigate} arrowSize="lg" />
 
           {/* 現在の日付表示 */}
           <DateRangeDisplay
@@ -85,14 +86,17 @@ export const CalendarHeader = ({
           />
         </div>
 
-        {/* 右側: ビュー切り替えとアクション */}
-        <div className="flex items-center gap-0">
+        {/* 右側: ビュー切り替え + Today + ナビゲーション + アクション */}
+        <div className="flex items-center gap-2">
           {/* ビュー切り替え */}
           <ViewSwitcher
             options={viewOptions}
             currentView={viewType}
             onChange={(view) => onViewChange(view as CalendarViewType)}
           />
+
+          {/* 日付ナビゲーション（Today + 矢印） */}
+          <DateNavigator onNavigate={onNavigate} arrowSize="md" />
 
           {/* アクションボタン */}
           {showActions != null && <HeaderActions onSettings={onSettings} onExport={onExport} onImport={onImport} />}

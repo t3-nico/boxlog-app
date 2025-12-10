@@ -18,6 +18,12 @@ import { useTranslations } from 'next-intl'
  * 統計ページ用ツールバー
  *
  * 期間選択、ナビゲーション、比較機能を提供
+ *
+ * **デザイン仕様**:
+ * - 全体の高さ: 48px固定（h-12）
+ * - 上下パディング: 8px（py-2）
+ * - コンテナ: 32px（h-8）
+ * - 8pxグリッドシステム準拠
  */
 export function StatsToolbar() {
   const pathname = usePathname()
@@ -65,7 +71,7 @@ export function StatsToolbar() {
 
   return (
     <TooltipProvider>
-      <div className="flex h-10 shrink-0 items-center gap-2 px-4">
+      <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
         {/* 期間ナビゲーション */}
         <div className="flex items-center gap-1">
           <Tooltip>
