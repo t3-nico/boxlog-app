@@ -303,11 +303,11 @@ export function TagsSidebar({
         onClick={handleUncategorizedClick}
         className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
           isUncategorizedPage ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
-        } ${isOver ? 'bg-primary/10 border-2 border-dashed border-primary/50' : ''}`}
+        } ${isOver ? 'bg-primary/10 border-primary/50 border-2 border-dashed' : ''}`}
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <FolderX className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <FolderX className="text-muted-foreground h-4 w-4 shrink-0" />
             <span>{t('tags.sidebar.uncategorized')}</span>
           </div>
           <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>

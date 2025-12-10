@@ -4,11 +4,7 @@ import { ChevronDown, ChevronUp, MoreHorizontal, PanelRight } from 'lucide-react
 import type { ReactNode } from 'react'
 
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 interface InspectorHeaderProps {
@@ -103,13 +99,7 @@ export function InspectorHeader({
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={onNext}
-                  disabled={!hasNext}
-                  aria-label={nextLabel}
-                >
+                <Button variant="ghost" size="icon-sm" onClick={onNext} disabled={!hasNext} aria-label={nextLabel}>
                   <ChevronDown className="h-5 w-5" />
                 </Button>
               </TooltipTrigger>

@@ -225,7 +225,13 @@ export const TagTreeView = ({
       {/* タグリスト（フラット） */}
       <div className="space-y-1">
         {tags.map((tag) => (
-          <TagTreeNode key={tag.id} tag={tag} onEditTag={onEditTag} onDeleteTag={onDeleteTag} onRenameTag={onRenameTag} />
+          <TagTreeNode
+            key={tag.id}
+            tag={tag}
+            onEditTag={onEditTag}
+            onDeleteTag={onDeleteTag}
+            onRenameTag={onRenameTag}
+          />
         ))}
       </div>
     </div>
