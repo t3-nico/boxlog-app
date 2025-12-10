@@ -42,8 +42,8 @@ export async function GET(request: NextRequest) {
     const sortFieldParam = searchParams.get('sort_field')
     const sortOrder = searchParams.get('sort_order') || 'asc'
 
-    // ソート可能なカラムを制限
-    const validSortFields = ['name', 'created_at', 'updated_at', 'tag_number', 'sort_order'] as const
+    // ソート可能なカラムを制限（sort_orderはDBに存在しないため削除）
+    const validSortFields = ['name', 'created_at', 'updated_at', 'tag_number'] as const
     type ValidSortField = (typeof validSortFields)[number]
     const sortField: ValidSortField = validSortFields.includes(sortFieldParam as ValidSortField)
       ? (sortFieldParam as ValidSortField)
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body: CreateTagInput = await request.json()
-    const { name, color, description, icon, group_id } = body
+    const { name, color, description, group_id } = body
 
     // バリデーション
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
@@ -102,13 +102,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'tags.validation.nameMaxLength' }, { status: 400 })
     }
 
-    // タグデータ作成（フラット構造: parent_id, level, path はDBトリガーで設定）
+    // タグデータ作成（フラット構造）
+    // 注意: 本番DBには icon, sort_order カラムが存在しない
     const tagData = {
       user_id: user.id,
       name: name.trim(),
       color: color || '#3B82F6',
       description: description?.trim() || null,
-      icon: icon || null,
       is_active: true,
       group_id: group_id || null,
     }
@@ -116,6 +116,8 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabase.from('tags').insert(tagData).select().single()
 
     if (error) {
+      console.error('POST /api/tags error:', JSON.stringify(error, null, 2))
+      console.error('POST /api/tags tagData:', JSON.stringify(tagData, null, 2))
       return NextResponse.json({ error: handleSupabaseError(error) }, { status: 500 })
     }
 

@@ -34,7 +34,7 @@ export async function GET() {
       return NextResponse.json({ error: 'tags.errors.unauthorized' }, { status: 401 })
     }
 
-    // ユーザーの全タグを取得
+    // ユーザーの全タグを取得（アクティブなもののみ）
     const { data: tags, error: tagsError } = await supabase
       .from('tags')
       .select('id, name, color')
