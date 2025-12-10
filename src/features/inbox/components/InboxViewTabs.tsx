@@ -1,9 +1,11 @@
 'use client'
 
 import { Columns3, MoreHorizontal, Pencil, Table2, Trash2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { AlertDialogConfirm } from '@/components/ui/alert-dialog-confirm'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -28,12 +30,14 @@ import type { DisplayMode, InboxView } from '../types/view'
  * ```
  */
 export function InboxViewTabs() {
+  const t = useTranslations()
   const router = useRouter()
   const params = useParams()
   const locale = params?.locale as string
 
   const { views, activeViewId, setActiveView, deleteView, displayMode, setDisplayMode } = useInboxViewStore()
   const [editingView, setEditingView] = useState<InboxView | null>(null)
+  const [deleteConfirmView, setDeleteConfirmView] = useState<InboxView | null>(null)
 
   const handleViewChange = (viewId: string) => {
     const view = views.find((v) => v.id === viewId)
@@ -43,9 +47,17 @@ export function InboxViewTabs() {
     router.push(`/${locale}/inbox?view=${viewId}`)
   }
 
-  const handleDeleteView = (viewId: string) => {
-    if (confirm('この表示設定を削除しますか？')) {
-      deleteView(viewId)
+  const handleOpenDeleteDialog = (viewId: string) => {
+    const view = views.find((v) => v.id === viewId)
+    if (view) {
+      setDeleteConfirmView(view)
+    }
+  }
+
+  const handleDeleteConfirm = () => {
+    if (deleteConfirmView) {
+      deleteView(deleteConfirmView.id)
+      setDeleteConfirmView(null)
     }
   }
 
@@ -101,15 +113,15 @@ export function InboxViewTabs() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => setEditingView(view)}>
                         <Pencil className="mr-2 h-4 w-4" />
-                        編集
+                        {t('common.inbox.view.edit')}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() => handleDeleteView(view.id)}
+                        onClick={() => handleOpenDeleteDialog(view.id)}
                         className="text-destructive focus:text-destructive"
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        削除
+                        {t('common.inbox.view.delete')}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -127,6 +139,18 @@ export function InboxViewTabs() {
           <p>編集: {editingView.name}</p>
         </div>
       )}
+
+      {/* 削除確認ダイアログ */}
+      <AlertDialogConfirm
+        open={!!deleteConfirmView}
+        onOpenChange={(open) => !open && setDeleteConfirmView(null)}
+        onConfirm={handleDeleteConfirm}
+        title={t('common.inbox.view.deleteConfirmTitle', { name: deleteConfirmView?.name ?? '' })}
+        description={t('common.inbox.view.deleteConfirmDescription')}
+        confirmText={t('common.inbox.view.deleteConfirm')}
+        cancelText={t('actions.cancel')}
+        variant="destructive"
+      />
     </>
   )
 }

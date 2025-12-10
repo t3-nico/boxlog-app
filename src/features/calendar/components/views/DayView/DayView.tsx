@@ -69,15 +69,6 @@ export const DayView = ({
     ...(onUpdatePlan && { onPlanUpdate: onUpdatePlan }),
   })
 
-  // 空き時間クリックハンドラー
-  const handleEmptySlotClick = React.useCallback(
-    (hour: number, minute: number) => {
-      const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-      onEmptyClick?.(date, timeString)
-    },
-    [onEmptyClick, date]
-  )
-
   // 日付ヘッダーのクリックハンドラー（DayViewでは日付変更のみ）
   const handleDateHeaderClick = React.useCallback(
     (_clickedDate: Date) => {
