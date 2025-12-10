@@ -29,6 +29,8 @@ interface WeekContentProps {
   className?: string | undefined
   dayIndex: number // 週内での日付インデックス（0-6）
   displayDates?: Date[] | undefined // 週の全日付配列（日付間移動用）
+  /** DnDを無効化するプランID（Inspector表示中のプランなど） */
+  disabledPlanId?: string | null | undefined
 }
 
 export const WeekContent = ({
@@ -43,6 +45,7 @@ export const WeekContent = ({
   className,
   dayIndex,
   displayDates,
+  disabledPlanId,
 }: WeekContentProps) => {
   // ドラッグ&ドロップ機能用にonPlanUpdateを変換
   const handlePlanUpdate = useCallback(
@@ -66,6 +69,7 @@ export const WeekContent = ({
     events: plans,
     displayDates,
     viewMode: 'week',
+    disabledPlanId,
   })
 
   // グローバルドラッグカーソー管理（共通化）

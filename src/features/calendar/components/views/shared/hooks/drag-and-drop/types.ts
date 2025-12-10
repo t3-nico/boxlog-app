@@ -3,6 +3,8 @@ import type React from 'react'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 export interface DragState {
+  /** マウスダウン後、移動前の準備状態 */
+  isPending: boolean
   isDragging: boolean
   isResizing: boolean
   draggedEventId: string | null
@@ -46,6 +48,8 @@ export interface UseDragAndDropProps {
   events: CalendarPlan[]
   displayDates?: Date[] | undefined
   viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda' | undefined
+  /** DnDを無効化するプランID（Inspector表示中のプランなど） */
+  disabledPlanId?: string | null | undefined
 }
 
 export interface DragDataRef {
@@ -63,6 +67,7 @@ export interface DragDataRef {
 }
 
 export const initialDragState: DragState = {
+  isPending: false,
   isDragging: false,
   isResizing: false,
   draggedEventId: null,

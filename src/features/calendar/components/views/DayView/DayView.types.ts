@@ -11,6 +11,8 @@ export interface DayViewProps {
   currentDate: Date
   showWeekends?: boolean | undefined // 週末の表示/非表示（デフォルト: true）
   className?: string | undefined
+  /** DnDを無効化するプランID（Inspector表示中のプランなど） */
+  disabledPlanId?: string | null | undefined
 
   // Plan handlers
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined
@@ -56,6 +58,8 @@ export interface DayContentProps {
   onEventUpdate?: ((eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void>) | undefined // D&D用
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined
   className?: string | undefined
+  /** DnDを無効化するプランID（Inspector表示中のプランなど） */
+  disabledPlanId?: string | null | undefined
 }
 
 export interface UseDayViewOptions {

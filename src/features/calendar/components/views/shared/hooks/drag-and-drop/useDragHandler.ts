@@ -14,7 +14,6 @@ import {
   calculateEventDuration,
   calculatePreviewTime,
   calculateSnappedPosition,
-  createDragElement,
   updateDragElementPosition,
   updateTimeDisplay,
 } from './utils'
@@ -65,15 +64,8 @@ export function useDragHandler({
         ((e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement)
       const columnWidth = calculateColumnWidth(originalElement, viewMode, displayDates)
 
-      let dragElement: HTMLElement | null = null
-      let initialRect: DOMRect | null = null
-      if (originalElement) {
-        const result = createDragElement(originalElement)
-        dragElement = result.dragElement
-        initialRect = result.initialRect
-        // 注意: 元要素の透明度はReact状態で管理（calculatePlanGhostStyle）
-        // 直接DOM操作は行わない
-      }
+      // 注意: ゴースト要素（dragElement）は5px移動後に作成する
+      // mousedown時点では作成しない（クリックと区別するため）
 
       dragDataRef.current = {
         eventId,
@@ -85,12 +77,13 @@ export function useDragHandler({
         originalElement,
         originalDateIndex: dateIndex,
         columnWidth,
-        dragElement,
-        initialRect,
+        dragElement: null, // 5px移動後に作成
+        initialRect: null, // 5px移動後に設定
       }
 
       setDragState({
-        isDragging: true,
+        isPending: true, // まず準備状態に入る（5px移動後にisDraggingになる）
+        isDragging: false,
         isResizing: false,
         draggedEventId: eventId,
         dragStartPosition: startPosition,
@@ -103,7 +96,7 @@ export function useDragHandler({
         previewTime: null,
         recentlyDragged: false,
         recentlyResized: false,
-        dragElement,
+        dragElement: null, // 5px移動後に作成
         originalDateIndex: dateIndex,
         targetDateIndex: dateIndex,
         ghostElement: null,

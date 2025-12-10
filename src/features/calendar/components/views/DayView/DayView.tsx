@@ -18,6 +18,7 @@ export const DayView = ({
   currentDate,
   showWeekends: _showWeekends = true,
   className,
+  disabledPlanId,
   onPlanClick,
   onPlanContextMenu,
   onCreatePlan: _onCreatePlan,
@@ -126,6 +127,7 @@ export const DayView = ({
             onEmptyClick={onEmptyClick}
             onEventUpdate={handleEventTimeUpdate}
             onTimeRangeSelect={onTimeRangeSelect}
+            disabledPlanId={disabledPlanId}
             className="absolute inset-y-0 right-0 left-0"
           />
         </ScrollableCalendarLayout>

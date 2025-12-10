@@ -34,11 +34,11 @@ import type { SidebarTabLayoutProps } from './types'
 export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
   const initialTab = defaultTab || tabs[0]?.value || ''
   return (
-    <div className="flex min-h-0 flex-1 flex-col pt-2">
+    <div className="flex min-h-0 flex-1 flex-col">
       <Tabs defaultValue={initialTab} className="flex flex-1 flex-col overflow-hidden">
         {/* TabsList - Slack風アンダーラインデザイン */}
         <TabsList
-          className="border-border grid h-10 w-full shrink-0 rounded-none border-b bg-transparent p-0 px-4"
+          className="border-border grid h-12 w-full shrink-0 rounded-none border-b bg-transparent px-4 pt-2"
           style={{
             gridTemplateColumns: `repeat(${tabs.length}, 1fr)`,
           }}

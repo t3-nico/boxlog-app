@@ -6,7 +6,13 @@ import type { DragDataRef, DragState, UseDragAndDropProps } from './types'
 import { initialDragState } from './types'
 import { useDragHandler } from './useDragHandler'
 import { useResizeHandler } from './useResizeHandler'
-import { calculateNewTime, calculateTargetDateIndex, cleanupDragElements, getConstrainedPosition } from './utils'
+import {
+  calculateNewTime,
+  calculateTargetDateIndex,
+  cleanupDragElements,
+  createDragElement,
+  getConstrainedPosition,
+} from './utils'
 
 /**
  * カレンダービュー共通のドラッグ&ドロップ機能
@@ -22,6 +28,7 @@ export function useDragAndDrop({
   events,
   displayDates,
   viewMode = 'day',
+  disabledPlanId,
 }: UseDragAndDropProps) {
   const eventUpdateHandler = onEventUpdate || onPlanUpdate
   const eventClickHandler = onEventClick || onPlanClick
@@ -40,12 +47,33 @@ export function useDragAndDrop({
   const dragDataRef = useRef<DragDataRef | null>(null)
 
   // Resize handler
-  const { handleResizing, handleResize, handleResizeStart } = useResizeHandler({
+  const {
+    handleResizing,
+    handleResize,
+    handleResizeStart: originalHandleResizeStart,
+  } = useResizeHandler({
     events,
     eventUpdateHandler,
     dragDataRef,
     setDragState,
   })
+
+  // handleResizeStart をラップして disabledPlanId をチェック
+  const handleResizeStart = useCallback(
+    (
+      eventId: string,
+      direction: 'top' | 'bottom',
+      e: React.MouseEvent,
+      originalPosition: { top: number; left: number; width: number; height: number }
+    ) => {
+      // 無効化されたプランの場合はリサイズを開始しない
+      if (disabledPlanId && eventId === disabledPlanId) {
+        return
+      }
+      originalHandleResizeStart(eventId, direction, e, originalPosition)
+    },
+    [originalHandleResizeStart, disabledPlanId]
+  )
 
   // Drag handler
   const { handleMouseDown, handleDragging, handleEventDrop, handleEventClick, executeEventUpdate } = useDragHandler({
@@ -112,15 +140,38 @@ export function useDragAndDrop({
   // マウス移動処理
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if ((!dragState.isDragging && !dragState.isResizing) || !dragDataRef.current) return
+      // isPending（準備状態）、isDragging、isResizing のいずれかでなければ終了
+      if ((!dragState.isPending && !dragState.isDragging && !dragState.isResizing) || !dragDataRef.current) return
 
       const dragData = dragDataRef.current
       const { constrainedX, constrainedY } = getConstrainedPosition(e.clientX, e.clientY)
       const deltaX = constrainedX - dragData.startX
       const deltaY = constrainedY - dragData.startY
 
+      // 5px以上移動したら hasMoved = true
       if (Math.abs(deltaY) > 5 || Math.abs(deltaX) > 5) {
         dragData.hasMoved = true
+
+        // isPending状態で5px移動したら、isDraggingに遷移
+        if (dragState.isPending && !dragState.isDragging) {
+          // ゴースト要素を作成（ドラッグ開始時に初めて作成）
+          let dragElement: HTMLElement | null = null
+          let initialRect: DOMRect | null = null
+          if (dragData.originalElement && !dragData.dragElement) {
+            const result = createDragElement(dragData.originalElement)
+            dragElement = result.dragElement
+            initialRect = result.initialRect
+            dragData.dragElement = dragElement
+            dragData.initialRect = initialRect
+          }
+
+          setDragState((prev) => ({
+            ...prev,
+            isPending: false,
+            isDragging: true,
+            dragElement: dragElement ?? prev.dragElement,
+          }))
+        }
       }
 
       const targetDateIndex = calculateTargetDateIndex(
@@ -140,12 +191,32 @@ export function useDragAndDrop({
         handleDragging(constrainedX, constrainedY, deltaX, deltaY, targetDateIndex)
       }
     },
-    [dragState.isDragging, dragState.isResizing, viewMode, displayDates, handleResizing, handleDragging]
+    [
+      dragState.isPending,
+      dragState.isDragging,
+      dragState.isResizing,
+      viewMode,
+      displayDates,
+      handleResizing,
+      handleDragging,
+      setDragState,
+    ]
   )
 
   // ドラッグ終了
   const handleMouseUp = useCallback(async () => {
     cleanupDrag()
+
+    // isPending状態（移動なし）の場合はクリックとして処理
+    if (dragState.isPending && !dragState.isDragging && !dragState.isResizing) {
+      if (handleEventClick()) {
+        resetDragState()
+        return
+      }
+      // クリックハンドラーがなくてもリセット
+      resetDragState()
+      return
+    }
 
     if (handleEventClick()) {
       resetDragState()
@@ -191,11 +262,8 @@ export function useDragAndDrop({
     completeDragOperation,
   ])
 
-  // mouseup リスナー（即座にクリック検出用）
-  // handleMouseDown で dragDataRef がセットされた瞬間から mouseup を検出
-  const mouseUpListenerRef = useRef<((e: MouseEvent) => void) | null>(null)
-
-  // handleMouseDown をラップして、mouseup リスナーを即座に登録
+  // handleMouseDown をラップして disabledPlanId をチェック
+  // クリック処理は handleMouseUp で isPending 状態をチェックして行う
   const wrappedHandleMouseDown = useCallback(
     (
       eventId: string,
@@ -203,36 +271,27 @@ export function useDragAndDrop({
       originalPosition: { top: number; left: number; width: number; height: number },
       dateIndex?: number
     ) => {
-      // 元の handleMouseDown を呼び出し
-      handleMouseDown(eventId, e, originalPosition, dateIndex)
-
-      // mouseup リスナーを即座に登録（クリック検出用）
-      // 重要: このコールバックで使う eventClickHandler を mouseDown 時点でキャプチャ
-      const capturedClickHandler = eventClickHandler
-      const capturedEvents = events
-
-      const onMouseUp = () => {
-        document.removeEventListener('mouseup', onMouseUp)
-        mouseUpListenerRef.current = null
-
-        // クリック判定（hasMoved が false の場合のみ）
-        if (dragDataRef.current && !dragDataRef.current.hasMoved && capturedClickHandler) {
-          const eventToClick = capturedEvents.find((ev) => ev.id === dragDataRef.current!.eventId)
-          if (eventToClick) {
-            capturedClickHandler(eventToClick)
-          }
+      // 無効化されたプランの場合はDnDを開始せず、クリックのみ処理
+      if (disabledPlanId && eventId === disabledPlanId) {
+        // クリックハンドラーがあれば呼び出す
+        const eventToClick = events.find((ev) => ev.id === eventId)
+        if (eventToClick && eventClickHandler) {
+          eventClickHandler(eventToClick)
         }
+        return
       }
 
-      document.addEventListener('mouseup', onMouseUp, { once: true })
-      mouseUpListenerRef.current = onMouseUp
+      // 元の handleMouseDown を呼び出し
+      // クリック判定は handleMouseUp で行う（isPending状態かつhasMoved=falseの場合）
+      handleMouseDown(eventId, e, originalPosition, dateIndex)
     },
-    [handleMouseDown, eventClickHandler, events]
+    [handleMouseDown, eventClickHandler, events, disabledPlanId]
   )
 
   // マウスイベントリスナーを設定（ドラッグ/リサイズ用）
+  // isPending状態でもリスナーを登録（5px移動検知のため）
   useEffect(() => {
-    if (dragState.isDragging || dragState.isResizing) {
+    if (dragState.isPending || dragState.isDragging || dragState.isResizing) {
       document.addEventListener('mousemove', handleMouseMove, { passive: false })
       document.addEventListener('mouseup', handleMouseUp)
 
@@ -242,10 +301,11 @@ export function useDragAndDrop({
       }
     }
     return undefined
-  }, [dragState.isDragging, dragState.isResizing, handleMouseMove, handleMouseUp])
+  }, [dragState.isPending, dragState.isDragging, dragState.isResizing, handleMouseMove, handleMouseUp])
 
   return {
     dragState,
+    disabledPlanId,
     handlers: {
       handleMouseDown: wrappedHandleMouseDown,
       handleMouseMove,

@@ -19,9 +19,9 @@ interface DateNavigatorProps {
 }
 
 const arrowSizes = {
-  sm: 'h-4 w-4',
-  md: 'h-5 w-5',
-  lg: 'h-6 w-6',
+  sm: 'size-4',
+  md: 'size-6',
+  lg: 'size-6',
 }
 
 /**
@@ -41,12 +41,12 @@ export const DateNavigator = ({
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      {/* 今日ボタン */}
+      {/* 今日ボタン - 40px（8pxグリッド準拠） */}
       {showTodayButton != null ? (
         <button
           type="button"
           onClick={() => onNavigate('today')}
-          className={cn(buttonVariants({ variant: 'outline' }), buttonClassName)}
+          className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), buttonClassName)}
           title={t('calendar.actions.goToToday')}
         >
           <span>{todayLabel}</span>
@@ -59,7 +59,11 @@ export const DateNavigator = ({
           <button
             type="button"
             onClick={() => onNavigate('prev')}
-            className={cn('rounded-full p-2 transition-colors', 'hover:bg-state-hover', 'text-muted-foreground')}
+            className={cn(
+              'flex size-10 items-center justify-center rounded-full transition-colors',
+              'hover:bg-state-hover',
+              'text-muted-foreground'
+            )}
             title="Previous period"
             aria-label="Previous"
           >
@@ -68,7 +72,11 @@ export const DateNavigator = ({
           <button
             type="button"
             onClick={() => onNavigate('next')}
-            className={cn('rounded-full p-2 transition-colors', 'hover:bg-state-hover', 'text-muted-foreground')}
+            className={cn(
+              'flex size-10 items-center justify-center rounded-full transition-colors',
+              'hover:bg-state-hover',
+              'text-muted-foreground'
+            )}
             title="Next period"
             aria-label="Next"
           >

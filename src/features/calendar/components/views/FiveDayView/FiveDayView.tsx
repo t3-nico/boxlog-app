@@ -27,6 +27,7 @@ export const FiveDayView = ({
   centerDate: _centerDate,
   showWeekends = true,
   className,
+  disabledPlanId,
   onPlanClick,
   onPlanContextMenu,
   onCreatePlan: _onCreatePlan,
@@ -194,6 +195,7 @@ export const FiveDayView = ({
                       : undefined
                   }
                   onTimeRangeSelect={onTimeRangeSelect}
+                  disabledPlanId={disabledPlanId}
                   className="h-full"
                   dayIndex={dayIndex}
                   displayDates={displayDates}

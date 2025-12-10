@@ -152,10 +152,11 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   })
 
   // カレンダーハンドラー（フック化）
-  const { handlePlanClick, handleCreatePlan, handleEmptyClick, handleDateTimeRangeSelect } = useCalendarHandlers({
-    viewType,
-    currentDate,
-  })
+  const { handlePlanClick, handleCreatePlan, handleEmptyClick, handleDateTimeRangeSelect, disabledPlanId } =
+    useCalendarHandlers({
+      viewType,
+      currentDate,
+    })
 
   // ナビゲーションハンドラー（フック化）
   const {
@@ -189,6 +190,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       dateRange: viewDateRange,
       plans: filteredEvents,
       currentDate,
+      disabledPlanId,
       onPlanClick: handlePlanClick,
       onPlanContextMenu: handleEventContextMenu,
       onCreatePlan: handleCreatePlan,
@@ -206,6 +208,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       viewDateRange,
       filteredEvents,
       currentDate,
+      disabledPlanId,
       handlePlanClick,
       handleEventContextMenu,
       handleCreatePlan,

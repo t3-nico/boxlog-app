@@ -16,8 +16,14 @@ interface UseCalendarHandlersOptions {
 }
 
 export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandlersOptions) {
-  const { openInspector } = usePlanInspectorStore()
+  const openInspector = usePlanInspectorStore((state) => state.openInspector)
+  const inspectorPlanId = usePlanInspectorStore((state) => state.planId)
+  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen)
   const { createPlan } = usePlanMutations()
+
+  // Inspector で開いているプランIDをDnD無効化用に計算
+  // Inspector が開いている場合のみ planId を返す
+  const disabledPlanId = isInspectorOpen ? inspectorPlanId : null
 
   // プラン関連のハンドラー
   const handlePlanClick = useCallback(
@@ -162,5 +168,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
     handleCreatePlan,
     handleEmptyClick,
     handleDateTimeRangeSelect,
+    /** DnDを無効化するプランID（Inspector表示中のプラン） */
+    disabledPlanId,
   }
 }

@@ -82,9 +82,9 @@ export function CalendarSidebar() {
       value: 'todo',
       label: t('calendar.sidebar.tabs.todo'),
       content: (
-        <>
-          {/* ナビゲーションコンテナ: 高さ48px（内部32px + 上padding 8px + 下padding 8px） */}
-          <div className="h-12 shrink-0 px-4 pt-2">
+        <div className="pt-2">
+          {/* ナビゲーションコンテナ: 高さ40px（内部32px + 下padding 8px） */}
+          <div className="h-10 shrink-0 px-4 pb-2">
             <TodoNavigation
               filter={filter}
               onFilterChange={setFilter}
@@ -100,14 +100,14 @@ export function CalendarSidebar() {
           <div className="flex-1 overflow-hidden px-4">
             <TodoCardList filter={filter} sort={sort} showHigh={showHigh} showMedium={showMedium} showLow={showLow} />
           </div>
-        </>
+        </div>
       ),
     },
     {
       value: 'view',
       label: t('calendar.sidebar.tabs.view'),
       content: (
-        <div className="px-2 pt-4">
+        <div className="px-2 pt-2">
           <MiniCalendar
             selectedDate={navigation?.currentDate}
             displayRange={displayRange}

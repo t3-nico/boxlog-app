@@ -41,6 +41,7 @@ export const WeekView = ({
   showWeekends = true,
   weekStartsOn = 1, // 0: 日曜始まり, 1: 月曜始まり
   className,
+  disabledPlanId,
   onPlanClick,
   onPlanContextMenu,
   onUpdatePlan,
@@ -76,6 +77,7 @@ export const WeekView = ({
         eventsByDate={eventsByDate}
         todayIndex={todayIndex}
         timezone={timezone}
+        disabledPlanId={disabledPlanId}
         onEventClick={onPlanClick}
         onEventContextMenu={onPlanContextMenu}
         onEmptyClick={(date, time) => {

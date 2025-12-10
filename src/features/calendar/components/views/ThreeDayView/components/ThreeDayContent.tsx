@@ -27,6 +27,8 @@ interface ThreeDayContentProps {
   className?: string | undefined
   dayIndex: number // 3日間内での日付インデックス（0-2）
   displayDates?: Date[] | undefined // 3日間の全日付配列（日付間移動用）
+  /** DnDを無効化するプランID（Inspector表示中のプランなど） */
+  disabledPlanId?: string | null | undefined
 }
 
 export const ThreeDayContent = ({
@@ -41,17 +43,12 @@ export const ThreeDayContent = ({
   className,
   dayIndex,
   displayDates,
+  disabledPlanId,
 }: ThreeDayContentProps) => {
   // ドラッグ&ドロップ機能用にonPlanUpdateを変換
   const handlePlanUpdate = useCallback(
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onPlanUpdate) return
-
-      console.log('🔧 ThreeDayContent: プラン更新要求:', {
-        planId,
-        startTime: updates.startTime.toISOString(),
-        endTime: updates.endTime.toISOString(),
-      })
 
       // handleUpdatePlan形式で呼び出し
       await onPlanUpdate(planId, {
@@ -70,6 +67,7 @@ export const ThreeDayContent = ({
     events: plans,
     displayDates,
     viewMode: '3day',
+    disabledPlanId,
   })
 
   // グローバルドラッグカーソー管理（共通化）

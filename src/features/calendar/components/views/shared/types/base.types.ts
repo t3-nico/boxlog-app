@@ -26,6 +26,9 @@ export interface BaseViewProps {
   showWeekends?: boolean | undefined
   className?: string | undefined
 
+  /** DnDを無効化するプランID（Inspector表示中のプランなど） */
+  disabledPlanId?: string | null | undefined
+
   // Plan handlers
   onPlanClick?: ((plan: CalendarPlan) => void) | undefined
   onPlanContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined

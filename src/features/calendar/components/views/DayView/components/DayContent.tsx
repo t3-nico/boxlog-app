@@ -20,6 +20,7 @@ export const DayContent = ({
   onEmptyClick,
   onEventUpdate,
   onTimeRangeSelect,
+  disabledPlanId,
   className,
 }: DayContentProps) => {
   // ドラッグ&ドロップ機能用にonEventUpdateを変換
@@ -42,6 +43,7 @@ export const DayContent = ({
     ...(onPlanClick && { onEventClick: onPlanClick }),
     date,
     events: events ?? [],
+    disabledPlanId,
   })
 
   // グローバルドラッグカーソー管理（共通化）

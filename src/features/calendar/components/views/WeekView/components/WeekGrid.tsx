@@ -29,6 +29,7 @@ export const WeekGrid = ({
   events,
   eventsByDate,
   todayIndex,
+  disabledPlanId,
   onEventClick,
   onEventContextMenu,
   onEmptyClick,
@@ -129,6 +130,7 @@ export const WeekGrid = ({
                 onEmptyClick={onEmptyClick}
                 onPlanUpdate={handlePlanUpdate}
                 onTimeRangeSelect={onTimeRangeSelect}
+                disabledPlanId={disabledPlanId}
                 className="h-full"
                 dayIndex={dayIndex}
                 displayDates={weekDates}

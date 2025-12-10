@@ -154,6 +154,7 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
       }
 
       setDragState({
+        isPending: false,
         isDragging: false,
         isResizing: true,
         draggedEventId: eventId,

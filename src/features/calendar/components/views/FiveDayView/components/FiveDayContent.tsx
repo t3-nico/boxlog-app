@@ -28,6 +28,8 @@ interface FiveDayContentProps {
   className?: string | undefined
   dayIndex: number // 5日間内での日付インデックス（0-4）
   displayDates?: Date[] | undefined // 5日間の全日付配列（日付間移動用）
+  /** DnDを無効化するプランID（Inspector表示中のプランなど） */
+  disabledPlanId?: string | null | undefined
 }
 
 export const FiveDayContent = ({
@@ -42,17 +44,12 @@ export const FiveDayContent = ({
   className,
   dayIndex,
   displayDates,
+  disabledPlanId,
 }: FiveDayContentProps) => {
   // ドラッグ&ドロップ機能用にonPlanUpdateを変換
   const handlePlanUpdate = useCallback(
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onPlanUpdate) return
-
-      console.log('🔧 FiveDayContent: プラン更新要求:', {
-        planId,
-        startTime: updates.startTime.toISOString(),
-        endTime: updates.endTime.toISOString(),
-      })
 
       // handleUpdatePlan形式で呼び出し
       await onPlanUpdate(planId, {
@@ -71,6 +68,7 @@ export const FiveDayContent = ({
     events: plans,
     displayDates,
     viewMode: '5day',
+    disabledPlanId,
   })
 
   // グローバルドラッグカーソー管理（共通化）

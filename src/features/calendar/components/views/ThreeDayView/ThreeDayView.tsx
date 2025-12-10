@@ -27,6 +27,7 @@ export const ThreeDayView = ({
   centerDate: _centerDate,
   showWeekends = true,
   className,
+  disabledPlanId,
   onPlanClick,
   onPlanContextMenu,
   onCreatePlan,
@@ -200,6 +201,7 @@ export const ThreeDayView = ({
                     // onCreatePlanは(date: Date, time?: string)の形式なので、startTimeのみ渡す
                     onCreatePlan?.(startDate, startTime)
                   }}
+                  disabledPlanId={disabledPlanId}
                   className="h-full"
                   dayIndex={dayIndex}
                   displayDates={displayDates}

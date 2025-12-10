@@ -14,6 +14,8 @@ export interface WeekGridProps {
   eventsByDate: Record<string, CalendarPlan[]>
   todayIndex: number
   timezone: string
+  /** DnDを無効化するプランID（Inspector表示中のプランなど） */
+  disabledPlanId?: string | null | undefined
   onEventClick?: ((plan: CalendarPlan) => void) | undefined
   onEventContextMenu?: ((plan: CalendarPlan, mouseEvent: React.MouseEvent) => void) | undefined
   onEmptyClick?: ((date: Date, time: string) => void) | undefined
