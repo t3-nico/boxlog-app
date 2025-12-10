@@ -14,7 +14,6 @@ interface AnimatedEventCardProps {
   isNew?: boolean
   isDeleting?: boolean
   onClick?: () => void
-  onDoubleClick?: () => void
   onContextMenu?: (e: React.MouseEvent) => void
   children?: React.ReactNode
   className?: string
@@ -27,7 +26,6 @@ export const AnimatedEventCard = ({
   isNew = false,
   isDeleting = false,
   onClick,
-  onDoubleClick,
   onContextMenu,
   children,
   className,
@@ -125,12 +123,6 @@ export const AnimatedEventCard = ({
     onClick?.()
   }
 
-  // ダブルクリック処理
-  const handleDoubleClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onDoubleClick?.()
-  }
-
   // 右クリック処理
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -178,7 +170,6 @@ export const AnimatedEventCard = ({
         containIntrinsicSize: 'layout', // パフォーマンス最適化
       }}
       onClick={handleClick}
-      onDoubleClick={handleDoubleClick}
       onContextMenu={handleContextMenu}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

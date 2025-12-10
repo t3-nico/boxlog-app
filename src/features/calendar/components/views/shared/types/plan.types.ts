@@ -23,7 +23,6 @@ export interface PlanCardProps {
   plan: CalendarPlan
   position?: PlanCardPosition | undefined
   onClick?: ((plan: CalendarPlan) => void) | undefined
-  onDoubleClick?: ((plan: CalendarPlan) => void) | undefined
   onContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined
   onDragStart?:
     | ((
@@ -85,7 +84,6 @@ export type EventColumn = PlanColumn
 
 export type PlanInteractionHandler = {
   onClick?: (plan: CalendarPlan) => void
-  onDoubleClick?: (plan: CalendarPlan) => void
   onContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onDragStart?: (plan: CalendarPlan) => void
   onDragEnd?: (plan: CalendarPlan) => void

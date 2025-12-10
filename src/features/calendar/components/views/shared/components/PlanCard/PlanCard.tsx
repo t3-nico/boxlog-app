@@ -23,7 +23,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   plan,
   position,
   onClick,
-  onDoubleClick,
   onContextMenu,
   onDragStart,
   onDragEnd,
@@ -75,14 +74,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       onClick?.(plan)
     },
     [onClick, plan]
-  )
-
-  const handleDoubleClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation()
-      onDoubleClick?.(plan)
-    },
-    [onDoubleClick, plan]
   )
 
   const handleContextMenu = useCallback(
@@ -203,7 +194,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       className={planCardClasses}
       style={dynamicStyle}
       onClick={handleClick}
-      onDoubleClick={handleDoubleClick}
       onContextMenu={handleContextMenu}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}

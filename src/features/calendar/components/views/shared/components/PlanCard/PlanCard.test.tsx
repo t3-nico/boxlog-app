@@ -75,16 +75,6 @@ describe('PlanCard', () => {
       expect(onClick).toHaveBeenCalledWith(mockEvent)
     })
 
-    it('ダブルクリックイベントが発火する', () => {
-      const onDoubleClick = vi.fn()
-      render(<PlanCard plan={mockEvent} position={mockPosition} onDoubleClick={onDoubleClick} />)
-
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i })
-      fireEvent.doubleClick(eventBlock)
-
-      expect(onDoubleClick).toHaveBeenCalledWith(mockEvent)
-    })
-
     it('右クリックでコンテキストメニューが表示される', () => {
       const onContextMenu = vi.fn()
       render(<PlanCard plan={mockEvent} position={mockPosition} onContextMenu={onContextMenu} />)
@@ -251,25 +241,6 @@ describe('PlanCard', () => {
 
       expect(onClick).toHaveBeenCalled()
       expect(parentClick).not.toHaveBeenCalled()
-    })
-
-    it('ダブルクリックイベントの伝播が停止される', () => {
-      const onDoubleClick = vi.fn()
-      const parentDoubleClick = vi.fn()
-
-      const { container } = render(
-        <div onDoubleClick={parentDoubleClick}>
-          <PlanCard plan={mockEvent} position={mockPosition} onDoubleClick={onDoubleClick} />
-        </div>
-      )
-
-      const eventBlock = container.querySelector('[role="button"]')
-      if (eventBlock) {
-        fireEvent.doubleClick(eventBlock)
-      }
-
-      expect(onDoubleClick).toHaveBeenCalled()
-      expect(parentDoubleClick).not.toHaveBeenCalled()
     })
   })
 })
