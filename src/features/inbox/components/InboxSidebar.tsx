@@ -21,11 +21,7 @@ interface InboxSidebarProps {
  *
  * カレンダーDayViewを表示し、ドラッグ＆ドロップでスケジュール設定
  */
-export function InboxSidebar({
-  isLoading = false,
-  calendarPlans = [],
-  onSchedulePlan,
-}: InboxSidebarProps) {
+export function InboxSidebar({ isLoading = false, calendarPlans = [], onSchedulePlan }: InboxSidebarProps) {
   const t = useTranslations()
   const [selectedDate, setSelectedDate] = useState(() => new Date())
 

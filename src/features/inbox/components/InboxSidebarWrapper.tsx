@@ -55,11 +55,5 @@ export function InboxSidebarWrapper() {
     [updatePlan]
   )
 
-  return (
-    <InboxSidebar
-      isLoading={isLoading}
-      calendarPlans={calendarPlans}
-      onSchedulePlan={handleSchedulePlan}
-    />
-  )
+  return <InboxSidebar isLoading={isLoading} calendarPlans={calendarPlans} onSchedulePlan={handleSchedulePlan} />
 }

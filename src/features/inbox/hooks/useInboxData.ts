@@ -177,8 +177,7 @@ export function useInboxData(filters: InboxFilters = {}) {
 
   // PlanをInboxItemに変換
   // APIレスポンスの型はPlanWithPlanTagsと互換性がある
-  let items: InboxItem[] =
-    plansData?.map((plan) => planToInboxItem(plan as PlanWithPlanTags)) || []
+  let items: InboxItem[] = plansData?.map((plan) => planToInboxItem(plan as PlanWithPlanTags)) || []
 
   // タグフィルタリング（クライアント側）
   if (filters.tags && filters.tags.length > 0) {

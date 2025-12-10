@@ -77,12 +77,10 @@ export const bulkRouter = createTRPCRouter({
     }
 
     // upsertで既存の関連は無視
-    const { error, count } = await supabase
-      .from('plan_tags')
-      .upsert(planTagsToInsert, {
-        onConflict: 'user_id,plan_id,tag_id',
-        ignoreDuplicates: true,
-      })
+    const { error, count } = await supabase.from('plan_tags').upsert(planTagsToInsert, {
+      onConflict: 'user_id,plan_id,tag_id',
+      ignoreDuplicates: true,
+    })
 
     if (error) {
       throw new TRPCError({
