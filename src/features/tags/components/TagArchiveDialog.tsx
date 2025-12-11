@@ -75,7 +75,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
 
   const dialog = (
     <div
-      className="animate-in fade-in fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 duration-150"
+      className="animate-in fade-in fixed inset-0 z-[250] flex items-center justify-center bg-black/80 duration-150"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
