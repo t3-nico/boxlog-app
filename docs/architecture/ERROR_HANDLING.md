@@ -397,3 +397,9 @@ A: `isAutoRecoverable(errorCode)` が `true` を返すか確認してくださ�
 
 **メンテナー**: BoxLog Development Team
 **最終レビュー**: 2025-10-06
+
+---
+
+**種類**: 📕 解説
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

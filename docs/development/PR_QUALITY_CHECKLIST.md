@@ -238,3 +238,9 @@ npm run quality:gate
 BoxLog PR品質メトリクス v1.0
 最終更新: 2025-09-25
 関連Issue: [品質メトリクスの作成 #56](https://github.com/t3-nico/boxlog-app/issues/56)
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

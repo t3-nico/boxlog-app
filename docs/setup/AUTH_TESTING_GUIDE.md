@@ -307,3 +307,9 @@ SKIP_AUTH_IN_DEV=true
 - [Supabase Auth公式ドキュメント](https://supabase.com/docs/guides/auth)
 - [Issue #531](https://github.com/t3-nico/boxlog-app/issues/531)
 - [認証実装コード](../../src/lib/supabase/)
+
+---
+
+**種類**: 📘 チュートリアル
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

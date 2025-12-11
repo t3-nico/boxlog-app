@@ -70,3 +70,9 @@ BoxLogは **Semantic Versioning 2.0.0** に準拠しています。
 - **PATCH (Z)**: バグ修正（後方互換性あり）
 
 詳細は [VERSIONING.md](VERSIONING.md) を参照してください。
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

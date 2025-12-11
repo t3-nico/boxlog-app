@@ -403,3 +403,9 @@ globalErrorHandler.registerNotificationHandler('debug', console.log)
 **最終更新**: 2024-09-29
 **バージョン**: v1.0.0 - エラーパターン辞書システム初回リリース
 **関連Issue**: #352 - エラーパターン辞書システム実装
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

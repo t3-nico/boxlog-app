@@ -213,3 +213,9 @@ plans データ（Supabase DB）
 ---
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+---
+
+**種類**: 📕 解説
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

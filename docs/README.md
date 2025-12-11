@@ -1,122 +1,137 @@
-# BoxLog App - メインドキュメント
+# BoxLog App - ドキュメントポータル
 
 BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケーションです。
 
-## 📚 ドキュメント構成
+## 📖 ドキュメント分類 (Diataxis Framework)
 
-### 🔧 [セットアップ・設定](./setup/)
+### 📘 チュートリアル (Tutorial) - 学習向け
 
-**開発環境構築・外部サービス連携**
+**初めての方が順序立てて学ぶためのガイド**
 
-- [Cursor AI統合](./setup/CURSOR_SETUP.md) - 開発ツール設定（推奨）
-- [CI/CD設定](./setup/CI_CD_SETUP.md) - 自動化パイプライン
-- [Vercelデプロイ](./setup/VERCEL_SETUP.md) - 本番環境設定
+| ドキュメント | 対象者 | 所要時間 |
+|-------------|--------|----------|
+| [セットアップガイド](./setup/README.md) | 新規開発者 | 30分 |
+| [Supabase Auth設定](./setup/SUPABASE_AUTH_SETUP.md) | 認証実装者 | 15分 |
+| [認証テストガイド](./setup/AUTH_TESTING_GUIDE.md) | QA担当者 | 10分 |
 
-### 🏗️ [アーキテクチャ・設計](./architecture/)
+### 📗 ハウツーガイド (How-to) - 実践向け
 
-**システム設計・エラーハンドリング・API設計**
+**特定の課題を解決するためのステップバイステップ手順**
 
-- [エラーハンドリング](./architecture/ERROR_HANDLING.md) - 統一エラーシステム
-- [エラーバウンダリー](./architecture/ERROR_BOUNDARY_SYSTEM.md) - エラー境界設計
-- [エラーパターン](./architecture/ERROR_PATTERNS_GUIDE.md) - エラーコード体系
-- [エラーページ](./architecture/ERROR_PAGES.md) - Next.js エラーページ実装
-- [APIバリデーション](./architecture/API_VALIDATION_GUIDE.md) - API検証ガイド
+| カテゴリ | ドキュメント | 解決する課題 |
+|----------|-------------|-------------|
+| **開発環境** | [Cursor AI統合](./setup/CURSOR_SETUP.md) | AI支援開発の設定 |
+| **デプロイ** | [Vercel設定](./setup/VERCEL_SETUP.md) | 本番環境構築 |
+| **CI/CD** | [パイプライン設定](./setup/CI_CD_SETUP.md) | 自動化ワークフロー |
+| **品質管理** | [ESLint設定](./development/ESLINT_HYBRID_APPROACH.md) | コード品質確保 |
+| **監視** | [Sentry統合](./integrations/SENTRY.md) | エラー監視導入 |
+| **テーマ** | [テーマ移行](./design-system/THEME_MIGRATION.md) | UI統一化 |
 
-### 🎨 [デザインシステム](./design-system/)
+### 📙 リファレンス (Reference) - 参照向け
 
-**UI統一・テーマ管理・視覚設計**
+**技術仕様・API・設定値の詳細情報**
 
-- [デザインシステム概要](./design-system/README.md) - デザインシステム全体像
-- [テーマ移行ガイド](./design-system/THEME_MIGRATION.md) - 既存コード移行手順
-- [スタイルガイド](./design-system/STYLE_GUIDE.md) - 8pxグリッド・カラー・タイポグラフィ
+| カテゴリ | ドキュメント | 内容 |
+|----------|-------------|------|
+| **コマンド** | [コマンド一覧](./development/COMMANDS.md) | npm scripts全量 |
+| **デザイン** | [スタイルガイド](./design-system/STYLE_GUIDE.md) | 8pxグリッド・色・タイポ |
+| **エラー** | [エラーパターン](./architecture/ERROR_PATTERNS_GUIDE.md) | エラーコード体系 |
+| **API** | [APIバリデーション](./architecture/API_VALIDATION_GUIDE.md) | API仕様・検証ルール |
+| **Issue** | [Issue管理ルール](./development/ISSUE_MANAGEMENT.md) | ラベル・テンプレート |
+| **PR** | [PRテンプレート](./development/PR_TEMPLATE.md) | プルリクエスト規約 |
+| **リリース** | [リリースプロセス](./releases/RELEASE_PROCESS.md) | バージョニング規約 |
 
-### ⚡ [開発ガイドライン](./development/)
+### 📕 解説 (Explanation) - 理解向け
 
-**開発ワークフロー・品質管理・コミット規約**
+**アーキテクチャ・設計思想の背景説明**
 
-- [ESLintハイブリッド](./development/ESLINT_HYBRID_APPROACH.md) - 公式準拠ESLint設定
-- [品質システム](./development/QUALITY_SYSTEM_README.md) - コード品質管理
-- [PRテンプレート](./development/PR_TEMPLATE.md) - プルリクエスト作成指針
-- [Issue管理](./development/ISSUE_MANAGEMENT.md) - Issue運用ルール
-- [セッション管理](./development/CLAUDE_SESSION_MANAGEMENT.md) - 開発セッション記録
-- [コマンド一覧](./development/COMMANDS.md) - 利用可能コマンド
+| カテゴリ | ドキュメント | 解説内容 |
+|----------|-------------|---------|
+| **エラー設計** | [エラーハンドリング](./architecture/ERROR_HANDLING.md) | 統一エラーシステムの設計 |
+| **UI設計** | [デザインシステム概要](./design-system/README.md) | デザイントークン体系 |
+| **状態管理** | [状態管理ガイド](./architecture/STATE_MANAGEMENT_DECISION_GUIDE.md) | Zustand選定理由 |
+| **品質戦略** | [品質システム](./development/QUALITY_SYSTEM_README.md) | 品質保証の全体像 |
 
-### 🔌 [統合・外部連携](./integrations/)
-
-**外部サービス統合**
-
-- [Sentry統合](./integrations/SENTRY.md) - エラー監視システム
-
-### ⚡ [パフォーマンス](./performance/)
-
-**最適化・アクセシビリティ**
-
-- [Bundle監視](./performance/BUNDLE_MONITORING.md) - バンドルサイズ最適化
-
-### 🏗️ [機能実装](./features/)
-
-**機能開発・UI改善・システム実装**
-
-- [プログレッシブ開示](./features/PROGRESSIVE_DISCLOSURE_IMPLEMENTATION.md) - UI段階表示
-- [機能実装概要](./features/README.md) - 実装済み機能一覧
-
-### 📊 [アーカイブ](./archive/)
-
-**完了した実装・将来計画・履歴**
-
-- [将来改善・ノート](./archive/FUTURE_IMPROVEMENTS_AND_NOTES.md) - 改善計画・アイデア
-- [完了レポート](./archive/completed/) - 過去の実装記録
-- [開発履歴](./archive/development/) - 古い開発ドキュメント
-- [分析レポート](./archive/analysis/) - 調査・分析結果
-- [品質レポート](./archive/reports/) - 品質監査結果
+---
 
 ## 🚀 クイックスタート
 
-### 新規開発者向け
+### 役割別ナビゲーション
 
-1. **環境構築**: [`setup/`](./setup/) - 開発環境セットアップ
-2. **開発ルール**: [`development/`](./development/) - コミット・品質管理
-3. **デザイン統一**: [`design-system/`](./design-system/) - UI実装ルール
+| 役割 | 最初に読むべきドキュメント |
+|------|--------------------------|
+| **新規開発者** | [セットアップ](./setup/README.md) → [コマンド一覧](./development/COMMANDS.md) → [スタイルガイド](./design-system/STYLE_GUIDE.md) |
+| **フロントエンド** | [デザインシステム](./design-system/README.md) → [エラーハンドリング](./architecture/ERROR_HANDLING.md) |
+| **バックエンド** | [APIバリデーション](./architecture/API_VALIDATION_GUIDE.md) → [Supabase設定](./setup/SUPABASE_AUTH_SETUP.md) |
+| **QA/テスト** | [認証テスト](./setup/AUTH_TESTING_GUIDE.md) → [テスティング](./testing/README.md) |
+| **リリース担当** | [リリースチェックリスト](./releases/RELEASE_CHECKLIST.md) → [バージョニング](./releases/VERSIONING.md) |
 
-### 機能開発者向け
+---
 
-1. **アーキテクチャ理解**: [`architecture/`](./architecture/) - システム設計
-2. **UI実装**: [`design-system/`](./design-system/) - デザインシステム
-3. **品質管理**: [`development/`](./development/) - ESLint・テスト
+## 🎯 技術スタック
 
-## 🎯 技術スタック概要
+| レイヤー | 技術 |
+|---------|-----|
+| **フレームワーク** | Next.js 14 (App Router), React 18 |
+| **言語** | TypeScript (strict mode) |
+| **データベース** | Supabase (PostgreSQL + RLS) |
+| **UIライブラリ** | shadcn/ui, Tailwind CSS v4 |
+| **状態管理** | Zustand, TanStack Query |
+| **API** | tRPC v11 |
+| **品質管理** | ESLint, Vitest, Playwright |
+| **監視** | Sentry |
 
-- **フロントエンド**: Next.js 14, React 18, TypeScript
-- **データベース**: Supabase (PostgreSQL)
-- **UIライブラリ**: shadcn/ui, kiboUI
-- **スタイリング**: Tailwind CSS v4 + 8pxグリッド
-- **品質管理**: ESLint（96%完成）, Vitest（80%カバレッジ）
-- **パフォーマンス**: Bundle最適化（99.5%削減達成）
-- **開発支援**: テストデータシード管理（環境別自動生成）
+---
 
-## 📖 ドキュメント利用ガイド
+## 📁 ディレクトリ構造
 
-### 目的別ナビゲーション
+```
+docs/
+├── architecture/     # 📕 解説: システム設計・アーキテクチャ
+├── design-system/    # 📙 リファレンス + 📕 解説: UI/UXガイド
+├── development/      # 📗 ハウツー + 📙 リファレンス: 開発ワークフロー
+├── features/         # 📕 解説: 機能仕様
+├── integrations/     # 📗 ハウツー: 外部サービス統合
+├── legal/            # 📙 リファレンス: ライセンス・コンプライアンス
+├── performance/      # 📙 リファレンス: パフォーマンス基準
+├── releases/         # 📙 リファレンス + 📗 ハウツー: リリース管理
+├── security/         # 📙 リファレンス: セキュリティ設定
+├── setup/            # 📘 チュートリアル + 📗 ハウツー: 環境構築
+├── testing/          # 📗 ハウツー: テスト戦略
+└── archive/          # 📦 アーカイブ: 過去の記録
+```
 
-| 目的             | 参照ディレクトリ                     | 重要度  |
-| ---------------- | ------------------------------------ | ------- |
-| **環境構築**     | [`setup/`](./setup/)                 | 🔴 必須 |
-| **UI実装**       | [`design-system/`](./design-system/) | 🔴 必須 |
-| **品質管理**     | [`performance/`](./performance/)     | 🟡 重要 |
-| **機能開発**     | [`features/`](./features/)           | 🟡 重要 |
-| **履歴参考**     | [`development/`](./features/)        | 🟢 参考 |
+---
 
-### コロケーション原則
+## 🔗 関連リソース
 
-機能固有のドキュメントは各機能ディレクトリ内に配置：
+### コード内ドキュメント (コロケーション)
 
-- **カレンダー**: `/src/features/calendar/__docs__/`
-- **設定**: `/src/features/settings/README.md`
-- **テーマ**: `/src/config/ui/README.md`
-- **ESLint**: `/.eslint/README.md`
+| 機能 | 場所 |
+|------|------|
+| **CLAUDE.md (AI指針)** | `/CLAUDE.md`, `/src/CLAUDE.md` |
+| **コンポーネント** | `/src/components/CLAUDE.md` |
+| **機能モジュール** | `/src/features/CLAUDE.md` |
+| **ESLint設定** | `/.eslint/README.md` |
+
+### 外部リンク
+
+- [Next.js公式ドキュメント](https://nextjs.org/docs)
+- [Supabase公式ドキュメント](https://supabase.com/docs)
+- [Tailwind CSS公式](https://tailwindcss.com/docs)
+
+---
+
+## 📊 ドキュメント品質
+
+| 指標 | 値 |
+|------|-----|
+| 総ドキュメント数 | 78 (アクティブ) + 13 (アーカイブ) |
+| 整合性スコア | 91.7% |
+| 最終チェック | 2025-12-11 |
 
 ---
 
 **最終更新**: 2025-12-11
-**管理**: BoxLog 開発チーム
-**バージョン**: v4.0 - ドキュメント整理・アーカイブ化
+**所有者**: BoxLog 開発チーム
+**バージョン**: v5.0 - Diataxis Framework適用

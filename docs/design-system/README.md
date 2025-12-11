@@ -76,3 +76,9 @@ import { colors, typography, spacing } from '@/config/theme'
 **最終更新**: 2025-09-22
 **管理**: BoxLog デザインシステムチーム
 **関連**: `/src/config/ui/README.md` (実装詳細)
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

@@ -136,3 +136,9 @@ gh pr list --state merged --base main --search "merged:>=YYYY-MM-DD" --json numb
 - [ ] カテゴリ別に整理されている（Added, Changed, Fixed, etc.）
 - [ ] Full Changelogリンクが正しい
 - [ ] バージョン番号が正しい
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム
