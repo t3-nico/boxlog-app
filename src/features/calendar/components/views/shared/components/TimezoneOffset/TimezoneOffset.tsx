@@ -1,5 +1,8 @@
 'use client'
 
+import { useCallback } from 'react'
+
+import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { cn } from '@/lib/utils'
 
 interface TimezoneOffsetProps {
@@ -8,6 +11,8 @@ interface TimezoneOffsetProps {
 }
 
 export function TimezoneOffset({ timezone, className }: TimezoneOffsetProps) {
+  const openSettings = useSettingsDialogStore((state) => state.openSettings)
+
   const getUTCOffset = (tz: string): string => {
     try {
       const now = new Date()
@@ -39,11 +44,23 @@ export function TimezoneOffset({ timezone, className }: TimezoneOffsetProps) {
     }
   }
 
+  const handleClick = useCallback(() => {
+    openSettings('calendar')
+  }, [openSettings])
+
   const offset = getUTCOffset(timezone)
 
   return (
-    <div className={cn('text-muted-foreground flex h-8 items-center justify-start text-xs', className)}>
+    <button
+      type="button"
+      onClick={handleClick}
+      className={cn(
+        'text-muted-foreground flex h-8 items-center justify-start text-xs',
+        'hover:text-foreground cursor-pointer rounded transition-colors',
+        className
+      )}
+    >
       <span className="font-medium">UTC{offset}</span>
-    </div>
+    </button>
   )
 }

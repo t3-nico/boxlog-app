@@ -2,8 +2,6 @@
 
 import { useCallback } from 'react'
 
-import { format } from 'date-fns'
-
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
@@ -16,13 +14,8 @@ import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
 
 export function CalendarSettings() {
-  const { settings, saveSettings, isSaving, isLoading } = useUserSettings()
+  const { settings, saveSettings, isSaving } = useUserSettings()
   const t = useTranslations()
-
-  const formatTimeWithSettings = (date: Date, timeFormat: '12h' | '24h') => {
-    const formatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a'
-    return format(date, formatString)
-  }
 
   // jsx-no-bind optimization: Reset settings handler
   const handleResetSettings = useCallback(() => {
@@ -91,6 +84,13 @@ export function CalendarSettings() {
     [saveSettings]
   )
 
+  const handleDefaultViewChange = useCallback(
+    (value: string) => {
+      saveSettings({ defaultView: value as 'day' | '3day' | '5day' | 'week' })
+    },
+    [saveSettings]
+  )
+
   const handleBusinessHoursStartChange = useCallback(
     (value: string) => {
       saveSettings({
@@ -114,10 +114,6 @@ export function CalendarSettings() {
     },
     [saveSettings, settings.businessHours]
   )
-
-  if (isLoading) {
-    return <div className="animate-pulse space-y-6">Loading...</div>
-  }
 
   return (
     <div className="space-y-6">
@@ -149,21 +145,25 @@ export function CalendarSettings() {
               </SelectContent>
             </Select>
           </SettingField>
+        </div>
+      </SettingsCard>
 
-          {/* プレビュー表示 */}
-          <div className="bg-surface-container rounded-lg p-4">
-            <p className="text-muted-foreground mb-2 text-sm">{t('settings.calendar.preview')}</p>
-            <div className="space-y-1">
-              <p className="font-medium">
-                {t('settings.calendar.currentTime', {
-                  time: formatTimeWithSettings(new Date(), settings.timeFormat),
-                })}
-              </p>
-              <p className="text-muted-foreground text-sm">
-                {t('settings.calendar.fullFormat', { time: format(new Date(), 'yyyy/MM/dd HH:mm') })}
-              </p>
-            </div>
-          </div>
+      {/* Default View Section */}
+      <SettingsCard title={t('settings.calendar.defaultViewSection')} isSaving={isSaving}>
+        <div className="space-y-4">
+          <SettingField label={t('settings.calendar.defaultView')}>
+            <Select value={settings.defaultView} onValueChange={handleDefaultViewChange}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('settings.calendar.selectDefaultView')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="day">{t('settings.calendar.viewDay')}</SelectItem>
+                <SelectItem value="3day">{t('settings.calendar.view3Day')}</SelectItem>
+                <SelectItem value="5day">{t('settings.calendar.view5Day')}</SelectItem>
+                <SelectItem value="week">{t('settings.calendar.viewWeek')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </SettingField>
         </div>
       </SettingsCard>
 

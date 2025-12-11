@@ -157,7 +157,14 @@
       "businessHoursPreview": "Business hours:",
       "resetSettings": "Reset Settings",
       "resetSettingsDesc": "Reset all calendar settings to default values",
-      "resetToDefault": "Reset to Default"
+      "resetToDefault": "Reset to Default",
+      "defaultViewSection": "Default View",
+      "defaultView": "Startup view",
+      "selectDefaultView": "Select view",
+      "viewDay": "Day",
+      "view3Day": "3 Days",
+      "view5Day": "5 Days",
+      "viewWeek": "Week"
     },
     "chronotype": {
       "title": "Chronotype Settings",
@@ -198,8 +205,10 @@
       "categories": {
         "general": "General",
         "generalDesc": "Language, theme, and startup settings",
+        "calendar": "Calendar",
+        "calendarDesc": "Timezone, display settings, and default view",
         "personalization": "Personalization",
-        "personalizationDesc": "Calendar and tag customization",
+        "personalizationDesc": "Chronotype and tag customization",
         "notifications": "Notifications",
         "notificationsDesc": "Notification and reminder settings",
         "dataControls": "Data Controls",
