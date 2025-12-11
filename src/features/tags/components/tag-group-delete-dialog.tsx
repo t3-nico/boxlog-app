@@ -1,20 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { TagGroup } from '@/features/tags/types'
 import { AlertTriangle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface TagGroupDeleteDialogProps {
   group: TagGroup | null
@@ -23,9 +17,27 @@ interface TagGroupDeleteDialogProps {
   onConfirm: () => Promise<void>
 }
 
+/**
+ * タググループ削除確認ダイアログ
+ *
+ * ReactのcreatePortalを使用してdocument.bodyに直接レンダリング
+ *
+ * スタイルガイド準拠:
+ * - 8pxグリッドシステム（p-6, gap-4, mb-6等）
+ * - 角丸: rounded-xl（16px）for ダイアログ
+ * - Surface: bg-surface（カード、ダイアログ用）
+ * - セマンティックカラー: destructive系トークン使用
+ */
 export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }: TagGroupDeleteDialogProps) {
+  const t = useTranslations()
   const [confirmText, setConfirmText] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // クライアントサイドでのみマウント
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // グループが変更されたら確認テキストをリセット
   useEffect(() => {
@@ -34,45 +46,91 @@ export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }
     }
   }, [group])
 
-  const handleConfirm = async () => {
+  const handleConfirm = useCallback(async () => {
     setIsDeleting(true)
     try {
       await onConfirm()
     } finally {
       setIsDeleting(false)
     }
-  }
+  }, [onConfirm])
+
+  const handleBackdropClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget && !isDeleting) {
+        setConfirmText('')
+        onClose()
+      }
+    },
+    [isDeleting, onClose]
+  )
+
+  // ESCキーでダイアログを閉じる
+  useEffect(() => {
+    if (!group) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isDeleting) {
+        setConfirmText('')
+        onClose()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [group, isDeleting, onClose])
+
+  if (!mounted || !group) return null
 
   const requiresConfirmation = tagCount > 10
-  const canDelete = !requiresConfirmation || confirmText === group?.name
+  const canDelete = !requiresConfirmation || confirmText === group.name
 
-  return (
-    <AlertDialog open={!!group} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent className="max-w-2xl gap-0 p-6">
-        <AlertDialogHeader className="mb-4">
-          <AlertDialogTitle>グループ「{group?.name}」を削除しますか？</AlertDialogTitle>
-        </AlertDialogHeader>
+  const dialog = (
+    <div
+      className="animate-in fade-in fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 duration-150"
+      onClick={handleBackdropClick}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tag-group-delete-dialog-title"
+    >
+      <div
+        className="animate-in zoom-in-95 fade-in bg-surface text-foreground border-border rounded-xl border p-6 shadow-lg duration-150"
+        style={{ width: 'min(calc(100vw - 32px), 512px)' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="mb-6 flex items-start gap-4">
+          <div className="bg-destructive/10 flex size-10 shrink-0 items-center justify-center rounded-full">
+            <AlertTriangle className="text-destructive size-5" />
+          </div>
+          <div className="flex-1">
+            <h2 id="tag-group-delete-dialog-title" className="text-lg leading-tight font-semibold">
+              {t('tag.groupDelete.confirmTitle', { name: group.name })}
+            </h2>
+          </div>
+        </div>
 
-        <div className="space-y-3">
+        {/* Content */}
+        <div className="space-y-4">
           {/* 警告 */}
-          <div className="bg-destructive/10 text-destructive border-destructive/20 flex items-center gap-2 rounded-xl border p-3">
-            <AlertTriangle className="h-4 w-4 shrink-0" />
-            <p className="text-sm font-medium">この操作は元に戻せません</p>
+          <div className="bg-destructive/10 text-destructive border-destructive/20 flex items-center gap-2 rounded-xl border p-4">
+            <AlertTriangle className="size-4 shrink-0" />
+            <p className="text-sm font-medium">{t('tag.groupDelete.warningIrreversible')}</p>
           </div>
 
           {/* タグ数表示 */}
           <div className="bg-surface-container rounded-xl p-4">
-            <p className="mb-2 text-sm font-medium">このグループに属するタグ:</p>
-            <p className="text-muted-foreground text-sm">{tagCount}件のタグが属しています</p>
+            <p className="mb-2 text-sm font-medium">{t('tag.groupDelete.tagsInGroup')}:</p>
+            <p className="text-muted-foreground text-sm">{t('tag.groupDelete.tagCount', { count: tagCount })}</p>
           </div>
 
           {/* 削除後の処理 */}
           <div className="space-y-2">
-            <p className="text-sm font-medium">削除すると:</p>
+            <p className="text-sm font-medium">{t('tag.groupDelete.afterDeletion')}:</p>
             <ul className="text-muted-foreground space-y-1 text-sm">
-              <li>• グループのみが削除されます</li>
-              <li>• 属するタグは「グループなし」状態になります</li>
-              <li>• タグ自体は削除されず、引き続き使用できます</li>
+              <li>• {t('tag.groupDelete.onlyGroupDeleted')}</li>
+              <li>• {t('tag.groupDelete.tagsWillBeUngrouped')}</li>
+              <li>• {t('tag.groupDelete.tagsStillUsable')}</li>
             </ul>
           </div>
 
@@ -80,11 +138,11 @@ export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }
           {requiresConfirmation && (
             <div className="space-y-2">
               <Label htmlFor="confirm-input" className="text-sm font-medium">
-                確認のため、グループ名「{group?.name}」を入力してください
+                {t('tag.groupDelete.confirmInputLabel', { name: group.name })}
               </Label>
               <Input
                 id="confirm-input"
-                placeholder={group?.name}
+                placeholder={group.name}
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
                 className="font-mono"
@@ -93,17 +151,31 @@ export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }
           )}
         </div>
 
-        <AlertDialogFooter className="mt-6">
-          <AlertDialogCancel disabled={isDeleting}>キャンセル</AlertDialogCancel>
-          <AlertDialogAction
+        {/* Footer */}
+        <div className="mt-6 flex justify-end gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setConfirmText('')
+              onClose()
+            }}
+            disabled={isDeleting}
+            className="hover:bg-state-hover"
+          >
+            {t('actions.cancel')}
+          </Button>
+          <Button
+            variant="destructive"
             onClick={handleConfirm}
             disabled={!canDelete || isDeleting}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive-hover"
+            className="hover:bg-destructive-hover"
           >
-            {isDeleting ? '削除中...' : '削除'}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+            {isDeleting ? t('tag.groupDelete.deleting') : t('actions.delete')}
+          </Button>
+        </div>
+      </div>
+    </div>
   )
+
+  return createPortal(dialog, document.body)
 }
