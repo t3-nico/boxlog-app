@@ -1,7 +1,7 @@
 'use client'
 
 import { format } from 'date-fns'
-import { ChevronDown, ChevronUp, FileText } from 'lucide-react'
+import { ChevronDown, ChevronUp, ClipboardList, FileText, History, MessageSquare } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -276,15 +276,17 @@ export function PlanInspectorContent({
             <TabsList className="border-border bg-popover sticky top-0 z-10 grid h-10 w-full shrink-0 grid-cols-3 rounded-none border-b p-0">
               <TabsTrigger
                 value="details"
-                className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className="data-[state=active]:border-primary hover:border-primary/50 flex h-10 items-center justify-center gap-1.5 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               >
+                <ClipboardList className="h-4 w-4" />
                 詳細
               </TabsTrigger>
               <TabsTrigger
                 value="activity"
-                className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className="data-[state=active]:border-primary hover:border-primary/50 flex h-10 items-center justify-center gap-1.5 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               >
                 <span className="relative flex items-center gap-1.5">
+                  <History className="h-4 w-4" />
                   アクティビティ
                   <span
                     role="button"
@@ -320,8 +322,9 @@ export function PlanInspectorContent({
               </TabsTrigger>
               <TabsTrigger
                 value="comments"
-                className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className="data-[state=active]:border-primary hover:border-primary/50 flex h-10 items-center justify-center gap-1.5 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               >
+                <MessageSquare className="h-4 w-4" />
                 コメント
               </TabsTrigger>
             </TabsList>
