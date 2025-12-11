@@ -1,6 +1,7 @@
 'use client'
 
 import * as Portal from '@radix-ui/react-portal'
+import { Check } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 import { RecurrenceDialog } from './RecurrenceDialog'
@@ -13,6 +14,7 @@ interface RecurrencePopoverProps {
   recurrenceRule: string | null // RRULE文字列
   onRecurrenceRuleChange: (rrule: string | null) => void
   placement?: 'bottom' | 'right' | 'left' // ポップアップの表示位置
+  currentValue?: string // 現在の表示値（'毎日', '毎週' など）
 }
 
 export function RecurrencePopover({
@@ -23,6 +25,7 @@ export function RecurrencePopover({
   recurrenceRule,
   onRecurrenceRuleChange,
   placement = 'bottom',
+  currentValue = '',
 }: RecurrencePopoverProps) {
   const popoverRef = useRef<HTMLDivElement>(null)
   const [showCustomDialog, setShowCustomDialog] = useState(false)
@@ -84,7 +87,7 @@ export function RecurrencePopover({
         <Portal.Root>
           <div
             ref={popoverRef}
-            className="border-input bg-popover fixed z-[9999] w-48 rounded-md border shadow-md"
+            className="border-border bg-popover fixed z-[100] w-48 rounded-md border shadow-md"
             style={{
               top: `${position.top}px`,
               left: `${position.left}px`,
@@ -92,7 +95,7 @@ export function RecurrencePopover({
           >
             <div className="p-1">
               <button
-                className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   onRepeatTypeChange('')
                   onOpenChange(false)
@@ -100,10 +103,11 @@ export function RecurrencePopover({
                 type="button"
               >
                 選択しない
+                {currentValue === '' && <Check className="text-primary h-4 w-4" />}
               </button>
               <div className="border-border my-1 border-t" />
               <button
-                className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   onRepeatTypeChange('毎日')
                   onOpenChange(false)
@@ -111,9 +115,10 @@ export function RecurrencePopover({
                 type="button"
               >
                 毎日
+                {currentValue === '毎日' && <Check className="text-primary h-4 w-4" />}
               </button>
               <button
-                className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   onRepeatTypeChange('毎週')
                   onOpenChange(false)
@@ -121,9 +126,10 @@ export function RecurrencePopover({
                 type="button"
               >
                 毎週
+                {currentValue === '毎週' && <Check className="text-primary h-4 w-4" />}
               </button>
               <button
-                className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   onRepeatTypeChange('毎月')
                   onOpenChange(false)
@@ -131,9 +137,10 @@ export function RecurrencePopover({
                 type="button"
               >
                 毎月
+                {currentValue === '毎月' && <Check className="text-primary h-4 w-4" />}
               </button>
               <button
-                className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   onRepeatTypeChange('毎年')
                   onOpenChange(false)
@@ -141,9 +148,10 @@ export function RecurrencePopover({
                 type="button"
               >
                 毎年
+                {currentValue === '毎年' && <Check className="text-primary h-4 w-4" />}
               </button>
               <button
-                className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   onRepeatTypeChange('平日')
                   onOpenChange(false)
@@ -151,10 +159,11 @@ export function RecurrencePopover({
                 type="button"
               >
                 平日（月〜金）
+                {currentValue === '平日' && <Check className="text-primary h-4 w-4" />}
               </button>
               <div className="border-border my-1 border-t" />
               <button
-                className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
                   setShowCustomDialog(true)
                 }}

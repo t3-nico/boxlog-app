@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { devtools, persist } from 'zustand/middleware'
 
 /**
  * Plan Inspector状態管理
@@ -9,6 +9,13 @@ import { devtools } from 'zustand/middleware'
  *
  * @see {@link @/features/inspector} 基本パターン
  */
+
+/**
+ * Inspector表示モード
+ * - sheet: サイドパネル（右側に固定表示）
+ * - popover: ポップアップ（クリック位置に表示）
+ */
+export type InspectorDisplayMode = 'sheet' | 'popover'
 
 /**
  * Plan作成時に事前設定するデータ
@@ -31,6 +38,10 @@ interface PlanInspectorState {
   instanceDate: string | null
   /** 新規作成時の初期データ */
   initialData?: PlanInitialData | undefined
+  /** 表示モード（sheet: サイドパネル, popover: ポップアップ） */
+  displayMode: InspectorDisplayMode
+  /** Popoverのアンカー要素の位置情報 */
+  popoverAnchor?: { x: number; y: number } | undefined
 }
 
 /**
@@ -38,9 +49,14 @@ interface PlanInspectorState {
  */
 interface PlanInspectorActions {
   /** Inspector を開く */
-  openInspector: (planId: string | null, options?: { initialData?: PlanInitialData; instanceDate?: string }) => void
+  openInspector: (
+    planId: string | null,
+    options?: { initialData?: PlanInitialData; instanceDate?: string; anchor?: { x: number; y: number } }
+  ) => void
   /** Inspector を閉じる */
   closeInspector: () => void
+  /** 表示モードを変更する */
+  setDisplayMode: (mode: InspectorDisplayMode) => void
 }
 
 /**
@@ -50,27 +66,43 @@ type PlanInspectorStore = PlanInspectorState & PlanInspectorActions
 
 export const usePlanInspectorStore = create<PlanInspectorStore>()(
   devtools(
-    (set) => ({
-      isOpen: false,
-      planId: null,
-      instanceDate: null,
-      initialData: undefined,
+    persist(
+      (set) => ({
+        isOpen: false,
+        planId: null,
+        instanceDate: null,
+        initialData: undefined,
+        displayMode: 'sheet',
+        popoverAnchor: undefined,
 
-      openInspector: (planId, options) =>
-        set(
-          {
-            isOpen: true,
-            planId,
-            instanceDate: options?.instanceDate ?? null,
-            initialData: planId === null ? options?.initialData : undefined,
-          },
-          false,
-          'openInspector'
-        ),
+        openInspector: (planId, options) =>
+          set(
+            {
+              isOpen: true,
+              planId,
+              instanceDate: options?.instanceDate ?? null,
+              initialData: planId === null ? options?.initialData : undefined,
+              popoverAnchor: options?.anchor,
+            },
+            false,
+            'openInspector'
+          ),
 
-      closeInspector: () =>
-        set({ isOpen: false, planId: null, instanceDate: null, initialData: undefined }, false, 'closeInspector'),
-    }),
+        closeInspector: () =>
+          set(
+            { isOpen: false, planId: null, instanceDate: null, initialData: undefined, popoverAnchor: undefined },
+            false,
+            'closeInspector'
+          ),
+
+        setDisplayMode: (mode) => set({ displayMode: mode }, false, 'setDisplayMode'),
+      }),
+      {
+        name: 'plan-inspector-settings',
+        // displayModeのみ永続化（isOpenやplanIdは永続化しない）
+        partialize: (state) => ({ displayMode: state.displayMode }),
+      }
+    ),
     { name: 'plan-inspector-store' }
   )
 )

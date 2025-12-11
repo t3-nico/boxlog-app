@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 
 import { addDays, endOfWeek, startOfDay, startOfWeek, subDays } from 'date-fns'
+import { CalendarDays, ListTodo } from 'lucide-react'
 
 import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
@@ -81,6 +82,7 @@ export function CalendarSidebar() {
     {
       value: 'todo',
       label: t('calendar.sidebar.tabs.todo'),
+      icon: ListTodo,
       content: (
         <div>
           {/* ナビゲーションコンテナ: 高さ40px（内部32px + 下padding 8px） */}
@@ -106,6 +108,7 @@ export function CalendarSidebar() {
     {
       value: 'view',
       label: t('calendar.sidebar.tabs.view'),
+      icon: CalendarDays,
       content: (
         <div className="px-2 pt-2">
           <MiniCalendar

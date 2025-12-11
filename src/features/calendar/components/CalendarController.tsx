@@ -4,9 +4,10 @@ import React, { useCallback, useEffect, useMemo } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { format } from 'date-fns'
+import { addHours, format, startOfHour } from 'date-fns'
 
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone, setUserTimezone } from '@/features/settings/utils/timezone'
 import { logger } from '@/lib/logger'
@@ -15,6 +16,7 @@ import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
 import { useCalendarContextMenu } from '../hooks/useCalendarContextMenu'
 import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard'
+import { useCalendarPlanKeyboard } from '../hooks/useCalendarPlanKeyboard'
 import { usePlanContextActions } from '../hooks/usePlanContextActions'
 import { usePlanOperations } from '../hooks/usePlanOperations'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
@@ -101,6 +103,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const showWeekends = useCalendarSettingsStore((state) => state.showWeekends)
   const updateSettings = useCalendarSettingsStore((state) => state.updateSettings)
 
+  // 選択中のプランID（削除確認ダイアログ用）
+  const selectedPlanId = usePlanInspectorStore((state) => state.planId)
+
   // キーボードショートカット（Cmd/Ctrl + W）
   useWeekendToggleShortcut()
 
@@ -182,6 +187,39 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     onNavigate: handleNavigate,
     onViewChange: handleViewChange,
     onToggleWeekends: handleToggleWeekends,
+  })
+
+  // プラン操作キーボードショートカット（Delete/Backspace, C）
+  const getInitialPlanData = useCallback(() => {
+    const now = new Date()
+    const start = startOfHour(now)
+    const end = addHours(start, 1)
+    return {
+      start_time: start.toISOString(),
+      end_time: end.toISOString(),
+    }
+  }, [])
+
+  // 選択中のプランタイトルを取得（削除確認ダイアログ用）
+  const getSelectedPlanTitle = useCallback(() => {
+    if (!selectedPlanId) return null
+    const plan = filteredEvents.find((p) => p.id === selectedPlanId)
+    return plan?.title ?? null
+  }, [selectedPlanId, filteredEvents])
+
+  // 削除関数をPromise化（既存のPlanDeleteConfirmDialogシステム用）
+  const deletePlanAsync = useCallback(
+    async (planId: string) => {
+      deletePlan(planId)
+    },
+    [deletePlan]
+  )
+
+  useCalendarPlanKeyboard({
+    enabled: true,
+    onDeletePlan: deletePlanAsync,
+    getSelectedPlanTitle,
+    getInitialPlanData,
   })
 
   // ビューコンポーネントのレンダリング用props（memo化のため安定した参照を保持）

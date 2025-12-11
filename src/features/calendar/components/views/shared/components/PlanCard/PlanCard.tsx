@@ -23,7 +23,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   plan,
   position,
   onClick,
-  onDoubleClick,
   onContextMenu,
   onDragStart,
   onDragEnd,
@@ -38,6 +37,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   const t = useTranslations()
   const { updatePlan } = usePlanMutations()
   const [isHovered, setIsHovered] = useState(false)
+  const [isCheckboxHovered, setIsCheckboxHovered] = useState(false)
 
   // すべてのプランは時間指定プラン
 
@@ -75,14 +75,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       onClick?.(plan)
     },
     [onClick, plan]
-  )
-
-  const handleDoubleClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation()
-      onDoubleClick?.(plan)
-    },
-    [onDoubleClick, plan]
   )
 
   const handleContextMenu = useCallback(
@@ -136,8 +128,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     [onClick, plan]
   )
 
-  // リサイズハンドラー
-  const handleResizeMouseDown = useCallback(
+  // 下端リサイズハンドラー
+  const handleBottomResizeMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation()
       e.preventDefault()
@@ -187,8 +179,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     isSelected && 'ring-primary ring-2 ring-offset-1',
     // Inspectorで開いているプランのハイライト（Board/Inboxと同様にborder-primary）
     isActive ? 'border-primary border-2' : 'border-transparent',
-    // サイズ別スタイル（上下左右に8pxのpadding = p-2）
-    safePosition.height < 30 ? 'p-2 text-xs' : 'p-2 text-sm',
+    // サイズ別スタイル（上下左右に8pxのpadding = p-2、フォントは統一）
+    'p-2 text-sm',
     className
   )
 
@@ -203,7 +195,6 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       className={planCardClasses}
       style={dynamicStyle}
       onClick={handleClick}
-      onDoubleClick={handleDoubleClick}
       onContextMenu={handleContextMenu}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
@@ -216,45 +207,53 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
       aria-label={`plan: ${plan.title}`}
       aria-pressed={isSelected}
     >
-      {/* チェックボックス（十分な高さがある場合のみ表示） */}
-      {safePosition.height >= 40 && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation()
-            const effectiveStatus = getEffectiveStatus(plan)
-            const newStatus = effectiveStatus === 'done' ? 'todo' : 'done'
-            updatePlan.mutate({
-              id: plan.id,
-              data: { status: newStatus },
-            })
-          }}
-          className="absolute top-2 left-2 z-10 flex-shrink-0 rounded transition-colors hover:opacity-80"
-          aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
-        >
-          {(() => {
-            const status = getEffectiveStatus(plan)
-            if (status === 'done') {
-              return <CheckCircle2 className="text-success h-4 w-4" />
-            }
-            if (status === 'doing') {
-              return <Circle className="text-primary h-4 w-4" />
-            }
-            // todo
-            return <Circle className="text-muted-foreground h-4 w-4" />
-          })()}
-        </button>
-      )}
+      {/* チェックボックス（常に表示、サイズは高さに応じて調整） */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation()
+          const effectiveStatus = getEffectiveStatus(plan)
+          const newStatus = effectiveStatus === 'done' ? 'todo' : 'done'
+          updatePlan.mutate({
+            id: plan.id,
+            data: { status: newStatus },
+          })
+        }}
+        onMouseEnter={() => setIsCheckboxHovered(true)}
+        onMouseLeave={() => setIsCheckboxHovered(false)}
+        className={cn(
+          'absolute z-10 flex-shrink-0 rounded',
+          safePosition.height < 30 ? 'top-0.5 left-0.5' : 'top-2 left-2'
+        )}
+        aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
+      >
+        {(() => {
+          const status = getEffectiveStatus(plan)
+          const iconClass = safePosition.height < 30 ? 'h-3 w-3' : 'h-4 w-4'
+          if (status === 'done') {
+            return <CheckCircle2 className={cn('text-success', iconClass)} />
+          }
+          // ホバー時はチェックマークを表示（完了予告）
+          if (isCheckboxHovered) {
+            return <CheckCircle2 className={cn('text-success', iconClass)} />
+          }
+          if (status === 'doing') {
+            return <Circle className={cn('text-primary', iconClass)} />
+          }
+          // todo
+          return <Circle className={cn('text-muted-foreground', iconClass)} />
+        })()}
+      </button>
 
       <PlanCardContent
         plan={plan}
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}
-        hasCheckbox={safePosition.height >= 40}
+        hasCheckbox={true}
       />
 
-      {/* 下部リサイズハンドル */}
+      {/* 下端リサイズハンドル */}
       <div
         className="focus:ring-ring absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-offset-1 focus:outline-none"
         role="slider"
@@ -264,7 +263,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         aria-valuenow={safePosition.height}
         aria-valuemin={20}
         aria-valuemax={480}
-        onMouseDown={handleResizeMouseDown}
+        onMouseDown={handleBottomResizeMouseDown}
         onKeyDown={handleResizeKeyDown}
         style={{
           height: '8px',

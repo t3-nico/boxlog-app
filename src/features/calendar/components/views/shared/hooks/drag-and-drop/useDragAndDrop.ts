@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore'
+
 import type { DragDataRef, DragState, UseDragAndDropProps } from './types'
 import { initialDragState } from './types'
 import { useDragHandler } from './useDragHandler'
@@ -32,6 +34,9 @@ export function useDragAndDrop({
 }: UseDragAndDropProps) {
   const eventUpdateHandler = onEventUpdate || onPlanUpdate
   const eventClickHandler = onEventClick || onPlanClick
+
+  // グローバルドラッグ状態（日付間移動用）
+  const { startDrag, updateDrag, endDrag } = useCalendarDragStore()
 
   // eventClickHandler の最新参照を保持（クロージャー問題を回避）
   // 重要: useRef の初期値として eventClickHandler を設定し、毎回の render で同期更新も行う
@@ -165,6 +170,12 @@ export function useDragAndDrop({
             dragData.initialRect = initialRect
           }
 
+          // グローバルストアにドラッグ開始を通知（日付間移動用）
+          const draggedPlan = eventsRef.current.find((e) => e.id === dragData.eventId)
+          if (draggedPlan) {
+            startDrag(dragData.eventId, draggedPlan, dragData.originalDateIndex)
+          }
+
           setDragState((prev) => ({
             ...prev,
             isPending: false,
@@ -191,6 +202,12 @@ export function useDragAndDrop({
         // dragState.isDragging がまだ false でも hasMoved が true ならドラッグ処理を実行
         // （isPending → isDragging 遷移直後は dragState がまだ更新されていないため）
         handleDragging(constrainedX, constrainedY, deltaX, deltaY, targetDateIndex)
+
+        // グローバルストアを更新（日付間移動の状態共有）
+        updateDrag({
+          targetDateIndex,
+          isDragging: true,
+        })
       }
     },
     [
@@ -202,6 +219,8 @@ export function useDragAndDrop({
       handleResizing,
       handleDragging,
       setDragState,
+      startDrag,
+      updateDrag,
     ]
   )
 
@@ -213,6 +232,7 @@ export function useDragAndDrop({
     if (dragState.isPending && !dragState.isDragging && !dragState.isResizing) {
       handleEventClick()
       resetDragState()
+      endDrag() // グローバルストアをリセット
       return
     }
 
@@ -224,12 +244,14 @@ export function useDragAndDrop({
       !dragState.dragStartPosition
     ) {
       resetDragState()
+      endDrag() // グローバルストアをリセット
       return
     }
 
     // リサイズ完了処理（クリック処理は行わない）
     if (dragState.isResizing) {
       handleResizeComplete()
+      endDrag() // グローバルストアをリセット
       return
     }
 
@@ -244,6 +266,7 @@ export function useDragAndDrop({
 
     const actuallyDragged = dragDataRef.current?.hasMoved || false
     completeDragOperation(actuallyDragged)
+    endDrag() // グローバルストアをリセット
   }, [
     dragState,
     date,
@@ -255,6 +278,7 @@ export function useDragAndDrop({
     handleResizeComplete,
     executeEventUpdate,
     completeDragOperation,
+    endDrag,
   ])
 
   // handleMouseDown をラップして disabledPlanId をチェック

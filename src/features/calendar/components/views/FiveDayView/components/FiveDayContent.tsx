@@ -2,6 +2,7 @@
 
 import React, { useCallback } from 'react'
 
+import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { cn } from '@/lib/utils'
@@ -50,6 +51,13 @@ export const FiveDayContent = ({
   // Inspectorで開いているプランのIDを取得
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId)
   const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen)
+
+  // グローバルドラッグ状態（日付間移動用）
+  const globalDragState = useCalendarDragStore()
+  const isGlobalDragging = globalDragState.isDragging
+  const globalDraggedPlan = globalDragState.draggedPlan
+  const globalTargetDateIndex = globalDragState.targetDateIndex
+  const globalOriginalDateIndex = globalDragState.originalDateIndex
 
   // ドラッグ&ドロップ機能用にonPlanUpdateを変換
   const handlePlanUpdate = useCallback(
@@ -122,6 +130,11 @@ export const FiveDayContent = ({
           if (!style) return null
 
           const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
+
+          // 日付間移動中のプランは元のカラムで半透明に（ゴースト要素がカーソルに追従）
+          const isMovingToOtherDate =
+            isGlobalDragging && globalDraggedPlan?.id === plan.id && globalTargetDateIndex !== globalOriginalDateIndex
+
           const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
@@ -129,8 +142,11 @@ export const FiveDayContent = ({
           // ゴースト表示スタイル（共通化）
           const adjustedStyle = calculatePlanGhostStyle(style, plan.id, dragState)
 
+          // 他の日付に移動中は元のプランを半透明に
+          const finalStyle = isMovingToOtherDate ? { ...adjustedStyle, opacity: 0.3 } : adjustedStyle
+
           return (
-            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-plan-block="true">
+            <div key={plan.id} style={finalStyle} className="pointer-events-none absolute" data-plan-block="true">
               {/* PlanBlockの内容部分のみクリック可能 */}
               <div
                 className="focus:ring-ring pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"

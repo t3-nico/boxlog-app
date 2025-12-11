@@ -46,15 +46,19 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
             gridTemplateColumns: `repeat(${tabs.length}, 1fr)`,
           }}
         >
-          {tabs.map((tab) => (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              className="border-border data-[state=active]:border-foreground hover:border-foreground/50 h-8 rounded-none border-b-2 p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
-              {tab.label}
-            </TabsTrigger>
-          ))}
+          {tabs.map((tab) => {
+            const Icon = tab.icon
+            return (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className="border-border data-[state=active]:border-foreground hover:border-foreground/50 h-8 gap-1.5 rounded-none border-b-2 p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
+                {Icon && <Icon className="size-4" />}
+                {tab.label}
+              </TabsTrigger>
+            )
+          })}
         </TabsList>
 
         {/* TabsContent - スクロール可能 */}

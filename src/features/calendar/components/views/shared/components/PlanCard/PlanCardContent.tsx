@@ -57,10 +57,10 @@ export const PlanCardContent = memo<PlanCardContentProps>(function PlanCardConte
   if (isCompact) {
     // コンパクト表示：タイトル #番号
     return (
-      <div className="flex h-full items-center gap-1">
-        <span className="text-foreground truncate text-xs leading-tight font-medium">{plan.title}</span>
+      <div className={`flex h-full items-center gap-1 ${hasCheckbox ? 'pl-4' : ''}`}>
+        <span className="text-foreground truncate text-sm leading-tight font-medium">{plan.title}</span>
         {plan.plan_number && (
-          <span className="flex-shrink-0 text-xs leading-tight opacity-75">#{plan.plan_number}</span>
+          <span className="flex-shrink-0 text-sm leading-tight opacity-75">#{plan.plan_number}</span>
         )}
       </div>
     )

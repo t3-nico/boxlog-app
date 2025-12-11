@@ -22,7 +22,6 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
   isWeekend: isWeekendProp,
   onTimeClick,
   onEventClick,
-  onEventDoubleClick,
   onEventContextMenu,
   className = '',
 }) {
@@ -102,7 +101,6 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
               plan={event}
               position={position} // undefinedでも大丈夫（PlanCard側で対応済み）
               onClick={onEventClick}
-              onDoubleClick={onEventDoubleClick}
               onContextMenu={onEventContextMenu}
             />
           )

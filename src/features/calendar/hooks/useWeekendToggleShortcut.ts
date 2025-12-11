@@ -68,7 +68,7 @@ function showToggleFeedback(newState: boolean) {
   const notification = document.createElement('div')
   notification.id = 'weekend-toggle-feedback'
   notification.className = `
-    fixed top-4 right-4 z-[9999]
+    fixed top-4 right-4 z-[300]
     bg-white dark:bg-gray-800
     border border-border
     rounded-xl shadow-lg
