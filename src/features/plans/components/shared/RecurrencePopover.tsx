@@ -87,7 +87,7 @@ export function RecurrencePopover({
         <Portal.Root>
           <div
             ref={popoverRef}
-            className="border-border bg-popover fixed z-[9999] w-48 rounded-md border shadow-md"
+            className="border-border bg-popover fixed z-[100] w-48 rounded-md border shadow-md"
             style={{
               top: `${position.top}px`,
               left: `${position.left}px`,
