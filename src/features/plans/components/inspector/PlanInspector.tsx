@@ -76,9 +76,7 @@ export function PlanInspector() {
         showCloseButton={false}
       >
         <DialogTitle className="sr-only">{plan?.title || '予定の詳細'}</DialogTitle>
-        <div className="flex-1 overflow-y-auto">
-          <PlanInspectorContent showResizeHandle={false} />
-        </div>
+        <PlanInspectorContent showResizeHandle={false} isPopover={true} />
       </DialogContent>
     </Dialog>
   )

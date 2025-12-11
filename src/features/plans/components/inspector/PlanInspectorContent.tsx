@@ -4,7 +4,6 @@ import { format } from 'date-fns'
 import { ChevronDown, ChevronUp, FileText } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
 
@@ -30,13 +29,19 @@ interface PlanInspectorContentProps {
     isResizing: boolean
     handleMouseDown: (e: React.MouseEvent) => void
   }
+  /** ポップアップモードか（ヘッダー固定用） */
+  isPopover?: boolean
 }
 
 /**
  * Plan Inspectorのコンテンツ部分
  * Sheet/Popover両方で共通で使用される
  */
-export function PlanInspectorContent({ showResizeHandle = false, resizeProps }: PlanInspectorContentProps) {
+export function PlanInspectorContent({
+  showResizeHandle = false,
+  resizeProps,
+  isPopover = false,
+}: PlanInspectorContentProps) {
   const planId = usePlanInspectorStore((state) => state.planId)
   const initialData = usePlanInspectorStore((state) => state.initialData)
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector)
@@ -242,17 +247,8 @@ export function PlanInspectorContent({ showResizeHandle = false, resizeProps }: 
     [selectedDate, autoSave]
   )
 
-  return (
+  const content = (
     <>
-      {/* Resize Handle (Sheet mode only) */}
-      {showResizeHandle && resizeProps && (
-        <div
-          onMouseDown={resizeProps.handleMouseDown}
-          className={`hover:bg-primary/50 absolute top-0 left-0 h-full w-1 cursor-ew-resize ${resizeProps.isResizing ? 'bg-primary' : ''}`}
-          style={{ touchAction: 'none' }}
-        />
-      )}
-
       {isLoading ? (
         <div className="flex h-full items-center justify-center">
           <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2" />
@@ -263,19 +259,21 @@ export function PlanInspectorContent({ showResizeHandle = false, resizeProps }: 
         </div>
       ) : (
         <>
-          <InspectorHeader
-            plan={plan}
-            planId={planId!}
-            hasPrevious={hasPrevious}
-            hasNext={hasNext}
-            onClose={closeInspector}
-            onPrevious={goToPrevious}
-            onNext={goToNext}
-            onDelete={handleDelete}
-          />
+          <div className="bg-popover sticky top-0 z-10">
+            <InspectorHeader
+              plan={plan}
+              planId={planId!}
+              hasPrevious={hasPrevious}
+              hasNext={hasNext}
+              onClose={closeInspector}
+              onPrevious={goToPrevious}
+              onNext={goToNext}
+              onDelete={handleDelete}
+            />
+          </div>
 
-          <Tabs defaultValue="details" className="pt-2">
-            <TabsList className="border-border grid h-10 w-full grid-cols-3 rounded-none border-b bg-transparent p-0">
+          <Tabs defaultValue="details" className="flex flex-1 flex-col overflow-hidden pt-2">
+            <TabsList className="border-border bg-popover sticky top-0 z-10 grid h-10 w-full shrink-0 grid-cols-3 rounded-none border-b p-0">
               <TabsTrigger
                 value="details"
                 className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
@@ -328,7 +326,7 @@ export function PlanInspectorContent({ showResizeHandle = false, resizeProps }: 
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="details">
+            <TabsContent value="details" className="flex-1 overflow-y-auto">
               {/* Title */}
               <div className="px-6 pt-4 pb-2">
                 <div className="inline">
@@ -412,10 +410,10 @@ export function PlanInspectorContent({ showResizeHandle = false, resizeProps }: 
               />
 
               {/* Description */}
-              <div className="border-border/50 max-h-[232px] min-h-12 border-t px-6 py-2">
-                <div className="flex h-8 items-center gap-2">
-                  <FileText className="text-muted-foreground h-4 w-4 flex-shrink-0" />
-                  <div className="min-w-0 flex-1 overflow-hidden">
+              <div className="border-border/50 flex min-h-12 items-start border-t px-6 py-2">
+                <div className="flex">
+                  <FileText className="text-muted-foreground mt-1.5 mr-2 h-4 w-4 flex-shrink-0" />
+                  <div className="max-h-52 min-w-0 flex-1 overflow-y-auto">
                     <NovelDescriptionEditor
                       key={plan.id}
                       content={plan.description || ''}
@@ -425,37 +423,32 @@ export function PlanInspectorContent({ showResizeHandle = false, resizeProps }: 
                   </div>
                 </div>
               </div>
-
-              {/* Status */}
-              <div className="flex flex-col gap-4 px-6 py-4">
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="status">ステータス</Label>
-                  <select
-                    id="status"
-                    key={`status-${plan.id}`}
-                    defaultValue={plan.status}
-                    onChange={(e) => autoSave('status', e.target.value)}
-                    className="bg-background border-input ring-offset-background focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                  >
-                    <option value="open">Open</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                </div>
-              </div>
             </TabsContent>
 
-            <TabsContent value="activity">
+            <TabsContent value="activity" className="flex-1 overflow-y-auto">
               <ActivityTab planId={planId!} order={activityOrder} />
             </TabsContent>
 
-            <TabsContent value="comments">
+            <TabsContent value="comments" className="flex-1 overflow-y-auto">
               <div className="text-muted-foreground py-8 text-center">コメント機能は準備中です</div>
             </TabsContent>
           </Tabs>
         </>
       )}
     </>
+  )
+
+  return (
+    <div className="flex h-full flex-col overflow-hidden">
+      {/* Resize Handle (Sheet mode only) */}
+      {showResizeHandle && resizeProps && (
+        <div
+          onMouseDown={resizeProps.handleMouseDown}
+          className={`hover:bg-primary/50 absolute top-0 left-0 h-full w-1 cursor-ew-resize ${resizeProps.isResizing ? 'bg-primary' : ''}`}
+          style={{ touchAction: 'none' }}
+        />
+      )}
+      {content}
+    </div>
   )
 }
