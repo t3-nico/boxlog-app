@@ -1,9 +1,36 @@
 import { cn } from '@/lib/utils'
 
-function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
+/**
+ * Skeletonアニメーションタイプ
+ * - pulse: フェードイン/アウト（デフォルト、軽量）
+ * - shimmer: 左→右の波アニメーション（Facebook/LinkedIn方式、高級感）
+ *
+ * @see https://uxdesign.cc/what-you-should-know-about-skeleton-screens-a820c45a571a
+ * shimmerはpulseより最大40%速く感じられる（UX研究結果）
+ */
+type SkeletonAnimation = 'pulse' | 'shimmer'
+
+interface SkeletonProps extends React.ComponentProps<'div'> {
+  /**
+   * アニメーションタイプ
+   * @default 'pulse'
+   */
+  animation?: SkeletonAnimation
+}
+
+function Skeleton({ className, animation = 'pulse', ...props }: SkeletonProps) {
   return (
-    <div data-slot="skeleton" className={cn('bg-surface-container animate-pulse rounded-md', className)} {...props} />
+    <div
+      data-slot="skeleton"
+      className={cn(
+        'rounded-md',
+        animation === 'shimmer' ? 'animate-shimmer' : 'bg-surface-container animate-pulse',
+        className
+      )}
+      {...props}
+    />
   )
 }
 
 export { Skeleton }
+export type { SkeletonProps, SkeletonAnimation }
