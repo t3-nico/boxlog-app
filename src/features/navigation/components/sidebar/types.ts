@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 
+import type { LucideIcon } from 'lucide-react'
+
 /**
  * Sidebarタブの定義
  */
@@ -8,6 +10,8 @@ export interface SidebarTab {
   value: string
   /** タブのラベル */
   label: string
+  /** タブのアイコン（オプション） */
+  icon?: LucideIcon
   /** タブのコンテンツ */
   content: ReactNode
 }
