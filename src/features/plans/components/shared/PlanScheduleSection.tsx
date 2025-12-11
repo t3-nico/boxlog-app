@@ -3,12 +3,27 @@
 import { Button } from '@/components/ui/button'
 import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime'
 import { configToReadable, ruleToConfig } from '@/features/plans/utils/rrule'
+import { addDays, addWeeks, isToday, isTomorrow, startOfWeek } from 'date-fns'
 import { Bell, Calendar, Clock, Repeat } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 import { DatePickerPopover } from './DatePickerPopover'
 import { RecurrencePopover } from './RecurrencePopover'
 import { ReminderSelect } from './ReminderSelect'
 import { TimeSelect } from './TimeSelect'
+
+// 日付クイックオプション
+const DATE_QUICK_OPTIONS = [
+  { label: '今日', getValue: () => new Date() },
+  { label: '明日', getValue: () => addDays(new Date(), 1) },
+  { label: '来週', getValue: () => addWeeks(startOfWeek(new Date(), { weekStartsOn: 1 }), 1) },
+] as const
+
+// 所要時間プリセット（分単位）
+const DURATION_PRESETS = [
+  { label: '30分', minutes: 30 },
+  { label: '1時間', minutes: 60 },
+  { label: '2時間', minutes: 120 },
+] as const
 
 interface PlanScheduleSectionProps {
   // 日付・時刻
@@ -55,25 +70,6 @@ export function PlanScheduleSection({
   const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
   const recurrenceTriggerRef = useRef<HTMLButtonElement>(null)
 
-  // 経過時間を計算（00:00形式）
-  const elapsedTime = useMemo(() => {
-    if (!startTime || !endTime) return null
-
-    const [startHour, startMin] = startTime.split(':').map(Number)
-    const [endHour, endMin] = endTime.split(':').map(Number)
-
-    const startMinutes = startHour! * 60 + startMin!
-    const endMinutes = endHour! * 60 + endMin!
-
-    const diffMinutes = endMinutes - startMinutes
-    if (diffMinutes <= 0) return null
-
-    const hours = Math.floor(diffMinutes / 60)
-    const minutes = diffMinutes % 60
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
-  }, [startTime, endTime])
-
   // 時刻自動調整フック
   const { handleStartTimeChange: autoStartTimeChange, handleEndTimeChange: autoEndTimeChange } = useAutoAdjustEndTime(
     startTime,
@@ -114,9 +110,52 @@ export function PlanScheduleSection({
   // 繰り返しが設定されているか
   const hasRecurrence = recurrenceRule || (recurrenceType && recurrenceType !== 'none')
 
+  // 選択中の日付がクイックオプションに該当するかチェック
+  const getActiveQuickOption = () => {
+    if (!selectedDate) return null
+    if (isToday(selectedDate)) return '今日'
+    if (isTomorrow(selectedDate)) return '明日'
+    return null
+  }
+  const activeQuickOption = getActiveQuickOption()
+
+  // 所要時間プリセットを適用
+  const applyDurationPreset = (minutes: number) => {
+    if (!startTime) return
+
+    const [hour, min] = startTime.split(':').map(Number)
+    const startMinutes = hour! * 60 + min!
+    let endMinutes = startMinutes + minutes
+
+    // 24時を超えた場合は23:59に制限
+    if (endMinutes >= 24 * 60) {
+      endMinutes = 23 * 60 + 59
+    }
+
+    const endHour = Math.floor(endMinutes / 60)
+    const endMin = endMinutes % 60
+    const newEndTime = `${endHour.toString().padStart(2, '0')}:${endMin.toString().padStart(2, '0')}`
+    onEndTimeChange(newEndTime)
+  }
+
+  // 現在の所要時間（分）を取得
+  const getCurrentDurationMinutes = () => {
+    if (!startTime || !endTime) return null
+    const [startHour, startMin] = startTime.split(':').map(Number)
+    const [endHour, endMin] = endTime.split(':').map(Number)
+    return endHour! * 60 + endMin! - (startHour! * 60 + startMin!)
+  }
+  const currentDuration = getCurrentDurationMinutes()
+
   // プロパティグリッド: ラベル幅を統一
   const labelClassName = 'text-muted-foreground flex h-8 w-24 flex-shrink-0 items-center text-sm'
   const valueClassName = 'flex h-8 flex-1 items-center'
+
+  // クイックオプションのスタイル
+  const quickOptionClassName = (isActive: boolean) =>
+    `h-6 rounded-md px-2 text-xs transition-colors ${
+      isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+    }`
 
   return (
     <div className={showBorderTop ? 'border-border/50 border-t' : ''}>
@@ -128,6 +167,20 @@ export function PlanScheduleSection({
         </div>
         <div className={valueClassName}>
           <DatePickerPopover selectedDate={selectedDate} onDateChange={onDateChange} />
+          {/* クイックオプション */}
+          <div className="ml-2 flex items-center gap-1">
+            {DATE_QUICK_OPTIONS.map((option) => (
+              <button
+                key={option.label}
+                type="button"
+                disabled={disabled}
+                onClick={() => onDateChange(option.getValue())}
+                className={quickOptionClassName(activeQuickOption === option.label)}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -147,7 +200,22 @@ export function PlanScheduleSection({
             disabled={disabled || !startTime}
             minTime={startTime}
           />
-          {elapsedTime && <span className="text-muted-foreground ml-2 text-sm">({elapsedTime})</span>}
+          {/* 所要時間プリセット */}
+          {startTime && (
+            <div className="ml-2 flex items-center gap-1">
+              {DURATION_PRESETS.map((preset) => (
+                <button
+                  key={preset.label}
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => applyDurationPreset(preset.minutes)}
+                  className={quickOptionClassName(currentDuration === preset.minutes)}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -180,6 +248,7 @@ export function PlanScheduleSection({
             recurrenceRule={recurrenceRule}
             onRepeatTypeChange={onRepeatTypeChange}
             onRecurrenceRuleChange={onRecurrenceRuleChange}
+            currentValue={hasRecurrence ? recurrenceDisplayText : ''}
           />
         </div>
       </div>

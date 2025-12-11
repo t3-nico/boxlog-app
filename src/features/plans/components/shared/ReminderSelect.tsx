@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Bell } from 'lucide-react'
+import { Bell, Check } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 // 通知オプションの定義（UI表示文字列）
@@ -121,14 +121,14 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
       )}
 
       {showPopover && !disabled && (
-        <div className="border-input bg-popover absolute top-10 left-0 z-50 w-56 rounded-md border shadow-md">
+        <div className="border-border bg-popover absolute top-10 left-0 z-50 w-56 rounded-md border shadow-md">
           <div className="p-1">
             {REMINDER_OPTIONS.map((option, index) => (
               <>
                 {index === 1 && <div key="separator" className="border-border my-1 border-t" />}
                 <button
                   key={option.value}
-                  className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                  className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
                   onClick={() => {
                     onChange(option.value)
                     setShowPopover(false)
@@ -136,6 +136,7 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
                   type="button"
                 >
                   {option.label}
+                  {value === option.value && <Check className="text-primary h-4 w-4" />}
                 </button>
               </>
             ))}

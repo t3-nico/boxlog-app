@@ -355,7 +355,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
         )}
 
         {isOpen && !disabled && filteredOptions.length > 0 && (
-          <div className="border-input bg-popover absolute top-10 left-0 z-50 w-20 overflow-hidden rounded-md border shadow-md">
+          <div className="border-border bg-popover absolute top-10 left-0 z-50 w-20 overflow-hidden rounded-md border shadow-md">
             <div
               id="time-listbox"
               ref={listRef}

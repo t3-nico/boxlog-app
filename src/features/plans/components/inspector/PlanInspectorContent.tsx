@@ -314,7 +314,7 @@ export function PlanInspectorContent({
                     )}
                   </span>
                   {isHoveringSort && (
-                    <div className="bg-foreground text-background absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 rounded-md px-3 py-1.5 text-xs whitespace-nowrap">
+                    <div className="bg-foreground text-background absolute bottom-full left-1/2 z-[100] mb-2 -translate-x-1/2 rounded-md px-3 py-1.5 text-xs whitespace-nowrap">
                       {activityOrder === 'desc' ? '最新順で表示中' : '古い順で表示中'}
                     </div>
                   )}
