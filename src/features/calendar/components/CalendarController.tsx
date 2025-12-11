@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { format } from 'date-fns'
+import { addHours, format, startOfHour } from 'date-fns'
 
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
@@ -15,6 +15,7 @@ import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
 import { useCalendarContextMenu } from '../hooks/useCalendarContextMenu'
 import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard'
+import { useCalendarPlanKeyboard } from '../hooks/useCalendarPlanKeyboard'
 import { usePlanContextActions } from '../hooks/usePlanContextActions'
 import { usePlanOperations } from '../hooks/usePlanOperations'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
@@ -182,6 +183,23 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     onNavigate: handleNavigate,
     onViewChange: handleViewChange,
     onToggleWeekends: handleToggleWeekends,
+  })
+
+  // プラン操作キーボードショートカット（Delete/Backspace, C）
+  const getInitialPlanData = useCallback(() => {
+    const now = new Date()
+    const start = startOfHour(now)
+    const end = addHours(start, 1)
+    return {
+      start_time: start.toISOString(),
+      end_time: end.toISOString(),
+    }
+  }, [])
+
+  useCalendarPlanKeyboard({
+    enabled: true,
+    onDeletePlan: deletePlan,
+    getInitialPlanData,
   })
 
   // ビューコンポーネントのレンダリング用props（memo化のため安定した参照を保持）

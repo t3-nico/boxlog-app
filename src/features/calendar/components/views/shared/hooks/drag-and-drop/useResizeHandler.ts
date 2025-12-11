@@ -26,28 +26,29 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
   const t = useTranslations()
   const calendarToast = useCalendarToast()
 
-  // リサイズ処理
+  // リサイズ処理（下端リサイズのみ）
   const handleResizing = useCallback(
     (constrainedX: number, constrainedY: number, deltaY: number) => {
       const dragData = dragDataRef.current
       if (!dragData) return
 
+      const event = events.find((e) => e.id === dragData.eventId)
+      let previewTime = null
+
+      // 下端リサイズ: 終了時刻を変更（開始時刻は固定）
       const newHeight = Math.max(15, dragData.eventDuration + deltaY)
       const { snappedTop: snappedHeight } = snapToQuarterHour(newHeight)
       const finalHeight = Math.max(HOUR_HEIGHT / 4, snappedHeight)
-
-      // サイズが変更されたらhasMovedをtrueに設定（リサイズ完了時の更新に必要）
-      if (Math.abs(deltaY) > 5) {
-        dragData.hasMoved = true
-      }
-
-      const event = events.find((e) => e.id === dragData.eventId)
-      let previewTime = null
 
       if (event?.startDate) {
         const newDurationMs = (finalHeight / HOUR_HEIGHT) * 60 * 60 * 1000
         const previewEndTime = new Date(event.startDate.getTime() + newDurationMs)
         previewTime = { start: event.startDate, end: previewEndTime }
+      }
+
+      // サイズが変更されたらhasMovedをtrueに設定（リサイズ完了時の更新に必要）
+      if (Math.abs(deltaY) > 5) {
+        dragData.hasMoved = true
       }
 
       setDragState((prev) => ({
@@ -63,7 +64,7 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
     [events, dragDataRef, setDragState]
   )
 
-  // リサイズ完了処理
+  // リサイズ完了処理（下端リサイズのみ）
   const handleResize = useCallback(
     (snappedHeight: number | undefined) => {
       if (!dragDataRef.current || !snappedHeight) {
@@ -135,7 +136,7 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
     [events, eventUpdateHandler, dragDataRef, calendarToast, t]
   )
 
-  // リサイズ開始
+  // リサイズ開始（下端リサイズのみ）
   const handleResizeStart = useCallback(
     (
       eventId: string,

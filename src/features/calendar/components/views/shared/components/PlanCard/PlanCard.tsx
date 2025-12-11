@@ -127,8 +127,8 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
     [onClick, plan]
   )
 
-  // リサイズハンドラー
-  const handleResizeMouseDown = useCallback(
+  // 下端リサイズハンドラー
+  const handleBottomResizeMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation()
       e.preventDefault()
@@ -244,7 +244,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         hasCheckbox={safePosition.height >= 40}
       />
 
-      {/* 下部リサイズハンドル */}
+      {/* 下端リサイズハンドル */}
       <div
         className="focus:ring-ring absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-offset-1 focus:outline-none"
         role="slider"
@@ -254,7 +254,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
         aria-valuenow={safePosition.height}
         aria-valuemin={20}
         aria-valuemax={480}
-        onMouseDown={handleResizeMouseDown}
+        onMouseDown={handleBottomResizeMouseDown}
         onKeyDown={handleResizeKeyDown}
         style={{
           height: '8px',

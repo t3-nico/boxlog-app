@@ -219,8 +219,11 @@ export function usePlanMutations() {
       }
     },
     onSettled: () => {
-      // mutation完了後にフラグをリセット
-      setIsMutating(false)
+      // mutation完了後、refetchが安定するまで少し待ってからフラグをリセット
+      // Realtime更新との競合を防ぐため
+      setTimeout(() => {
+        setIsMutating(false)
+      }, 500)
     },
   })
 
