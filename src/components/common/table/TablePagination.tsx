@@ -63,7 +63,7 @@ export function TablePagination({
     <div className="flex items-center justify-between px-4 py-4">
       {/* 左側: 表示件数選択 */}
       <div className="flex items-center gap-2">
-        <span className="text-muted-foreground text-sm">{t('common.table.rowsPerPage')}</span>
+        <span className="text-muted-foreground text-sm">{t('table.rowsPerPage')}</span>
         <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
           <SelectTrigger className="h-8 w-[72px]">
             <SelectValue />
@@ -80,15 +80,9 @@ export function TablePagination({
 
       {/* 中央: ページ情報 */}
       <div className="text-muted-foreground text-sm">
-        {totalItems > 0 ? (
-          <>
-            {startItem}〜{endItem}
-            {t('common.table.items')} / {t('common.table.total')} {totalItems}
-            {t('common.table.items')}
-          </>
-        ) : (
-          <>0{t('common.table.items')}</>
-        )}
+        {totalItems > 0
+          ? t('table.items', { start: startItem, end: endItem, total: totalItems })
+          : t('table.items', { start: 0, end: 0, total: 0 })}
       </div>
 
       {/* 右側: ページ移動ボタン */}
@@ -102,7 +96,7 @@ export function TablePagination({
             className="size-8 p-0"
           >
             <ChevronsLeft className="size-4" />
-            <span className="sr-only">{t('common.table.firstPage')}</span>
+            <span className="sr-only">{t('table.firstPage')}</span>
           </Button>
         )}
         <Button
@@ -113,10 +107,10 @@ export function TablePagination({
           className="size-8 p-0"
         >
           <ChevronLeft className="size-4" />
-          <span className="sr-only">{t('common.table.previousPage')}</span>
+          <span className="sr-only">{t('table.previousPage')}</span>
         </Button>
         <div className="text-muted-foreground flex h-8 items-center px-2 text-sm">
-          {t('common.table.page')} {currentPage} / {totalPages}
+          {t('table.page', { current: currentPage, total: totalPages })}
         </div>
         <Button
           variant="outline"
@@ -126,7 +120,7 @@ export function TablePagination({
           className="size-8 p-0"
         >
           <ChevronRight className="size-4" />
-          <span className="sr-only">{t('common.table.nextPage')}</span>
+          <span className="sr-only">{t('table.nextPage')}</span>
         </Button>
         {showFirstLastButtons && (
           <Button
@@ -137,7 +131,7 @@ export function TablePagination({
             className="size-8 p-0"
           >
             <ChevronsRight className="size-4" />
-            <span className="sr-only">{t('common.table.lastPage')}</span>
+            <span className="sr-only">{t('table.lastPage')}</span>
           </Button>
         )}
       </div>

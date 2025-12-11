@@ -186,7 +186,7 @@ export const CompactDayView = memo(function CompactDayView({
             onClick={handleToday}
             className={cn('h-6 px-2 text-xs', isTodayDate && 'text-primary font-semibold')}
           >
-            {t('common.calendar.today')}
+            {t('time.today')}
           </Button>
           <Button variant="ghost" size="icon" onClick={handlePrev} className="h-6 w-6">
             <ChevronLeft className="h-4 w-4" />
