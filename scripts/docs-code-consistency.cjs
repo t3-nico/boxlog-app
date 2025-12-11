@@ -169,10 +169,14 @@ class DocsConsistencyChecker {
     log.title('Markdownファイル内リンク切れチェック')
 
     const markdownFiles = this.getAllMarkdownFiles()
+    // アーカイブディレクトリは履歴保存用のため、リンクチェックから除外
+    const activeFiles = markdownFiles.filter((f) => !f.includes('/archive/'))
     let totalLinks = 0
     let brokenLinks = 0
 
-    markdownFiles.forEach((filePath) => {
+    log.info(`チェック対象: ${activeFiles.length}ファイル (アーカイブ除外: ${markdownFiles.length - activeFiles.length}ファイル)`)
+
+    activeFiles.forEach((filePath) => {
       const content = fs.readFileSync(filePath, 'utf8')
       const relativePath = path.relative(this.rootDir, filePath)
 

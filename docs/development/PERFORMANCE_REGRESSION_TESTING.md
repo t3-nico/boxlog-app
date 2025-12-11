@@ -295,7 +295,7 @@ npm run perf:check:force
 
 **📚 関連ドキュメント:**
 
-- [License Verification](./LICENSE_VERIFICATION.md)
+- [License Compliance Guide](./LICENSE_COMPLIANCE_GUIDE.md)
 - [Bundle Size Monitoring](../performance/BUNDLE_MONITORING.md)
 - [ESLint Setup](./ESLINT_HYBRID_APPROACH.md)
 
