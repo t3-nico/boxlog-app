@@ -279,7 +279,7 @@ npm run docs:check >> weekly-docs-report.md
 - [package.json](../../package.json) - NPMスクリプト定義
 - [docs/README.md](../README.md) - ドキュメント構造概要
 - [CLAUDE.md](../../CLAUDE.md) - 基本開発指針
-- [scripts/docs-code-consistency.js](../../scripts/docs-code-consistency.js) - チェックツール
+- [scripts/docs-code-consistency.cjs](../../scripts/docs-code-consistency.cjs) - チェックツール
 - [scripts/docs-auto-fix.js](../../scripts/docs-auto-fix.js) - 自動修正ツール
 
 ---

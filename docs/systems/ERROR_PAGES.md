@@ -510,9 +510,8 @@ npm run dev
 ## 📚 関連ドキュメント
 
 - [エラーハンドリングシステム](../architecture/ERROR_HANDLING.md)
-- [i18n実装ガイド](../../src/features/i18n/README.md)
 - [CLAUDE.md開発指針](../../CLAUDE.md)
-- [デザインシステム](./THEME_ENFORCEMENT.md)
+- [デザインシステム](../design-system/THEME_MIGRATION.md)
 
 ---
 

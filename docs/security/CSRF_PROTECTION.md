@@ -16,7 +16,7 @@ CSRF（クロスサイトリクエストフォージェリ）は、ユーザー�
 
 ### 1. SameSite Cookie属性（基本対策）
 
-**実装場所**: [src/middleware.ts:68](../../src/middleware.ts#L68)
+**実装場所**: `src/middleware.ts`
 
 ```typescript
 response.cookies.set(LOCALE_COOKIE, locale, {

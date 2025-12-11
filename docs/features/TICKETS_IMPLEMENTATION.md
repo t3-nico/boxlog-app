@@ -206,7 +206,6 @@ plans データ（Supabase DB）
 
 ## 📚 関連ドキュメント
 
-- [plans CLAUDE.md](../../src/features/plans/CLAUDE.md)
 - [CLAUDE.md](../../CLAUDE.md) - 開発ワークフロー改善
 - [Issue #623](https://github.com/t3-nico/boxlog-app/issues/623) - Phase 5
 - [Issue #624](https://github.com/t3-nico/boxlog-app/issues/624) - Phase 6

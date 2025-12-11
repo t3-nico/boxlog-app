@@ -258,14 +258,6 @@ npm run generate:business-rules -- \
 
 ---
 
-## 🔗 関連ドキュメント
-
-- [ビジネスルール設計](../architecture/BUSINESS_RULES.md)
-- [型システム](../architecture/TYPE_SYSTEM.md)
-- [バリデーション戦略](../architecture/VALIDATION.md)
-
----
-
 ## 📚 参考リンク
 
 - **生成スクリプト**: `scripts/business-rules-code-generator.js`

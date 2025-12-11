@@ -380,7 +380,6 @@ https://status.boxlog.app
 
 - [Security Policy](./SECURITY.md) - セキュリティポリシー
 - [Vulnerability Disclosure](./VULNERABILITY_DISCLOSURE.md) - 脆弱性報告ガイドライン
-- [Privacy Policy](/legal/privacy) - プライバシーポリシー
 
 ---
 

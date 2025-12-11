@@ -218,7 +218,7 @@ npm run dev
 - 🔜 **次**: OAuth設定（Google/Apple）
 - 🔜 **次**: E2Eテスト作成
 
-詳細は [`docs/setup/RLS_SETUP.md`](./RLS_SETUP.md) を参照してください。
+詳細は Supabase公式ドキュメントを参照してください。
 
 ---
 
