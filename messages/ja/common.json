@@ -36,7 +36,7 @@
       "open": "開く",
       "delete": {
         "confirmTitle": "プランを削除しますか？",
-        "confirmTitleWithName": "「{name}」を削除しますか？",
+        "confirmTitleWithName": "{name}を削除しますか？",
         "description": "この操作は取り消せません。プランは完全に削除され、カレンダーからも削除されます。",
         "warningIrreversible": "この操作は取り消せません",
         "afterDeletion": "削除すると",

@@ -36,7 +36,7 @@
       "open": "Open",
       "delete": {
         "confirmTitle": "Delete this plan?",
-        "confirmTitleWithName": "Delete \"{name}\"?",
+        "confirmTitleWithName": "Delete {name}?",
         "description": "This action cannot be undone. The plan will be permanently deleted and removed from calendar.",
         "warningIrreversible": "This action cannot be undone",
         "afterDeletion": "After deletion",
