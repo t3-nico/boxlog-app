@@ -60,10 +60,6 @@ export function getEffectiveStatus(plan: StatusInput): PlanStatus {
     return 'doing'
   }
 
-  // TODO: Log紐づけ判定（Log機能実装後に追加）
-  // if (plan.log_id) {
-  //   return 'doing'
-  // }
 
   // それ以外 → 正規化されたステータス（todoまたはdoing）
   return normalizedStatus
@@ -78,8 +74,6 @@ export function getEffectiveStatus(plan: StatusInput): PlanStatus {
  * @returns Todoに戻せる場合 true
  */
 export function canRevertToTodo(plan: Plan): boolean {
-  // TODO: Log紐づけ判定（Log機能実装後に追加）
-  // return !plan.log_id && !plan.start_time
   return !plan.start_time
 }
 

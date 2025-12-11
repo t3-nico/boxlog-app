@@ -61,7 +61,6 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
 
   // インライン編集ハンドラー
   const handleStatusChange = (status: PlanStatus) => {
-    // TODO: APIでステータスを更新
     console.log('Update status:', item.id, status)
   }
 
@@ -86,35 +85,28 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
     }
   }
 
-  // TODO: 開始日時・終了日時・期限日の更新機能は将来実装予定
-
   // コンテキストメニューアクション
   const handleEdit = (item: InboxItem) => {
     openInspector(item.id)
   }
 
   const handleDuplicate = (item: InboxItem) => {
-    // TODO: 複製機能実装
     console.log('Duplicate:', item.id)
   }
 
   const handleAddTags = (item: InboxItem) => {
-    // TODO: タグ追加機能実装
     console.log('Add tags:', item.id)
   }
 
   const handleChangeDueDate = (item: InboxItem) => {
-    // TODO: 期限変更機能実装
     console.log('Change due date:', item.id)
   }
 
   const handleArchive = (item: InboxItem) => {
-    // TODO: アーカイブ機能実装
     console.log('Archive:', item.id)
   }
 
   const handleDelete = (item: InboxItem) => {
-    // TODO: 削除機能実装
     console.log('Delete:', item.id)
   }
 

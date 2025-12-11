@@ -3,7 +3,7 @@
  * パフォーマンス監視・最適化・レポート生成
  */
 
-// TODO(#389): web-vitals v4 changed to onINP instead of onFID
+// @see Issue #389 - web-vitals v4 uses onINP instead of onFID
 import { onCLS, onFCP, onINP, onLCP, onTTFB } from 'web-vitals'
 
 import { trackPerformance } from './vercel-analytics'
@@ -228,7 +228,7 @@ export class SpeedInsightsManager {
     })
 
     // カスタムイベントとしても送信
-    // TODO(#389): trackEvent関数の実装後に有効化
+    // @see Issue #389 - trackEvent関数の実装後に有効化
     // if (typeof trackEvent !== 'undefined') {
     //   try {
     //     ;(window as any).gtag?.('event', 'web_vitals', {

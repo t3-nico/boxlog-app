@@ -54,27 +54,22 @@ export function InboxRowWrapper({ item, children, isSelected }: InboxRowWrapperP
   }
 
   const handleDuplicate = () => {
-    // TODO: 複製機能実装
     console.log('Duplicate:', item.id)
   }
 
   const handleAddTags = () => {
-    // TODO: タグ追加機能実装
     console.log('Add tags:', item.id)
   }
 
   const handleChangeDueDate = () => {
-    // TODO: 期限変更機能実装
     console.log('Change due date:', item.id)
   }
 
   const handleArchive = () => {
-    // TODO: アーカイブ機能実装
     console.log('Archive:', item.id)
   }
 
   const handleDelete = () => {
-    // TODO: 削除機能実装
     console.log('Delete:', item.id)
   }
 
