@@ -335,7 +335,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
           onFocus={handleInputFocus}
           disabled={disabled}
           placeholder="--:--"
-          className={`hover:bg-state-hover flex h-8 w-16 rounded-md bg-transparent px-2 py-1 text-center text-sm transition-colors outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+          className={`flex h-8 w-14 rounded-md bg-transparent py-1 pr-1 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
             value ? 'text-foreground' : 'text-muted-foreground'
           } ${error ? 'text-destructive' : ''}`}
         />

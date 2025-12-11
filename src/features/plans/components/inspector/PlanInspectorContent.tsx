@@ -409,10 +409,13 @@ export function PlanInspectorContent({
                 popoverAlignOffset={-80}
               />
 
-              {/* Description */}
-              <div className="border-border/50 flex min-h-12 items-start border-t px-6 py-2">
-                <div className="flex">
-                  <FileText className="text-muted-foreground mt-1.5 mr-2 h-4 w-4 flex-shrink-0" />
+              {/* Description - プロパティグリッドレイアウト */}
+              <div className="border-border/50 flex min-h-10 items-start border-t px-6 py-1">
+                <div className="text-muted-foreground flex h-8 w-24 flex-shrink-0 items-center text-sm">
+                  <FileText className="mr-2 h-4 w-4 flex-shrink-0" />
+                  説明
+                </div>
+                <div className="flex h-8 flex-1 items-start">
                   <div className="max-h-52 min-w-0 flex-1 overflow-y-auto">
                     <NovelDescriptionEditor
                       key={plan.id}

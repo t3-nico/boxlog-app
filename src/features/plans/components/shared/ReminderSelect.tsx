@@ -88,6 +88,21 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
             <path d="m6 9 6 6 6-6" />
           </svg>
         </button>
+      ) : variant === 'inspector' ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          className={`h-8 pr-2 pl-0 ${hasReminder ? 'text-foreground' : 'text-muted-foreground'}`}
+          type="button"
+          disabled={disabled}
+          onClick={() => {
+            if (!disabled) {
+              setShowPopover(!showPopover)
+            }
+          }}
+        >
+          <span className="text-sm">{value || 'なし'}</span>
+        </Button>
       ) : (
         <Button
           variant="ghost"
@@ -102,7 +117,6 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
           }}
         >
           <Bell className="h-4 w-4" />
-          {variant === 'inspector' && <span className="text-sm">{value || '通知'}</span>}
         </Button>
       )}
 

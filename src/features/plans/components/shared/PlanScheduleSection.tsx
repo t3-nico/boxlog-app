@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime'
 import { configToReadable, ruleToConfig } from '@/features/plans/utils/rrule'
-import { Calendar, Repeat } from 'lucide-react'
+import { Bell, Calendar, Clock, Repeat } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 import { DatePickerPopover } from './DatePickerPopover'
 import { RecurrencePopover } from './RecurrencePopover'
@@ -114,15 +114,32 @@ export function PlanScheduleSection({
   // 繰り返しが設定されているか
   const hasRecurrence = recurrenceRule || (recurrenceType && recurrenceType !== 'none')
 
+  // プロパティグリッド: ラベル幅を統一
+  const labelClassName = 'text-muted-foreground flex h-8 w-24 flex-shrink-0 items-center text-sm'
+  const valueClassName = 'flex h-8 flex-1 items-center'
+
   return (
-    <>
-      {/* 日付 + 時刻行 */}
-      <div className={`flex h-12 items-center px-6 py-2 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
-        <div className="flex h-8 items-center">
-          <Calendar className="text-muted-foreground mr-2 h-4 w-4 flex-shrink-0" />
+    <div className={showBorderTop ? 'border-border/50 border-t' : ''}>
+      {/* 日付行 */}
+      <div className="flex h-10 items-center px-6">
+        <div className={labelClassName}>
+          <Calendar className="mr-2 h-4 w-4 flex-shrink-0" />
+          日付
+        </div>
+        <div className={valueClassName}>
           <DatePickerPopover selectedDate={selectedDate} onDateChange={onDateChange} />
+        </div>
+      </div>
+
+      {/* 時間行 */}
+      <div className="flex h-10 items-center px-6">
+        <div className={labelClassName}>
+          <Clock className="mr-2 h-4 w-4 flex-shrink-0" />
+          時間
+        </div>
+        <div className={valueClassName}>
           <TimeSelect value={startTime} onChange={handleStartTimeChange} label="" disabled={disabled} />
-          <span className="text-muted-foreground">→</span>
+          <span className="text-muted-foreground mx-1">→</span>
           <TimeSelect
             value={endTime}
             onChange={handleEndTimeChange}
@@ -130,18 +147,22 @@ export function PlanScheduleSection({
             disabled={disabled || !startTime}
             minTime={startTime}
           />
-          {elapsedTime && <span className="text-muted-foreground text-sm">{elapsedTime}</span>}
+          {elapsedTime && <span className="text-muted-foreground ml-2 text-sm">({elapsedTime})</span>}
         </div>
       </div>
 
-      {/* 繰り返し + リマインダー行 */}
-      <div className="flex h-12 items-center px-6 py-2">
-        <div className="flex h-8 items-center pl-6">
+      {/* 繰り返し行 */}
+      <div className="flex h-10 items-center px-6">
+        <div className={labelClassName}>
+          <Repeat className="mr-2 h-4 w-4 flex-shrink-0" />
+          繰り返し
+        </div>
+        <div className={valueClassName}>
           <Button
             ref={recurrenceTriggerRef}
             variant="ghost"
             size="sm"
-            className={`h-8 gap-1 px-2 ${hasRecurrence ? 'text-foreground' : 'text-muted-foreground'}`}
+            className={`h-8 pr-2 pl-0 ${hasRecurrence ? 'text-foreground' : 'text-muted-foreground'}`}
             type="button"
             disabled={disabled}
             onClick={(e) => {
@@ -149,8 +170,7 @@ export function PlanScheduleSection({
               setRecurrencePopoverOpen(!recurrencePopoverOpen)
             }}
           >
-            <Repeat className="h-4 w-4" />
-            <span className="text-sm">{recurrenceDisplayText}</span>
+            <span className="text-sm">{hasRecurrence ? recurrenceDisplayText : 'なし'}</span>
           </Button>
 
           <RecurrencePopover
@@ -161,10 +181,19 @@ export function PlanScheduleSection({
             onRepeatTypeChange={onRepeatTypeChange}
             onRecurrenceRuleChange={onRecurrenceRuleChange}
           />
+        </div>
+      </div>
 
+      {/* リマインダー行 */}
+      <div className="flex h-10 items-center px-6">
+        <div className={labelClassName}>
+          <Bell className="mr-2 h-4 w-4 flex-shrink-0" />
+          通知
+        </div>
+        <div className={valueClassName}>
           <ReminderSelect value={reminderType} onChange={onReminderChange} variant="inspector" disabled={disabled} />
         </div>
       </div>
-    </>
+    </div>
   )
 }

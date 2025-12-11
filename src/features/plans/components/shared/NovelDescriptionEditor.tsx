@@ -82,7 +82,7 @@ export function NovelDescriptionEditor({
           const html = editor.getHTML()
           onChange(html)
         }}
-        className="text-muted-foreground hover:bg-state-hover min-h-[1.5rem] rounded-md border-0 bg-transparent px-1 text-sm shadow-none transition-colors focus-visible:ring-0"
+        className="text-muted-foreground min-h-[1.5rem] rounded-md border-0 bg-transparent pr-1 pl-0 text-sm shadow-none focus-visible:ring-0"
       >
         <EditorCommand className="novel-command-menu bg-popover border-border z-50 h-auto max-h-80 overflow-y-auto rounded-md border shadow-md transition-all">
           <EditorCommandEmpty className="text-muted-foreground px-3 py-2 text-sm">No results</EditorCommandEmpty>
