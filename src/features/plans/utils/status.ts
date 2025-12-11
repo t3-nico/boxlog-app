@@ -60,7 +60,6 @@ export function getEffectiveStatus(plan: StatusInput): PlanStatus {
     return 'doing'
   }
 
-
   // それ以外 → 正規化されたステータス（todoまたはdoing）
   return normalizedStatus
 }
