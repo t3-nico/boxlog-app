@@ -89,12 +89,11 @@ export function ScheduleStatusItem() {
     })
   }, [])
 
-  // クリック時: 現在の予定があればインスペクターを開く、なければ新規作成は別途Popoverで処理
+  // クリック時: 現在の予定があればインスペクターを開く
   const handleClick = useCallback(() => {
     if (currentPlan) {
       openInspector(currentPlan.id)
     }
-    // 予定がない場合は何もしない（PlanCreatePopoverのトリガーとして動作）
   }, [currentPlan, openInspector])
 
   // 進捗率を計算（0〜100）
@@ -145,7 +144,7 @@ export function ScheduleStatusItem() {
     return `${endHours.toString().padStart(2, '0')}:00`
   }, [])
 
-  // 現在の予定がある場合は通常のStatusBarItem、ない場合はPlanCreatePopoverでラップ
+  // 現在の予定がある場合は通常のStatusBarItem、ない場合はPlanCreateTriggerでラップ
   const hasActivePlan = !!currentPlan
 
   const statusBarContent = (
@@ -173,7 +172,7 @@ export function ScheduleStatusItem() {
     return <div className="flex items-center gap-2">{statusBarContent}</div>
   }
 
-  // 予定がない場合はPlanCreatePopoverでラップ
+  // 予定がない場合はPlanCreateTriggerでラップ
   return (
     <div className="flex items-center gap-2">
       <PlanCreateTrigger

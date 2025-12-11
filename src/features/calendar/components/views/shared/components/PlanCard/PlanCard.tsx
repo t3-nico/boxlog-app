@@ -37,6 +37,7 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
   const t = useTranslations()
   const { updatePlan } = usePlanMutations()
   const [isHovered, setIsHovered] = useState(false)
+  const [isCheckboxHovered, setIsCheckboxHovered] = useState(false)
 
   // すべてのプランは時間指定プラン
 
@@ -219,12 +220,18 @@ export const PlanCard = memo<PlanCardProps>(function PlanCard({
               data: { status: newStatus },
             })
           }}
-          className="absolute top-2 left-2 z-10 flex-shrink-0 rounded transition-colors hover:opacity-80"
+          onMouseEnter={() => setIsCheckboxHovered(true)}
+          onMouseLeave={() => setIsCheckboxHovered(false)}
+          className="absolute top-2 left-2 z-10 flex-shrink-0 rounded"
           aria-label={getEffectiveStatus(plan) === 'done' ? '未完了に戻す' : '完了にする'}
         >
           {(() => {
             const status = getEffectiveStatus(plan)
             if (status === 'done') {
+              return <CheckCircle2 className="text-success h-4 w-4" />
+            }
+            // ホバー時はチェックマークを表示（完了予告）
+            if (isCheckboxHovered) {
               return <CheckCircle2 className="text-success h-4 w-4" />
             }
             if (status === 'doing') {
