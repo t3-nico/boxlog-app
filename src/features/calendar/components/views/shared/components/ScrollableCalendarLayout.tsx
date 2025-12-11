@@ -54,7 +54,7 @@ export const CalendarDateHeader = ({
   timezone,
 }: CalendarDateHeaderProps) => {
   return (
-    <div className="flex shrink-0 flex-col">
+    <div className="flex h-12 shrink-0 flex-col justify-center py-2">
       <div className="flex px-4">
         {/* UTC/タイムゾーン表示エリア（ヘッダー左端） */}
         {showTimeColumn && showTimezone && timezone ? (

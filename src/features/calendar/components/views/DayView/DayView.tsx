@@ -79,7 +79,7 @@ export const DayView = ({
   )
 
   const headerComponent = (
-    <div className="bg-background flex h-16 items-center justify-center px-2">
+    <div className="bg-background flex h-8 items-center justify-center px-2">
       <DateDisplay
         date={date}
         className="text-center"

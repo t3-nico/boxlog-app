@@ -66,12 +66,12 @@ export const WeekGrid = ({
   const currentTimeDisplayDates = React.useMemo(() => weekDates, [weekDates])
 
   const headerComponent = (
-    <div className="bg-background flex h-16 flex-1">
+    <div className="bg-background flex h-8 flex-1">
       {/* 7日分の日付ヘッダー */}
       {weekDates.map((date) => (
         <div
           key={date.toISOString()}
-          className="flex flex-col items-center justify-center px-1"
+          className="flex items-center justify-center px-1"
           style={{ width: `${100 / 7}%` }}
         >
           <DateDisplay

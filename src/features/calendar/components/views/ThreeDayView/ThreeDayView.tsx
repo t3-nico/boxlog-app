@@ -123,7 +123,7 @@ export const ThreeDayView = ({
   // 初期スクロールはScrollableCalendarLayoutに委譲
 
   const headerComponent = (
-    <div className="bg-background flex h-16">
+    <div className="bg-background flex h-8">
       {/* 表示日数分のヘッダー（週末フィルタリング対応） */}
       {displayDates.map((date) => (
         <div key={date.toISOString()} className="flex flex-1 items-center justify-center px-1">
@@ -133,6 +133,7 @@ export const ThreeDayView = ({
             showDayName={true}
             showMonthYear={false}
             dayNameFormat="short"
+            dateFormat="d"
             isToday={isToday(date)}
             isSelected={false}
           />
