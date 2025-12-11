@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { addHours, format, startOfHour } from 'date-fns'
 
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone, setUserTimezone } from '@/features/settings/utils/timezone'
 import { logger } from '@/lib/logger'
@@ -102,6 +103,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const showWeekends = useCalendarSettingsStore((state) => state.showWeekends)
   const updateSettings = useCalendarSettingsStore((state) => state.updateSettings)
 
+  // 選択中のプランID（削除確認ダイアログ用）
+  const selectedPlanId = usePlanInspectorStore((state) => state.planId)
+
   // キーボードショートカット（Cmd/Ctrl + W）
   useWeekendToggleShortcut()
 
@@ -196,9 +200,25 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     }
   }, [])
 
+  // 選択中のプランタイトルを取得（削除確認ダイアログ用）
+  const getSelectedPlanTitle = useCallback(() => {
+    if (!selectedPlanId) return null
+    const plan = filteredEvents.find((p) => p.id === selectedPlanId)
+    return plan?.title ?? null
+  }, [selectedPlanId, filteredEvents])
+
+  // 削除関数をPromise化（既存のPlanDeleteConfirmDialogシステム用）
+  const deletePlanAsync = useCallback(
+    async (planId: string) => {
+      deletePlan(planId)
+    },
+    [deletePlan]
+  )
+
   useCalendarPlanKeyboard({
     enabled: true,
-    onDeletePlan: deletePlan,
+    onDeletePlan: deletePlanAsync,
+    getSelectedPlanTitle,
     getInitialPlanData,
   })
 

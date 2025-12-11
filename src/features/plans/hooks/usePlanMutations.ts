@@ -37,7 +37,19 @@ export function usePlanMutations() {
   // ✨ 作成
   const createPlan = api.plans.create.useMutation({
     onSuccess: (newPlan) => {
-      // 1. Toast通知
+      // 1. キャッシュを即座に更新（リアルタイム反映）
+      // plan_tags を空配列で初期化（既存のリストデータと同じ形式に合わせる）
+      const newPlanWithTags = { ...newPlan, plan_tags: [] }
+
+      utils.plans.list.setData(undefined, (oldData) => {
+        if (!oldData) return [newPlanWithTags]
+        // 重複を防ぐ
+        const exists = oldData.some((p) => p.id === newPlan.id)
+        if (exists) return oldData
+        return [...oldData, newPlanWithTags]
+      })
+
+      // 2. Toast通知
       toast.success(t('common.plan.created', { title: newPlan.title }), {
         action: {
           label: t('common.plan.open'),
@@ -47,9 +59,8 @@ export function usePlanMutations() {
         },
       })
 
-      // 2. キャッシュ無効化 + 即座に再フェッチ → すべてのビューが自動更新
-      void utils.plans.list.invalidate(undefined, { refetchType: 'active' })
-      void utils.plans.getById.invalidate({ id: newPlan.id }, { refetchType: 'active' })
+      // 3. 個別プランのキャッシュを設定
+      utils.plans.getById.setData({ id: newPlan.id }, newPlan)
     },
     onError: (error) => {
       console.error('[usePlanMutations] Create error:', error)
@@ -181,7 +192,8 @@ export function usePlanMutations() {
 
       // 現在のデータをスナップショット（ロールバック用）
       const previousPlans = utils.plans.list.getData()
-      const previousPlan = utils.plans.getById.getData({ id })
+      // getByIdキャッシュがない場合はリストから取得
+      const previousPlan = utils.plans.getById.getData({ id }) ?? previousPlans?.find((p) => p.id === id)
 
       // 楽観的更新: リストから即座に削除
       utils.plans.list.setData(undefined, (oldData) => {
@@ -197,12 +209,57 @@ export function usePlanMutations() {
       // Zustandキャッシュからも削除
       clearCache(id)
 
+      // 楽観的にtoastを即座に表示（undo付き）
+      if (previousPlan) {
+        // undoで復元するデータを事前に準備
+        // start_time/end_timeをISO 8601（UTC）形式に正規化（Zodバリデーション対策）
+        const normalizeDateTime = (value: string | null | undefined): string | undefined => {
+          if (!value || value === '') return undefined
+          // Dateオブジェクトに変換してからISO文字列に変換（UTCの'Z'サフィックス形式）
+          try {
+            const date = new Date(value)
+            if (isNaN(date.getTime())) return undefined
+            return date.toISOString()
+          } catch {
+            return undefined
+          }
+        }
+
+        const restoreData = {
+          title: previousPlan.title,
+          description: previousPlan.description ?? undefined,
+          status: previousPlan.status as 'todo' | 'doing' | 'done',
+          start_time: normalizeDateTime(previousPlan.start_time),
+          end_time: normalizeDateTime(previousPlan.end_time),
+          due_date: previousPlan.due_date ?? undefined,
+          reminder_minutes: previousPlan.reminder_minutes ?? undefined,
+          recurrence_type:
+            (previousPlan.recurrence_type as 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays') ??
+            undefined,
+          recurrence_rule: previousPlan.recurrence_rule ?? undefined,
+        }
+        console.log('[usePlanMutations] previousPlan data:', previousPlan)
+        console.log('[usePlanMutations] restoreData prepared:', restoreData)
+
+        toast.success(t('common.plan.deleted'), {
+          duration: 10000,
+          action: {
+            label: t('common.undo'),
+            onClick: () => {
+              console.log('[usePlanMutations] Undo clicked, restoring:', restoreData)
+              createPlan.mutate(restoreData)
+            },
+          },
+        })
+      } else {
+        toast.success(t('common.plan.deleted'))
+      }
+
+      closeInspector()
+
       return { id, previousPlans, previousPlan }
     },
     onSuccess: (_, { id }) => {
-      toast.success(t('common.plan.deleted'))
-      closeInspector() // Inspectorが開いていたら閉じる
-
       // キャッシュ無効化（全キャッシュを対象）
       void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
       void utils.plans.getById.invalidate({ id }, { refetchType: 'all' })
