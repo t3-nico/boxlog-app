@@ -12,10 +12,10 @@ import { cn } from '@/lib/utils'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
-// コンパクト版の定数
-const COMPACT_HOUR_HEIGHT = 32 // 通常の72pxより小さく
-const COMPACT_TIME_COLUMN_WIDTH = 36 // 通常の48pxより小さく
-const COMPACT_MIN_EVENT_HEIGHT = 16
+// コンパクト版の定数（カレンダーDayViewに近い設定）
+const COMPACT_HOUR_HEIGHT = 64 // 1時間あたりの高さ
+const COMPACT_TIME_COLUMN_WIDTH = 40 // 時間ラベル列の幅
+const COMPACT_MIN_EVENT_HEIGHT = 20
 
 interface CompactDayViewProps {
   /** 表示する日付 */
@@ -59,6 +59,7 @@ export const CompactDayView = memo(function CompactDayView({
   const [currentTime, setCurrentTime] = useState(new Date())
   const [isDragOver, setIsDragOver] = useState(false)
   const [dragOverHour, setDragOverHour] = useState<number | null>(null)
+  const [draggingPlanId, setDraggingPlanId] = useState<string | null>(null)
 
   const isTodayDate = useMemo(() => isToday(date), [date])
 
@@ -123,6 +124,18 @@ export const CompactDayView = memo(function CompactDayView({
     setDragOverHour(null)
   }, [])
 
+  // プランのドラッグ開始
+  const handlePlanDragStart = useCallback((e: React.DragEvent, planId: string) => {
+    e.dataTransfer.setData('text/plain', planId)
+    e.dataTransfer.effectAllowed = 'move'
+    setDraggingPlanId(planId)
+  }, [])
+
+  // プランのドラッグ終了
+  const handlePlanDragEnd = useCallback(() => {
+    setDraggingPlanId(null)
+  }, [])
+
   const handleDropOnHour = useCallback(
     (e: React.DragEvent, hour: number) => {
       e.preventDefault()
@@ -173,7 +186,7 @@ export const CompactDayView = memo(function CompactDayView({
   return (
     <div className={cn('flex h-full flex-col', className)}>
       {/* ヘッダー: 日付 + ナビゲーション */}
-      <div className="border-border flex shrink-0 items-center justify-between border-b px-2 py-2">
+      <div className="flex shrink-0 items-center justify-between px-2 py-2">
         <div className="flex items-center gap-1 text-sm font-medium">
           <span>{format(date, 'M月d日', locale === 'ja' ? { locale: ja } : {})}</span>
           <span className="text-muted-foreground">({format(date, 'E', locale === 'ja' ? { locale: ja } : {})})</span>
@@ -198,18 +211,18 @@ export const CompactDayView = memo(function CompactDayView({
       </div>
 
       {/* タイムグリッド */}
-      <ScrollArea className="flex-1">
+      <ScrollArea className="min-h-0 flex-1">
         <div
           ref={scrollRef}
-          className="relative"
+          className="relative w-full"
           style={{ height: 24 * COMPACT_HOUR_HEIGHT }}
           onDragLeave={handleDragLeave}
         >
           {/* 時間列 + グリッド */}
-          <div className="flex">
+          <div className="flex w-full">
             {/* 時間ラベル列 */}
             <div
-              className="border-border sticky left-0 z-10 shrink-0 border-r"
+              className="border-border sticky left-0 z-10 shrink-0 border-r bg-inherit"
               style={{ width: COMPACT_TIME_COLUMN_WIDTH }}
             >
               {timeLabels.map(({ hour, label }) => (
@@ -263,19 +276,30 @@ export const CompactDayView = memo(function CompactDayView({
 
               {/* プラン表示 */}
               {dayPlans.map(({ plan, top, height }) => (
-                <button
+                <div
                   key={plan.id}
-                  type="button"
+                  draggable={!!onDrop}
+                  onDragStart={(e) => handlePlanDragStart(e, plan.id)}
+                  onDragEnd={handlePlanDragEnd}
                   className={cn(
                     'absolute right-1 left-1 overflow-hidden rounded px-1 text-left text-[10px] leading-tight',
                     'bg-primary/20 hover:bg-primary/30 border-primary/50 border-l-2 transition-colors',
-                    'focus:ring-ring focus:ring-1 focus:outline-none'
+                    'focus:ring-ring focus:ring-1 focus:outline-none',
+                    onDrop && 'cursor-grab active:cursor-grabbing',
+                    draggingPlanId === plan.id && 'opacity-50'
                   )}
                   style={{ top, height, minHeight: COMPACT_MIN_EVENT_HEIGHT }}
                   onClick={() => onPlanClick?.(plan)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      onPlanClick?.(plan)
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                 >
                   <span className="line-clamp-2 font-medium">{plan.title}</span>
-                </button>
+                </div>
               ))}
             </div>
           </div>
