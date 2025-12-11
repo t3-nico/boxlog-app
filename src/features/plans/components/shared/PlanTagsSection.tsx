@@ -33,9 +33,9 @@ export function PlanTagsSection({
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
 
   return (
-    <div className={`h-12 px-6 py-2 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
-      <div className="flex h-8 items-center gap-2">
-        <Tag className="text-muted-foreground h-4 w-4 flex-shrink-0" />
+    <div className={`flex h-12 items-center px-6 py-2 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
+      <div className="flex h-8 items-center">
+        <Tag className="text-muted-foreground mr-2 h-4 w-4 flex-shrink-0" />
         <div className="min-w-0 flex-1">
           <div className="bg-popover dark:bg-popover flex max-h-[5.25rem] flex-wrap items-center gap-2 overflow-y-auto pr-2">
             {/* 選択済みタグを表示 */}
@@ -79,13 +79,16 @@ export function PlanTagsSection({
               {selectedTagIds.length === 0 ? (
                 <button
                   type="button"
-                  className="text-muted-foreground hover:bg-state-hover rounded px-1 text-sm transition-colors"
+                  className="text-muted-foreground hover:bg-state-hover h-8 rounded-md px-2 text-sm transition-colors"
                 >
                   タグを追加...
                 </button>
               ) : (
-                <button type="button" className="hover:bg-state-hover flex h-6 w-6 items-center justify-center rounded">
-                  <Plus className="h-3.5 w-3.5" />
+                <button
+                  type="button"
+                  className="text-muted-foreground hover:bg-state-hover flex h-8 w-8 items-center justify-center rounded-md transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
                 </button>
               )}
             </PlanTagSelectDialogEnhanced>

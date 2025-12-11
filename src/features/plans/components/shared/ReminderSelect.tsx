@@ -92,7 +92,7 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
         <Button
           variant="ghost"
           size="sm"
-          className={hasReminder ? 'text-foreground h-8 gap-2 px-2' : 'text-muted-foreground h-8 gap-2 px-2'}
+          className={`h-8 gap-1 px-2 ${hasReminder ? 'text-foreground' : 'text-muted-foreground'}`}
           type="button"
           disabled={disabled}
           onClick={() => {

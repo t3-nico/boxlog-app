@@ -26,7 +26,8 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = 'æ
       popoverTrigger={
         <button
           type="button"
-          className="hover:bg-state-hover inline-flex h-8 items-center justify-center rounded-md px-3 text-sm transition-colors"
+          className="hover:bg-state-hover text-muted-foreground hover:text-foreground data-[state=selected]:text-foreground inline-flex h-8 items-center justify-center rounded-md px-2 text-sm transition-colors"
+          data-state={selectedDate ? 'selected' : undefined}
         >
           {selectedDate ? format(selectedDate, 'yyyy/MM/dd', { locale: ja }) : placeholder}
         </button>
