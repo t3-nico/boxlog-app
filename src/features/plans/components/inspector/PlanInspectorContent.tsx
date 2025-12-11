@@ -1,5 +1,6 @@
 'use client'
 
+import * as Portal from '@radix-ui/react-portal'
 import { format } from 'date-fns'
 import { ChevronDown, ChevronUp, ClipboardList, FileText, History, MessageSquare } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -59,6 +60,8 @@ export function PlanInspectorContent({
   // Activity state
   const [activityOrder, setActivityOrder] = useState<'asc' | 'desc'>('desc')
   const [isHoveringSort, setIsHoveringSort] = useState(false)
+  const sortButtonRef = useRef<HTMLSpanElement>(null)
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 })
 
   // Tags state
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
@@ -276,19 +279,20 @@ export function PlanInspectorContent({
             <TabsList className="border-border bg-popover sticky top-0 z-10 grid h-10 w-full shrink-0 grid-cols-3 rounded-none border-b p-0">
               <TabsTrigger
                 value="details"
-                className="data-[state=active]:border-primary hover:border-primary/50 flex h-10 items-center justify-center gap-1.5 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-1.5 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               >
                 <ClipboardList className="h-4 w-4" />
                 詳細
               </TabsTrigger>
               <TabsTrigger
                 value="activity"
-                className="data-[state=active]:border-primary hover:border-primary/50 flex h-10 items-center justify-center gap-1.5 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-1.5 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               >
                 <span className="relative flex items-center gap-1.5">
                   <History className="h-4 w-4" />
                   アクティビティ
                   <span
+                    ref={sortButtonRef}
                     role="button"
                     tabIndex={0}
                     onClick={(e) => {
@@ -302,7 +306,16 @@ export function PlanInspectorContent({
                         setActivityOrder(activityOrder === 'desc' ? 'asc' : 'desc')
                       }
                     }}
-                    onMouseEnter={() => setIsHoveringSort(true)}
+                    onMouseEnter={() => {
+                      if (sortButtonRef.current) {
+                        const rect = sortButtonRef.current.getBoundingClientRect()
+                        setTooltipPosition({
+                          top: rect.top - 8,
+                          left: rect.left + rect.width / 2,
+                        })
+                      }
+                      setIsHoveringSort(true)
+                    }}
                     onMouseLeave={() => setIsHoveringSort(false)}
                     className="hover:bg-state-hover cursor-pointer rounded p-0.5 transition-colors"
                     aria-label={activityOrder === 'desc' ? '古い順に変更' : '最新順に変更'}
@@ -314,15 +327,23 @@ export function PlanInspectorContent({
                     )}
                   </span>
                   {isHoveringSort && (
-                    <div className="bg-foreground text-background absolute bottom-full left-1/2 z-[100] mb-2 -translate-x-1/2 rounded-md px-3 py-1.5 text-xs whitespace-nowrap">
-                      {activityOrder === 'desc' ? '最新順で表示中' : '古い順で表示中'}
-                    </div>
+                    <Portal.Root>
+                      <div
+                        className="bg-foreground text-background fixed z-[9999] -translate-x-1/2 -translate-y-full rounded-md px-3 py-1.5 text-xs whitespace-nowrap"
+                        style={{
+                          top: `${tooltipPosition.top}px`,
+                          left: `${tooltipPosition.left}px`,
+                        }}
+                      >
+                        {activityOrder === 'desc' ? '最新順で表示中' : '古い順で表示中'}
+                      </div>
+                    </Portal.Root>
                   )}
                 </span>
               </TabsTrigger>
               <TabsTrigger
                 value="comments"
-                className="data-[state=active]:border-primary hover:border-primary/50 flex h-10 items-center justify-center gap-1.5 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-1.5 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               >
                 <MessageSquare className="h-4 w-4" />
                 コメント
