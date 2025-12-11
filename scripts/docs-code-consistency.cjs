@@ -61,6 +61,7 @@ class DocsConsistencyChecker {
     await this.checkPackageJsonConsistency()
     await this.checkBrokenLinks()
     await this.checkTodoConsistency()
+    await this.checkMetadataCoverage()
 
     this.printSummary()
   }
@@ -240,6 +241,42 @@ class DocsConsistencyChecker {
       }
     } catch (error) {
       this.addResult('warning', 'TODO検索', 'TODO検索でエラーが発生しました')
+    }
+  }
+
+  // メタデータカバレッジチェック
+  async checkMetadataCoverage() {
+    log.title('ドキュメントメタデータカバレッジ')
+
+    const markdownFiles = this.getAllMarkdownFiles()
+    const activeFiles = markdownFiles.filter((f) => !f.includes('/archive/'))
+
+    // 特殊ファイルを除外 (CLAUDE.md, テンプレート, リリースノート, CREDITS)
+    const targetFiles = activeFiles.filter((f) => {
+      const basename = path.basename(f)
+      return !basename.includes('CLAUDE.md') &&
+             !f.includes('/session-templates/') &&
+             !basename.includes('RELEASE_NOTES_') &&
+             !basename.includes('CREDITS.md')
+    })
+
+    let withMetadata = 0
+    targetFiles.forEach((filePath) => {
+      const content = fs.readFileSync(filePath, 'utf8')
+      if (content.includes('種類') || content.includes('最終更新')) {
+        withMetadata++
+      }
+    })
+
+    const coverage = ((withMetadata / targetFiles.length) * 100).toFixed(1)
+    log.info(`メタデータ付きドキュメント: ${withMetadata}/${targetFiles.length} (${coverage}%)`)
+
+    if (parseFloat(coverage) >= 80) {
+      this.addResult('success', 'メタデータ', `カバレッジ ${coverage}% (目標: 80%以上)`)
+    } else if (parseFloat(coverage) >= 60) {
+      this.addResult('warning', 'メタデータ', `カバレッジ ${coverage}% (目標: 80%以上)`)
+    } else {
+      this.addResult('error', 'メタデータ', `カバレッジ ${coverage}% (目標: 80%以上)`)
     }
   }
 
