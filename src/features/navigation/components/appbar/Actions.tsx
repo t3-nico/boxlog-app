@@ -2,7 +2,7 @@
 
 import { SimpleTooltip } from '@/components/ui/tooltip'
 import { NotificationDropdown } from '@/features/notifications'
-import { PlanCreatePopover } from '@/features/plans/components'
+import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger'
 import { Moon, Plus, Search, Sun } from 'lucide-react'
 import { useCallback } from 'react'
 import { Item } from './Item'
@@ -42,7 +42,7 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
     <div className="flex flex-col items-center gap-1 px-2" onClick={(e) => e.stopPropagation()}>
       <SimpleTooltip content={t('actions.create')} side="right">
         <div>
-          <PlanCreatePopover
+          <PlanCreateTrigger
             triggerElement={
               <button className="flex items-center justify-center" type="button">
                 <div className="hover:bg-state-hover focus-visible:ring-ring flex h-10 w-10 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none">

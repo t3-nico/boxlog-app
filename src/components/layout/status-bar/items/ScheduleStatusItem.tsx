@@ -7,7 +7,7 @@ import { Calendar } from 'lucide-react'
 import { StatusBarItem } from '../StatusBarItem'
 
 import { Spinner } from '@/components/ui/spinner'
-import { PlanCreatePopover } from '@/features/plans/components'
+import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { api } from '@/lib/trpc'
 import { cn } from '@/lib/utils'
@@ -22,7 +22,6 @@ import { cn } from '@/lib/utils'
 export function ScheduleStatusItem() {
   const openInspector = usePlanInspectorStore((state) => state.openInspector)
   const [currentTime, setCurrentTime] = useState(() => new Date())
-  const [isCreatePopoverOpen, setIsCreatePopoverOpen] = useState(false)
 
   // 1分ごとに現在時刻を更新
   useEffect(() => {
@@ -177,7 +176,7 @@ export function ScheduleStatusItem() {
   // 予定がない場合はPlanCreatePopoverでラップ
   return (
     <div className="flex items-center gap-2">
-      <PlanCreatePopover
+      <PlanCreateTrigger
         triggerElement={
           <button type="button" className="flex items-center">
             <StatusBarItem icon={icon} label={isLoading ? '...' : label} tooltip={tooltip} forceClickable />
@@ -186,8 +185,6 @@ export function ScheduleStatusItem() {
         initialDate={initialDate}
         initialStartTime={initialStartTime}
         initialEndTime={initialEndTime}
-        open={isCreatePopoverOpen}
-        onOpenChange={setIsCreatePopoverOpen}
       />
       {progressPercent !== null && (
         <div className="flex items-center gap-1.5" title={`${progressPercent}% 経過`}>
