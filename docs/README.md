@@ -27,7 +27,7 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 
 - [デザインシステム概要](./design-system/README.md) - デザインシステム全体像
 - [テーマ移行ガイド](./design-system/THEME_MIGRATION.md) - 既存コード移行手順
-- [Tailwind移行ガイド](./design-system/TAILWIND_MIGRATION_GUIDE.md) - Tailwind CSS v4移行
+- [スタイルガイド](./design-system/STYLE_GUIDE.md) - 8pxグリッド・カラー・タイポグラフィ
 
 ### ⚡ [開発ガイドライン](./development/)
 
@@ -42,10 +42,9 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 
 ### 🔌 [統合・外部連携](./integrations/)
 
-**外部サービス統合・多言語対応**
+**外部サービス統合**
 
 - [Sentry統合](./integrations/SENTRY.md) - エラー監視システム
-- [国際化(i18n)](./integrations/I18N_IMPLEMENTATION_GUIDE.md) - 多言語対応実装
 
 ### ⚡ [パフォーマンス](./performance/)
 
@@ -99,7 +98,6 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 | ---------------- | ------------------------------------ | ------- |
 | **環境構築**     | [`setup/`](./setup/)                 | 🔴 必須 |
 | **UI実装**       | [`design-system/`](./design-system/) | 🔴 必須 |
-| **テストデータ** | [`../seeds/`](../seeds/)             | 🟡 重要 |
 | **品質管理**     | [`performance/`](./performance/)     | 🟡 重要 |
 | **機能開発**     | [`features/`](./features/)           | 🟡 重要 |
 | **履歴参考**     | [`development/`](./features/)        | 🟢 参考 |
@@ -112,7 +110,6 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 - **設定**: `/src/features/settings/README.md`
 - **テーマ**: `/src/config/ui/README.md`
 - **ESLint**: `/.eslint/README.md`
-- **テストデータ**: `/seeds/README.md`
 
 ---
 

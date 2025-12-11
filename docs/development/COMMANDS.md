@@ -9,9 +9,9 @@ npm run typecheck           # 型チェック
 npm run docs:check          # ドキュメント整合性チェック
 ```
 
-> **⚠️ Claude Code（AI）が開発サーバーを起動する場合**
-> 必ず `PORT=4000` 番台を使用してください（例: `PORT=4000 npm run dev`）
-> 詳細: [CLAUDE.md - 開発サーバー起動ルール](../../CLAUDE.md#%EF%B8%8F-開発サーバー起動ルール)
+> **⚠️ 開発サーバー管理について**
+> 開発サーバーの起動・停止は**ユーザー責務**です。Claude Code（AI）は開発サーバーを起動しません。
+> 詳細: [CLAUDE.md](../../CLAUDE.md) - 「絶対遵守ルール」セクション参照
 
 ---
 

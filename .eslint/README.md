@@ -48,7 +48,7 @@ npm run lint:fix
 ## 🔗 関連ドキュメント
 
 - **完全ガイド**: [`docs/ESLINT_OFFICIAL_MIGRATION.md`](../docs/ESLINT_OFFICIAL_MIGRATION.md)
-- **AI品質基準**: [`.claude/code-standards.md`](../.claude/code-standards.md)
+- **AI品質基準**: [`CLAUDE.md`](../CLAUDE.md)
 - **VSCodeスニペット**: [`.vscode/boxlog.code-snippets`](../.vscode/boxlog.code-snippets)
 
 ## 💡 哲学
