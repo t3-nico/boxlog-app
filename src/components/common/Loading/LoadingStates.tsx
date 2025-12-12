@@ -12,6 +12,8 @@ import { Loader2, RefreshCw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
+import { Skeleton, type SkeletonAnimation } from '@/components/ui/skeleton'
+
 import { LoadingButtonProps, LoadingCardProps, LoadingOverlayProps, LoadingSpinnerProps } from './types'
 
 // === スピナーコンポーネント ===
@@ -161,34 +163,8 @@ export const LoadingButton = ({
 }
 
 // === スケルトンコンポーネント ===
-
-/**
- * アニメーションタイプ
- * - pulse: フェードイン/アウト（軽量、デフォルト）
- * - shimmer: 左→右の波（Facebook/LinkedIn方式、高級感）
- */
-type SkeletonAnimation = 'pulse' | 'shimmer'
-
-export interface SkeletonProps {
-  className?: string
-  /**
-   * アニメーションタイプ
-   * @default 'pulse'
-   */
-  animation?: SkeletonAnimation
-}
-
-export const Skeleton = ({ className = '', animation = 'pulse' }: SkeletonProps) => {
-  return (
-    <div
-      className={cn(
-        'rounded-md',
-        animation === 'shimmer' ? 'animate-shimmer' : 'animate-pulse bg-neutral-200 dark:bg-neutral-700',
-        className
-      )}
-    />
-  )
-}
+// Skeleton は ui/skeleton.tsx から re-export
+export { Skeleton, type SkeletonAnimation } from '@/components/ui/skeleton'
 
 // === スケルトンテキスト ===
 
