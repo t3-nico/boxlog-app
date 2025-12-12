@@ -295,8 +295,14 @@ npm run perf:check:force
 
 **📚 関連ドキュメント:**
 
-- [License Verification](./LICENSE_VERIFICATION.md)
+- [License Compliance Guide](./LICENSE_COMPLIANCE_GUIDE.md)
 - [Bundle Size Monitoring](../performance/BUNDLE_MONITORING.md)
 - [ESLint Setup](./ESLINT_HYBRID_APPROACH.md)
 
 **🔗 関連Issue:** #242 - Phase 2c: パフォーマンス回帰テスト実装
+
+---
+
+**種類**: 📗 ハウツーガイド
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

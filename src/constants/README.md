@@ -67,7 +67,7 @@ const CALENDAR_GRID_SIZE = 7
 
 ## 📖 関連ドキュメント
 
-- [コロケーション原則](../CLAUDE.md#6-ファイル配置コロケーション原則)
+- [コロケーション原則](../CLAUDE.md#8-ファイル配置コロケーション原則)
 - [エラーハンドリング](../../docs/architecture/ERROR_HANDLING.md)
 - [コーディング規約](../CLAUDE.md)
 

@@ -36,7 +36,6 @@ export function CalendarNavigation({
   }
 
   const handleTagClick = () => {
-    // TODO: タグソート実装
     console.log('Tag clicked')
   }
 

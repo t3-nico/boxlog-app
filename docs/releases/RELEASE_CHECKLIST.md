@@ -376,3 +376,9 @@ gh release create v${VERSION} \
 **リリースURL**: https://github.com/t3-nico/boxlog-app/releases/tag/v{VERSION}
 
 お疲れ様でした！ 🎉
+
+---
+
+**種類**: 📗 ハウツーガイド
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

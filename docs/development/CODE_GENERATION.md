@@ -258,14 +258,6 @@ npm run generate:business-rules -- \
 
 ---
 
-## 🔗 関連ドキュメント
-
-- [ビジネスルール設計](../architecture/BUSINESS_RULES.md)
-- [型システム](../architecture/TYPE_SYSTEM.md)
-- [バリデーション戦略](../architecture/VALIDATION.md)
-
----
-
 ## 📚 参考リンク
 
 - **生成スクリプト**: `scripts/business-rules-code-generator.js`
@@ -274,3 +266,9 @@ npm run generate:business-rules -- \
 ---
 
 **最終更新**: 2025-10-06 | Issue #422
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

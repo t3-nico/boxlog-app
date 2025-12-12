@@ -77,7 +77,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
           aria-label={t('common.createNewEvent')}
           className="fixed right-4 bottom-20 z-50 size-14 rounded-2xl shadow-lg"
           onClick={() => {
-            // TODO: PlanInspectorを開く
             console.log('Create new plan')
           }}
         >

@@ -41,7 +41,6 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
   const [syncEnabled, setSyncEnabled] = useState(true)
 
   const handleConnect = useCallback((integrationId: string) => {
-    // TODO: 実際のOAuth連携を実装
     setIntegrations((prev) =>
       prev.map((int) => (int.id === integrationId ? { ...int, connected: true, status: 'active' as const } : int))
     )

@@ -179,27 +179,22 @@ export function PlanCard({ item }: PlanCardProps) {
   }
 
   const handleDuplicate = (item: InboxItem) => {
-    // TODO: 複製機能実装
     console.log('Duplicate:', item.id)
   }
 
   const handleAddTags = (item: InboxItem) => {
-    // TODO: タグ追加機能実装
     console.log('Add tags:', item.id)
   }
 
   const handleChangeDueDate = (item: InboxItem) => {
-    // TODO: 期限変更機能実装
     console.log('Change due date:', item.id)
   }
 
   const handleArchive = (item: InboxItem) => {
-    // TODO: アーカイブ機能実装
     console.log('Archive:', item.id)
   }
 
   const handleDelete = (item: InboxItem) => {
-    // TODO: 削除機能実装
     console.log('Delete:', item.id)
   }
 

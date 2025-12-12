@@ -16,7 +16,7 @@ CSRF（クロスサイトリクエストフォージェリ）は、ユーザー�
 
 ### 1. SameSite Cookie属性（基本対策）
 
-**実装場所**: [src/middleware.ts:68](../../src/middleware.ts#L68)
+**実装場所**: `src/middleware.ts`
 
 ```typescript
 response.cookies.set(LOCALE_COOKIE, locale, {
@@ -317,3 +317,9 @@ BoxLogは**多層防御**によりCSRF攻撃を完全にブロックしていま
 ---
 
 **最終更新**: 2025-10-08 | **バージョン**: v1.0
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

@@ -158,3 +158,9 @@ npm run dev
 
 - [#565 - セキュリティ監査](https://github.com/t3-nico/boxlog-app/issues/565)
   - HIGH #5: CAPTCHA導入 🚧 実装中
+
+---
+
+**種類**: 📗 ハウツーガイド
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

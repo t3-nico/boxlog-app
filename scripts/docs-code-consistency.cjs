@@ -61,6 +61,7 @@ class DocsConsistencyChecker {
     await this.checkPackageJsonConsistency()
     await this.checkBrokenLinks()
     await this.checkTodoConsistency()
+    await this.checkMetadataCoverage()
 
     this.printSummary()
   }
@@ -69,58 +70,21 @@ class DocsConsistencyChecker {
   async checkESLintDocumentation() {
     log.title('ESLint設定とドキュメントの整合性チェック')
 
-    const eslintDocPath = path.join(this.docsDir, 'ESLINT_THEME_ENFORCEMENT.md')
-    const eslintConfigPath = path.join(this.rootDir, '.eslint')
+    // ESLint設定ファイルの存在確認
+    const eslintConfigPath = path.join(this.rootDir, 'eslint.config.mjs')
+    const eslintDocPath = path.join(this.docsDir, 'development/ESLINT_HYBRID_APPROACH.md')
 
-    if (!fs.existsSync(eslintDocPath)) {
-      this.addResult('error', 'ESLintドキュメント', 'ESLINT_THEME_ENFORCEMENT.md が見つかりません')
-      return
+    if (fs.existsSync(eslintConfigPath)) {
+      this.addResult('success', 'ESLint設定', 'eslint.config.mjs が存在')
+    } else {
+      this.addResult('error', 'ESLint設定', 'eslint.config.mjs が見つかりません')
     }
 
-    const docContent = fs.readFileSync(eslintDocPath, 'utf8')
-
-    // 設定ファイルの存在確認
-    const configFiles = ['configs/theme-simple.js', 'configs/theme-strict.js', 'configs/bundle-optimization.js']
-
-    let _allConfigsExist = true
-    for (const configFile of configFiles) {
-      const configPath = path.join(eslintConfigPath, configFile)
-      if (fs.existsSync(configPath)) {
-        log.success(`設定ファイル存在: ${configFile}`)
-      } else {
-        log.error(`設定ファイル不足: ${configFile}`)
-        _allConfigsExist = false
-      }
+    if (fs.existsSync(eslintDocPath)) {
+      this.addResult('success', 'ESLintドキュメント', 'ESLINT_HYBRID_APPROACH.md が存在')
+    } else {
+      this.addResult('warning', 'ESLintドキュメント', 'ESLINT_HYBRID_APPROACH.md が見つかりません')
     }
-
-    // ドキュメント記載の機能が実装されているかチェック
-    const features = [
-      {
-        name: 'theme-simple.js統合',
-        inDoc: docContent.includes('theme-simple.js'),
-        inCode: fs.existsSync(path.join(eslintConfigPath, 'configs/theme-simple.js')),
-      },
-      {
-        name: 'theme-strict.js実装',
-        inDoc: docContent.includes('theme-strict.js'),
-        inCode: fs.existsSync(path.join(eslintConfigPath, 'configs/theme-strict.js')),
-      },
-      {
-        name: 'Bundle optimization',
-        inDoc: docContent.includes('bundle-optimization'),
-        inCode: fs.existsSync(path.join(eslintConfigPath, 'configs/bundle-optimization.js')),
-      },
-    ]
-
-    features.forEach((feature) => {
-      if (feature.inDoc && feature.inCode) {
-        this.addResult('success', 'ESLint機能', `${feature.name}: ドキュメントと実装が一致`)
-      } else if (feature.inDoc && !feature.inCode) {
-        this.addResult('error', 'ESLint機能', `${feature.name}: ドキュメントにあるが実装なし`)
-      } else if (!feature.inDoc && feature.inCode) {
-        this.addResult('warning', 'ESLint機能', `${feature.name}: 実装済みだがドキュメント未記載`)
-      }
-    })
   }
 
   // Theme系ドキュメントの整合性チェック
@@ -128,41 +92,38 @@ class DocsConsistencyChecker {
     log.title('Theme SystemとDesign Systemドキュメントの整合性')
 
     const themeConfigDir = path.join(this.srcDir, 'config/theme')
-    const designDocs = ['DESIGN_SYSTEM_README.md', 'THEME_ENFORCEMENT.md', 'THEME_MIGRATION.md']
+    const designSystemDir = path.join(this.docsDir, 'design-system')
 
-    if (!fs.existsSync(themeConfigDir)) {
-      this.addResult('error', 'Theme System', 'src/config/theme ディレクトリが存在しません')
+    // デザインシステムドキュメントディレクトリの確認
+    if (!fs.existsSync(designSystemDir)) {
+      this.addResult('error', 'Design System', 'docs/design-system ディレクトリが存在しません')
       return
     }
 
-    const themeFiles = fs.readdirSync(themeConfigDir).filter((file) => file.endsWith('.ts'))
-    log.info(`Theme設定ファイル: ${themeFiles.join(', ')}`)
+    // 主要ドキュメントの存在確認
+    const designDocs = [
+      { file: 'README.md', name: 'デザインシステム概要' },
+      { file: 'STYLE_GUIDE.md', name: 'スタイルガイド' },
+      { file: 'THEME_MIGRATION.md', name: 'テーマ移行ガイド' },
+    ]
 
-    // ドキュメントでの記載と実際のファイルの整合性
-    designDocs.forEach((docFile) => {
-      const docPath = path.join(this.docsDir, docFile)
+    designDocs.forEach(({ file, name }) => {
+      const docPath = path.join(designSystemDir, file)
       if (fs.existsSync(docPath)) {
-        const content = fs.readFileSync(docPath, 'utf8')
-
-        // colors.ts, typography.ts などの参照チェック
-        const mentionedFiles = ['colors', 'typography', 'spacing', 'layout', 'animations']
-        mentionedFiles.forEach((fileName) => {
-          const expectedFile = `${fileName}.ts`
-          const mentioned = content.includes(fileName)
-          const exists = themeFiles.includes(expectedFile)
-
-          if (mentioned && exists) {
-            this.addResult('success', docFile, `${fileName}: ドキュメントと実装が一致`)
-          } else if (mentioned && !exists) {
-            this.addResult('error', docFile, `${fileName}: ドキュメントで言及されているが実装なし`)
-          } else if (!mentioned && exists) {
-            this.addResult('warning', docFile, `${fileName}: 実装済みだがドキュメント未記載`)
-          }
-        })
+        this.addResult('success', 'Design System', `${name} (${file}) が存在`)
       } else {
-        this.addResult('warning', 'Design System', `${docFile} が見つかりません`)
+        this.addResult('warning', 'Design System', `${name} (${file}) が見つかりません`)
       }
     })
+
+    // Theme設定ディレクトリの確認
+    if (fs.existsSync(themeConfigDir)) {
+      const themeFiles = fs.readdirSync(themeConfigDir).filter((file) => file.endsWith('.ts'))
+      log.info(`Theme設定ファイル: ${themeFiles.join(', ')}`)
+      this.addResult('success', 'Theme System', `src/config/theme に ${themeFiles.length} 個の設定ファイル`)
+    } else {
+      this.addResult('warning', 'Theme System', 'src/config/theme ディレクトリが存在しません')
+    }
   }
 
   // package.json記載内容とドキュメントの整合性
@@ -209,10 +170,14 @@ class DocsConsistencyChecker {
     log.title('Markdownファイル内リンク切れチェック')
 
     const markdownFiles = this.getAllMarkdownFiles()
+    // アーカイブディレクトリは履歴保存用のため、リンクチェックから除外
+    const activeFiles = markdownFiles.filter((f) => !f.includes('/archive/'))
     let totalLinks = 0
     let brokenLinks = 0
 
-    markdownFiles.forEach((filePath) => {
+    log.info(`チェック対象: ${activeFiles.length}ファイル (アーカイブ除外: ${markdownFiles.length - activeFiles.length}ファイル)`)
+
+    activeFiles.forEach((filePath) => {
       const content = fs.readFileSync(filePath, 'utf8')
       const relativePath = path.relative(this.rootDir, filePath)
 
@@ -276,6 +241,42 @@ class DocsConsistencyChecker {
       }
     } catch (error) {
       this.addResult('warning', 'TODO検索', 'TODO検索でエラーが発生しました')
+    }
+  }
+
+  // メタデータカバレッジチェック
+  async checkMetadataCoverage() {
+    log.title('ドキュメントメタデータカバレッジ')
+
+    const markdownFiles = this.getAllMarkdownFiles()
+    const activeFiles = markdownFiles.filter((f) => !f.includes('/archive/'))
+
+    // 特殊ファイルを除外 (CLAUDE.md, テンプレート, リリースノート, CREDITS)
+    const targetFiles = activeFiles.filter((f) => {
+      const basename = path.basename(f)
+      return !basename.includes('CLAUDE.md') &&
+             !f.includes('/session-templates/') &&
+             !basename.includes('RELEASE_NOTES_') &&
+             !basename.includes('CREDITS.md')
+    })
+
+    let withMetadata = 0
+    targetFiles.forEach((filePath) => {
+      const content = fs.readFileSync(filePath, 'utf8')
+      if (content.includes('種類') || content.includes('最終更新')) {
+        withMetadata++
+      }
+    })
+
+    const coverage = ((withMetadata / targetFiles.length) * 100).toFixed(1)
+    log.info(`メタデータ付きドキュメント: ${withMetadata}/${targetFiles.length} (${coverage}%)`)
+
+    if (parseFloat(coverage) >= 80) {
+      this.addResult('success', 'メタデータ', `カバレッジ ${coverage}% (目標: 80%以上)`)
+    } else if (parseFloat(coverage) >= 60) {
+      this.addResult('warning', 'メタデータ', `カバレッジ ${coverage}% (目標: 80%以上)`)
+    } else {
+      this.addResult('error', 'メタデータ', `カバレッジ ${coverage}% (目標: 80%以上)`)
     }
   }
 

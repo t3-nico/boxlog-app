@@ -53,9 +53,9 @@ export default [
 - **カスタムルール数**: 0個（すべて公式管理）
 - **メンテナンス**: Next.jsチームが自動更新
 
-### 2. `.claude/code-standards.md` - AI用品質基準（公式準拠版）
+### 2. `CLAUDE.md` - AI用品質基準（公式準拠版）
 
-AI（Claude、GitHub Copilot等）がコード生成時に参照するガイドライン：
+AI（Claude、GitHub Copilot等）がコード生成時に参照するガイドライン（`/CLAUDE.md` および `/src/CLAUDE.md` を参照）：
 
 **Next.js公式**:
 
@@ -129,7 +129,7 @@ AI（Claude、GitHub Copilot等）がコード生成時に参照するガイド�
 # TypeScript: https://www.typescriptlang.org/docs/
 
 # 2. AIに正しいコードを生成させる
-# .claude/code-standards.md（公式準拠版）を参照
+# CLAUDE.md（公式準拠版）を参照
 
 # 3. コミット前にチェック（3.6秒）
 npm run lint
@@ -212,9 +212,9 @@ config/eslint/          # カスタムルール19個
 
 ## 📚 関連ドキュメント
 
-- **AI品質基準**: [`.claude/code-standards.md`](../../.claude/code-standards.md)
+- **AI品質基準**: [`CLAUDE.md`](../../CLAUDE.md)
 - **スニペット集**: [`.vscode/boxlog.code-snippets`](../../.vscode/boxlog.code-snippets)
-- **ESLint設定**: [`eslint.config.js`](../../eslint.config.js)
+- **ESLint設定**: [`eslint.config.mjs`](../../eslint.config.mjs)
 - **ESLint README**: [`.eslint/README.md`](../../.eslint/README.md)
 - **ディレクトリ構造**: [`.eslint/STRUCTURE.md`](../../.eslint/STRUCTURE.md)
 - **親Issue**: [#338 技術的失敗をしない開発環境](https://github.com/t3-nico/boxlog-app/issues/338)
@@ -233,3 +233,9 @@ config/eslint/          # カスタムルール19個
 **実装日**: 2025-09-30
 **ステータス**: 公式準拠移行完了
 **効果**: Issue #338「仕組みを意識させない仕組み」達成
+
+---
+
+**種類**: 📗 ハウツーガイド
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

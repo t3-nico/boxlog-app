@@ -629,8 +629,7 @@ const { data: tasks, isLoading } = trpc.tasks.list.useQuery()
 
 ### BoxLog内部ドキュメント
 
-- [AI品質基準（公式準拠版）](../../.claude/code-standards.md)
-- [CLAUDE.md](../../CLAUDE.md) - React公式準拠の記載あり
+- [CLAUDE.md](../../CLAUDE.md) - AI品質基準・React公式準拠の記載あり
 - [Hooks使用ガイドライン](../../src/hooks/CLAUDE.md)
 
 ---

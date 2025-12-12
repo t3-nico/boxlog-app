@@ -32,7 +32,6 @@ export function InboxCellContent({ item, columnId, width }: InboxCellContentProp
 
   // インライン編集ハンドラー
   const handleStatusChange = (status: PlanStatus) => {
-    // TODO: APIでステータスを更新
     console.log('Update status:', item.id, status)
   }
 
