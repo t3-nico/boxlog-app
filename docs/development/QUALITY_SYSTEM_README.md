@@ -302,8 +302,6 @@ npm run build
 ## 📚 詳細ドキュメント
 
 - [ESLint設定ガイド](./ESLINT_HYBRID_APPROACH.md)
-- [テスト戦略](./TESTING_STRATEGY.md)
-- [デプロイ管理](./DEPLOY_MANAGEMENT.md)
 
 ## 🤝 貢献・改善
 
@@ -326,3 +324,9 @@ npm run build
 - 最終更新: 2025-09-28
 - バージョン: v1.0
 - 管理Issue: #356
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

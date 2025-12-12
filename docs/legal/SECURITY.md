@@ -159,8 +159,6 @@ BoxLogでは以下のセキュリティ対策を実施しています:
 
 - [Vulnerability Disclosure Guidelines](./VULNERABILITY_DISCLOSURE.md) - 脆弱性報告ガイドライン
 - [Incident Response Plan](./INCIDENT_RESPONSE.md) - インシデント対応計画
-- [Privacy Policy](/legal/privacy) - プライバシーポリシー
-- [Terms of Service](/legal/terms) - 利用規約
 
 ---
 

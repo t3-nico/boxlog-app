@@ -115,7 +115,7 @@ src/app/
     └── maintenance/page.tsx   # メンテナンス
 ```
 
-**詳細**: [docs/systems/ERROR_PAGES.md](../systems/ERROR_PAGES.md)
+**詳細**: [docs/architecture/ERROR_PAGES.md](./ERROR_PAGES.md)
 
 ### **5. その他**
 
@@ -371,7 +371,7 @@ const health = errorPatternDictionary.healthCheck()
 
 ## 📚 関連ドキュメント
 
-- [ERROR_PAGES.md](../systems/ERROR_PAGES.md) - エラーページシステム
+- [ERROR_PAGES.md](./ERROR_PAGES.md) - エラーページシステム
 - [CLAUDE.md](../../CLAUDE.md) - 開発指針
 - [SENTRY.md](../integrations/SENTRY.md) - Sentry統合ガイド
 - [Issue #404](https://github.com/t3-nico/boxlog-app/issues/404) - エラーハンドリング整理Issue
@@ -397,3 +397,9 @@ A: `isAutoRecoverable(errorCode)` が `true` を返すか確認してくださ�
 
 **メンテナー**: BoxLog Development Team
 **最終レビュー**: 2025-10-06
+
+---
+
+**種類**: 📕 解説
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

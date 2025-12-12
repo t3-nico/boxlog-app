@@ -15,7 +15,7 @@ export function usePlanTags() {
 
   /**
    * プランにタグを追加
-   * TODO: tRPC APIにaddTagエンドポイント追加後に実装
+   * @see Issue - tRPC APIにaddTagエンドポイント追加予定
    */
   const addplanTag = useCallback(
     async (planId: string, tagId: string): Promise<boolean> => {
@@ -23,7 +23,6 @@ export function usePlanTags() {
         setIsLoading(true)
         setError(null)
 
-        // TODO: REST API または tRPC エンドポイント実装後に有効化
         console.warn(`addplanTag: planId=${planId}, tagId=${tagId} - API not yet implemented`)
 
         // キャッシュ無効化（API実装後に有効）
@@ -44,7 +43,7 @@ export function usePlanTags() {
 
   /**
    * プランからタグを削除
-   * TODO: tRPC APIにremoveTagエンドポイント追加後に実装
+   * @see Issue - tRPC APIにremoveTagエンドポイント追加予定
    */
   const removeplanTag = useCallback(
     async (planId: string, tagId: string): Promise<boolean> => {
@@ -52,7 +51,6 @@ export function usePlanTags() {
         setIsLoading(true)
         setError(null)
 
-        // TODO: REST API または tRPC エンドポイント実装後に有効化
         console.warn(`removeplanTag: planId=${planId}, tagId=${tagId} - API not yet implemented`)
 
         // キャッシュ無効化（API実装後に有効）
@@ -73,14 +71,13 @@ export function usePlanTags() {
 
   /**
    * プランのタグを一括設定
-   * TODO: tRPC APIに一括設定エンドポイント追加後に実装
+   * @see Issue - tRPC APIに一括設定エンドポイント追加予定
    */
   const setplanTags = useCallback(async (_planId: string, _tagIds: string[]): Promise<boolean> => {
     try {
       setIsLoading(true)
       setError(null)
 
-      // TODO: REST API または tRPC エンドポイント実装後に有効化
       console.warn('setplanTags is not yet implemented. Use addplanTag/removeplanTag instead.')
 
       setIsLoading(false)

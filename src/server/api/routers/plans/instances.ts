@@ -49,7 +49,6 @@ export const instancesRouter = createTRPCRouter({
       }
 
       // Get exception info from plan_instances
-      // TODO: plan_instances table will be added to type definitions after migration
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query = (supabase as any)
         .from('plan_instances')
@@ -115,7 +114,6 @@ export const instancesRouter = createTRPCRouter({
       }
 
       // Upsert: update if exists for same date, insert if not
-      // TODO: plan_instances table will be added to type definitions after migration
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data, error } = await (supabase as any)
         .from('plan_instances')
@@ -174,7 +172,6 @@ export const instancesRouter = createTRPCRouter({
         })
       }
 
-      // TODO: plan_instances table will be added to type definitions after migration
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await (supabase as any)
         .from('plan_instances')

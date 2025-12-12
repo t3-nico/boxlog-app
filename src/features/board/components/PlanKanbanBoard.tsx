@@ -278,7 +278,6 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
       reminder_minutes,
       recurrence_type: recurrenceRule ? undefined : recurrenceType !== 'none' ? recurrenceType : undefined,
       recurrence_rule: recurrenceRule || undefined,
-      // TODO: タグの保存は作成後に別途処理が必要
     })
 
     // リセット

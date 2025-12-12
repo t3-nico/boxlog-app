@@ -189,3 +189,9 @@ npm version prerelease --preid=rc
 - [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - [npm version](https://docs.npmjs.com/cli/v8/commands/npm-version)
 - [CHANGELOG.md](../../CHANGELOG.md)
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

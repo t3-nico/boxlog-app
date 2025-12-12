@@ -70,9 +70,6 @@ export function useNotifications({ events, onReminderTriggered }: UseNotificatio
       return
     }
 
-    // TODO: イベントのリマインダー時刻を監視し、適切なタイミングで通知を表示
-    // 現在はプレースホルダー実装
-
     const checkReminders = () => {
       const now = new Date()
       events.forEach((event) => {

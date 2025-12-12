@@ -13,9 +13,7 @@ import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarP
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useTranslations } from 'next-intl'
 
-// TODO(#621): Inspector削除後の一時的な型エラー回避
-// import { Inspector } from '@/features/inspector'
-// import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
+// @see Issue #621 - Inspector再実装予定
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
 
@@ -36,15 +34,9 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const pathname = usePathname() || '/'
   const searchParams = useSearchParams()
 
-  // TODO(#621): Inspector削除後、plans/Sessions統合後に再実装
-  // jsx-no-bind optimization: Create event handler
+  // @see Issue #621 - Plans/Sessions統合後に再実装
   const handleCreateEventClick = useCallback(() => {
-    // openCreateInspector({
-    //   context: {
-    //     source: 'fab',
-    //   },
-    // })
-    console.debug('TODO: Sessions統合後に実装')
+    console.debug('Plans/Sessions統合後に実装予定')
   }, [])
 
   const { calendarProviderProps } = useCalendarProviderProps(pathname, searchParams || new URLSearchParams())
@@ -81,8 +73,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
                   </main>
                 </div>
 
-                {/* TODO(#621): Inspector削除後、plans/Sessions統合後に再実装 */}
-                {/* <Inspector /> */}
+                {/* @see Issue #621 - Inspector再実装予定 */}
               </div>
             </div>
           </ResizablePanel>

@@ -191,7 +191,7 @@ function getSeverityLevel(severity: AuditSeverity): 'log' | 'warn' | 'error' | '
  */
 async function saveToDatabase(entry: AuditLogEntry): Promise<void> {
   try {
-    // TODO: Supabase統合実装
+    // @see Issue - Supabase統合実装予定
     // const { createServerClient } = await import('@/lib/supabase/server')
     // const supabase = createServerClient()
     //
@@ -223,7 +223,7 @@ async function saveToDatabase(entry: AuditLogEntry): Promise<void> {
  */
 async function sendToSentry(entry: AuditLogEntry): Promise<void> {
   try {
-    // TODO: Sentry統合実装
+    // @see Issue - Sentry統合実装予定
     // const Sentry = await import('@sentry/nextjs')
     // Sentry.captureMessage(`Security Event: ${entry.eventType}`, {
     //   level: entry.severity === AuditSeverity.CRITICAL ? 'error' : 'warning',

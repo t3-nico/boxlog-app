@@ -6,7 +6,7 @@
  * - interface優先（拡張可能性）
  * - type使用可（Union Types）
  *
- * 参考: .claude/code-standards.md
+ * 参考: CLAUDE.md
  */
 
 // ============================================

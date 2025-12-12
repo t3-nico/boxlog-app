@@ -46,7 +46,7 @@
 **❌ リダイレクトされない**
 
 - 原因: Redirect URLsが未設定
-- 解決: [SUPABASE_AUTH_SETUP.md ステップ3](./SUPABASE_AUTH_SETUP.md#ステップ3-redirect-urls-の設定)
+- 解決: [SUPABASE_AUTH_SETUP.md](./SUPABASE_AUTH_SETUP.md) ステップ3を参照
 
 ---
 
@@ -212,7 +212,7 @@ console.log('Error:', error)
 
 ### 3. Middleware ログの確認
 
-[middleware.ts:124](../../src/middleware.ts#L124) にログ出力があります：
+`src/middleware.ts` にログ出力があります：
 
 ```typescript
 console.log('[Middleware] Redirecting to login:', request.nextUrl.pathname)
@@ -298,11 +298,7 @@ SKIP_AUTH_IN_DEV=true
 2. ✅ **E2Eテスト作成**: Playwrightで自動化
 3. ✅ **OAuth設定**: Google/Apple認証
 
-詳細は以下を参照：
-
-- [RLS_SETUP.md](./RLS_SETUP.md)
-- [E2E_TESTING.md](./E2E_TESTING.md)
-- [OAUTH_SETUP.md](./OAUTH_SETUP.md)
+詳細は Supabase公式ドキュメントを参照してください。
 
 ---
 
@@ -311,3 +307,9 @@ SKIP_AUTH_IN_DEV=true
 - [Supabase Auth公式ドキュメント](https://supabase.com/docs/guides/auth)
 - [Issue #531](https://github.com/t3-nico/boxlog-app/issues/531)
 - [認証実装コード](../../src/lib/supabase/)
+
+---
+
+**種類**: 📘 チュートリアル
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム
