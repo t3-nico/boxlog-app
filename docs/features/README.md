@@ -4,17 +4,6 @@ BoxLogアプリの機能実装、UI改善、システム実装に関するドキ
 
 ## 📚 実装ドキュメント一覧
 
-### 💾 データ管理システム
-
-#### [自動保存システム](./AUTO_SAVE_SYSTEM.md)
-
-**データ保存最適化** - ユーザー体験向上
-
-- リアルタイム自動保存実装
-- 競合状態（Race Condition）解決
-- エラーハンドリング・リトライ機構
-- オフライン対応・同期システム
-
 ### 🎨 UI/UX改善
 
 #### [プログレッシブ開示](./PROGRESSIVE_DISCLOSURE_IMPLEMENTATION.md)
@@ -25,15 +14,6 @@ BoxLogアプリの機能実装、UI改善、システム実装に関するドキ
 - ユーザー操作に応じた詳細展開
 - 認知負荷軽減による使いやすさ向上
 - レスポンシブ対応・アクセシビリティ配慮
-
-#### [設定レイアウト](./SETTINGS_LAYOUT_IMPLEMENTATION.md)
-
-**設定画面最適化** - 直感的設定体験
-
-- カテゴリ別設定項目整理
-- 検索・フィルタリング機能
-- 設定変更の即座反映
-- 設定エクスポート・インポート機能
 
 ## 🎯 実装アプローチ
 
@@ -100,9 +80,7 @@ BoxLogアプリの機能実装、UI改善、システム実装に関するドキ
 
 ### 実装参考優先順位
 
-1. **新規データ機能**: [AUTO_SAVE_SYSTEM.md](./AUTO_SAVE_SYSTEM.md)
-2. **UI改善**: [PROGRESSIVE_DISCLOSURE_IMPLEMENTATION.md](./PROGRESSIVE_DISCLOSURE_IMPLEMENTATION.md)
-3. **設定画面**: [SETTINGS_LAYOUT_IMPLEMENTATION.md](./SETTINGS_LAYOUT_IMPLEMENTATION.md)
+1. **UI改善**: [PROGRESSIVE_DISCLOSURE_IMPLEMENTATION.md](./PROGRESSIVE_DISCLOSURE_IMPLEMENTATION.md)
 
 ## 🔗 関連リソース
 
@@ -123,3 +101,9 @@ BoxLogアプリの機能実装、UI改善、システム実装に関するドキ
 **最終更新**: 2025-09-22
 **管理**: BoxLog 機能開発チーム
 **関連**: `/src/features/`, コロケーションドキュメント
+
+---
+
+**種類**: 📕 解説
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

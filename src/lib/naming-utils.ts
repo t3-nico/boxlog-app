@@ -149,7 +149,7 @@ export function navigateToScreen(screen: ScreenName): string {
     INBOX: ROUTES.inbox,
     STATS: ROUTES.stats,
     STATS_DETAIL: () => ROUTES.statsDetail(''), // パラメータが必要
-    HELP: settingsRouteStub, // TODO: ヘルプルート追加
+    HELP: settingsRouteStub,
     AUTH: ROUTES.auth,
     LOGIN: ROUTES.login,
     SIGNUP: ROUTES.signup,
@@ -185,7 +185,7 @@ export function navigateToScreen(screen: ScreenName): string {
     STATS_REFLECT_MONTH: ROUTES.statsReflectMonth,
     STATS_ACT_TRY: ROUTES.statsActTry,
     STATS_ACT_NEXT: ROUTES.statsActNext,
-    HELP_CHAT_HISTORY: settingsRouteStub, // TODO: ヘルプチャット履歴ルート追加
+    HELP_CHAT_HISTORY: settingsRouteStub,
     ERROR: () => '/', // エラーはerror.tsxで処理、URLルートは不要
     TEST_SENTRY: ROUTES.testSentry,
   }

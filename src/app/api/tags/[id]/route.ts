@@ -40,8 +40,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // 使用状況を取得
     if (includeUsage) {
-      // TODO: 実際のテーブル名に置き換える必要があります
-      // 現在は仮の実装として0を返します
       const usage = {
         planCount: 0,
         eventCount: 0,

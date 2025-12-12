@@ -37,13 +37,7 @@ export async function POST(request: NextRequest) {
     })
 
     // 本番環境ではSentryやログサービスに送信
-    if (process.env.NODE_ENV === 'production') {
-      // TODO: Sentry統合
-      // await captureException(new Error('CSP Violation'), {
-      //   extra: { cspReport },
-      //   level: 'warning',
-      // })
-    }
+    // @see Issue #487 - Sentry統合は別途実装予定
 
     return NextResponse.json({ received: true }, { status: 200 })
   } catch (error) {

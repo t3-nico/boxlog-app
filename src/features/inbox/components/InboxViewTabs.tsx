@@ -120,7 +120,7 @@ export function InboxViewTabs() {
         </Tabs>
       </div>
 
-      {/* 編集ダイアログ（TODO: 実装予定） */}
+      {/* 編集ダイアログ */}
       {editingView && (
         <div>
           {/* 編集ダイアログをここに実装 */}

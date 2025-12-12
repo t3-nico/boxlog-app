@@ -199,3 +199,9 @@ SELECT * FROM pg_trigger WHERE tgname = 'cleanup_login_attempts_trigger';
 - [OWASP Authentication Cheat Sheet - Account Lockout](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#account-lockout)
 - [Supabase RLS Documentation](https://supabase.com/docs/guides/auth/row-level-security)
 - [Supabase Auth Rate Limits](https://supabase.com/docs/guides/platform/going-into-prod#auth-rate-limits)
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

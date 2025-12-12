@@ -49,7 +49,6 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
   const [billingPeriod, setBillingPeriod] = useState<'month' | 'year'>('month')
 
   const handleUpgrade = useCallback((planId: string) => {
-    // TODO: Stripe連携でアップグレード処理
     console.log('Upgrade to:', planId)
   }, [])
 

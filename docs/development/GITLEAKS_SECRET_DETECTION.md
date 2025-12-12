@@ -375,12 +375,12 @@ CONFIG.thresholds.maxFileSize = 5 * 1024 * 1024 // 5MB
 
 **Phase 2（前提システム）:**
 
-- [License Verification](./LICENSE_VERIFICATION.md) - ライセンス検証システム
+- [License Compliance Guide](./LICENSE_COMPLIANCE_GUIDE.md) - ライセンス検証システム
 - [Performance Regression Testing](./PERFORMANCE_REGRESSION_TESTING.md) - パフォーマンス回帰テスト
 
 **セキュリティ関連:**
 
-- [ESLint Security Rules](../compliance/eslint-rules.md) - ESLintセキュリティルール
+- [ESLint設定ガイド](./ESLINT_HYBRID_APPROACH.md) - ESLintセキュリティルール
 
 **品質管理:**
 

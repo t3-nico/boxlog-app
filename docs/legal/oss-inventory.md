@@ -224,3 +224,9 @@ MITライセンスのパッケージは、著作権表示とライセンステ�
 **最終更新**: 2025-10-14
 **管理**: BoxLog Development Team
 **データソース**: `npx license-checker --production --json`
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

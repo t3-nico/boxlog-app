@@ -81,7 +81,7 @@ export function planToCalendarEvent(plan: Plan | PlanWithTags): CalendarEvent {
     displayStartDate: startDate,
     displayEndDate: endDate,
     duration: Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60)), // 分単位
-    isMultiDay: false, // TODO: 複数日対応
+    isMultiDay: false,
     isRecurring: plan.recurrence_type !== null && plan.recurrence_type !== 'none',
   }
 }
