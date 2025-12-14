@@ -28,9 +28,9 @@ function formatHours(hours: number): string {
 }
 
 export function TagTimeChart() {
-  const { data, isLoading } = api.plans.getTimeByTag.useQuery()
+  const { data, isPending } = api.plans.getTimeByTag.useQuery()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Card className="bg-background">
         <CardHeader>

@@ -22,9 +22,9 @@ function formatHours(hours: number): string {
 }
 
 export function DayOfWeekChart() {
-  const { data, isLoading } = api.plans.getDayOfWeekDistribution.useQuery()
+  const { data, isPending } = api.plans.getDayOfWeekDistribution.useQuery()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Card className="bg-background">
         <CardHeader>
