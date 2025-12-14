@@ -34,7 +34,7 @@ export function PlanInspector() {
   const initialData = usePlanInspectorStore((state) => state.initialData)
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector)
 
-  const { data: planData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId })
+  const { data: planData, isPending } = usePlan(planId!, { includeTags: true, enabled: !!planId })
   const plan = (planData ?? null) as unknown as Plan | null
 
   // Custom hooks

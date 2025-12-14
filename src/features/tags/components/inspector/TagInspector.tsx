@@ -53,7 +53,7 @@ export function TagInspector() {
   }, [closeInspectorStore, pathname, router])
 
   // タグデータ取得（フラット）
-  const { data: tags = [], isLoading } = useTags()
+  const { data: tags = [], isPending } = useTags()
   const { data: groups = [] } = useTagGroups()
 
   // 現在のタグを取得（フラット検索）
