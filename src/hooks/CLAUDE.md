@@ -2,7 +2,7 @@
 
 BoxLogカスタムReact Hooks実装ガイドライン。
 
-## 📁 現在のフック一覧（8個）
+## 📁 現在のフック一覧（10個）
 
 ### 保持されている共通フック
 
@@ -13,6 +13,8 @@ src/hooks/
 ├── useAutoRetry.ts              # 自動リトライ
 ├── useDebounce.ts               # デバウンス処理
 ├── useDelayedLoading.ts         # 遅延ローディング表示（300ms閾値）
+├── useIsOnline.ts               # オンライン状態検出
+├── useLoadingTimeout.ts         # ローディングタイムアウト検出
 ├── useMediaQuery.ts             # レスポンシブ対応
 ├── useOfflineSync.tsx           # オフライン同期
 └── usePerformanceMonitor.ts     # パフォーマンス監視
@@ -127,7 +129,49 @@ const showLoading = useDelayedLoadingWithMinDuration(isPending, {
 })
 ```
 
-### 4. データフェッチフック
+### 4. オンライン状態検出フック
+
+```tsx
+// hooks/useIsOnline.ts
+import { useIsOnline } from '@/hooks/useIsOnline'
+
+const isOnline = useIsOnline()
+
+// ローディング中にオフラインになった場合
+if (!isOnline && isLoading) {
+  return <OfflineLoadingFallback />
+}
+```
+
+### 5. ローディングタイムアウトフック
+
+```tsx
+// hooks/useLoadingTimeout.ts
+import { useLoadingTimeout, useLoadingState } from '@/hooks/useLoadingTimeout'
+
+// シンプル版: タイムアウト検出のみ
+const hasTimedOut = useLoadingTimeout(isLoading, 10000) // 10秒
+
+if (hasTimedOut) {
+  return <TimeoutFallback onRetry={refetch} />
+}
+
+// 詳細版: 警告状態も検出
+const loadingState = useLoadingState(isLoading, {
+  timeout: 10000,        // 10秒でタイムアウト
+  warningThreshold: 5000 // 5秒で警告表示
+})
+
+if (loadingState.hasTimedOut) {
+  return <TimeoutError />
+}
+
+if (loadingState.isWarning) {
+  return <Skeleton message="読み込みに時間がかかっています..." />
+}
+```
+
+### 6. データフェッチフック
 
 ```tsx
 // hooks/useFetch.ts
@@ -168,7 +212,7 @@ export const useFetch = <T,>(url: string): UseFetchResult<T> => {
 }
 ```
 
-### 5. フォーム管理フック
+### 7. フォーム管理フック
 
 ```tsx
 // hooks/useForm.ts

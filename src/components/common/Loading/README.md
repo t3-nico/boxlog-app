@@ -16,6 +16,8 @@
 | 長時間処理（進捗あり） | `Progress value={n}` | 10秒以上 |
 | 長時間処理（進捗不明） | `Progress indeterminate` | 10秒以上 |
 | 短時間ロードのチラつき防止 | `useDelayedLoading` | 300ms未満はスキップ |
+| オフライン時のフォールバック | `useIsOnline` | 接続状態を監視 |
+| 長時間ローディングの検出 | `useLoadingTimeout` | 10秒以上で警告 |
 
 ## コンポーネント一覧
 
