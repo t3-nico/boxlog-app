@@ -2,7 +2,7 @@
 
 BoxLogカスタムReact Hooks実装ガイドライン。
 
-## 📁 現在のフック一覧（7個）
+## 📁 現在のフック一覧（8個）
 
 ### 保持されている共通フック
 
@@ -12,6 +12,7 @@ src/hooks/
 ├── useAddPopup.ts               # ポップアップ追加
 ├── useAutoRetry.ts              # 自動リトライ
 ├── useDebounce.ts               # デバウンス処理
+├── useDelayedLoading.ts         # 遅延ローディング表示（300ms閾値）
 ├── useMediaQuery.ts             # レスポンシブ対応
 ├── useOfflineSync.tsx           # オフライン同期
 └── usePerformanceMonitor.ts     # パフォーマンス監視
@@ -106,7 +107,27 @@ export const useDebounce = <T,>(value: T, delay: number): T => {
 }
 ```
 
-### 3. データフェッチフック
+### 3. 遅延ローディングフック
+
+```tsx
+// hooks/useDelayedLoading.ts
+// 300ms以下の短時間ローディングをスキップし、チラつきを防止
+import { useDelayedLoading } from '@/hooks/useDelayedLoading'
+
+const { data, isPending } = api.plans.list.useQuery()
+const showLoading = useDelayedLoading(isPending) // 300ms以下はスキップ
+
+if (showLoading) return <Skeleton animation="shimmer" />
+return <Content data={data} />
+
+// 最小表示時間付きバージョン
+const showLoading = useDelayedLoadingWithMinDuration(isPending, {
+  delay: 300,      // 表示開始までの遅延
+  minDuration: 500 // 一度表示したら最低500ms維持
+})
+```
+
+### 4. データフェッチフック
 
 ```tsx
 // hooks/useFetch.ts
@@ -147,7 +168,7 @@ export const useFetch = <T,>(url: string): UseFetchResult<T> => {
 }
 ```
 
-### 4. フォーム管理フック
+### 5. フォーム管理フック
 
 ```tsx
 // hooks/useForm.ts

@@ -6,6 +6,17 @@
 
 様々なサイズ・用途に対応したローディング表示コンポーネントを提供します。
 
+## ローディングパターン選択ガイド
+
+| シナリオ | パターン | 時間目安 |
+|---------|----------|----------|
+| ページ遷移 | `loading.tsx` + Skeleton | 2-10秒 |
+| コンテナ系（カード、リスト） | `Skeleton animation="shimmer"` | 2-10秒 |
+| インライン操作 | `Spinner` | 0.3-2秒 |
+| 長時間処理（進捗あり） | `Progress value={n}` | 10秒以上 |
+| 長時間処理（進捗不明） | `Progress indeterminate` | 10秒以上 |
+| 短時間ロードのチラつき防止 | `useDelayedLoading` | 300ms未満はスキップ |
+
 ## コンポーネント一覧
 
 ### LoadingSpinner
@@ -90,14 +101,33 @@ import { LoadingButton } from '@/components/common'
 ```tsx
 import { Skeleton, SkeletonText, SkeletonCard } from '@/components/common'
 
-// 基本的なスケルトン
+// 基本的なスケルトン（pulse アニメーション - デフォルト）
 <Skeleton className="h-4 w-full" />
+
+// shimmer アニメーション（Facebook/LinkedIn方式、pulseより40%速く感じる）
+<Skeleton className="h-4 w-full" animation="shimmer" />
 
 // テキストスケルトン
 <SkeletonText lines={3} />
+<SkeletonText lines={3} animation="shimmer" />
 
 // カードスケルトン
 <SkeletonCard />
+<SkeletonCard animation="shimmer" showAvatar />
+```
+
+### useDelayedLoading
+
+300ms以下の短時間ローディングをスキップし、チラつきを防止するhook。
+
+```tsx
+import { useDelayedLoading } from '@/hooks/useDelayedLoading'
+
+const { data, isPending } = api.plans.list.useQuery()
+const showLoading = useDelayedLoading(isPending) // 300ms以下はスキップ
+
+if (showLoading) return <Skeleton animation="shimmer" />
+return <Content data={data} />
 ```
 
 ## Props
