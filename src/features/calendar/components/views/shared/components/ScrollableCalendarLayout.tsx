@@ -7,6 +7,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useCalendarScrollStore } from '@/features/calendar/stores'
 import { cn } from '@/lib/utils'
 
 import { TimeColumn } from '../grid/TimeColumn/TimeColumn'
@@ -77,7 +78,7 @@ export const ScrollableCalendarLayout = ({
   children,
   className = '',
   timezone: _timezone,
-  scrollToHour = 8,
+  scrollToHour: _scrollToHour = 8,
   showTimeColumn = true,
   showCurrentTime = true,
   showTimezone: _showTimezone = true,
@@ -94,6 +95,10 @@ export const ScrollableCalendarLayout = ({
   const scrollTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const [_isScrolling, setIsScrolling] = useState(false)
   const [_containerWidth, setContainerWidth] = useState(800)
+  const hasRestoredScroll = useRef(false)
+
+  // スクロール位置ストア
+  const { setScrollPosition, getScrollPosition, setLastActiveView } = useCalendarScrollStore()
 
   const HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,
@@ -156,19 +161,50 @@ export const ScrollableCalendarLayout = ({
 
   // ScrollableCalendarLayoutの初期化完了
 
-  // 初期スクロール位置の設定
+  // アクティブビューの更新
   useEffect(() => {
-    if (scrollContainerRef.current && scrollToHour) {
-      const scrollTop = Math.max(0, (scrollToHour - 2) * HOUR_HEIGHT)
-
-      setTimeout(() => {
-        scrollContainerRef.current?.scrollTo({
-          top: scrollTop,
-          behavior: 'smooth',
-        })
-      }, 100)
+    if (viewMode !== 'agenda') {
+      setLastActiveView(viewMode as 'day' | '3day' | '5day' | 'week')
     }
-  }, [scrollToHour, HOUR_HEIGHT])
+  }, [viewMode, setLastActiveView])
+
+  // 初期スクロール位置の設定（保存された位置を優先、なければ現在時刻を中央に）
+  useEffect(() => {
+    if (!scrollContainerRef.current || hasRestoredScroll.current) return
+
+    // viewModeが有効なタイプの場合のみ処理
+    if (viewMode === 'agenda') return
+
+    const savedPosition = getScrollPosition(viewMode as 'day' | '3day' | '5day' | 'week')
+
+    let targetScroll: number
+    if (savedPosition > 0) {
+      // 保存された位置がある場合は復元
+      targetScroll = savedPosition
+    } else {
+      // 保存がない場合は現在時刻を画面中央に
+      const now = new Date()
+      const currentHour = now.getHours() + now.getMinutes() / 60
+      const currentPosition = currentHour * HOUR_HEIGHT
+      const containerHeight = scrollContainerRef.current.clientHeight
+      // 現在時刻が画面中央に来るように調整
+      targetScroll = Math.max(0, currentPosition - containerHeight / 2)
+    }
+
+    hasRestoredScroll.current = true
+
+    setTimeout(() => {
+      scrollContainerRef.current?.scrollTo({
+        top: targetScroll,
+        behavior: savedPosition > 0 ? 'instant' : 'smooth',
+      })
+    }, 50)
+  }, [viewMode, getScrollPosition, HOUR_HEIGHT])
+
+  // viewMode変更時にhasRestoredScrollをリセット
+  useEffect(() => {
+    hasRestoredScroll.current = false
+  }, [viewMode])
 
   // コンテナ幅の動的取得
   useEffect(() => {
@@ -195,13 +231,18 @@ export const ScrollableCalendarLayout = ({
       onScrollPositionChange(scrollTop)
     }
 
+    // スクロール位置をストアに保存（agendaビュー以外）
+    if (viewMode !== 'agenda') {
+      setScrollPosition(viewMode as 'day' | '3day' | '5day' | 'week', scrollTop)
+    }
+
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current)
     }
     scrollTimeoutRef.current = setTimeout(() => {
       setIsScrolling(false)
     }, 150)
-  }, [onScrollPositionChange])
+  }, [onScrollPositionChange, viewMode, setScrollPosition])
 
   // スクロールリスナーの設定
   useEffect(() => {
