@@ -16,7 +16,7 @@ interface RecurrencePopoverProps {
   triggerRef: React.RefObject<HTMLElement | null>
   recurrenceRule: string | null // RRULE文字列
   onRecurrenceRuleChange: (rrule: string | null) => void
-  placement?: 'bottom' | 'right' | 'left' // ポップアップの表示位置
+  placement?: 'bottom' | 'right' | 'left' | undefined // ポップアップの表示位置
 }
 
 export function RecurrencePopover({
@@ -158,16 +158,6 @@ export function RecurrencePopover({
 // ===== 後方互換性のためのレガシーコンポーネント =====
 // TODO: 全てのコンシューマーが新APIに移行後に削除
 
-/** レガシーAPI用のラベル→タイプ変換マップ */
-const LEGACY_LABEL_TO_TYPE: Record<string, RecurrenceType> = {
-  '': 'none',
-  毎日: 'daily',
-  毎週: 'weekly',
-  毎月: 'monthly',
-  毎年: 'yearly',
-  平日: 'weekdays',
-}
-
 /** レガシーAPI用のタイプ→ラベル変換マップ */
 const LEGACY_TYPE_TO_LABEL: Record<RecurrenceType, string> = {
   none: '',
@@ -186,7 +176,7 @@ interface LegacyRecurrencePopoverProps {
   triggerRef: React.RefObject<HTMLElement | null>
   recurrenceRule: string | null
   onRecurrenceRuleChange: (rrule: string | null) => void
-  placement?: 'bottom' | 'right' | 'left'
+  placement?: 'bottom' | 'right' | 'left' | undefined
 }
 
 /** @deprecated Use RecurrencePopover with RecurrenceType values instead */

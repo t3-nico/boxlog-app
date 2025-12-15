@@ -14,9 +14,9 @@ interface ReminderSelectProps {
   /** 値が変更されたときのコールバック */
   onChange: (value: number | null) => void
   /** 表示バリアント */
-  variant?: 'inspector' | 'compact' | 'button'
+  variant?: 'inspector' | 'compact' | 'button' | undefined
   /** 無効化フラグ */
-  disabled?: boolean
+  disabled?: boolean | undefined
 }
 
 /**
@@ -57,10 +57,7 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
   }
 
   // オプションリスト
-  const options = [
-    { value: null, key: 'reminder.none' },
-    ...REMINDER_OPTIONS,
-  ] as const
+  const options = [{ value: null, key: 'reminder.none' }, ...REMINDER_OPTIONS] as const
 
   return (
     <div className="relative" ref={reminderRef}>
@@ -173,8 +170,8 @@ const LEGACY_MINUTES_TO_LABEL: Record<number, string> = {
 interface LegacyReminderSelectProps {
   value: string
   onChange: (value: string) => void
-  variant?: 'inspector' | 'compact' | 'button'
-  disabled?: boolean
+  variant?: 'inspector' | 'compact' | 'button' | undefined
+  disabled?: boolean | undefined
 }
 
 /** @deprecated Use ReminderSelect with number values instead */
