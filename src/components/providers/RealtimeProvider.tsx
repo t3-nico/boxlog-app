@@ -55,13 +55,10 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
       return
     }
 
-    // 少し遅延させてAuthStoreの初期化を確実に待つ
-    const timer = setTimeout(() => {
-      setIsReady(true)
-      console.debug('[RealtimeProvider] Ready. userId:', userId)
-    }, 100)
-
-    return () => clearTimeout(timer)
+    // AuthStoreのloading完了 = 初期化完了なので、即座にreadyにする
+    // 以前は100ms遅延があったが、不要な遅延のため削除
+    setIsReady(true)
+    console.debug('[RealtimeProvider] Ready. userId:', userId)
   }, [userId, loading])
 
   // 購読を有効化する条件
