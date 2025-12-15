@@ -75,15 +75,6 @@ export function getDateStyleClass(date: Date): string {
 }
 
 /**
- * 時間範囲のフォーマット
- */
-export function formatTimeRange(start: Date, end: Date): string {
-  const startStr = format(start, 'HH:mm')
-  const endStr = format(end, 'HH:mm')
-  return `${startStr} - ${endStr}`
-}
-
-/**
  * タスクの表示用テキストを取得
  */
 export function getTaskDisplayText(task: CalendarTask, maxLength: number = 20): string {
