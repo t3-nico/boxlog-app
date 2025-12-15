@@ -14,7 +14,7 @@ const currentTimeLineStyles = {
   dot: 'absolute w-2.5 h-2.5 bg-primary rounded-full top-[-4px] shadow-sm',
   line: 'absolute h-[2px] bg-primary shadow-sm',
   // 他の日用（薄い表示）
-  lineFaded: 'absolute h-[1px] bg-primary/30',
+  lineFaded: 'absolute h-[1px] bg-primary/50',
 } as const
 
 interface CurrentTimeLineProps {
@@ -205,7 +205,7 @@ export const CurrentTimeLineForColumn = ({
       )}
 
       {/* 他の日の場合：薄い線のみ */}
-      {!isToday && showOnOtherDays && <div className="bg-primary/30 h-px w-full" />}
+      {!isToday && showOnOtherDays && <div className="bg-primary/50 h-px w-full" />}
     </div>
   )
 }

@@ -395,13 +395,23 @@ export const ScrollableCalendarLayout = ({
           {/* メインコンテンツ */}
           {children}
 
-          {/* 現在時刻線 */}
-          {shouldShowCurrentTimeLine ? (
+          {/* 現在時刻線 - 全ての列に表示 */}
+          {shouldShowCurrentTimeLine && displayDates && displayDates.length > 0 ? (
             <>
-              {/* 今日が含まれる場合: 今日の列のみ濃い線 */}
+              {/* 全列に薄い線を表示 */}
+              <div
+                className={cn('bg-primary/50 pointer-events-none absolute z-40 h-px')}
+                style={{
+                  top: `${currentTimePosition}px`,
+                  left: 0,
+                  right: 0,
+                }}
+              />
+
+              {/* 今日の列のみ濃い線を上書き */}
               {hasToday && todayColumnPosition ? (
                 <>
-                  {/* 横線 - 今日の列のみ */}
+                  {/* 横線 - 今日の列のみ濃く */}
                   <div
                     className={cn('bg-primary pointer-events-none absolute z-40 h-[2px] shadow-sm')}
                     style={{
@@ -422,17 +432,7 @@ export const ScrollableCalendarLayout = ({
                     }}
                   />
                 </>
-              ) : (
-                /* 今日が含まれない場合: 全幅で薄い線 */
-                <div
-                  className={cn('bg-primary/30 pointer-events-none absolute z-40 h-px')}
-                  style={{
-                    top: `${currentTimePosition}px`,
-                    left: 0,
-                    right: 0,
-                  }}
-                />
-              )}
+              ) : null}
             </>
           ) : null}
         </div>
