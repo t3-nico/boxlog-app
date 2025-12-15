@@ -14,7 +14,7 @@ interface ThemeContextType {
   setTheme: (theme: Theme) => void
   setColorScheme: (colorScheme: ColorScheme) => void
   resolvedTheme: 'light' | 'dark'
-  isLoading: boolean
+  isPending: boolean
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null)
@@ -66,7 +66,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const utils = api.useUtils()
 
   // DBから設定を取得
-  const { data: dbSettings, isLoading } = api.userSettings.get.useQuery(undefined, {
+  const { data: dbSettings, isPending } = api.userSettings.get.useQuery(undefined, {
     staleTime: CACHE_5_MINUTES,
     refetchOnWindowFocus: false,
     retry: false, // 認証エラー時はリトライしない
@@ -81,7 +81,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   // DBから取得した設定を反映
   useEffect(() => {
-    if (dbSettings && !isLoading) {
+    if (dbSettings && !isPending) {
       if (dbSettings.theme) {
         setThemeState(dbSettings.theme)
       }
@@ -89,7 +89,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
         setColorSchemeState(dbSettings.colorScheme)
       }
     }
-  }, [dbSettings, isLoading])
+  }, [dbSettings, isPending])
 
   // テーマ設定（DB保存 + ローカル状態更新）
   const setTheme = useCallback(
@@ -172,7 +172,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
         setTheme,
         setColorScheme,
         resolvedTheme,
-        isLoading,
+        isPending,
       }}
     >
       {children}

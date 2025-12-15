@@ -53,7 +53,7 @@ export function TagInspector() {
   }, [closeInspectorStore, pathname, router])
 
   // タグデータ取得（フラット）
-  const { data: tags = [], isLoading } = useTags()
+  const { data: tags = [], isPending } = useTags()
   const { data: groups = [] } = useTagGroups()
 
   // 現在のタグを取得（フラット検索）
@@ -237,7 +237,7 @@ export function TagInspector() {
         <SheetContent className="w-[480px] gap-0 overflow-y-auto" showCloseButton={false}>
           <SheetTitle className="sr-only">{tag?.name || 'タグの詳細'}</SheetTitle>
 
-          {isLoading ? (
+          {isPending ? (
             <div className="flex h-full items-center justify-center">
               <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2" />
             </div>

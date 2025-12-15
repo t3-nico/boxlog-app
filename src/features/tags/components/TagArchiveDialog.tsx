@@ -27,7 +27,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
   const [isArchiving, setIsArchiving] = useState(false)
 
   // TanStack Queryでタグ使用状況を取得
-  const { data: usage, isLoading } = useTagUsage(tag?.id)
+  const { data: usage, isPending } = useTagUsage(tag?.id)
 
   const handleConfirm = async () => {
     setIsArchiving(true)
@@ -53,7 +53,7 @@ export function TagArchiveDialog({ tag, onClose, onConfirm }: TagArchiveDialogPr
           </div>
 
           {/* 使用状況 */}
-          {isLoading ? (
+          {isPending ? (
             <div className="bg-surface-container flex items-center justify-center rounded-xl p-4">
               <div className="border-primary h-5 w-5 animate-spin rounded-full border-b-2"></div>
             </div>
