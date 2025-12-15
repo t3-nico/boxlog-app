@@ -41,15 +41,15 @@ const CurrentTimeLine = ({ day }: { day: Date }) => {
         top: `${currentHours * HOUR_HEIGHT}px`,
       }}
     >
-      {/* 今日の場合：濃い線と赤い点 */}
+      {/* 今日の場合：濃い線と点 */}
       {isTodayColumn && (
         <>
-          <div className="h-0.5 w-full bg-red-500" />
-          <div className="absolute top-1/2 -left-1 h-2 w-2 -translate-y-1/2 rounded-full bg-red-500" />
+          <div className="bg-primary h-0.5 w-full shadow-sm" />
+          <div className="bg-primary absolute top-1/2 -left-1 h-2 w-2 -translate-y-1/2 rounded-full" />
         </>
       )}
       {/* 他の日の場合：薄い線のみ */}
-      {!isTodayColumn && <div className="h-px w-full bg-red-500/30" />}
+      {!isTodayColumn && <div className="bg-primary/30 h-px w-full" />}
     </div>
   )
 }

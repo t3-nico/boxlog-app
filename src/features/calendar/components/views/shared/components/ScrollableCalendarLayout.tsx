@@ -57,10 +57,11 @@ export const CalendarDateHeader = ({
   return (
     <div className="flex h-12 shrink-0 flex-col justify-center py-2">
       <div className="flex px-4">
-        {/* UTC/タイムゾーン表示エリア（ヘッダー左端） */}
-        {showTimeColumn && showTimezone && timezone ? (
+        {/* 左スペーサー（時間列と揃えるため） */}
+        {showTimeColumn ? (
           <div className="flex shrink-0 items-end justify-start" style={{ width: timeColumnWidth }}>
-            <TimezoneOffset timezone={timezone} className="text-xs" />
+            {/* タイムゾーン表示（showTimezone=trueの場合のみ） */}
+            {showTimezone && timezone ? <TimezoneOffset timezone={timezone} className="text-xs" /> : null}
           </div>
         ) : null}
 
@@ -145,10 +146,11 @@ export const ScrollableCalendarLayout = ({
     }
   }, [displayDates])
 
-  // 今日が表示範囲に含まれるか判定
-  const shouldShowCurrentTimeLine = useMemo(() => {
-    return showCurrentTime && todayColumnPosition !== null
-  }, [showCurrentTime, todayColumnPosition])
+  // 現在時刻線を表示するか判定（showCurrentTimeがtrueなら常に表示）
+  const shouldShowCurrentTimeLine = showCurrentTime
+
+  // 今日が表示範囲に含まれるか
+  const hasToday = todayColumnPosition !== null
 
   // 現在時刻の位置を計算
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -393,29 +395,44 @@ export const ScrollableCalendarLayout = ({
           {/* メインコンテンツ */}
           {children}
 
-          {/* 現在時刻線 - 今日の列のみに表示 */}
-          {shouldShowCurrentTimeLine && todayColumnPosition ? (
+          {/* 現在時刻線 */}
+          {shouldShowCurrentTimeLine ? (
             <>
-              {/* 横線 - 今日の列のみ */}
-              <div
-                className={cn('bg-primary pointer-events-none absolute z-40 h-[2px] shadow-sm')}
-                style={{
-                  top: `${currentTimePosition}px`,
-                  left: todayColumnPosition.left,
-                  width: todayColumnPosition.width,
-                }}
-              />
+              {/* 今日が含まれる場合: 今日の列のみ濃い線 */}
+              {hasToday && todayColumnPosition ? (
+                <>
+                  {/* 横線 - 今日の列のみ */}
+                  <div
+                    className={cn('bg-primary pointer-events-none absolute z-40 h-[2px] shadow-sm')}
+                    style={{
+                      top: `${currentTimePosition}px`,
+                      left: todayColumnPosition.left,
+                      width: todayColumnPosition.width,
+                    }}
+                  />
 
-              {/* 点 - 今日の列の左端 */}
-              <div
-                className={cn(
-                  'border-background bg-primary pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md'
-                )}
-                style={{
-                  top: `${currentTimePosition - 4}px`,
-                  left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
-                }}
-              />
+                  {/* 点 - 今日の列の左端 */}
+                  <div
+                    className={cn(
+                      'border-background bg-primary pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md'
+                    )}
+                    style={{
+                      top: `${currentTimePosition - 4}px`,
+                      left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
+                    }}
+                  />
+                </>
+              ) : (
+                /* 今日が含まれない場合: 全幅で薄い線 */
+                <div
+                  className={cn('bg-primary/30 pointer-events-none absolute z-40 h-px')}
+                  style={{
+                    top: `${currentTimePosition}px`,
+                    left: 0,
+                    right: 0,
+                  }}
+                />
+              )}
             </>
           ) : null}
         </div>
