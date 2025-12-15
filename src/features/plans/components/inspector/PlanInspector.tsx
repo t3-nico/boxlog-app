@@ -10,6 +10,12 @@ import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
 
+import {
+  getRecurrenceLabel,
+  getReminderLabel,
+  RECURRENCE_LABEL_TO_TYPE,
+  REMINDER_LABEL_TO_MINUTES,
+} from '../../constants'
 import { usePlan } from '../../hooks/usePlan'
 import { usePlanTags } from '../../hooks/usePlanTags'
 import { usePlanCacheStore } from '../../stores/usePlanCacheStore'
@@ -100,16 +106,7 @@ export function PlanInspector() {
       }
 
       if ('reminder_minutes' in plan && plan.reminder_minutes !== null) {
-        const minutes = plan.reminder_minutes
-        const reminderMap: Record<number, string> = {
-          0: '開始時刻',
-          10: '10分前',
-          30: '30分前',
-          60: '1時間前',
-          1440: '1日前',
-          10080: '1週間前',
-        }
-        setReminderType(reminderMap[minutes] || 'カスタム')
+        setReminderType(getReminderLabel(plan.reminder_minutes))
       } else {
         setReminderType('')
       }
@@ -410,18 +407,7 @@ export function PlanInspector() {
                                 ? cache.recurrence_type
                                 : (plan?.recurrence_type ?? null)
                             if (recurrence_rule) return configToReadable(ruleToConfig(recurrence_rule))
-                            if (recurrence_type && recurrence_type !== 'none') {
-                              const typeMap: Record<string, string> = {
-                                daily: '毎日',
-                                weekly: '毎週',
-                                monthly: '毎月',
-                                yearly: '毎年',
-                                weekdays: '平日',
-                                none: '繰り返し',
-                              }
-                              return typeMap[recurrence_type] || '繰り返し'
-                            }
-                            return '繰り返し'
+                            return getRecurrenceLabel(recurrence_type)
                           })()}
                         </span>
                       </Button>
@@ -432,20 +418,12 @@ export function PlanInspector() {
                         onRepeatTypeChange={(type) => {
                           if (!planId) return
                           setRepeatType(type)
-                          const typeMap: Record<
-                            string,
-                            'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'
-                          > = {
-                            '': 'none',
-                            毎日: 'daily',
-                            毎週: 'weekly',
-                            毎月: 'monthly',
-                            毎年: 'yearly',
-                            平日: 'weekdays',
-                          }
                           updatePlan.mutate({
                             id: planId,
-                            data: { recurrence_type: typeMap[type] || 'none', recurrence_rule: null },
+                            data: {
+                              recurrence_type: RECURRENCE_LABEL_TO_TYPE[type] ?? 'none',
+                              recurrence_rule: null,
+                            },
                           })
                         }}
                         triggerRef={recurrenceTriggerRef}
@@ -469,16 +447,10 @@ export function PlanInspector() {
                       onChange={(type) => {
                         if (!planId) return
                         setReminderType(type)
-                        const reminderMap: Record<string, number | null> = {
-                          '': null,
-                          開始時刻: 0,
-                          '10分前': 10,
-                          '30分前': 30,
-                          '1時間前': 60,
-                          '1日前': 1440,
-                          '1週間前': 10080,
-                        }
-                        updatePlan.mutate({ id: planId, data: { reminder_minutes: reminderMap[type] ?? null } })
+                        updatePlan.mutate({
+                          id: planId,
+                          data: { reminder_minutes: REMINDER_LABEL_TO_MINUTES[type] ?? null },
+                        })
                       }}
                     />
                   </div>

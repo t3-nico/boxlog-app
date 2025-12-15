@@ -12,6 +12,8 @@ import {
   subWeeks,
 } from 'date-fns'
 
+import { MS_PER_MINUTE } from '@/constants/time'
+
 import type { CalendarViewType, ViewDateRange } from '../types/calendar.types'
 
 import type { CalendarTask } from './time-grid-helpers'
@@ -207,7 +209,7 @@ export const MINUTE_HEIGHT = 1 // 1分 = 1px
  * 時間に基づく高さを計算
  */
 export function calculateHeightFromDuration(startTime: Date, endTime: Date): number {
-  const durationMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60)
+  const durationMinutes = (endTime.getTime() - startTime.getTime()) / MS_PER_MINUTE
   return Math.max(durationMinutes * MINUTE_HEIGHT, 20) // 最小高さ20px
 }
 

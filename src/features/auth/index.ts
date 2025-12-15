@@ -31,4 +31,3 @@ export { AUTH_CONFIG as authConfig } from './lib/auth-config'
 export { getAuditLogs, getRecentLogins, recordAuthAuditLog } from './lib/audit-log'
 export type { AuthAuditEventType, AuthAuditLogEntry, AuthAuditMetadata } from './lib/audit-log'
 
-// Note: LoginFormDisabled and useAuthForm are currently unused and excluded from exports

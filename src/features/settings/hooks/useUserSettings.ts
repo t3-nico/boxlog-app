@@ -5,6 +5,7 @@
 
 import { useCallback, useEffect } from 'react'
 
+import { CACHE_5_MINUTES } from '@/constants/time'
 import { api } from '@/lib/trpc'
 
 import { useCalendarSettingsStore } from '../stores/useCalendarSettingsStore'
@@ -25,7 +26,7 @@ export function useUserSettings() {
     isLoading,
     error,
   } = api.userSettings.get.useQuery(undefined, {
-    staleTime: 1000 * 60 * 5, // 5分間キャッシュ
+    staleTime: CACHE_5_MINUTES,
     refetchOnWindowFocus: false,
   })
 

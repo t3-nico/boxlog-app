@@ -14,6 +14,8 @@ import {
   subYears,
 } from 'date-fns'
 import { create } from 'zustand'
+
+import { MS_PER_DAY } from '@/constants/time'
 import { devtools, persist } from 'zustand/middleware'
 
 /** 期間タイプ */
@@ -116,7 +118,7 @@ function shiftPeriod(type: PeriodType, currentStart: Date, direction: 'prev' | '
       }
     }
     case 'custom': {
-      const days = Math.ceil((currentStart.getTime() - currentStart.getTime()) / (1000 * 60 * 60 * 24))
+      const days = Math.ceil((currentStart.getTime() - currentStart.getTime()) / MS_PER_DAY)
       const newStart = addDays(currentStart, shift * (days + 1))
       const newEnd = addDays(currentStart, shift * (days + 1))
       return { start: newStart, end: newEnd }

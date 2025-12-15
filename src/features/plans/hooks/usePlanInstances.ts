@@ -1,3 +1,4 @@
+import { CACHE_2_MINUTES, CACHE_5_MINUTES } from '@/constants/time'
 import { api } from '@/lib/trpc'
 
 import type { PlanInstanceException } from '../utils/recurrence'
@@ -29,8 +30,8 @@ export function usePlanInstances(
     },
     {
       enabled: enabled && planIds.length > 0,
-      staleTime: 1000 * 60 * 2, // 2分
-      gcTime: 1000 * 60 * 5, // 5分
+      staleTime: CACHE_2_MINUTES,
+      gcTime: CACHE_5_MINUTES,
     }
   )
 }
