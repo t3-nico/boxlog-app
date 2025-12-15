@@ -366,5 +366,3 @@ export const LoadingStates = {
   DataLoading,
   PresetLoadings,
 }
-
-export type { SkeletonAnimation }

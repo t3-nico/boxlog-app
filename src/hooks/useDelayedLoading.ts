@@ -37,6 +37,7 @@ export function useDelayedLoading(isLoading: boolean, delay = 300): boolean {
 
     // ローディング終了時は即座に非表示
     setShowLoading(false)
+    return undefined
   }, [isLoading, delay])
 
   return showLoading
@@ -93,6 +94,7 @@ export function useDelayedLoadingWithMinDuration(
     }
 
     setShowLoading(false)
+    return undefined
   }, [isLoading, delay, minDuration, startTime])
 
   return showLoading
