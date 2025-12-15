@@ -73,7 +73,7 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
           <span>{t('badge', { count: overduePlans.length })}</span>
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-72 p-0" align="start" sideOffset={4}>
+      <PopoverContent className="w-72 p-0" align="start" sideOffset={4} onOpenAutoFocus={(e) => e.preventDefault()}>
         <div className="border-border border-b px-3 py-2">
           <h4 className="text-sm font-semibold">{t('popoverTitle')}</h4>
         </div>
@@ -84,9 +84,9 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
               type="button"
               onClick={() => handlePlanClick(plan.id)}
               className={cn(
-                'hover:bg-muted/50 w-full px-3 py-2 text-left transition-colors',
+                'hover:bg-state-hover w-full px-3 py-2 text-left transition-colors',
                 'border-border border-b last:border-b-0',
-                'focus:bg-muted/50 focus:outline-none'
+                'focus:bg-state-focus focus:outline-none'
               )}
             >
               <div className="flex items-start justify-between gap-2">
