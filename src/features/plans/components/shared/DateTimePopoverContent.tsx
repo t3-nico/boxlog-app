@@ -2,8 +2,8 @@
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
-import { RecurrencePopover } from '@/features/plans/components/shared/RecurrencePopover'
-import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
+import { LegacyRecurrencePopover } from '@/features/plans/components/shared/RecurrencePopover'
+import { LegacyReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
 import { TimeSelect } from '@/features/plans/components/shared/TimeSelect'
 import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime'
 import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat } from 'lucide-react'
@@ -106,7 +106,7 @@ export function DateTimePopoverContent({
           <Tooltip delayDuration={300}>
             <TooltipTrigger asChild>
               <div>
-                <ReminderSelect
+                <LegacyReminderSelect
                   value={reminderType}
                   onChange={onReminderChange}
                   variant="button"
@@ -176,7 +176,7 @@ export function DateTimePopoverContent({
                 </button>
 
                 {!isRecurrenceDisabled && (
-                  <RecurrencePopover
+                  <LegacyRecurrencePopover
                     open={recurrencePopoverOpen}
                     onOpenChange={setRecurrencePopoverOpen}
                     triggerRef={recurrenceTriggerRef}

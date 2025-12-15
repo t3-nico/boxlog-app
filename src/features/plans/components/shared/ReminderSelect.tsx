@@ -1,25 +1,22 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { Bell } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 
-// 通知オプションの定義（UI表示文字列）
-export const REMINDER_OPTIONS = [
-  { value: '', label: '選択しない' },
-  { value: '開始時刻', label: 'イベント開始時刻' },
-  { value: '10分前', label: '10分前' },
-  { value: '30分前', label: '30分前' },
-  { value: '1時間前', label: '1時間前' },
-  { value: '1日前', label: '1日前' },
-  { value: '1週間前', label: '1週間前' },
-] as const
+import { Button } from '@/components/ui/button'
+
+import { REMINDER_MINUTES, REMINDER_OPTIONS } from '../../constants'
 
 interface ReminderSelectProps {
-  value: string // UI表示文字列（'', '開始時刻', '10分前', ...）
-  onChange: (value: string) => void
-  variant?: 'inspector' | 'compact' | 'button' // inspectorスタイル、compactスタイル、または buttonスタイル
-  disabled?: boolean // 無効化フラグ
+  /** リマインダー値（分数） */
+  value: number | null
+  /** 値が変更されたときのコールバック */
+  onChange: (value: number | null) => void
+  /** 表示バリアント */
+  variant?: 'inspector' | 'compact' | 'button'
+  /** 無効化フラグ */
+  disabled?: boolean
 }
 
 /**
@@ -28,9 +25,10 @@ interface ReminderSelectProps {
  * Inspector、Card、Tableの全てで共通して使用
  * - inspector: Inspectorで使用する横長スタイル（Bell + テキスト）
  * - compact: Card/Tableで使用するコンパクトスタイル（Bell のみ）
- * - button: Card/Tableポップオーバー内で使用する標準ボタンスタイル（繰り返しと同じ）
+ * - button: Card/Tableポップオーバー内で使用する標準ボタンスタイル
  */
 export function ReminderSelect({ value, onChange, variant = 'inspector', disabled = false }: ReminderSelectProps) {
+  const t = useTranslations()
   const reminderRef = useRef<HTMLDivElement>(null)
   const [showPopover, setShowPopover] = useState(false)
 
@@ -49,14 +47,20 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
   }, [])
 
   // 通知が設定されているかどうか
-  const hasReminder = value && value !== ''
+  const hasReminder = value !== null
 
   // 表示ラベルを取得
   const getDisplayLabel = () => {
-    if (!value || value === '') return 'なし'
+    if (value === null) return t('reminder.none')
     const option = REMINDER_OPTIONS.find((opt) => opt.value === value)
-    return option?.label || value
+    return option ? t(option.key) : t('reminder.custom')
   }
+
+  // オプションリスト
+  const options = [
+    { value: null, key: 'reminder.none' },
+    ...REMINDER_OPTIONS,
+  ] as const
 
   return (
     <div className="relative" ref={reminderRef}>
@@ -102,18 +106,17 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
           }}
         >
           <Bell className="h-4 w-4" />
-          {variant === 'inspector' && <span className="text-sm">{value || '通知'}</span>}
+          {variant === 'inspector' && <span className="text-sm">{getDisplayLabel()}</span>}
         </Button>
       )}
 
       {showPopover && !disabled && (
         <div className="border-input bg-popover absolute top-10 left-0 z-50 w-56 rounded-md border shadow-md">
           <div className="p-1">
-            {REMINDER_OPTIONS.map((option, index) => (
-              <>
-                {index === 1 && <div key="separator" className="border-border my-1 border-t" />}
+            {options.map((option, index) => (
+              <div key={option.key}>
+                {index === 1 && <div className="border-border my-1 border-t" />}
                 <button
-                  key={option.value}
                   className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
                   onClick={() => {
                     onChange(option.value)
@@ -121,13 +124,72 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
                   }}
                   type="button"
                 >
-                  {option.label}
+                  {t(option.key)}
                 </button>
-              </>
+              </div>
             ))}
           </div>
         </div>
       )}
     </div>
   )
+}
+
+// ===== 後方互換性のためのレガシーコンポーネント =====
+// TODO: 全てのコンシューマーが新APIに移行後に削除
+
+/** @deprecated Use ReminderSelect with number values instead */
+export const REMINDER_OPTIONS_LEGACY = [
+  { value: '', label: '選択しない' },
+  { value: '開始時刻', label: 'イベント開始時刻' },
+  { value: '10分前', label: '10分前' },
+  { value: '30分前', label: '30分前' },
+  { value: '1時間前', label: '1時間前' },
+  { value: '1日前', label: '1日前' },
+  { value: '1週間前', label: '1週間前' },
+] as const
+
+/** レガシーAPI用のラベル→分数変換マップ */
+const LEGACY_LABEL_TO_MINUTES: Record<string, number | null> = {
+  '': null,
+  開始時刻: REMINDER_MINUTES.AT_START,
+  '10分前': REMINDER_MINUTES.MIN_10,
+  '30分前': REMINDER_MINUTES.MIN_30,
+  '1時間前': REMINDER_MINUTES.HOUR_1,
+  '1日前': REMINDER_MINUTES.DAY_1,
+  '1週間前': REMINDER_MINUTES.WEEK_1,
+}
+
+/** レガシーAPI用の分数→ラベル変換マップ */
+const LEGACY_MINUTES_TO_LABEL: Record<number, string> = {
+  [REMINDER_MINUTES.AT_START]: '開始時刻',
+  [REMINDER_MINUTES.MIN_10]: '10分前',
+  [REMINDER_MINUTES.MIN_30]: '30分前',
+  [REMINDER_MINUTES.HOUR_1]: '1時間前',
+  [REMINDER_MINUTES.DAY_1]: '1日前',
+  [REMINDER_MINUTES.WEEK_1]: '1週間前',
+}
+
+interface LegacyReminderSelectProps {
+  value: string
+  onChange: (value: string) => void
+  variant?: 'inspector' | 'compact' | 'button'
+  disabled?: boolean
+}
+
+/** @deprecated Use ReminderSelect with number values instead */
+export function LegacyReminderSelect({ value, onChange, variant, disabled }: LegacyReminderSelectProps) {
+  // レガシーラベルを分数に変換
+  const numericValue = LEGACY_LABEL_TO_MINUTES[value] ?? null
+
+  // 分数からレガシーラベルに変換してコールバック
+  const handleChange = (minutes: number | null) => {
+    if (minutes === null) {
+      onChange('')
+    } else {
+      onChange(LEGACY_MINUTES_TO_LABEL[minutes] ?? '')
+    }
+  }
+
+  return <ReminderSelect value={numericValue} onChange={handleChange} variant={variant} disabled={disabled} />
 }

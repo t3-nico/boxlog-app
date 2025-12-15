@@ -1,5 +1,10 @@
 {
   "settings": {
+    "tabs": {
+      "details": "Details",
+      "activity": "Activity",
+      "comments": "Comments"
+    },
     "account": {
       "profileUpdated": "Profile updated successfully",
       "passwordUpdated": "Password updated successfully",

@@ -19,8 +19,8 @@ import { NovelDescriptionEditor } from './NovelDescriptionEditor'
 import { PlanDateTimeInput } from './PlanDateTimeInput'
 import { PlanTagsSection } from './PlanTagsSection'
 import { PlanTitleInput } from './PlanTitleInput'
-import { RecurrencePopover } from './RecurrencePopover'
-import { ReminderSelect } from './ReminderSelect'
+import { LegacyRecurrencePopover } from './RecurrencePopover'
+import { LegacyReminderSelect } from './ReminderSelect'
 
 interface PlanCreatePopoverProps {
   triggerElement: React.ReactNode
@@ -239,7 +239,7 @@ export function PlanCreatePopover({
                   </span>
                 </Button>
 
-                <RecurrencePopover
+                <LegacyRecurrencePopover
                   open={recurrencePopoverOpen}
                   onOpenChange={setRecurrencePopoverOpen}
                   triggerRef={recurrenceTriggerRef}
@@ -267,7 +267,7 @@ export function PlanCreatePopover({
                   }}
                 />
 
-                <ReminderSelect value={reminderType} onChange={setReminderType} variant="inspector" />
+                <LegacyReminderSelect value={reminderType} onChange={setReminderType} variant="inspector" />
               </div>
             </div>
 
