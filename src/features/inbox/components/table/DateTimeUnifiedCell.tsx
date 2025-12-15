@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { TableCell } from '@/components/ui/table'
 import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator'
-import { LegacyReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
+import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { format } from 'date-fns'
 import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat, Trash2 } from 'lucide-react'
@@ -205,9 +205,9 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
                 <Bell className="mr-2 size-4" />
                 <span>通知</span>
               </div>
-              <LegacyReminderSelect
+              <ReminderSelect
                 value={reminderType}
-                onChange={(value) => {
+                onChange={(value: string) => {
                   setReminderType(value)
                   handleChange()
                 }}
