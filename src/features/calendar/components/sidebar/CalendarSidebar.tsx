@@ -99,8 +99,8 @@ export function CalendarSidebar() {
               onPriorityToggle={handlePriorityToggle}
             />
           </div>
-          {/* カードリストコンテナ */}
-          <div className="flex-1 overflow-hidden px-4">
+          {/* カードリストコンテナ - パディングはTodoCardList内で管理 */}
+          <div className="flex-1 overflow-hidden">
             <TodoCardList filter={filter} sort={sort} showHigh={showHigh} showMedium={showMedium} showLow={showLow} />
           </div>
         </div>
@@ -111,7 +111,7 @@ export function CalendarSidebar() {
       label: t('calendar.sidebar.tabs.view'),
       icon: CalendarDays,
       content: (
-        <div className="space-y-2">
+        <div>
           {/* ミニカレンダー */}
           <MiniCalendar
             selectedDate={navigation?.currentDate}
