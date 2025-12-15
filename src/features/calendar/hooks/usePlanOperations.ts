@@ -11,14 +11,13 @@ import type { CalendarPlan } from '../types/calendar.types'
 export const usePlanOperations = () => {
   const { updatePlan, deletePlan } = usePlanMutations()
 
-  // プラン削除ハンドラー（ソフトデリート）
+  // プラン削除ハンドラー
   const handlePlanDelete = useCallback(
     async (planId: string) => {
       try {
         deletePlan.mutate({ id: planId })
-        console.log('✅ プラン削除:', planId)
       } catch (error) {
-        console.error('プラン削除に失敗:', error)
+        logger.error('プラン削除に失敗:', error)
       }
     },
     [deletePlan]
@@ -36,12 +35,6 @@ export const usePlanOperations = () => {
         // ドラッグ&ドロップからの呼び出し（planId + updates形式）
         if (typeof planIdOrPlan === 'string' && updates) {
           const planId = planIdOrPlan
-
-          console.log('🔧 プラン更新 (planId + updates形式):', {
-            planId,
-            newStartTime: updates.startTime.toISOString(),
-            newEndTime: updates.endTime.toISOString(),
-          })
 
           updatePlan.mutate({
             id: planId,
@@ -76,7 +69,7 @@ export const usePlanOperations = () => {
           })
         }
       } catch (error) {
-        console.error('❌ プラン更新に失敗:', error)
+        logger.error('プラン更新に失敗:', error)
       }
     },
     [updatePlan]

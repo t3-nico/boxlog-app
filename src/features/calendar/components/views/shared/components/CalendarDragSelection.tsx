@@ -7,6 +7,7 @@ import { format } from 'date-fns'
 
 import { getEventColor } from '@/features/calendar/theme'
 import { calendarStyles } from '@/features/calendar/theme/styles'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 
 import { HOUR_HEIGHT } from '../constants/grid.constants'
@@ -26,7 +27,7 @@ interface CalendarDragSelectionProps {
   date: Date // 必須：この列が担当する日付
   className?: string | undefined
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined
-  onSingleClick?: ((date: Date, timeString: string) => void) | undefined // 単一クリック処理
+  onDoubleClick?: ((selection: DateTimeSelection) => void) | undefined // ダブルクリック専用ハンドラー（オプション、未指定時はonTimeRangeSelectが呼ばれる）
   children?: React.ReactNode | undefined
   disabled?: boolean | undefined // ドラッグ選択を無効にする
 }
@@ -35,20 +36,24 @@ interface CalendarDragSelectionProps {
  * 日付を知るドラッグ選択レイヤー
  * - 各カレンダー列が担当する日付を明確に持つ
  * - 全ビュー共通のドラッグ選択動作を提供
+ * - ドラッグ操作で時間範囲選択、ダブルクリックでプラン作成
  * - 統一されたDateTimeSelectionを出力
  */
 export const CalendarDragSelection = ({
   date,
   className,
   onTimeRangeSelect,
-  onSingleClick,
+  onDoubleClick,
   children,
   disabled = false,
 }: CalendarDragSelectionProps) => {
+  // 設定からデフォルト時間を取得
+  const defaultDuration = useCalendarSettingsStore((state) => state.defaultDuration)
   // ドラッグ選択の状態
   const [isSelecting, setIsSelecting] = useState(false)
   const [selection, setSelection] = useState<TimeRange | null>(null)
   const [selectionStart, setSelectionStart] = useState<{ hour: number; minute: number } | null>(null)
+  const [showSelectionPreview, setShowSelectionPreview] = useState(false) // 5px以上移動したらtrue（ゴースト表示用）
   const containerRef = useRef<HTMLDivElement | null>(null)
   const isDragging = useRef(false)
   const [dropTime, setDropTime] = useState<string | null>(null)
@@ -68,6 +73,7 @@ export const CalendarDragSelection = ({
     setIsSelecting(false)
     setSelection(null)
     setSelectionStart(null)
+    setShowSelectionPreview(false)
     isDragging.current = false
   }
 
@@ -92,6 +98,46 @@ export const CalendarDragSelection = ({
     return { hour: Math.max(0, hour), minute: Math.max(0, minute) }
   }, [])
 
+  // ダブルクリックで予定作成
+  const handleDoubleClick = useCallback(
+    (e: React.MouseEvent) => {
+      // 無効化されている場合は何もしない
+      if (disabled) return
+
+      // イベントブロック上のダブルクリックは無視
+      const target = e.target as HTMLElement
+      const eventBlock = target.closest('[data-event-block]') || target.closest('[data-plan-block]')
+      if (eventBlock) return
+
+      const rect = e.currentTarget.getBoundingClientRect()
+      const y = e.clientY - rect.top
+      const clickTime = pixelsToTime(y)
+
+      // ダブルクリック位置からdefaultDuration分のプランを作成
+      const doubleClickHandler = onDoubleClick || onTimeRangeSelect
+      if (doubleClickHandler) {
+        const startTotalMinutes = clickTime.hour * 60 + clickTime.minute
+        const endTotalMinutes = Math.min(startTotalMinutes + defaultDuration, 24 * 60 - 1)
+        const endHour = Math.floor(endTotalMinutes / 60)
+        const endMinute = endTotalMinutes % 60
+
+        const dateTimeSelection: DateTimeSelection = {
+          date,
+          startHour: clickTime.hour,
+          startMinute: clickTime.minute,
+          endHour,
+          endMinute,
+        }
+
+        doubleClickHandler(dateTimeSelection)
+      }
+
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    [pixelsToTime, disabled, onDoubleClick, onTimeRangeSelect, date, defaultDuration]
+  )
+
   // マウスダウン開始
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -103,8 +149,10 @@ export const CalendarDragSelection = ({
       }
 
       // イベントブロック上のクリックは無視
+      // data-event-block: DayView用
+      // data-plan-block: WeekView/ThreeDayView/FiveDayView用
       const target = e.target as HTMLElement
-      const eventBlock = target.closest('[data-event-block]')
+      const eventBlock = target.closest('[data-event-block]') || target.closest('[data-plan-block]')
 
       if (eventBlock) {
         return
@@ -170,7 +218,13 @@ export const CalendarDragSelection = ({
       const y = e.clientY - rect.top
       const currentTime = pixelsToTime(y)
 
-      isDragging.current = true
+      // 5px以上の移動があった場合のみドラッグとして扱う
+      const startY = (selectionStart.hour * 60 + selectionStart.minute) * (HOUR_HEIGHT / 60)
+      const deltaY = Math.abs(y - startY)
+      if (deltaY > 5) {
+        isDragging.current = true
+        setShowSelectionPreview(true) // ゴースト表示を有効化
+      }
 
       let startHour, startMinute, endHour, endMinute
 
@@ -217,9 +271,9 @@ export const CalendarDragSelection = ({
         return
       }
 
-      if (selection) {
+      if (selection && selectionStart) {
         if (isDragging.current && onTimeRangeSelect) {
-          // ドラッグした場合：時間範囲選択
+          // ドラッグした場合：時間範囲選択でプラン作成
           const dateTimeSelection: DateTimeSelection = {
             date,
             startHour: selection.startHour,
@@ -229,11 +283,8 @@ export const CalendarDragSelection = ({
           }
 
           onTimeRangeSelect(dateTimeSelection)
-        } else if (!isDragging.current && selectionStart && onSingleClick) {
-          // ドラッグしなかった場合：シングルクリック処理
-          const timeString = formatTime(selectionStart.hour, selectionStart.minute)
-          onSingleClick(date, timeString)
         }
+        // シングルクリックでは何もしない（ダブルクリックで作成）
       }
 
       clearSelectionState()
@@ -255,17 +306,7 @@ export const CalendarDragSelection = ({
       document.removeEventListener('mouseup', handleGlobalMouseUp)
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [
-    isSelecting,
-    selectionStart,
-    selection,
-    pixelsToTime,
-    onTimeRangeSelect,
-    date,
-    disabled,
-    onSingleClick,
-    formatTime,
-  ])
+  }, [isSelecting, selectionStart, selection, pixelsToTime, onTimeRangeSelect, date, disabled, formatTime])
 
   // モーダルキャンセル時のカスタムイベントリスナー
   useEffect(() => {
@@ -318,6 +359,11 @@ export const CalendarDragSelection = ({
       tabIndex={0}
       aria-label="Calendar drag selection area"
       onMouseDown={handleMouseDown}
+      onDoubleClick={handleDoubleClick}
+      onClick={(e) => {
+        // クリックイベントの伝播を停止して、ScrollableCalendarLayoutのonClickが呼ばれないようにする
+        e.stopPropagation()
+      }}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
@@ -327,8 +373,8 @@ export const CalendarDragSelection = ({
     >
       {children}
 
-      {/* ドラッグ選択範囲の表示（イベントカードと同じスタイル） */}
-      {selectionStyle && selection ? (
+      {/* ドラッグ選択範囲の表示（イベントカードと同じスタイル）- 5px以上ドラッグした場合のみ表示 */}
+      {showSelectionPreview && selectionStyle && selection ? (
         <div style={selectionStyle} className={selectionClassName}>
           <div
             className={cn(

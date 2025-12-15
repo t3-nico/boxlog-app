@@ -2,13 +2,12 @@
 
 import { useCallback } from 'react'
 
-import { format } from 'date-fns'
-
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 
 import { useUserSettings } from '@/features/settings/hooks/useUserSettings'
+import type { DateFormatType } from '@/features/settings/stores/useCalendarSettingsStore'
 import { formatHour } from '@/features/settings/utils/timezone-utils'
 import { useTranslations } from 'next-intl'
 
@@ -19,11 +18,6 @@ export function CalendarSettings() {
   const { settings, saveSettings, isSaving, isPending } = useUserSettings()
   const t = useTranslations()
 
-  const formatTimeWithSettings = (date: Date, timeFormat: '12h' | '24h') => {
-    const formatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a'
-    return format(date, formatString)
-  }
-
   // jsx-no-bind optimization: Reset settings handler
   const handleResetSettings = useCallback(() => {
     if (confirm('カレンダー設定をすべてデフォルトに戻しますか？')) {
@@ -31,6 +25,7 @@ export function CalendarSettings() {
       saveSettings({
         timezone: 'Asia/Tokyo',
         timeFormat: '24h',
+        dateFormat: 'yyyy/MM/dd',
         weekStartsOn: 1,
         showWeekNumbers: false,
         showDeclinedEvents: false,
@@ -52,6 +47,13 @@ export function CalendarSettings() {
   const handleTimeFormatChange = useCallback(
     (value: string) => {
       saveSettings({ timeFormat: value as '12h' | '24h' })
+    },
+    [saveSettings]
+  )
+
+  const handleDateFormatChange = useCallback(
+    (value: string) => {
+      saveSettings({ dateFormat: value as DateFormatType })
     },
     [saveSettings]
   )
@@ -87,6 +89,13 @@ export function CalendarSettings() {
   const handleSnapIntervalChange = useCallback(
     (value: string) => {
       saveSettings({ snapInterval: Number(value) as 5 | 10 | 15 | 30 })
+    },
+    [saveSettings]
+  )
+
+  const handleDefaultViewChange = useCallback(
+    (value: string) => {
+      saveSettings({ defaultView: value as 'day' | '3day' | '5day' | 'week' })
     },
     [saveSettings]
   )
@@ -150,20 +159,38 @@ export function CalendarSettings() {
             </Select>
           </SettingField>
 
-          {/* プレビュー表示 */}
-          <div className="bg-surface-container rounded-lg p-4">
-            <p className="text-muted-foreground mb-2 text-sm">{t('settings.calendar.preview')}</p>
-            <div className="space-y-1">
-              <p className="font-medium">
-                {t('settings.calendar.currentTime', {
-                  time: formatTimeWithSettings(new Date(), settings.timeFormat),
-                })}
-              </p>
-              <p className="text-muted-foreground text-sm">
-                {t('settings.calendar.fullFormat', { time: format(new Date(), 'yyyy/MM/dd HH:mm') })}
-              </p>
-            </div>
-          </div>
+          <SettingField label={t('settings.calendar.dateFormat')}>
+            <Select value={settings.dateFormat} onValueChange={handleDateFormatChange}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('settings.calendar.selectDateFormat')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="yyyy/MM/dd">{t('settings.calendar.dateFormatJapan')}</SelectItem>
+                <SelectItem value="MM/dd/yyyy">{t('settings.calendar.dateFormatUS')}</SelectItem>
+                <SelectItem value="dd/MM/yyyy">{t('settings.calendar.dateFormatEU')}</SelectItem>
+                <SelectItem value="yyyy-MM-dd">{t('settings.calendar.dateFormatISO')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </SettingField>
+        </div>
+      </SettingsCard>
+
+      {/* Default View Section */}
+      <SettingsCard title={t('settings.calendar.defaultViewSection')} isSaving={isSaving}>
+        <div className="space-y-4">
+          <SettingField label={t('settings.calendar.defaultView')}>
+            <Select value={settings.defaultView} onValueChange={handleDefaultViewChange}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('settings.calendar.selectDefaultView')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="day">{t('settings.calendar.viewDay')}</SelectItem>
+                <SelectItem value="3day">{t('settings.calendar.view3Day')}</SelectItem>
+                <SelectItem value="5day">{t('settings.calendar.view5Day')}</SelectItem>
+                <SelectItem value="week">{t('settings.calendar.viewWeek')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </SettingField>
         </div>
       </SettingsCard>
 

@@ -4,13 +4,13 @@ import React, { useCallback, useState } from 'react'
 
 import type { DragEndEvent, DragMoveEvent, DragStartEvent, Over } from '@dnd-kit/core'
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { format } from 'date-fns'
 import { fromZonedTime } from 'date-fns-tz'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { useplans } from '@/features/plans/hooks/usePlans'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 
 interface DnDProviderProps {
@@ -39,6 +39,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
   const t = useTranslations()
   const { updatePlan } = usePlanMutations()
   const { timezone } = useCalendarSettingsStore()
+  const { formatDate: formatDateWithSettings } = useDateFormat()
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dragPreviewTime, setDragPreviewTime] = useState<{ date: string; time?: string } | null>(null)
 
@@ -261,7 +262,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
               {/* ドラッグ中の時間をリアルタイム表示 */}
               {dragPreviewTime ? (
                 <>
-                  <div>📅 {format(new Date(dragPreviewTime.date + 'T00:00:00'), 'yyyy/MM/dd')}</div>
+                  <div>📅 {formatDateWithSettings(new Date(dragPreviewTime.date + 'T00:00:00'))}</div>
                   {dragPreviewTime.time && (
                     <div>
                       🕐 {dragPreviewTime.time} -{' '}
@@ -278,7 +279,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
               ) : (
                 // ドロップ先がない場合は元の日付を表示
                 activeplan.due_date && (
-                  <div>📅 {activeplan.due_date.replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$1/$2/$3')}</div>
+                  <div>📅 {formatDateWithSettings(new Date(activeplan.due_date + 'T00:00:00'))}</div>
                 )
               )}
             </div>

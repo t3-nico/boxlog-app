@@ -81,16 +81,6 @@ export function useViewPlans({ date, plans = [] }: UseViewPlansOptions): UseView
       const top = startHour * HOUR_HEIGHT
       const height = Math.max(duration * HOUR_HEIGHT - PLAN_PADDING, MIN_PLAN_HEIGHT)
 
-      console.log('🎨 プラン配置:', {
-        タイトル: layout.plan.title,
-        カラム: layout.column,
-        総カラム数: layout.totalColumns,
-        幅: layout.width,
-        左位置: layout.left,
-        top,
-        height,
-      })
-
       return {
         plan: layout.plan as CalendarPlan,
         top,

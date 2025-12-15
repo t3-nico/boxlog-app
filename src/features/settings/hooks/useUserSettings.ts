@@ -8,6 +8,7 @@ import { useCallback, useEffect } from 'react'
 import { CACHE_5_MINUTES } from '@/constants/time'
 import { api } from '@/lib/trpc'
 
+import type { DateFormatType } from '../stores/useCalendarSettingsStore'
 import { useCalendarSettingsStore } from '../stores/useCalendarSettingsStore'
 import type { ProductivityZone } from '../types/chronotype'
 
@@ -63,6 +64,7 @@ export function useUserSettings() {
         timezone: dbSettings.timezone,
         showUTCOffset: dbSettings.showUtcOffset,
         timeFormat: dbSettings.timeFormat,
+        dateFormat: dbSettings.dateFormat as DateFormatType,
         weekStartsOn: dbSettings.weekStartsOn,
         showWeekends: dbSettings.showWeekends,
         showWeekNumbers: dbSettings.showWeekNumbers,
@@ -88,6 +90,7 @@ export function useUserSettings() {
       if (settings.timezone !== undefined) dbInput.timezone = settings.timezone
       if (settings.showUTCOffset !== undefined) dbInput.showUtcOffset = settings.showUTCOffset
       if (settings.timeFormat !== undefined) dbInput.timeFormat = settings.timeFormat
+      if (settings.dateFormat !== undefined) dbInput.dateFormat = settings.dateFormat
       if (settings.weekStartsOn !== undefined) dbInput.weekStartsOn = settings.weekStartsOn
       if (settings.showWeekends !== undefined) dbInput.showWeekends = settings.showWeekends
       if (settings.showWeekNumbers !== undefined) dbInput.showWeekNumbers = settings.showWeekNumbers

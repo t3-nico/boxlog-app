@@ -130,6 +130,10 @@
       "view": "表示",
       "goToToday": "今日へ移動"
     },
+    "navigation": {
+      "previous": "前へ",
+      "next": "次へ"
+    },
     "performance": {
       "notCalculated": "未計測",
       "memoryLeakDetected": "継続的なメモリ増加を検出",
@@ -153,9 +157,19 @@
     },
     "sidebar": {
       "tabs": {
-        "inbox": "Inbox",
+        "todo": "Todo",
         "view": "View"
       }
+    },
+    "statusBar": {
+      "noSchedule": "予定なし",
+      "openSchedule": "予定を開く",
+      "createNewPlan": "新規プラン作成"
+    },
+    "overdue": {
+      "badge": "{count}件の未完了",
+      "popoverTitle": "期限切れのプラン",
+      "overdueBy": "{time}超過"
     }
   }
 }

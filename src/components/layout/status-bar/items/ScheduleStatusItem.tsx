@@ -3,27 +3,27 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Calendar } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 import { StatusBarItem } from '../StatusBarItem'
 
 import { Spinner } from '@/components/ui/spinner'
-import { PlanCreatePopover } from '@/features/plans/components'
+import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { api } from '@/lib/trpc'
 import { cn } from '@/lib/utils'
 
 /**
- * 現在の予定/次の予定をステータスバーに表示
+ * 現在の予定をステータスバーに表示
  *
  * 表示パターン:
  * - 現在進行中: "ミーティング (14:00-15:00)" + プログレスバー
- * - 次の予定あり: "次: 打ち合わせ (16:00〜)"
  * - 予定なし: "予定なし"（クリックで新規作成ポップオーバーを表示）
  */
 export function ScheduleStatusItem() {
+  const t = useTranslations('calendar')
   const openInspector = usePlanInspectorStore((state) => state.openInspector)
   const [currentTime, setCurrentTime] = useState(() => new Date())
-  const [isCreatePopoverOpen, setIsCreatePopoverOpen] = useState(false)
 
   // 1分ごとに現在時刻を更新
   useEffect(() => {
@@ -81,19 +81,6 @@ export function ScheduleStatusItem() {
     })
   }, [todayPlans, currentTime])
 
-  // 次の予定を取得
-  const nextPlan = useMemo(() => {
-    if (currentPlan) return null
-
-    const now = currentTime.getTime()
-
-    return todayPlans.find((plan) => {
-      if (!plan.start_time) return false
-      const start = new Date(plan.start_time).getTime()
-      return start > now
-    })
-  }, [todayPlans, currentPlan, currentTime])
-
   // 時刻フォーマット（HH:MM）
   const formatTime = useCallback((dateStr: string) => {
     const date = new Date(dateStr)
@@ -104,14 +91,12 @@ export function ScheduleStatusItem() {
     })
   }, [])
 
-  // クリック時: 予定があればインスペクターを開く、なければ新規作成は別途Popoverで処理
+  // クリック時: 現在の予定があればインスペクターを開く
   const handleClick = useCallback(() => {
-    const activePlan = currentPlan || nextPlan
-    if (activePlan) {
-      openInspector(activePlan.id)
+    if (currentPlan) {
+      openInspector(currentPlan.id)
     }
-    // 予定がない場合は何もしない（PlanCreatePopoverのトリガーとして動作）
-  }, [currentPlan, nextPlan, openInspector])
+  }, [currentPlan, openInspector])
 
   // 進捗率を計算（0〜100）
   const progressPercent = useMemo(() => {
@@ -139,20 +124,14 @@ export function ScheduleStatusItem() {
       return `${currentPlan.title}${timeRange}`
     }
 
-    if (nextPlan) {
-      const startTime = nextPlan.start_time ? formatTime(nextPlan.start_time) : ''
-      const timeStr = startTime ? ` (${startTime}〜)` : ''
-      return `次: ${nextPlan.title}${timeStr}`
-    }
-
-    return '予定なし'
-  }, [currentPlan, nextPlan, formatTime])
+    return t('statusBar.noSchedule')
+  }, [currentPlan, formatTime, t])
 
   // アイコン（ローディング時はスピナー）
   const icon = isPending ? <Spinner className="h-3 w-3" /> : <Calendar className="h-3 w-3" />
 
   // ツールチップ
-  const tooltip = currentPlan || nextPlan ? '予定を開く' : '新規プラン作成'
+  const tooltip = currentPlan ? t('statusBar.openSchedule') : t('statusBar.createNewPlan')
 
   // 予定がない場合の初期値を計算
   const initialDate = useMemo(() => new Date(), [])
@@ -167,8 +146,8 @@ export function ScheduleStatusItem() {
     return `${endHours.toString().padStart(2, '0')}:00`
   }, [])
 
-  // 予定がある場合は通常のStatusBarItem、ない場合はPlanCreatePopoverでラップ
-  const hasActivePlan = currentPlan || nextPlan
+  // 現在の予定がある場合は通常のStatusBarItem、ない場合はPlanCreateTriggerでラップ
+  const hasActivePlan = !!currentPlan
 
   const statusBarContent = (
     <>
@@ -195,10 +174,10 @@ export function ScheduleStatusItem() {
     return <div className="flex items-center gap-2">{statusBarContent}</div>
   }
 
-  // 予定がない場合はPlanCreatePopoverでラップ
+  // 予定がない場合はPlanCreateTriggerでラップ
   return (
     <div className="flex items-center gap-2">
-      <PlanCreatePopover
+      <PlanCreateTrigger
         triggerElement={
           <button type="button" className="flex items-center">
             <StatusBarItem icon={icon} label={isPending ? '...' : label} tooltip={tooltip} forceClickable />
@@ -207,8 +186,6 @@ export function ScheduleStatusItem() {
         initialDate={initialDate}
         initialStartTime={initialStartTime}
         initialEndTime={initialEndTime}
-        open={isCreatePopoverOpen}
-        onOpenChange={setIsCreatePopoverOpen}
       />
       {progressPercent !== null && (
         <div className="flex items-center gap-1.5" title={`${progressPercent}% 経過`}>

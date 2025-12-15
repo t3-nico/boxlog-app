@@ -45,10 +45,11 @@ const generateRangeText = (date: Date, endDate: Date): string => {
 
 /**
  * 日付ヘッダーコンテンツを作成
+ * PageHeaderと同じtext-lg（18px）を使用
  */
 const createDateContent = (text: string) => (
   <div className="flex items-center gap-2">
-    <h2 className="text-xl font-semibold">{text}</h2>
+    <h2 className="text-lg font-semibold">{text}</h2>
   </div>
 )
 

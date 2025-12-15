@@ -130,6 +130,10 @@
       "view": "View",
       "goToToday": "Go to today"
     },
+    "navigation": {
+      "previous": "Previous",
+      "next": "Next"
+    },
     "performance": {
       "notCalculated": "Not Calculated",
       "memoryLeakDetected": "Continuous memory increase detected",
@@ -153,9 +157,19 @@
     },
     "sidebar": {
       "tabs": {
-        "inbox": "Inbox",
+        "todo": "Todo",
         "view": "View"
       }
+    },
+    "statusBar": {
+      "noSchedule": "No schedule",
+      "openSchedule": "Open schedule",
+      "createNewPlan": "Create new plan"
+    },
+    "overdue": {
+      "badge": "{count} overdue",
+      "popoverTitle": "Overdue Plans",
+      "overdueBy": "Overdue by {time}"
     }
   }
 }

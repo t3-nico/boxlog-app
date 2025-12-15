@@ -20,11 +20,11 @@ const placeholder = Placeholder.configure({
     // エディター全体が空（最初の段落のみ）の場合
     const isEditorEmpty = editor.state.doc.textContent.length === 0
     if (isEditorEmpty) {
-      return 'Add description...'
+      return '説明を追加...'
     }
 
     // それ以外の空の行
-    return "Press '/' for commands"
+    return "'/' でコマンドを表示"
   },
   emptyEditorClass: 'is-editor-empty',
   showOnlyWhenEditable: true,

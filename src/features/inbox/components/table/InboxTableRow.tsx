@@ -14,9 +14,8 @@ import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { useplanTags } from '@/features/plans/hooks/usePlanTags'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import type { PlanStatus } from '@/features/plans/types/plan'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useEffect, useRef } from 'react'
 import type { InboxItem } from '../../hooks/useInboxData'
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
@@ -53,6 +52,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
   const { focusedId, setFocusedId } = useInboxFocusStore()
   const { updatePlan } = usePlanMutations()
   const { addplanTag, removeplanTag } = useplanTags()
+  const { formatDate: formatDateWithSettings, formatTime: formatTimeWithSettings } = useDateFormat()
 
   const rowRef = useRef<HTMLTableRowElement>(null)
   const selected = isSelected(item.id)
@@ -184,8 +184,8 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
             key={columnId}
             data={{
               date: item.start_time ? parseDatetimeString(item.start_time).toISOString().split('T')[0]! : null,
-              startTime: item.start_time ? format(parseDatetimeString(item.start_time), 'HH:mm') : null,
-              endTime: item.end_time ? format(parseDatetimeString(item.end_time), 'HH:mm') : null,
+              startTime: item.start_time ? formatTimeWithSettings(parseDatetimeString(item.start_time)) : null,
+              endTime: item.end_time ? formatTimeWithSettings(parseDatetimeString(item.end_time)) : null,
               reminder: null,
               recurrence: null,
             }}
@@ -209,14 +209,14 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
       case 'created_at':
         return (
           <TableCell key={columnId} className="text-muted-foreground text-sm" style={style}>
-            {format(new Date(item.created_at), 'yyyy/MM/dd', { locale: ja })}
+            {formatDateWithSettings(new Date(item.created_at))}
           </TableCell>
         )
 
       case 'updated_at':
         return (
           <TableCell key={columnId} className="text-muted-foreground text-sm" style={style}>
-            {format(new Date(item.updated_at), 'yyyy/MM/dd', { locale: ja })}
+            {formatDateWithSettings(new Date(item.updated_at))}
           </TableCell>
         )
 

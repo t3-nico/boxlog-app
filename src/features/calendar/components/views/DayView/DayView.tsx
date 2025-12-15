@@ -6,7 +6,7 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { cn } from '@/lib/utils'
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout } from '../shared'
+import { CalendarDateHeader, DateDisplay, OverdueSectionSingle, ScrollableCalendarLayout } from '../shared'
 
 import { DayContent } from './components/DayContent'
 import type { DayViewProps } from './DayView.types'
@@ -15,9 +15,11 @@ import { useDayView } from './hooks/useDayView'
 export const DayView = ({
   dateRange: _dateRange,
   plans,
+  allPlans,
   currentDate,
   showWeekends: _showWeekends = true,
   className,
+  disabledPlanId,
   onPlanClick,
   onPlanContextMenu,
   onCreatePlan: _onCreatePlan,
@@ -48,10 +50,12 @@ export const DayView = ({
 
   // ドラッグイベント用のハンドラー（プラン時間更新）
   const handleEventTimeUpdate = React.useCallback(
-    async (_eventId: string, _updates: { startTime: Date; endTime: Date }) => {
-      // プランの時間更新はonUpdatePlanで処理
+    async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
+      if (onUpdatePlan) {
+        await onUpdatePlan(eventId, updates)
+      }
     },
-    []
+    [onUpdatePlan]
   )
 
   // DayView専用ロジック（CalendarControllerから渡されたプランデータを使用）
@@ -66,15 +70,6 @@ export const DayView = ({
     ...(onUpdatePlan && { onPlanUpdate: onUpdatePlan }),
   })
 
-  // 空き時間クリックハンドラー
-  const handleEmptySlotClick = React.useCallback(
-    (hour: number, minute: number) => {
-      const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-      onEmptyClick?.(date, timeString)
-    },
-    [onEmptyClick, date]
-  )
-
   // 日付ヘッダーのクリックハンドラー（DayViewでは日付変更のみ）
   const handleDateHeaderClick = React.useCallback(
     (_clickedDate: Date) => {
@@ -85,7 +80,7 @@ export const DayView = ({
   )
 
   const headerComponent = (
-    <div className="bg-background flex h-16 items-center justify-center px-2">
+    <div className="bg-background flex h-8 items-center justify-center px-2">
       <DateDisplay
         date={date}
         className="text-center"
@@ -104,7 +99,10 @@ export const DayView = ({
     <CalendarViewAnimation viewType="day">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         {/* 固定日付ヘッダー */}
-        <CalendarDateHeader header={headerComponent} timezone={timezone} />
+        <CalendarDateHeader header={headerComponent} showTimezone={false} />
+
+        {/* タイムゾーン＋未完了プランバッジエリア */}
+        <OverdueSectionSingle date={date} plans={allPlans || plans || []} timezone={timezone} />
 
         {/* スクロール可能コンテンツ */}
         <ScrollableCalendarLayout
@@ -112,18 +110,19 @@ export const DayView = ({
           {...(isToday && { scrollToHour: 8 })}
           displayDates={displayDates}
           viewMode="day"
-          onTimeClick={handleEmptySlotClick}
+          // onTimeClickは削除: CalendarDragSelectionがクリック処理を担当
         >
           {/* 日のコンテンツ */}
           <DayContent
             date={date}
             events={dayEvents}
             eventStyles={eventStyles}
-            {...(onPlanClick && { onPlanClick })}
-            {...(onPlanContextMenu && { onPlanContextMenu })}
-            {...(onEmptyClick && { onEmptyClick })}
-            {...(handleEventTimeUpdate && { onEventUpdate: handleEventTimeUpdate })}
-            {...(onTimeRangeSelect && { onTimeRangeSelect })}
+            onPlanClick={onPlanClick}
+            onPlanContextMenu={onPlanContextMenu}
+            onEmptyClick={onEmptyClick}
+            onEventUpdate={handleEventTimeUpdate}
+            onTimeRangeSelect={onTimeRangeSelect}
+            disabledPlanId={disabledPlanId}
             className="absolute inset-y-0 right-0 left-0"
           />
         </ScrollableCalendarLayout>

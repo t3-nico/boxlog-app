@@ -119,7 +119,7 @@ export function Providers({ children }: ProvidersProps) {
         <AuthStoreInitializer />
         <RealtimeProvider>
           <ThemeProvider>
-            <TooltipProvider delayDuration={300} skipDelayDuration={100}>
+            <TooltipProvider delayDuration={300} skipDelayDuration={100} disableHoverableContent>
               <GlobalSearchProvider>
                 {children}
                 <GlobalTagCreateModal />

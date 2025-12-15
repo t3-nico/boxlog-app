@@ -77,15 +77,6 @@ export function getDateStyleClass(date: Date): string {
 }
 
 /**
- * 時間範囲のフォーマット
- */
-export function formatTimeRange(start: Date, end: Date): string {
-  const startStr = format(start, 'HH:mm')
-  const endStr = format(end, 'HH:mm')
-  return `${startStr} - ${endStr}`
-}
-
-/**
  * タスクの表示用テキストを取得
  */
 export function getTaskDisplayText(task: CalendarTask, maxLength: number = 20): string {
@@ -222,8 +213,15 @@ export function cn(...classes: (string | undefined | null | boolean)[]): string 
 
 /**
  * ビューの日付範囲を計算
+ * @param viewType - カレンダーのビュータイプ
+ * @param currentDate - 現在表示中の日付
+ * @param weekStartsOn - 週の開始日（0: 日曜日, 1: 月曜日, 6: 土曜日）
  */
-export function calculateViewDateRange(viewType: CalendarViewType, currentDate: Date): ViewDateRange {
+export function calculateViewDateRange(
+  viewType: CalendarViewType,
+  currentDate: Date,
+  weekStartsOn: 0 | 1 | 6 = 1
+): ViewDateRange {
   let start: Date, end: Date, days: Date[]
 
   switch (viewType) {
@@ -256,8 +254,8 @@ export function calculateViewDateRange(viewType: CalendarViewType, currentDate: 
       break
 
     case 'week':
-      start = startOfWeek(currentDate, { weekStartsOn: 1 }) // 月曜日開始
-      end = endOfWeek(currentDate, { weekStartsOn: 1 })
+      start = startOfWeek(currentDate, { weekStartsOn })
+      end = endOfWeek(currentDate, { weekStartsOn })
       days = eachDayOfInterval({ start, end })
       break
 

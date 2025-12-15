@@ -11,7 +11,7 @@ import type { DragDataRef } from '../types'
 export function calculatePreviewTime(
   events: CalendarPlan[],
   draggedEventId: string | null,
-  originalDateIndex: number | undefined,
+  _originalDateIndex: number | undefined,
   eventDuration: number | undefined,
   hour: number,
   minute: number,
@@ -32,18 +32,6 @@ export function calculatePreviewTime(
   let targetDate = date
   if (viewMode !== 'day' && displayDates && targetDateIndex in displayDates && displayDates[targetDateIndex]) {
     targetDate = displayDates[targetDateIndex]
-
-    if (targetDateIndex !== originalDateIndex) {
-      console.log('🎯 プレビュー日付計算（非連続対応）:', {
-        targetDateIndex,
-        originalDateIndex,
-        targetDate: targetDate.toDateString(),
-        originalDate:
-          originalDateIndex !== undefined && displayDates[originalDateIndex]
-            ? displayDates[originalDateIndex]?.toDateString()
-            : undefined,
-      })
-    }
   }
 
   if (!targetDate || isNaN(targetDate.getTime())) {
@@ -65,29 +53,16 @@ export function calculateTargetDate(
   date: Date,
   viewMode: string,
   displayDates: Date[] | undefined,
-  dragDataRef: DragDataRef | null
+  _dragDataRef: DragDataRef | null
 ): Date {
   let targetDate = date
 
   if (viewMode !== 'day' && displayDates && displayDates[targetDateIndex]) {
     targetDate = displayDates[targetDateIndex]
-    console.log('🎯 ドロップ時のターゲット日付決定（非連続対応）:', {
-      targetDateIndex,
-      targetDate: targetDate.toDateString(),
-      originalDateIndex: dragDataRef?.originalDateIndex,
-      originalDate:
-        dragDataRef?.originalDateIndex !== undefined
-          ? displayDates[dragDataRef.originalDateIndex]?.toDateString?.()
-          : undefined,
-      displayDatesLength: displayDates.length,
-      isNonConsecutive: displayDates.length < 7,
-      allDisplayDates: displayDates.map((d) => d.toDateString()),
-    })
   }
 
   if (!targetDate || isNaN(targetDate.getTime())) {
     targetDate = date
-    console.log('⚠️ 無効な日付のためデフォルト使用:', targetDate.toDateString())
   }
 
   return targetDate
@@ -105,8 +80,14 @@ export function calculateNewTime(
   dragDataRef: DragDataRef | null
 ): Date {
   const hourDecimal = newTop / HOUR_HEIGHT
-  const hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)))
-  const minute = Math.round(Math.max(0, ((hourDecimal - hour) * 60) / 15)) * 15
+  let hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)))
+  let minute = Math.round(Math.max(0, ((hourDecimal - hour) * 60) / 15)) * 15
+
+  // 60分になった場合は時間を繰り上げる
+  if (minute >= 60) {
+    minute = 0
+    hour = Math.min(23, hour + 1)
+  }
 
   const targetDate = calculateTargetDate(targetDateIndex, date, viewMode, displayDates, dragDataRef)
 
@@ -146,11 +127,5 @@ export function updateTimeDisplay(dragElement: HTMLElement | null, previewStartT
   if (timeElement) {
     const formattedTimeRange = formatTimeRange(previewStartTime, previewEndTime, '24h')
     timeElement.textContent = formattedTimeRange
-
-    console.log('🕐 ドラッグ要素時間更新:', {
-      formattedTimeRange,
-      start: previewStartTime.toLocaleTimeString(),
-      end: previewEndTime.toLocaleTimeString(),
-    })
   }
 }

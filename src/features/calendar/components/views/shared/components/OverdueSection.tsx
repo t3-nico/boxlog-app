@@ -1,0 +1,110 @@
+'use client'
+
+import { isToday } from 'date-fns'
+
+import { cn } from '@/lib/utils'
+
+import { useAllOverduePlans } from '../../../../hooks/useOverduePlans'
+import type { CalendarPlan } from '../../../../types/calendar.types'
+
+import { OverdueBadge } from './OverdueBadge'
+import { TimezoneOffset } from './TimezoneOffset'
+
+interface OverdueSectionProps {
+  /** 表示する日付配列 */
+  dates: Date[]
+  /** 全プラン配列 */
+  plans: CalendarPlan[]
+  /** タイムゾーン（左端に表示） */
+  timezone?: string
+  /** 追加のクラス名 */
+  className?: string
+}
+
+/**
+ * OverdueSection - 未完了プランバッジ＋タイムゾーン表示セクション
+ *
+ * @description
+ * 複数日付のカレンダービュー（Week, 3Day, 5Dayなど）で、
+ * タイムゾーンと今日の列に未完了プランバッジを表示するセクション。
+ * バッジは今日の列にのみ表示され、全ての期限切れ未完了プランの件数を表示。
+ */
+export function OverdueSection({ dates, plans, timezone, className }: OverdueSectionProps) {
+  const overduePlans = useAllOverduePlans(plans)
+
+  return (
+    <div className={cn('bg-background border-border flex h-6 items-center border-b px-4', className)}>
+      {/* タイムゾーン表示（左端） */}
+      <div className="border-border flex w-12 flex-shrink-0 items-center border-r">
+        {timezone ? <TimezoneOffset timezone={timezone} className="text-xs" /> : null}
+      </div>
+
+      {/* 各日付のエリア（今日の列のみバッジ表示） */}
+      <div className="flex flex-1">
+        {dates.map((date, index) => {
+          const isCurrentDay = isToday(date)
+          const hasOverdue = isCurrentDay && overduePlans.length > 0
+          return (
+            <div
+              key={date.toISOString()}
+              className={cn('flex flex-1 items-center py-0.5', index < dates.length - 1 && 'border-border border-r')}
+              style={{ width: `${100 / dates.length}%` }}
+            >
+              {hasOverdue ? (
+                <OverdueBadge
+                  overduePlans={overduePlans}
+                  className="bg-destructive/10 hover:bg-destructive/15 h-full rounded-md"
+                  style={{ width: 'calc(100% - 8px)' }}
+                />
+              ) : null}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+interface OverdueSectionSingleProps {
+  /** 表示する日付 */
+  date: Date
+  /** 全プラン配列 */
+  plans: CalendarPlan[]
+  /** タイムゾーン（左端に表示） */
+  timezone?: string
+  /** 追加のクラス名 */
+  className?: string
+}
+
+/**
+ * OverdueSectionSingle - 単一日付用の未完了プランバッジ＋タイムゾーン表示セクション
+ *
+ * @description
+ * DayViewなど、単一日付のビューで使用。
+ * 今日を表示している場合のみバッジを表示。
+ */
+export function OverdueSectionSingle({ date, plans, timezone, className }: OverdueSectionSingleProps) {
+  const overduePlans = useAllOverduePlans(plans)
+  const isTodayView = isToday(date)
+  const hasOverdue = isTodayView && overduePlans.length > 0
+
+  return (
+    <div className={cn('bg-background border-border flex h-6 items-center border-b px-4', className)}>
+      {/* タイムゾーン表示（左端） */}
+      <div className="border-border flex w-12 flex-shrink-0 items-center border-r">
+        {timezone ? <TimezoneOffset timezone={timezone} className="text-xs" /> : null}
+      </div>
+
+      {/* バッジエリア（今日の場合のみ表示） */}
+      <div className="flex flex-1 items-center py-0.5">
+        {hasOverdue ? (
+          <OverdueBadge
+            overduePlans={overduePlans}
+            className="bg-destructive/10 hover:bg-destructive/15 h-full rounded-md"
+            style={{ width: 'calc(100% - 8px)' }}
+          />
+        ) : null}
+      </div>
+    </div>
+  )
+}

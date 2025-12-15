@@ -2,15 +2,15 @@
 
 import * as Portal from '@radix-ui/react-portal'
 import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useEffect, useRef, useState } from 'react'
 
+import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 
 import type { RecurrenceConfig } from '../../types/plan'
 import { configToRRule, ruleToConfig } from '../../utils/rrule'
@@ -49,6 +49,7 @@ export function RecurrenceDialog({
   const dialogRef = useRef<HTMLDivElement>(null)
   const [showCalendar, setShowCalendar] = useState(false)
   const [position, setPosition] = useState({ top: 0, left: 0 })
+  const { formatDate: formatDateWithSettings } = useDateFormat()
 
   const [config, setConfig] = useState<RecurrenceConfig>(() => {
     if (value) {
@@ -148,7 +149,7 @@ export function RecurrenceDialog({
     <Portal.Root>
       <div
         ref={dialogRef}
-        className="bg-popover border-border fixed z-[9999] w-[25rem] overflow-hidden rounded-xl border shadow-lg"
+        className="bg-popover border-border fixed z-[200] w-[25rem] overflow-hidden rounded-xl border shadow-lg"
         style={{
           top: `${position.top}px`,
           left: `${position.left}px`,
@@ -189,7 +190,7 @@ export function RecurrenceDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <Portal.Root>
-                  <SelectContent className="z-[10000]">
+                  <SelectContent className="z-[250]">
                     <SelectItem value="daily">日ごと</SelectItem>
                     <SelectItem value="weekly">週間ごと</SelectItem>
                     <SelectItem value="monthly">ヶ月ごと</SelectItem>
@@ -258,7 +259,7 @@ export function RecurrenceDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <Portal.Root>
-                  <SelectContent className="z-[10000]">
+                  <SelectContent className="z-[250]">
                     {(() => {
                       // 現在の日付から候補を生成
                       const today = new Date()
@@ -341,7 +342,7 @@ export function RecurrenceDialog({
                   終了日：
                 </Label>
                 <span className="text-foreground text-sm">
-                  {config.endDate ? format(new Date(config.endDate), 'yyyy/MM/dd', { locale: ja }) : ''}
+                  {config.endDate ? formatDateWithSettings(new Date(config.endDate)) : ''}
                 </span>
               </div>
 

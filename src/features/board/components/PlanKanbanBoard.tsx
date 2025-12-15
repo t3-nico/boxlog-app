@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent'
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
@@ -12,6 +12,7 @@ import { RecurringIndicator } from '@/features/plans/components/shared/Recurring
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { reminderTypeToMinutes } from '@/features/plans/utils/reminder'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { cn } from '@/lib/utils'
 import {
   DndContext,
@@ -24,7 +25,6 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { Bell, Calendar as CalendarIcon, MoreVertical, Plus, Tag } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
@@ -44,6 +44,7 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const { updatePlan } = usePlanMutations()
   const { isStatusVisible } = useBoardStatusFilterStore()
+  const { formatDate: formatDateWithSettings, formatTime: formatTimeWithSettings } = useDateFormat()
 
   // Planデータをカラムごとに分類（3段階ステータス: todo/doing/done）
   const columns = {
@@ -143,14 +144,12 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
             {/* 2. 日付・時間 */}
             {(activeItem.due_date || activeItem.start_time || activeItem.end_time) && (
               <div className="text-foreground mt-2 flex w-fit items-center gap-1 text-sm">
-                {activeItem.due_date && (
-                  <span>{format(new Date(activeItem.due_date), 'yyyy/MM/dd', { locale: ja })}</span>
-                )}
+                {activeItem.due_date && <span>{formatDateWithSettings(new Date(activeItem.due_date))}</span>}
                 {activeItem.start_time && activeItem.end_time && (
                   <span>
                     {' '}
-                    {format(new Date(activeItem.start_time), 'HH:mm')} →{' '}
-                    {format(new Date(activeItem.end_time), 'HH:mm')}
+                    {formatTimeWithSettings(new Date(activeItem.start_time))} →{' '}
+                    {formatTimeWithSettings(new Date(activeItem.end_time))}
                   </span>
                 )}
               </div>
@@ -215,6 +214,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   const { createPlan } = usePlanMutations()
   const formRef = useRef<HTMLDivElement>(null)
   const t = useTranslations()
+  const { formatDate: formatDateWithSettings } = useDateFormat()
 
   // 作成キャンセル
   const handleCancel = () => {
@@ -318,24 +318,22 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
           </DropdownMenu>
 
           {/* プラスアイコン（ツールチップ付き） */}
-          <TooltipProvider delayDuration={0} skipDelayDuration={0}>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                  onClick={() => setIsAdding(true)}
-                  disabled={isAdding}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>{t('board.kanban.addNewPlan')}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => setIsAdding(true)}
+                disabled={isAdding}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>{t('board.kanban.addNewPlan')}</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
       <div className={`${bgColor} flex-1 space-y-2 overflow-y-auto rounded-b-lg px-4 pt-4 pb-2`}>
@@ -380,7 +378,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
                 >
                   {selectedDate || startTime || endTime ? (
                     <span>
-                      {selectedDate ? format(selectedDate, 'yyyy/MM/dd', { locale: ja }) : ''}
+                      {selectedDate ? formatDateWithSettings(selectedDate) : ''}
                       {startTime && endTime && ` ${startTime} → ${endTime}`}
                       {startTime && !endTime && ` ${startTime}`}
                     </span>

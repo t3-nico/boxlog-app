@@ -16,11 +16,17 @@ interface UseCalendarHandlersOptions {
 }
 
 export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandlersOptions) {
-  const { openInspector } = usePlanInspectorStore()
+  const openInspector = usePlanInspectorStore((state) => state.openInspector)
+  const inspectorPlanId = usePlanInspectorStore((state) => state.planId)
+  const inspectorIsOpen = usePlanInspectorStore((state) => state.isOpen)
   const { createPlan } = usePlanMutations()
 
-  // イベント関連のハンドラー
-  const handleEventClick = useCallback(
+  // Inspector で開いているプランIDをDnD無効化用に計算
+  // Inspector が開いている場合のみ planId を返す
+  const disabledPlanId = inspectorIsOpen ? inspectorPlanId : null
+
+  // プラン関連のハンドラー
+  const handlePlanClick = useCallback(
     (plan: CalendarPlan) => {
       // プランIDでplan Inspectorを開く
       openInspector(plan.id)
@@ -29,9 +35,9 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
     [openInspector]
   )
 
-  const handleCreateEvent = useCallback(
+  const handleCreatePlan = useCallback(
     (date?: Date, time?: string) => {
-      logger.log('➕ Create event requested:', {
+      logger.log('➕ Create plan requested:', {
         date: date?.toISOString(),
         dateString: date?.toDateString(),
         time,
@@ -98,16 +104,16 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
     [viewType, currentDate, createPlan, openInspector]
   )
 
-  // 空き時間クリック用のハンドラー
+  // 空き時間クリック用のハンドラー（ダブルクリックで使用）
   const handleEmptyClick = useCallback(
     (date: Date, time: string) => {
       logger.log('🖱️ Empty time clicked:', { date, time })
-      handleCreateEvent(date, time)
+      handleCreatePlan(date, time)
     },
-    [handleCreateEvent]
+    [handleCreatePlan]
   )
 
-  // 統一された時間範囲選択ハンドラー（全ビュー共通）
+  // 統一された時間範囲選択ハンドラー（全ビュー共通、ドラッグまたはダブルクリックで呼ばれる）
   const handleDateTimeRangeSelect = useCallback(
     (selection: { date: Date; startHour: number; startMinute: number; endHour: number; endMinute: number }) => {
       // 指定された日付に時間を設定
@@ -158,9 +164,11 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
   )
 
   return {
-    handleEventClick,
-    handleCreateEvent,
+    handlePlanClick,
+    handleCreatePlan,
     handleEmptyClick,
     handleDateTimeRangeSelect,
+    /** DnDを無効化するプランID（Inspector表示中のプラン） */
+    disabledPlanId,
   }
 }

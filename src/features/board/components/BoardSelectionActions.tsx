@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { BoardActionMenuItems } from './BoardActionMenuItems'
@@ -60,7 +60,7 @@ export function BoardSelectionActions({
   }
 
   return (
-    <TooltipProvider>
+    <>
       {/* タグ一括追加 */}
       {onAddTags && (
         <Tooltip>
@@ -167,6 +167,6 @@ export function BoardSelectionActions({
           </DropdownMenuContent>
         </DropdownMenu>
       )}
-    </TooltipProvider>
+    </>
   )
 }

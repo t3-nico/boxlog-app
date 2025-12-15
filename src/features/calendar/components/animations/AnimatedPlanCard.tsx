@@ -2,9 +2,8 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 
-import { format } from 'date-fns'
-
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { cn } from '@/lib/utils'
 
 interface AnimatedEventCardProps {
@@ -14,7 +13,6 @@ interface AnimatedEventCardProps {
   isNew?: boolean
   isDeleting?: boolean
   onClick?: () => void
-  onDoubleClick?: () => void
   onContextMenu?: (e: React.MouseEvent) => void
   children?: React.ReactNode
   className?: string
@@ -27,7 +25,6 @@ export const AnimatedEventCard = ({
   isNew = false,
   isDeleting = false,
   onClick,
-  onDoubleClick,
   onContextMenu,
   children,
   className,
@@ -36,6 +33,7 @@ export const AnimatedEventCard = ({
   const [isHovered, setIsHovered] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const { formatTime: formatTimeWithSettings } = useDateFormat()
 
   // 新規イベントのアニメーション
   useEffect(() => {
@@ -125,12 +123,6 @@ export const AnimatedEventCard = ({
     onClick?.()
   }
 
-  // ダブルクリック処理
-  const handleDoubleClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onDoubleClick?.()
-  }
-
   // 右クリック処理
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -178,7 +170,6 @@ export const AnimatedEventCard = ({
         containIntrinsicSize: 'layout', // パフォーマンス最適化
       }}
       onClick={handleClick}
-      onDoubleClick={handleDoubleClick}
       onContextMenu={handleContextMenu}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -197,8 +188,8 @@ export const AnimatedEventCard = ({
               {/* 時間（高さが十分な場合のみ） */}
               {(style.height as number) > 40 && plan.startDate ? (
                 <div className="text-xs leading-tight opacity-90">
-                  {format(plan.startDate, 'HH:mm')}
-                  {plan.endDate ? ` - ${format(plan.endDate, 'HH:mm')}` : null}
+                  {formatTimeWithSettings(plan.startDate)}
+                  {plan.endDate ? ` - ${formatTimeWithSettings(plan.endDate)}` : null}
                 </div>
               ) : null}
             </div>

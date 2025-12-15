@@ -1,9 +1,5 @@
 import { useCallback } from 'react'
 
-import { format } from 'date-fns'
-
-import { useTranslations } from 'next-intl'
-
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 export interface TimeCalculationResult {
@@ -26,8 +22,6 @@ export interface UseTimeCalculationOptions {
  * @returns 位置→時刻計算関数
  */
 export function useTimeCalculation({ snapToMinutes = 15, maxHour = 23, minHour = 0 }: UseTimeCalculationOptions = {}) {
-  const t = useTranslations()
-
   /**
    * Y座標（ピクセル）から時刻を計算
    * @param clickY クリック位置のY座標
@@ -112,40 +106,9 @@ export function useTimeCalculation({ snapToMinutes = 15, maxHour = 23, minHour =
     return isStartMidnight && (isEndLateNight || isEndMidnight)
   }, [])
 
-  /**
-   * 時間範囲をフォーマットする
-   * @param startDate 開始日時
-   * @param endDate 終了日時（オプション）
-   * @returns フォーマットされた時間範囲文字列
-   */
-  const formatTimeRange = useCallback(
-    (startDate: Date, endDate?: Date | null): string => {
-      if (!startDate) return t('calendar.event.noTimeSet')
-
-      const start = startDate instanceof Date ? startDate : new Date(startDate)
-      if (isNaN(start.getTime())) return t('calendar.event.noTimeSet')
-
-      const startTime = format(start, 'HH:mm')
-
-      if (!endDate) {
-        return startTime
-      }
-
-      const end = endDate instanceof Date ? endDate : new Date(endDate)
-      if (isNaN(end.getTime())) {
-        return startTime
-      }
-
-      const endTime = format(end, 'HH:mm')
-      return `${startTime} - ${endTime}`
-    },
-    [t]
-  )
-
   return {
     calculateTimeFromY,
     calculateTimeFromEvent,
     isAllDayEvent,
-    formatTimeRange,
   }
 }

@@ -9,14 +9,14 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Separator } from '@/components/ui/separator'
 
-export type InboxFilter = 'all' | 'today' | 'overdue'
-export type InboxSort = 'due' | 'priority' | 'created'
+export type TodoFilter = 'all' | 'today' | 'overdue'
+export type TodoSort = 'due' | 'priority' | 'created'
 
-interface InboxNavigationProps {
-  filter: InboxFilter
-  onFilterChange: (filter: InboxFilter) => void
-  sort: InboxSort
-  onSortChange: (sort: InboxSort) => void
+interface TodoNavigationProps {
+  filter: TodoFilter
+  onFilterChange: (filter: TodoFilter) => void
+  sort: TodoSort
+  onSortChange: (sort: TodoSort) => void
   showHigh: boolean
   showMedium: boolean
   showLow: boolean
@@ -24,14 +24,14 @@ interface InboxNavigationProps {
 }
 
 /**
- * InboxNavigation - Inboxタブのフィルター・ソート・優先度設定
+ * TodoNavigation - Todoタブのフィルター・ソート・優先度設定
  *
  * **構成**:
  * - Clock icon: 期間フィルター（All / Today / Overdue）
  * - ArrowUpDown icon: ソート順（Due / Priority / Created）
  * - ListFilter icon: 優先度フィルター（High / Medium / Low）
  */
-export function InboxNavigation({
+export function TodoNavigation({
   filter,
   onFilterChange,
   sort,
@@ -40,14 +40,14 @@ export function InboxNavigation({
   showMedium,
   showLow,
   onPriorityToggle,
-}: InboxNavigationProps) {
+}: TodoNavigationProps) {
   return (
     <div className="flex items-center gap-1">
       {/* 期間フィルター */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Clock className="h-4 w-4" />
+          <Button variant="ghost" size="icon-sm">
+            <Clock className="size-4" />
             <span className="sr-only">Time filter</span>
           </Button>
         </PopoverTrigger>
@@ -55,7 +55,7 @@ export function InboxNavigation({
           <div className="space-y-3">
             <h4 className="text-sm font-semibold">Period</h4>
             <Separator />
-            <RadioGroup value={filter} onValueChange={(value) => onFilterChange(value as InboxFilter)}>
+            <RadioGroup value={filter} onValueChange={(value) => onFilterChange(value as TodoFilter)}>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="all" id="all" />
                 <Label htmlFor="all" className="text-sm font-normal">
@@ -82,8 +82,8 @@ export function InboxNavigation({
       {/* ソート順 */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <ArrowUpDown className="h-4 w-4" />
+          <Button variant="ghost" size="icon-sm">
+            <ArrowUpDown className="size-4" />
             <span className="sr-only">Sort order</span>
           </Button>
         </PopoverTrigger>
@@ -91,7 +91,7 @@ export function InboxNavigation({
           <div className="space-y-3">
             <h4 className="text-sm font-semibold">Sort by</h4>
             <Separator />
-            <RadioGroup value={sort} onValueChange={(value) => onSortChange(value as InboxSort)}>
+            <RadioGroup value={sort} onValueChange={(value) => onSortChange(value as TodoSort)}>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="due" id="due" />
                 <Label htmlFor="due" className="text-sm font-normal">
@@ -118,8 +118,8 @@ export function InboxNavigation({
       {/* 優先度フィルター */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <ListFilter className="h-4 w-4" />
+          <Button variant="ghost" size="icon-sm">
+            <ListFilter className="size-4" />
             <span className="sr-only">Priority filter</span>
           </Button>
         </PopoverTrigger>

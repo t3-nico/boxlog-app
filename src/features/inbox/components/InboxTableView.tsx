@@ -233,8 +233,8 @@ export function InboxTableView() {
           }
         />
       ) : (
-        <div className="flex h-12 shrink-0 items-end gap-2 px-4 pt-2 md:px-6">
-          <div className="flex h-10 w-full items-center justify-between gap-2">
+        <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2 md:px-6">
+          <div className="flex h-8 w-full items-center justify-between gap-2">
             <GroupBySelector />
             <TableToolbar onCreateClick={() => createRowRef.current?.startCreate()} />
           </div>

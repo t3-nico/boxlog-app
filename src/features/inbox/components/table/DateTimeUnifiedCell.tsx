@@ -1,14 +1,14 @@
 'use client'
 
+import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { TableCell } from '@/components/ui/table'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator'
-import { LegacyReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
+import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -65,6 +65,7 @@ interface DateTimeUnifiedCellProps {
  * ```
  */
 export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCellProps) {
+  const { formatDate } = useDateFormat()
   const [open, setOpen] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(data.date ? new Date(data.date) : undefined)
   const [startTime, setStartTime] = useState(data.startTime || '')
@@ -77,7 +78,7 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
   const getDisplayContent = () => {
     if (!data.date) return <span>-</span>
 
-    const dateStr = format(new Date(data.date), 'yyyy/MM/dd', { locale: ja })
+    const dateStr = formatDate(new Date(data.date))
     const hasReminder = data.reminder?.enabled
 
     let timeStr = ''
@@ -204,9 +205,9 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
                 <Bell className="mr-2 size-4" />
                 <span>通知</span>
               </div>
-              <LegacyReminderSelect
+              <ReminderSelect
                 value={reminderType}
-                onChange={(value) => {
+                onChange={(value: string) => {
                   setReminderType(value)
                   handleChange()
                 }}

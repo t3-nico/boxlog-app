@@ -8,7 +8,7 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { cn } from '@/lib/utils'
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout, usePlanStyles } from '../shared'
+import { CalendarDateHeader, DateDisplay, OverdueSection, ScrollableCalendarLayout, usePlanStyles } from '../shared'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 
 import type { PlanPosition } from '../shared/hooks/useViewPlans'
@@ -22,17 +22,19 @@ import type { ThreeDayViewProps } from './ThreeDayView.types'
  */
 export const ThreeDayView = ({
   dateRange: _dateRange,
-  events,
+  plans,
+  allPlans,
   currentDate,
   centerDate: _centerDate,
   showWeekends = true,
   className,
-  onEventClick,
-  onEventContextMenu,
-  onCreateEvent,
-  onUpdateEvent,
-  onDeleteEvent: _onDeleteEvent,
-  onRestoreEvent: _onRestoreEvent,
+  disabledPlanId,
+  onPlanClick,
+  onPlanContextMenu,
+  onCreatePlan,
+  onUpdatePlan,
+  onDeletePlan: _onDeletePlan,
+  onRestorePlan: _onRestorePlan,
   onEmptyClick,
   onViewChange: _onViewChange,
   onNavigatePrev: _onNavigatePrev,
@@ -58,7 +60,7 @@ export const ThreeDayView = ({
   // ThreeDayView specific logic
   const { threeDayDates, isCurrentDay } = useThreeDayView({
     centerDate: displayCenterDate,
-    events,
+    events: plans,
     showWeekends,
   })
 
@@ -67,37 +69,37 @@ export const ThreeDayView = ({
     return threeDayDates
   }, [threeDayDates])
 
-  // イベント位置計算（統一された日付配列ベース）
-  const eventPositions = useMemo(() => {
+  // プラン位置計算（統一された日付配列ベース）
+  const planPositions = useMemo(() => {
     const positions: PlanPosition[] = []
 
-    // displayDates（統一フィルタリング済み）を基準にイベントを配置
+    // displayDates（統一フィルタリング済み）を基準にプランを配置
     displayDates.forEach((displayDate) => {
       const dateKey = format(displayDate, 'yyyy-MM-dd')
 
-      // 元のevents配列から直接フィルタリング（週末設定に依存しない）
-      const dayEvents = events.filter((event) => {
-        const eventDate = event.startDate || new Date()
-        return format(eventDate, 'yyyy-MM-dd') === dateKey
+      // 元のplans配列から直接フィルタリング（週末設定に依存しない）
+      const dayPlans = plans.filter((plan) => {
+        const planDate = plan.startDate || new Date()
+        return format(planDate, 'yyyy-MM-dd') === dateKey
       })
 
-      dayEvents.forEach((event) => {
-        const startDate = event.startDate || new Date()
+      dayPlans.forEach((plan) => {
+        const startDate = plan.startDate || new Date()
         const startHour = startDate.getHours()
         const startMinute = startDate.getMinutes()
         const top = (startHour + startMinute / 60) * HOUR_HEIGHT
 
         // 高さ計算
         let height = HOUR_HEIGHT // デフォルト1時間
-        if (event.endDate) {
-          const endHour = event.endDate.getHours()
-          const endMinute = event.endDate.getMinutes()
+        if (plan.endDate) {
+          const endHour = plan.endDate.getHours()
+          const endMinute = plan.endDate.getMinutes()
           const duration = endHour + endMinute / 60 - (startHour + startMinute / 60)
           height = Math.max(20, duration * HOUR_HEIGHT) // 最小20px
         }
 
         positions.push({
-          plan: event,
+          plan,
           top,
           height,
           left: 1, // 各カラム内での位置（%）
@@ -111,10 +113,10 @@ export const ThreeDayView = ({
     })
 
     return positions
-  }, [events, displayDates, HOUR_HEIGHT])
+  }, [plans, displayDates, HOUR_HEIGHT])
 
   // 共通フック使用してスタイル計算
-  const eventStyles = usePlanStyles(eventPositions)
+  const planStyles = usePlanStyles(planPositions)
 
   // TimeGrid が空き時間クリック処理を担当するため、この関数は不要
 
@@ -122,7 +124,7 @@ export const ThreeDayView = ({
   // 初期スクロールはScrollableCalendarLayoutに委譲
 
   const headerComponent = (
-    <div className="bg-background flex h-16">
+    <div className="bg-background flex h-8">
       {/* 表示日数分のヘッダー（週末フィルタリング対応） */}
       {displayDates.map((date) => (
         <div key={date.toISOString()} className="flex flex-1 items-center justify-center px-1">
@@ -132,6 +134,7 @@ export const ThreeDayView = ({
             showDayName={true}
             showMonthYear={false}
             dayNameFormat="short"
+            dateFormat="d"
             isToday={isToday(date)}
             isSelected={false}
           />
@@ -144,7 +147,10 @@ export const ThreeDayView = ({
     <CalendarViewAnimation viewType="3day">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         {/* 固定日付ヘッダー */}
-        <CalendarDateHeader header={headerComponent} timezone={timezone} />
+        <CalendarDateHeader header={headerComponent} showTimezone={false} />
+
+        {/* タイムゾーン＋未完了プランバッジエリア */}
+        <OverdueSection dates={displayDates} plans={allPlans || plans} timezone={timezone} />
 
         {/* スクロール可能コンテンツ */}
         <ScrollableCalendarLayout
@@ -152,20 +158,16 @@ export const ThreeDayView = ({
           scrollToHour={isCurrentDay ? undefined : 8}
           displayDates={displayDates}
           viewMode="3day"
-          onTimeClick={(hour, minute) => {
-            // ThreeDayViewでは最初にクリックされた日付を使用
-            const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-            onEmptyClick?.(displayDates[0]!, timeString)
-          }}
+          // onTimeClickは削除: CalendarDragSelectionがクリック処理を担当
           enableKeyboardNavigation={true}
         >
           {/* 3日分のグリッド */}
           {displayDates.map((date, dayIndex) => {
             const dateKey = format(date, 'yyyy-MM-dd')
-            // 統一フィルタリング済みの日付に対応するイベントを取得
-            const dayEvents = events.filter((event) => {
-              const eventDate = event.startDate || new Date()
-              return format(eventDate, 'yyyy-MM-dd') === dateKey
+            // 統一フィルタリング済みの日付に対応するプランを取得
+            const dayPlans = plans.filter((plan) => {
+              const planDate = plan.startDate || new Date()
+              return format(planDate, 'yyyy-MM-dd') === dateKey
             })
 
             return (
@@ -176,17 +178,17 @@ export const ThreeDayView = ({
               >
                 <ThreeDayContent
                   date={date}
-                  plans={dayEvents}
-                  planStyles={eventStyles}
-                  onPlanClick={onEventClick}
-                  onPlanContextMenu={onEventContextMenu}
+                  plans={dayPlans}
+                  planStyles={planStyles}
+                  onPlanClick={onPlanClick}
+                  onPlanContextMenu={onPlanContextMenu}
                   onEmptyClick={onEmptyClick}
                   onPlanUpdate={
-                    onUpdateEvent
+                    onUpdatePlan
                       ? (planId, updates) => {
-                          const plan = events.find((e) => e.id === planId)
+                          const plan = plans.find((p) => p.id === planId)
                           if (plan) {
-                            onUpdateEvent({ ...plan, ...updates })
+                            onUpdatePlan({ ...plan, ...updates })
                           }
                         }
                       : undefined
@@ -197,9 +199,10 @@ export const ThreeDayView = ({
                     const [startHour = 0, startMinute = 0] = startTime.split(':').map(Number)
                     startDate.setHours(startHour, startMinute, 0, 0)
 
-                    // onCreateEventは(date: Date, time?: string)の形式なので、startTimeのみ渡す
-                    onCreateEvent?.(startDate, startTime)
+                    // onCreatePlanは(date: Date, time?: string)の形式なので、startTimeのみ渡す
+                    onCreatePlan?.(startDate, startTime)
                   }}
+                  disabledPlanId={disabledPlanId}
                   className="h-full"
                   dayIndex={dayIndex}
                   displayDates={displayDates}

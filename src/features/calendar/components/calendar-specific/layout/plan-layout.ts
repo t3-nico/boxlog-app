@@ -3,9 +3,9 @@ import type { CalendarPlan } from '../../../types/calendar.types'
 /**
  * プラングループ - 重なり合うプランの集合
  */
-export interface EventGroup {
+export interface PlanLayoutGroup {
   id: string
-  events: CalendarPlan[]
+  plans: CalendarPlan[]
   startTime: Date
   endTime: Date
   maxColumns: number
@@ -15,7 +15,7 @@ export interface EventGroup {
  * 列割り当て情報
  */
 export interface ColumnAssignment {
-  eventId: string
+  planId: string
   column: number // 0から始まる列インデックス
   totalColumns: number // このグループの総列数
   width: number // パーセンテージ (0-100)
@@ -25,7 +25,7 @@ export interface ColumnAssignment {
 /**
  * レイアウト適用後のプラン
  */
-export interface LayoutedEvent extends CalendarPlan {
+export interface LayoutedPlan extends CalendarPlan {
   layout: {
     column: number
     totalColumns: number
@@ -40,7 +40,7 @@ export interface LayoutedEvent extends CalendarPlan {
 /**
  * プラン位置情報（内部用）
  */
-interface EventPosition {
+interface PlanPosition {
   plan: CalendarPlan
   start: number // 分単位
   end: number // 分単位
@@ -52,24 +52,24 @@ interface EventPosition {
 const MAX_COLUMNS = 2
 
 // 最小プラン幅（パーセンテージ）
-const MIN_EVENT_WIDTH = 45 // 2列の場合は各列45%程度
+const MIN_PLAN_WIDTH = 45 // 2列の場合は各列45%程度
 
 // プラン間マージン（パーセンテージ）
-const EVENT_MARGIN = 2
+const PLAN_MARGIN = 2
 
 /**
  * 2つのプランが時間的に重なっているかを判定
  */
-function eventsOverlap(event1: CalendarPlan, event2: CalendarPlan): boolean {
+function plansOverlap(plan1: CalendarPlan, plan2: CalendarPlan): boolean {
   // startDate が null の場合は重ならないと判定
-  if (!event1.startDate || !event2.startDate) {
+  if (!plan1.startDate || !plan2.startDate) {
     return false
   }
 
-  const start1 = event1.startDate.getTime()
-  const end1 = event1.endDate?.getTime() || event1.startDate.getTime()
-  const start2 = event2.startDate.getTime()
-  const end2 = event2.endDate?.getTime() || event2.startDate.getTime()
+  const start1 = plan1.startDate.getTime()
+  const end1 = plan1.endDate?.getTime() || plan1.startDate.getTime()
+  const start2 = plan2.startDate.getTime()
+  const end2 = plan2.endDate?.getTime() || plan2.startDate.getTime()
 
   return start1 < end2 && start2 < end1
 }
@@ -83,46 +83,46 @@ function timeToMinutes(date: Date): number {
 
 /**
  * 重なり合うプランをグループ化
- * @param events カレンダープランの配列
+ * @param plans カレンダープランの配列
  * @returns プラングループの配列
  */
-export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
-  if (events.length === 0) return []
+export function detectOverlappingPlans(plans: CalendarPlan[]): PlanLayoutGroup[] {
+  if (plans.length === 0) return []
 
   // 日付ごとにプランを分類
-  const eventsByDay = new Map<string, CalendarPlan[]>()
+  const plansByDay = new Map<string, CalendarPlan[]>()
 
-  events.forEach((event) => {
+  plans.forEach((plan) => {
     // startDate が null の場合はスキップ
-    if (!event.startDate) {
+    if (!plan.startDate) {
       return
     }
 
-    const dayKey = `${event.startDate.getFullYear()}-${event.startDate.getMonth()}-${event.startDate.getDate()}`
-    const dayEvents = eventsByDay.get(dayKey) || []
-    dayEvents.push(event)
-    eventsByDay.set(dayKey, dayEvents)
+    const dayKey = `${plan.startDate.getFullYear()}-${plan.startDate.getMonth()}-${plan.startDate.getDate()}`
+    const dayPlans = plansByDay.get(dayKey) || []
+    dayPlans.push(plan)
+    plansByDay.set(dayKey, dayPlans)
   })
 
-  const groups: EventGroup[] = []
+  const groups: PlanLayoutGroup[] = []
 
   // 各日のプランをグループ化
-  eventsByDay.forEach((dayEvents, dayKey) => {
+  plansByDay.forEach((dayPlans, dayKey) => {
     // 開始時刻でソート（startDate が null の場合は現在時刻を使用）
-    const sortedEvents = [...dayEvents].sort(
+    const sortedPlans = [...dayPlans].sort(
       (a, b) => (a.startDate?.getTime() ?? Date.now()) - (b.startDate?.getTime() ?? Date.now())
     )
 
     // 重なるプランをグループ化
     const dayGroups: CalendarPlan[][] = []
 
-    sortedEvents.forEach((event) => {
+    sortedPlans.forEach((plan) => {
       let addedToGroup = false
 
       // 既存のグループに追加できるかチェック
       for (const group of dayGroups) {
-        if (group.some((groupEvent) => eventsOverlap(event, groupEvent))) {
-          group.push(event)
+        if (group.some((groupPlan) => plansOverlap(plan, groupPlan))) {
+          group.push(plan)
           addedToGroup = true
           break
         }
@@ -130,7 +130,7 @@ export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
 
       // どのグループにも追加できなかった場合、新しいグループを作成
       if (!addedToGroup) {
-        dayGroups.push([event])
+        dayGroups.push([plan])
       }
     })
 
@@ -144,7 +144,7 @@ export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
         const mergedGroup = i < mergedGroups.length && i in mergedGroups ? mergedGroups[i] : null
         if (!mergedGroup) continue
         // グループ同士が重なるかチェック
-        const hasOverlap = group.some((event1) => mergedGroup.some((event2) => eventsOverlap(event1, event2)))
+        const hasOverlap = group.some((plan1) => mergedGroup.some((plan2) => plansOverlap(plan1, plan2)))
 
         if (hasOverlap) {
           // マージ
@@ -159,16 +159,16 @@ export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
       }
     })
 
-    // EventGroup オブジェクトを作成
+    // PlanLayoutGroup オブジェクトを作成
     mergedGroups.forEach((group, index) => {
-      const startTime = new Date(Math.min(...group.map((e) => e.startDate?.getTime() ?? Date.now())))
+      const startTime = new Date(Math.min(...group.map((p) => p.startDate?.getTime() ?? Date.now())))
       const endTime = new Date(
-        Math.max(...group.map((e) => e.endDate?.getTime() || e.startDate?.getTime() || Date.now()))
+        Math.max(...group.map((p) => p.endDate?.getTime() || p.startDate?.getTime() || Date.now()))
       )
 
       groups.push({
         id: `${dayKey}-group-${index}`,
-        events: group,
+        plans: group,
         startTime,
         endTime,
         maxColumns: 0, // 後で計算
@@ -184,18 +184,18 @@ export function detectOverlappingEvents(events: CalendarPlan[]): EventGroup[] {
  * @param group プラングループ
  * @returns 列割り当て情報の配列
  */
-export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
-  if (group.events.length === 0) return []
+export function calculatePlanColumns(group: PlanLayoutGroup): ColumnAssignment[] {
+  if (group.plans.length === 0) return []
 
   // プランを開始時刻でソート（nullの場合は現在時刻を使用）
-  const sortedEvents = [...group.events].sort((a, b) => {
+  const sortedPlans = [...group.plans].sort((a, b) => {
     const aTime = a.startDate?.getTime() ?? Date.now()
     const bTime = b.startDate?.getTime() ?? Date.now()
     return aTime - bTime
   })
 
   // 各プランの位置情報を作成（nullの場合は現在時刻を使用）
-  const positions: EventPosition[] = sortedEvents.map((plan) => ({
+  const positions: PlanPosition[] = sortedPlans.map((plan) => ({
     plan,
     start: timeToMinutes(plan.startDate || new Date()),
     end: timeToMinutes(plan.endDate || plan.startDate || new Date()),
@@ -267,16 +267,16 @@ export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
 
     if (totalColumns === 1) {
       // 1列の場合：全幅使用
-      width = 100 - EVENT_MARGIN
-      left = EVENT_MARGIN / 2
+      width = 100 - PLAN_MARGIN
+      left = PLAN_MARGIN / 2
     } else {
       // 2列の場合：半分ずつ
-      width = (100 - EVENT_MARGIN * 3) / 2 // 3つのマージン分を除いた半分
-      left = column === 0 ? EVENT_MARGIN : 50 + EVENT_MARGIN / 2
+      width = (100 - PLAN_MARGIN * 3) / 2 // 3つのマージン分を除いた半分
+      left = column === 0 ? PLAN_MARGIN : 50 + PLAN_MARGIN / 2
     }
 
     return {
-      eventId: pos.plan.id,
+      planId: pos.plan.id,
       column,
       totalColumns,
       width,
@@ -292,41 +292,41 @@ export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
 
 /**
  * カレンダープランにレイアウト情報を適用
- * @param events カレンダープランの配列
+ * @param plans カレンダープランの配列
  * @param dayStartHour 表示開始時刻（デフォルト: 0）
  * @param dayEndHour 表示終了時刻（デフォルト: 24）
  * @param hourHeight 1時間あたりの高さ（ピクセル、デフォルト: 60）
  * @returns レイアウト適用後のプラン配列
  */
-export function applyEventLayout(
-  events: CalendarPlan[],
+export function applyPlanLayout(
+  plans: CalendarPlan[],
   dayStartHour: number = 0,
   dayEndHour: number = 24,
   hourHeight: number = 60
-): LayoutedEvent[] {
-  if (events.length === 0) return []
+): LayoutedPlan[] {
+  if (plans.length === 0) return []
 
   // 重なりグループを検出
-  const groups = detectOverlappingEvents(events)
+  const groups = detectOverlappingPlans(plans)
 
   // 各グループの列配置を計算
   const allAssignments = new Map<string, ColumnAssignment>()
 
   groups.forEach((group) => {
-    const assignments = calculateEventColumns(group)
+    const assignments = calculatePlanColumns(group)
     assignments.forEach((assignment) => {
-      allAssignments.set(assignment.eventId, assignment)
+      allAssignments.set(assignment.planId, assignment)
     })
   })
 
   // レイアウト情報を適用
-  const layoutedEvents: LayoutedEvent[] = events.map((event, _index) => {
-    const assignment = allAssignments.get(event.id)
+  const layoutedPlans: LayoutedPlan[] = plans.map((plan) => {
+    const assignment = allAssignments.get(plan.id)
 
     // 時間を位置に変換（startDate が null の場合は現在時刻を使用）
-    const startDate = event.startDate || new Date()
+    const startDate = plan.startDate || new Date()
     const startMinutes = startDate.getHours() * 60 + startDate.getMinutes()
-    const endMinutes = event.endDate ? event.endDate.getHours() * 60 + event.endDate.getMinutes() : startMinutes + 60 // デフォルト1時間
+    const endMinutes = plan.endDate ? plan.endDate.getHours() * 60 + plan.endDate.getMinutes() : startMinutes + 60 // デフォルト1時間
 
     const dayStartMinutes = dayStartHour * 60
     const dayEndMinutes = dayEndHour * 60
@@ -362,59 +362,71 @@ export function applyEventLayout(
     }
 
     return {
-      ...event,
+      ...plan,
       layout,
     }
   })
 
-  return layoutedEvents
+  return layoutedPlans
 }
 
 /**
  * レスポンシブ対応のレイアウト計算
  * 画面幅に応じて列数を調整
  */
-export function applyResponsiveEventLayout(
-  events: CalendarPlan[],
+export function applyResponsivePlanLayout(
+  plans: CalendarPlan[],
   containerWidth: number,
   dayStartHour: number = 0,
   dayEndHour: number = 24,
   hourHeight: number = 60
-): LayoutedEvent[] {
+): LayoutedPlan[] {
   // 画面幅に応じて最大列数を制限
   const maxColumnsAllowed = containerWidth < 400 ? 2 : containerWidth < 600 ? 3 : containerWidth < 800 ? 4 : Infinity
 
-  const layoutedEvents = applyEventLayout(events, dayStartHour, dayEndHour, hourHeight)
+  const layoutedPlans = applyPlanLayout(plans, dayStartHour, dayEndHour, hourHeight)
 
   // 最大列数を超える場合は調整
-  layoutedEvents.forEach((event) => {
-    if (event.layout.totalColumns > maxColumnsAllowed) {
-      const scaleFactor = maxColumnsAllowed / event.layout.totalColumns
+  layoutedPlans.forEach((plan) => {
+    if (plan.layout.totalColumns > maxColumnsAllowed) {
+      const scaleFactor = maxColumnsAllowed / plan.layout.totalColumns
 
       // 幅を調整（最小幅を保証）
-      event.layout.width = Math.max(event.layout.width * scaleFactor, MIN_EVENT_WIDTH)
+      plan.layout.width = Math.max(plan.layout.width * scaleFactor, MIN_PLAN_WIDTH)
 
       // 位置を調整（列インデックスに基づいて再計算）
-      const adjustedColumn = Math.min(event.layout.column, maxColumnsAllowed - 1)
+      const adjustedColumn = Math.min(plan.layout.column, maxColumnsAllowed - 1)
       const baseWidth = 100 / maxColumnsAllowed
-      event.layout.left = adjustedColumn * baseWidth + EVENT_MARGIN / 2
+      plan.layout.left = adjustedColumn * baseWidth + PLAN_MARGIN / 2
 
-      event.layout.totalColumns = maxColumnsAllowed
-      event.layout.column = adjustedColumn
+      plan.layout.totalColumns = maxColumnsAllowed
+      plan.layout.column = adjustedColumn
     }
   })
 
-  return layoutedEvents
+  return layoutedPlans
 }
 
 /**
  * デバッグ用: レイアウト情報を文字列で表示
  */
-export function debugLayoutInfo(layoutedEvents: LayoutedEvent[]): string {
-  return layoutedEvents
-    .map((event) => {
-      const { layout } = event
-      return `${event.title}: Column ${layout.column}/${layout.totalColumns}, Width: ${layout.width.toFixed(1)}%, Left: ${layout.left.toFixed(1)}%, Height: ${layout.height.toFixed(0)}px`
+export function debugLayoutInfo(layoutedPlans: LayoutedPlan[]): string {
+  return layoutedPlans
+    .map((plan) => {
+      const { layout } = plan
+      return `${plan.title}: Column ${layout.column}/${layout.totalColumns}, Width: ${layout.width.toFixed(1)}%, Left: ${layout.left.toFixed(1)}%, Height: ${layout.height.toFixed(0)}px`
     })
     .join('\n')
 }
+
+// 後方互換性のためのエイリアス
+/** @deprecated Use applyPlanLayout instead */
+export const applyEventLayout = applyPlanLayout
+/** @deprecated Use applyResponsivePlanLayout instead */
+export const applyResponsiveEventLayout = applyResponsivePlanLayout
+/** @deprecated Use detectOverlappingPlans instead */
+export const detectOverlappingEvents = detectOverlappingPlans
+/** @deprecated Use calculatePlanColumns instead */
+export const calculateEventColumns = calculatePlanColumns
+/** @deprecated Use LayoutedPlan instead */
+export type LayoutedEvent = LayoutedPlan

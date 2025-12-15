@@ -19,6 +19,7 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
   showDot = true,
   updateInterval = 60000,
   displayDates,
+  showOnOtherDays = true,
   // viewModeはpropsとして受け取るが使用しない（将来の拡張用）
   viewMode: _viewMode = 'day',
 }) {
@@ -27,10 +28,10 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
   // 現在時刻のY座標を計算
   const topPosition = timeToPixels(currentTime, hourHeight)
 
-  // 今日かどうかをチェック
-  const shouldShow = useMemo(() => {
+  // 今日が含まれているかチェック
+  const hasToday = useMemo(() => {
     if (!displayDates || displayDates.length === 0) {
-      return true // displayDatesがない場合は表示
+      return true // displayDatesがない場合は今日とみなす
     }
 
     const today = new Date()
@@ -50,6 +51,7 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
       return {
         left: timeColumnWidth,
         width: '100%',
+        isToday: hasToday,
       }
     }
 
@@ -64,7 +66,15 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
     })
 
     if (todayIndex === -1) {
-      return null // 今日が見つからない場合
+      // 今日が見つからない場合、showOnOtherDaysがtrueなら全幅で薄く表示
+      if (showOnOtherDays) {
+        return {
+          left: timeColumnWidth,
+          width: containerWidth - timeColumnWidth,
+          isToday: false,
+        }
+      }
+      return null
     }
 
     // 今日の列の位置とサイズを計算
@@ -75,11 +85,12 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
     return {
       left,
       width: columnWidth,
+      isToday: true,
     }
-  }, [displayDates, timeColumnWidth, containerWidth])
+  }, [displayDates, timeColumnWidth, containerWidth, hasToday, showOnOtherDays])
 
-  // 今日が含まれていない場合は表示しない
-  if (!shouldShow || !columnInfo) {
+  // 表示しない場合
+  if (!columnInfo) {
     return null
   }
 
@@ -90,15 +101,15 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
         top: `${topPosition}px`,
         left: `${columnInfo.left}px`,
         width: typeof columnInfo.width === 'string' ? columnInfo.width : `${columnInfo.width}px`,
-        height: '2px',
+        height: columnInfo.isToday ? '2px' : '1px',
         zIndex: Z_INDEX.CURRENT_TIME,
       }}
     >
-      {/* 時刻線 */}
-      <div className="bg-primary h-full w-full shadow-sm" />
+      {/* 時刻線 - 今日は濃く、他の日は薄く */}
+      <div className={`h-full w-full shadow-sm ${columnInfo.isToday ? 'bg-primary' : 'bg-primary/50'}`} />
 
-      {/* ドット */}
-      {showDot != null && (
+      {/* ドット（今日の場合のみ） */}
+      {showDot != null && columnInfo.isToday && (
         <div
           className="border-background bg-primary absolute rounded-full border-2 shadow-sm"
           style={{
@@ -120,11 +131,26 @@ export const CurrentTimeLineForColumn = memo<{
   hourHeight?: number
   showDot?: boolean
   className?: string
-}>(function CurrentTimeLineForColumn({ hourHeight = HOUR_HEIGHT, showDot = false, className = '' }) {
+  /** この列が今日かどうか */
+  isToday?: boolean
+  /** 他の日でも薄く表示するか（デフォルト: true） */
+  showOnOtherDays?: boolean
+}>(function CurrentTimeLineForColumn({
+  hourHeight = HOUR_HEIGHT,
+  showDot = false,
+  className = '',
+  isToday = true,
+  showOnOtherDays = true,
+}) {
   const currentTime = useCurrentTime({ updateInterval: 60000 })
 
   // 現在時刻のY座標を計算
   const topPosition = timeToPixels(currentTime, hourHeight)
+
+  // 今日でない場合で、他の日に表示しない設定なら非表示
+  if (!isToday && !showOnOtherDays) {
+    return null
+  }
 
   return (
     <div
@@ -134,8 +160,8 @@ export const CurrentTimeLineForColumn = memo<{
         zIndex: Z_INDEX.CURRENT_TIME,
       }}
     >
-      {/* ドット（列の左端） */}
-      {showDot != null && (
+      {/* ドット（今日の場合のみ、列の左端） */}
+      {showDot != null && isToday && (
         <div
           className="border-background bg-primary absolute rounded-full border-2 shadow-sm"
           style={{
@@ -147,8 +173,8 @@ export const CurrentTimeLineForColumn = memo<{
         />
       )}
 
-      {/* 時刻線 */}
-      <div className="bg-primary h-0.5 w-full shadow-sm" />
+      {/* 時刻線 - 今日は濃く、他の日は薄く */}
+      <div className={`w-full shadow-sm ${isToday ? 'bg-primary h-0.5' : 'bg-primary/50 h-px'}`} />
     </div>
   )
 })

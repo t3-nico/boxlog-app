@@ -25,6 +25,9 @@ interface ViewSwitcherProps {
 /**
  * ビュー切り替えドロップダウン
  * shadcn/ui公式DropdownMenuを使用
+ *
+ * **デザイン仕様**:
+ * - ボタン: 32px（size: 'sm'、8pxグリッド準拠）
  */
 export const ViewSwitcher = ({ options, currentView, onChange, className }: ViewSwitcherProps) => {
   const currentOption = options.find((opt) => opt.value === currentView)
@@ -70,12 +73,14 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={cn(buttonVariants({ variant: 'outline' }), 'justify-start gap-0', className)}>
+      <DropdownMenuTrigger
+        className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'justify-start gap-0', className)}
+      >
         {currentOption?.icon}
         <span>{currentOption?.label || 'Day'}</span>
         <ChevronDown className="ml-2 h-4 w-4" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" side="bottom" sideOffset={8} className="dark:border-input min-w-40 border">
+      <DropdownMenuContent align="end" side="bottom" sideOffset={8} className="min-w-40">
         {/* ビューオプション */}
         {options.map((option) => (
           <DropdownMenuItem
@@ -83,16 +88,18 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
             onClick={() => handleSelect(option.value)}
             className="flex items-center justify-between gap-2"
           >
-            <div className="flex items-center gap-0">
+            <div className="flex items-center gap-2">
               {option.icon}
               <span>{option.label}</span>
-              {currentView === option.value && <Check className="text-primary h-4 w-4" />}
             </div>
-            {option.shortcut && (
-              <span className="bg-surface-container text-muted-foreground rounded px-1.5 py-0.5 font-mono text-xs">
-                {option.shortcut}
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {currentView === option.value && <Check className="text-primary h-4 w-4" />}
+              {option.shortcut && (
+                <span className="bg-surface-container text-muted-foreground rounded px-1.5 py-0.5 font-mono text-xs">
+                  {option.shortcut}
+                </span>
+              )}
+            </div>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

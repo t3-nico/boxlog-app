@@ -98,18 +98,16 @@ const MonthYearDisplay = ({ monthYear }: { monthYear?: string }) => {
   return <div className="text-muted-foreground mb-1 text-xs">{monthYear}</div>
 }
 
-// 日付メイン表示コンポーネント
+// 日付メイン表示コンポーネント（横並び）
 const DateMainDisplay = ({ dayName, dateString, today }: { dayName?: string; dateString: string; today: boolean }) => (
-  <div className="flex flex-col items-center">
+  <div className="flex items-center gap-1">
     {dayName ? (
-      <div className={cn('text-xs font-medium', today ? 'text-primary-foreground/75' : 'text-muted-foreground')}>
-        {dayName}
-      </div>
+      <div className={cn('text-base font-medium', today ? 'text-primary' : 'text-muted-foreground')}>{dayName}</div>
     ) : null}
 
     <div
       className={cn(
-        'flex h-8 w-8 items-center justify-center rounded-full text-lg font-medium',
+        'flex h-7 w-7 items-center justify-center rounded-full text-lg font-medium',
         today && 'bg-primary text-primary-foreground font-semibold'
       )}
     >

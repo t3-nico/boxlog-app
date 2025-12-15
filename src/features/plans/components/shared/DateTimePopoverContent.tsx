@@ -1,12 +1,12 @@
 'use client'
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
-import { LegacyRecurrencePopover } from '@/features/plans/components/shared/RecurrencePopover'
-import { LegacyReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
+import { MiniCalendar } from '@/components/common/MiniCalendar'
+import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
 import { TimeSelect } from '@/features/plans/components/shared/TimeSelect'
 import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime'
-import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat } from 'lucide-react'
+import { Bell, Check, Clock, Repeat } from 'lucide-react'
 import { useRef, useState } from 'react'
 
 interface DateTimePopoverContentProps {
@@ -24,9 +24,19 @@ interface DateTimePopoverContentProps {
   onRecurrenceRuleChange: (rule: string | null) => void
 }
 
+// 繰り返しオプション
+const RECURRENCE_OPTIONS = [
+  { value: '', label: '選択しない' },
+  { value: '毎日', label: '毎日' },
+  { value: '毎週', label: '毎週' },
+  { value: '毎月', label: '毎月' },
+  { value: '毎年', label: '毎年' },
+  { value: '平日', label: '平日（月〜金）' },
+] as const
+
 /**
  * 日付・時刻・通知・繰り返し設定のPopover内容コンポーネント
- * planCardとplanKanbanBoardで共有
+ * Inspectorスタイル（アイコン左、コンパクトなインライン形式）
  */
 export function DateTimePopoverContent({
   selectedDate,
@@ -42,8 +52,8 @@ export function DateTimePopoverContent({
   onRepeatTypeChange,
   onRecurrenceRuleChange,
 }: DateTimePopoverContentProps) {
-  const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
-  const recurrenceTriggerRef = useRef<HTMLDivElement>(null)
+  const [showRecurrencePopover, setShowRecurrencePopover] = useState(false)
+  const recurrenceRef = useRef<HTMLDivElement>(null)
 
   // バリデーション: 繰り返しは日付が必須、通知は日付と開始時刻が必須
   const isRecurrenceDisabled = !selectedDate
@@ -68,133 +78,143 @@ export function DateTimePopoverContent({
     onEndTimeChange(time)
   }
 
+  // 繰り返し表示テキスト
+  const recurrenceDisplayText = (() => {
+    if (recurrenceRule) return 'カスタム'
+    if (recurrenceType && recurrenceType !== 'none') {
+      const typeMap: Record<string, string> = {
+        daily: '毎日',
+        weekly: '毎週',
+        monthly: '毎月',
+        yearly: '毎年',
+        weekdays: '平日',
+      }
+      return typeMap[recurrenceType] || '繰り返し'
+    }
+    return '繰り返し'
+  })()
+
+  const hasRecurrence = recurrenceRule || (recurrenceType && recurrenceType !== 'none')
+
   return (
-    <div className="space-y-4">
-      {/* 日付選択 */}
-      <div className="space-y-2">
-        <div className="flex items-center text-sm font-medium">
-          <CalendarIcon className="mr-2 size-4" />
-          <span>日付</span>
-        </div>
-        <MiniCalendar
-          selectedDate={selectedDate}
-          onDateSelect={onDateSelect}
-          className="w-fit border-none bg-transparent p-0"
-        />
-      </div>
+    <div>
+      {/* カレンダー（直接表示） */}
+      <MiniCalendar selectedDate={selectedDate} onDateSelect={onDateSelect} />
 
-      {/* 時刻設定 */}
-      <div className="space-y-2">
-        <div className="flex items-center text-sm font-medium">
-          <Clock className="mr-2 size-4" />
-          <span>時刻</span>
-        </div>
-        <div className="flex items-end gap-2">
-          <TimeSelect value={startTime} onChange={handleStartTimeChange} label="開始" />
-          <ArrowRight className="text-muted-foreground mb-2 size-4" />
-          <TimeSelect value={endTime} onChange={handleEndTimeChange} label="終了" minTime={startTime} />
+      {/* 時刻行 */}
+      <div className="border-border/50 border-t">
+        <div className="flex min-h-10 items-center gap-2 px-3 py-2">
+          <Clock className="text-muted-foreground size-4 flex-shrink-0" />
+          <div className="flex flex-1 flex-col gap-1">
+            <div className="flex h-8 items-center">
+              <TimeSelect value={startTime} onChange={handleStartTimeChange} label="" disabled={!selectedDate} />
+              <span className="text-muted-foreground mx-1">→</span>
+              <TimeSelect
+                value={endTime}
+                onChange={handleEndTimeChange}
+                label=""
+                disabled={!selectedDate || !startTime}
+                minTime={startTime}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* 通知設定 */}
-      <div className="space-y-2">
-        <div className="flex items-center text-sm font-medium">
-          <Bell className="mr-2 size-4" />
-          <span>通知</span>
-        </div>
-        <TooltipProvider>
-          <Tooltip delayDuration={300}>
-            <TooltipTrigger asChild>
-              <div>
-                <LegacyReminderSelect
-                  value={reminderType}
-                  onChange={onReminderChange}
-                  variant="button"
-                  disabled={isReminderDisabled}
-                />
-              </div>
-            </TooltipTrigger>
-            {isReminderDisabled && (
-              <TooltipContent>
-                <p className="text-xs">日付と開始時刻を先に設定してください</p>
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-
-      {/* 繰り返し設定 */}
-      <div className="space-y-2">
-        <div className="flex items-center text-sm font-medium">
-          <Repeat className="mr-2 size-4" />
-          <span>繰り返し</span>
-        </div>
-        <TooltipProvider>
-          <Tooltip delayDuration={300}>
-            <TooltipTrigger asChild>
-              <div className="relative" ref={recurrenceTriggerRef}>
-                <button
-                  type="button"
-                  disabled={isRecurrenceDisabled}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    if (!isRecurrenceDisabled) {
-                      setRecurrencePopoverOpen(!recurrencePopoverOpen)
-                    }
-                  }}
-                  className="border-border bg-secondary text-secondary-foreground hover:bg-state-hover focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-fit items-center gap-1 rounded-md border px-2 py-0 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <span>
-                    {recurrenceRule
-                      ? 'カスタム'
-                      : recurrenceType === 'daily'
-                        ? '毎日'
-                        : recurrenceType === 'weekly'
-                          ? '毎週'
-                          : recurrenceType === 'monthly'
-                            ? '毎月'
-                            : recurrenceType === 'yearly'
-                              ? '毎年'
-                              : recurrenceType === 'weekdays'
-                                ? '平日'
-                                : 'なし'}
-                  </span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-4 w-4 opacity-50"
+      {/* 繰り返し行 */}
+      <div className="border-border/50 border-t">
+        <div className="flex min-h-10 items-center gap-2 px-3 py-2">
+          <Repeat className="text-muted-foreground size-4 flex-shrink-0" />
+          <div className="flex flex-1 flex-col gap-1">
+            <div className="relative flex h-8 items-center" ref={recurrenceRef}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`h-8 px-2 text-sm ${hasRecurrence ? 'text-foreground' : 'text-muted-foreground'}`}
+                    type="button"
+                    disabled={isRecurrenceDisabled}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      if (!isRecurrenceDisabled) {
+                        setShowRecurrencePopover(!showRecurrencePopover)
+                      }
+                    }}
                   >
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
-                </button>
-
-                {!isRecurrenceDisabled && (
-                  <LegacyRecurrencePopover
-                    open={recurrencePopoverOpen}
-                    onOpenChange={setRecurrencePopoverOpen}
-                    triggerRef={recurrenceTriggerRef}
-                    recurrenceRule={recurrenceRule ?? null}
-                    placement="right"
-                    onRepeatTypeChange={onRepeatTypeChange}
-                    onRecurrenceRuleChange={onRecurrenceRuleChange}
-                  />
+                    {hasRecurrence ? recurrenceDisplayText : '繰り返し'}
+                  </Button>
+                </TooltipTrigger>
+                {isRecurrenceDisabled && (
+                  <TooltipContent>
+                    <p className="text-xs">日付を先に設定してください</p>
+                  </TooltipContent>
                 )}
-              </div>
-            </TooltipTrigger>
-            {isRecurrenceDisabled && (
-              <TooltipContent>
-                <p className="text-xs">日付を先に設定してください</p>
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
+              </Tooltip>
+
+              {showRecurrencePopover && !isRecurrenceDisabled && (
+                <div className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-md border shadow-md">
+                  <div className="p-1">
+                    <button
+                      className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
+                      onClick={() => {
+                        onRepeatTypeChange('')
+                        onRecurrenceRuleChange(null)
+                        setShowRecurrencePopover(false)
+                      }}
+                      type="button"
+                    >
+                      選択しない
+                      {!hasRecurrence && <Check className="text-primary h-4 w-4" />}
+                    </button>
+                    <div className="border-border my-1 border-t" />
+                    {RECURRENCE_OPTIONS.slice(1).map((option) => (
+                      <button
+                        key={option.value}
+                        className="hover:bg-state-hover flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-left text-sm"
+                        onClick={() => {
+                          onRepeatTypeChange(option.value)
+                          onRecurrenceRuleChange(null)
+                          setShowRecurrencePopover(false)
+                        }}
+                        type="button"
+                      >
+                        {option.label}
+                        {recurrenceDisplayText === option.value && <Check className="text-primary h-4 w-4" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 通知行 */}
+      <div className="border-border/50 border-t">
+        <div className="flex min-h-10 items-center gap-2 px-3 py-2">
+          <Bell className="text-muted-foreground size-4 flex-shrink-0" />
+          <div className="flex h-8 flex-1 items-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <ReminderSelect
+                    value={reminderType}
+                    onChange={onReminderChange}
+                    variant="inspector"
+                    disabled={isReminderDisabled}
+                  />
+                </div>
+              </TooltipTrigger>
+              {isReminderDisabled && (
+                <TooltipContent>
+                  <p className="text-xs">日付と開始時刻を先に設定してください</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </div>
+        </div>
       </div>
     </div>
   )

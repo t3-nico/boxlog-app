@@ -5,13 +5,19 @@ import { HOUR_HEIGHT } from '../../../constants/grid.constants'
  */
 export function snapToQuarterHour(yPosition: number): { snappedTop: number; hour: number; minute: number } {
   const hourDecimal = yPosition / HOUR_HEIGHT
-  const hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)))
+  let hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)))
   const minuteDecimal = (hourDecimal - hour) * 60
-  const minute = Math.round(minuteDecimal / 15) * 15
+  let minute = Math.round(minuteDecimal / 15) * 15
+
+  // 60分になった場合は時間を繰り上げる
+  if (minute >= 60) {
+    minute = 0
+    hour = Math.min(23, hour + 1)
+  }
 
   const snappedTop = (hour + minute / 60) * HOUR_HEIGHT
 
-  return { snappedTop, hour, minute: Math.min(minute, 59) }
+  return { snappedTop, hour, minute }
 }
 
 /**
@@ -40,7 +46,7 @@ export function getConstrainedPosition(clientX: number, clientY: number) {
  */
 export function calculateSnappedPosition(
   originalTop: number,
-  originalDateIndex: number | undefined,
+  _originalDateIndex: number | undefined,
   deltaY: number,
   targetDateIndex: number,
   viewMode: string,
@@ -53,15 +59,6 @@ export function calculateSnappedPosition(
   if (viewMode !== 'day' && displayDates) {
     const columnWidthPercent = 100 / displayDates.length
     snappedLeft = targetDateIndex * columnWidthPercent + 1
-
-    if (targetDateIndex !== originalDateIndex) {
-      console.log('🔧 日付間移動 - 水平移動実行:', {
-        originalDateIndex,
-        targetDateIndex,
-        columnWidthPercent,
-        snappedLeft,
-      })
-    }
   }
 
   return { snappedTop, snappedLeft, hour, minute }
@@ -76,7 +73,7 @@ export function calculateTargetDateIndex(
   hasMoved: boolean,
   originalElement: HTMLElement | null,
   columnWidth: number | undefined,
-  deltaX: number,
+  _deltaX: number,
   viewMode: string,
   displayDates: Date[] | undefined
 ): number {
@@ -96,19 +93,6 @@ export function calculateTargetDateIndex(
       const newTargetIndex = Math.max(0, Math.min(displayDates.length - 1, columnIndex))
 
       targetDateIndex = newTargetIndex
-
-      if (Math.abs(newTargetIndex - originalDateIndex) > 0 && Math.abs(deltaX) > 30) {
-        console.log('🔧 日付間移動（非連続日付対応）:', {
-          originalIndex: originalDateIndex,
-          originalDate: displayDates[originalDateIndex]?.toDateString?.(),
-          newTargetIndex,
-          targetDate: displayDates[newTargetIndex]?.toDateString?.(),
-          relativeX,
-          columnWidth,
-          columnIndex,
-          isNonConsecutive: displayDates.length < 7,
-        })
-      }
     }
   }
 
