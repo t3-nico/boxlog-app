@@ -28,7 +28,7 @@ import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { cn } from '@/lib/utils'
 import { useDraggable } from '@dnd-kit/core'
 import { format } from 'date-fns'
-import { Bell, Calendar as CalendarIcon, CheckCircle2, Circle, Plus, Tag, Trash2 } from 'lucide-react'
+import { Bell, Calendar as CalendarIcon, CheckCircle2, Circle, Plus, Tag } from 'lucide-react'
 
 import { useBoardFocusStore } from '../../stores/useBoardFocusStore'
 import { BoardActionMenuItems } from '../BoardActionMenuItems'
@@ -317,76 +317,78 @@ export function PlanCard({ item }: PlanCardProps) {
                 </div>
               </PopoverTrigger>
               <PopoverContent
-                className="w-auto p-3"
+                className="w-auto p-0"
                 align="start"
                 onClick={(e) => {
                   // Popover内のクリックイベントがカードに伝播しないようにする
                   e.stopPropagation()
                 }}
               >
-                <div className="space-y-4">
-                  <DateTimePopoverContent
-                    selectedDate={selectedDate}
-                    onDateSelect={(date) => {
-                      setSelectedDate(date)
-                      handleDateTimeChange()
-                    }}
-                    startTime={startTime}
-                    onStartTimeChange={(time) => {
-                      setStartTime(time)
-                      handleDateTimeChange()
-                    }}
-                    endTime={endTime}
-                    onEndTimeChange={(time) => {
-                      setEndTime(time)
-                      handleDateTimeChange()
-                    }}
-                    reminderType={reminderType}
-                    onReminderChange={(value) => {
-                      setReminderType(value)
-                      handleDateTimeChange()
-                    }}
-                    recurrenceRule={recurrenceRule}
-                    recurrenceType={recurrenceType}
-                    onRepeatTypeChange={(type) => {
-                      // 型マッピング
-                      const typeMap: Record<string, 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'> = {
-                        '': 'none',
-                        毎日: 'daily',
-                        毎週: 'weekly',
-                        毎月: 'monthly',
-                        毎年: 'yearly',
-                        平日: 'weekdays',
-                      }
-                      const recurrenceType = typeMap[type] || 'none'
+                <DateTimePopoverContent
+                  selectedDate={selectedDate}
+                  onDateSelect={(date) => {
+                    setSelectedDate(date)
+                    handleDateTimeChange()
+                  }}
+                  startTime={startTime}
+                  onStartTimeChange={(time) => {
+                    setStartTime(time)
+                    handleDateTimeChange()
+                  }}
+                  endTime={endTime}
+                  onEndTimeChange={(time) => {
+                    setEndTime(time)
+                    handleDateTimeChange()
+                  }}
+                  reminderType={reminderType}
+                  onReminderChange={(value) => {
+                    setReminderType(value)
+                    handleDateTimeChange()
+                  }}
+                  recurrenceRule={recurrenceRule}
+                  recurrenceType={recurrenceType}
+                  onRepeatTypeChange={(type) => {
+                    // 型マッピング
+                    const typeMap: Record<string, 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'> = {
+                      '': 'none',
+                      毎日: 'daily',
+                      毎週: 'weekly',
+                      毎月: 'monthly',
+                      毎年: 'yearly',
+                      平日: 'weekdays',
+                    }
+                    const recurrenceType = typeMap[type] || 'none'
 
-                      // optimistic updateがキャッシュを即座に更新
-                      updatePlan.mutate({
-                        id: item.id,
-                        data: {
-                          recurrence_type: recurrenceType,
-                          recurrence_rule: null,
-                        },
-                      })
-                    }}
-                    onRecurrenceRuleChange={(rrule) => {
-                      // optimistic updateがキャッシュを即座に更新
-                      updatePlan.mutate({
-                        id: item.id,
-                        data: {
-                          recurrence_rule: rrule,
-                        },
-                      })
-                    }}
-                  />
+                    // optimistic updateがキャッシュを即座に更新
+                    updatePlan.mutate({
+                      id: item.id,
+                      data: {
+                        recurrence_type: recurrenceType,
+                        recurrence_rule: null,
+                      },
+                    })
+                  }}
+                  onRecurrenceRuleChange={(rrule) => {
+                    // optimistic updateがキャッシュを即座に更新
+                    updatePlan.mutate({
+                      id: item.id,
+                      data: {
+                        recurrence_rule: rrule,
+                      },
+                    })
+                  }}
+                />
 
-                  {/* アクションボタン */}
-                  <div className="flex justify-end">
-                    <Button onClick={handleDateTimeClear} variant="secondary" size="sm">
-                      <Trash2 className="mr-2 size-4" />
-                      クリア
-                    </Button>
-                  </div>
+                {/* アクションボタン */}
+                <div className="border-border/50 flex justify-end border-t px-3 py-2">
+                  <Button
+                    onClick={handleDateTimeClear}
+                    variant="ghost"
+                    size="sm"
+                    className="text-destructive hover:bg-destructive/10 h-6 px-2 text-xs"
+                  >
+                    クリア
+                  </Button>
                 </div>
               </PopoverContent>
             </Popover>
