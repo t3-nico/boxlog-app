@@ -227,26 +227,3 @@ export function isSentryInitialized(): boolean {
   return !!Sentry.getClient()
 }
 
-// 後方互換性のためのエクスポート（非推奨）
-/** @deprecated initializeSentryは不要になりました。instrumentation.tsで自動初期化されます。 */
-export function initializeSentry(): void {
-  console.warn('initializeSentry() is deprecated. Sentry is now initialized via instrumentation.ts')
-}
-
-/** @deprecated SentryIntegrationは不要になりました。reportToSentry()を直接使用してください。 */
-export class SentryIntegration {
-  initialize(): void {
-    console.warn('SentryIntegration.initialize() is deprecated. Sentry is now initialized via instrumentation.ts')
-  }
-
-  reportError(error: AppError): void {
-    reportToSentry(error)
-  }
-
-  isHealthy(): boolean {
-    return isSentryInitialized()
-  }
-}
-
-/** @deprecated sentryIntegrationは不要になりました。reportToSentry()を直接使用してください。 */
-export const sentryIntegration = new SentryIntegration()
