@@ -160,6 +160,11 @@
         "todo": "Todo",
         "view": "View"
       }
+    },
+    "statusBar": {
+      "noSchedule": "予定なし",
+      "openSchedule": "予定を開く",
+      "createNewPlan": "新規プラン作成"
     }
   }
 }

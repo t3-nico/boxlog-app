@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Calendar } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 import { StatusBarItem } from '../StatusBarItem'
 
@@ -20,6 +21,7 @@ import { cn } from '@/lib/utils'
  * - 予定なし: "予定なし"（クリックで新規作成ポップオーバーを表示）
  */
 export function ScheduleStatusItem() {
+  const t = useTranslations('calendar')
   const openInspector = usePlanInspectorStore((state) => state.openInspector)
   const [currentTime, setCurrentTime] = useState(() => new Date())
 
@@ -122,14 +124,14 @@ export function ScheduleStatusItem() {
       return `${currentPlan.title}${timeRange}`
     }
 
-    return '予定なし'
-  }, [currentPlan, formatTime])
+    return t('statusBar.noSchedule')
+  }, [currentPlan, formatTime, t])
 
   // アイコン（ローディング時はスピナー）
   const icon = isLoading ? <Spinner className="h-3 w-3" /> : <Calendar className="h-3 w-3" />
 
   // ツールチップ
-  const tooltip = currentPlan ? '予定を開く' : '新規プラン作成'
+  const tooltip = currentPlan ? t('statusBar.openSchedule') : t('statusBar.createNewPlan')
 
   // 予定がない場合の初期値を計算
   const initialDate = useMemo(() => new Date(), [])

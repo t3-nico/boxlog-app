@@ -160,6 +160,11 @@
         "todo": "Todo",
         "view": "View"
       }
+    },
+    "statusBar": {
+      "noSchedule": "No schedule",
+      "openSchedule": "Open schedule",
+      "createNewPlan": "Create new plan"
     }
   }
 }

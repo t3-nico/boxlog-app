@@ -137,7 +137,8 @@
     "closeSettings": "設定を閉じる",
     "weeklyCalendar": "週間カレンダー",
     "previous": "前へ",
-    "next": "次へ"
+    "next": "次へ",
+    "selectColor": "{color}を選択"
   },
   "status": {
     "loading": "読み込み中...",

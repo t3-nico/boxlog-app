@@ -41,7 +41,6 @@ export const WeekContent = ({
   planPositions,
   onPlanClick,
   onPlanContextMenu,
-  onEmptyClick,
   onPlanUpdate,
   onTimeRangeSelect,
   className,

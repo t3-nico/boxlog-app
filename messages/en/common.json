@@ -137,7 +137,8 @@
     "closeSettings": "Close settings",
     "weeklyCalendar": "Weekly calendar",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "selectColor": "Select {color}"
   },
   "status": {
     "loading": "Loading...",

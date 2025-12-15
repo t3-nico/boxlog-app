@@ -40,7 +40,6 @@ export const FiveDayContent = ({
   planStyles,
   onPlanClick,
   onPlanContextMenu,
-  onEmptyClick,
   onPlanUpdate,
   onTimeRangeSelect,
   className,

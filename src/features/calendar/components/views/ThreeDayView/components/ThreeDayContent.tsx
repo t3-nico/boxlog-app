@@ -39,7 +39,6 @@ export const ThreeDayContent = ({
   planStyles,
   onPlanClick,
   onPlanContextMenu,
-  onEmptyClick,
   onPlanUpdate,
   onTimeRangeSelect,
   className,
