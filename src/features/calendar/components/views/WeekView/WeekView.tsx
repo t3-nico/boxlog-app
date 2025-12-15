@@ -38,6 +38,7 @@ import type { WeekViewProps } from './WeekView.types'
 export const WeekView = ({
   dateRange,
   plans,
+  allPlans,
   showWeekends = true,
   weekStartsOn: weekStartsOnProp,
   className,
@@ -76,6 +77,7 @@ export const WeekView = ({
       <WeekGrid
         weekDates={displayDates}
         events={plans}
+        allPlans={allPlans}
         eventsByDate={eventsByDate}
         todayIndex={todayIndex}
         timezone={timezone}

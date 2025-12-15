@@ -11,6 +11,8 @@ export interface WeekViewProps extends BaseViewProps {
 export interface WeekGridProps {
   weekDates: Date[]
   events: CalendarPlan[]
+  /** 全プラン（期限切れ未完了表示用） */
+  allPlans?: CalendarPlan[] | undefined
   eventsByDate: Record<string, CalendarPlan[]>
   todayIndex: number
   timezone: string

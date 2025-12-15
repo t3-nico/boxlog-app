@@ -8,6 +8,8 @@ import type { DateTimeSelection, TimeSlot } from '../shared'
 export interface DayViewProps {
   dateRange: ViewDateRange
   plans: CalendarPlan[]
+  /** 全プラン（期限切れ未完了表示用、日付フィルタリング前） */
+  allPlans?: CalendarPlan[] | undefined
   currentDate: Date
   showWeekends?: boolean | undefined // 週末の表示/非表示（デフォルト: true）
   className?: string | undefined

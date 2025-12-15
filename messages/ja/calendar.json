@@ -165,6 +165,11 @@
       "noSchedule": "予定なし",
       "openSchedule": "予定を開く",
       "createNewPlan": "新規プラン作成"
+    },
+    "overdue": {
+      "badge": "{count}件の未完了",
+      "popoverTitle": "期限切れのプラン",
+      "overdueBy": "{time}超過"
     }
   }
 }

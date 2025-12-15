@@ -6,7 +6,7 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { cn } from '@/lib/utils'
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout } from '../shared'
+import { CalendarDateHeader, DateDisplay, OverdueSectionSingle, ScrollableCalendarLayout } from '../shared'
 
 import { DayContent } from './components/DayContent'
 import type { DayViewProps } from './DayView.types'
@@ -15,6 +15,7 @@ import { useDayView } from './hooks/useDayView'
 export const DayView = ({
   dateRange: _dateRange,
   plans,
+  allPlans,
   currentDate,
   showWeekends: _showWeekends = true,
   className,
@@ -98,7 +99,10 @@ export const DayView = ({
     <CalendarViewAnimation viewType="day">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         {/* 固定日付ヘッダー */}
-        <CalendarDateHeader header={headerComponent} timezone={timezone} />
+        <CalendarDateHeader header={headerComponent} showTimezone={false} />
+
+        {/* タイムゾーン＋未完了プランバッジエリア */}
+        <OverdueSectionSingle date={date} plans={allPlans || plans || []} timezone={timezone} />
 
         {/* スクロール可能コンテンツ */}
         <ScrollableCalendarLayout

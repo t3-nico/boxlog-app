@@ -6,7 +6,7 @@ import { isToday } from 'date-fns'
 
 import { cn } from '@/lib/utils'
 
-import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout, getDateKey } from '../../shared'
+import { CalendarDateHeader, DateDisplay, OverdueSection, ScrollableCalendarLayout, getDateKey } from '../../shared'
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight'
 import { useWeekPlans } from '../hooks/useWeekPlans'
 
@@ -27,6 +27,7 @@ import { WeekContent } from './WeekContent'
 export const WeekGrid = ({
   weekDates,
   events,
+  allPlans,
   eventsByDate,
   todayIndex,
   disabledPlanId,
@@ -92,7 +93,10 @@ export const WeekGrid = ({
   return (
     <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
       {/* 固定日付ヘッダー */}
-      <CalendarDateHeader header={headerComponent} timezone={timezone} />
+      <CalendarDateHeader header={headerComponent} showTimezone={false} />
+
+      {/* タイムゾーン＋未完了プランバッジエリア */}
+      <OverdueSection dates={weekDates} plans={allPlans || events} timezone={timezone} />
 
       {/* スクロール可能コンテンツ */}
       <ScrollableCalendarLayout

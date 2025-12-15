@@ -36,6 +36,10 @@ export type { TimeSelection } from './components/DragSelectionLayer'
 // EmptyState - 空状態
 export { EmptyState } from './components/EmptyState'
 
+// OverdueSection - 未完了プランバッジ
+export { OverdueBadge } from './components/OverdueBadge'
+export { OverdueSection, OverdueSectionSingle } from './components/OverdueSection'
+
 // TimezoneOffset - タイムゾーン表示
 export { TimezoneOffset } from './components/TimezoneOffset'
 
