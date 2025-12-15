@@ -1,3 +1,5 @@
+import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from '@/constants/time'
+
 import type { PlanStatus } from '../types/plan'
 
 /**
@@ -72,9 +74,9 @@ export function formatRelativeTime(dateString: string | null | undefined): strin
     const date = new Date(dateString)
     const now = new Date()
     const diffMs = now.getTime() - date.getTime()
-    const diffMinutes = Math.floor(diffMs / (1000 * 60))
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    const diffMinutes = Math.floor(diffMs / MS_PER_MINUTE)
+    const diffHours = Math.floor(diffMs / MS_PER_HOUR)
+    const diffDays = Math.floor(diffMs / MS_PER_DAY)
 
     if (diffMinutes < 1) return 'たった今'
     if (diffMinutes < 60) return `${diffMinutes}分前`

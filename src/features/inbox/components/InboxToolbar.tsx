@@ -10,12 +10,18 @@ import { useInboxViewStore } from '../stores/useInboxViewStore'
  * 表示モードに応じて適切なツールを表示:
  * - Board: KanbanToolbar（フィルター・検索）
  * - Table: SavedViewsSelector + GroupBySelector
+ *
+ * **デザイン仕様**:
+ * - 全体の高さ: 48px固定（h-12）
+ * - 上下パディング: 8px（py-2）
+ * - コンテナ: 32px（h-8）
+ * - 8pxグリッドシステム準拠
  */
 export function InboxToolbar() {
   const { displayMode } = useInboxViewStore()
 
   return (
-    <div className="bg-background flex shrink-0 items-center px-4 py-4 md:px-6">
+    <div className="bg-background flex h-12 shrink-0 items-center px-4 py-2 md:px-6">
       {displayMode === 'board' ? <KanbanToolbar /> : null}
     </div>
   )

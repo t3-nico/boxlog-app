@@ -123,14 +123,16 @@ export function useCalendarData() {
   const { data: plans } = usePlans()
 
   const calendarItems = useMemo(() => {
-    return plans?.map((plan) => ({
-      id: plan.id,
-      title: plan.title,
-      start: plan.start_time,
-      end: plan.end_time,
-      color: getPlanColor(plan.status),
-      source: plan,
-    })) ?? []
+    return (
+      plans?.map((plan) => ({
+        id: plan.id,
+        title: plan.title,
+        start: plan.start_time,
+        end: plan.end_time,
+        color: getPlanColor(plan.status),
+        source: plan,
+      })) ?? []
+    )
   }, [plans])
 
   return { calendarItems }
@@ -245,14 +247,14 @@ src/features/
 
 ## 📊 移行スケジュール
 
-| フェーズ | 内容                               | 状態      |
-| -------- | ---------------------------------- | --------- |
-| Phase 1  | Database設計・Migration            | ✅ 完了   |
-| Phase 2  | tRPC API + Zod                     | ✅ 完了   |
-| Phase 3  | Zustand Store + Hooks              | ✅ 完了   |
-| Phase 4  | ビュー統合（Calendar/Board/Table） | ⏳ TODO   |
-| Phase 5  | Inspector統合・UI完成              | ⏳ TODO   |
-| Phase 6  | 高度な機能・最適化                 | ⏳ TODO   |
+| フェーズ | 内容                               | 状態    |
+| -------- | ---------------------------------- | ------- |
+| Phase 1  | Database設計・Migration            | ✅ 完了 |
+| Phase 2  | tRPC API + Zod                     | ✅ 完了 |
+| Phase 3  | Zustand Store + Hooks              | ✅ 完了 |
+| Phase 4  | ビュー統合（Calendar/Board/Table） | ⏳ TODO |
+| Phase 5  | Inspector統合・UI完成              | ⏳ TODO |
+| Phase 6  | 高度な機能・最適化                 | ⏳ TODO |
 
 ---
 

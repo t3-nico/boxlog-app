@@ -1,6 +1,8 @@
 import { format } from 'date-fns'
 import { formatInTimeZone as formatInTZ, fromZonedTime, toZonedTime } from 'date-fns-tz'
 
+import type { DateFormatType } from '../stores/useCalendarSettingsStore'
+
 // タイムゾーンリストの取得
 export function getTimeZones() {
   const timezones = [
@@ -65,6 +67,41 @@ export function convertFromTimezone(zonedDate: Date, timezone: string): Date {
   // zonedDateは「そのタイムゾーンでの時刻」として解釈されるべきDateオブジェクト
   // 例: 2025-11-20 16:00 (JST) → 2025-11-20 07:00 (UTC)
   return fromZonedTime(zonedDate, timezone)
+}
+
+/**
+ * 日付をユーザー設定のフォーマットで表示
+ * @param date - フォーマットする日付
+ * @param dateFormat - 日付フォーマット設定
+ * @param timezone - オプションのタイムゾーン
+ */
+export function formatDateWithSettings(date: Date, dateFormat: DateFormatType, timezone?: string): string {
+  if (timezone) {
+    return formatInTZ(date, timezone, dateFormat)
+  }
+  return format(date, dateFormat)
+}
+
+/**
+ * 日付と時刻をユーザー設定のフォーマットで表示
+ * @param date - フォーマットする日付
+ * @param dateFormat - 日付フォーマット設定
+ * @param timeFormat - 時間フォーマット設定
+ * @param timezone - オプションのタイムゾーン
+ */
+export function formatDateTimeWithSettings(
+  date: Date,
+  dateFormat: DateFormatType,
+  timeFormat: '12h' | '24h',
+  timezone?: string
+): string {
+  const timeFormatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a'
+  const fullFormat = `${dateFormat} ${timeFormatString}`
+
+  if (timezone) {
+    return formatInTZ(date, timezone, fullFormat)
+  }
+  return format(date, fullFormat)
 }
 
 // タイムゾーンの略称を取得

@@ -17,14 +17,12 @@ src/features/auth/
 │   ├── LoginForm.tsx          # ログインフォーム
 │   ├── SignupForm.tsx         # サインアップフォーム
 │   ├── PasswordResetForm.tsx  # パスワードリセットフォーム
-│   ├── ProtectedRoute.tsx     # 保護ルートラッパー
-│   └── LoginFormDisabled.tsx  # 無効化ログインフォーム（未使用）
+│   └── ProtectedRoute.tsx     # 保護ルートラッパー
 ├── contexts/            # React Context
 │   └── AuthContext.tsx        # 認証状態管理Context
 ├── hooks/               # カスタムフック
 │   ├── useAuth.ts             # 認証機能フック
-│   ├── useAuth.test.ts        # useAuthテスト
-│   └── useAuthForm.ts         # 認証フォームフック（未使用）
+│   └── useAuth.test.ts        # useAuthテスト
 ├── lib/                 # ユーティリティ・設定
 │   └── auth-config.ts         # 認証設定・バリデーション
 ├── index.ts             # エクスポート定義

@@ -21,7 +21,7 @@ import { InboxBoardToolbar } from './board/InboxBoardToolbar'
  */
 export function InboxBoardView() {
   const filters = useInboxFilterStore()
-  const { items, isLoading, error } = useInboxData({
+  const { items, isPending, error } = useInboxData({
     status: filters.status[0] as PlanStatus | undefined,
     search: filters.search,
     tags: filters.tags,
@@ -42,14 +42,14 @@ export function InboxBoardView() {
 
   return (
     <div id="inbox-view-panel" role="tabpanel" className="flex h-full flex-col">
-      {/* ツールバー: 高さ48px固定 + 上padding 8px */}
-      <div className="flex h-12 shrink-0 items-center px-4 pt-2 md:px-6">
+      {/* ツールバー: 高さ48px固定（8px + 32px + 8px） */}
+      <div className="flex h-12 shrink-0 items-center px-4 py-2 md:px-6">
         <InboxBoardToolbar />
       </div>
 
       {/* Kanbanボード: 残りのスペース */}
       <div className="min-h-0 flex-1 overflow-hidden">
-        {isLoading ? (
+        {isPending ? (
           <div className="flex h-full items-center justify-center">
             <div className="flex flex-col items-center gap-2">
               <div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />

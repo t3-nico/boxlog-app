@@ -2,17 +2,18 @@
 
 import { useMemo, useState } from 'react'
 
-import { endOfWeek, startOfWeek } from 'date-fns'
+import { addDays, endOfWeek, startOfDay, startOfWeek, subDays } from 'date-fns'
+import { CalendarDays, ListTodo } from 'lucide-react'
 
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
+import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
 import { SidebarTabLayout } from '@/features/navigation/components/sidebar/SidebarTabLayout'
 import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
 import { useTranslations } from 'next-intl'
 
-import { InboxCardList } from './inbox/InboxCardList'
-import { InboxNavigation, type InboxFilter, type InboxSort } from './inbox/InboxNavigation'
+import { TodoCardList } from './todo/TodoCardList'
+import { TodoNavigation, type TodoFilter, type TodoSort } from './todo/TodoNavigation'
 
 /**
  * CalendarSidebar - カレンダーページ専用サイドバー
@@ -21,31 +22,54 @@ import { InboxNavigation, type InboxFilter, type InboxSort } from './inbox/Inbox
  * SidebarTabLayoutでタブUIを実装。
  *
  * **タブ構成**:
- * - Inbox: フィルターナビゲーション
+ * - Todo: フィルターナビゲーション（ステータス: todo のプラン一覧）
  * - View: ミニカレンダー（日付選択・月移動）
  */
 export function CalendarSidebar() {
   const navigation = useCalendarNavigation()
   const t = useTranslations()
 
-  const [filter, setFilter] = useState<InboxFilter>('all')
-  const [sort, setSort] = useState<InboxSort>('due')
+  const [filter, setFilter] = useState<TodoFilter>('all')
+  const [sort, setSort] = useState<TodoSort>('due')
   const [showHigh, setShowHigh] = useState(true)
   const [showMedium, setShowMedium] = useState(true)
   const [showLow, setShowLow] = useState(true)
 
-  // 週表示の場合、表示中の週の範囲を計算
+  // ビュータイプに応じた表示範囲を計算
   const displayRange = useMemo(() => {
     if (!navigation?.currentDate || !navigation?.viewType) return undefined
 
-    // 週表示の場合のみハイライト
-    const weekViewTypes = ['week', 'week-no-weekend']
-    if (!weekViewTypes.includes(navigation.viewType)) return undefined
+    const { currentDate, viewType } = navigation
+    // 時刻部分を正規化（00:00:00に統一）してisWithinIntervalの比較を正確にする
+    const normalizedDate = startOfDay(currentDate)
 
-    const start = startOfWeek(navigation.currentDate, { weekStartsOn: 1 })
-    const end = endOfWeek(navigation.currentDate, { weekStartsOn: 1 })
+    switch (viewType) {
+      case 'day':
+        // 日表示: 1日のみ
+        return { start: normalizedDate, end: normalizedDate }
 
-    return { start, end }
+      case '3day':
+        // 3日表示: 当日を中央として前後1日（合計3日間）
+        return { start: subDays(normalizedDate, 1), end: addDays(normalizedDate, 1) }
+
+      case '5day':
+        // 5日表示: 当日を中央として前後2日（合計5日間）
+        return { start: subDays(normalizedDate, 2), end: addDays(normalizedDate, 2) }
+
+      case 'week':
+        // 週表示: 月曜から日曜
+        return {
+          start: startOfWeek(normalizedDate, { weekStartsOn: 1 }),
+          end: endOfWeek(normalizedDate, { weekStartsOn: 1 }),
+        }
+
+      case 'agenda':
+        // アジェンダ表示: 範囲なし（単一日付選択のみ）
+        return undefined
+
+      default:
+        return undefined
+    }
   }, [navigation?.currentDate, navigation?.viewType])
 
   const handlePriorityToggle = (priority: 'high' | 'medium' | 'low') => {
@@ -56,13 +80,14 @@ export function CalendarSidebar() {
 
   const tabs: SidebarTab[] = [
     {
-      value: 'inbox',
-      label: t('calendar.sidebar.tabs.inbox'),
+      value: 'todo',
+      label: t('calendar.sidebar.tabs.todo'),
+      icon: ListTodo,
       content: (
-        <>
-          {/* ナビゲーションコンテナ: 高さ48px（内部32px + 上padding 8px + 下padding 8px） */}
-          <div className="h-12 shrink-0 px-4 pt-2">
-            <InboxNavigation
+        <div>
+          {/* ナビゲーションコンテナ: 高さ40px（内部32px + 下padding 8px） */}
+          <div className="h-10 shrink-0 px-4 pb-2">
+            <TodoNavigation
               filter={filter}
               onFilterChange={setFilter}
               sort={sort}
@@ -75,16 +100,17 @@ export function CalendarSidebar() {
           </div>
           {/* カードリストコンテナ */}
           <div className="flex-1 overflow-hidden px-4">
-            <InboxCardList filter={filter} sort={sort} showHigh={showHigh} showMedium={showMedium} showLow={showLow} />
+            <TodoCardList filter={filter} sort={sort} showHigh={showHigh} showMedium={showMedium} showLow={showLow} />
           </div>
-        </>
+        </div>
       ),
     },
     {
       value: 'view',
       label: t('calendar.sidebar.tabs.view'),
+      icon: CalendarDays,
       content: (
-        <div className="p-2">
+        <div className="px-2 pt-2">
           <MiniCalendar
             selectedDate={navigation?.currentDate}
             displayRange={displayRange}
@@ -102,7 +128,7 @@ export function CalendarSidebar() {
 
   return (
     <SidebarShell title={t('sidebar.navigation.calendar')}>
-      <SidebarTabLayout tabs={tabs} defaultTab="inbox" />
+      <SidebarTabLayout tabs={tabs} defaultTab="todo" />
     </SidebarShell>
   )
 }

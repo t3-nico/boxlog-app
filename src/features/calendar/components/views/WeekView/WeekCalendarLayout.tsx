@@ -7,6 +7,7 @@ import { X } from 'lucide-react'
 import { toast } from 'sonner'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
 import { useTranslations } from 'next-intl'
@@ -29,19 +30,26 @@ interface WeekCalendarLayoutProps {
 
 // 現在時刻線コンポーネント（シンプル版）
 const CurrentTimeLine = ({ day }: { day: Date }) => {
-  if (!isToday(day)) return null
-
   const now = new Date()
   const currentHours = now.getHours() + now.getMinutes() / 60
+  const isTodayColumn = isToday(day)
 
   return (
     <div
-      className="pointer-events-none absolute right-0 left-0 z-30 h-0.5 bg-red-500"
+      className="pointer-events-none absolute right-0 left-0 z-30"
       style={{
         top: `${currentHours * HOUR_HEIGHT}px`,
       }}
     >
-      <div className="absolute top-1/2 -left-1 h-2 w-2 -translate-y-1/2 rounded-full bg-red-500" />
+      {/* 今日の場合：濃い線と点 */}
+      {isTodayColumn && (
+        <>
+          <div className="bg-primary h-0.5 w-full shadow-sm" />
+          <div className="bg-primary absolute top-1/2 -left-1 h-2 w-2 -translate-y-1/2 rounded-full" />
+        </>
+      )}
+      {/* 他の日の場合：薄い線のみ */}
+      {!isTodayColumn && <div className="bg-primary/30 h-px w-full" />}
     </div>
   )
 }
@@ -59,6 +67,7 @@ export const WeekCalendarLayout = ({
   const t = useTranslations()
   const { openEventPopup } = useAddPopup()
   const { planRecordMode } = useCalendarSettingsStore()
+  const { formatTime: formatTimeWithSettings } = useDateFormat()
   const containerRef = useRef<HTMLDivElement>(null)
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
 
@@ -308,7 +317,7 @@ export const WeekCalendarLayout = ({
                         }}
                         onClick={createPlanClickHandler(plan)}
                         onKeyDown={createPlanKeyDownHandler(plan)}
-                        aria-label={`プラン: ${plan.title}${plan.startDate ? ` (${format(plan.startDate, 'HH:mm')}開始)` : ''}`}
+                        aria-label={`プラン: ${plan.title}${plan.startDate ? ` (${formatTimeWithSettings(plan.startDate)}開始)` : ''}`}
                       >
                         {/* ホバー時の削除ボタン */}
                         <button
@@ -326,8 +335,8 @@ export const WeekCalendarLayout = ({
                               <div className="mb-0.5 line-clamp-2 text-xs leading-tight font-medium">{plan.title}</div>
                               {height > 30 ? (
                                 <div className="text-xs leading-tight opacity-90">
-                                  {format(plan.startDate, 'HH:mm')}
-                                  {plan.endDate ? ` - ${format(plan.endDate, 'HH:mm')}` : null}
+                                  {formatTimeWithSettings(plan.startDate)}
+                                  {plan.endDate ? ` - ${formatTimeWithSettings(plan.endDate)}` : null}
                                 </div>
                               ) : null}
                             </div>

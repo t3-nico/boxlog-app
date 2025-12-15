@@ -33,63 +33,64 @@ export function PlanTagsSection({
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
 
   return (
-    <div className={`h-12 px-6 py-2 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
-      <div className="flex h-8 items-center gap-2">
-        <Tag className="text-muted-foreground h-4 w-4 flex-shrink-0" />
-        <div className="min-w-0 flex-1">
-          <div className="bg-popover dark:bg-popover flex max-h-[5.25rem] flex-wrap items-center gap-2 overflow-y-auto pr-2">
-            {/* 選択済みタグを表示 */}
-            {selectedTags.map((tag) => (
-              <Badge
-                key={tag.id}
-                variant="outline"
-                style={{
-                  borderColor: tag.color,
-                }}
-                className="group relative gap-0.5 pr-6 text-xs font-normal"
-              >
-                <span className="font-medium" style={{ color: tag.color }}>
-                  #
-                </span>
-                {tag.name}
-                {onRemoveTag && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onRemoveTag(tag.id)
-                    }}
-                    className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                )}
-              </Badge>
-            ))}
-
-            {/* タグ選択ダイアログ - 常に同じインスタンスを使用 */}
-            <PlanTagSelectDialogEnhanced
-              selectedTagIds={selectedTagIds}
-              onTagsChange={onTagsChange}
-              align={popoverAlign}
-              side={popoverSide}
-              alignOffset={popoverAlignOffset}
-              sideOffset={popoverSideOffset}
+    <div className={`flex min-h-10 items-start gap-2 px-4 py-2 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
+      <Tag className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+      <div className="flex min-h-8 flex-1 items-center">
+        <div className="flex max-h-[5.25rem] flex-wrap items-center gap-1.5 overflow-y-auto">
+          {/* 選択済みタグを表示 */}
+          {selectedTags.map((tag) => (
+            <Badge
+              key={tag.id}
+              variant="outline"
+              style={{
+                borderColor: tag.color,
+              }}
+              className="group relative gap-0.5 pr-6 text-xs font-normal"
             >
-              {selectedTagIds.length === 0 ? (
+              <span className="font-medium" style={{ color: tag.color }}>
+                #
+              </span>
+              {tag.name}
+              {onRemoveTag && (
                 <button
                   type="button"
-                  className="text-muted-foreground hover:bg-state-hover rounded px-1 text-sm transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onRemoveTag(tag.id)
+                  }}
+                  className="hover:bg-state-hover absolute top-1/2 right-1 -translate-y-1/2 rounded-sm opacity-70 transition-opacity hover:opacity-100"
                 >
-                  タグを追加...
-                </button>
-              ) : (
-                <button type="button" className="hover:bg-state-hover flex h-6 w-6 items-center justify-center rounded">
-                  <Plus className="h-3.5 w-3.5" />
+                  <X className="h-3 w-3" />
                 </button>
               )}
-            </PlanTagSelectDialogEnhanced>
-          </div>
+            </Badge>
+          ))}
+
+          {/* タグ選択ダイアログ */}
+          <PlanTagSelectDialogEnhanced
+            selectedTagIds={selectedTagIds}
+            onTagsChange={onTagsChange}
+            align={popoverAlign}
+            side={popoverSide}
+            alignOffset={popoverAlignOffset}
+            sideOffset={popoverSideOffset}
+          >
+            {selectedTagIds.length === 0 ? (
+              <button
+                type="button"
+                className="text-muted-foreground hover:bg-state-hover h-8 rounded-md px-2 text-sm transition-colors"
+              >
+                タグを追加...
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="text-muted-foreground hover:bg-state-hover flex h-8 w-8 items-center justify-center rounded-md transition-colors"
+              >
+                <Plus className="size-4" />
+              </button>
+            )}
+          </PlanTagSelectDialogEnhanced>
         </div>
       </div>
     </div>

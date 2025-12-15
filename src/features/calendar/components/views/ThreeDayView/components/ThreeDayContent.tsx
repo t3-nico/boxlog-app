@@ -2,7 +2,9 @@
 
 import React, { useCallback } from 'react'
 
+import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { cn } from '@/lib/utils'
 
 import {
@@ -27,6 +29,8 @@ interface ThreeDayContentProps {
   className?: string | undefined
   dayIndex: number // 3日間内での日付インデックス（0-2）
   displayDates?: Date[] | undefined // 3日間の全日付配列（日付間移動用）
+  /** DnDを無効化するプランID（Inspector表示中のプランなど） */
+  disabledPlanId?: string | null | undefined
 }
 
 export const ThreeDayContent = ({
@@ -35,23 +39,28 @@ export const ThreeDayContent = ({
   planStyles,
   onPlanClick,
   onPlanContextMenu,
-  onEmptyClick,
   onPlanUpdate,
   onTimeRangeSelect,
   className,
   dayIndex,
   displayDates,
+  disabledPlanId,
 }: ThreeDayContentProps) => {
+  // Inspectorで開いているプランのIDを取得
+  const inspectorPlanId = usePlanInspectorStore((state) => state.planId)
+  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen)
+
+  // グローバルドラッグ状態（日付間移動用）
+  const globalDragState = useCalendarDragStore()
+  const isGlobalDragging = globalDragState.isDragging
+  const globalDraggedPlan = globalDragState.draggedPlan
+  const globalTargetDateIndex = globalDragState.targetDateIndex
+  const globalOriginalDateIndex = globalDragState.originalDateIndex
+
   // ドラッグ&ドロップ機能用にonPlanUpdateを変換
   const handlePlanUpdate = useCallback(
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onPlanUpdate) return
-
-      console.log('🔧 ThreeDayContent: プラン更新要求:', {
-        planId,
-        startTime: updates.startTime.toISOString(),
-        endTime: updates.endTime.toISOString(),
-      })
 
       // handleUpdatePlan形式で呼び出し
       await onPlanUpdate(planId, {
@@ -70,6 +79,7 @@ export const ThreeDayContent = ({
     events: plans,
     displayDates,
     viewMode: '3day',
+    disabledPlanId,
   })
 
   // グローバルドラッグカーソー管理（共通化）
@@ -98,7 +108,7 @@ export const ThreeDayContent = ({
 
   return (
     <div className={cn('bg-background relative h-full flex-1 overflow-hidden', className)} data-calendar-grid>
-      {/* CalendarDragSelectionを使用 */}
+      {/* CalendarDragSelectionを使用（ドラッグ操作のみでプラン作成） */}
       <CalendarDragSelection
         date={date}
         className="absolute inset-0"
@@ -107,8 +117,7 @@ export const ThreeDayContent = ({
           const endTime = `${String(selection.endHour).padStart(2, '0')}:${String(selection.endMinute).padStart(2, '0')}`
           onTimeRangeSelect?.(date, startTime, endTime)
         }}
-        onSingleClick={onEmptyClick}
-        disabled={dragState.isDragging || dragState.isResizing}
+        disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
       >
         {/* 背景グリッド（DayViewと同じパターン） */}
         <div className="absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
@@ -116,13 +125,18 @@ export const ThreeDayContent = ({
         </div>
       </CalendarDragSelection>
 
-      {/* プラン表示エリア */}
-      <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
+      {/* プラン表示エリア - CalendarDragSelectionより上にz-indexを設定 */}
+      <div className="pointer-events-none absolute inset-0 z-20" style={{ height: 24 * HOUR_HEIGHT }}>
         {plans.map((plan) => {
           const style = planStyles[plan.id]
           if (!style) return null
 
           const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
+
+          // 日付間移動中のプランは元のカラムで半透明に（ゴースト要素がカーソルに追従）
+          const isMovingToOtherDate =
+            isGlobalDragging && globalDraggedPlan?.id === plan.id && globalTargetDateIndex !== globalOriginalDateIndex
+
           const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
@@ -130,14 +144,18 @@ export const ThreeDayContent = ({
           // ゴースト表示スタイル（共通化）
           const adjustedStyle = calculatePlanGhostStyle(style, plan.id, dragState)
 
+          // 他の日付に移動中は元のプランを半透明に
+          const finalStyle = isMovingToOtherDate ? { ...adjustedStyle, opacity: 0.3 } : adjustedStyle
+
           return (
-            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-plan-block="true">
+            <div key={plan.id} style={finalStyle} className="pointer-events-none absolute" data-plan-block="true">
               {/* PlanBlockの内容部分のみクリック可能 */}
               <div
                 className="focus:ring-ring pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"
                 role="button"
                 tabIndex={0}
                 aria-label={`Drag plan: ${plan.title}`}
+                data-plan-block="true"
                 onMouseDown={(e) => {
                   // 左クリックのみドラッグ開始
                   if (e.button === 0) {
@@ -189,6 +207,7 @@ export const ThreeDayContent = ({
                   }
                   isDragging={isDragging}
                   isResizing={isResizingThis}
+                  isActive={isInspectorOpen && inspectorPlanId === plan.id}
                   previewTime={calculatePreviewTime(plan.id, dragState)}
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />

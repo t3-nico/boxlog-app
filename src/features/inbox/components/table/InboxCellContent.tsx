@@ -4,8 +4,7 @@ import { parseDatetimeString } from '@/features/calendar/utils/dateUtils'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { useplanTags } from '@/features/plans/hooks/usePlanTags'
 import type { PlanStatus } from '@/features/plans/types/plan'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import type { InboxItem } from '../../hooks/useInboxData'
 import { DateTimeUnifiedCell } from './DateTimeUnifiedCell'
 import { StatusEditCell } from './StatusEditCell'
@@ -29,6 +28,7 @@ interface InboxCellContentProps {
 export function InboxCellContent({ item, columnId, width }: InboxCellContentProps) {
   const { updatePlan } = usePlanMutations()
   const { addplanTag, removeplanTag } = useplanTags()
+  const { formatDate: formatDateWithSettings, formatTime: formatTimeWithSettings } = useDateFormat()
 
   // インライン編集ハンドラー
   const handleStatusChange = (status: PlanStatus) => {
@@ -72,8 +72,8 @@ export function InboxCellContent({ item, columnId, width }: InboxCellContentProp
         <DateTimeUnifiedCell
           data={{
             date: item.start_time ? parseDatetimeString(item.start_time).toISOString().split('T')[0]! : null,
-            startTime: item.start_time ? format(parseDatetimeString(item.start_time), 'HH:mm') : null,
-            endTime: item.end_time ? format(parseDatetimeString(item.end_time), 'HH:mm') : null,
+            startTime: item.start_time ? formatTimeWithSettings(parseDatetimeString(item.start_time)) : null,
+            endTime: item.end_time ? formatTimeWithSettings(parseDatetimeString(item.end_time)) : null,
             reminder: null,
             recurrence: null,
           }}
@@ -94,18 +94,10 @@ export function InboxCellContent({ item, columnId, width }: InboxCellContentProp
       )
 
     case 'created_at':
-      return (
-        <span className="text-muted-foreground text-sm">
-          {format(new Date(item.created_at), 'yyyy/MM/dd', { locale: ja })}
-        </span>
-      )
+      return <span className="text-muted-foreground text-sm">{formatDateWithSettings(new Date(item.created_at))}</span>
 
     case 'updated_at':
-      return (
-        <span className="text-muted-foreground text-sm">
-          {format(new Date(item.updated_at), 'yyyy/MM/dd', { locale: ja })}
-        </span>
-      )
+      return <span className="text-muted-foreground text-sm">{formatDateWithSettings(new Date(item.updated_at))}</span>
 
     default:
       return null

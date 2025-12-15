@@ -8,9 +8,6 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import { useLocale, useTranslations } from 'next-intl'
 
-// import { formatDistanceToNow } from 'date-fns'
-// import { ja } from 'date-fns/locale'
-
 interface NotificationModalProps {
   isOpen: boolean
   onClose: () => void

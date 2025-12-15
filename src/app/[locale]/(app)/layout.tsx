@@ -8,8 +8,7 @@
  *
  * Provider階層:
  * 1. Providers（QueryClient, tRPC, Auth, Realtime, Theme, GlobalSearch）
- * 2. SessionMonitorProvider（セッション監視）
- * 3. BaseLayout（サイドバー、ヘッダー）
+ * 2. BaseLayout（サイドバー、ヘッダー）
  *
  * @see src/components/providers.tsx - フルProviders定義
  */
@@ -17,7 +16,7 @@ import { BaseLayout } from '@/components/layout/base-layout'
 import { Providers } from '@/components/providers'
 import { Toaster } from '@/components/ui/sonner'
 import { SessionMonitorProvider } from '@/features/auth/components/SessionMonitorProvider'
-import { PlanInspector } from '@/features/plans/components'
+import { PlanDeleteConfirmDialog, PlanInspector } from '@/features/plans/components'
 import { TagInspector } from '@/features/tags/components/inspector'
 
 const AppLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -27,6 +26,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
         <BaseLayout>
           {children}
           <PlanInspector />
+          <PlanDeleteConfirmDialog />
           <TagInspector />
           <Toaster />
         </BaseLayout>

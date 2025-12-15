@@ -4,6 +4,7 @@ import { useEffect, useMemo } from 'react'
 
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import type { Plan } from '@/features/plans/types/plan'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { logger } from '@/lib/logger'
 
 import { calculateViewDateRange } from '../../../lib/view-helpers'
@@ -26,12 +27,16 @@ type PlansApiResult = ReturnType<typeof usePlans>['data']
 interface UseCalendarDataResult {
   viewDateRange: ViewDateRange
   filteredEvents: CalendarPlan[]
+  allCalendarPlans: CalendarPlan[]
   plansData: PlansApiResult
 }
 
 export function useCalendarData({ viewType, currentDate }: UseCalendarDataOptions): UseCalendarDataResult {
   // plansを取得（リアルタイム性最優化済み）
   const { data: plansData } = usePlans()
+
+  // 週の開始日設定を取得
+  const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn)
 
   // デバッグ: plansDataの更新を検知
   useEffect(() => {
@@ -47,14 +52,13 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
     })
   }, [plansData])
 
-  // ビューに応じた期間計算
+  // ビューに応じた期間計算（週の開始日設定を反映）
   const viewDateRange = useMemo(() => {
-    return calculateViewDateRange(viewType, currentDate)
-  }, [viewType, currentDate])
+    return calculateViewDateRange(viewType, currentDate, weekStartsOn)
+  }, [viewType, currentDate, weekStartsOn])
 
-  // 表示範囲のイベントを取得してCalendarPlan型に変換（削除済みを除外）
-  const filteredEvents = useMemo(() => {
-    // planデータがない場合は空配列を返す
+  // 全プランをCalendarPlan型に変換（期限切れ未完了表示用）
+  const allCalendarPlans = useMemo(() => {
     if (!plansData) {
       return []
     }
@@ -72,9 +76,16 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
     })
 
     // planをCalendarPlanに変換
-    const calendarEvents = plansToCalendarPlans(
+    return plansToCalendarPlans(
       plansWithTime as Array<Plan & { tags: Array<{ id: string; name: string; color: string }> }>
     )
+  }, [plansData])
+
+  // 表示範囲のイベントをフィルタリング
+  const filteredEvents = useMemo(() => {
+    if (allCalendarPlans.length === 0) {
+      return []
+    }
 
     // 表示範囲内のイベントのみをフィルタリング
     const startDateOnly = new Date(
@@ -88,7 +99,7 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
       viewDateRange.end.getDate()
     )
 
-    const filtered = calendarEvents.filter((event) => {
+    const filtered = allCalendarPlans.filter((event) => {
       // startDate/endDate が null の場合はスキップ
       if (!event.startDate || !event.endDate) {
         return false
@@ -108,8 +119,7 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
     })
 
     logger.log(`[useCalendarData] plansフィルタリング:`, {
-      totalplans: plansData.length,
-      plansWithTime: plansWithTime.length,
+      totalPlans: allCalendarPlans.length,
       filteredCount: filtered.length,
       dateRange: {
         start: startDateOnly.toDateString(),
@@ -124,11 +134,12 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
     })
 
     return filtered
-  }, [viewDateRange, plansData])
+  }, [viewDateRange, allCalendarPlans])
 
   return {
     viewDateRange,
     filteredEvents,
+    allCalendarPlans,
     plansData,
   }
 }

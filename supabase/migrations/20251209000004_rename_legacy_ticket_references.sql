@@ -4,14 +4,32 @@
 -- ===== 制約のリネーム（依存関係のないもののみ）=====
 -- plan_activities
 ALTER TABLE plan_activities DROP CONSTRAINT IF EXISTS ticket_activities_action_type_check;
-ALTER TABLE plan_activities ADD CONSTRAINT plan_activities_action_type_check
-  CHECK (action_type IN ('created', 'updated', 'status_changed', 'title_changed',
-    'description_changed', 'due_date_changed', 'time_changed', 'tag_added', 'tag_removed', 'deleted'));
+-- 制約が既に存在する場合はスキップ
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'plan_activities_action_type_check'
+  ) THEN
+    ALTER TABLE plan_activities ADD CONSTRAINT plan_activities_action_type_check
+      CHECK (action_type IN ('created', 'updated', 'status_changed', 'title_changed',
+        'description_changed', 'due_date_changed', 'time_changed', 'tag_added', 'tag_removed', 'deleted'));
+  END IF;
+END
+$$;
 
 -- plans
 ALTER TABLE plans DROP CONSTRAINT IF EXISTS tickets_recurrence_type_check;
-ALTER TABLE plans ADD CONSTRAINT plans_recurrence_type_check
-  CHECK (recurrence_type IN ('none', 'daily', 'weekly', 'monthly', 'yearly', 'weekdays'));
+-- 制約が既に存在する場合はスキップ
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'plans_recurrence_type_check'
+  ) THEN
+    ALTER TABLE plans ADD CONSTRAINT plans_recurrence_type_check
+      CHECK (recurrence_type IN ('none', 'daily', 'weekly', 'monthly', 'yearly', 'weekdays'));
+  END IF;
+END
+$$;
 
 -- ===== インデックスのリネーム =====
 -- plan_activities
@@ -61,18 +79,8 @@ DROP TRIGGER IF EXISTS trigger_cleanup_ticket_tags ON plans;
 DROP TRIGGER IF EXISTS trigger_generate_ticket_number ON plans;
 DROP TRIGGER IF EXISTS trigger_update_tickets_updated_at ON plans;
 
--- 新しい名前でトリガーを再作成
-CREATE OR REPLACE TRIGGER trigger_cleanup_plan_tags
-  BEFORE DELETE ON plans
-  FOR EACH ROW
-  EXECUTE FUNCTION cleanup_tag_relations_on_ticket_delete();
-
-CREATE OR REPLACE TRIGGER trigger_generate_plan_number
-  BEFORE INSERT ON plans
-  FOR EACH ROW
-  WHEN (NEW.plan_number IS NULL OR NEW.plan_number = '')
-  EXECUTE FUNCTION generate_simple_ticket_number();
-
+-- 注意: トリガーは関数作成後に再作成するため、ここでは削除のみ
+-- trigger_update_plans_updated_at は update_updated_at() が既存なので再作成
 CREATE OR REPLACE TRIGGER trigger_update_plans_updated_at
   BEFORE UPDATE ON plans
   FOR EACH ROW
@@ -83,94 +91,45 @@ CREATE OR REPLACE TRIGGER trigger_update_plans_updated_at
 ALTER TABLE plan_activities DROP CONSTRAINT IF EXISTS ticket_activities_ticket_id_fkey;
 ALTER TABLE plan_activities DROP CONSTRAINT IF EXISTS ticket_activities_user_id_fkey;
 
-ALTER TABLE plan_activities
-  ADD CONSTRAINT plan_activities_plan_id_fkey
-  FOREIGN KEY (plan_id) REFERENCES plans(id) ON DELETE SET NULL;
-
-ALTER TABLE plan_activities
-  ADD CONSTRAINT plan_activities_user_id_fkey
-  FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'plan_activities_plan_id_fkey') THEN
+    ALTER TABLE plan_activities
+      ADD CONSTRAINT plan_activities_plan_id_fkey
+      FOREIGN KEY (plan_id) REFERENCES plans(id) ON DELETE SET NULL;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'plan_activities_user_id_fkey') THEN
+    ALTER TABLE plan_activities
+      ADD CONSTRAINT plan_activities_user_id_fkey
+      FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+  END IF;
+END
+$$;
 
 -- plan_tags
 ALTER TABLE plan_tags DROP CONSTRAINT IF EXISTS ticket_tags_tag_id_fkey;
 ALTER TABLE plan_tags DROP CONSTRAINT IF EXISTS ticket_tags_ticket_id_fkey;
 
-ALTER TABLE plan_tags
-  ADD CONSTRAINT plan_tags_tag_id_fkey
-  FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE;
-
-ALTER TABLE plan_tags
-  ADD CONSTRAINT plan_tags_plan_id_fkey
-  FOREIGN KEY (plan_id) REFERENCES plans(id) ON DELETE CASCADE;
-
--- ===== 関数のリネーム・修正 =====
--- cleanup_tag_relations_on_ticket_delete を plan用に修正
-CREATE OR REPLACE FUNCTION public.cleanup_tag_relations_on_plan_delete()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
+DO $$
 BEGIN
-  -- Plan削除時に、紐づくtag_relationsも削除
-  DELETE FROM tag_relations
-  WHERE entity_id = OLD.id
-    AND entity_type = 'plan';
-  RETURN OLD;
-END;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'plan_tags_tag_id_fkey') THEN
+    ALTER TABLE plan_tags
+      ADD CONSTRAINT plan_tags_tag_id_fkey
+      FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'plan_tags_plan_id_fkey') THEN
+    ALTER TABLE plan_tags
+      ADD CONSTRAINT plan_tags_plan_id_fkey
+      FOREIGN KEY (plan_id) REFERENCES plans(id) ON DELETE CASCADE;
+  END IF;
+END
 $$;
-
-COMMENT ON FUNCTION public.cleanup_tag_relations_on_plan_delete() IS
-  'Plan削除時にtag_relationsのレコードを自動削除するトリガー関数';
-
--- トリガーを新しい関数に切り替え
-DROP TRIGGER IF EXISTS trigger_cleanup_plan_tags ON plans;
-CREATE TRIGGER trigger_cleanup_plan_tags
-  BEFORE DELETE ON plans
-  FOR EACH ROW
-  EXECUTE FUNCTION cleanup_tag_relations_on_plan_delete();
-
--- generate_simple_ticket_number を generate_plan_number にリネーム
-CREATE OR REPLACE FUNCTION public.generate_plan_number()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
-DECLARE
-  next_num INTEGER;
-BEGIN
-  SELECT COALESCE(
-    MAX(CAST(REGEXP_REPLACE(plan_number, '[^0-9]', '', 'g') AS INTEGER)),
-    0
-  ) + 1 INTO next_num
-  FROM plans
-  WHERE user_id = NEW.user_id;
-
-  NEW.plan_number := next_num::TEXT;
-  RETURN NEW;
-END;
-$$;
-
-COMMENT ON FUNCTION public.generate_plan_number() IS
-  'Planのplan_numberを自動生成するトリガー関数';
-
--- トリガーを新しい関数に切り替え
-DROP TRIGGER IF EXISTS trigger_generate_plan_number ON plans;
-CREATE TRIGGER trigger_generate_plan_number
-  BEFORE INSERT ON plans
-  FOR EACH ROW
-  WHEN (NEW.plan_number IS NULL OR NEW.plan_number = '')
-  EXECUTE FUNCTION generate_plan_number();
 
 -- ===== 不要な関数の削除 =====
 -- record_event_history と update_event_status は使用されていないため削除
 DROP FUNCTION IF EXISTS public.record_event_history() CASCADE;
 DROP FUNCTION IF EXISTS public.update_event_status() CASCADE;
 
--- 旧関数も削除（新関数作成後）
+-- 旧関数も削除
 DROP FUNCTION IF EXISTS public.cleanup_tag_relations_on_ticket_delete() CASCADE;
 DROP FUNCTION IF EXISTS public.generate_simple_ticket_number() CASCADE;
-
--- ===== コメントの更新 =====
-COMMENT ON TABLE tag_relations IS
-  '汎用タグ関連付けテーブル。plans, recordsなど全てのエンティティに対応。';
-
-COMMENT ON COLUMN tag_relations.entity_id IS
-  'エンティティのID（plans.id等）';

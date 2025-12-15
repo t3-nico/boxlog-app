@@ -7,11 +7,13 @@ import type { RecurringEditScope } from '@/features/plans/components/shared/Recu
 import { usePlanInstanceMutations } from '@/features/plans/hooks/usePlanInstances'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { usePlanTags } from '@/features/plans/hooks/usePlanTags'
+import { useDeleteConfirmStore } from '@/features/plans/stores/useDeleteConfirmStore'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { format } from 'date-fns'
 
 export function usePlanContextActions() {
   const { openInspector } = usePlanInspectorStore()
+  const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog)
   const { createPlan, deletePlan, updatePlan } = usePlanMutations()
   const { createInstance } = usePlanInstanceMutations()
   const { addPlanTag } = usePlanTags()
@@ -21,7 +23,7 @@ export function usePlanContextActions() {
   const [recurringDialogOpen, setRecurringDialogOpen] = useState(false)
 
   const handleDeletePlan = useCallback(
-    async (plan: CalendarPlan) => {
+    (plan: CalendarPlan) => {
       // 繰り返しプランの場合はダイアログを表示
       if (plan.isRecurring) {
         setRecurringDeleteTarget(plan)
@@ -29,20 +31,17 @@ export function usePlanContextActions() {
         return
       }
 
-      // 通常プラン: 削除確認ダイアログ
-      if (!confirm('このプランを削除しますか？')) {
-        return
-      }
-
-      try {
-        // プランを削除（繰り返しオカレンスの場合はcalendarIdが親ID）
-        const planIdToDelete = plan.calendarId || plan.id
-        await deletePlan.mutateAsync({ id: planIdToDelete })
-      } catch (err) {
-        console.error('Failed to delete plan:', err)
-      }
+      // 通常プラン: カスタム削除確認ダイアログを使用
+      const planIdToDelete = plan.calendarId || plan.id
+      openDeleteDialog(planIdToDelete, plan.title, async () => {
+        try {
+          await deletePlan.mutateAsync({ id: planIdToDelete })
+        } catch (err) {
+          console.error('Failed to delete plan:', err)
+        }
+      })
     },
-    [deletePlan]
+    [deletePlan, openDeleteDialog]
   )
 
   // 繰り返しプラン削除確認ハンドラー

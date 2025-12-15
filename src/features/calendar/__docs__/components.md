@@ -8,7 +8,8 @@
 src/features/calendar/components/
 ├── CalendarView.tsx              # 📍 メインエントリーポイント
 ├── views/                        # 📅 ビュータイプ別実装
-├── interactions/                 # 🔄 ユーザーインタラクション
+│   └── shared/hooks/             # 🔄 インタラクション（DnD等）
+├── animations/                   # 🎬 アニメーション
 ├── layout/                       # 🎨 レイアウト管理
 ├── common/                       # 🔧 共通コンポーネント
 ├── event/                        # ✨ イベント関連
@@ -58,32 +59,30 @@ src/features/calendar/components/
 - **DateRangeDisplay.tsx**: 日付範囲表示
 - **ViewSwitcher.tsx**: ビュー切り替え
 
-## 🔄 インタラクション (interactions/)
+## 🔄 インタラクション
 
 ユーザーの操作に関する機能を提供
 
-### 主要インタラクション
+### ドラッグ&ドロップ
 
-| コンポーネント                  | 機能                         | 対応操作      |
-| ------------------------------- | ---------------------------- | ------------- |
-| **ContextMenu.tsx**             | 右クリックメニュー           | 右クリック    |
-| **EventInteractionManager.tsx** | イベント操作統合管理         | 全般          |
-| **KeyboardShortcuts.tsx**       | キーボードショートカット     | キーボード    |
-| **UndoToast.tsx**               | Undo/Redo機能                | Ctrl+Z/Ctrl+Y |
-| **ViewTransition.tsx**          | ビュー切り替えアニメーション | ビュー変更    |
+カレンダーのD&Dは**ハイブリッドアプローチ**を採用:
 
-### ドラッグ&ドロップ (interactions/dnd/)
+| システム                   | 用途                                 | 実装場所                               |
+| -------------------------- | ------------------------------------ | -------------------------------------- |
+| **カスタムマウスイベント** | カレンダー内でのプラン移動・リサイズ | `views/shared/hooks/useDragAndDrop.ts` |
+| **@dnd-kit（将来実装）**   | Sidebar → Calendar のドラッグ        | 未実装                                 |
 
-- **DnDProvider.tsx**: D&Dコンテキスト提供
-- **DraggableEvent.tsx**: ドラッグ可能なイベント
-- **CalendarDropZone.tsx**: ドロップゾーン
-- **EventResizeHandle.tsx**: リサイズハンドル
-- **DragPreview.tsx**: ドラッグプレビュー
+### カレンダー内DnD (useDragAndDrop)
 
-### アニメーション (interactions/animations/)
+カレンダー内でのプラン操作は、カスタムマウスイベントで実装:
 
-- **AnimatedEventCard.tsx**: イベントカードアニメーション
-- **EventAnimations.tsx**: イベント動作アニメーション
+- **移動**: プランをドラッグして時間・日付を変更
+- **リサイズ**: プランの端をドラッグして期間を変更
+- **スナップ**: 15分単位のグリッドにスナップ
+
+### アニメーション
+
+- **ViewTransition.tsx**: ビュー切り替えアニメーション (`animations/`)
 
 ## 🎨 レイアウト (layout/)
 
@@ -143,9 +142,6 @@ export { CalendarView } from './CalendarView'
 // ビューコンポーネント
 export * from './views'
 
-// インタラクション
-export * from './interactions'
-
 // 共通コンポーネント
 export * from './common'
 ```
@@ -155,15 +151,13 @@ export * from './common'
 ```mermaid
 graph TD
     A[CalendarView] --> B[Views]
-    A --> C[Interactions]
     A --> D[Layout]
 
     B --> E[Shared Components]
-    C --> F[DnD Components]
-    C --> G[Animation Components]
+    B --> F[useDragAndDrop Hook]
 
     E --> H[Time Components]
-    E --> I[Event Components]
+    E --> I[Plan Components]
 
     D --> J[Header Components]
 ```
@@ -179,8 +173,8 @@ graph TD
 
 ### 新しいインタラクション機能の追加
 
-1. `interactions/` に新しいコンポーネントを作成
-2. 必要に応じて `interactions/index.ts` でエクスポート
+1. `views/shared/hooks/` に新しいフックを作成
+2. 必要に応じて `views/shared/index.ts` でエクスポート
 3. 関連するビューコンポーネントでインポート・使用
 
 ## 🏷️ タグ

@@ -2,6 +2,8 @@
  * グリッド計算ユーティリティ
  */
 
+import { MS_PER_MINUTE } from '@/constants/time'
+
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 /**
@@ -143,7 +145,7 @@ export function roundToQuarterHour(time: Date, direction: 'up' | 'down' | 'neare
  * @returns 継続時間（分）
  */
 export function getDurationInMinutes(start: Date, end: Date): number {
-  return Math.max(0, (end.getTime() - start.getTime()) / (1000 * 60))
+  return Math.max(0, (end.getTime() - start.getTime()) / MS_PER_MINUTE)
 }
 
 /**

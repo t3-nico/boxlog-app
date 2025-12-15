@@ -1,9 +1,9 @@
 'use client'
 
+import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell } from '@/components/ui/table'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { formatDistanceToNow } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { X } from 'lucide-react'

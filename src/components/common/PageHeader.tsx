@@ -28,9 +28,11 @@ interface PageHeaderProps {
  * 全ページのメインコンテンツヘッダーで共通の仕様を提供
  *
  * **デザイン仕様（SidebarHeaderと同じ）:**
- * - 高さ: 48px固定（8px top padding + 40px container）
+ * - 高さ: 48px固定（8px padding + 32px container）
+ * - 上下パディング: 8px（py-2）
  * - 横幅パディング: 16px (px-4)
  * - 背景: bg-background
+ * - 8pxグリッドシステム準拠
  *
  * @example
  * ```tsx
@@ -56,22 +58,20 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn('bg-background flex h-12 shrink-0 items-end px-4 pt-2', className)}>
+    <div className={cn('bg-background flex h-12 shrink-0 items-center px-4 py-2', className)}>
       {/* モバイル: ハンバーガーメニュー */}
       {showMobileMenu && <MobileMenuButton className="mr-2 md:hidden" />}
 
-      {/* タイトルコンテナ（40px） */}
-      <div className="flex h-10 flex-1 items-center gap-2 overflow-hidden">
-        <h1 className="truncate text-base font-semibold">{title}</h1>
-        {count !== undefined && (
-          <span className="text-muted-foreground shrink-0 text-base font-semibold">({count})</span>
-        )}
+      {/* タイトルコンテナ（32px） */}
+      <div className="flex h-8 flex-1 items-center gap-2 overflow-hidden">
+        <h1 className="truncate text-lg font-semibold">{title}</h1>
+        {count !== undefined && <span className="text-muted-foreground shrink-0 text-lg font-semibold">({count})</span>}
         {subtitle && <span className="text-muted-foreground truncate text-sm">{subtitle}</span>}
         {children}
       </div>
 
       {/* アクションボタン */}
-      {actions && <div className="flex h-10 items-center gap-2">{actions}</div>}
+      {actions && <div className="flex h-8 items-center gap-2">{actions}</div>}
     </div>
   )
 }

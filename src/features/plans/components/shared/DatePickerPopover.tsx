@@ -1,8 +1,7 @@
 'use client'
 
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
+import { MiniCalendar } from '@/components/common/MiniCalendar'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 
 interface DatePickerPopoverProps {
   selectedDate: Date | undefined
@@ -20,15 +19,18 @@ interface DatePickerPopoverProps {
  * - 月/年のドロップダウン選択対応
  */
 export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '日付を選択' }: DatePickerPopoverProps) {
+  const { formatDate } = useDateFormat()
+
   return (
     <MiniCalendar
       asPopover
       popoverTrigger={
         <button
           type="button"
-          className="hover:bg-state-hover inline-flex h-8 items-center justify-center rounded-md px-3 text-sm transition-colors"
+          className="text-muted-foreground data-[state=selected]:text-foreground hover:bg-state-hover inline-flex h-8 items-center rounded-md px-2 text-sm transition-colors"
+          data-state={selectedDate ? 'selected' : undefined}
         >
-          {selectedDate ? format(selectedDate, 'yyyy/MM/dd', { locale: ja }) : placeholder}
+          {selectedDate ? formatDate(selectedDate) : placeholder}
         </button>
       }
       selectedDate={selectedDate}

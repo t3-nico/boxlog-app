@@ -7,6 +7,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useCalendarScrollStore } from '@/features/calendar/stores'
 import { cn } from '@/lib/utils'
 
 import { TimeColumn } from '../grid/TimeColumn/TimeColumn'
@@ -54,12 +55,13 @@ export const CalendarDateHeader = ({
   timezone,
 }: CalendarDateHeaderProps) => {
   return (
-    <div className="flex shrink-0 flex-col">
+    <div className="flex h-12 shrink-0 flex-col justify-center py-2">
       <div className="flex px-4">
-        {/* UTC/タイムゾーン表示エリア（ヘッダー左端） */}
-        {showTimeColumn && showTimezone && timezone ? (
+        {/* 左スペーサー（時間列と揃えるため） */}
+        {showTimeColumn ? (
           <div className="flex shrink-0 items-end justify-start" style={{ width: timeColumnWidth }}>
-            <TimezoneOffset timezone={timezone} className="text-xs" />
+            {/* タイムゾーン表示（showTimezone=trueの場合のみ） */}
+            {showTimezone && timezone ? <TimezoneOffset timezone={timezone} className="text-xs" /> : null}
           </div>
         ) : null}
 
@@ -77,7 +79,7 @@ export const ScrollableCalendarLayout = ({
   children,
   className = '',
   timezone: _timezone,
-  scrollToHour = 8,
+  scrollToHour: _scrollToHour = 8,
   showTimeColumn = true,
   showCurrentTime = true,
   showTimezone: _showTimezone = true,
@@ -94,6 +96,10 @@ export const ScrollableCalendarLayout = ({
   const scrollTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   const [_isScrolling, setIsScrolling] = useState(false)
   const [_containerWidth, setContainerWidth] = useState(800)
+  const hasRestoredScroll = useRef(false)
+
+  // スクロール位置ストア
+  const { setScrollPosition, getScrollPosition, setLastActiveView } = useCalendarScrollStore()
 
   const HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,
@@ -140,10 +146,11 @@ export const ScrollableCalendarLayout = ({
     }
   }, [displayDates])
 
-  // 今日が表示範囲に含まれるか判定
-  const shouldShowCurrentTimeLine = useMemo(() => {
-    return showCurrentTime && todayColumnPosition !== null
-  }, [showCurrentTime, todayColumnPosition])
+  // 現在時刻線を表示するか判定（showCurrentTimeがtrueなら常に表示）
+  const shouldShowCurrentTimeLine = showCurrentTime
+
+  // 今日が表示範囲に含まれるか
+  const hasToday = todayColumnPosition !== null
 
   // 現在時刻の位置を計算
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -156,19 +163,50 @@ export const ScrollableCalendarLayout = ({
 
   // ScrollableCalendarLayoutの初期化完了
 
-  // 初期スクロール位置の設定
+  // アクティブビューの更新
   useEffect(() => {
-    if (scrollContainerRef.current && scrollToHour) {
-      const scrollTop = Math.max(0, (scrollToHour - 2) * HOUR_HEIGHT)
-
-      setTimeout(() => {
-        scrollContainerRef.current?.scrollTo({
-          top: scrollTop,
-          behavior: 'smooth',
-        })
-      }, 100)
+    if (viewMode !== 'agenda') {
+      setLastActiveView(viewMode as 'day' | '3day' | '5day' | 'week')
     }
-  }, [scrollToHour, HOUR_HEIGHT])
+  }, [viewMode, setLastActiveView])
+
+  // 初期スクロール位置の設定（保存された位置を優先、なければ現在時刻を中央に）
+  useEffect(() => {
+    if (!scrollContainerRef.current || hasRestoredScroll.current) return
+
+    // viewModeが有効なタイプの場合のみ処理
+    if (viewMode === 'agenda') return
+
+    const savedPosition = getScrollPosition(viewMode as 'day' | '3day' | '5day' | 'week')
+
+    let targetScroll: number
+    if (savedPosition > 0) {
+      // 保存された位置がある場合は復元
+      targetScroll = savedPosition
+    } else {
+      // 保存がない場合は現在時刻を画面中央に
+      const now = new Date()
+      const currentHour = now.getHours() + now.getMinutes() / 60
+      const currentPosition = currentHour * HOUR_HEIGHT
+      const containerHeight = scrollContainerRef.current.clientHeight
+      // 現在時刻が画面中央に来るように調整
+      targetScroll = Math.max(0, currentPosition - containerHeight / 2)
+    }
+
+    hasRestoredScroll.current = true
+
+    setTimeout(() => {
+      scrollContainerRef.current?.scrollTo({
+        top: targetScroll,
+        behavior: savedPosition > 0 ? 'instant' : 'smooth',
+      })
+    }, 50)
+  }, [viewMode, getScrollPosition, HOUR_HEIGHT])
+
+  // viewMode変更時にhasRestoredScrollをリセット
+  useEffect(() => {
+    hasRestoredScroll.current = false
+  }, [viewMode])
 
   // コンテナ幅の動的取得
   useEffect(() => {
@@ -195,13 +233,18 @@ export const ScrollableCalendarLayout = ({
       onScrollPositionChange(scrollTop)
     }
 
+    // スクロール位置をストアに保存（agendaビュー以外）
+    if (viewMode !== 'agenda') {
+      setScrollPosition(viewMode as 'day' | '3day' | '5day' | 'week', scrollTop)
+    }
+
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current)
     }
     scrollTimeoutRef.current = setTimeout(() => {
       setIsScrolling(false)
     }, 150)
-  }, [onScrollPositionChange])
+  }, [onScrollPositionChange, viewMode, setScrollPosition])
 
   // スクロールリスナーの設定
   useEffect(() => {
@@ -352,29 +395,44 @@ export const ScrollableCalendarLayout = ({
           {/* メインコンテンツ */}
           {children}
 
-          {/* 現在時刻線 - 今日の列のみに表示 */}
-          {shouldShowCurrentTimeLine && todayColumnPosition ? (
+          {/* 現在時刻線 - 全ての列に表示 */}
+          {shouldShowCurrentTimeLine && displayDates && displayDates.length > 0 ? (
             <>
-              {/* 横線 - 今日の列のみ */}
+              {/* 全列に薄い線を表示 */}
               <div
-                className={cn('bg-primary pointer-events-none absolute z-40 h-[2px] shadow-sm')}
+                className={cn('bg-primary/50 pointer-events-none absolute z-40 h-px')}
                 style={{
                   top: `${currentTimePosition}px`,
-                  left: todayColumnPosition.left,
-                  width: todayColumnPosition.width,
+                  left: 0,
+                  right: 0,
                 }}
               />
 
-              {/* 点 - 今日の列の左端 */}
-              <div
-                className={cn(
-                  'border-background bg-primary pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md'
-                )}
-                style={{
-                  top: `${currentTimePosition - 4}px`,
-                  left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
-                }}
-              />
+              {/* 今日の列のみ濃い線を上書き */}
+              {hasToday && todayColumnPosition ? (
+                <>
+                  {/* 横線 - 今日の列のみ濃く */}
+                  <div
+                    className={cn('bg-primary pointer-events-none absolute z-40 h-[2px] shadow-sm')}
+                    style={{
+                      top: `${currentTimePosition}px`,
+                      left: todayColumnPosition.left,
+                      width: todayColumnPosition.width,
+                    }}
+                  />
+
+                  {/* 点 - 今日の列の左端 */}
+                  <div
+                    className={cn(
+                      'border-background bg-primary pointer-events-none absolute z-40 h-2 w-2 rounded-full border shadow-md'
+                    )}
+                    style={{
+                      top: `${currentTimePosition - 4}px`,
+                      left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left,
+                    }}
+                  />
+                </>
+              ) : null}
             </>
           ) : null}
         </div>

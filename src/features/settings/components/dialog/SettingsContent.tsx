@@ -55,6 +55,8 @@ export function SettingsContent() {
     switch (activeCategory) {
       case 'general':
         return t('settings.dialog.categories.general')
+      case 'calendar':
+        return t('settings.dialog.categories.calendar')
       case 'personalization':
         return t('settings.dialog.categories.personalization')
       case 'notifications':
@@ -87,10 +89,12 @@ export function SettingsContent() {
         {/* General: 言語、テーマ、起動画面（既存のPreferencesSettingsを再利用） */}
         {activeCategory === 'general' && <PreferencesSettings />}
 
-        {/* Personalization: カレンダー + クロノタイプ + タグ */}
+        {/* Calendar: カレンダー設定（タイムゾーン、表示、デフォルトビュー） */}
+        {activeCategory === 'calendar' && <CalendarSettings />}
+
+        {/* Personalization: クロノタイプ + タグ */}
         {activeCategory === 'personalization' && (
           <div className="space-y-8">
-            <CalendarSettings />
             <div ref={chronotypeRef}>
               <ChronotypeSettings />
             </div>

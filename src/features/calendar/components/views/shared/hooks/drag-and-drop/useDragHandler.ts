@@ -3,8 +3,10 @@
 import type React from 'react'
 import { useCallback } from 'react'
 
+import { MS_PER_MINUTE } from '@/constants/time'
 import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { logger } from '@/lib/logger'
 import { useTranslations } from 'next-intl'
 
 import type { DragDataRef, DragState } from './types'
@@ -13,7 +15,6 @@ import {
   calculateEventDuration,
   calculatePreviewTime,
   calculateSnappedPosition,
-  createDragElement,
   updateDragElementPosition,
   updateTimeDisplay,
 } from './utils'
@@ -58,17 +59,20 @@ export function useDragHandler({
       e.stopPropagation()
 
       const startPosition = { x: e.clientX, y: e.clientY }
-      const originalElement = (e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement
+      // 外側のポジショニング用divを優先して取得
+      // DayView: data-event-wrapper / data-event-block
+      // WeekView/ThreeDayView/FiveDayView: data-plan-block
+      const originalElement =
+        ((e.target as HTMLElement).closest('[data-event-wrapper="true"]') as HTMLElement) ||
+        ((e.target as HTMLElement).closest('[data-plan-block="true"]') as HTMLElement) ||
+        ((e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement)
       const columnWidth = calculateColumnWidth(originalElement, viewMode, displayDates)
 
-      let dragElement: HTMLElement | null = null
-      let initialRect: DOMRect | null = null
-      if (originalElement) {
-        const result = createDragElement(originalElement)
-        dragElement = result.dragElement
-        initialRect = result.initialRect
-        originalElement.style.opacity = '0.3'
-      }
+      // mousedown時点での元要素の位置を保存（ゴースト位置計算用）
+      const originalElementRect = originalElement?.getBoundingClientRect() ?? null
+
+      // 注意: ゴースト要素（dragElement）は5px移動後に作成する
+      // mousedown時点では作成しない（クリックと区別するため）
 
       dragDataRef.current = {
         eventId,
@@ -80,12 +84,14 @@ export function useDragHandler({
         originalElement,
         originalDateIndex: dateIndex,
         columnWidth,
-        dragElement,
-        initialRect,
+        dragElement: null, // 5px移動後に作成
+        initialRect: null, // 5px移動後に設定
+        originalElementRect, // mousedown時点の位置
       }
 
       setDragState({
-        isDragging: true,
+        isPending: true, // まず準備状態に入る（5px移動後にisDraggingになる）
+        isDragging: false,
         isResizing: false,
         draggedEventId: eventId,
         dragStartPosition: startPosition,
@@ -98,7 +104,7 @@ export function useDragHandler({
         previewTime: null,
         recentlyDragged: false,
         recentlyResized: false,
-        dragElement,
+        dragElement: null, // 5px移動後に作成
         originalDateIndex: dateIndex,
         targetDateIndex: dateIndex,
         ghostElement: null,
@@ -122,7 +128,9 @@ export function useDragHandler({
         displayDates
       )
 
-      updateDragElementPosition(dragData.dragElement || null, dragData.initialRect || null, deltaX, deltaY)
+      // originalElementRect（mousedown時点の位置）を基準に計算
+      // initialRectは5px移動後に取得されるため、deltaX/deltaYとずれる
+      updateDragElementPosition(dragData.dragElement || null, dragData.originalElementRect || null, deltaX, deltaY)
 
       const { previewStartTime, previewEndTime } = calculatePreviewTime(
         events,
@@ -188,11 +196,6 @@ export function useDragHandler({
       const timeChanged = Math.abs(newStartTime.getTime() - previousStartTime.getTime()) > 1000
 
       if (!timeChanged) {
-        console.log('🔧 時間変更なし - Toast表示をスキップ:', {
-          previousTime: previousStartTime.toISOString(),
-          newTime: newStartTime.toISOString(),
-          timeDifference: Math.abs(newStartTime.getTime() - previousStartTime.getTime()),
-        })
         return
       }
 
@@ -211,7 +214,7 @@ export function useDragHandler({
         updatedAt: new Date(),
         displayStartDate: newStartTime,
         displayEndDate: new Date(newStartTime.getTime() + durationMs),
-        duration: Math.round(durationMs / (1000 * 60)),
+        duration: Math.round(durationMs / MS_PER_MINUTE),
         isMultiDay: false,
         isRecurring: false,
         type: plan.type,
@@ -242,7 +245,7 @@ export function useDragHandler({
             })
           })
           .catch((error: unknown) => {
-            console.error('Failed to update event time:', error)
+            logger.error('Failed to update event time:', error)
             calendarToast.error(t('calendar.event.moveFailed'))
           })
       } else {
@@ -262,7 +265,7 @@ export function useDragHandler({
       const { event, durationMs } = calculateEventDuration(events, dragDataRef.current.eventId, dragDataRef.current)
 
       if (!event) {
-        console.warn('Plan not found for update')
+        logger.warn('Plan not found for update')
         return
       }
 
@@ -273,12 +276,6 @@ export function useDragHandler({
       }
 
       try {
-        console.log('🚀 プラン更新実行:', {
-          eventId: dragDataRef.current.eventId,
-          newStartTime: newStartTime.toISOString(),
-          newEndTime: newEndTime.toISOString(),
-        })
-
         const result = eventUpdateHandler(dragDataRef.current.eventId, {
           startTime: newStartTime,
           endTime: newEndTime,
@@ -286,7 +283,7 @@ export function useDragHandler({
 
         await handleEventUpdateToast(Promise.resolve(result), event, newStartTime, durationMs)
       } catch (error) {
-        console.error('Failed to update event time:', error)
+        logger.error('Failed to update event time:', error)
         calendarToast.error(t('calendar.event.moveFailed'))
       }
     },

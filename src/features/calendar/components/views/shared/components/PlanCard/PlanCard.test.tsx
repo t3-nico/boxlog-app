@@ -50,7 +50,7 @@ describe('PlanCard', () => {
     it('デフォルトポジションが適用される', () => {
       render(<PlanCard plan={mockEvent} position={undefined} />)
 
-      const eventBlock = screen.getByRole('button')
+      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i })
       expect(eventBlock).toBeInTheDocument()
     })
 
@@ -73,16 +73,6 @@ describe('PlanCard', () => {
       fireEvent.click(eventBlock)
 
       expect(onClick).toHaveBeenCalledWith(mockEvent)
-    })
-
-    it('ダブルクリックイベントが発火する', () => {
-      const onDoubleClick = vi.fn()
-      render(<PlanCard plan={mockEvent} position={mockPosition} onDoubleClick={onDoubleClick} />)
-
-      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i })
-      fireEvent.doubleClick(eventBlock)
-
-      expect(onDoubleClick).toHaveBeenCalledWith(mockEvent)
     })
 
     it('右クリックでコンテキストメニューが表示される', () => {
@@ -203,7 +193,12 @@ describe('PlanCard', () => {
       render(<PlanCard plan={mockEvent} position={smallPosition} />)
 
       const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i })
-      expect(eventBlock.className).toContain('text-xs')
+      // 高さ30px未満でもフォントは統一（text-sm）
+      expect(eventBlock.className).toContain('text-sm')
+      // チェックボックスの位置がコンパクトに（top-0.5 left-0.5）
+      const checkbox = screen.getByRole('button', { name: /完了にする/i })
+      expect(checkbox.className).toContain('top-0.5')
+      expect(checkbox.className).toContain('left-0.5')
     })
 
     it('最小高さが保証される', () => {
@@ -251,25 +246,6 @@ describe('PlanCard', () => {
 
       expect(onClick).toHaveBeenCalled()
       expect(parentClick).not.toHaveBeenCalled()
-    })
-
-    it('ダブルクリックイベントの伝播が停止される', () => {
-      const onDoubleClick = vi.fn()
-      const parentDoubleClick = vi.fn()
-
-      const { container } = render(
-        <div onDoubleClick={parentDoubleClick}>
-          <PlanCard plan={mockEvent} position={mockPosition} onDoubleClick={onDoubleClick} />
-        </div>
-      )
-
-      const eventBlock = container.querySelector('[role="button"]')
-      if (eventBlock) {
-        fireEvent.doubleClick(eventBlock)
-      }
-
-      expect(onDoubleClick).toHaveBeenCalled()
-      expect(parentDoubleClick).not.toHaveBeenCalled()
     })
   })
 })

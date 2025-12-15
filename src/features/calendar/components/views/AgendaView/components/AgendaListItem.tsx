@@ -9,6 +9,7 @@ import { Tag } from 'lucide-react'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
 import { usePlanTags } from '@/features/plans/hooks/usePlanTags'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { cn } from '@/lib/utils'
 import { useLocale } from 'next-intl'
 
@@ -27,6 +28,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
   const locale = useLocale()
   const dateLocale = locale === 'ja' ? ja : undefined
   const { addPlanTag, removePlanTag } = usePlanTags()
+  const { formatTime: formatTimeWithSettings } = useDateFormat()
 
   // プランの実際のIDを取得（繰り返しプランの場合はcalendarIdを使用）
   const planId = plan.calendarId ?? plan.id
@@ -80,7 +82,7 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
   // 時間のフォーマット
   const formatTime = (date: Date | null) => {
     if (!date) return ''
-    return format(date, 'HH:mm')
+    return formatTimeWithSettings(date)
   }
 
   const dateLabel = formatDate(plan.startDate)

@@ -34,7 +34,6 @@ export const PlanGrid = ({
   planStyles,
   onPlanClick,
   onPlanContextMenu,
-  onEmptyClick,
   onPlanUpdate,
   onTimeRangeSelect,
   className,
@@ -118,7 +117,7 @@ export const PlanGrid = ({
 
   return (
     <div className={cn('bg-background relative flex-1 overflow-hidden', className)}>
-      {/* 背景選択レイヤー */}
+      {/* CalendarDragSelectionを使用（ドラッグ操作のみでプラン作成） */}
       <CalendarDragSelection
         date={date}
         className="absolute inset-0"
@@ -133,8 +132,7 @@ export const PlanGrid = ({
               }
             : undefined
         }
-        onSingleClick={onEmptyClick}
-        disabled={dragState.isDragging || dragState.isResizing}
+        disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
       >
         {/* 時間グリッド */}
         {showTimeGrid != null && (
@@ -144,8 +142,8 @@ export const PlanGrid = ({
         )}
       </CalendarDragSelection>
 
-      {/* プラン表示レイヤー */}
-      <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
+      {/* プラン表示レイヤー - CalendarDragSelectionより上にz-indexを設定 */}
+      <div className="pointer-events-none absolute inset-0 z-20" style={{ height: 24 * HOUR_HEIGHT }}>
         {plans.map((plan) => {
           const style = planStyles[plan.id]
           if (!style) return null
@@ -165,12 +163,13 @@ export const PlanGrid = ({
           }
 
           return (
-            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute">
+            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-plan-block="true">
               <div
                 className="focus:ring-ring pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"
                 role="button"
                 tabIndex={0}
                 aria-label={`Drag plan: ${plan.title}`}
+                data-plan-block="true"
                 onMouseDown={(e) => {
                   if (e.button === 0) {
                     handlers.handleMouseDown(plan.id, e, {

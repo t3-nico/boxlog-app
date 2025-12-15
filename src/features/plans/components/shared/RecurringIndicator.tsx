@@ -2,7 +2,7 @@
 
 import { Repeat } from 'lucide-react'
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { useLocale } from 'next-intl'
 
@@ -116,16 +116,14 @@ export function RecurringIndicator({
   }
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span className="inline-flex">{icon}</span>
-        </TooltipTrigger>
-        <TooltipContent side="top">
-          <p>{getTooltipText()}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="inline-flex">{icon}</span>
+      </TooltipTrigger>
+      <TooltipContent side="top">
+        <p>{getTooltipText()}</p>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 

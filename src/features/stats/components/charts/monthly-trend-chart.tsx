@@ -22,9 +22,9 @@ function formatHours(hours: number): string {
 }
 
 export function MonthlyTrendChart() {
-  const { data, isLoading } = api.plans.getMonthlyTrend.useQuery()
+  const { data, isPending } = api.plans.getMonthlyTrend.useQuery()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Card className="bg-background">
         <CardHeader>

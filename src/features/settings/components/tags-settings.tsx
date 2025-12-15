@@ -40,7 +40,7 @@ export function TagsSettings() {
   }, [])
 
   // データ取得
-  const { data: tags = [], isLoading, error } = useTags(true)
+  const { data: tags = [], isPending, error } = useTags(true)
 
   // タグ操作
   const {
@@ -124,7 +124,7 @@ export function TagsSettings() {
 
           {/* タグツリービュー */}
           <div className="min-h-52">
-            {isLoading ? (
+            {isPending ? (
               <div className="flex h-52 items-center justify-center">
                 <p className="text-muted-foreground text-sm">読み込み中...</p>
               </div>
@@ -147,7 +147,7 @@ export function TagsSettings() {
                 onEditTag={handleEditTag}
                 onDeleteTag={handleDeleteTag}
                 onRenameTag={handleRenameTag}
-                isLoading={isLoading}
+                isLoading={isPending}
               />
             )}
           </div>

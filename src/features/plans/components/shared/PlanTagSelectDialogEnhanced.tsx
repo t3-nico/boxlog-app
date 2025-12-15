@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
@@ -226,23 +226,21 @@ export function PlanTagSelectDialogEnhanced({
             </Button>
 
             {/* サイドバー開閉ボタン */}
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowSidebar(!showSidebar)}
-                    className="hidden shrink-0 md:flex"
-                  >
-                    {showSidebar ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{showSidebar ? 'サイドバーを閉じる' : 'サイドバーを開く'}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSidebar(!showSidebar)}
+                  className="hidden shrink-0 md:flex"
+                >
+                  {showSidebar ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{showSidebar ? 'サイドバーを閉じる' : 'サイドバーを開く'}</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
 
           {/* 作成フォーム（isCreating時のみ表示） */}

@@ -1,29 +1,23 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import { PlanCard } from '@/features/board/components/shared/PlanCard'
 import { parseDateString } from '@/features/calendar/utils/dateUtils'
 import { useInboxData } from '@/features/inbox/hooks/useInboxData'
 
-import type { CalendarSortType } from '../../navigation/CalendarNavigation'
-import { InboxCardCreate } from './InboxCardCreate'
-import type { InboxFilter, InboxSort } from './InboxNavigation'
+import type { TodoFilter, TodoSort } from './TodoNavigation'
 
-interface InboxCardListProps {
-  filter: InboxFilter
-  sort: InboxSort
+interface TodoCardListProps {
+  filter: TodoFilter
+  sort: TodoSort
   showHigh: boolean
   showMedium: boolean
   showLow: boolean
-  calendarSort?: CalendarSortType
-  selectedTags?: string[]
-  triggerCreate?: boolean
-  onCreateFinish?: () => void
 }
 
 /**
- * InboxCardList - Calendar Sidebar用カードリスト
+ * TodoCardList - Calendar Sidebar用カードリスト（status: todoのプラン）
  *
  * **機能**:
  * - useInboxData でデータ取得
@@ -33,19 +27,15 @@ interface InboxCardListProps {
  * **Note**: PlanCard の useDraggable は既に実装済みなので、
  * DndContext 内に配置すれば自動的にドラッグ可能になる
  */
-export function InboxCardList({
+export function TodoCardList({
   filter,
   sort,
   showHigh: _showHigh,
   showMedium: _showMedium,
   showLow: _showLow,
-  calendarSort,
-  selectedTags,
-  triggerCreate,
-  onCreateFinish,
-}: InboxCardListProps) {
-  const { items, isLoading, error } = useInboxData()
-  const [isCreating, setIsCreating] = useState(false)
+}: TodoCardListProps) {
+  // status: 'todo' のプランのみ取得
+  const { items, isPending, error } = useInboxData({ status: 'todo' })
 
   // フィルタリング・ソート処理
   const filteredAndSortedItems = useMemo(() => {
@@ -72,30 +62,12 @@ export function InboxCardList({
       })
     }
 
-    // 2. タグフィルター（CalendarNavigationから）
-    if (selectedTags && selectedTags.length > 0) {
-      result = result.filter((item) => {
-        const itemTagIds = item.tags?.map((tag) => tag.id) ?? []
-        return selectedTags.some((tagId) => itemTagIds.includes(tagId))
-      })
-    }
-
-    // 3. 優先度フィルター
+    // 2. 優先度フィルター
     // NOTE: Plan/InboxItem には現在 priority フィールドが存在しない
     // 将来の機能追加時に実装予定（DBスキーマ変更が必要）
 
-    // 4. ソート（CalendarNavigationからのソートを優先）
+    // 3. ソート
     result.sort((a, b) => {
-      // CalendarNavigationからのソートがある場合はそちらを優先
-      if (calendarSort) {
-        if (calendarSort === 'updated-desc') {
-          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-        } else if (calendarSort === 'updated-asc') {
-          return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()
-        }
-      }
-
-      // InboxNavigationからのソート
       if (sort === 'due') {
         // 期限日順（期限なしは最後）
         if (!a.due_date) return 1
@@ -113,17 +85,10 @@ export function InboxCardList({
     })
 
     return result
-  }, [items, filter, sort, calendarSort, selectedTags])
-
-  // 新規作成トリガー監視
-  useEffect(() => {
-    if (triggerCreate && !isCreating) {
-      setIsCreating(true)
-    }
-  }, [triggerCreate, isCreating])
+  }, [items, filter, sort])
 
   // ローディング表示
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex flex-col items-center justify-center py-8">
         <div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />
@@ -154,20 +119,9 @@ export function InboxCardList({
   // カードリスト表示（PlanCardを再利用）
   return (
     <div className="flex flex-col gap-2 overflow-y-auto pt-4 pb-4">
-      {/* 既存カード */}
       {filteredAndSortedItems.map((item) => (
         <PlanCard key={item.id} item={item} />
       ))}
-
-      {/* 新規作成カード（最後） */}
-      <InboxCardCreate
-        isCreating={isCreating}
-        onStartCreate={() => setIsCreating(true)}
-        onFinishCreate={() => {
-          setIsCreating(false)
-          onCreateFinish?.()
-        }}
-      />
     </div>
   )
 }

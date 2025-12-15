@@ -18,25 +18,36 @@
     "toast": {
       "eventDeleted": "Event deleted"
     },
-    "selectedCount": "{{count}} selected",
+    "selectedCount": "{count} selected",
     "plan": {
-      "created": "\"{{title}}\" created",
-      "createFailed": "Failed to create: {{error}}",
+      "created": "\"{title}\" created",
+      "createFailed": "Failed to create: {error}",
       "updated": "Updated",
       "updateFailed": "Failed to update",
       "deleted": "Deleted",
-      "deleteFailed": "Failed to delete: {{error}}",
-      "bulkUpdated": "{{count}} plans updated",
-      "bulkUpdateFailed": "Failed to bulk update: {{error}}",
-      "bulkDeleted": "{{count}} plans deleted",
-      "bulkDeleteFailed": "Failed to bulk delete: {{error}}",
+      "deleteFailed": "Failed to delete: {error}",
+      "bulkUpdated": "{count} plans updated",
+      "bulkUpdateFailed": "Failed to bulk update: {error}",
+      "bulkDeleted": "{count} plans deleted",
+      "bulkDeleteFailed": "Failed to bulk delete: {error}",
       "tagsAdded": "Tags added",
-      "tagsAddFailed": "Failed to add tags: {{error}}",
-      "statusChanged": "Status changed to {{status}}",
-      "open": "Open"
+      "tagsAddFailed": "Failed to add tags: {error}",
+      "statusChanged": "Status changed to {status}",
+      "open": "Open",
+      "delete": {
+        "confirmTitle": "Delete this plan?",
+        "confirmTitleWithName": "Delete {name}?",
+        "description": "This action cannot be undone. The plan will be permanently deleted and removed from calendar.",
+        "warningIrreversible": "This action cannot be undone",
+        "afterDeletion": "After deletion",
+        "willBeDeleted": "The plan will be permanently deleted",
+        "willBeRemovedFromCalendar": "It will be removed from calendar",
+        "confirm": "Delete",
+        "deleting": "Deleting..."
+      }
     },
     "inbox": {
-      "selected": "{{count}} selected",
+      "selected": "{count} selected",
       "clear": "Clear",
       "changeStatus": "Change Status",
       "status": "Status",
@@ -49,20 +60,22 @@
       "dueDate": "Due Date",
       "archive": "Archive",
       "delete": "Delete",
-      "statusChangedCount": "Status changed for {{count}} plans",
+      "statusChangedCount": "Status changed for {count} plans",
       "statusChangeFailed": "Failed to change status",
-      "archivedCount": "{{count}} plans archived",
+      "archivedCount": "{count} plans archived",
       "archiveFailed": "Failed to archive",
-      "deleteConfirm": "Delete {{count}} plans? This action cannot be undone.",
-      "deletedCount": "{{count}} plans deleted",
+      "deleteConfirm": "Delete {count} plans? This action cannot be undone.",
+      "deleteConfirmTitle": "Delete {count} plans?",
+      "deleteConfirmDescription": "This will permanently delete the selected {count} plans. This action cannot be undone.",
+      "deletedCount": "{count} plans deleted",
       "deleteFailed": "Failed to delete",
       "selectDate": "Please select a date",
-      "dueDateSetCount": "Due date set for {{count}} plans",
+      "dueDateSetCount": "Due date set for {count} plans",
       "dueDateSetFailed": "Failed to set due date",
-      "dueDateClearedCount": "Due date cleared for {{count}} plans",
+      "dueDateClearedCount": "Due date cleared for {count} plans",
       "dueDateClearFailed": "Failed to clear due date",
       "bulkDueDate": "Set Due Date",
-      "bulkDueDateDescription": "Set due date for {{count}} plans",
+      "bulkDueDateDescription": "Set due date for {count} plans",
       "dateSelected": "Selected date will be set as the due date",
       "selectDateHint": "Select a date from the calendar",
       "cancel": "Cancel",
@@ -70,16 +83,24 @@
       "clearDueDate": "Clear Due Date",
       "setDueDate": "Set Due Date",
       "bulkAddTags": "Add Tags",
-      "bulkAddTagsDescription": "Add tags to {{count}} plans",
+      "bulkAddTagsDescription": "Add tags to {count} plans",
       "searchTags": "Search tags...",
       "noTagsFound": "No tags found",
       "noTags": "No tags available",
-      "addTags": "Add Tags"
+      "addTags": "Add Tags",
+      "view": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "deleteConfirmTitle": "Delete \"{name}\"?",
+        "deleteConfirmDescription": "This view configuration will be deleted. This action cannot be undone.",
+        "deleteConfirm": "Delete"
+      }
     }
   },
   "actions": {
     "save": "Save",
     "cancel": "Cancel",
+    "close": "Close",
     "delete": "Delete",
     "edit": "Edit",
     "create": "Create",
@@ -87,6 +108,15 @@
     "search": "Search",
     "filter": "Filter",
     "sort": "Sort"
+  },
+  "table": {
+    "rowsPerPage": "Rows per page",
+    "items": "{start}-{end} of {total} items",
+    "firstPage": "First page",
+    "previousPage": "Previous page",
+    "page": "Page {current} of {total}",
+    "nextPage": "Next page",
+    "lastPage": "Last page"
   },
   "aria": {
     "clearSelection": "Clear selection",
@@ -107,7 +137,8 @@
     "closeSettings": "Close settings",
     "weeklyCalendar": "Weekly calendar",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "selectColor": "Select {color}"
   },
   "status": {
     "loading": "Loading...",
@@ -127,6 +158,26 @@
     "daysAgo": " days ago",
     "weeksAgo": " weeks ago",
     "monthsAgo": " months ago"
+  },
+  "reminder": {
+    "label": "Reminder",
+    "none": "None",
+    "atStart": "At start time",
+    "min10": "10 minutes before",
+    "min30": "30 minutes before",
+    "hour1": "1 hour before",
+    "day1": "1 day before",
+    "week1": "1 week before",
+    "custom": "Custom"
+  },
+  "recurrence": {
+    "label": "Repeat",
+    "none": "Repeat",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "weekdays": "Weekdays"
   },
   "language": {
     "current": "Current Language",
@@ -150,15 +201,15 @@
     "futureDate": "Please enter a future date",
     "title": {
       "required": "Title is required",
-      "maxLength": "Title must be {{max}} characters or less",
+      "maxLength": "Title must be {max} characters or less",
       "noNewlines": "Title cannot contain only newlines or spaces"
     },
     "description": {
-      "maxLength": "Description must be {{max}} characters or less"
+      "maxLength": "Description must be {max} characters or less"
     },
     "password": {
-      "minLength": "Password must be at least {{min}} characters",
-      "maxLength": "Password must be {{max}} characters or less",
+      "minLength": "Password must be at least {min} characters",
+      "maxLength": "Password must be {max} characters or less",
       "lowercase": "Password must contain a lowercase letter",
       "uppercase": "Password must contain an uppercase letter",
       "number": "Password must contain a number"
@@ -169,24 +220,24 @@
     "pagination": {
       "pageMin": "Page number must be at least 1",
       "limitMin": "Limit must be at least 1",
-      "limitMax": "Limit must be {{max}} or less"
+      "limitMax": "Limit must be {max} or less"
     },
     "search": {
-      "maxLength": "Search query must be {{max}} characters or less"
+      "maxLength": "Search query must be {max} characters or less"
     },
     "file": {
-      "maxSize": "File size must be {{max}}MB or less"
+      "maxSize": "File size must be {max}MB or less"
     },
     "tag": {
       "nameRequired": "Tag name is required",
-      "nameMaxLength": "Tag name must be {{max}} characters or less"
+      "nameMaxLength": "Tag name must be {max} characters or less"
     },
     "recaptcha": {
       "required": "reCAPTCHA token is required"
     },
     "username": {
       "required": "Username is required",
-      "maxLength": "Username must be {{max}} characters or less"
+      "maxLength": "Username must be {max} characters or less"
     }
   },
   "errors": {

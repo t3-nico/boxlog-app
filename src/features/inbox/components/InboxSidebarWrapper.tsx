@@ -16,7 +16,7 @@ import { InboxSidebar } from './InboxSidebar'
  */
 export function InboxSidebarWrapper() {
   const { data: plansData, isLoading } = useplans()
-  const { updatePlan } = usePlanMutations()
+  const { createPlan, updatePlan } = usePlanMutations()
 
   // カレンダー表示用のプラン（start_time/end_timeが設定されているもの）
   const calendarPlans = useMemo(() => {
@@ -55,5 +55,36 @@ export function InboxSidebarWrapper() {
     [updatePlan]
   )
 
-  return <InboxSidebar isLoading={isLoading} calendarPlans={calendarPlans} onSchedulePlan={handleSchedulePlan} />
+  // 空き時間クリックでプラン作成
+  const handleCreatePlan = useCallback(
+    (date: Date, time: string) => {
+      // 時間文字列をパース（例: "09:00"）
+      const [hours, minutes] = time.split(':').map(Number)
+      const startTime = new Date(date)
+      startTime.setHours(hours ?? 0, minutes ?? 0, 0, 0)
+
+      // デフォルト1時間の予定
+      const endTime = new Date(startTime)
+      endTime.setHours(endTime.getHours() + 1)
+
+      // 新規プラン作成
+      createPlan.mutate({
+        title: '',
+        status: 'todo',
+        start_time: startTime.toISOString(),
+        end_time: endTime.toISOString(),
+        due_date: date.toISOString().split('T')[0],
+      })
+    },
+    [createPlan]
+  )
+
+  return (
+    <InboxSidebar
+      isLoading={isLoading}
+      calendarPlans={calendarPlans}
+      onSchedulePlan={handleSchedulePlan}
+      onCreatePlan={handleCreatePlan}
+    />
+  )
 }

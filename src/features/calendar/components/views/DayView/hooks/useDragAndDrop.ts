@@ -9,6 +9,8 @@ interface UseDragAndDropProps {
   onEventClick?: (plan: CalendarPlan) => void
   date: Date
   events: CalendarPlan[]
+  /** DnDを無効化するプランID（Inspector表示中のプランなど） */
+  disabledPlanId?: string | null | undefined
 }
 
 /**

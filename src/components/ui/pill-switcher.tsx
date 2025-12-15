@@ -45,15 +45,15 @@ export function PillSwitcher<T extends string = string>({
 }: PillSwitcherProps<T>) {
   return (
     <Tabs value={value} onValueChange={(v) => onValueChange(v as T)} className={className}>
-      <TabsList className="h-8 rounded-lg bg-transparent p-0.5">
+      <TabsList className="bg-muted/50 h-8 gap-1 rounded-lg p-1">
         {options.map((option) => (
           <TabsTrigger
             key={option.value}
             value={option.value}
             className={cn(
-              'h-7 rounded-md px-3 text-xs',
-              'data-[state=inactive]:hover:bg-state-hover',
-              'data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground',
+              'h-6 rounded-md px-3 text-xs font-medium transition-all',
+              'text-muted-foreground',
+              'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
               option.icon && 'gap-1.5'
             )}
           >

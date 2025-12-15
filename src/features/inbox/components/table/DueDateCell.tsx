@@ -1,7 +1,6 @@
+import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { TableCell } from '@/components/ui/table'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 
 interface DueDateCellProps {
   /** 期限日時（ISO 8601 or YYYY-MM-DD） */
@@ -31,10 +30,12 @@ interface DueDateCellProps {
  * ```
  */
 export function DueDateCell({ dueDate, width, onDueDateChange }: DueDateCellProps) {
-  const formatDate = (dateTimeStr: string | null | undefined) => {
+  const { formatDate: formatDateWithSettings } = useDateFormat()
+
+  const formatDateDisplay = (dateTimeStr: string | null | undefined) => {
     if (!dateTimeStr) return null
     try {
-      return format(new Date(dateTimeStr), 'yyyy/MM/dd', { locale: ja })
+      return formatDateWithSettings(new Date(dateTimeStr))
     } catch {
       return null
     }
@@ -60,7 +61,7 @@ export function DueDateCell({ dueDate, width, onDueDateChange }: DueDateCellProp
     }
   }
 
-  const displayText = formatDate(dueDate) || '-'
+  const displayText = formatDateDisplay(dueDate) || '-'
   const selectedDate = dueDate ? new Date(dueDate) : undefined
   const style = width ? { width: `${width}px`, minWidth: `${width}px` } : undefined
 

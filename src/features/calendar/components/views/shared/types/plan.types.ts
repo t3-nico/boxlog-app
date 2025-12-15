@@ -23,7 +23,6 @@ export interface PlanCardProps {
   plan: CalendarPlan
   position?: PlanCardPosition | undefined
   onClick?: ((plan: CalendarPlan) => void) | undefined
-  onDoubleClick?: ((plan: CalendarPlan) => void) | undefined
   onContextMenu?: ((plan: CalendarPlan, e: React.MouseEvent) => void) | undefined
   onDragStart?:
     | ((
@@ -45,6 +44,8 @@ export interface PlanCardProps {
   isDragging?: boolean | undefined
   isSelected?: boolean | undefined
   isResizing?: boolean | undefined
+  /** Inspectorで開いているプランかどうか */
+  isActive?: boolean | undefined
   className?: string | undefined
   style?: React.CSSProperties | undefined
   previewTime?: ({ start: Date; end: Date } | null) | undefined
@@ -71,10 +72,6 @@ export interface PlanGroup {
   columns: PlanColumn[]
 }
 
-// 後方互換性のためのエイリアス
-/** @deprecated Use PlanGroup instead */
-export type EventGroup = PlanGroup
-
 export interface PlanColumn {
   plans: CalendarPlan[]
   columnIndex: number
@@ -87,7 +84,6 @@ export type EventColumn = PlanColumn
 
 export type PlanInteractionHandler = {
   onClick?: (plan: CalendarPlan) => void
-  onDoubleClick?: (plan: CalendarPlan) => void
   onContextMenu?: (plan: CalendarPlan, e: React.MouseEvent) => void
   onDragStart?: (plan: CalendarPlan) => void
   onDragEnd?: (plan: CalendarPlan) => void

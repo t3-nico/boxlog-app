@@ -2,7 +2,9 @@
 
 import React, { useCallback } from 'react'
 
+import { useCalendarDragStore } from '@/features/calendar/stores/useCalendarDragStore'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { cn } from '@/lib/utils'
 
 import {
@@ -29,6 +31,8 @@ interface WeekContentProps {
   className?: string | undefined
   dayIndex: number // 週内での日付インデックス（0-6）
   displayDates?: Date[] | undefined // 週の全日付配列（日付間移動用）
+  /** DnDを無効化するプランID（Inspector表示中のプランなど） */
+  disabledPlanId?: string | null | undefined
 }
 
 export const WeekContent = ({
@@ -37,13 +41,24 @@ export const WeekContent = ({
   planPositions,
   onPlanClick,
   onPlanContextMenu,
-  onEmptyClick,
   onPlanUpdate,
   onTimeRangeSelect,
   className,
   dayIndex,
   displayDates,
+  disabledPlanId,
 }: WeekContentProps) => {
+  // Inspectorで開いているプランのIDを取得
+  const inspectorPlanId = usePlanInspectorStore((state) => state.planId)
+  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen)
+
+  // グローバルドラッグ状態（日付間移動用）
+  const globalDragState = useCalendarDragStore()
+  const isGlobalDragging = globalDragState.isDragging
+  const globalDraggedPlan = globalDragState.draggedPlan
+  const globalTargetDateIndex = globalDragState.targetDateIndex
+  const globalOriginalDateIndex = globalDragState.originalDateIndex
+
   // ドラッグ&ドロップ機能用にonPlanUpdateを変換
   const handlePlanUpdate = useCallback(
     async (planId: string, updates: { startTime: Date; endTime: Date }) => {
@@ -66,6 +81,7 @@ export const WeekContent = ({
     events: plans,
     displayDates,
     viewMode: 'week',
+    disabledPlanId,
   })
 
   // グローバルドラッグカーソー管理（共通化）
@@ -121,7 +137,7 @@ export const WeekContent = ({
       )}
       data-calendar-grid
     >
-      {/* CalendarDragSelectionを使用 */}
+      {/* CalendarDragSelectionを使用（ドラッグ操作のみでプラン作成） */}
       <CalendarDragSelection
         date={date}
         className="absolute inset-0 z-10"
@@ -129,8 +145,7 @@ export const WeekContent = ({
           // DayViewと同じように直接DateTimeSelectionを渡す
           onTimeRangeSelect?.(selection)
         }}
-        onSingleClick={onEmptyClick}
-        disabled={dragState.isDragging || dragState.isResizing}
+        disabled={dragState.isPending || dragState.isDragging || dragState.isResizing}
       >
         {/* 背景グリッド（DayViewと同じパターン） */}
         <div className="absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
@@ -138,8 +153,8 @@ export const WeekContent = ({
         </div>
       </CalendarDragSelection>
 
-      {/* プラン表示エリア */}
-      <div className="pointer-events-none absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
+      {/* プラン表示エリア - CalendarDragSelectionより上にz-indexを設定 */}
+      <div className="pointer-events-none absolute inset-0 z-20" style={{ height: 24 * HOUR_HEIGHT }}>
         {/* 通常のプラン表示 */}
         {plans.map((plan) => {
           const style = planStyles[plan.id]
@@ -147,8 +162,12 @@ export const WeekContent = ({
 
           const isDragging = dragState.draggedEventId === plan.id && dragState.isDragging
 
-          // ドラッグ中のプラン表示制御：元のカラムで水平移動表示
-          // （非表示にせず、水平位置を調整して表示継続）
+          // 日付間移動中のプランは元のカラムで非表示（ゴースト要素がカーソルに追従）
+          // ただし、同じカラム内での移動は表示を維持
+          const isMovingToOtherDate =
+            isGlobalDragging && globalDraggedPlan?.id === plan.id && globalTargetDateIndex !== globalOriginalDateIndex
+
+          // ドラッグ中のプラン表示制御
           const isResizingThis = dragState.isResizing && dragState.draggedEventId === plan.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
@@ -156,14 +175,18 @@ export const WeekContent = ({
           // ゴースト表示スタイル（共通化）
           const adjustedStyle = calculatePlanGhostStyle(style, plan.id, dragState)
 
+          // 他の日付に移動中は元のプランを半透明に
+          const finalStyle = isMovingToOtherDate ? { ...adjustedStyle, opacity: 0.3 } : adjustedStyle
+
           return (
-            <div key={plan.id} style={adjustedStyle} className="pointer-events-none absolute" data-plan-block="true">
+            <div key={plan.id} style={finalStyle} className="pointer-events-none absolute" data-plan-block="true">
               {/* PlanBlockの内容部分のみクリック可能 */}
               <div
                 className="focus:ring-ring pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"
                 role="button"
                 tabIndex={0}
                 aria-label={`Drag plan: ${plan.title}`}
+                data-plan-block="true"
                 onMouseDown={(e) => {
                   // 左クリックのみドラッグ開始
                   if (e.button === 0) {
@@ -215,6 +238,7 @@ export const WeekContent = ({
                   }
                   isDragging={isDragging}
                   isResizing={isResizingThis}
+                  isActive={isInspectorOpen && inspectorPlanId === plan.id}
                   previewTime={calculatePreviewTime(plan.id, dragState)}
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
@@ -222,27 +246,6 @@ export const WeekContent = ({
             </div>
           )
         })}
-
-        {/* ドラッグ中のプランを他の日付カラムで表示 */}
-        {dragState.isDragging &&
-        dragState.draggedEventId &&
-        dragState.targetDateIndex !== undefined &&
-        dragState.targetDateIndex === dayIndex &&
-        !plans.find((p) => p.id === dragState.draggedEventId) &&
-        displayDates
-          ? (() => {
-              // 週の全プランからドラッグ中のプランを探す
-              // displayDates配列を使って全日付のプランを探索
-
-              // 他のWeekContentインスタンスが保持しているプランを探すのは困難
-              // そのため、親コンポーネントから渡されるplans配列から探す
-              // 現在はplansには当日のプランのみ含まれているため、
-              // WeekGridから全プランを渡すよう修正が必要
-
-              // Implementation tracked in Issue #89
-              return null
-            })()
-          : null}
       </div>
     </div>
   )

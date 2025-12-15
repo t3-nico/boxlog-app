@@ -20,8 +20,8 @@ interface SidebarHeaderProps {
  *
  * **デザイン仕様**:
  * - 全体の高さ: 48px固定（h-12）
- * - 上パディング: 8px（pt-2）
- * - コンテナ: 40px（h-10）
+ * - 上下パディング: 8px（py-2）
+ * - コンテナ: 32px（h-8）
  * - 左右パディング: 16px（px-4）
  * - 背景: bg-surface-container
  * - 8pxグリッドシステム準拠
@@ -31,20 +31,20 @@ export function SidebarHeader({ title, className }: SidebarHeaderProps) {
   const t = useTranslations()
 
   return (
-    <div className={cn('bg-surface-container flex h-12 items-end px-4 pt-2', className)}>
-      {/* タイトルコンテナ（40px） */}
-      <div className="flex h-10 flex-1 items-center">
+    <div className={cn('bg-surface-container flex h-12 items-center px-4 py-2', className)}>
+      {/* タイトルコンテナ（32px） */}
+      <div className="flex h-8 flex-1 items-center">
         <h2 className="text-base font-semibold">{title}</h2>
       </div>
       {/* 閉じるボタン（モバイルのみ表示） */}
       <Button
         onClick={toggle}
-        size="icon"
+        size="icon-sm"
         variant="ghost"
         aria-label={t('aria.closeSidebar')}
-        className={cn('text-muted-foreground size-10 shrink-0 md:hidden')}
+        className={cn('text-muted-foreground size-8 shrink-0 md:hidden')}
       >
-        <PanelLeftClose className="size-5" />
+        <PanelLeftClose className="size-4" />
       </Button>
     </div>
   )

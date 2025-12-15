@@ -52,6 +52,9 @@ export const CalendarNavigationProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 初回マウント時のみ実行
   }, [])
 
+  // 現在のビュータイプをパスから取得（URLと同期）
+  const currentViewFromPath = pathname?.split('/').pop() as CalendarViewType | undefined
+
   const navigateToDate = useCallback(
     (date: Date, updateUrl = false) => {
       setCurrentDate(date)
@@ -59,11 +62,13 @@ export const CalendarNavigationProvider = ({
       // URLの更新が明示的に要求された場合のみ実行
       if (updateUrl) {
         const dateString = format(date, 'yyyy-MM-dd')
-        const newUrl = `/${locale}/calendar/${viewType}?date=${dateString}`
+        // URLからの現在のビュータイプを使用（stateよりも信頼性が高い）
+        const activeView = currentViewFromPath || viewType
+        const newUrl = `/${locale}/calendar/${activeView}?date=${dateString}`
         router.push(newUrl, { scroll: false })
       }
     },
-    [router, viewType, locale]
+    [router, viewType, locale, currentViewFromPath]
   )
 
   const changeView = useCallback(

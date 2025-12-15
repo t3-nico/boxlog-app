@@ -36,6 +36,10 @@ export type { TimeSelection } from './components/DragSelectionLayer'
 // EmptyState - 空状態
 export { EmptyState } from './components/EmptyState'
 
+// OverdueSection - 未完了プランバッジ
+export { OverdueBadge } from './components/OverdueBadge'
+export { OverdueSection, OverdueSectionSingle } from './components/OverdueSection'
+
 // TimezoneOffset - タイムゾーン表示
 export { TimezoneOffset } from './components/TimezoneOffset'
 
@@ -99,19 +103,5 @@ export * from './constants/grid.constants'
 export type * from './types/base.types'
 export type * from './types/grid.types'
 export type { TimeSlot } from './types/grid.types'
-// plan.types から EventGroup を除外（calendar-specific/layout/plan-layout.ts と競合するため）
-// @deprecated lowercase aliases も削除済み
-export type {
-  CalendarPlan,
-  EventBlockProps,
-  EventColumn,
-  EventInteractionHandler,
-  PlanCardPosition,
-  PlanCardProps,
-  PlanColumn,
-  PlanGroup,
-  PlanInteractionHandler,
-  TimedEvent,
-  TimedPlan,
-} from './types/plan.types'
+export type * from './types/plan.types'
 export type * from './types/view.types'

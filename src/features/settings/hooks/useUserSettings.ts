@@ -5,8 +5,10 @@
 
 import { useCallback, useEffect } from 'react'
 
+import { CACHE_5_MINUTES } from '@/constants/time'
 import { api } from '@/lib/trpc'
 
+import type { DateFormatType } from '../stores/useCalendarSettingsStore'
 import { useCalendarSettingsStore } from '../stores/useCalendarSettingsStore'
 import type { ProductivityZone } from '../types/chronotype'
 
@@ -22,10 +24,10 @@ export function useUserSettings() {
   // DBから設定を取得
   const {
     data: dbSettings,
-    isLoading,
+    isPending,
     error,
   } = api.userSettings.get.useQuery(undefined, {
-    staleTime: 1000 * 60 * 5, // 5分間キャッシュ
+    staleTime: CACHE_5_MINUTES,
     refetchOnWindowFocus: false,
   })
 
@@ -38,7 +40,7 @@ export function useUserSettings() {
 
   // DBから取得した設定をStoreに反映（初回のみ）
   useEffect(() => {
-    if (dbSettings && !isLoading) {
+    if (dbSettings && !isPending) {
       // chronotype設定の構築
       const chronotypeSettings: {
         enabled: boolean
@@ -62,6 +64,7 @@ export function useUserSettings() {
         timezone: dbSettings.timezone,
         showUTCOffset: dbSettings.showUtcOffset,
         timeFormat: dbSettings.timeFormat,
+        dateFormat: dbSettings.dateFormat as DateFormatType,
         weekStartsOn: dbSettings.weekStartsOn,
         showWeekends: dbSettings.showWeekends,
         showWeekNumbers: dbSettings.showWeekNumbers,
@@ -73,7 +76,7 @@ export function useUserSettings() {
         planRecordMode: dbSettings.planRecordMode,
       })
     }
-  }, [dbSettings, isLoading]) // storeは依存配列に含めない（無限ループ防止）
+  }, [dbSettings, isPending]) // storeは依存配列に含めない（無限ループ防止）
 
   // 設定をDBに保存する関数
   const saveSettings = useCallback(
@@ -87,6 +90,7 @@ export function useUserSettings() {
       if (settings.timezone !== undefined) dbInput.timezone = settings.timezone
       if (settings.showUTCOffset !== undefined) dbInput.showUtcOffset = settings.showUTCOffset
       if (settings.timeFormat !== undefined) dbInput.timeFormat = settings.timeFormat
+      if (settings.dateFormat !== undefined) dbInput.dateFormat = settings.dateFormat
       if (settings.weekStartsOn !== undefined) dbInput.weekStartsOn = settings.weekStartsOn
       if (settings.showWeekends !== undefined) dbInput.showWeekends = settings.showWeekends
       if (settings.showWeekNumbers !== undefined) dbInput.showWeekNumbers = settings.showWeekNumbers
@@ -114,7 +118,7 @@ export function useUserSettings() {
   return {
     settings: store,
     saveSettings,
-    isLoading,
+    isPending,
     isSaving: updateMutation.isPending,
     error,
   }

@@ -24,7 +24,7 @@ interface PublicProvidersProps {
 export function PublicProviders({ children }: PublicProvidersProps) {
   return (
     <PublicThemeProvider>
-      <TooltipProvider delayDuration={300} skipDelayDuration={100}>
+      <TooltipProvider delayDuration={300} skipDelayDuration={100} disableHoverableContent>
         {children}
       </TooltipProvider>
     </PublicThemeProvider>

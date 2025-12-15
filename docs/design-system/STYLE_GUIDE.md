@@ -552,7 +552,6 @@ import { AlertTriangle, Info } from 'lucide-react'
 
 ```tsx
 import { InfoBox } from '@/components/common'
-
 ;<InfoBox>
   <p className="mb-2 text-sm font-medium">使用状況:</p>
   <ul className="text-muted-foreground space-y-1 text-sm">
@@ -586,21 +585,102 @@ shadcn/ui の AlertDialog を直接使用。共通スタイル：
 
 ---
 
+## 📚 z-index階層（スタッキング順序）
+
+UIコンポーネントの重なり順序を統一管理。値が大きいほど前面に表示されます。
+
+### 階層定義
+
+| レベル            | 値  | Tailwindクラス | 用途                                             |
+| ----------------- | --- | -------------- | ------------------------------------------------ |
+| **dropdown**      | 50  | `z-50`         | ドロップダウンメニュー、セレクト、ツールチップ   |
+| **popover**       | 100 | `z-[100]`      | ポップオーバー（日付選択、カラーピッカーなど）   |
+| **sheet**         | 150 | `z-[150]`      | サイドシート、ドロワー（PlanInspectorなど）      |
+| **modal**         | 200 | `z-[200]`      | 通常のダイアログ・モーダル                       |
+| **confirmDialog** | 250 | `z-[250]`      | 確認ダイアログ（削除、アーカイブなど重要な操作） |
+| **toast**         | 300 | `z-[300]`      | トースト通知                                     |
+| **contextMenu**   | 350 | `z-[350]`      | コンテキストメニュー（右クリックメニュー）       |
+
+### 設定ファイル
+
+```typescript
+// src/config/ui/z-index.ts
+import { zIndex, getZIndexClass } from '@/config/ui/z-index'
+
+// 使用例
+zIndex.modal // 200
+zIndex.sheet // 150
+getZIndexClass('confirmDialog') // 'z-[250]'
+```
+
+### 対応コンポーネント
+
+| コンポーネント         | z-index | 説明               |
+| ---------------------- | ------- | ------------------ |
+| `DropdownMenu`         | 50      | ドロップダウン     |
+| `Tooltip`              | 50      | ツールチップ       |
+| `Popover`              | 100     | ポップオーバー     |
+| `Sheet`                | 150     | サイドシート       |
+| `Dialog`               | 200     | 通常ダイアログ     |
+| `AlertDialog`          | 250     | 確認ダイアログ     |
+| カスタム確認ダイアログ | 250     | createPortalベース |
+| `ContextMenu`          | 350     | 右クリックメニュー |
+
+### 設計原則
+
+1. **予測可能性**: ユーザーの操作順序に沿った階層
+2. **一貫性**: 同種のUIは同じz-index
+3. **可読性**: 意味のある数値（50刻み）
+
+### ❌ 禁止事項
+
+```tsx
+// ❌ z-[9999]などの極端な値
+<div className="z-[9999]">
+
+// ❌ 定義されていない中途半端な値
+<div className="z-[175]">
+
+// ❌ コンポーネント内でのハードコード
+// → src/config/ui/z-index.ts を使用
+```
+
+### ✅ 推奨パターン
+
+```tsx
+// ✅ カスタムダイアログでの使用
+import { zIndex } from '@/config/ui/z-index'
+
+const dialog = (
+  <div
+    className="fixed inset-0 z-[250] flex items-center justify-center"
+    // または
+    style={{ zIndex: zIndex.confirmDialog }}
+  >
+    {/* ... */}
+  </div>
+)
+```
+
+---
+
 ## 🔗 関連ドキュメント
 
 - **セマンティックトークン定義**: `/src/styles/globals.css`
+- **z-index階層定義**: `/src/config/ui/z-index.ts`
 - **コンポーネント例**: `/src/components/CLAUDE.md`
 - **テーマ移行**: `docs/design-system/THEME_MIGRATION.md`
 - **統合履歴**: `docs/design-system/INTEGRATION_LOG.md`
 
 ---
 
-**最終更新**: 2025-12-05
-**バージョン**: v1.3
+**最終更新**: 2025-12-11
+**バージョン**: v1.4
 **管理**: BoxLog デザインシステムチーム
 
 ### 更新履歴
 
+- **v1.4** (2025-12-11): z-index階層セクション追加（dropdown:50 → contextMenu:350の7段階）、スタッキング順序の一元管理
 - **v1.3** (2025-12-05): M3 Surfaceシステム導入（surface-dim/surface/surface-bright/surface-container/surface-container-high）、Primary Containerトークン追加、既存トークンを互換性エイリアス化
 - **v1.2** (2025-11-28): ChatGPT/Claude方式に統一（ホバー・選択ともにforegroundベース）、統一ルール早見表追加
 - **v1.1** (2025-11-27): hover:bg-accent禁止ルール追加、shadcn/ui修正ガイド追加
