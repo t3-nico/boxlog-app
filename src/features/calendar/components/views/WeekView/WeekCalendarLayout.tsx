@@ -30,19 +30,26 @@ interface WeekCalendarLayoutProps {
 
 // 現在時刻線コンポーネント（シンプル版）
 const CurrentTimeLine = ({ day }: { day: Date }) => {
-  if (!isToday(day)) return null
-
   const now = new Date()
   const currentHours = now.getHours() + now.getMinutes() / 60
+  const isTodayColumn = isToday(day)
 
   return (
     <div
-      className="pointer-events-none absolute right-0 left-0 z-30 h-0.5 bg-red-500"
+      className="pointer-events-none absolute right-0 left-0 z-30"
       style={{
         top: `${currentHours * HOUR_HEIGHT}px`,
       }}
     >
-      <div className="absolute top-1/2 -left-1 h-2 w-2 -translate-y-1/2 rounded-full bg-red-500" />
+      {/* 今日の場合：濃い線と赤い点 */}
+      {isTodayColumn && (
+        <>
+          <div className="h-0.5 w-full bg-red-500" />
+          <div className="absolute top-1/2 -left-1 h-2 w-2 -translate-y-1/2 rounded-full bg-red-500" />
+        </>
+      )}
+      {/* 他の日の場合：薄い線のみ */}
+      {!isTodayColumn && <div className="h-px w-full bg-red-500/30" />}
     </div>
   )
 }
