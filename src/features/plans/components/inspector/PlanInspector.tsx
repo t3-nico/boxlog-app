@@ -34,7 +34,7 @@ export function PlanInspector() {
   const initialData = usePlanInspectorStore((state) => state.initialData)
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector)
 
-  const { data: planData, isLoading } = usePlan(planId!, { includeTags: true, enabled: !!planId })
+  const { data: planData, isPending } = usePlan(planId!, { includeTags: true, enabled: !!planId })
   const plan = (planData ?? null) as unknown as Plan | null
 
   // Custom hooks
@@ -257,7 +257,7 @@ export function PlanInspector() {
           style={{ touchAction: 'none' }}
         />
 
-        {isLoading ? (
+        {isPending ? (
           <div className="flex h-full items-center justify-center">
             <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2" />
           </div>

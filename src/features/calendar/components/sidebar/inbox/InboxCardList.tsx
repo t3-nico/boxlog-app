@@ -44,7 +44,7 @@ export function InboxCardList({
   triggerCreate,
   onCreateFinish,
 }: InboxCardListProps) {
-  const { items, isLoading, error } = useInboxData()
+  const { items, isPending, error } = useInboxData()
   const [isCreating, setIsCreating] = useState(false)
 
   // フィルタリング・ソート処理
@@ -123,7 +123,7 @@ export function InboxCardList({
   }, [triggerCreate, isCreating])
 
   // ローディング表示
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex flex-col items-center justify-center py-8">
         <div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />

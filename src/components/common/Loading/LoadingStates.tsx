@@ -12,6 +12,8 @@ import { Loader2, RefreshCw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
+import { Skeleton, type SkeletonAnimation } from '@/components/ui/skeleton'
+
 import { LoadingButtonProps, LoadingCardProps, LoadingOverlayProps, LoadingSpinnerProps } from './types'
 
 // === スピナーコンポーネント ===
@@ -161,28 +163,24 @@ export const LoadingButton = ({
 }
 
 // === スケルトンコンポーネント ===
-
-export interface SkeletonProps {
-  className?: string
-}
-
-export const Skeleton = ({ className = '' }: SkeletonProps) => {
-  return <div className={cn('animate-pulse rounded-md bg-neutral-200 dark:bg-neutral-700', className)} />
-}
+// Skeleton は ui/skeleton.tsx から re-export
+export { Skeleton, type SkeletonAnimation } from '@/components/ui/skeleton'
 
 // === スケルトンテキスト ===
 
 export interface SkeletonTextProps {
   lines?: number
   className?: string
+  animation?: SkeletonAnimation
 }
 
-export const SkeletonText = ({ lines = 3, className = '' }: SkeletonTextProps) => {
+export const SkeletonText = ({ lines = 3, className = '', animation = 'pulse' }: SkeletonTextProps) => {
   return (
     <div className={cn('flex flex-col gap-2', className)}>
       {Array.from({ length: lines }, (_, i) => (
         <Skeleton
           key={i}
+          animation={animation}
           className={cn(
             'h-4',
             i === lines - 1 ? 'w-3/4' : 'w-full' // 最後の行は少し短く
@@ -199,23 +197,29 @@ export interface SkeletonCardProps {
   showAvatar?: boolean
   showImage?: boolean
   className?: string
+  animation?: SkeletonAnimation
 }
 
-export const SkeletonCard = ({ showAvatar = false, showImage = false, className = '' }: SkeletonCardProps) => {
+export const SkeletonCard = ({
+  showAvatar = false,
+  showImage = false,
+  className = '',
+  animation = 'pulse',
+}: SkeletonCardProps) => {
   return (
     <div className={cn('rounded-md bg-white p-4 shadow-sm dark:bg-neutral-800', className)}>
-      {showImage ? <Skeleton className="mb-4 h-40 w-full" /> : null}
+      {showImage ? <Skeleton animation={animation} className="mb-4 h-40 w-full" /> : null}
 
       <div className="flex items-start gap-2">
-        {showAvatar ? <Skeleton className="h-10 w-10 flex-shrink-0 rounded-full" /> : null}
+        {showAvatar ? <Skeleton animation={animation} className="h-10 w-10 flex-shrink-0 rounded-full" /> : null}
 
         <div className="flex flex-1 flex-col gap-2">
-          <Skeleton className="h-4 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
+          <Skeleton animation={animation} className="h-4 w-3/4" />
+          <Skeleton animation={animation} className="h-4 w-1/2" />
           <div className="space-y-1">
-            <Skeleton className="h-3 w-full" />
-            <Skeleton className="h-3 w-full" />
-            <Skeleton className="h-3 w-2/3" />
+            <Skeleton animation={animation} className="h-3 w-full" />
+            <Skeleton animation={animation} className="h-3 w-full" />
+            <Skeleton animation={animation} className="h-3 w-2/3" />
           </div>
         </div>
       </div>

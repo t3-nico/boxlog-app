@@ -22,9 +22,9 @@ function formatHours(hours: number): string {
 }
 
 export function HourlyDistributionChart() {
-  const { data, isLoading } = api.plans.getHourlyDistribution.useQuery()
+  const { data, isPending } = api.plans.getHourlyDistribution.useQuery()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Card className="bg-background">
         <CardHeader>

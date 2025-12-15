@@ -11,9 +11,9 @@ interface ActivityTabProps {
 }
 
 export function ActivityTab({ planId, order }: ActivityTabProps) {
-  const { data: activities, isLoading } = usePlanActivities(planId, { order })
+  const { data: activities, isPending } = usePlanActivities(planId, { order })
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex items-center justify-center py-8">
         <div className="border-primary h-6 w-6 animate-spin rounded-full border-b-2" />
