@@ -46,7 +46,9 @@ export function PlanTagSelectDialogEnhanced({
   const { data: tagsData } = useTags(true)
   const { data: groups = [] } = useTagGroups()
   const createTagMutation = useCreateTag()
-  const { data: tagplanCounts = {} } = api.plans.getTagPlanCounts.useQuery()
+  // 最適化: getTagStats で counts と lastUsed を一括取得
+  const { data: tagStats } = api.plans.getTagStats.useQuery()
+  const tagplanCounts = tagStats?.counts ?? {}
 
   const allTags = tagsData ?? []
 
