@@ -1,18 +1,22 @@
 'use client'
 
 import * as Portal from '@radix-ui/react-portal'
+import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
+
+import { RECURRENCE_OPTIONS, type RecurrenceType } from '../../constants'
 
 import { RecurrenceDialog } from './RecurrenceDialog'
 
 interface RecurrencePopoverProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onRepeatTypeChange: (type: string) => void
+  /** 繰り返しタイプが変更されたときのコールバック */
+  onRepeatTypeChange: (type: RecurrenceType) => void
   triggerRef: React.RefObject<HTMLElement | null>
   recurrenceRule: string | null // RRULE文字列
   onRecurrenceRuleChange: (rrule: string | null) => void
-  placement?: 'bottom' | 'right' | 'left' // ポップアップの表示位置
+  placement?: 'bottom' | 'right' | 'left' | undefined // ポップアップの表示位置
 }
 
 export function RecurrencePopover({
@@ -24,6 +28,7 @@ export function RecurrencePopover({
   onRecurrenceRuleChange,
   placement = 'bottom',
 }: RecurrencePopoverProps) {
+  const t = useTranslations()
   const popoverRef = useRef<HTMLDivElement>(null)
   const [showCustomDialog, setShowCustomDialog] = useState(false)
   const [position, setPosition] = useState({ top: 0, left: 0 })
@@ -94,64 +99,28 @@ export function RecurrencePopover({
               <button
                 className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
                 onClick={() => {
-                  onRepeatTypeChange('')
+                  onRepeatTypeChange('none')
                   onOpenChange(false)
                 }}
                 type="button"
               >
-                選択しない
+                {t('reminder.none')}
               </button>
               <div className="border-border my-1 border-t" />
-              <button
-                className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                onClick={() => {
-                  onRepeatTypeChange('毎日')
-                  onOpenChange(false)
-                }}
-                type="button"
-              >
-                毎日
-              </button>
-              <button
-                className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                onClick={() => {
-                  onRepeatTypeChange('毎週')
-                  onOpenChange(false)
-                }}
-                type="button"
-              >
-                毎週
-              </button>
-              <button
-                className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                onClick={() => {
-                  onRepeatTypeChange('毎月')
-                  onOpenChange(false)
-                }}
-                type="button"
-              >
-                毎月
-              </button>
-              <button
-                className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                onClick={() => {
-                  onRepeatTypeChange('毎年')
-                  onOpenChange(false)
-                }}
-                type="button"
-              >
-                毎年
-              </button>
-              <button
-                className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
-                onClick={() => {
-                  onRepeatTypeChange('平日')
-                  onOpenChange(false)
-                }}
-                type="button"
-              >
-                平日（月〜金）
-              </button>
+              {RECURRENCE_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
+                  onClick={() => {
+                    onRepeatTypeChange(option.value)
+                    onOpenChange(false)
+                  }}
+                  type="button"
+                >
+                  {t(option.key)}
+                  {option.value === 'weekdays' && ` (${t('calendar.views.weekday')})`}
+                </button>
+              ))}
               <div className="border-border my-1 border-t" />
               <button
                 className="hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm"
@@ -160,7 +129,7 @@ export function RecurrencePopover({
                 }}
                 type="button"
               >
-                カスタム...
+                {t('reminder.custom')}...
               </button>
             </div>
           </div>
@@ -183,5 +152,57 @@ export function RecurrencePopover({
         onChange={onRecurrenceRuleChange}
       />
     </>
+  )
+}
+
+// ===== 後方互換性のためのレガシーコンポーネント =====
+// TODO: 全てのコンシューマーが新APIに移行後に削除
+
+/** レガシーAPI用のタイプ→ラベル変換マップ */
+const LEGACY_TYPE_TO_LABEL: Record<RecurrenceType, string> = {
+  none: '',
+  daily: '毎日',
+  weekly: '毎週',
+  monthly: '毎月',
+  yearly: '毎年',
+  weekdays: '平日',
+}
+
+interface LegacyRecurrencePopoverProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  /** @deprecated Use onRepeatTypeChange with RecurrenceType instead */
+  onRepeatTypeChange: (type: string) => void
+  triggerRef: React.RefObject<HTMLElement | null>
+  recurrenceRule: string | null
+  onRecurrenceRuleChange: (rrule: string | null) => void
+  placement?: 'bottom' | 'right' | 'left' | undefined
+}
+
+/** @deprecated Use RecurrencePopover with RecurrenceType values instead */
+export function LegacyRecurrencePopover({
+  open,
+  onOpenChange,
+  onRepeatTypeChange,
+  triggerRef,
+  recurrenceRule,
+  onRecurrenceRuleChange,
+  placement,
+}: LegacyRecurrencePopoverProps) {
+  // タイプからレガシーラベルに変換してコールバック
+  const handleTypeChange = (type: RecurrenceType) => {
+    onRepeatTypeChange(LEGACY_TYPE_TO_LABEL[type])
+  }
+
+  return (
+    <RecurrencePopover
+      open={open}
+      onOpenChange={onOpenChange}
+      onRepeatTypeChange={handleTypeChange}
+      triggerRef={triggerRef}
+      recurrenceRule={recurrenceRule}
+      onRecurrenceRuleChange={onRecurrenceRuleChange}
+      placement={placement}
+    />
   )
 }

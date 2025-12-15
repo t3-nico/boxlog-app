@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 import { getCacheStrategy } from '@/lib/tanstack-query/cache-config'
-// import { calendarService } from '../services/calendar-service' // Removed - using localStorage
 import type {
   Calendar,
   CalendarShare,
@@ -87,9 +86,6 @@ export function useCalendarShares(calendarId: string) {
 export function useShareCalendar() {
   return useMutation({
     mutationFn: (_input: CalendarShareInput) => Promise.resolve({} as CalendarShare), // Temporary stub
-    onSuccess: (_share) => {
-      // queryClient.invalidateQueries({ queryKey: ['calendar-shares', share.calendarId] })
-    },
   })
 }
 

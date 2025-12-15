@@ -1,5 +1,10 @@
 {
   "settings": {
+    "tabs": {
+      "details": "詳細",
+      "activity": "アクティビティ",
+      "comments": "コメント"
+    },
     "account": {
       "profileUpdated": "プロフィールを更新しました",
       "passwordUpdated": "パスワードを更新しました",

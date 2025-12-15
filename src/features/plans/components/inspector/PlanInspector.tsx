@@ -2,6 +2,7 @@
 
 import { format } from 'date-fns'
 import { ChevronDown, ChevronUp, FileText, Repeat } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,7 @@ import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
 
+import { getRecurrenceTranslationKey, type RecurrenceType } from '../../constants'
 import { usePlan } from '../../hooks/usePlan'
 import { usePlanTags } from '../../hooks/usePlanTags'
 import { usePlanCacheStore } from '../../stores/usePlanCacheStore'
@@ -29,6 +31,7 @@ import { useInspectorAutoSave, useInspectorNavigation, useInspectorResize } from
  * Plan Inspector（全ページ共通Sheet）
  */
 export function PlanInspector() {
+  const t = useTranslations()
   const isOpen = usePlanInspectorStore((state) => state.isOpen)
   const planId = usePlanInspectorStore((state) => state.planId)
   const initialData = usePlanInspectorStore((state) => state.initialData)
@@ -56,8 +59,7 @@ export function PlanInspector() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
-  const [_repeatType, setRepeatType] = useState<string>('')
-  const [reminderType, setReminderType] = useState<string>('')
+  const [reminderMinutes, setReminderMinutes] = useState<number | null>(null)
   const [recurrencePopoverOpen, setRecurrencePopoverOpen] = useState(false)
   const recurrenceTriggerRef = useRef<HTMLDivElement>(null)
 
@@ -99,19 +101,10 @@ export function PlanInspector() {
         setEndTime('')
       }
 
-      if ('reminder_minutes' in plan && plan.reminder_minutes !== null) {
-        const minutes = plan.reminder_minutes
-        const reminderMap: Record<number, string> = {
-          0: '開始時刻',
-          10: '10分前',
-          30: '30分前',
-          60: '1時間前',
-          1440: '1日前',
-          10080: '1週間前',
-        }
-        setReminderType(reminderMap[minutes] || 'カスタム')
+      if ('reminder_minutes' in plan) {
+        setReminderMinutes(plan.reminder_minutes ?? null)
       } else {
-        setReminderType('')
+        setReminderMinutes(null)
       }
     } else if (!plan && initialData) {
       if (initialData.start_time) {
@@ -131,7 +124,7 @@ export function PlanInspector() {
       setSelectedDate(undefined)
       setStartTime('')
       setEndTime('')
-      setReminderType('')
+      setReminderMinutes(null)
     }
   }, [plan, initialData])
 
@@ -199,11 +192,11 @@ export function PlanInspector() {
 
   const handleDelete = useCallback(() => {
     if (!planId) return
-    if (confirm('このプランを削除しますか？')) {
+    if (confirm(t('common.inbox.deleteConfirm', { count: 1 }))) {
       deletePlan.mutate({ id: planId })
       closeInspector()
     }
-  }, [planId, deletePlan, closeInspector])
+  }, [planId, deletePlan, closeInspector, t])
 
   const handleDateChange = useCallback(
     (date: Date | undefined) => {
@@ -243,12 +236,35 @@ export function PlanInspector() {
     [selectedDate, autoSave]
   )
 
+  // Get recurrence display text
+  const getRecurrenceDisplayText = useCallback(() => {
+    if (!planId) return t('recurrence.none')
+    const cache = getCache(planId)
+    const recurrence_rule =
+      cache?.recurrence_rule !== undefined ? cache.recurrence_rule : (plan?.recurrence_rule ?? null)
+    const recurrence_type =
+      cache?.recurrence_type !== undefined ? cache.recurrence_type : (plan?.recurrence_type ?? null)
+    if (recurrence_rule) return configToReadable(ruleToConfig(recurrence_rule))
+    return t(getRecurrenceTranslationKey(recurrence_type))
+  }, [planId, getCache, plan, t])
+
+  // Check if recurrence is set
+  const hasRecurrence = useCallback(() => {
+    if (!planId) return false
+    const cache = getCache(planId)
+    const recurrence_rule =
+      cache?.recurrence_rule !== undefined ? cache.recurrence_rule : (plan?.recurrence_rule ?? null)
+    const recurrence_type =
+      cache?.recurrence_type !== undefined ? cache.recurrence_type : (plan?.recurrence_type ?? null)
+    return recurrence_rule || (recurrence_type && recurrence_type !== 'none')
+  }, [planId, getCache, plan])
+
   if (!isOpen) return null
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && closeInspector()} modal={false}>
       <SheetContent className="gap-0 overflow-y-auto" style={{ width: `${inspectorWidth}px` }} showCloseButton={false}>
-        <SheetTitle className="sr-only">{plan?.title || '予定の詳細'}</SheetTitle>
+        <SheetTitle className="sr-only">{plan?.title || t('calendar.event.title')}</SheetTitle>
 
         {/* Resize Handle */}
         <div
@@ -263,7 +279,7 @@ export function PlanInspector() {
           </div>
         ) : !plan ? (
           <div className="flex h-full items-center justify-center">
-            <p className="text-muted-foreground">プランが見つかりません</p>
+            <p className="text-muted-foreground">{t('common.noData')}</p>
           </div>
         ) : (
           <>
@@ -284,14 +300,14 @@ export function PlanInspector() {
                   value="details"
                   className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                 >
-                  詳細
+                  {t('settings.tabs.details')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="activity"
                   className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                 >
                   <span className="relative flex items-center gap-1.5">
-                    アクティビティ
+                    {t('settings.tabs.activity')}
                     <span
                       role="button"
                       tabIndex={0}
@@ -309,7 +325,7 @@ export function PlanInspector() {
                       onMouseEnter={() => setIsHoveringSort(true)}
                       onMouseLeave={() => setIsHoveringSort(false)}
                       className="hover:bg-state-hover cursor-pointer rounded p-0.5 transition-colors"
-                      aria-label={activityOrder === 'desc' ? '古い順に変更' : '最新順に変更'}
+                      aria-label={activityOrder === 'desc' ? t('actions.sort') : t('actions.sort')}
                     >
                       {activityOrder === 'desc' ? (
                         <ChevronDown className="h-3.5 w-3.5" />
@@ -319,7 +335,7 @@ export function PlanInspector() {
                     </span>
                     {isHoveringSort && (
                       <div className="bg-foreground text-background absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 rounded-md px-3 py-1.5 text-xs whitespace-nowrap">
-                        {activityOrder === 'desc' ? '最新順で表示中' : '古い順で表示中'}
+                        {activityOrder === 'desc' ? t('actions.sort') : t('actions.sort')}
                       </div>
                     )}
                   </span>
@@ -328,7 +344,7 @@ export function PlanInspector() {
                   value="comments"
                   className="data-[state=active]:border-primary hover:border-primary/50 h-10 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                 >
-                  コメント
+                  {t('settings.tabs.comments')}
                 </TabsTrigger>
               </TabsList>
 
@@ -375,21 +391,9 @@ export function PlanInspector() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className={(() => {
-                          if (!planId) return 'text-muted-foreground h-8 gap-2 px-2'
-                          const cache = getCache(planId)
-                          const recurrence_rule =
-                            cache?.recurrence_rule !== undefined
-                              ? cache.recurrence_rule
-                              : (plan?.recurrence_rule ?? null)
-                          const recurrence_type =
-                            cache?.recurrence_type !== undefined
-                              ? cache.recurrence_type
-                              : (plan?.recurrence_type ?? null)
-                          return recurrence_rule || (recurrence_type && recurrence_type !== 'none')
-                            ? 'text-foreground h-8 gap-2 px-2'
-                            : 'text-muted-foreground h-8 gap-2 px-2'
-                        })()}
+                        className={
+                          hasRecurrence() ? 'text-foreground h-8 gap-2 px-2' : 'text-muted-foreground h-8 gap-2 px-2'
+                        }
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
@@ -397,55 +401,20 @@ export function PlanInspector() {
                         }}
                       >
                         <Repeat className="h-4 w-4" />
-                        <span className="text-sm">
-                          {(() => {
-                            if (!planId) return '繰り返し'
-                            const cache = getCache(planId)
-                            const recurrence_rule =
-                              cache?.recurrence_rule !== undefined
-                                ? cache.recurrence_rule
-                                : (plan?.recurrence_rule ?? null)
-                            const recurrence_type =
-                              cache?.recurrence_type !== undefined
-                                ? cache.recurrence_type
-                                : (plan?.recurrence_type ?? null)
-                            if (recurrence_rule) return configToReadable(ruleToConfig(recurrence_rule))
-                            if (recurrence_type && recurrence_type !== 'none') {
-                              const typeMap: Record<string, string> = {
-                                daily: '毎日',
-                                weekly: '毎週',
-                                monthly: '毎月',
-                                yearly: '毎年',
-                                weekdays: '平日',
-                                none: '繰り返し',
-                              }
-                              return typeMap[recurrence_type] || '繰り返し'
-                            }
-                            return '繰り返し'
-                          })()}
-                        </span>
+                        <span className="text-sm">{getRecurrenceDisplayText()}</span>
                       </Button>
 
                       <RecurrencePopover
                         open={recurrencePopoverOpen}
                         onOpenChange={setRecurrencePopoverOpen}
-                        onRepeatTypeChange={(type) => {
+                        onRepeatTypeChange={(type: RecurrenceType) => {
                           if (!planId) return
-                          setRepeatType(type)
-                          const typeMap: Record<
-                            string,
-                            'none' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'weekdays'
-                          > = {
-                            '': 'none',
-                            毎日: 'daily',
-                            毎週: 'weekly',
-                            毎月: 'monthly',
-                            毎年: 'yearly',
-                            平日: 'weekdays',
-                          }
                           updatePlan.mutate({
                             id: planId,
-                            data: { recurrence_type: typeMap[type] || 'none', recurrence_rule: null },
+                            data: {
+                              recurrence_type: type,
+                              recurrence_rule: null,
+                            },
                           })
                         }}
                         triggerRef={recurrenceTriggerRef}
@@ -465,20 +434,14 @@ export function PlanInspector() {
                     </div>
 
                     <ReminderSelect
-                      value={reminderType}
-                      onChange={(type) => {
+                      value={reminderMinutes}
+                      onChange={(minutes) => {
                         if (!planId) return
-                        setReminderType(type)
-                        const reminderMap: Record<string, number | null> = {
-                          '': null,
-                          開始時刻: 0,
-                          '10分前': 10,
-                          '30分前': 30,
-                          '1時間前': 60,
-                          '1日前': 1440,
-                          '1週間前': 10080,
-                        }
-                        updatePlan.mutate({ id: planId, data: { reminder_minutes: reminderMap[type] ?? null } })
+                        setReminderMinutes(minutes)
+                        updatePlan.mutate({
+                          id: planId,
+                          data: { reminder_minutes: minutes },
+                        })
                       }}
                     />
                   </div>
@@ -504,7 +467,7 @@ export function PlanInspector() {
                         key={plan.id}
                         content={plan.description || ''}
                         onChange={(html) => autoSave('description', html)}
-                        placeholder="Add description..."
+                        placeholder={t('calendar.event.noDescription')}
                       />
                     </div>
                   </div>
@@ -513,7 +476,7 @@ export function PlanInspector() {
                 {/* Status */}
                 <div className="flex flex-col gap-4 px-6 py-4">
                   <div className="flex flex-col gap-2">
-                    <Label htmlFor="status">ステータス</Label>
+                    <Label htmlFor="status">{t('common.inbox.status')}</Label>
                     <select
                       id="status"
                       key={`status-${plan.id}`}
@@ -535,7 +498,7 @@ export function PlanInspector() {
               </TabsContent>
 
               <TabsContent value="comments">
-                <div className="text-muted-foreground py-8 text-center">コメント機能は準備中です</div>
+                <div className="text-muted-foreground py-8 text-center">{t('status.loading')}</div>
               </TabsContent>
             </Tabs>
           </>

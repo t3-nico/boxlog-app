@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { TableCell } from '@/components/ui/table'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { RecurringIndicator } from '@/features/plans/components/shared/RecurringIndicator'
-import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
+import { LegacyReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { ArrowRight, Bell, Calendar as CalendarIcon, Clock, Repeat, Trash2 } from 'lucide-react'
@@ -204,7 +204,7 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
                 <Bell className="mr-2 size-4" />
                 <span>通知</span>
               </div>
-              <ReminderSelect
+              <LegacyReminderSelect
                 value={reminderType}
                 onChange={(value) => {
                   setReminderType(value)
