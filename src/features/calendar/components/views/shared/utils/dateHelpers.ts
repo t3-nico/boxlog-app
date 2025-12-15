@@ -2,6 +2,8 @@
  * 日付操作ヘルパー関数
  */
 
+import { MS_PER_DAY } from '@/constants/time'
+
 /**
  * 今日かどうか判定
  */
@@ -95,7 +97,7 @@ export function isSameDay(date1: Date, date2: Date): boolean {
 export function getDaysDifference(date1: Date, date2: Date): number {
   const d1 = startOfDay(date1)
   const d2 = startOfDay(date2)
-  return Math.floor((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24))
+  return Math.floor((d2.getTime() - d1.getTime()) / MS_PER_DAY)
 }
 
 /**

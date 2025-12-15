@@ -5,6 +5,7 @@
 
 import { TRPCError } from '@trpc/server'
 
+import { MS_PER_DAY, MS_PER_HOUR, MS_PER_MINUTE } from '@/constants/time'
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 
 import { z } from 'zod'
@@ -59,7 +60,7 @@ export const statisticsRouter = createTRPCRouter({
       if (plan.start_time && plan.end_time) {
         const start = new Date(plan.start_time)
         const end = new Date(plan.end_time)
-        const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60)
+        const hours = (end.getTime() - start.getTime()) / MS_PER_HOUR
 
         if (hours > 0) {
           totalHours += hours
@@ -158,7 +159,7 @@ export const statisticsRouter = createTRPCRouter({
     for (const dateStr of sortedDates) {
       const currentDate = new Date(dateStr)
       if (prevDate) {
-        const diffDays = Math.round((currentDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24))
+        const diffDays = Math.round((currentDate.getTime() - prevDate.getTime()) / MS_PER_DAY)
         if (diffDays === 1) {
           tempStreak++
         } else {
@@ -241,7 +242,7 @@ export const statisticsRouter = createTRPCRouter({
     const tagHours: Record<string, number> = {}
     for (const plan of plans) {
       if (plan.start_time && plan.end_time) {
-        const hours = (new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime()) / (1000 * 60 * 60)
+        const hours = (new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime()) / MS_PER_HOUR
         if (hours > 0) {
           const tagIdsForPlan = planTags.filter((pt) => pt.plan_id === plan.id).map((pt) => pt.tag_id)
           for (const tagId of tagIdsForPlan) {
@@ -297,7 +298,7 @@ export const statisticsRouter = createTRPCRouter({
       if (plan.start_time && plan.end_time) {
         const datePart = new Date(plan.start_time).toISOString().split('T')[0]
         if (datePart) {
-          const hours = (new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime()) / (1000 * 60 * 60)
+          const hours = (new Date(plan.end_time).getTime() - new Date(plan.start_time).getTime()) / MS_PER_HOUR
           if (hours > 0) {
             dailyHours[datePart] = (dailyHours[datePart] || 0) + hours
           }
@@ -338,7 +339,7 @@ export const statisticsRouter = createTRPCRouter({
 
         // Simple approach: assign to start hour
         const hour = start.getHours()
-        const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60)
+        const hours = (end.getTime() - start.getTime()) / MS_PER_HOUR
         if (hours > 0) {
           const currentHours = hourlyHours[hour]
           if (currentHours !== undefined) {
@@ -390,7 +391,7 @@ export const statisticsRouter = createTRPCRouter({
         const start = new Date(plan.start_time)
         const end = new Date(plan.end_time)
         const dayOfWeek = start.getDay()
-        const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60)
+        const hours = (end.getTime() - start.getTime()) / MS_PER_HOUR
         if (hours > 0) {
           const currentHours = dayHours[dayOfWeek]
           if (currentHours !== undefined) {
@@ -445,7 +446,7 @@ export const statisticsRouter = createTRPCRouter({
       if (plan.start_time && plan.end_time) {
         const start = new Date(plan.start_time)
         const key = `${start.getFullYear()}-${(start.getMonth() + 1).toString().padStart(2, '0')}`
-        const hours = (new Date(plan.end_time).getTime() - start.getTime()) / (1000 * 60 * 60)
+        const hours = (new Date(plan.end_time).getTime() - start.getTime()) / MS_PER_HOUR
         if (hours > 0 && monthlyHours[key] !== undefined) {
           monthlyHours[key] += hours
         }
@@ -495,7 +496,7 @@ export const statisticsRouter = createTRPCRouter({
         const end = new Date(plan.end_time)
         const diffMs = end.getTime() - start.getTime()
         if (diffMs > 0) {
-          totalMinutes += diffMs / (1000 * 60)
+          totalMinutes += diffMs / MS_PER_MINUTE
           planCount++
         }
       }

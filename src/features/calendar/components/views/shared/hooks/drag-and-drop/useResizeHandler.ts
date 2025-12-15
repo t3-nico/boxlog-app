@@ -3,6 +3,7 @@
 import type React from 'react'
 import { useCallback } from 'react'
 
+import { MS_PER_MINUTE } from '@/constants/time'
 import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { logger } from '@/lib/logger'
@@ -98,7 +99,7 @@ export function useResizeHandler({ events, eventUpdateHandler, dragDataRef, setD
         updatedAt: new Date(),
         displayStartDate: event.startDate,
         displayEndDate: newEndTime,
-        duration: Math.round(newDurationMs / (1000 * 60)),
+        duration: Math.round(newDurationMs / MS_PER_MINUTE),
         isMultiDay: event.startDate.toDateString() !== newEndTime.toDateString(),
         isRecurring: false,
         type: event.type,
