@@ -1,0 +1,37 @@
+{
+  "offline": {
+    "conflict": {
+      "title": "Sync Conflict",
+      "description": "{entity} data conflicts with the server. Choose which version to keep.",
+      "localVersion": "Local Version",
+      "localDescription": "Keep the data edited on this device",
+      "serverVersion": "Server Version",
+      "serverDescription": "Use the data stored on the server",
+      "resolve": "Resolve",
+      "resolving": "Resolving..."
+    },
+    "entity": {
+      "plans": "Plan",
+      "tags": "Tag",
+      "tagGroups": "Tag Group"
+    },
+    "toast": {
+      "online": "Back online",
+      "onlineDescription": "Starting sync...",
+      "offline": "Working offline",
+      "offlineDescription": "Changes will be saved locally and synced when online",
+      "syncCompleted": "Sync completed",
+      "syncCompletedDescription": "{count} changes synced",
+      "conflictDetected": "Conflict detected",
+      "conflictDetectedDescription": "Please resolve {count} conflicts",
+      "conflictResolved": "Conflict resolved",
+      "conflictResolvedDescription": "Data synced successfully",
+      "syncFailed": "Sync failed",
+      "actionRecordFailed": "Failed to record action",
+      "conflictResolveFailed": "Failed to resolve conflict",
+      "clearCompleted": "History cleared",
+      "clearCompletedDescription": "Completed sync actions have been removed",
+      "clearFailed": "Failed to clear history"
+    }
+  }
+}
