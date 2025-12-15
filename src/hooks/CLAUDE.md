@@ -124,8 +124,8 @@ return <Content data={data} />
 
 // 最小表示時間付きバージョン
 const showLoading = useDelayedLoadingWithMinDuration(isPending, {
-  delay: 300,      // 表示開始までの遅延
-  minDuration: 500 // 一度表示したら最低500ms維持
+  delay: 300, // 表示開始までの遅延
+  minDuration: 500, // 一度表示したら最低500ms維持
 })
 ```
 
@@ -158,8 +158,8 @@ if (hasTimedOut) {
 
 // 詳細版: 警告状態も検出
 const loadingState = useLoadingState(isLoading, {
-  timeout: 10000,        // 10秒でタイムアウト
-  warningThreshold: 5000 // 5秒で警告表示
+  timeout: 10000, // 10秒でタイムアウト
+  warningThreshold: 5000, // 5秒で警告表示
 })
 
 if (loadingState.hasTimedOut) {

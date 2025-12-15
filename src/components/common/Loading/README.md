@@ -8,16 +8,16 @@
 
 ## ローディングパターン選択ガイド
 
-| シナリオ | パターン | 時間目安 |
-|---------|----------|----------|
-| ページ遷移 | `loading.tsx` + Skeleton | 2-10秒 |
-| コンテナ系（カード、リスト） | `Skeleton animation="shimmer"` | 2-10秒 |
-| インライン操作 | `Spinner` | 0.3-2秒 |
-| 長時間処理（進捗あり） | `Progress value={n}` | 10秒以上 |
-| 長時間処理（進捗不明） | `Progress indeterminate` | 10秒以上 |
-| 短時間ロードのチラつき防止 | `useDelayedLoading` | 300ms未満はスキップ |
-| オフライン時のフォールバック | `useIsOnline` | 接続状態を監視 |
-| 長時間ローディングの検出 | `useLoadingTimeout` | 10秒以上で警告 |
+| シナリオ                     | パターン                       | 時間目安            |
+| ---------------------------- | ------------------------------ | ------------------- |
+| ページ遷移                   | `loading.tsx` + Skeleton       | 2-10秒              |
+| コンテナ系（カード、リスト） | `Skeleton animation="shimmer"` | 2-10秒              |
+| インライン操作               | `Spinner`                      | 0.3-2秒             |
+| 長時間処理（進捗あり）       | `Progress value={n}`           | 10秒以上            |
+| 長時間処理（進捗不明）       | `Progress indeterminate`       | 10秒以上            |
+| 短時間ロードのチラつき防止   | `useDelayedLoading`            | 300ms未満はスキップ |
+| オフライン時のフォールバック | `useIsOnline`                  | 接続状態を監視      |
+| 長時間ローディングの検出     | `useLoadingTimeout`            | 10秒以上で警告      |
 
 ## コンポーネント一覧
 

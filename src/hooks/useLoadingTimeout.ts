@@ -83,10 +83,7 @@ export interface LoadingStateResult {
   elapsedTime: number
 }
 
-export function useLoadingState(
-  isLoading: boolean,
-  options: LoadingStateOptions = {}
-): LoadingStateResult {
+export function useLoadingState(isLoading: boolean, options: LoadingStateOptions = {}): LoadingStateResult {
   const { timeout = 10000, warningThreshold = 5000 } = options
 
   const [state, setState] = useState<LoadingStateResult>({

@@ -33,4 +33,4 @@ function Skeleton({ className, animation = 'pulse', ...props }: SkeletonProps) {
 }
 
 export { Skeleton }
-export type { SkeletonProps, SkeletonAnimation }
+export type { SkeletonAnimation, SkeletonProps }
