@@ -56,7 +56,7 @@ export function PlanCard({ item }: PlanCardProps) {
   const { addplanTag, removeplanTag } = useplanTags()
   const { updatePlan } = usePlanMutations()
   const { getCache } = useplanCacheStore()
-  const { formatDate: formatDateWithSettings } = useDateFormat()
+  const { formatDate: formatDateWithSettings, formatTime: formatTimeWithSettings } = useDateFormat()
   const isActive = planId === item.id
   const isFocused = focusedId === item.id
 
@@ -155,9 +155,9 @@ export function PlanCard({ item }: PlanCardProps) {
     let timeStr = ''
 
     if (item.start_time && item.end_time) {
-      timeStr = ` ${format(parseDatetimeString(item.start_time), 'HH:mm')} → ${format(parseDatetimeString(item.end_time), 'HH:mm')}`
+      timeStr = ` ${formatTimeWithSettings(parseDatetimeString(item.start_time))} → ${formatTimeWithSettings(parseDatetimeString(item.end_time))}`
     } else if (item.start_time) {
-      timeStr = ` ${format(parseDatetimeString(item.start_time), 'HH:mm')}`
+      timeStr = ` ${formatTimeWithSettings(parseDatetimeString(item.start_time))}`
     }
 
     return (

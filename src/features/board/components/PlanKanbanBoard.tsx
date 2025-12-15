@@ -44,7 +44,7 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const { updatePlan } = usePlanMutations()
   const { isStatusVisible } = useBoardStatusFilterStore()
-  const { formatDate: formatDateWithSettings } = useDateFormat()
+  const { formatDate: formatDateWithSettings, formatTime: formatTimeWithSettings } = useDateFormat()
 
   // Planデータをカラムごとに分類（3段階ステータス: todo/doing/done）
   const columns = {
@@ -148,8 +148,8 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
                 {activeItem.start_time && activeItem.end_time && (
                   <span>
                     {' '}
-                    {format(new Date(activeItem.start_time), 'HH:mm')} →{' '}
-                    {format(new Date(activeItem.end_time), 'HH:mm')}
+                    {formatTimeWithSettings(new Date(activeItem.start_time))} →{' '}
+                    {formatTimeWithSettings(new Date(activeItem.end_time))}
                   </span>
                 )}
               </div>

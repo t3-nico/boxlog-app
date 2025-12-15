@@ -7,6 +7,7 @@ import { X } from 'lucide-react'
 import { toast } from 'sonner'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
 import { useTranslations } from 'next-intl'
@@ -59,6 +60,7 @@ export const WeekCalendarLayout = ({
   const t = useTranslations()
   const { openEventPopup } = useAddPopup()
   const { planRecordMode } = useCalendarSettingsStore()
+  const { formatTime: formatTimeWithSettings } = useDateFormat()
   const containerRef = useRef<HTMLDivElement>(null)
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
 
@@ -308,7 +310,7 @@ export const WeekCalendarLayout = ({
                         }}
                         onClick={createPlanClickHandler(plan)}
                         onKeyDown={createPlanKeyDownHandler(plan)}
-                        aria-label={`プラン: ${plan.title}${plan.startDate ? ` (${format(plan.startDate, 'HH:mm')}開始)` : ''}`}
+                        aria-label={`プラン: ${plan.title}${plan.startDate ? ` (${formatTimeWithSettings(plan.startDate)}開始)` : ''}`}
                       >
                         {/* ホバー時の削除ボタン */}
                         <button
@@ -326,8 +328,8 @@ export const WeekCalendarLayout = ({
                               <div className="mb-0.5 line-clamp-2 text-xs leading-tight font-medium">{plan.title}</div>
                               {height > 30 ? (
                                 <div className="text-xs leading-tight opacity-90">
-                                  {format(plan.startDate, 'HH:mm')}
-                                  {plan.endDate ? ` - ${format(plan.endDate, 'HH:mm')}` : null}
+                                  {formatTimeWithSettings(plan.startDate)}
+                                  {plan.endDate ? ` - ${formatTimeWithSettings(plan.endDate)}` : null}
                                 </div>
                               ) : null}
                             </div>

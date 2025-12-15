@@ -1,6 +1,7 @@
+'use client'
+
 import { TableCell } from '@/components/ui/table'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 
 interface DurationRangeCellProps {
   /** 開始時刻（ISO 8601） */
@@ -30,17 +31,19 @@ interface DurationRangeCellProps {
  * ```
  */
 export function DurationRangeCell({ startTime, endTime, width }: DurationRangeCellProps) {
-  const formatTime = (dateTimeStr: string | null | undefined) => {
+  const { formatTime: formatTimeWithSettings } = useDateFormat()
+
+  const formatTimeValue = (dateTimeStr: string | null | undefined) => {
     if (!dateTimeStr) return null
     try {
-      return format(new Date(dateTimeStr), 'HH:mm', { locale: ja })
+      return formatTimeWithSettings(new Date(dateTimeStr))
     } catch {
       return null
     }
   }
 
-  const startFormatted = formatTime(startTime)
-  const endFormatted = formatTime(endTime)
+  const startFormatted = formatTimeValue(startTime)
+  const endFormatted = formatTimeValue(endTime)
 
   let displayText = '-'
   if (startFormatted && endFormatted) {
