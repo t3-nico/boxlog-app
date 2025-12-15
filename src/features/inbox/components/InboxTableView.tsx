@@ -79,7 +79,7 @@ export function InboxTableView() {
   const [showTagDialog, setShowTagDialog] = useState(false)
 
   // データ取得
-  const { items, isLoading, error } = useInboxData({
+  const { items, isPending, error } = useInboxData({
     status: filterStatus[0] as PlanStatus | undefined,
     search: filterSearch,
     tags: filterTags,
@@ -199,7 +199,7 @@ export function InboxTableView() {
   }
 
   // ローディング表示
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-2">

@@ -23,7 +23,7 @@ export function useUserSettings() {
   // DBから設定を取得
   const {
     data: dbSettings,
-    isLoading,
+    isPending,
     error,
   } = api.userSettings.get.useQuery(undefined, {
     staleTime: 1000 * 60 * 5, // 5分間キャッシュ
@@ -39,7 +39,7 @@ export function useUserSettings() {
 
   // DBから取得した設定をStoreに反映（初回のみ）
   useEffect(() => {
-    if (dbSettings && !isLoading) {
+    if (dbSettings && !isPending) {
       // chronotype設定の構築
       const chronotypeSettings: {
         enabled: boolean
@@ -75,7 +75,7 @@ export function useUserSettings() {
         planRecordMode: dbSettings.planRecordMode,
       })
     }
-  }, [dbSettings, isLoading]) // storeは依存配列に含めない（無限ループ防止）
+  }, [dbSettings, isPending]) // storeは依存配列に含めない（無限ループ防止）
 
   // 設定をDBに保存する関数
   const saveSettings = useCallback(
@@ -117,7 +117,7 @@ export function useUserSettings() {
   return {
     settings: store,
     saveSettings,
-    isLoading,
+    isPending,
     isSaving: updateMutation.isPending,
     error,
   }

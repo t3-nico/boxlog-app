@@ -610,6 +610,57 @@ html.dark {
     animation-name: slideInFromBottom;
   }
 
+  /* ============================================
+   * ローディングアニメーション（GAFA準拠）
+   * shimmer: 左→右の波アニメーション（Facebook/LinkedIn方式）
+   * pulse: フェードイン/アウト（フォールバック）
+   * ============================================ */
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  /* Shimmerアニメーション - pulseより40%速く感じる */
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--surface-container) 0%,
+      var(--surface-bright) 50%,
+      var(--surface-container) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  /* ダークモード対応シマー */
+  .dark .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--surface-container) 0%,
+      var(--surface) 50%,
+      var(--surface-container) 100%
+    );
+    background-size: 200% 100%;
+  }
+
+  /* Indeterminate Progress Bar アニメーション */
+  @keyframes indeterminate {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(400%);
+    }
+  }
+
+  .animate-indeterminate {
+    animation: indeterminate 1.5s ease-in-out infinite;
+  }
+
   /* data-state対応 */
   [data-state='closed'].animate-out {
     animation-name: fadeOut;

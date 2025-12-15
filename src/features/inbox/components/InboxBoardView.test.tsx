@@ -38,7 +38,7 @@ describe('InboxBoardView', () => {
     vi.spyOn(useInboxDataModule, 'useInboxData').mockReturnValue({
       items: [],
       plans: [],
-      isLoading: false,
+      isPending: false,
       error: null,
     })
   })
@@ -64,7 +64,7 @@ describe('InboxBoardView', () => {
       vi.spyOn(useInboxDataModule, 'useInboxData').mockReturnValue({
         items: [],
         plans: [],
-        isLoading: true,
+        isPending: true,
         error: null,
       })
 
@@ -100,7 +100,7 @@ describe('InboxBoardView', () => {
       vi.spyOn(useInboxDataModule, 'useInboxData').mockReturnValue({
         items: [],
         plans: [],
-        isLoading: false,
+        isPending: false,
         error: mockError as unknown as ReturnType<typeof useInboxDataModule.useInboxData>['error'],
       })
 

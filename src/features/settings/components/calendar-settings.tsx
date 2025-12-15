@@ -15,7 +15,7 @@ import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
 
 export function CalendarSettings() {
-  const { settings, saveSettings, isSaving } = useUserSettings()
+  const { settings, saveSettings, isSaving, isPending } = useUserSettings()
   const t = useTranslations()
 
   // jsx-no-bind optimization: Reset settings handler
@@ -123,6 +123,10 @@ export function CalendarSettings() {
     },
     [saveSettings, settings.businessHours]
   )
+
+  if (isPending) {
+    return <div className="animate-pulse space-y-6">Loading...</div>
+  }
 
   return (
     <div className="space-y-6">

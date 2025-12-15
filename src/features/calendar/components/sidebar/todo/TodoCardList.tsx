@@ -35,7 +35,7 @@ export function TodoCardList({
   showLow: _showLow,
 }: TodoCardListProps) {
   // status: 'todo' のプランのみ取得
-  const { items, isLoading, error } = useInboxData({ status: 'todo' })
+  const { items, isPending, error } = useInboxData({ status: 'todo' })
 
   // フィルタリング・ソート処理
   const filteredAndSortedItems = useMemo(() => {
@@ -88,7 +88,7 @@ export function TodoCardList({
   }, [items, filter, sort])
 
   // ローディング表示
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex flex-col items-center justify-center py-8">
         <div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />

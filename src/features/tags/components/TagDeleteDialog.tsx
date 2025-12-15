@@ -35,7 +35,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
   const [mounted, setMounted] = useState(false)
 
   // TanStack Queryでタグ使用状況を取得
-  const { data: usage, isLoading } = useTagUsage(tag?.id)
+  const { data: usage, isPending } = useTagUsage(tag?.id)
 
   // クライアントサイドでのみマウント
   useEffect(() => {
@@ -122,7 +122,7 @@ export function TagDeleteDialog({ tag, onClose, onConfirm }: TagDeleteDialogProp
           </div>
 
           {/* 使用状況 */}
-          {isLoading ? (
+          {isPending ? (
             <div className="bg-surface-container flex items-center justify-center rounded-xl p-4">
               <div className="border-primary size-5 animate-spin rounded-full border-b-2"></div>
             </div>
