@@ -12,6 +12,7 @@ import { SidebarTabLayout } from '@/features/navigation/components/sidebar/Sideb
 import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
 import { useTranslations } from 'next-intl'
 
+import { CalendarFilterList } from './CalendarFilterList'
 import { TodoCardList } from './todo/TodoCardList'
 import { TodoNavigation, type TodoFilter, type TodoSort } from './todo/TodoNavigation'
 
@@ -110,7 +111,8 @@ export function CalendarSidebar() {
       label: t('calendar.sidebar.tabs.view'),
       icon: CalendarDays,
       content: (
-        <div className="px-2 pt-2">
+        <div className="space-y-2">
+          {/* ミニカレンダー */}
           <MiniCalendar
             selectedDate={navigation?.currentDate}
             displayRange={displayRange}
@@ -119,8 +121,10 @@ export function CalendarSidebar() {
                 navigation.navigateToDate(date, true)
               }
             }}
-            className="w-full bg-transparent p-0"
+            className="w-full bg-transparent"
           />
+          {/* カレンダーフィルター */}
+          <CalendarFilterList />
         </div>
       ),
     },

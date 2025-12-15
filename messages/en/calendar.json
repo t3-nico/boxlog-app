@@ -161,6 +161,13 @@
         "view": "View"
       }
     },
+    "filter": {
+      "myCalendars": "My Calendars",
+      "tags": "Tags",
+      "untagged": "Untagged",
+      "noTags": "No tags available",
+      "comingSoon": "Coming soon"
+    },
     "statusBar": {
       "noSchedule": "No schedule",
       "openSchedule": "Open schedule",

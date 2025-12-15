@@ -125,7 +125,7 @@ export function PlanScheduleSection({
         <div className="flex flex-1 flex-col gap-1">
           {/* 1行目: 日付 */}
           <div className="flex h-8 items-center">
-            <DatePickerPopover selectedDate={selectedDate} onDateChange={onDateChange} />
+            <DatePickerPopover selectedDate={selectedDate} onDateChange={onDateChange} allowClear />
           </div>
 
           {/* 2行目: 時間 */}

@@ -8,6 +8,8 @@ interface DatePickerPopoverProps {
   onDateChange: (date: Date | undefined) => void
   placeholder?: string
   className?: string
+  /** 「日付なし」ボタンを表示するか */
+  allowClear?: boolean
 }
 
 /**
@@ -18,7 +20,12 @@ interface DatePickerPopoverProps {
  * - 日付選択後に自動的に閉じる
  * - 月/年のドロップダウン選択対応
  */
-export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '日付を選択' }: DatePickerPopoverProps) {
+export function DatePickerPopover({
+  selectedDate,
+  onDateChange,
+  placeholder = '日付を選択',
+  allowClear = false,
+}: DatePickerPopoverProps) {
   const { formatDate } = useDateFormat()
 
   return (
@@ -36,6 +43,7 @@ export function DatePickerPopover({ selectedDate, onDateChange, placeholder = '�
       selectedDate={selectedDate}
       onDateSelect={onDateChange}
       popoverAlign="start"
+      allowClear={allowClear}
     />
   )
 }

@@ -161,6 +161,13 @@
         "view": "View"
       }
     },
+    "filter": {
+      "myCalendars": "マイカレンダー",
+      "tags": "タグ",
+      "untagged": "タグなし",
+      "noTags": "タグがありません",
+      "comingSoon": "近日公開予定"
+    },
     "statusBar": {
       "noSchedule": "予定なし",
       "openSchedule": "予定を開く",
