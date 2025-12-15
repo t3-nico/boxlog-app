@@ -40,32 +40,3 @@ export function getReminderTranslationKey(minutes: number | null | undefined): s
   return REMINDER_TRANSLATION_KEYS[minutes as keyof typeof REMINDER_TRANSLATION_KEYS] ?? 'reminder.custom'
 }
 
-// ===== 後方互換性のためのレガシーAPI（非推奨） =====
-// TODO: 以下のAPIはi18n移行完了後に削除予定
-
-/** @deprecated Use REMINDER_OPTIONS with translations instead */
-export const REMINDER_MINUTES_TO_LABEL: Record<number, string> = {
-  [REMINDER_MINUTES.AT_START]: '開始時刻',
-  [REMINDER_MINUTES.MIN_10]: '10分前',
-  [REMINDER_MINUTES.MIN_30]: '30分前',
-  [REMINDER_MINUTES.HOUR_1]: '1時間前',
-  [REMINDER_MINUTES.DAY_1]: '1日前',
-  [REMINDER_MINUTES.WEEK_1]: '1週間前',
-}
-
-/** @deprecated Use REMINDER_OPTIONS with translations instead */
-export const REMINDER_LABEL_TO_MINUTES: Record<string, number | null> = {
-  '': null,
-  開始時刻: REMINDER_MINUTES.AT_START,
-  '10分前': REMINDER_MINUTES.MIN_10,
-  '30分前': REMINDER_MINUTES.MIN_30,
-  '1時間前': REMINDER_MINUTES.HOUR_1,
-  '1日前': REMINDER_MINUTES.DAY_1,
-  '1週間前': REMINDER_MINUTES.WEEK_1,
-}
-
-/** @deprecated Use getReminderTranslationKey with translations instead */
-export function getReminderLabel(minutes: number | null | undefined): string {
-  if (minutes === null || minutes === undefined) return ''
-  return REMINDER_MINUTES_TO_LABEL[minutes] ?? 'カスタム'
-}
