@@ -4,7 +4,7 @@ import type { BasePlanPosition, BaseViewProps, CalendarPlan, DateTimeSelection }
 
 // WeekViewの固有Props（BaseViewPropsを継承して95%削減）
 export interface WeekViewProps extends BaseViewProps {
-  weekStartsOn?: 0 | 1 // 0: 日曜始まり, 1: 月曜始まり
+  weekStartsOn?: 0 | 1 | 6 // 0: 日曜始まり, 1: 月曜始まり, 6: 土曜始まり
 }
 
 // WeekGridコンポーネントのProps
@@ -28,7 +28,7 @@ export interface WeekGridProps {
 export interface UseWeekViewOptions {
   startDate: Date
   events: CalendarPlan[]
-  weekStartsOn?: 0 | 1
+  weekStartsOn?: 0 | 1 | 6
   onEventUpdate?: (plan: CalendarPlan) => void
 }
 
@@ -86,7 +86,7 @@ export interface WeekViewSettings {
   eventMinHeight: number
   dayColumnWidth: number // 各日の列幅（%）
   showWeekends: boolean
-  weekStartsOn: 0 | 1
+  weekStartsOn: 0 | 1 | 6
 }
 
 // 日付ヘッダーの情報

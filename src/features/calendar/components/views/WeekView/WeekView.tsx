@@ -39,7 +39,7 @@ export const WeekView = ({
   dateRange,
   plans,
   showWeekends = true,
-  weekStartsOn = 1, // 0: 日曜始まり, 1: 月曜始まり
+  weekStartsOn: weekStartsOnProp,
   className,
   disabledPlanId,
   onPlanClick,
@@ -48,7 +48,9 @@ export const WeekView = ({
   onEmptyClick,
   onTimeRangeSelect,
 }: WeekViewProps) => {
-  const { timezone } = useCalendarSettingsStore()
+  const { timezone, weekStartsOn: weekStartsOnSetting } = useCalendarSettingsStore()
+  // 設定ストアの値を優先、プロップでオーバーライド可能
+  const weekStartsOn = weekStartsOnProp ?? weekStartsOnSetting
 
   // 週の開始日を計算（通常は dateRange.start を使用）
   const weekStartDate = useMemo(() => {

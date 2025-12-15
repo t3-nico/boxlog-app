@@ -447,6 +447,7 @@ export type Database = {
           timezone: string
           show_utc_offset: boolean
           time_format: string
+          date_format: string
           week_starts_on: number
           show_weekends: boolean
           show_week_numbers: boolean
@@ -472,6 +473,7 @@ export type Database = {
           timezone?: string
           show_utc_offset?: boolean
           time_format?: string
+          date_format?: string
           week_starts_on?: number
           show_weekends?: boolean
           show_week_numbers?: boolean
@@ -497,6 +499,7 @@ export type Database = {
           timezone?: string
           show_utc_offset?: boolean
           time_format?: string
+          date_format?: string
           week_starts_on?: number
           show_weekends?: boolean
           show_week_numbers?: boolean

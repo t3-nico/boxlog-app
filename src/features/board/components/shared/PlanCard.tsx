@@ -24,10 +24,10 @@ import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorS
 import { toLocalISOString } from '@/features/plans/utils/datetime'
 import { minutesToReminderType, reminderTypeToMinutes } from '@/features/plans/utils/reminder'
 import { getEffectiveStatus } from '@/features/plans/utils/status'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { cn } from '@/lib/utils'
 import { useDraggable } from '@dnd-kit/core'
 import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { Bell, Calendar as CalendarIcon, CheckCircle2, Circle, Plus, Tag, Trash2 } from 'lucide-react'
 
 import { useBoardFocusStore } from '../../stores/useBoardFocusStore'
@@ -56,6 +56,7 @@ export function PlanCard({ item }: PlanCardProps) {
   const { addplanTag, removeplanTag } = useplanTags()
   const { updatePlan } = usePlanMutations()
   const { getCache } = useplanCacheStore()
+  const { formatDate: formatDateWithSettings } = useDateFormat()
   const isActive = planId === item.id
   const isFocused = focusedId === item.id
 
@@ -150,7 +151,7 @@ export function PlanCard({ item }: PlanCardProps) {
   const getDisplayContent = () => {
     if (!item.due_date && !item.start_time && !item.end_time) return null
 
-    const dateStr = item.due_date ? format(parseDateString(item.due_date), 'yyyy/MM/dd', { locale: ja }) : ''
+    const dateStr = item.due_date ? formatDateWithSettings(parseDateString(item.due_date)) : ''
     let timeStr = ''
 
     if (item.start_time && item.end_time) {

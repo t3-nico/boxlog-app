@@ -7,6 +7,9 @@ import { listenToTimezoneChange } from '../utils/timezone'
 
 export type CalendarViewType = 'day' | '3day' | '5day' | 'week'
 
+// 日付フォーマット型
+export type DateFormatType = 'yyyy/MM/dd' | 'MM/dd/yyyy' | 'dd/MM/yyyy' | 'yyyy-MM-dd'
+
 interface CalendarSettings {
   // タイムゾーン設定
   timezone: string // 例: 'Asia/Tokyo', 'America/New_York'
@@ -14,6 +17,9 @@ interface CalendarSettings {
 
   // 時間表示形式
   timeFormat: '24h' | '12h'
+
+  // 日付表示形式
+  dateFormat: DateFormatType // yyyy/MM/dd（日本）, MM/dd/yyyy（米国）, dd/MM/yyyy（欧州）, yyyy-MM-dd（ISO）
 
   // デフォルトビュー設定
   defaultView: CalendarViewType // 起動時のデフォルトビュー
@@ -54,6 +60,7 @@ const defaultSettings: CalendarSettings = {
   timezone: 'Asia/Tokyo', // デフォルトはJST、useEffectで実際の値に更新
   showUTCOffset: true,
   timeFormat: '24h',
+  dateFormat: 'yyyy/MM/dd', // デフォルトは日本式
   defaultView: 'week', // デフォルトは週表示
   weekStartsOn: 1, // 月曜始まり
   defaultDuration: 60,

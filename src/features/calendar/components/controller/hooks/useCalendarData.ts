@@ -4,6 +4,7 @@ import { useEffect, useMemo } from 'react'
 
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import type { Plan } from '@/features/plans/types/plan'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { logger } from '@/lib/logger'
 
 import { calculateViewDateRange } from '../../../lib/view-helpers'
@@ -33,6 +34,9 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
   // plansを取得（リアルタイム性最優化済み）
   const { data: plansData } = usePlans()
 
+  // 週の開始日設定を取得
+  const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn)
+
   // デバッグ: plansDataの更新を検知
   useEffect(() => {
     console.log('[useCalendarData] plansData 更新検知:', {
@@ -47,10 +51,10 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
     })
   }, [plansData])
 
-  // ビューに応じた期間計算
+  // ビューに応じた期間計算（週の開始日設定を反映）
   const viewDateRange = useMemo(() => {
-    return calculateViewDateRange(viewType, currentDate)
-  }, [viewType, currentDate])
+    return calculateViewDateRange(viewType, currentDate, weekStartsOn)
+  }, [viewType, currentDate, weekStartsOn])
 
   // 表示範囲のイベントを取得してCalendarPlan型に変換（削除済みを除外）
   const filteredEvents = useMemo(() => {

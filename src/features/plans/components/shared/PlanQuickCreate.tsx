@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { Bell, Calendar as CalendarIcon, Plus, Repeat, Tag } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import type { PlanStatus } from '@/schemas/plans/plan'
 import { usePlanMutations } from '../../hooks/usePlanMutations'
 import { useplanTags } from '../../hooks/usePlanTags'
@@ -53,6 +53,7 @@ interface PlanQuickCreateProps {
 export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCreate }: PlanQuickCreateProps) {
   const { createPlan } = usePlanMutations()
   const { addplanTag } = useplanTags()
+  const { formatDate: formatDateWithSettings } = useDateFormat()
   const [title, setTitle] = useState('')
   const [selectedDate, setSelectedDate] = useState<Date>()
   const [startTime, setStartTime] = useState('')
@@ -178,7 +179,7 @@ export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCre
               >
                 {selectedDate || startTime || endTime ? (
                   <span>
-                    {selectedDate ? format(selectedDate, 'yyyy/MM/dd', { locale: ja }) : ''}
+                    {selectedDate ? formatDateWithSettings(selectedDate) : ''}
                     {startTime && endTime && ` ${startTime} → ${endTime}`}
                     {startTime && !endTime && ` ${startTime}`}
                   </span>

@@ -12,6 +12,7 @@ import { RecurringIndicator } from '@/features/plans/components/shared/Recurring
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { reminderTypeToMinutes } from '@/features/plans/utils/reminder'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { cn } from '@/lib/utils'
 import {
   DndContext,
@@ -24,7 +25,6 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { Bell, Calendar as CalendarIcon, MoreVertical, Plus, Tag } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
@@ -44,6 +44,7 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const { updatePlan } = usePlanMutations()
   const { isStatusVisible } = useBoardStatusFilterStore()
+  const { formatDate: formatDateWithSettings } = useDateFormat()
 
   // Planデータをカラムごとに分類（3段階ステータス: todo/doing/done）
   const columns = {
@@ -143,9 +144,7 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
             {/* 2. 日付・時間 */}
             {(activeItem.due_date || activeItem.start_time || activeItem.end_time) && (
               <div className="text-foreground mt-2 flex w-fit items-center gap-1 text-sm">
-                {activeItem.due_date && (
-                  <span>{format(new Date(activeItem.due_date), 'yyyy/MM/dd', { locale: ja })}</span>
-                )}
+                {activeItem.due_date && <span>{formatDateWithSettings(new Date(activeItem.due_date))}</span>}
                 {activeItem.start_time && activeItem.end_time && (
                   <span>
                     {' '}
@@ -215,6 +214,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
   const { createPlan } = usePlanMutations()
   const formRef = useRef<HTMLDivElement>(null)
   const t = useTranslations()
+  const { formatDate: formatDateWithSettings } = useDateFormat()
 
   // 作成キャンセル
   const handleCancel = () => {
@@ -378,7 +378,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
                 >
                   {selectedDate || startTime || endTime ? (
                     <span>
-                      {selectedDate ? format(selectedDate, 'yyyy/MM/dd', { locale: ja }) : ''}
+                      {selectedDate ? formatDateWithSettings(selectedDate) : ''}
                       {startTime && endTime && ` ${startTime} → ${endTime}`}
                       {startTime && !endTime && ` ${startTime}`}
                     </span>

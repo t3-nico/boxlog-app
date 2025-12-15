@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch'
 
 import { useUserSettings } from '@/features/settings/hooks/useUserSettings'
+import type { DateFormatType } from '@/features/settings/stores/useCalendarSettingsStore'
 import { formatHour } from '@/features/settings/utils/timezone-utils'
 import { useTranslations } from 'next-intl'
 
@@ -24,6 +25,7 @@ export function CalendarSettings() {
       saveSettings({
         timezone: 'Asia/Tokyo',
         timeFormat: '24h',
+        dateFormat: 'yyyy/MM/dd',
         weekStartsOn: 1,
         showWeekNumbers: false,
         showDeclinedEvents: false,
@@ -45,6 +47,13 @@ export function CalendarSettings() {
   const handleTimeFormatChange = useCallback(
     (value: string) => {
       saveSettings({ timeFormat: value as '12h' | '24h' })
+    },
+    [saveSettings]
+  )
+
+  const handleDateFormatChange = useCallback(
+    (value: string) => {
+      saveSettings({ dateFormat: value as DateFormatType })
     },
     [saveSettings]
   )
@@ -142,6 +151,20 @@ export function CalendarSettings() {
               <SelectContent>
                 <SelectItem value="24h">{t('settings.calendar.timeFormat24h')}</SelectItem>
                 <SelectItem value="12h">{t('settings.calendar.timeFormat12h')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </SettingField>
+
+          <SettingField label={t('settings.calendar.dateFormat')}>
+            <Select value={settings.dateFormat} onValueChange={handleDateFormatChange}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('settings.calendar.selectDateFormat')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="yyyy/MM/dd">{t('settings.calendar.dateFormatJapan')}</SelectItem>
+                <SelectItem value="MM/dd/yyyy">{t('settings.calendar.dateFormatUS')}</SelectItem>
+                <SelectItem value="dd/MM/yyyy">{t('settings.calendar.dateFormatEU')}</SelectItem>
+                <SelectItem value="yyyy-MM-dd">{t('settings.calendar.dateFormatISO')}</SelectItem>
               </SelectContent>
             </Select>
           </SettingField>

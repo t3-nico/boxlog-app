@@ -10,7 +10,7 @@ import { addDays, startOfWeek, subDays } from 'date-fns'
 export interface UseDateUtilitiesOptions {
   referenceDate: Date
   viewType: 'week' | 'threeday' | 'fiveday' | 'agenda'
-  weekStartsOn?: 0 | 1
+  weekStartsOn?: 0 | 1 | 6
   showWeekends?: boolean
   agendaDays?: number // AgendaView用の表示日数
 }
