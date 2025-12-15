@@ -18,12 +18,12 @@ interface UseCalendarHandlersOptions {
 export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandlersOptions) {
   const openInspector = usePlanInspectorStore((state) => state.openInspector)
   const inspectorPlanId = usePlanInspectorStore((state) => state.planId)
-  const isInspectorOpen = usePlanInspectorStore((state) => state.isOpen)
+  const inspectorIsOpen = usePlanInspectorStore((state) => state.isOpen)
   const { createPlan } = usePlanMutations()
 
   // Inspector で開いているプランIDをDnD無効化用に計算
   // Inspector が開いている場合のみ planId を返す
-  const disabledPlanId = isInspectorOpen ? inspectorPlanId : null
+  const disabledPlanId = inspectorIsOpen ? inspectorPlanId : null
 
   // プラン関連のハンドラー
   const handlePlanClick = useCallback(
@@ -104,7 +104,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
     [viewType, currentDate, createPlan, openInspector]
   )
 
-  // 空き時間クリック用のハンドラー
+  // 空き時間クリック用のハンドラー（ダブルクリックで使用）
   const handleEmptyClick = useCallback(
     (date: Date, time: string) => {
       logger.log('🖱️ Empty time clicked:', { date, time })
@@ -113,7 +113,7 @@ export function useCalendarHandlers({ viewType, currentDate }: UseCalendarHandle
     [handleCreatePlan]
   )
 
-  // 統一された時間範囲選択ハンドラー（全ビュー共通）
+  // 統一された時間範囲選択ハンドラー（全ビュー共通、ドラッグまたはダブルクリックで呼ばれる）
   const handleDateTimeRangeSelect = useCallback(
     (selection: { date: Date; startHour: number; startMinute: number; endHour: number; endMinute: number }) => {
       // 指定された日付に時間を設定

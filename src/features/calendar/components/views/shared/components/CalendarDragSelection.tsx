@@ -27,7 +27,7 @@ interface CalendarDragSelectionProps {
   date: Date // 必須：この列が担当する日付
   className?: string | undefined
   onTimeRangeSelect?: ((selection: DateTimeSelection) => void) | undefined
-  onSingleClick?: ((selection: DateTimeSelection) => void) | undefined // シングルクリック専用ハンドラー（オプション、未指定時はonTimeRangeSelectが呼ばれる）
+  onDoubleClick?: ((selection: DateTimeSelection) => void) | undefined // ダブルクリック専用ハンドラー（オプション、未指定時はonTimeRangeSelectが呼ばれる）
   children?: React.ReactNode | undefined
   disabled?: boolean | undefined // ドラッグ選択を無効にする
 }
@@ -36,14 +36,14 @@ interface CalendarDragSelectionProps {
  * 日付を知るドラッグ選択レイヤー
  * - 各カレンダー列が担当する日付を明確に持つ
  * - 全ビュー共通のドラッグ選択動作を提供
- * - ドラッグ操作で時間範囲選択、シングルクリックで15分プラン作成
+ * - ドラッグ操作で時間範囲選択、ダブルクリックでプラン作成
  * - 統一されたDateTimeSelectionを出力
  */
 export const CalendarDragSelection = ({
   date,
   className,
   onTimeRangeSelect,
-  onSingleClick,
+  onDoubleClick,
   children,
   disabled = false,
 }: CalendarDragSelectionProps) => {
@@ -97,6 +97,46 @@ export const CalendarDragSelection = ({
 
     return { hour: Math.max(0, hour), minute: Math.max(0, minute) }
   }, [])
+
+  // ダブルクリックで予定作成
+  const handleDoubleClick = useCallback(
+    (e: React.MouseEvent) => {
+      // 無効化されている場合は何もしない
+      if (disabled) return
+
+      // イベントブロック上のダブルクリックは無視
+      const target = e.target as HTMLElement
+      const eventBlock = target.closest('[data-event-block]') || target.closest('[data-plan-block]')
+      if (eventBlock) return
+
+      const rect = e.currentTarget.getBoundingClientRect()
+      const y = e.clientY - rect.top
+      const clickTime = pixelsToTime(y)
+
+      // ダブルクリック位置からdefaultDuration分のプランを作成
+      const doubleClickHandler = onDoubleClick || onTimeRangeSelect
+      if (doubleClickHandler) {
+        const startTotalMinutes = clickTime.hour * 60 + clickTime.minute
+        const endTotalMinutes = Math.min(startTotalMinutes + defaultDuration, 24 * 60 - 1)
+        const endHour = Math.floor(endTotalMinutes / 60)
+        const endMinute = endTotalMinutes % 60
+
+        const dateTimeSelection: DateTimeSelection = {
+          date,
+          startHour: clickTime.hour,
+          startMinute: clickTime.minute,
+          endHour,
+          endMinute,
+        }
+
+        doubleClickHandler(dateTimeSelection)
+      }
+
+      e.preventDefault()
+      e.stopPropagation()
+    },
+    [pixelsToTime, disabled, onDoubleClick, onTimeRangeSelect, date, defaultDuration]
+  )
 
   // マウスダウン開始
   const handleMouseDown = useCallback(
@@ -243,27 +283,8 @@ export const CalendarDragSelection = ({
           }
 
           onTimeRangeSelect(dateTimeSelection)
-        } else if (!isDragging.current) {
-          // シングルクリック（5px未満の移動）：クリック位置からdefaultDuration分のプランを作成
-          const singleClickHandler = onSingleClick || onTimeRangeSelect
-          if (singleClickHandler) {
-            // 開始時間（分）から終了時間を計算
-            const startTotalMinutes = selectionStart.hour * 60 + selectionStart.minute
-            const endTotalMinutes = Math.min(startTotalMinutes + defaultDuration, 24 * 60 - 1) // 24:00を超えないように
-            const endHour = Math.floor(endTotalMinutes / 60)
-            const endMinute = endTotalMinutes % 60
-
-            const dateTimeSelection: DateTimeSelection = {
-              date,
-              startHour: selectionStart.hour,
-              startMinute: selectionStart.minute,
-              endHour,
-              endMinute,
-            }
-
-            singleClickHandler(dateTimeSelection)
-          }
         }
+        // シングルクリックでは何もしない（ダブルクリックで作成）
       }
 
       clearSelectionState()
@@ -285,17 +306,7 @@ export const CalendarDragSelection = ({
       document.removeEventListener('mouseup', handleGlobalMouseUp)
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [
-    isSelecting,
-    selectionStart,
-    selection,
-    pixelsToTime,
-    onTimeRangeSelect,
-    onSingleClick,
-    date,
-    disabled,
-    formatTime,
-  ])
+  }, [isSelecting, selectionStart, selection, pixelsToTime, onTimeRangeSelect, date, disabled, formatTime])
 
   // モーダルキャンセル時のカスタムイベントリスナー
   useEffect(() => {
@@ -348,6 +359,7 @@ export const CalendarDragSelection = ({
       tabIndex={0}
       aria-label="Calendar drag selection area"
       onMouseDown={handleMouseDown}
+      onDoubleClick={handleDoubleClick}
       onClick={(e) => {
         // クリックイベントの伝播を停止して、ScrollableCalendarLayoutのonClickが呼ばれないようにする
         e.stopPropagation()
