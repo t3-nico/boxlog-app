@@ -16,7 +16,7 @@ import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
 
 export function CalendarSettings() {
-  const { settings, saveSettings, isSaving, isLoading } = useUserSettings()
+  const { settings, saveSettings, isSaving, isPending } = useUserSettings()
   const t = useTranslations()
 
   const formatTimeWithSettings = (date: Date, timeFormat: '12h' | '24h') => {
@@ -115,7 +115,7 @@ export function CalendarSettings() {
     [saveSettings, settings.businessHours]
   )
 
-  if (isLoading) {
+  if (isPending) {
     return <div className="animate-pulse space-y-6">Loading...</div>
   }
 

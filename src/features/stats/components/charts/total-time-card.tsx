@@ -17,9 +17,9 @@ function formatHours(hours: number): string {
 }
 
 export function TotalTimeCard() {
-  const { data, isLoading } = api.plans.getTotalTime.useQuery()
+  const { data, isPending } = api.plans.getTotalTime.useQuery()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Card className="bg-background">
         <CardHeader className="pb-2">

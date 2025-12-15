@@ -48,7 +48,7 @@ export const TagFilter = ({
   className = '',
 }: TagFilterProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  const { data: allTags = [], isLoading } = useTags(true)
+  const { data: allTags = [], isPending } = useTags(true)
   const t = useTranslations()
   // Use a simple local state for tag filtering for now
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
@@ -156,7 +156,7 @@ export const TagFilter = ({
 
             {/* タグリスト */}
             <div className="max-h-80 overflow-y-auto">
-              {isLoading ? (
+              {isPending ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="border-primary h-6 w-6 animate-spin rounded-full border-b-2"></div>
                 </div>
@@ -229,7 +229,7 @@ export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
  * 横並びタグフィルター（チップ形式）
  */
 export const TagFilterChips = ({ className = '' }: { className?: string }) => {
-  const { data: allTags = [], isLoading } = useTags(true)
+  const { data: allTags = [], isPending } = useTags(true)
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const toggleTag = (tagId: string) => {
     setSelectedTagIds((prev) => (prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]))
@@ -238,7 +238,7 @@ export const TagFilterChips = ({ className = '' }: { className?: string }) => {
   // 使用頻度が高いタグを表示（最大10個）
   const popularTags = allTags.slice(0, 10)
 
-  if (isLoading || popularTags.length === 0) {
+  if (isPending || popularTags.length === 0) {
     return null
   }
 

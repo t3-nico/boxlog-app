@@ -28,7 +28,7 @@ export function YearlyHeatmap() {
   const currentYear = new Date().getFullYear()
   const [year, setYear] = useState(currentYear)
 
-  const { data, isLoading } = api.plans.getDailyHours.useQuery({ year })
+  const { data, isPending } = api.plans.getDailyHours.useQuery({ year })
 
   const startDate = new Date(year, 0, 1)
   const endDate = new Date(year, 11, 31)
@@ -39,7 +39,7 @@ export function YearlyHeatmap() {
   // 合計時間を計算
   const totalHours = values.reduce((sum, v) => sum + v.hours, 0)
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Card className="bg-background">
         <CardHeader>

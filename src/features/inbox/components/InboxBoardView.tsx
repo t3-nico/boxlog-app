@@ -21,7 +21,7 @@ import { InboxBoardToolbar } from './board/InboxBoardToolbar'
  */
 export function InboxBoardView() {
   const filters = useInboxFilterStore()
-  const { items, isLoading, error } = useInboxData({
+  const { items, isPending, error } = useInboxData({
     status: filters.status[0] as PlanStatus | undefined,
     search: filters.search,
     tags: filters.tags,
@@ -49,7 +49,7 @@ export function InboxBoardView() {
 
       {/* Kanbanボード: 残りのスペース */}
       <div className="min-h-0 flex-1 overflow-hidden">
-        {isLoading ? (
+        {isPending ? (
           <div className="flex h-full items-center justify-center">
             <div className="flex flex-col items-center gap-2">
               <div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />
