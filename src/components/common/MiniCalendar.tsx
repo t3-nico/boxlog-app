@@ -44,6 +44,8 @@ export interface MiniCalendarProps {
   popoverAlign?: 'start' | 'center' | 'end' | undefined
   popoverSide?: 'top' | 'right' | 'bottom' | 'left' | undefined
   onOpenChange?: ((open: boolean) => void) | undefined
+  /** 「日付なし」ボタンを表示するか */
+  allowClear?: boolean | undefined
 }
 
 // 週の開始日に応じた曜日配列を取得する関数
@@ -89,6 +91,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     popoverAlign = 'start',
     popoverSide = 'bottom',
     onOpenChange,
+    allowClear = false,
   }) => {
     const locale = useLocale()
     const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn)
@@ -193,6 +196,13 @@ export const MiniCalendar = memo<MiniCalendarProps>(
       [onOpenChange]
     )
 
+    const handleClearDate = useCallback(() => {
+      onDateSelect?.(undefined)
+      if (asPopover) {
+        setOpen(false)
+      }
+    }, [onDateSelect, asPopover])
+
     // 日付の状態を判定
     const getDayState = useCallback(
       (date: Date) => {
@@ -223,7 +233,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     }
 
     const renderCalendar = () => (
-      <div className={cn('p-3 select-none', className)}>
+      <div className={cn('p-2 select-none', className)}>
         {/* ヘッダー: ナビゲーション + 月・年選択 */}
         <div className="mb-2 flex items-center justify-between">
           {/* 前月ボタン */}
@@ -333,6 +343,22 @@ export const MiniCalendar = memo<MiniCalendarProps>(
             </div>
           ))}
         </div>
+
+        {/* 日付なしボタン（全幅ボーダー用に外側） */}
+        {allowClear && (
+          <div className="border-border/50 border-t">
+            <div className="px-3 py-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground h-8 w-full text-sm"
+                onClick={handleClearDate}
+              >
+                {locale === 'ja' ? '日付なし' : 'No date'}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     )
 
@@ -340,11 +366,9 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     if (asPopover) {
       return (
         <Popover open={open} onOpenChange={handleOpenChange} modal={false}>
-          <PopoverTrigger asChild className="hover:bg-state-hover transition-colors">
-            {popoverTrigger}
-          </PopoverTrigger>
+          <PopoverTrigger asChild>{popoverTrigger}</PopoverTrigger>
           <PopoverContent
-            className={cn('bg-popover dark:border-input w-auto border p-0', popoverClassName)}
+            className={cn('bg-popover border-border z-[350] w-auto border p-0', popoverClassName)}
             align={popoverAlign}
             side={popoverSide}
           >

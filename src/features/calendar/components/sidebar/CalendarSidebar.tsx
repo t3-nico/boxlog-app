@@ -12,6 +12,7 @@ import { SidebarTabLayout } from '@/features/navigation/components/sidebar/Sideb
 import type { SidebarTab } from '@/features/navigation/components/sidebar/types'
 import { useTranslations } from 'next-intl'
 
+import { CalendarFilterList } from './CalendarFilterList'
 import { TodoCardList } from './todo/TodoCardList'
 import { TodoNavigation, type TodoFilter, type TodoSort } from './todo/TodoNavigation'
 
@@ -31,9 +32,6 @@ export function CalendarSidebar() {
 
   const [filter, setFilter] = useState<TodoFilter>('all')
   const [sort, setSort] = useState<TodoSort>('due')
-  const [showHigh, setShowHigh] = useState(true)
-  const [showMedium, setShowMedium] = useState(true)
-  const [showLow, setShowLow] = useState(true)
 
   // ビュータイプに応じた表示範囲を計算
   const displayRange = useMemo(() => {
@@ -70,13 +68,7 @@ export function CalendarSidebar() {
       default:
         return undefined
     }
-  }, [navigation?.currentDate, navigation?.viewType])
-
-  const handlePriorityToggle = (priority: 'high' | 'medium' | 'low') => {
-    if (priority === 'high') setShowHigh(!showHigh)
-    if (priority === 'medium') setShowMedium(!showMedium)
-    if (priority === 'low') setShowLow(!showLow)
-  }
+  }, [navigation])
 
   const tabs: SidebarTab[] = [
     {
@@ -85,22 +77,13 @@ export function CalendarSidebar() {
       icon: ListTodo,
       content: (
         <div>
-          {/* ナビゲーションコンテナ: 高さ40px（内部32px + 下padding 8px） */}
-          <div className="h-10 shrink-0 px-4 pb-2">
-            <TodoNavigation
-              filter={filter}
-              onFilterChange={setFilter}
-              sort={sort}
-              onSortChange={setSort}
-              showHigh={showHigh}
-              showMedium={showMedium}
-              showLow={showLow}
-              onPriorityToggle={handlePriorityToggle}
-            />
+          {/* ナビゲーションコンテナ: 上padding 8pxのみ */}
+          <div className="shrink-0 px-4 pt-2">
+            <TodoNavigation filter={filter} onFilterChange={setFilter} sort={sort} onSortChange={setSort} />
           </div>
-          {/* カードリストコンテナ */}
-          <div className="flex-1 overflow-hidden px-4">
-            <TodoCardList filter={filter} sort={sort} showHigh={showHigh} showMedium={showMedium} showLow={showLow} />
+          {/* カードリストコンテナ - パディングはTodoCardList内で管理 */}
+          <div className="flex-1 overflow-hidden">
+            <TodoCardList filter={filter} sort={sort} />
           </div>
         </div>
       ),
@@ -110,7 +93,8 @@ export function CalendarSidebar() {
       label: t('calendar.sidebar.tabs.view'),
       icon: CalendarDays,
       content: (
-        <div className="px-2 pt-2">
+        <div>
+          {/* ミニカレンダー */}
           <MiniCalendar
             selectedDate={navigation?.currentDate}
             displayRange={displayRange}
@@ -119,8 +103,10 @@ export function CalendarSidebar() {
                 navigation.navigateToDate(date, true)
               }
             }}
-            className="w-full bg-transparent p-0"
+            className="w-full bg-transparent"
           />
+          {/* カレンダーフィルター */}
+          <CalendarFilterList />
         </div>
       ),
     },
