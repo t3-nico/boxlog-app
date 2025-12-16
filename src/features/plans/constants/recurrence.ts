@@ -31,4 +31,3 @@ export function getRecurrenceTranslationKey(type: string | null | undefined): st
   if (!type || type === 'none') return 'recurrence.none'
   return RECURRENCE_TRANSLATION_KEYS[type as RecurrenceType] ?? 'recurrence.none'
 }
-

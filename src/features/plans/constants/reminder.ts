@@ -39,4 +39,3 @@ export function getReminderTranslationKey(minutes: number | null | undefined): s
   if (minutes === null || minutes === undefined) return ''
   return REMINDER_TRANSLATION_KEYS[minutes as keyof typeof REMINDER_TRANSLATION_KEYS] ?? 'reminder.custom'
 }
-

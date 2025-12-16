@@ -226,4 +226,3 @@ export function handleApiError(error: Error, context?: Record<string, unknown>):
 export function isSentryInitialized(): boolean {
   return !!Sentry.getClient()
 }
-

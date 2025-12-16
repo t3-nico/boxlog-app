@@ -98,10 +98,12 @@ export function ConflictResolutionModal({ isOpen, conflict, onResolve, onCancel 
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <AlertTriangleIcon className="size-5 text-warning" />
+            <AlertTriangleIcon className="text-warning size-5" />
             {t('offline.conflict.title')}
           </DialogTitle>
-          <DialogDescription>{t('offline.conflict.description', { entity: getEntityLabel(conflict.entity) })}</DialogDescription>
+          <DialogDescription>
+            {t('offline.conflict.description', { entity: getEntityLabel(conflict.entity) })}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -111,24 +113,24 @@ export function ConflictResolutionModal({ isOpen, conflict, onResolve, onCancel 
             className={cn(
               'w-full rounded-lg border p-4 text-left transition-colors',
               selectedChoice === 'local'
-                ? 'border-primary bg-primary/5 ring-2 ring-primary'
+                ? 'border-primary bg-primary/5 ring-primary ring-2'
                 : 'border-border hover:border-primary/50 hover:bg-muted/50'
             )}
             onClick={() => setSelectedChoice('local')}
           >
             <div className="flex items-start gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
-                <SmartphoneIcon className="size-5 text-muted-foreground" />
+              <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-full">
+                <SmartphoneIcon className="text-muted-foreground size-5" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{t('offline.conflict.localVersion')}</span>
-                  {selectedChoice === 'local' && <CheckIcon className="size-4 text-primary" />}
+                  {selectedChoice === 'local' && <CheckIcon className="text-primary size-4" />}
                 </div>
-                <p className="mt-1 text-sm text-muted-foreground">{t('offline.conflict.localDescription')}</p>
-                <div className="mt-2 rounded bg-muted/50 p-2">
-                  <p className="truncate text-sm font-mono">{formatData(conflict.localData)}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{formatTimestamp(conflict.localTimestamp)}</p>
+                <p className="text-muted-foreground mt-1 text-sm">{t('offline.conflict.localDescription')}</p>
+                <div className="bg-muted/50 mt-2 rounded p-2">
+                  <p className="truncate font-mono text-sm">{formatData(conflict.localData)}</p>
+                  <p className="text-muted-foreground mt-1 text-xs">{formatTimestamp(conflict.localTimestamp)}</p>
                 </div>
               </div>
             </div>
@@ -140,24 +142,24 @@ export function ConflictResolutionModal({ isOpen, conflict, onResolve, onCancel 
             className={cn(
               'w-full rounded-lg border p-4 text-left transition-colors',
               selectedChoice === 'server'
-                ? 'border-primary bg-primary/5 ring-2 ring-primary'
+                ? 'border-primary bg-primary/5 ring-primary ring-2'
                 : 'border-border hover:border-primary/50 hover:bg-muted/50'
             )}
             onClick={() => setSelectedChoice('server')}
           >
             <div className="flex items-start gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
-                <CloudIcon className="size-5 text-muted-foreground" />
+              <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-full">
+                <CloudIcon className="text-muted-foreground size-5" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{t('offline.conflict.serverVersion')}</span>
-                  {selectedChoice === 'server' && <CheckIcon className="size-4 text-primary" />}
+                  {selectedChoice === 'server' && <CheckIcon className="text-primary size-4" />}
                 </div>
-                <p className="mt-1 text-sm text-muted-foreground">{t('offline.conflict.serverDescription')}</p>
-                <div className="mt-2 rounded bg-muted/50 p-2">
-                  <p className="truncate text-sm font-mono">{formatData(conflict.serverData)}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{formatTimestamp(conflict.serverTimestamp)}</p>
+                <p className="text-muted-foreground mt-1 text-sm">{t('offline.conflict.serverDescription')}</p>
+                <div className="bg-muted/50 mt-2 rounded p-2">
+                  <p className="truncate font-mono text-sm">{formatData(conflict.serverData)}</p>
+                  <p className="text-muted-foreground mt-1 text-xs">{formatTimestamp(conflict.serverTimestamp)}</p>
                 </div>
               </div>
             </div>
