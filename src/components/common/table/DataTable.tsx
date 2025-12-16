@@ -314,12 +314,12 @@ export function DataTable<T>({
       const key = getRowKey(item)
       const isSelected = selectedIds.has(key)
 
-      const rowContent = (
-        <TableRow key={key} className={isSelected ? 'bg-primary/12 hover:bg-primary/16' : ''}>
+      // セル内容を生成
+      const cellContents = (
+        <>
           {selectable && (
-            <td
+            <TableCell
               style={{ width: '48px', minWidth: '48px', maxWidth: '48px' }}
-              className="p-4"
               onClick={(e) => e.stopPropagation()}
             >
               <Checkbox
@@ -327,28 +327,30 @@ export function DataTable<T>({
                 onCheckedChange={() => handleToggleSelection(key)}
                 aria-label={getSelectLabel?.(item) ?? `Select row ${index + 1}`}
               />
-            </td>
+            </TableCell>
           )}
           {columns.map((col) => {
             const width = getColumnWidth(col.id)
             return (
-              <td
-                key={col.id}
-                style={{ width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` }}
-                className="p-4"
-              >
+              <TableCell key={col.id} style={{ width: `${width}px`, minWidth: `${width}px`, maxWidth: `${width}px` }}>
                 {col.render(item, index)}
-              </td>
+              </TableCell>
             )
           })}
-        </TableRow>
+        </>
       )
 
+      // rowWrapperがある場合、セル内容だけを渡す（rowWrapper側でTableRowを提供）
       if (rowWrapper) {
-        return rowWrapper({ item, children: rowContent, isSelected })
+        return rowWrapper({ item, children: cellContents, isSelected })
       }
 
-      return rowContent
+      // rowWrapperがない場合、DataTable側でTableRowを提供
+      return (
+        <TableRow key={key} className={isSelected ? 'bg-primary/12 hover:bg-primary/16' : ''}>
+          {cellContents}
+        </TableRow>
+      )
     },
     [columns, getColumnWidth, getRowKey, getSelectLabel, handleToggleSelection, rowWrapper, selectable, selectedIds]
   )
@@ -399,32 +401,30 @@ export function DataTable<T>({
 
                 return (
                   <TableHead key={col.id} style={style}>
-                    <div className="flex items-center gap-1">
-                      {col.sortKey && onSortChange ? (
-                        <button
-                          type="button"
-                          onClick={() => handleSort(col.sortKey!)}
-                          className="hover:bg-state-hover -ml-1 flex min-w-0 items-center gap-1 rounded-md px-1 py-0.5 transition-colors"
-                        >
-                          {Icon && <Icon className="text-muted-foreground size-4 shrink-0" />}
-                          <span className="truncate">{col.label}</span>
-                          {isSorting ? (
-                            sortState?.direction === 'asc' ? (
-                              <ArrowUp className="text-foreground size-4 shrink-0" />
-                            ) : (
-                              <ArrowDown className="text-foreground size-4 shrink-0" />
-                            )
+                    {col.sortKey && onSortChange ? (
+                      <button
+                        type="button"
+                        onClick={() => handleSort(col.sortKey!)}
+                        className="hover:bg-state-hover flex min-w-0 items-center gap-1 rounded-md px-1 py-0.5 transition-colors"
+                      >
+                        {Icon && <Icon className="text-muted-foreground size-4 shrink-0" />}
+                        <span className="truncate">{col.label}</span>
+                        {isSorting ? (
+                          sortState?.direction === 'asc' ? (
+                            <ArrowUp className="text-foreground size-4 shrink-0" />
                           ) : (
-                            <ArrowUpDown className="text-muted-foreground size-4 shrink-0" />
-                          )}
-                        </button>
-                      ) : (
-                        <div className="flex min-w-0 items-center gap-1">
-                          {Icon && <Icon className="text-muted-foreground size-4 shrink-0" />}
-                          <span className="truncate">{col.label}</span>
-                        </div>
-                      )}
-                    </div>
+                            <ArrowDown className="text-foreground size-4 shrink-0" />
+                          )
+                        ) : (
+                          <ArrowUpDown className="text-muted-foreground size-4 shrink-0" />
+                        )}
+                      </button>
+                    ) : (
+                      <span className="flex min-w-0 items-center gap-1">
+                        {Icon && <Icon className="text-muted-foreground size-4 shrink-0" />}
+                        <span className="truncate">{col.label}</span>
+                      </span>
+                    )}
 
                     {/* リサイズハンドル */}
                     {col.resizable !== false && (
