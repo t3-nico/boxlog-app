@@ -12,12 +12,36 @@ import type {
   UpdateTagGroupInput,
 } from '@/features/tags/types'
 
+/**
+ * APIレスポンスからエラーメッセージを抽出
+ * @param response - Fetchレスポンス
+ * @param fallbackMessage - JSONパース失敗時のフォールバックメッセージ
+ */
+async function extractErrorMessage(response: Response, fallbackMessage: string): Promise<string> {
+  try {
+    const errorData = await response.json()
+    return errorData.error || errorData.message || fallbackMessage
+  } catch {
+    return `${fallbackMessage} (HTTP ${response.status})`
+  }
+}
+
+/**
+ * APIエラーをスロー
+ */
+async function throwApiError(response: Response, fallbackMessage: string): Promise<never> {
+  const message = await extractErrorMessage(response, fallbackMessage)
+  throw new Error(message)
+}
+
 // API関数群
 const tagGroupAPI = {
   // 全タググループ取得
   async fetchTagGroups(): Promise<TagGroup[]> {
     const response = await fetch('/api/tag-groups')
-    if (!response.ok) throw new Error('Failed to fetch tag groups')
+    if (!response.ok) {
+      await throwApiError(response, 'タググループの取得に失敗しました')
+    }
 
     const data: TagGroupsResponse = await response.json()
     return data.data
@@ -27,7 +51,9 @@ const tagGroupAPI = {
   async fetchTagGroup(id: string, withTags = false): Promise<TagGroup | TagGroupWithTags> {
     const params = withTags ? '?with_tags=true' : ''
     const response = await fetch(`/api/tag-groups/${id}${params}`)
-    if (!response.ok) throw new Error('Failed to fetch tag group')
+    if (!response.ok) {
+      await throwApiError(response, 'タググループの取得に失敗しました')
+    }
 
     const data = await response.json()
     return data.data
@@ -42,8 +68,7 @@ const tagGroupAPI = {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to create tag group')
+      await throwApiError(response, 'タググループの作成に失敗しました')
     }
 
     const data = await response.json()
@@ -59,8 +84,7 @@ const tagGroupAPI = {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to update tag group')
+      await throwApiError(response, 'タググループの更新に失敗しました')
     }
 
     const data = await response.json()
@@ -74,8 +98,7 @@ const tagGroupAPI = {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to delete tag group')
+      await throwApiError(response, 'タググループの削除に失敗しました')
     }
   },
 
@@ -88,8 +111,7 @@ const tagGroupAPI = {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error || 'Failed to reorder tag groups')
+      await throwApiError(response, 'タググループの並び替えに失敗しました')
     }
 
     const data = await response.json()
