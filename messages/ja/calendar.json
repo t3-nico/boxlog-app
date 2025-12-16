@@ -162,8 +162,9 @@
       }
     },
     "filter": {
-      "myCalendars": "マイカレンダー",
+      "type": "種類",
       "tags": "タグ",
+      "ungrouped": "グループなし",
       "untagged": "タグなし",
       "noTags": "タグがありません",
       "comingSoon": "近日公開予定"

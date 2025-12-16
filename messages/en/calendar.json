@@ -162,8 +162,9 @@
       }
     },
     "filter": {
-      "myCalendars": "My Calendars",
+      "type": "Type",
       "tags": "Tags",
+      "ungrouped": "Ungrouped",
       "untagged": "Untagged",
       "noTags": "No tags available",
       "comingSoon": "Coming soon"

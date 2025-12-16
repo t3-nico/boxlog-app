@@ -41,6 +41,15 @@ interface CalendarFilterActions {
   /** すべてのタグを非表示 */
   hideAllTags: () => void
 
+  /** グループ内のタグを一括表示 */
+  showGroupTags: (tagIds: string[]) => void
+
+  /** グループ内のタグを一括非表示 */
+  hideGroupTags: (tagIds: string[]) => void
+
+  /** グループ内のタグを一括切替（全ON→全OFF、それ以外→全ON） */
+  toggleGroupTags: (tagIds: string[]) => void
+
   /** タグ一覧で初期化（まだ設定がないタグを追加） */
   initializeWithTags: (tagIds: string[]) => void
 
@@ -49,6 +58,9 @@ interface CalendarFilterActions {
 
   /** タグが表示中かチェック */
   isTagVisible: (tagId: string) => boolean
+
+  /** グループ内のタグの表示状態を取得（all: 全ON, none: 全OFF, some: 一部） */
+  getGroupVisibility: (tagIds: string[]) => 'all' | 'none' | 'some'
 
   /** プランが表示対象かチェック（種類とタグの両方） */
   isPlanVisible: (planTagIds: string[]) => boolean
@@ -125,6 +137,33 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
           showUntagged: false,
         })),
 
+      showGroupTags: (tagIds) =>
+        set((state) => {
+          const newSet = new Set(state.visibleTagIds)
+          tagIds.forEach((id) => newSet.add(id))
+          return { visibleTagIds: newSet }
+        }),
+
+      hideGroupTags: (tagIds) =>
+        set((state) => {
+          const newSet = new Set(state.visibleTagIds)
+          tagIds.forEach((id) => newSet.delete(id))
+          return { visibleTagIds: newSet }
+        }),
+
+      toggleGroupTags: (tagIds) =>
+        set((state) => {
+          const newSet = new Set(state.visibleTagIds)
+          // 全てONなら全てOFF、それ以外は全てON
+          const allVisible = tagIds.every((id) => state.visibleTagIds.has(id))
+          if (allVisible) {
+            tagIds.forEach((id) => newSet.delete(id))
+          } else {
+            tagIds.forEach((id) => newSet.add(id))
+          }
+          return { visibleTagIds: newSet }
+        }),
+
       initializeWithTags: (tagIds) =>
         set((state) => {
           if (state.initialized) {
@@ -149,6 +188,15 @@ export const useCalendarFilterStore = create<CalendarFilterStore>()(
       isTypeVisible: (type) => get().visibleTypes[type],
 
       isTagVisible: (tagId) => get().visibleTagIds.has(tagId),
+
+      getGroupVisibility: (tagIds) => {
+        if (tagIds.length === 0) return 'none'
+        const state = get()
+        const visibleCount = tagIds.filter((id) => state.visibleTagIds.has(id)).length
+        if (visibleCount === 0) return 'none'
+        if (visibleCount === tagIds.length) return 'all'
+        return 'some'
+      },
 
       isPlanVisible: (planTagIds) => {
         const state = get()
