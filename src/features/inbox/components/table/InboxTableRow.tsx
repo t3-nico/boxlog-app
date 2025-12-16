@@ -237,7 +237,7 @@ export function InboxTableRow({ item }: InboxTableRowProps) {
           }}
           className={cn(
             'hover:bg-state-hover cursor-pointer transition-colors',
-            selected && 'bg-primary/12 hover:bg-primary/16',
+            selected && 'bg-primary-state-selected hover:bg-state-dragged',
             isFocused && 'ring-primary ring-2 ring-inset'
           )}
           onClick={() => {

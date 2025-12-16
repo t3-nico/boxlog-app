@@ -80,7 +80,7 @@ export function InboxRowWrapper({ item, children, isSelected }: InboxRowWrapperP
           ref={wrapperRef}
           className={cn(
             'hover:bg-state-hover cursor-pointer transition-colors',
-            isSelected && 'bg-primary/12 hover:bg-primary/16',
+            isSelected && 'bg-primary-state-selected hover:bg-state-dragged',
             isFocused && 'ring-primary ring-2 ring-inset'
           )}
           onClick={() => {

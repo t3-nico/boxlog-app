@@ -347,7 +347,7 @@ export function DataTable<T>({
 
       // rowWrapperがない場合、DataTable側でTableRowを提供
       return (
-        <TableRow key={key} className={isSelected ? 'bg-primary/12 hover:bg-primary/16' : ''}>
+        <TableRow key={key} className={isSelected ? 'bg-primary-state-selected hover:bg-state-dragged' : ''}>
           {cellContents}
         </TableRow>
       )

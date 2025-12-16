@@ -223,7 +223,7 @@ export function TagRowWrapper({
       <ContextMenuTrigger asChild>
         <DraggableTagRow
           id={tag.id}
-          className={isSelected ? 'bg-primary/10 hover:bg-primary/15' : ''}
+          className={isSelected ? 'bg-primary-state-selected hover:bg-state-dragged' : ''}
           onContextMenu={() => {
             if (!isSelected) {
               setSelectedIds([tag.id])

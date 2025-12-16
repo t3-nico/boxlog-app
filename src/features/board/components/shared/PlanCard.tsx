@@ -223,7 +223,7 @@ export function PlanCard({ item }: PlanCardProps) {
             className={cn(
               'bg-secondary text-secondary-foreground hover:bg-state-hover border-border group flex cursor-pointer flex-col gap-2 rounded-xl border p-3 shadow-sm transition-colors',
               isActive && 'border-primary',
-              isFocused && 'bg-primary/12 hover:bg-primary/16',
+              isFocused && 'bg-primary-state-selected hover:bg-state-dragged',
               isDragging && 'opacity-50'
             )}
           >
