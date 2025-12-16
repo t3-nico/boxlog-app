@@ -366,9 +366,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     if (asPopover) {
       return (
         <Popover open={open} onOpenChange={handleOpenChange} modal={false}>
-          <PopoverTrigger asChild className="hover:bg-state-hover transition-colors">
-            {popoverTrigger}
-          </PopoverTrigger>
+          <PopoverTrigger asChild>{popoverTrigger}</PopoverTrigger>
           <PopoverContent
             className={cn('bg-popover border-border z-[350] w-auto border p-0', popoverClassName)}
             align={popoverAlign}

@@ -344,10 +344,10 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
           <button
             type="button"
             onClick={handleClear}
-            className="text-muted-foreground hover:text-foreground -ml-1 flex h-4 w-4 items-center justify-center transition-colors"
+            className="text-muted-foreground hover:text-foreground hover:bg-state-hover -ml-1 flex size-6 items-center justify-center rounded-md transition-colors"
             aria-label="時刻をクリア"
           >
-            <X className="h-3 w-3" />
+            <X className="size-3.5" />
           </button>
         )}
         {error && (
