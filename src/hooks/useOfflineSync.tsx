@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { ConflictResolutionModal } from '@/features/offline/components'
 import { offlineManager } from '@/features/offline/services/offline-manager'
-import type { OfflineAction } from '@/features/offline/types'
+import type { ConflictResolution, OfflineAction } from '@/features/offline/types'
 
 interface ToastOptions {
   title: string
@@ -47,7 +48,7 @@ export function useOfflineSync() {
   })
 
   const [currentConflict, setCurrentConflict] = useState<ConflictContext | null>(null)
-  const [_isConflictModalOpen, setIsConflictModalOpen] = useState(false)
+  const [isConflictModalOpen, setIsConflictModalOpen] = useState(false)
   const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // 状態の更新
@@ -279,7 +280,7 @@ export function useOfflineSync() {
 
   // 競合解決
   const resolveConflict = useCallback(
-    async (resolution: { choice: 'local' | 'server' | 'merge'; mergedData?: unknown }) => {
+    async (resolution: ConflictResolution) => {
       if (!currentConflict) return
 
       try {
@@ -326,18 +327,17 @@ export function useOfflineSync() {
     optimisticUpdate,
 
     // 競合解決モーダル
-    ConflictModal: null, // Temporarily disabled
-    // ConflictModal: currentConflict ? (
-    //   <ConflictResolutionModal
-    //     isOpen={isConflictModalOpen}
-    //     conflict={currentConflict}
-    //     onResolve={resolveConflict}
-    //     onCancel={() => {
-    //       setIsConflictModalOpen(false)
-    //       setCurrentConflict(null)
-    //     }}
-    //   />
-    // ) : null
+    ConflictModal: currentConflict ? (
+      <ConflictResolutionModal
+        isOpen={isConflictModalOpen}
+        conflict={currentConflict}
+        onResolve={resolveConflict}
+        onCancel={() => {
+          setIsConflictModalOpen(false)
+          setCurrentConflict(null)
+        }}
+      />
+    ) : null,
   }
 }
 
