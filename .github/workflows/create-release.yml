@@ -9,8 +9,8 @@ permissions:
   contents: write
 
 env:
-  VERCEL_ORG_ID: ${{ secrets.ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
   # 本番デプロイ（タグ作成時のみ）
