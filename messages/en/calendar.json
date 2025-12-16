@@ -169,6 +169,18 @@
       "noTags": "No tags available",
       "comingSoon": "Coming soon"
     },
+    "todo": {
+      "navigation": {
+        "period": "Period",
+        "sortBy": "Sort by",
+        "all": "All",
+        "today": "Today",
+        "overdue": "Overdue",
+        "dueDate": "Due date",
+        "priority": "Priority",
+        "created": "Created"
+      }
+    },
     "statusBar": {
       "noSchedule": "No schedule",
       "openSchedule": "Open schedule",

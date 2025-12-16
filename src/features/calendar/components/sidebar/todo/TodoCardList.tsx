@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 
 import { PlanCard } from '@/features/board/components/shared/PlanCard'
+import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore'
 import { parseDateString } from '@/features/calendar/utils/dateUtils'
 import { useInboxData } from '@/features/inbox/hooks/useInboxData'
 
@@ -11,9 +12,6 @@ import type { TodoFilter, TodoSort } from './TodoNavigation'
 interface TodoCardListProps {
   filter: TodoFilter
   sort: TodoSort
-  showHigh: boolean
-  showMedium: boolean
-  showLow: boolean
 }
 
 /**
@@ -27,19 +25,22 @@ interface TodoCardListProps {
  * **Note**: PlanCard の useDraggable は既に実装済みなので、
  * DndContext 内に配置すれば自動的にドラッグ可能になる
  */
-export function TodoCardList({
-  filter,
-  sort,
-  showHigh: _showHigh,
-  showMedium: _showMedium,
-  showLow: _showLow,
-}: TodoCardListProps) {
+export function TodoCardList({ filter, sort }: TodoCardListProps) {
   // status: 'todo' のプランのみ取得
   const { items, isPending, error } = useInboxData({ status: 'todo' })
+
+  // カレンダーフィルター（タグフィルター）
+  const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible)
 
   // フィルタリング・ソート処理
   const filteredAndSortedItems = useMemo(() => {
     let result = [...items]
+
+    // 0. カレンダーフィルター（タグによる表示/非表示）
+    result = result.filter((item) => {
+      const tagIds = item.tags?.map((tag) => tag.id) || []
+      return isPlanVisible(tagIds)
+    })
 
     // 1. 期間フィルター
     if (filter !== 'all') {
@@ -85,7 +86,7 @@ export function TodoCardList({
     })
 
     return result
-  }, [items, filter, sort])
+  }, [items, filter, sort, isPlanVisible])
 
   // ローディング表示
   if (isPending) {

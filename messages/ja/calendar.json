@@ -169,6 +169,18 @@
       "noTags": "タグがありません",
       "comingSoon": "近日公開予定"
     },
+    "todo": {
+      "navigation": {
+        "period": "期間",
+        "sortBy": "並べ替え",
+        "all": "すべて",
+        "today": "今日",
+        "overdue": "期限切れ",
+        "dueDate": "期限日順",
+        "priority": "優先度順",
+        "created": "作成日順"
+      }
+    },
     "statusBar": {
       "noSchedule": "予定なし",
       "openSchedule": "予定を開く",

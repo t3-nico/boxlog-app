@@ -1,7 +1,7 @@
 'use client'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, UnderlineTabsTrigger } from '@/components/ui/tabs'
 
 import type { SidebarTabLayoutProps } from './types'
 
@@ -49,14 +49,10 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
           {tabs.map((tab) => {
             const Icon = tab.icon
             return (
-              <TabsTrigger
-                key={tab.value}
-                value={tab.value}
-                className="border-border data-[state=active]:border-foreground hover:border-foreground/50 h-8 gap-1.5 rounded-none border-b-2 p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-              >
+              <UnderlineTabsTrigger key={tab.value} value={tab.value} className="h-8 gap-1.5">
                 {Icon && <Icon className="size-4" />}
                 {tab.label}
-              </TabsTrigger>
+              </UnderlineTabsTrigger>
             )
           })}
         </TabsList>

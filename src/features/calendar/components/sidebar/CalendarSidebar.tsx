@@ -32,9 +32,6 @@ export function CalendarSidebar() {
 
   const [filter, setFilter] = useState<TodoFilter>('all')
   const [sort, setSort] = useState<TodoSort>('due')
-  const [showHigh, setShowHigh] = useState(true)
-  const [showMedium, setShowMedium] = useState(true)
-  const [showLow, setShowLow] = useState(true)
 
   // ビュータイプに応じた表示範囲を計算
   const displayRange = useMemo(() => {
@@ -73,12 +70,6 @@ export function CalendarSidebar() {
     }
   }, [navigation?.currentDate, navigation?.viewType])
 
-  const handlePriorityToggle = (priority: 'high' | 'medium' | 'low') => {
-    if (priority === 'high') setShowHigh(!showHigh)
-    if (priority === 'medium') setShowMedium(!showMedium)
-    if (priority === 'low') setShowLow(!showLow)
-  }
-
   const tabs: SidebarTab[] = [
     {
       value: 'todo',
@@ -88,20 +79,11 @@ export function CalendarSidebar() {
         <div>
           {/* ナビゲーションコンテナ: 高さ40px（内部32px + 下padding 8px） */}
           <div className="h-10 shrink-0 px-4 pb-2">
-            <TodoNavigation
-              filter={filter}
-              onFilterChange={setFilter}
-              sort={sort}
-              onSortChange={setSort}
-              showHigh={showHigh}
-              showMedium={showMedium}
-              showLow={showLow}
-              onPriorityToggle={handlePriorityToggle}
-            />
+            <TodoNavigation filter={filter} onFilterChange={setFilter} sort={sort} onSortChange={setSort} />
           </div>
           {/* カードリストコンテナ - パディングはTodoCardList内で管理 */}
           <div className="flex-1 overflow-hidden">
-            <TodoCardList filter={filter} sort={sort} showHigh={showHigh} showMedium={showMedium} showLow={showLow} />
+            <TodoCardList filter={filter} sort={sort} />
           </div>
         </div>
       ),

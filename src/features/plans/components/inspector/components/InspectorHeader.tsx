@@ -77,7 +77,7 @@ export function InspectorHeader({
   }
 
   return (
-    <div className="flex h-10 items-center justify-between pt-2">
+    <div className="flex h-10 items-center justify-between px-2 pt-2">
       <div className="flex items-center gap-1">
         <Tooltip>
           <TooltipTrigger asChild>

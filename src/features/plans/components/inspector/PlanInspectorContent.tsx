@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, UnderlineTabsTrigger } from '@/components/ui/tabs'
 import { parseDateString, parseDatetimeString } from '@/features/calendar/utils/dateUtils'
 
 import { usePlan } from '../../hooks/usePlan'
@@ -282,18 +282,12 @@ export function PlanInspectorContent({ showResizeHandle = false, resizeProps }: 
           </div>
 
           <Tabs defaultValue="details" className="flex flex-1 flex-col overflow-hidden pt-2">
-            <TabsList className="border-border bg-popover sticky top-0 z-10 grid h-10 w-full shrink-0 grid-cols-3 rounded-none border-b p-0">
-              <TabsTrigger
-                value="details"
-                className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-2 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-              >
+            <TabsList className="bg-popover sticky top-0 z-10 grid h-10 w-full shrink-0 grid-cols-3 rounded-none p-0">
+              <UnderlineTabsTrigger value="details" className="h-10">
                 <ClipboardList className="size-4" />
                 詳細
-              </TabsTrigger>
-              <TabsTrigger
-                value="activity"
-                className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-2 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-              >
+              </UnderlineTabsTrigger>
+              <UnderlineTabsTrigger value="activity" className="h-10">
                 <span className="relative flex items-center gap-2">
                   <History className="size-4" />
                   アクティビティ
@@ -346,14 +340,11 @@ export function PlanInspectorContent({ showResizeHandle = false, resizeProps }: 
                     </Portal.Root>
                   )}
                 </span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="comments"
-                className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-2 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-              >
+              </UnderlineTabsTrigger>
+              <UnderlineTabsTrigger value="comments" className="h-10">
                 <MessageSquare className="size-4" />
                 コメント
-              </TabsTrigger>
+              </UnderlineTabsTrigger>
             </TabsList>
 
             <TabsContent value="details" className="flex-1 overflow-y-auto">
