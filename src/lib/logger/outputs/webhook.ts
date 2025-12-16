@@ -23,11 +23,7 @@ export interface WebhookDeliveryResult {
 /**
  * Webhookエラーコールバック
  */
-export type WebhookErrorCallback = (
-  error: Error,
-  entries: LogEntry[],
-  result: WebhookDeliveryResult
-) => void
+export type WebhookErrorCallback = (error: Error, entries: LogEntry[], result: WebhookDeliveryResult) => void
 
 /**
  * Webhook出力オプション
@@ -161,11 +157,7 @@ export class WebhookOutput implements LogOutput {
       // エラーコールバックを呼び出し
       if (this.options.onError) {
         try {
-          this.options.onError(
-            error instanceof Error ? error : new Error(errorMessage),
-            entries,
-            result
-          )
+          this.options.onError(error instanceof Error ? error : new Error(errorMessage), entries, result)
         } catch (callbackError) {
           console.error('[Webhook] Error callback failed:', callbackError)
         }
