@@ -120,10 +120,19 @@ export async function withUpstashRateLimit(
   // クライアント識別子取得
   const identifier = getClientIdentifier(request)
 
-  // レート制限チェック
-  const { success, limit, remaining, reset, pending } = await rateLimit.limit(identifier)
-
-  return { success, limit, remaining, reset, pending }
+  try {
+    // レート制限チェック
+    const { success, limit, remaining, reset, pending } = await rateLimit.limit(identifier)
+    return { success, limit, remaining, reset, pending }
+  } catch (error) {
+    // Redis接続エラー等の場合はログを出力し、レート制限をスキップ（可用性優先）
+    console.error('[RateLimit] Upstash rate limit check failed:', {
+      identifier,
+      error: error instanceof Error ? error.message : String(error),
+    })
+    // エラー時はnullを返してインメモリ実装にフォールバック
+    return null
+  }
 }
 
 /**
