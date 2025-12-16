@@ -11,7 +11,7 @@ import { persist } from 'zustand/middleware'
 /** アイテムの種類 */
 export type ItemType = 'plan' | 'record'
 
-interface CalendarFilterState {
+export interface CalendarFilterState {
   /** 種類ごとの表示設定（デフォルト: すべて表示） */
   visibleTypes: Record<ItemType, boolean>
 
@@ -25,7 +25,7 @@ interface CalendarFilterState {
   initialized: boolean
 }
 
-interface CalendarFilterActions {
+export interface CalendarFilterActions {
   /** 種類の表示切替 */
   toggleType: (type: ItemType) => void
 
