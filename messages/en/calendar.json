@@ -160,6 +160,39 @@
         "todo": "Todo",
         "view": "View"
       }
+    },
+    "filter": {
+      "type": "Type",
+      "tags": "Tags",
+      "ungrouped": "Ungrouped",
+      "untagged": "Untagged",
+      "noTags": "No tags available",
+      "comingSoon": "Coming soon"
+    },
+    "todo": {
+      "navigation": {
+        "period": "Period",
+        "sortBy": "Sort by",
+        "all": "All",
+        "today": "Today",
+        "overdue": "Overdue",
+        "dueDate": "Due date",
+        "priority": "Priority",
+        "created": "Created"
+      },
+      "loading": "Loading...",
+      "noTasks": "No tasks",
+      "error": "An error occurred"
+    },
+    "statusBar": {
+      "noSchedule": "No schedule",
+      "openSchedule": "Open schedule",
+      "createNewPlan": "Create new plan"
+    },
+    "overdue": {
+      "badge": "{count} overdue",
+      "popoverTitle": "Overdue Plans",
+      "overdueBy": "Overdue by {time}"
     }
   }
 }

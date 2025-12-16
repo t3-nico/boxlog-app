@@ -43,8 +43,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   // データ取得
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
   const { data: groups = [] as TagGroup[] } = useTagGroups()
-  const { data: tagPlanCounts = {} } = api.plans.getTagPlanCounts.useQuery()
-  const { data: tagLastUsed = {} } = api.plans.getTagLastUsed.useQuery()
+  // 最適化: 2つのクエリを1つに統合（DB側でGROUP BY集計）
+  const { data: tagStats } = api.plans.getTagStats.useQuery()
+  const tagPlanCounts = tagStats?.counts ?? {}
+  const tagLastUsed = tagStats?.lastUsed ?? {}
 
   // コンテキスト
   const { tags, setTags, setIsLoading } = useTagsPageContext()
@@ -105,11 +107,12 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     }
   }, [initialGroup, selectedGroupId])
 
-  // タグデータをContextに同期
+  // タグデータをContextに同期（setTags/setIsLoadingは安定した関数なので依存配列から除外）
   useEffect(() => {
     setTags(fetchedTags)
     setIsLoading(isFetching)
-  }, [fetchedTags, isFetching, setTags, setIsLoading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchedTags, isFetching])
 
   // アクティブなタグ数を計算
   const activeTagsCount = useMemo(() => {
@@ -460,7 +463,9 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           onOutsideClick={clearSelection}
           selectAllLabel={t('tags.page.selectAll')}
           getSelectLabel={(tag) => t('tags.page.selectTag', { name: tag.name })}
-          extraRows={<TagTableRowCreate ref={createRowRef} selectedGroupId={selectedGroupId} groups={groups} />}
+          extraRows={
+            <TagTableRowCreate ref={createRowRef} selectedGroupId={selectedGroupId} groups={groups} allTags={tags} />
+          }
           emptyState={
             <div className="border-border flex h-64 items-center justify-center rounded-xl border-2 border-dashed">
               <div className="text-center">

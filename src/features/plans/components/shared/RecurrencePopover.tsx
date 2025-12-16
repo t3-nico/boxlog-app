@@ -33,27 +33,34 @@ export function RecurrencePopover({
 
   // 位置を動的に計算（useEffect内でref参照）
   useEffect(() => {
-    if (!open || !triggerRef?.current) return
+    if (!open) return
 
-    const rect = triggerRef.current.getBoundingClientRect()
-    const popoverWidth = 192 // w-48 = 12rem = 192px
+    // 少し遅延させてrefが確実にセットされるのを待つ
+    const timer = setTimeout(() => {
+      if (!triggerRef?.current) return
 
-    if (placement === 'right') {
-      setPosition({
-        top: rect.top + window.scrollY,
-        left: rect.right + window.scrollX + 4,
-      })
-    } else if (placement === 'left') {
-      setPosition({
-        top: rect.top + window.scrollY,
-        left: rect.left + window.scrollX - popoverWidth - 4,
-      })
-    } else {
-      setPosition({
-        top: rect.bottom + window.scrollY + 4,
-        left: rect.left + window.scrollX,
-      })
-    }
+      const rect = triggerRef.current.getBoundingClientRect()
+      const popoverWidth = 192 // w-48 = 12rem = 192px
+
+      if (placement === 'right') {
+        setPosition({
+          top: rect.top,
+          left: rect.right + 4,
+        })
+      } else if (placement === 'left') {
+        setPosition({
+          top: rect.top,
+          left: rect.left - popoverWidth - 4,
+        })
+      } else {
+        setPosition({
+          top: rect.bottom + 4,
+          left: rect.left,
+        })
+      }
+    }, 0)
+
+    return () => clearTimeout(timer)
   }, [open, triggerRef, placement])
 
   // 外側クリックで閉じる（カスタムダイアログが開いている時は除外）

@@ -90,7 +90,13 @@ export const usePlanInspectorStore = create<PlanInspectorStore>()(
 
         closeInspector: () =>
           set(
-            { isOpen: false, planId: null, instanceDate: null, initialData: undefined, popoverAnchor: undefined },
+            {
+              isOpen: false,
+              planId: null,
+              instanceDate: null,
+              initialData: undefined,
+              popoverAnchor: undefined,
+            },
             false,
             'closeInspector'
           ),

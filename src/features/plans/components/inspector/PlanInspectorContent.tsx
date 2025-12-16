@@ -2,7 +2,16 @@
 
 import * as Portal from '@radix-ui/react-portal'
 import { format } from 'date-fns'
-import { ChevronDown, ChevronUp, ClipboardList, FileText, History, MessageSquare } from 'lucide-react'
+import {
+  Bell,
+  CheckSquare,
+  ChevronDown,
+  ChevronUp,
+  ClipboardList,
+  FileText,
+  History,
+  MessageSquare,
+} from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -17,6 +26,7 @@ import type { Plan } from '../../types/plan'
 import { NovelDescriptionEditor } from '../shared/NovelDescriptionEditor'
 import { PlanScheduleSection } from '../shared/PlanScheduleSection'
 import { PlanTagsSection } from '../shared/PlanTagsSection'
+import { ReminderSelect } from '../shared/ReminderSelect'
 
 import { ActivityTab, InspectorHeader } from './components'
 import { useInspectorAutoSave, useInspectorNavigation } from './hooks'
@@ -38,11 +48,7 @@ interface PlanInspectorContentProps {
  * Plan Inspectorのコンテンツ部分
  * Sheet/Popover両方で共通で使用される
  */
-export function PlanInspectorContent({
-  showResizeHandle = false,
-  resizeProps,
-  isPopover = false,
-}: PlanInspectorContentProps) {
+export function PlanInspectorContent({ showResizeHandle = false, resizeProps }: PlanInspectorContentProps) {
   const planId = usePlanInspectorStore((state) => state.planId)
   const initialData = usePlanInspectorStore((state) => state.initialData)
   const closeInspector = usePlanInspectorStore((state) => state.closeInspector)
@@ -279,17 +285,17 @@ export function PlanInspectorContent({
             <TabsList className="border-border bg-popover sticky top-0 z-10 grid h-10 w-full shrink-0 grid-cols-3 rounded-none border-b p-0">
               <TabsTrigger
                 value="details"
-                className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-1.5 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-2 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               >
-                <ClipboardList className="h-4 w-4" />
+                <ClipboardList className="size-4" />
                 詳細
               </TabsTrigger>
               <TabsTrigger
                 value="activity"
-                className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-1.5 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-2 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               >
-                <span className="relative flex items-center gap-1.5">
-                  <History className="h-4 w-4" />
+                <span className="relative flex items-center gap-2">
+                  <History className="size-4" />
                   アクティビティ
                   <span
                     ref={sortButtonRef}
@@ -343,31 +349,32 @@ export function PlanInspectorContent({
               </TabsTrigger>
               <TabsTrigger
                 value="comments"
-                className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-1.5 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className="data-[state=active]:border-foreground hover:border-foreground/50 flex h-10 items-center justify-center gap-2 rounded-none border-b-2 border-transparent p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               >
-                <MessageSquare className="h-4 w-4" />
+                <MessageSquare className="size-4" />
                 コメント
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="details" className="flex-1 overflow-y-auto">
               {/* Title */}
-              <div className="px-6 pt-4 pb-2">
-                <div className="inline">
+              <div className="flex items-start gap-2 px-4 py-2">
+                <CheckSquare className="text-muted-foreground mt-1.5 size-4 flex-shrink-0" />
+                <div className="flex min-h-8 flex-1 items-center">
                   <span
                     ref={titleRef}
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={(e) => autoSave('title', e.currentTarget.textContent || '')}
-                    className="bg-popover border-0 px-0 text-2xl font-bold outline-none"
+                    className="bg-popover border-0 px-0 text-lg font-semibold outline-none"
                   >
                     {plan.title}
                   </span>
-                  {plan.plan_number && <span className="text-muted-foreground ml-4 text-2xl">#{plan.plan_number}</span>}
+                  {plan.plan_number && <span className="text-muted-foreground ml-2 text-sm">#{plan.plan_number}</span>}
                 </div>
               </div>
 
-              {/* 日付・時刻・繰り返し・リマインダー */}
+              {/* 日付・時刻・繰り返し */}
               <PlanScheduleSection
                 selectedDate={selectedDate}
                 startTime={startTime}
@@ -404,21 +411,6 @@ export function PlanInspectorContent({
                   if (!planId) return
                   updatePlan.mutate({ id: planId, data: { recurrence_rule: rrule } })
                 }}
-                reminderType={reminderType}
-                onReminderChange={(type) => {
-                  if (!planId) return
-                  setReminderType(type)
-                  const reminderMap: Record<string, number | null> = {
-                    '': null,
-                    開始時刻: 0,
-                    '10分前': 10,
-                    '30分前': 30,
-                    '1時間前': 60,
-                    '1日前': 1440,
-                    '1週間前': 10080,
-                  }
-                  updatePlan.mutate({ id: planId, data: { reminder_minutes: reminderMap[type] ?? null } })
-                }}
                 showBorderTop={true}
               />
 
@@ -433,21 +425,41 @@ export function PlanInspectorContent({
                 popoverAlignOffset={-80}
               />
 
-              {/* Description - プロパティグリッドレイアウト */}
-              <div className="border-border/50 flex min-h-10 items-start border-t px-6 py-1">
-                <div className="text-muted-foreground flex h-8 w-24 flex-shrink-0 items-center text-sm">
-                  <FileText className="mr-2 h-4 w-4 flex-shrink-0" />
-                  説明
+              {/* Description */}
+              <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
+                <FileText className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+                <div className="max-h-52 min-h-8 min-w-0 flex-1 overflow-y-auto">
+                  <NovelDescriptionEditor
+                    key={plan.id}
+                    content={plan.description || ''}
+                    onChange={(html) => autoSave('description', html)}
+                    placeholder="説明を追加..."
+                  />
                 </div>
-                <div className="flex h-8 flex-1 items-start">
-                  <div className="max-h-52 min-w-0 flex-1 overflow-y-auto">
-                    <NovelDescriptionEditor
-                      key={plan.id}
-                      content={plan.description || ''}
-                      onChange={(html) => autoSave('description', html)}
-                      placeholder="説明を追加..."
-                    />
-                  </div>
+              </div>
+
+              {/* Reminder */}
+              <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
+                <Bell className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+                <div className="flex h-8 flex-1 items-center">
+                  <ReminderSelect
+                    value={reminderType}
+                    onChange={(type) => {
+                      if (!planId) return
+                      setReminderType(type)
+                      const reminderMap: Record<string, number | null> = {
+                        '': null,
+                        開始時刻: 0,
+                        '10分前': 10,
+                        '30分前': 30,
+                        '1時間前': 60,
+                        '1日前': 1440,
+                        '1週間前': 10080,
+                      }
+                      updatePlan.mutate({ id: planId, data: { reminder_minutes: reminderMap[type] ?? null } })
+                    }}
+                    variant="inspector"
+                  />
                 </div>
               </div>
             </TabsContent>

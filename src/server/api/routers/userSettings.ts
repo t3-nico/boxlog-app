@@ -21,6 +21,9 @@ const userSettingsSchema = z.object({
   // 時間表示形式
   timeFormat: z.enum(['24h', '12h']).optional(),
 
+  // 日付表示形式
+  dateFormat: z.enum(['yyyy/MM/dd', 'MM/dd/yyyy', 'dd/MM/yyyy', 'yyyy-MM-dd']).optional(),
+
   // 週の設定
   weekStartsOn: z.union([z.literal(0), z.literal(1), z.literal(6)]).optional(),
   showWeekends: z.boolean().optional(),
@@ -89,6 +92,7 @@ export const userSettingsRouter = createTRPCRouter({
       timezone: data.timezone,
       showUtcOffset: data.show_utc_offset,
       timeFormat: data.time_format as '24h' | '12h',
+      dateFormat: data.date_format as 'yyyy/MM/dd' | 'MM/dd/yyyy' | 'dd/MM/yyyy' | 'yyyy-MM-dd',
       weekStartsOn: data.week_starts_on as 0 | 1 | 6,
       showWeekends: data.show_weekends,
       showWeekNumbers: data.show_week_numbers,
@@ -135,6 +139,7 @@ export const userSettingsRouter = createTRPCRouter({
     if (input.timezone !== undefined) updateData.timezone = input.timezone
     if (input.showUtcOffset !== undefined) updateData.show_utc_offset = input.showUtcOffset
     if (input.timeFormat !== undefined) updateData.time_format = input.timeFormat
+    if (input.dateFormat !== undefined) updateData.date_format = input.dateFormat
     if (input.weekStartsOn !== undefined) updateData.week_starts_on = input.weekStartsOn
     if (input.showWeekends !== undefined) updateData.show_weekends = input.showWeekends
     if (input.showWeekNumbers !== undefined) updateData.show_week_numbers = input.showWeekNumbers

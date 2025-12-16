@@ -6,6 +6,7 @@
 
 import { useCallback } from 'react'
 
+import { MS_PER_MINUTE } from '@/constants/time'
 import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
 import { useTranslations } from 'next-intl'
@@ -54,7 +55,7 @@ export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdatePr
       updatedAt: new Date(),
       displayStartDate: newStartTime,
       displayEndDate: new Date(newStartTime.getTime() + durationMs),
-      duration: Math.round(durationMs / (1000 * 60)), // 分単位
+      duration: Math.round(durationMs / MS_PER_MINUTE), // 分単位
       isMultiDay: false,
       isRecurring: false,
       type: plan.type,

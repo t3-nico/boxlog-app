@@ -21,6 +21,9 @@ export function getTranslation(key: string, locale: 'ja' | 'en' = 'ja'): string 
   const translations: Record<'ja' | 'en', Dictionary> = {
     ja: {
       calendar: {
+        accessibility: {
+          toggleWeekend: '週末表示の切り替え',
+        },
         event: {
           moved: '予定を移動しました',
           resized: '予定をリサイズしました',
@@ -90,6 +93,9 @@ export function getTranslation(key: string, locale: 'ja' | 'en' = 'ja'): string 
     },
     en: {
       calendar: {
+        accessibility: {
+          toggleWeekend: 'Toggle weekend display',
+        },
         event: {
           moved: 'Plan moved',
           resized: 'Plan resized',

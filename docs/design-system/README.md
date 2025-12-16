@@ -67,8 +67,8 @@ import { colors, typography, spacing } from '@/config/theme'
 
 ### 参照優先順位
 
-1. **既存修正**: [THEME_MIGRATION.md](./THEME_MIGRATION.md)
-2. **Tailwind v4移行**: [TAILWIND_MIGRATION_GUIDE.md](./TAILWIND_MIGRATION_GUIDE.md)
+1. **スタイルガイド**: [STYLE_GUIDE.md](./STYLE_GUIDE.md) - 8pxグリッド・カラー・タイポグラフィ
+2. **既存修正**: [THEME_MIGRATION.md](./THEME_MIGRATION.md)
 3. **実装履歴**: [INTEGRATION_LOG.md](./INTEGRATION_LOG.md)
 
 ---
@@ -76,3 +76,9 @@ import { colors, typography, spacing } from '@/config/theme'
 **最終更新**: 2025-09-22
 **管理**: BoxLog デザインシステムチーム
 **関連**: `/src/config/ui/README.md` (実装詳細)
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

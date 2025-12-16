@@ -8,8 +8,7 @@
  *
  * Provider階層:
  * 1. Providers（QueryClient, tRPC, Auth, Realtime, Theme, GlobalSearch）
- * 2. SessionMonitorProvider（セッション監視）
- * 3. BaseLayout（サイドバー、ヘッダー）
+ * 2. BaseLayout（サイドバー、ヘッダー）
  *
  * @see src/components/providers.tsx - フルProviders定義
  */

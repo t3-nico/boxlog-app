@@ -65,6 +65,8 @@ export interface CurrentTimeLineProps {
   // 複数日ビュー用の新しいProps
   displayDates?: Date[] | undefined // 表示している日付の配列
   viewMode?: 'day' | '3day' | '5day' | 'week' | 'agenda' | undefined
+  /** 他の日にも薄い線を表示するか（デフォルト: true） */
+  showOnOtherDays?: boolean | undefined
 }
 
 export interface TimeRange {

@@ -20,6 +20,8 @@ export interface BaseViewProps {
   // Core data
   dateRange: ViewDateRange
   plans: CalendarPlan[]
+  /** 全プラン（期限切れ未完了表示用、日付フィルタリング前） */
+  allPlans?: CalendarPlan[] | undefined
   currentDate: Date
 
   // Display options

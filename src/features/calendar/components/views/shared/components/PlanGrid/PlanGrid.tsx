@@ -34,7 +34,6 @@ export const PlanGrid = ({
   planStyles,
   onPlanClick,
   onPlanContextMenu,
-  onEmptyClick,
   onPlanUpdate,
   onTimeRangeSelect,
   className,

@@ -1,5 +1,6 @@
 import {
   Bell,
+  Calendar,
   CreditCard,
   Database,
   Info,
@@ -44,6 +45,12 @@ export const SETTINGS_CATEGORIES: readonly SettingsCategoryMeta[] = [
     icon: SettingsIcon,
     labelKey: 'settings.dialog.categories.general',
     descKey: 'settings.dialog.categories.generalDesc',
+  },
+  {
+    id: 'calendar',
+    icon: Calendar,
+    labelKey: 'settings.dialog.categories.calendar',
+    descKey: 'settings.dialog.categories.calendarDesc',
   },
   {
     id: 'personalization',

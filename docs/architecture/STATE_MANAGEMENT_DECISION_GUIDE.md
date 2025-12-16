@@ -343,3 +343,9 @@ export const CalendarGridProvider = ({ children, hourHeightConfig = {} }: Calend
 
 **最終更新**: 2025-10-24
 **関連Issue**: #610 - Context APIの段階的廃止とZustand移行完了
+
+---
+
+**種類**: 📕 解説
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

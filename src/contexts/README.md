@@ -173,7 +173,7 @@ export const DashboardLayout = ({ children }) => {
 ## 🔗 関連ドキュメント
 
 - [Context API vs Zustand 比較](../features/aichat/stores/README.md)
-- [コロケーション原則](../CLAUDE.md#6-ファイル配置コロケーション原則)
+- [コロケーション原則](../CLAUDE.md#8-ファイル配置コロケーション原則)
 - [Issue #411](https://github.com/t3-nico/boxlog-app/issues/411) - AI/Chat Context移行
 
 ---

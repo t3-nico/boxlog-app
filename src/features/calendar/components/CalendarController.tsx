@@ -151,7 +151,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   }, [timezone, updateSettings])
 
   // カレンダーデータ取得（フック化）
-  const { viewDateRange, filteredEvents } = useCalendarData({
+  const { viewDateRange, filteredEvents, allCalendarPlans } = useCalendarData({
     viewType,
     currentDate,
   })
@@ -227,6 +227,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     () => ({
       dateRange: viewDateRange,
       plans: filteredEvents,
+      allPlans: allCalendarPlans,
       currentDate,
       disabledPlanId,
       onPlanClick: handlePlanClick,
@@ -245,6 +246,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     [
       viewDateRange,
       filteredEvents,
+      allCalendarPlans,
       currentDate,
       disabledPlanId,
       handlePlanClick,

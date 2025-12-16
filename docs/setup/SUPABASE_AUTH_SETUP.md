@@ -218,7 +218,7 @@ npm run dev
 - 🔜 **次**: OAuth設定（Google/Apple）
 - 🔜 **次**: E2Eテスト作成
 
-詳細は [`docs/setup/RLS_SETUP.md`](./RLS_SETUP.md) を参照してください。
+詳細は Supabase公式ドキュメントを参照してください。
 
 ---
 
@@ -227,3 +227,9 @@ npm run dev
 - [Supabase公式: Next.js Auth Guide](https://supabase.com/docs/guides/auth/server-side/nextjs)
 - [Issue #531](https://github.com/t3-nico/boxlog-app/issues/531)
 - [認証実装: src/lib/supabase/](../../src/lib/supabase/)
+
+---
+
+**種類**: 📘 チュートリアル
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

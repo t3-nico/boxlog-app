@@ -3,6 +3,7 @@
  * PlanStore形式 ↔ CalendarView形式の相互変換
  */
 
+import { MS_PER_MINUTE } from '@/constants/time'
 import type { Plan } from '@/features/plans/types/plan'
 import {
   expandRecurrence,
@@ -70,7 +71,7 @@ export function planToCalendarPlan(plan: Plan): CalendarPlan {
     updatedAt,
     displayStartDate: startDate,
     displayEndDate: endDate,
-    duration: Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60)), // minutes
+    duration: Math.round((endDate.getTime() - startDate.getTime()) / MS_PER_MINUTE), // minutes
     isMultiDay,
     isRecurring,
   }
@@ -266,7 +267,7 @@ function occurrenceToCalendarPlan(basePlan: Plan, occurrence: ExpandedOccurrence
     updatedAt,
     displayStartDate: startDate,
     displayEndDate: endDate,
-    duration: Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60)),
+    duration: Math.round((endDate.getTime() - startDate.getTime()) / MS_PER_MINUTE),
     isMultiDay: false,
     isRecurring: true,
     // 繰り返し用の追加プロパティ

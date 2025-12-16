@@ -448,3 +448,9 @@ const toastInfo = createErrorToast(ERROR_CODES.API_RATE_LIMIT)
 - [エラーパターンガイド](./ERROR_PATTERNS_GUIDE.md) - エラーパターン詳細
 
 **🤖 Generated with [Claude Code](https://claude.ai/code)**
+
+---
+
+**種類**: 📕 解説
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

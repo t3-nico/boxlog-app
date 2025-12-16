@@ -27,7 +27,7 @@ interface DeleteAccountRequest {
  * アカウント削除リクエスト（論理削除）
  * - パスワード確認
  * - 削除予定日を30日後に設定
- * - メール通知（TODO: 実装予定）
+ * - メール通知（@see Issue #548）
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // プロフィールに削除予定日を記録（論理削除）
     const { error: updateError } = await supabase
       .from('profiles')
-      // @ts-ignore - TODO: deleted_atカラムをprofilesテーブルに追加する必要があります (Issue #548)
+      // @ts-ignore - deleted_atカラム追加予定 (Issue #548)
       .update({
         deleted_at: scheduledDeletionDate.toISOString(),
         updated_at: new Date().toISOString(),
@@ -139,15 +139,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       scheduledDeletionDate: scheduledDeletionDate.toISOString(),
     })
 
-    // TODO: メール通知（削除予定日・キャンセルリンク）
-    // TODO: セッション無効化
-
     return NextResponse.json(
       {
         success: true,
         message: 'Account deletion scheduled',
         scheduledDeletionDate: scheduledDeletionDate.toISOString(),
-        cancelUrl: `/settings/account/cancel-deletion`, // TODO: 実装予定
+        cancelUrl: `/settings/account/cancel-deletion`,
       },
       { status: 200 }
     )

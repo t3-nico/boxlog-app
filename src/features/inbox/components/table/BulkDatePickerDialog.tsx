@@ -108,7 +108,7 @@ export function BulkDatePickerDialog({ open, onOpenChange, selectedIds, onSucces
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="border-border max-w-md border">
         <DialogHeader>
           <DialogTitle>{t('common.inbox.bulkDueDate')}</DialogTitle>
           <DialogDescription>

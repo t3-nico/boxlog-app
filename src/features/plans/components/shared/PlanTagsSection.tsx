@@ -32,17 +32,10 @@ export function PlanTagsSection({
 
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
 
-  // プロパティグリッド: ラベル幅を統一（PlanScheduleSectionと同じ）
-  const labelClassName = 'text-muted-foreground flex h-8 w-24 flex-shrink-0 items-center text-sm'
-  const valueClassName = 'flex h-8 flex-1 items-center'
-
   return (
-    <div className={`flex min-h-10 items-start px-6 py-1 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
-      <div className={labelClassName}>
-        <Tag className="mr-2 h-4 w-4 flex-shrink-0" />
-        タグ
-      </div>
-      <div className={valueClassName}>
+    <div className={`flex min-h-10 items-start gap-2 px-4 py-2 ${showBorderTop ? 'border-border/50 border-t' : ''}`}>
+      <Tag className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+      <div className="flex min-h-8 flex-1 items-center">
         <div className="flex max-h-[5.25rem] flex-wrap items-center gap-1.5 overflow-y-auto">
           {/* 選択済みタグを表示 */}
           {selectedTags.map((tag) => (
@@ -83,15 +76,18 @@ export function PlanTagsSection({
             sideOffset={popoverSideOffset}
           >
             {selectedTagIds.length === 0 ? (
-              <button type="button" className="text-muted-foreground h-7 rounded-md pr-2 pl-0 text-sm">
+              <button
+                type="button"
+                className="text-muted-foreground hover:bg-state-hover h-8 rounded-md px-2 text-sm transition-colors"
+              >
                 タグを追加...
               </button>
             ) : (
               <button
                 type="button"
-                className="text-muted-foreground flex h-7 w-7 items-center justify-center rounded-md"
+                className="text-muted-foreground hover:bg-state-hover flex h-8 w-8 items-center justify-center rounded-md transition-colors"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="size-4" />
               </button>
             )}
           </PlanTagSelectDialogEnhanced>

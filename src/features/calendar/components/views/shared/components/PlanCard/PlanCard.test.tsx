@@ -50,7 +50,7 @@ describe('PlanCard', () => {
     it('デフォルトポジションが適用される', () => {
       render(<PlanCard plan={mockEvent} position={undefined} />)
 
-      const eventBlock = screen.getByRole('button')
+      const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i })
       expect(eventBlock).toBeInTheDocument()
     })
 
@@ -193,7 +193,12 @@ describe('PlanCard', () => {
       render(<PlanCard plan={mockEvent} position={smallPosition} />)
 
       const eventBlock = screen.getByRole('button', { name: /plan: テストイベント/i })
-      expect(eventBlock.className).toContain('text-xs')
+      // 高さ30px未満でもフォントは統一（text-sm）
+      expect(eventBlock.className).toContain('text-sm')
+      // チェックボックスの位置がコンパクトに（top-0.5 left-0.5）
+      const checkbox = screen.getByRole('button', { name: /完了にする/i })
+      expect(checkbox.className).toContain('top-0.5')
+      expect(checkbox.className).toContain('left-0.5')
     })
 
     it('最小高さが保証される', () => {

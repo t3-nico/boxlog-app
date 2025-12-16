@@ -1,6 +1,7 @@
 'use client'
 
 import { Check, Circle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { TAG_COLOR_PALETTE } from '@/config/ui/colors'
@@ -27,6 +28,7 @@ const COLOR_NAMES: Record<string, string> = {
 }
 
 export function ColorPalettePicker({ selectedColor, onColorSelect, className }: ColorPalettePickerProps) {
+  const t = useTranslations('aria')
   return (
     <div className={cn('flex gap-2', className)}>
       {TAG_COLOR_PALETTE.map((color) => {
@@ -46,7 +48,7 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
                   'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
                   isSelected && 'scale-105'
                 )}
-                aria-label={`${colorName}を選択`}
+                aria-label={t('selectColor', { color: colorName })}
               >
                 <Circle className="stroke-border h-6 w-6 transition-all" fill={color} strokeWidth={2} />
                 {isSelected && (

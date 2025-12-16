@@ -15,9 +15,9 @@ function formatHours(hours: number): string {
 }
 
 export function StatsSummary() {
-  const { data, isLoading } = api.plans.getSummary.useQuery()
+  const { data, isPending } = api.plans.getSummary.useQuery()
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="bg-background">

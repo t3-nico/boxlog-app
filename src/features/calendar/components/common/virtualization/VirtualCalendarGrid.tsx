@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import type { CalendarPlan } from '@/features/calendar/types/calendar.types'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { cn } from '@/lib/utils'
 
 interface VirtualCalendarGridProps {
@@ -345,6 +346,7 @@ interface VirtualPlanCardProps {
 }
 
 const VirtualPlanCard = React.memo(function VirtualPlanCard({ plan, onClick }: VirtualPlanCardProps) {
+  const { formatTime: formatTimeWithSettings } = useDateFormat()
   const { style, heightInPixels } = useMemo(() => {
     if (!plan.startDate || !plan.endDate) {
       return { style: {}, heightInPixels: 0 }
@@ -390,7 +392,7 @@ const VirtualPlanCard = React.memo(function VirtualPlanCard({ plan, onClick }: V
     >
       <div className="truncate font-medium">{plan.title}</div>
       {heightInPixels > 30 && plan.startDate ? (
-        <div className="opacity-90">{format(plan.startDate, 'HH:mm')}</div>
+        <div className="opacity-90">{formatTimeWithSettings(plan.startDate)}</div>
       ) : null}
     </div>
   )
@@ -401,8 +403,8 @@ function format(date: Date, formatStr: string): string {
   if (formatStr === 'yyyy-MM-dd') {
     return date.toISOString().split('T')[0]!
   }
-  if (formatStr === 'HH:mm') {
-    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
+  if (formatStr === 'MMM d') {
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
   return date.toISOString()
 }

@@ -8,7 +8,7 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { cn } from '@/lib/utils'
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { CalendarDateHeader, DateDisplay, ScrollableCalendarLayout, usePlanStyles } from '../shared'
+import { CalendarDateHeader, DateDisplay, OverdueSection, ScrollableCalendarLayout, usePlanStyles } from '../shared'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 
 import type { PlanPosition } from '../shared/hooks/useViewPlans'
@@ -23,6 +23,7 @@ import { useFiveDayView } from './hooks/useFiveDayView'
 export const FiveDayView = ({
   dateRange: _dateRange,
   plans,
+  allPlans,
   currentDate,
   centerDate: _centerDate,
   showWeekends = true,
@@ -124,7 +125,7 @@ export const FiveDayView = ({
   // 初期スクロールはScrollableCalendarLayoutに委譲
 
   const headerComponent = (
-    <div className="bg-background flex h-16">
+    <div className="bg-background flex h-8">
       {/* 表示日数分のヘッダー（週末フィルタリング対応） */}
       {displayDates.map((date) => (
         <div key={date.toISOString()} className="flex flex-1 items-center justify-center px-1">
@@ -147,7 +148,10 @@ export const FiveDayView = ({
     <CalendarViewAnimation viewType="5day">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         {/* 固定日付ヘッダー */}
-        <CalendarDateHeader header={headerComponent} timezone={timezone} />
+        <CalendarDateHeader header={headerComponent} showTimezone={false} />
+
+        {/* タイムゾーン＋未完了プランバッジエリア */}
+        <OverdueSection dates={displayDates} plans={allPlans || plans} timezone={timezone} />
 
         {/* スクロール可能コンテンツ */}
         <ScrollableCalendarLayout

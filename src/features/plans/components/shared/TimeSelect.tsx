@@ -320,7 +320,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
   return (
     <div className={label ? 'space-y-1' : ''}>
       {label && <label className="text-muted-foreground text-xs">{label}</label>}
-      <div className="relative flex items-center" ref={containerRef}>
+      <div className="hover:bg-state-hover relative flex items-center rounded-md transition-colors" ref={containerRef}>
         <input
           ref={inputRef}
           type="text"
@@ -335,7 +335,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
           onFocus={handleInputFocus}
           disabled={disabled}
           placeholder="--:--"
-          className={`flex h-8 w-14 rounded-md bg-transparent py-1 pr-1 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+          className={`flex h-8 w-14 rounded-md bg-transparent px-2 py-1 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
             value ? 'text-foreground' : 'text-muted-foreground'
           } ${error ? 'text-destructive' : ''}`}
         />
@@ -344,10 +344,10 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
           <button
             type="button"
             onClick={handleClear}
-            className="text-muted-foreground hover:text-foreground -ml-1 flex h-4 w-4 items-center justify-center transition-colors"
+            className="text-muted-foreground hover:text-foreground hover:bg-state-hover -ml-1 flex size-6 items-center justify-center rounded-md transition-colors"
             aria-label="時刻をクリア"
           >
-            <X className="h-3 w-3" />
+            <X className="size-3.5" />
           </button>
         )}
         {error && (

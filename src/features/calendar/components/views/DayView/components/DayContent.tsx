@@ -18,7 +18,6 @@ export const DayContent = ({
   eventStyles,
   onPlanClick,
   onPlanContextMenu,
-  onEmptyClick,
   onEventUpdate,
   onTimeRangeSelect,
   disabledPlanId,

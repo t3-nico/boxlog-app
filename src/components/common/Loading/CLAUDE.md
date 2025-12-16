@@ -37,7 +37,20 @@ const sizeClasses = {
 <Loader2 className="animate-spin" />  // NG
 ```
 
-### 3. 型定義の場所
+### 3. Skeleton アニメーション選択
+
+```tsx
+// ✅ pulse: デフォルト、軽量（フェードイン/アウト）
+<Skeleton className="h-4 w-full" />
+
+// ✅ shimmer: 高級感、pulseより40%速く感じる（Facebook/LinkedIn方式）
+<Skeleton className="h-4 w-full" animation="shimmer" />
+
+// ❌ 禁止: 独自アニメーションの追加
+<Skeleton className="animate-bounce" />  // NG
+```
+
+### 4. 型定義の場所
 
 ```tsx
 // ✅ types.ts で定義

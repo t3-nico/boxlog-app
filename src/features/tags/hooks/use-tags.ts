@@ -6,6 +6,28 @@ import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
 
 import type { CreateTagInput, Tag, TagsResponse, TagUsage, UpdateTagInput } from '@/features/tags/types'
 
+/**
+ * APIレスポンスからエラーメッセージを抽出
+ * @param response - Fetchレスポンス
+ * @param fallbackMessage - JSONパース失敗時のフォールバックメッセージ
+ */
+async function extractErrorMessage(response: Response, fallbackMessage: string): Promise<string> {
+  try {
+    const errorData = await response.json()
+    return errorData.error || errorData.message || fallbackMessage
+  } catch {
+    return `${fallbackMessage} (HTTP ${response.status})`
+  }
+}
+
+/**
+ * APIエラーをスロー
+ */
+async function throwApiError(response: Response, fallbackMessage: string): Promise<never> {
+  const message = await extractErrorMessage(response, fallbackMessage)
+  throw new Error(message)
+}
+
 // API関数群
 const tagAPI = {
   // 全タグ取得（フラット）
@@ -16,7 +38,9 @@ const tagAPI = {
     })
 
     const response = await fetch(`/api/tags?${params}`)
-    if (!response.ok) throw new Error('Failed to fetch tags')
+    if (!response.ok) {
+      await throwApiError(response, 'タグの取得に失敗しました')
+    }
 
     const data: TagsResponse = await response.json()
     return data.data
@@ -30,7 +54,9 @@ const tagAPI = {
       body: JSON.stringify(input),
     })
 
-    if (!response.ok) throw new Error('Failed to create tag')
+    if (!response.ok) {
+      await throwApiError(response, 'タグの作成に失敗しました')
+    }
 
     const data = await response.json()
     return data.data
@@ -44,7 +70,9 @@ const tagAPI = {
       body: JSON.stringify(input),
     })
 
-    if (!response.ok) throw new Error('Failed to update tag')
+    if (!response.ok) {
+      await throwApiError(response, 'タグの更新に失敗しました')
+    }
 
     const data = await response.json()
     return data.data
@@ -56,7 +84,9 @@ const tagAPI = {
       method: 'DELETE',
     })
 
-    if (!response.ok) throw new Error('Failed to delete tag')
+    if (!response.ok) {
+      await throwApiError(response, 'タグの削除に失敗しました')
+    }
   },
 
   // タグリネーム
@@ -71,7 +101,9 @@ const tagAPI = {
       }),
     })
 
-    if (!response.ok) throw new Error('Failed to rename tag')
+    if (!response.ok) {
+      await throwApiError(response, 'タグ名の変更に失敗しました')
+    }
 
     const data = await response.json()
     return data.data
@@ -89,7 +121,9 @@ const tagAPI = {
       }),
     })
 
-    if (!response.ok) throw new Error('Failed to update tag color')
+    if (!response.ok) {
+      await throwApiError(response, 'タグ色の変更に失敗しました')
+    }
 
     const data = await response.json()
     return data.data
@@ -98,7 +132,9 @@ const tagAPI = {
   // 単一タグ取得
   async getTag(id: string): Promise<Tag> {
     const response = await fetch(`/api/tags/${id}`)
-    if (!response.ok) throw new Error('Failed to fetch tag')
+    if (!response.ok) {
+      await throwApiError(response, 'タグの取得に失敗しました')
+    }
 
     const data = await response.json()
     return data.data
@@ -107,7 +143,9 @@ const tagAPI = {
   // タグ使用状況取得
   async getTagUsage(id: string): Promise<TagUsage> {
     const response = await fetch(`/api/tags/${id}?usage=true`)
-    if (!response.ok) throw new Error('Failed to fetch tag usage')
+    if (!response.ok) {
+      await throwApiError(response, 'タグ使用状況の取得に失敗しました')
+    }
 
     const data = await response.json()
     return data.usage || { planCount: 0, eventCount: 0, taskCount: 0, totalCount: 0 }
@@ -216,7 +254,9 @@ export function useMoveTag() {
         body: JSON.stringify({ group_id: newGroupId }),
       })
 
-      if (!response.ok) throw new Error('Failed to move tag')
+      if (!response.ok) {
+        await throwApiError(response, 'タグの移動に失敗しました')
+      }
       const data = await response.json()
       return data.data
     },
@@ -294,8 +334,7 @@ export function useMergeTag() {
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to merge tags')
+        await throwApiError(response, 'タグのマージに失敗しました')
       }
 
       return response.json()

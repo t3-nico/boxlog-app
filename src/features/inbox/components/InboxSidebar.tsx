@@ -14,6 +14,8 @@ interface InboxSidebarProps {
   calendarPlans?: CalendarPlan[]
   /** プランのスケジュール更新ハンドラー */
   onSchedulePlan?: (planId: string, date: Date, time: string) => void
+  /** 空き時間クリックでプラン作成 */
+  onCreatePlan?: (date: Date, time: string) => void
 }
 
 /**
@@ -21,7 +23,12 @@ interface InboxSidebarProps {
  *
  * カレンダーDayViewを表示し、ドラッグ＆ドロップでスケジュール設定
  */
-export function InboxSidebar({ isLoading = false, calendarPlans = [], onSchedulePlan }: InboxSidebarProps) {
+export function InboxSidebar({
+  isLoading = false,
+  calendarPlans = [],
+  onSchedulePlan,
+  onCreatePlan,
+}: InboxSidebarProps) {
   const t = useTranslations()
   const [selectedDate, setSelectedDate] = useState(() => new Date())
 
@@ -42,7 +49,8 @@ export function InboxSidebar({ isLoading = false, calendarPlans = [], onSchedule
         onDateChange={setSelectedDate}
         plans={calendarPlans}
         {...(onSchedulePlan && { onDrop: onSchedulePlan })}
-        className="flex-1"
+        {...(onCreatePlan && { onEmptyClick: onCreatePlan })}
+        className="min-h-0 flex-1"
       />
     </SidebarShell>
   )

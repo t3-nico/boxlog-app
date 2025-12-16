@@ -96,7 +96,10 @@ export async function updateSession(request: NextRequest) {
 
   // ⚠️ 重要: getUser() を呼び出すことで、期限切れトークンが自動リフレッシュされる
   // この呼び出しにより、上記の setAll() が実行され、新しいトークンがCookieに保存される
-  await supabase.auth.getUser()
+  // パフォーマンス最適化: ユーザー情報も返すことで、呼び出し元での重複取得を防止
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  return { response, supabase }
+  return { response, supabase, user }
 }

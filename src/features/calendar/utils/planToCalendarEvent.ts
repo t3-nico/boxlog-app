@@ -1,3 +1,4 @@
+import { MS_PER_HOUR, MS_PER_MINUTE } from '@/constants/time'
 import type { Plan, PlanStatus, PlanWithTags } from '@/features/plans/types/plan'
 import type { CalendarEvent } from '../types/calendar.types'
 import { parseDatetimeString } from './dateUtils'
@@ -60,7 +61,7 @@ export function planToCalendarEvent(plan: Plan | PlanWithTags): CalendarEvent {
   const startDate = plan.start_time ? parseDatetimeString(plan.start_time, userTimezone) : new Date()
   const endDate = plan.end_time
     ? parseDatetimeString(plan.end_time, userTimezone)
-    : new Date(startDate.getTime() + 60 * 60 * 1000) // デフォルト1時間後
+    : new Date(startDate.getTime() + MS_PER_HOUR) // デフォルト1時間後
 
   // タグ情報を変換（PlanWithTagsの場合）
   const tags = 'tags' in plan && plan.tags ? plan.tags : undefined
@@ -80,8 +81,8 @@ export function planToCalendarEvent(plan: Plan | PlanWithTags): CalendarEvent {
     updatedAt: plan.updated_at ? new Date(plan.updated_at) : new Date(),
     displayStartDate: startDate,
     displayEndDate: endDate,
-    duration: Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60)), // 分単位
-    isMultiDay: false, // TODO: 複数日対応
+    duration: Math.round((endDate.getTime() - startDate.getTime()) / MS_PER_MINUTE), // 分単位
+    isMultiDay: false,
     isRecurring: plan.recurrence_type !== null && plan.recurrence_type !== 'none',
   }
 }

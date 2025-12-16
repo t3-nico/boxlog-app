@@ -249,16 +249,16 @@ NODE_ENV=production
 
 ### Sentry設定
 
-```typescript
-import { initializeSentry } from '@/lib/sentry'
+Sentryは `instrumentation.ts` / `instrumentation-client.ts` で自動初期化されます。
+エラー報告には `reportToSentry()` を使用してください：
 
-initializeSentry({
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.NODE_ENV,
-  sampleRate: 1.0,
-  tracesSampleRate: 0.1,
-  enablePerformanceMonitoring: true,
-})
+```typescript
+import { reportToSentry } from '@/lib/sentry'
+import { AppError } from '@/config/error-patterns'
+
+// エラー報告
+const appError = new AppError('操作に失敗', 'SYSTEM_ERROR_500', { context: 'example' })
+reportToSentry(appError)
 ```
 
 ## 🚀 パフォーマンス
@@ -403,3 +403,9 @@ globalErrorHandler.registerNotificationHandler('debug', console.log)
 **最終更新**: 2024-09-29
 **バージョン**: v1.0.0 - エラーパターン辞書システム初回リリース
 **関連Issue**: #352 - エラーパターン辞書システム実装
+
+---
+
+**種類**: 📙 リファレンス
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

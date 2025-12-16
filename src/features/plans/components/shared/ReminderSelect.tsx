@@ -92,7 +92,7 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
         <Button
           variant="ghost"
           size="sm"
-          className={`h-8 pr-2 pl-0 ${hasReminder ? 'text-foreground' : 'text-muted-foreground'}`}
+          className={`h-8 px-2 text-sm ${hasReminder ? 'text-foreground' : 'text-muted-foreground'}`}
           type="button"
           disabled={disabled}
           onClick={() => {
@@ -101,7 +101,7 @@ export function ReminderSelect({ value, onChange, variant = 'inspector', disable
             }
           }}
         >
-          <span className="text-sm">{value || 'なし'}</span>
+          {value || '通知'}
         </Button>
       ) : (
         <Button

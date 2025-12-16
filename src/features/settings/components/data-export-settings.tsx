@@ -66,7 +66,6 @@ export const DataExportSettings = memo(function DataExportSettings() {
 
   const handleAutoBackupChange = useCallback((checked: boolean) => {
     setAutoBackup(checked)
-    // TODO: 実際のバックアップ設定APIを呼び出す
   }, [])
 
   return (

@@ -100,3 +100,9 @@ export type TaskWithUser = Database['public']['Tables']['tasks']['Row'] & {
 
 - [Supabase CLI Type Generation](https://supabase.com/docs/guides/cli/managing-environments#generate-types)
 - [TypeScript Support](https://supabase.com/docs/guides/api/typescript-support)
+
+---
+
+**種類**: 📗 ハウツーガイド
+**最終更新**: 2025-12-11
+**所有者**: BoxLog 開発チーム

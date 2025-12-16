@@ -13,7 +13,7 @@ export interface UseCurrentPeriodOptions {
   dates: Date[]
   referenceDate?: Date | undefined // 基準日（デフォルト: 今日）
   periodType: 'day' | 'week' | 'threeday' | 'fiveday' | 'agenda'
-  weekStartsOn?: 0 | 1 | undefined // 週の開始日
+  weekStartsOn?: 0 | 1 | 6 | undefined // 週の開始日
 }
 
 export interface UseCurrentPeriodReturn {

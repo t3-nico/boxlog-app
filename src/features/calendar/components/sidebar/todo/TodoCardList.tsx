@@ -2,7 +2,10 @@
 
 import { useMemo } from 'react'
 
+import { useTranslations } from 'next-intl'
+
 import { PlanCard } from '@/features/board/components/shared/PlanCard'
+import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore'
 import { parseDateString } from '@/features/calendar/utils/dateUtils'
 import { useInboxData } from '@/features/inbox/hooks/useInboxData'
 
@@ -11,9 +14,6 @@ import type { TodoFilter, TodoSort } from './TodoNavigation'
 interface TodoCardListProps {
   filter: TodoFilter
   sort: TodoSort
-  showHigh: boolean
-  showMedium: boolean
-  showLow: boolean
 }
 
 /**
@@ -27,19 +27,24 @@ interface TodoCardListProps {
  * **Note**: PlanCard の useDraggable は既に実装済みなので、
  * DndContext 内に配置すれば自動的にドラッグ可能になる
  */
-export function TodoCardList({
-  filter,
-  sort,
-  showHigh: _showHigh,
-  showMedium: _showMedium,
-  showLow: _showLow,
-}: TodoCardListProps) {
+export function TodoCardList({ filter, sort }: TodoCardListProps) {
+  const t = useTranslations('calendar.todo')
+
   // status: 'todo' のプランのみ取得
-  const { items, isLoading, error } = useInboxData({ status: 'todo' })
+  const { items, isPending, error } = useInboxData({ status: 'todo' })
+
+  // カレンダーフィルター（タグフィルター）
+  const isPlanVisible = useCalendarFilterStore((state) => state.isPlanVisible)
 
   // フィルタリング・ソート処理
   const filteredAndSortedItems = useMemo(() => {
     let result = [...items]
+
+    // 0. カレンダーフィルター（タグによる表示/非表示）
+    result = result.filter((item) => {
+      const tagIds = item.tags?.map((tag) => tag.id) || []
+      return isPlanVisible(tagIds)
+    })
 
     // 1. 期間フィルター
     if (filter !== 'all') {
@@ -85,14 +90,14 @@ export function TodoCardList({
     })
 
     return result
-  }, [items, filter, sort])
+  }, [items, filter, sort, isPlanVisible])
 
   // ローディング表示
-  if (isLoading) {
+  if (isPending) {
     return (
       <div className="flex flex-col items-center justify-center py-8">
         <div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />
-        <p className="text-muted-foreground mt-2 text-sm">読み込み中...</p>
+        <p className="text-muted-foreground mt-2 text-sm">{t('loading')}</p>
       </div>
     )
   }
@@ -101,7 +106,7 @@ export function TodoCardList({
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-8">
-        <p className="text-destructive text-sm font-medium">エラーが発生しました</p>
+        <p className="text-destructive text-sm font-medium">{t('error')}</p>
         <p className="text-muted-foreground mt-1 text-xs">{error.message}</p>
       </div>
     )
@@ -111,14 +116,15 @@ export function TodoCardList({
   if (filteredAndSortedItems.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8">
-        <p className="text-muted-foreground text-sm">タスクがありません</p>
+        <p className="text-muted-foreground text-sm">{t('noTasks')}</p>
       </div>
     )
   }
 
   // カードリスト表示（PlanCardを再利用）
+  // パディングはこのコンポーネント内で管理（スクロール時の見切れ防止）
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto pt-4 pb-4">
+    <div className="flex flex-col gap-2 overflow-y-auto px-4 py-2">
       {filteredAndSortedItems.map((item) => (
         <PlanCard key={item.id} item={item} />
       ))}

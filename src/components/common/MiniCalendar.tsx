@@ -23,6 +23,7 @@ import { useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 
 export interface MiniCalendarProps {
@@ -43,10 +44,22 @@ export interface MiniCalendarProps {
   popoverAlign?: 'start' | 'center' | 'end' | undefined
   popoverSide?: 'top' | 'right' | 'bottom' | 'left' | undefined
   onOpenChange?: ((open: boolean) => void) | undefined
+  /** 「日付なし」ボタンを表示するか */
+  allowClear?: boolean | undefined
 }
 
-const WEEKDAYS_JA = ['月', '火', '水', '木', '金', '土', '日']
-const WEEKDAYS_EN = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+// 週の開始日に応じた曜日配列を取得する関数
+function getWeekdays(locale: string, weekStartsOn: 0 | 1 | 6): string[] {
+  const weekdaysJa = ['日', '月', '火', '水', '木', '金', '土']
+  const weekdaysEn = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+  const base = locale === 'ja' ? weekdaysJa : weekdaysEn
+
+  // weekStartsOnに応じて配列を回転
+  // 0: 日曜始まり → そのまま
+  // 1: 月曜始まり → 月火水木金土日
+  // 6: 土曜始まり → 土日月火水木金
+  return [...base.slice(weekStartsOn), ...base.slice(0, weekStartsOn)]
+}
 
 const MONTHS_JA = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
 const MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -78,8 +91,10 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     popoverAlign = 'start',
     popoverSide = 'bottom',
     onOpenChange,
+    allowClear = false,
   }) => {
     const locale = useLocale()
+    const weekStartsOn = useCalendarSettingsStore((state) => state.weekStartsOn)
     const [isMounted, setIsMounted] = useState(false)
     const [open, setOpen] = useState(false)
     const [viewMonth, setViewMonth] = useState(() => month ?? selectedDate ?? new Date())
@@ -102,18 +117,18 @@ export const MiniCalendar = memo<MiniCalendarProps>(
       }
     }, [selectedDate])
 
-    const weekdays = locale === 'ja' ? WEEKDAYS_JA : WEEKDAYS_EN
+    const weekdays = getWeekdays(locale, weekStartsOn)
     const months = locale === 'ja' ? MONTHS_JA : MONTHS_EN
 
     // カレンダーの日付配列を生成
     const calendarDays = useMemo(() => {
       const monthStart = startOfMonth(viewMonth)
       const monthEnd = endOfMonth(viewMonth)
-      const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 })
-      const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 1 })
+      const calendarStart = startOfWeek(monthStart, { weekStartsOn })
+      const calendarEnd = endOfWeek(monthEnd, { weekStartsOn })
 
       return eachDayOfInterval({ start: calendarStart, end: calendarEnd })
-    }, [viewMonth])
+    }, [viewMonth, weekStartsOn])
 
     // 週ごとにグループ化
     const weeks = useMemo(() => {
@@ -181,6 +196,13 @@ export const MiniCalendar = memo<MiniCalendarProps>(
       [onOpenChange]
     )
 
+    const handleClearDate = useCallback(() => {
+      onDateSelect?.(undefined)
+      if (asPopover) {
+        setOpen(false)
+      }
+    }, [onDateSelect, asPopover])
+
     // 日付の状態を判定
     const getDayState = useCallback(
       (date: Date) => {
@@ -211,7 +233,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     }
 
     const renderCalendar = () => (
-      <div className={cn('p-3 select-none', className)}>
+      <div className={cn('p-2 select-none', className)}>
         {/* ヘッダー: ナビゲーション + 月・年選択 */}
         <div className="mb-2 flex items-center justify-between">
           {/* 前月ボタン */}
@@ -321,6 +343,22 @@ export const MiniCalendar = memo<MiniCalendarProps>(
             </div>
           ))}
         </div>
+
+        {/* 日付なしボタン（全幅ボーダー用に外側） */}
+        {allowClear && (
+          <div className="border-border/50 border-t">
+            <div className="px-3 py-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground h-8 w-full text-sm"
+                onClick={handleClearDate}
+              >
+                {locale === 'ja' ? '日付なし' : 'No date'}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     )
 
@@ -328,11 +366,9 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     if (asPopover) {
       return (
         <Popover open={open} onOpenChange={handleOpenChange} modal={false}>
-          <PopoverTrigger asChild className="hover:bg-state-hover transition-colors">
-            {popoverTrigger}
-          </PopoverTrigger>
+          <PopoverTrigger asChild>{popoverTrigger}</PopoverTrigger>
           <PopoverContent
-            className={cn('bg-popover dark:border-input w-auto border p-0', popoverClassName)}
+            className={cn('bg-popover border-border z-[350] w-auto border p-0', popoverClassName)}
             align={popoverAlign}
             side={popoverSide}
           >

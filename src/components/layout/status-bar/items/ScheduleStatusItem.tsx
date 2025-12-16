@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Calendar } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 import { StatusBarItem } from '../StatusBarItem'
 
@@ -20,6 +21,7 @@ import { cn } from '@/lib/utils'
  * - 予定なし: "予定なし"（クリックで新規作成ポップオーバーを表示）
  */
 export function ScheduleStatusItem() {
+  const t = useTranslations('calendar')
   const openInspector = usePlanInspectorStore((state) => state.openInspector)
   const [currentTime, setCurrentTime] = useState(() => new Date())
 
@@ -33,7 +35,7 @@ export function ScheduleStatusItem() {
   }, [])
 
   // 今日の予定を取得
-  const { data: plans, isLoading } = api.plans.list.useQuery(undefined, {
+  const { data: plans, isPending } = api.plans.list.useQuery(undefined, {
     staleTime: 60 * 1000, // 1分
     refetchInterval: 60 * 1000, // 1分ごとに再取得
   })
@@ -122,14 +124,14 @@ export function ScheduleStatusItem() {
       return `${currentPlan.title}${timeRange}`
     }
 
-    return '予定なし'
-  }, [currentPlan, formatTime])
+    return t('statusBar.noSchedule')
+  }, [currentPlan, formatTime, t])
 
   // アイコン（ローディング時はスピナー）
-  const icon = isLoading ? <Spinner className="h-3 w-3" /> : <Calendar className="h-3 w-3" />
+  const icon = isPending ? <Spinner className="h-3 w-3" /> : <Calendar className="h-3 w-3" />
 
   // ツールチップ
-  const tooltip = currentPlan ? '予定を開く' : '新規プラン作成'
+  const tooltip = currentPlan ? t('statusBar.openSchedule') : t('statusBar.createNewPlan')
 
   // 予定がない場合の初期値を計算
   const initialDate = useMemo(() => new Date(), [])
@@ -149,7 +151,7 @@ export function ScheduleStatusItem() {
 
   const statusBarContent = (
     <>
-      <StatusBarItem icon={icon} label={isLoading ? '...' : label} onClick={handleClick} tooltip={tooltip} />
+      <StatusBarItem icon={icon} label={isPending ? '...' : label} onClick={handleClick} tooltip={tooltip} />
       {/* 進行中の予定がある場合のみプログレスバーを表示 */}
       {progressPercent !== null && (
         <div className="flex items-center gap-1.5" title={`${progressPercent}% 経過`}>
@@ -178,7 +180,7 @@ export function ScheduleStatusItem() {
       <PlanCreateTrigger
         triggerElement={
           <button type="button" className="flex items-center">
-            <StatusBarItem icon={icon} label={isLoading ? '...' : label} tooltip={tooltip} forceClickable />
+            <StatusBarItem icon={icon} label={isPending ? '...' : label} tooltip={tooltip} forceClickable />
           </button>
         }
         initialDate={initialDate}

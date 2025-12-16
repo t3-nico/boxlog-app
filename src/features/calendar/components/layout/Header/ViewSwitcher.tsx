@@ -80,7 +80,7 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
         <span>{currentOption?.label || 'Day'}</span>
         <ChevronDown className="ml-2 h-4 w-4" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" side="bottom" sideOffset={8} className="dark:border-input min-w-40 border">
+      <DropdownMenuContent align="end" side="bottom" sideOffset={8} className="min-w-40">
         {/* ビューオプション */}
         {options.map((option) => (
           <DropdownMenuItem

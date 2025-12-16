@@ -1,5 +1,6 @@
 import { addDays, endOfDay, format, isSameDay, isSaturday, isSunday, isWithinInterval, startOfDay } from 'date-fns'
 
+import { MS_PER_DAY, MS_PER_MINUTE } from '@/constants/time'
 import { CalendarPlan } from '@/features/calendar/types/calendar.types'
 
 export interface PlanSegment extends CalendarPlan {
@@ -74,7 +75,7 @@ function createPlanSegments(plan: CalendarPlan, showWeekends: boolean, _weekStar
   const originalDuration = plan.duration || 60
 
   let segmentIndex = 0
-  const totalDays = Math.ceil((endDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+  const totalDays = Math.ceil((endDate.getTime() - currentDate.getTime()) / MS_PER_DAY) + 1
 
   while (currentDate <= endDate) {
     // 週末表示がOFFの場合、土日をスキップ
@@ -122,7 +123,7 @@ function createPlanSegments(plan: CalendarPlan, showWeekends: boolean, _weekStar
       // タイトルにセグメント情報を追加
       title: segmentType === 'full' ? plan.title : `${plan.title} ${getSegmentLabel(segmentType)}`,
       // 分割されたセグメントの継続時間を計算
-      duration: Math.ceil((segmentEnd.getTime() - segmentStart.getTime()) / (1000 * 60)),
+      duration: Math.ceil((segmentEnd.getTime() - segmentStart.getTime()) / MS_PER_MINUTE),
     })
 
     currentDate = addDays(currentDate, 1)

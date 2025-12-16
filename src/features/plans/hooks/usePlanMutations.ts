@@ -175,7 +175,6 @@ export function usePlanMutations() {
     },
     onSettled: async () => {
       // mutation完了後にフラグをリセット
-      console.log('[usePlanMutations] onSettled: isMutating = false')
       setIsMutating(false)
     },
   })
@@ -238,15 +237,12 @@ export function usePlanMutations() {
             undefined,
           recurrence_rule: previousPlan.recurrence_rule ?? undefined,
         }
-        console.log('[usePlanMutations] previousPlan data:', previousPlan)
-        console.log('[usePlanMutations] restoreData prepared:', restoreData)
 
         toast.success(t('common.plan.deleted'), {
           duration: 10000,
           action: {
             label: t('common.undo'),
             onClick: () => {
-              console.log('[usePlanMutations] Undo clicked, restoring:', restoreData)
               createPlan.mutate(restoreData)
             },
           },
