@@ -99,7 +99,7 @@ export function DateTimePopoverContent({
   return (
     <div>
       {/* カレンダー（直接表示） */}
-      <MiniCalendar selectedDate={selectedDate} onDateSelect={onDateSelect} allowClear />
+      <MiniCalendar selectedDate={selectedDate} onDateSelect={onDateSelect} />
 
       {/* 時刻行 */}
       <div className="border-border/50 border-t">

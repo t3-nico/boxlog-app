@@ -77,7 +77,7 @@ export function InspectorHeader({
   }
 
   return (
-    <div className="flex h-10 items-center justify-between px-2 pt-2">
+    <div className="flex h-10 items-center justify-between pt-2">
       <div className="flex items-center gap-1">
         <Tooltip>
           <TooltipTrigger asChild>
@@ -85,7 +85,7 @@ export function InspectorHeader({
               {displayMode === 'popover' ? <X className="h-4 w-4" /> : <PanelRightClose className="h-4 w-4" />}
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="bottom" className="z-[200]">
+          <TooltipContent side="bottom">
             <p>{t('actions.close')}</p>
           </TooltipContent>
         </Tooltip>
@@ -103,7 +103,7 @@ export function InspectorHeader({
                 <ChevronUp className="h-6 w-6" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="bottom" className="z-[200]">
+            <TooltipContent side="bottom">
               <p>{t('aria.previous')}</p>
             </TooltipContent>
           </Tooltip>
@@ -120,7 +120,7 @@ export function InspectorHeader({
                 <ChevronDown className="h-6 w-6" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="bottom" className="z-[200]">
+            <TooltipContent side="bottom">
               <p>{t('aria.next')}</p>
             </TooltipContent>
           </Tooltip>
@@ -133,7 +133,7 @@ export function InspectorHeader({
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="z-[200] w-56">
+        <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuItem onClick={handleDuplicate}>
             <Copy className="size-4" />
             複製する

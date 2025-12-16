@@ -95,23 +95,27 @@ export function AppBar() {
       {/* Logo / Sidebar Toggle - 48px (8px padding + 32px button + 8px padding) */}
       <div className="flex items-center justify-center py-2" onClick={(e) => e.stopPropagation()}>
         <SimpleTooltip content={isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')} side="right">
-          <Button
-            onClick={toggle}
-            size="icon-sm"
-            variant="ghost"
-            aria-label={isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')}
-            className="text-foreground size-8 shrink-0"
-          >
-            {isAppBarHovered ? (
-              isOpen ? (
-                <PanelLeftClose className="size-5" />
-              ) : (
-                <PanelLeftOpen className="size-5" />
-              )
-            ) : (
-              <Box className="size-5" />
-            )}
-          </Button>
+          {isOpen ? (
+            <Button
+              onClick={toggle}
+              size="icon-sm"
+              variant="ghost"
+              aria-label={t('sidebar.closeSidebar')}
+              className="text-muted-foreground size-8 shrink-0"
+            >
+              <PanelLeftClose className="size-4" />
+            </Button>
+          ) : (
+            <Button
+              onClick={toggle}
+              size="icon-sm"
+              variant="ghost"
+              aria-label={t('sidebar.openSidebar')}
+              className="text-foreground size-8 shrink-0"
+            >
+              {isAppBarHovered ? <PanelLeftOpen className="size-4" /> : <Box className="size-4" />}
+            </Button>
+          )}
         </SimpleTooltip>
       </div>
 

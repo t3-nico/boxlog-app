@@ -114,24 +114,6 @@ export function PlanScheduleSection({
   // 繰り返しが設定されているか
   const hasRecurrence = recurrenceRule || (recurrenceType && recurrenceType !== 'none')
 
-  // 所要時間を計算
-  const durationText = useMemo(() => {
-    if (!startTime || !endTime) return null
-    const [startH, startM] = startTime.split(':').map(Number)
-    const [endH, endM] = endTime.split(':').map(Number)
-    const startMinutes = (startH ?? 0) * 60 + (startM ?? 0)
-    const endMinutes = (endH ?? 0) * 60 + (endM ?? 0)
-    const diff = endMinutes - startMinutes
-    if (diff <= 0) return null
-
-    const hours = Math.floor(diff / 60)
-    const minutes = diff % 60
-
-    if (hours === 0) return `${minutes}分`
-    if (minutes === 0) return `${hours}時間`
-    return `${hours}時間${minutes}分`
-  }, [startTime, endTime])
-
   return (
     <div className={showBorderTop ? 'border-border/50 border-t' : ''}>
       {/* 時間グループ */}
@@ -143,7 +125,7 @@ export function PlanScheduleSection({
         <div className="flex flex-1 flex-col gap-1">
           {/* 1行目: 日付 */}
           <div className="flex h-8 items-center">
-            <DatePickerPopover selectedDate={selectedDate} onDateChange={onDateChange} allowClear />
+            <DatePickerPopover selectedDate={selectedDate} onDateChange={onDateChange} />
           </div>
 
           {/* 2行目: 時間 */}
@@ -157,7 +139,6 @@ export function PlanScheduleSection({
               disabled={disabled || !startTime}
               minTime={startTime}
             />
-            {durationText && <span className="text-muted-foreground ml-2 text-sm">{durationText}</span>}
           </div>
 
           {/* 3行目: 繰り返し */}
