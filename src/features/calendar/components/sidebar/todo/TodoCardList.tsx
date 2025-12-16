@@ -2,6 +2,8 @@
 
 import { useMemo } from 'react'
 
+import { useTranslations } from 'next-intl'
+
 import { PlanCard } from '@/features/board/components/shared/PlanCard'
 import { useCalendarFilterStore } from '@/features/calendar/stores/useCalendarFilterStore'
 import { parseDateString } from '@/features/calendar/utils/dateUtils'
@@ -26,6 +28,8 @@ interface TodoCardListProps {
  * DndContext 内に配置すれば自動的にドラッグ可能になる
  */
 export function TodoCardList({ filter, sort }: TodoCardListProps) {
+  const t = useTranslations('calendar.todo')
+
   // status: 'todo' のプランのみ取得
   const { items, isPending, error } = useInboxData({ status: 'todo' })
 
@@ -93,7 +97,7 @@ export function TodoCardList({ filter, sort }: TodoCardListProps) {
     return (
       <div className="flex flex-col items-center justify-center py-8">
         <div className="border-primary size-8 animate-spin rounded-full border-4 border-t-transparent" />
-        <p className="text-muted-foreground mt-2 text-sm">読み込み中...</p>
+        <p className="text-muted-foreground mt-2 text-sm">{t('loading')}</p>
       </div>
     )
   }
@@ -102,7 +106,7 @@ export function TodoCardList({ filter, sort }: TodoCardListProps) {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-8">
-        <p className="text-destructive text-sm font-medium">エラーが発生しました</p>
+        <p className="text-destructive text-sm font-medium">{t('error')}</p>
         <p className="text-muted-foreground mt-1 text-xs">{error.message}</p>
       </div>
     )
@@ -112,7 +116,7 @@ export function TodoCardList({ filter, sort }: TodoCardListProps) {
   if (filteredAndSortedItems.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8">
-        <p className="text-muted-foreground text-sm">タスクがありません</p>
+        <p className="text-muted-foreground text-sm">{t('noTasks')}</p>
       </div>
     )
   }

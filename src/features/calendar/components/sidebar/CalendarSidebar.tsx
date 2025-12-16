@@ -68,7 +68,7 @@ export function CalendarSidebar() {
       default:
         return undefined
     }
-  }, [navigation?.currentDate, navigation?.viewType])
+  }, [navigation])
 
   const tabs: SidebarTab[] = [
     {

@@ -179,7 +179,10 @@
         "dueDate": "Due date",
         "priority": "Priority",
         "created": "Created"
-      }
+      },
+      "loading": "Loading...",
+      "noTasks": "No tasks",
+      "error": "An error occurred"
     },
     "statusBar": {
       "noSchedule": "No schedule",
