@@ -8,18 +8,10 @@
 // メイン統合機能
 export {
   SentryErrorHandler,
-  /** @deprecated */
-  SentryIntegration,
-  // 推奨API
   handleApiError,
   handleReactError,
-  // 後方互換性（非推奨）
-  /** @deprecated */
-  initializeSentry,
   isSentryInitialized,
   reportToSentry,
-  /** @deprecated */
-  sentryIntegration,
 } from './integration'
 
 // パフォーマンス監視

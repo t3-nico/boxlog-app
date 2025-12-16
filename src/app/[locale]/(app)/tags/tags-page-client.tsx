@@ -42,8 +42,10 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   // データ取得
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
   const { data: groups = [] as TagGroup[] } = useTagGroups()
-  const { data: tagPlanCounts = {} } = api.plans.getTagPlanCounts.useQuery()
-  const { data: tagLastUsed = {} } = api.plans.getTagLastUsed.useQuery()
+  // 最適化: 2つのクエリを1つに統合（DB側でGROUP BY集計）
+  const { data: tagStats } = api.plans.getTagStats.useQuery()
+  const tagPlanCounts = tagStats?.counts ?? {}
+  const tagLastUsed = tagStats?.lastUsed ?? {}
 
   // コンテキスト
   const { tags, setTags, setIsLoading } = useTagsPageContext()

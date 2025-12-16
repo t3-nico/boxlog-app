@@ -586,6 +586,10 @@ export type Database = {
       cleanup_old_login_attempts: { Args: never; Returns: undefined }
       delete_old_notifications: { Args: never; Returns: undefined }
       get_next_tag_number: { Args: { p_user_id: string }; Returns: number }
+      get_tag_stats: {
+        Args: { p_user_id: string }
+        Returns: Array<{ tag_id: string; plan_count: number; last_used: string | null }>
+      }
     }
     Enums: {
       [_ in never]: never

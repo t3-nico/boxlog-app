@@ -104,15 +104,10 @@ export async function middleware(request: NextRequest) {
     return intlResponse
   }
 
-  // Supabaseセッションを更新
-  const { response, supabase } = await updateSession(request)
+  // Supabaseセッションを更新（ユーザー情報も同時取得 - 重複呼び出し防止で高速化）
+  const { response, user } = await updateSession(request)
 
   try {
-    // Supabase認証チェック
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
     // 環境変数で認証をスキップ（開発環境用）
     const skipAuth = process.env.SKIP_AUTH_IN_DEV === 'true' && process.env.NODE_ENV === 'development'
 

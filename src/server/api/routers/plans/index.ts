@@ -22,8 +22,7 @@ const bulkAliasRouter = createTRPCRouter({
 
 const statisticsAliasRouter = createTRPCRouter({
   getStats: statisticsRouter.getStats,
-  getTagPlanCounts: statisticsRouter.getTagPlanCounts,
-  getTagLastUsed: statisticsRouter.getTagLastUsed,
+  getTagStats: statisticsRouter.getTagStats, // Optimized: replaces getTagPlanCounts + getTagLastUsed
   getTotalTime: statisticsRouter.getTotalTime,
   getSummary: statisticsRouter.getSummary,
   getStreak: statisticsRouter.getStreak,
