@@ -47,11 +47,12 @@ export function usePlanLayoutCalculator(plans: TimedPlan[], options?: { notifyCo
 
       // 重複が発生している場合（2つ以上のプラン）にToast通知
       if (options?.notifyConflicts && group.plans.length > 1) {
-        // 最新のプランが追加された場合のみ通知（レイアウト変更での重複検知）
+        // 最近作成/更新されたプランがある場合のみ通知
         const hasRecentPlan = group.plans.some((plan) => {
-          const planTime = new Date(plan.start)
+          const updatedAt = plan.updatedAt ? new Date(plan.updatedAt) : null
+          if (!updatedAt) return false
           const now = new Date()
-          return now.getTime() - planTime.getTime() < 5000 // 5秒以内に作成されたプラン
+          return now.getTime() - updatedAt.getTime() < 5000 // 5秒以内に更新されたプラン
         })
 
         if (hasRecentPlan) {
