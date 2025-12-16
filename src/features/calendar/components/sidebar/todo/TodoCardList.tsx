@@ -120,7 +120,7 @@ export function TodoCardList({ filter, sort }: TodoCardListProps) {
   // カードリスト表示（PlanCardを再利用）
   // パディングはこのコンポーネント内で管理（スクロール時の見切れ防止）
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto px-4 py-4">
+    <div className="flex flex-col gap-2 overflow-y-auto px-4 py-2">
       {filteredAndSortedItems.map((item) => (
         <PlanCard key={item.id} item={item} />
       ))}

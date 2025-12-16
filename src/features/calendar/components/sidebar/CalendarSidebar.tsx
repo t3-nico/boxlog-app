@@ -77,8 +77,8 @@ export function CalendarSidebar() {
       icon: ListTodo,
       content: (
         <div>
-          {/* ナビゲーションコンテナ: 高さ40px（内部32px + 下padding 8px） */}
-          <div className="h-10 shrink-0 px-4 pb-2">
+          {/* ナビゲーションコンテナ: 上padding 8pxのみ */}
+          <div className="shrink-0 px-4 pt-2">
             <TodoNavigation filter={filter} onFilterChange={setFilter} sort={sort} onSortChange={setSort} />
           </div>
           {/* カードリストコンテナ - パディングはTodoCardList内で管理 */}
