@@ -60,6 +60,10 @@
   --info: oklch(0.5851 0.1538 241.9);
   --info-foreground: oklch(1 0 0);
 
+  /* Tooltip（反転デザイン） */
+  --tooltip: oklch(0.25 0 0);
+  --tooltip-foreground: oklch(0.95 0 0);
+
   /* Borders & Inputs */
   --border: oklch(0.9 0.006 264.54);
   --input: var(--surface-bright);
@@ -118,6 +122,10 @@
   --success-foreground: oklch(1 0 0);
   --info: oklch(0.5851 0.1538 241.9);
   --info-foreground: oklch(1 0 0);
+
+  /* Tooltip（反転デザイン - ダークモードでは明るい背景） */
+  --tooltip: oklch(0.9 0 0);
+  --tooltip-foreground: oklch(0.2 0 0);
 
   /* Borders & Inputs */
   --border: oklch(0.3715 0 0);
@@ -202,6 +210,8 @@
   --color-success-foreground: var(--success-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
+  --color-tooltip: var(--tooltip);
+  --color-tooltip-foreground: var(--tooltip-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
