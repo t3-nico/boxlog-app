@@ -5,14 +5,15 @@ on:
     tags:
       - 'v*.*.*'
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
 permissions:
   contents: write
 
+env:
+  VERCEL_ORG_ID: ${{ secrets.ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+
 jobs:
+  # 本番デプロイ（タグ作成時のみ）
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
@@ -20,6 +21,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
 
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
@@ -31,8 +38,18 @@ jobs:
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy to Vercel Production
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        id: deploy
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "✅ Deployed to: $DEPLOYMENT_URL"
 
+      - name: Output Deployment URL
+        run: |
+          echo "🚀 Production deployment complete!"
+          echo "URL: ${{ steps.deploy.outputs.url }}"
+
+  # GitHub Release作成
   release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
@@ -54,7 +71,7 @@ jobs:
       - name: Check if release notes exist
         id: check_notes
         run: |
-          NOTES_FILE="docs/releases/RELEASE_NOTES_${{ steps.version.outputs.version }}.md"
+          NOTES_FILE="RELEASE_NOTES_${{ steps.version.outputs.version }}.md"
           if [ -f "$NOTES_FILE" ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
             echo "file=$NOTES_FILE" >> $GITHUB_OUTPUT
@@ -68,11 +85,11 @@ jobs:
           TAG_VERSION="${{ steps.version.outputs.version_number }}"
 
           if [ "$PACKAGE_VERSION" != "$TAG_VERSION" ]; then
-            echo "Error: package.json version ($PACKAGE_VERSION) does not match tag version ($TAG_VERSION)"
+            echo "❌ Error: package.json version ($PACKAGE_VERSION) does not match tag version ($TAG_VERSION)"
             exit 1
           fi
 
-          echo "Version match: $PACKAGE_VERSION"
+          echo "✅ Version match: $PACKAGE_VERSION"
 
       - name: Create Release with notes file
         if: steps.check_notes.outputs.exists == 'true'
@@ -90,9 +107,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           body: |
-            ## Release ${{ steps.version.outputs.version }}
+            ## 🎉 Release ${{ steps.version.outputs.version }}
 
-            Release notes file was not found.
+            **⚠️ Note**: This release was created automatically. Release notes file was not found.
 
             Please see the [Full Changelog](${{ github.server_url }}/${{ github.repository }}/compare/${{ steps.version.outputs.version }}...${{ steps.version.outputs.version }}) for details.
           draft: false
@@ -100,3 +117,15 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "✅ Release ${{ steps.version.outputs.version }} created successfully!"
+          echo "🔗 View at: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Failed to create release ${{ steps.version.outputs.version }}"
+          echo "Please check the workflow logs and create the release manually if needed."
