@@ -28,7 +28,7 @@ interface SidebarSectionProps {
  * - 上下パディング: 8px（py-2）
  * - ホバー: bg-state-hover（Material Design 3準拠）
  * - 角丸: rounded（4px - 内部小要素用）
- * - フォント: text-sm font-medium
+ * - フォント: text-xs font-semibold
  * - アイコン: 16px（size-4）、右端配置、開閉時90度回転
  *
  * @example
@@ -42,7 +42,7 @@ interface SidebarSectionProps {
 export function SidebarSection({ title, children, defaultOpen = false, className }: SidebarSectionProps) {
   return (
     <Collapsible defaultOpen={defaultOpen}>
-      <CollapsibleTrigger className="hover:bg-state-hover flex h-8 w-full items-center justify-between rounded px-2 text-left text-sm font-medium transition-colors">
+      <CollapsibleTrigger className="text-muted-foreground hover:bg-state-hover flex h-8 w-full items-center justify-between rounded px-2 text-left text-xs font-semibold transition-colors">
         <span>{title}</span>
         <ChevronRight className="size-4 transition-transform [[data-state=open]>&]:rotate-90" />
       </CollapsibleTrigger>

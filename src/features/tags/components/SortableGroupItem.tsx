@@ -100,12 +100,16 @@ export function SortableGroupItem({
   )
 
   return (
-    <Button
+    <div
       ref={setRefs}
-      type="button"
-      variant="ghost"
       onClick={() => onGroupClick(group.group_number)}
-      className={`group w-full justify-start px-3 py-2 text-sm ${
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onGroupClick(group.group_number)
+        }
+      }}
+      className={`group hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${
         isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground'
       } ${isOver ? 'bg-primary/10 border-primary/50 border-2 border-dashed' : ''}`}
       style={style}
@@ -216,6 +220,6 @@ export function SortableGroupItem({
           <span className="text-muted-foreground text-xs">{tagCount}</span>
         </div>
       </div>
-    </Button>
+    </div>
   )
 }

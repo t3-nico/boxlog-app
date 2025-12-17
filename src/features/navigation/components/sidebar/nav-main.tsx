@@ -8,6 +8,8 @@ import type { TranslatedString } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
+import { SidebarHeading } from './SidebarHeading'
+
 export function NavMain({
   items,
 }: {
@@ -24,7 +26,7 @@ export function NavMain({
     <div className="flex flex-col gap-2">
       {/* Navigation Items */}
       <div className="flex flex-col">
-        <div className="text-muted-foreground px-2 py-2 text-xs font-semibold">{t('sidebar.views')}</div>
+        <SidebarHeading>{t('sidebar.views')}</SidebarHeading>
         <div className="flex flex-col">
           {items.map((item) => {
             // パス比較: 両方のパスを正規化して比較

@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
+import { SidebarHeading } from '@/features/navigation/components/sidebar/SidebarHeading'
 import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
 import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
@@ -297,23 +298,31 @@ export function TagsSidebar({
     })
 
     return (
-      <Button
+      <div
         ref={setNodeRef}
-        type="button"
-        variant="ghost"
+        role="button"
+        tabIndex={0}
         onClick={handleUncategorizedClick}
-        className={`w-full justify-start px-3 py-2 text-sm ${
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleUncategorizedClick()
+          }
+        }}
+        className={`hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${
           isUncategorizedPage ? 'bg-state-selected text-foreground' : 'text-muted-foreground'
         } ${isOver ? 'bg-primary/10 border-primary/50 border-2 border-dashed' : ''}`}
       >
         <div className="flex w-full items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <FolderX className="text-muted-foreground h-4 w-4 shrink-0" />
+          <div className="flex min-w-0 flex-1 items-center gap-2">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center">
+              <FolderX className="text-muted-foreground h-4 w-4" />
+            </div>
             <span>{t('tags.sidebar.uncategorized')}</span>
           </div>
           <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>
         </div>
-      </Button>
+      </div>
     )
   }
 
@@ -333,70 +342,90 @@ export function TagsSidebar({
       <nav className="flex-1 overflow-y-auto px-2 py-2">
         <div className="space-y-1">
           {/* すべてのタグ */}
-          <Button
-            type="button"
-            variant="ghost"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={onAllTagsClick}
-            className={`w-full justify-start px-3 py-2 text-sm ${
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onAllTagsClick()
+              }
+            }}
+            className={`hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${
               !isArchivePage && !isUncategorizedPage && !currentGroupNumber
                 ? 'bg-state-selected text-foreground'
                 : 'text-muted-foreground'
             }`}
           >
             <div className="flex w-full items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <Tags className="h-4 w-4 shrink-0" />
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center">
+                  <Tags className="h-4 w-4" />
+                </div>
                 <span>{t('tags.sidebar.allTags')}</span>
               </div>
               <span className="text-muted-foreground text-xs">{activeTagsCount}</span>
             </div>
-          </Button>
+          </div>
 
           {/* 未分類 */}
           <UncategorizedDropZone />
 
           {/* アーカイブ */}
-          <Button
-            type="button"
-            variant="ghost"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={handleArchiveClick}
-            className={`w-full justify-start px-3 py-2 text-sm ${
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                handleArchiveClick()
+              }
+            }}
+            className={`hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${
               isArchivePage ? 'bg-state-selected text-foreground' : 'text-muted-foreground'
             }`}
           >
             <div className="flex w-full items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <Archive className="h-4 w-4 shrink-0" />
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center">
+                  <Archive className="h-4 w-4" />
+                </div>
                 <span>{t('tags.sidebar.archive')}</span>
               </div>
               <span className="text-muted-foreground text-xs">{archivedTagsCount}</span>
             </div>
-          </Button>
-
-          {/* グループセクション */}
-          <div className="text-muted-foreground mt-4 mb-1 flex items-center justify-between px-3 py-2">
-            <span className="text-xs font-semibold uppercase">{t('tags.sidebar.groups')}</span>
-            <TooltipProvider>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleStartCreating}
-                    className="hover:bg-state-hover h-5 w-5 p-0"
-                  >
-                    <Plus className="h-3 w-3" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top" sideOffset={4}>
-                  <p>{t('tags.page.createGroup')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
           </div>
 
+          {/* グループセクション */}
+          <SidebarHeading
+            className="mt-4"
+            action={
+              <TooltipProvider>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleStartCreating}
+                      className="hover:bg-state-hover h-5 w-5 p-0"
+                    >
+                      <Plus className="h-3 w-3" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" sideOffset={4}>
+                    <p>{t('tags.page.createGroup')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            }
+          >
+            {t('tags.sidebar.groups')}
+          </SidebarHeading>
+
           {reorderedGroups.length === 0 && !isCreating ? (
-            <div className="text-muted-foreground px-3 py-2 text-xs">{t('tags.sidebar.noGroups')}</div>
+            <div className="text-muted-foreground px-2 py-2 text-xs">{t('tags.sidebar.noGroups')}</div>
           ) : (
             <>
               {/* SortableContext - DndContextは親のTagsPageProviderで提供 */}
@@ -422,7 +451,7 @@ export function TagsSidebar({
 
               {/* インライン作成フォーム */}
               {isCreating && (
-                <div ref={inlineFormRef} className="w-full rounded-md px-3 py-2">
+                <div ref={inlineFormRef} className="w-full rounded-md px-2 py-2">
                   <div className="flex items-center gap-2">
                     {/* カラーアイコン（左側） */}
                     <Popover>
