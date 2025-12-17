@@ -97,10 +97,10 @@ export function AppBar() {
         <SimpleTooltip content={isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')} side="right">
           <Button
             onClick={toggle}
-            size="icon-sm"
+            size="icon"
             variant="ghost"
             aria-label={isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')}
-            className="text-foreground size-8 shrink-0"
+            className="text-foreground shrink-0"
           >
             {isAppBarHovered ? (
               isOpen ? (

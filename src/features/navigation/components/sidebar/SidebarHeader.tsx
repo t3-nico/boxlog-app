@@ -39,10 +39,10 @@ export function SidebarHeader({ title, className }: SidebarHeaderProps) {
       {/* 閉じるボタン（モバイルのみ表示） */}
       <Button
         onClick={toggle}
-        size="icon-sm"
+        size="icon"
         variant="ghost"
         aria-label={t('aria.closeSidebar')}
-        className={cn('text-muted-foreground size-8 shrink-0 md:hidden')}
+        className={cn('text-muted-foreground shrink-0 md:hidden')}
       >
         <PanelLeftClose className="size-4" />
       </Button>
