@@ -44,7 +44,9 @@ function Progress({ className, value, indeterminate = false, ...props }: Progres
         data-slot="progress-indicator"
         className={cn(
           'bg-primary h-full flex-1',
-          indeterminate ? 'animate-indeterminate w-1/4' : 'w-full transition-all'
+          indeterminate
+            ? 'animate-indeterminate w-1/4 motion-reduce:w-full motion-reduce:animate-none'
+            : 'w-full transition-all'
         )}
         style={indeterminate ? undefined : { transform: `translateX(-${100 - (value || 0)}%)` }}
       />
