@@ -143,7 +143,7 @@ export const LoadingButton = ({
       className={className}
       disabled={disabled}
       isLoading={isLoading}
-      loadingText={loadingText}
+      {...(loadingText && { loadingText })}
       onClick={onClick}
     >
       {children}
