@@ -225,12 +225,12 @@ export function TagInspector() {
   const menuContent = (
     <>
       <DropdownMenuItem onClick={() => setShowColorPicker(true)}>
-        <Palette className="mr-2 h-4 w-4" />
+        <Palette className="size-4" />
         カラー変更
       </DropdownMenuItem>
       <DropdownMenuSub>
         <DropdownMenuSubTrigger>
-          <Folder className="mr-2 h-4 w-4" />
+          <Folder className="size-4" />
           グループを変更
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent className="w-48">
@@ -238,11 +238,11 @@ export function TagInspector() {
         </DropdownMenuSubContent>
       </DropdownMenuSub>
       <DropdownMenuItem onClick={handleMerge}>
-        <Merge className="mr-2 h-4 w-4" />
+        <Merge className="size-4" />
         マージ
       </DropdownMenuItem>
       <DropdownMenuItem onClick={handleArchive}>
-        <Archive className="mr-2 h-4 w-4" />
+        <Archive className="size-4" />
         アーカイブ
       </DropdownMenuItem>
       <DropdownMenuSeparator />
@@ -271,7 +271,7 @@ export function TagInspector() {
       </button>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={handleDelete} variant="destructive">
-        <Trash2 className="mr-2 h-4 w-4" />
+        <Trash2 className="size-4" />
         削除
       </DropdownMenuItem>
     </>
@@ -304,8 +304,8 @@ export function TagInspector() {
               />
 
               {/* タグ名とカラー */}
-              <div className="flex items-start gap-2 px-4 py-2">
-                <div className="relative mt-2">
+              <div className="flex min-h-10 items-start gap-2 px-4 py-2">
+                <div className="relative mt-1.5">
                   <button
                     onClick={() => setShowColorPicker(!showColorPicker)}
                     className="size-4 rounded-full transition-transform hover:scale-110"
@@ -335,7 +335,7 @@ export function TagInspector() {
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={(e) => autoSave('name', e.currentTarget.textContent || '')}
-                    className="bg-popover border-0 px-0 text-lg leading-8 font-semibold outline-none"
+                    className="bg-popover border-0 px-0 text-lg font-semibold outline-none"
                   >
                     {tag.name}
                   </span>
@@ -353,13 +353,13 @@ export function TagInspector() {
                 ) : (
                   <FolderX className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
                 )}
-                <div className="flex h-8 flex-1 items-center">
+                <div className="flex min-h-8 flex-1 items-center">
                   <button
                     type="button"
                     onClick={() => {
                       /* グループ選択メニューを表示 */
                     }}
-                    className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                    className="text-muted-foreground hover:bg-state-hover h-8 rounded-md px-2 text-sm transition-colors"
                   >
                     {tagGroup ? tagGroup.name : 'グループを選択...'}
                   </button>
@@ -369,7 +369,7 @@ export function TagInspector() {
               {/* 説明 */}
               <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
                 <FileText className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
-                <div className="flex min-h-8 min-w-0 flex-1 items-center">
+                <div className="min-h-8 min-w-0 flex-1">
                   <span
                     ref={descriptionRef}
                     contentEditable
@@ -392,7 +392,7 @@ export function TagInspector() {
                       }
                     }}
                     onBlur={(e) => autoSave('description', e.currentTarget.textContent || '')}
-                    className="text-muted-foreground empty:before:text-muted-foreground/60 block w-full text-sm leading-8 break-words outline-none empty:before:content-['説明を追加...']"
+                    className="text-muted-foreground empty:before:text-muted-foreground/60 block min-h-8 w-full pt-1.5 text-sm break-words outline-none empty:before:content-['説明を追加...']"
                     style={{ overflowWrap: 'anywhere' }}
                   >
                     {tag.description || ''}

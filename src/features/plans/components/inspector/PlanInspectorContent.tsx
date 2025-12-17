@@ -433,7 +433,7 @@ export function PlanInspectorContent() {
 
         <TabsContent value="details" className="flex-1 overflow-y-auto">
           {/* Title */}
-          <div className="flex items-start gap-2 px-4 py-2">
+          <div className="flex min-h-10 items-start gap-2 px-4 py-2">
             <CheckSquare className="text-muted-foreground mt-1.5 size-4 flex-shrink-0" />
             <div className="flex min-h-8 flex-1 items-center">
               <span
