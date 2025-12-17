@@ -65,7 +65,7 @@ export function BoardSelectionActions({
       {onAddTags && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onAddTags}>
+            <Button variant="ghost" size="icon" onClick={onAddTags} aria-label="タグを追加">
               <Tag className="size-4" />
             </Button>
           </TooltipTrigger>
@@ -77,7 +77,7 @@ export function BoardSelectionActions({
       {onChangeDueDate && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onChangeDueDate}>
+            <Button variant="ghost" size="icon" onClick={onChangeDueDate} aria-label="期限を設定">
               <Calendar className="size-4" />
             </Button>
           </TooltipTrigger>
@@ -95,6 +95,7 @@ export function BoardSelectionActions({
               onArchive()
               onClearSelection()
             }}
+            aria-label="アーカイブ"
           >
             <Archive className="size-4" />
           </Button>
@@ -113,6 +114,7 @@ export function BoardSelectionActions({
               onClearSelection()
             }}
             className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+            aria-label="削除"
           >
             <Trash2 className="size-4" />
           </Button>
@@ -126,7 +128,7 @@ export function BoardSelectionActions({
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" aria-label="その他">
                   <MoreHorizontal className="size-4" />
                 </Button>
               </DropdownMenuTrigger>

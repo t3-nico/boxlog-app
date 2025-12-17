@@ -58,8 +58,6 @@ export function TagInspector() {
     openInspector,
     setDisplayMode,
   } = useTagInspectorStore()
-
-  console.log('🔍 TagInspector render:', { isOpen, tagId, displayMode })
   const { openInspector: openPlanInspector } = usePlanInspectorStore()
   const router = useRouter()
   const pathname = usePathname()

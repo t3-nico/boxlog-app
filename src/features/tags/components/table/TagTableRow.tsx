@@ -131,13 +131,7 @@ export function TagCellContent({ tag, columnId, groups, allTags, planCounts, las
               className="h-7 px-2"
             />
           ) : (
-            <span
-              className="cursor-pointer font-medium hover:underline"
-              onClick={() => {
-                console.log('🔍 openInspector called with tag.id:', tag.id)
-                openInspector(tag.id)
-              }}
-            >
+            <span className="cursor-pointer font-medium hover:underline" onClick={() => openInspector(tag.id)}>
               {tag.name} <span className="text-muted-foreground">({planCounts[tag.id] || 0})</span>
             </span>
           )}

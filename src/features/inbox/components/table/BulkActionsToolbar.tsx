@@ -123,7 +123,7 @@ export function BulkActionsToolbar() {
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium">{t('common.inbox.selected', { count: selectedCount })}</span>
         <Button variant="ghost" size="sm" onClick={clearSelection}>
-          <X className="mr-1 size-4" />
+          <X className="size-4" />
           {t('common.inbox.clear')}
         </Button>
       </div>
@@ -150,19 +150,19 @@ export function BulkActionsToolbar() {
 
         {/* 期限設定 */}
         <Button variant="outline" size="sm" onClick={handleOpenDateDialog} disabled={isProcessing}>
-          <Calendar className="mr-1 size-4" />
+          <Calendar className="size-4" />
           {t('common.inbox.dueDate')}
         </Button>
 
         {/* アーカイブ */}
         <Button variant="outline" size="sm" onClick={handleArchive} disabled={isProcessing}>
-          <Archive className="mr-1 size-4" />
+          <Archive className="size-4" />
           {t('common.inbox.archive')}
         </Button>
 
         {/* 削除 */}
         <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isProcessing}>
-          <Trash2 className="mr-1 size-4" />
+          <Trash2 className="size-4" />
           {t('common.inbox.delete')}
         </Button>
       </div>

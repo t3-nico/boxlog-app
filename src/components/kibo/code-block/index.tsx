@@ -457,7 +457,14 @@ export const CodeBlockCopyButton = ({
   const Icon = isCopied ? CheckIcon : CopyIcon
 
   return (
-    <Button className={cn('shrink-0', className)} onClick={copyToClipboard} size="icon" variant="ghost" {...props}>
+    <Button
+      className={cn('shrink-0', className)}
+      onClick={copyToClipboard}
+      size="icon"
+      variant="ghost"
+      aria-label={isCopied ? 'コピー完了' : 'コードをコピー'}
+      {...props}
+    >
       {children ?? <Icon className="text-muted-foreground" size={14} />}
     </Button>
   )

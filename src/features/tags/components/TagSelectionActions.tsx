@@ -67,7 +67,7 @@ export function TagSelectionActions({
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" aria-label={t('tag.page.moveToGroup')}>
                   <Folder className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -115,6 +115,7 @@ export function TagSelectionActions({
                 await onArchive(selectedTagIds)
                 onClearSelection()
               }}
+              aria-label={t('tag.page.archive')}
             >
               <Archive className="size-4" />
             </Button>
@@ -127,7 +128,7 @@ export function TagSelectionActions({
       {isMultipleSelection && onMerge && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onMerge}>
+            <Button variant="ghost" size="icon" onClick={onMerge} aria-label={t('tags.bulkMerge.title')}>
               <Merge className="size-4" />
             </Button>
           </TooltipTrigger>
@@ -143,6 +144,7 @@ export function TagSelectionActions({
             size="icon"
             onClick={onDelete}
             className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+            aria-label={t('tag.page.delete')}
           >
             <Trash2 className="size-4" />
           </Button>
@@ -156,7 +158,7 @@ export function TagSelectionActions({
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" aria-label={t('common.moreActions')}>
                   <MoreHorizontal className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
