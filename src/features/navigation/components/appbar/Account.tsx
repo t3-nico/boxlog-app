@@ -59,6 +59,7 @@ export function Account({ userData, locale }: AccountProps) {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
+            aria-label={t('navUser.accountMenuLabel', { name: userData.name })}
             className="hover:bg-state-hover data-[state=open]:bg-secondary flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
           >
             <Avatar className="h-8 w-8 rounded-xl">
