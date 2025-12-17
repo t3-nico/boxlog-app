@@ -43,7 +43,7 @@ export function TagsFilterBar({
   t,
 }: TagsFilterBarProps) {
   return (
-    <div className="flex h-12 shrink-0 items-center justify-between px-6 py-2">
+    <div className="flex h-12 shrink-0 items-center justify-between px-4 py-2">
       <div className="flex h-8 items-center gap-2">
         {/* Filter type dropdown */}
         <DropdownMenu>

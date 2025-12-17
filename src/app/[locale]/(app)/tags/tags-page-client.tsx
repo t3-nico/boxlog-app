@@ -443,7 +443,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       )}
 
       {/* テーブル */}
-      <div className="flex flex-1 flex-col overflow-auto px-6 pt-4 pb-2">
+      <div className="flex flex-1 flex-col overflow-auto px-4 pt-4">
         <DataTable
           data={sortedTags}
           columns={columns}

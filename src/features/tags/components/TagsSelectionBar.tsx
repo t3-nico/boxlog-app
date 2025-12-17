@@ -17,6 +17,6 @@ interface TagsSelectionBarProps {
  */
 export function TagsSelectionBar({ selectedCount, onClearSelection, actions }: TagsSelectionBarProps) {
   return (
-    <SelectionBar selectedCount={selectedCount} onClearSelection={onClearSelection} actions={actions} paddingX="px-6" />
+    <SelectionBar selectedCount={selectedCount} onClearSelection={onClearSelection} actions={actions} paddingX="px-4" />
   )
 }

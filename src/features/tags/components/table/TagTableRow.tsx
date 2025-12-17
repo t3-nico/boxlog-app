@@ -139,7 +139,7 @@ export function TagCellContent({ tag, columnId, groups, allTags, planCounts, las
 
     case 'description':
       return (
-        <span className="text-muted-foreground truncate">
+        <span className="text-muted-foreground block max-w-[200px] truncate">
           {tag.description || (
             <span className="opacity-0 transition-opacity group-hover:opacity-100">
               {t('tags.page.addDescription')}

@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import type { CreateTagInput, TagGroup } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
+import { toast } from 'sonner'
 
 interface TagCreateModalProps {
   isOpen: boolean
@@ -141,9 +142,16 @@ export const TagCreateModal = ({ isOpen, onClose, onSave }: TagCreateModalProps)
               <Textarea
                 id="description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 100) {
+                    setDescription(e.target.value)
+                  } else {
+                    toast.info('説明は100文字までです', { id: 'description-limit' })
+                  }
+                }}
                 placeholder={t('tag.form.descriptionPlaceholder')}
                 rows={3}
+                maxLength={100}
               />
             </div>
 
