@@ -17,7 +17,6 @@ import {
   useInspectorKeyboard,
   type InspectorDisplayMode,
 } from '@/features/inspector'
-import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { DEFAULT_GROUP_COLOR, TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors'
@@ -435,13 +434,20 @@ export function TagInspector() {
                     このタグに紐づくプランはありません
                   </div>
                 ) : (
-                  <div className="grid gap-3">
-                    {plans.slice(0, 10).map((plan) => (
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      <PlanCard key={plan.id} plan={plan as any} onClick={(p) => openPlanInspector(p.id)} />
+                  <div className="divide-border/50 divide-y">
+                    {plans.slice(0, 20).map((plan) => (
+                      <button
+                        key={plan.id}
+                        type="button"
+                        onClick={() => openPlanInspector(plan.id)}
+                        className="hover:bg-muted/50 flex w-full items-center gap-2 px-2 py-2 text-left transition-colors"
+                      >
+                        <span className="text-muted-foreground text-xs">#{plan.plan_number}</span>
+                        <span className="min-w-0 flex-1 truncate text-sm">{plan.title}</span>
+                      </button>
                     ))}
-                    {plans.length > 10 && (
-                      <p className="text-muted-foreground text-center text-sm">他 {plans.length - 10} 件のプラン</p>
+                    {plans.length > 20 && (
+                      <p className="text-muted-foreground py-2 text-center text-xs">他 {plans.length - 20} 件</p>
                     )}
                   </div>
                 )}
