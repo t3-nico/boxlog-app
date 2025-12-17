@@ -76,6 +76,8 @@ export function StatusBarItem({
       className={cn(
         // ベーススタイル
         'flex items-center gap-1.5',
+        // フォントサイズ（12px）・アイコンサイズ（12px）
+        'text-xs [&_svg]:size-3',
         // パディング・角丸（ホバー背景用）
         'rounded-sm px-1.5 py-0.5',
         // テキストカラー
