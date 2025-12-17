@@ -1,6 +1,6 @@
 'use client'
 
-import { ColorPaletteGrid } from '@/components/ui/color-palette-picker'
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   DropdownMenuItem,
   DropdownMenuSeparator,
@@ -321,7 +321,7 @@ export function TagInspector() {
                   {/* カラーピッカー */}
                   {showColorPicker && (
                     <div className="bg-popover border-border absolute top-6 left-0 z-20 rounded-lg border p-3 shadow-lg">
-                      <ColorPaletteGrid
+                      <ColorPalettePicker
                         selectedColor={tag.color || DEFAULT_TAG_COLOR}
                         onColorSelect={handleColorChange}
                       />

@@ -74,39 +74,6 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
 }
 
 /**
- * カラーパレットピッカー（グリッド表示 - 5x2）
- * Inspector内で使用するグリッド型のカラー選択UI
- */
-interface ColorPaletteGridProps {
-  selectedColor: string
-  onColorSelect: (color: string) => void
-  className?: string
-}
-
-export function ColorPaletteGrid({ selectedColor, onColorSelect, className }: ColorPaletteGridProps) {
-  return (
-    <div className={cn('grid grid-cols-5 gap-2', className)}>
-      {TAG_COLOR_PALETTE.map((color) => {
-        const isSelected = selectedColor === color
-        return (
-          <button
-            key={color}
-            type="button"
-            onClick={() => onColorSelect(color)}
-            className={cn(
-              'size-5 rounded-full transition-transform hover:scale-110',
-              isSelected && 'ring-primary ring-2 ring-offset-2'
-            )}
-            style={{ backgroundColor: color }}
-            aria-label={`色を${COLOR_NAMES[color] || color}に変更`}
-          />
-        )
-      })}
-    </div>
-  )
-}
-
-/**
  * カラーパレットメニューアイテム（DropdownMenu用）
  * DropdownMenuContent / DropdownMenuSubContent の中で使用
  */
