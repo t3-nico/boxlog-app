@@ -14,6 +14,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 // Tag interface
 interface Tag {
@@ -229,9 +231,9 @@ export const TagManagementModal = ({
         {/* Header */}
         <div className="border-border flex items-center justify-between border-b p-4">
           <h2 className="text-foreground text-lg font-semibold">Tag Management</h2>
-          <button type="button" onClick={onClose} className="hover:bg-state-hover rounded-lg p-1 transition-colors">
+          <Button type="button" variant="ghost" size="icon-sm" onClick={onClose}>
             <X className="text-muted-foreground h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
         <div className="max-h-[calc(80vh-120px)] overflow-y-auto">
@@ -280,14 +282,16 @@ export const TagManagementModal = ({
                 </div>
                 <div className="flex flex-wrap gap-2" role="group" aria-labelledby="new-tag-color-label">
                   {presetColors.map((color) => (
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
                       key={color}
                       onClick={handleNewTagColorSelect}
                       data-color={color}
-                      className={`h-8 w-8 rounded-lg transition-all hover:scale-110 ${
-                        newTagColor === color ? 'ring-2 ring-gray-400 ring-offset-2' : ''
-                      }`}
+                      className={cn(
+                        'h-8 w-8 rounded-lg p-0 transition-all hover:scale-110 hover:bg-transparent',
+                        newTagColor === color && 'ring-2 ring-gray-400 ring-offset-2'
+                      )}
                       style={{ backgroundColor: color }}
                       title={color}
                     />
@@ -295,15 +299,15 @@ export const TagManagementModal = ({
                 </div>
               </div>
 
-              <button
+              <Button
                 type="button"
                 onClick={handleCreateTag}
                 disabled={!newTagName.trim()}
-                className="bg-primary text-primary-foreground hover:bg-primary-hover disabled:bg-surface-container disabled:text-muted-foreground flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 transition-colors disabled:cursor-not-allowed"
+                className="w-full"
               >
                 <Plus className="h-4 w-4" />
                 Create Tag
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -350,34 +354,40 @@ export const TagManagementModal = ({
 
                           <div className="flex gap-2">
                             {presetColors.map((color) => (
-                              <button
+                              <Button
                                 type="button"
+                                variant="ghost"
                                 key={color}
                                 onClick={handleEditColorSelect}
                                 data-color={color}
-                                className={`h-6 w-6 rounded transition-all ${
-                                  editColor === color ? 'ring-2 ring-blue-500' : ''
-                                }`}
+                                className={cn(
+                                  'h-6 w-6 rounded p-0 transition-all hover:bg-transparent',
+                                  editColor === color && 'ring-2 ring-blue-500'
+                                )}
                                 style={{ backgroundColor: color }}
                               />
                             ))}
                           </div>
                         </div>
                         <div className="flex gap-1">
-                          <button
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon-sm"
                             onClick={handleSaveEdit}
-                            className="text-primary hover:bg-state-hover rounded p-1 transition-colors"
+                            className="text-primary"
                           >
                             <Check className="h-4 w-4" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon-sm"
                             onClick={handleCancelEdit}
-                            className="text-muted-foreground hover:bg-state-hover rounded p-1 transition-colors"
+                            className="text-muted-foreground"
                           >
                             <X className="h-4 w-4" />
-                          </button>
+                          </Button>
                         </div>
                       </>
                     ) : (
@@ -393,25 +403,29 @@ export const TagManagementModal = ({
                           )}
                         </div>
                         <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                          <button
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon-sm"
                             onClick={handleEditClick}
                             data-tag-id={tag.id}
-                            className="text-primary hover:bg-state-hover rounded p-1 transition-colors"
+                            className="text-primary size-6"
                             title="Edit tag"
                           >
                             <Edit2 className="h-3 w-3" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon-sm"
                             onClick={handleDeleteClick}
                             data-tag-id={tag.id}
                             data-tag-name={tag.name}
-                            className="text-destructive hover:bg-state-hover rounded p-1 transition-colors"
+                            className="text-destructive size-6"
                             title="Delete tag"
                           >
                             <Trash2 className="h-3 w-3" />
-                          </button>
+                          </Button>
                         </div>
                       </>
                     )}
@@ -424,13 +438,9 @@ export const TagManagementModal = ({
 
         {/* Footer */}
         <div className="border-border flex justify-end gap-2 border-t p-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-muted-foreground hover:bg-state-hover rounded-lg px-4 py-2 transition-colors"
-          >
+          <Button type="button" variant="ghost" onClick={onClose}>
             Done
-          </button>
+          </Button>
         </div>
       </div>
 
