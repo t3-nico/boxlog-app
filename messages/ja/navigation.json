@@ -52,6 +52,7 @@
       "security": "セキュリティ",
       "contact": "お問い合わせ"
     },
+    "accountMenuLabel": "{name}のアカウントメニューを開く",
     "logout": "ログアウト",
     "loggingOut": "ログアウト中...",
     "logoutSuccess": "ログアウトしました",

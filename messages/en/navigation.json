@@ -52,6 +52,7 @@
       "security": "Security",
       "contact": "Contact Us"
     },
+    "accountMenuLabel": "Open account menu for {name}",
     "logout": "Log out",
     "loggingOut": "Logging out...",
     "logoutSuccess": "Logged out successfully",
