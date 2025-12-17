@@ -19,15 +19,24 @@ export const CalendarSkeleton = () => {
         <div className="flex items-center justify-between">
           {/* Left: Date navigation */}
           <div className="flex items-center gap-4">
-            <div className={cn('bg-surface-container h-9 w-9 animate-pulse rounded-md')}></div>
-            <div className={cn('bg-surface-container h-7 w-40 animate-pulse rounded-md')}></div>
-            <div className={cn('bg-surface-container h-9 w-9 animate-pulse rounded-md')}></div>
+            <div
+              className={cn('bg-surface-container h-9 w-9 animate-pulse rounded-md motion-reduce:animate-none')}
+            ></div>
+            <div
+              className={cn('bg-surface-container h-7 w-40 animate-pulse rounded-md motion-reduce:animate-none')}
+            ></div>
+            <div
+              className={cn('bg-surface-container h-9 w-9 animate-pulse rounded-md motion-reduce:animate-none')}
+            ></div>
           </div>
 
           {/* Right: View switcher and actions */}
           <div className="flex items-center gap-2">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className={cn('bg-surface-container h-9 w-16 animate-pulse rounded-md')}></div>
+              <div
+                key={i}
+                className={cn('bg-surface-container h-9 w-16 animate-pulse rounded-md motion-reduce:animate-none')}
+              ></div>
             ))}
           </div>
         </div>
@@ -41,7 +50,10 @@ export const CalendarSkeleton = () => {
             <div className="w-16 shrink-0" /> {/* Time column spacer */}
             <div className="grid flex-1 grid-cols-7 gap-1">
               {Array.from({ length: 7 }).map((_, i) => (
-                <div key={i} className={cn('bg-surface-container h-10 animate-pulse rounded-md')}></div>
+                <div
+                  key={i}
+                  className={cn('bg-surface-container h-10 animate-pulse rounded-md motion-reduce:animate-none')}
+                ></div>
               ))}
             </div>
           </div>
@@ -51,7 +63,10 @@ export const CalendarSkeleton = () => {
             {/* Time column */}
             <div className="w-16 shrink-0 space-y-1 pr-2">
               {Array.from({ length: 24 }).map((_, i) => (
-                <div key={i} className={cn('bg-surface-container/50 h-12 animate-pulse rounded-sm')}></div>
+                <div
+                  key={i}
+                  className={cn('bg-surface-container/50 h-12 animate-pulse rounded-sm motion-reduce:animate-none')}
+                ></div>
               ))}
             </div>
 
@@ -75,7 +90,7 @@ export const CalendarSkeleton = () => {
                     <div
                       style={{ top: '160px', height: '96px' }}
                       className={cn(
-                        'bg-primary/20 border-primary/30 absolute right-1 left-1 animate-pulse rounded-md border'
+                        'bg-primary/20 border-primary/30 absolute right-1 left-1 animate-pulse rounded-md border motion-reduce:animate-none'
                       )}
                     ></div>
                   )}
@@ -83,7 +98,7 @@ export const CalendarSkeleton = () => {
                     <div
                       style={{ top: '320px', height: '64px' }}
                       className={cn(
-                        'bg-surface-container border-muted-foreground/20 absolute right-1 left-1 animate-pulse rounded-md border'
+                        'bg-surface-container border-muted-foreground/20 absolute right-1 left-1 animate-pulse rounded-md border motion-reduce:animate-none'
                       )}
                     ></div>
                   )}
