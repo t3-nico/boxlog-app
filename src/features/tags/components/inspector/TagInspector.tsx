@@ -17,7 +17,13 @@ import {
 import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR, TAG_PRESET_COLORS } from '@/features/tags/constants/colors'
+import {
+  DEFAULT_GROUP_COLOR,
+  DEFAULT_TAG_COLOR,
+  TAG_DESCRIPTION_MAX_LENGTH,
+  TAG_NAME_MAX_LENGTH,
+  TAG_PRESET_COLORS,
+} from '@/features/tags/constants/colors'
 import {
   Archive,
   CheckIcon,
@@ -281,7 +287,11 @@ export function TagInspector() {
     <>
       <InspectorShell
         isOpen={isOpen}
-        onClose={closeInspector}
+        onClose={() => {
+          // ダイアログが開いている時はSheetを閉じない
+          if (showDeleteDialog || showArchiveDialog || showMergeDialog) return
+          closeInspector()
+        }}
         displayMode={displayMode as InspectorDisplayMode}
         title={tag?.name || 'タグの詳細'}
         resizable={true}
@@ -334,6 +344,22 @@ export function TagInspector() {
                     ref={titleRef}
                     contentEditable
                     suppressContentEditableWarning
+                    onInput={(e) => {
+                      const text = e.currentTarget.textContent || ''
+                      if (text.length > TAG_NAME_MAX_LENGTH) {
+                        e.currentTarget.textContent = text.slice(0, TAG_NAME_MAX_LENGTH)
+                        // カーソルを末尾に移動
+                        const range = document.createRange()
+                        const selection = window.getSelection()
+                        range.selectNodeContents(e.currentTarget)
+                        range.collapse(false)
+                        selection?.removeAllRanges()
+                        selection?.addRange(range)
+                        toast.info(`タグ名は${TAG_NAME_MAX_LENGTH}文字までです`, {
+                          id: 'name-limit',
+                        })
+                      }
+                    }}
                     onBlur={(e) => autoSave('name', e.currentTarget.textContent || '')}
                     className="bg-popover border-0 px-0 text-lg font-semibold outline-none"
                   >
@@ -376,8 +402,8 @@ export function TagInspector() {
                     suppressContentEditableWarning
                     onInput={(e) => {
                       const text = e.currentTarget.textContent || ''
-                      if (text.length > 100) {
-                        e.currentTarget.textContent = text.slice(0, 100)
+                      if (text.length > TAG_DESCRIPTION_MAX_LENGTH) {
+                        e.currentTarget.textContent = text.slice(0, TAG_DESCRIPTION_MAX_LENGTH)
                         // カーソルを末尾に移動
                         const range = document.createRange()
                         const selection = window.getSelection()
@@ -386,7 +412,7 @@ export function TagInspector() {
                         selection?.removeAllRanges()
                         selection?.addRange(range)
                         // 制限通知
-                        toast.info('説明は100文字までです', {
+                        toast.info(`説明は${TAG_DESCRIPTION_MAX_LENGTH}文字までです`, {
                           id: 'description-limit',
                         })
                       }
