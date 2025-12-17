@@ -1,5 +1,12 @@
 {
   "table": {
+    "rowsPerPage": "Rows per page",
+    "items": "{start}-{end} of {total}",
+    "firstPage": "First page",
+    "previousPage": "Previous page",
+    "page": "{current} / {total}",
+    "nextPage": "Next page",
+    "lastPage": "Last page",
     "title": "Table View",
     "description": "Display tasks in table format",
     "comingSoon": "Task table component coming soon...",

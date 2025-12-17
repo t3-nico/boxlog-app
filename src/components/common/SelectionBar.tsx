@@ -11,7 +11,7 @@ interface SelectionBarProps {
   selectedCount: number
   onClearSelection: () => void
   actions: ReactNode
-  /** 横幅パディングのカスタマイズ（デフォルト: "px-4 md:px-6"） */
+  /** 横幅パディングのカスタマイズ（デフォルト: "px-4"） */
   paddingX?: string
 }
 
@@ -38,12 +38,7 @@ interface SelectionBarProps {
  * />
  * ```
  */
-export function SelectionBar({
-  selectedCount,
-  onClearSelection,
-  actions,
-  paddingX = 'px-4 md:px-6',
-}: SelectionBarProps) {
+export function SelectionBar({ selectedCount, onClearSelection, actions, paddingX = 'px-4' }: SelectionBarProps) {
   const t = useTranslations()
 
   if (selectedCount === 0) return null

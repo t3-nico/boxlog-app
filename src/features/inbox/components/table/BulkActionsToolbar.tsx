@@ -118,7 +118,7 @@ export function BulkActionsToolbar() {
   }
 
   return (
-    <div className="bg-surface-container border-border flex items-center justify-between border-b px-4 py-3 md:px-6">
+    <div className="bg-surface-container border-border flex items-center justify-between border-b px-4 py-3">
       {/* 左側: 選択数表示 */}
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium">{t('common.inbox.selected', { count: selectedCount })}</span>

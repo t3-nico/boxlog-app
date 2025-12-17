@@ -21,7 +21,7 @@ export function InboxToolbar() {
   const { displayMode } = useInboxViewStore()
 
   return (
-    <div className="bg-background flex h-12 shrink-0 items-center px-4 py-2 md:px-6">
+    <div className="bg-background flex h-12 shrink-0 items-center px-4 py-2">
       {displayMode === 'board' ? <KanbanToolbar /> : null}
     </div>
   )

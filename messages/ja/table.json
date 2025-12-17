@@ -1,6 +1,13 @@
 {
   "table": {
-    "title": "��ーブルビュー",
+    "rowsPerPage": "表示件数",
+    "items": "{start}〜{end}件 / 全{total}件",
+    "firstPage": "最初のページ",
+    "previousPage": "前のページ",
+    "page": "{current} / {total}ページ",
+    "nextPage": "次のページ",
+    "lastPage": "最後のページ",
+    "title": "テーブルビュー",
     "description": "タスクをテーブル形式で表示",
     "comingSoon": "タスクテーブルコンポーネントは近日公開予定...",
     "willDisplay": "タスクをテーブル形式で表示します",

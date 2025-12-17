@@ -27,7 +27,7 @@ export default function StatsLayout({ children }: StatsLayoutProps) {
       <StatsToolbar />
 
       {/* メインコンテンツ */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-6">{children}</div>
+      <div className="flex-1 overflow-y-auto px-4">{children}</div>
     </div>
   )
 }

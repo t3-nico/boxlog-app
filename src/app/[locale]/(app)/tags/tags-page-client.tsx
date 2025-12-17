@@ -107,12 +107,16 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     }
   }, [initialGroup, selectedGroupId])
 
-  // タグデータをContextに同期（setTags/setIsLoadingは安定した関数なので依存配列から除外）
+  // タグデータをContextに同期（参照の安定化のためJSON比較）
+  const fetchedTagsJson = JSON.stringify(fetchedTags.map((t) => t.id))
   useEffect(() => {
     setTags(fetchedTags)
-    setIsLoading(isFetching)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchedTags, isFetching])
+  }, [fetchedTagsJson])
+
+  useEffect(() => {
+    setIsLoading(isFetching)
+  }, [isFetching, setIsLoading])
 
   // アクティブなタグ数を計算
   const activeTagsCount = useMemo(() => {

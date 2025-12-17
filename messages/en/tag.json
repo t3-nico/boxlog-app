@@ -178,6 +178,8 @@
         "frequentlyUsed": "Frequently Used"
       },
       "bulkDeleteConfirm": "Delete {count} selected tags?",
+      "bulkDeleteConfirmTitle": "Delete {count} tags?",
+      "bulkDeleteConfirmDescription": "This will permanently delete {count} selected tags. This action cannot be undone.",
       "bulkArchived": "Archived {count} tags",
       "bulkArchiveFailed": "Failed to archive tags",
       "addDescription": "Add description...",
@@ -197,13 +199,22 @@
       "deleteSourceDescription": "Delete source tags after merge"
     },
     "merge": {
+      "title": "Merge Tags",
+      "description": "Merge \"{source}\" into another tag",
+      "sourceTag": "Source tag",
       "targetTag": "Target tag",
       "selectTarget": "Select target...",
       "options": "Options",
       "mergeAssociations": "Merge associations",
       "mergeAssociationsDescription": "Move plan associations to target tag",
-      "deleteSource": "Delete source tags",
-      "warning": "Warning"
+      "deleteSource": "Delete source tag",
+      "deleteSourceDescription": "Delete the source tag after merging",
+      "warning": "This action cannot be undone",
+      "noTargetSelected": "Please select a target tag",
+      "success": "Merged {count} associations",
+      "failed": "Failed to merge tags",
+      "merging": "Merging...",
+      "confirm": "Merge"
     },
     "archive": {
       "confirmTitle": "Archive tag \"{name}\"?",
@@ -401,6 +412,8 @@
         "frequentlyUsed": "Frequently Used"
       },
       "bulkDeleteConfirm": "Delete {count} selected tags?",
+      "bulkDeleteConfirmTitle": "Delete {count} tags?",
+      "bulkDeleteConfirmDescription": "This will permanently delete {count} selected tags. This action cannot be undone.",
       "bulkArchived": "Archived {count} tags",
       "bulkArchiveFailed": "Failed to archive tags",
       "addDescription": "Add description...",
@@ -420,13 +433,22 @@
       "deleteSourceDescription": "Delete source tags after merge"
     },
     "merge": {
+      "title": "Merge Tags",
+      "description": "Merge \"{source}\" into another tag",
+      "sourceTag": "Source tag",
       "targetTag": "Target tag",
       "selectTarget": "Select target...",
       "options": "Options",
       "mergeAssociations": "Merge associations",
       "mergeAssociationsDescription": "Move plan associations to target tag",
-      "deleteSource": "Delete source tags",
-      "warning": "Warning"
+      "deleteSource": "Delete source tag",
+      "deleteSourceDescription": "Delete the source tag after merging",
+      "warning": "This action cannot be undone",
+      "noTargetSelected": "Please select a target tag",
+      "success": "Merged {count} associations",
+      "failed": "Failed to merge tags",
+      "merging": "Merging...",
+      "confirm": "Merge"
     },
     "archive": {
       "confirmTitle": "Archive tag \"{name}\"?",
