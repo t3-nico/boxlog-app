@@ -40,7 +40,7 @@ export function TableToolbar({ onCreateClick }: TableToolbarProps) {
 
         {/* フィルターリセット */}
         {isFiltered && (
-          <Button variant="ghost" onClick={reset} className="h-9 px-2 lg:px-3">
+          <Button variant="ghost" onClick={reset} className="px-2 lg:px-3">
             リセット
             <X className="ml-2 size-4" />
           </Button>
@@ -51,7 +51,7 @@ export function TableToolbar({ onCreateClick }: TableToolbarProps) {
       </div>
 
       {/* 右側: 新規作成 */}
-      <Button onClick={onCreateClick} size="sm" className="h-9">
+      <Button onClick={onCreateClick} size="sm">
         <Plus className="mr-2 size-4" />
         新規作成
       </Button>

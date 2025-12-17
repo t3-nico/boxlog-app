@@ -35,7 +35,7 @@ export function KanbanToolbar() {
             setFilter({ priority: value === 'all' ? undefined : (value as 'low' | 'medium' | 'high') })
           }
         >
-          <SelectTrigger className="h-9 w-[120px]">
+          <SelectTrigger className="h-8 w-[120px]">
             <SelectValue placeholder={t('board.toolbar.priority')} />
           </SelectTrigger>
           <SelectContent>
@@ -57,7 +57,7 @@ export function KanbanToolbar() {
             setSort({ key, order })
           }}
         >
-          <SelectTrigger className="h-9 w-[140px]">
+          <SelectTrigger className="h-8 w-[140px]">
             <SelectValue placeholder={t('board.toolbar.sort')} />
           </SelectTrigger>
           <SelectContent>
@@ -77,7 +77,7 @@ export function KanbanToolbar() {
 
         {/* フィルターリセット */}
         {isFiltered && (
-          <Button variant="ghost" onClick={clearFilter} className="h-9 px-2 lg:px-3">
+          <Button variant="ghost" onClick={clearFilter} className="h-8 px-2 lg:px-3">
             {t('board.toolbar.reset')}
             <X className="ml-2 size-4" />
           </Button>
@@ -86,7 +86,7 @@ export function KanbanToolbar() {
 
       {/* 右側アクション */}
       <div className="flex items-center gap-2">
-        <Button variant="default" size="sm" className="h-9">
+        <Button variant="default" size="sm" className="h-8">
           <Plus className="mr-2 size-4" />
           {t('board.toolbar.addCard')}
         </Button>

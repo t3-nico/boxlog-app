@@ -34,12 +34,14 @@ interface InboxRowWrapperProps {
  * - フォーカス管理
  */
 export function InboxRowWrapper({ item, children, isSelected }: InboxRowWrapperProps) {
-  const { openInspector } = usePlanInspectorStore()
+  const { openInspector, planId: inspectorPlanId, isOpen: isInspectorOpen } = usePlanInspectorStore()
   const { setSelectedIds } = useInboxSelectionStore()
   const { focusedId, setFocusedId } = useInboxFocusStore()
 
   const wrapperRef = useRef<HTMLDivElement>(null)
   const isFocused = focusedId === item.id
+  // Inspectorで開いているアイテムかどうか
+  const isInspectorActive = isInspectorOpen && inspectorPlanId === item.id
 
   // フォーカスされた行をスクロールして表示
   useEffect(() => {
@@ -81,6 +83,7 @@ export function InboxRowWrapper({ item, children, isSelected }: InboxRowWrapperP
           className={cn(
             'hover:bg-state-hover cursor-pointer transition-colors',
             isSelected && 'bg-primary-state-selected hover:bg-state-dragged',
+            !isSelected && isInspectorActive && 'bg-state-hover',
             isFocused && 'ring-primary ring-2 ring-inset'
           )}
           onClick={() => {

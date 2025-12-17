@@ -192,11 +192,15 @@
     },
     "bulkMerge": {
       "title": "タグを統合",
-      "description": "選択したタグを1つのタグに統合します",
+      "description": "{count}件のタグを1つのタグに統合します",
       "selectedTags": "選択中のタグ",
-      "confirm": "統合する",
-      "warningDetail": "統合後、元のタグは削除されます",
-      "deleteSourceDescription": "統合元のタグを削除する"
+      "mergeTarget": "統合先",
+      "selectedTagsGroup": "選択中のタグ",
+      "otherTagsGroup": "その他のタグ",
+      "confirm": "{count}件のタグを統合",
+      "warningDetail": "統合後、{count}件のタグは削除されます",
+      "deleteSourceDescription": "{count}件のタグを削除する",
+      "success": "{count}件のタグを統合しました"
     },
     "merge": {
       "title": "タグを統合",
@@ -426,11 +430,15 @@
     },
     "bulkMerge": {
       "title": "タグを統合",
-      "description": "選択したタグを1つのタグに統合します",
+      "description": "{count}件のタグを1つのタグに統合します",
       "selectedTags": "選択中のタグ",
-      "confirm": "統合する",
-      "warningDetail": "統合後、元のタグは削除されます",
-      "deleteSourceDescription": "統合元のタグを削除する"
+      "mergeTarget": "統合先",
+      "selectedTagsGroup": "選択中のタグ",
+      "otherTagsGroup": "その他のタグ",
+      "confirm": "{count}件のタグを統合",
+      "warningDetail": "統合後、{count}件のタグは削除されます",
+      "deleteSourceDescription": "{count}件のタグを削除する",
+      "success": "{count}件のタグを統合しました"
     },
     "merge": {
       "title": "タグを統合",

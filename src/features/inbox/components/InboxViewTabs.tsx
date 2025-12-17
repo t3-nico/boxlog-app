@@ -80,7 +80,7 @@ export function InboxViewTabs() {
     <>
       <div className="flex h-10 items-center gap-4">
         {/* Board/Table 切り替えボタン */}
-        <Button variant="ghost" size="sm" onClick={handleDisplayModeToggle} className="h-9 gap-2">
+        <Button variant="ghost" size="sm" onClick={handleDisplayModeToggle} className="gap-2">
           {getDisplayModeIcon(displayMode)}
           <span>{displayMode === 'board' ? 'Board' : 'Table'}</span>
         </Button>

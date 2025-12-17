@@ -65,7 +65,7 @@ export function InboxSelectionActions({
       {onAddTags && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onAddTags} className="h-9 w-9">
+            <Button variant="ghost" size="icon" onClick={onAddTags}>
               <Tag className="size-4" />
             </Button>
           </TooltipTrigger>
@@ -77,7 +77,7 @@ export function InboxSelectionActions({
       {onChangeDueDate && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onChangeDueDate} className="h-9 w-9">
+            <Button variant="ghost" size="icon" onClick={onChangeDueDate}>
               <Calendar className="size-4" />
             </Button>
           </TooltipTrigger>
@@ -95,7 +95,6 @@ export function InboxSelectionActions({
               onArchive()
               onClearSelection()
             }}
-            className="h-9 w-9"
           >
             <Archive className="size-4" />
           </Button>
@@ -113,7 +112,7 @@ export function InboxSelectionActions({
               onDelete()
               onClearSelection()
             }}
-            className="text-destructive hover:bg-destructive hover:text-destructive-foreground h-9 w-9"
+            className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
           >
             <Trash2 className="size-4" />
           </Button>
@@ -127,7 +126,7 @@ export function InboxSelectionActions({
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
+                <Button variant="ghost" size="icon">
                   <MoreHorizontal className="size-4" />
                 </Button>
               </DropdownMenuTrigger>

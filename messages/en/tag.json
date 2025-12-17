@@ -192,11 +192,15 @@
     },
     "bulkMerge": {
       "title": "Merge Tags",
-      "description": "Merge selected tags into one tag",
+      "description": "Merge {count} tags into one tag",
       "selectedTags": "Selected tags",
-      "confirm": "Merge",
-      "warningDetail": "Original tags will be deleted after merge",
-      "deleteSourceDescription": "Delete source tags after merge"
+      "mergeTarget": "Merge target",
+      "selectedTagsGroup": "Selected tags",
+      "otherTagsGroup": "Other tags",
+      "confirm": "Merge {count} tags",
+      "warningDetail": "{count} tags will be deleted after merge",
+      "deleteSourceDescription": "Delete {count} tags after merge",
+      "success": "Merged {count} tags successfully"
     },
     "merge": {
       "title": "Merge Tags",
@@ -426,11 +430,15 @@
     },
     "bulkMerge": {
       "title": "Merge Tags",
-      "description": "Merge selected tags into one tag",
+      "description": "Merge {count} tags into one tag",
       "selectedTags": "Selected tags",
-      "confirm": "Merge",
-      "warningDetail": "Original tags will be deleted after merge",
-      "deleteSourceDescription": "Delete source tags after merge"
+      "mergeTarget": "Merge target",
+      "selectedTagsGroup": "Selected tags",
+      "otherTagsGroup": "Other tags",
+      "confirm": "Merge {count} tags",
+      "warningDetail": "{count} tags will be deleted after merge",
+      "deleteSourceDescription": "Delete {count} tags after merge",
+      "success": "Merged {count} tags successfully"
     },
     "merge": {
       "title": "Merge Tags",

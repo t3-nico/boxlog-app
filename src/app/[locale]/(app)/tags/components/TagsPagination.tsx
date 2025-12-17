@@ -36,7 +36,7 @@ export function TagsPagination({
         <div className="flex items-center gap-2">
           <span className="text-muted-foreground text-sm">{t('tag.page.rowsPerPage')}</span>
           <Select value={String(pageSize)} onValueChange={(value) => onPageSizeChange(Number(value))}>
-            <SelectTrigger className="h-9 w-16">
+            <SelectTrigger className="h-8 w-16">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -62,12 +62,12 @@ export function TagsPagination({
             size="sm"
             onClick={() => onPageChange(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            className="h-9 w-9 p-0"
+            className="h-8 w-8 p-0"
           >
             <ChevronLeft className="size-4" />
             <span className="sr-only">{t('tag.page.previous')}</span>
           </Button>
-          <div className="text-muted-foreground flex h-9 items-center px-3 text-sm">
+          <div className="text-muted-foreground flex h-8 items-center px-3 text-sm">
             {t('tag.page.page')} {currentPage} {t('tag.page.of')} {totalPages || 1}
           </div>
           <Button
@@ -75,7 +75,7 @@ export function TagsPagination({
             size="sm"
             onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages || totalPages === 0}
-            className="h-9 w-9 p-0"
+            className="h-8 w-8 p-0"
           >
             <ChevronRight className="size-4" />
             <span className="sr-only">{t('tag.page.next')}</span>

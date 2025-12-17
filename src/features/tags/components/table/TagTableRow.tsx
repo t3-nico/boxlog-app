@@ -19,6 +19,7 @@ import { useUpdateTag } from '@/features/tags/hooks/use-tags'
 import { useTagInspectorStore } from '@/features/tags/stores/useTagInspectorStore'
 import { useTagSelectionStore } from '@/features/tags/stores/useTagSelectionStore'
 import type { Tag, TagGroup } from '@/features/tags/types'
+import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Folder, Hash } from 'lucide-react'
@@ -210,8 +211,11 @@ export function TagRowWrapper({
   onDeleteConfirm,
 }: TagRowWrapperProps) {
   const t = useTranslations()
-  const { openInspector } = useTagInspectorStore()
+  const { openInspector, entityId: inspectorTagId, isOpen: isInspectorOpen } = useTagInspectorStore()
   const { setSelectedIds } = useTagSelectionStore()
+
+  // Inspectorで開いているタグかどうか
+  const isInspectorActive = isInspectorOpen && inspectorTagId === tag.id
 
   // インライン編集開始（名前編集）
   // Note: インライン編集はTagCellContent内で状態管理されるため、
@@ -223,7 +227,10 @@ export function TagRowWrapper({
       <ContextMenuTrigger asChild>
         <DraggableTagRow
           id={tag.id}
-          className={isSelected ? 'bg-primary-state-selected hover:bg-state-dragged' : ''}
+          className={cn(
+            isSelected && 'bg-primary-state-selected hover:bg-state-dragged',
+            !isSelected && isInspectorActive && 'bg-state-hover'
+          )}
           onContextMenu={() => {
             if (!isSelected) {
               setSelectedIds([tag.id])

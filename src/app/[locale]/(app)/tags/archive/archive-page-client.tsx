@@ -505,7 +505,7 @@ export function ArchivePageClient() {
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground text-sm">{t('tag.page.rowsPerPage')}</span>
                   <Select value={String(pageSize)} onValueChange={(value) => setPageSize(Number(value))}>
-                    <SelectTrigger className="h-9 w-16">
+                    <SelectTrigger className="h-8 w-16">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -535,12 +535,12 @@ export function ArchivePageClient() {
                     size="sm"
                     onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                     disabled={currentPage === 1}
-                    className="h-9 w-9 p-0"
+                    className="h-8 w-8 p-0"
                   >
                     <ChevronLeft className="size-4" />
                     <span className="sr-only">{t('tag.archive.previousPage')}</span>
                   </Button>
-                  <div className="text-muted-foreground flex h-9 items-center px-3 text-sm">
+                  <div className="text-muted-foreground flex h-8 items-center px-3 text-sm">
                     {t('tag.archive.pageOf', { current: currentPage, total: totalPages || 1 })}
                   </div>
                   <Button
@@ -548,7 +548,7 @@ export function ArchivePageClient() {
                     size="sm"
                     onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                     disabled={currentPage === totalPages || totalPages === 0}
-                    className="h-9 w-9 p-0"
+                    className="h-8 w-8 p-0"
                   >
                     <ChevronRight className="size-4" />
                     <span className="sr-only">{t('tag.archive.nextPage')}</span>

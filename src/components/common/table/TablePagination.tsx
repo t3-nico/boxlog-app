@@ -39,7 +39,7 @@ export function TablePagination({
   pageSizeOptions = [10, 25, 50, 100],
   showFirstLastButtons = true,
 }: TablePaginationProps) {
-  const t = useTranslations('common')
+  const t = useTranslations()
 
   // 総ページ数
   const totalPages = Math.ceil(totalItems / pageSize) || 1

@@ -4,15 +4,12 @@ import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
 interface SelectionBarProps {
   selectedCount: number
   onClearSelection: () => void
   actions: ReactNode
-  /** 横幅パディングのカスタマイズ（デフォルト: "px-4"） */
-  paddingX?: string
 }
 
 /**
@@ -20,9 +17,11 @@ interface SelectionBarProps {
  *
  * TagsページとInboxページで共通で使用する選択バーコンポーネント
  *
- * 構造:
- * - 高さ: 48px固定（8px top padding + 40px container）
- * - 背景: bg-surface-container（選択状態を視覚的に示す）
+ * **デザイン仕様**:
+ * - 全体の高さ: 48px固定（h-12）
+ * - パディング: 上下8px（py-2）、左右16px（px-4）- 背景なし
+ * - 背景コンテナ: 32px（h-8）- bg-surface-container + rounded-md、横幅いっぱい
+ * - 8pxグリッドシステム準拠（他のnavと統一）
  *
  * 構成:
  * - 左側: 選択解除ボタン（×）
@@ -38,28 +37,22 @@ interface SelectionBarProps {
  * />
  * ```
  */
-export function SelectionBar({ selectedCount, onClearSelection, actions, paddingX = 'px-4' }: SelectionBarProps) {
+export function SelectionBar({ selectedCount, onClearSelection, actions }: SelectionBarProps) {
   const t = useTranslations()
 
   if (selectedCount === 0) return null
 
   return (
-    <div className={cn('flex h-12 shrink-0 items-end pt-2', paddingX)}>
-      {/* 選択コンテナ（40px） */}
-      <div className="bg-surface-container flex h-10 flex-1 items-center gap-2 rounded-md px-2">
+    <div className="flex h-12 shrink-0 items-center px-4 py-2">
+      {/* 背景コンテナ（32px、角丸） */}
+      <div className="bg-surface-container flex h-8 flex-1 items-center gap-2 rounded-md pl-1">
         {/* 選択解除ボタン（左端） */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClearSelection}
-          className="h-9 w-9"
-          aria-label={t('aria.clearSelection')}
-        >
-          <X className="h-4 w-4" />
+        <Button variant="ghost" size="icon-sm" onClick={onClearSelection} aria-label={t('aria.clearSelection')}>
+          <X className="h-3.5 w-3.5" />
         </Button>
 
         {/* 選択数表示 */}
-        <span className="text-base font-semibold">{t('common.selectedCount', { count: selectedCount })}</span>
+        <span className="text-sm font-medium">{t('common.selectedCount', { count: selectedCount })}</span>
 
         {/* アクションボタン */}
         <div className="flex items-center gap-1">{actions}</div>

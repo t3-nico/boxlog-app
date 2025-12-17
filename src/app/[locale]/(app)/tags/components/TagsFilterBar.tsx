@@ -18,7 +18,7 @@ export function TagsFilterBar({ onCreateTag, t }: TagsFilterBarProps) {
         {/* フィルタータイプドロップダウン */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="h-8 gap-1">
+            <Button variant="outline" size="sm" className="gap-1">
               <Filter className="h-3.5 w-3.5" />
               <span>{t('tag.page.filter.type')}</span>
               <ChevronDown className="h-3.5 w-3.5 opacity-50" />
@@ -32,7 +32,7 @@ export function TagsFilterBar({ onCreateTag, t }: TagsFilterBarProps) {
         </DropdownMenu>
       </div>
       <div className="flex h-8 items-center">
-        <Button onClick={onCreateTag} size="sm" className="h-8">
+        <Button onClick={onCreateTag} size="sm">
           <Plus className="mr-2 size-4" />
           {t('tag.page.createTag')}
         </Button>

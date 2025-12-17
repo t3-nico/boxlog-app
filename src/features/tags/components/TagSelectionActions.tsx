@@ -67,7 +67,7 @@ export function TagSelectionActions({
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
+                <Button variant="ghost" size="icon">
                   <Folder className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -115,7 +115,6 @@ export function TagSelectionActions({
                 await onArchive(selectedTagIds)
                 onClearSelection()
               }}
-              className="h-9 w-9"
             >
               <Archive className="size-4" />
             </Button>
@@ -128,7 +127,7 @@ export function TagSelectionActions({
       {isMultipleSelection && onMerge && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onMerge} className="h-9 w-9">
+            <Button variant="ghost" size="icon" onClick={onMerge}>
               <Merge className="size-4" />
             </Button>
           </TooltipTrigger>
@@ -143,7 +142,7 @@ export function TagSelectionActions({
             variant="ghost"
             size="icon"
             onClick={onDelete}
-            className="text-destructive hover:bg-destructive hover:text-destructive-foreground h-9 w-9"
+            className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
           >
             <Trash2 className="size-4" />
           </Button>
@@ -157,7 +156,7 @@ export function TagSelectionActions({
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
+                <Button variant="ghost" size="icon">
                   <MoreHorizontal className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
