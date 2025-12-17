@@ -142,7 +142,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // ローディング中のコンテンツ
     const content = isLoading ? (
       <>
-        <Loader2 className="animate-spin" aria-hidden="true" />
+        <Loader2 className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
         {loadingText ?? children}
       </>
     ) : (

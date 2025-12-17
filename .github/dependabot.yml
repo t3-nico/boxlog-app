@@ -9,13 +9,12 @@ updates:
       time: '09:00'
       timezone: 'Asia/Tokyo'
 
-    # PR数の制限（1つずつ順次処理）
-    open-pull-requests-limit: 1
+    # PR数の制限（3件まで並列処理）
+    open-pull-requests-limit: 3
 
-    # ラベル設定
+    # ラベル設定（securityは自動付与に任せる）
     labels:
       - 'dependencies'
-      - 'security'
 
     # レビュアー設定
     reviewers:
@@ -30,27 +29,28 @@ updates:
       prefix: 'chore'
       include: 'scope'
 
-    # 更新対象
-    allow:
-      - dependency-type: 'direct' # 直接依存
-      - dependency-type: 'indirect' # 間接依存
-
-    # バージョニング戦略
-    versioning-strategy: 'increase'
-
-    # グループ化設定（セキュリティアップデートは個別）
+    # グループ化設定（minor/patchをまとめる）
     groups:
-      production-dependencies:
+      production:
         dependency-type: 'production'
         update-types:
           - 'minor'
           - 'patch'
 
-      development-dependencies:
+      development:
         dependency-type: 'development'
         update-types:
           - 'minor'
           - 'patch'
+
+    # major更新は除外（手動で慎重に対応）
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - 'version-update:semver-major'
+
+    # 競合時の自動リベース
+    rebase-strategy: 'auto'
 
   # GitHub Actions の自動更新
   - package-ecosystem: 'github-actions'
@@ -64,8 +64,6 @@ updates:
     labels:
       - 'dependencies'
       - 'github-actions'
-      - 'ci/cd'
-      - 'security'
 
     reviewers:
       - 't3-nico'
@@ -75,4 +73,3 @@ updates:
 
     commit-message:
       prefix: 'chore(deps)'
-      include: 'scope'

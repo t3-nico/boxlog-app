@@ -16,7 +16,7 @@ export function CalendarViewSkeleton() {
         <div className="border-border flex w-14 flex-shrink-0 flex-col border-r">
           {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="flex h-16 items-start justify-end pt-0 pr-2">
-              <div className="bg-surface-container h-3 w-8 animate-pulse rounded" />
+              <div className="bg-surface-container h-3 w-8 animate-pulse rounded motion-reduce:animate-none" />
             </div>
           ))}
         </div>
@@ -26,8 +26,12 @@ export function CalendarViewSkeleton() {
           {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="border-border flex h-16 border-b">
               {/* ダミーのイベントスロット */}
-              {i === 2 && <div className="bg-surface-container/50 m-1 flex-1 animate-pulse rounded" />}
-              {i === 5 && <div className="bg-surface-container/50 m-1 flex-1 animate-pulse rounded" />}
+              {i === 2 && (
+                <div className="bg-surface-container/50 m-1 flex-1 animate-pulse rounded motion-reduce:animate-none" />
+              )}
+              {i === 5 && (
+                <div className="bg-surface-container/50 m-1 flex-1 animate-pulse rounded motion-reduce:animate-none" />
+              )}
             </div>
           ))}
         </div>

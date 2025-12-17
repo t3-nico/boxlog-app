@@ -61,16 +61,18 @@ export const AnimatedEventCard = ({
   // 選択時のアニメーション
   const getAnimationClasses = () => {
     const baseClasses = [
-      'transition-all duration-200 ease-out',
+      'transition-all duration-200 ease-out motion-reduce:transition-none',
       'transform-gpu', // GPUアクセラレーション
     ]
 
     if (isNew) {
-      baseClasses.push(isVisible ? 'animate-in fade-in-0 zoom-in-95 duration-200' : 'opacity-0 scale-95')
+      baseClasses.push(
+        isVisible ? 'animate-in fade-in-0 zoom-in-95 duration-200 motion-reduce:animate-none' : 'opacity-0 scale-95'
+      )
     }
 
     if (isDeleting) {
-      baseClasses.push('animate-out fade-out-0 zoom-out-95 duration-150')
+      baseClasses.push('animate-out fade-out-0 zoom-out-95 duration-150 motion-reduce:animate-none')
     }
 
     if (isSelected) {
