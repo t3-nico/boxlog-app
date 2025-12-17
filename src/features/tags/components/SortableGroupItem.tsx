@@ -6,6 +6,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { Edit, Folder, MoreHorizontal, Palette, Trash2 } from 'lucide-react'
 import { useCallback } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   DropdownMenu,
@@ -99,32 +100,35 @@ export function SortableGroupItem({
   )
 
   return (
-    <button
+    <Button
       ref={setRefs}
       type="button"
+      variant="ghost"
       onClick={() => onGroupClick(group.group_number)}
-      className={`group w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-        isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
+      className={`group w-full justify-start px-3 py-2 text-sm ${
+        isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground'
       } ${isOver ? 'bg-primary/10 border-primary/50 border-2 border-dashed' : ''}`}
       style={style}
       {...attributes}
       {...listeners}
     >
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex w-full items-center justify-between gap-2">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           {/* カラーアイコン */}
           <Popover>
             <PopoverTrigger asChild>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon-sm"
                 onClick={(e) => {
                   e.stopPropagation()
                 }}
-                className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                className="shrink-0"
                 aria-label={t('tags.sidebar.changeColorAria', { name: group.name })}
               >
                 <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
-              </button>
+              </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-3" align="start">
               <ColorPalettePicker
@@ -160,15 +164,17 @@ export function SortableGroupItem({
           {/* コンテキストメニュー */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
+              <Button
                 type="button"
-                className="hover:bg-state-hover flex h-6 w-6 shrink-0 items-center justify-center rounded p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                variant="ghost"
+                size="icon-sm"
+                className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100"
                 onClick={(e) => {
                   e.stopPropagation()
                 }}
               >
                 <MoreHorizontal className="h-3 w-3" />
-              </button>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
@@ -210,6 +216,6 @@ export function SortableGroupItem({
           <span className="text-muted-foreground text-xs">{tagCount}</span>
         </div>
       </div>
-    </button>
+    </Button>
   )
 }

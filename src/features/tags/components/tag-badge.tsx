@@ -1,6 +1,7 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Tag } from '@/features/tags/types'
 
 interface TagBadgeProps {
@@ -31,16 +32,18 @@ export const TagBadge = ({ tag, size = 'sm', showIcon = true, onClick, onRemove 
       {showIcon && tag.icon ? <span className="text-xs">{tag.icon}</span> : null}
       <span>{tag.name}</span>
       {onRemove != null && (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={(e) => {
             e.stopPropagation()
             onRemove()
           }}
-          className="hover:bg-destructive/10 dark:hover:bg-destructive/20 hover:text-destructive ml-1 flex h-4 w-4 items-center justify-center rounded-full text-xs"
+          className="hover:bg-destructive/10 dark:hover:bg-destructive/20 hover:text-destructive ml-1 h-4 w-4 text-xs"
         >
           ×
-        </button>
+        </Button>
       )}
     </Badge>
   )

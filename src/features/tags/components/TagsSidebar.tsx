@@ -297,22 +297,23 @@ export function TagsSidebar({
     })
 
     return (
-      <button
+      <Button
         ref={setNodeRef}
         type="button"
+        variant="ghost"
         onClick={handleUncategorizedClick}
-        className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-          isUncategorizedPage ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
+        className={`w-full justify-start px-3 py-2 text-sm ${
+          isUncategorizedPage ? 'bg-state-selected text-foreground' : 'text-muted-foreground'
         } ${isOver ? 'bg-primary/10 border-primary/50 border-2 border-dashed' : ''}`}
       >
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex w-full items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <FolderX className="text-muted-foreground h-4 w-4 shrink-0" />
             <span>{t('tags.sidebar.uncategorized')}</span>
           </div>
           <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>
         </div>
-      </button>
+      </Button>
     )
   }
 
@@ -332,43 +333,45 @@ export function TagsSidebar({
       <nav className="flex-1 overflow-y-auto px-2 py-2">
         <div className="space-y-1">
           {/* すべてのタグ */}
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={onAllTagsClick}
-            className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
+            className={`w-full justify-start px-3 py-2 text-sm ${
               !isArchivePage && !isUncategorizedPage && !currentGroupNumber
                 ? 'bg-state-selected text-foreground'
-                : 'text-muted-foreground hover:bg-state-hover'
+                : 'text-muted-foreground'
             }`}
           >
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex w-full items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Tags className="h-4 w-4 shrink-0" />
                 <span>{t('tags.sidebar.allTags')}</span>
               </div>
               <span className="text-muted-foreground text-xs">{activeTagsCount}</span>
             </div>
-          </button>
+          </Button>
 
           {/* 未分類 */}
           <UncategorizedDropZone />
 
           {/* アーカイブ */}
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={handleArchiveClick}
-            className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-              isArchivePage ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
+            className={`w-full justify-start px-3 py-2 text-sm ${
+              isArchivePage ? 'bg-state-selected text-foreground' : 'text-muted-foreground'
             }`}
           >
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex w-full items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Archive className="h-4 w-4 shrink-0" />
                 <span>{t('tags.sidebar.archive')}</span>
               </div>
               <span className="text-muted-foreground text-xs">{archivedTagsCount}</span>
             </div>
-          </button>
+          </Button>
 
           {/* グループセクション */}
           <div className="text-muted-foreground mt-4 mb-1 flex items-center justify-between px-3 py-2">
@@ -424,13 +427,15 @@ export function TagsSidebar({
                     {/* カラーアイコン（左側） */}
                     <Popover>
                       <PopoverTrigger asChild>
-                        <button
+                        <Button
                           type="button"
-                          className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                          variant="ghost"
+                          size="icon-sm"
+                          className="shrink-0"
                           aria-label={t('tags.sidebar.changeColor')}
                         >
                           <Folder className="h-4 w-4 shrink-0" style={{ color: newGroupColor }} />
-                        </button>
+                        </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-3" align="start">
                         <ColorPalettePicker selectedColor={newGroupColor} onColorSelect={setNewGroupColor} />

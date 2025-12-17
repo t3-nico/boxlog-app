@@ -99,11 +99,12 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                   '#d946ef',
                   '#ec4899',
                 ].map((presetColor) => (
-                  <button
+                  <Button
                     key={presetColor}
                     type="button"
+                    variant="ghost"
                     onClick={() => setColor(presetColor)}
-                    className={`h-8 w-8 rounded-md border-2 transition-all ${
+                    className={`h-8 w-8 rounded-md border-2 p-0 transition-all ${
                       color === presetColor ? 'border-border scale-110' : 'border-border hover:scale-105'
                     }`}
                     style={{ backgroundColor: presetColor }}
@@ -145,19 +146,20 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
                       {icons.map((iconName) => {
                         const IconComponent = tagIconMapping[iconName as TagIconName]
                         return (
-                          <button
+                          <Button
                             key={iconName}
                             type="button"
+                            variant="ghost"
                             onClick={() => setIcon(iconName as TagIconName)}
-                            className={`rounded-md p-2 transition-all ${
+                            className={`rounded-md p-2 ${
                               icon === iconName
                                 ? 'border-primary bg-primary/12 border-2'
-                                : 'border-border bg-secondary text-secondary-foreground hover:bg-state-hover border'
+                                : 'border-border bg-secondary text-secondary-foreground border'
                             }`}
                             title={iconName}
                           >
                             <IconComponent className="text-muted-foreground tag-icon mx-auto h-5 w-5" />
-                          </button>
+                          </Button>
                         )
                       })}
                     </div>

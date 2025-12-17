@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -160,13 +161,15 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
               <div className="flex items-center gap-2">
                 <Popover>
                   <PopoverTrigger asChild>
-                    <button
+                    <Button
                       type="button"
-                      className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                      variant="ghost"
+                      size="icon-sm"
+                      className="shrink-0"
                       aria-label={t('tags.page.changeColor')}
                     >
                       <Hash className="h-4 w-4" style={{ color: newTagColor }} aria-label={t('tags.page.tagColor')} />
-                    </button>
+                    </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-3" align="start">
                     <ColorPalettePicker selectedColor={newTagColor} onColorSelect={setNewTagColor} />

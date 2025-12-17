@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   DropdownMenuItem,
@@ -249,28 +250,30 @@ export function TagInspector() {
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <div className="text-muted-foreground px-2 py-2 text-xs font-medium">表示モード</div>
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => setDisplayMode('sheet')}
-        className="hover:bg-state-hover flex w-full cursor-default items-center justify-between gap-2 rounded-sm px-2 py-2 text-sm outline-none select-none"
+        className="flex w-full cursor-default justify-between gap-2"
       >
         <span className="flex items-center gap-2">
           <PanelRight className="size-4 shrink-0" />
           パネル
         </span>
         {displayMode === 'sheet' && <CheckIcon className="text-primary size-4" />}
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => setDisplayMode('popover')}
-        className="hover:bg-state-hover flex w-full cursor-default items-center justify-between gap-2 rounded-sm px-2 py-2 text-sm outline-none select-none"
+        className="flex w-full cursor-default justify-between gap-2"
       >
         <span className="flex items-center gap-2">
           <SquareMousePointer className="size-4 shrink-0" />
           ポップアップ
         </span>
         {displayMode === 'popover' && <CheckIcon className="text-primary size-4" />}
-      </button>
+      </Button>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={handleDelete} variant="destructive">
         <Trash2 className="size-4" />
@@ -312,9 +315,12 @@ export function TagInspector() {
               {/* タグ名とカラー */}
               <div className="flex min-h-10 items-start gap-2 px-4 py-2">
                 <div className="relative mt-1.5">
-                  <button
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
                     onClick={() => setShowColorPicker(!showColorPicker)}
-                    className="size-4 rounded-full transition-transform hover:scale-110"
+                    className="size-4 rounded-full p-0"
                     style={{ backgroundColor: tag.color || DEFAULT_TAG_COLOR }}
                     aria-label="カラー変更"
                   />
@@ -369,15 +375,17 @@ export function TagInspector() {
                   <FolderX className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
                 )}
                 <div className="flex min-h-8 flex-1 items-center">
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => {
                       /* グループ選択メニューを表示 */
                     }}
-                    className="text-muted-foreground hover:bg-state-hover h-8 rounded-md px-2 text-sm transition-colors"
+                    className="text-muted-foreground h-8 px-2 text-sm"
                   >
                     {tagGroup ? tagGroup.name : 'グループを選択...'}
-                  </button>
+                  </Button>
                 </div>
               </div>
 

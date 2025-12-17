@@ -150,8 +150,9 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
           {/* ターゲットタグ選択（カスタムドロップダウン） */}
           <div className="relative inline-block">
             {/* トリガーボタン */}
-            <button
+            <Button
               type="button"
+              variant="outline"
               onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation()
@@ -159,7 +160,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                 setIsDropdownOpen((prev) => !prev)
               }}
               className={cn(
-                'border-border bg-secondary text-secondary-foreground hover:bg-state-hover flex items-center justify-between gap-2 rounded-md border px-3 py-2 text-sm',
+                'bg-secondary text-secondary-foreground hover:bg-state-hover justify-between gap-2',
                 isDropdownOpen && 'ring-ring/50 border-ring ring-2'
               )}
             >
@@ -174,7 +175,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                 <span className="text-muted-foreground">{t('tags.merge.selectTarget')}</span>
               )}
               <ChevronDown className="size-4 opacity-50" />
-            </button>
+            </Button>
 
             {/* ドロップダウンリスト */}
             {isDropdownOpen && (
@@ -183,9 +184,10 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                   <p className="text-muted-foreground p-3 text-center text-sm">{t('tags.search.noTags')}</p>
                 ) : (
                   availableTags.map((tagItem) => (
-                    <button
+                    <Button
                       key={tagItem.id}
                       type="button"
+                      variant="ghost"
                       onClick={(e) => {
                         e.stopPropagation()
                         setTargetTagId(tagItem.id)
@@ -193,15 +195,14 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                         setError(null)
                       }}
                       className={cn(
-                        'flex w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm transition-colors outline-none',
-                        'hover:bg-state-hover',
+                        'flex w-full cursor-default justify-start gap-2',
                         targetTagId === tagItem.id && 'bg-state-selected'
                       )}
                     >
                       <span style={{ color: tagItem.color || DEFAULT_TAG_COLOR }}>#</span>
                       <span className="flex-1 truncate">{tagItem.name}</span>
                       {targetTagId === tagItem.id && <Check className="text-primary size-4 shrink-0" />}
-                    </button>
+                    </Button>
                   ))
                 )}
               </div>
