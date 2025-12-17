@@ -35,7 +35,7 @@ interface CalendarViewRendererProps {
 function ViewLoadingSkeleton() {
   return (
     <div className="flex h-full items-center justify-center">
-      <div className="bg-surface-container/50 h-8 w-8 animate-pulse motion-reduce:animate-none rounded-full" />
+      <div className="bg-surface-container/50 h-8 w-8 animate-pulse rounded-full motion-reduce:animate-none" />
     </div>
   )
 }

@@ -45,7 +45,7 @@ function Progress({ className, value, indeterminate = false, ...props }: Progres
         className={cn(
           'bg-primary h-full flex-1',
           indeterminate
-            ? 'animate-indeterminate motion-reduce:animate-none motion-reduce:w-full w-1/4'
+            ? 'animate-indeterminate w-1/4 motion-reduce:w-full motion-reduce:animate-none'
             : 'w-full transition-all'
         )}
         style={indeterminate ? undefined : { transform: `translateX(-${100 - (value || 0)}%)` }}

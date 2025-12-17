@@ -34,7 +34,7 @@ export const LoadingSpinner = ({
   return (
     <Loader2
       className={cn(
-        'animate-spin motion-reduce:animate-none text-neutral-600 dark:text-neutral-400',
+        'animate-spin text-neutral-600 motion-reduce:animate-none dark:text-neutral-400',
         Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '',
         className
       )}
@@ -61,7 +61,7 @@ export const RefreshSpinner = ({
   return (
     <RefreshCw
       className={cn(
-        'animate-spin motion-reduce:animate-none text-blue-600 dark:text-blue-400',
+        'animate-spin text-blue-600 motion-reduce:animate-none dark:text-blue-400',
         Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '',
         className
       )}

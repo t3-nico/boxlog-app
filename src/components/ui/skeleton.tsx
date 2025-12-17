@@ -25,7 +25,7 @@ function Skeleton({ className, animation = 'pulse', ...props }: SkeletonProps) {
       className={cn(
         'rounded-md',
         animation === 'shimmer'
-          ? 'animate-shimmer motion-reduce:animate-none motion-reduce:bg-surface-container'
+          ? 'animate-shimmer motion-reduce:bg-surface-container motion-reduce:animate-none'
           : 'bg-surface-container animate-pulse motion-reduce:animate-none',
         className
       )}
