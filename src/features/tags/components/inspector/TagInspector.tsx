@@ -458,9 +458,15 @@ export function TagInspector() {
       {/* マージダイアログ */}
       <TagMergeDialog
         tag={showMergeDialog ? tag : null}
-        onClose={() => {
+        onClose={(mergedTargetTagId) => {
           setShowMergeDialog(false)
-          closeInspector()
+          if (mergedTargetTagId) {
+            // 統合成功: 統合先タグのインスペクターを開く
+            openInspector(mergedTargetTagId)
+          } else {
+            // キャンセル: インスペクターを閉じる
+            closeInspector()
+          }
         }}
       />
     </>

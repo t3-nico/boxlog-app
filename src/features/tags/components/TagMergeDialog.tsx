@@ -14,7 +14,7 @@ import { toast } from 'sonner'
 
 interface TagMergeDialogProps {
   tag: Tag | null
-  onClose: () => void
+  onClose: (targetTagId?: string) => void
 }
 
 /**
@@ -29,6 +29,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
   const [isMerging, setIsMerging] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const { data: tags = [] } = useTags()
   const mergeTagMutation = useMergeTag()
@@ -43,6 +44,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
     if (!tag) {
       setTargetTagId('')
       setIsDropdownOpen(false)
+      setError(null)
     }
   }, [tag])
 
@@ -57,8 +59,11 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
   })
 
   const handleMerge = useCallback(async () => {
+    // エラーをクリア
+    setError(null)
+
     if (!tag || !targetTagId) {
-      toast.error(t('tags.merge.noTargetSelected'))
+      setError(t('tags.merge.noTargetSelected'))
       return
     }
 
@@ -73,10 +78,11 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
       })
 
       toast.success(t('tags.merge.success', { count: result.merged_associations || 0 }))
-      onClose()
-    } catch (error) {
-      console.error('Merge failed:', error)
-      toast.error(t('tags.merge.failed'))
+      // 統合先タグIDを渡して閉じる（インスペクターで統合先を開くため）
+      onClose(targetTagId)
+    } catch (err) {
+      console.error('Merge failed:', err)
+      setError(t('tags.merge.failed'))
     } finally {
       setIsMerging(false)
     }
@@ -183,6 +189,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                         e.stopPropagation()
                         setTargetTagId(tagItem.id)
                         setIsDropdownOpen(false)
+                        setError(null)
                       }}
                       className={cn(
                         'flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors',
@@ -202,6 +209,9 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
               </div>
             )}
           </div>
+
+          {/* エラーメッセージ */}
+          {error && <div className="bg-destructive/10 text-destructive rounded-md px-3 py-2 text-sm">{error}</div>}
         </div>
 
         {/* Footer */}
@@ -209,7 +219,7 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
           <Button
             type="button"
             variant="outline"
-            onClick={onClose}
+            onClick={() => onClose()}
             disabled={isMerging}
             className="hover:bg-state-hover"
           >

@@ -81,7 +81,8 @@ export function usePlanTags() {
   const isLoading = addTagMutation.isPending || removeTagMutation.isPending || setTagsMutation.isPending
 
   // Get the most recent error
-  const error = addTagMutation.error?.message ?? removeTagMutation.error?.message ?? setTagsMutation.error?.message ?? null
+  const error =
+    addTagMutation.error?.message ?? removeTagMutation.error?.message ?? setTagsMutation.error?.message ?? null
 
   return {
     // State

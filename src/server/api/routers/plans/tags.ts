@@ -172,11 +172,7 @@ export const tagsRouter = createTRPCRouter({
     }
 
     // 既存の関連をすべて削除
-    const { error: deleteError } = await supabase
-      .from('plan_tags')
-      .delete()
-      .eq('plan_id', planId)
-      .eq('user_id', userId)
+    const { error: deleteError } = await supabase.from('plan_tags').delete().eq('plan_id', planId).eq('user_id', userId)
 
     if (deleteError) {
       throw new TRPCError({
