@@ -243,7 +243,7 @@ export function InboxTableView() {
 
       {/* テーブル - InboxTableContentに委譲（担当制） */}
       <div
-        className="flex flex-1 flex-col overflow-hidden px-4 pt-4 md:px-6"
+        className="flex flex-1 flex-col overflow-hidden px-4 md:px-6"
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             useInboxSelectionStore.getState().clearSelection()
