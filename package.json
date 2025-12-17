@@ -249,7 +249,7 @@
     "@trpc/client": "^11.6.0",
     "@trpc/next": "^11.6.0",
     "@trpc/react-query": "^11.6.0",
-    "@trpc/server": "^11.6.0",
+    "@trpc/server": "^11.8.0",
     "@types/dompurify": "^3.0.5",
     "@types/qrcode": "^1.5.5",
     "@types/react-window": "^1.8.8",
