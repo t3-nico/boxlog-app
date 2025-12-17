@@ -1,25 +1,38 @@
 'use client'
 
-import { InspectorHeader } from '@/components/common/InspectorHeader'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
+import {
+  InspectorContent,
+  InspectorHeader,
+  InspectorShell,
+  useInspectorKeyboard,
+  type InspectorDisplayMode,
+} from '@/features/inspector'
 import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/features/tags/constants/colors'
-import { Archive, ChevronRight, FileText, Folder, FolderX, Merge, Palette, Trash2 } from 'lucide-react'
+import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR, TAG_PRESET_COLORS } from '@/features/tags/constants/colors'
+import {
+  Archive,
+  CheckIcon,
+  FileText,
+  Folder,
+  FolderX,
+  Merge,
+  Palette,
+  PanelRight,
+  SquareMousePointer,
+  Trash2,
+} from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { TAG_PRESET_COLORS } from '../../constants/colors'
+import { toast } from 'sonner'
 import { useTagGroups } from '../../hooks/use-tag-groups'
 import { useDeleteTag, useTags, useUpdateTag, useUpdateTagColor } from '../../hooks/use-tags'
 import { useTagInspectorStore } from '../../stores/useTagInspectorStore'
@@ -31,13 +44,20 @@ import { TagGroupMenuItems } from './TagGroupDropdown'
 /**
  * Tag Inspector（タグ詳細Sheet）
  *
- * - タグ一覧から呼び出し可能
+ * 共通Inspector基盤を使用
  * - useTagInspectorStoreでグローバル状態管理
  * - レイアウトに配置して常にマウント
  * - 各フィールド変更時に自動保存（デバウンス処理あり）
  */
 export function TagInspector() {
-  const { isOpen, entityId: tagId, closeInspector: closeInspectorStore, openInspector } = useTagInspectorStore()
+  const {
+    isOpen,
+    entityId: tagId,
+    displayMode,
+    closeInspector: closeInspectorStore,
+    openInspector,
+    setDisplayMode,
+  } = useTagInspectorStore()
   const { openInspector: openPlanInspector } = usePlanInspectorStore()
   const router = useRouter()
   const pathname = usePathname()
@@ -52,11 +72,11 @@ export function TagInspector() {
     }
   }, [closeInspectorStore, pathname, router])
 
-  // タグデータ取得（フラット）
+  // タグデータ取得
   const { data: tags = [], isPending } = useTags()
   const { data: groups = [] } = useTagGroups()
 
-  // 現在のタグを取得（フラット検索）
+  // 現在のタグを取得
   const tag = useMemo(() => {
     if (!tagId) return null
     return tags.find((t) => t.id === tagId) ?? null
@@ -118,6 +138,16 @@ export function TagInspector() {
       if (nextTag) openInspector(nextTag.id)
     }
   }, [hasNext, activeTags, currentIndex, openInspector])
+
+  // キーボードショートカット
+  useInspectorKeyboard({
+    isOpen,
+    hasPrevious,
+    hasNext,
+    onClose: closeInspector,
+    onPrevious: goToPrevious,
+    onNext: goToNext,
+  })
 
   // 自動保存関数（デバウンス処理付き）
   const autoSave = useCallback(
@@ -191,62 +221,75 @@ export function TagInspector() {
     }
   }, [])
 
-  // キーボードショートカット
-  useEffect(() => {
-    if (!isOpen) return
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // 入力中は無視
-      const target = e.target as HTMLElement
-      if (target.isContentEditable || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
-        return
-      }
-
-      switch (e.key) {
-        case 'Escape':
-          closeInspector()
-          break
-        case 'ArrowUp':
-        case 'k':
-          if (hasPrevious) {
-            e.preventDefault()
-            goToPrevious()
-          }
-          break
-        case 'ArrowDown':
-        case 'j':
-          if (hasNext) {
-            e.preventDefault()
-            goToNext()
-          }
-          break
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, hasPrevious, hasNext, closeInspector, goToPrevious, goToNext])
-
-  if (!isOpen) {
-    return null
-  }
+  // Tag固有のメニュー内容
+  const menuContent = (
+    <>
+      <DropdownMenuItem onClick={() => setShowColorPicker(true)}>
+        <Palette className="size-4" />
+        カラー変更
+      </DropdownMenuItem>
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+          <Folder className="size-4" />
+          グループを変更
+        </DropdownMenuSubTrigger>
+        <DropdownMenuSubContent className="w-48">
+          <TagGroupMenuItems groups={groups} currentGroupId={tagGroup?.id ?? null} onSelect={handleChangeGroup} />
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
+      <DropdownMenuItem onClick={handleMerge}>
+        <Merge className="size-4" />
+        マージ
+      </DropdownMenuItem>
+      <DropdownMenuItem onClick={handleArchive}>
+        <Archive className="size-4" />
+        アーカイブ
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <div className="text-muted-foreground px-2 py-2 text-xs font-medium">表示モード</div>
+      <button
+        type="button"
+        onClick={() => setDisplayMode('sheet')}
+        className="hover:bg-state-hover flex w-full cursor-default items-center justify-between gap-2 rounded-sm px-2 py-2 text-sm outline-none select-none"
+      >
+        <span className="flex items-center gap-2">
+          <PanelRight className="size-4 shrink-0" />
+          パネル
+        </span>
+        {displayMode === 'sheet' && <CheckIcon className="text-primary size-4" />}
+      </button>
+      <button
+        type="button"
+        onClick={() => setDisplayMode('popover')}
+        className="hover:bg-state-hover flex w-full cursor-default items-center justify-between gap-2 rounded-sm px-2 py-2 text-sm outline-none select-none"
+      >
+        <span className="flex items-center gap-2">
+          <SquareMousePointer className="size-4 shrink-0" />
+          ポップアップ
+        </span>
+        {displayMode === 'popover' && <CheckIcon className="text-primary size-4" />}
+      </button>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem onClick={handleDelete} variant="destructive">
+        <Trash2 className="size-4" />
+        削除
+      </DropdownMenuItem>
+    </>
+  )
 
   return (
     <>
-      <Sheet open={isOpen} onOpenChange={(open) => !open && closeInspector()} modal={false}>
-        <SheetContent className="w-[480px] gap-0 overflow-y-auto" showCloseButton={false}>
-          <SheetTitle className="sr-only">{tag?.name || 'タグの詳細'}</SheetTitle>
-
-          {isPending ? (
-            <div className="flex h-full items-center justify-center">
-              <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2" />
-            </div>
-          ) : !tag ? (
-            <div className="flex h-full items-center justify-center">
-              <p className="text-muted-foreground">タグが見つかりません</p>
-            </div>
-          ) : (
-            <>
+      <InspectorShell
+        isOpen={isOpen}
+        onClose={closeInspector}
+        displayMode={displayMode as InspectorDisplayMode}
+        title={tag?.name || 'タグの詳細'}
+        resizable={true}
+        modal={false}
+      >
+        <InspectorContent isLoading={isPending} hasData={!!tag} emptyMessage="タグが見つかりません">
+          {tag && (
+            <div className="flex h-full flex-col overflow-hidden">
               {/* ヘッダー */}
               <InspectorHeader
                 hasPrevious={hasPrevious}
@@ -256,130 +299,101 @@ export function TagInspector() {
                 onNext={goToNext}
                 previousLabel="前のタグ"
                 nextLabel="次のタグ"
-                menuContent={
-                  <>
-                    <DropdownMenuItem onClick={() => setShowColorPicker(true)}>
-                      <Palette className="mr-2 h-4 w-4" />
-                      カラー変更
-                    </DropdownMenuItem>
-                    <DropdownMenuSub>
-                      <DropdownMenuSubTrigger>
-                        <Folder className="mr-2 h-4 w-4" />
-                        グループを変更
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuSubContent className="w-48">
-                        <TagGroupMenuItems
-                          groups={groups}
-                          currentGroupId={tagGroup?.id ?? null}
-                          onSelect={handleChangeGroup}
-                        />
-                      </DropdownMenuSubContent>
-                    </DropdownMenuSub>
-                    <DropdownMenuItem onClick={handleMerge}>
-                      <Merge className="mr-2 h-4 w-4" />
-                      マージ
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleArchive}>
-                      <Archive className="mr-2 h-4 w-4" />
-                      アーカイブ
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleDelete} variant="destructive">
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      削除
-                    </DropdownMenuItem>
-                  </>
-                }
+                displayMode={displayMode as InspectorDisplayMode}
+                menuContent={menuContent}
               />
 
-              {/* タグ情報 */}
-              <div className="px-6 pt-4 pb-2">
-                {/* タグ名とカラー */}
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowColorPicker(!showColorPicker)}
-                      className="h-6 w-6 rounded-full transition-transform hover:scale-110"
-                      style={{ backgroundColor: tag.color || DEFAULT_TAG_COLOR }}
-                      aria-label="カラー変更"
-                    />
-                    {/* カラーピッカー */}
-                    {showColorPicker && (
-                      <div className="bg-popover border-border absolute top-8 left-0 z-50 rounded-lg border p-3 shadow-lg">
-                        <div className="grid grid-cols-5 gap-2">
-                          {TAG_PRESET_COLORS.map((color) => (
-                            <button
-                              key={color}
-                              onClick={() => handleColorChange(color)}
-                              className="h-6 w-6 rounded-full transition-transform hover:scale-110"
-                              style={{ backgroundColor: color }}
-                              aria-label={`色を${color}に変更`}
-                            />
-                          ))}
-                        </div>
+              {/* タグ名とカラー */}
+              <div className="flex min-h-10 items-start gap-2 px-4 py-2">
+                <div className="relative mt-1.5">
+                  <button
+                    onClick={() => setShowColorPicker(!showColorPicker)}
+                    className="size-4 rounded-full transition-transform hover:scale-110"
+                    style={{ backgroundColor: tag.color || DEFAULT_TAG_COLOR }}
+                    aria-label="カラー変更"
+                  />
+                  {/* カラーピッカー */}
+                  {showColorPicker && (
+                    <div className="bg-popover border-border absolute top-6 left-0 z-20 rounded-lg border p-3 shadow-lg">
+                      <div className="grid grid-cols-5 gap-2">
+                        {TAG_PRESET_COLORS.map((color) => (
+                          <button
+                            key={color}
+                            onClick={() => handleColorChange(color)}
+                            className="size-5 rounded-full transition-transform hover:scale-110"
+                            style={{ backgroundColor: color }}
+                            aria-label={`色を${color}に変更`}
+                          />
+                        ))}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
+                </div>
+                <div className="flex min-h-8 flex-1 items-center">
                   <span
                     ref={titleRef}
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={(e) => autoSave('name', e.currentTarget.textContent || '')}
-                    className="bg-popover flex-1 border-0 px-0 text-2xl font-bold outline-none"
+                    className="bg-popover border-0 px-0 text-lg font-semibold outline-none"
                   >
                     {tag.name}
                   </span>
-                  <span className="text-muted-foreground text-sm">t-{tag.tag_number}</span>
+                  <span className="text-muted-foreground ml-2 text-sm">t-{tag.tag_number}</span>
                 </div>
               </div>
 
               {/* グループ */}
-              <div className="border-border/50 border-t px-6 py-3">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                      type="button"
-                      className="hover:bg-state-hover flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        {tagGroup ? (
-                          <>
-                            <Folder
-                              className="h-4 w-4 flex-shrink-0"
-                              style={{ color: tagGroup.color || DEFAULT_GROUP_COLOR }}
-                            />
-                            <span className="text-sm">{tagGroup.name}</span>
-                          </>
-                        ) : (
-                          <>
-                            <FolderX className="text-muted-foreground h-4 w-4 flex-shrink-0" />
-                            <span className="text-muted-foreground text-sm">グループなし</span>
-                          </>
-                        )}
-                      </div>
-                      <ChevronRight className="text-muted-foreground h-4 w-4" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-48">
-                    <TagGroupMenuItems
-                      groups={groups}
-                      currentGroupId={tagGroup?.id ?? null}
-                      onSelect={handleChangeGroup}
-                    />
-                  </DropdownMenuContent>
-                </DropdownMenu>
+              <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
+                {tagGroup ? (
+                  <Folder
+                    className="mt-2 size-4 flex-shrink-0"
+                    style={{ color: tagGroup.color || DEFAULT_GROUP_COLOR }}
+                  />
+                ) : (
+                  <FolderX className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+                )}
+                <div className="flex min-h-8 flex-1 items-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      /* グループ選択メニューを表示 */
+                    }}
+                    className="text-muted-foreground hover:bg-state-hover h-8 rounded-md px-2 text-sm transition-colors"
+                  >
+                    {tagGroup ? tagGroup.name : 'グループを選択...'}
+                  </button>
+                </div>
               </div>
 
               {/* 説明 */}
-              <div className="border-border/50 hover:bg-state-hover min-h-[48px] border-t px-6 py-3 transition-colors">
-                <div className="flex items-start gap-2">
-                  <FileText className="text-muted-foreground mt-0.5 h-4 w-4 flex-shrink-0" />
+              <div className="border-border/50 flex min-h-10 items-start gap-2 border-t px-4 py-2">
+                <FileText className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
+                <div className="min-h-8 min-w-0 flex-1">
                   <span
                     ref={descriptionRef}
                     contentEditable
                     suppressContentEditableWarning
+                    onInput={(e) => {
+                      const text = e.currentTarget.textContent || ''
+                      if (text.length > 100) {
+                        e.currentTarget.textContent = text.slice(0, 100)
+                        // カーソルを末尾に移動
+                        const range = document.createRange()
+                        const selection = window.getSelection()
+                        range.selectNodeContents(e.currentTarget)
+                        range.collapse(false)
+                        selection?.removeAllRanges()
+                        selection?.addRange(range)
+                        // 制限通知
+                        toast.info('説明は100文字までです', {
+                          id: 'description-limit',
+                        })
+                      }
+                    }}
                     onBlur={(e) => autoSave('description', e.currentTarget.textContent || '')}
-                    className="text-muted-foreground empty:before:text-muted-foreground/60 min-h-[20px] flex-1 text-sm outline-none empty:before:content-['説明を追加...']"
+                    className="text-muted-foreground empty:before:text-muted-foreground/60 block min-h-8 w-full pt-1.5 text-sm break-words outline-none empty:before:content-['説明を追加...']"
+                    style={{ overflowWrap: 'anywhere' }}
                   >
                     {tag.description || ''}
                   </span>
@@ -387,8 +401,8 @@ export function TagInspector() {
               </div>
 
               {/* 紐づくプラン */}
-              <div className="border-border/50 border-t px-6 py-4">
-                <h3 className="text-muted-foreground mb-3 text-sm font-medium">紐づくプラン ({plans.length})</h3>
+              <div className="border-border/50 flex-1 overflow-y-auto border-t px-4 py-2">
+                <h3 className="text-muted-foreground mb-2 text-sm font-medium">紐づくプラン ({plans.length})</h3>
                 {isLoadingPlans ? (
                   <div className="flex h-24 items-center justify-center">
                     <div className="border-primary h-6 w-6 animate-spin rounded-full border-b-2" />
@@ -409,10 +423,10 @@ export function TagInspector() {
                   </div>
                 )}
               </div>
-            </>
+            </div>
           )}
-        </SheetContent>
-      </Sheet>
+        </InspectorContent>
+      </InspectorShell>
 
       {/* 削除ダイアログ */}
       <TagDeleteDialog
@@ -444,9 +458,15 @@ export function TagInspector() {
       {/* マージダイアログ */}
       <TagMergeDialog
         tag={showMergeDialog ? tag : null}
-        onClose={() => {
+        onClose={(mergedTargetTagId) => {
           setShowMergeDialog(false)
-          closeInspector()
+          if (mergedTargetTagId) {
+            // 統合成功: 統合先タグのインスペクターを開く
+            openInspector(mergedTargetTagId)
+          } else {
+            // キャンセル: インスペクターを閉じる
+            closeInspector()
+          }
         }}
       />
     </>

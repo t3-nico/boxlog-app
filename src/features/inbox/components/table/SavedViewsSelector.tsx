@@ -112,7 +112,7 @@ export function SavedViewsSelector({ currentState }: SavedViewsSelectorProps) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="h-9">
+          <Button variant="outline" size="sm">
             <Layers className="size-4" />
             {activeView?.name || 'ビューを選択'}
             <ChevronDown className="size-4" />

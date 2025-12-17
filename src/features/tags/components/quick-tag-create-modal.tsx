@@ -99,7 +99,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
       <div className="bg-popover fixed top-1/2 left-1/2 z-50 w-80 -translate-x-1/2 -translate-y-1/2 transform rounded-lg shadow-xl">
         {/* Header */}
         <div className="border-border flex items-center justify-between border-b p-4">
-          <h2 className="text-foreground text-lg font-semibold">Create New Tag</h2>
+          <h2 className="text-foreground text-lg font-semibold">{t('tags.modal.createTitle')}</h2>
           <button type="button" onClick={handleClose} className="hover:bg-state-hover rounded-lg p-1 transition-colors">
             <X className="text-muted-foreground h-4 w-4" />
           </button>
@@ -109,14 +109,14 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
         <div className="space-y-4 p-4">
           <div>
             <label htmlFor="tag-name-input" className="text-muted-foreground mb-2 block text-sm font-medium">
-              Tag Name
+              {t('tags.form.tagName')}
             </label>
             <input
               id="tag-name-input"
               type="text"
               value={tagName}
               onChange={handleTagNameChange}
-              placeholder="Enter tag name..."
+              placeholder={t('tags.form.namePlaceholder')}
               className="border-border text-foreground focus:ring-primary w-full rounded-lg border bg-transparent px-3 py-2 focus:border-transparent focus:ring-2"
               onKeyDown={handleKeyDown}
             />
@@ -124,7 +124,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
 
           <div>
             <div className="text-muted-foreground mb-2 block text-sm font-medium" id="color-selection-label">
-              Color
+              {t('tags.form.color')}
             </div>
             <div className="flex flex-wrap gap-2" role="group" aria-labelledby="color-selection-label">
               {presetColors.map((color) => (
@@ -144,10 +144,10 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
 
           {/* Preview */}
           <div className="bg-surface-container rounded-lg p-3">
-            <div className="text-muted-foreground mb-2 text-xs font-medium">Preview:</div>
+            <div className="text-muted-foreground mb-2 text-xs font-medium">{t('tags.form.preview')}:</div>
             <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full" style={{ backgroundColor: selectedColor }} />
-              <span className="text-foreground text-sm">{tagName || 'Tag name'}</span>
+              <span className="text-foreground text-sm">{tagName || t('tags.form.tagNamePlaceholder')}</span>
             </div>
           </div>
         </div>
@@ -159,7 +159,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
             onClick={handleClose}
             className="text-muted-foreground hover:bg-state-hover rounded-lg px-4 py-2 transition-colors"
           >
-            Cancel
+            {t('tags.actions.cancel')}
           </button>
           <button
             type="button"
@@ -168,7 +168,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
             className="bg-primary text-primary-foreground hover:bg-primary-hover disabled:bg-surface-container disabled:text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 transition-colors disabled:cursor-not-allowed"
           >
             <Plus className="h-4 w-4" />
-            Create Tag
+            {t('tags.page.createTag')}
           </button>
         </div>
       </div>

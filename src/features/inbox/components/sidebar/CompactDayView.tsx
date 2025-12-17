@@ -201,10 +201,10 @@ export const CompactDayView = memo(function CompactDayView({
           >
             {t('time.today')}
           </Button>
-          <Button variant="ghost" size="icon" onClick={handlePrev} className="h-6 w-6">
+          <Button variant="ghost" size="icon" onClick={handlePrev} className="h-6 w-6" aria-label="前日">
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={handleNext} className="h-6 w-6">
+          <Button variant="ghost" size="icon" onClick={handleNext} className="h-6 w-6" aria-label="翌日">
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

@@ -118,12 +118,12 @@ export function BulkActionsToolbar() {
   }
 
   return (
-    <div className="bg-surface-container border-border flex items-center justify-between border-b px-4 py-3 md:px-6">
+    <div className="bg-surface-container border-border flex items-center justify-between border-b px-4 py-3">
       {/* 左側: 選択数表示 */}
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium">{t('common.inbox.selected', { count: selectedCount })}</span>
-        <Button variant="ghost" size="sm" onClick={clearSelection} className="h-8">
-          <X className="mr-1 size-4" />
+        <Button variant="ghost" size="sm" onClick={clearSelection}>
+          <X className="size-4" />
           {t('common.inbox.clear')}
         </Button>
       </div>
@@ -149,20 +149,20 @@ export function BulkActionsToolbar() {
         </Select>
 
         {/* 期限設定 */}
-        <Button variant="outline" size="sm" onClick={handleOpenDateDialog} disabled={isProcessing} className="h-8">
-          <Calendar className="mr-1 size-4" />
+        <Button variant="outline" size="sm" onClick={handleOpenDateDialog} disabled={isProcessing}>
+          <Calendar className="size-4" />
           {t('common.inbox.dueDate')}
         </Button>
 
         {/* アーカイブ */}
-        <Button variant="outline" size="sm" onClick={handleArchive} disabled={isProcessing} className="h-8">
-          <Archive className="mr-1 size-4" />
+        <Button variant="outline" size="sm" onClick={handleArchive} disabled={isProcessing}>
+          <Archive className="size-4" />
           {t('common.inbox.archive')}
         </Button>
 
         {/* 削除 */}
-        <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isProcessing} className="h-8">
-          <Trash2 className="mr-1 size-4" />
+        <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isProcessing}>
+          <Trash2 className="size-4" />
           {t('common.inbox.delete')}
         </Button>
       </div>

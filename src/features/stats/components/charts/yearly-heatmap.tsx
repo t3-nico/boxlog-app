@@ -63,11 +63,23 @@ export function YearlyHeatmap() {
           </CardDescription>
         </div>
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" onClick={() => setYear((y) => y - 1)} disabled={year <= 2020}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setYear((y) => y - 1)}
+            disabled={year <= 2020}
+            aria-label="前年"
+          >
             <ChevronLeft className="size-4" />
           </Button>
           <span className="min-w-16 text-center text-sm font-medium">{year}</span>
-          <Button variant="ghost" size="icon" onClick={() => setYear((y) => y + 1)} disabled={year >= currentYear}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setYear((y) => y + 1)}
+            disabled={year >= currentYear}
+            aria-label="翌年"
+          >
             <ChevronRight className="size-4" />
           </Button>
         </div>

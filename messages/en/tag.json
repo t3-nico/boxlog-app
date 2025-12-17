@@ -1,5 +1,9 @@
 {
   "tags": {
+    "page": {
+      "bulkDeleteConfirmTitle": "Delete {count} tags?",
+      "bulkDeleteConfirmDescription": "This will permanently delete the selected {count} tags. This action cannot be undone."
+    },
     "form": {
       "nameRequired": "Tag name is required",
       "nameMaxLength": "Tag name must be 50 characters or less",
@@ -41,8 +45,8 @@
     "selector": {
       "placeholder": "Select tags...",
       "searchPlaceholder": "Search tags...",
-      "tagsSelected": "{{count}} tag(s) selected",
-      "tagsCount": "{{current}} / {{max}} tags selected"
+      "tagsSelected": "{count} tag(s) selected",
+      "tagsCount": "{current} / {max} tags selected"
     },
     "actions": {
       "addChild": "Add child tag",
@@ -62,7 +66,7 @@
       "required": "*",
       "parentTagNote": "Parent Tag:",
       "icon": "Icon",
-      "selectColor": "Select color: {{color}}"
+      "selectColor": "Select color: {color}"
     },
     "search": {
       "noTags": "No tags found",
@@ -80,22 +84,22 @@
     },
     "delete": {
       "confirmTitle": "Delete this tag?",
-      "confirmMessage": "Deleting \"{{name}}\". This action cannot be undone.",
-      "childWarning": "⚠️ This tag has {{count}} child tags. Please delete or move child tags first.",
+      "confirmMessage": "Deleting \"{name}\". This action cannot be undone.",
+      "childWarning": "⚠️ This tag has {count} child tags. Please delete or move child tags first.",
       "confirmButton": "Delete",
-      "confirmTitleWithName": "Delete \"{{name}}\"?",
+      "confirmTitleWithName": "Delete \"{name}\"?",
       "warningIrreversible": "This action cannot be undone",
       "affectedItems": "Affected items",
       "plans": "Plans",
       "events": "Events",
       "tasks": "Tasks",
-      "itemsCount": "{{count}} items",
+      "itemsCount": "{count} items",
       "total": "Total",
       "afterDeletion": "After deletion",
-      "willBeDeleted": "Tag #{{number}} will be deleted",
+      "willBeDeleted": "Tag #{number} will be deleted",
       "willBeRemovedFromItems": "Tag will be removed from all items",
       "willBeRemovedFromStats": "Tag will be removed from statistics",
-      "confirmInputLabel": "Type \"{{name}}\" to confirm deletion",
+      "confirmInputLabel": "Type \"{name}\" to confirm deletion",
       "deleting": "Deleting...",
       "permanentDelete": "Permanently Delete"
     },
@@ -121,17 +125,17 @@
       "editName": "Rename",
       "changeColor": "Change Color",
       "delete": "Delete",
-      "colorLabel": "Color {{color}}",
-      "changeColorAria": "Change color of {{name}}"
+      "colorLabel": "Color {color}",
+      "changeColorAria": "Change color of {name}"
     },
     "toast": {
       "groupNameRequired": "Please enter a group name",
-      "groupCreated": "Created group \"{{name}}\"",
-      "groupNameChanged": "Changed group name to \"{{name}}\"",
+      "groupCreated": "Created group \"{name}\"",
+      "groupNameChanged": "Changed group name to \"{name}\"",
       "groupNameChangeFailed": "Failed to change group name",
       "colorChanged": "Color changed",
       "colorChangeFailed": "Failed to change color",
-      "groupDeleted": "Deleted group \"{{name}}\"",
+      "groupDeleted": "Deleted group \"{name}\"",
       "groupDeleteFailed": "Failed to delete group",
       "groupCreateFailed": "Failed to create group"
     },
@@ -143,7 +147,7 @@
       "noTags": "No tags",
       "addFirstTag": "Add your first tag",
       "selectAll": "Select All",
-      "selectTag": "Select {{name}}",
+      "selectTag": "Select {name}",
       "name": "Name",
       "description": "Description",
       "createdAt": "Created At",
@@ -159,13 +163,13 @@
       "moveToGroup": "Move to Group",
       "noGroup": "No Group",
       "permanentDelete": "Permanently Delete",
-      "tagCreated": "Created tag \"{{name}}\"",
+      "tagCreated": "Created tag \"{name}\"",
       "tagCreateFailed": "Failed to create tag",
-      "tagArchived": "Archived tag \"{{name}}\"",
+      "tagArchived": "Archived tag \"{name}\"",
       "tagArchiveFailed": "Failed to archive tag",
-      "tagDeleted": "Permanently deleted tag \"{{name}}\"",
+      "tagDeleted": "Permanently deleted tag \"{name}\"",
       "tagDeleteFailed": "Failed to delete tag",
-      "tagMoved": "Moved tag \"{{name}}\" to {{group}}",
+      "tagMoved": "Moved tag \"{name}\" to {group}",
       "tagMoveFailed": "Failed to move tag",
       "filter": {
         "type": "Type",
@@ -173,16 +177,45 @@
         "unused": "Unused",
         "frequentlyUsed": "Frequently Used"
       },
-      "bulkDeleteConfirm": "Delete {{count}} selected tags?",
-      "bulkArchived": "Archived {{count}} tags",
+      "bulkDeleteConfirm": "Delete {count} selected tags?",
+      "bulkDeleteConfirmTitle": "Delete {count} tags?",
+      "bulkDeleteConfirmDescription": "This will permanently delete {count} selected tags. This action cannot be undone.",
+      "bulkArchived": "Archived {count} tags",
       "bulkArchiveFailed": "Failed to archive tags",
       "addDescription": "Add description...",
       "addGroup": "Add to group...",
       "changeColor": "Change color",
-      "tagColor": "Tag color"
+      "tagColor": "Tag color",
+      "lastUsed": "Last used",
+      "columns": "Columns",
+      "columnSettings": "Column settings"
+    },
+    "bulkMerge": {
+      "title": "Merge Tags",
+      "description": "Merge {count} tags into one tag",
+      "selectedTags": "Selected tags",
+      "mergeTarget": "Merge target",
+      "selectedTagsGroup": "Selected tags",
+      "otherTagsGroup": "Other tags",
+      "confirm": "Merge {count} tags",
+      "warningDetail": "{count} tags will be deleted after merge",
+      "deleteSourceDescription": "Delete {count} tags after merge",
+      "success": "Merged {count} tags successfully"
+    },
+    "merge": {
+      "title": "Merge Tags",
+      "description": "Merge \"{source}\" into another tag",
+      "autoMergeDescription": "All plan associations will be moved to the target tag, and the source tag will be automatically deleted.",
+      "targetTag": "Target tag",
+      "selectTarget": "Select target...",
+      "noTargetSelected": "Please select a target tag",
+      "success": "Merged {count} associations",
+      "failed": "Failed to merge tags",
+      "merging": "Merging...",
+      "confirm": "Merge"
     },
     "archive": {
-      "confirmTitle": "Archive tag \"{{name}}\"?",
+      "confirmTitle": "Archive tag \"{name}\"?",
       "warning": "Archived tags cannot be used for new tagging",
       "currentUsage": "Current usage:",
       "afterArchive": "After archiving:",
@@ -192,31 +225,39 @@
       "canRestoreAnytime": "Can be restored anytime from archive page",
       "archiving": "Archiving...",
       "archiveButton": "Archive",
-      "restoreConfirm": "Restore tag \"{{name}}\"?\n\nRestored tags can be used for tagging again.",
-      "restoreSuccess": "Tag \"{{name}}\" has been restored",
+      "restoreConfirm": "Restore tag \"{name}\"?\n\nRestored tags can be used for tagging again.",
+      "restoreSuccess": "Tag \"{name}\" has been restored",
       "restoreFailed": "Failed to restore tag",
-      "deleteSuccess": "Tag \"{{name}}\" has been permanently deleted",
+      "deleteSuccess": "Tag \"{name}\" has been permanently deleted",
       "deleteFailed": "Failed to delete tag",
-      "bulkDeleteConfirm": "Permanently delete {{count}} selected tag(s)?",
+      "bulkDeleteConfirm": "Permanently delete {count} selected tag(s)?",
       "noArchivedTags": "No archived tags",
       "restore": "Restore",
       "permanentDelete": "Delete permanently",
       "view": "View",
-      "showing": "{{start}}-{{end}} of {{total}} items",
+      "showing": "{start}-{end} of {total} items",
       "noItems": "0 items",
       "previousPage": "Previous page",
       "nextPage": "Next page",
-      "pageOf": "Page {{current}} / {{total}}"
+      "pageOf": "Page {current} / {total}"
     },
     "detail": {
       "description": "Description",
-      "linkedPlans": "Linked Plans ({{count}})",
+      "linkedPlans": "Linked Plans ({count})",
       "noLinkedPlans": "No plans linked to this tag"
     }
   },
   "tag": {
+    "modal": {
+      "createTitle": "Create New Tag",
+      "createDescription": "Create a new tag",
+      "editTitle": "Edit Tag",
+      "updating": "Updating...",
+      "update": "Update"
+    },
     "form": {
       "nameRequired": "Tag name is required",
+      "tagNameRequired": "Tag Name *",
       "nameMaxLength": "Tag name must be 50 characters or less",
       "noSlash": "Tag name cannot contain slash (/)",
       "noHashPrefix": "Tag name cannot start with #",
@@ -228,13 +269,16 @@
       "parentTag": "Parent Tag",
       "color": "Color",
       "description": "Description (Optional)",
+      "descriptionOptional": "Description (Optional)",
       "descriptionPlaceholder": "Enter tag description or purpose...",
       "maxLevelNote": "Maximum 3 levels can be created",
       "customColor": "Custom Color",
       "preview": "Preview",
       "tagNamePlaceholder": "(Tag Name)",
       "parentTagPrefix": "Parent Tag:",
-      "examplePlaceholder": "e.g., Work, Project A"
+      "examplePlaceholder": "e.g., Work, Project A",
+      "group": "Group",
+      "selectGroupPlaceholder": "Select group (optional)"
     },
     "actions": {
       "addChild": "Add child tag",
@@ -254,7 +298,7 @@
       "required": "*",
       "parentTagNote": "Parent Tag:",
       "icon": "Icon",
-      "selectColor": "Select color: {{color}}"
+      "selectColor": "Select color: {color}"
     },
     "search": {
       "noTags": "No tags found",
@@ -272,22 +316,22 @@
     },
     "delete": {
       "confirmTitle": "Delete this tag?",
-      "confirmMessage": "Deleting \"{{name}}\". This action cannot be undone.",
-      "childWarning": "This tag has {{count}} child tags. Please delete or move child tags first.",
+      "confirmMessage": "Deleting \"{name}\". This action cannot be undone.",
+      "childWarning": "This tag has {count} child tags. Please delete or move child tags first.",
       "confirmButton": "Delete",
-      "confirmTitleWithName": "Delete \"{{name}}\"?",
+      "confirmTitleWithName": "Delete \"{name}\"?",
       "warningIrreversible": "This action cannot be undone",
       "affectedItems": "Affected items",
       "plans": "Plans",
       "events": "Events",
       "tasks": "Tasks",
-      "itemsCount": "{{count}} items",
+      "itemsCount": "{count} items",
       "total": "Total",
       "afterDeletion": "After deletion",
-      "willBeDeleted": "Tag #{{number}} will be deleted",
+      "willBeDeleted": "Tag #{number} will be deleted",
       "willBeRemovedFromItems": "Tag will be removed from all items",
       "willBeRemovedFromStats": "Tag will be removed from statistics",
-      "confirmInputLabel": "Type \"{{name}}\" to confirm deletion",
+      "confirmInputLabel": "Type \"{name}\" to confirm deletion",
       "deleting": "Deleting...",
       "permanentDelete": "Permanently Delete"
     },
@@ -313,17 +357,17 @@
       "editName": "Rename",
       "changeColor": "Change Color",
       "delete": "Delete",
-      "colorLabel": "Color {{color}}",
-      "changeColorAria": "Change color of {{name}}"
+      "colorLabel": "Color {color}",
+      "changeColorAria": "Change color of {name}"
     },
     "toast": {
       "groupNameRequired": "Please enter a group name",
-      "groupCreated": "Created group \"{{name}}\"",
-      "groupNameChanged": "Changed group name to \"{{name}}\"",
+      "groupCreated": "Created group \"{name}\"",
+      "groupNameChanged": "Changed group name to \"{name}\"",
       "groupNameChangeFailed": "Failed to change group name",
       "colorChanged": "Color changed",
       "colorChangeFailed": "Failed to change color",
-      "groupDeleted": "Deleted group \"{{name}}\"",
+      "groupDeleted": "Deleted group \"{name}\"",
       "groupDeleteFailed": "Failed to delete group",
       "groupCreateFailed": "Failed to create group"
     },
@@ -335,7 +379,7 @@
       "noTags": "No tags",
       "addFirstTag": "Add your first tag",
       "selectAll": "Select All",
-      "selectTag": "Select {{name}}",
+      "selectTag": "Select {name}",
       "name": "Name",
       "description": "Description",
       "createdAt": "Created At",
@@ -351,13 +395,13 @@
       "moveToGroup": "Move to Group",
       "noGroup": "No Group",
       "permanentDelete": "Permanently Delete",
-      "tagCreated": "Created tag \"{{name}}\"",
+      "tagCreated": "Created tag \"{name}\"",
       "tagCreateFailed": "Failed to create tag",
-      "tagArchived": "Archived tag \"{{name}}\"",
+      "tagArchived": "Archived tag \"{name}\"",
       "tagArchiveFailed": "Failed to archive tag",
-      "tagDeleted": "Permanently deleted tag \"{{name}}\"",
+      "tagDeleted": "Permanently deleted tag \"{name}\"",
       "tagDeleteFailed": "Failed to delete tag",
-      "tagMoved": "Moved tag \"{{name}}\" to {{group}}",
+      "tagMoved": "Moved tag \"{name}\" to {group}",
       "tagMoveFailed": "Failed to move tag",
       "filter": {
         "type": "Type",
@@ -365,16 +409,45 @@
         "unused": "Unused",
         "frequentlyUsed": "Frequently Used"
       },
-      "bulkDeleteConfirm": "Delete {{count}} selected tags?",
-      "bulkArchived": "Archived {{count}} tags",
+      "bulkDeleteConfirm": "Delete {count} selected tags?",
+      "bulkDeleteConfirmTitle": "Delete {count} tags?",
+      "bulkDeleteConfirmDescription": "This will permanently delete {count} selected tags. This action cannot be undone.",
+      "bulkArchived": "Archived {count} tags",
       "bulkArchiveFailed": "Failed to archive tags",
       "addDescription": "Add description...",
       "addGroup": "Add to group...",
       "changeColor": "Change color",
-      "tagColor": "Tag color"
+      "tagColor": "Tag color",
+      "lastUsed": "Last used",
+      "columns": "Columns",
+      "columnSettings": "Column settings"
+    },
+    "bulkMerge": {
+      "title": "Merge Tags",
+      "description": "Merge {count} tags into one tag",
+      "selectedTags": "Selected tags",
+      "mergeTarget": "Merge target",
+      "selectedTagsGroup": "Selected tags",
+      "otherTagsGroup": "Other tags",
+      "confirm": "Merge {count} tags",
+      "warningDetail": "{count} tags will be deleted after merge",
+      "deleteSourceDescription": "Delete {count} tags after merge",
+      "success": "Merged {count} tags successfully"
+    },
+    "merge": {
+      "title": "Merge Tags",
+      "description": "Merge \"{source}\" into another tag",
+      "autoMergeDescription": "All plan associations will be moved to the target tag, and the source tag will be automatically deleted.",
+      "targetTag": "Target tag",
+      "selectTarget": "Select target...",
+      "noTargetSelected": "Please select a target tag",
+      "success": "Merged {count} associations",
+      "failed": "Failed to merge tags",
+      "merging": "Merging...",
+      "confirm": "Merge"
     },
     "archive": {
-      "confirmTitle": "Archive tag \"{{name}}\"?",
+      "confirmTitle": "Archive tag \"{name}\"?",
       "warning": "Archived tags cannot be used for new tagging",
       "currentUsage": "Current usage:",
       "afterArchive": "After archiving:",
@@ -384,25 +457,29 @@
       "canRestoreAnytime": "Can be restored anytime from archive page",
       "archiving": "Archiving...",
       "archiveButton": "Archive",
-      "restoreConfirm": "Restore tag \"{{name}}\"?\n\nRestored tags can be used for tagging again.",
-      "restoreSuccess": "Tag \"{{name}}\" has been restored",
+      "restoreConfirm": "Restore tag \"{name}\"?\n\nRestored tags can be used for tagging again.",
+      "restoreConfirmTitle": "Restore tag \"{name}\"?",
+      "restoreConfirmDescription": "Restored tags can be used for tagging again.",
+      "restoreSuccess": "Tag \"{name}\" has been restored",
       "restoreFailed": "Failed to restore tag",
-      "deleteSuccess": "Tag \"{{name}}\" has been permanently deleted",
+      "deleteSuccess": "Tag \"{name}\" has been permanently deleted",
       "deleteFailed": "Failed to delete tag",
-      "bulkDeleteConfirm": "Permanently delete {{count}} selected tag(s)?",
+      "bulkDeleteConfirm": "Permanently delete {count} selected tag(s)?",
+      "bulkDeleteConfirmTitle": "Permanently delete {count} tag(s)?",
+      "bulkDeleteConfirmDescription": "This will permanently delete the selected {count} tag(s). This action cannot be undone.",
       "noArchivedTags": "No archived tags",
       "restore": "Restore",
       "permanentDelete": "Delete permanently",
       "view": "View",
-      "showing": "{{start}}-{{end}} of {{total}} items",
+      "showing": "{start}-{end} of {total} items",
       "noItems": "0 items",
       "previousPage": "Previous page",
       "nextPage": "Next page",
-      "pageOf": "Page {{current}} / {{total}}"
+      "pageOf": "Page {current} / {total}"
     },
     "detail": {
       "description": "Description",
-      "linkedPlans": "Linked Plans ({{count}})",
+      "linkedPlans": "Linked Plans ({count})",
       "noLinkedPlans": "No plans linked to this tag"
     }
   }

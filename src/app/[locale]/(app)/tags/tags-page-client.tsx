@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { AlertDialogConfirm } from '@/components/ui/alert-dialog-confirm'
 import { Button } from '@/components/ui/button'
 import { DataTable, type SortState } from '@/features/table'
 import { TagRowWrapper, TagTableRowCreate, type TagTableRowCreateHandle } from '@/features/tags/components/table'
@@ -65,6 +66,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<Tag | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<Tag | null>(null)
   const [bulkMergeTags, setBulkMergeTags] = useState<Tag[]>([])
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false)
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false)
   const createRowRef = useRef<TagTableRowCreateHandle>(null)
 
   // 表示列
@@ -104,11 +107,16 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     }
   }, [initialGroup, selectedGroupId])
 
-  // タグデータをContextに同期
+  // タグデータをContextに同期（参照の安定化のためJSON比較）
+  const fetchedTagsJson = JSON.stringify(fetchedTags.map((t) => t.id))
   useEffect(() => {
     setTags(fetchedTags)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchedTagsJson])
+
+  useEffect(() => {
     setIsLoading(isFetching)
-  }, [fetchedTags, isFetching, setTags, setIsLoading])
+  }, [isFetching, setIsLoading])
 
   // アクティブなタグ数を計算
   const activeTagsCount = useMemo(() => {
@@ -261,20 +269,32 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     [tags, updateTagMutation, t]
   )
 
-  // ハンドラー: 一括削除
-  const handleBulkDelete = useCallback(async () => {
+  // ハンドラー: 一括削除ダイアログを開く
+  const handleOpenBulkDeleteDialog = useCallback(() => {
     const ids = selectedTagIds
     if (ids.size === 0) return
-    if (!confirm(t('tags.page.bulkDeleteConfirm', { count: ids.size }))) return
+    setBulkDeleteDialogOpen(true)
+  }, [selectedTagIds])
 
-    for (const tagId of ids) {
-      const tag = sortedTags.find((item) => item.id === tagId)
-      if (tag) {
-        await handleDeleteTag(tag)
+  // ハンドラー: 一括削除確認
+  const handleBulkDeleteConfirm = useCallback(async () => {
+    const ids = selectedTagIds
+    if (ids.size === 0) return
+
+    setIsBulkDeleting(true)
+    try {
+      for (const tagId of ids) {
+        const tag = sortedTags.find((item) => item.id === tagId)
+        if (tag) {
+          await handleDeleteTag(tag)
+        }
       }
+      clearSelection()
+    } finally {
+      setIsBulkDeleting(false)
+      setBulkDeleteDialogOpen(false)
     }
-    clearSelection()
-  }, [selectedTagIds, sortedTags, handleDeleteTag, clearSelection, t])
+  }, [selectedTagIds, sortedTags, handleDeleteTag, clearSelection])
 
   // ハンドラー: 一括マージダイアログを開く
   const handleOpenBulkMerge = useCallback(() => {
@@ -409,7 +429,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
               groups={groups}
               onMoveToGroup={handleMoveToGroup}
               onArchive={handleBulkArchive}
-              onDelete={handleBulkDelete}
+              onDelete={handleOpenBulkDeleteDialog}
               onMerge={handleOpenBulkMerge}
               onClearSelection={clearSelection}
               t={t}
@@ -427,7 +447,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       )}
 
       {/* テーブル */}
-      <div className="flex flex-1 flex-col overflow-auto px-6 pt-4 pb-2">
+      <div className="flex flex-1 flex-col overflow-auto px-4">
         <DataTable
           data={sortedTags}
           columns={columns}
@@ -475,6 +495,19 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
       {/* 一括マージダイアログ */}
       <TagBulkMergeDialog sourceTags={bulkMergeTags} onClose={handleCloseBulkMerge} />
+
+      {/* 一括削除確認ダイアログ */}
+      <AlertDialogConfirm
+        open={bulkDeleteDialogOpen}
+        onOpenChange={setBulkDeleteDialogOpen}
+        onConfirm={handleBulkDeleteConfirm}
+        title={t('tags.page.bulkDeleteConfirmTitle', { count: selectedTagIds.size })}
+        description={t('tags.page.bulkDeleteConfirmDescription', { count: selectedTagIds.size })}
+        confirmText={isBulkDeleting ? t('common.plan.delete.deleting') : t('common.plan.delete.confirm')}
+        cancelText={t('actions.cancel')}
+        isLoading={isBulkDeleting}
+        variant="destructive"
+      />
     </div>
   )
 }

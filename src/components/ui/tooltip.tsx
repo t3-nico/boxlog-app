@@ -3,6 +3,7 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import * as React from 'react'
 
+import { zIndex } from '@/config/ui/z-index'
 import { cn } from '@/lib/utils'
 
 function TooltipProvider({
@@ -42,7 +43,7 @@ function TooltipContent({
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          'bg-foreground text-background animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-fit origin-(--radix-tooltip-content-transform-origin) rounded-md px-2 py-1 text-xs text-balance',
+          `bg-tooltip text-tooltip-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-[${zIndex.modal}] w-fit origin-(--radix-tooltip-content-transform-origin) rounded-md px-2 py-1 text-xs text-balance`,
           className
         )}
         {...props}
@@ -77,7 +78,7 @@ function SimpleTooltip({ content, children, side = 'bottom', className }: Simple
       {children}
       <span
         className={cn(
-          'bg-foreground text-background pointer-events-none absolute z-50 rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity group-hover:opacity-100',
+          `bg-tooltip text-tooltip-foreground pointer-events-none absolute z-[${zIndex.modal}] rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity group-hover:opacity-100`,
           positionClasses[side]
         )}
       >

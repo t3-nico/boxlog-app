@@ -129,10 +129,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       updateData.description = body.description?.trim() || null
     }
 
-    if (body.icon !== undefined) {
-      updateData.icon = body.icon
-    }
-
     if (body.is_active !== undefined) {
       updateData.is_active = body.is_active
     }

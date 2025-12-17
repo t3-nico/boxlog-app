@@ -4,14 +4,17 @@ import { createInspectorStore } from '@/features/inspector'
  * Tag Inspector状態管理
  *
  * features/inspector の createInspectorStore を使用
- * タグ詳細のSheet表示を制御
+ * タグ詳細のSheet/Popover表示を制御
  *
  * @example
  * ```ts
- * const { isOpen, entityId, openInspector, closeInspector } = useTagInspectorStore()
+ * const { isOpen, entityId, displayMode, openInspector, closeInspector, setDisplayMode } = useTagInspectorStore()
  *
  * // Inspector を開く
  * openInspector('tag-123')
+ *
+ * // 表示モードを変更
+ * setDisplayMode('popover')
  *
  * // Inspector を閉じる
  * closeInspector()
@@ -19,6 +22,7 @@ import { createInspectorStore } from '@/features/inspector'
  */
 export const useTagInspectorStore = createInspectorStore({
   storeName: 'tag-inspector-store',
+  persistKey: 'tag-inspector-settings',
 })
 
 /**

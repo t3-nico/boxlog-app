@@ -58,7 +58,7 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
                 )}
               </button>
             </TooltipTrigger>
-            <TooltipContent side="bottom" className="bg-card text-card-foreground border-border border text-xs">
+            <TooltipContent side="top">
               <p>{colorName}</p>
             </TooltipContent>
           </Tooltip>

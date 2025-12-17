@@ -19,7 +19,6 @@ const NAMESPACES = [
   'offline',
   'settings',
   'stats',
-  'table',
   'tag',
 ] as const
 

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   Dialog,
   DialogContent,
@@ -18,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import type { Tag, TagGroup, UpdateTagInput } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
+import { toast } from 'sonner'
 
 interface TagEditModalProps {
   isOpen: boolean
@@ -115,16 +117,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
             {/* カラー */}
             <div className="grid gap-2">
               <Label htmlFor="color">{t('tag.form.color')}</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="color"
-                  type="color"
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                  className="h-10 w-20"
-                />
-                <span className="text-muted-foreground text-sm">{color}</span>
-              </div>
+              <ColorPalettePicker selectedColor={color} onColorSelect={setColor} />
             </div>
 
             {/* グループ */}
@@ -151,9 +144,16 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
               <Textarea
                 id="description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 100) {
+                    setDescription(e.target.value)
+                  } else {
+                    toast.info('説明は100文字までです', { id: 'description-limit' })
+                  }
+                }}
                 placeholder={t('tag.form.descriptionPlaceholder')}
                 rows={3}
+                maxLength={100}
               />
             </div>
 

@@ -233,7 +233,7 @@ export function InboxTableView() {
           }
         />
       ) : (
-        <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2 md:px-6">
+        <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
           <div className="flex h-8 w-full items-center justify-between gap-2">
             <GroupBySelector />
             <TableToolbar onCreateClick={() => createRowRef.current?.startCreate()} />
@@ -243,7 +243,7 @@ export function InboxTableView() {
 
       {/* テーブル - InboxTableContentに委譲（担当制） */}
       <div
-        className="flex flex-1 flex-col overflow-hidden px-4 pt-4 md:px-6"
+        className="flex flex-1 flex-col overflow-hidden px-4"
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             useInboxSelectionStore.getState().clearSelection()

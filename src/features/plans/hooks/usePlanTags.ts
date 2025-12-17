@@ -1,94 +1,88 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 
 import { api } from '@/lib/trpc'
 
 /**
  * プラン・セッションとタグの関連付け管理フック
  *
- * 注意: tRPC APIへのaddTag/removeTagエンドポイント追加が必要
- * 現在はスタブ実装で、将来のAPI実装後に有効化予定
+ * tRPC APIを使用してプランとタグの関連付けを管理します。
  */
 export function usePlanTags() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const utils = api.useUtils()
+
+  // tRPC mutations
+  const addTagMutation = api.plans.addTag.useMutation({
+    onSuccess: () => {
+      void utils.plans.getById.invalidate()
+      void utils.plans.list.invalidate()
+    },
+  })
+
+  const removeTagMutation = api.plans.removeTag.useMutation({
+    onSuccess: () => {
+      void utils.plans.getById.invalidate()
+      void utils.plans.list.invalidate()
+    },
+  })
+
+  const setTagsMutation = api.plans.setTags.useMutation({
+    onSuccess: () => {
+      void utils.plans.getById.invalidate()
+      void utils.plans.list.invalidate()
+    },
+  })
 
   /**
    * プランにタグを追加
-   * @see Issue - tRPC APIにaddTagエンドポイント追加予定
    */
   const addplanTag = useCallback(
     async (planId: string, tagId: string): Promise<boolean> => {
       try {
-        setIsLoading(true)
-        setError(null)
-
-        console.warn(`addplanTag: planId=${planId}, tagId=${tagId} - API not yet implemented`)
-
-        // キャッシュ無効化（API実装後に有効）
-        await utils.plans.getById.invalidate()
-        await utils.plans.list.invalidate()
-
-        setIsLoading(false)
+        await addTagMutation.mutateAsync({ planId, tagId })
         return true
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'タグの追加に失敗しました'
-        setError(message)
-        setIsLoading(false)
+      } catch {
         return false
       }
     },
-    [utils.plans.getById, utils.plans.list]
+    [addTagMutation]
   )
 
   /**
    * プランからタグを削除
-   * @see Issue - tRPC APIにremoveTagエンドポイント追加予定
    */
   const removeplanTag = useCallback(
     async (planId: string, tagId: string): Promise<boolean> => {
       try {
-        setIsLoading(true)
-        setError(null)
-
-        console.warn(`removeplanTag: planId=${planId}, tagId=${tagId} - API not yet implemented`)
-
-        // キャッシュ無効化（API実装後に有効）
-        await utils.plans.getById.invalidate()
-        await utils.plans.list.invalidate()
-
-        setIsLoading(false)
+        await removeTagMutation.mutateAsync({ planId, tagId })
         return true
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'タグの削除に失敗しました'
-        setError(message)
-        setIsLoading(false)
+      } catch {
         return false
       }
     },
-    [utils.plans.getById, utils.plans.list]
+    [removeTagMutation]
   )
 
   /**
-   * プランのタグを一括設定
-   * @see Issue - tRPC APIに一括設定エンドポイント追加予定
+   * プランのタグを一括設定（既存タグをすべて置換）
    */
-  const setplanTags = useCallback(async (_planId: string, _tagIds: string[]): Promise<boolean> => {
-    try {
-      setIsLoading(true)
-      setError(null)
+  const setplanTags = useCallback(
+    async (planId: string, tagIds: string[]): Promise<boolean> => {
+      try {
+        await setTagsMutation.mutateAsync({ planId, tagIds })
+        return true
+      } catch {
+        return false
+      }
+    },
+    [setTagsMutation]
+  )
 
-      console.warn('setplanTags is not yet implemented. Use addplanTag/removeplanTag instead.')
+  // Combine loading states from all mutations
+  const isLoading = addTagMutation.isPending || removeTagMutation.isPending || setTagsMutation.isPending
 
-      setIsLoading(false)
-      return false
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'タグの設定に失敗しました'
-      setError(message)
-      setIsLoading(false)
-      return false
-    }
-  }, [])
+  // Get the most recent error
+  const error =
+    addTagMutation.error?.message ?? removeTagMutation.error?.message ?? setTagsMutation.error?.message ?? null
 
   return {
     // State

@@ -1,2 +1,2 @@
 export { ActivityTab } from './ActivityTab'
-export { InspectorHeader } from './InspectorHeader'
+// InspectorHeader は @/features/inspector の共通コンポーネントを使用

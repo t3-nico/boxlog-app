@@ -13,6 +13,7 @@ import {
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { AlertDialogConfirm } from '@/components/ui/alert-dialog-confirm'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
@@ -51,6 +52,9 @@ export function ArchivePageClient() {
   const [editingField, setEditingField] = useState<'name' | 'description' | null>(null)
   const [editValue, setEditValue] = useState('')
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<Tag | null>(null)
+  const [restoreConfirmTag, setRestoreConfirmTag] = useState<Tag | null>(null)
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false)
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false)
 
   const { handleDeleteTag, handleEditTag } = useTagOperations(tags)
 
@@ -112,26 +116,27 @@ export function ArchivePageClient() {
     [updateTagMutation]
   )
 
-  // 復元ハンドラー（is_active = true）
-  const handleRestoreTag = useCallback(
-    async (tag: Tag) => {
-      if (!confirm(t('tag.archive.restoreConfirm', { name: tag.name }))) {
-        return
-      }
+  // 復元ダイアログを開く
+  const handleOpenRestoreConfirm = useCallback((tag: Tag) => {
+    setRestoreConfirmTag(tag)
+  }, [])
 
-      try {
-        await updateTagMutation.mutateAsync({
-          id: tag.id,
-          data: { is_active: true },
-        })
-        toast.success(t('tag.archive.restoreSuccess', { name: tag.name }))
-      } catch (error) {
-        console.error('Failed to restore tag:', error)
-        toast.error(t('tag.archive.restoreFailed'))
-      }
-    },
-    [updateTagMutation, t]
-  )
+  // 復元確認ハンドラー（is_active = true）
+  const handleConfirmRestore = useCallback(async () => {
+    if (!restoreConfirmTag) return
+
+    try {
+      await updateTagMutation.mutateAsync({
+        id: restoreConfirmTag.id,
+        data: { is_active: true },
+      })
+      toast.success(t('tag.archive.restoreSuccess', { name: restoreConfirmTag.name }))
+      setRestoreConfirmTag(null)
+    } catch (error) {
+      console.error('Failed to restore tag:', error)
+      toast.error(t('tag.archive.restoreFailed'))
+    }
+  }, [restoreConfirmTag, updateTagMutation, t])
 
   // 削除確認ダイアログを開く
   const handleOpenDeleteConfirm = useCallback((tag: Tag) => {
@@ -213,18 +218,30 @@ export function ArchivePageClient() {
     setSelectedTagIds((prev) => (prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]))
   }
 
-  const handleBulkDelete = async () => {
+  // 一括削除ダイアログを開く
+  const handleOpenBulkDeleteDialog = useCallback(() => {
     if (selectedTagIds.length === 0) return
-    if (!confirm(t('tag.archive.bulkDeleteConfirm', { count: selectedTagIds.length }))) return
+    setBulkDeleteDialogOpen(true)
+  }, [selectedTagIds])
 
-    for (const tagId of selectedTagIds) {
-      const tag = displayTags.find((t) => t.id === tagId)
-      if (tag) {
-        await handleDeleteTag(tag)
+  // 一括削除確認ハンドラー
+  const handleBulkDeleteConfirm = useCallback(async () => {
+    if (selectedTagIds.length === 0) return
+
+    setIsBulkDeleting(true)
+    try {
+      for (const tagId of selectedTagIds) {
+        const tag = displayTags.find((t) => t.id === tagId)
+        if (tag) {
+          await handleDeleteTag(tag)
+        }
       }
+      setSelectedTagIds([])
+    } finally {
+      setIsBulkDeleting(false)
+      setBulkDeleteDialogOpen(false)
     }
-    setSelectedTagIds([])
-  }
+  }, [selectedTagIds, displayTags, handleDeleteTag])
 
   // 日時フォーマット関数
   const formatDate = (date: Date | string) => {
@@ -261,7 +278,7 @@ export function ArchivePageClient() {
             tags={tags}
             groups={[]}
             onMoveToGroup={() => {}}
-            onDelete={handleBulkDelete}
+            onDelete={handleOpenBulkDeleteDialog}
             onEdit={handleEditTag}
             onView={(tag) => {
               const locale = pathname?.split('/')[1] || 'ja'
@@ -455,7 +472,7 @@ export function ArchivePageClient() {
                               <DropdownMenuItem
                                 onClick={(e) => {
                                   e.stopPropagation()
-                                  handleRestoreTag(tag)
+                                  handleOpenRestoreConfirm(tag)
                                 }}
                               >
                                 <RotateCcw className="mr-2 h-4 w-4" />
@@ -488,7 +505,7 @@ export function ArchivePageClient() {
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground text-sm">{t('tag.page.rowsPerPage')}</span>
                   <Select value={String(pageSize)} onValueChange={(value) => setPageSize(Number(value))}>
-                    <SelectTrigger className="h-9 w-16">
+                    <SelectTrigger className="h-8 w-16">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -518,12 +535,12 @@ export function ArchivePageClient() {
                     size="sm"
                     onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                     disabled={currentPage === 1}
-                    className="h-9 w-9 p-0"
+                    className="h-8 w-8 p-0"
                   >
                     <ChevronLeft className="size-4" />
                     <span className="sr-only">{t('tag.archive.previousPage')}</span>
                   </Button>
-                  <div className="text-muted-foreground flex h-9 items-center px-3 text-sm">
+                  <div className="text-muted-foreground flex h-8 items-center px-3 text-sm">
                     {t('tag.archive.pageOf', { current: currentPage, total: totalPages || 1 })}
                   </div>
                   <Button
@@ -531,7 +548,7 @@ export function ArchivePageClient() {
                     size="sm"
                     onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                     disabled={currentPage === totalPages || totalPages === 0}
-                    className="h-9 w-9 p-0"
+                    className="h-8 w-8 p-0"
                   >
                     <ChevronRight className="size-4" />
                     <span className="sr-only">{t('tag.archive.nextPage')}</span>
@@ -545,6 +562,30 @@ export function ArchivePageClient() {
 
       {/* 削除確認ダイアログ */}
       <TagDeleteDialog tag={deleteConfirmTag} onClose={handleCloseDeleteConfirm} onConfirm={handleConfirmDelete} />
+
+      {/* 復元確認ダイアログ */}
+      <AlertDialogConfirm
+        open={!!restoreConfirmTag}
+        onOpenChange={(open) => !open && setRestoreConfirmTag(null)}
+        onConfirm={handleConfirmRestore}
+        title={t('tag.archive.restoreConfirmTitle', { name: restoreConfirmTag?.name || '' })}
+        description={t('tag.archive.restoreConfirmDescription')}
+        confirmText={t('tag.archive.restore')}
+        cancelText={t('actions.cancel')}
+      />
+
+      {/* 一括削除確認ダイアログ */}
+      <AlertDialogConfirm
+        open={bulkDeleteDialogOpen}
+        onOpenChange={setBulkDeleteDialogOpen}
+        onConfirm={handleBulkDeleteConfirm}
+        title={t('tag.archive.bulkDeleteConfirmTitle', { count: selectedTagIds.length })}
+        description={t('tag.archive.bulkDeleteConfirmDescription', { count: selectedTagIds.length })}
+        confirmText={isBulkDeleting ? t('common.plan.delete.deleting') : t('common.plan.delete.confirm')}
+        cancelText={t('actions.cancel')}
+        isLoading={isBulkDeleting}
+        variant="destructive"
+      />
     </div>
   )
 }

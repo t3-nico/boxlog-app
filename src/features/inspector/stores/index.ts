@@ -7,6 +7,7 @@ export {
   type ExtendedInspectorState,
   type ExtendedInspectorStore,
   type InspectorActions,
+  type InspectorDisplayMode,
   type InspectorState,
   type InspectorStore,
 } from './createInspectorStore'

@@ -79,7 +79,7 @@ export function InboxBoardToolbar() {
       <div className="flex flex-1 items-center gap-2">
         {/* 期限フィルター */}
         <Select value={dueDate} onValueChange={(value) => setDueDate(value as DueDateFilter)}>
-          <SelectTrigger className="h-9 w-36">
+          <SelectTrigger className="h-8 w-36">
             <Calendar className="mr-2 size-4" />
             <SelectValue placeholder="期限" />
           </SelectTrigger>
@@ -116,7 +116,7 @@ export function InboxBoardToolbar() {
 
         {/* フィルターリセット */}
         {isFiltered && (
-          <Button variant="ghost" onClick={reset} className="h-9 px-2 lg:px-3">
+          <Button variant="ghost" onClick={reset} className="px-2 lg:px-3">
             リセット
             <X className="ml-2 size-4" />
           </Button>
@@ -164,7 +164,7 @@ export function InboxBoardToolbar() {
 
       {/* 右側アクション */}
       <div className="flex items-center gap-2">
-        <Button variant="default" size="sm" className="h-9">
+        <Button variant="default" size="sm">
           <Plus className="mr-2 size-4" />
           新規作成
         </Button>
