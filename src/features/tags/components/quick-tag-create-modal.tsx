@@ -6,6 +6,7 @@ import { Plus, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 
 // Tag interface
@@ -114,13 +115,12 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
             <label htmlFor="tag-name-input" className="text-muted-foreground mb-2 block text-sm font-medium">
               {t('tags.form.tagName')}
             </label>
-            <input
+            <Input
               id="tag-name-input"
               type="text"
               value={tagName}
               onChange={handleTagNameChange}
               placeholder={t('tags.form.namePlaceholder')}
-              className="border-border text-foreground focus:ring-primary w-full rounded-lg border bg-transparent px-3 py-2 focus:border-transparent focus:ring-2"
               onKeyDown={handleKeyDown}
             />
           </div>

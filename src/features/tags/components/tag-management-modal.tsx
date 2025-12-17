@@ -15,6 +15,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 
 // Tag interface
@@ -118,8 +120,8 @@ export const TagManagementModal = ({
     [handleCreateTag]
   )
 
-  const handleNewTagParentChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setNewTagParentId(e.target.value || null)
+  const handleNewTagParentChange = useCallback((value: string) => {
+    setNewTagParentId(value || null)
   }, [])
 
   const handleEditNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,8 +139,8 @@ export const TagManagementModal = ({
     [handleSaveEdit, handleCancelEdit]
   )
 
-  const handleEditParentChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setEditParentId(e.target.value || null)
+  const handleEditParentChange = useCallback((value: string) => {
+    setEditParentId(value || null)
   }, [])
 
   const handleOverlayKeyDown = useCallback(
@@ -246,13 +248,12 @@ export const TagManagementModal = ({
                 <label htmlFor="new-tag-name" className="text-muted-foreground mb-1 block text-xs font-medium">
                   Name
                 </label>
-                <input
+                <Input
                   id="new-tag-name"
                   type="text"
                   value={newTagName}
                   onChange={handleNewTagNameChange}
                   placeholder="Enter tag name..."
-                  className="border-border bg-card text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm focus:border-transparent focus:ring-2"
                   onKeyDown={handleNewTagNameKeyDown}
                 />
               </div>
@@ -261,19 +262,19 @@ export const TagManagementModal = ({
                 <label htmlFor="new-tag-parent" className="text-muted-foreground mb-1 block text-xs font-medium">
                   Parent Tag (Optional)
                 </label>
-                <select
-                  id="new-tag-parent"
-                  value={newTagParentId || ''}
-                  onChange={handleNewTagParentChange}
-                  className="border-border bg-card text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm focus:border-transparent focus:ring-2"
-                >
-                  <option value="">None (Root Level)</option>
-                  {getAvailableParentTags().map((tag) => (
-                    <option key={tag.id} value={tag.id}>
-                      {tag.name}
-                    </option>
-                  ))}
-                </select>
+                <Select value={newTagParentId || ''} onValueChange={handleNewTagParentChange}>
+                  <SelectTrigger id="new-tag-parent" className="w-full">
+                    <SelectValue placeholder="None (Root Level)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">None (Root Level)</SelectItem>
+                    {getAvailableParentTags().map((tag) => (
+                      <SelectItem key={tag.id} value={tag.id}>
+                        {tag.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
@@ -331,26 +332,26 @@ export const TagManagementModal = ({
                       <>
                         {/* Edit Mode */}
                         <div className="flex-1 space-y-2">
-                          <input
+                          <Input
                             type="text"
                             value={editName}
                             onChange={handleEditNameChange}
-                            className="border-border bg-card text-foreground w-full rounded border px-2 py-1 text-sm"
                             onKeyDown={handleEditNameKeyDown}
                           />
 
-                          <select
-                            value={editParentId || ''}
-                            onChange={handleEditParentChange}
-                            className="border-border bg-card text-foreground w-full rounded border px-2 py-1 text-sm"
-                          >
-                            <option value="">None (Root Level)</option>
-                            {getAvailableParentTags(editingTag!).map((parentTag) => (
-                              <option key={parentTag.id} value={parentTag.id}>
-                                {parentTag.name}
-                              </option>
-                            ))}
-                          </select>
+                          <Select value={editParentId || ''} onValueChange={handleEditParentChange}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="None (Root Level)" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="">None (Root Level)</SelectItem>
+                              {getAvailableParentTags(editingTag!).map((parentTag) => (
+                                <SelectItem key={parentTag.id} value={parentTag.id}>
+                                  {parentTag.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
 
                           <div className="flex gap-2">
                             {presetColors.map((color) => (

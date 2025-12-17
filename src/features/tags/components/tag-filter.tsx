@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react'
 import { ChevronDown as ChevronDownIcon, Filter as FunnelIcon, Tag as TagIcon, X as XMarkIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import type { Tag } from '@/features/tags/types'
 import { cn } from '@/lib/utils'
@@ -25,18 +26,13 @@ interface TagFilterItemProps {
 
 const TagFilterItem = ({ tag, isSelected, onToggle }: TagFilterItemProps) => {
   // jsx-no-bind optimization: Toggle handler
-  const handleToggle = useCallback(() => {
+  const handleCheckedChange = useCallback(() => {
     onToggle(tag.id)
   }, [onToggle, tag.id])
 
   return (
     <label className="hover:bg-state-hover flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors">
-      <input
-        type="checkbox"
-        checked={isSelected}
-        onChange={handleToggle}
-        className="border-border text-primary focus:ring-primary rounded"
-      />
+      <Checkbox checked={isSelected} onCheckedChange={handleCheckedChange} />
       <TagIcon className="h-4 w-4 flex-shrink-0" style={{ color: tag.color }} />
       <span className="flex-1 truncate">{tag.name}</span>
     </label>

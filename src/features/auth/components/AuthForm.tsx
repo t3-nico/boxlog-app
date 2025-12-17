@@ -10,8 +10,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { cn } from '@/lib/utils'
 import { useLocale, useTranslations } from 'next-intl'
+
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 interface AuthFormProps {
   mode: 'login' | 'signup'
@@ -132,17 +134,12 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
     <div className="space-y-6">
       {/* Social Login Buttons */}
       <div className="space-y-3">
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={() => handleSocialLogin('google')}
           disabled={isLoading}
-          className={cn(
-            'border-border flex w-full items-center justify-center gap-3 rounded-md border',
-            'bg-card text-muted-foreground px-4 py-2 text-sm font-medium',
-            'hover:bg-state-hover shadow-sm',
-            'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
-            'disabled:cursor-not-allowed disabled:opacity-50'
-          )}
+          className="w-full gap-3"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
@@ -163,25 +160,19 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
             />
           </svg>
           Continue with Google
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
           onClick={() => handleSocialLogin('apple')}
           disabled={isLoading}
-          className={cn(
-            'border-border flex w-full items-center justify-center gap-3 rounded-md border',
-            'bg-foreground text-background px-4 py-2 text-sm font-medium',
-            'shadow-sm hover:opacity-90',
-            'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
-            'disabled:cursor-not-allowed disabled:opacity-50'
-          )}
+          className="bg-foreground text-background hover:bg-foreground/90 w-full gap-3"
         >
           <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
           </svg>
           Continue with Apple
-        </button>
+        </Button>
       </div>
 
       <div className="relative">
@@ -199,11 +190,11 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           <label htmlFor="email" className="text-muted-foreground block text-sm font-medium">
             Email address
           </label>
-          <input
+          <Input
             {...register('email')}
             type="email"
             id="email"
-            className="border-input focus:border-ring focus:ring-ring/50 mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:ring-1 focus:outline-none"
+            className="mt-1"
             placeholder="you@example.com"
           />
           {errors.email ? <p className="text-destructive mt-1 text-sm">{errors.email.message}</p> : null}
@@ -213,11 +204,11 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           <label htmlFor="password" className="text-muted-foreground block text-sm font-medium">
             Password
           </label>
-          <input
+          <Input
             {...register('password')}
             type="password"
             id="password"
-            className="border-input focus:border-ring focus:ring-ring/50 mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:ring-1 focus:outline-none"
+            className="mt-1"
             placeholder="••••••••"
           />
           {errors.password ? <p className="text-destructive mt-1 text-sm">{errors.password.message}</p> : null}
@@ -229,13 +220,9 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="text-primary-foreground bg-primary hover:bg-primary-hover focus:ring-ring flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium shadow-sm focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isLoading ? 'Loading...' : mode === 'login' ? 'Sign in' : 'Create account'}
-        </button>
+        <Button type="submit" disabled={isLoading} isLoading={isLoading} className="w-full">
+          {mode === 'login' ? 'Sign in' : 'Create account'}
+        </Button>
       </form>
     </div>
   )
