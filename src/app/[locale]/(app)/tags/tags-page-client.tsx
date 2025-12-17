@@ -107,12 +107,12 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     }
   }, [initialGroup, selectedGroupId])
 
-  // タグデータをContextに同期（参照の安定化のためJSON比較）
-  const fetchedTagsJson = JSON.stringify(fetchedTags.map((t) => t.id))
+  // タグデータをContextに同期（ID配列のjoinで軽量な変更検知）
+  const fetchedTagIds = fetchedTags.map((t) => t.id).join(',')
   useEffect(() => {
     setTags(fetchedTags)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchedTagsJson])
+  }, [fetchedTagIds])
 
   useEffect(() => {
     setIsLoading(isFetching)
