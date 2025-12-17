@@ -4,8 +4,11 @@ import { useCallback, useState } from 'react'
 
 import { ChevronDown as ChevronDownIcon, Filter as FunnelIcon, Tag as TagIcon, X as XMarkIcon } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import type { Tag } from '@/features/tags/types'
+import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
 interface TagFilterProps {
@@ -23,18 +26,13 @@ interface TagFilterItemProps {
 
 const TagFilterItem = ({ tag, isSelected, onToggle }: TagFilterItemProps) => {
   // jsx-no-bind optimization: Toggle handler
-  const handleToggle = useCallback(() => {
+  const handleCheckedChange = useCallback(() => {
     onToggle(tag.id)
   }, [onToggle, tag.id])
 
   return (
     <label className="hover:bg-state-hover flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors">
-      <input
-        type="checkbox"
-        checked={isSelected}
-        onChange={handleToggle}
-        className="border-border text-primary focus:ring-primary rounded"
-      />
+      <Checkbox checked={isSelected} onCheckedChange={handleCheckedChange} />
       <TagIcon className="h-4 w-4 flex-shrink-0" style={{ color: tag.color }} />
       <span className="flex-1 truncate">{tag.name}</span>
     </label>
@@ -87,14 +85,11 @@ export const TagFilter = ({
   return (
     <div className={`relative ${className}`}>
       {/* フィルターボタン */}
-      <button
+      <Button
         type="button"
+        variant="outline"
         onClick={handleToggleOpen}
-        className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors ${
-          hasTagFilters
-            ? 'border-primary/30 bg-primary/10 text-primary'
-            : 'border-border hover:border-border bg-card text-foreground'
-        }`}
+        className={cn(hasTagFilters && 'border-primary/30 bg-primary/10 text-primary hover:bg-primary/20')}
       >
         <FunnelIcon className="h-4 w-4" />
         {showTitle ? <span className={compact ? 'hidden sm:inline' : ''}>Tags</span> : null}
@@ -103,8 +98,8 @@ export const TagFilter = ({
             {selectedTagIds.length}
           </span>
         ) : null}
-        <ChevronDownIcon className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-      </button>
+        <ChevronDownIcon className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
+      </Button>
 
       {/* 選択されたタグバッジ（コンパクトモードでない場合） */}
       {!compact && selectedTags.length > 0 && (
@@ -116,14 +111,16 @@ export const TagFilter = ({
             >
               <TagIcon className="h-4 w-4" style={{ color: tag.color }} />
               {tag.name}
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon-sm"
                 onClick={createRemoveTagHandler(tag.id)}
-                className="text-primary/70 hover:text-primary ml-1"
+                className="text-primary/70 hover:text-primary ml-1 size-4 hover:bg-transparent"
                 aria-label={`Remove ${tag.name} filter`}
               >
-                <XMarkIcon className="h-4 w-4" />
-              </button>
+                <XMarkIcon className="h-3 w-3" />
+              </Button>
             </span>
           ))}
         </div>
@@ -148,9 +145,9 @@ export const TagFilter = ({
             <div className="border-border flex items-center justify-between border-b p-3">
               <h3 className="text-foreground text-sm font-medium">Filter by Tags</h3>
               {hasTagFilters === true && (
-                <button type="button" onClick={clearTags} className="text-primary hover:text-primary/80 text-xs">
+                <Button type="button" variant="link" size="sm" onClick={clearTags} className="h-auto p-0 text-xs">
                   Clear all
-                </button>
+                </Button>
               )}
             </div>
 
@@ -210,18 +207,19 @@ export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
   }, [onToggle, tag.id])
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
+      size="sm"
       onClick={handleToggle}
-      className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
-        isSelected
-          ? 'border-primary/30 bg-primary/10 text-primary border'
-          : 'border-border bg-surface-container text-foreground hover:bg-state-hover border'
-      }`}
+      className={cn(
+        'h-auto px-2 py-1 text-xs font-medium',
+        isSelected ? 'border-primary/30 bg-primary/10 text-primary hover:bg-primary/20' : 'bg-surface-container'
+      )}
     >
       <TagIcon className="h-4 w-4" style={{ color: tag.color }} />
       {tag.name}
-    </button>
+    </Button>
   )
 }
 

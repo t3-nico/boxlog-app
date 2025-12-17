@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { SimpleTooltip } from '@/components/ui/tooltip'
 import { NotificationDropdown } from '@/features/notifications'
 import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger'
@@ -44,11 +45,9 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
         <div>
           <PlanCreateTrigger
             triggerElement={
-              <button className="flex items-center justify-center" type="button">
-                <div className="hover:bg-state-hover focus-visible:ring-ring flex h-10 w-10 items-center justify-center rounded-lg transition-colors focus-visible:ring-2 focus-visible:outline-none">
-                  <Plus className="h-5 w-5 shrink-0" aria-hidden="true" />
-                </div>
-              </button>
+              <Button variant="ghost" size="icon-lg" aria-label={t('actions.create')}>
+                <Plus className="h-5 w-5 shrink-0" aria-hidden="true" />
+              </Button>
             }
           />
         </div>

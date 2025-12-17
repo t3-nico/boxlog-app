@@ -14,6 +14,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { cn } from '@/lib/utils'
 
 // Tag interface
 interface Tag {
@@ -116,8 +120,8 @@ export const TagManagementModal = ({
     [handleCreateTag]
   )
 
-  const handleNewTagParentChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setNewTagParentId(e.target.value || null)
+  const handleNewTagParentChange = useCallback((value: string) => {
+    setNewTagParentId(value || null)
   }, [])
 
   const handleEditNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,8 +139,8 @@ export const TagManagementModal = ({
     [handleSaveEdit, handleCancelEdit]
   )
 
-  const handleEditParentChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setEditParentId(e.target.value || null)
+  const handleEditParentChange = useCallback((value: string) => {
+    setEditParentId(value || null)
   }, [])
 
   const handleOverlayKeyDown = useCallback(
@@ -229,9 +233,9 @@ export const TagManagementModal = ({
         {/* Header */}
         <div className="border-border flex items-center justify-between border-b p-4">
           <h2 className="text-foreground text-lg font-semibold">Tag Management</h2>
-          <button type="button" onClick={onClose} className="hover:bg-state-hover rounded-lg p-1 transition-colors">
+          <Button type="button" variant="ghost" size="icon-sm" onClick={onClose}>
             <X className="text-muted-foreground h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
         <div className="max-h-[calc(80vh-120px)] overflow-y-auto">
@@ -244,13 +248,12 @@ export const TagManagementModal = ({
                 <label htmlFor="new-tag-name" className="text-muted-foreground mb-1 block text-xs font-medium">
                   Name
                 </label>
-                <input
+                <Input
                   id="new-tag-name"
                   type="text"
                   value={newTagName}
                   onChange={handleNewTagNameChange}
                   placeholder="Enter tag name..."
-                  className="border-border bg-card text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm focus:border-transparent focus:ring-2"
                   onKeyDown={handleNewTagNameKeyDown}
                 />
               </div>
@@ -259,19 +262,19 @@ export const TagManagementModal = ({
                 <label htmlFor="new-tag-parent" className="text-muted-foreground mb-1 block text-xs font-medium">
                   Parent Tag (Optional)
                 </label>
-                <select
-                  id="new-tag-parent"
-                  value={newTagParentId || ''}
-                  onChange={handleNewTagParentChange}
-                  className="border-border bg-card text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 text-sm focus:border-transparent focus:ring-2"
-                >
-                  <option value="">None (Root Level)</option>
-                  {getAvailableParentTags().map((tag) => (
-                    <option key={tag.id} value={tag.id}>
-                      {tag.name}
-                    </option>
-                  ))}
-                </select>
+                <Select value={newTagParentId || ''} onValueChange={handleNewTagParentChange}>
+                  <SelectTrigger id="new-tag-parent" className="w-full">
+                    <SelectValue placeholder="None (Root Level)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">None (Root Level)</SelectItem>
+                    {getAvailableParentTags().map((tag) => (
+                      <SelectItem key={tag.id} value={tag.id}>
+                        {tag.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
@@ -280,14 +283,16 @@ export const TagManagementModal = ({
                 </div>
                 <div className="flex flex-wrap gap-2" role="group" aria-labelledby="new-tag-color-label">
                   {presetColors.map((color) => (
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
                       key={color}
                       onClick={handleNewTagColorSelect}
                       data-color={color}
-                      className={`h-8 w-8 rounded-lg transition-all hover:scale-110 ${
-                        newTagColor === color ? 'ring-2 ring-gray-400 ring-offset-2' : ''
-                      }`}
+                      className={cn(
+                        'h-8 w-8 rounded-lg p-0 transition-all hover:scale-110 hover:bg-transparent',
+                        newTagColor === color && 'ring-2 ring-gray-400 ring-offset-2'
+                      )}
                       style={{ backgroundColor: color }}
                       title={color}
                     />
@@ -295,15 +300,10 @@ export const TagManagementModal = ({
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={handleCreateTag}
-                disabled={!newTagName.trim()}
-                className="bg-primary text-primary-foreground hover:bg-primary-hover disabled:bg-surface-container disabled:text-muted-foreground flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 transition-colors disabled:cursor-not-allowed"
-              >
+              <Button type="button" onClick={handleCreateTag} disabled={!newTagName.trim()} className="w-full">
                 <Plus className="h-4 w-4" />
                 Create Tag
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -327,57 +327,63 @@ export const TagManagementModal = ({
                       <>
                         {/* Edit Mode */}
                         <div className="flex-1 space-y-2">
-                          <input
+                          <Input
                             type="text"
                             value={editName}
                             onChange={handleEditNameChange}
-                            className="border-border bg-card text-foreground w-full rounded border px-2 py-1 text-sm"
                             onKeyDown={handleEditNameKeyDown}
                           />
 
-                          <select
-                            value={editParentId || ''}
-                            onChange={handleEditParentChange}
-                            className="border-border bg-card text-foreground w-full rounded border px-2 py-1 text-sm"
-                          >
-                            <option value="">None (Root Level)</option>
-                            {getAvailableParentTags(editingTag!).map((parentTag) => (
-                              <option key={parentTag.id} value={parentTag.id}>
-                                {parentTag.name}
-                              </option>
-                            ))}
-                          </select>
+                          <Select value={editParentId || ''} onValueChange={handleEditParentChange}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="None (Root Level)" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="">None (Root Level)</SelectItem>
+                              {getAvailableParentTags(editingTag!).map((parentTag) => (
+                                <SelectItem key={parentTag.id} value={parentTag.id}>
+                                  {parentTag.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
 
                           <div className="flex gap-2">
                             {presetColors.map((color) => (
-                              <button
+                              <Button
                                 type="button"
+                                variant="ghost"
                                 key={color}
                                 onClick={handleEditColorSelect}
                                 data-color={color}
-                                className={`h-6 w-6 rounded transition-all ${
-                                  editColor === color ? 'ring-2 ring-blue-500' : ''
-                                }`}
+                                className={cn(
+                                  'h-6 w-6 rounded p-0 transition-all hover:bg-transparent',
+                                  editColor === color && 'ring-2 ring-blue-500'
+                                )}
                                 style={{ backgroundColor: color }}
                               />
                             ))}
                           </div>
                         </div>
                         <div className="flex gap-1">
-                          <button
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon-sm"
                             onClick={handleSaveEdit}
-                            className="text-primary hover:bg-state-hover rounded p-1 transition-colors"
+                            className="text-primary"
                           >
                             <Check className="h-4 w-4" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon-sm"
                             onClick={handleCancelEdit}
-                            className="text-muted-foreground hover:bg-state-hover rounded p-1 transition-colors"
+                            className="text-muted-foreground"
                           >
                             <X className="h-4 w-4" />
-                          </button>
+                          </Button>
                         </div>
                       </>
                     ) : (
@@ -393,25 +399,29 @@ export const TagManagementModal = ({
                           )}
                         </div>
                         <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                          <button
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon-sm"
                             onClick={handleEditClick}
                             data-tag-id={tag.id}
-                            className="text-primary hover:bg-state-hover rounded p-1 transition-colors"
+                            className="text-primary size-6"
                             title="Edit tag"
                           >
                             <Edit2 className="h-3 w-3" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon-sm"
                             onClick={handleDeleteClick}
                             data-tag-id={tag.id}
                             data-tag-name={tag.name}
-                            className="text-destructive hover:bg-state-hover rounded p-1 transition-colors"
+                            className="text-destructive size-6"
                             title="Delete tag"
                           >
                             <Trash2 className="h-3 w-3" />
-                          </button>
+                          </Button>
                         </div>
                       </>
                     )}
@@ -424,13 +434,9 @@ export const TagManagementModal = ({
 
         {/* Footer */}
         <div className="border-border flex justify-end gap-2 border-t p-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-muted-foreground hover:bg-state-hover rounded-lg px-4 py-2 transition-colors"
-          >
+          <Button type="button" variant="ghost" onClick={onClose}>
             Done
-          </button>
+          </Button>
         </div>
       </div>
 

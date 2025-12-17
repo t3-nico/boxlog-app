@@ -1,5 +1,6 @@
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { Loader2 } from 'lucide-react'
 import * as React from 'react'
 
 import { cn } from '@/lib/utils'
@@ -80,6 +81,10 @@ const buttonVariants = cva(
 export interface ButtonProps extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
   /** 子要素にスタイルを委譲する（Linkなどで使用） */
   asChild?: boolean
+  /** ローディング状態 */
+  isLoading?: boolean
+  /** ローディング中に表示するテキスト（省略時は children を表示） */
+  loadingText?: string
 }
 
 /**
@@ -105,28 +110,61 @@ export interface ButtonProps extends React.ComponentProps<'button'>, VariantProp
  * @example
  * // 無効化ボタン（aria-disabled推奨）
  * <Button aria-disabled={true}>送信</Button>
+ *
+ * @example
+ * // ローディング状態
+ * <Button isLoading>保存中...</Button>
+ * <Button isLoading loadingText="送信中...">送信</Button>
  */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, onClick, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      isLoading = false,
+      loadingText,
+      onClick,
+      children,
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = asChild ? Slot : 'button'
 
-    // aria-disabled時はクリックを無効化
+    // aria-disabled または isLoading 時はクリックを無効化
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (props['aria-disabled']) {
+      if (props['aria-disabled'] || isLoading) {
         e.preventDefault()
         return
       }
       onClick?.(e)
     }
 
+    // ローディング中のコンテンツ
+    const content = isLoading ? (
+      <>
+        <Loader2 className="animate-spin" aria-hidden="true" />
+        {loadingText ?? children}
+      </>
+    ) : (
+      children
+    )
+
     return (
       <Comp
         data-slot="button"
         className={cn(buttonVariants({ variant, size, className }))}
         onClick={asChild ? onClick : handleClick}
+        disabled={isLoading || disabled}
+        aria-busy={isLoading || undefined}
         ref={ref}
         {...props}
-      />
+      >
+        {content}
+      </Comp>
     )
   }
 )
