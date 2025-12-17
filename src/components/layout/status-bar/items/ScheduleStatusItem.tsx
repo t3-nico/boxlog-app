@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl'
 
 import { StatusBarItem } from '../StatusBarItem'
 
+import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
@@ -179,9 +180,9 @@ export function ScheduleStatusItem() {
     <div className="flex items-center gap-2">
       <PlanCreateTrigger
         triggerElement={
-          <button type="button" className="flex items-center">
+          <Button type="button" variant="ghost" className="h-auto p-0">
             <StatusBarItem icon={icon} label={isPending ? '...' : label} tooltip={tooltip} forceClickable />
-          </button>
+          </Button>
         }
         initialDate={initialDate}
         initialStartTime={initialStartTime}

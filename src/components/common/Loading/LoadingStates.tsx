@@ -9,6 +9,7 @@ import React, { useCallback } from 'react'
 
 import { Loader2, RefreshCw } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
@@ -131,34 +132,22 @@ export const LoadingButton = ({
   onClick,
   variant = 'default',
 }: LoadingButtonProps) => {
-  const baseClasses =
-    'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
-
-  const variantClasses = {
-    default: 'bg-primary text-primary-foreground hover:bg-primary-hover active:bg-state-pressed',
-    outline: 'border border-border bg-secondary text-secondary-foreground hover:bg-state-hover active:bg-state-pressed',
-    ghost: 'hover:bg-state-hover active:bg-state-pressed',
-  }
-
-  const sizeClasses = 'h-10 px-4 py-2'
+  // variantのマッピング（LoadingButtonPropsのvariantをui/Buttonのvariantに変換）
+  const buttonVariant = variant === 'default' ? 'default' : variant === 'outline' ? 'outline' : 'ghost'
 
   return (
-    <button
+    <Button
       type="button"
-      className={cn(
-        baseClasses,
-        Object.prototype.hasOwnProperty.call(variantClasses, variant)
-          ? variantClasses[variant as keyof typeof variantClasses]
-          : '',
-        sizeClasses,
-        className
-      )}
-      disabled={isLoading || disabled}
+      variant={buttonVariant}
+      size="lg"
+      className={className}
+      disabled={disabled}
+      isLoading={isLoading}
+      {...(loadingText && { loadingText })}
       onClick={onClick}
     >
-      {isLoading ? <LoadingSpinner size="sm" className="mr-2" /> : null}
-      {isLoading && loadingText ? loadingText : children}
-    </button>
+      {children}
+    </Button>
   )
 }
 
@@ -268,9 +257,9 @@ export const DataLoading = ({
         {errorComponent || (
           <div className="text-center">
             <p className="mb-2 text-red-600 dark:text-red-400">{t('error.loading.loadFailed')}</p>
-            <button type="button" onClick={handleReload} className="text-blue-600 hover:underline dark:text-blue-400">
+            <Button type="button" variant="link" onClick={handleReload}>
               {t('error.loading.retry')}
-            </button>
+            </Button>
           </div>
         )}
       </div>

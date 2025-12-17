@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { Inbox } from 'lucide-react'
 
@@ -44,9 +45,9 @@ export function TableEmptyState({
           <p className="text-muted-foreground text-sm">{message}</p>
           {subMessage && <p className="text-muted-foreground text-xs">{subMessage}</p>}
           {isFiltered && onResetFilter && (
-            <button type="button" onClick={onResetFilter} className="text-primary text-sm hover:underline">
+            <Button type="button" variant="link" onClick={onResetFilter}>
               フィルターをリセット
-            </button>
+            </Button>
           )}
         </div>
       </TableCell>

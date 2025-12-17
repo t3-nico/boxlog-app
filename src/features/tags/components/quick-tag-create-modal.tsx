@@ -6,6 +6,10 @@ import { TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors'
 import { Plus, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
+
 // Tag interface
 interface Tag {
   id: string
@@ -101,9 +105,9 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
         {/* Header */}
         <div className="border-border flex items-center justify-between border-b p-4">
           <h2 className="text-foreground text-lg font-semibold">{t('tags.modal.createTitle')}</h2>
-          <button type="button" onClick={handleClose} className="hover:bg-state-hover rounded-lg p-1 transition-colors">
+          <Button type="button" variant="ghost" size="icon-sm" onClick={handleClose}>
             <X className="text-muted-foreground h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
         {/* Content */}
@@ -112,14 +116,13 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
             <label htmlFor="tag-name-input" className="text-muted-foreground mb-2 block text-sm font-medium">
               {t('tags.form.tagName')}
             </label>
-            <input
+            <Input
               id="tag-name-input"
               type="text"
               value={tagName}
               onChange={handleTagNameChange}
               placeholder={t('tags.form.namePlaceholder')}
               maxLength={TAG_NAME_MAX_LENGTH}
-              className="border-border text-foreground focus:ring-primary w-full rounded-lg border bg-transparent px-3 py-2 focus:border-transparent focus:ring-2"
               onKeyDown={handleKeyDown}
             />
           </div>
@@ -130,13 +133,15 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
             </div>
             <div className="flex flex-wrap gap-2" role="group" aria-labelledby="color-selection-label">
               {presetColors.map((color) => (
-                <button
+                <Button
                   key={color}
                   type="button"
+                  variant="ghost"
                   onClick={createColorHandler(color)}
-                  className={`h-10 w-10 rounded-lg transition-all hover:scale-105 ${
-                    selectedColor === color ? 'ring-primary ring-2 ring-offset-2' : ''
-                  }`}
+                  className={cn(
+                    'h-10 w-10 rounded-lg p-0 transition-all hover:scale-105 hover:bg-transparent',
+                    selectedColor === color && 'ring-primary ring-2 ring-offset-2'
+                  )}
                   style={{ backgroundColor: color }}
                   title={color}
                 />
@@ -156,22 +161,13 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
 
         {/* Footer */}
         <div className="border-border flex justify-end gap-2 border-t p-4">
-          <button
-            type="button"
-            onClick={handleClose}
-            className="text-muted-foreground hover:bg-state-hover rounded-lg px-4 py-2 transition-colors"
-          >
+          <Button type="button" variant="ghost" onClick={handleClose}>
             {t('tags.actions.cancel')}
-          </button>
-          <button
-            type="button"
-            onClick={handleCreateTag}
-            disabled={!tagName.trim()}
-            className="bg-primary text-primary-foreground hover:bg-primary-hover disabled:bg-surface-container disabled:text-muted-foreground flex items-center gap-2 rounded-lg px-4 py-2 transition-colors disabled:cursor-not-allowed"
-          >
+          </Button>
+          <Button type="button" onClick={handleCreateTag} disabled={!tagName.trim()}>
             <Plus className="h-4 w-4" />
             {t('tags.page.createTag')}
-          </button>
+          </Button>
         </div>
       </div>
     </>

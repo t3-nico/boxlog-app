@@ -3,6 +3,7 @@
 import { Check, Circle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
+import { Button } from '@/components/ui/button'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { TAG_COLOR_PALETTE } from '@/config/ui/colors'
@@ -43,14 +44,15 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
         return (
           <Tooltip key={color}>
             <TooltipTrigger asChild>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon-sm"
                 onClick={() => onColorSelect(color)}
                 tabIndex={-1}
                 className={cn(
-                  'group relative shrink-0 transition-all',
-                  'hover:scale-110',
-                  'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+                  'relative shrink-0 p-0 transition-all',
+                  'hover:scale-110 hover:bg-transparent',
                   isSelected && 'scale-105'
                 )}
                 aria-label={t('selectColor', { color: colorName })}
@@ -61,7 +63,7 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
                     <Check className="text-background h-3 w-3" strokeWidth={3} />
                   </div>
                 )}
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent side="top">
               <p>{colorName}</p>
