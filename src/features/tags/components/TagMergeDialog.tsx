@@ -8,7 +8,7 @@ import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useMergeTag, useTags } from '@/features/tags/hooks/use-tags'
 import type { Tag } from '@/features/tags/types'
 import { cn } from '@/lib/utils'
-import { Check, ChevronDown, GitMerge } from 'lucide-react'
+import { AlertCircle, Check, ChevronDown, GitMerge } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
@@ -209,7 +209,12 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
           </div>
 
           {/* エラーメッセージ */}
-          {error && <div className="bg-destructive/10 text-destructive rounded-md px-3 py-2 text-sm">{error}</div>}
+          {error && (
+            <div className="text-destructive flex items-center gap-2 text-sm">
+              <AlertCircle className="size-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
