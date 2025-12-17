@@ -178,7 +178,7 @@ export const LazyImage = ({
             </div>
           ) : state.isLoading ? (
             <div className="text-gray-400">
-              <div className="border-border border-t-foreground mx-auto mb-2 h-6 w-6 animate-spin rounded-full border-2"></div>
+              <div className="border-border border-t-foreground mx-auto mb-2 h-6 w-6 animate-spin motion-reduce:animate-none rounded-full border-2"></div>
               <span className="text-xs">読み込み中...</span>
             </div>
           ) : placeholder ? (
@@ -336,7 +336,7 @@ export const LazyIcon = ({ name, size = 24, className, priority = false }: LazyI
       {hasError ? (
         <div className="rounded bg-gray-200" style={{ width: size, height: size }} />
       ) : !isLoaded ? (
-        <div className="animate-pulse rounded bg-gray-100" style={{ width: size, height: size }} />
+        <div className="animate-pulse motion-reduce:animate-none rounded bg-gray-100" style={{ width: size, height: size }} />
       ) : (
         <div
           className="h-full w-full"

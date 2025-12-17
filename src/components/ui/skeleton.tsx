@@ -24,7 +24,9 @@ function Skeleton({ className, animation = 'pulse', ...props }: SkeletonProps) {
       data-slot="skeleton"
       className={cn(
         'rounded-md',
-        animation === 'shimmer' ? 'animate-shimmer' : 'bg-surface-container animate-pulse',
+        animation === 'shimmer'
+          ? 'animate-shimmer motion-reduce:animate-none motion-reduce:bg-surface-container'
+          : 'bg-surface-container animate-pulse motion-reduce:animate-none',
         className
       )}
       {...props}
