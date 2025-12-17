@@ -17,15 +17,21 @@ import {
   useInspectorKeyboard,
   type InspectorDisplayMode,
 } from '@/features/inspector'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
+import { getEffectiveStatus } from '@/features/plans/utils/status'
+import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { DEFAULT_GROUP_COLOR, TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors'
 import {
   Archive,
+  CheckCircle2,
   CheckIcon,
+  Circle,
   FileText,
   Folder,
   FolderX,
+  Link2,
   Merge,
   Palette,
   PanelRight,
@@ -61,6 +67,8 @@ export function TagInspector() {
     setDisplayMode,
   } = useTagInspectorStore()
   const { openInspector: openPlanInspector } = usePlanInspectorStore()
+  const { updatePlan } = usePlanMutations()
+  const { formatDate, formatTime } = useDateFormat()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -423,8 +431,11 @@ export function TagInspector() {
               </div>
 
               {/* 紐づくプラン */}
-              <div className="border-border/50 flex-1 overflow-y-auto border-t px-4 py-2">
-                <h3 className="text-muted-foreground mb-2 text-sm font-medium">紐づくプラン ({plans.length})</h3>
+              <div className="border-border/50 flex-1 overflow-y-auto border-t px-4 pt-4 pb-2">
+                <h3 className="text-muted-foreground mb-2 flex items-center gap-1 text-sm font-medium">
+                  <Link2 className="size-4" />
+                  紐づくプラン ({plans.length})
+                </h3>
                 {isLoadingPlans ? (
                   <div className="flex h-24 items-center justify-center">
                     <div className="border-primary h-6 w-6 animate-spin rounded-full border-b-2" />
@@ -434,18 +445,74 @@ export function TagInspector() {
                     このタグに紐づくプランはありません
                   </div>
                 ) : (
-                  <div className="divide-border/50 divide-y">
-                    {plans.slice(0, 20).map((plan) => (
-                      <button
-                        key={plan.id}
-                        type="button"
-                        onClick={() => openPlanInspector(plan.id)}
-                        className="hover:bg-muted/50 flex w-full items-center gap-2 px-2 py-2 text-left transition-colors"
-                      >
-                        <span className="text-muted-foreground text-xs">#{plan.plan_number}</span>
-                        <span className="min-w-0 flex-1 truncate text-sm">{plan.title}</span>
-                      </button>
-                    ))}
+                  <div>
+                    {plans.slice(0, 20).map((plan) => {
+                      const effectiveStatus = getEffectiveStatus(plan)
+                      // 日付・時間のフォーマット（ユーザー設定に従う）
+                      const getFormattedDateTime = () => {
+                        const parts: string[] = []
+
+                        // 日付（ユーザー設定のフォーマット）
+                        if (plan.due_date) {
+                          const date = new Date(plan.due_date)
+                          parts.push(formatDate(date))
+                        }
+
+                        // 時間（start_time - end_time）
+                        if (plan.start_time && plan.end_time) {
+                          // "HH:MM:SS" -> Date オブジェクトに変換してフォーマット
+                          const startDate = new Date(`2000-01-01T${plan.start_time}`)
+                          const endDate = new Date(`2000-01-01T${plan.end_time}`)
+                          parts.push(`${formatTime(startDate)}-${formatTime(endDate)}`)
+                        } else if (plan.start_time) {
+                          const startDate = new Date(`2000-01-01T${plan.start_time}`)
+                          parts.push(formatTime(startDate))
+                        } else if (plan.end_time) {
+                          const endDate = new Date(`2000-01-01T${plan.end_time}`)
+                          parts.push(`-${formatTime(endDate)}`)
+                        }
+
+                        return parts.length > 0 ? parts.join(' ') : null
+                      }
+                      const dateTime = getFormattedDateTime()
+
+                      return (
+                        <div
+                          key={plan.id}
+                          className="hover:bg-state-hover flex w-full items-center gap-2 rounded-sm px-2 py-2 transition-colors"
+                        >
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              const newStatus = effectiveStatus === 'done' ? 'todo' : 'done'
+                              updatePlan.mutate({
+                                id: plan.id,
+                                data: { status: newStatus },
+                              })
+                            }}
+                            className="hover:bg-state-hover shrink-0 rounded p-0.5 transition-colors"
+                            aria-label={effectiveStatus === 'done' ? '未完了に戻す' : '完了にする'}
+                          >
+                            {effectiveStatus === 'done' ? (
+                              <CheckCircle2 className="text-success size-4" />
+                            ) : effectiveStatus === 'doing' ? (
+                              <Circle className="text-primary size-4" />
+                            ) : (
+                              <Circle className="text-muted-foreground size-4" />
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openPlanInspector(plan.id)}
+                            className="min-w-0 flex-1 truncate text-left text-sm hover:underline"
+                          >
+                            {plan.title}
+                          </button>
+                          {dateTime && <span className="text-muted-foreground shrink-0 text-xs">{dateTime}</span>}
+                        </div>
+                      )
+                    })}
                     {plans.length > 20 && (
                       <p className="text-muted-foreground py-2 text-center text-xs">他 {plans.length - 20} 件</p>
                     )}
