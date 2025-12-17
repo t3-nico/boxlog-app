@@ -66,7 +66,7 @@ export function PlanCreateTrigger({
     <button
       type="button"
       onClick={handleClick}
-      className="inline-flex cursor-pointer appearance-none items-center justify-center border-none bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="focus-visible:outline-ring inline-flex cursor-pointer appearance-none items-center justify-center border-none bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
       aria-label="新しい予定を作成"
     >
       {triggerElement}
