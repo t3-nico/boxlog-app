@@ -117,7 +117,21 @@ export interface ButtonProps extends React.ComponentProps<'button'>, VariantProp
  * <Button isLoading loadingText="送信中...">送信</Button>
  */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, isLoading = false, loadingText, onClick, children, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      isLoading = false,
+      loadingText,
+      onClick,
+      children,
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = asChild ? Slot : 'button'
 
     // aria-disabled または isLoading 時はクリックを無効化
@@ -144,7 +158,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         data-slot="button"
         className={cn(buttonVariants({ variant, size, className }))}
         onClick={asChild ? onClick : handleClick}
-        disabled={isLoading || props.disabled}
+        disabled={isLoading || disabled}
         aria-busy={isLoading || undefined}
         ref={ref}
         {...props}

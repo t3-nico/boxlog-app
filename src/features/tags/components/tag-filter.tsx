@@ -89,9 +89,7 @@ export const TagFilter = ({
         type="button"
         variant="outline"
         onClick={handleToggleOpen}
-        className={cn(
-          hasTagFilters && 'border-primary/30 bg-primary/10 text-primary hover:bg-primary/20'
-        )}
+        className={cn(hasTagFilters && 'border-primary/30 bg-primary/10 text-primary hover:bg-primary/20')}
       >
         <FunnelIcon className="h-4 w-4" />
         {showTitle ? <span className={compact ? 'hidden sm:inline' : ''}>Tags</span> : null}
@@ -118,7 +116,7 @@ export const TagFilter = ({
                 variant="ghost"
                 size="icon-sm"
                 onClick={createRemoveTagHandler(tag.id)}
-                className="text-primary/70 hover:text-primary hover:bg-transparent ml-1 size-4"
+                className="text-primary/70 hover:text-primary ml-1 size-4 hover:bg-transparent"
                 aria-label={`Remove ${tag.name} filter`}
               >
                 <XMarkIcon className="h-3 w-3" />
@@ -216,9 +214,7 @@ export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
       onClick={handleToggle}
       className={cn(
         'h-auto px-2 py-1 text-xs font-medium',
-        isSelected
-          ? 'border-primary/30 bg-primary/10 text-primary hover:bg-primary/20'
-          : 'bg-surface-container'
+        isSelected ? 'border-primary/30 bg-primary/10 text-primary hover:bg-primary/20' : 'bg-surface-container'
       )}
     >
       <TagIcon className="h-4 w-4" style={{ color: tag.color }} />

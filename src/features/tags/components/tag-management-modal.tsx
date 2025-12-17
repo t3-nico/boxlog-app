@@ -300,12 +300,7 @@ export const TagManagementModal = ({
                 </div>
               </div>
 
-              <Button
-                type="button"
-                onClick={handleCreateTag}
-                disabled={!newTagName.trim()}
-                className="w-full"
-              >
+              <Button type="button" onClick={handleCreateTag} disabled={!newTagName.trim()} className="w-full">
                 <Plus className="h-4 w-4" />
                 Create Tag
               </Button>

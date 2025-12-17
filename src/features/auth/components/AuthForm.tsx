@@ -190,13 +190,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           <label htmlFor="email" className="text-muted-foreground block text-sm font-medium">
             Email address
           </label>
-          <Input
-            {...register('email')}
-            type="email"
-            id="email"
-            className="mt-1"
-            placeholder="you@example.com"
-          />
+          <Input {...register('email')} type="email" id="email" className="mt-1" placeholder="you@example.com" />
           {errors.email ? <p className="text-destructive mt-1 text-sm">{errors.email.message}</p> : null}
         </div>
 
@@ -204,13 +198,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           <label htmlFor="password" className="text-muted-foreground block text-sm font-medium">
             Password
           </label>
-          <Input
-            {...register('password')}
-            type="password"
-            id="password"
-            className="mt-1"
-            placeholder="••••••••"
-          />
+          <Input {...register('password')} type="password" id="password" className="mt-1" placeholder="••••••••" />
           {errors.password ? <p className="text-destructive mt-1 text-sm">{errors.password.message}</p> : null}
         </div>
 
