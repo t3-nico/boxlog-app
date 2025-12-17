@@ -48,12 +48,8 @@ const buttonVariants = cva(
         // 8pxグリッド準拠: h-8=32px, h-10=40px
         // default: 高さ32px、パディング16px（px-4）
         default: 'h-8 px-4 py-2',
-        // sm: 高さ32px、パディング8px（px-2）、タップターゲット44px確保
-        sm: [
-          'h-8 rounded-md px-2',
-          // タップターゲット44px確保（モバイルアクセシビリティ）
-          'relative after:absolute after:inset-x-0 after:-inset-y-1.5 after:content-[""]',
-        ].join(' '),
+        // sm: 高さ32px、パディング8px（px-2）
+        sm: 'h-8 rounded-md px-2',
         // lg: 高さ40px、パディング32px（px-8）
         lg: 'h-10 rounded-md px-8',
         // アイコンボタン: 8pxグリッド準拠の正方形

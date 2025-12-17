@@ -11,8 +11,8 @@ import { DataTable, type SortState } from '@/features/table'
 import { TagRowWrapper, TagTableRowCreate, type TagTableRowCreateHandle } from '@/features/tags/components/table'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagArchiveDialog } from '@/features/tags/components/TagArchiveDialog'
-import { TagBulkMergeDialog } from '@/features/tags/components/TagBulkMergeDialog'
 import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
+import { TagMergeDialog } from '@/features/tags/components/TagMergeDialog'
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions'
 import { TagsFilterBar } from '@/features/tags/components/TagsFilterBar'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
@@ -65,7 +65,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<Tag | null>(null)
   const [archiveConfirmTag, setArchiveConfirmTag] = useState<Tag | null>(null)
-  const [bulkMergeTags, setBulkMergeTags] = useState<Tag[]>([])
+  const [singleMergeTag, setSingleMergeTag] = useState<Tag | null>(null)
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false)
   const [isBulkDeleting, setIsBulkDeleting] = useState(false)
   const createRowRef = useRef<TagTableRowCreateHandle>(null)
@@ -296,17 +296,14 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     }
   }, [selectedTagIds, sortedTags, handleDeleteTag, clearSelection])
 
-  // ハンドラー: 一括マージダイアログを開く
-  const handleOpenBulkMerge = useCallback(() => {
-    const ids = selectedTagIds
-    if (ids.size < 2) return
-    const selectedTags = tags.filter((t) => ids.has(t.id))
-    setBulkMergeTags(selectedTags)
-  }, [selectedTagIds, tags])
+  // ハンドラー: 単一タグマージダイアログを開く
+  const handleOpenSingleMerge = useCallback((tag: Tag) => {
+    setSingleMergeTag(tag)
+  }, [])
 
-  // ハンドラー: 一括マージダイアログを閉じる
-  const handleCloseBulkMerge = useCallback(() => {
-    setBulkMergeTags([])
+  // ハンドラー: 単一タグマージダイアログを閉じる
+  const handleCloseSingleMerge = useCallback(() => {
+    setSingleMergeTag(null)
     clearSelection()
   }, [clearSelection])
 
@@ -430,7 +427,7 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
               onMoveToGroup={handleMoveToGroup}
               onArchive={handleBulkArchive}
               onDelete={handleOpenBulkDeleteDialog}
-              onMerge={handleOpenBulkMerge}
+              onSingleMerge={handleOpenSingleMerge}
               onClearSelection={clearSelection}
               t={t}
             />
@@ -493,8 +490,8 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       {/* 削除確認ダイアログ */}
       <TagDeleteDialog tag={deleteConfirmTag} onClose={handleCloseDeleteConfirm} onConfirm={handleConfirmDelete} />
 
-      {/* 一括マージダイアログ */}
-      <TagBulkMergeDialog sourceTags={bulkMergeTags} onClose={handleCloseBulkMerge} />
+      {/* 単一タグマージダイアログ */}
+      <TagMergeDialog tag={singleMergeTag} onClose={handleCloseSingleMerge} />
 
       {/* 一括削除確認ダイアログ */}
       <AlertDialogConfirm

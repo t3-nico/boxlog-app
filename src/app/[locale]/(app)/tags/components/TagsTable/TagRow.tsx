@@ -144,7 +144,7 @@ export function TagRow({
                   className="h-7 px-2"
                 />
               ) : (
-                <span className="cursor-pointer hover:underline" onClick={() => onView(tag)}>
+                <span className="min-w-0 flex-1 cursor-pointer truncate hover:underline" onClick={() => onView(tag)}>
                   {tag.name} <span className="text-muted-foreground">({planCount})</span>
                 </span>
               )}

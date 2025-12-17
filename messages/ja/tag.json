@@ -190,24 +190,12 @@
       "columns": "表示カラム",
       "columnSettings": "カラム設定"
     },
-    "bulkMerge": {
-      "title": "タグを統合",
-      "description": "{count}件のタグを1つのタグに統合します",
-      "selectedTags": "選択中のタグ",
-      "mergeTarget": "統合先",
-      "selectedTagsGroup": "選択中のタグ",
-      "otherTagsGroup": "その他のタグ",
-      "confirm": "{count}件のタグを統合",
-      "warningDetail": "統合後、{count}件のタグは削除されます",
-      "deleteSourceDescription": "{count}件のタグを削除する",
-      "success": "{count}件のタグを統合しました"
-    },
     "merge": {
       "title": "タグを統合",
       "description": "「{source}」を別のタグに統合します",
       "autoMergeDescription": "統合先のタグにすべてのプラン紐付けを移行し、統合元のタグは自動的に削除されます。",
       "targetTag": "統合先タグ",
-      "selectTarget": "統合先を選択...",
+      "selectTarget": "統合先を選択",
       "noTargetSelected": "統合先を選択してください",
       "success": "{count}件の関連付けを統合しました",
       "failed": "統合に失敗しました",
@@ -422,24 +410,12 @@
       "columns": "表示カラム",
       "columnSettings": "カラム設定"
     },
-    "bulkMerge": {
-      "title": "タグを統合",
-      "description": "{count}件のタグを1つのタグに統合します",
-      "selectedTags": "選択中のタグ",
-      "mergeTarget": "統合先",
-      "selectedTagsGroup": "選択中のタグ",
-      "otherTagsGroup": "その他のタグ",
-      "confirm": "{count}件のタグを統合",
-      "warningDetail": "統合後、{count}件のタグは削除されます",
-      "deleteSourceDescription": "{count}件のタグを削除する",
-      "success": "{count}件のタグを統合しました"
-    },
     "merge": {
       "title": "タグを統合",
       "description": "「{source}」を別のタグに統合します",
       "autoMergeDescription": "統合先のタグにすべてのプラン紐付けを移行し、統合元のタグは自動的に削除されます。",
       "targetTag": "統合先タグ",
-      "selectTarget": "統合先を選択...",
+      "selectTarget": "統合先を選択",
       "noTargetSelected": "統合先を選択してください",
       "success": "{count}件の関連付けを統合しました",
       "failed": "統合に失敗しました",

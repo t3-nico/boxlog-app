@@ -190,24 +190,12 @@
       "columns": "Columns",
       "columnSettings": "Column settings"
     },
-    "bulkMerge": {
-      "title": "Merge Tags",
-      "description": "Merge {count} tags into one tag",
-      "selectedTags": "Selected tags",
-      "mergeTarget": "Merge target",
-      "selectedTagsGroup": "Selected tags",
-      "otherTagsGroup": "Other tags",
-      "confirm": "Merge {count} tags",
-      "warningDetail": "{count} tags will be deleted after merge",
-      "deleteSourceDescription": "Delete {count} tags after merge",
-      "success": "Merged {count} tags successfully"
-    },
     "merge": {
       "title": "Merge Tags",
       "description": "Merge \"{source}\" into another tag",
       "autoMergeDescription": "All plan associations will be moved to the target tag, and the source tag will be automatically deleted.",
       "targetTag": "Target tag",
-      "selectTarget": "Select target...",
+      "selectTarget": "Select target",
       "noTargetSelected": "Please select a target tag",
       "success": "Merged {count} associations",
       "failed": "Failed to merge tags",
@@ -422,24 +410,12 @@
       "columns": "Columns",
       "columnSettings": "Column settings"
     },
-    "bulkMerge": {
-      "title": "Merge Tags",
-      "description": "Merge {count} tags into one tag",
-      "selectedTags": "Selected tags",
-      "mergeTarget": "Merge target",
-      "selectedTagsGroup": "Selected tags",
-      "otherTagsGroup": "Other tags",
-      "confirm": "Merge {count} tags",
-      "warningDetail": "{count} tags will be deleted after merge",
-      "deleteSourceDescription": "Delete {count} tags after merge",
-      "success": "Merged {count} tags successfully"
-    },
     "merge": {
       "title": "Merge Tags",
       "description": "Merge \"{source}\" into another tag",
       "autoMergeDescription": "All plan associations will be moved to the target tag, and the source tag will be automatically deleted.",
       "targetTag": "Target tag",
-      "selectTarget": "Select target...",
+      "selectTarget": "Select target",
       "noTargetSelected": "Please select a target tag",
       "success": "Merged {count} associations",
       "failed": "Failed to merge tags",

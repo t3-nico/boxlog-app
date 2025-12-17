@@ -25,7 +25,8 @@ interface TagSelectionActionsProps {
   onMoveToGroup: (tag: Tag, groupId: string | null) => void
   onArchive?: (tagIds: string[]) => Promise<void>
   onDelete: () => void
-  onMerge?: () => void
+  /** 単一タグマージ（1つ選択時のみ有効） */
+  onSingleMerge?: (tag: Tag) => void
   onEdit?: (tag: Tag) => void
   onView?: (tag: Tag) => void
   onClearSelection: () => void
@@ -48,7 +49,7 @@ export function TagSelectionActions({
   onMoveToGroup,
   onArchive,
   onDelete,
-  onMerge,
+  onSingleMerge,
   onEdit,
   onView,
   onClearSelection,
@@ -56,7 +57,6 @@ export function TagSelectionActions({
 }: TagSelectionActionsProps) {
   const hasGroups = groups.length > 0
   const isSingleSelection = selectedTagIds.length === 1
-  const isMultipleSelection = selectedTagIds.length >= 2
   const selectedTag = isSingleSelection ? tags.find((t) => t.id === selectedTagIds[0]) : null
 
   return (
@@ -124,15 +124,20 @@ export function TagSelectionActions({
         </Tooltip>
       )}
 
-      {/* 一括マージ（2つ以上選択時） */}
-      {isMultipleSelection && onMerge && (
+      {/* マージ（1つ選択時のみ） */}
+      {isSingleSelection && selectedTag && onSingleMerge && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onMerge} aria-label={t('tags.bulkMerge.title')}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onSingleMerge(selectedTag)}
+              aria-label={t('tags.merge.title')}
+            >
               <Merge className="size-4" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>{t('tags.bulkMerge.title')}</TooltipContent>
+          <TooltipContent>{t('tags.merge.title')}</TooltipContent>
         </Tooltip>
       )}
 

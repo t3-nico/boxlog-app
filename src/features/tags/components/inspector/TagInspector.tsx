@@ -1,5 +1,6 @@
 'use client'
 
+import { ColorPaletteGrid } from '@/components/ui/color-palette-picker'
 import {
   DropdownMenuItem,
   DropdownMenuSeparator,
@@ -7,6 +8,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu'
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import {
   InspectorContent,
   InspectorHeader,
@@ -17,13 +19,7 @@ import {
 import { PlanCard } from '@/features/plans/components/display/PlanCard'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import {
-  DEFAULT_GROUP_COLOR,
-  DEFAULT_TAG_COLOR,
-  TAG_DESCRIPTION_MAX_LENGTH,
-  TAG_NAME_MAX_LENGTH,
-  TAG_PRESET_COLORS,
-} from '@/features/tags/constants/colors'
+import { DEFAULT_GROUP_COLOR, TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors'
 import {
   Archive,
   CheckIcon,
@@ -325,17 +321,10 @@ export function TagInspector() {
                   {/* カラーピッカー */}
                   {showColorPicker && (
                     <div className="bg-popover border-border absolute top-6 left-0 z-20 rounded-lg border p-3 shadow-lg">
-                      <div className="grid grid-cols-5 gap-2">
-                        {TAG_PRESET_COLORS.map((color) => (
-                          <button
-                            key={color}
-                            onClick={() => handleColorChange(color)}
-                            className="size-5 rounded-full transition-transform hover:scale-110"
-                            style={{ backgroundColor: color }}
-                            aria-label={`色を${color}に変更`}
-                          />
-                        ))}
-                      </div>
+                      <ColorPaletteGrid
+                        selectedColor={tag.color || DEFAULT_TAG_COLOR}
+                        onColorSelect={handleColorChange}
+                      />
                     </div>
                   )}
                 </div>

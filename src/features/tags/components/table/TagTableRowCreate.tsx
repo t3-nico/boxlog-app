@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
+import { TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors'
 import { useCreateTag } from '@/features/tags/hooks/use-tags'
 import { useTagColumnStore } from '@/features/tags/stores/useTagColumnStore'
 import type { Tag, TagGroup } from '@/features/tags/types'
@@ -173,7 +174,13 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
                 </Popover>
                 <Input
                   value={newTagName}
-                  onChange={(e) => setNewTagName(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    if (value.length >= TAG_NAME_MAX_LENGTH) {
+                      toast.info(`タグ名は${TAG_NAME_MAX_LENGTH}文字までです`, { id: 'name-limit' })
+                    }
+                    setNewTagName(value)
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       handleSave()
@@ -182,6 +189,7 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
                     }
                   }}
                   placeholder={t('tags.page.name')}
+                  maxLength={TAG_NAME_MAX_LENGTH}
                   autoFocus
                   className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
                 />
@@ -195,7 +203,13 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
             <TableCell key={columnId} style={style}>
               <Input
                 value={newTagDescription}
-                onChange={(e) => setNewTagDescription(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value
+                  if (value.length >= TAG_DESCRIPTION_MAX_LENGTH) {
+                    toast.info(`説明は${TAG_DESCRIPTION_MAX_LENGTH}文字までです`, { id: 'description-limit' })
+                  }
+                  setNewTagDescription(value)
+                }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     handleSave()
@@ -204,6 +218,7 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
                   }
                 }}
                 placeholder={t('tags.page.description')}
+                maxLength={TAG_DESCRIPTION_MAX_LENGTH}
                 className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
               />
             </TableCell>
