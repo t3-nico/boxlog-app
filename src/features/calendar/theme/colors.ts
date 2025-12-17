@@ -75,12 +75,12 @@ export const calendarColors: CalendarColors = {
       active: 'bg-green-200 dark:bg-green-800/40',
     },
 
-    // cancelled - 無効系（薄いグレー）
+    // cancelled - 無効系（コントラスト比改善: 4.5:1以上確保）
     cancelled: {
-      background: 'bg-neutral-50 dark:bg-neutral-900',
-      text: 'text-neutral-500 dark:text-neutral-500',
-      hover: 'hover:bg-neutral-100 dark:hover:bg-neutral-800',
-      active: 'bg-neutral-200 dark:bg-neutral-700',
+      background: 'bg-neutral-100 dark:bg-neutral-800',
+      text: 'text-neutral-700 dark:text-neutral-300',
+      hover: 'hover:bg-neutral-200 dark:hover:bg-neutral-700',
+      active: 'bg-neutral-300 dark:bg-neutral-600',
     },
 
     // task - タスク系（青ベース）
@@ -97,10 +97,10 @@ export const calendarColors: CalendarColors = {
   },
 
   states: {
-    // ghost - ゴースト表示（薄いグレー、透明度）
+    // ghost - ゴースト表示（コントラスト比改善: 視認性向上）
     ghost: {
-      background: 'bg-neutral-100/30 dark:bg-neutral-800/30',
-      text: 'text-neutral-500/50 dark:text-neutral-400/50',
+      background: 'bg-neutral-200/50 dark:bg-neutral-700/50',
+      text: 'text-neutral-600 dark:text-neutral-400',
     },
 
     // selected - 選択時（青、濃い）
