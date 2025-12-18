@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 import { ChevronRight } from 'lucide-react'
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { cn } from '@/lib/utils'
 
 interface SidebarSectionProps {
   /** セクションタイトル */
@@ -41,13 +42,13 @@ interface SidebarSectionProps {
  */
 export function SidebarSection({ title, children, defaultOpen = false, className }: SidebarSectionProps) {
   return (
-    <Collapsible defaultOpen={defaultOpen}>
+    <Collapsible defaultOpen={defaultOpen} className="min-w-0 overflow-hidden">
       <CollapsibleTrigger className="text-muted-foreground hover:bg-state-hover flex h-8 w-full items-center justify-between rounded px-2 text-left text-xs font-semibold transition-colors">
-        <span>{title}</span>
-        <ChevronRight className="size-4 transition-transform [[data-state=open]>&]:rotate-90" />
+        <span className="truncate">{title}</span>
+        <ChevronRight className="ml-auto size-4 w-4 shrink-0 transition-transform [[data-state=open]>&]:rotate-90" />
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <div className={className}>{children}</div>
+        <div className={cn('min-w-0 overflow-hidden', className)}>{children}</div>
       </CollapsibleContent>
     </Collapsible>
   )
