@@ -62,7 +62,9 @@ describe('plansCrudRouter', () => {
 
       const result = await caller.list()
 
-      expect(result).toEqual(mockPlans)
+      // APIレスポンスにはtags配列が追加される
+      const expectedPlans = mockPlans.map((plan) => ({ ...plan, tags: [] }))
+      expect(result).toEqual(expectedPlans)
       expect(mockSupabase.from).toHaveBeenCalledWith('plans')
     })
 
