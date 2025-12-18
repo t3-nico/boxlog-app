@@ -6,12 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
  */
 export default function StatsLoading() {
   return (
-    <div
-      className="mx-auto max-w-7xl space-y-6"
-      role="status"
-      aria-live="polite"
-      aria-label="Loading stats"
-    >
+    <div className="mx-auto max-w-7xl space-y-6" role="status" aria-live="polite" aria-label="Loading stats">
       {/* サマリーカード（3列） */}
       <div className="grid gap-4 md:grid-cols-3">
         <Skeleton className="h-[120px]" />
