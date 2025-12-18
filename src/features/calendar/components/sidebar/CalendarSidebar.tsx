@@ -93,7 +93,7 @@ export function CalendarSidebar() {
       label: t('calendar.sidebar.tabs.view'),
       icon: CalendarDays,
       content: (
-        <div>
+        <div className="min-w-0 overflow-hidden">
           {/* ミニカレンダー */}
           <MiniCalendar
             selectedDate={navigation?.currentDate}
