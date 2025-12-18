@@ -51,8 +51,8 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     const tagsPath = pathname?.replace(`/${localeFromPath}/tags`, '') || ''
     if (tagsPath === '/uncategorized') return 'uncategorized'
     if (tagsPath === '/archive') return 'archive'
-    // /tags/[tagNumber] → group-{number}
-    const groupMatch = tagsPath.match(/^\/(\d+)$/)
+    // /tags/g-{number} → group-{number}
+    const groupMatch = tagsPath.match(/^\/g-(\d+)$/)
     if (groupMatch) return `group-${parseInt(groupMatch[1], 10)}`
     return 'all'
   }

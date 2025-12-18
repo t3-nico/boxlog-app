@@ -15,6 +15,7 @@ import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
 import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
 import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
+import { useTagsNavigation } from '@/features/tags/contexts/TagsNavigationContext'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useCreateTagGroup, useDeleteTagGroup, useUpdateTagGroup } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
@@ -45,6 +46,7 @@ export function TagsSidebar({
   const t = useTranslations()
   const router = useRouter()
   const pathname = usePathname()
+  const tagsNav = useTagsNavigation()
   const { setIsCreatingGroup, reorderedGroups, sortableContextProps } = useTagsPageContext()
   const { data: allTags = [] } = useTags(true) // タグ数カウント用
   const createGroupMutation = useCreateTagGroup()
@@ -137,13 +139,17 @@ export function TagsSidebar({
       setNewGroupColor(DEFAULT_GROUP_COLOR)
 
       // 作成したグループのページに遷移
-      const locale = pathname?.split('/')[1] || 'ja'
-      router.push(`/${locale}/tags/g-${result.group_number}`)
+      if (tagsNav) {
+        tagsNav.navigateToGroup(result.group_number)
+      } else {
+        const locale = pathname?.split('/')[1] || 'ja'
+        router.push(`/${locale}/tags/g-${result.group_number}`)
+      }
     } catch (error) {
       console.error('Failed to create tag group:', error)
       toast.error(t('tags.toast.groupCreateFailed'))
     }
-  }, [newGroupName, newGroupColor, createGroupMutation, router, pathname, setIsCreatingGroup, t])
+  }, [newGroupName, newGroupColor, createGroupMutation, router, pathname, setIsCreatingGroup, t, tagsNav])
 
   // 削除確認ダイアログからの削除実行
   const handleConfirmDelete = useCallback(async () => {
@@ -156,14 +162,18 @@ export function TagsSidebar({
 
       // 削除したグループのページを表示中だったら、タグ一覧に戻る
       if (currentGroupNumber === deletingGroup.group_number) {
-        const locale = pathname?.split('/')[1] || 'ja'
-        router.push(`/${locale}/tags`)
+        if (tagsNav) {
+          tagsNav.navigateToFilter('all')
+        } else {
+          const locale = pathname?.split('/')[1] || 'ja'
+          router.push(`/${locale}/tags`)
+        }
       }
     } catch (error) {
       console.error('Failed to delete tag group:', error)
       toast.error(t('tag.toast.groupDeleteFailed'))
     }
-  }, [deletingGroup, deleteGroupMutation, currentGroupNumber, router, pathname, t])
+  }, [deletingGroup, deleteGroupMutation, currentGroupNumber, router, pathname, t, tagsNav])
 
   // インライン編集を開始
   const handleStartEditing = useCallback((group: TagGroup) => {
@@ -247,8 +257,12 @@ export function TagsSidebar({
             toast.success(t('tags.toast.groupDeleted', { name: group.name }))
             // 削除したグループのページを表示中だったら、タグ一覧に戻る
             if (currentGroupNumber === group.group_number) {
-              const locale = pathname?.split('/')[1] || 'ja'
-              router.push(`/${locale}/tags`)
+              if (tagsNav) {
+                tagsNav.navigateToFilter('all')
+              } else {
+                const locale = pathname?.split('/')[1] || 'ja'
+                router.push(`/${locale}/tags`)
+              }
             }
           })
           .catch((error) => {
@@ -260,7 +274,7 @@ export function TagsSidebar({
         setDeletingGroup(group)
       }
     },
-    [getGroupTagCount, deleteGroupMutation, t, currentGroupNumber, pathname, router]
+    [getGroupTagCount, deleteGroupMutation, t, currentGroupNumber, pathname, router, tagsNav]
   )
 
   // 未分類タグ数をカウント
@@ -269,21 +283,33 @@ export function TagsSidebar({
   }, [allTags])
 
   const handleArchiveClick = useCallback(() => {
-    const locale = pathname?.split('/')[1] || 'ja'
-    router.push(`/${locale}/tags/archive`)
-  }, [router, pathname])
+    if (tagsNav) {
+      tagsNav.navigateToFilter('archive')
+    } else {
+      const locale = pathname?.split('/')[1] || 'ja'
+      router.push(`/${locale}/tags/archive`)
+    }
+  }, [tagsNav, router, pathname])
 
   const handleUncategorizedClick = useCallback(() => {
-    const locale = pathname?.split('/')[1] || 'ja'
-    router.push(`/${locale}/tags/uncategorized`)
-  }, [router, pathname])
+    if (tagsNav) {
+      tagsNav.navigateToFilter('uncategorized')
+    } else {
+      const locale = pathname?.split('/')[1] || 'ja'
+      router.push(`/${locale}/tags/uncategorized`)
+    }
+  }, [tagsNav, router, pathname])
 
   const handleGroupClick = useCallback(
     (groupNumber: number) => {
-      const locale = pathname?.split('/')[1] || 'ja'
-      router.push(`/${locale}/tags/g-${groupNumber}`)
+      if (tagsNav) {
+        tagsNav.navigateToGroup(groupNumber)
+      } else {
+        const locale = pathname?.split('/')[1] || 'ja'
+        router.push(`/${locale}/tags/g-${groupNumber}`)
+      }
     },
-    [router, pathname]
+    [tagsNav, router, pathname]
   )
 
   // 未分類へのドロップゾーン
