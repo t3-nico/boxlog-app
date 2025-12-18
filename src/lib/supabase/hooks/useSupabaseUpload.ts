@@ -104,34 +104,29 @@ function useSupabaseUpload(options: UseSupabaseUploadOptions) {
   }, [files, successes])
 
   // ファイルドロップ時のハンドラ
-  const onDrop = useCallback(
-    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
-      // 受け入れられたファイルにプレビューを追加
-      const filesWithPreview: FileWithPreview[] = acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
-          errors: [] as readonly FileError[],
-        })
-      )
+  const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+    // 受け入れられたファイルにプレビューを追加
+    const filesWithPreview: FileWithPreview[] = acceptedFiles.map((file) =>
+      Object.assign(file, {
+        preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+        errors: [] as readonly FileError[],
+      })
+    )
 
-      // 拒否されたファイルをエラー付きで追加
-      const rejectedFilesWithErrors: FileWithPreview[] = rejectedFiles.map((rejection) =>
-        Object.assign(rejection.file, {
-          preview: rejection.file.type.startsWith('image/')
-            ? URL.createObjectURL(rejection.file)
-            : undefined,
-          errors: rejection.errors,
-        })
-      )
+    // 拒否されたファイルをエラー付きで追加
+    const rejectedFilesWithErrors: FileWithPreview[] = rejectedFiles.map((rejection) =>
+      Object.assign(rejection.file, {
+        preview: rejection.file.type.startsWith('image/') ? URL.createObjectURL(rejection.file) : undefined,
+        errors: rejection.errors,
+      })
+    )
 
-      setFiles((prev) => [...prev, ...filesWithPreview, ...rejectedFilesWithErrors])
+    setFiles((prev) => [...prev, ...filesWithPreview, ...rejectedFilesWithErrors])
 
-      // エラーと成功をリセット
-      setErrors([])
-      setSuccesses([])
-    },
-    []
-  )
+    // エラーと成功をリセット
+    setErrors([])
+    setSuccesses([])
+  }, [])
 
   // dropzone 設定
   const dropzoneOptions = useMemo(() => {
@@ -210,16 +205,7 @@ function useSupabaseUpload(options: UseSupabaseUploadOptions) {
     if (uploadResults.length > 0) {
       onUploadSuccess?.(uploadResults)
     }
-  }, [
-    files,
-    successes,
-    bucketName,
-    path,
-    cacheControl,
-    upsert,
-    onUploadSuccess,
-    onUploadError,
-  ])
+  }, [files, successes, bucketName, path, cacheControl, upsert, onUploadSuccess, onUploadError])
 
   // プレビューURLのクリーンアップ
   useEffect(() => {
@@ -285,4 +271,4 @@ function parseAcceptTypes(mimeTypes: string[]): Record<string, string[]> {
 }
 
 export { useSupabaseUpload }
-export type { UseSupabaseUploadOptions, UseSupabaseUploadReturn, FileWithPreview, UploadError }
+export type { FileWithPreview, UploadError, UseSupabaseUploadOptions, UseSupabaseUploadReturn }

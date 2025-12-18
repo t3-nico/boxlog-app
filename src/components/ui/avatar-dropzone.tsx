@@ -22,8 +22,8 @@
 import { useCallback, useMemo, useState } from 'react'
 
 import { Camera, Loader2, Trash2, Upload, User } from 'lucide-react'
-import Image from 'next/image'
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 import { type FileRejection, useDropzone } from 'react-dropzone'
 
 import { Button } from '@/components/ui/button'
@@ -242,9 +242,7 @@ function AvatarDropzone({
       </div>
 
       {/* ファイル制限の説明 */}
-      <p className="text-muted-foreground text-xs">
-        {t('fileRequirements', { maxSize: formatBytes(maxFileSize) })}
-      </p>
+      <p className="text-muted-foreground text-xs">{t('fileRequirements', { maxSize: formatBytes(maxFileSize) })}</p>
 
       {/* エラー表示 */}
       {error && <p className="text-destructive text-xs">{error}</p>}

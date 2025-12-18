@@ -34,8 +34,8 @@
 import { createContext, type PropsWithChildren, useCallback, useContext } from 'react'
 
 import { CheckCircle, File, Loader2, Upload, X } from 'lucide-react'
-import Image from 'next/image'
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 
 import { Button } from '@/components/ui/button'
 import type { UseSupabaseUploadReturn } from '@/lib/supabase/hooks/useSupabaseUpload'
@@ -44,11 +44,7 @@ import { cn } from '@/lib/utils'
 /**
  * バイト数をフォーマット（例: 1024 → "1 KB"）
  */
-function formatBytes(
-  bytes: number,
-  decimals = 2,
-  size?: 'bytes' | 'KB' | 'MB' | 'GB' | 'TB'
-): string {
+function formatBytes(bytes: number, decimals = 2, size?: 'bytes' | 'KB' | 'MB' | 'GB' | 'TB'): string {
   const k = 1000
   const dm = decimals < 0 ? 0 : decimals
   const sizes = ['bytes', 'KB', 'MB', 'GB', 'TB']
@@ -117,17 +113,8 @@ function Dropzone({
  * Dropzone コンテンツ（ファイルリスト表示）
  */
 function DropzoneContent({ className }: { className?: string }) {
-  const {
-    files,
-    setFiles,
-    onUpload,
-    loading,
-    successes,
-    errors,
-    maxFileSize,
-    maxFiles,
-    isSuccess,
-  } = useDropzoneContext()
+  const { files, setFiles, onUpload, loading, successes, errors, maxFileSize, maxFiles, isSuccess } =
+    useDropzoneContext()
   const t = useTranslations('dropzone')
 
   const exceedMaxFiles = files.length > maxFiles
@@ -144,9 +131,7 @@ function DropzoneContent({ className }: { className?: string }) {
     return (
       <div className={cn('flex flex-row items-center justify-center gap-x-2', className)}>
         <CheckCircle size={16} className="text-primary" />
-        <p className="text-primary text-sm">
-          {t('uploadSuccess', { count: files.length })}
-        </p>
+        <p className="text-primary text-sm">{t('uploadSuccess', { count: files.length })}</p>
       </div>
     )
   }
@@ -165,13 +150,7 @@ function DropzoneContent({ className }: { className?: string }) {
             {/* ファイルアイコン/プレビュー */}
             {file.type.startsWith('image/') && file.preview ? (
               <div className="bg-muted relative h-10 w-10 shrink-0 overflow-hidden rounded border">
-                <Image
-                  src={file.preview}
-                  alt={file.name}
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
+                <Image src={file.preview} alt={file.name} fill className="object-cover" unoptimized />
               </div>
             ) : (
               <div className="bg-muted flex h-10 w-10 items-center justify-center rounded border">
@@ -200,9 +179,7 @@ function DropzoneContent({ className }: { className?: string }) {
               ) : loading && !isSuccessfullyUploaded ? (
                 <p className="text-muted-foreground text-xs">{t('uploading')}</p>
               ) : fileError ? (
-                <p className="text-destructive text-xs">
-                  {t('uploadFailed', { message: fileError.message })}
-                </p>
+                <p className="text-destructive text-xs">{t('uploadFailed', { message: fileError.message })}</p>
               ) : isSuccessfullyUploaded ? (
                 <p className="text-primary text-xs">{t('uploadedSuccess')}</p>
               ) : (
@@ -275,9 +252,7 @@ function DropzoneEmptyState({ className }: { className?: string }) {
     <div className={cn('flex flex-col items-center gap-y-2', className)}>
       <Upload size={20} className="text-muted-foreground" />
       <p className="text-sm">
-        {maxFiles && maxFiles > 1
-          ? t('uploadFilesWithCount', { count: maxFiles })
-          : t('uploadFile')}
+        {maxFiles && maxFiles > 1 ? t('uploadFilesWithCount', { count: maxFiles }) : t('uploadFile')}
       </p>
       <div className="flex flex-col items-center gap-y-1">
         <p className="text-muted-foreground text-xs">
@@ -292,9 +267,7 @@ function DropzoneEmptyState({ className }: { className?: string }) {
           {t('toUpload')}
         </p>
         {maxFileSize !== Number.POSITIVE_INFINITY && (
-          <p className="text-muted-foreground text-xs">
-            {t('maxFileSize', { size: formatBytes(maxFileSize, 2) })}
-          </p>
+          <p className="text-muted-foreground text-xs">{t('maxFileSize', { size: formatBytes(maxFileSize, 2) })}</p>
         )}
       </div>
     </div>
@@ -314,4 +287,4 @@ function useDropzoneContext(): DropzoneContextType {
   return context
 }
 
-export { Dropzone, DropzoneContent, DropzoneEmptyState, useDropzoneContext, formatBytes }
+export { Dropzone, DropzoneContent, DropzoneEmptyState, formatBytes, useDropzoneContext }
