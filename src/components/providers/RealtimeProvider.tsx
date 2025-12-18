@@ -45,8 +45,15 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
   const userId = useAuthStore((state) => state.user?.id)
   const loading = useAuthStore((state) => state.loading)
   const [isReady, setIsReady] = useState(false)
+  // クライアントサイドマウント確認（SSR時のtRPCコンテキストエラー回避）
+  const [isMounted, setIsMounted] = useState(false)
 
-  console.debug('[RealtimeProvider] userId:', userId, 'isReady:', isReady, 'loading:', loading)
+  // クライアントマウント時にフラグを設定
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  console.debug('[RealtimeProvider] userId:', userId, 'isReady:', isReady, 'loading:', loading, 'isMounted:', isMounted)
 
   // AuthStoreの初期化を待つ
   useEffect(() => {
@@ -62,11 +69,13 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
   }, [userId, loading])
 
   // 購読を有効化する条件
+  // - クライアントサイドでマウントされている
   // - 初期化が完了している
   // - ユーザーIDが存在する
-  const shouldSubscribe = isReady && !!userId
+  const shouldSubscribe = isMounted && isReady && !!userId
 
   // 各機能のRealtime購読
+  // 注意: フックは常に呼び出されるが、enabled=falseの場合は購読しない
   useCalendarRealtime(userId, { enabled: shouldSubscribe })
   usePlanRealtime(userId, { enabled: shouldSubscribe })
   useTagRealtime(userId, { enabled: shouldSubscribe })

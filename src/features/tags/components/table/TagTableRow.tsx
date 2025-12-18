@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   ContextMenu,
@@ -101,13 +102,15 @@ export function TagCellContent({ tag, columnId, groups, allTags, planCounts, las
         <div className="flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
-              <button
+              <Button
                 type="button"
-                className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                variant="ghost"
+                size="icon-sm"
+                className="shrink-0"
                 aria-label={t('tags.page.changeColor')}
               >
                 <Hash className="h-4 w-4" style={{ color: tag.color || DEFAULT_TAG_COLOR }} />
-              </button>
+              </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-3" align="start">
               <ColorPalettePicker
@@ -131,7 +134,10 @@ export function TagCellContent({ tag, columnId, groups, allTags, planCounts, las
               className="h-7 px-2"
             />
           ) : (
-            <span className="cursor-pointer font-medium hover:underline" onClick={() => openInspector(tag.id)}>
+            <span
+              className="min-w-0 flex-1 cursor-pointer truncate font-medium hover:underline"
+              onClick={() => openInspector(tag.id)}
+            >
               {tag.name} <span className="text-muted-foreground">({planCounts[tag.id] || 0})</span>
             </span>
           )}

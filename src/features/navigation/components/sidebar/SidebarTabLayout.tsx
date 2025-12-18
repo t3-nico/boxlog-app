@@ -52,7 +52,7 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="border-border data-[state=active]:border-foreground hover:border-foreground/50 h-8 gap-1.5 rounded-none border-b-2 p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                className="border-border data-[state=active]:border-foreground hover:border-foreground/50 h-8 gap-2 rounded-none border-b-2 p-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
               >
                 {Icon && <Icon className="size-4" />}
                 {tab.label}

@@ -37,10 +37,15 @@ function mapPlanStatusToCalendarStatus(status: string): 'todo' | 'doing' | 'done
   }
 }
 
+// タグ付きPlan型
+type PlanWithTags = Plan & {
+  tags?: Array<{ id: string; name: string; color: string; icon?: string; parent_id?: string }>
+}
+
 /**
  * データベースPlan型をCalendarPlan型に変換
  */
-export function planToCalendarPlan(plan: Plan): CalendarPlan {
+export function planToCalendarPlan(plan: PlanWithTags): CalendarPlan {
   const startDate = plan.start_time ? new Date(plan.start_time) : new Date()
   const endDate = plan.end_time ? new Date(plan.end_time) : new Date()
   const createdAt = plan.created_at ? new Date(plan.created_at) : new Date()
@@ -66,7 +71,7 @@ export function planToCalendarPlan(plan: Plan): CalendarPlan {
     color: '#3b82f6', // デフォルトカラー
     plan_number: plan.plan_number,
     reminder_minutes: plan.reminder_minutes,
-    tags: [], // タグは別途設定される
+    tags: plan.tags ?? [], // タグ情報を引き継ぐ
     createdAt,
     updatedAt,
     displayStartDate: startDate,
@@ -80,7 +85,7 @@ export function planToCalendarPlan(plan: Plan): CalendarPlan {
 /**
  * データベースPlan型の配列をCalendarPlan型の配列に変換
  */
-export function plansToCalendarPlans(plans: Plan[]): CalendarPlan[] {
+export function plansToCalendarPlans(plans: PlanWithTags[]): CalendarPlan[] {
   return plans.map(planToCalendarPlan)
 }
 

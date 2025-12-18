@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import type { Plan } from '@/features/plans/types/plan'
@@ -19,8 +19,9 @@ interface UseCalendarDataOptions {
   currentDate: Date
 }
 
-interface PlanWithPlanTags extends Plan {
-  plan_tags?: Array<{ tag_id: string; tags: { id: string; name: string; color: string } | null }>
+// サーバーからはformatPlanWithTagsで変換済みの形式が返る
+interface PlanWithTags extends Plan {
+  tags?: Array<{ id: string; name: string; color: string }>
 }
 
 // tRPCから返る型（API定義から推論される）
@@ -45,20 +46,6 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
   const visibleTagIds = useCalendarFilterStore((state) => state.visibleTagIds)
   const showUntagged = useCalendarFilterStore((state) => state.showUntagged)
 
-  // デバッグ: plansDataの更新を検知
-  useEffect(() => {
-    console.log('[useCalendarData] plansData 更新検知:', {
-      count: plansData?.length,
-      firstPlan: plansData?.[0]
-        ? {
-            id: plansData[0].id,
-            start_time: plansData[0].start_time,
-            end_time: plansData[0].end_time,
-          }
-        : null,
-    })
-  }, [plansData])
-
   // ビューに応じた期間計算（週の開始日設定を反映）
   const viewDateRange = useMemo(() => {
     return calculateViewDateRange(viewType, currentDate, weekStartsOn)
@@ -70,12 +57,8 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
       return []
     }
 
-    // plan_tags を tags に変換
-    const plansWithTags = (plansData as PlanWithPlanTags[]).map((plan) => {
-      const tags = plan.plan_tags?.map((pt) => pt.tags).filter(Boolean) ?? []
-      const { plan_tags: _plan_tags, ...planData } = plan
-      return { ...planData, tags } as Plan & { tags: Array<{ id: string; name: string; color: string }> }
-    })
+    // サーバーからはformatPlanWithTagsで変換済みのtags配列が返る
+    const plansWithTags = plansData as PlanWithTags[]
 
     // start_time/end_timeが設定されているplanのみを抽出
     const plansWithTime = plansWithTags.filter((plan) => {
@@ -83,9 +66,7 @@ export function useCalendarData({ viewType, currentDate }: UseCalendarDataOption
     })
 
     // planをCalendarPlanに変換
-    return plansToCalendarPlans(
-      plansWithTime as Array<Plan & { tags: Array<{ id: string; name: string; color: string }> }>
-    )
+    return plansToCalendarPlans(plansWithTime)
   }, [plansData])
 
   // 表示範囲のイベントをフィルタリング

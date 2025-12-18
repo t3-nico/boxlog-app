@@ -1,5 +1,7 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
+import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   DropdownMenuItem,
   DropdownMenuSeparator,
@@ -7,6 +9,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu'
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import {
   InspectorContent,
   InspectorHeader,
@@ -14,17 +17,21 @@ import {
   useInspectorKeyboard,
   type InspectorDisplayMode,
 } from '@/features/inspector'
-import { PlanCard } from '@/features/plans/components/display/PlanCard'
+import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR, TAG_PRESET_COLORS } from '@/features/tags/constants/colors'
+import { getEffectiveStatus } from '@/features/plans/utils/status'
+import { DEFAULT_GROUP_COLOR, TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors'
 import {
   Archive,
+  CheckCircle2,
   CheckIcon,
+  Circle,
   FileText,
   Folder,
   FolderX,
   Merge,
+  MoveUpRight,
   Palette,
   PanelRight,
   SquareMousePointer,
@@ -59,6 +66,7 @@ export function TagInspector() {
     setDisplayMode,
   } = useTagInspectorStore()
   const { openInspector: openPlanInspector } = usePlanInspectorStore()
+  const { updatePlan } = usePlanMutations()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -247,28 +255,30 @@ export function TagInspector() {
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <div className="text-muted-foreground px-2 py-2 text-xs font-medium">表示モード</div>
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => setDisplayMode('sheet')}
-        className="hover:bg-state-hover flex w-full cursor-default items-center justify-between gap-2 rounded-sm px-2 py-2 text-sm outline-none select-none"
+        className="flex w-full cursor-default justify-between gap-2"
       >
         <span className="flex items-center gap-2">
           <PanelRight className="size-4 shrink-0" />
           パネル
         </span>
         {displayMode === 'sheet' && <CheckIcon className="text-primary size-4" />}
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => setDisplayMode('popover')}
-        className="hover:bg-state-hover flex w-full cursor-default items-center justify-between gap-2 rounded-sm px-2 py-2 text-sm outline-none select-none"
+        className="flex w-full cursor-default justify-between gap-2"
       >
         <span className="flex items-center gap-2">
           <SquareMousePointer className="size-4 shrink-0" />
           ポップアップ
         </span>
         {displayMode === 'popover' && <CheckIcon className="text-primary size-4" />}
-      </button>
+      </Button>
       <DropdownMenuSeparator />
       <DropdownMenuItem onClick={handleDelete} variant="destructive">
         <Trash2 className="size-4" />
@@ -281,7 +291,11 @@ export function TagInspector() {
     <>
       <InspectorShell
         isOpen={isOpen}
-        onClose={closeInspector}
+        onClose={() => {
+          // ダイアログが開いている時はSheetを閉じない
+          if (showDeleteDialog || showArchiveDialog || showMergeDialog) return
+          closeInspector()
+        }}
         displayMode={displayMode as InspectorDisplayMode}
         title={tag?.name || 'タグの詳細'}
         resizable={true}
@@ -306,26 +320,22 @@ export function TagInspector() {
               {/* タグ名とカラー */}
               <div className="flex min-h-10 items-start gap-2 px-4 py-2">
                 <div className="relative mt-1.5">
-                  <button
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
                     onClick={() => setShowColorPicker(!showColorPicker)}
-                    className="size-4 rounded-full transition-transform hover:scale-110"
+                    className="size-4 rounded-full p-0"
                     style={{ backgroundColor: tag.color || DEFAULT_TAG_COLOR }}
                     aria-label="カラー変更"
                   />
                   {/* カラーピッカー */}
                   {showColorPicker && (
                     <div className="bg-popover border-border absolute top-6 left-0 z-20 rounded-lg border p-3 shadow-lg">
-                      <div className="grid grid-cols-5 gap-2">
-                        {TAG_PRESET_COLORS.map((color) => (
-                          <button
-                            key={color}
-                            onClick={() => handleColorChange(color)}
-                            className="size-5 rounded-full transition-transform hover:scale-110"
-                            style={{ backgroundColor: color }}
-                            aria-label={`色を${color}に変更`}
-                          />
-                        ))}
-                      </div>
+                      <ColorPalettePicker
+                        selectedColor={tag.color || DEFAULT_TAG_COLOR}
+                        onColorSelect={handleColorChange}
+                      />
                     </div>
                   )}
                 </div>
@@ -334,6 +344,22 @@ export function TagInspector() {
                     ref={titleRef}
                     contentEditable
                     suppressContentEditableWarning
+                    onInput={(e) => {
+                      const text = e.currentTarget.textContent || ''
+                      if (text.length > TAG_NAME_MAX_LENGTH) {
+                        e.currentTarget.textContent = text.slice(0, TAG_NAME_MAX_LENGTH)
+                        // カーソルを末尾に移動
+                        const range = document.createRange()
+                        const selection = window.getSelection()
+                        range.selectNodeContents(e.currentTarget)
+                        range.collapse(false)
+                        selection?.removeAllRanges()
+                        selection?.addRange(range)
+                        toast.info(`タグ名は${TAG_NAME_MAX_LENGTH}文字までです`, {
+                          id: 'name-limit',
+                        })
+                      }
+                    }}
                     onBlur={(e) => autoSave('name', e.currentTarget.textContent || '')}
                     className="bg-popover border-0 px-0 text-lg font-semibold outline-none"
                   >
@@ -354,15 +380,17 @@ export function TagInspector() {
                   <FolderX className="text-muted-foreground mt-2 size-4 flex-shrink-0" />
                 )}
                 <div className="flex min-h-8 flex-1 items-center">
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => {
                       /* グループ選択メニューを表示 */
                     }}
-                    className="text-muted-foreground hover:bg-state-hover h-8 rounded-md px-2 text-sm transition-colors"
+                    className="text-muted-foreground h-8 px-2 text-sm"
                   >
                     {tagGroup ? tagGroup.name : 'グループを選択...'}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -376,8 +404,8 @@ export function TagInspector() {
                     suppressContentEditableWarning
                     onInput={(e) => {
                       const text = e.currentTarget.textContent || ''
-                      if (text.length > 100) {
-                        e.currentTarget.textContent = text.slice(0, 100)
+                      if (text.length > TAG_DESCRIPTION_MAX_LENGTH) {
+                        e.currentTarget.textContent = text.slice(0, TAG_DESCRIPTION_MAX_LENGTH)
                         // カーソルを末尾に移動
                         const range = document.createRange()
                         const selection = window.getSelection()
@@ -386,7 +414,7 @@ export function TagInspector() {
                         selection?.removeAllRanges()
                         selection?.addRange(range)
                         // 制限通知
-                        toast.info('説明は100文字までです', {
+                        toast.info(`説明は${TAG_DESCRIPTION_MAX_LENGTH}文字までです`, {
                           id: 'description-limit',
                         })
                       }
@@ -400,9 +428,12 @@ export function TagInspector() {
                 </div>
               </div>
 
-              {/* 紐づくプラン */}
-              <div className="border-border/50 flex-1 overflow-y-auto border-t px-4 py-2">
-                <h3 className="text-muted-foreground mb-2 text-sm font-medium">紐づくプラン ({plans.length})</h3>
+              {/* 紐づくプラン・レコード */}
+              <div className="border-border/50 flex-1 space-y-4 overflow-y-auto border-t px-4 pt-4 pb-2">
+                <h3 className="text-muted-foreground mb-2 flex items-center gap-1 text-sm font-medium">
+                  <MoveUpRight className="size-4" />
+                  紐づくプラン ({plans.length})
+                </h3>
                 {isLoadingPlans ? (
                   <div className="flex h-24 items-center justify-center">
                     <div className="border-primary h-6 w-6 animate-spin rounded-full border-b-2" />
@@ -412,16 +443,114 @@ export function TagInspector() {
                     このタグに紐づくプランはありません
                   </div>
                 ) : (
-                  <div className="grid gap-3">
-                    {plans.slice(0, 10).map((plan) => (
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      <PlanCard key={plan.id} plan={plan as any} onClick={(p) => openPlanInspector(p.id)} />
-                    ))}
-                    {plans.length > 10 && (
-                      <p className="text-muted-foreground text-center text-sm">他 {plans.length - 10} 件のプラン</p>
+                  <div>
+                    {plans.slice(0, 20).map((plan) => {
+                      const effectiveStatus = getEffectiveStatus(plan)
+                      // 日付・時間のフォーマット
+                      const getFormattedDateTime = () => {
+                        const parts: string[] = []
+
+                        // 日付のフォーマット（due_date: YYYY-MM-DD形式）
+                        if (plan.due_date) {
+                          const dateStr = String(plan.due_date).split('T')[0]
+                          if (dateStr) {
+                            const dateParts = dateStr.split('-')
+                            const yearStr = dateParts[0]
+                            const monthStr = dateParts[1]
+                            const dayStr = dateParts[2]
+                            if (yearStr && monthStr && dayStr) {
+                              const year = parseInt(yearStr, 10)
+                              const month = parseInt(monthStr, 10)
+                              const day = parseInt(dayStr, 10)
+                              if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+                                parts.push(`${year}/${month}/${day}`)
+                              }
+                            }
+                          }
+                        }
+
+                        // 時間（start_time, end_time: ISO 8601形式 例: 2025-12-16T14:30:00+09:00）
+                        const getTimeStr = (isoString: string | null | undefined): string | null => {
+                          if (!isoString) return null
+                          try {
+                            const date = new Date(isoString)
+                            if (isNaN(date.getTime())) return null
+                            const hours = date.getHours().toString().padStart(2, '0')
+                            const minutes = date.getMinutes().toString().padStart(2, '0')
+                            return `${hours}:${minutes}`
+                          } catch {
+                            return null
+                          }
+                        }
+
+                        const startTimeStr = getTimeStr(plan.start_time)
+                        const endTimeStr = getTimeStr(plan.end_time)
+
+                        if (startTimeStr && endTimeStr) {
+                          parts.push(`${startTimeStr}-${endTimeStr}`)
+                        } else if (startTimeStr) {
+                          parts.push(startTimeStr)
+                        } else if (endTimeStr) {
+                          parts.push(`-${endTimeStr}`)
+                        }
+
+                        return parts.length > 0 ? parts.join(' ') : null
+                      }
+                      const dateTime = getFormattedDateTime()
+
+                      return (
+                        <div
+                          key={plan.id}
+                          className="hover:bg-state-hover flex w-full items-center gap-2 rounded-sm px-2 py-2 transition-colors"
+                        >
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              const newStatus = effectiveStatus === 'done' ? 'todo' : 'done'
+                              updatePlan.mutate({
+                                id: plan.id,
+                                data: { status: newStatus },
+                              })
+                            }}
+                            className="hover:bg-state-hover shrink-0 rounded p-0.5 transition-colors"
+                            aria-label={effectiveStatus === 'done' ? '未完了に戻す' : '完了にする'}
+                          >
+                            {effectiveStatus === 'done' ? (
+                              <CheckCircle2 className="text-success size-4" />
+                            ) : effectiveStatus === 'doing' ? (
+                              <Circle className="text-primary size-4" />
+                            ) : (
+                              <Circle className="text-muted-foreground size-4" />
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openPlanInspector(plan.id)}
+                            className="min-w-0 flex-1 truncate text-left text-sm hover:underline"
+                          >
+                            {plan.title}
+                          </button>
+                          {dateTime && <span className="text-muted-foreground shrink-0 text-xs">{dateTime}</span>}
+                        </div>
+                      )
+                    })}
+                    {plans.length > 20 && (
+                      <p className="text-muted-foreground py-2 text-center text-xs">他 {plans.length - 20} 件</p>
                     )}
                   </div>
                 )}
+
+                {/* 紐づくレコード */}
+                <div>
+                  <h3 className="text-muted-foreground mb-2 flex items-center gap-1 text-sm font-medium">
+                    <MoveUpRight className="size-4" />
+                    紐づくレコード (0)
+                  </h3>
+                  <div className="text-muted-foreground py-6 text-center text-sm">
+                    このタグに紐づくレコードはありません
+                  </div>
+                </div>
               </div>
             </div>
           )}

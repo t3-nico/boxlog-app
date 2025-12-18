@@ -6,6 +6,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { Edit, Folder, MoreHorizontal, Palette, Trash2 } from 'lucide-react'
 import { useCallback } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import {
   DropdownMenu,
@@ -24,7 +25,7 @@ import { GroupNameWithTooltip } from '@/features/tags/components/GroupNameWithTo
 import type { TagGroup } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 
-interface SortableGroupItemProps {
+interface GroupItemProps {
   group: TagGroup
   isActive: boolean
   tagCount: number
@@ -37,10 +38,12 @@ interface SortableGroupItemProps {
   isEditing: boolean
   editingName: string
   setEditingName: (name: string) => void
+  /** ドラッグ並び替えを有効にするか（manual sort時のみtrue） */
+  isDraggable?: boolean
 }
 
 /**
- * ソート可能なグループアイテムコンポーネント
+ * グループアイテムコンポーネント（ドロップゾーン機能付き）
  */
 export function SortableGroupItem({
   group,
@@ -55,18 +58,37 @@ export function SortableGroupItem({
   isEditing,
   editingName,
   setEditingName,
-}: SortableGroupItemProps) {
+  isDraggable = false,
+}: GroupItemProps) {
   const t = useTranslations()
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: group.id })
 
-  // ドロップゾーンとして設定
-  const { setNodeRef: setDropRef, isOver } = useDroppable({
+  // ソート用（ドラッグ並び替え）
+  const {
+    attributes,
+    listeners,
+    setNodeRef: setSortableNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: group.id,
+    disabled: !isDraggable,
+  })
+
+  // ドロップゾーンとして設定（タグをグループにドロップ）
+  const { setNodeRef: setDroppableNodeRef, isOver } = useDroppable({
     id: `drop-${group.id}`,
     data: {
       type: 'group',
       groupId: group.id,
     },
   })
+
+  // 両方のrefを結合
+  const setNodeRef = (node: HTMLDivElement | null) => {
+    setSortableNodeRef(node)
+    setDroppableNodeRef(node)
+  }
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -89,42 +111,40 @@ export function SortableGroupItem({
     [handleSave, onCancelEdit]
   )
 
-  // ソートとドロップの両方のrefを設定
-  const setRefs = useCallback(
-    (node: HTMLElement | null) => {
-      setNodeRef(node)
-      setDropRef(node)
-    },
-    [setNodeRef, setDropRef]
-  )
-
   return (
-    <button
-      ref={setRefs}
-      type="button"
-      onClick={() => onGroupClick(group.group_number)}
-      className={`group w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
-        isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
-      } ${isOver ? 'bg-primary/10 border-primary/50 border-2 border-dashed' : ''}`}
+    <div
+      ref={setNodeRef}
       style={style}
+      onClick={() => onGroupClick(group.group_number)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onGroupClick(group.group_number)
+        }
+      }}
+      className={`group hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${
+        isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground'
+      } ${isOver ? 'bg-primary-state-hover' : ''} ${isDragging ? 'z-50 cursor-grabbing shadow-lg' : ''}`}
       {...attributes}
       {...listeners}
     >
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex w-full items-center justify-between gap-2">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           {/* カラーアイコン */}
           <Popover>
             <PopoverTrigger asChild>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon-sm"
                 onClick={(e) => {
                   e.stopPropagation()
                 }}
-                className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                className="shrink-0"
                 aria-label={t('tags.sidebar.changeColorAria', { name: group.name })}
               >
                 <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
-              </button>
+              </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-3" align="start">
               <ColorPalettePicker
@@ -160,15 +180,17 @@ export function SortableGroupItem({
           {/* コンテキストメニュー */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
+              <Button
                 type="button"
-                className="hover:bg-state-hover flex h-6 w-6 shrink-0 items-center justify-center rounded p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                variant="ghost"
+                size="icon-sm"
+                className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100"
                 onClick={(e) => {
                   e.stopPropagation()
                 }}
               >
                 <MoreHorizontal className="h-3 w-3" />
-              </button>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
@@ -210,6 +232,6 @@ export function SortableGroupItem({
           <span className="text-muted-foreground text-xs">{tagCount}</span>
         </div>
       </div>
-    </button>
+    </div>
   )
 }

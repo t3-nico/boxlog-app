@@ -12,16 +12,15 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core'
-import { arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { Folder } from 'lucide-react'
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { useTranslations } from 'next-intl'
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useState, type ReactNode } from 'react'
 import { toast } from 'sonner'
 
-import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
-import { useReorderTagGroups, useTagGroups } from '@/features/tags/hooks/use-tag-groups'
+import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
+import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useUpdateTag } from '@/features/tags/hooks/use-tags'
-import type { Tag, TagGroup } from '@/features/tags/types'
+import type { Tag } from '@/features/tags/types'
 
 interface TagsPageContextValue {
   tags: Tag[]
@@ -34,13 +33,6 @@ interface TagsPageContextValue {
   setIsCreatingTag: (creating: boolean) => void
   // ドラッグ中のタグ
   draggingTag: Tag | null
-  // グループソート用
-  activeGroup: TagGroup | null
-  reorderedGroups: TagGroup[]
-  sortableContextProps: {
-    items: string[]
-    strategy: typeof verticalListSortingStrategy
-  }
 }
 
 const TagsPageContext = createContext<TagsPageContextValue | null>(null)
@@ -65,16 +57,10 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
   const [isCreatingTag, setIsCreatingTag] = useState(false)
   const [draggingTag, setDraggingTag] = useState<Tag | null>(null)
 
-  // グループソート用の状態
-  const { data: groups = [] as TagGroup[] } = useTagGroups()
-  const [activeGroup, setActiveGroup] = useState<TagGroup | null>(null)
-  const [localGroups, setLocalGroups] = useState<TagGroup[]>(groups)
-  const reorderMutation = useReorderTagGroups()
-  const prevGroupIdsRef = useRef<string>(groups.map((g) => g.id).join(','))
-
+  const { data: groups = [] } = useTagGroups()
   const updateTagMutation = useUpdateTag()
 
-  // センサー設定（タグとグループの両方に対応）
+  // センサー設定（タグのドラッグ用）
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 },
@@ -87,15 +73,6 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
     })
   )
 
-  // グループIDが変わった時のみlocalGroupsを更新
-  const currentGroupIds = groups.map((g) => g.id).join(',')
-  useEffect(() => {
-    if (currentGroupIds !== prevGroupIdsRef.current && !activeGroup) {
-      prevGroupIdsRef.current = currentGroupIds
-      setLocalGroups(groups)
-    }
-  }, [currentGroupIds, groups, activeGroup])
-
   // ドラッグ開始
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
@@ -107,16 +84,9 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
         if (tag) {
           setDraggingTag(tag)
         }
-        return
-      }
-
-      // グループのドラッグ（ソート用）
-      const group = localGroups.find((g) => g.id === active.id)
-      if (group) {
-        setActiveGroup(group)
       }
     },
-    [tags, localGroups]
+    [tags]
   )
 
   // ドラッグ終了
@@ -130,6 +100,58 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
 
         if (!over) return
 
+        // タグをアーカイブにドロップ
+        if (over.data.current?.type === 'archive') {
+          const tagId = active.id as string
+          const tag = tags.find((t) => t.id === tagId)
+
+          if (tag && tag.is_active) {
+            // 楽観的更新: リストから即座に削除
+            const previousTags = [...tags]
+            setTags(tags.filter((t) => t.id !== tagId))
+
+            try {
+              await updateTagMutation.mutateAsync({
+                id: tagId,
+                data: { is_active: false },
+              })
+              toast.success(t('tag.page.tagArchived', { name: tag.name }))
+            } catch (error) {
+              // エラー時: ロールバック
+              console.error('Failed to archive tag:', error)
+              setTags(previousTags)
+              toast.error(t('tag.page.tagArchiveFailed'))
+            }
+          }
+          return
+        }
+
+        // タグを「すべてのタグ」にドロップ（アーカイブから復元）
+        if (over.data.current?.type === 'restore') {
+          const tagId = active.id as string
+          const tag = tags.find((t) => t.id === tagId)
+
+          if (tag && !tag.is_active) {
+            // 楽観的更新: is_activeをtrueに変更
+            const previousTags = [...tags]
+            setTags(tags.map((t) => (t.id === tagId ? { ...t, is_active: true } : t)))
+
+            try {
+              await updateTagMutation.mutateAsync({
+                id: tagId,
+                data: { is_active: true },
+              })
+              toast.success(t('tag.archive.restoreSuccess', { name: tag.name }))
+            } catch (error) {
+              // エラー時: ロールバック
+              console.error('Failed to restore tag:', error)
+              setTags(previousTags)
+              toast.error(t('tag.archive.restoreFailed'))
+            }
+          }
+          return
+        }
+
         // タグをグループにドロップ
         if (over.data.current?.type === 'group') {
           const tagId = active.id as string
@@ -138,62 +160,36 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
           const tag = tags.find((t) => t.id === tagId)
 
           if (tag && tag.group_id !== groupId) {
+            // 楽観的更新: グループを即座に変更
+            const previousTags = [...tags]
+            setTags(tags.map((t) => (t.id === tagId ? { ...t, group_id: groupId } : t)))
+
+            const targetGroup = groupId ? groups.find((g) => g.id === groupId) : null
+            const groupName = targetGroup?.name ?? t('tag.sidebar.uncategorized')
+
             try {
               await updateTagMutation.mutateAsync({
                 id: tagId,
                 data: { group_id: groupId },
               })
-              const targetGroup = groupId ? localGroups.find((g) => g.id === groupId) : null
-              const groupName = targetGroup?.name ?? t('tag.sidebar.uncategorized')
               toast.success(t('tag.page.tagMoved', { name: tag.name, group: groupName }))
             } catch (error) {
+              // エラー時: ロールバック
               console.error('Failed to move tag:', error)
+              setTags(previousTags)
               toast.error(t('tag.page.tagMoveFailed'))
             }
           }
         }
-        return
-      }
-
-      // グループのドラッグ終了（ソート）
-      if (activeGroup) {
-        setActiveGroup(null)
-
-        if (!over || active.id === over.id) return
-
-        const oldIndex = localGroups.findIndex((g) => g.id === active.id)
-        const newIndex = localGroups.findIndex((g) => g.id === over.id)
-
-        if (oldIndex === -1 || newIndex === -1) return
-
-        // 楽観的更新
-        const reordered = arrayMove(localGroups, oldIndex, newIndex)
-        setLocalGroups(reordered)
-
-        // APIに反映
-        const groupIds = reordered.map((g) => g.id)
-        reorderMutation.mutate(groupIds, {
-          onError: () => {
-            // エラー時はロールバック
-            setLocalGroups(groups)
-          },
-        })
       }
     },
-    [draggingTag, activeGroup, tags, localGroups, groups, updateTagMutation, reorderMutation, t]
+    [draggingTag, tags, groups, updateTagMutation, t]
   )
 
   // ドラッグキャンセル
   const handleDragCancel = useCallback(() => {
     setDraggingTag(null)
-    setActiveGroup(null)
   }, [])
-
-  // SortableContext用のprops
-  const sortableContextProps = {
-    items: localGroups.map((g) => g.id),
-    strategy: verticalListSortingStrategy,
-  }
 
   return (
     <TagsPageContext.Provider
@@ -207,9 +203,6 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
         isCreatingTag,
         setIsCreatingTag,
         draggingTag,
-        activeGroup,
-        reorderedGroups: localGroups,
-        sortableContextProps,
       }}
     >
       <DndContext
@@ -228,14 +221,6 @@ export function TagsPageProvider({ children }: TagsPageProviderProps) {
                 style={{ backgroundColor: draggingTag.color || DEFAULT_TAG_COLOR }}
               />
               <span className="text-sm font-medium">{draggingTag.name}</span>
-            </div>
-          )}
-          {activeGroup && (
-            <div className="bg-state-selected text-foreground w-48 rounded-md px-3 py-2 text-left text-sm opacity-80 shadow-lg">
-              <div className="flex items-center gap-2">
-                <Folder className="h-4 w-4 shrink-0" style={{ color: activeGroup.color || DEFAULT_GROUP_COLOR }} />
-                <span className="flex-1 truncate">{activeGroup.name}</span>
-              </div>
             </div>
           )}
         </DragOverlay>

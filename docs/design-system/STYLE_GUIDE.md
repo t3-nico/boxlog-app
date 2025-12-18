@@ -671,6 +671,33 @@ const dialog = (
 - **コンポーネント例**: `/src/components/CLAUDE.md`
 - **テーマ移行**: `docs/design-system/THEME_MIGRATION.md`
 - **統合履歴**: `docs/design-system/INTEGRATION_LOG.md`
+- **boxlog-web デザインシステム**: `boxlog-web/docs/design-system/CLAUDE.md`
+
+---
+
+## 🔄 boxlog-web との同期
+
+### 同期ルール
+
+boxlog-app と boxlog-web のデザインシステムは共通化されています。**app が正**（ソースオブトゥルース）。
+
+| カテゴリ         | 同期方向  | 説明                                                                                                                                         |
+| ---------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **共通トークン** | app → web | background, foreground, primary, card, popover, secondary, muted, accent, destructive, warning, success, info, border, input, ring, chart-\* |
+| **app固有**      | app のみ  | surface-_, state-_, tooltip-\*, typography tokens, spacing tokens, shadow tokens, z-index tokens, animations                                 |
+| **web固有**      | web のみ  | sidebar-_, release-_, tag-_, highlight-_, icon-bg-_, signup-btn-_                                                                            |
+
+### 同期対象ファイル
+
+| app                      | web                   | 備考                 |
+| ------------------------ | --------------------- | -------------------- |
+| `src/styles/globals.css` | `src/app/globals.css` | 共通トークンのみ同期 |
+
+### 同期手順
+
+1. app の `globals.css` で共通トークンを変更
+2. web の `globals.css` の「共通トークン」セクションを更新
+3. OKLCH値をそのままコピー
 
 ---
 
