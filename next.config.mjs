@@ -175,6 +175,13 @@ const nextConfig = {
 
   // 実験的機能
   experimental: {
+    // Next.js 15 Router Cache再有効化（デフォルトで無効化された）
+    // ページ遷移パフォーマンス向上のため、クライアント側キャッシュを有効化
+    // @see https://nextjs.org/docs/app/api-reference/config/next-config-js/staleTimes
+    staleTimes: {
+      dynamic: 30, // 動的ルート: 30秒キャッシュ（[locale]等）
+      static: 180, // 静的ルート: 3分キャッシュ
+    },
     optimizePackageImports: [
       // アイコン
       'lucide-react',
