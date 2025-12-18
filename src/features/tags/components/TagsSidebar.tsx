@@ -1,5 +1,7 @@
 'use client'
 
+import { closestCenter, DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core'
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Check, Folder, ListFilter, Plus } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -70,6 +72,17 @@ export function TagsSidebar({
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null)
   const [editingGroupName, setEditingGroupName] = useState('')
   const [sortType, setSortType] = useState<GroupSortType>('manual')
+  // 手動ソート用のローカル順序（グループIDの配列）
+  const [manualOrder, setManualOrder] = useState<string[]>([])
+
+  // DnD センサー設定
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 8px以上ドラッグしないと開始しない
+      },
+    })
+  )
 
   // インライン作成フォームのref
   const inlineFormRef = useRef<HTMLDivElement>(null)
@@ -300,10 +313,58 @@ export function TagsSidebar({
   // 「すべてのタグ」がアクティブかどうか
   const isAllTagsActive = !isArchivePage && !isUncategorizedPage && !currentGroupNumber
 
+  // manualOrderの初期化（groupsが変わったら更新）
+  useEffect(() => {
+    if (groups.length > 0 && manualOrder.length === 0) {
+      setManualOrder(groups.map((g) => g.id))
+    }
+    // 新しいグループが追加された場合、manualOrderに追加
+    const groupIds = new Set(groups.map((g) => g.id))
+    const currentOrderIds = new Set(manualOrder)
+    const newIds = groups.filter((g) => !currentOrderIds.has(g.id)).map((g) => g.id)
+    const removedIds = manualOrder.filter((id) => !groupIds.has(id))
+
+    if (newIds.length > 0 || removedIds.length > 0) {
+      setManualOrder((prev) => {
+        const filtered = prev.filter((id) => groupIds.has(id))
+        return [...filtered, ...newIds]
+      })
+    }
+  }, [groups, manualOrder])
+
+  // ドラッグ終了時のハンドラ
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (!over) return
+
+    // over.id は "drop-xxx" 形式かもしれないので、グループIDを抽出
+    const overId = String(over.id).startsWith('drop-') ? String(over.id).slice(5) : String(over.id)
+    const activeId = String(active.id)
+
+    if (activeId !== overId) {
+      setManualOrder((prev) => {
+        const oldIndex = prev.indexOf(activeId)
+        const newIndex = prev.indexOf(overId)
+        if (oldIndex === -1 || newIndex === -1) return prev
+        return arrayMove(prev, oldIndex, newIndex)
+      })
+    }
+  }, [])
+
   // ソート済みグループ
   const sortedGroups = useMemo(() => {
     if (sortType === 'manual') {
-      return groups
+      // manualOrderに基づいてソート
+      if (manualOrder.length === 0) {
+        return groups
+      }
+      const orderMap = new Map(manualOrder.map((id, index) => [id, index]))
+      return [...groups].sort((a, b) => {
+        const aIndex = orderMap.get(a.id) ?? Infinity
+        const bIndex = orderMap.get(b.id) ?? Infinity
+        return aIndex - bIndex
+      })
     }
 
     const sorted = [...groups]
@@ -328,7 +389,7 @@ export function TagsSidebar({
         break
     }
     return sorted
-  }, [groups, sortType, getGroupTagCount])
+  }, [groups, sortType, getGroupTagCount, manualOrder])
 
   if (isLoading || isLoadingGroups) {
     return (
@@ -400,7 +461,7 @@ export function TagsSidebar({
                         className="flex items-center justify-between"
                       >
                         <span>{t(`tags.sidebar.sort.${option}`)}</span>
-                        {sortType === option && <Check className="size-4" />}
+                        {sortType === option && <Check className="text-primary size-4" />}
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
@@ -428,23 +489,28 @@ export function TagsSidebar({
           ) : (
             <>
               {/* グループリスト */}
-              {sortedGroups.map((group) => (
-                <SortableGroupItem
-                  key={group.id}
-                  group={group}
-                  isActive={currentGroupNumber === group.group_number}
-                  tagCount={getGroupTagCount(group.id)}
-                  onGroupClick={handleGroupClick}
-                  onStartEdit={handleStartEditing}
-                  onCancelEdit={handleCancelEditing}
-                  onSaveEdit={handleSaveEditing}
-                  onUpdateColor={handleUpdateColor}
-                  onDelete={handleDeleteGroup}
-                  isEditing={editingGroupId === group.id}
-                  editingName={editingGroupName}
-                  setEditingName={setEditingGroupName}
-                />
-              ))}
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={sortedGroups.map((g) => g.id)} strategy={verticalListSortingStrategy}>
+                  {sortedGroups.map((group) => (
+                    <SortableGroupItem
+                      key={group.id}
+                      group={group}
+                      isActive={currentGroupNumber === group.group_number}
+                      tagCount={getGroupTagCount(group.id)}
+                      onGroupClick={handleGroupClick}
+                      onStartEdit={handleStartEditing}
+                      onCancelEdit={handleCancelEditing}
+                      onSaveEdit={handleSaveEditing}
+                      onUpdateColor={handleUpdateColor}
+                      onDelete={handleDeleteGroup}
+                      isEditing={editingGroupId === group.id}
+                      editingName={editingGroupName}
+                      setEditingName={setEditingGroupName}
+                      isDraggable={sortType === 'manual'}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
 
               {/* インライン作成フォーム */}
               {isCreating && (
