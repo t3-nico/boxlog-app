@@ -433,10 +433,7 @@ export function PlanTagSelectDialogEnhanced({
                               </TableCell>
                               <TableCell className="pl-1 font-medium">
                                 <div className="flex items-center gap-2">
-                                  <span>
-                                    {tag.name}{' '}
-                                    <span className="text-muted-foreground">({tagplanCounts[tag.id] || 0})</span>
-                                  </span>
+                                  <span>{tag.name}</span>
                                   {!tag.is_active && (
                                     <Badge variant="outline" className="text-xs">
                                       アーカイブ済み
@@ -486,10 +483,7 @@ export function PlanTagSelectDialogEnhanced({
                               </TableCell>
                               <TableCell className="pl-1 font-medium">
                                 <div className="flex items-center gap-2">
-                                  <span>
-                                    {tag.name}{' '}
-                                    <span className="text-muted-foreground">({tagplanCounts[tag.id] || 0})</span>
-                                  </span>
+                                  <span>{tag.name}</span>
                                   {!tag.is_active && (
                                     <Badge variant="outline" className="text-xs">
                                       アーカイブ済み

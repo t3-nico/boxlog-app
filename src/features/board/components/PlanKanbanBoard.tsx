@@ -299,9 +299,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
         className={`${bgColor} flex items-center justify-between rounded-t-lg pt-2`}
         style={{ height: '48px', minHeight: '48px', maxHeight: '48px', paddingLeft: '16px', paddingRight: '16px' }}
       >
-        <h3 className="text-foreground font-semibold">
-          {title} <span className="text-muted-foreground">({count})</span>
-        </h3>
+        <h3 className="text-foreground font-semibold">{title}</h3>
         <div className="flex items-center gap-1">
           {/* ドロップダウンメニュー */}
           <DropdownMenu>

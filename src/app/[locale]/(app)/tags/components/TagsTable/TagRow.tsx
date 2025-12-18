@@ -145,7 +145,7 @@ export function TagRow({
                 />
               ) : (
                 <span className="min-w-0 flex-1 cursor-pointer truncate hover:underline" onClick={() => onView(tag)}>
-                  {tag.name} <span className="text-muted-foreground">({planCount})</span>
+                  {tag.name}
                 </span>
               )}
             </div>
@@ -163,9 +163,7 @@ export function TagRow({
             {group ? (
               <div className="flex items-center gap-1">
                 <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
-                <span className="text-sm">
-                  {group.name} <span className="text-muted-foreground">({groupTagCount})</span>
-                </span>
+                <span className="text-sm">{group.name}</span>
               </div>
             ) : (
               <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">

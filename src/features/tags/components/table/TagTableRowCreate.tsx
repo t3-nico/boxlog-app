@@ -233,9 +233,7 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
               {selectedGroup ? (
                 <div className="flex items-center gap-1">
                   <Folder className="h-4 w-4 shrink-0" style={{ color: selectedGroup.color || DEFAULT_GROUP_COLOR }} />
-                  <span className="text-sm">
-                    {selectedGroup.name} <span className="text-muted-foreground">({groupTagCount})</span>
-                  </span>
+                  <span className="text-sm">{selectedGroup.name}</span>
                 </div>
               ) : null}
             </TableCell>
