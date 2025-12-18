@@ -6,18 +6,26 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 /**
- * ボタンの基本スタイル
- * - アクセシビリティ: aria-disabled対応、フォーカスリング
- * - デジタル庁デザインシステム参考
+ * ボタンバリアント定義
+ *
+ * サイズ設計（8pxグリッド準拠、Carbon Design System参考）:
+ * - sm:      24px (h-6)  - コンパクトUI、ツールバー、テーブル内
+ * - default: 32px (h-8)  - 標準的なアクション
+ * - lg:      40px (h-10) - 主要なCTA、フォーム送信
+ *
+ * パディング設計:
+ * - 左右パディングは高さの50%を基準（視覚的バランス）
+ * - sm: 12px (px-3), default: 16px (px-4), lg: 24px (px-6)
+ *
+ * アイコンサイズ:
+ * - sm: 14px (size-3.5), default: 16px (size-4), lg: 20px (size-5)
  */
 const buttonVariants = cva(
   [
     // 基本レイアウト
-    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium',
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium',
     // トランジション
     'transition-colors',
-    // SVGアイコンのデフォルトサイズと制御
-    "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
     // フォーカス状態（アクセシビリティ）
     'outline-none',
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
@@ -30,41 +38,58 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-hover',
+        default: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover active:bg-primary-hover',
         destructive: [
-          'bg-destructive text-white',
+          'bg-destructive text-white shadow-sm',
           'hover:bg-destructive-hover active:bg-destructive-hover',
           'focus-visible:outline-destructive',
           'dark:bg-destructive/60',
         ].join(' '),
         outline: [
-          'border border-border bg-secondary text-secondary-foreground shadow-xs',
+          'border border-input bg-background text-foreground shadow-sm',
           'hover:bg-state-hover active:bg-state-hover',
         ].join(' '),
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-state-hover active:bg-state-hover',
-        ghost: 'hover:bg-state-hover active:bg-state-hover',
+        secondary: [
+          'bg-secondary text-secondary-foreground shadow-sm',
+          'hover:bg-state-hover active:bg-state-hover',
+        ].join(' '),
+        ghost: 'text-foreground hover:bg-state-hover active:bg-state-hover',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {
-        // 8pxグリッド準拠: h-8=32px, h-10=40px
-        // default: 高さ32px、パディング16px（px-4）
-        default: 'h-8 px-4 py-2',
-        // sm: 高さ32px、パディング8px（px-2）
-        sm: 'h-8 rounded-md px-2',
-        // lg: 高さ40px、パディング32px（px-8）
-        lg: 'h-10 rounded-md px-8',
+        // sm: 24px高さ、12pxパディング、14pxアイコン
+        sm: [
+          'h-6 px-3 text-xs',
+          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:shrink-0",
+        ].join(' '),
+        // default: 32px高さ、16pxパディング、16pxアイコン
+        default: [
+          'h-8 px-4 text-sm',
+          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        ].join(' '),
+        // lg: 40px高さ、24pxパディング、20pxアイコン
+        lg: [
+          'h-10 px-6 text-base',
+          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 [&_svg]:shrink-0",
+        ].join(' '),
         // アイコンボタン: 8pxグリッド準拠の正方形
-        // icon: 32x32px、タップターゲット44px確保
-        icon: ['size-8', 'relative after:absolute after:inset-0 after:m-auto after:size-11 after:content-[""]'].join(
-          ' '
-        ),
         // icon-sm: 24x24px、タップターゲット44px確保
         'icon-sm': [
           'size-6',
           'relative after:absolute after:inset-0 after:m-auto after:size-11 after:content-[""]',
+          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:shrink-0",
+        ].join(' '),
+        // icon: 32x32px、タップターゲット44px確保
+        icon: [
+          'size-8',
+          'relative after:absolute after:inset-0 after:m-auto after:size-11 after:content-[""]',
+          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         ].join(' '),
         // icon-lg: 40x40px
-        'icon-lg': 'size-10',
+        'icon-lg': [
+          'size-10',
+          "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5 [&_svg]:shrink-0",
+        ].join(' '),
       },
     },
     defaultVariants: {
