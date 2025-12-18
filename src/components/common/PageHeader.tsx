@@ -65,7 +65,7 @@ export function PageHeader({
       {/* タイトルコンテナ（32px） */}
       <div className="flex h-8 flex-1 items-center gap-2 overflow-hidden">
         <h1 className="truncate text-lg font-semibold">{title}</h1>
-        {count !== undefined && <span className="text-muted-foreground shrink-0 text-lg font-semibold">({count})</span>}
+        {/* count表示は一旦削除 - 必要であれば復活 */}
         {subtitle && <span className="text-muted-foreground truncate text-sm">{subtitle}</span>}
         {children}
       </div>
