@@ -29,6 +29,7 @@ export function Item({ icon: Icon, label, url, isActive, onClick }: ItemProps) {
     <SimpleTooltip content={label} side="right">
       <Link
         href={url}
+        prefetch={true}
         {...(onClick && { onClick })}
         {...(isActive && { 'aria-current': 'page' as const })}
         className="flex items-center justify-center"

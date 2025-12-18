@@ -152,7 +152,32 @@ npm run i18n:check
 npm run i18n:unused
 ```
 
+## webとの同期
+
+このプロジェクト（app）の翻訳は、boxlog-webと一部共通化されています。
+
+### 同期対象ファイル
+
+| ファイル      | 同期先web | 備考                           |
+| ------------- | --------- | ------------------------------ |
+| `common.json` | 共通      | app構造ベース、web固有キー追加 |
+| `legal.json`  | 共通      | 完全同期                       |
+
+### 同期ルール
+
+1. **app が正**：共通キーはこちら（app）が正
+2. **web独自キー**：`navigation`, `footer`, `blog`, `releases` はweb固有
+3. **構造統一**：両方同じキー構造を使用
+
+### 同期手順
+
+```bash
+# Claude Codeで両リポジトリを開いた状態で
+# appのmessages/を読み込み、webに反映
+```
+
 ## 参考
 
 - [next-intl 公式ドキュメント](https://next-intl-docs.vercel.app/)
 - [App Router での使用](https://next-intl-docs.vercel.app/docs/getting-started/app-router)
+- [boxlog-web/src/i18n/CLAUDE.md](../../boxlog-web/src/i18n/CLAUDE.md) - web側のi18nガイド

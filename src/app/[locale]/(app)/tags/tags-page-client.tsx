@@ -16,6 +16,7 @@ import { TagSelectionActions } from '@/features/tags/components/TagSelectionActi
 import { TagsFilterBar } from '@/features/tags/components/TagsFilterBar'
 import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
+import { useTagsNavigation } from '@/features/tags/contexts/TagsNavigationContext'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
@@ -28,6 +29,7 @@ import { useTagSortStore } from '@/features/tags/stores/useTagSortStore'
 import type { Tag, TagGroup } from '@/features/tags/types'
 import { api } from '@/lib/trpc'
 import { useTranslations } from 'next-intl'
+import { usePathname } from 'next/navigation'
 import { toast } from 'sonner'
 
 interface TagsPageClientProps {
@@ -42,6 +44,8 @@ export function TagsPageClient({
   showArchiveOnly = false,
 }: TagsPageClientProps = {}) {
   const t = useTranslations()
+  const pathname = usePathname()
+  const tagsNav = useTagsNavigation()
 
   // データ取得
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
@@ -64,6 +68,14 @@ export function TagsPageClient({
   const updateTagMutation = useUpdateTag()
   const { showCreateModal, handleSaveNewTag, handleDeleteTag, handleCloseModals } = useTagOperations(tags)
 
+  // Contextからフィルター状態を導出（propsはフォールバック）
+  const effectiveFilter = tagsNav?.filter ?? (showUncategorizedOnly ? 'uncategorized' : 'all')
+  const isUncategorizedFilter = effectiveFilter === 'uncategorized'
+  const isArchiveFilter = effectiveFilter === 'archive' || pathname?.includes('/archive')
+  const contextGroupNumber = effectiveFilter.startsWith('group-')
+    ? parseInt(effectiveFilter.replace('group-', ''), 10)
+    : null
+
   // ローカル状態
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
   const [deleteConfirmTag, setDeleteConfirmTag] = useState<Tag | null>(null)
@@ -78,11 +90,12 @@ export function TagsPageClient({
   const selectedTagIds = getSelectedIds()
   const selectedCount = getSelectedCount()
 
-  // initialGroupNumber からグループIDを解決
+  // グループ番号からグループIDを解決（Context優先、propsがフォールバック）
+  const effectiveGroupNumber = contextGroupNumber ?? (initialGroupNumber ? Number(initialGroupNumber) : null)
   const initialGroup = useMemo(() => {
-    if (!initialGroupNumber) return null
-    return groups.find((g) => g.group_number === Number(initialGroupNumber)) ?? null
-  }, [initialGroupNumber, groups])
+    if (!effectiveGroupNumber) return null
+    return groups.find((g) => g.group_number === effectiveGroupNumber) ?? null
+  }, [effectiveGroupNumber, groups])
 
   // 選択されたグループ情報を取得
   const selectedGroup = useMemo(() => {
@@ -91,31 +104,39 @@ export function TagsPageClient({
 
   // ページタイトルを決定
   const pageTitle = useMemo(() => {
-    if (showArchiveOnly) {
-      return t('tags.sidebar.archive')
-    }
-    if (showUncategorizedOnly) {
+    if (isUncategorizedFilter) {
       return t('tags.sidebar.uncategorized')
+    }
+    if (isArchiveFilter) {
+      return t('tags.sidebar.archive')
     }
     if (selectedGroup) {
       return selectedGroup.name
     }
     return t('tags.sidebar.allTags')
-  }, [showArchiveOnly, showUncategorizedOnly, selectedGroup, t])
+  }, [isUncategorizedFilter, isArchiveFilter, selectedGroup, t])
 
-  // initialGroup が解決されたら selectedGroupId を更新
+  // フィルター状態に応じて selectedGroupId を更新
   useEffect(() => {
-    if (initialGroup && selectedGroupId !== initialGroup.id) {
-      setSelectedGroupId(initialGroup.id)
+    if (initialGroup) {
+      // グループフィルターの場合はグループIDを設定
+      if (selectedGroupId !== initialGroup.id) {
+        setSelectedGroupId(initialGroup.id)
+      }
+    } else if (effectiveFilter === 'all' || effectiveFilter === 'uncategorized' || effectiveFilter === 'archive') {
+      // グループ以外のフィルターの場合はクリア
+      if (selectedGroupId !== null) {
+        setSelectedGroupId(null)
+      }
     }
-  }, [initialGroup, selectedGroupId])
+  }, [initialGroup, effectiveFilter, selectedGroupId])
 
-  // タグデータをContextに同期（参照の安定化のためJSON比較）
-  const fetchedTagsJson = JSON.stringify(fetchedTags.map((t) => t.id))
+  // タグデータをContextに同期（ID配列のjoinで軽量な変更検知）
+  const fetchedTagIds = fetchedTags.map((t) => t.id).join(',')
   useEffect(() => {
     setTags(fetchedTags)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchedTagsJson])
+  }, [fetchedTagIds])
 
   useEffect(() => {
     setIsLoading(isFetching)
@@ -128,13 +149,13 @@ export function TagsPageClient({
 
   // ページタイトルにタグ数を表示
   useEffect(() => {
-    if (!showUncategorizedOnly && !initialGroupNumber) {
+    if (!isUncategorizedFilter && !effectiveGroupNumber) {
       document.title = `${t('tags.page.title')} (${activeTagsCount})`
     }
     return () => {
       document.title = t('tags.page.title')
     }
-  }, [activeTagsCount, showUncategorizedOnly, initialGroupNumber, t])
+  }, [activeTagsCount, isUncategorizedFilter, effectiveGroupNumber, t])
 
   // すべてのタグを取得（アーカイブモードによって切り替え）
   const baseTags = useMemo(() => {
@@ -147,13 +168,13 @@ export function TagsPageClient({
   // 検索とグループフィルタ適用
   const filteredTags = useMemo(() => {
     let filtered = baseTags
-    if (showUncategorizedOnly) {
+    if (isUncategorizedFilter) {
       filtered = filtered.filter((tag) => !tag.group_id)
     } else if (selectedGroupId) {
       filtered = filtered.filter((tag) => tag.group_id === selectedGroupId)
     }
     return filtered
-  }, [baseTags, selectedGroupId, showUncategorizedOnly])
+  }, [baseTags, selectedGroupId, isUncategorizedFilter])
 
   // ソート適用
   const sortedTags = useMemo(() => {

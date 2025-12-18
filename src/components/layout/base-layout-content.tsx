@@ -8,6 +8,7 @@ import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarP
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
 import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime'
 import { SettingsDialog } from '@/features/settings/components/dialog'
+import { TagsNavigationProvider, type TagsFilter } from '@/features/tags/contexts/TagsNavigationContext'
 import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { Plus } from 'lucide-react'
@@ -43,6 +44,18 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
   // タグページかどうかを判定
   const isTagsPage = pathname?.startsWith(`/${localeFromPath}/tags`) ?? false
+
+  // タグページの初期フィルターをURLから解析
+  const getInitialTagsFilter = (): TagsFilter => {
+    if (!isTagsPage) return 'all'
+    const tagsPath = pathname?.replace(`/${localeFromPath}/tags`, '') || ''
+    if (tagsPath === '/uncategorized') return 'uncategorized'
+    if (tagsPath === '/archive') return 'archive'
+    // /tags/g-{number} → group-{number}
+    const groupMatch = tagsPath.match(/^\/g-(\d+)$/)
+    if (groupMatch?.[1]) return `group-${parseInt(groupMatch[1], 10)}`
+    return 'all'
+  }
 
   // Realtime通知購読（Toast表示）
   useNotificationRealtime(user?.id, true)
@@ -101,9 +114,13 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     )
   }
 
-  // タグページの場合はTagsPageProviderでラップ
+  // タグページの場合はTagsNavigationProvider + TagsPageProviderでラップ
   if (isTagsPage) {
-    return <TagsPageProvider>{content}</TagsPageProvider>
+    return (
+      <TagsNavigationProvider initialFilter={getInitialTagsFilter()}>
+        <TagsPageProvider>{content}</TagsPageProvider>
+      </TagsNavigationProvider>
+    )
   }
 
   return content

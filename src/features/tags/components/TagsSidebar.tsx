@@ -18,6 +18,7 @@ import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarSh
 import { AllTagsDropZone, ArchiveDropZone, UncategorizedDropZone } from '@/features/tags/components/sidebar'
 import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
+import { useTagsNavigation } from '@/features/tags/contexts/TagsNavigationContext'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import {
   useCreateTagGroup,
@@ -56,6 +57,7 @@ export function TagsSidebar({
   const t = useTranslations()
   const router = useRouter()
   const pathname = usePathname()
+  const tagsNav = useTagsNavigation()
   const { setIsCreatingGroup } = useTagsPageContext()
   const { data: groups = [] } = useTagGroups()
   const { data: allTags = [] } = useTags(true) // タグ数カウント用
@@ -90,13 +92,17 @@ export function TagsSidebar({
   // 外部から制御される isCreating を使用
   const isCreating = externalIsCreating
 
-  const isArchivePage = pathname?.includes('/archive')
-  const isUncategorizedPage = pathname?.includes('/uncategorized')
+  // Context優先でアクティブ状態を判定（フォールバック: pathname）
+  const isArchivePage = tagsNav?.filter === 'archive' || pathname?.includes('/archive')
+  const isUncategorizedPage = tagsNav?.filter === 'uncategorized' || pathname?.includes('/uncategorized')
   const currentGroupNumber = useMemo(() => {
+    // Context優先
+    if (tagsNav?.groupNumber !== undefined) return tagsNav.groupNumber
+    // フォールバック: pathname から解析
     if (!pathname) return null
     const match = pathname.match(/\/tags\/g-(\d+)/)
     return match ? Number(match[1]) : null
-  }, [pathname])
+  }, [tagsNav?.groupNumber, pathname])
 
   // インライン作成を開始
   const handleStartCreating = useCallback(() => {
@@ -161,13 +167,17 @@ export function TagsSidebar({
       setNewGroupColor(DEFAULT_GROUP_COLOR)
 
       // 作成したグループのページに遷移
-      const locale = pathname?.split('/')[1] || 'ja'
-      router.push(`/${locale}/tags/g-${result.group_number}`)
+      if (tagsNav) {
+        tagsNav.navigateToGroup(result.group_number)
+      } else {
+        const locale = pathname?.split('/')[1] || 'ja'
+        router.push(`/${locale}/tags/g-${result.group_number}`)
+      }
     } catch (error) {
       console.error('Failed to create tag group:', error)
       toast.error(t('tags.toast.groupCreateFailed'))
     }
-  }, [newGroupName, newGroupColor, createGroupMutation, router, pathname, setIsCreatingGroup, t])
+  }, [newGroupName, newGroupColor, createGroupMutation, router, pathname, setIsCreatingGroup, t, tagsNav])
 
   // 削除確認ダイアログからの削除実行
   const handleConfirmDelete = useCallback(async () => {
@@ -180,14 +190,18 @@ export function TagsSidebar({
 
       // 削除したグループのページを表示中だったら、タグ一覧に戻る
       if (currentGroupNumber === deletingGroup.group_number) {
-        const locale = pathname?.split('/')[1] || 'ja'
-        router.push(`/${locale}/tags`)
+        if (tagsNav) {
+          tagsNav.navigateToFilter('all')
+        } else {
+          const locale = pathname?.split('/')[1] || 'ja'
+          router.push(`/${locale}/tags`)
+        }
       }
     } catch (error) {
       console.error('Failed to delete tag group:', error)
       toast.error(t('tag.toast.groupDeleteFailed'))
     }
-  }, [deletingGroup, deleteGroupMutation, currentGroupNumber, router, pathname, t])
+  }, [deletingGroup, deleteGroupMutation, currentGroupNumber, router, pathname, t, tagsNav])
 
   // インライン編集を開始
   const handleStartEditing = useCallback((group: TagGroup) => {
@@ -271,8 +285,12 @@ export function TagsSidebar({
             toast.success(t('tags.toast.groupDeleted', { name: group.name }))
             // 削除したグループのページを表示中だったら、タグ一覧に戻る
             if (currentGroupNumber === group.group_number) {
-              const locale = pathname?.split('/')[1] || 'ja'
-              router.push(`/${locale}/tags`)
+              if (tagsNav) {
+                tagsNav.navigateToFilter('all')
+              } else {
+                const locale = pathname?.split('/')[1] || 'ja'
+                router.push(`/${locale}/tags`)
+              }
             }
           })
           .catch((error) => {
@@ -284,7 +302,7 @@ export function TagsSidebar({
         setDeletingGroup(group)
       }
     },
-    [getGroupTagCount, deleteGroupMutation, t, currentGroupNumber, pathname, router]
+    [getGroupTagCount, deleteGroupMutation, t, currentGroupNumber, pathname, router, tagsNav]
   )
 
   // 未分類タグ数をカウント
@@ -292,22 +310,42 @@ export function TagsSidebar({
     return allTags.filter((tag) => !tag.group_id && tag.is_active).length
   }, [allTags])
 
+  const handleAllTagsClick = useCallback(() => {
+    if (tagsNav) {
+      tagsNav.navigateToFilter('all')
+    } else {
+      onAllTagsClick()
+    }
+  }, [tagsNav, onAllTagsClick])
+
   const handleArchiveClick = useCallback(() => {
-    const locale = pathname?.split('/')[1] || 'ja'
-    router.push(`/${locale}/tags/archive`)
-  }, [router, pathname])
+    if (tagsNav) {
+      tagsNav.navigateToFilter('archive')
+    } else {
+      const locale = pathname?.split('/')[1] || 'ja'
+      router.push(`/${locale}/tags/archive`)
+    }
+  }, [tagsNav, router, pathname])
 
   const handleUncategorizedClick = useCallback(() => {
-    const locale = pathname?.split('/')[1] || 'ja'
-    router.push(`/${locale}/tags/uncategorized`)
-  }, [router, pathname])
+    if (tagsNav) {
+      tagsNav.navigateToFilter('uncategorized')
+    } else {
+      const locale = pathname?.split('/')[1] || 'ja'
+      router.push(`/${locale}/tags/uncategorized`)
+    }
+  }, [tagsNav, router, pathname])
 
   const handleGroupClick = useCallback(
     (groupNumber: number) => {
-      const locale = pathname?.split('/')[1] || 'ja'
-      router.push(`/${locale}/tags/g-${groupNumber}`)
+      if (tagsNav) {
+        tagsNav.navigateToGroup(groupNumber)
+      } else {
+        const locale = pathname?.split('/')[1] || 'ja'
+        router.push(`/${locale}/tags/g-${groupNumber}`)
+      }
     },
-    [router, pathname]
+    [tagsNav, router, pathname]
   )
 
   // 「すべてのタグ」がアクティブかどうか
@@ -407,7 +445,7 @@ export function TagsSidebar({
       <nav className="flex-1 overflow-y-auto px-2 py-2">
         <div className="space-y-1">
           {/* すべてのタグ（アーカイブから復元のドロップゾーン） */}
-          <AllTagsDropZone isActive={isAllTagsActive} activeTagsCount={activeTagsCount} onClick={onAllTagsClick} />
+          <AllTagsDropZone isActive={isAllTagsActive} activeTagsCount={activeTagsCount} onClick={handleAllTagsClick} />
 
           {/* 未分類 */}
           <UncategorizedDropZone
