@@ -442,7 +442,7 @@ export function TagsSidebar({
   return (
     <SidebarShell title={t('sidebar.navigation.tags')}>
       {/* コンテンツ */}
-      <nav className="flex-1 overflow-y-auto px-2 py-2">
+      <nav className="flex-1 overflow-x-hidden overflow-y-auto px-2 py-2">
         <div>
           {/* すべてのタグ（アーカイブから復元のドロップゾーン） */}
           <AllTagsDropZone isActive={isAllTagsActive} activeTagsCount={activeTagsCount} onClick={handleAllTagsClick} />

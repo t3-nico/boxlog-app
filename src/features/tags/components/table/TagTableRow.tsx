@@ -64,7 +64,7 @@ export function TagCellContent({
   const updateTagMutation = useUpdateTag()
 
   // インライン編集の状態
-  const [editingField, setEditingField] = useState<'name' | null>(null)
+  const [editingField, setEditingField] = useState<'name' | 'description' | null>(null)
   const [editValue, setEditValue] = useState('')
 
   // 日時フォーマット関数
@@ -81,14 +81,19 @@ export function TagCellContent({
 
   // インライン編集保存
   const saveInlineEdit = useCallback(async () => {
-    if (!editingField || editValue.trim() === '') {
+    if (!editingField) {
+      cancelEditing()
+      return
+    }
+    // nameは必須、descriptionは空でもOK
+    if (editingField === 'name' && editValue.trim() === '') {
       cancelEditing()
       return
     }
     try {
       await updateTagMutation.mutateAsync({
         id: tag.id,
-        data: { [editingField]: editValue.trim() },
+        data: { [editingField]: editValue.trim() || null },
       })
       cancelEditing()
     } catch (error) {
@@ -151,8 +156,27 @@ export function TagCellContent({
       )
 
     case 'description':
-      return (
-        <span className="text-muted-foreground block max-w-[200px] truncate">
+      return editingField === 'description' ? (
+        <Input
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onBlur={saveInlineEdit}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') saveInlineEdit()
+            else if (e.key === 'Escape') cancelEditing()
+          }}
+          autoFocus
+          placeholder={t('tags.page.addDescription')}
+          className="h-7 px-2"
+        />
+      ) : (
+        <span
+          className="text-muted-foreground block max-w-[200px] cursor-pointer truncate"
+          onClick={() => {
+            setEditingField('description')
+            setEditValue(tag.description || '')
+          }}
+        >
           {tag.description || (
             <span className="opacity-0 transition-opacity group-hover:opacity-100">
               {t('tags.page.addDescription')}
