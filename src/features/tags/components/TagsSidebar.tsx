@@ -2,7 +2,7 @@
 
 import { closestCenter, DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { Check, Folder, ListFilter, Plus } from 'lucide-react'
+import { ArrowUpDown, Check, Folder, Plus } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -405,7 +405,7 @@ export function TagsSidebar({
     <SidebarShell title={t('sidebar.navigation.tags')}>
       {/* コンテンツ */}
       <nav className="flex-1 overflow-y-auto px-2 py-2">
-        <div className="space-y-1">
+        <div>
           {/* すべてのタグ（アーカイブから復元のドロップゾーン） */}
           <AllTagsDropZone isActive={isAllTagsActive} activeTagsCount={activeTagsCount} onClick={onAllTagsClick} />
 
@@ -434,7 +434,7 @@ export function TagsSidebar({
                       <TooltipTrigger asChild>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon-sm">
-                            <ListFilter className="size-4" />
+                            <ArrowUpDown className="size-4" />
                           </Button>
                         </DropdownMenuTrigger>
                       </TooltipTrigger>
