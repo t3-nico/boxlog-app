@@ -21,6 +21,15 @@ export { updateSession } from './middleware'
 // 注: useTasks は削除済み（src/features/plans/hooks/useplans.ts を使用）
 export { useAuth, useProfile } from './hooks'
 
+// Storage アップロードフック
+export {
+  useSupabaseUpload,
+  type UseSupabaseUploadOptions,
+  type UseSupabaseUploadReturn,
+  type FileWithPreview,
+  type UploadError,
+} from './hooks/useSupabaseUpload'
+
 // ユーティリティ
 export * from './utils'
 
