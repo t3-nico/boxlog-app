@@ -21,7 +21,6 @@ import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { usePlans } from '@/features/plans/hooks/usePlans'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { getEffectiveStatus } from '@/features/plans/utils/status'
-import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { DEFAULT_GROUP_COLOR, TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors'
 import {
   Archive,
@@ -31,8 +30,8 @@ import {
   FileText,
   Folder,
   FolderX,
-  Link2,
   Merge,
+  MoveUpRight,
   Palette,
   PanelRight,
   SquareMousePointer,
@@ -68,7 +67,6 @@ export function TagInspector() {
   } = useTagInspectorStore()
   const { openInspector: openPlanInspector } = usePlanInspectorStore()
   const { updatePlan } = usePlanMutations()
-  const { formatDate, formatTime } = useDateFormat()
   const router = useRouter()
   const pathname = usePathname()
 
@@ -430,10 +428,10 @@ export function TagInspector() {
                 </div>
               </div>
 
-              {/* 紐づくプラン */}
-              <div className="border-border/50 flex-1 overflow-y-auto border-t px-4 pt-4 pb-2">
+              {/* 紐づくプラン・レコード */}
+              <div className="border-border/50 flex-1 space-y-4 overflow-y-auto border-t px-4 pt-4 pb-2">
                 <h3 className="text-muted-foreground mb-2 flex items-center gap-1 text-sm font-medium">
-                  <Link2 className="size-4" />
+                  <MoveUpRight className="size-4" />
                   紐づくプラン ({plans.length})
                 </h3>
                 {isLoadingPlans ? (
@@ -448,28 +446,52 @@ export function TagInspector() {
                   <div>
                     {plans.slice(0, 20).map((plan) => {
                       const effectiveStatus = getEffectiveStatus(plan)
-                      // 日付・時間のフォーマット（ユーザー設定に従う）
+                      // 日付・時間のフォーマット
                       const getFormattedDateTime = () => {
                         const parts: string[] = []
 
-                        // 日付（ユーザー設定のフォーマット）
+                        // 日付のフォーマット（due_date: YYYY-MM-DD形式）
                         if (plan.due_date) {
-                          const date = new Date(plan.due_date)
-                          parts.push(formatDate(date))
+                          const dateStr = String(plan.due_date).split('T')[0]
+                          if (dateStr) {
+                            const dateParts = dateStr.split('-')
+                            const yearStr = dateParts[0]
+                            const monthStr = dateParts[1]
+                            const dayStr = dateParts[2]
+                            if (yearStr && monthStr && dayStr) {
+                              const year = parseInt(yearStr, 10)
+                              const month = parseInt(monthStr, 10)
+                              const day = parseInt(dayStr, 10)
+                              if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+                                parts.push(`${year}/${month}/${day}`)
+                              }
+                            }
+                          }
                         }
 
-                        // 時間（start_time - end_time）
-                        if (plan.start_time && plan.end_time) {
-                          // "HH:MM:SS" -> Date オブジェクトに変換してフォーマット
-                          const startDate = new Date(`2000-01-01T${plan.start_time}`)
-                          const endDate = new Date(`2000-01-01T${plan.end_time}`)
-                          parts.push(`${formatTime(startDate)}-${formatTime(endDate)}`)
-                        } else if (plan.start_time) {
-                          const startDate = new Date(`2000-01-01T${plan.start_time}`)
-                          parts.push(formatTime(startDate))
-                        } else if (plan.end_time) {
-                          const endDate = new Date(`2000-01-01T${plan.end_time}`)
-                          parts.push(`-${formatTime(endDate)}`)
+                        // 時間（start_time, end_time: ISO 8601形式 例: 2025-12-16T14:30:00+09:00）
+                        const getTimeStr = (isoString: string | null | undefined): string | null => {
+                          if (!isoString) return null
+                          try {
+                            const date = new Date(isoString)
+                            if (isNaN(date.getTime())) return null
+                            const hours = date.getHours().toString().padStart(2, '0')
+                            const minutes = date.getMinutes().toString().padStart(2, '0')
+                            return `${hours}:${minutes}`
+                          } catch {
+                            return null
+                          }
+                        }
+
+                        const startTimeStr = getTimeStr(plan.start_time)
+                        const endTimeStr = getTimeStr(plan.end_time)
+
+                        if (startTimeStr && endTimeStr) {
+                          parts.push(`${startTimeStr}-${endTimeStr}`)
+                        } else if (startTimeStr) {
+                          parts.push(startTimeStr)
+                        } else if (endTimeStr) {
+                          parts.push(`-${endTimeStr}`)
                         }
 
                         return parts.length > 0 ? parts.join(' ') : null
@@ -518,6 +540,17 @@ export function TagInspector() {
                     )}
                   </div>
                 )}
+
+                {/* 紐づくレコード */}
+                <div>
+                  <h3 className="text-muted-foreground mb-2 flex items-center gap-1 text-sm font-medium">
+                    <MoveUpRight className="size-4" />
+                    紐づくレコード (0)
+                  </h3>
+                  <div className="text-muted-foreground py-6 text-center text-sm">
+                    このタグに紐づくレコードはありません
+                  </div>
+                </div>
               </div>
             </div>
           )}
