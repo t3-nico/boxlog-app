@@ -126,7 +126,17 @@
       "changeColor": "カラーを変更",
       "delete": "削除",
       "colorLabel": "カラー {color}",
-      "changeColorAria": "{name}のカラーを変更"
+      "changeColorAria": "{name}のカラーを変更",
+      "sortGroups": "グループを並び替え",
+      "sort": {
+        "manual": "手動",
+        "nameAsc": "名前（A→Z）",
+        "nameDesc": "名前（Z→A）",
+        "createdAsc": "作成日（古い順）",
+        "createdDesc": "作成日（新しい順）",
+        "tagCountDesc": "タグ数（多い順）",
+        "tagCountAsc": "タグ数（少ない順）"
+      }
     },
     "toast": {
       "groupNameRequired": "グループ名を入力してください",
@@ -358,7 +368,17 @@
       "changeColor": "カラーを変更",
       "delete": "削除",
       "colorLabel": "カラー {color}",
-      "changeColorAria": "{name}のカラーを変更"
+      "changeColorAria": "{name}のカラーを変更",
+      "sortGroups": "グループを並び替え",
+      "sort": {
+        "manual": "手動",
+        "nameAsc": "名前（A→Z）",
+        "nameDesc": "名前（Z→A）",
+        "createdAsc": "作成日（古い順）",
+        "createdDesc": "作成日（新しい順）",
+        "tagCountDesc": "タグ数（多い順）",
+        "tagCountAsc": "タグ数（少ない順）"
+      }
     },
     "toast": {
       "groupNameRequired": "グループ名を入力してください",

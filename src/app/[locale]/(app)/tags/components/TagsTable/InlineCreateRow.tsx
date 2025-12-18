@@ -4,12 +4,14 @@ import type React from 'react'
 import { forwardRef } from 'react'
 
 import { Folder, Hash } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
+import { TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors'
 import type { Tag, TagGroup } from '@/features/tags/types'
 import type { useTranslations } from 'next-intl'
 
@@ -90,9 +92,16 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
           </Popover>
           <Input
             value={newTagName}
-            onChange={(e) => onNameChange(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value
+              if (value.length >= TAG_NAME_MAX_LENGTH) {
+                toast.info(`タグ名は${TAG_NAME_MAX_LENGTH}文字までです`, { id: 'name-limit' })
+              }
+              onNameChange(value)
+            }}
             onKeyDown={handleKeyDown}
             placeholder={t('tag.page.name')}
+            maxLength={TAG_NAME_MAX_LENGTH}
             autoFocus
             className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
           />
@@ -101,9 +110,16 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
       <TableCell style={{ width: `${columnWidths.description}px` }}>
         <Input
           value={newTagDescription}
-          onChange={(e) => onDescriptionChange(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value
+            if (value.length >= TAG_DESCRIPTION_MAX_LENGTH) {
+              toast.info(`説明は${TAG_DESCRIPTION_MAX_LENGTH}文字までです`, { id: 'description-limit' })
+            }
+            onDescriptionChange(value)
+          }}
           onKeyDown={handleKeyDown}
           placeholder={t('tag.page.description')}
+          maxLength={TAG_DESCRIPTION_MAX_LENGTH}
           className="h-auto border-0 bg-transparent p-0 text-sm shadow-none focus-visible:ring-0 dark:bg-transparent"
         />
       </TableCell>

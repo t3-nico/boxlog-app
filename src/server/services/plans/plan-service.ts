@@ -94,7 +94,8 @@ export class PlanService {
       throw new PlanServiceError('FETCH_FAILED', `Failed to fetch plans: ${error.message}`)
     }
 
-    return data as PlanWithTags[]
+    // plan_tags のネスト構造を tags 配列にフォーマット
+    return (data as unknown as PlanWithTags[]).map((plan) => this.formatPlanWithTags(plan))
   }
 
   /**

@@ -178,37 +178,69 @@ export function PlanInspectorContent() {
   }, [plan])
 
   // Handlers
+  // selectedTagIds を ref で保持して最新値を参照可能にする
+  const selectedTagIdsRef = useRef<string[]>(selectedTagIds)
+  useEffect(() => {
+    selectedTagIdsRef.current = selectedTagIds
+  }, [selectedTagIds])
+
   const handleTagsChange = useCallback(
     async (newTagIds: string[]) => {
       if (!planId) return
-      const oldTagIds = selectedTagIds
+
+      // ref から最新の値を取得
+      const oldTagIds = selectedTagIdsRef.current
       const added = newTagIds.filter((id) => !oldTagIds.includes(id))
+      const removed = oldTagIds.filter((id) => !newTagIds.includes(id))
+
+      // 変更がなければスキップ
+      if (added.length === 0 && removed.length === 0) return
+
+      // 楽観的更新
       setSelectedTagIds(newTagIds)
+      selectedTagIdsRef.current = newTagIds
+
       try {
+        // 追加されたタグを処理
         for (const tagId of added) {
           await addPlanTag(planId, tagId)
         }
+        // 削除されたタグを処理
+        for (const tagId of removed) {
+          await removePlanTag(planId, tagId)
+        }
       } catch (error) {
-        console.error('Failed to add tags:', error)
+        console.error('Failed to update tags:', error)
+        // エラー時はロールバック
         setSelectedTagIds(oldTagIds)
+        selectedTagIdsRef.current = oldTagIds
       }
     },
-    [planId, selectedTagIds, addPlanTag]
+    [planId, addPlanTag, removePlanTag]
   )
 
   const handleRemoveTag = useCallback(
     async (tagId: string) => {
       if (!planId) return
-      const oldTagIds = selectedTagIds
-      setSelectedTagIds((prev) => prev.filter((id) => id !== tagId))
+
+      // ref から最新の値を取得
+      const oldTagIds = selectedTagIdsRef.current
+      const newTagIds = oldTagIds.filter((id) => id !== tagId)
+
+      // 楽観的更新
+      setSelectedTagIds(newTagIds)
+      selectedTagIdsRef.current = newTagIds
+
       try {
         await removePlanTag(planId, tagId)
       } catch (error) {
         console.error('Failed to remove tag:', error)
+        // エラー時はロールバック
         setSelectedTagIds(oldTagIds)
+        selectedTagIdsRef.current = oldTagIds
       }
     },
-    [planId, selectedTagIds, removePlanTag]
+    [planId, removePlanTag]
   )
 
   const handleDelete = useCallback(() => {

@@ -1,6 +1,6 @@
 'use client'
 
-import { Archive, Folder, FolderX, Merge, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Archive, Folder, FolderX, Merge, MoreHorizontal, RotateCcw, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -24,8 +24,11 @@ interface TagSelectionActionsProps {
   groups: TagGroup[]
   onMoveToGroup: (tag: Tag, groupId: string | null) => void
   onArchive?: (tagIds: string[]) => Promise<void>
+  /** 復元（アーカイブモード用） */
+  onRestore?: (tagIds: string[]) => Promise<void>
   onDelete: () => void
-  onMerge?: () => void
+  /** 単一タグマージ（1つ選択時のみ有効） */
+  onSingleMerge?: (tag: Tag) => void
   onEdit?: (tag: Tag) => void
   onView?: (tag: Tag) => void
   onClearSelection: () => void
@@ -47,8 +50,9 @@ export function TagSelectionActions({
   groups,
   onMoveToGroup,
   onArchive,
+  onRestore,
   onDelete,
-  onMerge,
+  onSingleMerge,
   onEdit,
   onView,
   onClearSelection,
@@ -56,7 +60,6 @@ export function TagSelectionActions({
 }: TagSelectionActionsProps) {
   const hasGroups = groups.length > 0
   const isSingleSelection = selectedTagIds.length === 1
-  const isMultipleSelection = selectedTagIds.length >= 2
   const selectedTag = isSingleSelection ? tags.find((t) => t.id === selectedTagIds[0]) : null
 
   return (
@@ -104,6 +107,26 @@ export function TagSelectionActions({
         </DropdownMenu>
       )}
 
+      {/* 復元（アーカイブモード用） */}
+      {onRestore && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={async () => {
+                await onRestore(selectedTagIds)
+                onClearSelection()
+              }}
+              aria-label={t('tag.archive.restore')}
+            >
+              <RotateCcw className="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{t('tag.archive.restore')}</TooltipContent>
+        </Tooltip>
+      )}
+
       {/* アーカイブ */}
       {onArchive && (
         <Tooltip>
@@ -124,15 +147,20 @@ export function TagSelectionActions({
         </Tooltip>
       )}
 
-      {/* 一括マージ（2つ以上選択時） */}
-      {isMultipleSelection && onMerge && (
+      {/* マージ（1つ選択時のみ） */}
+      {isSingleSelection && selectedTag && onSingleMerge && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onMerge} aria-label={t('tags.bulkMerge.title')}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onSingleMerge(selectedTag)}
+              aria-label={t('tags.merge.title')}
+            >
               <Merge className="size-4" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>{t('tags.bulkMerge.title')}</TooltipContent>
+          <TooltipContent>{t('tags.merge.title')}</TooltipContent>
         </Tooltip>
       )}
 

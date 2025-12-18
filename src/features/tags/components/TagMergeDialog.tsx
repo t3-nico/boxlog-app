@@ -8,7 +8,7 @@ import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useMergeTag, useTags } from '@/features/tags/hooks/use-tags'
 import type { Tag } from '@/features/tags/types'
 import { cn } from '@/lib/utils'
-import { Check, ChevronDown, GitMerge } from 'lucide-react'
+import { AlertCircle, Check, ChevronDown, GitMerge } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
@@ -143,48 +143,51 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
         </div>
 
         {/* Content */}
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-visible">
           {/* 説明 */}
           <p className="text-muted-foreground text-sm">{t('tags.merge.autoMergeDescription')}</p>
 
           {/* ターゲットタグ選択（カスタムドロップダウン） */}
-          <div className="relative">
+          <div className="relative inline-block">
             {/* トリガーボタン */}
-            <button
+            <Button
               type="button"
+              variant="outline"
+              onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation()
-                setIsDropdownOpen(!isDropdownOpen)
+                e.preventDefault()
+                setIsDropdownOpen((prev) => !prev)
               }}
               className={cn(
-                'border-border bg-secondary text-secondary-foreground hover:bg-state-hover flex w-full items-center justify-between gap-2 rounded-md border px-3 py-2 text-sm',
+                'bg-secondary text-secondary-foreground hover:bg-state-hover justify-between gap-2',
                 isDropdownOpen && 'ring-ring/50 border-ring ring-2'
               )}
             >
               {selectedTag ? (
-                <div className="flex items-center gap-2">
-                  <div
-                    className="size-3 shrink-0 rounded-full"
-                    style={{ backgroundColor: selectedTag.color || DEFAULT_TAG_COLOR }}
-                  />
-                  <span>{selectedTag.name}</span>
+                <div className="flex max-w-48 items-center gap-1">
+                  <span className="shrink-0" style={{ color: selectedTag.color || DEFAULT_TAG_COLOR }}>
+                    #
+                  </span>
+                  <span className="truncate">{selectedTag.name}</span>
                 </div>
               ) : (
                 <span className="text-muted-foreground">{t('tags.merge.selectTarget')}</span>
               )}
-              <ChevronDown className={cn('size-4 opacity-50 transition-transform', isDropdownOpen && 'rotate-180')} />
-            </button>
+              <ChevronDown className="size-4 opacity-50" />
+            </Button>
 
             {/* ドロップダウンリスト */}
             {isDropdownOpen && (
-              <div className="bg-popover border-border absolute top-full left-0 z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border shadow-md">
+              <div className="bg-popover border-border absolute top-full left-0 z-[260] mt-1 max-h-60 max-w-72 min-w-48 overflow-y-auto rounded-md border p-1 shadow-lg">
                 {availableTags.length === 0 ? (
                   <p className="text-muted-foreground p-3 text-center text-sm">{t('tags.search.noTags')}</p>
                 ) : (
                   availableTags.map((tagItem) => (
-                    <button
+                    <Button
                       key={tagItem.id}
                       type="button"
+                      variant="ghost"
                       onClick={(e) => {
                         e.stopPropagation()
                         setTargetTagId(tagItem.id)
@@ -192,18 +195,14 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
                         setError(null)
                       }}
                       className={cn(
-                        'flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors',
-                        'hover:bg-state-hover',
-                        targetTagId === tagItem.id && 'bg-state-active'
+                        'flex w-full cursor-default justify-start gap-2',
+                        targetTagId === tagItem.id && 'bg-state-selected'
                       )}
                     >
-                      <div
-                        className="size-3 shrink-0 rounded-full"
-                        style={{ backgroundColor: tagItem.color || DEFAULT_TAG_COLOR }}
-                      />
+                      <span style={{ color: tagItem.color || DEFAULT_TAG_COLOR }}>#</span>
                       <span className="flex-1 truncate">{tagItem.name}</span>
                       {targetTagId === tagItem.id && <Check className="text-primary size-4 shrink-0" />}
-                    </button>
+                    </Button>
                   ))
                 )}
               </div>
@@ -211,7 +210,12 @@ export function TagMergeDialog({ tag, onClose }: TagMergeDialogProps) {
           </div>
 
           {/* エラーメッセージ */}
-          {error && <div className="bg-destructive/10 text-destructive rounded-md px-3 py-2 text-sm">{error}</div>}
+          {error && (
+            <div className="text-destructive flex items-center gap-2 text-sm">
+              <AlertCircle className="size-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
         </div>
 
         {/* Footer */}

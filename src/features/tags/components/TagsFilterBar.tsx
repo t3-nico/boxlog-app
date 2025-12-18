@@ -1,13 +1,12 @@
 'use client'
 
-import { ChevronDown, Filter, Plus, Settings2 } from 'lucide-react'
+import { ChevronDown, Plus, Settings2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -28,7 +27,7 @@ interface TagsFilterBarProps {
   columnSettings: ColumnSetting[]
   visibleColumns: VisibleColumn[]
   onColumnVisibilityChange: (columnId: TagColumnId, visible: boolean) => void
-  onCreateClick: () => void
+  onCreateClick?: () => void
   t: (key: string) => string
 }
 
@@ -45,22 +44,6 @@ export function TagsFilterBar({
   return (
     <div className="flex h-12 shrink-0 items-center justify-between px-4 py-2">
       <div className="flex h-8 items-center gap-2">
-        {/* Filter type dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Filter className="size-4" />
-              <span>{t('tags.page.filter.type')}</span>
-              <ChevronDown className="size-4 opacity-50" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <DropdownMenuItem>{t('tags.page.filter.all')}</DropdownMenuItem>
-            <DropdownMenuItem>{t('tags.page.filter.unused')}</DropdownMenuItem>
-            <DropdownMenuItem>{t('tags.page.filter.frequentlyUsed')}</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
         {/* Column settings dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -89,12 +72,14 @@ export function TagsFilterBar({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex h-8 items-center">
-        <Button onClick={onCreateClick} size="sm">
-          <Plus className="size-4" />
-          {t('tags.page.createTag')}
-        </Button>
-      </div>
+      {onCreateClick && (
+        <div className="flex h-8 items-center">
+          <Button onClick={onCreateClick} size="sm">
+            <Plus className="size-4" />
+            {t('tags.page.createTag')}
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

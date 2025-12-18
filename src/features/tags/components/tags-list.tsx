@@ -14,6 +14,7 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { Tag } from '@/features/tags/types'
@@ -143,10 +144,12 @@ const TagItem = ({
           {/* 展開/折りたたみアイコンまたはスペーサー */}
           <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
             {hasChildren === true && (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon-sm"
                 onClick={handleToggleExpanded}
-                className="tag-toggle-button z-10 rounded p-1 transition-colors"
+                className="tag-toggle-button z-10"
                 style={{ '--tag-color': tag.color || DEFAULT_TAG_COLOR } as React.CSSProperties}
               >
                 {isExpanded ? (
@@ -154,7 +157,7 @@ const TagItem = ({
                 ) : (
                   <ChevronRightIcon className="text-muted-foreground h-4 w-4" />
                 )}
-              </button>
+              </Button>
             )}
           </div>
 
@@ -201,36 +204,38 @@ const TagItem = ({
         {/* メニュー */}
         {!isCollapsed && (
           <div className="relative">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon-sm"
               onClick={handleMenuButtonClick}
-              className={`tag-menu-button rounded p-2 transition-all ${
-                isHovered || showMenu ? 'opacity-100' : 'opacity-0'
-              }`}
+              className={`tag-menu-button transition-all ${isHovered || showMenu ? 'opacity-100' : 'opacity-0'}`}
               style={{ '--tag-color': tag.color || DEFAULT_TAG_COLOR } as React.CSSProperties}
             >
               <EllipsisHorizontalIcon className="text-muted-foreground h-4 w-4" />
-            </button>
+            </Button>
 
             {/* コンテキストメニュー */}
             {showMenu != null && (
               <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-50 mt-1 min-w-36 rounded-lg border py-1 shadow-lg">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={handleEditTag}
-                  className="text-foreground hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                  className="text-foreground flex w-full justify-start gap-2"
                 >
                   <PencilIcon className="h-4 w-4" />
                   編集
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={handleDeleteTag}
-                  className="text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                  className="text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 flex w-full justify-start gap-2"
                 >
                   <TrashIcon className="h-4 w-4" />
                   削除
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -332,10 +337,12 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
     <div className="space-y-2">
       {/* セクションヘッダー */}
       <div className="flex w-full items-center justify-between">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={handleToggleExpansion}
-          className="text-muted-foreground hover:bg-state-hover section-header-toggle mb-2 flex items-center gap-1 rounded px-2 text-xs/6 font-medium transition-colors"
+          className="text-muted-foreground section-header-toggle mb-2 gap-1 px-2 text-xs/6 font-medium"
         >
           {isExpanded ? (
             <ChevronDownIcon className="text-muted-foreground h-4 w-4" />
@@ -348,15 +355,17 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
             <FolderIcon className="text-muted-foreground h-4 w-4" />
           )}
           <span>Tags</span>
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={handleCreateNewTag}
-          className="hover:bg-state-hover section-header-button rounded p-1 transition-colors"
+          className="section-header-button"
         >
           <PlusIcon className="text-muted-foreground h-4 w-4" />
-        </button>
+        </Button>
       </div>
 
       {/* タグリスト */}
@@ -384,14 +393,16 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
             <div className="py-4 text-center">
               <TagIcon className="text-muted-foreground mx-auto mb-2 h-6 w-6" />
               <p className="text-muted-foreground mb-2 text-xs">タグがありません</p>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={handleCreateNewTagCollapsed}
-                className="text-primary hover:bg-state-hover inline-flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors"
+                className="text-primary gap-1 text-xs"
               >
                 <PlusIcon className="h-4 w-4" />
                 作成
-              </button>
+              </Button>
             </div>
           )}
         </div>

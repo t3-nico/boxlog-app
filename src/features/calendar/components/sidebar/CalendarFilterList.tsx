@@ -72,7 +72,7 @@ export function CalendarFilterList() {
   return (
     <div className="space-y-2 p-2">
       {/* 種類（Plan / Record） */}
-      <SidebarSection title={t('calendar.filter.type')} defaultOpen className="space-y-0.5 py-1">
+      <SidebarSection title={t('calendar.filter.type')} defaultOpen className="space-y-1 py-1">
         <FilterItem
           label="Plan"
           checkboxColor={PLAN_COLOR}
@@ -90,9 +90,9 @@ export function CalendarFilterList() {
       </SidebarSection>
 
       {/* タグ */}
-      <SidebarSection title={t('calendar.filter.tags')} defaultOpen className="space-y-0.5 py-1">
+      <SidebarSection title={t('calendar.filter.tags')} defaultOpen className="space-y-1 py-1">
         {isLoading ? (
-          <div className="space-y-1.5 py-1">
+          <div className="space-y-1 py-1">
             <Skeleton className="h-6 w-full" />
             <Skeleton className="h-6 w-full" />
             <Skeleton className="h-6 w-full" />
@@ -131,7 +131,7 @@ export function CalendarFilterList() {
             {/* タグなし */}
             <FilterItem
               label={t('calendar.filter.untagged')}
-              icon={<CircleDashed className="size-3" />}
+              icon={<CircleDashed className="size-4" />}
               checked={showUntagged}
               onCheckedChange={toggleUntagged}
             />
@@ -182,13 +182,13 @@ function TagGroupSection({
           style={groupCheckboxStyle}
         />
         {/* 折りたたみトリガー */}
-        <CollapsibleTrigger className="hover:bg-state-hover flex flex-1 items-center justify-between rounded px-1.5 py-1.5 text-sm font-medium">
+        <CollapsibleTrigger className="hover:bg-state-hover flex flex-1 items-center justify-between rounded px-2 py-1 text-sm font-medium">
           <span className="truncate">{groupName}</span>
-          <ChevronRight className="size-3 transition-transform [[data-state=open]>&]:rotate-90" />
+          <ChevronRight className="size-4 transition-transform [[data-state=open]>&]:rotate-90" />
         </CollapsibleTrigger>
       </div>
       <CollapsibleContent>
-        <div className="space-y-0.5 pl-4">
+        <div className="space-y-1 pl-4">
           {tags.map((tag) => (
             <FilterItem
               key={tag.id}
@@ -235,7 +235,7 @@ function FilterItem({
   return (
     <label
       className={cn(
-        'hover:bg-state-hover flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm',
+        'hover:bg-state-hover flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm',
         disabled && 'cursor-not-allowed opacity-50'
       )}
       title={disabled ? disabledReason : undefined}

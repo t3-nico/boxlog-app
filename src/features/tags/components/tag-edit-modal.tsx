@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { TAG_DESCRIPTION_MAX_LENGTH, TAG_NAME_MAX_LENGTH } from '@/features/tags/constants/colors'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import type { Tag, TagGroup, UpdateTagInput } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
@@ -110,6 +111,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t('tag.form.examplePlaceholder')}
+                maxLength={TAG_NAME_MAX_LENGTH}
                 required
               />
             </div>
@@ -145,15 +147,15 @@ export const TagEditModal = ({ isOpen, onClose, onSave, tag }: TagEditModalProps
                 id="description"
                 value={description}
                 onChange={(e) => {
-                  if (e.target.value.length <= 100) {
+                  if (e.target.value.length <= TAG_DESCRIPTION_MAX_LENGTH) {
                     setDescription(e.target.value)
                   } else {
-                    toast.info('説明は100文字までです', { id: 'description-limit' })
+                    toast.info(`説明は${TAG_DESCRIPTION_MAX_LENGTH}文字までです`, { id: 'description-limit' })
                   }
                 }}
                 placeholder={t('tag.form.descriptionPlaceholder')}
                 rows={3}
-                maxLength={100}
+                maxLength={TAG_DESCRIPTION_MAX_LENGTH}
               />
             </div>
 
