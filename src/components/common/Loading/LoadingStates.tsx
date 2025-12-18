@@ -130,10 +130,10 @@ export const LoadingButton = ({
   className = '',
   disabled = false,
   onClick,
-  variant = 'default',
+  variant = 'primary',
 }: LoadingButtonProps) => {
   // variantのマッピング（LoadingButtonPropsのvariantをui/Buttonのvariantに変換）
-  const buttonVariant = variant === 'default' ? 'default' : variant === 'outline' ? 'outline' : 'ghost'
+  const buttonVariant = variant === 'primary' ? 'primary' : variant === 'outline' ? 'outline' : 'ghost'
 
   return (
     <Button
@@ -257,7 +257,7 @@ export const DataLoading = ({
         {errorComponent || (
           <div className="text-center">
             <p className="mb-2 text-red-600 dark:text-red-400">{t('error.loading.loadFailed')}</p>
-            <Button type="button" variant="link" onClick={handleReload}>
+            <Button type="button" variant="text" onClick={handleReload}>
               {t('error.loading.retry')}
             </Button>
           </div>

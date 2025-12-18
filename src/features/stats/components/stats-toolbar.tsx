@@ -130,7 +130,7 @@ export function StatsToolbar() {
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            variant={compareEnabled ? 'secondary' : 'ghost'}
+            variant={compareEnabled ? 'outline' : 'ghost'}
             size="sm"
             className={cn('h-8 gap-1.5', compareEnabled && 'bg-surface-container')}
             onClick={() => setCompareEnabled(!compareEnabled)}

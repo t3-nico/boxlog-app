@@ -27,5 +27,5 @@ export interface LoadingButtonProps {
   className?: string
   disabled?: boolean
   onClick?: () => void
-  variant?: 'default' | 'outline' | 'ghost'
+  variant?: 'primary' | 'outline' | 'ghost'
 }

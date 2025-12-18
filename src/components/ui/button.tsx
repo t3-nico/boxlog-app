@@ -8,7 +8,14 @@ import { cn } from '@/lib/utils'
 /**
  * ボタンバリアント定義
  *
- * サイズ設計（8pxグリッド準拠、Carbon Design System参考）:
+ * バリアント設計（Material Design 3 / Carbon Design System 参考）:
+ * - primary:     主要CTA（保存、送信、作成）
+ * - outline:     副次アクション（キャンセル、戻る）
+ * - ghost:       アイコンボタン、ツールバー
+ * - text:        テキストリンク風（詳細を見る、もっと見る）
+ * - destructive: 破壊的アクション（削除、解除）
+ *
+ * サイズ設計（8pxグリッド準拠）:
  * - sm:      24px (h-6)  - コンパクトUI、ツールバー、テーブル内
  * - default: 32px (h-8)  - 標準的なアクション
  * - lg:      40px (h-10) - 主要なCTA、フォーム送信
@@ -38,23 +45,24 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover active:bg-primary-hover',
+        // 主要CTA - 最も強調されるボタン
+        primary: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover active:bg-primary-hover',
+        // 副次アクション - ボーダー付きの控えめなボタン
+        outline: [
+          'border border-input bg-background text-foreground shadow-sm',
+          'hover:bg-state-hover active:bg-state-hover',
+        ].join(' '),
+        // アイコンボタン・ツールバー - 背景なし、ホバーで背景出現
+        ghost: 'text-foreground hover:bg-state-hover active:bg-state-hover',
+        // テキストリンク風 - 下線スタイル
+        text: 'text-primary underline-offset-4 hover:underline',
+        // 破壊的アクション - 削除、解除など
         destructive: [
           'bg-destructive text-white shadow-sm',
           'hover:bg-destructive-hover active:bg-destructive-hover',
           'focus-visible:outline-destructive',
           'dark:bg-destructive/60',
         ].join(' '),
-        outline: [
-          'border border-input bg-background text-foreground shadow-sm',
-          'hover:bg-state-hover active:bg-state-hover',
-        ].join(' '),
-        secondary: [
-          'bg-secondary text-secondary-foreground shadow-sm',
-          'hover:bg-state-hover active:bg-state-hover',
-        ].join(' '),
-        ghost: 'text-foreground hover:bg-state-hover active:bg-state-hover',
-        link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {
         // sm: 24px高さ、12pxパディング、14pxアイコン
@@ -93,7 +101,7 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: 'primary',
       size: 'default',
     },
   }
@@ -112,30 +120,31 @@ export interface ButtonProps extends React.ComponentProps<'button'>, VariantProp
  * ボタンコンポーネント
  *
  * @example
- * // 基本的な使用
- * <Button>ラベル</Button>
+ * // 基本的な使用（primary）
+ * <Button>保存</Button>
+ * <Button variant="primary">送信</Button>
  *
  * @example
- * // アイコン付きボタン
- * <Button>
- *   <Plus className="size-4" />
- *   新規作成
- * </Button>
+ * // 副次アクション（outline）
+ * <Button variant="outline">キャンセル</Button>
  *
  * @example
- * // アイコンのみのボタン（アクセシビリティ対応）
+ * // アイコンボタン（ghost）
  * <Button variant="ghost" size="icon" aria-label="設定を開く">
  *   <Settings className="size-4" />
  * </Button>
  *
  * @example
- * // 無効化ボタン（aria-disabled推奨）
- * <Button aria-disabled={true}>送信</Button>
+ * // テキストリンク風（text）
+ * <Button variant="text">詳細を見る</Button>
+ *
+ * @example
+ * // 破壊的アクション（destructive）
+ * <Button variant="destructive">削除</Button>
  *
  * @example
  * // ローディング状態
  * <Button isLoading>保存中...</Button>
- * <Button isLoading loadingText="送信中...">送信</Button>
  */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
