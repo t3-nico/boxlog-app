@@ -111,12 +111,20 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     return t('tags.sidebar.allTags')
   }, [isUncategorizedFilter, isArchiveFilter, selectedGroup, t])
 
-  // initialGroup が解決されたら selectedGroupId を更新
+  // フィルター状態に応じて selectedGroupId を更新
   useEffect(() => {
-    if (initialGroup && selectedGroupId !== initialGroup.id) {
-      setSelectedGroupId(initialGroup.id)
+    if (initialGroup) {
+      // グループフィルターの場合はグループIDを設定
+      if (selectedGroupId !== initialGroup.id) {
+        setSelectedGroupId(initialGroup.id)
+      }
+    } else if (effectiveFilter === 'all' || effectiveFilter === 'uncategorized' || effectiveFilter === 'archive') {
+      // グループ以外のフィルターの場合はクリア
+      if (selectedGroupId !== null) {
+        setSelectedGroupId(null)
+      }
     }
-  }, [initialGroup, selectedGroupId])
+  }, [initialGroup, effectiveFilter, selectedGroupId])
 
   // タグデータをContextに同期（ID配列のjoinで軽量な変更検知）
   const fetchedTagIds = fetchedTags.map((t) => t.id).join(',')

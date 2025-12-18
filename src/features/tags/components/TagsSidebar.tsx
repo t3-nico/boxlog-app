@@ -68,13 +68,17 @@ export function TagsSidebar({
   // 外部から制御される isCreating を使用
   const isCreating = externalIsCreating
 
-  const isArchivePage = pathname?.includes('/archive')
-  const isUncategorizedPage = pathname?.includes('/uncategorized')
+  // Context優先でアクティブ状態を判定（フォールバック: pathname）
+  const isArchivePage = tagsNav?.filter === 'archive' || pathname?.includes('/archive')
+  const isUncategorizedPage = tagsNav?.filter === 'uncategorized' || pathname?.includes('/uncategorized')
   const currentGroupNumber = useMemo(() => {
+    // Context優先
+    if (tagsNav?.groupNumber !== undefined) return tagsNav.groupNumber
+    // フォールバック: pathname から解析
     if (!pathname) return null
     const match = pathname.match(/\/tags\/g-(\d+)/)
     return match ? Number(match[1]) : null
-  }, [pathname])
+  }, [tagsNav?.groupNumber, pathname])
 
   // インライン作成を開始
   const handleStartCreating = useCallback(() => {
@@ -282,6 +286,14 @@ export function TagsSidebar({
     return allTags.filter((tag) => !tag.group_id && tag.is_active).length
   }, [allTags])
 
+  const handleAllTagsClick = useCallback(() => {
+    if (tagsNav) {
+      tagsNav.navigateToFilter('all')
+    } else {
+      onAllTagsClick()
+    }
+  }, [tagsNav, onAllTagsClick])
+
   const handleArchiveClick = useCallback(() => {
     if (tagsNav) {
       tagsNav.navigateToFilter('archive')
@@ -360,7 +372,7 @@ export function TagsSidebar({
           {/* すべてのタグ */}
           <button
             type="button"
-            onClick={onAllTagsClick}
+            onClick={handleAllTagsClick}
             className={`w-full rounded-md px-3 py-2 text-left text-sm transition-colors ${
               !isArchivePage && !isUncategorizedPage && !currentGroupNumber
                 ? 'bg-state-selected text-foreground'
