@@ -294,6 +294,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.2.1",
+    "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.64.0",
     "react-markdown": "^10.1.0",
     "react-resizable-panels": "^3.0.6",

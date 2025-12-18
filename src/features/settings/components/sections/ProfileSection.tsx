@@ -2,15 +2,13 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
-import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 
-import { Button } from '@/components/ui/button'
+import { AvatarDropzone } from '@/components/ui/avatar-dropzone'
 import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { getErrorMessage } from '@/lib/errors'
 import { createClient } from '@/lib/supabase/client'
 import { deleteAvatar, uploadAvatar } from '@/lib/supabase/storage'
-import { useTranslations } from 'next-intl'
 
 import { useAutoSaveSettings } from '../../hooks/useAutoSaveSettings'
 import { SettingField } from '../fields/SettingField'
@@ -88,9 +86,8 @@ export function ProfileSection() {
   }, [user?.id, user?.email])
 
   const handleAvatarUpload = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0]
-      if (!file || !user?.id) return
+    async (file: File) => {
+      if (!user?.id) return
 
       setIsUploading(true)
       try {
@@ -99,19 +96,16 @@ export function ProfileSection() {
         profile.updateValue('uploadedAvatar', publicUrl)
       } catch (error) {
         console.error('Avatar upload error:', error)
-        alert(getErrorMessage(error, t('errors.storage.uploadFailed')))
+        throw error // AvatarDropzone側でエラー表示
       } finally {
         setIsUploading(false)
       }
     },
-    [profile, user?.id, t]
+    [profile, user?.id]
   )
 
   const handleAvatarRemove = useCallback(async () => {
     if (!user?.id) return
-
-    const confirmed = window.confirm(t('settings.account.avatarDeleteConfirm'))
-    if (!confirmed) return
 
     setIsUploading(true)
     try {
@@ -120,11 +114,11 @@ export function ProfileSection() {
       profile.updateValue('uploadedAvatar', null)
     } catch (error) {
       console.error('Avatar delete error:', error)
-      alert(getErrorMessage(error, t('errors.storage.deleteFailed')))
+      throw error // AvatarDropzone側でエラー表示
     } finally {
       setIsUploading(false)
     }
-  }, [profile, user?.id, t])
+  }, [profile, user?.id])
 
   const handleUsernameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,72 +129,16 @@ export function ProfileSection() {
 
   return (
     <SettingsCard title={t('settings.account.profile')} isSaving={profile.isSaving}>
-      <div className="space-y-4">
+      <div className="space-y-6">
         {/* Profile Picture Section */}
         <SettingField label={t('settings.account.profilePicture')}>
-          <div className="flex items-start gap-6">
-            {/* Avatar Preview */}
-            <div className="group relative">
-              {uploadedAvatar ? (
-                <div className="relative">
-                  <Image
-                    src={uploadedAvatar}
-                    alt={t('settings.account.profilePictureAlt')}
-                    width={80}
-                    height={80}
-                    className="ring-border rounded-full object-cover ring-2"
-                    sizes="80px"
-                  />
-                  {/* Hover overlay */}
-                  <label
-                    htmlFor="avatar-upload"
-                    className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/60 opacity-0 transition-opacity group-hover:opacity-100"
-                  >
-                    <span className="text-xs font-medium text-white">変更</span>
-                  </label>
-                </div>
-              ) : (
-                <label
-                  htmlFor="avatar-upload"
-                  className="border-border bg-surface-container hover:bg-state-hover flex h-20 w-20 cursor-pointer items-center justify-center rounded-full border-2 border-dashed transition-colors"
-                >
-                  <span className="text-muted-foreground text-xs">+</span>
-                </label>
-              )}
-            </div>
-
-            {/* Upload Controls */}
-            <div className="flex flex-1 flex-col gap-3">
-              <input
-                id="avatar-upload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleAvatarUpload}
-                disabled={isUploading}
-              />
-              <div className="flex items-center gap-2">
-                <label htmlFor="avatar-upload">
-                  <Button type="button" variant="outline" size="sm" disabled={isUploading} asChild>
-                    <span>{isUploading ? 'アップロード中...' : '画像を選択'}</span>
-                  </Button>
-                </label>
-                {uploadedAvatar && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleAvatarRemove}
-                    disabled={isUploading}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    削除
-                  </Button>
-                )}
-              </div>
-              <p className="text-muted-foreground text-xs">JPG, PNG、5MB以下</p>
-            </div>
-          </div>
+          <AvatarDropzone
+            currentAvatarUrl={uploadedAvatar}
+            onUpload={handleAvatarUpload}
+            onRemove={handleAvatarRemove}
+            isUploading={isUploading}
+            size={96}
+          />
         </SettingField>
 
         <SettingField label="ユーザー名" description="アプリ内で表示される名前です" required>
