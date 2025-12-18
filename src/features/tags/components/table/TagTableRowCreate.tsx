@@ -44,7 +44,7 @@ interface TagTableRowCreateProps {
  * - 外側クリックでキャンセル
  */
 export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRowCreateProps>(
-  ({ selectedGroupId, groups, allTags, onCreated }, ref) => {
+  ({ selectedGroupId, groups, allTags: _allTags, onCreated }, ref) => {
     const t = useTranslations()
     const { getVisibleColumns, getColumnWidth } = useTagColumnStore()
     const createTagMutation = useCreateTag()
@@ -130,9 +130,6 @@ export const TagTableRowCreate = forwardRef<TagTableRowCreateHandle, TagTableRow
 
     // グループ情報
     const selectedGroup = selectedGroupId ? groups.find((g) => g.id === selectedGroupId) : null
-    const groupTagCount = selectedGroup
-      ? allTags.filter((t) => t.group_id === selectedGroup.id && t.is_active).length
-      : 0
 
     if (!isCreating) return null
 

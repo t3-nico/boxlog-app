@@ -50,7 +50,7 @@ interface PageHeaderProps {
  */
 export function PageHeader({
   title,
-  count,
+  count: _count,
   subtitle,
   actions,
   children,

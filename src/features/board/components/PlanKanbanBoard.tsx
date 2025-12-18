@@ -198,7 +198,7 @@ interface KanbanColumnProps {
   children: React.ReactNode
 }
 
-function KanbanColumn({ title, count, variant, status, children }: KanbanColumnProps) {
+function KanbanColumn({ title, count: _count, variant, status, children }: KanbanColumnProps) {
   const [isAdding, setIsAdding] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [selectedDate, setSelectedDate] = useState<Date>()

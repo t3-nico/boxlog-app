@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
-import { Suspense } from 'react'
+import { Suspense, useMemo } from 'react'
 
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { CalendarSidebar } from '@/features/calendar/components/sidebar/CalendarSidebar'
@@ -51,20 +51,30 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
   const user = useAuthStore((state) => state.user)
   const isAuthenticated = !!user
 
-  // ページごとにSidebarを切り替え
-  const isCalendarPage = pathname?.startsWith(`/${locale}/calendar`) ?? false
-  const isInboxPage = pathname?.startsWith(`/${locale}/inbox`) ?? false
-  const isTagsPage = pathname?.startsWith(`/${locale}/tags`) ?? false
-  const isStatsPage = pathname?.startsWith(`/${locale}/stats`) ?? false
+  // パフォーマンス最適化: ページ判定をメモ化（pathnameとlocale変更時のみ再計算）
+  const currentPage = useMemo(() => {
+    if (pathname?.startsWith(`/${locale}/calendar`)) return 'calendar'
+    if (pathname?.startsWith(`/${locale}/inbox`)) return 'inbox'
+    if (pathname?.startsWith(`/${locale}/tags`)) return 'tags'
+    if (pathname?.startsWith(`/${locale}/stats`)) return 'stats'
+    return 'default'
+  }, [pathname, locale])
 
-  // サイドバーコンポーネントを決定
-  const renderSidebar = () => {
-    if (isCalendarPage) return <CalendarSidebar />
-    if (isInboxPage) return <InboxSidebarWrapper />
-    if (isTagsPage) return <TagsSidebarWrapper />
-    if (isStatsPage) return <StatsSidebar />
-    return <AppSidebar />
-  }
+  // サイドバーコンポーネントをメモ化（currentPage変更時のみ再計算）
+  const SidebarComponent = useMemo(() => {
+    switch (currentPage) {
+      case 'calendar':
+        return CalendarSidebar
+      case 'inbox':
+        return InboxSidebarWrapper
+      case 'tags':
+        return TagsSidebarWrapper
+      case 'stats':
+        return StatsSidebar
+      default:
+        return AppSidebar
+    }
+  }, [currentPage])
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -79,7 +89,11 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           <div className="flex min-h-0 flex-1">
             {/* Sidebar（240px固定、開閉可能）← ページごとに動的切り替え */}
-            {isOpen && <div className="h-full w-60 shrink-0">{renderSidebar()}</div>}
+            {isOpen && (
+              <div className="h-full w-60 shrink-0">
+                <SidebarComponent />
+              </div>
+            )}
 
             {/* Main Content + Inspector（自動的に残りのスペースを使用） */}
             <div className="min-w-0 flex-1 overflow-hidden">

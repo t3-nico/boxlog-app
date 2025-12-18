@@ -1,0 +1,18 @@
+{
+  "uploadFile": "Upload file",
+  "uploadFilesWithCount": "Upload up to {count} files",
+  "dragAndDrop": "Drag and drop or",
+  "selectFile": "select file",
+  "selectFiles": "select files",
+  "toUpload": "to upload",
+  "maxFileSize": "Maximum file size: {size}",
+  "uploadButton": "Upload files",
+  "uploadingButton": "Uploading...",
+  "uploading": "Uploading file...",
+  "uploadSuccess": "Successfully uploaded {count} file(s)",
+  "uploadedSuccess": "Successfully uploaded",
+  "uploadFailed": "Failed to upload: {message}",
+  "fileTooLarge": "File is larger than {maxSize} (Size: {actualSize})",
+  "maxFilesExceeded": "You may upload only up to {maxFiles} files, please remove {removeCount} file(s).",
+  "removeFile": "Remove file"
+}

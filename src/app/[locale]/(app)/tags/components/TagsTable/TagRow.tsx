@@ -60,13 +60,13 @@ interface TagRowProps {
 export function TagRow({
   tag,
   groups,
-  tags,
+  tags: _tags,
   columnWidths,
   isSelected,
   isEditing,
   editingField,
   editValue,
-  planCount,
+  planCount: _planCount,
   onSelect,
   onContextSelect,
   onColorChange,
@@ -82,7 +82,6 @@ export function TagRow({
   t,
 }: TagRowProps) {
   const group = tag.group_id ? groups.find((g) => g.id === tag.group_id) : null
-  const groupTagCount = group ? tags.filter((t) => t.group_id === group.id && t.is_active).length : 0
 
   return (
     <ContextMenu modal={false}>

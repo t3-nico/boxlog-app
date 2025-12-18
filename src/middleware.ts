@@ -25,6 +25,9 @@ const protectedPaths = [
 // 認証ページのパス
 const authPaths = ['/login', '/signup', '/auth']
 
+// 公開パス（認証チェック不要）- getUser() 呼び出しをスキップしてパフォーマンス向上
+const publicPaths = ['/', '/about', '/privacy', '/terms', '/contact', '/pricing']
+
 // 言語プレフィックスを除いたパスを取得
 // as-needed設定: デフォルト言語(en)はプレフィックスなし
 function getPathWithoutLocale(pathname: string): string {
@@ -104,6 +107,19 @@ export async function middleware(request: NextRequest) {
     return intlResponse
   }
 
+  const currentLocale = getCurrentLocale(pathname)
+  const pathWithoutLocale = getPathWithoutLocale(pathname)
+
+  const isProtectedPath = protectedPaths.some((path) => pathWithoutLocale.startsWith(path))
+  const isAuthPath = authPaths.some((path) => pathWithoutLocale.startsWith(path))
+  const isPublicPath = publicPaths.some((path) => pathWithoutLocale === path)
+
+  // パフォーマンス最適化: 公開ページでは getUser() をスキップ
+  // getUser() は Supabase API への往復が発生するため、認証が必要なパスのみ実行
+  if (isPublicPath && !isProtectedPath && !isAuthPath) {
+    return intlResponse
+  }
+
   // Supabaseセッションを更新（ユーザー情報も同時取得 - 重複呼び出し防止で高速化）
   const { response, user } = await updateSession(request)
 
@@ -118,12 +134,6 @@ export async function middleware(request: NextRequest) {
       })
       return response
     }
-
-    const currentLocale = getCurrentLocale(pathname)
-    const pathWithoutLocale = getPathWithoutLocale(pathname)
-
-    const isProtectedPath = protectedPaths.some((path) => pathWithoutLocale.startsWith(path))
-    const isAuthPath = authPaths.some((path) => pathWithoutLocale.startsWith(path))
 
     // 未認証でprotectedPathにアクセスした場合
     if (!user && isProtectedPath) {
@@ -148,8 +158,6 @@ export async function middleware(request: NextRequest) {
     return response
   } catch (error) {
     console.error('Middleware error:', error)
-
-    const currentLocale = getCurrentLocale(pathname)
     return NextResponse.redirect(new URL(getLocalizedPath('/auth/login', currentLocale), request.url))
   }
 }

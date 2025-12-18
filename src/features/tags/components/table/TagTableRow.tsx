@@ -51,7 +51,14 @@ interface TagCellContentProps {
  * タグテーブルのセル内容をレンダリング
  * DataTableのrender関数から使用
  */
-export function TagCellContent({ tag, columnId, groups, allTags, planCounts, lastUsed }: TagCellContentProps) {
+export function TagCellContent({
+  tag,
+  columnId,
+  groups,
+  allTags: _allTags,
+  planCounts: _planCounts,
+  lastUsed,
+}: TagCellContentProps) {
   const t = useTranslations()
   const { openInspector } = useTagInspectorStore()
   const updateTagMutation = useUpdateTag()
@@ -91,7 +98,6 @@ export function TagCellContent({ tag, columnId, groups, allTags, planCounts, las
 
   // グループ情報
   const group = tag.group_id ? groups.find((g) => g.id === tag.group_id) : null
-  const groupTagCount = group ? allTags.filter((t) => t.group_id === group.id && t.is_active).length : 0
 
   switch (columnId) {
     case 'id':

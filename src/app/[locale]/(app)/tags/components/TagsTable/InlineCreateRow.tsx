@@ -48,7 +48,7 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
     newTagDescription,
     newTagColor,
     selectedGroup,
-    tags,
+    tags: _tags,
     onNameChange,
     onDescriptionChange,
     onColorChange,
@@ -58,8 +58,6 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
   },
   ref
 ) {
-  const groupTagCount = selectedGroup ? tags.filter((t) => t.group_id === selectedGroup.id && t.is_active).length : 0
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       onSave()

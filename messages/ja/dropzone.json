@@ -1,0 +1,18 @@
+{
+  "uploadFile": "ファイルをアップロード",
+  "uploadFilesWithCount": "{count}個までファイルをアップロード",
+  "dragAndDrop": "ドラッグ＆ドロップ、または",
+  "selectFile": "ファイルを選択",
+  "selectFiles": "ファイルを選択",
+  "toUpload": "してアップロード",
+  "maxFileSize": "最大ファイルサイズ: {size}",
+  "uploadButton": "アップロード",
+  "uploadingButton": "アップロード中...",
+  "uploading": "ファイルをアップロード中...",
+  "uploadSuccess": "{count}個のファイルをアップロードしました",
+  "uploadedSuccess": "アップロード完了",
+  "uploadFailed": "アップロード失敗: {message}",
+  "fileTooLarge": "ファイルサイズが大きすぎます（最大: {maxSize}、実際: {actualSize}）",
+  "maxFilesExceeded": "最大{maxFiles}個までアップロード可能です。{removeCount}個のファイルを削除してください。",
+  "removeFile": "ファイルを削除"
+}

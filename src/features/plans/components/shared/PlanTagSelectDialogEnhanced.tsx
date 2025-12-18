@@ -14,7 +14,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
-import { api } from '@/lib/trpc'
 
 interface PlanTagSelectDialogEnhancedProps {
   children: React.ReactNode
@@ -46,9 +45,6 @@ export function PlanTagSelectDialogEnhanced({
   const { data: tagsData } = useTags(true)
   const { data: groups = [] } = useTagGroups()
   const createTagMutation = useCreateTag()
-  // 最適化: getTagStats で counts と lastUsed を一括取得
-  const { data: tagStats } = api.plans.getTagStats.useQuery()
-  const tagplanCounts = tagStats?.counts ?? {}
 
   const allTags = tagsData ?? []
 
