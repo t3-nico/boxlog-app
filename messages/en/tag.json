@@ -126,7 +126,17 @@
       "changeColor": "Change Color",
       "delete": "Delete",
       "colorLabel": "Color {color}",
-      "changeColorAria": "Change color of {name}"
+      "changeColorAria": "Change color of {name}",
+      "sortGroups": "Sort groups",
+      "sort": {
+        "manual": "Manual",
+        "nameAsc": "Name (A→Z)",
+        "nameDesc": "Name (Z→A)",
+        "createdAsc": "Created (oldest)",
+        "createdDesc": "Created (newest)",
+        "tagCountDesc": "Tag count (most)",
+        "tagCountAsc": "Tag count (least)"
+      }
     },
     "toast": {
       "groupNameRequired": "Please enter a group name",
@@ -358,7 +368,17 @@
       "changeColor": "Change Color",
       "delete": "Delete",
       "colorLabel": "Color {color}",
-      "changeColorAria": "Change color of {name}"
+      "changeColorAria": "Change color of {name}",
+      "sortGroups": "Sort groups",
+      "sort": {
+        "manual": "Manual",
+        "nameAsc": "Name (A→Z)",
+        "nameDesc": "Name (Z→A)",
+        "createdAsc": "Created (oldest)",
+        "createdDesc": "Created (newest)",
+        "tagCountDesc": "Tag count (most)",
+        "tagCountAsc": "Tag count (least)"
+      }
     },
     "toast": {
       "groupNameRequired": "Please enter a group name",

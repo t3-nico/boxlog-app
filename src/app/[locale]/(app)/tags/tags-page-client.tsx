@@ -1,7 +1,6 @@
 'use client'
 
 import { Plus } from 'lucide-react'
-import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -34,11 +33,15 @@ import { toast } from 'sonner'
 interface TagsPageClientProps {
   initialGroupNumber?: string
   showUncategorizedOnly?: boolean
+  showArchiveOnly?: boolean
 }
 
-export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = false }: TagsPageClientProps = {}) {
+export function TagsPageClient({
+  initialGroupNumber,
+  showUncategorizedOnly = false,
+  showArchiveOnly = false,
+}: TagsPageClientProps = {}) {
   const t = useTranslations()
-  const pathname = usePathname()
 
   // データ取得
   const { data: fetchedTags = [], isLoading: isFetching } = useTags(true)
@@ -88,17 +91,17 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
 
   // ページタイトルを決定
   const pageTitle = useMemo(() => {
+    if (showArchiveOnly) {
+      return t('tags.sidebar.archive')
+    }
     if (showUncategorizedOnly) {
       return t('tags.sidebar.uncategorized')
-    }
-    if (pathname?.includes('/archive')) {
-      return t('tags.sidebar.archive')
     }
     if (selectedGroup) {
       return selectedGroup.name
     }
     return t('tags.sidebar.allTags')
-  }, [showUncategorizedOnly, pathname, selectedGroup, t])
+  }, [showArchiveOnly, showUncategorizedOnly, selectedGroup, t])
 
   // initialGroup が解決されたら selectedGroupId を更新
   useEffect(() => {
@@ -133,10 +136,13 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
     }
   }, [activeTagsCount, showUncategorizedOnly, initialGroupNumber, t])
 
-  // すべてのアクティブなタグを取得
+  // すべてのタグを取得（アーカイブモードによって切り替え）
   const baseTags = useMemo(() => {
+    if (showArchiveOnly) {
+      return tags.filter((tag) => !tag.is_active)
+    }
     return tags.filter((tag) => tag.is_active)
-  }, [tags])
+  }, [tags, showArchiveOnly])
 
   // 検索とグループフィルタ適用
   const filteredTags = useMemo(() => {
@@ -264,6 +270,28 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
       } catch (error) {
         console.error('Failed to archive tags:', error)
         toast.error(t('tags.page.bulkArchiveFailed'))
+      }
+    },
+    [tags, updateTagMutation, t]
+  )
+
+  // ハンドラー: 一括復元（アーカイブモード用）
+  const handleBulkRestore = useCallback(
+    async (tagIds: string[]) => {
+      try {
+        for (const tagId of tagIds) {
+          const tag = tags.find((t) => t.id === tagId)
+          if (tag) {
+            await updateTagMutation.mutateAsync({
+              id: tag.id,
+              data: { is_active: true },
+            })
+          }
+        }
+        toast.success(t('tag.archive.restoreSuccess', { name: `${tagIds.length}個のタグ` }))
+      } catch (error) {
+        console.error('Failed to restore tags:', error)
+        toast.error(t('tag.archive.restoreFailed'))
       }
     },
     [tags, updateTagMutation, t]
@@ -420,18 +448,38 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           selectedCount={selectedCount}
           onClearSelection={clearSelection}
           actions={
-            <TagSelectionActions
-              selectedTagIds={Array.from(selectedTagIds)}
-              tags={tags}
-              groups={groups}
-              onMoveToGroup={handleMoveToGroup}
-              onArchive={handleBulkArchive}
-              onDelete={handleOpenBulkDeleteDialog}
-              onSingleMerge={handleOpenSingleMerge}
-              onClearSelection={clearSelection}
-              t={t}
-            />
+            showArchiveOnly ? (
+              <TagSelectionActions
+                selectedTagIds={Array.from(selectedTagIds)}
+                tags={tags}
+                groups={[]}
+                onMoveToGroup={handleMoveToGroup}
+                onRestore={handleBulkRestore}
+                onDelete={handleOpenBulkDeleteDialog}
+                onClearSelection={clearSelection}
+                t={t}
+              />
+            ) : (
+              <TagSelectionActions
+                selectedTagIds={Array.from(selectedTagIds)}
+                tags={tags}
+                groups={groups}
+                onMoveToGroup={handleMoveToGroup}
+                onArchive={handleBulkArchive}
+                onDelete={handleOpenBulkDeleteDialog}
+                onSingleMerge={handleOpenSingleMerge}
+                onClearSelection={clearSelection}
+                t={t}
+              />
+            )
           }
+        />
+      ) : showArchiveOnly ? (
+        <TagsFilterBar
+          columnSettings={columnSettings}
+          visibleColumns={visibleColumns}
+          onColumnVisibilityChange={setColumnVisibility}
+          t={t}
         />
       ) : (
         <TagsFilterBar
@@ -465,16 +513,22 @@ export function TagsPageClient({ initialGroupNumber, showUncategorizedOnly = fal
           selectAllLabel={t('tags.page.selectAll')}
           getSelectLabel={(tag) => t('tags.page.selectTag', { name: tag.name })}
           extraRows={
-            <TagTableRowCreate ref={createRowRef} selectedGroupId={selectedGroupId} groups={groups} allTags={tags} />
+            showArchiveOnly ? undefined : (
+              <TagTableRowCreate ref={createRowRef} selectedGroupId={selectedGroupId} groups={groups} allTags={tags} />
+            )
           }
           emptyState={
             <div className="border-border flex h-64 items-center justify-center rounded-xl border-2 border-dashed">
               <div className="text-center">
-                <p className="text-muted-foreground mb-4">{t('tags.page.noTags')}</p>
-                <Button onClick={() => createRowRef.current?.startCreate()}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t('tags.page.addFirstTag')}
-                </Button>
+                <p className="text-muted-foreground mb-4">
+                  {showArchiveOnly ? t('tag.archive.noArchivedTags') : t('tags.page.noTags')}
+                </p>
+                {!showArchiveOnly && (
+                  <Button onClick={() => createRowRef.current?.startCreate()}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    {t('tags.page.addFirstTag')}
+                  </Button>
+                )}
               </div>
             </div>
           }

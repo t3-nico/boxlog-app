@@ -1,27 +1,35 @@
 'use client'
 
-import { useDroppable } from '@dnd-kit/core'
-import { SortableContext } from '@dnd-kit/sortable'
-import { Archive, Folder, FolderX, Plus, Tags } from 'lucide-react'
+import { Check, Folder, ListFilter, Plus } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
 import { SidebarHeading } from '@/features/navigation/components/sidebar/SidebarHeading'
 import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
+import { AllTagsDropZone, ArchiveDropZone, UncategorizedDropZone } from '@/features/tags/components/sidebar'
 import { SortableGroupItem } from '@/features/tags/components/SortableGroupItem'
 import { TagGroupDeleteDialog } from '@/features/tags/components/tag-group-delete-dialog'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
-import { useCreateTagGroup, useDeleteTagGroup, useUpdateTagGroup } from '@/features/tags/hooks/use-tag-groups'
+import {
+  useCreateTagGroup,
+  useDeleteTagGroup,
+  useTagGroups,
+  useUpdateTagGroup,
+} from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import type { TagGroup } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
+
+/** グループソートの種類 */
+type GroupSortType = 'manual' | 'nameAsc' | 'nameDesc' | 'createdAsc' | 'createdDesc' | 'tagCountDesc' | 'tagCountAsc'
 
 interface TagsSidebarProps {
   onAllTagsClick: () => void
@@ -46,20 +54,22 @@ export function TagsSidebar({
   const t = useTranslations()
   const router = useRouter()
   const pathname = usePathname()
-  const { setIsCreatingGroup, reorderedGroups, sortableContextProps } = useTagsPageContext()
+  const { setIsCreatingGroup } = useTagsPageContext()
+  const { data: groups = [] } = useTagGroups()
   const { data: allTags = [] } = useTags(true) // タグ数カウント用
   const createGroupMutation = useCreateTagGroup()
   const updateGroupMutation = useUpdateTagGroup()
   const deleteGroupMutation = useDeleteTagGroup()
 
-  // グループのローディング状態はContextから取得できるかどうかで判断
-  const isLoadingGroups = reorderedGroups.length === 0 && isLoading
+  // グループのローディング状態
+  const isLoadingGroups = groups.length === 0 && isLoading
 
   const [deletingGroup, setDeletingGroup] = useState<TagGroup | null>(null)
   const [newGroupName, setNewGroupName] = useState('')
   const [newGroupColor, setNewGroupColor] = useState(DEFAULT_GROUP_COLOR)
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null)
   const [editingGroupName, setEditingGroupName] = useState('')
+  const [sortType, setSortType] = useState<GroupSortType>('manual')
 
   // インライン作成フォームのref
   const inlineFormRef = useRef<HTMLDivElement>(null)
@@ -209,7 +219,7 @@ export function TagsSidebar({
   // カラー更新
   const handleUpdateColor = useCallback(
     async (groupId: string, color: string) => {
-      const group = reorderedGroups.find((g) => g.id === groupId)
+      const group = groups.find((g) => g.id === groupId)
       if (!group) return
 
       try {
@@ -225,7 +235,7 @@ export function TagsSidebar({
         console.error('Failed to update group color:', error)
       }
     },
-    [reorderedGroups, updateGroupMutation]
+    [groups, updateGroupMutation]
   )
 
   // グループごとのタグ数をカウント
@@ -287,44 +297,38 @@ export function TagsSidebar({
     [router, pathname]
   )
 
-  // 未分類へのドロップゾーン
-  const UncategorizedDropZone = () => {
-    const { setNodeRef, isOver } = useDroppable({
-      id: 'drop-uncategorized',
-      data: {
-        type: 'group',
-        groupId: null,
-      },
-    })
+  // 「すべてのタグ」がアクティブかどうか
+  const isAllTagsActive = !isArchivePage && !isUncategorizedPage && !currentGroupNumber
 
-    return (
-      <div
-        ref={setNodeRef}
-        role="button"
-        tabIndex={0}
-        onClick={handleUncategorizedClick}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            handleUncategorizedClick()
-          }
-        }}
-        className={`hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${
-          isUncategorizedPage ? 'bg-state-selected text-foreground' : 'text-muted-foreground'
-        } ${isOver ? 'bg-primary/10 border-primary/50 border-2 border-dashed' : ''}`}
-      >
-        <div className="flex w-full items-center justify-between gap-2">
-          <div className="flex min-w-0 flex-1 items-center gap-2">
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center">
-              <FolderX className="text-muted-foreground h-4 w-4" />
-            </div>
-            <span>{t('tags.sidebar.uncategorized')}</span>
-          </div>
-          <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>
-        </div>
-      </div>
-    )
-  }
+  // ソート済みグループ
+  const sortedGroups = useMemo(() => {
+    if (sortType === 'manual') {
+      return groups
+    }
+
+    const sorted = [...groups]
+    switch (sortType) {
+      case 'nameAsc':
+        sorted.sort((a, b) => a.name.localeCompare(b.name, 'ja'))
+        break
+      case 'nameDesc':
+        sorted.sort((a, b) => b.name.localeCompare(a.name, 'ja'))
+        break
+      case 'createdAsc':
+        sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+        break
+      case 'createdDesc':
+        sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        break
+      case 'tagCountDesc':
+        sorted.sort((a, b) => getGroupTagCount(b.id) - getGroupTagCount(a.id))
+        break
+      case 'tagCountAsc':
+        sorted.sort((a, b) => getGroupTagCount(a.id) - getGroupTagCount(b.id))
+        break
+    }
+    return sorted
+  }, [groups, sortType, getGroupTagCount])
 
   if (isLoading || isLoadingGroups) {
     return (
@@ -341,113 +345,106 @@ export function TagsSidebar({
       {/* コンテンツ */}
       <nav className="flex-1 overflow-y-auto px-2 py-2">
         <div className="space-y-1">
-          {/* すべてのタグ */}
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={onAllTagsClick}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                onAllTagsClick()
-              }
-            }}
-            className={`hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${
-              !isArchivePage && !isUncategorizedPage && !currentGroupNumber
-                ? 'bg-state-selected text-foreground'
-                : 'text-muted-foreground'
-            }`}
-          >
-            <div className="flex w-full items-center justify-between gap-2">
-              <div className="flex min-w-0 flex-1 items-center gap-2">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center">
-                  <Tags className="h-4 w-4" />
-                </div>
-                <span>{t('tags.sidebar.allTags')}</span>
-              </div>
-              <span className="text-muted-foreground text-xs">{activeTagsCount}</span>
-            </div>
-          </div>
+          {/* すべてのタグ（アーカイブから復元のドロップゾーン） */}
+          <AllTagsDropZone isActive={isAllTagsActive} activeTagsCount={activeTagsCount} onClick={onAllTagsClick} />
 
           {/* 未分類 */}
-          <UncategorizedDropZone />
+          <UncategorizedDropZone
+            isActive={isUncategorizedPage ?? false}
+            uncategorizedTagsCount={uncategorizedTagsCount}
+            onClick={handleUncategorizedClick}
+          />
 
           {/* アーカイブ */}
-          <div
-            role="button"
-            tabIndex={0}
+          <ArchiveDropZone
+            isActive={isArchivePage ?? false}
+            archivedTagsCount={archivedTagsCount}
             onClick={handleArchiveClick}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                handleArchiveClick()
-              }
-            }}
-            className={`hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${
-              isArchivePage ? 'bg-state-selected text-foreground' : 'text-muted-foreground'
-            }`}
-          >
-            <div className="flex w-full items-center justify-between gap-2">
-              <div className="flex min-w-0 flex-1 items-center gap-2">
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center">
-                  <Archive className="h-4 w-4" />
-                </div>
-                <span>{t('tags.sidebar.archive')}</span>
-              </div>
-              <span className="text-muted-foreground text-xs">{archivedTagsCount}</span>
-            </div>
-          </div>
+          />
 
           {/* グループセクション */}
           <SidebarHeading
             className="mt-4"
             action={
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleStartCreating}
-                      className="hover:bg-state-hover h-5 w-5 p-0"
-                    >
-                      <Plus className="h-3 w-3" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" sideOffset={4}>
-                    <p>{t('tags.page.createGroup')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div className="flex items-center gap-1">
+                <DropdownMenu>
+                  <TooltipProvider>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon-sm">
+                            <ListFilter className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" sideOffset={4}>
+                        <p>{t('tags.sidebar.sortGroups')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <DropdownMenuContent align="end">
+                    {(
+                      [
+                        'manual',
+                        'nameAsc',
+                        'nameDesc',
+                        'createdAsc',
+                        'createdDesc',
+                        'tagCountDesc',
+                        'tagCountAsc',
+                      ] as const
+                    ).map((option) => (
+                      <DropdownMenuItem
+                        key={option}
+                        onClick={() => setSortType(option)}
+                        className="flex items-center justify-between"
+                      >
+                        <span>{t(`tags.sidebar.sort.${option}`)}</span>
+                        {sortType === option && <Check className="size-4" />}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <TooltipProvider>
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon-sm" onClick={handleStartCreating}>
+                        <Plus className="size-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" sideOffset={4}>
+                      <p>{t('tags.page.createGroup')}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             }
           >
             {t('tags.sidebar.groups')}
           </SidebarHeading>
 
-          {reorderedGroups.length === 0 && !isCreating ? (
+          {sortedGroups.length === 0 && !isCreating ? (
             <div className="text-muted-foreground px-2 py-2 text-xs">{t('tags.sidebar.noGroups')}</div>
           ) : (
             <>
-              {/* SortableContext - DndContextは親のTagsPageProviderで提供 */}
-              <SortableContext {...sortableContextProps}>
-                {reorderedGroups.map((group) => (
-                  <SortableGroupItem
-                    key={group.id}
-                    group={group}
-                    isActive={currentGroupNumber === group.group_number}
-                    tagCount={getGroupTagCount(group.id)}
-                    onGroupClick={handleGroupClick}
-                    onStartEdit={handleStartEditing}
-                    onCancelEdit={handleCancelEditing}
-                    onSaveEdit={handleSaveEditing}
-                    onUpdateColor={handleUpdateColor}
-                    onDelete={handleDeleteGroup}
-                    isEditing={editingGroupId === group.id}
-                    editingName={editingGroupName}
-                    setEditingName={setEditingGroupName}
-                  />
-                ))}
-              </SortableContext>
+              {/* グループリスト */}
+              {sortedGroups.map((group) => (
+                <SortableGroupItem
+                  key={group.id}
+                  group={group}
+                  isActive={currentGroupNumber === group.group_number}
+                  tagCount={getGroupTagCount(group.id)}
+                  onGroupClick={handleGroupClick}
+                  onStartEdit={handleStartEditing}
+                  onCancelEdit={handleCancelEditing}
+                  onSaveEdit={handleSaveEditing}
+                  onUpdateColor={handleUpdateColor}
+                  onDelete={handleDeleteGroup}
+                  isEditing={editingGroupId === group.id}
+                  editingName={editingGroupName}
+                  setEditingName={setEditingGroupName}
+                />
+              ))}
 
               {/* インライン作成フォーム */}
               {isCreating && (

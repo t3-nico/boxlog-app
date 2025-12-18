@@ -1,8 +1,6 @@
 'use client'
 
 import { useDroppable } from '@dnd-kit/core'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
 import { Edit, Folder, MoreHorizontal, Palette, Trash2 } from 'lucide-react'
 import { useCallback } from 'react'
 
@@ -25,7 +23,7 @@ import { GroupNameWithTooltip } from '@/features/tags/components/GroupNameWithTo
 import type { TagGroup } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 
-interface SortableGroupItemProps {
+interface GroupItemProps {
   group: TagGroup
   isActive: boolean
   tagCount: number
@@ -41,7 +39,7 @@ interface SortableGroupItemProps {
 }
 
 /**
- * ソート可能なグループアイテムコンポーネント
+ * グループアイテムコンポーネント（ドロップゾーン機能付き）
  */
 export function SortableGroupItem({
   group,
@@ -56,24 +54,17 @@ export function SortableGroupItem({
   isEditing,
   editingName,
   setEditingName,
-}: SortableGroupItemProps) {
+}: GroupItemProps) {
   const t = useTranslations()
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: group.id })
 
   // ドロップゾーンとして設定
-  const { setNodeRef: setDropRef, isOver } = useDroppable({
+  const { setNodeRef, isOver } = useDroppable({
     id: `drop-${group.id}`,
     data: {
       type: 'group',
       groupId: group.id,
     },
   })
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  }
 
   const handleSave = useCallback(() => {
     onSaveEdit(group)
@@ -90,18 +81,9 @@ export function SortableGroupItem({
     [handleSave, onCancelEdit]
   )
 
-  // ソートとドロップの両方のrefを設定
-  const setRefs = useCallback(
-    (node: HTMLElement | null) => {
-      setNodeRef(node)
-      setDropRef(node)
-    },
-    [setNodeRef, setDropRef]
-  )
-
   return (
     <div
-      ref={setRefs}
+      ref={setNodeRef}
       onClick={() => onGroupClick(group.group_number)}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -111,10 +93,7 @@ export function SortableGroupItem({
       }}
       className={`group hover:bg-state-hover flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm transition-colors ${
         isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground'
-      } ${isOver ? 'bg-primary/10 border-primary/50 border-2 border-dashed' : ''}`}
-      style={style}
-      {...attributes}
-      {...listeners}
+      } ${isOver ? 'bg-primary-state-hover' : ''}`}
     >
       <div className="flex w-full items-center justify-between gap-2">
         <div className="flex min-w-0 flex-1 items-center gap-2">

@@ -27,7 +27,7 @@ interface TagsFilterBarProps {
   columnSettings: ColumnSetting[]
   visibleColumns: VisibleColumn[]
   onColumnVisibilityChange: (columnId: TagColumnId, visible: boolean) => void
-  onCreateClick: () => void
+  onCreateClick?: () => void
   t: (key: string) => string
 }
 
@@ -72,12 +72,14 @@ export function TagsFilterBar({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex h-8 items-center">
-        <Button onClick={onCreateClick} size="sm">
-          <Plus className="size-4" />
-          {t('tags.page.createTag')}
-        </Button>
-      </div>
+      {onCreateClick && (
+        <div className="flex h-8 items-center">
+          <Button onClick={onCreateClick} size="sm">
+            <Plus className="size-4" />
+            {t('tags.page.createTag')}
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

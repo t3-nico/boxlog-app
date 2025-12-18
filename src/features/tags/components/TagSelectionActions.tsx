@@ -1,6 +1,6 @@
 'use client'
 
-import { Archive, Folder, FolderX, Merge, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Archive, Folder, FolderX, Merge, MoreHorizontal, RotateCcw, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -24,6 +24,8 @@ interface TagSelectionActionsProps {
   groups: TagGroup[]
   onMoveToGroup: (tag: Tag, groupId: string | null) => void
   onArchive?: (tagIds: string[]) => Promise<void>
+  /** 復元（アーカイブモード用） */
+  onRestore?: (tagIds: string[]) => Promise<void>
   onDelete: () => void
   /** 単一タグマージ（1つ選択時のみ有効） */
   onSingleMerge?: (tag: Tag) => void
@@ -48,6 +50,7 @@ export function TagSelectionActions({
   groups,
   onMoveToGroup,
   onArchive,
+  onRestore,
   onDelete,
   onSingleMerge,
   onEdit,
@@ -102,6 +105,26 @@ export function TagSelectionActions({
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+      )}
+
+      {/* 復元（アーカイブモード用） */}
+      {onRestore && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={async () => {
+                await onRestore(selectedTagIds)
+                onClearSelection()
+              }}
+              aria-label={t('tag.archive.restore')}
+            >
+              <RotateCcw className="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{t('tag.archive.restore')}</TooltipContent>
+        </Tooltip>
       )}
 
       {/* アーカイブ */}
