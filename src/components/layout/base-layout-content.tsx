@@ -53,7 +53,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     if (tagsPath === '/archive') return 'archive'
     // /tags/g-{number} → group-{number}
     const groupMatch = tagsPath.match(/^\/g-(\d+)$/)
-    if (groupMatch) return `group-${parseInt(groupMatch[1], 10)}`
+    if (groupMatch?.[1]) return `group-${parseInt(groupMatch[1], 10)}`
     return 'all'
   }
 

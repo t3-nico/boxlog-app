@@ -186,7 +186,7 @@ export const CompactDayView = memo(function CompactDayView({
   return (
     <div className={cn('flex h-full flex-col', className)}>
       {/* ヘッダー: 日付 + ナビゲーション */}
-      <div className="flex shrink-0 items-center justify-between px-2 py-2">
+      <div className="flex shrink-0 items-center justify-between py-2 pr-1 pl-2">
         <div className="flex items-center gap-1 text-sm font-medium">
           <span>{format(date, 'M月d日', locale === 'ja' ? { locale: ja } : {})}</span>
           <span className="text-muted-foreground">({format(date, 'E', locale === 'ja' ? { locale: ja } : {})})</span>

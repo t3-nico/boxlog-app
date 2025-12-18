@@ -235,12 +235,14 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                   {/* カラーインジケーター（クリック可能） */}
                   <Popover>
                     <PopoverTrigger asChild>
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="icon-sm"
                         onClick={(e) => {
                           e.stopPropagation()
                         }}
-                        className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                        className="shrink-0"
                         aria-label={`${group.name}のカラーを変更`}
                       >
                         <Folder
@@ -248,7 +250,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                           style={{ color: group.color || DEFAULT_GROUP_COLOR }}
                           fill={group.color || DEFAULT_GROUP_COLOR}
                         />
-                      </button>
+                      </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-3" align="start">
                       <ColorPalettePicker
@@ -361,13 +363,15 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                 {/* カラーアイコン（左側） */}
                 <Popover>
                   <PopoverTrigger asChild>
-                    <button
+                    <Button
                       type="button"
-                      className="hover:ring-offset-background focus-visible:ring-ring shrink-0 transition-all hover:ring-2 focus-visible:ring-2 focus-visible:outline-none"
+                      variant="ghost"
+                      size="icon-sm"
+                      className="shrink-0"
                       aria-label={t('tag.sidebar.changeColor')}
                     >
                       <Folder className="h-5 w-5" style={{ color: newGroupColor }} fill={newGroupColor} />
-                    </button>
+                    </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-3" align="start">
                     <ColorPalettePicker selectedColor={newGroupColor} onColorSelect={setNewGroupColor} />

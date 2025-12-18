@@ -4,6 +4,7 @@ import { Check, Circle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 import { Button } from '@/components/ui/button'
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { TAG_COLOR_PALETTE } from '@/config/ui/colors'
 import { cn } from '@/lib/utils'
@@ -15,7 +16,7 @@ interface ColorPalettePickerProps {
 }
 
 // カラー名マッピング
-const COLOR_NAMES: Record<string, string> = {
+export const COLOR_NAMES: Record<string, string> = {
   '#3B82F6': 'Blue',
   '#10B981': 'Green',
   '#EF4444': 'Red',
@@ -28,6 +29,10 @@ const COLOR_NAMES: Record<string, string> = {
   '#6366F1': 'Indigo',
 }
 
+/**
+ * カラーパレットピッカー（グリッド表示）
+ * Popover内で使用するグリッド型のカラー選択UI
+ */
 export function ColorPalettePicker({ selectedColor, onColorSelect, className }: ColorPalettePickerProps) {
   const t = useTranslations('aria')
   return (
@@ -67,5 +72,33 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
         )
       })}
     </div>
+  )
+}
+
+/**
+ * カラーパレットメニューアイテム（DropdownMenu用）
+ * DropdownMenuContent / DropdownMenuSubContent の中で使用
+ */
+interface ColorPaletteMenuItemsProps {
+  selectedColor: string
+  onColorSelect: (color: string) => void
+}
+
+export function ColorPaletteMenuItems({ selectedColor, onColorSelect }: ColorPaletteMenuItemsProps) {
+  return (
+    <>
+      {TAG_COLOR_PALETTE.map((color) => {
+        const isSelected = selectedColor === color
+        const colorName = COLOR_NAMES[color] || color
+
+        return (
+          <DropdownMenuItem key={color} onClick={() => onColorSelect(color)} className="hover:bg-state-hover">
+            <Circle className="mr-2 h-4 w-4" fill={color} strokeWidth={0} />
+            <span className="flex-1">{colorName}</span>
+            {isSelected && <Check className="text-primary ml-2 h-4 w-4" />}
+          </DropdownMenuItem>
+        )
+      })}
+    </>
   )
 }

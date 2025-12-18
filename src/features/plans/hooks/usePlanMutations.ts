@@ -38,8 +38,8 @@ export function usePlanMutations() {
   const createPlan = api.plans.create.useMutation({
     onSuccess: (newPlan) => {
       // 1. キャッシュを即座に更新（リアルタイム反映）
-      // plan_tags を空配列で初期化（既存のリストデータと同じ形式に合わせる）
-      const newPlanWithTags = { ...newPlan, plan_tags: [] }
+      // tags を空配列で初期化（サーバーからはtagsが返る形式）
+      const newPlanWithTags = { ...newPlan, tags: [] }
 
       utils.plans.list.setData(undefined, (oldData) => {
         if (!oldData) return [newPlanWithTags]
@@ -138,13 +138,13 @@ export function usePlanMutations() {
     },
     onSuccess: (updatedPlan, variables) => {
       // サーバーから返ってきた最新データでキャッシュを更新
-      // plan_tags などのリレーションデータは保持する
+      // tags などのリレーションデータは保持する（サーバーのupdateはタグをJOINしていない）
       utils.plans.list.setData(undefined, (oldData) => {
         if (!oldData) return oldData
         return oldData.map((plan) => {
           if (plan.id === variables.id) {
-            // 既存のplan_tagsを保持しつつ、サーバーデータで更新
-            return { ...updatedPlan, plan_tags: plan.plan_tags ?? [] }
+            // 既存のtagsを保持しつつ、サーバーデータで更新
+            return { ...updatedPlan, tags: plan.tags ?? [] }
           }
           return plan
         })
@@ -342,7 +342,9 @@ export function usePlanMutations() {
   const bulkAddTags = api.plans.bulkAddTags.useMutation({
     onSuccess: () => {
       toast.success(t('common.plan.tagsAdded'))
-      void utils.plans.list.invalidate(undefined, { refetchType: 'active' })
+      // 全てのplans.listクエリを無効化（tagIdフィルター付きも含む）
+      void utils.plans.list.invalidate(undefined, { refetchType: 'all' })
+      void utils.plans.getTagStats.invalidate() // タグページの統計を更新
     },
     onError: (error) => {
       toast.error(t('common.plan.tagsAddFailed', { error: error.message }))

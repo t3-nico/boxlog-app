@@ -10,6 +10,7 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import type { Tag } from '@/features/tags/types'
 import { useTranslations } from 'next-intl'
 
@@ -107,55 +108,61 @@ const TagTreeNode = ({ tag, onEditTag, onDeleteTag, onRenameTag }: TagTreeNodePr
               className="border-primary bg-card focus:ring-ring w-full rounded border px-2 py-1 text-sm focus:ring-1 focus:outline-none"
             />
           ) : (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={handleStartEdit}
-              className="text-foreground hover:text-primary w-full truncate text-left text-sm font-medium"
+              className="text-foreground hover:text-primary w-full justify-start truncate text-sm font-medium"
               title={tag.name}
             >
               {tag.name}
-            </button>
+            </Button>
           )}
         </div>
 
         {/* アクションボタン */}
         <div className="flex flex-shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
           <div className="relative">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon-sm"
               onClick={handleToggleMenu}
-              className="text-muted-foreground hover:bg-state-hover hover:text-foreground rounded p-1 transition-colors"
+              className="text-muted-foreground hover:text-foreground"
             >
               <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
-            </button>
+            </Button>
 
             {/* コンテキストメニュー */}
             {showMenu && (
               <div className="border-border bg-popover text-popover-foreground absolute top-full right-0 z-10 mt-1 min-w-32 rounded-lg border shadow-lg">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={handleEditTag}
-                  className="text-foreground hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                  className="text-foreground flex w-full justify-start gap-2"
                 >
                   <PencilIcon className="h-4 w-4" data-slot="icon" />
                   {t('tag.actions.edit')}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={handleStartEdit}
-                  className="text-foreground hover:bg-state-hover flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                  className="text-foreground flex w-full justify-start gap-2"
                 >
                   <PencilIcon className="h-4 w-4" data-slot="icon" />
                   {t('tag.actions.rename')}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={handleDeleteTag}
-                  className="text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
+                  className="text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 flex w-full justify-start gap-2"
                 >
                   <TrashIcon className="h-4 w-4" data-slot="icon" />
                   {t('tag.actions.delete')}
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -193,14 +200,10 @@ export const TagTreeView = ({
       <div className="py-8 text-center">
         <TagIcon className="text-muted-foreground mx-auto mb-4 h-12 w-12" data-slot="icon" />
         <p className="text-muted-foreground mb-4">{t('tag.messages.noTagsYet')}</p>
-        <button
-          type="button"
-          onClick={handleCreateTag}
-          className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex items-center gap-2 rounded-lg px-4 py-2 transition-colors"
-        >
+        <Button type="button" onClick={handleCreateTag}>
           <PlusIcon className="h-4 w-4" />
           {t('tag.actions.createFirst')}
-        </button>
+        </Button>
       </div>
     )
   }
@@ -212,14 +215,10 @@ export const TagTreeView = ({
         <h3 className="text-foreground text-sm font-medium">
           {t('tag.messages.tagList')} ({tags.length})
         </h3>
-        <button
-          type="button"
-          onClick={handleCreateTag}
-          className="text-primary hover:bg-state-hover inline-flex items-center gap-1 rounded px-2 py-1 text-sm transition-colors"
-        >
+        <Button type="button" variant="ghost" size="sm" onClick={handleCreateTag} className="text-primary">
           <PlusIcon className="h-4 w-4" />
           {t('tag.messages.newTag')}
-        </button>
+        </Button>
       </div>
 
       {/* タグリスト（フラット） */}

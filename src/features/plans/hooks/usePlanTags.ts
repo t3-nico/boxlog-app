@@ -15,6 +15,7 @@ export function usePlanTags() {
     onSuccess: () => {
       void utils.plans.getById.invalidate()
       void utils.plans.list.invalidate()
+      void utils.plans.getTagStats.invalidate()
     },
   })
 
@@ -22,6 +23,7 @@ export function usePlanTags() {
     onSuccess: () => {
       void utils.plans.getById.invalidate()
       void utils.plans.list.invalidate()
+      void utils.plans.getTagStats.invalidate()
     },
   })
 
@@ -29,6 +31,7 @@ export function usePlanTags() {
     onSuccess: () => {
       void utils.plans.getById.invalidate()
       void utils.plans.list.invalidate()
+      void utils.plans.getTagStats.invalidate()
     },
   })
 
@@ -40,7 +43,8 @@ export function usePlanTags() {
       try {
         await addTagMutation.mutateAsync({ planId, tagId })
         return true
-      } catch {
+      } catch (error) {
+        console.error('Failed to add tag:', error)
         return false
       }
     },
@@ -55,7 +59,8 @@ export function usePlanTags() {
       try {
         await removeTagMutation.mutateAsync({ planId, tagId })
         return true
-      } catch {
+      } catch (error) {
+        console.error('Failed to remove tag:', error)
         return false
       }
     },
