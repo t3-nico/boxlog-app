@@ -3,7 +3,6 @@
 import { Suspense } from 'react'
 
 import { InboxBoardView } from '@/features/inbox/components/InboxBoardView'
-import { InboxPageHeader } from '@/features/inbox/components/InboxPageHeader'
 import { InboxTableView } from '@/features/inbox/components/InboxTableView'
 import { InboxToolbar } from '@/features/inbox/components/InboxToolbar'
 import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore'
@@ -34,13 +33,10 @@ interface InboxViewPageProps {
 export default function InboxViewPage({ params: _params }: InboxViewPageProps) {
   return (
     <div className="flex flex-1 flex-col">
-      {/* 1. ヘッダー：タイトル + ビュースイッチャー */}
-      <InboxPageHeader />
-
-      {/* 2. ツールバー：表示モード別ナビゲーション */}
+      {/* ツールバー：表示モード別ナビゲーション */}
       <InboxToolbar />
 
-      {/* 3. コンテンツ：Board/Table */}
+      {/* コンテンツ：Board/Table */}
       <Suspense
         fallback={
           <div className="flex h-full items-center justify-center">

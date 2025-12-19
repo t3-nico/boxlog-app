@@ -42,7 +42,6 @@ export {
   TagSelector,
   TagTreeView,
   TagsList,
-  TagsPageHeader,
   TagsSelectionBar,
   // Main
   TagsSidebar,

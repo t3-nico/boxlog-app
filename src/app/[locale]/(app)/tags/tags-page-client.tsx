@@ -14,8 +14,8 @@ import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagMergeDialog } from '@/features/tags/components/TagMergeDialog'
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions'
 import { TagsFilterBar } from '@/features/tags/components/TagsFilterBar'
-import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
+import { PageHeader } from '@/components/common/PageHeader'
 import { useTagsNavigation } from '@/features/tags/contexts/TagsNavigationContext'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
@@ -461,7 +461,7 @@ export function TagsPageClient({
   return (
     <div className="flex h-full flex-col">
       {/* ヘッダー */}
-      <TagsPageHeader title={pageTitle} count={filteredTags.length} />
+      <PageHeader title={pageTitle} count={filteredTags.length} />
 
       {/* フィルターバー または 選択バー */}
       {selectedCount > 0 ? (
