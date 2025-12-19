@@ -147,7 +147,7 @@ export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, classNam
   return (
     <>
       {/* オーバーレイ */}
-      <div className="fixed inset-0 z-50 bg-black/50 transition-opacity" onClick={onClose} aria-hidden="true" />
+      <div className="bg-overlay fixed inset-0 z-50 transition-opacity" onClick={onClose} aria-hidden="true" />
 
       {/* ドロワー */}
       <div

@@ -209,7 +209,7 @@ export const VirtualCalendarGrid = ({
 
       {/* パフォーマンス監視用の情報（開発時のみ） */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-4 right-4 z-50 rounded bg-black/80 p-2 font-mono text-xs text-white">
+        <div className="bg-overlay-heavy fixed top-4 right-4 z-50 rounded p-2 font-mono text-xs text-white">
           <div>
             Visible: {viewport.visibleStart}h - {viewport.visibleEnd}h
           </div>

@@ -94,7 +94,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
       <div
         role="button"
         tabIndex={0}
-        className="bg-opacity-50 fixed inset-0 z-50 bg-black"
+        className="bg-overlay fixed inset-0 z-50"
         onClick={handleClose}
         onKeyDown={handleOverlayKeyDown}
         aria-label={t('aria.closeModal')}

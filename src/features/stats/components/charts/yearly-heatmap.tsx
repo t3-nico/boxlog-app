@@ -129,25 +129,25 @@ export function YearlyHeatmap() {
           font-size: 10px;
         }
         .yearly-heatmap .react-calendar-heatmap text {
-          fill: hsl(var(--muted-foreground));
+          fill: var(--color-muted-foreground);
         }
         .yearly-heatmap .react-calendar-heatmap .color-empty {
-          fill: hsl(var(--muted));
+          fill: var(--color-muted);
         }
         .yearly-heatmap .react-calendar-heatmap .color-scale-1 {
-          fill: hsl(var(--primary) / 0.2);
+          fill: oklch(from var(--primary) l c h / 20%);
         }
         .yearly-heatmap .react-calendar-heatmap .color-scale-2 {
-          fill: hsl(var(--primary) / 0.4);
+          fill: oklch(from var(--primary) l c h / 40%);
         }
         .yearly-heatmap .react-calendar-heatmap .color-scale-3 {
-          fill: hsl(var(--primary) / 0.6);
+          fill: oklch(from var(--primary) l c h / 60%);
         }
         .yearly-heatmap .react-calendar-heatmap .color-scale-4 {
-          fill: hsl(var(--primary) / 0.8);
+          fill: oklch(from var(--primary) l c h / 80%);
         }
         .yearly-heatmap .react-calendar-heatmap rect:hover {
-          stroke: hsl(var(--foreground));
+          stroke: var(--color-foreground);
           stroke-width: 1px;
         }
       `}</style>

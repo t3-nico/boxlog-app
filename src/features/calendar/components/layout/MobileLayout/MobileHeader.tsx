@@ -176,7 +176,7 @@ export const MobileHeader = ({
         <>
           {/* オーバーレイ */}
           <div
-            className="fixed inset-0 z-50 bg-black/20"
+            className="bg-overlay fixed inset-0 z-50"
             onClick={handleViewMenuClose}
             onKeyDown={handleViewMenuKeyDown}
             role="button"
