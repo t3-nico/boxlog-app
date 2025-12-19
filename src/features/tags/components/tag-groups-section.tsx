@@ -194,7 +194,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
             <h3 className="text-lg font-semibold">タググループ</h3>
             <p className="text-muted-foreground text-sm">タグをグループ化して整理します</p>
           </div>
-          <Button onClick={handleStartCreating} size="sm" disabled={isCreating}>
+          <Button onClick={handleStartCreating} disabled={isCreating}>
             <Plus className="mr-2 h-4 w-4" />
             グループを作成
           </Button>
@@ -205,7 +205,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
           <div className="border-border flex h-32 items-center justify-center rounded-xl border-2 border-dashed">
             <div className="text-center">
               <p className="text-muted-foreground mb-2">グループがありません</p>
-              <Button onClick={handleStartCreating} variant="outline" size="sm">
+              <Button onClick={handleStartCreating} variant="outline">
                 <Plus className="mr-2 h-4 w-4" />
                 最初のグループを作成
               </Button>

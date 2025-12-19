@@ -161,7 +161,7 @@ export function TagsFilterBar({
         </DropdownMenu>
 
         {onCreateClick && (
-          <Button onClick={onCreateClick} size="sm" className="ml-1">
+          <Button onClick={onCreateClick} className="ml-1">
             <Plus className="size-4" />
             {t('tags.page.createTag')}
           </Button>
