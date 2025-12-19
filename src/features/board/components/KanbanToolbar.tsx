@@ -86,7 +86,7 @@ export function KanbanToolbar() {
 
       {/* 右側アクション */}
       <div className="flex items-center gap-2">
-        <Button variant="default" size="sm" className="h-8">
+        <Button variant="primary" size="sm" className="h-8">
           <Plus className="mr-2 size-4" />
           {t('board.toolbar.addCard')}
         </Button>

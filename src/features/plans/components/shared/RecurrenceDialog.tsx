@@ -212,7 +212,7 @@ export function RecurrenceDialog({
                   return (
                     <Button
                       key={index}
-                      variant={config.byWeekday?.includes(weekdayIndex) ? 'default' : 'outline'}
+                      variant={config.byWeekday?.includes(weekdayIndex) ? 'primary' : 'outline'}
                       size="sm"
                       className="h-10 w-10 rounded-full p-0 text-sm"
                       onClick={() => toggleWeekday(weekdayIndex)}

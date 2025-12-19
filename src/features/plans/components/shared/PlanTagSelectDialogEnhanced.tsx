@@ -218,7 +218,7 @@ export function PlanTagSelectDialogEnhanced({
             </div>
 
             {/* 新規作成ボタン */}
-            <Button variant="default" size="sm" onClick={() => setIsCreating(!isCreating)} className="shrink-0">
+            <Button variant="primary" size="sm" onClick={() => setIsCreating(!isCreating)} className="shrink-0">
               <Plus className="mr-2 h-4 w-4" />
               新しいタグ
             </Button>

@@ -82,14 +82,14 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
         actions={
           <div className="bg-surface-container flex gap-1 rounded-xl p-1">
             <Button
-              variant={billingPeriod === 'month' ? 'default' : 'ghost'}
+              variant={billingPeriod === 'month' ? 'primary' : 'ghost'}
               size="sm"
               onClick={() => handlePeriodChange('month')}
             >
               月払い
             </Button>
             <Button
-              variant={billingPeriod === 'year' ? 'default' : 'ghost'}
+              variant={billingPeriod === 'year' ? 'primary' : 'ghost'}
               size="sm"
               onClick={() => handlePeriodChange('year')}
             >
@@ -142,7 +142,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
 
               <Button
                 className="w-full"
-                variant={currentPlan === plan.id ? 'outline' : plan.recommended ? 'default' : 'outline'}
+                variant={currentPlan === plan.id ? 'outline' : plan.recommended ? 'primary' : 'outline'}
                 disabled={currentPlan === plan.id}
                 onClick={() => handleUpgrade(plan.id)}
               >
