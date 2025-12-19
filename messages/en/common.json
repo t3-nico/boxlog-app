@@ -192,7 +192,8 @@
     "weeklyCalendar": "Weekly calendar",
     "previous": "Previous",
     "next": "Next",
-    "selectColor": "Select {color}"
+    "selectColor": "Select {color}",
+    "openAIAssistant": "Open AI Assistant"
   },
   "status": {
     "loading": "Loading...",
