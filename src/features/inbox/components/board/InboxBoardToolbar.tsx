@@ -164,7 +164,7 @@ export function InboxBoardToolbar() {
 
       {/* 右側アクション */}
       <div className="flex items-center gap-2">
-        <Button variant="default" size="sm">
+        <Button variant="primary" size="sm">
           <Plus className="mr-2 size-4" />
           新規作成
         </Button>

@@ -15,10 +15,11 @@ const chartData = [
   { time: '21-24', tasks: 5 },
 ]
 
+// 単一系列 → セマンティック primary を使用
 const chartConfig = {
   tasks: {
     label: 'タスク数',
-    color: 'hsl(217, 91%, 60%)', // 青
+    color: 'var(--color-chart-primary)',
   },
 } satisfies ChartConfig
 

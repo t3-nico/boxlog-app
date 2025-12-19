@@ -6,6 +6,51 @@ import type { LegendPayload } from 'recharts/types/component/DefaultLegendConten
 
 import { cn } from '@/lib/utils'
 
+/**
+ * チャートカラーシステム
+ *
+ * ## Comparison（比較用、shadcn準拠）
+ *
+ * カテゴリ分けなど、意味を持たない複数系列の比較に使用
+ *
+ * | トークン   | 用途                                         |
+ * |------------|----------------------------------------------|
+ * | chart-1    | 第1系列（メイン）                            |
+ * | chart-2    | 第2系列                                      |
+ * | chart-3    | 第3系列                                      |
+ * | chart-4    | 第4系列                                      |
+ * | chart-5    | 第5系列                                      |
+ *
+ * ## Semantic（意味ベース）
+ *
+ * 意味を持つデータに使用（既存セマンティックカラー参照）
+ *
+ * | トークン            | 用途                           |
+ * |---------------------|--------------------------------|
+ * | color-chart-primary | メインデータ、単一系列         |
+ * | color-chart-success | 成功、増加、完了               |
+ * | color-chart-warning | 警告、注意、保留               |
+ * | color-chart-destructive | エラー、減少、削除         |
+ * | color-chart-info    | 情報、ニュートラル             |
+ * | color-chart-muted   | その他、無効                   |
+ *
+ * ## 使用例
+ *
+ * ```tsx
+ * // 比較用（カテゴリ分け）
+ * const chartConfig = {
+ *   categoryA: { label: 'カテゴリA', color: 'var(--chart-1)' },
+ *   categoryB: { label: 'カテゴリB', color: 'var(--chart-2)' },
+ * } satisfies ChartConfig
+ *
+ * // 意味ベース
+ * const chartConfig = {
+ *   completed: { label: '完了', color: 'var(--color-chart-success)' },
+ *   pending: { label: '未完了', color: 'var(--color-chart-warning)' },
+ * } satisfies ChartConfig
+ * ```
+ */
+
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: '', dark: '.dark' } as const
 

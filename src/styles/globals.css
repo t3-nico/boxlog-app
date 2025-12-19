@@ -69,7 +69,7 @@
   --input: var(--surface-bright);
   --ring: oklch(0.6231 0.188 259.8145);
 
-  /* Charts */
+  /* Charts - Comparison（比較用、shadcn準拠） */
   --chart-1: oklch(0.6231 0.188 259.8145);
   --chart-2: oklch(0.5461 0.2152 262.8809);
   --chart-3: oklch(0.4882 0.2172 264.3763);
@@ -132,7 +132,7 @@
   --input: var(--surface-bright);
   --ring: oklch(0.6231 0.188 259.8145);
 
-  /* Charts */
+  /* Charts - Comparison（比較用、shadcn準拠） */
   --chart-1: oklch(0.7137 0.1434 254.624);
   --chart-2: oklch(0.6231 0.188 259.8145);
   --chart-3: oklch(0.5461 0.2152 262.8809);
@@ -215,11 +215,20 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  /* Charts - Comparison（比較用） */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
+  /* Charts - Semantic（意味ベース、既存セマンティックカラー参照） */
+  --color-chart-primary: var(--primary);
+  --color-chart-success: var(--success);
+  --color-chart-warning: var(--warning);
+  --color-chart-destructive: var(--destructive);
+  --color-chart-info: var(--info);
+  --color-chart-muted: var(--muted-foreground);
 }
 
 @theme {

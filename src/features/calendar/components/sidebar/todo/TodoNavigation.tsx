@@ -54,7 +54,7 @@ export function TodoNavigation({ filter, onFilterChange, sort, onSortChange }: T
       {/* 期間フィルター */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="secondary" size="sm" className="border-border h-7 gap-1 border px-2 text-xs">
+          <Button variant="outline" size="sm" className="h-7 gap-1 px-2 text-xs">
             <span>{filterLabels[filter]}</span>
             <ChevronDown className="size-3" />
           </Button>
@@ -71,7 +71,7 @@ export function TodoNavigation({ filter, onFilterChange, sort, onSortChange }: T
       {/* ソート順 */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="secondary" size="sm" className="border-border h-7 gap-1 border px-2 text-xs">
+          <Button variant="outline" size="sm" className="h-7 gap-1 px-2 text-xs">
             <span>{sortLabels[sort]}</span>
             <ChevronDown className="size-3" />
           </Button>

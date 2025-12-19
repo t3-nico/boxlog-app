@@ -145,7 +145,7 @@ export const TagFilter = ({
             <div className="border-border flex items-center justify-between border-b p-3">
               <h3 className="text-foreground text-sm font-medium">Filter by Tags</h3>
               {hasTagFilters === true && (
-                <Button type="button" variant="link" size="sm" onClick={clearTags} className="h-auto p-0 text-xs">
+                <Button type="button" variant="text" size="sm" onClick={clearTags} className="h-auto p-0 text-xs">
                   Clear all
                 </Button>
               )}
