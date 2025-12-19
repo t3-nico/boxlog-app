@@ -16,6 +16,7 @@ import { useTags } from '@/features/tags/hooks/use-tags'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Skeleton } from '@/components/ui/skeleton'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { api } from '@/lib/trpc'
 
 /** Planのデフォルト色 */
@@ -153,7 +154,7 @@ export function CalendarFilterList() {
 interface TagGroupSectionProps {
   groupName: string
   groupColor?: string | undefined
-  tags: Array<{ id: string; name: string; color: string }>
+  tags: Array<{ id: string; name: string; color: string; description?: string | null }>
   visibleTagIds: Set<string>
   onToggleTag: (tagId: string) => void
   onToggleGroup: () => void
@@ -200,6 +201,7 @@ function TagGroupSection({
             <FilterItem
               key={tag.id}
               label={tag.name}
+              description={tag.description}
               checkboxColor={tag.color || undefined}
               checked={visibleTagIds.has(tag.id)}
               onCheckedChange={() => onToggleTag(tag.id)}
@@ -214,6 +216,8 @@ function TagGroupSection({
 
 interface FilterItemProps {
   label: string
+  /** タグの説明（ツールチップで表示） */
+  description?: string | null | undefined
   /** チェックボックスの色（hex値） */
   checkboxColor?: string | undefined
   icon?: React.ReactNode
@@ -227,6 +231,7 @@ interface FilterItemProps {
 
 function FilterItem({
   label,
+  description,
   checkboxColor,
   icon,
   checked,
@@ -246,13 +251,13 @@ function FilterItem({
   // 親幅 w-60 (240px) - padding 16px = 224px
   // チェックボックス 16px + gap 8px + 数字用 24px + gap 8px = 56px
   // ラベル最大幅 = 224px - 56px = 168px
-  return (
+  const content = (
     <label
       className={cn(
         'hover:bg-state-hover flex w-full cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm',
         disabled && 'cursor-not-allowed opacity-50'
       )}
-      title={disabled ? disabledReason : label}
+      title={disabled ? disabledReason : undefined}
     >
       <Checkbox
         checked={checked}
@@ -267,5 +272,12 @@ function FilterItem({
         <span className="text-muted-foreground ml-auto w-4 shrink-0 text-right text-xs tabular-nums">{count}</span>
       )}
     </label>
+  )
+
+  // 説明がある場合はツールチップで表示
+  return (
+    <HoverTooltip content={description} side="right" disabled={!description}>
+      {content}
+    </HoverTooltip>
   )
 }
