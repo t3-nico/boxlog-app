@@ -6,6 +6,43 @@ import type { LegendPayload } from 'recharts/types/component/DefaultLegendConten
 
 import { cn } from '@/lib/utils'
 
+/**
+ * チャートカラーシステム
+ *
+ * ## Primary Scale（単色グラデーション用）
+ *
+ * | トークン   | 用途                                         |
+ * |------------|----------------------------------------------|
+ * | chart-1    | 最明るい、メイン系列                         |
+ * | chart-2    | 第2系列                                      |
+ * | chart-3    | 第3系列                                      |
+ * | chart-4    | 第4系列                                      |
+ * | chart-5    | 最暗い、第5系列                              |
+ *
+ * ## Categorical（カテゴリ区分用）
+ *
+ * | トークン      | 色相    | 用途                           |
+ * |---------------|---------|--------------------------------|
+ * | chart-blue    | 青      | Primary、メインデータ          |
+ * | chart-teal    | ティール| サブカテゴリ                   |
+ * | chart-green   | 緑      | 成功、増加、ポジティブ         |
+ * | chart-yellow  | 黄      | 警告、注意                     |
+ * | chart-orange  | オレンジ| 中間値、トランジション         |
+ * | chart-red     | 赤      | エラー、減少、ネガティブ       |
+ * | chart-purple  | 紫      | 特殊カテゴリ                   |
+ * | chart-pink    | ピンク  | 追加カテゴリ                   |
+ *
+ * ## 使用例
+ *
+ * ```tsx
+ * const chartConfig = {
+ *   sales: { label: '売上', color: 'var(--chart-blue)' },
+ *   profit: { label: '利益', color: 'var(--chart-green)' },
+ *   loss: { label: '損失', color: 'var(--chart-red)' },
+ * } satisfies ChartConfig
+ * ```
+ */
+
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: '', dark: '.dark' } as const
 

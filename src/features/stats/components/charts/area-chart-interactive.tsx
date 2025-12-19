@@ -18,11 +18,11 @@ const chartData = [
 const chartConfig = {
   completed: {
     label: '完了',
-    color: 'hsl(217, 91%, 60%)', // 青
+    color: 'var(--chart-green)',
   },
   pending: {
     label: '未完了',
-    color: 'hsl(217, 91%, 80%)', // 明るい青
+    color: 'var(--chart-yellow)',
   },
 } satisfies ChartConfig
 

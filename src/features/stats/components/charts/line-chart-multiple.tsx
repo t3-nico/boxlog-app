@@ -17,11 +17,11 @@ const chartData = [
 const chartConfig = {
   completed: {
     label: '完了タスク',
-    color: 'hsl(217, 91%, 60%)', // 青
+    color: 'var(--chart-green)',
   },
   created: {
     label: '作成タスク',
-    color: 'hsl(217, 91%, 80%)', // 明るい青
+    color: 'var(--chart-blue)',
   },
 } satisfies ChartConfig
 

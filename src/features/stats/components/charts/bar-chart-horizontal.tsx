@@ -18,7 +18,7 @@ const chartData = [
 const chartConfig = {
   tasks: {
     label: 'タスク数',
-    color: 'hsl(217, 91%, 60%)', // 青
+    color: 'var(--chart-blue)',
   },
 } satisfies ChartConfig
 

@@ -18,19 +18,19 @@ const chartConfig = {
   },
   work: {
     label: '仕事',
-    color: 'hsl(217, 91%, 60%)', // 青
+    color: 'var(--chart-blue)',
   },
   study: {
     label: '学習',
-    color: 'hsl(217, 91%, 70%)', // 明るい青
+    color: 'var(--chart-teal)',
   },
   personal: {
     label: 'プライベート',
-    color: 'hsl(217, 91%, 80%)', // より明るい青
+    color: 'var(--chart-purple)',
   },
   other: {
     label: 'その他',
-    color: 'hsl(217, 91%, 90%)', // 最も明るい青
+    color: 'var(--chart-3)',
   },
 } satisfies ChartConfig
 
