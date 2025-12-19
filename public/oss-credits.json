@@ -338,6 +338,46 @@
     "publisher": "atomiks"
   },
   {
+    "name": "@formatjs/ecma402-abstract",
+    "version": "2.3.6",
+    "license": "MIT",
+    "repository": "https://github.com/formatjs/formatjs",
+    "publisher": "Long Ho"
+  },
+  {
+    "name": "@formatjs/fast-memoize",
+    "version": "2.2.7",
+    "license": "MIT",
+    "repository": "https://github.com/formatjs/formatjs",
+    "publisher": "Long Ho"
+  },
+  {
+    "name": "@formatjs/icu-messageformat-parser",
+    "version": "2.11.4",
+    "license": "MIT",
+    "repository": "https://github.com/formatjs/formatjs"
+  },
+  {
+    "name": "@formatjs/icu-skeleton-parser",
+    "version": "1.8.16",
+    "license": "MIT",
+    "repository": "https://github.com/formatjs/formatjs"
+  },
+  {
+    "name": "@formatjs/intl-localematcher",
+    "version": "0.5.10",
+    "license": "MIT",
+    "repository": "https://github.com/formatjs/formatjs",
+    "publisher": "Long Ho"
+  },
+  {
+    "name": "@formatjs/intl-localematcher",
+    "version": "0.6.2",
+    "license": "MIT",
+    "repository": "https://github.com/formatjs/formatjs",
+    "publisher": "Long Ho"
+  },
+  {
     "name": "@headlessui/react",
     "version": "2.2.9",
     "license": "MIT",
@@ -442,133 +482,133 @@
   },
   {
     "name": "@lexical/clipboard",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/code",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/devtools-core",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/dragon",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/extension",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/hashtag",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/history",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/html",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/link",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/list",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/mark",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/markdown",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/offset",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/overflow",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/plain-text",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/react",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/rich-text",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/selection",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/table",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/text",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/utils",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
   {
     "name": "@lexical/yjs",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
@@ -581,14 +621,14 @@
   },
   {
     "name": "@next/env",
-    "version": "15.5.6",
+    "version": "15.5.7",
     "license": "MIT",
     "repository": "https://github.com/vercel/next.js",
     "publisher": "Next.js Team"
   },
   {
     "name": "@next/swc-darwin-arm64",
-    "version": "15.5.6",
+    "version": "15.5.7",
     "license": "MIT",
     "repository": "https://github.com/vercel/next.js"
   },
@@ -1375,6 +1415,13 @@
     "publisher": "Daybrush"
   },
   {
+    "name": "@schummar/icu-type-parser",
+    "version": "1.21.5",
+    "license": "MIT",
+    "repository": "https://github.com/schummar/schummar-translate",
+    "publisher": "Marco Schumacher"
+  },
+  {
     "name": "@sentry-internal/browser-utils",
     "version": "10.27.0",
     "license": "MIT",
@@ -1633,8 +1680,36 @@
     "publisher": "Supabase"
   },
   {
+    "name": "@swc/core",
+    "version": "1.15.3",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/swc-project/swc",
+    "publisher": "강동윤"
+  },
+  {
+    "name": "@swc/core-darwin-arm64",
+    "version": "1.15.3",
+    "license": "Apache-2.0 AND MIT",
+    "repository": "https://github.com/swc-project/swc",
+    "publisher": "강동윤"
+  },
+  {
+    "name": "@swc/counter",
+    "version": "0.1.3",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/swc-project/pkgs",
+    "publisher": "강동윤"
+  },
+  {
     "name": "@swc/helpers",
     "version": "0.5.15",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/swc-project/swc",
+    "publisher": "강동윤"
+  },
+  {
+    "name": "@swc/types",
+    "version": "0.1.25",
     "license": "Apache-2.0",
     "repository": "https://github.com/swc-project/swc",
     "publisher": "강동윤"
@@ -2463,13 +2538,13 @@
   },
   {
     "name": "@types/node",
-    "version": "20.19.21",
+    "version": "22.19.1",
     "license": "MIT",
     "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
   },
   {
     "name": "@types/node",
-    "version": "22.19.1",
+    "version": "25.0.3",
     "license": "MIT",
     "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
   },
@@ -2714,6 +2789,13 @@
     "publisher": "Anton Korzunov"
   },
   {
+    "name": "attr-accept",
+    "version": "2.2.5",
+    "license": "MIT",
+    "repository": "https://github.com/react-dropzone/attr-accept",
+    "publisher": "Andrey Okonetchnikov @okonetchnikov"
+  },
+  {
     "name": "bail",
     "version": "2.0.2",
     "license": "MIT",
@@ -2756,7 +2838,7 @@
   },
   {
     "name": "boxlog-app",
-    "version": "0.6.0",
+    "version": "0.8.1",
     "license": "UNLICENSED"
   },
   {
@@ -3392,6 +3474,13 @@
     "publisher": "Sindre Sorhus"
   },
   {
+    "name": "decimal.js",
+    "version": "10.6.0",
+    "license": "MIT",
+    "repository": "https://github.com/MikeMcl/decimal.js",
+    "publisher": "Michael Mclaughlin"
+  },
+  {
     "name": "decimal.js-light",
     "version": "2.5.1",
     "license": "MIT",
@@ -3631,6 +3720,13 @@
     "publisher": "thecodrr"
   },
   {
+    "name": "file-selector",
+    "version": "2.1.2",
+    "license": "MIT",
+    "repository": "https://github.com/react-dropzone/file-selector",
+    "publisher": "Roland Groza"
+  },
+  {
     "name": "fill-range",
     "version": "7.1.1",
     "license": "MIT",
@@ -3698,6 +3794,13 @@
     "license": "MIT",
     "repository": "https://github.com/Raynos/function-bind",
     "publisher": "Raynos"
+  },
+  {
+    "name": "fuse.js",
+    "version": "7.1.0",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/krisk/Fuse",
+    "publisher": "Kiro Risk"
   },
   {
     "name": "gensync",
@@ -4000,6 +4103,13 @@
     "publisher": "Mike Bostock"
   },
   {
+    "name": "intl-messageformat",
+    "version": "10.7.18",
+    "license": "BSD-3-Clause",
+    "repository": "https://github.com/formatjs/formatjs",
+    "publisher": "Eric Ferraiuolo"
+  },
+  {
     "name": "invariant",
     "version": "2.2.4",
     "license": "MIT",
@@ -4148,7 +4258,7 @@
   },
   {
     "name": "katex",
-    "version": "0.16.25",
+    "version": "0.16.27",
     "license": "MIT",
     "repository": "https://github.com/KaTeX/KaTeX"
   },
@@ -4200,7 +4310,7 @@
   },
   {
     "name": "lexical",
-    "version": "0.38.2",
+    "version": "0.39.0",
     "license": "MIT",
     "repository": "https://github.com/facebook/lexical"
   },
@@ -4289,7 +4399,7 @@
   },
   {
     "name": "lucide-react",
-    "version": "0.555.0",
+    "version": "0.561.0",
     "license": "ISC",
     "repository": "https://github.com/lucide-icons/lucide",
     "publisher": "Eric Fennis"
@@ -4774,17 +4884,30 @@
     "publisher": "Andrey Sitnik"
   },
   {
+    "name": "negotiator",
+    "version": "1.0.0",
+    "license": "MIT",
+    "repository": "https://github.com/jshttp/negotiator"
+  },
+  {
     "name": "next",
-    "version": "15.5.6",
+    "version": "15.5.7",
     "license": "MIT",
     "repository": "https://github.com/vercel/next.js"
   },
   {
-    "name": "next-recaptcha-v3",
-    "version": "1.5.2",
+    "name": "next-intl",
+    "version": "4.5.8",
     "license": "MIT",
-    "repository": "https://github.com/snelsi/next-recaptcha-v3",
-    "publisher": "Roman Zhuravlov"
+    "repository": "https://github.com/amannn/next-intl",
+    "publisher": "Jan Amann"
+  },
+  {
+    "name": "next-intl-swc-plugin-extractor",
+    "version": "4.5.8",
+    "license": "MIT",
+    "repository": "https://github.com/amannn/next-intl",
+    "publisher": "강동윤"
   },
   {
     "name": "next-themes",
@@ -5080,6 +5203,13 @@
     "repository": "https://github.com/lukeapage/pngjs"
   },
   {
+    "name": "po-parser",
+    "version": "1.0.2",
+    "license": "MIT",
+    "repository": "https://github.com/amannn/po-parser",
+    "publisher": "Jan Amann"
+  },
+  {
     "name": "points-on-curve",
     "version": "0.2.0",
     "license": "MIT",
@@ -5319,7 +5449,7 @@
   },
   {
     "name": "react",
-    "version": "19.2.0",
+    "version": "19.2.1",
     "license": "MIT",
     "repository": "https://github.com/facebook/react"
   },
@@ -5329,6 +5459,13 @@
     "license": "MIT",
     "repository": "https://github.com/jquense/react-big-calendar",
     "publisher": "Jason Quense"
+  },
+  {
+    "name": "react-calendar-heatmap",
+    "version": "1.10.0",
+    "license": "MIT",
+    "repository": "https://github.com/kevinsqi/react-calendar-heatmap",
+    "publisher": "Kevin Qi"
   },
   {
     "name": "react-css-styled",
@@ -5358,9 +5495,16 @@
   },
   {
     "name": "react-dom",
-    "version": "19.2.0",
+    "version": "19.2.1",
     "license": "MIT",
     "repository": "https://github.com/facebook/react"
+  },
+  {
+    "name": "react-dropzone",
+    "version": "14.3.8",
+    "license": "MIT",
+    "repository": "https://github.com/react-dropzone/react-dropzone",
+    "publisher": "Param Aggarwal"
   },
   {
     "name": "react-error-boundary",
@@ -6097,6 +6241,12 @@
     "repository": "https://github.com/nodejs/undici"
   },
   {
+    "name": "undici-types",
+    "version": "7.16.0",
+    "license": "MIT",
+    "repository": "https://github.com/nodejs/undici"
+  },
+  {
     "name": "unified",
     "version": "11.0.5",
     "license": "MIT",
@@ -6178,6 +6328,13 @@
     "license": "MIT",
     "repository": "https://github.com/theKashey/use-callback-ref",
     "publisher": "theKashey"
+  },
+  {
+    "name": "use-intl",
+    "version": "4.5.8",
+    "license": "MIT",
+    "repository": "https://github.com/amannn/next-intl",
+    "publisher": "Jan Amann"
   },
   {
     "name": "use-sidecar",
