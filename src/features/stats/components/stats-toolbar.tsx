@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import type { ComparePeriod, PeriodType } from '@/features/stats/stores'
 import { useStatsPeriodStore } from '@/features/stats/stores'
 import { cn } from '@/lib/utils'
@@ -73,35 +73,26 @@ export function StatsToolbar() {
     <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
       {/* 期間ナビゲーション */}
       <div className="flex items-center gap-1">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="size-8" onClick={goToPrevious}>
-              <ChevronLeft className="size-4" />
-              <span className="sr-only">{t('stats.toolbar.previous')}</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{t('stats.toolbar.previous')}</TooltipContent>
-        </Tooltip>
+        <HoverTooltip content={t('stats.toolbar.previous')} side="bottom">
+          <Button variant="ghost" size="icon" className="size-8" onClick={goToPrevious}>
+            <ChevronLeft className="size-4" />
+            <span className="sr-only">{t('stats.toolbar.previous')}</span>
+          </Button>
+        </HoverTooltip>
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="size-8" onClick={goToNext}>
-              <ChevronRight className="size-4" />
-              <span className="sr-only">{t('stats.toolbar.next')}</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{t('stats.toolbar.next')}</TooltipContent>
-        </Tooltip>
+        <HoverTooltip content={t('stats.toolbar.next')} side="bottom">
+          <Button variant="ghost" size="icon" className="size-8" onClick={goToNext}>
+            <ChevronRight className="size-4" />
+            <span className="sr-only">{t('stats.toolbar.next')}</span>
+          </Button>
+        </HoverTooltip>
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="size-8" onClick={goToCurrent}>
-              <RotateCcw className="size-4" />
-              <span className="sr-only">{t('stats.toolbar.current')}</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{t('stats.toolbar.current')}</TooltipContent>
-        </Tooltip>
+        <HoverTooltip content={t('stats.toolbar.current')} side="bottom">
+          <Button variant="ghost" size="icon" className="size-8" onClick={goToCurrent}>
+            <RotateCcw className="size-4" />
+            <span className="sr-only">{t('stats.toolbar.current')}</span>
+          </Button>
+        </HoverTooltip>
       </div>
 
       {/* 日付範囲表示 */}
@@ -127,20 +118,17 @@ export function StatsToolbar() {
       <Separator orientation="vertical" className="mx-1 h-6" />
 
       {/* 比較トグル */}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant={compareEnabled ? 'secondary' : 'ghost'}
-            size="sm"
-            className={cn('h-8 gap-1.5', compareEnabled && 'bg-surface-container')}
-            onClick={() => setCompareEnabled(!compareEnabled)}
-          >
-            <GitCompareArrows className="size-4" />
-            <span className="hidden sm:inline">{t('stats.toolbar.compare')}</span>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>{t('stats.toolbar.compareTooltip')}</TooltipContent>
-      </Tooltip>
+      <HoverTooltip content={t('stats.toolbar.compareTooltip')} side="bottom">
+        <Button
+          variant={compareEnabled ? 'secondary' : 'ghost'}
+          size="sm"
+          className={cn('h-8 gap-1.5', compareEnabled && 'bg-surface-container')}
+          onClick={() => setCompareEnabled(!compareEnabled)}
+        >
+          <GitCompareArrows className="size-4" />
+          <span className="hidden sm:inline">{t('stats.toolbar.compare')}</span>
+        </Button>
+      </HoverTooltip>
 
       {/* 比較期間選択（比較有効時のみ表示） */}
       {compareEnabled && (
@@ -162,15 +150,12 @@ export function StatsToolbar() {
       <div className="flex-1" />
 
       {/* エクスポート */}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="outline" size="sm" className="h-8 gap-1.5">
-            <Download className="size-4" />
-            <span className="hidden sm:inline">{t('stats.toolbar.export')}</span>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>{t('stats.toolbar.exportTooltip')}</TooltipContent>
-      </Tooltip>
+      <HoverTooltip content={t('stats.toolbar.exportTooltip')} side="bottom">
+        <Button variant="outline" size="sm" className="h-8 gap-1.5">
+          <Download className="size-4" />
+          <span className="hidden sm:inline">{t('stats.toolbar.export')}</span>
+        </Button>
+      </HoverTooltip>
     </div>
   )
 }
