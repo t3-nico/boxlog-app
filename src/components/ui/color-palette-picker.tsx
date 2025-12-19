@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 
 import { Button } from '@/components/ui/button'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { TAG_COLOR_PALETTE } from '@/config/ui/colors'
 import { cn } from '@/lib/utils'
 
@@ -42,33 +42,28 @@ export function ColorPalettePicker({ selectedColor, onColorSelect, className }: 
         const colorName = COLOR_NAMES[color] || color
 
         return (
-          <Tooltip key={color}>
-            <TooltipTrigger asChild>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                onClick={() => onColorSelect(color)}
-                tabIndex={-1}
-                className={cn(
-                  'relative shrink-0 p-0 transition-all',
-                  'hover:scale-110 hover:bg-transparent',
-                  isSelected && 'scale-105'
-                )}
-                aria-label={t('selectColor', { color: colorName })}
-              >
-                <Circle className="stroke-border h-6 w-6 transition-all" fill={color} strokeWidth={2} />
-                {isSelected && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Check className="text-background h-3 w-3" strokeWidth={3} />
-                  </div>
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p>{colorName}</p>
-            </TooltipContent>
-          </Tooltip>
+          <HoverTooltip key={color} content={colorName} side="top">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => onColorSelect(color)}
+              tabIndex={-1}
+              className={cn(
+                'relative shrink-0 p-0 transition-all',
+                'hover:scale-110 hover:bg-transparent',
+                isSelected && 'scale-105'
+              )}
+              aria-label={t('selectColor', { color: colorName })}
+            >
+              <Circle className="stroke-border h-6 w-6 transition-all" fill={color} strokeWidth={2} />
+              {isSelected && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Check className="text-background h-3 w-3" strokeWidth={3} />
+                </div>
+              )}
+            </Button>
+          </HoverTooltip>
         )
       })}
     </div>

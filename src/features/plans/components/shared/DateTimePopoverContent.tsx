@@ -2,7 +2,7 @@
 
 import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { ReminderSelect } from '@/features/plans/components/shared/ReminderSelect'
 import { TimeSelect } from '@/features/plans/components/shared/TimeSelect'
 import { useAutoAdjustEndTime } from '@/features/plans/hooks/useAutoAdjustEndTime'
@@ -127,30 +127,23 @@ export function DateTimePopoverContent({
           <Repeat className="text-muted-foreground size-4 flex-shrink-0" />
           <div className="flex flex-1 flex-col gap-1">
             <div className="relative flex h-8 items-center" ref={recurrenceRef}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={`h-8 px-2 text-sm ${hasRecurrence ? 'text-foreground' : 'text-muted-foreground'}`}
-                    type="button"
-                    disabled={isRecurrenceDisabled}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      if (!isRecurrenceDisabled) {
-                        setShowRecurrencePopover(!showRecurrencePopover)
-                      }
-                    }}
-                  >
-                    {hasRecurrence ? recurrenceDisplayText : '繰り返し'}
-                  </Button>
-                </TooltipTrigger>
-                {isRecurrenceDisabled && (
-                  <TooltipContent>
-                    <p className="text-xs">日付を先に設定してください</p>
-                  </TooltipContent>
-                )}
-              </Tooltip>
+              <HoverTooltip content="日付を先に設定してください" side="top" disabled={!isRecurrenceDisabled}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`h-8 px-2 text-sm ${hasRecurrence ? 'text-foreground' : 'text-muted-foreground'}`}
+                  type="button"
+                  disabled={isRecurrenceDisabled}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (!isRecurrenceDisabled) {
+                      setShowRecurrencePopover(!showRecurrencePopover)
+                    }
+                  }}
+                >
+                  {hasRecurrence ? recurrenceDisplayText : '繰り返し'}
+                </Button>
+              </HoverTooltip>
 
               {showRecurrencePopover && !isRecurrenceDisabled && (
                 <div className="border-border bg-popover absolute top-10 left-0 z-50 w-48 rounded-md border shadow-md">
@@ -196,23 +189,16 @@ export function DateTimePopoverContent({
         <div className="flex min-h-10 items-center gap-2 px-3 py-2">
           <Bell className="text-muted-foreground size-4 flex-shrink-0" />
           <div className="flex h-8 flex-1 items-center">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div>
-                  <ReminderSelect
-                    value={reminderType}
-                    onChange={onReminderChange}
-                    variant="inspector"
-                    disabled={isReminderDisabled}
-                  />
-                </div>
-              </TooltipTrigger>
-              {isReminderDisabled && (
-                <TooltipContent>
-                  <p className="text-xs">日付と開始時刻を先に設定してください</p>
-                </TooltipContent>
-              )}
-            </Tooltip>
+            <HoverTooltip content="日付と開始時刻を先に設定してください" side="top" disabled={!isReminderDisabled}>
+              <div>
+                <ReminderSelect
+                  value={reminderType}
+                  onChange={onReminderChange}
+                  variant="inspector"
+                  disabled={isReminderDisabled}
+                />
+              </div>
+            </HoverTooltip>
           </div>
         </div>
       </div>

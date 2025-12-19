@@ -16,6 +16,8 @@ import { useTags } from '@/features/tags/hooks/use-tags'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Skeleton } from '@/components/ui/skeleton'
+import { HoverTooltip } from '@/components/ui/tooltip'
+import { api } from '@/lib/trpc'
 
 /** Planのデフォルト色 */
 const PLAN_COLOR = '#3b82f6' // blue-500
@@ -33,6 +35,8 @@ export function CalendarFilterList() {
   const t = useTranslations()
   const { data: tags, isLoading: tagsLoading } = useTags()
   const { data: groups, isLoading: groupsLoading } = useTagGroups()
+  const { data: tagStats } = api.plans.getTagStats.useQuery()
+  const tagPlanCounts = tagStats?.counts ?? {}
 
   const {
     visibleTypes,
@@ -70,7 +74,7 @@ export function CalendarFilterList() {
   const isLoading = tagsLoading || groupsLoading
 
   return (
-    <div className="space-y-2 p-2">
+    <div className="min-w-0 space-y-2 overflow-hidden p-2">
       {/* 種類（Plan / Record） */}
       <SidebarSection title={t('calendar.filter.type')} defaultOpen className="space-y-1 py-1">
         <FilterItem
@@ -112,6 +116,7 @@ export function CalendarFilterList() {
                     onToggleTag={toggleTag}
                     onToggleGroup={() => toggleGroupTags(groupTags.map((t) => t.id))}
                     groupVisibility={getGroupVisibility(groupTags.map((t) => t.id))}
+                    tagPlanCounts={tagPlanCounts}
                   />
                 )
             )}
@@ -125,6 +130,7 @@ export function CalendarFilterList() {
                 onToggleTag={toggleTag}
                 onToggleGroup={() => toggleGroupTags(groupedTags.ungrouped.map((t) => t.id))}
                 groupVisibility={getGroupVisibility(groupedTags.ungrouped.map((t) => t.id))}
+                tagPlanCounts={tagPlanCounts}
               />
             )}
 
@@ -148,11 +154,12 @@ export function CalendarFilterList() {
 interface TagGroupSectionProps {
   groupName: string
   groupColor?: string | undefined
-  tags: Array<{ id: string; name: string; color: string }>
+  tags: Array<{ id: string; name: string; color: string; description?: string | null }>
   visibleTagIds: Set<string>
   onToggleTag: (tagId: string) => void
   onToggleGroup: () => void
   groupVisibility: 'all' | 'none' | 'some'
+  tagPlanCounts: Record<string, number>
 }
 
 function TagGroupSection({
@@ -163,6 +170,7 @@ function TagGroupSection({
   onToggleTag,
   onToggleGroup,
   groupVisibility,
+  tagPlanCounts,
 }: TagGroupSectionProps) {
   const groupCheckboxStyle = groupColor
     ? ({
@@ -172,8 +180,8 @@ function TagGroupSection({
     : undefined
 
   return (
-    <Collapsible defaultOpen>
-      <div className="flex items-center">
+    <Collapsible defaultOpen className="min-w-0">
+      <div className="flex min-w-0 items-center">
         {/* グループチェックボックス */}
         <Checkbox
           checked={groupVisibility === 'some' ? 'indeterminate' : groupVisibility === 'all'}
@@ -182,20 +190,22 @@ function TagGroupSection({
           style={groupCheckboxStyle}
         />
         {/* 折りたたみトリガー */}
-        <CollapsibleTrigger className="hover:bg-state-hover flex flex-1 items-center justify-between rounded px-2 py-1 text-sm font-medium">
-          <span className="truncate">{groupName}</span>
-          <ChevronRight className="size-4 transition-transform [[data-state=open]>&]:rotate-90" />
+        <CollapsibleTrigger className="hover:bg-state-hover flex min-w-0 flex-1 items-center justify-between overflow-hidden rounded px-2 py-1 text-sm font-medium">
+          <span className="min-w-0 truncate">{groupName}</span>
+          <ChevronRight className="ml-auto size-4 w-4 shrink-0 transition-transform [[data-state=open]>&]:rotate-90" />
         </CollapsibleTrigger>
       </div>
       <CollapsibleContent>
-        <div className="space-y-1 pl-4">
+        <div className="min-w-0 space-y-1 overflow-hidden pl-4">
           {tags.map((tag) => (
             <FilterItem
               key={tag.id}
               label={tag.name}
+              description={tag.description}
               checkboxColor={tag.color || undefined}
               checked={visibleTagIds.has(tag.id)}
               onCheckedChange={() => onToggleTag(tag.id)}
+              count={tagPlanCounts[tag.id] ?? 0}
             />
           ))}
         </div>
@@ -206,6 +216,8 @@ function TagGroupSection({
 
 interface FilterItemProps {
   label: string
+  /** タグの説明（ツールチップで表示） */
+  description?: string | null | undefined
   /** チェックボックスの色（hex値） */
   checkboxColor?: string | undefined
   icon?: React.ReactNode
@@ -213,16 +225,20 @@ interface FilterItemProps {
   onCheckedChange: () => void
   disabled?: boolean
   disabledReason?: string
+  /** 右端に表示するカウント数 */
+  count?: number | undefined
 }
 
 function FilterItem({
   label,
+  description,
   checkboxColor,
   icon,
   checked,
   onCheckedChange,
   disabled = false,
   disabledReason,
+  count,
 }: FilterItemProps) {
   // チェックボックスのカスタムスタイル
   const checkboxStyle = checkboxColor
@@ -232,10 +248,13 @@ function FilterItem({
       } as React.CSSProperties)
     : undefined
 
-  return (
+  // 親幅 w-60 (240px) - padding 16px = 224px
+  // チェックボックス 16px + gap 8px + 数字用 24px + gap 8px = 56px
+  // ラベル最大幅 = 224px - 56px = 168px
+  const content = (
     <label
       className={cn(
-        'hover:bg-state-hover flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm',
+        'hover:bg-state-hover flex w-full cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm',
         disabled && 'cursor-not-allowed opacity-50'
       )}
       title={disabled ? disabledReason : undefined}
@@ -244,11 +263,21 @@ function FilterItem({
         checked={checked}
         onCheckedChange={onCheckedChange}
         disabled={disabled}
-        className="h-4 w-4"
+        className="h-4 w-4 shrink-0"
         style={checkboxStyle}
       />
-      {icon && <span className="text-muted-foreground">{icon}</span>}
-      <span className="truncate">{label}</span>
+      {icon && <span className="text-muted-foreground shrink-0">{icon}</span>}
+      <span className="max-w-[140px] truncate">{label}</span>
+      {count !== undefined && (
+        <span className="text-muted-foreground ml-auto w-4 shrink-0 text-right text-xs tabular-nums">{count}</span>
+      )}
     </label>
+  )
+
+  // 説明がある場合はツールチップで表示
+  return (
+    <HoverTooltip content={description} side="right" disabled={!description}>
+      {content}
+    </HoverTooltip>
   )
 }

@@ -6,7 +6,7 @@ import { Eye, EyeOff, InfoIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { addPasswordToHistory, isPasswordReused } from '@/lib/auth/password-history'
 import { checkPasswordPwned } from '@/lib/auth/pwned-password'
@@ -155,29 +155,25 @@ export function PasswordSection() {
             maxLength={64}
           />
           <InputGroupAddon align="inline-end">
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <InputGroupButton
-                  variant="ghost"
-                  aria-label={showCurrentPassword ? 'Hide password' : 'Show password'}
-                  size="icon-xs"
-                  onClick={toggleCurrentPasswordVisibility}
-                >
-                  {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </InputGroupButton>
-              </TooltipTrigger>
-              <TooltipContent>{showCurrentPassword ? 'パスワードを隠す' : 'パスワードを表示'}</TooltipContent>
-            </Tooltip>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
-                  <InfoIcon />
-                </InputGroupButton>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>現在のパスワードを入力してください</p>
-              </TooltipContent>
-            </Tooltip>
+            <HoverTooltip
+              content={showCurrentPassword ? 'パスワードを隠す' : 'パスワードを表示'}
+              side="top"
+              delayMs={0}
+            >
+              <InputGroupButton
+                variant="ghost"
+                aria-label={showCurrentPassword ? 'Hide password' : 'Show password'}
+                size="icon-xs"
+                onClick={toggleCurrentPasswordVisibility}
+              >
+                {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </InputGroupButton>
+            </HoverTooltip>
+            <HoverTooltip content="現在のパスワードを入力してください" side="top" delayMs={0}>
+              <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
+                <InfoIcon />
+              </InputGroupButton>
+            </HoverTooltip>
           </InputGroupAddon>
         </InputGroup>
 
@@ -192,29 +188,21 @@ export function PasswordSection() {
             maxLength={64}
           />
           <InputGroupAddon align="inline-end">
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <InputGroupButton
-                  variant="ghost"
-                  aria-label={showNewPassword ? 'Hide password' : 'Show password'}
-                  size="icon-xs"
-                  onClick={toggleNewPasswordVisibility}
-                >
-                  {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </InputGroupButton>
-              </TooltipTrigger>
-              <TooltipContent>{showNewPassword ? 'パスワードを隠す' : 'パスワードを表示'}</TooltipContent>
-            </Tooltip>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
-                  <InfoIcon />
-                </InputGroupButton>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{t('settings.account.passwordMinLength')}</p>
-              </TooltipContent>
-            </Tooltip>
+            <HoverTooltip content={showNewPassword ? 'パスワードを隠す' : 'パスワードを表示'} side="top" delayMs={0}>
+              <InputGroupButton
+                variant="ghost"
+                aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                size="icon-xs"
+                onClick={toggleNewPasswordVisibility}
+              >
+                {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </InputGroupButton>
+            </HoverTooltip>
+            <HoverTooltip content={t('settings.account.passwordMinLength')} side="top" delayMs={0}>
+              <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
+                <InfoIcon />
+              </InputGroupButton>
+            </HoverTooltip>
           </InputGroupAddon>
         </InputGroup>
 
@@ -229,29 +217,25 @@ export function PasswordSection() {
             maxLength={64}
           />
           <InputGroupAddon align="inline-end">
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <InputGroupButton
-                  variant="ghost"
-                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
-                  size="icon-xs"
-                  onClick={toggleConfirmPasswordVisibility}
-                >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </InputGroupButton>
-              </TooltipTrigger>
-              <TooltipContent>{showConfirmPassword ? 'パスワードを隠す' : 'パスワードを表示'}</TooltipContent>
-            </Tooltip>
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
-                  <InfoIcon />
-                </InputGroupButton>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>新しいパスワードを再入力してください</p>
-              </TooltipContent>
-            </Tooltip>
+            <HoverTooltip
+              content={showConfirmPassword ? 'パスワードを隠す' : 'パスワードを表示'}
+              side="top"
+              delayMs={0}
+            >
+              <InputGroupButton
+                variant="ghost"
+                aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                size="icon-xs"
+                onClick={toggleConfirmPasswordVisibility}
+              >
+                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </InputGroupButton>
+            </HoverTooltip>
+            <HoverTooltip content="新しいパスワードを再入力してください" side="top" delayMs={0}>
+              <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
+                <InfoIcon />
+              </InputGroupButton>
+            </HoverTooltip>
           </InputGroupAddon>
         </InputGroup>
 

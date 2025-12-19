@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import type { InboxItem } from '@/features/inbox/hooks/useInboxData'
 import { DateTimePopoverContent } from '@/features/plans/components/shared/DateTimePopoverContent'
 import { PlanTagSelectDialogEnhanced } from '@/features/plans/components/shared/PlanTagSelectDialogEnhanced'
@@ -198,7 +198,7 @@ interface KanbanColumnProps {
   children: React.ReactNode
 }
 
-function KanbanColumn({ title, count, variant, status, children }: KanbanColumnProps) {
+function KanbanColumn({ title, count: _count, variant, status, children }: KanbanColumnProps) {
   const [isAdding, setIsAdding] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [selectedDate, setSelectedDate] = useState<Date>()
@@ -299,9 +299,7 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
         className={`${bgColor} flex items-center justify-between rounded-t-lg pt-2`}
         style={{ height: '48px', minHeight: '48px', maxHeight: '48px', paddingLeft: '16px', paddingRight: '16px' }}
       >
-        <h3 className="text-foreground font-semibold">
-          {title} <span className="text-muted-foreground">({count})</span>
-        </h3>
+        <h3 className="text-foreground font-semibold">{title}</h3>
         <div className="flex items-center gap-1">
           {/* ドロップダウンメニュー */}
           <DropdownMenu>
@@ -318,22 +316,17 @@ function KanbanColumn({ title, count, variant, status, children }: KanbanColumnP
           </DropdownMenu>
 
           {/* プラスアイコン（ツールチップ付き） */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6"
-                onClick={() => setIsAdding(true)}
-                disabled={isAdding}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p>{t('board.kanban.addNewPlan')}</p>
-            </TooltipContent>
-          </Tooltip>
+          <HoverTooltip content={t('board.kanban.addNewPlan')} side="top">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              onClick={() => setIsAdding(true)}
+              disabled={isAdding}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </HoverTooltip>
         </div>
       </div>
       <div className={`${bgColor} flex-1 space-y-2 overflow-y-auto rounded-b-lg px-4 pt-4 pb-2`}>

@@ -228,8 +228,7 @@ export function SortableGroupItem({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* タグ数 */}
-          <span className="text-muted-foreground text-xs">{tagCount}</span>
+          <span className="text-muted-foreground w-4 text-right text-xs tabular-nums">{tagCount}</span>
         </div>
       </div>
     </div>

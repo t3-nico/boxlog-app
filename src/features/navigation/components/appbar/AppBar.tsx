@@ -4,7 +4,7 @@ import { BarChart3, Box, Calendar, Inbox, PanelLeftClose, PanelLeftOpen, Tag } f
 import { useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { SimpleTooltip } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { useTheme } from '@/contexts/theme-context'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
@@ -94,7 +94,7 @@ export function AppBar() {
     >
       {/* Logo / Sidebar Toggle - 48px (8px padding + 32px button + 8px padding) */}
       <div className="flex items-center justify-center py-2" onClick={(e) => e.stopPropagation()}>
-        <SimpleTooltip content={isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')} side="right">
+        <HoverTooltip content={isOpen ? t('sidebar.closeSidebar') : t('sidebar.openSidebar')} side="right">
           <Button
             onClick={toggle}
             size="icon"
@@ -112,7 +112,7 @@ export function AppBar() {
               <Box className="size-5" />
             )}
           </Button>
-        </SimpleTooltip>
+        </HoverTooltip>
       </div>
 
       <Navigation navItems={navItems} />

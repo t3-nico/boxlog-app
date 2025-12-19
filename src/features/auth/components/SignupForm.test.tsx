@@ -2,13 +2,11 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { TooltipProvider } from '@/components/ui/tooltip'
-
 import { SignupForm } from './SignupForm'
 
-// TooltipProvider でラップするヘルパー
+// シンプルなレンダリングヘルパー（TooltipProviderは不要になった）
 function renderWithProviders(ui: React.ReactElement) {
-  return render(<TooltipProvider>{ui}</TooltipProvider>)
+  return render(ui)
 }
 
 // モックの設定

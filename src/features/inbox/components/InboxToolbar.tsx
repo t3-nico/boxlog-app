@@ -3,6 +3,7 @@
 import { KanbanToolbar } from '@/features/board/components/KanbanToolbar'
 
 import { useInboxViewStore } from '../stores/useInboxViewStore'
+import { DisplayModeSwitcher } from './DisplayModeSwitcher'
 
 /**
  * Inboxツールバー
@@ -21,8 +22,14 @@ export function InboxToolbar() {
   const { displayMode } = useInboxViewStore()
 
   return (
-    <div className="bg-background flex h-12 shrink-0 items-center px-4 py-2">
-      {displayMode === 'board' ? <KanbanToolbar /> : null}
+    <div className="bg-background flex h-12 shrink-0 items-center justify-between px-4 py-2">
+      {/* 左側: 表示モード切り替え */}
+      <div className="flex h-8 items-center">
+        <DisplayModeSwitcher />
+      </div>
+
+      {/* 右側: モード別ツール */}
+      <div className="flex h-8 items-center">{displayMode === 'board' ? <KanbanToolbar /> : null}</div>
     </div>
   )
 }

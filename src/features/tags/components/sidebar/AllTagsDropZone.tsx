@@ -45,7 +45,7 @@ export function AllTagsDropZone({ isActive, activeTagsCount, onClick }: AllTagsD
           </div>
           <span>{t('tags.sidebar.allTags')}</span>
         </div>
-        <span className="text-muted-foreground text-xs">{activeTagsCount}</span>
+        <span className="text-muted-foreground w-4 text-right text-xs tabular-nums">{activeTagsCount}</span>
       </div>
     </div>
   )

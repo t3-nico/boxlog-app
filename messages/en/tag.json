@@ -198,7 +198,11 @@
       "tagColor": "Tag color",
       "lastUsed": "Last used",
       "columns": "Columns",
-      "columnSettings": "Column settings"
+      "columnSettings": "Column settings",
+      "displayMode": {
+        "flat": "Flat",
+        "grouped": "Grouped"
+      }
     },
     "bulkMerge": {
       "title": "Merge Tags",
@@ -440,7 +444,11 @@
       "tagColor": "Tag color",
       "lastUsed": "Last used",
       "columns": "Columns",
-      "columnSettings": "Column settings"
+      "columnSettings": "Column settings",
+      "displayMode": {
+        "flat": "Flat",
+        "grouped": "Grouped"
+      }
     },
     "bulkMerge": {
       "title": "Merge Tags",

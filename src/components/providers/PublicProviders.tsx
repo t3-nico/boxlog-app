@@ -7,14 +7,12 @@
  *
  * 含まれるProvider:
  * - PublicThemeProvider（テーマ切替 - tRPC不使用）
- * - TooltipProvider（ツールチップ）
  *
  * @see /CLAUDE.md - プロバイダー階層の詳細
  */
 
 'use client'
 
-import { TooltipProvider } from '@/components/ui/tooltip'
 import { PublicThemeProvider } from '@/contexts/public-theme-context'
 
 interface PublicProvidersProps {
@@ -22,11 +20,5 @@ interface PublicProvidersProps {
 }
 
 export function PublicProviders({ children }: PublicProvidersProps) {
-  return (
-    <PublicThemeProvider>
-      <TooltipProvider delayDuration={300} skipDelayDuration={100} disableHoverableContent>
-        {children}
-      </TooltipProvider>
-    </PublicThemeProvider>
-  )
+  return <PublicThemeProvider>{children}</PublicThemeProvider>
 }

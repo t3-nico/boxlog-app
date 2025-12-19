@@ -304,9 +304,7 @@ export const SimpleTags = ({ value, onValueChange, options, placeholder, classNa
                     <div className="h-3 w-3 rounded-full" style={{ backgroundColor: option.color }} />
                   ) : null}
                   <span>{option.name}</span>
-                  {option.count ? (
-                    <span className="text-muted-foreground ml-auto text-xs">({option.count})</span>
-                  ) : null}
+                  {/* count表示は一旦削除 */}
                 </TagsItem>
               ))}
             </TagsGroup>

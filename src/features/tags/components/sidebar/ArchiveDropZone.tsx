@@ -45,7 +45,7 @@ export function ArchiveDropZone({ isActive, archivedTagsCount, onClick }: Archiv
           </div>
           <span>{t('tags.sidebar.archive')}</span>
         </div>
-        <span className="text-muted-foreground text-xs">{archivedTagsCount}</span>
+        <span className="text-muted-foreground w-4 text-right text-xs tabular-nums">{archivedTagsCount}</span>
       </div>
     </div>
   )

@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 
 import type { InboxItem } from '../../hooks/useInboxData'
 import { InboxActionMenuItems } from './InboxActionMenuItems'
@@ -60,81 +60,66 @@ export function InboxSelectionActions({
   }
 
   return (
-    <TooltipProvider>
+    <>
       {/* タグ一括追加 */}
       {onAddTags && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onAddTags} aria-label="タグを追加">
-              <Tag className="size-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>タグを追加</TooltipContent>
-        </Tooltip>
+        <HoverTooltip content="タグを追加" side="top">
+          <Button variant="ghost" size="icon" onClick={onAddTags} aria-label="タグを追加">
+            <Tag className="size-4" />
+          </Button>
+        </HoverTooltip>
       )}
 
       {/* 期限一括変更 */}
       {onChangeDueDate && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onChangeDueDate} aria-label="期限を設定">
-              <Calendar className="size-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>期限を設定</TooltipContent>
-        </Tooltip>
+        <HoverTooltip content="期限を設定" side="top">
+          <Button variant="ghost" size="icon" onClick={onChangeDueDate} aria-label="期限を設定">
+            <Calendar className="size-4" />
+          </Button>
+        </HoverTooltip>
       )}
 
       {/* アーカイブ */}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              onArchive()
-              onClearSelection()
-            }}
-            aria-label="アーカイブ"
-          >
-            <Archive className="size-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>アーカイブ</TooltipContent>
-      </Tooltip>
+      <HoverTooltip content="アーカイブ" side="top">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => {
+            onArchive()
+            onClearSelection()
+          }}
+          aria-label="アーカイブ"
+        >
+          <Archive className="size-4" />
+        </Button>
+      </HoverTooltip>
 
       {/* 削除 */}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              onDelete()
-              onClearSelection()
-            }}
-            className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-            aria-label="削除"
-          >
-            <Trash2 className="size-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>削除</TooltipContent>
-      </Tooltip>
+      <HoverTooltip content="削除" side="top">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => {
+            onDelete()
+            onClearSelection()
+          }}
+          className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+          aria-label="削除"
+        >
+          <Trash2 className="size-4" />
+        </Button>
+      </HoverTooltip>
 
       {/* その他メニュー（単一選択時のみ） */}
       {isSingleSelection && selectedItem && (
         <DropdownMenu modal={false}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="その他">
-                  <MoreHorizontal className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-            </TooltipTrigger>
-            <TooltipContent>その他</TooltipContent>
-          </Tooltip>
+          <HoverTooltip content="その他" side="top">
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="その他">
+                <MoreHorizontal className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+          </HoverTooltip>
           <DropdownMenuContent>
             <InboxActionMenuItems
               item={selectedItem}
@@ -168,6 +153,6 @@ export function InboxSelectionActions({
           </DropdownMenuContent>
         </DropdownMenu>
       )}
-    </TooltipProvider>
+    </>
   )
 }

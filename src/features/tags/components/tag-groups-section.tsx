@@ -308,8 +308,7 @@ export const TagGroupsSection = forwardRef<TagGroupsSectionRef, TagGroupsSection
                     {group.description && <p className="text-muted-foreground text-sm">{group.description}</p>}
                   </div>
 
-                  {/* タグ数 */}
-                  <span className="text-muted-foreground text-sm">{getGroupTagCount(group.id)}件</span>
+                  {/* タグ数表示は一旦削除 */}
                 </div>
 
                 {/* アクションメニュー */}

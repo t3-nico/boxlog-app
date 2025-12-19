@@ -12,7 +12,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
@@ -128,23 +128,21 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                     minLength={8}
                     maxLength={64}
                   />
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-0 right-0 h-full px-3"
-                        onClick={() => setShowPassword(!showPassword)}
-                        disabled={isLoading}
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {showPassword ? t('auth.loginForm.hidePassword') : t('auth.loginForm.showPassword')}
-                    </TooltipContent>
-                  </Tooltip>
+                  <HoverTooltip
+                    content={showPassword ? t('auth.loginForm.hidePassword') : t('auth.loginForm.showPassword')}
+                    side="top"
+                  >
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-0 right-0 h-full px-3"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isLoading}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </HoverTooltip>
                 </div>
               </Field>
 

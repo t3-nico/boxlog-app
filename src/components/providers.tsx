@@ -11,9 +11,8 @@
  * 3. AuthStoreInitializer（認証層 - Zustand）
  * 4. RealtimeProvider（リアルタイム購読層 - Supabase）
  * 5. ThemeProvider（UI層）
- * 6. TooltipProvider（UI層）
- * 7. GlobalSearchProvider（機能層）
- * 8. ReactQueryDevtools（開発ツール - 本番環境では自動除外）
+ * 6. GlobalSearchProvider（機能層）
+ * 7. ReactQueryDevtools（開発ツール - 本番環境では自動除外）
  *
  * 公開ページ（/auth/、/legal/、/error/）では、このProvidersではなく
  * 軽量なPublicProvidersを使用すること。
@@ -38,7 +37,6 @@ const ReactQueryDevtools =
     : () => null
 
 import { RealtimeProvider } from '@/components/providers/RealtimeProvider'
-import { TooltipProvider } from '@/components/ui/tooltip'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { AuthStoreInitializer } from '@/features/auth/stores/AuthStoreInitializer'
 import { api } from '@/lib/trpc'
@@ -119,12 +117,10 @@ export function Providers({ children }: ProvidersProps) {
         <AuthStoreInitializer />
         <RealtimeProvider>
           <ThemeProvider>
-            <TooltipProvider delayDuration={300} skipDelayDuration={100} disableHoverableContent>
-              <GlobalSearchProvider>
-                {children}
-                <GlobalTagCreateModal />
-              </GlobalSearchProvider>
-            </TooltipProvider>
+            <GlobalSearchProvider>
+              {children}
+              <GlobalTagCreateModal />
+            </GlobalSearchProvider>
           </ThemeProvider>
         </RealtimeProvider>
         {/* React Query DevTools（開発環境のみ） */}
