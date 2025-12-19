@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import type { NotificationType } from '@/schemas/notifications'
 import { useTranslations } from 'next-intl'
@@ -250,21 +250,16 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
               <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">{unreadCount}</span>
             )}
           </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={handleOpenSettings}
-                className="hover:bg-state-hover flex h-7 w-7 items-center justify-center rounded-md transition-colors"
-              >
-                <Settings className="h-4 w-4" />
-                <span className="sr-only">{t('notification.settings')}</span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p>{t('notification.settings')}</p>
-            </TooltipContent>
-          </Tooltip>
+          <HoverTooltip content={t('notification.settings')} side="top">
+            <button
+              type="button"
+              onClick={handleOpenSettings}
+              className="hover:bg-state-hover flex h-7 w-7 items-center justify-center rounded-md transition-colors"
+            >
+              <Settings className="h-4 w-4" />
+              <span className="sr-only">{t('notification.settings')}</span>
+            </button>
+          </HoverTooltip>
         </DropdownMenuLabel>
 
         <DropdownMenuSeparator className="my-0" />

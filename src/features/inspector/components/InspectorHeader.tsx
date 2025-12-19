@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 
 import type { InspectorDisplayMode } from './InspectorShell'
 
@@ -78,54 +78,39 @@ export function InspectorHeader({
     <div className="bg-popover sticky top-0 z-10 flex h-12 shrink-0 items-center justify-between px-2">
       <div className="flex items-center gap-1">
         {/* 閉じるボタン */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose} aria-label={closeLabel}>
-              {displayMode === 'popover' ? <X className="h-4 w-4" /> : <PanelRightClose className="h-4 w-4" />}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <p>{closeLabel}</p>
-          </TooltipContent>
-        </Tooltip>
+        <HoverTooltip content={closeLabel} side="bottom">
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose} aria-label={closeLabel}>
+            {displayMode === 'popover' ? <X className="h-4 w-4" /> : <PanelRightClose className="h-4 w-4" />}
+          </Button>
+        </HoverTooltip>
 
         {/* ナビゲーションボタン */}
         {showNavigation && (
           <div className="flex items-center">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={onPrevious}
-                  disabled={!hasPrevious}
-                  aria-label={previousLabel}
-                >
-                  <ChevronUp className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>{previousLabel}</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={onNext}
-                  disabled={!hasNext}
-                  aria-label={nextLabel}
-                >
-                  <ChevronDown className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <p>{nextLabel}</p>
-              </TooltipContent>
-            </Tooltip>
+            <HoverTooltip content={previousLabel} side="bottom">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={onPrevious}
+                disabled={!hasPrevious}
+                aria-label={previousLabel}
+              >
+                <ChevronUp className="h-5 w-5" />
+              </Button>
+            </HoverTooltip>
+            <HoverTooltip content={nextLabel} side="bottom">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={onNext}
+                disabled={!hasNext}
+                aria-label={nextLabel}
+              >
+                <ChevronDown className="h-5 w-5" />
+              </Button>
+            </HoverTooltip>
           </div>
         )}
       </div>
