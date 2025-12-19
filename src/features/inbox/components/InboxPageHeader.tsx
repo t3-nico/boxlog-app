@@ -3,7 +3,6 @@
 import { PageHeader } from '@/components/common/PageHeader'
 
 import { useInboxViewStore } from '../stores/useInboxViewStore'
-import { DisplayModeSwitcher } from './DisplayModeSwitcher'
 
 /**
  * Inboxページヘッダー
@@ -14,11 +13,5 @@ export function InboxPageHeader() {
   const { getActiveView } = useInboxViewStore()
   const activeView = getActiveView()
 
-  return (
-    <PageHeader title={activeView?.name || 'Inbox'} showMobileMenu={false} className="pr-4 pl-4">
-      <div className="ml-2">
-        <DisplayModeSwitcher />
-      </div>
-    </PageHeader>
-  )
+  return <PageHeader title={activeView?.name || 'Inbox'} showMobileMenu={false} className="pr-4 pl-4" />
 }

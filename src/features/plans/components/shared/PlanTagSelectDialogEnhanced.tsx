@@ -10,11 +10,10 @@ import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useCreateTag, useTags } from '@/features/tags/hooks/use-tags'
-import { api } from '@/lib/trpc'
 
 interface PlanTagSelectDialogEnhancedProps {
   children: React.ReactNode
@@ -46,9 +45,6 @@ export function PlanTagSelectDialogEnhanced({
   const { data: tagsData } = useTags(true)
   const { data: groups = [] } = useTagGroups()
   const createTagMutation = useCreateTag()
-  // 最適化: getTagStats で counts と lastUsed を一括取得
-  const { data: tagStats } = api.plans.getTagStats.useQuery()
-  const tagplanCounts = tagStats?.counts ?? {}
 
   const allTags = tagsData ?? []
 
@@ -228,21 +224,16 @@ export function PlanTagSelectDialogEnhanced({
             </Button>
 
             {/* サイドバー開閉ボタン */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowSidebar(!showSidebar)}
-                  className="hidden shrink-0 md:flex"
-                >
-                  {showSidebar ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{showSidebar ? 'サイドバーを閉じる' : 'サイドバーを開く'}</p>
-              </TooltipContent>
-            </Tooltip>
+            <HoverTooltip content={showSidebar ? 'サイドバーを閉じる' : 'サイドバーを開く'} side="bottom">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSidebar(!showSidebar)}
+                className="hidden shrink-0 md:flex"
+              >
+                {showSidebar ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
+              </Button>
+            </HoverTooltip>
           </div>
 
           {/* 作成フォーム（isCreating時のみ表示） */}
@@ -433,10 +424,7 @@ export function PlanTagSelectDialogEnhanced({
                               </TableCell>
                               <TableCell className="pl-1 font-medium">
                                 <div className="flex items-center gap-2">
-                                  <span>
-                                    {tag.name}{' '}
-                                    <span className="text-muted-foreground">({tagplanCounts[tag.id] || 0})</span>
-                                  </span>
+                                  <span>{tag.name}</span>
                                   {!tag.is_active && (
                                     <Badge variant="outline" className="text-xs">
                                       アーカイブ済み
@@ -486,10 +474,7 @@ export function PlanTagSelectDialogEnhanced({
                               </TableCell>
                               <TableCell className="pl-1 font-medium">
                                 <div className="flex items-center gap-2">
-                                  <span>
-                                    {tag.name}{' '}
-                                    <span className="text-muted-foreground">({tagplanCounts[tag.id] || 0})</span>
-                                  </span>
+                                  <span>{tag.name}</span>
                                   {!tag.is_active && (
                                     <Badge variant="outline" className="text-xs">
                                       アーカイブ済み

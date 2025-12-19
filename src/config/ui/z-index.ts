@@ -14,7 +14,8 @@
  * - modal: 通常のダイアログ・モーダル
  * - confirmDialog: 確認ダイアログ（削除など重要な操作）
  * - toast: トースト通知
- * - contextMenu: 右クリックメニュー（最前面）
+ * - contextMenu: 右クリックメニュー
+ * - tooltip: ツールチップ（最前面）
  */
 export const zIndex = {
   /** ドロップダウンメニュー、セレクト、ツールチップ */
@@ -37,6 +38,9 @@ export const zIndex = {
 
   /** コンテキストメニュー（右クリックメニュー） */
   contextMenu: 350,
+
+  /** ツールチップ（最前面に表示） */
+  tooltip: 9999,
 } as const
 
 export type ZIndexKey = keyof typeof zIndex

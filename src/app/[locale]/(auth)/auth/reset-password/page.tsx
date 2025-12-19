@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useTranslations } from 'next-intl'
 
@@ -159,23 +159,21 @@ export default function ResetPasswordPage() {
                         required
                         minLength={8}
                       />
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute top-0 right-0 h-full px-3"
-                            onClick={() => setShowPassword(!showPassword)}
-                            disabled={loading}
-                          >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {showPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')}
-                        </TooltipContent>
-                      </Tooltip>
+                      <HoverTooltip
+                        content={showPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')}
+                        side="top"
+                      >
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="absolute top-0 right-0 h-full px-3"
+                          onClick={() => setShowPassword(!showPassword)}
+                          disabled={loading}
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </Button>
+                      </HoverTooltip>
                     </div>
                   </Field>
 
@@ -191,23 +189,23 @@ export default function ResetPasswordPage() {
                         required
                         minLength={8}
                       />
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute top-0 right-0 h-full px-3"
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            disabled={loading}
-                          >
-                            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {showConfirmPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')}
-                        </TooltipContent>
-                      </Tooltip>
+                      <HoverTooltip
+                        content={
+                          showConfirmPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')
+                        }
+                        side="top"
+                      >
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="absolute top-0 right-0 h-full px-3"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          disabled={loading}
+                        >
+                          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </Button>
+                      </HoverTooltip>
                     </div>
                   </Field>
 

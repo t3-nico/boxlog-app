@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 
 interface GroupNameWithTooltipProps {
   name: string
@@ -36,18 +36,9 @@ export function GroupNameWithTooltip({ name, onDoubleClick }: GroupNameWithToolt
     </span>
   )
 
-  if (!isTruncated) {
-    return content
-  }
-
   return (
-    <TooltipProvider delayDuration={300}>
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>{content}</TooltipTrigger>
-        <TooltipContent side="top" sideOffset={4}>
-          <p className="whitespace-nowrap">{name}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <HoverTooltip content={name} side="top" disabled={!isTruncated}>
+      {content}
+    </HoverTooltip>
   )
 }

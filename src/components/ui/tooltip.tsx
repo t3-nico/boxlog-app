@@ -1,91 +1,162 @@
 'use client'
 
-import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import * as React from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { zIndex } from '@/config/ui/z-index'
 import { cn } from '@/lib/utils'
 
-function TooltipProvider({
-  delayDuration = 0,
-  skipDelayDuration = 300,
-  disableHoverableContent = true,
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
-  return (
-    <TooltipPrimitive.Provider
-      data-slot="tooltip-provider"
-      delayDuration={delayDuration}
-      skipDelayDuration={skipDelayDuration}
-      disableHoverableContent={disableHoverableContent}
-      {...props}
-    />
-  )
-}
-
-function Tooltip({ ...props }: React.ComponentProps<typeof TooltipPrimitive.Root>) {
-  return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
-}
-
-function TooltipTrigger({ ...props }: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
-}
-
-function TooltipContent({
-  className,
-  sideOffset = 4,
-  children,
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
-  return (
-    <TooltipPrimitive.Portal>
-      <TooltipPrimitive.Content
-        data-slot="tooltip-content"
-        sideOffset={sideOffset}
-        className={cn(
-          `bg-tooltip text-tooltip-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 motion-reduce:animate-none z-[${zIndex.modal}] w-fit origin-(--radix-tooltip-content-transform-origin) rounded-md px-2 py-1 text-xs text-balance`,
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </TooltipPrimitive.Content>
-    </TooltipPrimitive.Portal>
-  )
-}
-
 /**
- * CSSベースのシンプルなTooltip
- * ホバー中のみ表示、離れると即座に消える
+ * 安定したCSSベースのTooltip
+ *
+ * - ホバー時のみ表示、離れると即座に消える
+ * - Radix UIの状態管理問題を回避
+ * - 表示遅延（delayMs）対応
+ * - 複数行テキスト対応（maxWidth）
+ *
+ * @example
+ * ```tsx
+ * <HoverTooltip content="ツールチップテキスト" side="top">
+ *   <Button>ホバーして</Button>
+ * </HoverTooltip>
+ * ```
  */
-interface SimpleTooltipProps {
-  content: string
+interface HoverTooltipProps {
+  /** ツールチップに表示するコンテンツ */
+  content: React.ReactNode
+  /** トリガー要素 */
   children: React.ReactNode
+  /** 表示位置 */
   side?: 'top' | 'bottom' | 'left' | 'right'
+  /** 表示までの遅延（ミリ秒） */
+  delayMs?: number
+  /** 最大幅（複数行テキスト用） */
+  maxWidth?: number
+  /** 追加のクラス名 */
   className?: string
+  /** 無効化 */
+  disabled?: boolean
 }
 
-function SimpleTooltip({ content, children, side = 'bottom', className }: SimpleTooltipProps) {
-  const positionClasses = {
-    top: 'bottom-full left-1/2 -translate-x-1/2 mb-1',
-    bottom: 'top-full left-1/2 -translate-x-1/2 mt-1',
-    left: 'right-full top-1/2 -translate-y-1/2 mr-1',
-    right: 'left-full top-1/2 -translate-y-1/2 ml-1',
+function HoverTooltip({
+  content,
+  children,
+  side = 'top',
+  delayMs = 300,
+  maxWidth = 200,
+  className,
+  disabled = false,
+}: HoverTooltipProps) {
+  const [isVisible, setIsVisible] = useState(false)
+  const [position, setPosition] = useState({ top: 0, left: 0 })
+  const triggerRef = useRef<HTMLSpanElement>(null)
+  const tooltipRef = useRef<HTMLDivElement>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const showTooltip = useCallback(() => {
+    if (disabled) return
+    timeoutRef.current = setTimeout(() => {
+      setIsVisible(true)
+    }, delayMs)
+  }, [delayMs, disabled])
+
+  const hideTooltip = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+    setIsVisible(false)
+  }, [])
+
+  // 位置計算
+  useEffect(() => {
+    if (!isVisible || !triggerRef.current || !tooltipRef.current) return
+
+    const trigger = triggerRef.current.getBoundingClientRect()
+    const tooltip = tooltipRef.current.getBoundingClientRect()
+    const offset = 6
+
+    let top = 0
+    let left = 0
+
+    switch (side) {
+      case 'top':
+        top = trigger.top - tooltip.height - offset
+        left = trigger.left + trigger.width / 2 - tooltip.width / 2
+        break
+      case 'bottom':
+        top = trigger.bottom + offset
+        left = trigger.left + trigger.width / 2 - tooltip.width / 2
+        break
+      case 'left':
+        top = trigger.top + trigger.height / 2 - tooltip.height / 2
+        left = trigger.left - tooltip.width - offset
+        break
+      case 'right':
+        top = trigger.top + trigger.height / 2 - tooltip.height / 2
+        left = trigger.right + offset
+        break
+    }
+
+    // 画面端の調整
+    const padding = 8
+    if (left < padding) left = padding
+    if (left + tooltip.width > window.innerWidth - padding) {
+      left = window.innerWidth - tooltip.width - padding
+    }
+    if (top < padding) top = padding
+    if (top + tooltip.height > window.innerHeight - padding) {
+      top = window.innerHeight - tooltip.height - padding
+    }
+
+    setPosition({ top, left })
+  }, [isVisible, side])
+
+  // クリーンアップ
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
+  if (disabled || !content) {
+    return <>{children}</>
   }
 
   return (
-    <span className={cn('group relative inline-flex', className)}>
-      {children}
+    <>
       <span
-        className={cn(
-          `bg-tooltip text-tooltip-foreground pointer-events-none absolute z-[${zIndex.modal}] rounded-md px-2 py-1 text-xs whitespace-nowrap opacity-0 transition-opacity group-hover:opacity-100`,
-          positionClasses[side]
-        )}
+        ref={triggerRef}
+        onMouseEnter={showTooltip}
+        onMouseLeave={hideTooltip}
+        onFocus={showTooltip}
+        onBlur={hideTooltip}
+        className="inline-flex"
       >
-        {content}
+        {children}
       </span>
-    </span>
+      {isVisible && (
+        <div
+          ref={tooltipRef}
+          role="tooltip"
+          className={cn(
+            'bg-tooltip text-tooltip-foreground animate-in fade-in-0 zoom-in-95 pointer-events-none fixed rounded-md px-2 py-1 text-xs',
+            className
+          )}
+          style={{
+            top: position.top,
+            left: position.left,
+            maxWidth,
+            zIndex: zIndex.tooltip,
+          }}
+        >
+          {content}
+        </div>
+      )}
+    </>
   )
 }
 
-export { SimpleTooltip, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger }
+export { HoverTooltip }

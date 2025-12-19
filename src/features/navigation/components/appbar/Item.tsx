@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 
-import { SimpleTooltip } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
 import type { ItemProps } from './types'
@@ -26,7 +26,7 @@ import type { ItemProps } from './types'
  */
 export function Item({ icon: Icon, label, url, isActive, onClick }: ItemProps) {
   return (
-    <SimpleTooltip content={label} side="right">
+    <HoverTooltip content={label} side="right">
       <Link
         href={url}
         prefetch={true}
@@ -45,6 +45,6 @@ export function Item({ icon: Icon, label, url, isActive, onClick }: ItemProps) {
           <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
         </div>
       </Link>
-    </SimpleTooltip>
+    </HoverTooltip>
   )
 }

@@ -14,7 +14,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { usePathname, useSearchParams } from 'next/navigation'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { DesktopLayout } from './desktop-layout'
 import { MobileLayout } from './mobile-layout'
 
@@ -35,18 +35,26 @@ interface BaseLayoutContentProps {
  */
 export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const pathname = usePathname() || '/'
-  const localeFromPath = (pathname.split('/')[1] || 'ja') as 'ja' | 'en'
   const t = useTranslations()
   const isMobile = useMediaQuery('(max-width: 768px)')
   const searchParams = useSearchParams()
-  const { calendarProviderProps } = useCalendarProviderProps(pathname, searchParams || new URLSearchParams())
   const user = useAuthStore((state) => state.user)
 
-  // タグページかどうかを判定
-  const isTagsPage = pathname?.startsWith(`/${localeFromPath}/tags`) ?? false
+  // メモ化: localeをパスから抽出
+  const localeFromPath = useMemo(() => {
+    return (pathname.split('/')[1] || 'ja') as 'ja' | 'en'
+  }, [pathname])
 
-  // タグページの初期フィルターをURLから解析
-  const getInitialTagsFilter = (): TagsFilter => {
+  // メモ化: カレンダープロバイダーのprops
+  const { calendarProviderProps } = useCalendarProviderProps(pathname, searchParams || new URLSearchParams())
+
+  // メモ化: タグページかどうかを判定
+  const isTagsPage = useMemo(() => {
+    return pathname?.startsWith(`/${localeFromPath}/tags`) ?? false
+  }, [pathname, localeFromPath])
+
+  // メモ化: タグページの初期フィルターをURLから解析
+  const initialTagsFilter = useMemo((): TagsFilter => {
     if (!isTagsPage) return 'all'
     const tagsPath = pathname?.replace(`/${localeFromPath}/tags`, '') || ''
     if (tagsPath === '/uncategorized') return 'uncategorized'
@@ -55,51 +63,55 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     const groupMatch = tagsPath.match(/^\/g-(\d+)$/)
     if (groupMatch?.[1]) return `group-${parseInt(groupMatch[1], 10)}`
     return 'all'
-  }
+  }, [isTagsPage, pathname, localeFromPath])
 
   // Realtime通知購読（Toast表示）
   useNotificationRealtime(user?.id, true)
 
-  const content = (
-    <div className="flex h-screen flex-col">
-      {/* アクセシビリティ: スキップリンク */}
-      <a
-        href="#main-content"
-        className="bg-primary text-primary-foreground sr-only z-50 rounded-md px-4 py-2 focus:not-sr-only focus:absolute focus:top-4 focus:left-4"
-      >
-        {t('common.skipToMainContent')}
-      </a>
-
-      {/* メインレイアウト */}
-      {isMobile ? (
-        <MobileLayout locale={localeFromPath}>{children}</MobileLayout>
-      ) : (
-        <DesktopLayout locale={localeFromPath}>{children}</DesktopLayout>
-      )}
-
-      {/* Settings Dialog */}
-      <SettingsDialog />
-
-      {/* Cookie Consent Banner */}
-      <CookieConsentBanner />
-
-      {/* Mobile FAB - BottomNavigationの上に配置 */}
-      {isMobile ? (
-        <Button
-          size="icon"
-          aria-label={t('common.createNewEvent')}
-          className="fixed right-4 bottom-20 z-50 size-14 rounded-2xl shadow-lg"
-          onClick={() => {
-            console.log('Create new plan')
-          }}
+  // メモ化: コンテンツ部分（children, isMobile, localeに依存）
+  const content = useMemo(
+    () => (
+      <div className="flex h-screen flex-col">
+        {/* アクセシビリティ: スキップリンク */}
+        <a
+          href="#main-content"
+          className="bg-primary text-primary-foreground sr-only z-50 rounded-md px-4 py-2 focus:not-sr-only focus:absolute focus:top-4 focus:left-4"
         >
-          <Plus className="size-6" />
-        </Button>
-      ) : null}
+          {t('common.skipToMainContent')}
+        </a>
 
-      {/* Mobile Bottom Navigation */}
-      {isMobile ? <MobileBottomNavigation /> : null}
-    </div>
+        {/* メインレイアウト */}
+        {isMobile ? (
+          <MobileLayout locale={localeFromPath}>{children}</MobileLayout>
+        ) : (
+          <DesktopLayout locale={localeFromPath}>{children}</DesktopLayout>
+        )}
+
+        {/* Settings Dialog */}
+        <SettingsDialog />
+
+        {/* Cookie Consent Banner */}
+        <CookieConsentBanner />
+
+        {/* Mobile FAB - BottomNavigationの上に配置 */}
+        {isMobile ? (
+          <Button
+            size="icon"
+            aria-label={t('common.createNewEvent')}
+            className="fixed right-4 bottom-20 z-50 size-14 rounded-2xl shadow-lg"
+            onClick={() => {
+              console.log('Create new plan')
+            }}
+          >
+            <Plus className="size-6" />
+          </Button>
+        ) : null}
+
+        {/* Mobile Bottom Navigation */}
+        {isMobile ? <MobileBottomNavigation /> : null}
+      </div>
+    ),
+    [children, isMobile, localeFromPath, t]
   )
 
   // カレンダーページの場合はCalendarNavigationProviderでラップ
@@ -117,7 +129,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   // タグページの場合はTagsNavigationProvider + TagsPageProviderでラップ
   if (isTagsPage) {
     return (
-      <TagsNavigationProvider initialFilter={getInitialTagsFilter()}>
+      <TagsNavigationProvider initialFilter={initialTagsFilter}>
         <TagsPageProvider>{content}</TagsPageProvider>
       </TagsNavigationProvider>
     )

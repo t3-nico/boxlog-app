@@ -8,4 +8,5 @@
  */
 
 export { useTagCreateModalStore } from './useTagCreateModalStore'
+export { useTagSearchStore } from './useTagSearchStore'
 export { colorCategories, tagColors, useTagStore } from './useTagStore'

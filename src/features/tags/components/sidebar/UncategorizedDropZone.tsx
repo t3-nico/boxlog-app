@@ -46,7 +46,7 @@ export function UncategorizedDropZone({ isActive, uncategorizedTagsCount, onClic
           </div>
           <span>{t('tags.sidebar.uncategorized')}</span>
         </div>
-        <span className="text-muted-foreground text-xs">{uncategorizedTagsCount}</span>
+        <span className="text-muted-foreground w-4 text-right text-xs tabular-nums">{uncategorizedTagsCount}</span>
       </div>
     </div>
   )

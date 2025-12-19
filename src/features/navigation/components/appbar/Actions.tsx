@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { SimpleTooltip } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { NotificationDropdown } from '@/features/notifications'
 import { PlanCreateTrigger } from '@/features/plans/components/shared/PlanCreateTrigger'
 import { Moon, Plus, Search, Sun } from 'lucide-react'
@@ -41,7 +41,7 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
 
   return (
     <div className="flex flex-col items-center gap-1 px-2" onClick={(e) => e.stopPropagation()}>
-      <SimpleTooltip content={t('actions.create')} side="right">
+      <HoverTooltip content={t('actions.create')} side="right">
         <div>
           <PlanCreateTrigger
             triggerElement={
@@ -51,12 +51,12 @@ export function Actions({ onSearch, onToggleTheme, resolvedTheme, t }: ActionsPr
             }
           />
         </div>
-      </SimpleTooltip>
-      <SimpleTooltip content={t('notification.title')} side="right">
+      </HoverTooltip>
+      <HoverTooltip content={t('notification.title')} side="right">
         <div className="flex items-center justify-center">
           <NotificationDropdown />
         </div>
-      </SimpleTooltip>
+      </HoverTooltip>
       <Item icon={Search} label={t('actions.search')} url="#" isActive={false} onClick={handleSearchClick} />
       <Item
         icon={resolvedTheme === 'light' ? Moon : Sun}

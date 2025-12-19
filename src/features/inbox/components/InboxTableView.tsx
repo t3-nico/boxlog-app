@@ -15,6 +15,7 @@ import { useInboxPaginationStore } from '../stores/useInboxPaginationStore'
 import { useInboxSelectionStore } from '../stores/useInboxSelectionStore'
 import { useInboxSortStore } from '../stores/useInboxSortStore'
 import { useInboxViewStore } from '../stores/useInboxViewStore'
+import { DisplayModeSwitcher } from './DisplayModeSwitcher'
 import { BulkDatePickerDialog } from './table/BulkDatePickerDialog'
 import { BulkTagSelectDialog } from './table/BulkTagSelectDialog'
 import { GroupBySelector } from './table/GroupBySelector'
@@ -233,9 +234,14 @@ export function InboxTableView() {
           }
         />
       ) : (
-        <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
-          <div className="flex h-8 w-full items-center justify-between gap-2">
+        <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 py-2">
+          {/* 左側: 表示モード切り替え + グループ化 */}
+          <div className="flex h-8 items-center gap-2">
+            <DisplayModeSwitcher />
             <GroupBySelector />
+          </div>
+          {/* 右側: ツールバー */}
+          <div className="flex h-8 items-center">
             <TableToolbar onCreateClick={() => createRowRef.current?.startCreate()} />
           </div>
         </div>

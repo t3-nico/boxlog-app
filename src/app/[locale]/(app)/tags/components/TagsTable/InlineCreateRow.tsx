@@ -48,7 +48,7 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
     newTagDescription,
     newTagColor,
     selectedGroup,
-    tags,
+    tags: _tags,
     onNameChange,
     onDescriptionChange,
     onColorChange,
@@ -58,8 +58,6 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
   },
   ref
 ) {
-  const groupTagCount = selectedGroup ? tags.filter((t) => t.group_id === selectedGroup.id && t.is_active).length : 0
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       onSave()
@@ -127,9 +125,7 @@ export const InlineCreateRow = forwardRef<HTMLTableRowElement, InlineCreateRowPr
         {selectedGroup ? (
           <div className="flex items-center gap-1">
             <Folder className="h-4 w-4 shrink-0" style={{ color: selectedGroup.color || DEFAULT_GROUP_COLOR }} />
-            <span className="text-sm">
-              {selectedGroup.name} <span className="text-muted-foreground">({groupTagCount})</span>
-            </span>
+            <span className="text-sm">{selectedGroup.name}</span>
           </div>
         ) : null}
       </TableCell>

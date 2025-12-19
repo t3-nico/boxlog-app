@@ -12,7 +12,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
 import type { Tag, TagGroup } from '@/features/tags/types'
 
@@ -63,20 +63,17 @@ export function TagSelectionActions({
   const selectedTag = isSingleSelection ? tags.find((t) => t.id === selectedTagIds[0]) : null
 
   return (
-    <TooltipProvider>
+    <>
       {/* グループに移動 */}
       {hasGroups && (
         <DropdownMenu modal={false}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label={t('tag.page.moveToGroup')}>
-                  <Folder className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-            </TooltipTrigger>
-            <TooltipContent>{t('tag.page.moveToGroup')}</TooltipContent>
-          </Tooltip>
+          <HoverTooltip content={t('tag.page.moveToGroup')} side="top">
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label={t('tag.page.moveToGroup')}>
+                <Folder className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+          </HoverTooltip>
           <DropdownMenuContent className="min-w-48">
             <DropdownMenuItem
               onClick={() => {
@@ -109,90 +106,75 @@ export function TagSelectionActions({
 
       {/* 復元（アーカイブモード用） */}
       {onRestore && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={async () => {
-                await onRestore(selectedTagIds)
-                onClearSelection()
-              }}
-              aria-label={t('tag.archive.restore')}
-            >
-              <RotateCcw className="size-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{t('tag.archive.restore')}</TooltipContent>
-        </Tooltip>
+        <HoverTooltip content={t('tag.archive.restore')} side="top">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={async () => {
+              await onRestore(selectedTagIds)
+              onClearSelection()
+            }}
+            aria-label={t('tag.archive.restore')}
+          >
+            <RotateCcw className="size-4" />
+          </Button>
+        </HoverTooltip>
       )}
 
       {/* アーカイブ */}
       {onArchive && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={async () => {
-                await onArchive(selectedTagIds)
-                onClearSelection()
-              }}
-              aria-label={t('tag.page.archive')}
-            >
-              <Archive className="size-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{t('tag.page.archive')}</TooltipContent>
-        </Tooltip>
+        <HoverTooltip content={t('tag.page.archive')} side="top">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={async () => {
+              await onArchive(selectedTagIds)
+              onClearSelection()
+            }}
+            aria-label={t('tag.page.archive')}
+          >
+            <Archive className="size-4" />
+          </Button>
+        </HoverTooltip>
       )}
 
       {/* マージ（1つ選択時のみ） */}
       {isSingleSelection && selectedTag && onSingleMerge && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onSingleMerge(selectedTag)}
-              aria-label={t('tags.merge.title')}
-            >
-              <Merge className="size-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{t('tags.merge.title')}</TooltipContent>
-        </Tooltip>
-      )}
-
-      {/* 完全削除 */}
-      <Tooltip>
-        <TooltipTrigger asChild>
+        <HoverTooltip content={t('tags.merge.title')} side="top">
           <Button
             variant="ghost"
             size="icon"
-            onClick={onDelete}
-            className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-            aria-label={t('tag.page.delete')}
+            onClick={() => onSingleMerge(selectedTag)}
+            aria-label={t('tags.merge.title')}
           >
-            <Trash2 className="size-4" />
+            <Merge className="size-4" />
           </Button>
-        </TooltipTrigger>
-        <TooltipContent>{t('tag.page.delete')}</TooltipContent>
-      </Tooltip>
+        </HoverTooltip>
+      )}
+
+      {/* 完全削除 */}
+      <HoverTooltip content={t('tag.page.delete')} side="top">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onDelete}
+          className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+          aria-label={t('tag.page.delete')}
+        >
+          <Trash2 className="size-4" />
+        </Button>
+      </HoverTooltip>
 
       {/* その他メニュー（単一選択時のみ有効） */}
       {selectedTag && (
         <DropdownMenu modal={false}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label={t('common.moreActions')}>
-                  <MoreHorizontal className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-            </TooltipTrigger>
-            <TooltipContent>{t('common.moreActions')}</TooltipContent>
-          </Tooltip>
+          <HoverTooltip content={t('common.moreActions')} side="top">
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label={t('common.moreActions')}>
+                <MoreHorizontal className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+          </HoverTooltip>
           <DropdownMenuContent>
             <TagActionMenuItems
               tag={selectedTag}
@@ -246,6 +228,6 @@ export function TagSelectionActions({
           </DropdownMenuContent>
         </DropdownMenu>
       )}
-    </TooltipProvider>
+    </>
   )
 }

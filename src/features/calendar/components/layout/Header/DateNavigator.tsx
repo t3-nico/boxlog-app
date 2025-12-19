@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { buttonVariants } from '@/components/ui/button'
-import { SimpleTooltip } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
@@ -48,7 +48,7 @@ export const DateNavigator = ({
     <div className={cn('flex items-center gap-2', className)}>
       {/* 今日ボタン - 32px（8pxグリッド準拠） */}
       {showTodayButton != null ? (
-        <SimpleTooltip content={t('calendar.actions.goToToday')}>
+        <HoverTooltip content={t('calendar.actions.goToToday')} side="bottom">
           <button
             type="button"
             onClick={() => onNavigate('today')}
@@ -56,13 +56,13 @@ export const DateNavigator = ({
           >
             <span>{todayLabel}</span>
           </button>
-        </SimpleTooltip>
+        </HoverTooltip>
       ) : null}
 
       {/* 前後ナビゲーション - 32px（8pxグリッド準拠） */}
       {showArrows != null ? (
         <div className="flex items-center gap-1">
-          <SimpleTooltip content={t('calendar.navigation.previous')}>
+          <HoverTooltip content={t('calendar.navigation.previous')} side="bottom">
             <button
               type="button"
               onClick={() => onNavigate('prev')}
@@ -75,8 +75,8 @@ export const DateNavigator = ({
             >
               <ChevronLeft className={arrowSizes[arrowSize]} />
             </button>
-          </SimpleTooltip>
-          <SimpleTooltip content={t('calendar.navigation.next')}>
+          </HoverTooltip>
+          <HoverTooltip content={t('calendar.navigation.next')} side="bottom">
             <button
               type="button"
               onClick={() => onNavigate('next')}
@@ -89,7 +89,7 @@ export const DateNavigator = ({
             >
               <ChevronRight className={arrowSizes[arrowSize]} />
             </button>
-          </SimpleTooltip>
+          </HoverTooltip>
         </div>
       ) : null}
     </div>

@@ -99,4 +99,4 @@ available under the Apache 2.0 license (https://github.com/puppeteer/puppeteer/b
 For a complete list of all third-party software and their licenses,
 please visit: /legal/oss-credits
 
-Generated: 2025-12-03T03:37:14.066Z
+Generated: 2025-12-18T23:46:17.526Z
