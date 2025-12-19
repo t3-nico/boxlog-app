@@ -198,7 +198,11 @@
       "tagColor": "タグカラー",
       "lastUsed": "最終使用",
       "columns": "表示カラム",
-      "columnSettings": "カラム設定"
+      "columnSettings": "カラム設定",
+      "displayMode": {
+        "flat": "フラット",
+        "grouped": "グループ別"
+      }
     },
     "bulkMerge": {
       "title": "タグを統合",
@@ -440,7 +444,11 @@
       "tagColor": "タグカラー",
       "lastUsed": "最終使用",
       "columns": "表示カラム",
-      "columnSettings": "カラム設定"
+      "columnSettings": "カラム設定",
+      "displayMode": {
+        "flat": "フラット",
+        "grouped": "グループ別"
+      }
     },
     "bulkMerge": {
       "title": "タグを統合",

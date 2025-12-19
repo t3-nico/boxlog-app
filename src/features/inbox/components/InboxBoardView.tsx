@@ -5,6 +5,7 @@ import type { PlanStatus } from '@/features/plans/types/plan'
 
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
+import { DisplayModeSwitcher } from './DisplayModeSwitcher'
 import { InboxBoardToolbar } from './board/InboxBoardToolbar'
 
 /**
@@ -43,8 +44,15 @@ export function InboxBoardView() {
   return (
     <div id="inbox-view-panel" role="tabpanel" className="flex h-full flex-col">
       {/* ツールバー: 高さ48px固定（8px + 32px + 8px） */}
-      <div className="flex h-12 shrink-0 items-center px-4 py-2">
-        <InboxBoardToolbar />
+      <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 py-2">
+        {/* 左側: 表示モード切り替え */}
+        <div className="flex h-8 shrink-0 items-center">
+          <DisplayModeSwitcher />
+        </div>
+        {/* 右側: フィルターツール */}
+        <div className="flex h-8 flex-1 items-center">
+          <InboxBoardToolbar />
+        </div>
       </div>
 
       {/* Kanbanボード: 残りのスペース */}
