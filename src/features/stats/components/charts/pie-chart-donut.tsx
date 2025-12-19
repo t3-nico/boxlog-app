@@ -12,25 +12,26 @@ const chartData = [
   { category: 'その他', tasks: 15, fill: 'var(--color-other)' },
 ]
 
+// カテゴリ分け（意味なし）→ 比較用カラー chart-1〜5 を使用
 const chartConfig = {
   tasks: {
     label: 'タスク数',
   },
   work: {
     label: '仕事',
-    color: 'var(--chart-blue)',
+    color: 'var(--chart-1)',
   },
   study: {
     label: '学習',
-    color: 'var(--chart-teal)',
+    color: 'var(--chart-2)',
   },
   personal: {
     label: 'プライベート',
-    color: 'var(--chart-purple)',
+    color: 'var(--chart-3)',
   },
   other: {
     label: 'その他',
-    color: 'var(--chart-3)',
+    color: 'var(--chart-4)',
   },
 } satisfies ChartConfig
 

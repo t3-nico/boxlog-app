@@ -14,14 +14,15 @@ const chartData = [
   { month: '10月', completed: 245, created: 260 },
 ]
 
+// 比較 → 比較用カラー chart-1, chart-2 を使用
 const chartConfig = {
   completed: {
     label: '完了タスク',
-    color: 'var(--chart-green)',
+    color: 'var(--chart-1)',
   },
   created: {
     label: '作成タスク',
-    color: 'var(--chart-blue)',
+    color: 'var(--chart-2)',
   },
 } satisfies ChartConfig
 

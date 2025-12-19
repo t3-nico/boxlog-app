@@ -9,36 +9,44 @@ import { cn } from '@/lib/utils'
 /**
  * チャートカラーシステム
  *
- * ## Primary Scale（単色グラデーション用）
+ * ## Comparison（比較用、shadcn準拠）
+ *
+ * カテゴリ分けなど、意味を持たない複数系列の比較に使用
  *
  * | トークン   | 用途                                         |
  * |------------|----------------------------------------------|
- * | chart-1    | 最明るい、メイン系列                         |
+ * | chart-1    | 第1系列（メイン）                            |
  * | chart-2    | 第2系列                                      |
  * | chart-3    | 第3系列                                      |
  * | chart-4    | 第4系列                                      |
- * | chart-5    | 最暗い、第5系列                              |
+ * | chart-5    | 第5系列                                      |
  *
- * ## Categorical（カテゴリ区分用）
+ * ## Semantic（意味ベース）
  *
- * | トークン      | 色相    | 用途                           |
- * |---------------|---------|--------------------------------|
- * | chart-blue    | 青      | Primary、メインデータ          |
- * | chart-teal    | ティール| サブカテゴリ                   |
- * | chart-green   | 緑      | 成功、増加、ポジティブ         |
- * | chart-yellow  | 黄      | 警告、注意                     |
- * | chart-orange  | オレンジ| 中間値、トランジション         |
- * | chart-red     | 赤      | エラー、減少、ネガティブ       |
- * | chart-purple  | 紫      | 特殊カテゴリ                   |
- * | chart-pink    | ピンク  | 追加カテゴリ                   |
+ * 意味を持つデータに使用（既存セマンティックカラー参照）
+ *
+ * | トークン            | 用途                           |
+ * |---------------------|--------------------------------|
+ * | color-chart-primary | メインデータ、単一系列         |
+ * | color-chart-success | 成功、増加、完了               |
+ * | color-chart-warning | 警告、注意、保留               |
+ * | color-chart-destructive | エラー、減少、削除         |
+ * | color-chart-info    | 情報、ニュートラル             |
+ * | color-chart-muted   | その他、無効                   |
  *
  * ## 使用例
  *
  * ```tsx
+ * // 比較用（カテゴリ分け）
  * const chartConfig = {
- *   sales: { label: '売上', color: 'var(--chart-blue)' },
- *   profit: { label: '利益', color: 'var(--chart-green)' },
- *   loss: { label: '損失', color: 'var(--chart-red)' },
+ *   categoryA: { label: 'カテゴリA', color: 'var(--chart-1)' },
+ *   categoryB: { label: 'カテゴリB', color: 'var(--chart-2)' },
+ * } satisfies ChartConfig
+ *
+ * // 意味ベース
+ * const chartConfig = {
+ *   completed: { label: '完了', color: 'var(--color-chart-success)' },
+ *   pending: { label: '未完了', color: 'var(--color-chart-warning)' },
  * } satisfies ChartConfig
  * ```
  */
