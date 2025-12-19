@@ -206,7 +206,6 @@ function AvatarDropzone({
         <Button
           type="button"
           variant="outline"
-          size="sm"
           disabled={disabled || isUploading}
           onClick={() => {
             const input = document.querySelector<HTMLInputElement>('input[type="file"]')
@@ -230,7 +229,6 @@ function AvatarDropzone({
           <Button
             type="button"
             variant="ghost"
-            size="sm"
             disabled={disabled || isUploading}
             onClick={handleRemove}
             className="text-destructive hover:text-destructive"

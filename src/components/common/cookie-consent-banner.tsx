@@ -78,13 +78,13 @@ export function CookieConsentBanner() {
 
           {/* アクションボタン */}
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
-            <Button onClick={handleAcceptAll} size="sm" className="w-full sm:w-auto">
+            <Button onClick={handleAcceptAll} className="w-full sm:w-auto">
               {t('legal.cookies.banner.acceptAll')}
             </Button>
-            <Button onClick={handleAcceptNecessaryOnly} variant="outline" size="sm" className="w-full sm:w-auto">
+            <Button onClick={handleAcceptNecessaryOnly} variant="outline" className="w-full sm:w-auto">
               {t('legal.cookies.banner.rejectAll')}
             </Button>
-            <Button asChild variant="ghost" size="sm" className="w-full sm:w-auto">
+            <Button asChild variant="ghost" className="w-full sm:w-auto">
               <Link href={`/${locale}/legal/cookies`}>{t('legal.cookies.banner.customize')}</Link>
             </Button>
           </div>

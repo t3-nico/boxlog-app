@@ -35,7 +35,7 @@ export const ThemeToggle = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="transition-transform duration-200 hover:scale-105 active:scale-95">
-            <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+            <Button variant="ghost" className="flex items-center space-x-2">
               {themeIcons[theme as keyof typeof themeIcons]}
               <ChevronDownIcon className="h-4 w-4" />
             </Button>
@@ -67,7 +67,7 @@ export const ThemeToggle = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="transition-transform duration-200 hover:scale-105 active:scale-95">
-            <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+            <Button variant="ghost" className="flex items-center space-x-2">
               <SwatchIcon className="h-4 w-4" />
               <ChevronDownIcon className="h-4 w-4" />
             </Button>
@@ -104,7 +104,7 @@ export const SimpleThemeToggle = () => {
 
   return (
     <div className="transition-transform duration-200 hover:scale-105 active:scale-95">
-      <Button variant="ghost" size="sm" onClick={toggleTheme} className="p-2">
+      <Button variant="ghost" onClick={toggleTheme} className="p-2">
         {resolvedTheme === 'light' ? <MoonIcon className="h-4 w-4" /> : <SunIcon className="h-4 w-4" />}
         <span className="sr-only">Toggle theme</span>
       </Button>

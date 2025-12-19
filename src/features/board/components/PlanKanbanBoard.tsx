@@ -459,9 +459,7 @@ function KanbanColumn({ title, count: _count, variant, status, children }: Kanba
 
             {/* 作成ボタン */}
             <div className="flex justify-end">
-              <Button size="sm" className="h-7 text-xs" onClick={handleCreate}>
-                {t('board.kanban.add')}
-              </Button>
+              <Button onClick={handleCreate}>{t('board.kanban.add')}</Button>
             </div>
           </div>
         )}

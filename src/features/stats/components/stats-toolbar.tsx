@@ -121,8 +121,7 @@ export function StatsToolbar() {
       <HoverTooltip content={t('stats.toolbar.compareTooltip')} side="bottom">
         <Button
           variant={compareEnabled ? 'outline' : 'ghost'}
-          size="sm"
-          className={cn('h-8 gap-1.5', compareEnabled && 'bg-surface-container')}
+          className={cn('gap-1.5', compareEnabled && 'bg-surface-container')}
           onClick={() => setCompareEnabled(!compareEnabled)}
         >
           <GitCompareArrows className="size-4" />
@@ -151,7 +150,7 @@ export function StatsToolbar() {
 
       {/* エクスポート */}
       <HoverTooltip content={t('stats.toolbar.exportTooltip')} side="bottom">
-        <Button variant="outline" size="sm" className="h-8 gap-1.5">
+        <Button variant="outline" className="gap-1.5">
           <Download className="size-4" />
           <span className="hidden sm:inline">{t('stats.toolbar.export')}</span>
         </Button>
