@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/context-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DEFAULT_GROUP_COLOR, DEFAULT_TAG_COLOR } from '@/config/ui/colors'
 import { DraggableTagRow } from '@/features/tags/components/DraggableTagRow'
 import { TagActionMenuItems } from '@/features/tags/components/TagActionMenuItems'
@@ -23,7 +24,7 @@ import type { Tag, TagGroup } from '@/features/tags/types'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Folder, Hash } from 'lucide-react'
+import { Check, Folder, FolderX, Hash } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 import { useCallback, useState } from 'react'
@@ -177,24 +178,53 @@ export function TagCellContent({
             setEditValue(tag.description || '')
           }}
         >
-          {tag.description || (
-            <span className="opacity-0 transition-opacity group-hover:opacity-100">
-              {t('tags.page.addDescription')}
-            </span>
-          )}
+          {tag.description || t('tags.page.addDescription')}
         </span>
       )
 
     case 'group':
-      return group ? (
-        <div className="flex items-center gap-1">
-          <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
-          <span className="text-sm">{group.name}</span>
-        </div>
-      ) : (
-        <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">
-          {t('tags.page.addGroup')}
-        </span>
+      return (
+        <Select
+          value={tag.group_id || 'uncategorized'}
+          onValueChange={(value) => {
+            const newGroupId = value === 'uncategorized' ? null : value
+            updateTagMutation.mutate({ id: tag.id, data: { group_id: newGroupId } })
+          }}
+        >
+          <SelectTrigger className="h-auto w-[160px] justify-start border-none bg-transparent p-0 shadow-none focus:ring-0">
+            <SelectValue>
+              {group ? (
+                <div className="flex items-center gap-2">
+                  <Folder className="h-4 w-4 shrink-0" style={{ color: group.color || DEFAULT_GROUP_COLOR }} />
+                  <span className="text-sm">{group.name}</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <FolderX className="text-muted-foreground h-4 w-4 shrink-0" />
+                  <span className="text-muted-foreground text-sm">{t('tags.sidebar.uncategorized')}</span>
+                </div>
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="uncategorized">
+              <div className="flex items-center gap-2">
+                <FolderX className="text-muted-foreground h-4 w-4" />
+                <span>{t('tags.sidebar.uncategorized')}</span>
+                {!tag.group_id && <Check className="ml-auto h-4 w-4" />}
+              </div>
+            </SelectItem>
+            {groups.map((g) => (
+              <SelectItem key={g.id} value={g.id}>
+                <div className="flex items-center gap-2">
+                  <Folder className="h-4 w-4" style={{ color: g.color || DEFAULT_GROUP_COLOR }} />
+                  <span>{g.name}</span>
+                  {tag.group_id === g.id && <Check className="ml-auto h-4 w-4" />}
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       )
 
     case 'created_at':

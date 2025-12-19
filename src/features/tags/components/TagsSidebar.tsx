@@ -11,7 +11,7 @@ import { ColorPalettePicker } from '@/components/ui/color-palette-picker'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { DEFAULT_GROUP_COLOR } from '@/config/ui/colors'
 import { SidebarHeading } from '@/features/navigation/components/sidebar/SidebarHeading'
 import { SidebarShell } from '@/features/navigation/components/sidebar/SidebarShell'
@@ -467,20 +467,13 @@ export function TagsSidebar({
             action={
               <div className="flex items-center gap-1">
                 <DropdownMenu>
-                  <TooltipProvider>
-                    <Tooltip delayDuration={0}>
-                      <TooltipTrigger asChild>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon-sm">
-                            <ArrowUpDown className="size-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent side="top" sideOffset={4}>
-                        <p>{t('tags.sidebar.sortGroups')}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <HoverTooltip content={t('tags.sidebar.sortGroups')} side="top">
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon-sm">
+                        <ArrowUpDown className="size-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                  </HoverTooltip>
                   <DropdownMenuContent align="end">
                     {(
                       [
@@ -504,18 +497,11 @@ export function TagsSidebar({
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <TooltipProvider>
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon-sm" onClick={handleStartCreating}>
-                        <Plus className="size-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" sideOffset={4}>
-                      <p>{t('tags.page.createGroup')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <HoverTooltip content={t('tags.page.createGroup')} side="top">
+                  <Button variant="ghost" size="icon-sm" onClick={handleStartCreating}>
+                    <Plus className="size-4" />
+                  </Button>
+                </HoverTooltip>
               </div>
             }
           >
