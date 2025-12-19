@@ -103,7 +103,7 @@ export const DataExportSettings = memo(function DataExportSettings() {
           <div className="border-border flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8">
             <Upload className="text-muted-foreground mb-2 h-8 w-8" />
             <p className="text-muted-foreground text-sm">JSONファイルをドロップまたはクリックして選択</p>
-            <Button variant="outline" size="sm" className="mt-4" disabled>
+            <Button variant="outline" className="mt-4" disabled>
               ファイルを選択
             </Button>
           </div>

@@ -88,12 +88,12 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
               </div>
               <div>
                 {integration.connected ? (
-                  <Button variant="outline" size="sm" onClick={() => handleDisconnect(integration.id)}>
+                  <Button variant="outline" onClick={() => handleDisconnect(integration.id)}>
                     <Unplug className="mr-2 h-4 w-4" />
                     解除
                   </Button>
                 ) : (
-                  <Button variant="outline" size="sm" onClick={() => handleConnect(integration.id)}>
+                  <Button variant="outline" onClick={() => handleConnect(integration.id)}>
                     <ExternalLink className="mr-2 h-4 w-4" />
                     接続
                   </Button>
