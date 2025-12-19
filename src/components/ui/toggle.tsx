@@ -30,7 +30,7 @@ const toggleVariants = cva(
     'hover:bg-state-hover',
     'disabled:pointer-events-none disabled:opacity-50',
     'data-[state=on]:bg-secondary data-[state=on]:text-secondary-foreground',
-    "[&_svg]:pointer-events-none [&_svg]:shrink-0",
+    '[&_svg]:pointer-events-none [&_svg]:shrink-0',
     'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
     'outline-none transition-[color,box-shadow]',
     'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
@@ -43,20 +43,11 @@ const toggleVariants = cva(
       },
       size: {
         // sm: 24px高さ - ボタンと統一
-        sm: [
-          'h-6 px-2 min-w-6 text-xs',
-          "[&_svg:not([class*='size-'])]:size-3.5",
-        ].join(' '),
+        sm: ['h-6 px-2 min-w-6 text-xs', "[&_svg:not([class*='size-'])]:size-3.5"].join(' '),
         // default: 32px高さ - ボタンと統一
-        default: [
-          'h-8 px-3 min-w-8 text-sm',
-          "[&_svg:not([class*='size-'])]:size-4",
-        ].join(' '),
+        default: ['h-8 px-3 min-w-8 text-sm', "[&_svg:not([class*='size-'])]:size-4"].join(' '),
         // lg: 40px高さ - ボタンと統一
-        lg: [
-          'h-10 px-4 min-w-10 text-base',
-          "[&_svg:not([class*='size-'])]:size-5",
-        ].join(' '),
+        lg: ['h-10 px-4 min-w-10 text-base', "[&_svg:not([class*='size-'])]:size-5"].join(' '),
       },
     },
     defaultVariants: {
