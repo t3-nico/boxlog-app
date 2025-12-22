@@ -25,7 +25,7 @@ interface DirectDragSelectionProps {
 
 /**
  * マウス座標から直接日付を計算するドラッグ選択
- * CalendarDragSelectionの問題を回避する緊急ソリューション
+ * タッチデバイス対応版
  */
 export const DirectDragSelection = ({
   weekDates,
@@ -51,6 +51,7 @@ export const DirectDragSelection = ({
     y: number
   } | null>(null)
   const isDragging = useRef(false)
+  const isTouchDevice = useRef(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
   // マウス座標から日付と時刻を計算
@@ -93,49 +94,70 @@ export const DirectDragSelection = ({
     [weekDates]
   )
 
-  // マウスダウン
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
+  // 共通のドラッグ開始処理
+  const startDragSelection = useCallback(
+    (clientX: number, clientY: number) => {
       if (disabled) return
 
-      const result = calculateDateTimeFromMouse(e.clientX, e.clientY)
+      const result = calculateDateTimeFromMouse(clientX, clientY)
       if (!result) return
-
-      console.log('🎯 DirectDragSelection: ドラッグ開始:', {
-        date: result.date.toDateString(),
-        time: `${result.hour}:${result.minute}`,
-      })
 
       setIsSelecting(true)
       setSelectionStart({
         date: result.date,
         hour: result.hour,
         minute: result.minute,
-        x: e.clientX,
-        y: e.clientY,
+        x: clientX,
+        y: clientY,
       })
       isDragging.current = false
-
-      e.preventDefault()
     },
     [disabled, calculateDateTimeFromMouse]
   )
 
-  // グローバルマウス移動とマウスアップの処理
+  // マウスダウン
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (disabled) return
+      isTouchDevice.current = false
+      startDragSelection(e.clientX, e.clientY)
+      e.preventDefault()
+    },
+    [disabled, startDragSelection]
+  )
+
+  // タッチ開始
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (disabled) return
+      if (e.touches.length !== 1) return
+
+      isTouchDevice.current = true
+      const touch = e.touches[0]
+      if (!touch) return
+
+      startDragSelection(touch.clientX, touch.clientY)
+      // タッチイベントではpreventDefaultしない（スクロールとの競合を避ける）
+    },
+    [disabled, startDragSelection]
+  )
+
+  // グローバルマウス/タッチ移動と終了の処理
   useEffect(() => {
     if (!isSelecting || !selectionStart) return
 
-    const handleGlobalMouseMove = (e: MouseEvent) => {
+    // 共通の移動処理
+    const handleMove = (clientX: number, clientY: number) => {
       if (!selectionStart) return
 
       // ドラッグ判定
-      const deltaX = Math.abs(e.clientX - selectionStart.x)
-      const deltaY = Math.abs(e.clientY - selectionStart.y)
+      const deltaX = Math.abs(clientX - selectionStart.x)
+      const deltaY = Math.abs(clientY - selectionStart.y)
       if (deltaX > 5 || deltaY > 10) {
         isDragging.current = true
       }
 
-      const result = calculateDateTimeFromMouse(e.clientX, e.clientY)
+      const result = calculateDateTimeFromMouse(clientX, clientY)
       if (!result || !result.date) return
 
       // 同じ日付内でのみドラッグを許可
@@ -172,31 +194,44 @@ export const DirectDragSelection = ({
       })
     }
 
-    const handleGlobalMouseUp = () => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      handleMove(e.clientX, e.clientY)
+    }
+
+    const handleGlobalTouchMove = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return
+      const touch = e.touches[0]
+      if (!touch) return
+      handleMove(touch.clientX, touch.clientY)
+      // ドラッグ中はスクロールを防止
+      if (isDragging.current) {
+        e.preventDefault()
+      }
+    }
+
+    // 共通の終了処理
+    const handleEnd = () => {
       if (disabled) {
         clearSelectionState()
         return
       }
 
       if (selection && isDragging.current && onTimeRangeSelect) {
-        console.log('🎯 DirectDragSelection: ドラッグ完了:', {
-          date: selection.date.toDateString(),
-          startTime: `${selection.startHour}:${selection.startMinute}`,
-          endTime: `${selection.endHour}:${selection.endMinute}`,
-        })
-
         onTimeRangeSelect(selection)
       } else if (!isDragging.current && onSingleClick && selectionStart) {
-        console.log('🎯 DirectDragSelection: シングルクリック:', {
-          date: selectionStart.date.toDateString(),
-          time: `${selectionStart.hour}:${selectionStart.minute}`,
-        })
-
         const timeString = `${String(selectionStart.hour).padStart(2, '0')}:${String(selectionStart.minute).padStart(2, '0')}`
         onSingleClick(selectionStart.date, timeString)
       }
 
       clearSelectionState()
+    }
+
+    const handleGlobalMouseUp = () => {
+      handleEnd()
+    }
+
+    const handleGlobalTouchEnd = () => {
+      handleEnd()
     }
 
     const clearSelectionState = () => {
@@ -206,12 +241,20 @@ export const DirectDragSelection = ({
       isDragging.current = false
     }
 
+    // マウスイベント
     document.addEventListener('mousemove', handleGlobalMouseMove)
     document.addEventListener('mouseup', handleGlobalMouseUp)
+    // タッチイベント
+    document.addEventListener('touchmove', handleGlobalTouchMove, { passive: false })
+    document.addEventListener('touchend', handleGlobalTouchEnd)
+    document.addEventListener('touchcancel', handleGlobalTouchEnd)
 
     return () => {
       document.removeEventListener('mousemove', handleGlobalMouseMove)
       document.removeEventListener('mouseup', handleGlobalMouseUp)
+      document.removeEventListener('touchmove', handleGlobalTouchMove)
+      document.removeEventListener('touchend', handleGlobalTouchEnd)
+      document.removeEventListener('touchcancel', handleGlobalTouchEnd)
     }
   }, [isSelecting, selectionStart, selection, onTimeRangeSelect, onSingleClick, calculateDateTimeFromMouse, disabled])
 
@@ -246,8 +289,9 @@ export const DirectDragSelection = ({
       ref={containerRef}
       role="button"
       tabIndex={0}
-      className={cn('absolute inset-0', className)}
+      className={cn('absolute inset-0 touch-none', className)}
       onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
