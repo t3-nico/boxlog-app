@@ -215,7 +215,7 @@ export const TagTreeView = ({
         <h3 className="text-foreground text-sm font-medium">
           {t('tag.messages.tagList')} ({tags.length})
         </h3>
-        <Button type="button" variant="ghost" size="sm" onClick={handleCreateTag} className="text-primary">
+        <Button type="button" variant="ghost" onClick={handleCreateTag} className="text-primary">
           <PlusIcon className="h-4 w-4" />
           {t('tag.messages.newTag')}
         </Button>

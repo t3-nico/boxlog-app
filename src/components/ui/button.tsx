@@ -64,7 +64,7 @@ const buttonVariants = cva(
         primary: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover active:bg-primary-hover',
         // 副次アクション - ボーダー付きの控えめなボタン
         outline: [
-          'border border-input bg-background text-foreground shadow-sm',
+          'border border-border bg-surface-container text-foreground shadow-sm',
           'hover:bg-state-hover active:bg-state-hover',
         ].join(' '),
         // アイコンボタン・ツールバー - 背景なし、ホバーで背景出現

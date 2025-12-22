@@ -382,10 +382,10 @@ export function RecurrenceDialog({
 
         {/* フッター */}
         <div className="border-border flex items-center justify-between border-t px-6 py-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)} type="button" size="sm">
+          <Button variant="outline" onClick={() => onOpenChange(false)} type="button">
             キャンセル
           </Button>
-          <Button onClick={handleSave} type="button" size="sm">
+          <Button onClick={handleSave} type="button">
             完了
           </Button>
         </div>

@@ -87,7 +87,7 @@ export function TagGroupDeleteDialog({ group, tagCount = 0, onClose, onConfirm }
 
   const dialog = (
     <div
-      className="animate-in fade-in fixed inset-0 z-[250] flex items-center justify-center bg-black/80 duration-150"
+      className="animate-in fade-in bg-overlay-heavy fixed inset-0 z-[250] flex items-center justify-center duration-150"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"

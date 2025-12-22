@@ -56,7 +56,7 @@ export function PlanFilters({
 
       {/* フィルタクリア */}
       {hasActiveFilters && onClearFilters && (
-        <Button variant="ghost" size="sm" onClick={onClearFilters} className="gap-2">
+        <Button variant="ghost" onClick={onClearFilters} className="gap-2">
           <X className="h-4 w-4" />
           クリア
         </Button>

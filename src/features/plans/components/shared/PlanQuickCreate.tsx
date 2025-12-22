@@ -280,9 +280,7 @@ export function PlanQuickCreate({ status, isCreating, onStartCreate, onFinishCre
 
           {/* 作成ボタン */}
           <div className="flex justify-end">
-            <Button size="sm" className="h-7 text-xs" onClick={handleCreate}>
-              追加
-            </Button>
+            <Button onClick={handleCreate}>追加</Button>
           </div>
         </div>
       )}

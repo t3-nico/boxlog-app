@@ -229,6 +229,20 @@
   --color-chart-destructive: var(--destructive);
   --color-chart-info: var(--info);
   --color-chart-muted: var(--muted-foreground);
+
+  /* ============================================
+   * Overlay トークン（モーダル背景、バックドロップ）
+   * bg-black/80 等のハードコードを置き換え
+   * ============================================ */
+  --color-overlay: oklch(0 0 0 / 50%);
+  --color-overlay-heavy: oklch(0 0 0 / 80%);
+
+  /* ============================================
+   * Shadow トークン（ドラッグ、ホバー時のシャドウ）
+   * rgba(0,0,0,...) のハードコードを置き換え
+   * ============================================ */
+  --shadow-color: oklch(0 0 0 / 15%);
+  --shadow-color-heavy: oklch(0 0 0 / 20%);
 }
 
 @theme {

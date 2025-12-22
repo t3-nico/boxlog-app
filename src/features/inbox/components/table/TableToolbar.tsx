@@ -51,7 +51,7 @@ export function TableToolbar({ onCreateClick }: TableToolbarProps) {
       </div>
 
       {/* 右側: 新規作成 */}
-      <Button onClick={onCreateClick} size="sm">
+      <Button onClick={onCreateClick}>
         <Plus className="mr-2 size-4" />
         新規作成
       </Button>
