@@ -172,7 +172,7 @@ export function TagCellContent({
         />
       ) : (
         <span
-          className="text-muted-foreground block max-w-[200px] cursor-pointer truncate"
+          className="text-muted-foreground block max-w-32 cursor-pointer truncate sm:max-w-[200px]"
           onClick={() => {
             setEditingField('description')
             setEditValue(tag.description || '')
@@ -191,7 +191,7 @@ export function TagCellContent({
             updateTagMutation.mutate({ id: tag.id, data: { group_id: newGroupId } })
           }}
         >
-          <SelectTrigger className="h-auto w-[160px] justify-start border-none bg-transparent p-0 shadow-none focus:ring-0">
+          <SelectTrigger className="h-auto w-32 justify-start border-none bg-transparent p-0 shadow-none focus:ring-0 sm:w-[160px]">
             <SelectValue>
               {group ? (
                 <div className="flex items-center gap-2">
