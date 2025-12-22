@@ -218,7 +218,7 @@ export function PlanTagSelectDialogEnhanced({
             </div>
 
             {/* 新規作成ボタン */}
-            <Button variant="default" size="sm" onClick={() => setIsCreating(!isCreating)} className="shrink-0">
+            <Button variant="primary" onClick={() => setIsCreating(!isCreating)} className="shrink-0">
               <Plus className="mr-2 h-4 w-4" />
               新しいタグ
             </Button>
@@ -247,11 +247,10 @@ export function PlanTagSelectDialogEnhanced({
                 autoFocus
                 className="bg-surface-container flex-1"
               />
-              <Button size="sm" onClick={handleCreateTag} disabled={!newTagName.trim()}>
+              <Button onClick={handleCreateTag} disabled={!newTagName.trim()}>
                 作成
               </Button>
               <Button
-                size="sm"
                 variant="ghost"
                 onClick={() => {
                   setIsCreating(false)

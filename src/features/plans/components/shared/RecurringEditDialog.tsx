@@ -133,7 +133,7 @@ export function RecurringEditDialog({ open, onOpenChange, onConfirm, mode, planT
           <Button variant="outline" onClick={handleCancel}>
             {locale === 'ja' ? 'キャンセル' : 'Cancel'}
           </Button>
-          <Button onClick={handleConfirm} variant={isEdit ? 'default' : 'destructive'}>
+          <Button onClick={handleConfirm} variant={isEdit ? 'primary' : 'destructive'}>
             {isEdit ? (locale === 'ja' ? '編集' : 'Edit') : locale === 'ja' ? '削除' : 'Delete'}
           </Button>
         </DialogFooter>

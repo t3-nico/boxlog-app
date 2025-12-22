@@ -52,7 +52,7 @@ export const DateNavigator = ({
           <button
             type="button"
             onClick={() => onNavigate('today')}
-            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), buttonClassName)}
+            className={cn(buttonVariants({ variant: 'outline' }), buttonClassName)}
           >
             <span>{todayLabel}</span>
           </button>

@@ -30,7 +30,7 @@ export function ColumnSettings() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline">
           <Settings2 className="mr-2 size-4" />
           列設定
         </Button>

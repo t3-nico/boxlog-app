@@ -30,7 +30,7 @@ export function EmailSection() {
             <p className="text-sm font-medium">{email}</p>
             <p className="text-muted-foreground text-xs">確認済み</p>
           </div>
-          <Button type="button" variant="outline" size="sm" onClick={() => setShowEmailDialog(true)}>
+          <Button type="button" variant="outline" onClick={() => setShowEmailDialog(true)}>
             変更
           </Button>
         </div>

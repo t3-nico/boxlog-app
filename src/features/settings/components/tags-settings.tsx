@@ -86,7 +86,7 @@ export function TagsSettings() {
         <SettingsCard title={t('settings.dialog.categories.tags') || 'タグ'}>
           <div className="border-destructive bg-destructive/12 rounded-lg border p-4">
             <p className="text-destructive text-sm">エラー: {error instanceof Error ? error.message : String(error)}</p>
-            <Button variant="destructive" size="sm" onClick={() => window.location.reload()} className="mt-4">
+            <Button variant="destructive" onClick={() => window.location.reload()} className="mt-4">
               再読み込み
             </Button>
           </div>
@@ -102,7 +102,7 @@ export function TagsSettings() {
         <SettingsCard
           title="タグ管理"
           actions={
-            <Button size="sm" onClick={handleCreateClick}>
+            <Button onClick={handleCreateClick}>
               <Plus className="mr-2 h-4 w-4" />
               新規タグ
             </Button>
@@ -134,7 +134,7 @@ export function TagsSettings() {
                   {searchQuery ? '該当するタグが見つかりません' : 'タグがありません'}
                 </p>
                 {!searchQuery && (
-                  <Button variant="outline" size="sm" onClick={handleCreateClick}>
+                  <Button variant="outline" onClick={handleCreateClick}>
                     <Plus className="mr-2 h-4 w-4" />
                     最初のタグを作成
                   </Button>

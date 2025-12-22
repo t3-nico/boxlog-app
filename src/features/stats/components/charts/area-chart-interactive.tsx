@@ -15,14 +15,15 @@ const chartData = [
   { date: '2024-10-20', completed: 25, pending: 3 },
 ]
 
+// 意味ベース → セマンティックカラー使用
 const chartConfig = {
   completed: {
     label: '完了',
-    color: 'hsl(217, 91%, 60%)', // 青
+    color: 'var(--color-chart-success)',
   },
   pending: {
     label: '未完了',
-    color: 'hsl(217, 91%, 80%)', // 明るい青
+    color: 'var(--color-chart-warning)',
   },
 } satisfies ChartConfig
 

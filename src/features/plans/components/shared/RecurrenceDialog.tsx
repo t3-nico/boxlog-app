@@ -212,7 +212,7 @@ export function RecurrenceDialog({
                   return (
                     <Button
                       key={index}
-                      variant={config.byWeekday?.includes(weekdayIndex) ? 'default' : 'outline'}
+                      variant={config.byWeekday?.includes(weekdayIndex) ? 'primary' : 'outline'}
                       size="sm"
                       className="h-10 w-10 rounded-full p-0 text-sm"
                       onClick={() => toggleWeekday(weekdayIndex)}
@@ -382,10 +382,10 @@ export function RecurrenceDialog({
 
         {/* フッター */}
         <div className="border-border flex items-center justify-between border-t px-6 py-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)} type="button" size="sm">
+          <Button variant="outline" onClick={() => onOpenChange(false)} type="button">
             キャンセル
           </Button>
-          <Button onClick={handleSave} type="button" size="sm">
+          <Button onClick={handleSave} type="button">
             完了
           </Button>
         </div>

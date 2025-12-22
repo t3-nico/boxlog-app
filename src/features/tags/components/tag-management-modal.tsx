@@ -222,7 +222,7 @@ export const TagManagementModal = ({
       <div
         role="button"
         tabIndex={0}
-        className="bg-opacity-50 fixed inset-0 z-50 bg-black"
+        className="bg-overlay fixed inset-0 z-50"
         onClick={onClose}
         onKeyDown={handleOverlayKeyDown}
         aria-label="モーダルを閉じる"

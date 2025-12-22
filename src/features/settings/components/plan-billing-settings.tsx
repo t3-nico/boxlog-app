@@ -82,17 +82,12 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
         actions={
           <div className="bg-surface-container flex gap-1 rounded-xl p-1">
             <Button
-              variant={billingPeriod === 'month' ? 'default' : 'ghost'}
-              size="sm"
+              variant={billingPeriod === 'month' ? 'primary' : 'ghost'}
               onClick={() => handlePeriodChange('month')}
             >
               月払い
             </Button>
-            <Button
-              variant={billingPeriod === 'year' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => handlePeriodChange('year')}
-            >
+            <Button variant={billingPeriod === 'year' ? 'primary' : 'ghost'} onClick={() => handlePeriodChange('year')}>
               年払い
               <Badge variant="secondary" className="ml-2">
                 20% OFF
@@ -142,7 +137,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
 
               <Button
                 className="w-full"
-                variant={currentPlan === plan.id ? 'outline' : plan.recommended ? 'default' : 'outline'}
+                variant={currentPlan === plan.id ? 'outline' : plan.recommended ? 'primary' : 'outline'}
                 disabled={currentPlan === plan.id}
                 onClick={() => handleUpgrade(plan.id)}
               >
@@ -165,7 +160,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
                 <p className="text-muted-foreground text-sm">カードが登録されていません</p>
               </div>
             </div>
-            <Button variant="outline" size="sm" disabled>
+            <Button variant="outline" disabled>
               カードを追加
             </Button>
           </div>

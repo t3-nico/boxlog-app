@@ -170,7 +170,7 @@ function AvatarDropzone({
             />
             {/* ホバーオーバーレイ */}
             {!isUploading && (
-              <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/60 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="bg-overlay-heavy absolute inset-0 flex items-center justify-center rounded-full opacity-0 transition-opacity group-hover:opacity-100">
                 <Camera className="h-6 w-6 text-white" />
               </div>
             )}
@@ -195,7 +195,7 @@ function AvatarDropzone({
 
         {/* ローディングオーバーレイ */}
         {isUploading && (
-          <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/60">
+          <div className="bg-overlay-heavy absolute inset-0 flex items-center justify-center rounded-full">
             <Loader2 className="h-6 w-6 animate-spin text-white" />
           </div>
         )}
@@ -206,7 +206,6 @@ function AvatarDropzone({
         <Button
           type="button"
           variant="outline"
-          size="sm"
           disabled={disabled || isUploading}
           onClick={() => {
             const input = document.querySelector<HTMLInputElement>('input[type="file"]')
@@ -230,7 +229,6 @@ function AvatarDropzone({
           <Button
             type="button"
             variant="ghost"
-            size="sm"
             disabled={disabled || isUploading}
             onClick={handleRemove}
             className="text-destructive hover:text-destructive"

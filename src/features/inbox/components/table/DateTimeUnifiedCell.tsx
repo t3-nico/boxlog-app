@@ -242,7 +242,7 @@ export function DateTimeUnifiedCell({ data, width, onChange }: DateTimeUnifiedCe
 
             {/* アクションボタン */}
             <div className="flex justify-end">
-              <Button onClick={handleClear} variant="secondary" size="sm">
+              <Button onClick={handleClear} variant="outline" size="sm">
                 <Trash2 className="mr-2 size-4" />
                 クリア
               </Button>

@@ -67,7 +67,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
       <div
         role="button"
         tabIndex={0}
-        className="absolute inset-0 bg-black backdrop-blur-sm"
+        className="bg-overlay absolute inset-0 backdrop-blur-sm"
         onClick={onClose}
         onKeyDown={(e) => {
           if (e.key === 'Escape') onClose()

@@ -45,7 +45,7 @@ export function TableEmptyState({
           <p className="text-muted-foreground text-sm">{message}</p>
           {subMessage && <p className="text-muted-foreground text-xs">{subMessage}</p>}
           {isFiltered && onResetFilter && (
-            <Button type="button" variant="link" onClick={onResetFilter}>
+            <Button type="button" variant="text" onClick={onResetFilter}>
               フィルターをリセット
             </Button>
           )}
