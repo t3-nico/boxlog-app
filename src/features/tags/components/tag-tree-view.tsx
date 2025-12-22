@@ -120,8 +120,8 @@ const TagTreeNode = ({ tag, onEditTag, onDeleteTag, onRenameTag }: TagTreeNodePr
           )}
         </div>
 
-        {/* アクションボタン */}
-        <div className="flex flex-shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+        {/* アクションボタン - タッチデバイスでは常に表示 */}
+        <div className="flex flex-shrink-0 items-center gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
           <div className="relative">
             <Button
               type="button"

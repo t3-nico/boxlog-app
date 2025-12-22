@@ -241,7 +241,12 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
           )}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-96 overflow-visible rounded-xl p-0" side="right" align="start" sideOffset={8}>
+      <DropdownMenuContent
+        className="w-[calc(100vw-2rem)] max-w-96 overflow-visible rounded-xl p-0 sm:w-96"
+        side="right"
+        align="start"
+        sideOffset={8}
+      >
         {/* ヘッダー */}
         <DropdownMenuLabel className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">

@@ -186,5 +186,5 @@ export function CompactSearchBar({ className }: { className?: string }) {
     )
   }
 
-  return <SearchBar className={cn('w-64', className)} />
+  return <SearchBar className={cn('w-48 sm:w-64', className)} />
 }

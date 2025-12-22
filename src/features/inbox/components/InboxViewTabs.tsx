@@ -97,16 +97,16 @@ export function InboxViewTabs() {
                   {view.name}
                 </TabsTrigger>
 
-                {/* デフォルト以外は編集・削除メニュー表示 */}
+                {/* デフォルト以外は編集・削除メニュー表示 - タッチデバイスでは常に表示 */}
                 {!view.id.startsWith('default-') && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="absolute top-1/2 -right-2 h-6 w-6 -translate-y-1/2 p-0 opacity-0 group-hover:opacity-100"
+                        className="absolute top-1/2 -right-2 h-7 w-7 -translate-y-1/2 p-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                       >
-                        <MoreHorizontal className="h-3 w-3" />
+                        <MoreHorizontal className="h-4 w-4" />
                         <span className="sr-only">メニュー</span>
                       </Button>
                     </DropdownMenuTrigger>

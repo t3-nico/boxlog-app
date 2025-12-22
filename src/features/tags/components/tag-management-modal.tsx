@@ -398,17 +398,17 @@ export const TagManagementModal = ({
                             </div>
                           )}
                         </div>
-                        <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                        <div className="flex gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
                           <Button
                             type="button"
                             variant="ghost"
                             size="icon-sm"
                             onClick={handleEditClick}
                             data-tag-id={tag.id}
-                            className="text-primary size-6"
+                            className="text-primary size-7"
                             title="Edit tag"
                           >
-                            <Edit2 className="h-3 w-3" />
+                            <Edit2 className="h-4 w-4" />
                           </Button>
                           <Button
                             type="button"
@@ -417,10 +417,10 @@ export const TagManagementModal = ({
                             onClick={handleDeleteClick}
                             data-tag-id={tag.id}
                             data-tag-name={tag.name}
-                            className="text-destructive size-6"
+                            className="text-destructive size-7"
                             title="Delete tag"
                           >
-                            <Trash2 className="h-3 w-3" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </>

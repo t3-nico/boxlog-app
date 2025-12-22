@@ -177,19 +177,19 @@ export function SortableGroupItem({
         </div>
 
         <div className="flex items-center gap-1">
-          {/* コンテキストメニュー */}
+          {/* コンテキストメニュー - タッチデバイスでは常に表示 */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon-sm"
-                className="h-6 w-6 shrink-0 opacity-0 group-hover:opacity-100"
+                className="h-7 w-7 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                 onClick={(e) => {
                   e.stopPropagation()
                 }}
               >
-                <MoreHorizontal className="h-3 w-3" />
+                <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
