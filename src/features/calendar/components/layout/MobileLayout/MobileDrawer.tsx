@@ -153,7 +153,7 @@ export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, classNam
       <div
         ref={drawerRef}
         className={cn(
-          'fixed top-0 left-0 h-full w-80 max-w-[85vw]',
+          'fixed top-0 left-0 h-full w-72 max-w-[80vw]',
           'bg-background border-border z-50 border-r shadow-xl',
           'transform transition-transform duration-300 ease-out',
           isOpen ? 'translate-x-0' : '-translate-x-full',

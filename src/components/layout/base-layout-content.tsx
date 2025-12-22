@@ -2,6 +2,7 @@
 
 import { CookieConsentBanner } from '@/components/common/cookie-consent-banner'
 import { Button } from '@/components/ui/button'
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
@@ -36,7 +37,7 @@ interface BaseLayoutContentProps {
 export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const pathname = usePathname() || '/'
   const t = useTranslations()
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile)
   const searchParams = useSearchParams()
   const user = useAuthStore((state) => state.user)
 

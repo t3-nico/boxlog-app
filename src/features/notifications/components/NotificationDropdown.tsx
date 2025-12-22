@@ -242,7 +242,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-[calc(100vw-2rem)] max-w-96 overflow-visible rounded-xl p-0 sm:w-96"
+        className="w-full max-w-sm overflow-visible rounded-xl p-0 sm:w-96 sm:max-w-96"
         side="right"
         align="start"
         sideOffset={8}
@@ -259,7 +259,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
             <button
               type="button"
               onClick={handleOpenSettings}
-              className="hover:bg-state-hover flex h-7 w-7 items-center justify-center rounded-md transition-colors"
+              className="hover:bg-state-hover flex h-10 w-10 items-center justify-center rounded-md transition-colors"
             >
               <Settings className="h-4 w-4" />
               <span className="sr-only">{t('notification.settings')}</span>
