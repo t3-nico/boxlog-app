@@ -490,23 +490,43 @@ leading - relaxed // 1.625 - 読みやすい本文
 
 ---
 
-## 📱 レスポンシブデザイン
+## 📱 レスポンシブデザイン（Material Design 3準拠）
 
-### ブレークポイント
+### ブレークポイント定義
+
+Material Design 3の[Window Size Classes](https://m3.material.io/foundations/layout/applying-layout/window-size-classes)に基づき、Tailwind v4のデフォルトブレークポイントを使用します。
 
 ```typescript
-// Tailwind v4 デフォルト
-sm: 640px   // スマートフォン横向き
+// Tailwind v4 デフォルト ↔ M3 Window Size Classes
+sm: 640px   // ≈ M3 Compact/Medium境界
 md: 768px   // タブレット縦向き
-lg: 1024px  // タブレット横向き、小型ノートPC
-xl: 1280px  // デスクトップ
-2xl: 1536px // 大型デスクトップ
+lg: 1024px  // ≈ M3 Expanded（デスクトップ）
+xl: 1280px  // ≈ M3 Large
+2xl: 1536px // ≈ M3 Extra-large
+```
+
+### 設定ファイル
+
+```typescript
+// src/config/ui/breakpoints.ts
+import { BREAKPOINT_VALUES, MEDIA_QUERIES, TOUCH_TARGET } from '@/config/ui/breakpoints'
+
+// ブレークポイント値（ピクセル）
+BREAKPOINT_VALUES.sm // 640
+BREAKPOINT_VALUES.md // 768
+BREAKPOINT_VALUES.lg // 1024
+
+// useMediaQuery用クエリ
+MEDIA_QUERIES.mobile // '(max-width: 639px)'
+MEDIA_QUERIES.tablet // '(min-width: 640px) and (max-width: 1023px)'
+MEDIA_QUERIES.desktop // '(min-width: 1024px)'
+MEDIA_QUERIES.touch // '(hover: none) and (pointer: coarse)'
 ```
 
 ### モバイルファースト設計
 
 ```tsx
-// ✅ モバイルファースト
+// ✅ モバイルファースト（推奨）
 <div className="p-4 md:p-6 lg:p-8">
   <h1 className="text-2xl md:text-3xl lg:text-4xl">タイトル</h1>
 </div>
@@ -514,6 +534,171 @@ xl: 1280px  // デスクトップ
 // ❌ デスクトップファースト（非推奨）
 <div className="lg:p-8 md:p-6 p-4">
 ```
+
+### useMediaQueryの使用
+
+```tsx
+import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
+
+function MyComponent() {
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile)
+  const isTouch = useMediaQuery(MEDIA_QUERIES.touch)
+
+  return isMobile ? <MobileView /> : <DesktopView />
+}
+```
+
+### タッチターゲットサイズ（M3アクセシビリティ）
+
+Material Design 3では、タッチ可能な要素は最小**48dp（48px）**を推奨しています。
+
+```typescript
+// src/config/ui/breakpoints.ts
+TOUCH_TARGET.minimum // 44px（WCAG 2.5.5最小）
+TOUCH_TARGET.standard // 48px（M3推奨）
+TOUCH_TARGET.large // 56px（FAB等）
+TOUCH_TARGET.spacing // 8px（要素間マージン）
+```
+
+#### サイズ早見表
+
+| サイズ   | Tailwindクラス | ピクセル | 用途                  |
+| -------- | -------------- | -------- | --------------------- |
+| minimum  | `h-11 w-11`    | 44px     | 最小タッチターゲット  |
+| standard | `h-12 w-12`    | 48px     | 標準ボタン・アイコン  |
+| large    | `h-14 w-14`    | 56px     | FAB、重要なアクション |
+
+#### レスポンシブタッチターゲット
+
+```tsx
+// ✅ モバイルで大きく、デスクトップで通常サイズ
+<Button className="h-12 w-12 sm:h-10 sm:w-10">
+  <Icon className="size-6 sm:size-5" />
+</Button>
+
+// ✅ SelectTriggerなど
+<SelectTrigger className="h-10 w-28 sm:h-8 sm:w-32">
+
+// ❌ 小さすぎるタッチターゲット（モバイルで問題）
+<button className="h-6 w-6">  // 24px - タップしにくい
+```
+
+### ホバー依存UIのモバイル対応
+
+ホバーで表示されるUIは、モバイルでは常時表示にする必要があります。
+
+```tsx
+// ✅ モバイルで常時表示、デスクトップでホバー時のみ
+<button className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
+  <TrashIcon />
+</button>
+
+// ❌ ホバーのみ（モバイルでアクセス不可）
+<button className="opacity-0 group-hover:opacity-100">
+```
+
+### 固定幅のレスポンシブ化
+
+```tsx
+// ✅ Tailwind標準クラス使用
+<div className="w-72 sm:w-80">        // 288px → 320px
+<div className="w-full max-w-sm sm:w-96">  // 全幅 → 384px
+
+// ❌ 任意値（Arbitrary values）の多用は避ける
+<div className="w-[25rem]">           // → w-96
+<div className="w-[calc(100vw-2rem)]"> // → w-full max-w-sm
+<div className="max-w-[85vw]">        // → max-w-72 または max-w-xs
+```
+
+### レスポンシブパターン集
+
+#### カード幅
+
+```tsx
+// Kanbanカラム
+<div className="w-72 sm:w-80">  // モバイル288px、デスクトップ320px
+
+// ダイアログ
+<DialogContent className="w-[95vw] max-w-lg sm:w-auto">
+```
+
+#### サイドバー
+
+```tsx
+// 設定サイドバー：モバイルでアイコンのみ
+<aside className="w-14 sm:w-48">
+  <span className="hidden sm:inline">{label}</span>
+</aside>
+```
+
+#### ドロップダウン
+
+```tsx
+// 通知ドロップダウン
+<DropdownMenuContent className="w-full max-w-sm sm:w-96">
+```
+
+#### 横スクロール対応
+
+```tsx
+// ヒートマップなど固定幅が必要なコンテンツ
+<div className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:overflow-visible sm:px-0">
+  <div className="min-w-[650px]">{/* 固定幅コンテンツ */}</div>
+</div>
+```
+
+### タッチイベント対応
+
+マウス専用のイベント（drag, resize等）にはタッチイベントも追加します。
+
+```tsx
+// ✅ マウス + タッチ両対応
+<div
+  onMouseDown={handleMouseDown}
+  onTouchStart={handleTouchStart}
+  className="touch-none"  // ブラウザのデフォルトタッチ動作を無効化
+>
+
+// useEffect内でグローバルイベント登録
+useEffect(() => {
+  document.addEventListener('mousemove', handleMouseMove)
+  document.addEventListener('mouseup', handleEnd)
+  document.addEventListener('touchmove', handleTouchMove, { passive: false })
+  document.addEventListener('touchend', handleEnd)
+  document.addEventListener('touchcancel', handleEnd)
+
+  return () => {
+    // クリーンアップ
+  }
+}, [])
+```
+
+### ❌ 禁止事項
+
+```tsx
+// ❌ ハードコードされたメディアクエリ
+const isMobile = useMediaQuery('(max-width: 768px)')
+// → MEDIA_QUERIES.mobile を使用
+
+// ❌ 任意値の多用
+<div className="w-[25rem]">        // → w-96
+<div className="max-w-[85vw]">     // → max-w-72
+<div className="h-[calc(100vh-4rem)]">  // 必要な場合のみ許容
+
+// ❌ ホバー専用UI（モバイルでアクセス不可）
+<button className="opacity-0 group-hover:opacity-100">
+
+// ❌ 小さすぎるタッチターゲット
+<button className="h-6 w-6">  // 24px - 最低h-10 w-10（40px）
+```
+
+### 参考資料
+
+- [Material Design 3 - Window Size Classes](https://m3.material.io/foundations/layout/applying-layout/window-size-classes)
+- [Android - Use window size classes](https://developer.android.com/develop/ui/compose/layouts/adaptive/use-window-size-classes)
+- [M3 Touch Target Guidelines](https://m3.material.io/foundations/designing/structure)
+- [WCAG 2.5.5 Target Size](https://www.w3.org/WAI/WCAG21/Understanding/target-size.html)
 
 ---
 
