@@ -1,7 +1,9 @@
 'use client'
 
 import { format, getWeek } from 'date-fns'
+import { ChevronDown } from 'lucide-react'
 
+import { MiniCalendar } from '@/components/common/MiniCalendar'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
@@ -44,55 +46,28 @@ const generateRangeText = (date: Date, endDate: Date): string => {
 }
 
 /**
- * 日付ヘッダーコンテンツを作成
- * PageHeaderと同じtext-lg（18px）を使用
+ * 週番号バッジ
  */
-const createDateContent = (text: string) => (
-  <div className="flex items-center gap-2">
-    <h2 className="text-lg font-semibold">{text}</h2>
-  </div>
-)
+const WeekBadge = ({ weekNumber, className }: { weekNumber: number; className?: string | undefined }) => {
+  const t = useTranslations()
 
-/**
- * 静的な日付表示コンテンツを作成
- */
-const createStaticContent = (
-  dateContent: React.ReactNode,
-  showWeekNumber: boolean,
-  weekNumber: number,
-  weekBadgeClassName?: string,
-  className?: string
-) => (
-  <div className={cn('flex items-center gap-2', className)}>
-    {dateContent}
-    {showWeekNumber ? (
-      <WeekBadge weekNumber={weekNumber} {...(weekBadgeClassName && { className: weekBadgeClassName })} />
-    ) : null}
-  </div>
-)
-
-/**
- * クリック可能な日付表示コンテンツを作成（ポップアップ削除）
- * 注意: ヘッダーの日付表示はクリック対象ではないため、現在は静的表示と同じ
- */
-const createClickableContent = (
-  dateContent: React.ReactNode,
-  showWeekNumber: boolean,
-  weekNumber: number,
-  weekBadgeClassName?: string,
-  className?: string
-) => (
-  <div className={cn('flex items-center gap-2', className)}>
-    {dateContent}
-    {showWeekNumber ? (
-      <WeekBadge weekNumber={weekNumber} {...(weekBadgeClassName && { className: weekBadgeClassName })} />
-    ) : null}
-  </div>
-)
+  return (
+    <span
+      className={cn('text-muted-foreground inline-flex items-center text-sm font-normal', className)}
+      aria-label={t('calendar.dateRange.weekLabel', { weekNumber })}
+    >
+      week{weekNumber}
+    </span>
+  )
+}
 
 /**
  * 日付範囲表示
  * 単一日付または期間を表示し、オプションで週番号も表示
+ *
+ * **モバイル対応**:
+ * - モバイル（md未満）: クリックでMiniCalendarポップアップを表示
+ * - PC（md以上）: 静的表示（サイドバーにMiniCalendarあり）
  */
 export const DateRangeDisplay = ({
   date,
@@ -103,39 +78,67 @@ export const DateRangeDisplay = ({
   weekBadgeClassName,
   onDateSelect,
   clickable = false,
-  displayRange: _displayRange,
+  displayRange,
 }: DateRangeDisplayProps) => {
   const weekNumber = getWeek(date, { weekStartsOn: 1 })
-  const isClickable = clickable && onDateSelect
 
   // 表示テキストを決定
   const displayText =
     endDate && date.getTime() !== endDate.getTime() ? generateRangeText(date, endDate) : format(date, formatPattern)
 
-  // 日付コンテンツを作成
-  const dateContent = createDateContent(displayText)
+  // 日付コンテンツ
+  const dateContent = <h2 className="text-lg font-semibold">{displayText}</h2>
 
-  // クリック可能な場合とそうでない場合で分岐（ポップアップは削除）
-  if (isClickable) {
-    return createClickableContent(dateContent, showWeekNumber, weekNumber, weekBadgeClassName, className)
+  // モバイル用: MiniCalendarポップアップ付き（週番号はカレンダーグリッドに表示するため非表示）
+  const mobileContent = clickable && onDateSelect && (
+    <MiniCalendar
+      asPopover
+      popoverTrigger={
+        <button
+          type="button"
+          className={cn('flex items-center gap-1 md:hidden', className)}
+          aria-label="カレンダーを開く"
+        >
+          {dateContent}
+          <ChevronDown className="text-muted-foreground size-4" />
+        </button>
+      }
+      selectedDate={date}
+      displayRange={displayRange}
+      onDateSelect={(selectedDate) => {
+        if (selectedDate) {
+          onDateSelect(selectedDate)
+        }
+      }}
+      popoverAlign="start"
+      popoverSide="bottom"
+    />
+  )
+
+  // PC用: 静的表示
+  const desktopContent = (
+    <div className={cn('hidden items-center gap-2 md:flex', className)}>
+      {dateContent}
+      {showWeekNumber && <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />}
+    </div>
+  )
+
+  // クリック可能な場合: モバイル（ポップアップ）+ PC（静的）
+  if (clickable && onDateSelect) {
+    return (
+      <>
+        {mobileContent}
+        {desktopContent}
+      </>
+    )
   }
 
-  return createStaticContent(dateContent, showWeekNumber, weekNumber, weekBadgeClassName, className)
-}
-
-/**
- * 週番号バッジ
- */
-const WeekBadge = ({ weekNumber, className }: { weekNumber: number; className?: string }) => {
-  const t = useTranslations()
-
+  // クリック不可の場合: 静的表示のみ
   return (
-    <span
-      className={cn('text-muted-foreground inline-flex items-center text-sm font-normal', className)}
-      aria-label={t('calendar.dateRange.weekLabel', { weekNumber })}
-    >
-      week{weekNumber}
-    </span>
+    <div className={cn('flex items-center gap-2', className)}>
+      {dateContent}
+      {showWeekNumber && <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />}
+    </div>
   )
 }
 

@@ -1,5 +1,7 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
+
 import type { CalendarViewType } from '../../../types/calendar.types'
 
 import { DateNavigator } from './DateNavigator'
@@ -49,9 +51,13 @@ const viewOptions = [
  * - コンテナ: 32px（h-8）
  * - 8pxグリッドシステム準拠
  *
- * **レイアウト**:
- * - 左側: モバイルメニュー + 日付表示
- * - 右側: Today + ナビゲーション矢印 + ViewSwitcher + アクション
+ * **レイアウト（PC）**:
+ * - 左側: 日付表示
+ * - 右側: ViewSwitcher + Today + ナビゲーション矢印 + アクション
+ *
+ * **レイアウト（モバイル）**:
+ * - 左側: メニュー + 日付表示
+ * - 右側: なし（スワイプでナビゲーション、ビュー切り替えはサイドバー）
  */
 export const CalendarHeader = ({
   viewType,
@@ -86,8 +92,26 @@ export const CalendarHeader = ({
           />
         </div>
 
-        {/* 右側: ビュー切り替え + Today + ナビゲーション + アクション */}
-        <div className="flex items-center gap-2">
+        {/* 右側（モバイル）: Todayボタン（今日の日付を表示するカレンダーアイコン風） */}
+        <div className="flex items-center md:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-foreground size-8"
+            onClick={() => onNavigate('today')}
+            aria-label="今日に戻る"
+          >
+            <div className="relative flex size-5 flex-col">
+              <div className="h-1 w-full border-b-2 border-current" />
+              <div className="flex flex-1 items-center justify-center">
+                <span className="text-[10px] leading-none font-semibold">{new Date().getDate()}</span>
+              </div>
+            </div>
+          </Button>
+        </div>
+
+        {/* 右側（PC）: ビュー切り替え + ナビゲーション + アクション */}
+        <div className="hidden items-center gap-2 md:flex">
           {/* ビュー切り替え */}
           <ViewSwitcher
             options={viewOptions}
