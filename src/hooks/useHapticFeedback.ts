@@ -1,11 +1,13 @@
 'use client'
 
 import { useCallback, useMemo } from 'react'
+import { useReducedMotion } from './useReducedMotion'
 
 /**
  * Haptic Feedback（触覚フィードバック）フック
  *
  * Web Vibration APIを使用してモバイルデバイスで触覚フィードバックを提供
+ * prefers-reduced-motion設定時は振動を無効化
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Vibration_API
  * @see https://developer.apple.com/design/human-interface-guidelines/playing-haptics
@@ -18,13 +20,17 @@ import { useCallback, useMemo } from 'react'
  * ```
  */
 export function useHapticFeedback() {
+  const prefersReducedMotion = useReducedMotion()
+
   /**
    * Vibration APIが利用可能かチェック
+   * prefers-reduced-motionの場合は無効化
    */
   const isSupported = useMemo(() => {
     if (typeof window === 'undefined') return false
+    if (prefersReducedMotion) return false
     return 'vibrate' in navigator
-  }, [])
+  }, [prefersReducedMotion])
 
   /**
    * 軽いタップフィードバック（ボタンクリック等）

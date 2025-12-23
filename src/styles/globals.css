@@ -1333,10 +1333,61 @@ button,
   touch-action: none;
 }
 
-/* スムーズスクロール（prefers-reduced-motion対応） */
+/* ============================================
+ * prefers-reduced-motion 対応
+ *
+ * アニメーション・トランジションを減らす設定の尊重
+ * WCAG 2.1 Success Criterion 2.3.3 準拠
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
+ * @see https://www.w3.org/WAI/WCAG21/Understanding/animation-from-interactions.html
+ * ============================================ */
+
+/* スムーズスクロール（reduced-motionでない場合のみ） */
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+  }
+}
+
+/* reduced-motion: アニメーション・トランジションを最小化 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* アニメーションを無効化（必要最小限の0.01sに短縮） */
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    /* トランジションを無効化 */
+    transition-duration: 0.01ms !important;
+    /* スクロールを即時に */
+    scroll-behavior: auto !important;
+  }
+
+  /* Shimmerアニメーションを静的な背景に置換 */
+  .animate-shimmer {
+    animation: none !important;
+    background: var(--surface-container) !important;
+  }
+
+  /* カレンダーアニメーションを無効化 */
+  .calendar-zoom-in,
+  .calendar-zoom-out,
+  .calendar-slide-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* フェード・スライドアニメーションを無効化 */
+  .animate-in,
+  .animate-out,
+  .fade-in,
+  .fade-out,
+  .zoom-in-95,
+  .zoom-out-95 {
+    animation: none !important;
+    opacity: 1 !important;
   }
 }
 
