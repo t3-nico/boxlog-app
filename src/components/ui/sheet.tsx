@@ -64,7 +64,7 @@ const SheetContent = ({
           side === 'right' &&
             'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right border-border inset-y-0 right-0 h-full border-l',
           side === 'left' &&
-            'data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left border-border inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
+            'data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left border-border inset-y-0 left-0 h-full w-4/5 max-w-80 border-r',
           side === 'top' &&
             'data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top border-border inset-x-0 top-0 h-auto border-b',
           side === 'bottom' &&
