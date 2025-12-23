@@ -46,11 +46,11 @@ export function InboxBoardView() {
       {/* ツールバー: 高さ48px固定（8px + 32px + 8px） */}
       <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 py-2">
         {/* 左側: 表示モード切り替え */}
-        <div className="flex h-8 shrink-0 items-center">
+        <div className="flex h-8 items-center">
           <DisplayModeSwitcher />
         </div>
         {/* 右側: フィルターツール */}
-        <div className="flex h-8 flex-1 items-center">
+        <div className="flex h-8 items-center">
           <InboxBoardToolbar />
         </div>
       </div>
