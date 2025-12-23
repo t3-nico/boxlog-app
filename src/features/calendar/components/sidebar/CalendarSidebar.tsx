@@ -15,6 +15,7 @@ import { useTranslations } from 'next-intl'
 import { CalendarFilterList } from './CalendarFilterList'
 import { TodoCardList } from './todo/TodoCardList'
 import { TodoNavigation, type TodoFilter, type TodoSort } from './todo/TodoNavigation'
+import { ViewSwitcherList } from './ViewSwitcherList'
 
 /**
  * CalendarSidebar - カレンダーページ専用サイドバー
@@ -94,17 +95,23 @@ export function CalendarSidebar() {
       icon: CalendarDays,
       content: (
         <div className="min-w-0 overflow-hidden">
-          {/* ミニカレンダー */}
-          <MiniCalendar
-            selectedDate={navigation?.currentDate}
-            displayRange={displayRange}
-            onDateSelect={(date) => {
-              if (date && navigation) {
-                navigation.navigateToDate(date, true)
-              }
-            }}
-            className="w-full bg-transparent"
-          />
+          {/* ミニカレンダー（PCのみ - モバイルはヘッダーのポップアップ） */}
+          <div className="hidden md:block">
+            <MiniCalendar
+              selectedDate={navigation?.currentDate}
+              displayRange={displayRange}
+              onDateSelect={(date) => {
+                if (date && navigation) {
+                  navigation.navigateToDate(date, true)
+                }
+              }}
+              className="w-full bg-transparent"
+            />
+          </div>
+
+          {/* ビュー切り替え（モバイルのみ） */}
+          <ViewSwitcherList />
+
           {/* カレンダーフィルター */}
           <CalendarFilterList />
         </div>
