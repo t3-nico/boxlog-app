@@ -176,6 +176,8 @@
    * ============================================ */
   --color-primary-container: oklch(from var(--primary) l c h / 12%);
   --color-on-primary-container: var(--primary);
+  --color-success-container: oklch(from var(--success) l c h / 12%);
+  --color-on-success-container: var(--success);
 
   /* ============================================
    * Surface トークン（M3準拠）

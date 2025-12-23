@@ -84,7 +84,7 @@ export function MobileBottomNavigation() {
               <div
                 className={cn(
                   'flex items-center justify-center rounded-full p-2 transition-colors',
-                  item.isActive && 'bg-primary/15'
+                  item.isActive && 'bg-primary-container'
                 )}
               >
                 <Icon

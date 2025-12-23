@@ -87,7 +87,7 @@ export function InspectorShell({
           {resizable && (
             <div
               onMouseDown={handleMouseDown}
-              className={`hover:bg-primary/50 absolute top-0 left-0 z-20 h-full w-1 cursor-ew-resize ${
+              className={`hover:bg-primary-state-hover absolute top-0 left-0 z-20 h-full w-1 cursor-ew-resize ${
                 isResizing ? 'bg-primary' : ''
               }`}
               style={{ touchAction: 'none' }}

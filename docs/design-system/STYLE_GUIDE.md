@@ -109,7 +109,12 @@ Material Design 3のState Layer方式を採用。背景色を変えるのでは�
 | **Focus**    | `bg-state-focus`    | 12% | キーボードフォーカス |
 | **Pressed**  | `bg-state-pressed`  | 12% | クリック/タップ中    |
 | **Selected** | `bg-state-selected` | 12% | 選択状態             |
+| **Active**   | `bg-state-active`   | -   | 現在のページ/ナビ項目 |
 | **Dragged**  | `bg-state-dragged`  | 16% | ドラッグ中           |
+
+**Active vs Selected の使い分け**:
+- `bg-state-active`: 現在のページやナビゲーション項目（持続的）
+- `bg-state-selected`: ユーザーが選択した項目（一時的）
 
 #### 塗りボタン用ホバートークン（各色90%）
 
@@ -146,6 +151,8 @@ isActive ? 'bg-primary-state-selected text-primary' : 'text-muted-foreground hov
 | ------------------------ | --------------------------- | ------------------------------------ |
 | **Primary Container**    | `bg-primary-container`      | バッジ、アイコン背景、今日ハイライト |
 | **On Primary Container** | `text-on-primary-container` | Container上のテキスト色（= primary） |
+| **Success Container**    | `bg-success-container`      | 成功状態のバッジ、アイコン背景       |
+| **On Success Container** | `text-on-success-container` | Container上のテキスト色（= success） |
 
 ```tsx
 // ✅ 使用例: ステータスバッジ
