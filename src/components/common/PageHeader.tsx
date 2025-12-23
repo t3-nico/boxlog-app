@@ -2,8 +2,14 @@
 
 import type { ReactNode } from 'react'
 
+import { Bot } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
+import { HoverTooltip } from '@/components/ui/tooltip'
+import { useAIInspectorStore } from '@/features/ai'
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface PageHeaderProps {
   /** ページタイトル */
@@ -57,6 +63,9 @@ export function PageHeader({
   showMobileMenu = true,
   className,
 }: PageHeaderProps) {
+  const openAIInspector = useAIInspectorStore((state) => state.openInspector)
+  const t = useTranslations()
+
   return (
     <div className={cn('bg-background flex h-12 shrink-0 items-center px-4 py-2', className)}>
       {/* モバイル: ハンバーガーメニュー */}
@@ -72,6 +81,19 @@ export function PageHeader({
 
       {/* アクションボタン */}
       {actions && <div className="flex h-8 items-center gap-2">{actions}</div>}
+
+      {/* AIアシスタントボタン */}
+      <HoverTooltip content={t('aria.openAIAssistant')} side="bottom">
+        <Button
+          onClick={() => openAIInspector()}
+          size="icon"
+          variant="ghost"
+          aria-label={t('aria.openAIAssistant')}
+          className="text-muted-foreground hover:text-foreground ml-2 shrink-0"
+        >
+          <Bot className="size-4" />
+        </Button>
+      </HoverTooltip>
     </div>
   )
 }
