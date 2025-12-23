@@ -246,6 +246,18 @@
     "light": "Light Mode",
     "dark": "Dark Mode"
   },
+  "create": {
+    "action": {
+      "title": "What would you like to add?",
+      "description": "Choose the type of item to add",
+      "plan": "Plan",
+      "planDescription": "Create a new plan",
+      "record": "Record",
+      "recordDescription": "Log what you actually did",
+      "template": "Template",
+      "templateDescription": "Add from saved templates"
+    }
+  },
   "validation": {
     "required": "This field is required",
     "invalidUuid": "Please enter a valid ID",
