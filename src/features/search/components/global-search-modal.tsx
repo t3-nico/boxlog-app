@@ -264,7 +264,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="!max-w-[42rem] overflow-hidden !p-0" showCloseButton={false}>
+      <DialogContent className="!w-[95vw] !max-w-[42rem] overflow-hidden !p-0 sm:!w-auto" showCloseButton={false}>
         <VisuallyHidden>
           <DialogTitle>グローバル検索</DialogTitle>
         </VisuallyHidden>

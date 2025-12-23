@@ -324,7 +324,9 @@ export const WeekCalendarLayout = ({
                           type="button"
                           onClick={createDeletePlanHandler(plan.id)}
                           className={`bg-card/90 hover:bg-card absolute top-1 right-1 z-30 rounded p-1.5 shadow-lg transition-all duration-200 ${
-                            selectedPlanId === plan.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                            selectedPlanId === plan.id
+                              ? 'opacity-100'
+                              : 'opacity-100 sm:opacity-0 sm:group-hover:opacity-100'
                           }`}
                           title={t('calendar.event.delete')}
                         >

@@ -107,7 +107,7 @@ export function InspectorShell({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()} modal={modal}>
       <DialogContent
-        className="flex h-[40rem] max-w-[28rem] flex-col gap-0 overflow-hidden p-0"
+        className="flex h-[40rem] w-[95vw] max-w-[28rem] flex-col gap-0 overflow-hidden p-0"
         style={{ zIndex: zIndex.modal }}
         showCloseButton={false}
       >

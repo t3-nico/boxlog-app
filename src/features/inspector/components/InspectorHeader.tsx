@@ -79,7 +79,13 @@ export function InspectorHeader({
       <div className="flex items-center gap-1">
         {/* 閉じるボタン */}
         <HoverTooltip content={closeLabel} side="bottom">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose} aria-label={closeLabel}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 sm:h-8 sm:w-8"
+            onClick={onClose}
+            aria-label={closeLabel}
+          >
             {displayMode === 'popover' ? <X className="h-4 w-4" /> : <PanelRightClose className="h-4 w-4" />}
           </Button>
         </HoverTooltip>
@@ -91,7 +97,7 @@ export function InspectorHeader({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8"
+                className="h-10 w-10 sm:h-8 sm:w-8"
                 onClick={onPrevious}
                 disabled={!hasPrevious}
                 aria-label={previousLabel}
@@ -103,7 +109,7 @@ export function InspectorHeader({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8"
+                className="h-10 w-10 sm:h-8 sm:w-8"
                 onClick={onNext}
                 disabled={!hasNext}
                 aria-label={nextLabel}
@@ -122,7 +128,12 @@ export function InspectorHeader({
         {menuContent && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 focus-visible:ring-0" aria-label="オプション">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 focus-visible:ring-0 sm:h-8 sm:w-8"
+                aria-label="オプション"
+              >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>

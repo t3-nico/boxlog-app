@@ -184,7 +184,7 @@ export function SortableGroupItem({
                 type="button"
                 variant="ghost"
                 size="icon-sm"
-                className="h-7 w-7 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                className="h-10 w-10 shrink-0 opacity-100 sm:h-7 sm:w-7 sm:opacity-0 sm:group-hover:opacity-100"
                 onClick={(e) => {
                   e.stopPropagation()
                 }}

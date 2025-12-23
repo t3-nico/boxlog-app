@@ -61,7 +61,7 @@ export function PlanCard({ plan, onEdit, onDelete, onClick, tags = [] }: PlanCar
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100"
+                className="h-10 w-10 p-0 opacity-100 transition-opacity sm:h-8 sm:w-8 sm:opacity-0 sm:group-hover:opacity-100"
               >
                 <MoreVertical className="h-4 w-4" />
               </Button>

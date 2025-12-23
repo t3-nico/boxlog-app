@@ -62,7 +62,7 @@ export function Account({ userData, locale }: AccountProps) {
             aria-label={t('navUser.accountMenuLabel', { name: userData.name })}
             className="hover:bg-state-hover data-[state=open]:bg-secondary flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
           >
-            <Avatar className="h-8 w-8 rounded-xl">
+            <Avatar className="h-10 w-10 rounded-xl sm:h-8 sm:w-8">
               {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}
               <AvatarFallback className="rounded-xl">{userData.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>

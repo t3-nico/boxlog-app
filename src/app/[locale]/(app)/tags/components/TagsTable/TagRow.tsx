@@ -152,7 +152,7 @@ export function TagRow({
           <TableCell className="text-muted-foreground" style={{ width: `${columnWidths.description}px` }}>
             <span className="truncate">
               {tag.description || (
-                <span className="opacity-0 transition-opacity group-hover:opacity-100">
+                <span className="opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
                   {t('tag.page.addDescription')}
                 </span>
               )}
@@ -165,7 +165,7 @@ export function TagRow({
                 <span className="text-sm">{group.name}</span>
               </div>
             ) : (
-              <span className="text-muted-foreground text-sm opacity-0 transition-opacity group-hover:opacity-100">
+              <span className="text-muted-foreground text-sm opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
                 {t('tag.page.addGroup')}
               </span>
             )}

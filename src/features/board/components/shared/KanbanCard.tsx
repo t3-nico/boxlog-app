@@ -127,7 +127,7 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
             <Button
               variant="ghost"
               size="icon"
-              className="size-8 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100"
+              className="size-10 opacity-100 transition-opacity sm:size-8 sm:opacity-0 sm:group-hover:opacity-100"
               aria-label={t('aria.cardMenu')}
             >
               <MoreHorizontal className="size-4" />
