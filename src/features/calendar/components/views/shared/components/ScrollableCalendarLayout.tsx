@@ -40,6 +40,8 @@ interface CalendarDateHeaderProps {
   showTimezone?: boolean | undefined
   timeColumnWidth?: number | undefined
   timezone?: string | undefined
+  /** 週番号（表示する場合） */
+  weekNumber?: number | undefined
 }
 
 const TIME_COLUMN_WIDTH = 48
@@ -53,15 +55,24 @@ export const CalendarDateHeader = ({
   showTimezone = true,
   timeColumnWidth = TIME_COLUMN_WIDTH,
   timezone,
+  weekNumber,
 }: CalendarDateHeaderProps) => {
   return (
     <div className="flex h-12 shrink-0 flex-col justify-center py-2">
-      <div className="flex px-4">
+      <div className="flex items-center px-4">
         {/* 左スペーサー（時間列と揃えるため） */}
         {showTimeColumn ? (
-          <div className="flex shrink-0 items-end justify-start" style={{ width: timeColumnWidth }}>
-            {/* タイムゾーン表示（showTimezone=trueの場合のみ） */}
-            {showTimezone && timezone ? <TimezoneOffset timezone={timezone} className="text-xs" /> : null}
+          <div className="flex shrink-0 items-center justify-center" style={{ width: timeColumnWidth }}>
+            {/* 週番号バッジ（Googleカレンダースタイル） - 丸いバッジ */}
+            {weekNumber != null ? (
+              <span className="bg-muted text-muted-foreground flex size-6 items-center justify-center rounded-full text-xs font-medium">
+                {weekNumber}
+              </span>
+            ) : null}
+            {/* タイムゾーン表示（showTimezone=trueの場合のみ、週番号がない場合） */}
+            {showTimezone && timezone && weekNumber == null ? (
+              <TimezoneOffset timezone={timezone} className="text-xs" />
+            ) : null}
           </div>
         ) : null}
 
