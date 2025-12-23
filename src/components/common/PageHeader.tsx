@@ -63,12 +63,11 @@ export function PageHeader({
 
   return (
     <div className={cn('bg-background flex h-12 shrink-0 items-center px-4 py-2', className)}>
-      {/* モバイル: ハンバーガーメニュー */}
-      {showMobileMenu && <MobileMenuButton className="mr-2 md:hidden" />}
-
       {/* タイトルコンテナ（32px） */}
       <div className="flex h-8 flex-1 items-center gap-2 overflow-hidden">
-        <h1 className="truncate text-lg font-semibold">{title}</h1>
+        {/* モバイル: ハンバーガーメニュー */}
+        {showMobileMenu && <MobileMenuButton className="md:hidden" />}
+        <h1 className="truncate text-lg leading-8 font-semibold">{title}</h1>
         {/* count表示は一旦削除 - 必要であれば復活 */}
         {subtitle && <span className="text-muted-foreground truncate text-sm">{subtitle}</span>}
         {children}
