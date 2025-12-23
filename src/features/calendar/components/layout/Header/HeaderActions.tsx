@@ -33,7 +33,7 @@ export const HeaderActions = ({
     compact ? 'p-2' : 'p-2'
   )
 
-  const iconSize = compact ? 'h-4 w-4' : 'h-5 w-5'
+  const iconSize = compact ? 'size-5' : 'size-6'
 
   return (
     <div className={cn('flex items-center gap-1', className)}>
