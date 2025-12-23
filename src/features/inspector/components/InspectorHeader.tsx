@@ -38,9 +38,8 @@ interface InspectorHeaderProps {
 /**
  * Inspector共通ヘッダー
  *
- * - 閉じるボタン（PanelRightClose / X）
- * - 前/次のナビゲーションボタン
- * - オプションメニュー
+ * PC: 閉じるボタン + ナビゲーション + メニュー
+ * モバイル: ドラッグハンドル + メニュー（閉じるはスワイプで）
  *
  * @example
  * ```tsx
@@ -76,27 +75,19 @@ export function InspectorHeader({
   const isMobile = useMediaQuery('(max-width: 767px)')
   const showNavigation = onPrevious && onNext
 
-  // モバイル用の閉じるアイコンを決定
-  const getCloseIcon = () => {
-    if (isMobile) {
-      return <X className="size-5" />
-    }
-    return displayMode === 'popover' ? <X className="size-5" /> : <PanelRightClose className="size-5" />
+  // モバイル: InspectorShell側でドラッグハンドル+メニューを表示するため非表示
+  if (isMobile) {
+    return null
   }
 
+  // PC: フルヘッダー
   return (
     <div className="bg-popover sticky top-0 z-10 flex h-12 shrink-0 items-center justify-between px-1">
       <div className="flex items-center gap-1">
         {/* 閉じるボタン */}
         <HoverTooltip content={closeLabel} side="bottom">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-10 w-10 sm:h-8 sm:w-8"
-            onClick={onClose}
-            aria-label={closeLabel}
-          >
-            {getCloseIcon()}
+          <Button variant="ghost" size="icon" className="size-8" onClick={onClose} aria-label={closeLabel}>
+            {displayMode === 'popover' ? <X className="size-5" /> : <PanelRightClose className="size-5" />}
           </Button>
         </HoverTooltip>
 
@@ -107,24 +98,24 @@ export function InspectorHeader({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 sm:h-8 sm:w-8"
+                className="size-8"
                 onClick={onPrevious}
                 disabled={!hasPrevious}
                 aria-label={previousLabel}
               >
-                <ChevronUp className="size-6" />
+                <ChevronUp className="size-5" />
               </Button>
             </HoverTooltip>
             <HoverTooltip content={nextLabel} side="bottom">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 sm:h-8 sm:w-8"
+                className="size-8"
                 onClick={onNext}
                 disabled={!hasNext}
                 aria-label={nextLabel}
               >
-                <ChevronDown className="size-6" />
+                <ChevronDown className="size-5" />
               </Button>
             </HoverTooltip>
           </div>
@@ -138,12 +129,7 @@ export function InspectorHeader({
         {menuContent && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-10 w-10 focus-visible:ring-0 sm:h-8 sm:w-8"
-                aria-label="オプション"
-              >
+              <Button variant="ghost" size="icon" className="size-8 focus-visible:ring-0" aria-label="オプション">
                 <MoreHorizontal className="size-5" />
               </Button>
             </DropdownMenuTrigger>
