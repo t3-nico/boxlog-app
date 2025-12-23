@@ -3,8 +3,10 @@
 import type { ReactNode } from 'react'
 
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { zIndex } from '@/config/ui/z-index'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 import { INSPECTOR_SIZE, useInspectorResize } from '../hooks'
 
@@ -62,14 +64,30 @@ export function InspectorShell({
   initialWidth = INSPECTOR_SIZE.default,
   modal = false,
 }: InspectorShellProps) {
+  const isMobile = useMediaQuery('(max-width: 767px)')
   const { inspectorWidth, isResizing, handleMouseDown } = useInspectorResize({
     initialWidth,
-    enabled: displayMode === 'sheet' && resizable,
+    enabled: displayMode === 'sheet' && resizable && !isMobile,
   })
 
   if (!isOpen) return null
 
-  // Sheet mode
+  // モバイル: 下からのDrawer（ボトムシート）
+  if (isMobile) {
+    return (
+      <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <DrawerContent
+          className="flex max-h-[85vh] flex-col gap-0 overflow-hidden p-0"
+          style={{ zIndex: zIndex.modal }}
+        >
+          <DrawerTitle className="sr-only">{title}</DrawerTitle>
+          {children}
+        </DrawerContent>
+      </Drawer>
+    )
+  }
+
+  // PC: Sheet mode
   if (displayMode === 'sheet') {
     return (
       <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()} modal={modal}>
@@ -103,7 +121,7 @@ export function InspectorShell({
     )
   }
 
-  // Dialog/Popover mode
+  // PC: Dialog/Popover mode
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()} modal={modal}>
       <DialogContent
