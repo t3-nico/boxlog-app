@@ -100,6 +100,8 @@ export function TagsFilterBar({
             <Input
               ref={inputRef}
               type="text"
+              inputMode="search"
+              enterKeyHint="search"
               placeholder={t('tags.page.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
