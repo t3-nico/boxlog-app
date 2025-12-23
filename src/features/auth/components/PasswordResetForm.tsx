@@ -95,6 +95,7 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  autoComplete="email"
                 />
               </Field>
               {error ? <FieldDescription className="text-destructive">{error}</FieldDescription> : null}

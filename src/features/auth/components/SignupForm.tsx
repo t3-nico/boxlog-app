@@ -129,6 +129,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
                   required
+                  autoComplete="email"
                 />
                 <FieldDescription>{t('auth.signupForm.emailDescription')}</FieldDescription>
               </Field>
@@ -147,6 +148,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                         required
                         minLength={8}
                         maxLength={64}
+                        autoComplete="new-password"
                       />
                       <HoverTooltip
                         content={showPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')}
@@ -177,6 +179,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                         required
                         minLength={8}
                         maxLength={64}
+                        autoComplete="new-password"
                       />
                       <HoverTooltip
                         content={

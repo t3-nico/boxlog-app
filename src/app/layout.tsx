@@ -19,7 +19,7 @@ import '@/styles/globals.css'
 
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, Noto_Sans_JP } from 'next/font/google'
 import { Suspense } from 'react'
 
@@ -47,12 +47,49 @@ const notoSansJP = Noto_Sans_JP({
   fallback: ['Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'sans-serif'],
 })
 
+/**
+ * Viewport設定（モバイルUX最適化）
+ *
+ * @see https://developer.apple.com/design/human-interface-guidelines/
+ * @see https://css-tricks.com/the-notch-and-css/
+ *
+ * - viewportFit: 'cover' → iPhone X以降のノッチ/Dynamic Island対応
+ * - themeColor → ステータスバーの色（ライト/ダークモード対応）
+ */
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#1a1a1a' },
+  ],
+}
+
+/**
+ * メタデータ設定（PWA・SEO最適化）
+ *
+ * @see https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html
+ */
 export const metadata: Metadata = {
   title: {
     template: '%s - BoxLog',
     default: 'BoxLog',
   },
   description: 'BoxLog - Task management and productivity application',
+  // iOS PWA設定（Apple Human Interface Guidelines準拠）
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'BoxLog',
+  },
+  // Android PWA向け追加設定
+  applicationName: 'BoxLog',
+  formatDetection: {
+    telephone: false,
+  },
 }
 
 interface RootLayoutProps {

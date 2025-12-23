@@ -1198,3 +1198,65 @@ input[type='time']::-webkit-datetime-edit-minute-field {
   animation: calendar-slide-in 0.2s ease-out forwards;
 }
 
+/* ============================================
+ * Safe Area Insets（iOS対応）
+ *
+ * iPhone X以降のノッチ・Dynamic Island・ホームインジケーター対応
+ *
+ * @see https://developer.apple.com/design/human-interface-guidelines/
+ * @see https://css-tricks.com/the-notch-and-css/
+ *
+ * 使用例:
+ * - ボトムナビ: pb-safe
+ * - ヘッダー: pt-safe
+ * - 全方向: p-safe
+ * ============================================ */
+
+/* Safe Area Padding ユーティリティ */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+.pr-safe {
+  padding-right: env(safe-area-inset-right);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pl-safe {
+  padding-left: env(safe-area-inset-left);
+}
+
+.px-safe {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.py-safe {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.p-safe {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+/* Safe Area Margin ユーティリティ */
+.mb-safe {
+  margin-bottom: env(safe-area-inset-bottom);
+}
+
+.mt-safe {
+  margin-top: env(safe-area-inset-top);
+}
+
+/* Fixed Bottom要素用（ボトムナビ、FAB等） */
+.bottom-safe {
+  bottom: env(safe-area-inset-bottom);
+}
+

@@ -107,6 +107,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
                   required
+                  autoComplete="email"
                 />
               </Field>
 
@@ -127,6 +128,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                     required
                     minLength={8}
                     maxLength={64}
+                    autoComplete="current-password"
                   />
                   <HoverTooltip
                     content={showPassword ? t('auth.loginForm.hidePassword') : t('auth.loginForm.showPassword')}
