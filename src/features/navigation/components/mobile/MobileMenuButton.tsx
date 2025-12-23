@@ -26,7 +26,7 @@ export function MobileMenuButton({ className }: { className?: string }) {
 
   return (
     <Button variant="ghost" size="icon" onClick={toggle} aria-label={t('aria.openMenu')} className={className}>
-      <Menu className="size-5" />
+      <Menu className="size-6" />
     </Button>
   )
 }
