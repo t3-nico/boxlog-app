@@ -43,7 +43,7 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
       description: t('create.action.planDescription'),
       icon: Calendar,
       color: 'text-primary',
-      bgColor: 'bg-primary/10',
+      bgColor: 'bg-primary-container',
     },
     {
       id: 'record' as const,
@@ -51,7 +51,7 @@ export function CreateActionSheet({ open, onOpenChange, onSelect }: CreateAction
       description: t('create.action.recordDescription'),
       icon: CheckSquare,
       color: 'text-success',
-      bgColor: 'bg-success/10',
+      bgColor: 'bg-success-container',
     },
     {
       id: 'template' as const,
