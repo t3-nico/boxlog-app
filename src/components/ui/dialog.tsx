@@ -59,6 +59,8 @@ const DialogContent = ({
           'data-[state=open]:animate-in data-[state=closed]:animate-out motion-reduce:animate-none',
           'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
           'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+          // モバイルUX: スクロールチェーン防止
+          'overscroll-contain',
           className
         )}
         {...props}
