@@ -11,7 +11,8 @@
       "weekNoWeekend": "週表示（平日のみ）",
       "2week": "2週表示",
       "month": "月表示",
-      "list": "リスト"
+      "list": "リスト",
+      "agenda": "アジェンダ"
     },
     "mobile": {
       "drawer": {

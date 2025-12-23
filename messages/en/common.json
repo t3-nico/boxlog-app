@@ -8,6 +8,7 @@
     "next": "Next",
     "previous": "Previous",
     "close": "Close",
+    "cancel": "Cancel",
     "confirm": "Confirm",
     "loading": "Loading...",
     "noData": "No data available",
@@ -247,17 +248,17 @@
     "light": "Light Mode",
     "dark": "Dark Mode"
   },
-  "create": {
-    "action": {
-      "title": "What would you like to add?",
-      "description": "Choose the type of item to add",
-      "plan": "Plan",
-      "planDescription": "Create a new plan",
-      "record": "Record",
-      "recordDescription": "Log what you actually did",
-      "template": "Template",
-      "templateDescription": "Add from saved templates"
-    }
+  "createSheet": {
+    "title": "What would you like to add?",
+    "description": "Choose the type of item to add",
+    "plan": "Plan",
+    "planDescription": "Create a new plan",
+    "record": "Record",
+    "recordDescription": "Log what you actually did",
+    "template": "Template",
+    "templateDescription": "Add from saved templates",
+    "history": "Create from History",
+    "historyDescription": "Recreate from recently used items"
   },
   "validation": {
     "required": "This field is required",

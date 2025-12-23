@@ -8,6 +8,7 @@
     "next": "次へ",
     "previous": "前へ",
     "close": "閉じる",
+    "cancel": "キャンセル",
     "confirm": "確認",
     "loading": "読み込み中...",
     "noData": "データがありません",
@@ -247,17 +248,17 @@
     "light": "ライトモード",
     "dark": "ダークモード"
   },
-  "create": {
-    "action": {
-      "title": "何を追加しますか？",
-      "description": "追加するアイテムの種類を選択してください",
-      "plan": "予定",
-      "planDescription": "新しい予定を作成します",
-      "record": "実績",
-      "recordDescription": "実際に行ったことを記録します",
-      "template": "テンプレート",
-      "templateDescription": "保存済みテンプレートから追加します"
-    }
+  "createSheet": {
+    "title": "何を追加しますか？",
+    "description": "追加するアイテムの種類を選択してください",
+    "plan": "予定",
+    "planDescription": "新しい予定を作成します",
+    "record": "実績",
+    "recordDescription": "実際に行ったことを記録します",
+    "template": "テンプレート",
+    "templateDescription": "保存済みテンプレートから追加します",
+    "history": "履歴から作成",
+    "historyDescription": "最近使った項目から再度作成します"
   },
   "validation": {
     "required": "この項目は必須です",

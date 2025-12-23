@@ -11,7 +11,8 @@
       "weekNoWeekend": "Week View (Weekdays)",
       "2week": "2-Week View",
       "month": "Month View",
-      "list": "List"
+      "list": "List",
+      "agenda": "Agenda"
     },
     "mobile": {
       "drawer": {
