@@ -3,6 +3,7 @@
 import * as React from 'react'
 
 import * as SheetPrimitive from '@radix-ui/react-dialog'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { XIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -46,6 +47,7 @@ const SheetContent = ({
   children,
   side = 'right',
   showCloseButton = true,
+  'aria-label': ariaLabel,
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
   side?: 'top' | 'right' | 'bottom' | 'left'
@@ -73,6 +75,10 @@ const SheetContent = ({
         )}
         {...props}
       >
+        {/* アクセシビリティ: DialogTitleが必須なのでVisuallyHiddenで提供 */}
+        <VisuallyHidden>
+          <SheetPrimitive.Title>{ariaLabel || 'Sheet'}</SheetPrimitive.Title>
+        </VisuallyHidden>
         {children}
         {showCloseButton && (
           <SheetPrimitive.Close
