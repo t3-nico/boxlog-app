@@ -119,6 +119,7 @@
     "page": "{current} / {total}",
     "nextPage": "Next page",
     "lastPage": "Last page",
+    "loadMore": "Show {count} more",
     "title": "Table View",
     "description": "Display tasks in table format",
     "comingSoon": "Task table component coming soon...",

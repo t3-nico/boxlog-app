@@ -119,6 +119,7 @@
     "page": "{current} / {total}ページ",
     "nextPage": "次のページ",
     "lastPage": "最後のページ",
+    "loadMore": "さらに{count}件を表示",
     "title": "テーブルビュー",
     "description": "タスクをテーブル形式で表示",
     "comingSoon": "タスクテーブルコンポーネントは近日公開予定...",

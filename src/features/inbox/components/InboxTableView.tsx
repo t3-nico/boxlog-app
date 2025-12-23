@@ -1,11 +1,15 @@
 'use client'
 
 import type { PlanStatus } from '@/features/plans/types/plan'
+import { ChevronDown, Plus } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
 import { TablePagination } from '@/features/table'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useTranslations } from 'next-intl'
 import type { InboxItem } from '../hooks/useInboxData'
 import { useInboxData } from '../hooks/useInboxData'
@@ -23,6 +27,7 @@ import { InboxSelectionActions } from './table/InboxSelectionActions'
 import { InboxSelectionBar } from './table/InboxSelectionBar'
 import { InboxTableContent } from './table/InboxTableContent'
 import { type InboxTableRowCreateHandle } from './table/InboxTableRowCreate'
+import { MobileTableSettingsSheet } from './table/MobileTableSettingsSheet'
 import { TableToolbar } from './table/TableToolbar'
 
 /**
@@ -73,6 +78,14 @@ export function InboxTableView() {
 
   // グループ化関連（ページネーション表示判定用）
   const groupBy = useInboxGroupStore((state) => state.groupBy)
+
+  // モバイル判定
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile)
+
+  // モバイル用「もっと見る」の表示件数（初期50件、クリックで50件追加）
+  const MOBILE_INITIAL_LIMIT = 50
+  const MOBILE_LOAD_MORE_COUNT = 50
+  const [mobileDisplayLimit, setMobileDisplayLimit] = useState(MOBILE_INITIAL_LIMIT)
 
   // 期限一括変更ダイアログの状態
   const [showDateDialog, setShowDateDialog] = useState(false)
@@ -182,9 +195,10 @@ export function InboxTableView() {
     }
   }, [activeView, setStatus, setSearch, setSort, setPageSize])
 
-  // フィルター変更時にページ1に戻る
+  // フィルター変更時にページ1に戻る＆モバイル表示件数リセット
   useEffect(() => {
     setCurrentPage(1)
+    setMobileDisplayLimit(MOBILE_INITIAL_LIMIT)
   }, [filterStatus, filterSearch, setCurrentPage])
 
   // エラー表示
@@ -234,16 +248,32 @@ export function InboxTableView() {
           }
         />
       ) : (
-        <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 py-2">
-          {/* 左側: 表示モード切り替え + グループ化 */}
-          <div className="flex h-8 items-center gap-2">
-            <DisplayModeSwitcher />
+        <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
+          {/* 左端: 表示モード切替（モバイル・デスクトップ共通） */}
+          <DisplayModeSwitcher />
+
+          {/* デスクトップ: グループ・フィルター等のツールバー */}
+          <div className="hidden h-8 flex-1 items-center gap-2 overflow-x-auto md:flex">
             <GroupBySelector />
+            <TableToolbar />
           </div>
-          {/* 右側: ツールバー */}
-          <div className="flex h-8 items-center">
-            <TableToolbar onCreateClick={() => createRowRef.current?.startCreate()} />
+
+          {/* モバイル: スペーサー */}
+          <div className="flex-1 md:hidden" />
+
+          {/* モバイル: 設定シートボタン（作成ボタンの左隣） */}
+          <div className="md:hidden">
+            <MobileTableSettingsSheet />
           </div>
+
+          {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
+          <Button onClick={() => createRowRef.current?.startCreate()} size="sm" className="shrink-0 md:hidden">
+            <Plus className="size-4" />
+          </Button>
+          <Button onClick={() => createRowRef.current?.startCreate()} className="hidden shrink-0 md:inline-flex">
+            <Plus className="size-4" />
+            {t('common.inbox.createNew')}
+          </Button>
         </div>
       )}
 
@@ -257,20 +287,40 @@ export function InboxTableView() {
         }}
       >
         <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl">
-          <InboxTableContent items={items} createRowRef={createRowRef} />
+          <InboxTableContent
+            items={items}
+            createRowRef={createRowRef}
+            mobileDisplayLimit={isMobile ? mobileDisplayLimit : undefined}
+          />
         </div>
 
-        {/* フッター: グループ化なしの場合のみ */}
+        {/* フッター */}
         {!groupBy && (
-          <div className="shrink-0">
-            <TablePagination
-              totalItems={items.length}
-              currentPage={currentPage}
-              pageSize={pageSize}
-              onPageChange={setCurrentPage}
-              onPageSizeChange={setPageSize}
-            />
-          </div>
+          <>
+            {/* モバイル: もっと見るボタン（件数が超えている場合のみ） */}
+            {isMobile && items.length > mobileDisplayLimit && (
+              <div className="flex shrink-0 justify-center py-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setMobileDisplayLimit((prev) => prev + MOBILE_LOAD_MORE_COUNT)}
+                  className="gap-2"
+                >
+                  <ChevronDown className="size-4" />
+                  {t('table.loadMore', { count: Math.min(MOBILE_LOAD_MORE_COUNT, items.length - mobileDisplayLimit) })}
+                </Button>
+              </div>
+            )}
+            {/* デスクトップ: ページネーション */}
+            <div className="hidden shrink-0 md:block">
+              <TablePagination
+                totalItems={items.length}
+                currentPage={currentPage}
+                pageSize={pageSize}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={setPageSize}
+              />
+            </div>
+          </>
         )}
       </div>
 

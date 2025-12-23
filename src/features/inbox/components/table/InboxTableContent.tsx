@@ -34,6 +34,8 @@ const columnIcons = {
 interface InboxTableContentProps {
   items: InboxItem[]
   createRowRef: React.RefObject<InboxTableRowCreateHandle | null>
+  /** モバイル用表示件数上限（undefinedの場合は通常のページネーション使用） */
+  mobileDisplayLimit?: number | undefined
 }
 
 /**
@@ -96,9 +98,11 @@ const TableHeaderSection = memo(function TableHeaderSection({
 const TableBodySection = memo(function TableBodySection({
   items,
   createRowRef,
+  mobileDisplayLimit,
 }: {
   items: InboxItem[]
   createRowRef: React.RefObject<InboxTableRowCreateHandle | null>
+  mobileDisplayLimit?: number | undefined
 }) {
   // 必要な値だけをselectorで取得
   const sortField = useInboxSortStore((state) => state.sortField)
@@ -162,12 +166,18 @@ const TableBodySection = memo(function TableBodySection({
   }, [sortedItems, groupBy])
 
   // ページネーション適用（グループ化なしの場合のみ）
+  // mobileDisplayLimitがある場合は「もっと見る」方式を使用
   const paginatedItems = useMemo(() => {
     if (groupBy) return sortedItems
+    if (mobileDisplayLimit !== undefined) {
+      // モバイル: 表示件数上限までスライス
+      return sortedItems.slice(0, mobileDisplayLimit)
+    }
+    // デスクトップ: 通常のページネーション
     const startIndex = (currentPage - 1) * pageSize
     const endIndex = startIndex + pageSize
     return sortedItems.slice(startIndex, endIndex)
-  }, [sortedItems, currentPage, pageSize, groupBy])
+  }, [sortedItems, currentPage, pageSize, groupBy, mobileDisplayLimit])
 
   return (
     <TableBody>
@@ -208,7 +218,11 @@ const TableBodySection = memo(function TableBodySection({
  *
  * これにより、フィルター変更時はTableBodySectionのみ再レンダリング
  */
-export const InboxTableContent = memo(function InboxTableContent({ items, createRowRef }: InboxTableContentProps) {
+export const InboxTableContent = memo(function InboxTableContent({
+  items,
+  createRowRef,
+  mobileDisplayLimit,
+}: InboxTableContentProps) {
   // 選択関連のみ監視
   const selectedIds = useInboxSelectionStore((state) => state.selectedIds)
   const toggleAll = useInboxSelectionStore((state) => state.toggleAll)
@@ -263,10 +277,13 @@ export const InboxTableContent = memo(function InboxTableContent({ items, create
 
   const paginatedItems = useMemo(() => {
     if (groupBy) return sortedItems
+    if (mobileDisplayLimit !== undefined) {
+      return sortedItems.slice(0, mobileDisplayLimit)
+    }
     const startIndex = (currentPage - 1) * pageSize
     const endIndex = startIndex + pageSize
     return sortedItems.slice(startIndex, endIndex)
-  }, [sortedItems, currentPage, pageSize, groupBy])
+  }, [sortedItems, currentPage, pageSize, groupBy, mobileDisplayLimit])
 
   // 全選択状態の計算
   const currentPageIds = useMemo(() => paginatedItems.map((item) => item.id), [paginatedItems])
@@ -284,7 +301,7 @@ export const InboxTableContent = memo(function InboxTableContent({ items, create
   return (
     <Table className="w-full">
       <TableHeaderSection allSelected={allSelected} someSelected={someSelected} onToggleAll={handleToggleAll} />
-      <TableBodySection items={items} createRowRef={createRowRef} />
+      <TableBodySection items={items} createRowRef={createRowRef} mobileDisplayLimit={mobileDisplayLimit} />
     </Table>
   )
 })
