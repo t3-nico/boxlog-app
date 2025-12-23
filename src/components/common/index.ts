@@ -13,3 +13,6 @@ export { ActionMenuItems, type ActionGroup, type MenuAction, type SubMenuAction 
 
 // Calendar
 export { MiniCalendar, type MiniCalendarProps } from './MiniCalendar'
+
+// Empty State
+export { EmptyState, type EmptyStateProps } from './EmptyState'

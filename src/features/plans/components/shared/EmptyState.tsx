@@ -1,26 +1,43 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+/**
+ * Plans用EmptyStateコンポーネント
+ *
+ * @deprecated 共通コンポーネント `@/components/common/EmptyState` を使用してください
+ */
+
+import type { LucideIcon } from 'lucide-react'
+
+import { EmptyState as BaseEmptyState } from '@/components/common'
 
 interface EmptyStateProps {
   title: string
   description?: string
   actionLabel?: string
   onAction?: () => void
-  icon?: React.ReactNode
+  icon?: LucideIcon | React.ReactNode
 }
 
+/**
+ * Plans用EmptyState
+ *
+ * 共通EmptyStateのラッパー。後方互換性のために残存。
+ */
 export function EmptyState({ title, description, actionLabel, onAction, icon }: EmptyStateProps) {
+  // アイコンがコンポーネント型かどうかを判定
+  const isIconComponent =
+    typeof icon === 'function' || (typeof icon === 'object' && icon !== null && '$$typeof' in icon && 'render' in icon)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const IconComponent = isIconComponent ? (icon as any) : undefined
+
   return (
-    <div className="border-border bg-card flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed p-12 text-center">
-      {icon && <div className="text-muted-foreground">{icon}</div>}
-
-      <div className="space-y-2">
-        <h3 className="text-foreground text-lg font-semibold">{title}</h3>
-        {description && <p className="text-muted-foreground text-sm">{description}</p>}
-      </div>
-
-      {actionLabel && onAction && <Button onClick={onAction}>{actionLabel}</Button>}
-    </div>
+    <BaseEmptyState
+      title={title}
+      description={description}
+      icon={IconComponent}
+      actionLabel={actionLabel}
+      onAction={onAction}
+    />
   )
 }

@@ -1,8 +1,11 @@
 'use client'
 
+import type { LucideIcon } from 'lucide-react'
+import { Inbox } from 'lucide-react'
+
+import { EmptyState } from '@/components/common'
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { Inbox } from 'lucide-react'
 
 export interface TableEmptyStateProps {
   /** 列数（colspan） */
@@ -15,6 +18,8 @@ export interface TableEmptyStateProps {
   isFiltered?: boolean
   /** フィルターリセットコールバック */
   onResetFilter?: () => void
+  /** カスタムアイコン */
+  icon?: LucideIcon
 }
 
 /**
@@ -36,20 +41,23 @@ export function TableEmptyState({
   subMessage,
   isFiltered = false,
   onResetFilter,
+  icon = Inbox,
 }: TableEmptyStateProps) {
   return (
     <TableRow>
-      <TableCell colSpan={columnCount} className="h-32 text-center">
-        <div className="flex flex-col items-center justify-center gap-2">
-          <Inbox className="text-muted-foreground size-8" />
-          <p className="text-muted-foreground text-sm">{message}</p>
-          {subMessage && <p className="text-muted-foreground text-xs">{subMessage}</p>}
-          {isFiltered && onResetFilter && (
-            <Button type="button" variant="text" onClick={onResetFilter}>
-              フィルターをリセット
-            </Button>
-          )}
-        </div>
+      <TableCell colSpan={columnCount} className="h-64">
+        <EmptyState
+          icon={icon}
+          title={message}
+          description={subMessage}
+          actions={
+            isFiltered && onResetFilter ? (
+              <Button type="button" variant="outline" onClick={onResetFilter}>
+                フィルターをリセット
+              </Button>
+            ) : undefined
+          }
+        />
       </TableCell>
     </TableRow>
   )
