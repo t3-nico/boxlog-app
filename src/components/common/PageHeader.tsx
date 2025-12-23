@@ -43,15 +43,10 @@ interface PageHeaderProps {
  * @example
  * ```tsx
  * // 基本的な使用
- * <PageHeader title="タグ" count={24} />
+ * <PageHeader title="タグ" />
  *
  * // アクション付き
  * <PageHeader title="タグ" actions={<Button>作成</Button>} />
- *
- * // カスタムコンテンツ付き
- * <PageHeader title="Inbox">
- *   <DisplayModeSwitcher />
- * </PageHeader>
  * ```
  */
 export function PageHeader({
@@ -82,14 +77,14 @@ export function PageHeader({
       {/* アクションボタン */}
       {actions && <div className="flex h-8 items-center gap-2">{actions}</div>}
 
-      {/* AIアシスタントボタン */}
+      {/* AIアシスタントボタン（PC版のみ） */}
       <HoverTooltip content={t('aria.openAIAssistant')} side="bottom">
         <Button
           onClick={() => openAIInspector()}
           size="icon"
           variant="ghost"
           aria-label={t('aria.openAIAssistant')}
-          className="text-muted-foreground hover:text-foreground ml-2 shrink-0"
+          className="text-muted-foreground hover:text-foreground ml-2 hidden shrink-0 md:flex"
         >
           <Bot className="size-4" />
         </Button>
