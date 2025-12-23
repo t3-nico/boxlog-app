@@ -2,7 +2,7 @@
 
 BoxLogカスタムReact Hooks実装ガイドライン。
 
-## 📁 現在のフック一覧（10個）
+## 📁 現在のフック一覧（11個）
 
 ### 保持されている共通フック
 
@@ -17,7 +17,8 @@ src/hooks/
 ├── useLoadingTimeout.ts         # ローディングタイムアウト検出
 ├── useMediaQuery.ts             # レスポンシブ対応
 ├── useOfflineSync.tsx           # オフライン同期
-└── usePerformanceMonitor.ts     # パフォーマンス監視
+├── usePerformanceMonitor.ts     # パフォーマンス監視
+└── useServiceWorker.ts          # PWA Service Worker管理
 ```
 
 **命名規則**: すべてcamelCase（useXxx.ts）で統一

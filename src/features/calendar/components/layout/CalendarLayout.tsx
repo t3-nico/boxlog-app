@@ -1,10 +1,13 @@
 'use client'
 
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
 import { MobileMenuButton } from '@/features/navigation/components/mobile/MobileMenuButton'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { cn } from '@/lib/utils'
 
+import { useSwipeGesture } from '../../hooks/useSwipeGesture'
 import type { CalendarViewType } from '../../types/calendar.types'
 
 import { CalendarHeader } from './Header'
@@ -41,6 +44,7 @@ export interface CalendarLayoutProps {
 /**
  * カレンダー最上位レイアウトコンポーネント
  * ヘッダーとメインコンテンツを管理
+ * モバイルでは左右スワイプで期間移動が可能
  */
 export const CalendarLayout = memo<CalendarLayoutProps>(
   ({
@@ -61,6 +65,24 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
     onDateSelect,
     displayRange,
   }) => {
+    // タッチデバイスでのみスワイプを有効化
+    const isTouchDevice = useMediaQuery(MEDIA_QUERIES.touch)
+
+    // スワイプで前後の期間に移動
+    const handleSwipeLeft = useCallback(() => {
+      onNavigate('next')
+    }, [onNavigate])
+
+    const handleSwipeRight = useCallback(() => {
+      onNavigate('prev')
+    }, [onNavigate])
+
+    const { handlers, ref } = useSwipeGesture(handleSwipeLeft, handleSwipeRight, {
+      threshold: 50,
+      touchOnly: true,
+      disabled: !isTouchDevice,
+    })
+
     return (
       <div className={cn('calendar-layout bg-background flex h-full flex-col', className)}>
         {/* ヘッダー */}
@@ -79,8 +101,14 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           displayRange={displayRange}
         />
 
-        {/* メインコンテンツ */}
-        <main data-calendar-main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        {/* メインコンテンツ（スワイプ対応） */}
+        <main
+          ref={ref as React.RefObject<HTMLElement>}
+          data-calendar-main
+          className="flex min-h-0 flex-1 flex-col overflow-hidden"
+          onTouchStart={handlers.onTouchStart}
+          onTouchEnd={handlers.onTouchEnd}
+        >
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</div>
         </main>
       </div>

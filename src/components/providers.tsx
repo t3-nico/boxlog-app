@@ -46,6 +46,12 @@ const GlobalSearchProvider = dynamic(() => import('@/features/search').then((mod
   ssr: false,
 })
 
+// ServiceWorkerProviderを遅延ロード（PWAオフライン対応）
+const ServiceWorkerProvider = dynamic(
+  () => import('@/components/providers/ServiceWorkerProvider').then((mod) => mod.ServiceWorkerProvider),
+  { ssr: false }
+)
+
 // GlobalTagCreateModalを遅延ロード
 const GlobalTagCreateModal = dynamic(
   () => import('@/features/tags/components').then((mod) => mod.GlobalTagCreateModal),
@@ -118,8 +124,10 @@ export function Providers({ children }: ProvidersProps) {
         <RealtimeProvider>
           <ThemeProvider>
             <GlobalSearchProvider>
-              {children}
-              <GlobalTagCreateModal />
+              <ServiceWorkerProvider>
+                {children}
+                <GlobalTagCreateModal />
+              </ServiceWorkerProvider>
             </GlobalSearchProvider>
           </ThemeProvider>
         </RealtimeProvider>
