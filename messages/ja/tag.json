@@ -200,9 +200,12 @@
       "columns": "表示カラム",
       "columnSettings": "カラム設定",
       "displayMode": {
+        "title": "表示モード",
         "flat": "フラット",
         "grouped": "グループ別"
-      }
+      },
+      "settings": "表示設定",
+      "search": "検索"
     },
     "bulkMerge": {
       "title": "タグを統合",
@@ -446,9 +449,12 @@
       "columns": "表示カラム",
       "columnSettings": "カラム設定",
       "displayMode": {
+        "title": "表示モード",
         "flat": "フラット",
         "grouped": "グループ別"
-      }
+      },
+      "settings": "表示設定",
+      "search": "検索"
     },
     "bulkMerge": {
       "title": "タグを統合",
