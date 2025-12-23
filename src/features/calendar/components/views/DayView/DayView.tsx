@@ -2,6 +2,8 @@
 
 import React, { useMemo } from 'react'
 
+import { getWeek } from 'date-fns'
+
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 
@@ -70,6 +72,11 @@ export const DayView = ({
     ...(onUpdatePlan && { onPlanUpdate: onUpdatePlan }),
   })
 
+  // 週番号を計算
+  const weekNumber = useMemo(() => {
+    return getWeek(date, { weekStartsOn: 1 })
+  }, [date])
+
   // 日付ヘッダーのクリックハンドラー（DayViewでは日付変更のみ）
   const handleDateHeaderClick = React.useCallback(
     (_clickedDate: Date) => {
@@ -99,7 +106,7 @@ export const DayView = ({
     <CalendarViewAnimation viewType="day">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         {/* 固定日付ヘッダー */}
-        <CalendarDateHeader header={headerComponent} showTimezone={false} />
+        <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
 
         {/* タイムゾーン＋未完了プランバッジエリア */}
         <OverdueSectionSingle date={date} plans={allPlans || plans || []} timezone={timezone} />
