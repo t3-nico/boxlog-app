@@ -3,6 +3,8 @@
 import { usePathname } from 'next/navigation'
 import { useEffect, type ReactNode } from 'react'
 
+import { PageHeader } from '@/components/common/PageHeader'
+import { DisplayModeSwitcher } from '@/features/inbox/components/DisplayModeSwitcher'
 import { useInboxViewStore } from '@/features/inbox/stores/useInboxViewStore'
 
 interface InboxLayoutProps {
@@ -17,7 +19,8 @@ interface InboxLayoutProps {
  */
 export default function InboxLayout({ children }: InboxLayoutProps) {
   const pathname = usePathname()
-  const setActiveView = useInboxViewStore((state) => state.setActiveView)
+  const { setActiveView, getActiveView } = useInboxViewStore()
+  const activeView = getActiveView()
 
   // URLパスからviewIdへのマッピング
   useEffect(() => {
@@ -41,5 +44,12 @@ export default function InboxLayout({ children }: InboxLayoutProps) {
     setActiveView(viewId)
   }, [pathname, setActiveView])
 
-  return <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">{children}</div>
+  return (
+    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+      <PageHeader title={activeView?.name || 'Inbox'} showMobileMenu={false}>
+        <DisplayModeSwitcher />
+      </PageHeader>
+      {children}
+    </div>
+  )
 }

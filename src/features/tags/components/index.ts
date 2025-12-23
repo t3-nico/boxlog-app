@@ -8,7 +8,6 @@
  */
 
 // Main components
-export { TagsPageHeader } from './TagsPageHeader'
 export { TagsSelectionBar } from './TagsSelectionBar'
 export { TagsSidebar } from './TagsSidebar'
 export { TagsSidebarWrapper } from './TagsSidebarWrapper'

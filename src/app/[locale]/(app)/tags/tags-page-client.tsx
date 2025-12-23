@@ -4,6 +4,7 @@ import { Plus } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { PageHeader } from '@/components/common/PageHeader'
 import { AlertDialogConfirm } from '@/components/ui/alert-dialog-confirm'
 import { Button } from '@/components/ui/button'
 import { DataTable, type DataTableGroupedData, type SortState } from '@/features/table'
@@ -14,7 +15,6 @@ import { TagDeleteDialog } from '@/features/tags/components/TagDeleteDialog'
 import { TagMergeDialog } from '@/features/tags/components/TagMergeDialog'
 import { TagSelectionActions } from '@/features/tags/components/TagSelectionActions'
 import { TagsFilterBar } from '@/features/tags/components/TagsFilterBar'
-import { TagsPageHeader } from '@/features/tags/components/TagsPageHeader'
 import { TagsSelectionBar } from '@/features/tags/components/TagsSelectionBar'
 import { useTagsNavigation } from '@/features/tags/contexts/TagsNavigationContext'
 import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
@@ -537,7 +537,7 @@ export function TagsPageClient({
   return (
     <div className="flex h-full flex-col">
       {/* ヘッダー */}
-      <TagsPageHeader title={pageTitle} count={filteredTags.length} />
+      <PageHeader title={pageTitle} count={filteredTags.length} />
 
       {/* フィルターバー または 選択バー */}
       {selectedCount > 0 ? (
