@@ -1,6 +1,9 @@
 'use client'
 
+import { Search } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
+import { useGlobalSearch } from '@/features/search/hooks/use-global-search'
 
 import type { CalendarViewType } from '../../../types/calendar.types'
 
@@ -73,6 +76,8 @@ export const CalendarHeader = ({
   showMiniCalendar = false,
   displayRange,
 }: CalendarHeaderProps) => {
+  const { open: openSearch } = useGlobalSearch()
+
   return (
     <header className="bg-background relative h-12 px-4 py-2">
       <div className="flex h-8 items-center justify-between">
@@ -92,8 +97,20 @@ export const CalendarHeader = ({
           />
         </div>
 
-        {/* 右側（モバイル）: Todayボタン（今日の日付を表示するカレンダーアイコン風） */}
-        <div className="flex items-center md:hidden">
+        {/* 右側（モバイル）: 検索 + Todayボタン */}
+        <div className="flex items-center gap-1 md:hidden">
+          {/* 検索ボタン */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-foreground size-8"
+            onClick={openSearch}
+            aria-label="検索"
+          >
+            <Search className="size-5" />
+          </Button>
+
+          {/* Todayボタン（今日の日付を表示するカレンダーアイコン風） */}
           <Button
             variant="ghost"
             size="icon"

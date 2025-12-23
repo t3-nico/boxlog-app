@@ -72,7 +72,7 @@ export function AppSidebar() {
       </div>
 
       {/* Content - スクロールコンテナはパディングなし、内部要素で管理 */}
-      <div className="flex flex-1 flex-col gap-2 overflow-y-auto bg-transparent px-2">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-y-auto bg-transparent px-2">
         <NavSecondary items={data.navSecondary} className="mt-auto py-2" />
       </div>
     </aside>

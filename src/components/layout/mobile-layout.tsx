@@ -54,7 +54,7 @@ export function MobileLayout({ children, locale }: MobileLayoutProps) {
     <>
       {/* モバイル: Sheet（左オーバーレイ）でSidebarを表示 */}
       <Sheet open={isOpen} onOpenChange={toggle}>
-        <SheetContent side="left" className="p-0" showCloseButton={false}>
+        <SheetContent side="left" className="p-0" showCloseButton={false} aria-label="Navigation menu">
           {renderSidebar()}
         </SheetContent>
       </Sheet>
