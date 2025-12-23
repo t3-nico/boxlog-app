@@ -13,6 +13,7 @@ import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import type { PlanStatus } from '@/features/plans/types/plan'
 import { reminderTypeToMinutes } from '@/features/plans/utils/reminder'
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
+import { useHapticFeedback } from '@/hooks/useHapticFeedback'
 import { cn } from '@/lib/utils'
 import {
   DndContext,
@@ -44,6 +45,7 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const { updatePlan } = usePlanMutations()
   const { isStatusVisible } = useBoardStatusFilterStore()
+  const { tap, impact } = useHapticFeedback()
   const { formatDate: formatDateWithSettings, formatTime: formatTimeWithSettings } = useDateFormat()
 
   // Planデータをカラムごとに分類（3段階ステータス: todo/doing/done）
@@ -68,6 +70,8 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
   // ドラッグ開始
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string)
+    // ドラッグ開始時の軽いHaptic Feedback
+    tap()
   }
 
   // ドラッグ終了
@@ -93,6 +97,8 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
           status: targetStatus,
         },
       })
+      // ドラッグ&ドロップ完了時のHaptic Feedback
+      impact()
     }
 
     setActiveId(null)
