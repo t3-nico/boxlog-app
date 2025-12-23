@@ -95,7 +95,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   // メモ化: コンテンツ部分（children, isMobile, localeに依存）
   const content = useMemo(
     () => (
-      <div className="flex h-screen flex-col">
+      <div className="flex h-screen flex-col pb-16 md:pb-0">
         {/* アクセシビリティ: スキップリンク */}
         <a
           href="#main-content"

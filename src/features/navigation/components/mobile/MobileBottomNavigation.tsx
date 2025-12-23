@@ -5,7 +5,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import { Calendar, Inbox, MoreHorizontal, Tag } from 'lucide-react'
+import { BarChart3, Calendar, Inbox, MoreHorizontal, Tag } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { useLocale, useTranslations } from 'next-intl'
@@ -15,14 +15,17 @@ import { MoreActionSheet } from './MoreActionSheet'
 /**
  * モバイル用ボトムナビゲーション
  *
- * 4項目構成:
+ * 5項目構成:
  * - Calendar: カレンダーページ
  * - Inbox: 受信箱ページ
  * - Tags: タグ管理ページ
+ * - Stats: 統計ページ
  * - More: その他メニュー（ボトムシート展開）
  *
  * **デザイン仕様**:
  * - 高さ: 64px（h-16）
+ * - アイコン: 24px（size-6）
+ * - Material Design 3 Navigation Bar準拠
  * - 8pxグリッドシステム準拠
  * - セマンティックトークン使用
  */
@@ -55,6 +58,13 @@ export function MobileBottomNavigation() {
       icon: Tag,
       isActive: pathname?.includes('/tags') ?? false,
     },
+    {
+      id: 'stats',
+      label: t('sidebar.navigation.stats'),
+      href: `/${locale}/stats`,
+      icon: BarChart3,
+      isActive: pathname?.includes('/stats') ?? false,
+    },
   ]
 
   return (
@@ -64,7 +74,7 @@ export function MobileBottomNavigation() {
           'fixed right-0 bottom-0 left-0 z-50',
           'flex items-center',
           'h-16',
-          'bg-background border-border border-t'
+          'bg-surface-dim border-border border-t'
         )}
         role="navigation"
         aria-label="Mobile navigation"
@@ -83,12 +93,12 @@ export function MobileBottomNavigation() {
             >
               <div
                 className={cn(
-                  'flex items-center justify-center rounded-full p-2 transition-colors',
+                  'flex items-center justify-center rounded-full px-3 py-1 transition-colors',
                   item.isActive && 'bg-primary-container'
                 )}
               >
                 <Icon
-                  className={cn('size-5 transition-colors', item.isActive ? 'text-primary' : 'text-muted-foreground')}
+                  className={cn('size-6 transition-colors', item.isActive ? 'text-primary' : 'text-muted-foreground')}
                 />
               </div>
               <span
@@ -111,8 +121,8 @@ export function MobileBottomNavigation() {
           aria-expanded={isMoreOpen}
           aria-haspopup="dialog"
         >
-          <div className="flex items-center justify-center rounded-full p-2">
-            <MoreHorizontal className="text-muted-foreground size-5" />
+          <div className="flex items-center justify-center rounded-full px-3 py-1">
+            <MoreHorizontal className="text-muted-foreground size-6" />
           </div>
           <span className="text-muted-foreground text-xs leading-tight">{t('navigation.more.label')}</span>
         </button>
