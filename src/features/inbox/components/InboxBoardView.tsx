@@ -1,6 +1,7 @@
 'use client'
 
 import { KanbanBoard } from '@/features/board'
+import { MobileBoardSettingsSheet } from '@/features/board/components/MobileBoardSettingsSheet'
 import type { PlanStatus } from '@/features/plans/types/plan'
 
 import { useInboxData } from '../hooks/useInboxData'
@@ -44,14 +45,21 @@ export function InboxBoardView() {
   return (
     <div id="inbox-view-panel" role="tabpanel" className="flex h-full flex-col">
       {/* ツールバー: 高さ48px固定（8px + 32px + 8px） */}
-      <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 py-2">
-        {/* 左側: 表示モード切り替え */}
-        <div className="flex h-8 items-center">
-          <DisplayModeSwitcher />
-        </div>
-        {/* 右側: フィルターツール */}
-        <div className="flex h-8 items-center">
+      <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
+        {/* 左端: 表示モード切替（モバイル・デスクトップ共通） */}
+        <DisplayModeSwitcher />
+
+        {/* デスクトップ: フィルターツール */}
+        <div className="hidden h-8 flex-1 items-center md:flex">
           <InboxBoardToolbar />
+        </div>
+
+        {/* モバイル: スペーサー */}
+        <div className="flex-1 md:hidden" />
+
+        {/* モバイル: 設定シートボタン */}
+        <div className="md:hidden">
+          <MobileBoardSettingsSheet />
         </div>
       </div>
 
