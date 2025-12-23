@@ -86,7 +86,7 @@ export function PageHeader({
           aria-label={t('aria.openAIAssistant')}
           className="text-muted-foreground hover:text-foreground ml-2 hidden shrink-0 md:flex"
         >
-          <Bot className="size-4" />
+          <Bot className="size-5" />
         </Button>
       </HoverTooltip>
     </div>
