@@ -107,7 +107,7 @@ export const CalendarHeader = ({
             onClick={openSearch}
             aria-label="検索"
           >
-            <Search className="size-5" />
+            <Search className="size-6" />
           </Button>
 
           {/* Todayボタン（今日の日付を表示するカレンダーアイコン風） */}
@@ -118,10 +118,10 @@ export const CalendarHeader = ({
             onClick={() => onNavigate('today')}
             aria-label="今日に戻る"
           >
-            <div className="relative flex size-5 flex-col">
-              <div className="h-1 w-full border-b-2 border-current" />
+            <div className="relative flex size-6 flex-col">
+              <div className="h-1.5 w-full border-b-2 border-current" />
               <div className="flex flex-1 items-center justify-center">
-                <span className="text-[10px] leading-none font-semibold">{new Date().getDate()}</span>
+                <span className="text-xs leading-none font-semibold">{new Date().getDate()}</span>
               </div>
             </div>
           </Button>
