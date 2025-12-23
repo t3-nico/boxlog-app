@@ -3,7 +3,7 @@
 import { Bot, PanelLeftClose } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { useAIInspectorStore } from '@/features/ai'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
 import { cn } from '@/lib/utils'
@@ -41,22 +41,17 @@ export function SidebarHeader({ title, className }: SidebarHeaderProps) {
       </div>
 
       {/* AIアシスタントボタン */}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            onClick={() => openAIInspector()}
-            size="icon"
-            variant="ghost"
-            aria-label={t('aria.openAIAssistant')}
-            className="text-muted-foreground hover:text-foreground shrink-0"
-          >
-            <Bot className="size-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          <p>AIアシスタント</p>
-        </TooltipContent>
-      </Tooltip>
+      <HoverTooltip content="AIアシスタント" side="bottom">
+        <Button
+          onClick={() => openAIInspector()}
+          size="icon"
+          variant="ghost"
+          aria-label={t('aria.openAIAssistant')}
+          className="text-muted-foreground hover:text-foreground shrink-0"
+        >
+          <Bot className="size-4" />
+        </Button>
+      </HoverTooltip>
 
       {/* 閉じるボタン（モバイルのみ表示） */}
       <Button
