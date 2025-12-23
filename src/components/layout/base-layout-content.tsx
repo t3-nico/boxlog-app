@@ -114,12 +114,16 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
         {/* Cookie Consent Banner */}
         <CookieConsentBanner />
 
-        {/* Mobile FAB - BottomNavigationの上に配置 */}
+        {/* Mobile FAB - BottomNavigationの上に配置（iOS Safe Area対応） */}
         {isMobile ? (
           <Button
             size="icon"
             aria-label={t('common.createNewEvent')}
-            className="fixed right-4 bottom-20 z-50 size-14 rounded-2xl shadow-lg"
+            className="fixed right-4 z-50 size-14 rounded-2xl shadow-lg"
+            style={{
+              // iOS Safe Area対応: ボトムナビ(64px) + 余白(16px) + Safe Area
+              bottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
+            }}
             onClick={createActionSheet.open}
           >
             <Plus className="size-6" />

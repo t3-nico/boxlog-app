@@ -91,10 +91,13 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
                 <Input
                   id="email"
                   type="email"
+                  inputMode="email"
+                  enterKeyHint="send"
                   placeholder={t('auth.passwordResetForm.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  autoComplete="email"
                 />
               </Field>
               {error ? <FieldDescription className="text-destructive">{error}</FieldDescription> : null}

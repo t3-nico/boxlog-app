@@ -74,7 +74,9 @@ export function MobileBottomNavigation() {
           'fixed right-0 bottom-0 left-0 z-50',
           'flex items-center',
           'h-16',
-          'bg-surface-dim border-border border-t'
+          'bg-surface-dim border-border border-t',
+          // iOS Safe Area対応（ホームインジケーター領域を確保）
+          'pb-safe'
         )}
         role="navigation"
         aria-label="Mobile navigation"
@@ -88,7 +90,7 @@ export function MobileBottomNavigation() {
               key={item.id}
               href={item.href}
               prefetch={true}
-              className="flex h-full flex-1 flex-col items-center justify-center gap-1 px-2 py-2"
+              className="flex h-full min-w-12 flex-1 flex-col items-center justify-center gap-1 px-2 py-2"
               aria-current={item.isActive ? 'page' : undefined}
             >
               <div
@@ -117,7 +119,7 @@ export function MobileBottomNavigation() {
         <button
           type="button"
           onClick={() => setIsMoreOpen(true)}
-          className="flex h-full flex-1 flex-col items-center justify-center gap-1 px-2 py-2"
+          className="flex h-full min-w-12 flex-1 flex-col items-center justify-center gap-1 px-2 py-2"
           aria-expanded={isMoreOpen}
           aria-haspopup="dialog"
         >

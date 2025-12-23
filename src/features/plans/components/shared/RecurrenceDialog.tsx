@@ -168,6 +168,8 @@ export function RecurrenceDialog({
             <div className="flex items-center gap-2">
               <Input
                 type="number"
+                inputMode="numeric"
+                enterKeyHint="done"
                 min="1"
                 max="365"
                 value={config.interval}
@@ -367,6 +369,8 @@ export function RecurrenceDialog({
                 <RadioGroupItem value="count" id="end-count" />
                 <Input
                   type="number"
+                  inputMode="numeric"
+                  enterKeyHint="done"
                   min="1"
                   max="50"
                   value={config.count || 4}

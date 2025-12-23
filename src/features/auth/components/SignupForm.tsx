@@ -124,11 +124,14 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                 <Input
                   id="email"
                   type="email"
+                  inputMode="email"
+                  enterKeyHint="next"
                   placeholder={t('auth.signupForm.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
                   required
+                  autoComplete="email"
                 />
                 <FieldDescription>{t('auth.signupForm.emailDescription')}</FieldDescription>
               </Field>
@@ -141,12 +144,14 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       <Input
                         id="password"
                         type={showPassword ? 'text' : 'password'}
+                        enterKeyHint="next"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         disabled={isLoading}
                         required
                         minLength={8}
                         maxLength={64}
+                        autoComplete="new-password"
                       />
                       <HoverTooltip
                         content={showPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')}
@@ -171,12 +176,14 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       <Input
                         id="confirm-password"
                         type={showConfirmPassword ? 'text' : 'password'}
+                        enterKeyHint="go"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         disabled={isLoading}
                         required
                         minLength={8}
                         maxLength={64}
+                        autoComplete="new-password"
                       />
                       <HoverTooltip
                         content={

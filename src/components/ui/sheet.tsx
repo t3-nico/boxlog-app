@@ -63,6 +63,8 @@ const SheetContent = ({
           'data-[state=open]:animate-in data-[state=closed]:animate-out motion-reduce:animate-none',
           'data-[state=closed]:duration-300 data-[state=open]:duration-500',
           'focus:outline-hidden focus-visible:ring-0',
+          // モバイルUX: スクロールチェーン防止
+          'overscroll-contain',
           side === 'right' &&
             'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right border-border inset-y-0 right-0 h-full border-l',
           side === 'left' &&
@@ -70,7 +72,7 @@ const SheetContent = ({
           side === 'top' &&
             'data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top border-border inset-x-0 top-0 h-auto border-b',
           side === 'bottom' &&
-            'data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom border-border inset-x-0 bottom-0 h-auto border-t',
+            'data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom border-border pb-safe inset-x-0 bottom-0 h-auto border-t',
           className
         )}
         {...props}

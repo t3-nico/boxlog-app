@@ -1200,3 +1200,338 @@ input[type='time']::-webkit-datetime-edit-minute-field {
   animation: calendar-slide-in 0.2s ease-out forwards;
 }
 
+/* ============================================
+ * Safe Area Insets（iOS対応）
+ *
+ * iPhone X以降のノッチ・Dynamic Island・ホームインジケーター対応
+ *
+ * @see https://developer.apple.com/design/human-interface-guidelines/
+ * @see https://css-tricks.com/the-notch-and-css/
+ *
+ * 使用例:
+ * - ボトムナビ: pb-safe
+ * - ヘッダー: pt-safe
+ * - 全方向: p-safe
+ * ============================================ */
+
+/* Safe Area Padding ユーティリティ */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+.pr-safe {
+  padding-right: env(safe-area-inset-right);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pl-safe {
+  padding-left: env(safe-area-inset-left);
+}
+
+.px-safe {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.py-safe {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.p-safe {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+/* Safe Area Margin ユーティリティ */
+.mb-safe {
+  margin-bottom: env(safe-area-inset-bottom);
+}
+
+.mt-safe {
+  margin-top: env(safe-area-inset-top);
+}
+
+/* Fixed Bottom要素用（ボトムナビ、FAB等） */
+.bottom-safe {
+  bottom: env(safe-area-inset-bottom);
+}
+
+/* ============================================
+ * モバイルタッチUX最適化
+ *
+ * @see https://developer.chrome.com/blog/overscroll-behavior
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-tap-highlight-color
+ * @see https://css-tricks.com/16px-or-larger-text-prevents-ios-form-zoom/
+ * ============================================ */
+
+/* タッチハイライトの最適化（iOS/Android） */
+html {
+  /* デフォルトのタップハイライトを無効化（独自のフィードバックを使用） */
+  -webkit-tap-highlight-color: transparent;
+  /* タッチ操作の最適化 */
+  -webkit-touch-callout: none;
+  /* スクロールの滑らかさ */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* スクロールチェーン防止（モーダル、ドロワー等で使用） */
+.overscroll-none {
+  overscroll-behavior: none;
+}
+
+.overscroll-contain {
+  overscroll-behavior: contain;
+}
+
+/* Pull-to-Refresh無効化（PWAアプリ向け） */
+body {
+  overscroll-behavior-y: contain;
+}
+
+/* タッチフィードバック（:active状態の最適化） */
+@media (hover: none) and (pointer: coarse) {
+  /* タッチデバイス向けのアクティブ状態フィードバック */
+  button:active,
+  a:active,
+  [role='button']:active {
+    opacity: 0.7;
+    transition: opacity 0.1s ease-out;
+  }
+}
+
+/* iOS Safari入力ズーム防止（16px未満でズームが発生） */
+@supports (-webkit-touch-callout: none) {
+  /* iOSデバイスのみ適用 */
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* インタラクティブ要素のテキスト選択防止 */
+button,
+[role='button'],
+[role='tab'],
+[role='menuitem'],
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+/* ドラッグ可能要素の最適化 */
+[draggable='true'] {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
+}
+
+/* ============================================
+ * prefers-reduced-motion 対応
+ *
+ * アニメーション・トランジションを減らす設定の尊重
+ * WCAG 2.1 Success Criterion 2.3.3 準拠
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
+ * @see https://www.w3.org/WAI/WCAG21/Understanding/animation-from-interactions.html
+ * ============================================ */
+
+/* スムーズスクロール（reduced-motionでない場合のみ） */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* reduced-motion: アニメーション・トランジションを最小化 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* アニメーションを無効化（必要最小限の0.01sに短縮） */
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    /* トランジションを無効化 */
+    transition-duration: 0.01ms !important;
+    /* スクロールを即時に */
+    scroll-behavior: auto !important;
+  }
+
+  /* Shimmerアニメーションを静的な背景に置換 */
+  .animate-shimmer {
+    animation: none !important;
+    background: var(--surface-container) !important;
+  }
+
+  /* カレンダーアニメーションを無効化 */
+  .calendar-zoom-in,
+  .calendar-zoom-out,
+  .calendar-slide-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* フェード・スライドアニメーションを無効化 */
+  .animate-in,
+  .animate-out,
+  .fade-in,
+  .fade-out,
+  .zoom-in-95,
+  .zoom-out-95 {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* スクロールバーの非表示（モバイルUI最適化、オプショナル） */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* 画像のドラッグ防止（モバイル操作時の誤操作防止） */
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* touch-actionユーティリティ（横スクロール領域向け） */
+.touch-pan-y {
+  touch-action: pan-y;
+}
+
+.touch-pan-x {
+  touch-action: pan-x;
+}
+
+.touch-pan-y-pinch {
+  touch-action: pan-y pinch-zoom;
+}
+
+.touch-pan-x-pinch {
+  touch-action: pan-x pinch-zoom;
+}
+
+/* ============================================
+ * フォーカス表示の最適化
+ *
+ * タッチデバイスではタップ時のフォーカスリングを非表示にし、
+ * キーボード操作時のみ表示することでUXを向上
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible
+ * ============================================ */
+
+/* タッチデバイス向け: タップ時のフォーカスリング非表示 */
+@media (hover: none) and (pointer: coarse) {
+  /* フォーカスはあるがfocus-visibleではない場合（タップ操作） */
+  button:focus:not(:focus-visible),
+  a:focus:not(:focus-visible),
+  [role='button']:focus:not(:focus-visible),
+  [role='tab']:focus:not(:focus-visible),
+  [role='menuitem']:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+/* ============================================
+ * scroll-snapユーティリティ
+ *
+ * スナップスクロールを実現するためのユーティリティクラス
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Scroll_Snap
+ * ============================================ */
+
+/* スナップコンテナ */
+.snap-y {
+  scroll-snap-type: y mandatory;
+}
+
+.snap-y-proximity {
+  scroll-snap-type: y proximity;
+}
+
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+
+.snap-x-proximity {
+  scroll-snap-type: x proximity;
+}
+
+/* スナップアイテム */
+.snap-start {
+  scroll-snap-align: start;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.snap-end {
+  scroll-snap-align: end;
+}
+
+/* スナップ停止（各アイテムで必ず停止） */
+.snap-stop {
+  scroll-snap-stop: always;
+}
+
+/* ============================================
+ * aspect-ratioユーティリティ
+ *
+ * レスポンシブな要素のアスペクト比を維持
+ * 画像、動画、チャートカード等に使用
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio
+ * ============================================ */
+
+/* 一般的なアスペクト比 */
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-photo {
+  aspect-ratio: 4 / 3;
+}
+
+.aspect-portrait {
+  aspect-ratio: 3 / 4;
+}
+
+.aspect-wide {
+  aspect-ratio: 21 / 9;
+}
+
+/* チャートカード用（ダッシュボード向け） */
+.aspect-chart {
+  aspect-ratio: 16 / 10;
+}
+
+.aspect-chart-tall {
+  aspect-ratio: 4 / 5;
+}
+
+/* カード用 */
+.aspect-card {
+  aspect-ratio: 3 / 2;
+}
+

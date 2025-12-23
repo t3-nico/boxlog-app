@@ -102,11 +102,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 <Input
                   id="email"
                   type="email"
+                  inputMode="email"
+                  enterKeyHint="next"
                   placeholder={t('auth.loginForm.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
                   required
+                  autoComplete="email"
                 />
               </Field>
 
@@ -121,12 +124,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
+                    enterKeyHint="go"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
                     required
                     minLength={8}
                     maxLength={64}
+                    autoComplete="current-password"
                   />
                   <HoverTooltip
                     content={showPassword ? t('auth.loginForm.hidePassword') : t('auth.loginForm.showPassword')}
