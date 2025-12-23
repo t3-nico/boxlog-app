@@ -366,6 +366,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
               style={{
                 scrollbarColor: 'color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent',
                 touchAction: 'pan-y', // モバイルUX: 縦スクロールを許可
+                scrollSnapType: 'y mandatory', // スナップスクロール
               }}
             >
               {filteredOptions.map((option, index) => (
@@ -377,6 +378,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
                   className={`hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm ${
                     index === highlightedIndex ? 'bg-state-selected' : option === value ? 'bg-state-hover' : ''
                   }`}
+                  style={{ scrollSnapAlign: 'center' }}
                   onClick={() => handleOptionClick(option)}
                   onMouseEnter={() => setHighlightedIndex(index)}
                 >
