@@ -102,6 +102,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 <Input
                   id="email"
                   type="email"
+                  inputMode="email"
+                  enterKeyHint="next"
                   placeholder={t('auth.loginForm.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -122,6 +124,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
+                    enterKeyHint="go"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}

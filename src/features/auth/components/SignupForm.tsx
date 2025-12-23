@@ -124,6 +124,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                 <Input
                   id="email"
                   type="email"
+                  inputMode="email"
+                  enterKeyHint="next"
                   placeholder={t('auth.signupForm.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -142,6 +144,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       <Input
                         id="password"
                         type={showPassword ? 'text' : 'password'}
+                        enterKeyHint="next"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         disabled={isLoading}
@@ -173,6 +176,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       <Input
                         id="confirm-password"
                         type={showConfirmPassword ? 'text' : 'password'}
+                        enterKeyHint="go"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         disabled={isLoading}

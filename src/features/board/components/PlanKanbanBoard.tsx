@@ -100,7 +100,8 @@ export function PlanKanbanBoard({ items }: PlanKanbanBoardProps) {
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="flex h-full gap-4 overflow-x-auto px-4 pb-4">
+      {/* モバイルUX: 横スクロール領域では縦スクロールとピンチズームを許可 */}
+      <div className="flex h-full gap-4 overflow-x-auto px-4 pb-4" style={{ touchAction: 'pan-y pinch-zoom' }}>
         {/* Todo カラム */}
         {isStatusVisible('todo') && (
           <KanbanColumn title="Todo" count={columns.todo.length} variant="todo" status="todo">

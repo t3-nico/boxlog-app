@@ -1356,3 +1356,20 @@ img {
   user-drag: none;
 }
 
+/* touch-actionユーティリティ（横スクロール領域向け） */
+.touch-pan-y {
+  touch-action: pan-y;
+}
+
+.touch-pan-x {
+  touch-action: pan-x;
+}
+
+.touch-pan-y-pinch {
+  touch-action: pan-y pinch-zoom;
+}
+
+.touch-pan-x-pinch {
+  touch-action: pan-x pinch-zoom;
+}
+

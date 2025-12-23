@@ -133,7 +133,13 @@ function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
   const { carouselRef, orientation } = useCarousel()
 
   return (
-    <div ref={carouselRef} className="overflow-hidden" data-slot="carousel-content">
+    <div
+      ref={carouselRef}
+      className="overflow-hidden"
+      data-slot="carousel-content"
+      // モバイルUX: 横カルーセルでは縦スクロールを許可、縦カルーセルでは横スクロールを許可
+      style={{ touchAction: orientation === 'horizontal' ? 'pan-y pinch-zoom' : 'pan-x pinch-zoom' }}
+    >
       <div className={cn('flex', orientation === 'horizontal' ? '-ml-4' : '-mt-4 flex-col', className)} {...props} />
     </div>
   )
