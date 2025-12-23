@@ -1,9 +1,9 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 
-import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
 
 interface TimezoneOffsetProps {
   timezone: string
@@ -11,7 +11,8 @@ interface TimezoneOffsetProps {
 }
 
 export function TimezoneOffset({ timezone, className }: TimezoneOffsetProps) {
-  const openSettings = useSettingsDialogStore((state) => state.openSettings)
+  const router = useRouter()
+  const locale = useLocale()
 
   const getUTCOffset = (tz: string): string => {
     try {
@@ -44,9 +45,9 @@ export function TimezoneOffset({ timezone, className }: TimezoneOffsetProps) {
     }
   }
 
-  const handleClick = useCallback(() => {
-    openSettings('calendar')
-  }, [openSettings])
+  const handleClick = () => {
+    router.push(`/${locale}/settings/calendar`)
+  }
 
   const offset = getUTCOffset(timezone)
 

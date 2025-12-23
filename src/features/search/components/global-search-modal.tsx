@@ -34,7 +34,6 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { useTheme } from '@/contexts/theme-context'
 import { usePlans } from '@/features/plans/hooks'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
@@ -143,12 +142,15 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   // Get actions from stores
   const openPlanInspector = usePlanInspectorStore((state) => state.openInspector)
   const openTagCreateModal = useTagCreateModalStore((state) => state.openModal)
-  const openSettings = useSettingsDialogStore((state) => state.openSettings)
   const { resolvedTheme, setTheme } = useTheme()
 
   const toggleTheme = useCallback(() => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
   }, [resolvedTheme, setTheme])
+
+  const navigateToSettings = useCallback(() => {
+    router.push('/settings')
+  }, [router])
 
   // Register default commands on mount
   useEffect(() => {
@@ -156,10 +158,10 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
       router,
       openPlanInspector,
       openTagCreateModal,
-      openSettings,
+      navigateToSettings,
       toggleTheme,
     })
-  }, [router, openPlanInspector, openTagCreateModal, openSettings, toggleTheme])
+  }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme])
 
   // Perform search when debounced query changes
   useEffect(() => {

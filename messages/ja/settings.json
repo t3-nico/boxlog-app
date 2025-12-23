@@ -211,6 +211,11 @@
       "saved": "設定を保存しました",
       "saveFailed": "保存に失敗しました"
     },
+    "mobile": {
+      "description": "アプリの設定を変更します",
+      "darkMode": "ダークモード",
+      "comingSoon": "この設定は準備中です"
+    },
     "dialog": {
       "title": "設定",
       "categories": {

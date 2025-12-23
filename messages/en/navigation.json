@@ -5,7 +5,15 @@
     "calendar": "Calendar",
     "settings": "Settings",
     "profile": "Profile",
-    "more": "More"
+    "more": {
+      "label": "More",
+      "title": "Menu",
+      "description": "Additional menu items",
+      "statsDescription": "View activity statistics and analytics",
+      "settingsDescription": "Customize app settings",
+      "themeDescription": "Switch between light and dark mode",
+      "logoutDescription": "Sign out of your account"
+    }
   },
   "appbar": {
     "navigation": {

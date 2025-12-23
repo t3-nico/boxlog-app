@@ -5,7 +5,15 @@
     "calendar": "カレンダー",
     "settings": "設定",
     "profile": "プロフィール",
-    "more": "その他"
+    "more": {
+      "label": "その他",
+      "title": "メニュー",
+      "description": "その他のメニュー項目",
+      "statsDescription": "活動の統計と分析を表示",
+      "settingsDescription": "アプリの設定を変更",
+      "themeDescription": "ライト/ダークモードを切り替え",
+      "logoutDescription": "アカウントからログアウト"
+    }
   },
   "appbar": {
     "navigation": {

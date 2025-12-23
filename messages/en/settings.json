@@ -211,6 +211,11 @@
       "saved": "Settings saved successfully",
       "saveFailed": "Failed to save settings"
     },
+    "mobile": {
+      "description": "Customize your app settings",
+      "darkMode": "Dark Mode",
+      "comingSoon": "This setting is coming soon"
+    },
     "dialog": {
       "title": "Settings",
       "categories": {
