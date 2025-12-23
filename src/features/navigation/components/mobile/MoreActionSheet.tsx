@@ -2,10 +2,11 @@
 
 import { useRouter } from 'next/navigation'
 
-import { BarChart3, Bell, Search } from 'lucide-react'
+import { BarChart3, Bell, Bot, Search } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
+import { useAIInspectorStore } from '@/features/ai'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { useTranslations } from 'next-intl'
 
@@ -27,6 +28,7 @@ export function MoreActionSheet({ open, onOpenChange, locale }: MoreActionSheetP
   const router = useRouter()
   const t = useTranslations()
   const user = useAuthStore((state) => state.user)
+  const openAIInspector = useAIInspectorStore((state) => state.openInspector)
 
   const userData = {
     name: user?.user_metadata?.username || user?.email?.split('@')[0] || 'User',
@@ -57,6 +59,15 @@ export function MoreActionSheet({ open, onOpenChange, locale }: MoreActionSheetP
       label: t('sidebar.navigation.stats'),
       icon: BarChart3,
       onClick: () => handleNavigation(`/${locale}/stats`),
+    },
+    {
+      id: 'ai-assistant',
+      label: t('aria.openAIAssistant'),
+      icon: Bot,
+      onClick: () => {
+        onOpenChange(false)
+        openAIInspector()
+      },
     },
   ]
 
