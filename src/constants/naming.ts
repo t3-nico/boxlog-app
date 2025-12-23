@@ -208,8 +208,9 @@ export const ROUTES = {
   passwordChange: () => '/auth/password',
 
   // === 設定ルート ===
-  // 設定はダイアログ形式に統一されたため、ページルートは削除
-  // 設定ダイアログは useSettingsDialogStore.openSettings() で開く
+  // 設定はページ形式 (/settings/*) で実装
+  settings: () => '/settings',
+  settingsNotifications: () => '/settings/notifications',
 
   // === 統計ルート ===
   statsLifeVision: () => '/stats/life-vision',

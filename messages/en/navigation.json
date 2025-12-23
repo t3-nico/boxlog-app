@@ -9,6 +9,8 @@
       "label": "More",
       "title": "Menu",
       "description": "Additional menu items",
+      "searchDescription": "Search tasks and plans",
+      "notificationsDescription": "View notifications",
       "statsDescription": "View activity statistics and analytics",
       "settingsDescription": "Customize app settings",
       "themeDescription": "Switch between light and dark mode",
@@ -40,7 +42,8 @@
       "tags": "Tags",
       "stats": "Stats",
       "settings": "Settings",
-      "search": "Search"
+      "search": "Search",
+      "notifications": "Notifications"
     }
   },
   "navUser": {

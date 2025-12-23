@@ -50,6 +50,7 @@
       "twoFactorPrompt": "Require authentication code when signing in",
       "twoFactorActive": "Two-factor authentication active",
       "twoFactorProtection": "Your account is protected with an additional security layer.",
+      "session": "Session",
       "dangerZone": "Danger Zone",
       "dangerZoneDesc": "Irreversible and destructive actions",
       "privacy": "Privacy",

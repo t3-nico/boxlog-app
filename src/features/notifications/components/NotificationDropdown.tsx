@@ -1,7 +1,7 @@
 'use client'
 
 import { Bell, CheckCheck, Loader2, Settings, Trash2 } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -15,15 +15,14 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HoverTooltip } from '@/components/ui/tooltip'
-import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import type { NotificationType } from '@/schemas/notifications'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 import { useNotificationMutations, useNotificationsList, useUnreadCount } from '../hooks/useNotificationsData'
 import { groupNotificationsByDate } from '../utils/notification-helpers'
 import { NotificationItem } from './NotificationItem'
 
-// 通知の型定義
+// 型定義
 interface NotificationData {
   id: string
   type: NotificationType
@@ -58,12 +57,9 @@ interface NotificationDropdownProps {
  * - 日付グループ化、タイプフィルター、一括操作
  */
 export function NotificationDropdown({ className: _className }: NotificationDropdownProps) {
-  const pathname = usePathname()
   const router = useRouter()
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
+  const locale = useLocale()
   const t = useTranslations()
-
-  const { openSettings } = useSettingsDialogStore()
 
   // タイプフィルター
   const [typeFilter, setTypeFilter] = useState<NotificationType | 'all'>('all')
@@ -134,8 +130,8 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
 
   const handleOpenSettings = useCallback(() => {
     setIsOpen(false)
-    openSettings('notifications')
-  }, [openSettings])
+    router.push(`/${locale}/settings/notifications`)
+  }, [locale, router])
 
   // 通知リストのレンダリング
   const renderNotificationList = (
@@ -210,7 +206,7 @@ export function NotificationDropdown({ className: _className }: NotificationDrop
                     isRead={notification.is_read}
                     createdAt={notification.created_at}
                     actionUrl={notification.action_url}
-                    locale={localeFromPath}
+                    locale={locale as 'ja' | 'en'}
                     onMarkAsRead={handleMarkAsRead}
                     onDelete={handleDelete}
                     onNavigate={handleNavigate}

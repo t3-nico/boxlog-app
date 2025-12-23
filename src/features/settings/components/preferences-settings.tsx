@@ -4,6 +4,7 @@ import { useCallback } from 'react'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import { useTheme } from '@/contexts/theme-context'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useTranslations } from 'next-intl'
@@ -12,7 +13,6 @@ import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
 
 interface PreferencesSettingsData {
-  theme: 'system' | 'light' | 'dark'
   animations: boolean
   sounds: boolean
   autoBackup: boolean
@@ -21,10 +21,11 @@ interface PreferencesSettingsData {
 
 export function PreferencesSettings() {
   const t = useTranslations()
-  // 設定の自動保存
+  const { theme, setTheme } = useTheme()
+
+  // 設定の自動保存（テーマ以外）
   const preferences = useAutoSaveSettings<PreferencesSettingsData>({
     initialValues: {
-      theme: 'system',
       animations: true,
       sounds: false,
       autoBackup: true,
@@ -41,9 +42,9 @@ export function PreferencesSettings() {
   // Handler functions
   const handleThemeChange = useCallback(
     (value: string) => {
-      preferences.updateValue('theme', value as 'system' | 'light' | 'dark')
+      setTheme(value as 'system' | 'light' | 'dark')
     },
-    [preferences]
+    [setTheme]
   )
 
   const handleAnimationsChange = useCallback(
@@ -80,7 +81,7 @@ export function PreferencesSettings() {
       <SettingsCard title={t('settings.preferences.theme')} isSaving={preferences.isSaving}>
         <div className="space-y-4">
           <SettingField label={t('settings.preferences.themeLabel')}>
-            <Select value={preferences.values.theme} onValueChange={handleThemeChange}>
+            <Select value={theme} onValueChange={handleThemeChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.preferences.selectTheme')} />
               </SelectTrigger>

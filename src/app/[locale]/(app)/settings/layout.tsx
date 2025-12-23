@@ -1,15 +1,19 @@
 'use client'
 
+import { useState } from 'react'
+
 import { usePathname, useRouter } from 'next/navigation'
 
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, LogOut } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { SETTINGS_CATEGORIES } from '@/features/settings/constants'
+import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 /**
  * 設定ページレイアウト
@@ -31,6 +35,24 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
 
   // モバイルでカテゴリが選択されているか
   const isInCategory = currentCategory !== undefined
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      const supabase = createClient()
+      await supabase.auth.signOut()
+      toast.success(t('navUser.logoutSuccess'))
+      router.push('/auth/login')
+      router.refresh()
+    } catch (error) {
+      console.error('Logout error:', error)
+      toast.error(t('navUser.logoutFailed'))
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
 
   return (
     <div className="bg-background flex h-full w-full">
@@ -65,28 +87,33 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
             <nav className="flex flex-col gap-1 p-2">
               {SETTINGS_CATEGORIES.map((category) => {
                 const Icon = category.icon
-                const isActive = currentCategory === category.id
                 const href = `/${locale}/settings/${category.id}`
 
                 return (
                   <Link
                     key={category.id}
                     href={href}
-                    className={cn(
-                      'flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition-colors',
-                      isActive ? 'bg-state-selected text-foreground' : 'text-muted-foreground hover:bg-state-hover'
-                    )}
-                    aria-current={isActive ? 'page' : undefined}
+                    className="text-muted-foreground active:bg-state-hover flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors"
                   >
-                    <Icon className="size-5 shrink-0" />
-                    <div className="flex-1">
-                      <span className="font-medium">{t(category.labelKey)}</span>
-                      {/* モバイル: 説明文も表示 */}
-                      <p className="text-muted-foreground mt-0.5 text-sm">{t(category.descKey)}</p>
-                    </div>
+                    <Icon className="size-4 shrink-0" />
+                    <span className="font-medium">{t(category.labelKey)}</span>
                   </Link>
                 )
               })}
+
+              {/* Divider */}
+              <div className="border-border my-1 border-t" />
+
+              {/* Logout */}
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="text-destructive active:bg-state-hover flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors disabled:opacity-50"
+              >
+                <LogOut className="size-4 shrink-0" />
+                <span className="font-medium">{isLoggingOut ? t('navUser.loggingOut') : t('navUser.logout')}</span>
+              </button>
             </nav>
           </ScrollArea>
         </div>

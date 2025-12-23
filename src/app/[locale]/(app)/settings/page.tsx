@@ -1,11 +1,31 @@
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+
+import { useLocale } from 'next-intl'
+
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 /**
  * 設定ページ（インデックス）
  *
- * /settings にアクセスした場合、デフォルトで general にリダイレクト
+ * PC: /settings/general にリダイレクト（サイドバーがあるため）
+ * モバイル: 空のコンテンツ（layout.tsxのカテゴリ一覧が表示される）
  */
-export default async function SettingsPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params
-  redirect(`/${locale}/settings/general`)
+export default function SettingsPage() {
+  const router = useRouter()
+  const locale = useLocale()
+  const isDesktop = useMediaQuery('(min-width: 768px)')
+
+  useEffect(() => {
+    // PCの場合のみリダイレクト
+    if (isDesktop) {
+      router.replace(`/${locale}/settings/general`)
+    }
+  }, [isDesktop, locale, router])
+
+  // モバイルでは空のコンテンツ（layout.tsxのasideが表示される）
+  // PCではリダイレクト中の一瞬だけ表示されるが、すぐにgeneralページに遷移
+  return null
 }
