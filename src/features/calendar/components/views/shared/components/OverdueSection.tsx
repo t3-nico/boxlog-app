@@ -33,9 +33,15 @@ export function OverdueSection({ dates, plans, timezone, className }: OverdueSec
   const overduePlans = useAllOverduePlans(plans)
 
   return (
-    <div className={cn('bg-background border-border flex h-6 items-center border-b px-4', className)}>
-      {/* タイムゾーン表示（左端） */}
-      <div className="border-border flex w-12 flex-shrink-0 items-center border-r">
+    <div
+      className={cn(
+        'bg-background border-border flex h-6 items-center border-b',
+        'px-1 md:px-4', // モバイルではパディングを小さく
+        className
+      )}
+    >
+      {/* タイムゾーン表示（左端） - モバイルでは非表示 */}
+      <div className="border-border hidden w-12 flex-shrink-0 items-center border-r md:flex">
         {timezone ? <TimezoneOffset timezone={timezone} className="text-xs" /> : null}
       </div>
 
@@ -47,14 +53,19 @@ export function OverdueSection({ dates, plans, timezone, className }: OverdueSec
           return (
             <div
               key={date.toISOString()}
-              className={cn('flex flex-1 items-center py-0.5', index < dates.length - 1 && 'border-border border-r')}
+              className={cn(
+                'flex flex-1 items-center justify-center py-0.5',
+                index < dates.length - 1 && 'border-border border-r'
+              )}
               style={{ width: `${100 / dates.length}%` }}
             >
               {hasOverdue ? (
                 <OverdueBadge
                   overduePlans={overduePlans}
-                  className="bg-destructive/10 hover:bg-destructive/15 h-full rounded-md"
-                  style={{ width: 'calc(100% - 8px)' }}
+                  className={cn(
+                    'bg-destructive/10 hover:bg-destructive/15 h-full rounded-md',
+                    'w-full px-0.5 md:w-[calc(100%-8px)] md:px-1'
+                  )}
                 />
               ) : null}
             </div>
@@ -89,10 +100,16 @@ export function OverdueSectionSingle({ date, plans, timezone, className }: Overd
   const hasOverdue = isTodayView && overduePlans.length > 0
 
   return (
-    <div className={cn('bg-background border-border flex h-6 items-center border-b px-4', className)}>
-      {/* タイムゾーン表示（左端） */}
-      <div className="border-border flex w-12 flex-shrink-0 items-center border-r">
-        {timezone ? <TimezoneOffset timezone={timezone} className="text-xs" /> : null}
+    <div
+      className={cn(
+        'bg-background border-border flex h-6 items-center border-b',
+        'px-2 md:px-4', // モバイルではパディングを小さく
+        className
+      )}
+    >
+      {/* タイムゾーン表示（左端） - モバイルでは小さく */}
+      <div className="border-border flex w-8 flex-shrink-0 items-center border-r md:w-12">
+        {timezone ? <TimezoneOffset timezone={timezone} className="text-[10px] md:text-xs" /> : null}
       </div>
 
       {/* バッジエリア（今日の場合のみ表示） */}
@@ -100,8 +117,10 @@ export function OverdueSectionSingle({ date, plans, timezone, className }: Overd
         {hasOverdue ? (
           <OverdueBadge
             overduePlans={overduePlans}
-            className="bg-destructive/10 hover:bg-destructive/15 h-full rounded-md"
-            style={{ width: 'calc(100% - 8px)' }}
+            className={cn(
+              'bg-destructive/10 hover:bg-destructive/15 h-full rounded-md',
+              'w-full md:w-[calc(100%-8px)]'
+            )}
           />
         ) : null}
       </div>

@@ -194,6 +194,10 @@
       "badge": "{count} overdue",
       "popoverTitle": "Overdue Plans",
       "overdueBy": "Overdue by {time}"
+    },
+    "agenda": {
+      "emptyTitle": "No upcoming events in the next 14 days",
+      "emptyDescription": "Create a new event in the calendar"
     }
   }
 }

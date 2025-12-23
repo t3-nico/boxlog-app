@@ -194,6 +194,10 @@
       "badge": "{count}件の未完了",
       "popoverTitle": "期限切れのプラン",
       "overdueBy": "{time}超過"
+    },
+    "agenda": {
+      "emptyTitle": "今後14日間に予定はありません",
+      "emptyDescription": "カレンダーで新しい予定を作成してください"
     }
   }
 }

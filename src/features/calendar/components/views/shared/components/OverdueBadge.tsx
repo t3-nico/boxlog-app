@@ -63,14 +63,14 @@ export function OverdueBadge({ overduePlans, className, style }: OverdueBadgePro
           type="button"
           className={cn(
             'text-destructive',
-            'flex items-center gap-1.5 px-1 text-xs font-medium',
+            'flex items-center justify-center gap-1 text-xs font-medium md:gap-1.5',
             'transition-colors focus:outline-none',
             className
           )}
           style={style}
         >
           <AlertCircle className="size-3 flex-shrink-0" />
-          <span>{t('badge', { count: overduePlans.length })}</span>
+          <span className="truncate">{t('badge', { count: overduePlans.length })}</span>
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-72 p-0" align="start" sideOffset={4} onOpenAutoFocus={(e) => e.preventDefault()}>

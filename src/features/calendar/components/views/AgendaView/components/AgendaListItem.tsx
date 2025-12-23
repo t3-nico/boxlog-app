@@ -98,7 +98,9 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
     <button
       type="button"
       className={cn(
-        'group flex w-full items-center gap-4 px-4 py-3',
+        'group w-full px-3 py-2.5 md:px-4 md:py-3',
+        // モバイル: 2列レイアウト、PC: 横並び
+        'flex flex-col gap-1 md:flex-row md:items-center md:gap-4',
         'hover:bg-secondary focus-visible:bg-secondary',
         'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset',
         'transition-colors duration-150',
@@ -107,62 +109,86 @@ export function AgendaListItem({ plan, onClick, onContextMenu }: AgendaListItemP
       onClick={handleClick}
       onContextMenu={handleContextMenu}
     >
-      {/* 日付 */}
-      <div
-        className={cn(
-          'w-12 shrink-0 text-sm font-medium',
-          isToday(plan.startDate ?? new Date()) ? 'text-primary' : 'text-muted-foreground'
-        )}
-      >
-        {dateLabel}
+      {/* モバイル: 上段（日付・時間）、PC: 左側 */}
+      <div className="flex items-center gap-2 md:contents">
+        {/* 日付 */}
+        <div
+          className={cn(
+            'shrink-0 text-sm font-medium md:w-12',
+            isToday(plan.startDate ?? new Date()) ? 'text-primary' : 'text-muted-foreground'
+          )}
+        >
+          {dateLabel}
+        </div>
+
+        {/* 区切り（モバイルのみ） */}
+        <span className="text-muted-foreground/50 md:hidden">•</span>
+
+        {/* 時間 */}
+        <div className="text-muted-foreground shrink-0 text-sm md:w-24">{timeRange}</div>
       </div>
 
-      {/* 時間 */}
-      <div className="text-muted-foreground w-24 shrink-0 text-sm">{timeRange}</div>
+      {/* モバイル: 下段（タイトル・タグ）、PC: 右側 */}
+      <div className="flex min-w-0 flex-1 items-center gap-2 md:gap-4">
+        {/* タイトル + # */}
+        <div className="flex min-w-0 flex-1 items-baseline gap-1 md:gap-1.5">
+          <span className="text-foreground truncate font-medium group-hover:underline md:max-w-48">{plan.title}</span>
+          {plan.plan_number && <span className="text-muted-foreground shrink-0 text-sm">#{plan.plan_number}</span>}
+        </div>
 
-      {/* タイトル + # */}
-      <div className="flex min-w-0 flex-1 items-baseline gap-1.5">
-        <span className="text-foreground max-w-48 truncate font-medium group-hover:underline">{plan.title}</span>
-        {plan.plan_number && <span className="text-muted-foreground shrink-0 text-sm">#{plan.plan_number}</span>}
-      </div>
-
-      {/* タグ */}
-      <div
-        className="flex w-40 shrink-0 items-center gap-1"
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
-      >
-        {displayTags.length > 0 ? (
-          <>
-            {displayTags.map((tag) => (
-              <span
-                key={tag.id}
-                className="inline-flex max-w-20 items-center gap-0.5 truncate rounded border px-1.5 py-0.5 text-xs"
-                style={{ borderColor: tag.color, color: tag.color }}
-                title={tag.name}
-              >
-                <span className="truncate">{tag.name}</span>
-              </span>
-            ))}
-            {(plan.tags?.length ?? 0) > 3 && (
-              <span className="text-muted-foreground text-xs">+{(plan.tags?.length ?? 0) - 3}</span>
-            )}
-          </>
-        ) : (
-          <PlanTagSelectDialogEnhanced
-            selectedTagIds={selectedTagIds}
-            onTagsChange={handleTagsChange}
-            align="end"
-            side="bottom"
-          >
-            <div className="hover:bg-state-hover flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors">
-              <div className="text-muted-foreground flex items-center gap-1">
-                <Tag className="size-3" />
-                <span>{locale === 'ja' ? 'タグを追加' : 'Add tag'}</span>
+        {/* タグ */}
+        <div
+          className="flex shrink-0 items-center gap-1 md:w-40"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          {displayTags.length > 0 ? (
+            <>
+              {/* モバイルでは最大2つ、PCでは最大3つ */}
+              {displayTags.slice(0, 2).map((tag) => (
+                <span
+                  key={tag.id}
+                  className="inline-flex max-w-16 items-center gap-0.5 truncate rounded border px-1 py-0.5 text-xs md:max-w-20 md:px-1.5"
+                  style={{ borderColor: tag.color, color: tag.color }}
+                  title={tag.name}
+                >
+                  <span className="truncate">{tag.name}</span>
+                </span>
+              ))}
+              {/* 3つ目のタグはPCのみ表示 */}
+              {displayTags[2] && (
+                <span
+                  key={displayTags[2].id}
+                  className="hidden items-center gap-0.5 truncate rounded border px-1.5 py-0.5 text-xs md:inline-flex md:max-w-20"
+                  style={{ borderColor: displayTags[2].color, color: displayTags[2].color }}
+                  title={displayTags[2].name}
+                >
+                  <span className="truncate">{displayTags[2].name}</span>
+                </span>
+              )}
+              {(plan.tags?.length ?? 0) > 3 && (
+                <span className="text-muted-foreground hidden text-xs md:inline">+{(plan.tags?.length ?? 0) - 3}</span>
+              )}
+              {(plan.tags?.length ?? 0) > 2 && (
+                <span className="text-muted-foreground text-xs md:hidden">+{(plan.tags?.length ?? 0) - 2}</span>
+              )}
+            </>
+          ) : (
+            <PlanTagSelectDialogEnhanced
+              selectedTagIds={selectedTagIds}
+              onTagsChange={handleTagsChange}
+              align="end"
+              side="bottom"
+            >
+              <div className="hover:bg-state-hover flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-sm transition-colors">
+                <div className="text-muted-foreground flex items-center gap-1">
+                  <Tag className="size-3" />
+                  <span className="hidden md:inline">{locale === 'ja' ? 'タグを追加' : 'Add tag'}</span>
+                </div>
               </div>
-            </div>
-          </PlanTagSelectDialogEnhanced>
-        )}
+            </PlanTagSelectDialogEnhanced>
+          )}
+        </div>
       </div>
     </button>
   )
