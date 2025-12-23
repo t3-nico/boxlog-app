@@ -125,7 +125,7 @@ export const MobileHeader = ({
             className="hover:bg-state-hover -ml-2 rounded-full p-2 transition-colors"
             aria-label={t('calendar.mobile.header.openMenu')}
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="size-6" />
           </button>
         )}
       </div>
@@ -159,7 +159,7 @@ export const MobileHeader = ({
           className="hover:bg-state-hover rounded-full p-2 transition-colors"
           aria-label={t('calendar.mobile.header.prevPeriod')}
         >
-          <ChevronLeft className="h-5 w-5" />
+          <ChevronLeft className="size-6" />
         </button>
         <button
           type="button"
@@ -167,7 +167,7 @@ export const MobileHeader = ({
           className="hover:bg-state-hover rounded-full p-2 transition-colors"
           aria-label={t('calendar.mobile.header.nextPeriod')}
         >
-          <ChevronRight className="h-5 w-5" />
+          <ChevronRight className="size-6" />
         </button>
       </div>
 
