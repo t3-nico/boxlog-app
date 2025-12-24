@@ -89,7 +89,7 @@ export function InboxBoardView() {
         <TableNavigation config={navigationConfig} />
 
         {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
-        <Button size="sm" className="shrink-0 md:hidden">
+        <Button size="icon" className="shrink-0 md:hidden">
           <Plus className="size-4" />
         </Button>
         <Button className="hidden shrink-0 md:inline-flex">

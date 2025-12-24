@@ -316,7 +316,7 @@ export function InboxTableView() {
           <TableNavigation config={navigationConfig} />
 
           {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
-          <Button onClick={() => createRowRef.current?.startCreate()} size="sm" className="shrink-0 md:hidden">
+          <Button onClick={() => createRowRef.current?.startCreate()} size="icon" className="shrink-0 md:hidden">
             <Plus className="size-4" />
           </Button>
           <Button onClick={() => createRowRef.current?.startCreate()} className="hidden shrink-0 md:inline-flex">
