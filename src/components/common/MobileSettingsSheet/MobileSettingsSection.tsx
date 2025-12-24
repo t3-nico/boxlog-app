@@ -5,8 +5,8 @@ import { Separator } from '@/components/ui/separator'
 interface MobileSettingsSectionProps {
   /** セクションアイコン */
   icon: React.ReactNode
-  /** セクションタイトル */
-  title: string
+  /** セクションタイトル（文字列またはReactNode） */
+  title: React.ReactNode
   /** セクションの内容 */
   children: React.ReactNode
   /** 区切り線を表示するか（デフォルト: true） */
@@ -29,9 +29,9 @@ export function MobileSettingsSection({ icon, title, children, showSeparator = t
   return (
     <>
       <section className="py-4">
-        <div className="mb-3 flex items-center gap-2">
+        <div className="mb-2 flex flex-1 items-center gap-2">
           <span className="text-muted-foreground [&>svg]:size-4">{icon}</span>
-          <h3 className="text-sm font-medium">{title}</h3>
+          <h3 className="flex-1 text-sm font-medium">{title}</h3>
         </div>
         {children}
       </section>

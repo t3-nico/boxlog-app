@@ -34,8 +34,8 @@ export function MobileSettingsChip({ id, label, checked, onCheckedChange }: Mobi
   return (
     <Label
       htmlFor={id}
-      className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors ${
-        checked ? 'border-primary bg-primary/10 text-primary' : 'border-border hover:bg-muted'
+      className={`flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
+        checked ? 'border-primary bg-primary-container text-on-primary-container' : 'border-border hover:bg-state-hover'
       }`}
     >
       <Checkbox
