@@ -103,7 +103,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
 
   return (
     <>
-      <IconNavigation items={navItems} className={className} />
+      <IconNavigation items={navItems} {...(className !== undefined && { className })} />
 
       {/* 検索シート */}
       <TableSearchSheet
@@ -130,7 +130,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
           open={showSettingsSheet}
           onOpenChange={setShowSettingsSheet}
           hasActiveSettings={config.hasActiveSettings ?? false}
-          onReset={config.onSettingsReset}
+          {...(config.onSettingsReset !== undefined && { onReset: config.onSettingsReset })}
         >
           {config.settingsContent}
         </TableSettingsSheet>
