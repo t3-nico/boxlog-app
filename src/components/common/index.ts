@@ -21,6 +21,7 @@ export { EmptyState, type EmptyStateProps } from './EmptyState'
 export {
   MobileSettingsButtonGroup,
   MobileSettingsChip,
+  MobileSettingsRadioGroup,
   MobileSettingsSection,
   MobileSettingsSheet,
 } from './MobileSettingsSheet'
