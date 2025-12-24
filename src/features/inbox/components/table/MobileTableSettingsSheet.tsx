@@ -108,8 +108,17 @@ export function MobileTableSettingsSheet({ open, onOpenChange }: MobileTableSett
   // アクティブな設定があるかどうか
   const hasActiveSettings = filterCount > 0 || groupBy !== null
 
-  // 外部制御かどうか
-  const isControlled = open !== undefined
+  // 外部制御かどうか（openとonOpenChangeの両方が必要）
+  const isControlled = open !== undefined && onOpenChange !== undefined
+
+  // 外部制御時のprops
+  const controlledProps = isControlled
+    ? {
+        open,
+        onOpenChange,
+        hideTrigger: true as const,
+      }
+    : {}
 
   return (
     <MobileSettingsSheet
@@ -117,9 +126,7 @@ export function MobileTableSettingsSheet({ open, onOpenChange }: MobileTableSett
       hasActiveSettings={hasActiveSettings}
       resetLabel="すべてリセット"
       onReset={handleResetAll}
-      open={isControlled ? open : undefined}
-      onOpenChange={isControlled ? onOpenChange : undefined}
-      hideTrigger={isControlled}
+      {...controlledProps}
     >
       {/* 表示モード */}
       <MobileSettingsSection icon={<Table2 />} title="表示モード">
