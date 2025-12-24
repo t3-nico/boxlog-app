@@ -18,14 +18,15 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 
 **特定の課題を解決するためのステップバイステップ手順**
 
-| カテゴリ     | ドキュメント                                          | 解決する課題       |
-| ------------ | ----------------------------------------------------- | ------------------ |
-| **開発環境** | [Cursor AI統合](./setup/CURSOR_SETUP.md)              | AI支援開発の設定   |
-| **デプロイ** | [Vercel設定](./setup/VERCEL_SETUP.md)                 | 本番環境構築       |
-| **CI/CD**    | [パイプライン設定](./setup/CI_CD_SETUP.md)            | 自動化ワークフロー |
-| **品質管理** | [ESLint設定](./development/ESLINT_HYBRID_APPROACH.md) | コード品質確保     |
-| **監視**     | [Sentry統合](./integrations/SENTRY.md)                | エラー監視導入     |
-| **テーマ**   | [テーマ移行](./design-system/THEME_MIGRATION.md)      | UI統一化           |
+| カテゴリ     | ドキュメント                                                     | 解決する課題             |
+| ------------ | ---------------------------------------------------------------- | ------------------------ |
+| **開発環境** | [Cursor AI統合](./setup/CURSOR_SETUP.md)                         | AI支援開発の設定         |
+| **AI活用**   | [Claude 4ベストプラクティス](./development/CLAUDE_4_BEST_PRACTICES.md) | Claude Codeの効果的な活用 |
+| **デプロイ** | [Vercel設定](./setup/VERCEL_SETUP.md)                            | 本番環境構築             |
+| **CI/CD**    | [パイプライン設定](./setup/CI_CD_SETUP.md)                       | 自動化ワークフロー       |
+| **品質管理** | [ESLint設定](./development/ESLINT_HYBRID_APPROACH.md)            | コード品質確保           |
+| **監視**     | [Sentry統合](./integrations/SENTRY.md)                           | エラー監視導入           |
+| **テーマ**   | [テーマ移行](./design-system/THEME_MIGRATION.md)                 | UI統一化                 |
 
 ### 📙 リファレンス (Reference) - 参照向け
 
