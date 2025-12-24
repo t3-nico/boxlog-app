@@ -7,7 +7,7 @@
 
 | カテゴリ           | 技術                                                |
 | ------------------ | --------------------------------------------------- |
-| **フレームワーク** | Next.js 14 (App Router), React 18                   |
+| **フレームワーク** | Next.js 15 (App Router), React 19                   |
 | **言語**           | TypeScript (strict mode)                            |
 | **スタイリング**   | Tailwind CSS v4, globals.css セマンティックトークン |
 | **状態管理**       | Zustand（グローバル）, useState（ローカル）         |
@@ -125,23 +125,53 @@ npm run lint         # コード品質（AI必須：コミット前）
 
 **詳細**: [`docs/development/ENVIRONMENTS.md`](docs/development/ENVIRONMENTS.md)
 
-## 🌐 環境構成（3環境分離）
+## 📦 依存関係の運用
 
-| 環境           | Supabase                    | Vercel      | 用途                   |
-| -------------- | --------------------------- | ----------- | ---------------------- |
-| **Local**      | ローカル（127.0.0.1:54321） | npm run dev | 開発・デバッグ         |
-| **Staging**    | boxlog-staging（Tokyo）     | Preview URL | 実機テスト・PRレビュー |
-| **Production** | t3-nico's Project（Tokyo）  | 本番URL     | 実ユーザー             |
+### 新規追加の基準
 
-**重要ポイント**:
+追加する前に確認：
 
-- 各環境のDBとAuthは完全に独立（アカウント共有不可）
-- Vercel Preview = すべてのmain以外のブランチ → Staging DB
-- マイグレーションは各環境に個別適用が必要
+- GitHub Stars 1000以上か？（マイナーすぎないか）
+- 最終コミットが6ヶ月以内か？（メンテされているか）
+- 週間ダウンロード数は十分か？
+- 同じことがブラウザ標準API or 言語標準で出来ないか？
+- 既に入っている依存で代替できないか？
 
-**詳細**: [`docs/development/ENVIRONMENTS.md`](docs/development/ENVIRONMENTS.md)
+### バージョン指定
+
+- package.json では `^`（キャレット）を使う
+- ただし lockファイルは必ずコミットする
+- メジャーバージョンアップは慎重に（破壊的変更を確認してから）
+
+### アップデート方針
+
+- セキュリティアップデート → 即対応
+- パッチ・マイナー → 月1でまとめて
+- メジャー → 必要に迫られるまで放置でOK
+
+### 避けるべきパターン
+
+- ❌ 1つの機能のためだけに大きなライブラリを入れる
+- ❌ 同じ用途のライブラリを複数入れる（例：moment + dayjs + date-fns）
+- ❌ ラッパーライブラリより本体を使う
+
+### 依存を増やさずに済む例
+
+| やりたいこと         | ライブラリ不要               |
+| -------------------- | ---------------------------- |
+| 日付フォーマット程度 | `Intl` API で十分            |
+| UUID生成             | `crypto.randomUUID()` で十分 |
+| ディープコピー       | `structuredClone()` で十分   |
+| 簡単なHTTPリクエスト | `fetch` で十分               |
+
+### 定期チェック（月1推奨）
+
+```bash
+npm ls --all | grep -E "UNMET|invalid"  # 依存整合性
+npm audit                                # セキュリティ
+```
 
 ---
 
-**📖 最終更新**: 2025-12-24 | **バージョン**: v11.3
+**📖 最終更新**: 2025-12-25 | **バージョン**: v11.4
 **変更履歴**: [`docs/development/CLAUDE_MD_CHANGELOG.md`](docs/development/CLAUDE_MD_CHANGELOG.md)
