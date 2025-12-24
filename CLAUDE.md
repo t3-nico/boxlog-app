@@ -294,6 +294,22 @@ npm run docs:check          # ドキュメント整合性チェック
 
 **全コマンド**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
 
+## 🌐 環境構成（3環境分離）
+
+| 環境           | Supabase                    | Vercel      | 用途                   |
+| -------------- | --------------------------- | ----------- | ---------------------- |
+| **Local**      | ローカル（127.0.0.1:54321） | npm run dev | 開発・デバッグ         |
+| **Staging**    | boxlog-staging（Tokyo）     | Preview URL | 実機テスト・PRレビュー |
+| **Production** | t3-nico's Project（Tokyo）  | 本番URL     | 実ユーザー             |
+
+**重要ポイント**:
+
+- 各環境のDBとAuthは完全に独立（アカウント共有不可）
+- Vercel Preview = すべてのmain以外のブランチ → Staging DB
+- マイグレーションは各環境に個別適用が必要
+
+**詳細**: [`docs/development/ENVIRONMENTS.md`](docs/development/ENVIRONMENTS.md)
+
 ---
 
 ## 🎯 Next.js 14 公式ベストプラクティス（必須遵守）
