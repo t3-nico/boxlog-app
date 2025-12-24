@@ -10,8 +10,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { loadConfig } from '@/config/loader'
-import { processApiRequest } from '@/lib/api/middleware'
-import type { ApiRequest } from '@/lib/api/versioning'
 
 /**
  * Configuration structure type
@@ -167,7 +165,7 @@ function buildHealthInfo(config: ConfigStructure): {
 /**
  * 📊 GET /api/config - Configuration Information API
  */
-export async function GET(_request: NextRequest, _apiRequest?: ApiRequest): Promise<NextResponse> {
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
     // 設定の読み込み・検証
     const configResult = await loadConfig({
@@ -237,7 +235,7 @@ export async function GET(_request: NextRequest, _apiRequest?: ApiRequest): Prom
 /**
  * 🔄 POST /api/config - Configuration Validation
  */
-export async function POST(request: NextRequest, _apiRequest?: ApiRequest): Promise<NextResponse> {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json().catch(() => ({}))
     const { strict = false, clearCache = false } = body
@@ -290,13 +288,3 @@ export async function POST(request: NextRequest, _apiRequest?: ApiRequest): Prom
     )
   }
 }
-
-/**
- * 🔧 API Middleware Integration
- */
-const getHandler = (request: NextRequest, apiRequest?: ApiRequest) => GET(request, apiRequest)
-const postHandler = (request: NextRequest, apiRequest?: ApiRequest) => POST(request, apiRequest)
-
-// Export wrapped handlers
-export const wrappedGET = (request: NextRequest) => processApiRequest(request, getHandler)
-export const wrappedPOST = (request: NextRequest) => processApiRequest(request, postHandler)

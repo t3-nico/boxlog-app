@@ -9,9 +9,6 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { processApiRequest } from '@/lib/api/middleware'
-import type { ApiRequest } from '@/lib/api/versioning'
-
 /**
  * 🎯 Version Test レスポンス型定義
  */
@@ -43,23 +40,22 @@ interface VersionTestResponse {
 /**
  * 📊 GET /api/version-test - Version Testing API
  */
-export async function GET(request: NextRequest, apiRequest?: ApiRequest): Promise<NextResponse> {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const url = new URL(request.url)
-    const version = apiRequest?.version
 
     // バージョン別の機能差分をシミュレート
-    const versionFeatures = getVersionFeatures(version?.version || '1.0')
+    const versionFeatures = getVersionFeatures('1.0')
 
     const response: VersionTestResponse = {
-      message: `API Version Testing - v${version?.version || '1.0'}`,
+      message: 'API Version Testing - v1.0',
       version: {
-        requested: apiRequest?.requestedVersion || '1.0',
-        actual: version?.version || '1.0',
-        source: apiRequest?.versionSource || 'default',
-        major: version?.major || 1,
-        minor: version?.minor || 0,
-        status: version?.status || 'supported',
+        requested: '1.0',
+        actual: '1.0',
+        source: 'default',
+        major: 1,
+        minor: 0,
+        status: 'supported',
       },
       request: {
         method: request.method,
@@ -91,20 +87,19 @@ export async function GET(request: NextRequest, apiRequest?: ApiRequest): Promis
 /**
  * 🔧 POST /api/version-test - Version Testing with Request Body
  */
-export async function POST(request: NextRequest, apiRequest?: ApiRequest): Promise<NextResponse> {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json().catch(() => ({}))
-    const version = apiRequest?.version
 
     const response: VersionTestResponse = {
-      message: `POST Version Test - v${version?.version || '1.0'}`,
+      message: 'POST Version Test - v1.0',
       version: {
-        requested: apiRequest?.requestedVersion || '1.0',
-        actual: version?.version || '1.0',
-        source: apiRequest?.versionSource || 'default',
-        major: version?.major || 1,
-        minor: version?.minor || 0,
-        status: version?.status || 'supported',
+        requested: '1.0',
+        actual: '1.0',
+        source: 'default',
+        major: 1,
+        minor: 0,
+        status: 'supported',
       },
       request: {
         method: request.method,
@@ -117,9 +112,9 @@ export async function POST(request: NextRequest, apiRequest?: ApiRequest): Promi
         timestamp: new Date().toISOString(),
       },
       features: {
-        ...getVersionFeatures(version?.version || '1.0'),
+        ...getVersionFeatures('1.0'),
         requestBody: body,
-        bodyProcessing: version?.version === '2.0' ? 'enhanced' : 'basic',
+        bodyProcessing: 'basic',
       },
     }
 
@@ -170,13 +165,3 @@ function getVersionFeatures(version: string): { [key: string]: unknown } {
       }
   }
 }
-
-/**
- * 🔧 API Middleware Integration
- */
-const getHandler = (request: NextRequest, apiRequest?: ApiRequest) => GET(request, apiRequest)
-const postHandler = (request: NextRequest, apiRequest?: ApiRequest) => POST(request, apiRequest)
-
-// Export wrapped handlers
-export const wrappedGET = (request: NextRequest) => processApiRequest(request, getHandler)
-export const wrappedPOST = (request: NextRequest) => processApiRequest(request, postHandler)

@@ -7,8 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getApiStats, processApiRequest } from '@/lib/api/middleware'
-import type { ApiRequest } from '@/lib/api/versioning'
+import { getApiStats } from '@/lib/api/middleware'
 import { API_VERSIONS } from '@/lib/api/versioning'
 
 /**
@@ -52,7 +51,7 @@ interface SystemInfoResponse {
 /**
  * 📊 GET /api/v1/system - System Information API
  */
-export async function GET(_request: NextRequest, apiRequest?: ApiRequest): Promise<NextResponse> {
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   try {
     // API統計情報の取得
     const apiStats = getApiStats()
@@ -69,8 +68,8 @@ export async function GET(_request: NextRequest, apiRequest?: ApiRequest): Promi
         currentVersion: API_VERSIONS.CURRENT,
         supportedVersions: [...API_VERSIONS.SUPPORTED],
         deprecatedVersions: [...API_VERSIONS.DEPRECATED],
-        requestedVersion: apiRequest?.requestedVersion || API_VERSIONS.CURRENT,
-        versionSource: apiRequest?.versionSource || 'default',
+        requestedVersion: API_VERSIONS.CURRENT,
+        versionSource: 'url',
       },
       system: {
         nodeVersion: process.version,
@@ -106,11 +105,3 @@ export async function GET(_request: NextRequest, apiRequest?: ApiRequest): Promi
     )
   }
 }
-
-/**
- * 🔧 API Middleware Integration
- */
-const handler = (request: NextRequest, apiRequest?: ApiRequest) => GET(request, apiRequest)
-
-// Export wrapped handlers
-export const wrappedGET = (request: NextRequest) => processApiRequest(request, handler)
