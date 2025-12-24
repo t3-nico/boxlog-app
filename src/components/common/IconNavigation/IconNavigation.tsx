@@ -14,16 +14,16 @@ export interface IconNavigationItem {
   /** クリック時のコールバック */
   onClick: () => void
   /** アクティブ状態かどうか */
-  isActive?: boolean
+  isActive?: boolean | undefined
   /** バッジ表示（フィルター数など） */
-  badge?: number
+  badge?: number | undefined
 }
 
 export interface IconNavigationProps {
   /** ナビゲーションアイテム */
   items: IconNavigationItem[]
   /** 追加のクラス名 */
-  className?: string
+  className?: string | undefined
 }
 
 /**
@@ -57,7 +57,7 @@ export function IconNavigation({ items, className }: IconNavigationProps) {
       {items.map((item) => {
         const Icon = item.icon
         return (
-          <HoverTooltip key={item.label} content={item.label} side="bottom">
+          <HoverTooltip key={item.label} content={item.label} side="top">
             <Button
               variant="ghost"
               size="icon"

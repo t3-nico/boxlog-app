@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { X } from 'lucide-react'
 
-interface TableSettingsSheetProps {
+export interface TableSettingsSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   children: React.ReactNode
-  hasActiveSettings?: boolean
-  onReset?: () => void
+  hasActiveSettings?: boolean | undefined
+  onReset?: (() => void) | undefined
 }
 
 /**
