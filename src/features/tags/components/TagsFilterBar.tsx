@@ -10,7 +10,7 @@ import { type TagDisplayMode, useTagDisplayModeStore } from '@/features/tags/sto
 import { TagsSettingsContent } from './TagsSettingsContent'
 
 interface TagsFilterBarProps {
-  onCreateClick?: (() => void) | undefined
+  onCreateClick?: () => void
   /** 検索クエリ */
   searchQuery: string
   /** 検索クエリ変更時のコールバック */

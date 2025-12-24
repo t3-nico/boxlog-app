@@ -19,11 +19,11 @@ interface MobileSettingsSheetProps {
   /** トリガーボタンのカスタムアイコン */
   triggerIcon?: React.ReactNode
   /** 外部から制御する場合のopen状態 */
-  open?: boolean | undefined
+  open?: boolean
   /** 外部から制御する場合のonOpenChange */
-  onOpenChange?: ((open: boolean) => void) | undefined
+  onOpenChange?: (open: boolean) => void
   /** トリガーボタンを非表示にする（外部制御時） */
-  hideTrigger?: boolean | undefined
+  hideTrigger?: boolean
 }
 
 /**

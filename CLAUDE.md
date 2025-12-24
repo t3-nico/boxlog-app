@@ -5,14 +5,14 @@
 
 ## 🛠️ Tech Stack
 
-| カテゴリ | 技術 |
-|---------|------|
-| **フレームワーク** | Next.js 14 (App Router), React 18 |
-| **言語** | TypeScript (strict mode) |
-| **スタイリング** | Tailwind CSS v4, globals.css セマンティックトークン |
-| **状態管理** | Zustand（グローバル）, useState（ローカル） |
-| **データ** | Supabase, tRPC v11, Zod |
-| **UI** | shadcn/ui |
+| カテゴリ           | 技術                                                |
+| ------------------ | --------------------------------------------------- |
+| **フレームワーク** | Next.js 14 (App Router), React 18                   |
+| **言語**           | TypeScript (strict mode)                            |
+| **スタイリング**   | Tailwind CSS v4, globals.css セマンティックトークン |
+| **状態管理**       | Zustand（グローバル）, useState（ローカル）         |
+| **データ**         | Supabase, tRPC v11, Zod                             |
+| **UI**             | shadcn/ui                                           |
 
 ## 📋 基本コマンド
 
@@ -25,21 +25,26 @@ npm run lint         # コード品質（AI必須：コミット前）
 ## 🚫 絶対的禁止事項
 
 ### 型定義
+
 - ❌ `any`, `unknown` → ✅ 具体的な型定義
 
 ### スタイリング
+
 - ❌ `style`属性、`text-blue-500`（直接カラー）
 - ✅ セマンティックトークン: `bg-card`, `text-foreground`, `border-border`
 
 ### コンポーネント
+
 - ❌ `React.FC`, `export default`（App Router例外除く）
 - ✅ `export function ComponentName() {}`
 
 ### データフェッチング
+
 - ❌ `useEffect`でのfetch, `getServerSideProps`
 - ✅ Server Components, TanStack Query
 
 ### 状態管理
+
 - ❌ Redux, 新しい状態管理ライブラリ
 - ✅ Zustand（グローバル）, useState（ローカル）
 
@@ -53,35 +58,43 @@ npm run lint         # コード品質（AI必須：コミット前）
 ## 🤖 AIの行動規範
 
 ### 曖昧な指示への対応
+
 推測で実装せず、確認を求める：
+
 ```
 「確認事項: [質問]  選択肢: A案 / B案 - どちらで進めますか？」
 ```
 
 ### ベストプラクティス違反の検出
+
 理由と代替案を提示：
+
 ```
 「懸念: [公式]では[推奨方法]が推奨。理由: [説明] 提案: [代替案]」
 ```
 
 ### #キーの活用
+
 開発中に気づいたルールは `#` キーでCLAUDE.mdに追加し、チームで共有。
 
 ## 📚 ドキュメント参照先
 
 ### 必須（作業前に確認）
-| ドキュメント | 内容 |
-|-------------|------|
-| [`src/CLAUDE.md`](src/CLAUDE.md) | コーディング規約、頻出パターン |
+
+| ドキュメント                                                                                 | 内容                                 |
+| -------------------------------------------------------------------------------------------- | ------------------------------------ |
+| [`src/CLAUDE.md`](src/CLAUDE.md)                                                             | コーディング規約、頻出パターン       |
 | [`docs/development/CLAUDE_4_BEST_PRACTICES.md`](docs/development/CLAUDE_4_BEST_PRACTICES.md) | プロンプト・エージェントコーディング |
 
 ### 作業時（必要に応じて）
+
 - **スタイル**: [`docs/design-system/STYLE_GUIDE.md`](docs/design-system/STYLE_GUIDE.md)
 - **リリース**: [`docs/releases/RELEASE_CHECKLIST.md`](docs/releases/RELEASE_CHECKLIST.md)（⚠️ リリース作業前に必須）
 - **コマンド**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
 - **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
 
 ### カスタムコマンド（/.claude/commands/）
+
 - `/review` - コードレビュー
 - `/fix-types` - 型エラー修正
 - `/new-feature` - 新機能実装
@@ -95,6 +108,22 @@ npm run lint         # コード品質（AI必須：コミット前）
 3. **既存実装パターン**: 同一ディレクトリ内のコードを参考
 
 **確信度99%未満 → 必ず確認を求める**
+
+## 🌐 環境構成（3環境分離）
+
+| 環境           | Supabase                    | Vercel      | 用途                   |
+| -------------- | --------------------------- | ----------- | ---------------------- |
+| **Local**      | ローカル（127.0.0.1:54321） | npm run dev | 開発・デバッグ         |
+| **Staging**    | boxlog-staging（Tokyo）     | Preview URL | 実機テスト・PRレビュー |
+| **Production** | t3-nico's Project（Tokyo）  | 本番URL     | 実ユーザー             |
+
+**重要ポイント**:
+
+- 各環境のDBとAuthは完全に独立（アカウント共有不可）
+- Vercel Preview = すべてのmain以外のブランチ → Staging DB
+- マイグレーションは各環境に個別適用が必要
+
+**詳細**: [`docs/development/ENVIRONMENTS.md`](docs/development/ENVIRONMENTS.md)
 
 ## 🌐 環境構成（3環境分離）
 

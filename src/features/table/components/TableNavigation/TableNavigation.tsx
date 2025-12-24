@@ -30,26 +30,26 @@ export interface TableNavigationConfig {
   /** ソートフィールドオプション */
   sortFieldOptions: Array<{ value: string; label: string }>
   /** フィルターシートの内容（カスタム） */
-  filterContent?: React.ReactNode | undefined
+  filterContent?: React.ReactNode
   /** フィルター数（バッジ表示用） */
-  filterCount?: number | undefined
+  filterCount?: number
   /** アクティブなフィルターがあるか */
-  hasActiveFilters?: boolean | undefined
+  hasActiveFilters?: boolean
   /** フィルターリセットハンドラー */
-  onFilterReset?: (() => void) | undefined
+  onFilterReset?: () => void
   /** 設定シートの内容（カスタム） */
-  settingsContent?: React.ReactNode | undefined
+  settingsContent?: React.ReactNode
   /** 設定のリセットハンドラー */
-  onSettingsReset?: (() => void) | undefined
+  onSettingsReset?: () => void
   /** アクティブな設定があるか */
-  hasActiveSettings?: boolean | undefined
+  hasActiveSettings?: boolean
 }
 
 export interface TableNavigationProps {
   /** 設定 */
   config: TableNavigationConfig
   /** 追加のクラス名 */
-  className?: string | undefined
+  className?: string
 }
 
 /**

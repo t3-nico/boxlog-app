@@ -14,16 +14,16 @@ export interface IconNavigationItem {
   /** クリック時のコールバック */
   onClick: () => void
   /** アクティブ状態かどうか */
-  isActive?: boolean | undefined
+  isActive?: boolean
   /** バッジ表示（フィルター数など） */
-  badge?: number | undefined
+  badge?: number
 }
 
 export interface IconNavigationProps {
   /** ナビゲーションアイテム */
   items: IconNavigationItem[]
   /** 追加のクラス名 */
-  className?: string | undefined
+  className?: string
 }
 
 /**
