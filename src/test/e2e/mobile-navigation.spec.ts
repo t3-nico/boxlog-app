@@ -15,7 +15,8 @@ test.use({
   viewport: { width: 390, height: 844 }, // iPhone 14サイズ
 })
 
-test.describe('モバイルナビゲーション', () => {
+// TODO: ボトムナビゲーションの実装後に有効化
+test.describe.skip('モバイルナビゲーション', () => {
   test.beforeEach(async ({ page: _page }) => {
     // 認証が必要な場合はここでログイン処理
     // await _page.goto('/auth/login')

@@ -1,15 +1,14 @@
 'use client'
 
 import type { PlanStatus } from '@/features/plans/types/plan'
-import { ArrowUpDown, ChevronDown, Plus, Search, Settings2 } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ChevronDown, Plus } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
-import { IconNavigation, type IconNavigationItem } from '@/components/common'
 import { Button } from '@/components/ui/button'
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { TablePagination } from '@/features/table'
+import { TableNavigation, TablePagination, type TableNavigationConfig } from '@/features/table'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useTranslations } from 'next-intl'
 import type { InboxItem } from '../hooks/useInboxData'
@@ -26,12 +25,9 @@ import { BulkTagSelectDialog } from './table/BulkTagSelectDialog'
 import { GroupBySelector } from './table/GroupBySelector'
 import { InboxSelectionActions } from './table/InboxSelectionActions'
 import { InboxSelectionBar } from './table/InboxSelectionBar'
+import { InboxSettingsContent } from './table/InboxSettingsContent'
 import { InboxTableContent } from './table/InboxTableContent'
 import { type InboxTableRowCreateHandle } from './table/InboxTableRowCreate'
-import { MobileSearchSheet } from './table/MobileSearchSheet'
-import { MobileSortSheet } from './table/MobileSortSheet'
-import { MobileTableSettingsSheet } from './table/MobileTableSettingsSheet'
-import { TableToolbar } from './table/TableToolbar'
 
 /**
  * Inbox Table View コンポーネント
@@ -94,10 +90,6 @@ export function InboxTableView() {
   const [showDateDialog, setShowDateDialog] = useState(false)
   // タグ一括追加ダイアログの状態
   const [showTagDialog, setShowTagDialog] = useState(false)
-  // モバイル用シート状態
-  const [showSearchSheet, setShowSearchSheet] = useState(false)
-  const [showSortSheet, setShowSortSheet] = useState(false)
-  const [showSettingsSheet, setShowSettingsSheet] = useState(false)
 
   // データ取得
   const { items, isPending, error } = useInboxData({
@@ -179,37 +171,58 @@ export function InboxTableView() {
   // アクティブなビューを取得
   const activeView = getActiveView()
 
-  // ソート状態取得（バッジ表示用）
+  // ソート状態取得
   const sortField = useInboxSortStore((state) => state.sortField)
+  const sortDirection = useInboxSortStore((state) => state.sortDirection)
+  const clearSort = useInboxSortStore((state) => state.clearSort)
 
-  // モバイル用アイコンナビゲーションハンドラー
-  const handleOpenSearch = useCallback(() => setShowSearchSheet(true), [])
-  const handleOpenSort = useCallback(() => setShowSortSheet(true), [])
-  const handleOpenSettings = useCallback(() => setShowSettingsSheet(true), [])
+  // フィルターリセット
+  const resetFilters = useInboxFilterStore((state) => state.reset)
+  const setGroupBy = useInboxGroupStore((state) => state.setGroupBy)
 
-  // モバイル用アイコンナビゲーションアイテム
-  const mobileNavItems: IconNavigationItem[] = useMemo(
+  // ソートフィールドオプション
+  const sortFieldOptions = useMemo(
     () => [
-      {
-        icon: Search,
-        label: '検索',
-        onClick: handleOpenSearch,
-        isActive: filterSearch !== '',
-      },
-      {
-        icon: ArrowUpDown,
-        label: 'ソート',
-        onClick: handleOpenSort,
-        isActive: sortField !== null,
-      },
-      {
-        icon: Settings2,
-        label: '設定',
-        onClick: handleOpenSettings,
-        badge: filterStatus.length + (filterDueDate !== 'all' ? 1 : 0),
-      },
+      { value: 'title', label: 'タイトル' },
+      { value: 'created_at', label: '作成日' },
+      { value: 'updated_at', label: '更新日' },
+      { value: 'status', label: 'ステータス' },
     ],
-    [handleOpenSearch, handleOpenSort, handleOpenSettings, filterSearch, sortField, filterStatus.length, filterDueDate]
+    []
+  )
+
+  // TableNavigation設定
+  const navigationConfig: TableNavigationConfig = useMemo(
+    () => ({
+      search: filterSearch,
+      onSearchChange: setSearch,
+      sortField,
+      sortDirection,
+      onSortChange: setSort,
+      onSortClear: clearSort,
+      sortFieldOptions,
+      filterCount: filterStatus.length + (filterDueDate !== 'all' ? 1 : 0),
+      settingsContent: <InboxSettingsContent />,
+      hasActiveSettings: filterStatus.length > 0 || filterDueDate !== 'all' || groupBy !== null,
+      onSettingsReset: () => {
+        resetFilters()
+        setGroupBy(null)
+      },
+    }),
+    [
+      filterSearch,
+      setSearch,
+      sortField,
+      sortDirection,
+      setSort,
+      clearSort,
+      sortFieldOptions,
+      filterStatus.length,
+      filterDueDate,
+      groupBy,
+      resetFilters,
+      setGroupBy,
+    ]
   )
 
   // アクティブビュー変更時にフィルター・ソート・ページサイズを適用
@@ -292,17 +305,14 @@ export function InboxTableView() {
           {/* 左端: 表示モード切替（モバイル・デスクトップ共通） */}
           <DisplayModeSwitcher />
 
-          {/* デスクトップ: グループ・フィルター等のツールバー */}
-          <div className="hidden h-8 flex-1 items-center gap-2 overflow-x-auto md:flex">
-            <GroupBySelector />
-            <TableToolbar />
-          </div>
+          {/* グループセレクター（PC・モバイル共通） */}
+          <GroupBySelector />
 
-          {/* モバイル: スペーサー */}
-          <div className="flex-1 md:hidden" />
+          {/* スペーサー */}
+          <div className="flex-1" />
 
-          {/* モバイル: Notion風アイコンナビゲーション（検索・ソート・設定） */}
-          <IconNavigation items={mobileNavItems} className="md:hidden" />
+          {/* Notion風アイコンナビゲーション（検索・ソート・設定）- PC・モバイル共通 */}
+          <TableNavigation config={navigationConfig} />
 
           {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
           <Button onClick={() => createRowRef.current?.startCreate()} size="sm" className="shrink-0 md:hidden">
@@ -383,11 +393,6 @@ export function InboxTableView() {
           setShowTagDialog(false)
         }}
       />
-
-      {/* モバイル用シート */}
-      <MobileSearchSheet open={showSearchSheet} onOpenChange={setShowSearchSheet} />
-      <MobileSortSheet open={showSortSheet} onOpenChange={setShowSortSheet} />
-      <MobileTableSettingsSheet open={showSettingsSheet} onOpenChange={setShowSettingsSheet} />
     </div>
   )
 }

@@ -72,9 +72,21 @@ export {
   SortableHeader,
   // Empty state - 空状態表示
   TableEmptyState,
+  // Navigation - Notion風アイコンナビゲーション
+  TableNavigation,
+  TableSearchSheet,
+  TableSettingsSheet,
+  TableSortSheet,
 } from './components'
 
-export type { SelectionCellProps, SelectionHeaderProps, SortableHeaderProps, TableEmptyStateProps } from './components'
+export type {
+  SelectionCellProps,
+  SelectionHeaderProps,
+  SortableHeaderProps,
+  TableEmptyStateProps,
+  TableNavigationConfig,
+  TableNavigationProps,
+} from './components'
 
 // ============================================
 // Store Factories
