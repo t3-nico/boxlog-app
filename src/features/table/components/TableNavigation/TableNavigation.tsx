@@ -77,7 +77,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
   const handleOpenSort = useCallback(() => setShowSortSheet(true), [])
   const handleOpenSettings = useCallback(() => setShowSettingsSheet(true), [])
 
-  const navItems: IconNavigationItem[] = useMemo(
+  const navItems = useMemo<IconNavigationItem[]>(
     () => [
       {
         icon: Search,
@@ -95,7 +95,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         icon: Settings2,
         label: '設定',
         onClick: handleOpenSettings,
-        badge: config.filterCount,
+        ...(config.filterCount !== undefined && { badge: config.filterCount }),
       },
     ],
     [handleOpenSearch, handleOpenSort, handleOpenSettings, config.search, config.sortField, config.filterCount]
@@ -129,7 +129,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         <TableSettingsSheet
           open={showSettingsSheet}
           onOpenChange={setShowSettingsSheet}
-          hasActiveSettings={config.hasActiveSettings}
+          hasActiveSettings={config.hasActiveSettings ?? false}
           onReset={config.onSettingsReset}
         >
           {config.settingsContent}
