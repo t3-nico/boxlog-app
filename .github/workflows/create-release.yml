@@ -71,7 +71,7 @@ jobs:
       - name: Check if release notes exist
         id: check_notes
         run: |
-          NOTES_FILE="RELEASE_NOTES_${{ steps.version.outputs.version }}.md"
+          NOTES_FILE="docs/releases/RELEASE_NOTES_${{ steps.version.outputs.version }}.md"
           if [ -f "$NOTES_FILE" ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
             echo "file=$NOTES_FILE" >> $GITHUB_OUTPUT
