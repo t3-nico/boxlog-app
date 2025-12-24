@@ -84,6 +84,7 @@ cp docs/releases/template.md docs/releases/RELEASE_NOTES_v${VERSION}.md
 ```
 
 **必須項目**:
+
 - [ ] 全PRが含まれている
 - [ ] Full Changelogリンクがある
 - [ ] カテゴリ別に整理（Added, Changed, Fixed等）
@@ -94,17 +95,23 @@ cp docs/releases/template.md docs/releases/RELEASE_NOTES_v${VERSION}.md
 
 ## よくある失敗
 
-| 失敗 | 対策 |
-|------|------|
-| バージョン重複 | Phase 0.1で必ず `gh release view` |
-| package.json更新忘れ | Phase 0.3でPRマージ前に更新 |
-| Full Changelog抜け | template.mdをコピーして使用 |
-| 一部PRのみ記載 | `gh pr list --state merged` で全件取得 |
+| 失敗                 | 対策                                   |
+| -------------------- | -------------------------------------- |
+| バージョン重複       | Phase 0.1で必ず `gh release view`      |
+| package.json更新忘れ | Phase 0.3でPRマージ前に更新            |
+| Full Changelog抜け   | template.mdをコピーして使用            |
+| 一部PRのみ記載       | `gh pr list --state merged` で全件取得 |
 
 ## スクリプト
 
 ### バージョン重複チェック
 
 ```bash
-./scripts/check-version.sh 0.X.0
+.claude/skills/releasing/scripts/check-version.sh 0.X.0
+```
+
+### マージ済みPR取得
+
+```bash
+.claude/skills/releasing/scripts/get-merged-prs.sh
 ```
