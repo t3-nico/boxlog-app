@@ -22,7 +22,7 @@ import { useInboxViewStore } from '../stores/useInboxViewStore'
 import { DisplayModeSwitcher } from './DisplayModeSwitcher'
 import { BulkDatePickerDialog } from './table/BulkDatePickerDialog'
 import { BulkTagSelectDialog } from './table/BulkTagSelectDialog'
-import { GroupBySelector } from './table/GroupBySelector'
+import { InboxFilterContent } from './table/InboxFilterContent'
 import { InboxSelectionActions } from './table/InboxSelectionActions'
 import { InboxSelectionBar } from './table/InboxSelectionBar'
 import { InboxSettingsContent } from './table/InboxSettingsContent'
@@ -191,6 +191,9 @@ export function InboxTableView() {
     []
   )
 
+  // フィルター数をカウント
+  const filterCount = filterStatus.length + (filterDueDate !== 'all' ? 1 : 0)
+
   // TableNavigation設定
   const navigationConfig: TableNavigationConfig = useMemo(
     () => ({
@@ -201,11 +204,13 @@ export function InboxTableView() {
       onSortChange: setSort,
       onSortClear: clearSort,
       sortFieldOptions,
-      filterCount: filterStatus.length + (filterDueDate !== 'all' ? 1 : 0),
+      filterContent: <InboxFilterContent />,
+      filterCount,
+      hasActiveFilters: filterCount > 0,
+      onFilterReset: resetFilters,
       settingsContent: <InboxSettingsContent />,
-      hasActiveSettings: filterStatus.length > 0 || filterDueDate !== 'all' || groupBy !== null,
+      hasActiveSettings: groupBy !== null,
       onSettingsReset: () => {
-        resetFilters()
         setGroupBy(null)
       },
     }),
@@ -217,10 +222,9 @@ export function InboxTableView() {
       setSort,
       clearSort,
       sortFieldOptions,
-      filterStatus.length,
-      filterDueDate,
-      groupBy,
+      filterCount,
       resetFilters,
+      groupBy,
       setGroupBy,
     ]
   )
@@ -305,9 +309,6 @@ export function InboxTableView() {
           {/* 左端: 表示モード切替（モバイル・デスクトップ共通） */}
           <DisplayModeSwitcher />
 
-          {/* グループセレクター（PC・モバイル共通） */}
-          <GroupBySelector />
-
           {/* スペーサー */}
           <div className="flex-1" />
 
@@ -315,7 +316,7 @@ export function InboxTableView() {
           <TableNavigation config={navigationConfig} />
 
           {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
-          <Button onClick={() => createRowRef.current?.startCreate()} size="sm" className="shrink-0 md:hidden">
+          <Button onClick={() => createRowRef.current?.startCreate()} size="icon" className="shrink-0 md:hidden">
             <Plus className="size-4" />
           </Button>
           <Button onClick={() => createRowRef.current?.startCreate()} className="hidden shrink-0 md:inline-flex">

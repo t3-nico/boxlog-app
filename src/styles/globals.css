@@ -1403,6 +1403,18 @@ button,
   display: none;
 }
 
+/* モバイルではスクロールバーを非表示（iOS/Android標準挙動に準拠） */
+@media (hover: none) and (pointer: coarse) {
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* 画像のドラッグ防止（モバイル操作時の誤操作防止） */
 img {
   -webkit-user-drag: none;

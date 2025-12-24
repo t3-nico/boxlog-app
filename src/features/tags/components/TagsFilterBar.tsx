@@ -1,38 +1,15 @@
 'use client'
 
-import { FolderTree, List, Plus, Search, Settings2, X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { FolderTree, List, Plus } from 'lucide-react'
+import { useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import { PillSwitcher } from '@/components/ui/pill-switcher'
-import type { TagColumnId } from '@/features/tags/stores/useTagColumnStore'
+import { TableNavigation, type TableNavigationConfig } from '@/features/table'
 import { type TagDisplayMode, useTagDisplayModeStore } from '@/features/tags/stores/useTagDisplayModeStore'
-import { cn } from '@/lib/utils'
-import { MobileTagsSettingsSheet } from './MobileTagsSettingsSheet'
-
-interface ColumnSetting {
-  id: TagColumnId
-  label: string
-}
-
-interface VisibleColumn {
-  id: string
-  width: number
-}
+import { TagsSettingsContent } from './TagsSettingsContent'
 
 interface TagsFilterBarProps {
-  columnSettings: ColumnSetting[]
-  visibleColumns: VisibleColumn[]
-  onColumnVisibilityChange: (columnId: TagColumnId, visible: boolean) => void
   onCreateClick?: () => void
   /** 検索クエリ */
   searchQuery: string
@@ -42,41 +19,43 @@ interface TagsFilterBarProps {
 }
 
 /**
- * Tags page filter bar with column settings and create button
+ * Tags page filter bar with icon navigation
+ *
+ * Notion風のアイコンナビゲーション（検索・設定）を提供
+ * - TableNavigation を使用してPC・モバイル共通UI
+ * - ソート機能なし（タグページはソート不要）
+ *
+ * @example
+ * ```tsx
+ * <TagsFilterBar
+ *   searchQuery={searchQuery}
+ *   onSearchChange={setSearchQuery}
+ *   onCreateClick={handleCreate}
+ *   t={t}
+ * />
+ * ```
  */
-export function TagsFilterBar({
-  columnSettings,
-  visibleColumns,
-  onColumnVisibilityChange,
-  onCreateClick,
-  searchQuery,
-  onSearchChange,
-  t,
-}: TagsFilterBarProps) {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  // 検索クエリがある場合は常に開いた状態にする
-  useEffect(() => {
-    if (searchQuery) {
-      setIsSearchOpen(true)
-    }
-  }, [searchQuery])
-
-  // 検索を開いたらフォーカス
-  useEffect(() => {
-    if (isSearchOpen && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [isSearchOpen])
-
-  const handleSearchClose = () => {
-    if (!searchQuery) {
-      setIsSearchOpen(false)
-    }
-  }
-
+export function TagsFilterBar({ onCreateClick, searchQuery, onSearchChange, t }: TagsFilterBarProps) {
   const { displayMode, setDisplayMode } = useTagDisplayModeStore()
+
+  // TableNavigation設定（タグはソート機能なし）
+  const navigationConfig: TableNavigationConfig = useMemo(
+    () => ({
+      search: searchQuery,
+      onSearchChange,
+      sortField: null,
+      sortDirection: null,
+      onSortChange: () => {},
+      onSortClear: () => {},
+      sortFieldOptions: [],
+      settingsContent: <TagsSettingsContent />,
+      hasActiveSettings: searchQuery.length > 0,
+      onSettingsReset: () => {
+        onSearchChange('')
+      },
+    }),
+    [searchQuery, onSearchChange]
+  )
 
   return (
     <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
@@ -90,97 +69,16 @@ export function TagsFilterBar({
         onValueChange={setDisplayMode}
       />
 
-      {/* デスクトップ: 検索・列設定のツールバー */}
-      <div className="hidden h-8 flex-1 items-center gap-2 overflow-x-auto md:flex">
-        {/* 検索 - Google Drive style: icon button that expands to input */}
-        {isSearchOpen ? (
-          <div className="relative shrink-0">
-            <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
-            <Input
-              ref={inputRef}
-              type="text"
-              inputMode="search"
-              enterKeyHint="search"
-              placeholder={t('tags.page.searchPlaceholder')}
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              onBlur={handleSearchClose}
-              onKeyDown={(e) => {
-                if (e.key === 'Escape') {
-                  onSearchChange('')
-                  setIsSearchOpen(false)
-                }
-              }}
-              className={cn(
-                'h-8 w-32 border-none bg-transparent pr-8 pl-8 shadow-none sm:w-48',
-                'focus-visible:ring-1 focus-visible:ring-offset-0'
-              )}
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => {
-                  onSearchChange('')
-                  inputRef.current?.focus()
-                }}
-                className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2"
-              >
-                <X className="size-4" />
-              </button>
-            )}
-          </div>
-        ) : (
-          <Button variant="ghost" size="icon-sm" onClick={() => setIsSearchOpen(true)} className="shrink-0">
-            <Search className="size-4" />
-          </Button>
-        )}
+      {/* スペーサー */}
+      <div className="flex-1" />
 
-        {/* 列設定 dropdown - icon only */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-sm" className="shrink-0">
-              <Settings2 className="size-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{t('tags.page.columnSettings')}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {columnSettings.map((col) => {
-              const column = visibleColumns.find((c) => c.id === col.id)
-              const isVisible = !!column
-              return (
-                <DropdownMenuCheckboxItem
-                  key={col.id}
-                  checked={isVisible}
-                  onCheckedChange={(checked) => onColumnVisibilityChange(col.id, checked)}
-                >
-                  {col.label}
-                </DropdownMenuCheckboxItem>
-              )
-            })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
-      {/* モバイル: スペーサー */}
-      <div className="flex-1 md:hidden" />
-
-      {/* モバイル: 設定シートボタン（作成ボタンの左隣） */}
-      <div className="md:hidden">
-        <MobileTagsSettingsSheet
-          columnSettings={columnSettings}
-          visibleColumns={visibleColumns}
-          onColumnVisibilityChange={onColumnVisibilityChange}
-          searchQuery={searchQuery}
-          onSearchChange={onSearchChange}
-          t={t}
-        />
-      </div>
+      {/* Notion風アイコンナビゲーション（検索・設定）- PC・モバイル共通 */}
+      <TableNavigation config={navigationConfig} />
 
       {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
       {onCreateClick && (
         <>
-          <Button onClick={onCreateClick} size="sm" className="shrink-0 md:hidden">
+          <Button onClick={onCreateClick} size="icon" className="shrink-0 md:hidden">
             <Plus className="size-4" />
           </Button>
           <Button onClick={onCreateClick} className="hidden shrink-0 md:inline-flex">

@@ -57,7 +57,7 @@ export function IconNavigation({ items, className }: IconNavigationProps) {
       {items.map((item) => {
         const Icon = item.icon
         return (
-          <HoverTooltip key={item.label} content={item.label} side="bottom">
+          <HoverTooltip key={item.label} content={item.label} side="top">
             <Button
               variant="ghost"
               size="icon"

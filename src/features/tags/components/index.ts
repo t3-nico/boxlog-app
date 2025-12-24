@@ -43,3 +43,4 @@ export { TagSelectionActions } from './TagSelectionActions'
 
 // Filter Bar
 export { TagsFilterBar } from './TagsFilterBar'
+export { TagsSettingsContent } from './TagsSettingsContent'

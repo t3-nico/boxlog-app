@@ -8,11 +8,4 @@ export { SortableHeader, type SortableHeaderProps } from './SortableHeader'
 export { TableEmptyState, type TableEmptyStateProps } from './TableEmptyState'
 
 // Navigation (Notion-style)
-export {
-  TableNavigation,
-  TableSearchSheet,
-  TableSettingsSheet,
-  TableSortSheet,
-  type TableNavigationConfig,
-  type TableNavigationProps,
-} from './TableNavigation'
+export { TableNavigation, type TableNavigationConfig, type TableNavigationProps } from './TableNavigation'

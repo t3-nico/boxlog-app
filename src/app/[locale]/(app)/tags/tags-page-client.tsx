@@ -21,8 +21,8 @@ import { useTagsPageContext } from '@/features/tags/contexts/TagsPageContext'
 import { useTagGroups } from '@/features/tags/hooks/use-tag-groups'
 import { useTagOperations } from '@/features/tags/hooks/use-tag-operations'
 import { useTags, useUpdateTag } from '@/features/tags/hooks/use-tags'
-import { getTagColumnSettings, useTagTableColumns } from '@/features/tags/hooks/useTagTableColumns'
-import { useTagColumnStore, type TagColumnId } from '@/features/tags/stores/useTagColumnStore'
+import { useTagTableColumns } from '@/features/tags/hooks/useTagTableColumns'
+import { type TagColumnId, useTagColumnStore } from '@/features/tags/stores/useTagColumnStore'
 import { useTagDisplayModeStore } from '@/features/tags/stores/useTagDisplayModeStore'
 import { useTagPaginationStore } from '@/features/tags/stores/useTagPaginationStore'
 import { useTagSearchStore } from '@/features/tags/stores/useTagSearchStore'
@@ -64,7 +64,7 @@ export function TagsPageClient({
   const { selectedIds, setSelectedIds, clearSelection, getSelectedIds, getSelectedCount } = useTagSelectionStore()
   const { sortField, sortDirection, setSort } = useTagSortStore()
   const { currentPage, pageSize, setCurrentPage, setPageSize } = useTagPaginationStore()
-  const { getVisibleColumns, setColumnWidth, setColumnVisibility } = useTagColumnStore()
+  const { getVisibleColumns, setColumnWidth } = useTagColumnStore()
   const { searchQuery, setSearchQuery } = useTagSearchStore()
   const { displayMode } = useTagDisplayModeStore()
 
@@ -495,9 +495,6 @@ export function TagsPageClient({
     t,
   })
 
-  // 列の表示設定用
-  const columnSettings = useMemo(() => getTagColumnSettings(t), [t])
-
   // DataTable用の列幅マップ
   const columnWidths = useMemo(() => {
     const widths: Record<string, number> = {}
@@ -572,19 +569,9 @@ export function TagsPageClient({
           }
         />
       ) : showArchiveOnly ? (
-        <TagsFilterBar
-          columnSettings={columnSettings}
-          visibleColumns={visibleColumns}
-          onColumnVisibilityChange={setColumnVisibility}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          t={t}
-        />
+        <TagsFilterBar searchQuery={searchQuery} onSearchChange={setSearchQuery} t={t} />
       ) : (
         <TagsFilterBar
-          columnSettings={columnSettings}
-          visibleColumns={visibleColumns}
-          onColumnVisibilityChange={setColumnVisibility}
           onCreateClick={() => createRowRef.current?.startCreate()}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
