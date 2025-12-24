@@ -2,6 +2,9 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+// 独自のmessagesを使うため、グローバルモックを解除
+vi.unmock('next-intl')
+
 import { MobileHeader } from './MobileHeader'
 
 import type { CalendarViewType } from '../../../types/calendar.types'
@@ -171,10 +174,10 @@ describe('MobileHeader', () => {
       // メニューを開く
       fireEvent.click(screen.getByText('週表示'))
 
-      // 週表示がアクティブ状態
+      // 週表示がアクティブ状態（メニュー内のボタンはw-fullを持つ）
       const buttons = screen.getAllByRole('button')
-      const weekButton = buttons.find((b) => b.textContent === '週表示')
-      expect(weekButton).toHaveClass('bg-state-selected')
+      const menuWeekButton = buttons.find((b) => b.textContent === '週表示' && b.classList.contains('w-full'))
+      expect(menuWeekButton).toHaveClass('bg-state-selected')
     })
   })
 

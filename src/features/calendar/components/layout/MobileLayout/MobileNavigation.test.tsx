@@ -2,6 +2,9 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+// 独自のmessagesを使うため、グローバルモックを解除
+vi.unmock('next-intl')
+
 import { MobileNavigation, MobileNavItem } from './MobileNavigation'
 
 const messages = {

@@ -2,6 +2,9 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+// 独自のmessagesを使うため、グローバルモックを解除
+vi.unmock('next-intl')
+
 import { DrawerMenuItem, MobileDrawer } from './MobileDrawer'
 
 // next/image のモック
@@ -90,7 +93,8 @@ describe('MobileDrawer', () => {
       renderWithIntl(<MobileDrawer isOpen={true} onClose={mockOnClose} />)
 
       expect(screen.getByText('カレンダー')).toBeInTheDocument()
-      expect(screen.getByText('設定')).toBeInTheDocument()
+      // 「設定」はタイトルとメニューアイテムの2箇所に表示される
+      expect(screen.getAllByText('設定')).toHaveLength(2)
       expect(screen.getByText('通知')).toBeInTheDocument()
     })
 
@@ -134,7 +138,8 @@ describe('MobileDrawer', () => {
 
       renderWithIntl(<MobileDrawer isOpen={true} onClose={mockOnClose} items={items} />)
 
-      const button = screen.getByRole('button', { name: '無効アイテム' })
+      // ボタン内にアイコンも含まれるため、テキストからボタンを取得
+      const button = screen.getByText('無効アイテム').closest('button')
       expect(button).toBeDisabled()
     })
 

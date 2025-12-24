@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
+import type { ReactNode } from 'react'
 import { afterEach, vi } from 'vitest'
 
 // next-intl のモック
@@ -14,6 +15,8 @@ vi.mock('next-intl', () => ({
     number: (num: number) => num.toString(),
     relativeTime: () => '',
   }),
+  // テストでNextIntlClientProviderを直接使うファイル用
+  NextIntlClientProvider: ({ children }: { children: ReactNode }) => children,
 }))
 
 // テスト後のクリーンアップ
