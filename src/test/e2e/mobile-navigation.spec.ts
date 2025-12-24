@@ -3,16 +3,16 @@ import { expect, test } from '@playwright/test'
 /**
  * モバイルナビゲーションのE2Eテスト
  *
- * モバイルデバイスでのみ実行される
+ * モバイルビューポートでのみ実行される
  * ボトムナビゲーション、設定画面のスタック遷移などをテスト
+ *
+ * Note: isMobileオプションはFirefoxでサポートされていないため使用しない
+ * viewportサイズのみでモバイル表示をテストする
  */
 
-// モバイルビューポートサイズでテスト（ブラウザはプロジェクト設定に従う）
-// devices['iPhone 14']はWebKitを強制するため、CIで問題が発生する
+// モバイルビューポートサイズでテスト
 test.use({
   viewport: { width: 390, height: 844 }, // iPhone 14サイズ
-  isMobile: true,
-  hasTouch: true,
 })
 
 test.describe('モバイルナビゲーション', () => {
@@ -41,15 +41,15 @@ test.describe('モバイルナビゲーション', () => {
       await page.goto('/ja/calendar')
 
       // Inboxをタップ
-      await page.getByRole('link', { name: /inbox/i }).tap()
+      await page.getByRole('link', { name: /inbox/i }).click()
       await expect(page).toHaveURL(/\/inbox/)
 
       // Tagsをタップ
-      await page.getByRole('link', { name: /tags/i }).tap()
+      await page.getByRole('link', { name: /tags/i }).click()
       await expect(page).toHaveURL(/\/tags/)
 
       // Calendarに戻る
-      await page.getByRole('link', { name: /calendar/i }).tap()
+      await page.getByRole('link', { name: /calendar/i }).click()
       await expect(page).toHaveURL(/\/calendar/)
     })
 
@@ -61,7 +61,7 @@ test.describe('モバイルナビゲーション', () => {
       await expect(calendarLink).toHaveAttribute('aria-current', 'page')
 
       // Inboxに遷移
-      await page.getByRole('link', { name: /inbox/i }).tap()
+      await page.getByRole('link', { name: /inbox/i }).click()
       await page.waitForURL(/\/inbox/)
 
       // Inboxがアクティブ
@@ -75,7 +75,7 @@ test.describe('モバイルナビゲーション', () => {
       await page.goto('/ja/calendar')
 
       // Moreボタンをタップ
-      await page.getByRole('button', { name: /more/i }).tap()
+      await page.getByRole('button', { name: /more/i }).click()
 
       // シートが表示される
       const sheet = page.getByRole('dialog')
@@ -91,13 +91,13 @@ test.describe('モバイルナビゲーション', () => {
       await page.goto('/ja/calendar')
 
       // Moreボタンをタップ
-      await page.getByRole('button', { name: /more/i }).tap()
+      await page.getByRole('button', { name: /more/i }).click()
 
       // ユーザーカード（設定へのリンク）をタップ
       // ユーザー名またはメールアドレスが表示されているボタン
       const userCard = page.locator('button').filter({ hasText: /@/ }).first()
       if (await userCard.isVisible()) {
-        await userCard.tap()
+        await userCard.click()
         await expect(page).toHaveURL(/\/settings/)
       }
     })
@@ -119,13 +119,13 @@ test.describe('モバイルナビゲーション', () => {
       await page
         .getByText(/一般|general/i)
         .first()
-        .tap()
+        .click()
       await expect(page).toHaveURL(/\/settings\/general/)
 
       // 戻るボタンで一覧に戻る
       const backButton = page.getByRole('button', { name: /戻る|back/i })
       if (await backButton.isVisible()) {
-        await backButton.tap()
+        await backButton.click()
         await expect(page).toHaveURL(/\/settings$/)
       }
     })

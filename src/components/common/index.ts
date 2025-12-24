@@ -17,6 +17,9 @@ export { MiniCalendar, type MiniCalendarProps } from './MiniCalendar'
 // Empty State
 export { EmptyState, type EmptyStateProps } from './EmptyState'
 
+// Icon Navigation
+export { IconNavigation, type IconNavigationItem, type IconNavigationProps } from './IconNavigation'
+
 // Mobile Settings Sheet
 export {
   MobileSettingsButtonGroup,

@@ -91,6 +91,10 @@ export function InboxTableView() {
   const [showDateDialog, setShowDateDialog] = useState(false)
   // タグ一括追加ダイアログの状態
   const [showTagDialog, setShowTagDialog] = useState(false)
+  // モバイル用シート状態
+  const [showSearchSheet, setShowSearchSheet] = useState(false)
+  const [showSortSheet, setShowSortSheet] = useState(false)
+  const [showSettingsSheet, setShowSettingsSheet] = useState(false)
 
   // データ取得
   const { items, isPending, error } = useInboxData({
