@@ -6,9 +6,9 @@ import { ArrowUpDown, ListFilter, Search, Settings2, X } from 'lucide-react'
 
 import { MobileSettingsRadioGroup, MobileSettingsSection } from '@/components/common'
 import { Button } from '@/components/ui/button'
+import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { HoverTooltip } from '@/components/ui/tooltip'
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
@@ -65,7 +65,7 @@ const SORT_DIRECTION_OPTIONS: Array<{ value: 'asc' | 'desc'; label: string }> = 
  *
  * 検索・フィルター・ソート・設定の4つのアイコンを表示
  * - PC: Popoverで表示
- * - モバイル: ボトムSheetで表示
+ * - モバイル: Drawer (Vaul) で表示
  */
 export function TableNavigation({ config, className }: TableNavigationProps) {
   const isMobile = useMediaQuery(MEDIA_QUERIES.mobile)
@@ -185,7 +185,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
     </div>
   )
 
-  // モバイル用レンダリング
+  // モバイル用レンダリング（Drawer）
   if (isMobile) {
     return (
       <>
@@ -255,66 +255,92 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
           )}
         </div>
 
-        {/* 検索Sheet */}
-        <Sheet
+        {/* 検索Drawer */}
+        <Drawer
           open={showSearch}
           onOpenChange={(open) => {
             if (open) setLocalSearch(config.search)
             setShowSearch(open)
           }}
         >
-          <SheetContent side="bottom" className="rounded-t-2xl" showCloseButton={false}>
-            <SheetHeader className="pb-4">
-              <SheetTitle>検索</SheetTitle>
-            </SheetHeader>
-            {searchContent}
-          </SheetContent>
-        </Sheet>
-
-        {/* フィルターSheet */}
-        <Sheet open={showFilter} onOpenChange={setShowFilter}>
-          <SheetContent side="bottom" className="rounded-t-2xl" showCloseButton={false}>
-            <SheetHeader className="flex flex-row items-center justify-between pb-4">
-              <SheetTitle>フィルター</SheetTitle>
-              {config.hasActiveFilters && config.onFilterReset && (
-                <Button variant="ghost" size="sm" onClick={config.onFilterReset} className="h-auto p-0 text-xs">
-                  リセット
+          <DrawerContent>
+            <DrawerHeader className="flex flex-row items-center justify-between">
+              <DrawerTitle>検索</DrawerTitle>
+              <DrawerClose asChild>
+                <Button variant="ghost" size="icon" className="size-8">
+                  <X className="size-4" />
                 </Button>
-              )}
-            </SheetHeader>
-            <div className="max-h-[60vh] overflow-y-auto pb-8">{config.filterContent}</div>
-          </SheetContent>
-        </Sheet>
+              </DrawerClose>
+            </DrawerHeader>
+            <div className="px-4 pb-8">{searchContent}</div>
+          </DrawerContent>
+        </Drawer>
 
-        {/* ソートSheet */}
-        <Sheet open={showSort} onOpenChange={setShowSort}>
-          <SheetContent side="bottom" className="rounded-t-2xl" showCloseButton={false}>
-            <SheetHeader className="flex flex-row items-center justify-between pb-4">
-              <SheetTitle>ソート</SheetTitle>
-              {config.sortField && (
-                <Button variant="ghost" size="sm" onClick={config.onSortClear} className="h-auto p-0 text-xs">
-                  リセット
-                </Button>
-              )}
-            </SheetHeader>
-            <div className="pb-4">{sortContent}</div>
-          </SheetContent>
-        </Sheet>
+        {/* フィルターDrawer */}
+        <Drawer open={showFilter} onOpenChange={setShowFilter}>
+          <DrawerContent>
+            <DrawerHeader className="flex flex-row items-center justify-between">
+              <DrawerTitle>フィルター</DrawerTitle>
+              <div className="flex items-center gap-2">
+                {config.hasActiveFilters && config.onFilterReset && (
+                  <Button variant="ghost" size="sm" onClick={config.onFilterReset}>
+                    リセット
+                  </Button>
+                )}
+                <DrawerClose asChild>
+                  <Button variant="ghost" size="icon" className="size-8">
+                    <X className="size-4" />
+                  </Button>
+                </DrawerClose>
+              </div>
+            </DrawerHeader>
+            <div className="max-h-[60vh] overflow-y-auto px-4 pb-8">{config.filterContent}</div>
+          </DrawerContent>
+        </Drawer>
 
-        {/* 設定Sheet */}
-        <Sheet open={showSettings} onOpenChange={setShowSettings}>
-          <SheetContent side="bottom" className="rounded-t-2xl" showCloseButton={false}>
-            <SheetHeader className="flex flex-row items-center justify-between pb-4">
-              <SheetTitle>設定</SheetTitle>
-              {config.hasActiveSettings && config.onSettingsReset && (
-                <Button variant="ghost" size="sm" onClick={config.onSettingsReset} className="h-auto p-0 text-xs">
-                  リセット
-                </Button>
-              )}
-            </SheetHeader>
-            <div className="max-h-[60vh] overflow-y-auto pb-8">{config.settingsContent}</div>
-          </SheetContent>
-        </Sheet>
+        {/* ソートDrawer */}
+        <Drawer open={showSort} onOpenChange={setShowSort}>
+          <DrawerContent>
+            <DrawerHeader className="flex flex-row items-center justify-between">
+              <DrawerTitle>ソート</DrawerTitle>
+              <div className="flex items-center gap-2">
+                {config.sortField && (
+                  <Button variant="ghost" size="sm" onClick={config.onSortClear}>
+                    リセット
+                  </Button>
+                )}
+                <DrawerClose asChild>
+                  <Button variant="ghost" size="icon" className="size-8">
+                    <X className="size-4" />
+                  </Button>
+                </DrawerClose>
+              </div>
+            </DrawerHeader>
+            <div className="max-h-[60vh] overflow-y-auto px-4 pb-8">{sortContent}</div>
+          </DrawerContent>
+        </Drawer>
+
+        {/* 設定Drawer */}
+        <Drawer open={showSettings} onOpenChange={setShowSettings}>
+          <DrawerContent>
+            <DrawerHeader className="flex flex-row items-center justify-between">
+              <DrawerTitle>設定</DrawerTitle>
+              <div className="flex items-center gap-2">
+                {config.hasActiveSettings && config.onSettingsReset && (
+                  <Button variant="ghost" size="sm" onClick={config.onSettingsReset}>
+                    リセット
+                  </Button>
+                )}
+                <DrawerClose asChild>
+                  <Button variant="ghost" size="icon" className="size-8">
+                    <X className="size-4" />
+                  </Button>
+                </DrawerClose>
+              </div>
+            </DrawerHeader>
+            <div className="max-h-[60vh] overflow-y-auto px-4 pb-8">{config.settingsContent}</div>
+          </DrawerContent>
+        </Drawer>
       </>
     )
   }
