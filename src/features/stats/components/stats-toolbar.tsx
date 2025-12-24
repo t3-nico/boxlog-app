@@ -70,7 +70,7 @@ export function StatsToolbar() {
   ]
 
   return (
-    <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
+    <div className="flex h-full items-center gap-2">
       {/* 期間ナビゲーション */}
       <div className="flex items-center gap-1">
         <HoverTooltip content={t('stats.toolbar.previous')} side="bottom">

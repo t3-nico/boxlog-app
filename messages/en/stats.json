@@ -61,12 +61,14 @@
       "goalsDescription": "Track goal achievement"
     },
     "toolbar": {
+      "settings": "Settings",
+      "periodType": "Period Type",
       "today": "Today",
       "thisWeek": "This Week",
       "thisMonth": "This Month",
       "thisYear": "This Year",
-      "previous": "Previous period",
-      "next": "Next period",
+      "previous": "Prev",
+      "next": "Next",
       "current": "Back to current",
       "compare": "Compare",
       "compareTooltip": "Compare with previous period",
@@ -74,7 +76,8 @@
       "previousPeriod": "Previous period",
       "lastYear": "Same period last year",
       "export": "Export",
-      "exportTooltip": "Export data"
+      "exportTooltip": "Export data",
+      "exportData": "Export Data"
     }
   }
 }
