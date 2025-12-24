@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { MobileNavigation, MobileNavItem } from './MobileNavigation'
 
@@ -104,9 +104,7 @@ describe('MobileNavigation', () => {
 
   describe('バッジ表示', () => {
     it('バッジが正しく表示される', () => {
-      const items: MobileNavItem[] = [
-        { id: 'badged', label: 'バッジ付き', icon: <span>Icon</span>, badge: 5 },
-      ]
+      const items: MobileNavItem[] = [{ id: 'badged', label: 'バッジ付き', icon: <span>Icon</span>, badge: 5 }]
 
       renderWithIntl(<MobileNavigation items={items} />)
 
@@ -114,9 +112,7 @@ describe('MobileNavigation', () => {
     })
 
     it('99より大きいバッジは99+と表示', () => {
-      const items: MobileNavItem[] = [
-        { id: 'large-badge', label: '大きいバッジ', icon: <span>Icon</span>, badge: 150 },
-      ]
+      const items: MobileNavItem[] = [{ id: 'large-badge', label: '大きいバッジ', icon: <span>Icon</span>, badge: 150 }]
 
       renderWithIntl(<MobileNavigation items={items} />)
 
@@ -124,9 +120,7 @@ describe('MobileNavigation', () => {
     })
 
     it('badge=0の場合は表示されない', () => {
-      const items: MobileNavItem[] = [
-        { id: 'no-badge', label: 'バッジなし', icon: <span>Icon</span>, badge: 0 },
-      ]
+      const items: MobileNavItem[] = [{ id: 'no-badge', label: 'バッジなし', icon: <span>Icon</span>, badge: 0 }]
 
       renderWithIntl(<MobileNavigation items={items} />)
 
@@ -136,9 +130,7 @@ describe('MobileNavigation', () => {
 
   describe('無効状態', () => {
     it('disabled=trueのアイテムは無効化される', () => {
-      const items: MobileNavItem[] = [
-        { id: 'disabled', label: '無効', icon: <span>Icon</span>, disabled: true },
-      ]
+      const items: MobileNavItem[] = [{ id: 'disabled', label: '無効', icon: <span>Icon</span>, disabled: true }]
 
       renderWithIntl(<MobileNavigation items={items} />)
 

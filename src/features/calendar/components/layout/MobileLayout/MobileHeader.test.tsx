@@ -1,8 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { MobileHeader, MobileNavigationDirection } from './MobileHeader'
+import { MobileHeader } from './MobileHeader'
 
 import type { CalendarViewType } from '../../../types/calendar.types'
 

@@ -1,4 +1,4 @@
-import { test, expect, devices } from '@playwright/test'
+import { devices, expect, test } from '@playwright/test'
 
 /**
  * モバイルナビゲーションのE2Eテスト
@@ -11,9 +11,9 @@ import { test, expect, devices } from '@playwright/test'
 test.use(devices['iPhone 14'])
 
 test.describe('モバイルナビゲーション', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page: _page }) => {
     // 認証が必要な場合はここでログイン処理
-    // await page.goto('/auth/login')
+    // await _page.goto('/auth/login')
     // ...
   })
 
@@ -111,7 +111,10 @@ test.describe('モバイルナビゲーション', () => {
       await page.goto('/ja/settings')
 
       // 一般をタップ
-      await page.getByText(/一般|general/i).first().tap()
+      await page
+        .getByText(/一般|general/i)
+        .first()
+        .tap()
       await expect(page).toHaveURL(/\/settings\/general/)
 
       // 戻るボタンで一覧に戻る

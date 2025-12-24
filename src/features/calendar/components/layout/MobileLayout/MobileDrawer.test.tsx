@@ -1,8 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { MobileDrawer, DrawerMenuItem } from './MobileDrawer'
+import { DrawerMenuItem, MobileDrawer } from './MobileDrawer'
 
 // next/image のモック
 vi.mock('next/image', () => ({
@@ -155,9 +155,7 @@ describe('MobileDrawer', () => {
 
   describe('バッジ表示', () => {
     it('バッジが正しく表示される', () => {
-      const items: DrawerMenuItem[] = [
-        { id: 'badged', label: 'バッジ付き', icon: <span>Icon</span>, badge: 5 },
-      ]
+      const items: DrawerMenuItem[] = [{ id: 'badged', label: 'バッジ付き', icon: <span>Icon</span>, badge: 5 }]
 
       renderWithIntl(<MobileDrawer isOpen={true} onClose={mockOnClose} items={items} />)
 
@@ -175,9 +173,7 @@ describe('MobileDrawer', () => {
     })
 
     it('badge=0の場合は表示されない', () => {
-      const items: DrawerMenuItem[] = [
-        { id: 'no-badge', label: 'バッジなし', icon: <span>Icon</span>, badge: 0 },
-      ]
+      const items: DrawerMenuItem[] = [{ id: 'no-badge', label: 'バッジなし', icon: <span>Icon</span>, badge: 0 }]
 
       renderWithIntl(<MobileDrawer isOpen={true} onClose={mockOnClose} items={items} />)
 

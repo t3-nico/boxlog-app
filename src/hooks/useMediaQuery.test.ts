@@ -1,5 +1,5 @@
-import { renderHook, act } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { act, renderHook } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useMediaQuery } from './useMediaQuery'
 
@@ -31,7 +31,10 @@ describe('useMediaQuery', () => {
 
   beforeEach(() => {
     matchMediaMock = createMatchMediaMock(false)
-    vi.stubGlobal('matchMedia', vi.fn(() => matchMediaMock))
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(() => matchMediaMock)
+    )
   })
 
   afterEach(() => {

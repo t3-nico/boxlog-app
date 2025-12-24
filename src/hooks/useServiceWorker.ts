@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export interface ServiceWorkerState {
   /** Service Workerがサポートされているか */
@@ -98,10 +98,11 @@ export function useServiceWorker(): UseServiceWorkerResult {
     // ページ読み込み完了後に登録
     if (document.readyState === 'complete') {
       registerSW()
-    } else {
-      window.addEventListener('load', registerSW)
-      return () => window.removeEventListener('load', registerSW)
+      return
     }
+
+    window.addEventListener('load', registerSW)
+    return () => window.removeEventListener('load', registerSW)
   }, [])
 
   // 更新適用

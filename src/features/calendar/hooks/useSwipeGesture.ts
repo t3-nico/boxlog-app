@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
 
