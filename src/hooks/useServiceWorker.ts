@@ -51,6 +51,12 @@ export function useServiceWorker(): UseServiceWorkerResult {
       return
     }
 
+    // 開発環境ではService Workerを登録しない（HMRとの競合を防止）
+    if (process.env.NODE_ENV === 'development') {
+      setState((prev) => ({ ...prev, isSupported: true }))
+      return
+    }
+
     setState((prev) => ({ ...prev, isSupported: true, isRegistering: true }))
 
     const registerSW = async () => {
