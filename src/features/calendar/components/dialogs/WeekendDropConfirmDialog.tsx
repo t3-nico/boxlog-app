@@ -48,13 +48,8 @@ export const WeekendDropConfirmDialog = ({
       <DialogContent className="max-w-lg">
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
-            <div
-              className={cn(
-                'flex h-10 w-10 items-center justify-center rounded-full',
-                'bg-orange-100 dark:bg-orange-900/20'
-              )}
-            >
-              <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+            <div className={cn('flex h-10 w-10 items-center justify-center rounded-full', 'bg-warning/10')}>
+              <AlertTriangle className="text-warning h-5 w-5" />
             </div>
             <div>
               <DialogTitle className="text-left">{t('calendar.weekendDropDialog.title')}</DialogTitle>

@@ -283,26 +283,28 @@ export function AnalyticsDebugPanel() {
     <div className="bg-overlay-heavy fixed right-4 bottom-4 z-50 max-h-96 w-96 overflow-y-auto rounded-xl p-4 text-xs text-white">
       <div className="mb-2">
         <h3 className="text-sm font-bold">📊 Analytics Debug</h3>
-        <div className="text-xs text-gray-300">
-          <span className={`mr-2 ${isReady ? 'text-green-400' : 'text-red-400'}`}>{isReady ? '✅' : '❌'} Ready</span>
-          <span className={`mr-2 ${hasUserConsent ? 'text-green-400' : 'text-red-400'}`}>
+        <div className="text-muted-foreground text-xs">
+          <span className={`mr-2 ${isReady ? 'text-success' : 'text-destructive'}`}>{isReady ? '✅' : '❌'} Ready</span>
+          <span className={`mr-2 ${hasUserConsent ? 'text-success' : 'text-destructive'}`}>
             {hasUserConsent ? '✅' : '❌'} Consent
           </span>
-          <span className="text-blue-400">Providers: {enabledProviders.join(', ')}</span>
+          <span className="text-primary">Providers: {enabledProviders.join(', ')}</span>
         </div>
       </div>
 
       <div className="max-h-64 overflow-y-auto">
         <h4 className="mb-1 font-semibold">Recent Events:</h4>
         {events.length === 0 ? (
-          <p className="text-gray-400">No events tracked yet</p>
+          <p className="text-muted-foreground">No events tracked yet</p>
         ) : (
           events.slice(-10).map((event, index) => (
             <div key={index} className="border-border mb-1 border-b pb-1">
-              <div className="font-mono text-yellow-400">{event.name}</div>
-              <div className="text-xs text-gray-400">{new Date(event.timestamp).toLocaleTimeString()}</div>
+              <div className="text-warning font-mono">{event.name}</div>
+              <div className="text-muted-foreground text-xs">{new Date(event.timestamp).toLocaleTimeString()}</div>
               {Object.keys(event.properties).length > 0 && (
-                <div className="truncate text-xs text-gray-300">{JSON.stringify(event.properties, null, 0)}</div>
+                <div className="text-muted-foreground truncate text-xs">
+                  {JSON.stringify(event.properties, null, 0)}
+                </div>
               )}
             </div>
           ))

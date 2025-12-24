@@ -115,7 +115,7 @@ export const PlanBillingSettings = memo(function PlanBillingSettings() {
 
               <div className="mb-4">
                 <div className="flex items-center gap-2">
-                  {plan.id === 'team' && <Crown className="h-4 w-4 text-amber-500" />}
+                  {plan.id === 'team' && <Crown className="text-primary h-4 w-4" />}
                   <h4 className="font-semibold">{plan.name}</h4>
                 </div>
                 <div className="mt-2">

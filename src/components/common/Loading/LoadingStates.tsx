@@ -34,7 +34,7 @@ export const LoadingSpinner = ({
   return (
     <Loader2
       className={cn(
-        'animate-spin text-neutral-600 motion-reduce:animate-none dark:text-neutral-400',
+        'text-muted-foreground animate-spin motion-reduce:animate-none',
         Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '',
         className
       )}
@@ -61,7 +61,7 @@ export const RefreshSpinner = ({
   return (
     <RefreshCw
       className={cn(
-        'animate-spin text-blue-600 motion-reduce:animate-none dark:text-blue-400',
+        'text-primary animate-spin motion-reduce:animate-none',
         Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '',
         className
       )}
@@ -87,12 +87,10 @@ export const LoadingOverlay = ({
     <div className={cn('relative', className)}>
       {children}
       {isLoading === true && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-neutral-100/80 backdrop-blur-sm dark:bg-neutral-900/80">
+        <div className="bg-background/80 absolute inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
           <div className="flex flex-col items-center gap-2">
             <LoadingSpinner size={spinnerSize} />
-            {displayMessage ? (
-              <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{displayMessage}</p>
-            ) : null}
+            {displayMessage ? <p className="text-foreground text-sm font-medium">{displayMessage}</p> : null}
           </div>
         </div>
       )}
@@ -108,15 +106,10 @@ export const LoadingCard = ({ title, message, className = '' }: LoadingCardProps
   const displayMessage = message ?? t('error.loading.loadingData')
 
   return (
-    <div
-      className={cn(
-        'flex flex-col items-center justify-center rounded-md bg-white p-8 shadow-sm dark:bg-neutral-800',
-        className
-      )}
-    >
+    <div className={cn('bg-card flex flex-col items-center justify-center rounded-md p-8 shadow-sm', className)}>
       <LoadingSpinner size="lg" className="mb-4" />
-      <h3 className="mb-2 text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">{displayTitle}</h3>
-      <p className="max-w-sm text-center text-neutral-800 dark:text-neutral-200">{displayMessage}</p>
+      <h3 className="text-card-foreground mb-2 text-3xl font-bold tracking-tight">{displayTitle}</h3>
+      <p className="text-muted-foreground max-w-sm text-center">{displayMessage}</p>
     </div>
   )
 }
@@ -196,7 +189,7 @@ export const SkeletonCard = ({
   animation = 'pulse',
 }: SkeletonCardProps) => {
   return (
-    <div className={cn('rounded-md bg-white p-4 shadow-sm dark:bg-neutral-800', className)}>
+    <div className={cn('bg-card rounded-md p-4 shadow-sm', className)}>
       {showImage ? <Skeleton animation={animation} className="mb-4 h-40 w-full" /> : null}
 
       <div className="flex items-start gap-2">
@@ -256,7 +249,7 @@ export const DataLoading = ({
       <div className={cn('flex items-center justify-center p-8', className)}>
         {errorComponent || (
           <div className="text-center">
-            <p className="mb-2 text-red-600 dark:text-red-400">{t('error.loading.loadFailed')}</p>
+            <p className="text-destructive mb-2">{t('error.loading.loadFailed')}</p>
             <Button type="button" variant="text" onClick={handleReload}>
               {t('error.loading.retry')}
             </Button>
@@ -269,7 +262,7 @@ export const DataLoading = ({
   if (isEmpty) {
     return (
       <div className={cn('flex items-center justify-center p-8', className)}>
-        {emptyComponent || <p className="text-neutral-600 dark:text-neutral-400">{t('error.loading.noData')}</p>}
+        {emptyComponent || <p className="text-muted-foreground">{t('error.loading.noData')}</p>}
       </div>
     )
   }

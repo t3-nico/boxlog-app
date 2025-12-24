@@ -17,11 +17,11 @@ import type { ProductivityZone } from '@/features/settings/types/chronotype'
 
 // ゾーンレベルに応じたアイコンの色
 const LEVEL_ICON_COLORS: Record<ProductivityZone['level'], string> = {
-  peak: 'text-green-500',
-  good: 'text-green-400',
-  moderate: 'text-blue-400',
-  low: 'text-gray-400',
-  sleep: 'text-indigo-400',
+  peak: 'text-success',
+  good: 'text-success',
+  moderate: 'text-primary',
+  low: 'text-muted-foreground',
+  sleep: 'text-primary',
 }
 
 /**

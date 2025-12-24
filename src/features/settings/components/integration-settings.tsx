@@ -179,7 +179,7 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-medium">{integration.name}</h4>
                     {integration.connected && (
-                      <Badge variant="outline" className="gap-1 text-green-600">
+                      <Badge variant="outline" className="text-success gap-1">
                         <CheckCircle2 className="h-3 w-3" />
                         接続済み
                       </Badge>

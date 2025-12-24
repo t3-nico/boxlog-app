@@ -24,13 +24,13 @@ const alertVariants = cva(
         // デフォルト - 一般的な通知
         default: 'bg-background text-foreground border-border [&>svg]:text-foreground',
         // 情報 - ヒント、追加情報
-        info: 'bg-blue-50 text-blue-900 border-blue-200 dark:bg-blue-950/50 dark:text-blue-100 dark:border-blue-800 [&>svg]:text-blue-600 dark:[&>svg]:text-blue-400',
+        info: 'bg-info/10 text-info border-info/50 dark:bg-info/20 dark:border-info [&>svg]:text-info',
         // 成功 - 完了、成功
         success:
-          'bg-green-50 text-green-900 border-green-200 dark:bg-green-950/50 dark:text-green-100 dark:border-green-800 [&>svg]:text-green-600 dark:[&>svg]:text-green-400',
+          'bg-success/10 text-success border-success/50 dark:bg-success/20 dark:border-success [&>svg]:text-success',
         // 警告 - 注意
         warning:
-          'bg-yellow-50 text-yellow-900 border-yellow-200 dark:bg-yellow-950/50 dark:text-yellow-100 dark:border-yellow-800 [&>svg]:text-yellow-600 dark:[&>svg]:text-yellow-400',
+          'bg-warning/10 text-warning border-warning/50 dark:bg-warning/20 dark:border-warning [&>svg]:text-warning',
         // エラー - 危険、エラー
         destructive:
           'bg-destructive/10 text-destructive border-destructive/50 dark:border-destructive dark:bg-destructive/20 [&>svg]:text-destructive',

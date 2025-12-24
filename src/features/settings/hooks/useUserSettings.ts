@@ -19,6 +19,7 @@ import type { ProductivityZone } from '../types/chronotype'
  */
 export function useUserSettings() {
   const store = useCalendarSettingsStore()
+  const updateSettings = store.updateSettings
   const utils = api.useUtils()
 
   // DBから設定を取得
@@ -60,7 +61,7 @@ export function useUserSettings() {
         chronotypeSettings.customZones = dbSettings.chronotype.customZones as unknown as ProductivityZone[]
       }
 
-      store.updateSettings({
+      updateSettings({
         timezone: dbSettings.timezone,
         showUTCOffset: dbSettings.showUtcOffset,
         timeFormat: dbSettings.timeFormat,
@@ -76,7 +77,7 @@ export function useUserSettings() {
         planRecordMode: dbSettings.planRecordMode,
       })
     }
-  }, [dbSettings, isPending]) // storeは依存配列に含めない（無限ループ防止）
+  }, [dbSettings, isPending, updateSettings])
 
   // 設定をDBに保存する関数
   const saveSettings = useCallback(

@@ -33,11 +33,11 @@ const CHRONOTYPE_LABEL: Record<Exclude<ChronotypeType, 'custom'>, string> = {
 
 // 生産性レベルの色
 const LEVEL_COLORS: Record<ProductivityZone['level'], string> = {
-  peak: 'bg-green-500',
-  good: 'bg-green-300',
-  moderate: 'bg-blue-200',
-  low: 'bg-gray-300',
-  sleep: 'bg-indigo-400',
+  peak: 'bg-success',
+  good: 'bg-success/60',
+  moderate: 'bg-primary/40',
+  low: 'bg-muted',
+  sleep: 'bg-accent',
 }
 
 // 生産性レベルの日本語ラベル
@@ -245,8 +245,8 @@ export function ChronotypeSettings() {
             </div>
 
             {/* ピーク時間のハイライト */}
-            <div className="flex items-center gap-2 rounded-lg bg-green-500/12 p-3">
-              <Star className="h-4 w-4 text-green-600" />
+            <div className="bg-success/12 flex items-center gap-2 rounded-lg p-3">
+              <Star className="text-success h-4 w-4" />
               <div>
                 <span className="text-sm font-medium">{t('settings.chronotype.peakTime')}</span>
                 <span className="text-muted-foreground ml-2 text-sm">

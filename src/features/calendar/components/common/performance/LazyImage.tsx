@@ -166,7 +166,7 @@ export const LazyImage = ({
           style={placeholderStyle}
         >
           {state.hasError ? (
-            <div className="text-center text-gray-400">
+            <div className="text-muted-foreground text-center">
               <svg className="mx-auto mb-2 h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
@@ -177,7 +177,7 @@ export const LazyImage = ({
               <span className="text-xs">読み込みエラー</span>
             </div>
           ) : state.isLoading ? (
-            <div className="text-gray-400">
+            <div className="text-muted-foreground">
               <div className="border-border border-t-foreground mx-auto mb-2 h-6 w-6 animate-spin rounded-full border-2 motion-reduce:animate-none"></div>
               <span className="text-xs">読み込み中...</span>
             </div>
@@ -190,7 +190,7 @@ export const LazyImage = ({
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           ) : (
-            <div className="text-gray-400">
+            <div className="text-muted-foreground">
               <svg className="mx-auto mb-2 h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
@@ -334,10 +334,10 @@ export const LazyIcon = ({ name, size = 24, className, priority = false }: LazyI
       style={{ width: size, height: size }}
     >
       {hasError ? (
-        <div className="rounded bg-gray-200" style={{ width: size, height: size }} />
+        <div className="bg-muted rounded" style={{ width: size, height: size }} />
       ) : !isLoaded ? (
         <div
-          className="animate-pulse rounded bg-gray-100 motion-reduce:animate-none"
+          className="bg-muted/50 animate-pulse rounded motion-reduce:animate-none"
           style={{ width: size, height: size }}
         />
       ) : (

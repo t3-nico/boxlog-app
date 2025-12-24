@@ -54,8 +54,8 @@ export function TagsPageClient({
   const { data: groups = [] as TagGroup[] } = useTagGroups()
   // 最適化: 2つのクエリを1つに統合（DB側でGROUP BY集計）
   const { data: tagStats } = api.plans.getTagStats.useQuery()
-  const tagPlanCounts = tagStats?.counts ?? {}
-  const tagLastUsed = tagStats?.lastUsed ?? {}
+  const tagPlanCounts = useMemo(() => tagStats?.counts ?? {}, [tagStats?.counts])
+  const tagLastUsed = useMemo(() => tagStats?.lastUsed ?? {}, [tagStats?.lastUsed])
 
   // コンテキスト
   const { tags, setTags, setIsLoading } = useTagsPageContext()

@@ -7,4 +7,5 @@ export { AccessibilityLiveRegion, useAccessibilityKeyboard } from '../../../hook
 
 export { useHighContrast } from '../../../hooks/useHighContrast'
 
-export { FocusTrap, useFocusTrap } from '../../../hooks/useFocusTrap'
+// useFocusTrap は Radix UI Dialog に置き換えられました
+// 新しいダイアログには @radix-ui/react-dialog を使用してください

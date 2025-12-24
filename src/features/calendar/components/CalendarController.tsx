@@ -58,7 +58,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   )
 
   // 初期日付をメモ化して参照の安定性を保つ
-  const stableInitialDate = useMemo(() => initialDate || new Date(), [initialDate?.getTime()])
+  const stableInitialDate = useMemo(() => initialDate || new Date(), [initialDate])
 
   // カレンダーレイアウト状態管理（Context が利用できない場合のフォールバック）
   const layoutHook = useCalendarLayout({
@@ -86,7 +86,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         viewType,
       })
     }
-  }, [])
+  }, [contextAvailable, viewType])
 
   // コンテキストメニュー管理（フック化）
   const { contextMenuEvent, contextMenuPosition, handleEventContextMenu, handleCloseContextMenu } =

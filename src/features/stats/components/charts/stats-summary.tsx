@@ -84,7 +84,7 @@ export function StatsSummary() {
           <div className="text-2xl font-bold">{formatHours(data.thisMonthHours)}</div>
           <p className="text-muted-foreground text-xs">
             {isPositive ? (
-              <Badge className="bg-green-600 hover:bg-green-700">+{data.monthComparison}%</Badge>
+              <Badge className="bg-success hover:bg-success">+{data.monthComparison}%</Badge>
             ) : (
               <Badge variant="destructive">{data.monthComparison}%</Badge>
             )}{' '}

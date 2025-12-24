@@ -7,8 +7,9 @@ vi.unmock('next-intl')
 
 import { DrawerMenuItem, MobileDrawer } from './MobileDrawer'
 
-// next/image のモック
+// next/image のモック（テスト用に単純なimgタグを使用）
 vi.mock('next/image', () => ({
+  // eslint-disable-next-line @next/next/no-img-element
   default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
 }))
 

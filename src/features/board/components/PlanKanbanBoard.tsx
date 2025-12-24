@@ -260,9 +260,9 @@ function KanbanColumn({ title, count: _count, variant, status, children }: Kanba
   })
 
   const bgColor = {
-    todo: 'bg-gray-100 dark:bg-gray-800/40',
-    doing: 'bg-blue-100 dark:bg-blue-900/30',
-    done: 'bg-green-100 dark:bg-green-900/30',
+    todo: 'bg-muted',
+    doing: 'bg-muted',
+    done: 'bg-success/10',
   }[variant]
 
   const handleCreate = () => {

@@ -188,9 +188,9 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                     className={cn(
                       'flex h-10 w-10 items-center justify-center',
                       'rounded-full',
-                      notification.type === 'reminder' && 'bg-orange-100 text-orange-600',
-                      notification.type === 'task' && 'bg-green-100 text-green-600',
-                      notification.type === 'event' && 'bg-blue-100 text-blue-600'
+                      notification.type === 'reminder' && 'bg-warning/10 text-warning',
+                      notification.type === 'task' && 'bg-success/10 text-success',
+                      notification.type === 'event' && 'bg-primary/10 text-primary'
                     )}
                   >
                     {notification.type === 'reminder' && <Clock className="h-4 w-4" />}

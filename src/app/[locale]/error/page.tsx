@@ -58,17 +58,15 @@ const ErrorPage = () => {
   }, [router])
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-100 p-6 dark:bg-neutral-900">
+    <div className="bg-background flex min-h-screen items-center justify-center p-6">
       <div className={cn('flex w-full max-w-md flex-col gap-8')}>
         <div className="text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
-            <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-500" />
+          <div className="bg-destructive/10 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
+            <AlertCircle className="text-destructive h-8 w-8" />
           </div>
-          <h2 className="mt-6 text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
-            {errorInfo.title}
-          </h2>
-          <p className="mt-2 text-sm text-neutral-800 dark:text-neutral-200">{errorInfo.description}</p>
-          <p className="mt-4 text-sm text-neutral-600 dark:text-neutral-400">{errorInfo.suggestion}</p>
+          <h2 className="text-foreground mt-6 text-4xl font-bold tracking-tight">{errorInfo.title}</h2>
+          <p className="text-foreground mt-2 text-sm">{errorInfo.description}</p>
+          <p className="text-muted-foreground mt-4 text-sm">{errorInfo.suggestion}</p>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -84,12 +82,9 @@ const ErrorPage = () => {
         </div>
 
         <div className="text-center">
-          <p className="mt-2 text-xs text-neutral-600 dark:text-neutral-400">
+          <p className="text-muted-foreground mt-2 text-xs">
             Need help?{' '}
-            <a
-              href="mailto:support@boxlog.com"
-              className="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-400"
-            >
+            <a href="mailto:support@boxlog.com" className="text-primary hover:text-primary/80 font-medium">
               Contact Support
             </a>
           </p>

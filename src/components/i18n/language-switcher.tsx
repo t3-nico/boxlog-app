@@ -84,9 +84,9 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
         onClick={handleToggleDropdown}
         className={cn(
           'flex items-center gap-2 rounded-md px-3 py-2 transition-colors duration-200',
-          'bg-neutral-200 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-100',
-          'hover:bg-neutral-300 hover:dark:bg-neutral-600',
-          'focus:ring-primary-500 focus:ring-2 focus:ring-offset-2 focus:outline-none'
+          'bg-muted text-foreground',
+          'hover:bg-state-hover',
+          'focus:ring-primary focus:ring-2 focus:ring-offset-2 focus:outline-none'
         )}
         aria-label={typedDictionary?.language?.switch || 'Switch Language'}
         aria-expanded={isOpen}

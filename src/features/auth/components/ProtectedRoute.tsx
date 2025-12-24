@@ -26,7 +26,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="border-foreground mx-auto h-12 w-12 animate-spin rounded-full border-b-2"></div>
-          <p className="mt-4 text-neutral-600 dark:text-neutral-400">読み込み中...</p>
+          <p className="text-muted-foreground mt-4">読み込み中...</p>
         </div>
       </div>
     )

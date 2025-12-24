@@ -14,7 +14,10 @@ const Checkbox = React.forwardRef<
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      'peer border-primary h-4 w-4 shrink-0 rounded-sm border',
+      // 視覚サイズ: 16x16px、タッチターゲット: 44x44px (Apple HIG準拠)
+      'peer border-primary relative h-4 w-4 shrink-0 rounded-sm border',
+      // タッチターゲット拡大用の疑似要素
+      'before:absolute before:-inset-3.5 before:content-[""]',
       'focus-visible:ring-ring focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
       'disabled:cursor-not-allowed disabled:opacity-50',
       'data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground',

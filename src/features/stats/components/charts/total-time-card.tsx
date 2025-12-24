@@ -84,7 +84,7 @@ export function TotalTimeCard() {
         <div className="mt-4 flex items-center justify-center gap-2 text-sm">
           {data.planCount > 0 ? (
             <span className="text-muted-foreground flex items-center gap-1">
-              <span className="size-2 rounded-full bg-blue-500" />
+              <span className="bg-primary size-2 rounded-full" />
               時間設定済みの予定を集計
             </span>
           ) : (

@@ -113,23 +113,23 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
           {/* アイコン */}
           <div className="flex-shrink-0">
             {action.type === 'create' && (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/20">
-                <span className="text-sm text-green-400">+</span>
+              <div className="bg-success/20 flex h-8 w-8 items-center justify-center rounded-full">
+                <span className="text-success text-sm">+</span>
               </div>
             )}
             {action.type === 'delete' && (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/20">
-                <X className="h-4 w-4 text-red-400" />
+              <div className="bg-destructive/20 flex h-8 w-8 items-center justify-center rounded-full">
+                <X className="text-destructive h-4 w-4" />
               </div>
             )}
             {action.type === 'edit' && (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/20">
-                <span className="text-sm text-blue-400">✏️</span>
+              <div className="bg-primary/20 flex h-8 w-8 items-center justify-center rounded-full">
+                <span className="text-primary text-sm">✏️</span>
               </div>
             )}
             {action.type === 'move' && (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500/20">
-                <RotateCcw className="h-4 w-4 text-purple-400" />
+              <div className="bg-accent flex h-8 w-8 items-center justify-center rounded-full">
+                <RotateCcw className="text-accent-foreground h-4 w-4" />
               </div>
             )}
           </div>

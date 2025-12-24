@@ -46,7 +46,7 @@ export function PlanTagSelectDialogEnhanced({
   const { data: groups = [] } = useTagGroups()
   const createTagMutation = useCreateTag()
 
-  const allTags = tagsData ?? []
+  const allTags = useMemo(() => tagsData ?? [], [tagsData])
 
   // フィルタリング
   const filteredTags = useMemo(() => {
@@ -306,7 +306,7 @@ export function PlanTagSelectDialogEnhanced({
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <FolderX className="h-4 w-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
+                      <FolderX className="text-muted-foreground h-4 w-4 shrink-0" />
                       <span className="flex-1 truncate">未分類</span>
                       <span className="text-muted-foreground shrink-0">{uncategorizedCount}</span>
                     </div>

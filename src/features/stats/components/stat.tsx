@@ -10,7 +10,7 @@ export const Stat = ({ title, value, change }: { title: string; value: string; c
       <div className="mt-3 text-3xl font-semibold">{value}</div>
       <div className="mt-3 text-sm">
         <Badge
-          className={cn(change.startsWith('+') ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700')}
+          className={cn(change.startsWith('+') ? 'bg-success hover:bg-success' : 'bg-destructive hover:bg-destructive')}
         >
           {change}
         </Badge>{' '}

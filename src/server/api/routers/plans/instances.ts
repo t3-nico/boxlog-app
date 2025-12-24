@@ -49,12 +49,7 @@ export const instancesRouter = createTRPCRouter({
       }
 
       // Get exception info from plan_instances
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let query = (supabase as any)
-        .from('plan_instances')
-        .select('*')
-        .in('plan_id', validPlanIds)
-        .eq('is_exception', true)
+      let query = supabase.from('plan_instances').select('*').in('plan_id', validPlanIds).eq('is_exception', true)
 
       // Date range filter
       if (startDate) {
@@ -114,8 +109,7 @@ export const instancesRouter = createTRPCRouter({
       }
 
       // Upsert: update if exists for same date, insert if not
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('plan_instances')
         .upsert(
           {
@@ -123,7 +117,7 @@ export const instancesRouter = createTRPCRouter({
             instance_date: input.instanceDate,
             is_exception: true,
             exception_type: input.exceptionType,
-            overrides: input.overrides ?? {},
+            overrides: input.overrides ? JSON.parse(JSON.stringify(input.overrides)) : null,
             original_date: input.originalDate ?? null,
           },
           {
@@ -172,8 +166,7 @@ export const instancesRouter = createTRPCRouter({
         })
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('plan_instances')
         .delete()
         .eq('plan_id', input.planId)

@@ -36,9 +36,7 @@ export function MFASection() {
         {/* エラー・成功メッセージ */}
         {error && <div className="bg-destructive/10 text-destructive rounded-lg p-3 text-sm">{error}</div>}
         {success && (
-          <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-3 text-sm text-green-700 dark:text-green-400">
-            {success}
-          </div>
+          <div className="border-success/30 bg-success/5 text-success rounded-lg border p-3 text-sm">{success}</div>
         )}
 
         {/* MFA未設定時の表示 */}
@@ -113,16 +111,12 @@ export function MFASection() {
         {/* MFA有効時の表示 */}
         {hasMFA && (
           <div className="space-y-4">
-            <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-4">
+            <div className="border-success/30 bg-success/5 rounded-lg border p-4">
               <div className="mb-2 flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                <span className="text-sm font-medium text-green-700 dark:text-green-400">
-                  2段階認証が有効になっています
-                </span>
+                <div className="bg-success h-2 w-2 rounded-full"></div>
+                <span className="text-success text-sm font-medium">2段階認証が有効になっています</span>
               </div>
-              <p className="text-xs text-green-600 dark:text-green-500">
-                ログイン時に認証アプリで生成されるコードが必要になります
-              </p>
+              <p className="text-success/80 text-xs">ログイン時に認証アプリで生成されるコードが必要になります</p>
             </div>
 
             <div className="flex justify-end">

@@ -204,15 +204,20 @@ const handleKeyDown = useCallback((event: KeyboardEvent) => {
 3. **フォーカス管理**
 
 ```typescript
-import { useFocusTrap } from '../hooks/useFocusTrap'
+// Radix UI Dialogを使用（フォーカストラップ内蔵）
+import * as Dialog from '@radix-ui/react-dialog'
 
 const Component = () => {
-  const trapRef = useFocusTrap<HTMLDivElement>()
-
   return (
-    <div ref={trapRef}>
-      {/* フォーカストラップされたコンテンツ */}
-    </div>
+    <Dialog.Root>
+      <Dialog.Trigger>開く</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-overlay" />
+        <Dialog.Content>
+          {/* フォーカストラップされたコンテンツ */}
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   )
 }
 ```

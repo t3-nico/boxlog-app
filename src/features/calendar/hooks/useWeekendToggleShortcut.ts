@@ -56,6 +56,7 @@ export function useWeekendToggleShortcut() {
 
 /**
  * 切り替え時のフィードバック表示
+ * XSS対策: innerHTML を使用せず、DOM API で安全に要素を構築
  */
 function showToggleFeedback(newState: boolean) {
   // 既存の通知があれば削除
@@ -67,31 +68,37 @@ function showToggleFeedback(newState: boolean) {
   // 通知要素を作成
   const notification = document.createElement('div')
   notification.id = 'weekend-toggle-feedback'
-  notification.className = `
-    fixed top-4 right-4 z-[300]
-    bg-white dark:bg-gray-800
-    border border-border
-    rounded-xl shadow-lg
-    px-4 py-3
-    flex items-center gap-3
-    transform transition-all duration-300 ease-out
-    translate-x-full opacity-0
-  `
-    .replace(/\s+/g, ' ')
-    .trim()
+  notification.className = [
+    'fixed top-4 right-4 z-[300]',
+    'bg-card',
+    'border border-border',
+    'rounded-xl shadow-lg',
+    'px-4 py-3',
+    'flex items-center gap-3',
+    'transform transition-all duration-300 ease-out',
+    'translate-x-full opacity-0',
+  ].join(' ')
 
-  // 内容を設定
-  notification.innerHTML = `
-    <div class="flex items-center gap-2">
-      <div class="w-2 h-2 rounded-full ${newState ? 'bg-green-500' : 'bg-orange-500'}"></div>
-      <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
-        週末表示: ${newState ? 'ON' : 'OFF'}
-      </span>
-    </div>
-    <div class="text-xs text-gray-500 dark:text-gray-400">
-      Cmd/Ctrl + W
-    </div>
-  `
+  // 内容を安全に構築（DOM API を使用）
+  const contentWrapper = document.createElement('div')
+  contentWrapper.className = 'flex items-center gap-2'
+
+  const indicator = document.createElement('div')
+  indicator.className = `w-2 h-2 rounded-full ${newState ? 'bg-primary' : 'bg-muted-foreground'}`
+
+  const label = document.createElement('span')
+  label.className = 'text-sm font-medium text-foreground'
+  label.textContent = `週末表示: ${newState ? 'ON' : 'OFF'}`
+
+  contentWrapper.appendChild(indicator)
+  contentWrapper.appendChild(label)
+
+  const shortcutHint = document.createElement('div')
+  shortcutHint.className = 'text-xs text-muted-foreground'
+  shortcutHint.textContent = 'Cmd/Ctrl + W'
+
+  notification.appendChild(contentWrapper)
+  notification.appendChild(shortcutHint)
 
   document.body.appendChild(notification)
 
