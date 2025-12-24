@@ -1,13 +1,18 @@
 'use client'
 
+import { useMemo } from 'react'
+
+import { Button } from '@/components/ui/button'
 import { KanbanBoard } from '@/features/board'
-import { MobileBoardSettingsSheet } from '@/features/board/components/MobileBoardSettingsSheet'
+import { useBoardStatusFilterStore } from '@/features/board/stores/useBoardStatusFilterStore'
 import type { PlanStatus } from '@/features/plans/types/plan'
+import { TableNavigation, type TableNavigationConfig } from '@/features/table'
+import { Plus } from 'lucide-react'
 
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 import { DisplayModeSwitcher } from './DisplayModeSwitcher'
-import { InboxBoardToolbar } from './board/InboxBoardToolbar'
+import { InboxBoardSettingsContent } from './board/InboxBoardSettingsContent'
 
 /**
  * Inbox Board View コンポーネント
@@ -23,12 +28,39 @@ import { InboxBoardToolbar } from './board/InboxBoardToolbar'
  */
 export function InboxBoardView() {
   const filters = useInboxFilterStore()
+  const { reset: resetFilters } = useInboxFilterStore()
+  const { resetFilters: resetStatusFilters } = useBoardStatusFilterStore()
+
   const { items, isPending, error } = useInboxData({
     status: filters.status[0] as PlanStatus | undefined,
     search: filters.search,
     tags: filters.tags,
     dueDate: filters.dueDate,
   })
+
+  // フィルター数をカウント
+  const filterCount = filters.tags.length + (filters.dueDate !== 'all' ? 1 : 0)
+
+  // TableNavigation設定（Boardはソート機能なし）
+  const navigationConfig: TableNavigationConfig = useMemo(
+    () => ({
+      search: filters.search,
+      onSearchChange: filters.setSearch,
+      sortField: null,
+      sortDirection: null,
+      onSortChange: () => {},
+      onSortClear: () => {},
+      sortFieldOptions: [],
+      filterCount,
+      settingsContent: <InboxBoardSettingsContent />,
+      hasActiveSettings: filterCount > 0,
+      onSettingsReset: () => {
+        resetFilters()
+        resetStatusFilters()
+      },
+    }),
+    [filters.search, filters.setSearch, filterCount, resetFilters, resetStatusFilters]
+  )
 
   // エラー表示
   if (error) {
@@ -49,18 +81,20 @@ export function InboxBoardView() {
         {/* 左端: 表示モード切替（モバイル・デスクトップ共通） */}
         <DisplayModeSwitcher />
 
-        {/* デスクトップ: フィルターツール */}
-        <div className="hidden h-8 flex-1 items-center md:flex">
-          <InboxBoardToolbar />
-        </div>
+        {/* スペーサー */}
+        <div className="flex-1" />
 
-        {/* モバイル: スペーサー */}
-        <div className="flex-1 md:hidden" />
+        {/* Notion風アイコンナビゲーション（検索・ソート・設定）- PC・モバイル共通 */}
+        <TableNavigation config={navigationConfig} />
 
-        {/* モバイル: 設定シートボタン */}
-        <div className="md:hidden">
-          <MobileBoardSettingsSheet />
-        </div>
+        {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
+        <Button size="sm" className="shrink-0 md:hidden">
+          <Plus className="size-4" />
+        </Button>
+        <Button className="hidden shrink-0 md:inline-flex">
+          <Plus className="size-4" />
+          新規作成
+        </Button>
       </div>
 
       {/* Kanbanボード: 残りのスペース */}

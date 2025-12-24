@@ -4,13 +4,30 @@ import * as useInboxDataModule from '../hooks/useInboxData'
 import * as useInboxFilterStoreModule from '../stores/useInboxFilterStore'
 import { InboxBoardView } from './InboxBoardView'
 
-// KanbanBoardとInboxBoardToolbarのモック
+// KanbanBoardとTableNavigationのモック
 vi.mock('@/features/board', () => ({
   KanbanBoard: () => <div data-testid="kanban-board">Kanban Board</div>,
+  useBoardStatusFilterStore: () => ({
+    toggleStatus: vi.fn(),
+    isStatusVisible: () => true,
+    resetFilters: vi.fn(),
+  }),
 }))
 
-vi.mock('./board/InboxBoardToolbar', () => ({
-  InboxBoardToolbar: () => <div data-testid="inbox-board-toolbar">Inbox Board Toolbar</div>,
+vi.mock('@/features/board/stores/useBoardStatusFilterStore', () => ({
+  useBoardStatusFilterStore: () => ({
+    toggleStatus: vi.fn(),
+    isStatusVisible: () => true,
+    resetFilters: vi.fn(),
+  }),
+}))
+
+vi.mock('@/features/table', () => ({
+  TableNavigation: () => <div data-testid="table-navigation">Table Navigation</div>,
+}))
+
+vi.mock('./board/InboxBoardSettingsContent', () => ({
+  InboxBoardSettingsContent: () => <div data-testid="inbox-board-settings-content">Settings Content</div>,
 }))
 
 describe('InboxBoardView', () => {
@@ -44,10 +61,10 @@ describe('InboxBoardView', () => {
   })
 
   describe('基本レンダリング', () => {
-    it('正常時にKanbanBoardとInboxBoardToolbarが表示される', () => {
+    it('正常時にKanbanBoardとTableNavigationが表示される', () => {
       render(<InboxBoardView />)
 
-      expect(screen.getByTestId('inbox-board-toolbar')).toBeInTheDocument()
+      expect(screen.getByTestId('table-navigation')).toBeInTheDocument()
       expect(screen.getByTestId('kanban-board')).toBeInTheDocument()
     })
 
