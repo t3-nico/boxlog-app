@@ -77,15 +77,15 @@ export function MobileSettingsSheet({
       <DrawerContent>
         <DrawerHeader className="flex flex-row items-center justify-between">
           <DrawerTitle>{title}</DrawerTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             {hasActiveSettings && resetLabel && onReset && (
               <Button variant="ghost" size="sm" onClick={onReset}>
                 {resetLabel}
               </Button>
             )}
             <DrawerClose asChild>
-              <Button variant="ghost" size="icon-sm">
-                <X className="size-4" />
+              <Button variant="ghost" size="icon" aria-label="閉じる">
+                <X className="size-5" />
               </Button>
             </DrawerClose>
           </div>

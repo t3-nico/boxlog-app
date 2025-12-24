@@ -267,8 +267,8 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
             <DrawerHeader className="flex flex-row items-center justify-between">
               <DrawerTitle>検索</DrawerTitle>
               <DrawerClose asChild>
-                <Button variant="ghost" size="icon" className="size-8">
-                  <X className="size-4" />
+                <Button variant="ghost" size="icon" aria-label="閉じる">
+                  <X className="size-5" />
                 </Button>
               </DrawerClose>
             </DrawerHeader>
@@ -281,15 +281,15 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
           <DrawerContent>
             <DrawerHeader className="flex flex-row items-center justify-between">
               <DrawerTitle>フィルター</DrawerTitle>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 {config.hasActiveFilters && config.onFilterReset && (
                   <Button variant="ghost" size="sm" onClick={config.onFilterReset}>
                     リセット
                   </Button>
                 )}
                 <DrawerClose asChild>
-                  <Button variant="ghost" size="icon" className="size-8">
-                    <X className="size-4" />
+                  <Button variant="ghost" size="icon" aria-label="閉じる">
+                    <X className="size-5" />
                   </Button>
                 </DrawerClose>
               </div>
@@ -303,15 +303,15 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
           <DrawerContent>
             <DrawerHeader className="flex flex-row items-center justify-between">
               <DrawerTitle>ソート</DrawerTitle>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 {config.sortField && (
                   <Button variant="ghost" size="sm" onClick={config.onSortClear}>
                     リセット
                   </Button>
                 )}
                 <DrawerClose asChild>
-                  <Button variant="ghost" size="icon" className="size-8">
-                    <X className="size-4" />
+                  <Button variant="ghost" size="icon" aria-label="閉じる">
+                    <X className="size-5" />
                   </Button>
                 </DrawerClose>
               </div>
@@ -325,15 +325,15 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
           <DrawerContent>
             <DrawerHeader className="flex flex-row items-center justify-between">
               <DrawerTitle>設定</DrawerTitle>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 {config.hasActiveSettings && config.onSettingsReset && (
                   <Button variant="ghost" size="sm" onClick={config.onSettingsReset}>
                     リセット
                   </Button>
                 )}
                 <DrawerClose asChild>
-                  <Button variant="ghost" size="icon" className="size-8">
-                    <X className="size-4" />
+                  <Button variant="ghost" size="icon" aria-label="閉じる">
+                    <X className="size-5" />
                   </Button>
                 </DrawerClose>
               </div>
