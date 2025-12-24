@@ -48,6 +48,7 @@
       }
     },
     "inbox": {
+      "createNew": "新規作成",
       "selected": "{count}件選択中",
       "clear": "クリア",
       "changeStatus": "ステータス変更",

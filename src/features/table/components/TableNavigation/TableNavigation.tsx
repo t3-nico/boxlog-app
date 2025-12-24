@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react'
 
-import { ArrowUpDown, Filter, Search, Settings2 } from 'lucide-react'
+import { ArrowUpDown, ListFilter, Search, Settings2 } from 'lucide-react'
 
 import { IconNavigation, type IconNavigationItem } from '@/components/common'
 
@@ -98,7 +98,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         isActive: config.search !== '',
       },
       {
-        icon: Filter,
+        icon: ListFilter,
         label: 'フィルター',
         onClick: handleOpenFilter,
         isActive: config.hasActiveFilters,
