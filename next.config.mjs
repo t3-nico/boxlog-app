@@ -20,7 +20,7 @@ const nextConfig = {
 
   // TypeScript設定
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
 
   // セキュリティヘッダー設定
@@ -50,11 +50,19 @@ const nextConfig = {
             value: 'max-age=63072000; includeSubDomains; preload',
           },
           // CSP（Content Security Policy）- 強化モード（2025-10-20より有効化）
+          // NOTE: 'unsafe-eval' / 'unsafe-inline' が必要な理由:
+          // - 'unsafe-eval': Next.js開発モードのHMR、一部ライブラリの動的コード評価
+          // - 'unsafe-inline': shadcn/ui, Radix UI, Tailwind CSSのインラインスタイル
+          // TODO: 将来的にnonce-based CSPへの移行を検討（Next.js 15.xでのサポート改善後）
           {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://www.google.com https://www.gstatic.com",
+              // 開発環境では'unsafe-eval'が必要、本番では可能な限り制限
+              isDevelopment
+                ? "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://www.google.com https://www.gstatic.com"
+                : "script-src 'self' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://www.google.com https://www.gstatic.com",
+              // NOTE: 'unsafe-inline'はshadcn/ui, Radix UIで必要
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data:",
