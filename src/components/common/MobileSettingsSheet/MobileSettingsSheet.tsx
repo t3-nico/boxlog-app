@@ -85,7 +85,7 @@ export function MobileSettingsSheet({
             )}
             <DrawerClose asChild>
               <Button variant="ghost" size="icon" aria-label="閉じる">
-                <X className="size-5" />
+                <X />
               </Button>
             </DrawerClose>
           </div>

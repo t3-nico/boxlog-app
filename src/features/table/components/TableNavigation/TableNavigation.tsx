@@ -268,7 +268,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
               <DrawerTitle>検索</DrawerTitle>
               <DrawerClose asChild>
                 <Button variant="ghost" size="icon" aria-label="閉じる">
-                  <X className="size-5" />
+                  <X />
                 </Button>
               </DrawerClose>
             </DrawerHeader>
@@ -289,7 +289,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
                 )}
                 <DrawerClose asChild>
                   <Button variant="ghost" size="icon" aria-label="閉じる">
-                    <X className="size-5" />
+                    <X />
                   </Button>
                 </DrawerClose>
               </div>
@@ -311,7 +311,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
                 )}
                 <DrawerClose asChild>
                   <Button variant="ghost" size="icon" aria-label="閉じる">
-                    <X className="size-5" />
+                    <X />
                   </Button>
                 </DrawerClose>
               </div>
@@ -333,7 +333,7 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
                 )}
                 <DrawerClose asChild>
                   <Button variant="ghost" size="icon" aria-label="閉じる">
-                    <X className="size-5" />
+                    <X />
                   </Button>
                 </DrawerClose>
               </div>
