@@ -22,7 +22,6 @@ import { useInboxViewStore } from '../stores/useInboxViewStore'
 import { DisplayModeSwitcher } from './DisplayModeSwitcher'
 import { BulkDatePickerDialog } from './table/BulkDatePickerDialog'
 import { BulkTagSelectDialog } from './table/BulkTagSelectDialog'
-import { GroupBySelector } from './table/GroupBySelector'
 import { InboxSelectionActions } from './table/InboxSelectionActions'
 import { InboxSelectionBar } from './table/InboxSelectionBar'
 import { InboxSettingsContent } from './table/InboxSettingsContent'
@@ -304,9 +303,6 @@ export function InboxTableView() {
         <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
           {/* 左端: 表示モード切替（モバイル・デスクトップ共通） */}
           <DisplayModeSwitcher />
-
-          {/* グループセレクター（PC・モバイル共通） */}
-          <GroupBySelector />
 
           {/* スペーサー */}
           <div className="flex-1" />
