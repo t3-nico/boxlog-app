@@ -146,15 +146,5 @@ test.describe('モバイルナビゲーション', () => {
   })
 })
 
-test.describe('デスクトップでのモバイルUI非表示', () => {
-  // デスクトップ設定でテスト
-  test.use(devices['Desktop Chrome'])
-
-  test('ボトムナビゲーションが非表示', async ({ page }) => {
-    await page.goto('/ja/calendar')
-
-    // ボトムナビゲーションが非表示
-    const nav = page.getByRole('navigation', { name: /mobile navigation/i })
-    await expect(nav).not.toBeVisible()
-  })
-})
+// Note: デスクトップでのモバイルUI非表示テストは別ファイル（desktop-navigation.spec.ts）で実行
+// Playwrightではdescribe内でtest.use()を使用できないため
