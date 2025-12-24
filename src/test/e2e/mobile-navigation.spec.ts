@@ -1,4 +1,4 @@
-import { devices, expect, test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 /**
  * モバイルナビゲーションのE2Eテスト
@@ -7,8 +7,13 @@ import { devices, expect, test } from '@playwright/test'
  * ボトムナビゲーション、設定画面のスタック遷移などをテスト
  */
 
-// iPhone 14でテスト
-test.use(devices['iPhone 14'])
+// モバイルビューポートサイズでテスト（ブラウザはプロジェクト設定に従う）
+// devices['iPhone 14']はWebKitを強制するため、CIで問題が発生する
+test.use({
+  viewport: { width: 390, height: 844 }, // iPhone 14サイズ
+  isMobile: true,
+  hasTouch: true,
+})
 
 test.describe('モバイルナビゲーション', () => {
   test.beforeEach(async ({ page: _page }) => {
