@@ -18,6 +18,12 @@ interface MobileSettingsSheetProps {
   onReset?: () => void
   /** トリガーボタンのカスタムアイコン */
   triggerIcon?: React.ReactNode
+  /** 外部から制御する場合のopen状態 */
+  open?: boolean | undefined
+  /** 外部から制御する場合のonOpenChange */
+  onOpenChange?: ((open: boolean) => void) | undefined
+  /** トリガーボタンを非表示にする（外部制御時） */
+  hideTrigger?: boolean | undefined
 }
 
 /**
@@ -47,17 +53,27 @@ export function MobileSettingsSheet({
   resetLabel,
   onReset,
   triggerIcon,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  hideTrigger = false,
 }: MobileSettingsSheetProps) {
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+
+  // 外部制御モードかどうか
+  const isControlled = controlledOpen !== undefined
+  const open = isControlled ? controlledOpen : internalOpen
+  const setOpen = isControlled ? controlledOnOpenChange! : setInternalOpen
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button variant="ghost" size="icon-sm" className="relative shrink-0">
-          {triggerIcon ?? <SlidersHorizontal className="size-4" />}
-          {hasActiveSettings && <span className="bg-primary absolute -top-0.5 -right-0.5 size-2 rounded-full" />}
-        </Button>
-      </DrawerTrigger>
+      {!hideTrigger && (
+        <DrawerTrigger asChild>
+          <Button variant="ghost" size="icon-sm" className="relative shrink-0">
+            {triggerIcon ?? <SlidersHorizontal className="size-4" />}
+            {hasActiveSettings && <span className="bg-primary absolute -top-0.5 -right-0.5 size-2 rounded-full" />}
+          </Button>
+        </DrawerTrigger>
+      )}
       <DrawerContent>
         <DrawerHeader className="flex flex-row items-center justify-between">
           <DrawerTitle>{title}</DrawerTitle>

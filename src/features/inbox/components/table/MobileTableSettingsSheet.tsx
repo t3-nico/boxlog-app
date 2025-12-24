@@ -50,6 +50,13 @@ const GROUP_BY_OPTIONS: Array<{ value: GroupByField; label: string }> = [
   { value: 'tags', label: 'タグ' },
 ]
 
+interface MobileTableSettingsSheetProps {
+  /** 外部から制御する場合のopen状態 */
+  open?: boolean
+  /** 外部から制御する場合のonOpenChange */
+  onOpenChange?: (open: boolean) => void
+}
+
 /**
  * モバイル用テーブル設定シート
  *
@@ -61,10 +68,14 @@ const GROUP_BY_OPTIONS: Array<{ value: GroupByField; label: string }> = [
  *
  * @example
  * ```tsx
+ * // 内部制御（トリガーボタン付き）
  * <MobileTableSettingsSheet />
+ *
+ * // 外部制御（IconNavigationから開く場合）
+ * <MobileTableSettingsSheet open={open} onOpenChange={setOpen} />
  * ```
  */
-export function MobileTableSettingsSheet() {
+export function MobileTableSettingsSheet({ open, onOpenChange }: MobileTableSettingsSheetProps) {
   // 表示モード
   const { displayMode, setDisplayMode } = useInboxViewStore()
 
@@ -97,12 +108,18 @@ export function MobileTableSettingsSheet() {
   // アクティブな設定があるかどうか
   const hasActiveSettings = filterCount > 0 || groupBy !== null
 
+  // 外部制御かどうか
+  const isControlled = open !== undefined
+
   return (
     <MobileSettingsSheet
       title="表示設定"
       hasActiveSettings={hasActiveSettings}
       resetLabel="すべてリセット"
       onReset={handleResetAll}
+      open={isControlled ? open : undefined}
+      onOpenChange={isControlled ? onOpenChange : undefined}
+      hideTrigger={isControlled}
     >
       {/* 表示モード */}
       <MobileSettingsSection icon={<Table2 />} title="表示モード">

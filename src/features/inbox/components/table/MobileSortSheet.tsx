@@ -14,11 +14,11 @@ interface MobileSortSheetProps {
 
 /**
  * ソートフィールド選択肢
+ * @note due_dateはSortField型に含まれていないため、利用可能なフィールドのみ表示
  */
 const SORT_FIELD_OPTIONS: Array<{ value: SortField | 'none'; label: string }> = [
   { value: 'none', label: 'なし' },
   { value: 'title', label: 'タイトル' },
-  { value: 'due_date', label: '期限' },
   { value: 'created_at', label: '作成日' },
   { value: 'updated_at', label: '更新日' },
   { value: 'status', label: 'ステータス' },

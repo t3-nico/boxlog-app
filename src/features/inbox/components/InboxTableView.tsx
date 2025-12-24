@@ -1,9 +1,10 @@
 'use client'
 
 import type { PlanStatus } from '@/features/plans/types/plan'
-import { ChevronDown, Plus } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { ArrowUpDown, ChevronDown, Plus, Search, Settings2 } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { IconNavigation, type IconNavigationItem } from '@/components/common'
 import { Button } from '@/components/ui/button'
 import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
@@ -27,6 +28,8 @@ import { InboxSelectionActions } from './table/InboxSelectionActions'
 import { InboxSelectionBar } from './table/InboxSelectionBar'
 import { InboxTableContent } from './table/InboxTableContent'
 import { type InboxTableRowCreateHandle } from './table/InboxTableRowCreate'
+import { MobileSearchSheet } from './table/MobileSearchSheet'
+import { MobileSortSheet } from './table/MobileSortSheet'
 import { MobileTableSettingsSheet } from './table/MobileTableSettingsSheet'
 import { TableToolbar } from './table/TableToolbar'
 
@@ -176,6 +179,39 @@ export function InboxTableView() {
   // アクティブなビューを取得
   const activeView = getActiveView()
 
+  // ソート状態取得（バッジ表示用）
+  const sortField = useInboxSortStore((state) => state.sortField)
+
+  // モバイル用アイコンナビゲーションハンドラー
+  const handleOpenSearch = useCallback(() => setShowSearchSheet(true), [])
+  const handleOpenSort = useCallback(() => setShowSortSheet(true), [])
+  const handleOpenSettings = useCallback(() => setShowSettingsSheet(true), [])
+
+  // モバイル用アイコンナビゲーションアイテム
+  const mobileNavItems: IconNavigationItem[] = useMemo(
+    () => [
+      {
+        icon: Search,
+        label: '検索',
+        onClick: handleOpenSearch,
+        isActive: filterSearch !== '',
+      },
+      {
+        icon: ArrowUpDown,
+        label: 'ソート',
+        onClick: handleOpenSort,
+        isActive: sortField !== null,
+      },
+      {
+        icon: Settings2,
+        label: '設定',
+        onClick: handleOpenSettings,
+        badge: filterStatus.length + (filterDueDate !== 'all' ? 1 : 0),
+      },
+    ],
+    [handleOpenSearch, handleOpenSort, handleOpenSettings, filterSearch, sortField, filterStatus.length, filterDueDate]
+  )
+
   // アクティブビュー変更時にフィルター・ソート・ページサイズを適用
   useEffect(() => {
     if (!activeView) return
@@ -265,10 +301,8 @@ export function InboxTableView() {
           {/* モバイル: スペーサー */}
           <div className="flex-1 md:hidden" />
 
-          {/* モバイル: 設定シートボタン（作成ボタンの左隣） */}
-          <div className="md:hidden">
-            <MobileTableSettingsSheet />
-          </div>
+          {/* モバイル: Notion風アイコンナビゲーション（検索・ソート・設定） */}
+          <IconNavigation items={mobileNavItems} className="md:hidden" />
 
           {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
           <Button onClick={() => createRowRef.current?.startCreate()} size="sm" className="shrink-0 md:hidden">
@@ -349,6 +383,11 @@ export function InboxTableView() {
           setShowTagDialog(false)
         }}
       />
+
+      {/* モバイル用シート */}
+      <MobileSearchSheet open={showSearchSheet} onOpenChange={setShowSearchSheet} />
+      <MobileSortSheet open={showSortSheet} onOpenChange={setShowSortSheet} />
+      <MobileTableSettingsSheet open={showSettingsSheet} onOpenChange={setShowSettingsSheet} />
     </div>
   )
 }
