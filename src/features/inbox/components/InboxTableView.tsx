@@ -22,6 +22,7 @@ import { useInboxViewStore } from '../stores/useInboxViewStore'
 import { DisplayModeSwitcher } from './DisplayModeSwitcher'
 import { BulkDatePickerDialog } from './table/BulkDatePickerDialog'
 import { BulkTagSelectDialog } from './table/BulkTagSelectDialog'
+import { InboxFilterContent } from './table/InboxFilterContent'
 import { InboxSelectionActions } from './table/InboxSelectionActions'
 import { InboxSelectionBar } from './table/InboxSelectionBar'
 import { InboxSettingsContent } from './table/InboxSettingsContent'
@@ -190,6 +191,9 @@ export function InboxTableView() {
     []
   )
 
+  // フィルター数をカウント
+  const filterCount = filterStatus.length + (filterDueDate !== 'all' ? 1 : 0)
+
   // TableNavigation設定
   const navigationConfig: TableNavigationConfig = useMemo(
     () => ({
@@ -200,11 +204,13 @@ export function InboxTableView() {
       onSortChange: setSort,
       onSortClear: clearSort,
       sortFieldOptions,
-      filterCount: filterStatus.length + (filterDueDate !== 'all' ? 1 : 0),
+      filterContent: <InboxFilterContent />,
+      filterCount,
+      hasActiveFilters: filterCount > 0,
+      onFilterReset: resetFilters,
       settingsContent: <InboxSettingsContent />,
-      hasActiveSettings: filterStatus.length > 0 || filterDueDate !== 'all' || groupBy !== null,
+      hasActiveSettings: groupBy !== null,
       onSettingsReset: () => {
-        resetFilters()
         setGroupBy(null)
       },
     }),
@@ -216,10 +222,9 @@ export function InboxTableView() {
       setSort,
       clearSort,
       sortFieldOptions,
-      filterStatus.length,
-      filterDueDate,
-      groupBy,
+      filterCount,
       resetFilters,
+      groupBy,
       setGroupBy,
     ]
   )

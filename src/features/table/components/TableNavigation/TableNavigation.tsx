@@ -2,10 +2,11 @@
 
 import { useCallback, useMemo, useState } from 'react'
 
-import { ListFilter, Search, Settings2 } from 'lucide-react'
+import { ArrowUpDown, Filter, Search, Settings2 } from 'lucide-react'
 
 import { IconNavigation, type IconNavigationItem } from '@/components/common'
 
+import { TableFilterSheet } from './TableFilterSheet'
 import { TableSearchSheet } from './TableSearchSheet'
 import { TableSettingsSheet } from './TableSettingsSheet'
 import { TableSortSheet } from './TableSortSheet'
@@ -25,14 +26,20 @@ export interface TableNavigationConfig {
   onSortClear: () => void
   /** ソートフィールドオプション */
   sortFieldOptions: Array<{ value: string; label: string }>
+  /** フィルターシートの内容（カスタム） */
+  filterContent?: React.ReactNode | undefined
   /** フィルター数（バッジ表示用） */
-  filterCount?: number
+  filterCount?: number | undefined
+  /** アクティブなフィルターがあるか */
+  hasActiveFilters?: boolean | undefined
+  /** フィルターリセットハンドラー */
+  onFilterReset?: (() => void) | undefined
   /** 設定シートの内容（カスタム） */
-  settingsContent?: React.ReactNode
+  settingsContent?: React.ReactNode | undefined
   /** 設定のリセットハンドラー */
-  onSettingsReset?: () => void
+  onSettingsReset?: (() => void) | undefined
   /** アクティブな設定があるか */
-  hasActiveSettings?: boolean
+  hasActiveSettings?: boolean | undefined
 }
 
 export interface TableNavigationProps {
@@ -45,7 +52,7 @@ export interface TableNavigationProps {
 /**
  * テーブル用Notion風ナビゲーション
  *
- * 検索・ソート・設定の3つのアイコンを表示
+ * 検索・フィルター・ソート・設定の4つのアイコンを表示
  * モバイル・PC両対応
  *
  * @example
@@ -62,7 +69,10 @@ export interface TableNavigationProps {
  *       { value: 'title', label: 'タイトル' },
  *       { value: 'created_at', label: '作成日' },
  *     ],
+ *     filterContent: <MyFilterContent />,
  *     filterCount: 2,
+ *     hasActiveFilters: true,
+ *     onFilterReset: resetFilters,
  *     settingsContent: <MySettingsUI />,
  *   }}
  * />
@@ -70,10 +80,12 @@ export interface TableNavigationProps {
  */
 export function TableNavigation({ config, className }: TableNavigationProps) {
   const [showSearchSheet, setShowSearchSheet] = useState(false)
+  const [showFilterSheet, setShowFilterSheet] = useState(false)
   const [showSortSheet, setShowSortSheet] = useState(false)
   const [showSettingsSheet, setShowSettingsSheet] = useState(false)
 
   const handleOpenSearch = useCallback(() => setShowSearchSheet(true), [])
+  const handleOpenFilter = useCallback(() => setShowFilterSheet(true), [])
   const handleOpenSort = useCallback(() => setShowSortSheet(true), [])
   const handleOpenSettings = useCallback(() => setShowSettingsSheet(true), [])
 
@@ -86,7 +98,14 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         isActive: config.search !== '',
       },
       {
-        icon: ListFilter,
+        icon: Filter,
+        label: 'フィルター',
+        onClick: handleOpenFilter,
+        isActive: config.hasActiveFilters,
+        ...(config.filterCount !== undefined && config.filterCount > 0 && { badge: config.filterCount }),
+      },
+      {
+        icon: ArrowUpDown,
         label: 'ソート',
         onClick: handleOpenSort,
         isActive: config.sortField !== null,
@@ -95,10 +114,18 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         icon: Settings2,
         label: '設定',
         onClick: handleOpenSettings,
-        ...(config.filterCount !== undefined && { badge: config.filterCount }),
       },
     ],
-    [handleOpenSearch, handleOpenSort, handleOpenSettings, config.search, config.sortField, config.filterCount]
+    [
+      handleOpenSearch,
+      handleOpenFilter,
+      handleOpenSort,
+      handleOpenSettings,
+      config.search,
+      config.hasActiveFilters,
+      config.filterCount,
+      config.sortField,
+    ]
   )
 
   return (
@@ -112,6 +139,18 @@ export function TableNavigation({ config, className }: TableNavigationProps) {
         value={config.search}
         onChange={config.onSearchChange}
       />
+
+      {/* フィルターシート */}
+      {config.filterContent && (
+        <TableFilterSheet
+          open={showFilterSheet}
+          onOpenChange={setShowFilterSheet}
+          hasActiveFilters={config.hasActiveFilters}
+          onReset={config.onFilterReset}
+        >
+          {config.filterContent}
+        </TableFilterSheet>
+      )}
 
       {/* ソートシート */}
       <TableSortSheet

@@ -12,6 +12,7 @@ import { Plus } from 'lucide-react'
 import { useInboxData } from '../hooks/useInboxData'
 import { useInboxFilterStore } from '../stores/useInboxFilterStore'
 import { DisplayModeSwitcher } from './DisplayModeSwitcher'
+import { InboxBoardFilterContent } from './board/InboxBoardFilterContent'
 import { InboxBoardSettingsContent } from './board/InboxBoardSettingsContent'
 
 /**
@@ -51,13 +52,13 @@ export function InboxBoardView() {
       onSortChange: () => {},
       onSortClear: () => {},
       sortFieldOptions: [],
+      filterContent: <InboxBoardFilterContent />,
       filterCount,
+      hasActiveFilters: filterCount > 0,
+      onFilterReset: resetFilters,
       settingsContent: <InboxBoardSettingsContent />,
-      hasActiveSettings: filterCount > 0,
-      onSettingsReset: () => {
-        resetFilters()
-        resetStatusFilters()
-      },
+      hasActiveSettings: false,
+      onSettingsReset: resetStatusFilters,
     }),
     [filters.search, filters.setSearch, filterCount, resetFilters, resetStatusFilters]
   )
