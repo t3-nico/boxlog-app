@@ -9,7 +9,7 @@ import { routing } from '@/i18n/routing'
 
 interface LocaleLayoutProps {
   children: React.ReactNode
-  params: Promise<{ locale: Locale }>
+  params: Promise<{ locale: string }>
 }
 
 // RTL言語判定
@@ -18,10 +18,15 @@ function getDirection(locale: string): 'ltr' | 'rtl' {
   return rtlLocales.includes(locale) ? 'rtl' : 'ltr'
 }
 
+// 型ガード: 有効なロケールかチェック
+function isValidLocale(locale: string): locale is Locale {
+  return routing.locales.includes(locale as Locale)
+}
+
 // 動的メタデータ生成
-export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
-  const validLocale = routing.locales.includes(locale) ? locale : routing.defaultLocale
+  const validLocale = isValidLocale(locale) ? locale : routing.defaultLocale
   const t = await getTranslations({ locale: validLocale, namespace: 'app' })
 
   // 代替言語URLの生成
@@ -138,7 +143,7 @@ export async function generateStaticParams() {
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const { locale } = await params
   // 不正な言語の場合、デフォルト言語にフォールバック
-  const validLocale = routing.locales.includes(locale) ? locale : routing.defaultLocale
+  const validLocale = isValidLocale(locale) ? locale : routing.defaultLocale
   const direction = getDirection(validLocale)
 
   // next-intl: メッセージを取得

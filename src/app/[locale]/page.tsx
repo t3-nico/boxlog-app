@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import type { Locale } from '@/lib/i18n'
 
 interface PageProps {
-  params: { locale: Locale }
+  params: Promise<{ locale: Locale }>
 }
 
 // ロケール付きのホームページ
