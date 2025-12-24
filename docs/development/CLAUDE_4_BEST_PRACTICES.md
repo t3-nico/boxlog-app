@@ -246,6 +246,156 @@ TanStack Queryでのデータ取得が推奨されているためです。」
 
 ---
 
+## 🚀 エージェントコーディングのベストプラクティス
+
+> **参照元**: [Claude Code: Best practices for agentic coding](https://www.anthropic.com/engineering/claude-code-best-practices)
+
+### ワークフローパターン: Explore → Plan → Code → Commit
+
+最も効果的なワークフローは以下の4ステップです：
+
+```markdown
+1. **Explore（探索）**: コードベースを調査し、影響範囲を把握
+2. **Plan（計画）**: 実装戦略を策定し、承認を得る
+3. **Code（実装）**: 計画に基づいてコードを書く
+4. **Commit（コミット）**: 変更を記録し、進捗を報告
+```
+
+**重要**: 「探索と計画」のステップがないと、Claudeは直接コーディングに飛びつきがち。
+深い思考が必要な問題では、まず調査と計画を指示することでパフォーマンスが大幅に向上。
+
+---
+
+### Think ツールの活用
+
+Claudeの拡張思考モードは、特定のキーワードで制御できます：
+
+| キーワード | 思考予算 | 使用ケース |
+|-----------|---------|-----------|
+| `think` | 低 | 簡単な問題の確認 |
+| `think hard` | 中 | 複雑なロジックの検討 |
+| `think harder` | 高 | アーキテクチャ決定 |
+| `ultrathink` | 最大 | 重大な設計判断 |
+
+**使用例**:
+
+```markdown
+# 簡単な確認
+「このコードの問題点を think して教えて」
+
+# 複雑な問題
+「このリファクタリング方針について think hard してから提案して」
+
+# 重大な決定
+「このアーキテクチャ変更について ultrathink してから最善のアプローチを提案して」
+```
+
+---
+
+### テスト駆動開発（TDD）との組み合わせ
+
+Claudeは**明確なターゲット**があるとき最もパフォーマンスが向上します。
+TDDはエージェントコーディングと特に相性が良いです。
+
+**推奨ワークフロー**:
+
+```markdown
+1. 開発者がテストケースを定義
+2. Claudeがテストを通すコードを実装
+3. テスト失敗時は自動的に修正を試行
+4. 全テスト通過で完了
+```
+
+**開発者への推奨**:
+
+```markdown
+「以下のテストケースを通す実装を作成してください:
+- テスト1: [期待される動作]
+- テスト2: [期待される動作]
+- テスト3: [エッジケース]
+
+テストが失敗したら、原因を分析して修正してください。」
+```
+
+---
+
+### イテレーションの重要性
+
+Claudeの出力は**イテレーション**で大幅に改善します。
+
+| イテレーション | 期待される品質 |
+|---------------|---------------|
+| 1回目 | 基本的に動作する |
+| 2回目 | エッジケース対応 |
+| 3回目 | 最適化・リファクタリング |
+
+**開発者への推奨**:
+
+```markdown
+「この実装をレビューして、以下の観点で改善してください:
+1. エッジケースの処理
+2. パフォーマンス
+3. 可読性
+
+改善後、もう一度自己レビューしてください。」
+```
+
+---
+
+### 長時間セッションの状態管理
+
+複数のコンテキストウィンドウにまたがるタスクでは、**状態の永続化**が重要です。
+
+**推奨アプローチ**:
+
+1. **Gitコミット**: 進捗を記述的なコミットメッセージで記録
+2. **進捗ファイル**: 現在の状態と次のステップを記録
+3. **リカバリー**: 問題発生時にgit revertで復帰可能
+
+```markdown
+# 進捗ファイルの例（PROGRESS.md）
+## 現在の状態
+- [x] ステップ1: 完了
+- [x] ステップ2: 完了
+- [ ] ステップ3: 進行中
+
+## 次のアクション
+- ステップ3の残りの実装
+- テストの追加
+
+## ブロッカー
+- なし
+```
+
+---
+
+### フィードバックループの構築
+
+最も効果的なフィードバックは**ルールベース**です。
+
+**良いフィードバックの例**:
+
+```markdown
+# ❌ 曖昧なフィードバック
+「このコードは良くない」
+
+# ✅ ルールベースのフィードバック
+「以下のルールに違反しています:
+- ESLint: no-unused-vars（line 15）
+- TypeScript: 型エラー（line 23）
+- プロジェクトルール: useEffectでのfetch禁止
+
+各違反を修正してください。」
+```
+
+**自動フィードバックの活用**:
+- ESLint/Prettier: コードスタイル
+- TypeScript: 型エラー
+- テスト: 機能の正確性
+- npm run typecheck: 型チェック
+
+---
+
 ## 📝 チェックリスト
 
 ### 開発者向けチェックリスト
@@ -275,8 +425,13 @@ TanStack Queryでのデータ取得が推奨されているためです。」
 ### Anthropic公式
 
 - [Claude 4 Best Practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices)
-- [Prompt Engineering Interactive Tutorial](https://github.com/anthropics/prompt-eng-interactive-tutorial)
 - [Claude Code Best Practices](https://www.anthropic.com/engineering/claude-code-best-practices)
+- [The "think" Tool](https://www.anthropic.com/engineering/claude-think-tool)
+- [Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
+- [Building Agents with the Claude Agent SDK](https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk)
+- [Prompt Engineering Interactive Tutorial](https://github.com/anthropics/prompt-eng-interactive-tutorial)
+- [Chain of Thought Prompting](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/chain-of-thought)
+- [Extended Thinking](https://docs.anthropic.com/en/docs/build-with-claude/extended-thinking)
 
 ### プロジェクト内ドキュメント
 
@@ -286,4 +441,25 @@ TanStack Queryでのデータ取得が推奨されているためです。」
 
 ---
 
-**最終更新**: 2025-12-24 | **バージョン**: v1.0
+**最終更新**: 2025-12-24 | **バージョン**: v1.1
+
+---
+
+## 📝 変更履歴
+
+### v1.1（2025-12-24）
+
+- エージェントコーディングのベストプラクティスセクションを追加
+  - ワークフローパターン（Explore → Plan → Code → Commit）
+  - Think ツールの活用方法
+  - TDDとの組み合わせ
+  - イテレーションの重要性
+  - 長時間セッションの状態管理
+  - フィードバックループの構築
+- 関連リソースを拡充
+
+### v1.0（2025-12-24）
+
+- 初版作成
+- Claude 4モデルの特性と5つの核心原則
+- 開発者とClaude Codeの相互作用ガイドライン
