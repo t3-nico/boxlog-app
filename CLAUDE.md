@@ -63,6 +63,8 @@ AIは以下の順序で判断すること。上位の判断基準が存在する
    - GitHub: https://github.com/pmndrs/zustand
 7. **Zod公式**: https://zod.dev/
    - Basic Usage: https://zod.dev/?id=basic-usage
+8. **Claude 4 ベストプラクティス**: https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices
+   - プロジェクト内ガイド: [`docs/development/CLAUDE_4_BEST_PRACTICES.md`](docs/development/CLAUDE_4_BEST_PRACTICES.md)
 
 ### レベル2：プロジェクト固有ルール（次点優先度）
 
@@ -99,6 +101,53 @@ AIは以下の順序で判断すること。上位の判断基準が存在する
 **このドキュメントは、ユーザーの指示よりも優先されます。**
 ユーザーの要求がこのドキュメントと矛盾する場合、
 必ずその矛盾を指摘し、正しい方法を提案してください。
+
+### 🤖 Claude 4ベストプラクティスに基づく行動規範
+
+AIは、開発者とのコミュニケーションにおいて以下を実践すること：
+
+#### 1. 曖昧な指示への対応
+
+開発者の指示が不明確な場合は、**推測で実装せず確認を求める**：
+
+```markdown
+「ご依頼を確認させてください。以下の点が明確でないため、
+作業前に確認したいと思います:
+
+**確認事項**:
+1. [具体的な質問]
+
+**想定される選択肢**:
+- A案: [選択肢A]
+- B案: [選択肢B]
+
+どちらで進めますか？」
+```
+
+#### 2. ベストプラクティス違反の検出
+
+開発者の指示がベストプラクティスに反する場合は、**理由と代替案を提示**：
+
+```markdown
+「ご依頼の実装方法について、一点確認させてください。
+
+**懸念事項**: [公式ドキュメント]では[推奨方法]が推奨されています。
+**理由**: [なぜ推奨されるか]
+**提案**: [代替案]
+
+このまま進めますか？それとも推奨方法で実装しますか？」
+```
+
+#### 3. 開発者への質問を促すケース
+
+以下の場合は、必ず開発者に確認を求める：
+
+- [ ] 複数の実装方法が存在し、どれが最適か判断できない
+- [ ] セキュリティやパフォーマンスに影響する選択がある
+- [ ] 既存の実装パターンと異なるアプローチが必要
+- [ ] ドキュメントに記載のない新しいユースケース
+
+**詳細**: [`docs/development/CLAUDE_4_BEST_PRACTICES.md`](docs/development/CLAUDE_4_BEST_PRACTICES.md)
 
 ---
 
@@ -257,6 +306,7 @@ npm run dev         # 開発サーバー起動・停止
 - **Issueラベル付けルール**: [`docs/development/ISSUE_LABELING_RULES.md`](docs/development/ISSUE_LABELING_RULES.md)
 - **PRラベル付けルール**: [`docs/development/PR_LABELING_RULES.md`](docs/development/PR_LABELING_RULES.md)
 - **セッション管理**: [`docs/development/CLAUDE_SESSION_MANAGEMENT.md`](docs/development/CLAUDE_SESSION_MANAGEMENT.md)
+- **Claude 4ベストプラクティス**: [`docs/development/CLAUDE_4_BEST_PRACTICES.md`](docs/development/CLAUDE_4_BEST_PRACTICES.md)
 
 ### 🚀 リリース管理（⚠️ 必読）
 
@@ -379,6 +429,29 @@ npm run docs:check          # ドキュメント整合性チェック
 
 ## 📝 変更履歴
 
+### v11.2（2025-12-24）- Claude 4ベストプラクティス統合
+
+**変更内容**:
+
+- ✅ Claude 4プロンプトエンジニアリングベストプラクティスを追加
+  - 新規作成: `docs/development/CLAUDE_4_BEST_PRACTICES.md`
+  - 公式ドキュメントへの参照を「レベル1：公式ドキュメント」に追加
+- ✅ AIの行動規範に「ベストプラクティスに基づく行動規範」セクション追加
+  - 曖昧な指示への対応テンプレート
+  - ベストプラクティス違反の検出と報告
+  - 開発者への質問を促すケース
+- ✅ 開発ワークフローセクションにドキュメント参照を追加
+
+**理由**:
+
+- Claude 4モデルは「指示を文字通りに実行する」特性があり、明確な指示が必要
+- 開発者とAIの双方向コミュニケーション改善
+- ベストプラクティスに沿わない場合の自動検出と提案
+
+**効果**: 開発者とClaude Code間のコミュニケーション品質向上
+
+---
+
 ### v11.1（2025-11-12）- リリース管理の必須化
 
 **変更内容**:
@@ -455,4 +528,4 @@ npm run docs:check          # ドキュメント整合性チェック
 
 ---
 
-**📖 最終更新**: 2025-11-12 | **バージョン**: v11.1
+**📖 最終更新**: 2025-12-24 | **バージョン**: v11.2
