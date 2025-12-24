@@ -1,11 +1,15 @@
 'use client'
 
 import type { PlanStatus } from '@/features/plans/types/plan'
-import { useEffect, useRef, useState } from 'react'
+import { ChevronDown, Plus } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
 import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { TablePagination } from '@/features/table'
+import { TableNavigation, TablePagination, type TableNavigationConfig } from '@/features/table'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useTranslations } from 'next-intl'
 import type { InboxItem } from '../hooks/useInboxData'
 import { useInboxData } from '../hooks/useInboxData'
@@ -21,9 +25,9 @@ import { BulkTagSelectDialog } from './table/BulkTagSelectDialog'
 import { GroupBySelector } from './table/GroupBySelector'
 import { InboxSelectionActions } from './table/InboxSelectionActions'
 import { InboxSelectionBar } from './table/InboxSelectionBar'
+import { InboxSettingsContent } from './table/InboxSettingsContent'
 import { InboxTableContent } from './table/InboxTableContent'
 import { type InboxTableRowCreateHandle } from './table/InboxTableRowCreate'
-import { TableToolbar } from './table/TableToolbar'
 
 /**
  * Inbox Table View コンポーネント
@@ -73,6 +77,14 @@ export function InboxTableView() {
 
   // グループ化関連（ページネーション表示判定用）
   const groupBy = useInboxGroupStore((state) => state.groupBy)
+
+  // モバイル判定
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile)
+
+  // モバイル用「もっと見る」の表示件数（初期50件、クリックで50件追加）
+  const MOBILE_INITIAL_LIMIT = 50
+  const MOBILE_LOAD_MORE_COUNT = 50
+  const [mobileDisplayLimit, setMobileDisplayLimit] = useState(MOBILE_INITIAL_LIMIT)
 
   // 期限一括変更ダイアログの状態
   const [showDateDialog, setShowDateDialog] = useState(false)
@@ -159,6 +171,60 @@ export function InboxTableView() {
   // アクティブなビューを取得
   const activeView = getActiveView()
 
+  // ソート状態取得
+  const sortField = useInboxSortStore((state) => state.sortField)
+  const sortDirection = useInboxSortStore((state) => state.sortDirection)
+  const clearSort = useInboxSortStore((state) => state.clearSort)
+
+  // フィルターリセット
+  const resetFilters = useInboxFilterStore((state) => state.reset)
+  const setGroupBy = useInboxGroupStore((state) => state.setGroupBy)
+
+  // ソートフィールドオプション
+  const sortFieldOptions = useMemo(
+    () => [
+      { value: 'title', label: 'タイトル' },
+      { value: 'created_at', label: '作成日' },
+      { value: 'updated_at', label: '更新日' },
+      { value: 'status', label: 'ステータス' },
+    ],
+    []
+  )
+
+  // TableNavigation設定
+  const navigationConfig: TableNavigationConfig = useMemo(
+    () => ({
+      search: filterSearch,
+      onSearchChange: setSearch,
+      sortField,
+      sortDirection,
+      onSortChange: setSort,
+      onSortClear: clearSort,
+      sortFieldOptions,
+      filterCount: filterStatus.length + (filterDueDate !== 'all' ? 1 : 0),
+      settingsContent: <InboxSettingsContent />,
+      hasActiveSettings: filterStatus.length > 0 || filterDueDate !== 'all' || groupBy !== null,
+      onSettingsReset: () => {
+        resetFilters()
+        setGroupBy(null)
+      },
+    }),
+    [
+      filterSearch,
+      setSearch,
+      sortField,
+      sortDirection,
+      setSort,
+      clearSort,
+      sortFieldOptions,
+      filterStatus.length,
+      filterDueDate,
+      groupBy,
+      resetFilters,
+      setGroupBy,
+    ]
+  )
+
   // アクティブビュー変更時にフィルター・ソート・ページサイズを適用
   useEffect(() => {
     if (!activeView) return
@@ -182,9 +248,10 @@ export function InboxTableView() {
     }
   }, [activeView, setStatus, setSearch, setSort, setPageSize])
 
-  // フィルター変更時にページ1に戻る
+  // フィルター変更時にページ1に戻る＆モバイル表示件数リセット
   useEffect(() => {
     setCurrentPage(1)
+    setMobileDisplayLimit(MOBILE_INITIAL_LIMIT)
   }, [filterStatus, filterSearch, setCurrentPage])
 
   // エラー表示
@@ -234,16 +301,27 @@ export function InboxTableView() {
           }
         />
       ) : (
-        <div className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 py-2">
-          {/* 左側: 表示モード切り替え + グループ化 */}
-          <div className="flex h-8 items-center gap-2">
-            <DisplayModeSwitcher />
-            <GroupBySelector />
-          </div>
-          {/* 右側: ツールバー */}
-          <div className="flex h-8 items-center">
-            <TableToolbar onCreateClick={() => createRowRef.current?.startCreate()} />
-          </div>
+        <div className="flex h-12 shrink-0 items-center gap-2 px-4 py-2">
+          {/* 左端: 表示モード切替（モバイル・デスクトップ共通） */}
+          <DisplayModeSwitcher />
+
+          {/* グループセレクター（PC・モバイル共通） */}
+          <GroupBySelector />
+
+          {/* スペーサー */}
+          <div className="flex-1" />
+
+          {/* Notion風アイコンナビゲーション（検索・ソート・設定）- PC・モバイル共通 */}
+          <TableNavigation config={navigationConfig} />
+
+          {/* 作成ボタン: 固定位置（モバイル: アイコンのみ、PC: テキスト付き） */}
+          <Button onClick={() => createRowRef.current?.startCreate()} size="sm" className="shrink-0 md:hidden">
+            <Plus className="size-4" />
+          </Button>
+          <Button onClick={() => createRowRef.current?.startCreate()} className="hidden shrink-0 md:inline-flex">
+            <Plus className="size-4" />
+            {t('common.inbox.createNew')}
+          </Button>
         </div>
       )}
 
@@ -257,20 +335,40 @@ export function InboxTableView() {
         }}
       >
         <div className="border-border flex flex-1 flex-col overflow-auto rounded-xl border [&::-webkit-scrollbar-corner]:rounded-xl [&::-webkit-scrollbar-track]:rounded-xl">
-          <InboxTableContent items={items} createRowRef={createRowRef} />
+          <InboxTableContent
+            items={items}
+            createRowRef={createRowRef}
+            mobileDisplayLimit={isMobile ? mobileDisplayLimit : undefined}
+          />
         </div>
 
-        {/* フッター: グループ化なしの場合のみ */}
+        {/* フッター */}
         {!groupBy && (
-          <div className="shrink-0">
-            <TablePagination
-              totalItems={items.length}
-              currentPage={currentPage}
-              pageSize={pageSize}
-              onPageChange={setCurrentPage}
-              onPageSizeChange={setPageSize}
-            />
-          </div>
+          <>
+            {/* モバイル: もっと見るボタン（件数が超えている場合のみ） */}
+            {isMobile && items.length > mobileDisplayLimit && (
+              <div className="flex shrink-0 justify-center py-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setMobileDisplayLimit((prev) => prev + MOBILE_LOAD_MORE_COUNT)}
+                  className="gap-2"
+                >
+                  <ChevronDown className="size-4" />
+                  {t('table.loadMore', { count: Math.min(MOBILE_LOAD_MORE_COUNT, items.length - mobileDisplayLimit) })}
+                </Button>
+              </div>
+            )}
+            {/* デスクトップ: ページネーション */}
+            <div className="hidden shrink-0 md:block">
+              <TablePagination
+                totalItems={items.length}
+                currentPage={currentPage}
+                pageSize={pageSize}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={setPageSize}
+              />
+            </div>
+          </>
         )}
       </div>
 

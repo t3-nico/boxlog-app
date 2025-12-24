@@ -2,10 +2,11 @@
 
 import { memo, useCallback, useState } from 'react'
 
-import { Calendar, CheckCircle2, ExternalLink, MessageSquare, Unplug } from 'lucide-react'
+import { Bot, Calendar, CheckCircle2, ExternalLink, Eye, EyeOff, MessageSquare, Unplug } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 
 import { SettingField } from './fields/SettingField'
@@ -20,7 +21,52 @@ interface Integration {
   status?: 'active' | 'inactive' | 'error'
 }
 
+interface AIProvider {
+  id: string
+  name: string
+  description: string
+  keyPrefix: string
+}
+
+const AI_PROVIDERS: AIProvider[] = [
+  {
+    id: 'anthropic',
+    name: 'Claude (Anthropic)',
+    description: 'Anthropic社のClaudeを使用します',
+    keyPrefix: 'sk-ant-',
+  },
+  {
+    id: 'openai',
+    name: 'OpenAI',
+    description: 'OpenAI社のGPTモデルを使用します',
+    keyPrefix: 'sk-',
+  },
+]
+
 export const IntegrationSettings = memo(function IntegrationSettings() {
+  // AI API Keys state
+  const [aiKeys, setAiKeys] = useState<Record<string, string>>({
+    anthropic: '',
+    openai: '',
+  })
+  const [showKeys, setShowKeys] = useState<Record<string, boolean>>({
+    anthropic: false,
+    openai: false,
+  })
+
+  const handleAiKeyChange = useCallback((providerId: string, value: string) => {
+    setAiKeys((prev) => ({ ...prev, [providerId]: value }))
+  }, [])
+
+  const toggleKeyVisibility = useCallback((providerId: string) => {
+    setShowKeys((prev) => ({ ...prev, [providerId]: !prev[providerId] }))
+  }, [])
+
+  const handleSaveApiKey = useCallback((providerId: string) => {
+    // TODO: 実際の保存処理を実装（暗号化してlocalStorageまたはサーバーに保存）
+    console.log(`Saving API key for ${providerId}`)
+  }, [])
+
   const [integrations, setIntegrations] = useState<Integration[]>([
     {
       id: 'google-calendar',
@@ -64,6 +110,62 @@ export const IntegrationSettings = memo(function IntegrationSettings() {
 
   return (
     <div className="space-y-6">
+      {/* AI設定 */}
+      <SettingsCard title="AI設定">
+        <div className="space-y-4">
+          <div className="bg-surface-container rounded-xl p-4">
+            <p className="text-muted-foreground text-sm">
+              AIアシスタント機能を使用するには、各プロバイダーのAPIキーを設定してください。
+              APIキーはブラウザのローカルストレージに暗号化して保存されます。
+            </p>
+          </div>
+
+          {AI_PROVIDERS.map((provider) => (
+            <div key={provider.id} className="border-border rounded-xl border p-4">
+              <div className="flex items-start gap-4">
+                <div className="bg-surface-container flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
+                  <Bot className="text-primary h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1 space-y-3">
+                  <div>
+                    <h4 className="text-sm font-medium">{provider.name}</h4>
+                    <p className="text-muted-foreground text-sm">{provider.description}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Input
+                        type={showKeys[provider.id] ? 'text' : 'password'}
+                        placeholder={`${provider.keyPrefix}...`}
+                        value={aiKeys[provider.id]}
+                        onChange={(e) => handleAiKeyChange(provider.id, e.target.value)}
+                        className="pr-10"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute top-1/2 right-1 h-7 w-7 -translate-y-1/2 p-0"
+                        onClick={() => toggleKeyVisibility(provider.id)}
+                      >
+                        {showKeys[provider.id] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleSaveApiKey(provider.id)}
+                      disabled={!aiKeys[provider.id]}
+                    >
+                      保存
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </SettingsCard>
+
       {/* 連携サービス一覧 */}
       <SettingsCard title="連携サービス">
         <div className="space-y-4">

@@ -197,14 +197,26 @@ export const CompactDayView = memo(function CompactDayView({
             variant="ghost"
             size="sm"
             onClick={handleToday}
-            className={cn('h-6 px-2 text-xs', isTodayDate && 'text-primary font-semibold')}
+            className={cn('h-10 px-2 text-xs sm:h-6', isTodayDate && 'text-primary font-semibold')}
           >
             {t('time.today')}
           </Button>
-          <Button variant="ghost" size="icon" onClick={handlePrev} className="h-6 w-6" aria-label="前日">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handlePrev}
+            className="h-10 w-10 sm:h-6 sm:w-6"
+            aria-label="前日"
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={handleNext} className="h-6 w-6" aria-label="翌日">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleNext}
+            className="h-10 w-10 sm:h-6 sm:w-6"
+            aria-label="翌日"
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

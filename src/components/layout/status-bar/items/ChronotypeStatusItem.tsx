@@ -3,14 +3,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { Dna } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 
 import { StatusBarItem } from '../StatusBarItem'
 
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/features/settings/types/chronotype'
+import { useLocale } from 'next-intl'
 
 import type { ProductivityZone } from '@/features/settings/types/chronotype'
 
@@ -33,7 +34,8 @@ const LEVEL_ICON_COLORS: Record<ProductivityZone['level'], string> = {
 export function ChronotypeStatusItem() {
   const [currentTime, setCurrentTime] = useState(() => new Date())
   const chronotype = useCalendarSettingsStore((state) => state.chronotype)
-  const openSettingsDialog = useSettingsDialogStore((state) => state.openSettings)
+  const router = useRouter()
+  const locale = useLocale()
 
   // 1分ごとに現在時刻を更新
   useEffect(() => {
@@ -94,10 +96,10 @@ export function ChronotypeStatusItem() {
     return `残り${mins}m`
   }, [])
 
-  // クリック時: 設定ダイアログを開き、クロノタイプ設定へスクロール
+  // クリック時: 設定ページに遷移
   const handleClick = useCallback(() => {
-    openSettingsDialog('personalization', 'chronotype')
-  }, [openSettingsDialog])
+    router.push(`/${locale}/settings/personalization`)
+  }, [router, locale])
 
   // ラベル生成
   const label = useMemo(() => {

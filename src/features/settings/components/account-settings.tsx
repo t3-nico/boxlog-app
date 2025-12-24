@@ -1,6 +1,6 @@
 'use client'
 
-import { DangerZoneSection, EmailSection, MFASection, PasswordSection, ProfileSection } from './sections'
+import { DangerZoneSection, EmailSection, LogoutSection, MFASection, PasswordSection, ProfileSection } from './sections'
 
 /**
  * アカウント設定コンポーネント
@@ -10,6 +10,7 @@ import { DangerZoneSection, EmailSection, MFASection, PasswordSection, ProfileSe
  * - EmailSection: メールアドレス
  * - PasswordSection: パスワード変更
  * - MFASection: 二段階認証
+ * - LogoutSection: ログアウト
  * - DangerZoneSection: アカウント削除
  */
 export function AccountSettings() {
@@ -19,6 +20,7 @@ export function AccountSettings() {
       <EmailSection />
       <PasswordSection />
       <MFASection />
+      <LogoutSection />
       <DangerZoneSection />
     </div>
   )

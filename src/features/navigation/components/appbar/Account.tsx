@@ -15,6 +15,7 @@ import {
   UserCircle,
 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -29,7 +30,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { useTranslations } from 'next-intl'
 
 import { useUserAuth } from './hooks/useUserAuth'
@@ -50,8 +50,12 @@ interface AccountProps {
  */
 export function Account({ userData, locale }: AccountProps) {
   const t = useTranslations()
-  const openSettings = useSettingsDialogStore((state) => state.openSettings)
+  const router = useRouter()
   const { handleLogout, isLoggingOut } = useUserAuth()
+
+  const navigateToSettings = (category: string) => {
+    router.push(`/${locale}/settings/${category}`)
+  }
 
   return (
     <div className="flex flex-col items-center justify-center px-2 py-2" onClick={(e) => e.stopPropagation()}>
@@ -62,7 +66,7 @@ export function Account({ userData, locale }: AccountProps) {
             aria-label={t('navUser.accountMenuLabel', { name: userData.name })}
             className="hover:bg-state-hover data-[state=open]:bg-secondary flex h-10 w-10 items-center justify-center rounded-xl outline-hidden transition-colors"
           >
-            <Avatar className="h-8 w-8 rounded-xl">
+            <Avatar className="h-10 w-10 rounded-xl sm:h-8 sm:w-8">
               {userData.avatar ? <AvatarImage src={userData.avatar} alt={userData.name} /> : null}
               <AvatarFallback className="rounded-xl">{userData.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
@@ -85,15 +89,15 @@ export function Account({ userData, locale }: AccountProps) {
 
           {/* アカウント関連 */}
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => openSettings('account')}>
+            <DropdownMenuItem onClick={() => navigateToSettings('account')}>
               <UserCircle />
               {t('navUser.account')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => openSettings('subscription')}>
+            <DropdownMenuItem onClick={() => navigateToSettings('subscription')}>
               <Sparkles />
               {t('navUser.upgradePlan')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => openSettings('personalization')}>
+            <DropdownMenuItem onClick={() => navigateToSettings('personalization')}>
               <Palette />
               {t('navUser.personalize')}
             </DropdownMenuItem>
@@ -103,7 +107,7 @@ export function Account({ userData, locale }: AccountProps) {
 
           {/* 設定とヘルプ */}
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => openSettings('general')}>
+            <DropdownMenuItem onClick={() => navigateToSettings('general')}>
               <Settings />
               {t('navUser.settings')}
             </DropdownMenuItem>

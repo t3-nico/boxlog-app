@@ -1,9 +1,12 @@
 'use client'
 
+import { FileSearch, Filter, Inbox, Plus } from 'lucide-react'
+
+import { EmptyState } from '@/components/common'
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { FileSearch, Filter, Inbox, Plus } from 'lucide-react'
+
 import { useInboxFilterStore } from '../../stores/useInboxFilterStore'
 
 interface InboxTableEmptyStateProps {
@@ -84,21 +87,12 @@ export function InboxTableEmptyState({ columnCount, totalItems: _totalItems }: I
     }
   }
 
-  const { icon: Icon, title, description, action } = getEmptyStateContent()
+  const { icon, title, description, action } = getEmptyStateContent()
 
   return (
     <TableRow>
       <TableCell colSpan={columnCount} className="h-[28rem]">
-        <div className="flex h-full items-center justify-center">
-          <div className="mx-auto flex max-w-md flex-col items-center justify-center text-center">
-            <div className="bg-surface-container flex size-20 items-center justify-center rounded-full">
-              <Icon className="text-muted-foreground size-10" />
-            </div>
-            <h3 className="mt-6 text-lg font-semibold">{title}</h3>
-            <p className="text-muted-foreground mt-2 mb-6 text-sm">{description}</p>
-            {action}
-          </div>
-        </div>
+        <EmptyState icon={icon} title={title} description={description} actions={action} />
       </TableCell>
     </TableRow>
   )

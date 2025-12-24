@@ -55,6 +55,8 @@ const CommandInput = ({ className, ...props }: React.ComponentProps<typeof Comma
       <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         data-slot="command-input"
+        inputMode="search"
+        enterKeyHint="search"
         className={cn(
           'flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden',
           'placeholder:text-muted-foreground',

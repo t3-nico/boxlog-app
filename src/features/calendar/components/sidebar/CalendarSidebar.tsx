@@ -15,6 +15,7 @@ import { useTranslations } from 'next-intl'
 import { CalendarFilterList } from './CalendarFilterList'
 import { TodoCardList } from './todo/TodoCardList'
 import { TodoNavigation, type TodoFilter, type TodoSort } from './todo/TodoNavigation'
+import { ViewSwitcherList } from './ViewSwitcherList'
 
 /**
  * CalendarSidebar - カレンダーページ専用サイドバー
@@ -72,41 +73,47 @@ export function CalendarSidebar() {
 
   const tabs: SidebarTab[] = [
     {
+      value: 'view',
+      label: t('calendar.sidebar.tabs.view'),
+      icon: CalendarDays,
+      content: (
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+          {/* ミニカレンダー（PCのみ - モバイルはヘッダーのポップアップ） */}
+          <div className="hidden shrink-0 md:block">
+            <MiniCalendar
+              selectedDate={navigation?.currentDate}
+              displayRange={displayRange}
+              onDateSelect={(date) => {
+                if (date && navigation) {
+                  navigation.navigateToDate(date, true)
+                }
+              }}
+              className="w-full bg-transparent"
+            />
+          </div>
+
+          {/* ビュー切り替え（モバイルのみ） */}
+          <ViewSwitcherList />
+
+          {/* カレンダーフィルター */}
+          <CalendarFilterList />
+        </div>
+      ),
+    },
+    {
       value: 'todo',
       label: t('calendar.sidebar.tabs.todo'),
       icon: ListTodo,
       content: (
-        <div>
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
           {/* ナビゲーションコンテナ: 上padding 8pxのみ */}
           <div className="shrink-0 px-4 pt-2">
             <TodoNavigation filter={filter} onFilterChange={setFilter} sort={sort} onSortChange={setSort} />
           </div>
           {/* カードリストコンテナ - パディングはTodoCardList内で管理 */}
-          <div className="flex-1 overflow-hidden">
+          <div className="min-h-0 flex-1 overflow-hidden">
             <TodoCardList filter={filter} sort={sort} />
           </div>
-        </div>
-      ),
-    },
-    {
-      value: 'view',
-      label: t('calendar.sidebar.tabs.view'),
-      icon: CalendarDays,
-      content: (
-        <div className="min-w-0 overflow-hidden">
-          {/* ミニカレンダー */}
-          <MiniCalendar
-            selectedDate={navigation?.currentDate}
-            displayRange={displayRange}
-            onDateSelect={(date) => {
-              if (date && navigation) {
-                navigation.navigateToDate(date, true)
-              }
-            }}
-            className="w-full bg-transparent"
-          />
-          {/* カレンダーフィルター */}
-          <CalendarFilterList />
         </div>
       ),
     },
@@ -114,7 +121,7 @@ export function CalendarSidebar() {
 
   return (
     <SidebarShell title={t('sidebar.navigation.calendar')}>
-      <SidebarTabLayout tabs={tabs} defaultTab="todo" />
+      <SidebarTabLayout tabs={tabs} defaultTab="view" />
     </SidebarShell>
   )
 }

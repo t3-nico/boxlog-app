@@ -8,6 +8,7 @@
     "next": "Next",
     "previous": "Previous",
     "close": "Close",
+    "cancel": "Cancel",
     "confirm": "Confirm",
     "loading": "Loading...",
     "noData": "No data available",
@@ -118,6 +119,7 @@
     "page": "{current} / {total}",
     "nextPage": "Next page",
     "lastPage": "Last page",
+    "loadMore": "Show {count} more",
     "title": "Table View",
     "description": "Display tasks in table format",
     "comingSoon": "Task table component coming soon...",
@@ -192,7 +194,8 @@
     "weeklyCalendar": "Weekly calendar",
     "previous": "Previous",
     "next": "Next",
-    "selectColor": "Select {color}"
+    "selectColor": "Select {color}",
+    "openAIAssistant": "Open AI Assistant"
   },
   "status": {
     "loading": "Loading...",
@@ -245,6 +248,18 @@
   "theme": {
     "light": "Light Mode",
     "dark": "Dark Mode"
+  },
+  "createSheet": {
+    "title": "What would you like to add?",
+    "description": "Choose the type of item to add",
+    "plan": "Plan",
+    "planDescription": "Create a new plan",
+    "record": "Record",
+    "recordDescription": "Log what you actually did",
+    "template": "Template",
+    "templateDescription": "Add from saved templates",
+    "history": "Create from History",
+    "historyDescription": "Recreate from recently used items"
   },
   "validation": {
     "required": "This field is required",

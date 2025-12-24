@@ -124,11 +124,14 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                 <Input
                   id="email"
                   type="email"
+                  inputMode="email"
+                  enterKeyHint="next"
                   placeholder={t('auth.signupForm.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
                   required
+                  autoComplete="email"
                 />
                 <FieldDescription>{t('auth.signupForm.emailDescription')}</FieldDescription>
               </Field>
@@ -141,12 +144,14 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       <Input
                         id="password"
                         type={showPassword ? 'text' : 'password'}
+                        enterKeyHint="next"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         disabled={isLoading}
                         required
                         minLength={8}
                         maxLength={64}
+                        autoComplete="new-password"
                       />
                       <HoverTooltip
                         content={showPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')}
@@ -159,6 +164,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                           className="absolute top-0 right-0 h-full px-3"
                           onClick={() => setShowPassword(!showPassword)}
                           disabled={isLoading}
+                          aria-label={
+                            showPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')
+                          }
                         >
                           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </Button>
@@ -171,12 +179,14 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       <Input
                         id="confirm-password"
                         type={showConfirmPassword ? 'text' : 'password'}
+                        enterKeyHint="go"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         disabled={isLoading}
                         required
                         minLength={8}
                         maxLength={64}
+                        autoComplete="new-password"
                       />
                       <HoverTooltip
                         content={
@@ -191,6 +201,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                           className="absolute top-0 right-0 h-full px-3"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           disabled={isLoading}
+                          aria-label={
+                            showConfirmPassword ? t('auth.signupForm.hidePassword') : t('auth.signupForm.showPassword')
+                          }
                         >
                           {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </Button>

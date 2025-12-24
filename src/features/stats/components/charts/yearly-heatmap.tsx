@@ -85,29 +85,32 @@ export function YearlyHeatmap() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="yearly-heatmap">
-          <CalendarHeatmap
-            startDate={startDate}
-            endDate={endDate}
-            values={values}
-            classForValue={(value) => {
-              const v = value as HeatmapValue | undefined
-              if (!v || !v.hours || v.hours === 0) {
-                return 'color-empty'
-              }
-              if (v.hours < 1) return 'color-scale-1'
-              if (v.hours < 3) return 'color-scale-2'
-              if (v.hours < 5) return 'color-scale-3'
-              return 'color-scale-4'
-            }}
-            titleForValue={(value) => {
-              const v = value as HeatmapValue | undefined
-              if (!v || !v.date) return ''
-              return `${v.date}: ${formatHours(v.hours || 0)}`
-            }}
-            showWeekdayLabels
-            gutterSize={2}
-          />
+        {/* モバイルで横スクロール対応 */}
+        <div className="yearly-heatmap -mx-2 overflow-x-auto px-2 sm:mx-0 sm:overflow-visible sm:px-0">
+          <div className="min-w-[650px]">
+            <CalendarHeatmap
+              startDate={startDate}
+              endDate={endDate}
+              values={values}
+              classForValue={(value) => {
+                const v = value as HeatmapValue | undefined
+                if (!v || !v.hours || v.hours === 0) {
+                  return 'color-empty'
+                }
+                if (v.hours < 1) return 'color-scale-1'
+                if (v.hours < 3) return 'color-scale-2'
+                if (v.hours < 5) return 'color-scale-3'
+                return 'color-scale-4'
+              }}
+              titleForValue={(value) => {
+                const v = value as HeatmapValue | undefined
+                if (!v || !v.date) return ''
+                return `${v.date}: ${formatHours(v.hours || 0)}`
+              }}
+              showWeekdayLabels
+              gutterSize={2}
+            />
+          </div>
         </div>
 
         {/* 凡例 */}

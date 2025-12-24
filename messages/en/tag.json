@@ -200,9 +200,12 @@
       "columns": "Columns",
       "columnSettings": "Column settings",
       "displayMode": {
+        "title": "Display Mode",
         "flat": "Flat",
         "grouped": "Grouped"
-      }
+      },
+      "settings": "Settings",
+      "search": "Search"
     },
     "bulkMerge": {
       "title": "Merge Tags",
@@ -446,9 +449,12 @@
       "columns": "Columns",
       "columnSettings": "Column settings",
       "displayMode": {
+        "title": "Display Mode",
         "flat": "Flat",
         "grouped": "Grouped"
-      }
+      },
+      "settings": "Settings",
+      "search": "Search"
     },
     "bulkMerge": {
       "title": "Merge Tags",

@@ -11,7 +11,8 @@
       "weekNoWeekend": "週表示（平日のみ）",
       "2week": "2週表示",
       "month": "月表示",
-      "list": "リスト"
+      "list": "リスト",
+      "agenda": "アジェンダ"
     },
     "mobile": {
       "drawer": {
@@ -193,6 +194,10 @@
       "badge": "{count}件の未完了",
       "popoverTitle": "期限切れのプラン",
       "overdueBy": "{time}超過"
+    },
+    "agenda": {
+      "emptyTitle": "今後14日間に予定はありません",
+      "emptyDescription": "カレンダーで新しい予定を作成してください"
     }
   }
 }

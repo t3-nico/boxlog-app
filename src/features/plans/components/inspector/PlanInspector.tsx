@@ -1,12 +1,17 @@
 'use client'
 
+import { Copy, ExternalLink, Link, Trash2 } from 'lucide-react'
+import { useCallback } from 'react'
+
+import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { InspectorContent, InspectorShell, useInspectorKeyboard, type InspectorDisplayMode } from '@/features/inspector'
 
 import { usePlan } from '../../hooks/usePlan'
+import { useDeleteConfirmStore } from '../../stores/useDeleteConfirmStore'
 import { usePlanInspectorStore } from '../../stores/usePlanInspectorStore'
 import type { Plan } from '../../types/plan'
 
-import { useInspectorNavigation } from './hooks'
+import { useInspectorAutoSave, useInspectorNavigation } from './hooks'
 import { PlanInspectorContent } from './PlanInspectorContent'
 
 /**
@@ -27,6 +32,10 @@ export function PlanInspector() {
   // ナビゲーション
   const { hasPrevious, hasNext, goToPrevious, goToNext } = useInspectorNavigation(planId)
 
+  // 削除
+  const openDeleteDialog = useDeleteConfirmStore((state) => state.openDialog)
+  const { deletePlan } = useInspectorAutoSave({ planId, plan })
+
   // キーボードショートカット
   useInspectorKeyboard({
     isOpen,
@@ -37,6 +46,53 @@ export function PlanInspector() {
     onNext: goToNext,
   })
 
+  // モバイル用メニューアクション
+  const handleCopyLink = useCallback(() => {
+    if (planId) {
+      const url = `${window.location.origin}/plans/${planId}`
+      navigator.clipboard.writeText(url)
+    }
+  }, [planId])
+
+  const handleOpenInNewTab = useCallback(() => {
+    if (planId) window.open(`/plans/${planId}`, '_blank')
+  }, [planId])
+
+  const handleDelete = useCallback(() => {
+    if (!planId) return
+    openDeleteDialog(planId, plan?.title ?? null, async () => {
+      await deletePlan.mutateAsync({ id: planId })
+      closeInspector()
+    })
+  }, [planId, plan?.title, openDeleteDialog, deletePlan, closeInspector])
+
+  // モバイル用メニューコンテンツ（簡略版）
+  const mobileMenuContent = (
+    <>
+      <DropdownMenuItem onClick={handleCopyLink}>
+        <Link className="size-4" />
+        リンクをコピー
+      </DropdownMenuItem>
+      <DropdownMenuItem onClick={handleOpenInNewTab}>
+        <ExternalLink className="size-4" />
+        新しいタブで開く
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        onClick={() => {
+          if (planId) navigator.clipboard.writeText(planId)
+        }}
+      >
+        <Copy className="size-4" />
+        IDをコピー
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem onClick={handleDelete} variant="destructive">
+        <Trash2 className="size-4" />
+        削除
+      </DropdownMenuItem>
+    </>
+  )
+
   return (
     <InspectorShell
       isOpen={isOpen}
@@ -45,6 +101,7 @@ export function PlanInspector() {
       title={plan?.title || '予定の詳細'}
       resizable={displayMode === 'sheet'}
       modal={false}
+      mobileMenuContent={mobileMenuContent}
     >
       <InspectorContent isLoading={isLoading} hasData={!!plan} emptyMessage="プランが見つかりません">
         <PlanInspectorContent />

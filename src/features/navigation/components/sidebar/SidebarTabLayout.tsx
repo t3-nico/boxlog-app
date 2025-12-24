@@ -61,11 +61,11 @@ export function SidebarTabLayout({ tabs, defaultTab }: SidebarTabLayoutProps) {
           })}
         </TabsList>
 
-        {/* TabsContent - スクロール可能 */}
+        {/* TabsContent - スクロール可能・幅可変 */}
         {tabs.map((tab) => (
           <TabsContent key={tab.value} value={tab.value} className="mt-0 min-h-0 min-w-0 flex-1 overflow-hidden">
             <ScrollArea className="h-full w-full">
-              <div className="w-60">{tab.content}</div>
+              <div className="flex min-w-0 flex-col">{tab.content}</div>
             </ScrollArea>
           </TabsContent>
         ))}

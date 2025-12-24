@@ -319,14 +319,18 @@ export const WeekCalendarLayout = ({
                         onKeyDown={createPlanKeyDownHandler(plan)}
                         aria-label={`プラン: ${plan.title}${plan.startDate ? ` (${formatTimeWithSettings(plan.startDate)}開始)` : ''}`}
                       >
-                        {/* ホバー時の削除ボタン */}
+                        {/* 削除ボタン: 選択時またはホバー時に表示（タッチデバイス対応） */}
                         <button
                           type="button"
                           onClick={createDeletePlanHandler(plan.id)}
-                          className="bg-card/90 hover:bg-card absolute top-1 right-1 z-30 rounded p-0.5 opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100"
+                          className={`bg-card/90 hover:bg-card absolute top-1 right-1 z-30 rounded p-1.5 shadow-lg transition-all duration-200 ${
+                            selectedPlanId === plan.id
+                              ? 'opacity-100'
+                              : 'opacity-100 sm:opacity-0 sm:group-hover:opacity-100'
+                          }`}
                           title={t('calendar.event.delete')}
                         >
-                          <X className="text-muted-foreground h-3 w-3" />
+                          <X className="text-muted-foreground h-4 w-4" />
                         </button>
 
                         <div className="h-full overflow-hidden p-1 text-white sm:p-2">

@@ -53,9 +53,9 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
     <div
       ref={setNodeRef}
       className={cn(
-        'flex w-80 shrink-0 flex-col gap-3 rounded-xl border p-3 transition-colors',
+        'flex w-72 shrink-0 flex-col gap-3 rounded-xl border p-3 transition-colors sm:w-80',
         colorClass,
-        isOver && 'bg-primary/12 ring-primary ring-2',
+        isOver && 'bg-state-selected ring-primary ring-2',
         isOverWipLimit && 'ring-destructive ring-2' // WIP制限超過時
       )}
     >
@@ -71,7 +71,7 @@ export function KanbanColumn({ column, onAddCard, onEditCard, onDeleteCard }: Ka
             className={cn(
               'flex size-5 items-center justify-center rounded-full text-xs font-medium',
               isOverWipLimit && 'bg-destructive text-destructive-foreground',
-              wipWarning && 'bg-yellow-500 text-white',
+              wipWarning && 'bg-warning text-warning-foreground',
               !isOverWipLimit && !wipWarning && 'bg-surface-container text-muted-foreground'
             )}
           >

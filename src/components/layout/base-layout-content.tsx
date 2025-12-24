@@ -2,19 +2,24 @@
 
 import { CookieConsentBanner } from '@/components/common/cookie-consent-banner'
 import { Button } from '@/components/ui/button'
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
+import {
+  CreateActionSheet,
+  useCreateActionSheet,
+  type CreateActionType,
+} from '@/features/navigation/components/mobile/CreateActionSheet'
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
 import { useNotificationRealtime } from '@/features/notifications/hooks/useNotificationRealtime'
-import { SettingsDialog } from '@/features/settings/components/dialog'
 import { TagsNavigationProvider, type TagsFilter } from '@/features/tags/contexts/TagsNavigationContext'
 import { TagsPageProvider } from '@/features/tags/contexts/TagsPageContext'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { usePathname, useSearchParams } from 'next/navigation'
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { DesktopLayout } from './desktop-layout'
 import { MobileLayout } from './mobile-layout'
 
@@ -36,7 +41,7 @@ interface BaseLayoutContentProps {
 export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const pathname = usePathname() || '/'
   const t = useTranslations()
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile)
   const searchParams = useSearchParams()
   const user = useAuthStore((state) => state.user)
 
@@ -68,10 +73,29 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   // Realtime通知購読（Toast表示）
   useNotificationRealtime(user?.id, true)
 
+  // CreateActionSheet状態管理
+  const createActionSheet = useCreateActionSheet()
+
+  // FABからのアクション選択ハンドラー
+  const handleCreateAction = useCallback((type: CreateActionType) => {
+    // TODO: 各アクションの実装
+    switch (type) {
+      case 'plan':
+        console.log('Create new plan')
+        break
+      case 'record':
+        console.log('Create new record')
+        break
+      case 'template':
+        console.log('Add from template')
+        break
+    }
+  }, [])
+
   // メモ化: コンテンツ部分（children, isMobile, localeに依存）
   const content = useMemo(
     () => (
-      <div className="flex h-screen flex-col">
+      <div className="flex h-screen flex-col pb-16 md:pb-0">
         {/* アクセシビリティ: スキップリンク */}
         <a
           href="#main-content"
@@ -87,31 +111,39 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
           <DesktopLayout locale={localeFromPath}>{children}</DesktopLayout>
         )}
 
-        {/* Settings Dialog */}
-        <SettingsDialog />
-
         {/* Cookie Consent Banner */}
         <CookieConsentBanner />
 
-        {/* Mobile FAB - BottomNavigationの上に配置 */}
+        {/* Mobile FAB - BottomNavigationの上に配置（iOS Safe Area対応） */}
         {isMobile ? (
           <Button
             size="icon"
             aria-label={t('common.createNewEvent')}
-            className="fixed right-4 bottom-20 z-50 size-14 rounded-2xl shadow-lg"
-            onClick={() => {
-              console.log('Create new plan')
+            className="fixed right-4 z-50 size-14 rounded-2xl shadow-lg"
+            style={{
+              // iOS Safe Area対応: ボトムナビ(64px) + 余白(16px) + Safe Area
+              bottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
             }}
+            onClick={createActionSheet.open}
           >
             <Plus className="size-6" />
           </Button>
+        ) : null}
+
+        {/* CreateActionSheet - FABタップ時のボトムシート */}
+        {isMobile ? (
+          <CreateActionSheet
+            open={createActionSheet.isOpen}
+            onOpenChange={createActionSheet.setIsOpen}
+            onSelect={handleCreateAction}
+          />
         ) : null}
 
         {/* Mobile Bottom Navigation */}
         {isMobile ? <MobileBottomNavigation /> : null}
       </div>
     ),
-    [children, isMobile, localeFromPath, t]
+    [children, isMobile, localeFromPath, t, createActionSheet, handleCreateAction]
   )
 
   // カレンダーページの場合はCalendarNavigationProviderでラップ

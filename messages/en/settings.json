@@ -50,6 +50,7 @@
       "twoFactorPrompt": "Require authentication code when signing in",
       "twoFactorActive": "Two-factor authentication active",
       "twoFactorProtection": "Your account is protected with an additional security layer.",
+      "session": "Session",
       "dangerZone": "Danger Zone",
       "dangerZoneDesc": "Irreversible and destructive actions",
       "privacy": "Privacy",
@@ -210,6 +211,11 @@
     "common": {
       "saved": "Settings saved successfully",
       "saveFailed": "Failed to save settings"
+    },
+    "mobile": {
+      "description": "Customize your app settings",
+      "darkMode": "Dark Mode",
+      "comingSoon": "This setting is coming soon"
     },
     "dialog": {
       "title": "Settings",

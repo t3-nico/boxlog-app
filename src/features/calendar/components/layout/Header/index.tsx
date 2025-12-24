@@ -1,5 +1,10 @@
 'use client'
 
+import { Search } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
+import { useGlobalSearch } from '@/features/search/hooks/use-global-search'
+
 import type { CalendarViewType } from '../../../types/calendar.types'
 
 import { DateNavigator } from './DateNavigator'
@@ -49,9 +54,13 @@ const viewOptions = [
  * - コンテナ: 32px（h-8）
  * - 8pxグリッドシステム準拠
  *
- * **レイアウト**:
- * - 左側: モバイルメニュー + 日付表示
- * - 右側: Today + ナビゲーション矢印 + ViewSwitcher + アクション
+ * **レイアウト（PC）**:
+ * - 左側: 日付表示
+ * - 右側: ViewSwitcher + Today + ナビゲーション矢印 + アクション
+ *
+ * **レイアウト（モバイル）**:
+ * - 左側: メニュー + 日付表示
+ * - 右側: なし（スワイプでナビゲーション、ビュー切り替えはサイドバー）
  */
 export const CalendarHeader = ({
   viewType,
@@ -67,6 +76,8 @@ export const CalendarHeader = ({
   showMiniCalendar = false,
   displayRange,
 }: CalendarHeaderProps) => {
+  const { open: openSearch } = useGlobalSearch()
+
   return (
     <header className="bg-background relative h-12 px-4 py-2">
       <div className="flex h-8 items-center justify-between">
@@ -86,8 +97,38 @@ export const CalendarHeader = ({
           />
         </div>
 
-        {/* 右側: ビュー切り替え + Today + ナビゲーション + アクション */}
-        <div className="flex items-center gap-2">
+        {/* 右側（モバイル）: 検索 + Todayボタン */}
+        <div className="flex items-center gap-1 md:hidden">
+          {/* 検索ボタン */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-foreground size-8"
+            onClick={openSearch}
+            aria-label="検索"
+          >
+            <Search className="size-6" />
+          </Button>
+
+          {/* Todayボタン（今日の日付を表示するカレンダーアイコン風） */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-foreground size-8"
+            onClick={() => onNavigate('today')}
+            aria-label="今日に戻る"
+          >
+            <div className="relative flex size-6 flex-col">
+              <div className="h-1.5 w-full border-b-2 border-current" />
+              <div className="flex flex-1 items-center justify-center">
+                <span className="text-xs leading-none font-semibold">{new Date().getDate()}</span>
+              </div>
+            </div>
+          </Button>
+        </div>
+
+        {/* 右側（PC）: ビュー切り替え + ナビゲーション + アクション */}
+        <div className="hidden items-center gap-2 md:flex">
           {/* ビュー切り替え */}
           <ViewSwitcher
             options={viewOptions}

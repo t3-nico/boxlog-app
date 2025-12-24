@@ -12,6 +12,7 @@ import { usePlanMutations } from '@/features/plans/hooks/usePlanMutations'
 import { useplans } from '@/features/plans/hooks/usePlans'
 import { useDateFormat } from '@/features/settings/hooks/useDateFormat'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { useHapticFeedback } from '@/hooks/useHapticFeedback'
 
 interface DnDProviderProps {
   children: React.ReactNode
@@ -40,6 +41,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
   const { updatePlan } = usePlanMutations()
   const { timezone } = useCalendarSettingsStore()
   const { formatDate: formatDateWithSettings } = useDateFormat()
+  const { tap, success } = useHapticFeedback()
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dragPreviewTime, setDragPreviewTime] = useState<{ date: string; time?: string } | null>(null)
 
@@ -59,10 +61,15 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
   /**
    * ドラッグ開始時の処理
    */
-  const handleDragStart = useCallback((event: DragStartEvent) => {
-    setActiveId(event.active.id as string)
-    setDragPreviewTime(null) // リセット
-  }, [])
+  const handleDragStart = useCallback(
+    (event: DragStartEvent) => {
+      setActiveId(event.active.id as string)
+      setDragPreviewTime(null) // リセット
+      // ドラッグ開始時の軽いHaptic Feedback
+      tap()
+    },
+    [tap]
+  )
 
   /**
    * ドラッグ移動中の処理（時間表示をリアルタイム更新）
@@ -185,6 +192,8 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
           id: planId,
           data: updateData,
         })
+        // カレンダーへのドロップ成功時のHaptic Feedback
+        success()
       } catch (error) {
         console.error('[DnDProvider] ドロップ処理エラー:', error)
         toast.error(error instanceof Error ? error.message : t('calendar.toast.dropFailed'))
@@ -194,7 +203,7 @@ export const DnDProvider = ({ children }: DnDProviderProps) => {
         setDragPreviewTime(null)
       }
     },
-    [updatePlan, timezone, t]
+    [updatePlan, timezone, t, success]
   )
 
   /**

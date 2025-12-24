@@ -1,10 +1,15 @@
 'use client'
 
+import { MoreHorizontal } from 'lucide-react'
 import type { ReactNode } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { zIndex } from '@/config/ui/z-index'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 import { INSPECTOR_SIZE, useInspectorResize } from '../hooks'
 
@@ -30,6 +35,8 @@ interface InspectorShellProps {
   initialWidth?: number
   /** モーダルモード（デフォルト: false） */
   modal?: boolean
+  /** モバイル用メニューコンテンツ（ドラッグハンドル行に表示） */
+  mobileMenuContent?: ReactNode
 }
 
 /**
@@ -61,15 +68,63 @@ export function InspectorShell({
   resizable = true,
   initialWidth = INSPECTOR_SIZE.default,
   modal = false,
+  mobileMenuContent,
 }: InspectorShellProps) {
+  const isMobile = useMediaQuery('(max-width: 767px)')
   const { inspectorWidth, isResizing, handleMouseDown } = useInspectorResize({
     initialWidth,
-    enabled: displayMode === 'sheet' && resizable,
+    enabled: displayMode === 'sheet' && resizable && !isMobile,
   })
 
   if (!isOpen) return null
 
-  // Sheet mode
+  // モバイル: 下からのDrawer（ボトムシート）
+  if (isMobile) {
+    return (
+      <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <DrawerContent
+          className="bg-popover flex max-h-[85vh] flex-col gap-0 overflow-hidden p-0 [&>div:first-child]:hidden"
+          style={{ zIndex: zIndex.modal }}
+        >
+          <DrawerTitle className="sr-only">{title}</DrawerTitle>
+
+          {/* ドラッグハンドル + メニュー（同じ行） */}
+          <div className="flex h-10 shrink-0 items-center justify-between px-2 pt-2">
+            {/* 左側スペーサー */}
+            <div className="w-10" />
+
+            {/* 中央: ドラッグハンドル */}
+            <div className="bg-muted h-1.5 w-12 rounded-full" />
+
+            {/* 右側: メニュー */}
+            <div className="flex w-10 justify-end">
+              {mobileMenuContent && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-10 focus-visible:ring-0"
+                      aria-label="オプション"
+                    >
+                      <MoreHorizontal className="size-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    {mobileMenuContent}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
+          </div>
+
+          {children}
+        </DrawerContent>
+      </Drawer>
+    )
+  }
+
+  // PC: Sheet mode
   if (displayMode === 'sheet') {
     return (
       <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()} modal={modal}>
@@ -87,7 +142,7 @@ export function InspectorShell({
           {resizable && (
             <div
               onMouseDown={handleMouseDown}
-              className={`hover:bg-primary/50 absolute top-0 left-0 z-20 h-full w-1 cursor-ew-resize ${
+              className={`hover:bg-primary-state-hover absolute top-0 left-0 z-20 h-full w-1 cursor-ew-resize ${
                 isResizing ? 'bg-primary' : ''
               }`}
               style={{ touchAction: 'none' }}
@@ -103,11 +158,11 @@ export function InspectorShell({
     )
   }
 
-  // Dialog/Popover mode
+  // PC: Dialog/Popover mode
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()} modal={modal}>
       <DialogContent
-        className="flex h-[40rem] max-w-[28rem] flex-col gap-0 overflow-hidden p-0"
+        className="flex h-[40rem] w-[95vw] max-w-[28rem] flex-col gap-0 overflow-hidden p-0"
         style={{ zIndex: zIndex.modal }}
         showCloseButton={false}
       >

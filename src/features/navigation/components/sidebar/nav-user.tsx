@@ -32,7 +32,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { createClient } from '@/lib/supabase/client'
 import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'sonner'
@@ -48,7 +47,6 @@ export function NavUser({
 }) {
   const router = useRouter()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
-  const openSettings = useSettingsDialogStore((state) => state.openSettings)
   const t = useTranslations()
   const locale = useLocale()
 
@@ -67,6 +65,11 @@ export function NavUser({
       setIsLoggingOut(false)
     }
   }
+
+  const navigateToSettings = (category: string) => {
+    router.push(`/${locale}/settings/${category}`)
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -104,15 +107,15 @@ export function NavUser({
 
         {/* アカウント関連 */}
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => openSettings('account')}>
+          <DropdownMenuItem onClick={() => navigateToSettings('account')}>
             <UserCircle />
             {t('navUser.account')}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openSettings('subscription')}>
+          <DropdownMenuItem onClick={() => navigateToSettings('subscription')}>
             <Sparkles />
             {t('navUser.upgradePlan')}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openSettings('personalization')}>
+          <DropdownMenuItem onClick={() => navigateToSettings('personalization')}>
             <Palette />
             {t('navUser.personalize')}
           </DropdownMenuItem>
@@ -122,7 +125,7 @@ export function NavUser({
 
         {/* 設定とヘルプ（Sidebarから移動） */}
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => openSettings('general')}>
+          <DropdownMenuItem onClick={() => navigateToSettings('general')}>
             <Settings />
             {t('navUser.settings')}
           </DropdownMenuItem>

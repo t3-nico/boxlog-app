@@ -57,30 +57,58 @@ export function ResizableTableHead({
   const isActive = sortField && currentSortField === sortField
   const Icon = isActive ? (sortDirection === 'asc' ? ArrowUp : ArrowDown) : ArrowUpDown
 
-  // リサイズ開始
-  const handleMouseDown = (e: React.MouseEvent) => {
+  // リサイズ開始（マウス・タッチ共通）
+  const startResize = (startX: number) => {
     if (!resizable) return
 
-    e.preventDefault()
     setIsResizing(true)
-
-    const startX = e.clientX
     const startWidth = width
 
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      const diff = moveEvent.clientX - startX
+    const handleMove = (clientX: number) => {
+      const diff = clientX - startX
       const newWidth = startWidth + diff
       setColumnWidth(columnId, newWidth)
     }
 
-    const handleMouseUp = () => {
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      handleMove(moveEvent.clientX)
+    }
+
+    const handleTouchMove = (moveEvent: TouchEvent) => {
+      if (moveEvent.touches.length !== 1) return
+      const touch = moveEvent.touches[0]
+      if (!touch) return
+      handleMove(touch.clientX)
+    }
+
+    const handleEnd = () => {
       setIsResizing(false)
       document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
+      document.removeEventListener('mouseup', handleEnd)
+      document.removeEventListener('touchmove', handleTouchMove)
+      document.removeEventListener('touchend', handleEnd)
+      document.removeEventListener('touchcancel', handleEnd)
     }
 
     document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
+    document.addEventListener('mouseup', handleEnd)
+    document.addEventListener('touchmove', handleTouchMove, { passive: true })
+    document.addEventListener('touchend', handleEnd)
+    document.addEventListener('touchcancel', handleEnd)
+  }
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!resizable) return
+    e.preventDefault()
+    startResize(e.clientX)
+  }
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!resizable) return
+    if (e.touches.length !== 1) return
+    const touch = e.touches[0]
+    if (!touch) return
+    startResize(touch.clientX)
   }
 
   // ソートハンドラー
@@ -114,11 +142,12 @@ export function ResizableTableHead({
         )}
       </div>
 
-      {/* リサイズハンドル */}
+      {/* リサイズハンドル（タッチ対応） */}
       {resizable && (
         <div
           onMouseDown={handleMouseDown}
-          className={`hover:bg-primary absolute top-0 right-0 h-full w-1 cursor-col-resize transition-colors ${
+          onTouchStart={handleTouchStart}
+          className={`hover:bg-primary absolute top-0 right-0 h-full w-2 cursor-col-resize touch-none transition-colors sm:w-1 ${
             isResizing ? 'bg-primary' : 'bg-transparent'
           }`}
           style={{ userSelect: 'none' }}

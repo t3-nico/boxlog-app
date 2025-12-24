@@ -50,6 +50,7 @@
       "twoFactorPrompt": "サインイン時に認証コードを要求します",
       "twoFactorActive": "2要素認証が有効",
       "twoFactorProtection": "アカウントが追加のセキュリティ層で保護されています。",
+      "session": "セッション",
       "dangerZone": "危険な操作",
       "dangerZoneDesc": "取り消すことのできない破壊的なアクション",
       "privacy": "プライバシー",
@@ -210,6 +211,11 @@
     "common": {
       "saved": "設定を保存しました",
       "saveFailed": "保存に失敗しました"
+    },
+    "mobile": {
+      "description": "アプリの設定を変更します",
+      "darkMode": "ダークモード",
+      "comingSoon": "この設定は準備中です"
     },
     "dialog": {
       "title": "設定",

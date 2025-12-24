@@ -324,6 +324,8 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
         <input
           ref={inputRef}
           type="text"
+          inputMode="numeric"
+          enterKeyHint="done"
           role="combobox"
           aria-expanded={isOpen}
           aria-controls="time-listbox"
@@ -360,9 +362,11 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
               id="time-listbox"
               ref={listRef}
               role="listbox"
-              className="scrollbar-thin max-h-52 overflow-y-auto p-1"
+              className="scrollbar-thin max-h-52 overflow-y-auto overscroll-contain p-1"
               style={{
                 scrollbarColor: 'color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) transparent',
+                touchAction: 'pan-y', // モバイルUX: 縦スクロールを許可
+                scrollSnapType: 'y mandatory', // スナップスクロール
               }}
             >
               {filteredOptions.map((option, index) => (
@@ -374,6 +378,7 @@ export function TimeSelect({ value, onChange, label, disabled = false, minTime }
                   className={`hover:bg-state-hover w-full rounded-sm px-2 py-1.5 text-left text-sm ${
                     index === highlightedIndex ? 'bg-state-selected' : option === value ? 'bg-state-hover' : ''
                   }`}
+                  style={{ scrollSnapAlign: 'center' }}
                   onClick={() => handleOptionClick(option)}
                   onMouseEnter={() => setHighlightedIndex(index)}
                 >

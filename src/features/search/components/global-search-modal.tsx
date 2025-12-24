@@ -34,7 +34,6 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { useTheme } from '@/contexts/theme-context'
 import { usePlans } from '@/features/plans/hooks'
 import { usePlanInspectorStore } from '@/features/plans/stores/usePlanInspectorStore'
-import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import { useTagCreateModalStore } from '@/features/tags/stores/useTagCreateModalStore'
 import { useTagStore } from '@/features/tags/stores/useTagStore'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
@@ -143,12 +142,15 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   // Get actions from stores
   const openPlanInspector = usePlanInspectorStore((state) => state.openInspector)
   const openTagCreateModal = useTagCreateModalStore((state) => state.openModal)
-  const openSettings = useSettingsDialogStore((state) => state.openSettings)
   const { resolvedTheme, setTheme } = useTheme()
 
   const toggleTheme = useCallback(() => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
   }, [resolvedTheme, setTheme])
+
+  const navigateToSettings = useCallback(() => {
+    router.push('/settings')
+  }, [router])
 
   // Register default commands on mount
   useEffect(() => {
@@ -156,10 +158,10 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
       router,
       openPlanInspector,
       openTagCreateModal,
-      openSettings,
+      navigateToSettings,
       toggleTheme,
     })
-  }, [router, openPlanInspector, openTagCreateModal, openSettings, toggleTheme])
+  }, [router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme])
 
   // Perform search when debounced query changes
   useEffect(() => {
@@ -264,14 +266,15 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="!max-w-[42rem] overflow-hidden !p-0" showCloseButton={false}>
+      <DialogContent className="!w-[95vw] !max-w-[42rem] overflow-hidden !p-0 sm:!w-auto" showCloseButton={false}>
         <VisuallyHidden>
           <DialogTitle>グローバル検索</DialogTitle>
         </VisuallyHidden>
         <Command className="[&_[cmdk-group-heading]]:text-muted-foreground !rounded-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-2">
           <div className="relative">
             <CommandInput placeholder="検索... (コマンド、プラン、タグ)" value={query} onValueChange={setQuery} />
-            <div className="absolute top-1/2 right-3 flex -translate-y-1/2 items-center gap-1">
+            {/* ESCバッジ（PCのみ表示） */}
+            <div className="absolute top-1/2 right-3 hidden -translate-y-1/2 items-center gap-1 md:flex">
               <kbd className="bg-surface-container text-muted-foreground inline-flex h-6 items-center gap-1 rounded border px-2 font-mono text-xs font-medium opacity-100 select-none">
                 ESC
               </kbd>
@@ -382,8 +385,9 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                           </span>
                         )}
                       </div>
+                      {/* ショートカット表示（PCのみ） */}
                       {result.shortcut && result.shortcut.length > 0 && (
-                        <div className="flex shrink-0 items-center gap-1">
+                        <div className="hidden shrink-0 items-center gap-1 md:flex">
                           {result.shortcut.map((key, index) => (
                             <kbd
                               key={index}

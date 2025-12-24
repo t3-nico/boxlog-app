@@ -25,10 +25,11 @@ interface TablePaginationProps {
 /**
  * 共通テーブルページネーションコンポーネント
  *
- * ページ移動と表示件数変更の機能を提供
- * - ページ移動ボタン（最初/前/次/最後）
- * - 表示件数選択
- * - 現在のページ情報表示
+ * **設計方針:**
+ * - デスクトップ専用（モバイルでは親コンポーネントで非表示にする）
+ * - タスク管理アプリでは通常データ量が少ないため、モバイルでは全件表示が適切
+ *
+ * @see https://baymard.com/blog/mobile-app-ux-trends
  */
 export function TablePagination({
   totalItems,

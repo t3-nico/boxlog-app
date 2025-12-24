@@ -1,5 +1,7 @@
 'use client'
 
+import { MEDIA_QUERIES } from '@/config/ui/breakpoints'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useTheme } from 'next-themes'
 import { Toaster as Sonner } from 'sonner'
 
@@ -31,11 +33,12 @@ type ToasterProps = React.ComponentProps<typeof Sonner>
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme()
   const validTheme = theme === 'light' || theme === 'dark' || theme === 'system' ? theme : 'system'
+  const isMobile = useMediaQuery(MEDIA_QUERIES.mobile)
 
   return (
     <Sonner
       theme={validTheme}
-      position="bottom-right"
+      position={isMobile ? 'top-center' : 'bottom-right'}
       richColors
       expand
       duration={6000}

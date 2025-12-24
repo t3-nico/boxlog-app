@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 
-import { format, isToday } from 'date-fns'
+import { format, getWeek, isToday } from 'date-fns'
 
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
@@ -119,6 +119,11 @@ export const FiveDayView = ({
   // 共通フック使用してスタイル計算
   const planStyles = usePlanStyles(planPositions)
 
+  // 週番号を計算（中央の日付から）
+  const weekNumber = useMemo(() => {
+    return getWeek(displayCenterDate, { weekStartsOn: 1 })
+  }, [displayCenterDate])
+
   // TimeGrid が空き時間クリック処理を担当するため、この関数は不要
 
   // Scroll to current time on initial render (only if center date is today)
@@ -148,7 +153,7 @@ export const FiveDayView = ({
     <CalendarViewAnimation viewType="5day">
       <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
         {/* 固定日付ヘッダー */}
-        <CalendarDateHeader header={headerComponent} showTimezone={false} />
+        <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
 
         {/* タイムゾーン＋未完了プランバッジエリア */}
         <OverdueSection dates={displayDates} plans={allPlans || plans} timezone={timezone} />

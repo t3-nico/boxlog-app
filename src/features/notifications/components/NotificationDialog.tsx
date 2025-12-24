@@ -1,6 +1,6 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -8,10 +8,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 import type { NotificationType } from '@/schemas/notifications'
 import { Loader2, Settings, Trash2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 import { useNotificationMutations, useNotificationsList } from '../hooks/useNotificationsData'
 import { useNotificationDialogStore } from '../stores/useNotificationDialogStore'
@@ -41,13 +40,11 @@ const TYPE_FILTER_OPTIONS: Array<{ value: NotificationType | 'all'; labelKey: st
 ]
 
 export function NotificationDialog() {
-  const pathname = usePathname()
   const router = useRouter()
-  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
+  const locale = useLocale()
   const t = useTranslations()
 
   const { isOpen, close } = useNotificationDialogStore()
-  const { openSettings } = useSettingsDialogStore()
 
   // タイプフィルター
   const [typeFilter, setTypeFilter] = useState<NotificationType | 'all'>('all')
@@ -117,8 +114,8 @@ export function NotificationDialog() {
 
   const handleOpenSettings = useCallback(() => {
     close()
-    openSettings('notifications')
-  }, [close, openSettings])
+    router.push(`/${locale}/settings/notifications`)
+  }, [close, locale, router])
 
   // 通知リストのレンダリング
   const renderNotificationList = (
@@ -181,7 +178,7 @@ export function NotificationDialog() {
                     isRead={notification.is_read}
                     createdAt={notification.created_at}
                     actionUrl={notification.action_url}
-                    locale={localeFromPath}
+                    locale={locale as 'ja' | 'en'}
                     onMarkAsRead={handleMarkAsRead}
                     onDelete={handleDelete}
                     onNavigate={handleNavigate}

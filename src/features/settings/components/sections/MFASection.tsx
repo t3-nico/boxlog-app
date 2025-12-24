@@ -34,11 +34,7 @@ export function MFASection() {
     <SettingsCard title={t('settings.account.twoFactor')} isSaving={isLoading}>
       <div className="space-y-4">
         {/* エラー・成功メッセージ */}
-        {error && (
-          <div className="border-destructive bg-destructive/12 text-destructive rounded-lg border p-3 text-sm">
-            {error}
-          </div>
-        )}
+        {error && <div className="bg-destructive/10 text-destructive rounded-lg p-3 text-sm">{error}</div>}
         {success && (
           <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-3 text-sm text-green-700 dark:text-green-400">
             {success}
@@ -54,7 +50,7 @@ export function MFASection() {
                 認証アプリを使って、ログイン時に追加のセキュリティ層を追加します
               </p>
             </div>
-            <Button type="button" variant="outline" onClick={enrollMFA} disabled={isLoading}>
+            <Button type="button" variant="ghost" onClick={enrollMFA} disabled={isLoading}>
               {isLoading ? '読み込み中...' : 'MFAを有効にする'}
             </Button>
           </div>
@@ -62,7 +58,7 @@ export function MFASection() {
 
         {/* MFA設定中の表示 */}
         {!hasMFA && showMFASetup && qrCode && (
-          <div className="border-border bg-card space-y-4 rounded-lg border p-6">
+          <div className="bg-muted space-y-4 rounded-lg p-6">
             <div>
               <h3 className="mb-2 text-lg font-semibold">2段階認証を設定</h3>
               <p className="text-muted-foreground text-sm">
@@ -73,7 +69,7 @@ export function MFASection() {
             <div className="space-y-4">
               <div>
                 <p className="mb-2 text-sm font-medium">1. QRコードをスキャン</p>
-                <div className="border-border flex justify-center rounded-lg border bg-white p-4">
+                <div className="flex justify-center rounded-lg bg-white p-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={qrCode} alt="QR Code" className="h-48 w-48" />
                 </div>
@@ -105,7 +101,7 @@ export function MFASection() {
                   <Button onClick={verifyMFA} disabled={isLoading || verificationCode.length !== 6}>
                     {isLoading ? '検証中...' : '確認'}
                   </Button>
-                  <Button variant="outline" onClick={cancelSetup}>
+                  <Button variant="ghost" onClick={cancelSetup}>
                     キャンセル
                   </Button>
                 </div>

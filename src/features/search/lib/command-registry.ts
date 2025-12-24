@@ -124,13 +124,13 @@ interface CommandActions {
   router: { push: (path: string) => void }
   openPlanInspector: (planId: string | null) => void
   openTagCreateModal: () => void
-  openSettings: () => void
+  navigateToSettings: () => void
   toggleTheme: () => void
 }
 
 // Default commands that are always available
 export const registerDefaultCommands = (actions: CommandActions) => {
-  const { router, openPlanInspector, openTagCreateModal, openSettings, toggleTheme } = actions
+  const { router, openPlanInspector, openTagCreateModal, navigateToSettings, toggleTheme } = actions
 
   const defaultCommands: Command[] = [
     // Navigation commands
@@ -205,7 +205,7 @@ export const registerDefaultCommands = (actions: CommandActions) => {
       icon: 'settings',
       shortcut: ['⌘', ','],
       keywords: ['settings', 'preferences', '設定', '環境設定'],
-      action: () => openSettings(),
+      action: () => navigateToSettings(),
     },
     {
       id: 'action:toggle-theme',

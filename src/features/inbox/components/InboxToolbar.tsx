@@ -3,14 +3,13 @@
 import { KanbanToolbar } from '@/features/board/components/KanbanToolbar'
 
 import { useInboxViewStore } from '../stores/useInboxViewStore'
-import { DisplayModeSwitcher } from './DisplayModeSwitcher'
 
 /**
  * Inboxツールバー
  *
  * 表示モードに応じて適切なツールを表示:
  * - Board: KanbanToolbar（フィルター・検索）
- * - Table: SavedViewsSelector + GroupBySelector
+ * - Table: （未実装）
  *
  * **デザイン仕様**:
  * - 全体の高さ: 48px固定（h-12）
@@ -21,15 +20,16 @@ import { DisplayModeSwitcher } from './DisplayModeSwitcher'
 export function InboxToolbar() {
   const { displayMode } = useInboxViewStore()
 
-  return (
-    <div className="bg-background flex h-12 shrink-0 items-center justify-between px-4 py-2">
-      {/* 左側: 表示モード切り替え */}
-      <div className="flex h-8 items-center">
-        <DisplayModeSwitcher />
-      </div>
+  // Tableモードの場合はツールバーを表示しない
+  if (displayMode === 'table') {
+    return null
+  }
 
-      {/* 右側: モード別ツール */}
-      <div className="flex h-8 items-center">{displayMode === 'board' ? <KanbanToolbar /> : null}</div>
+  return (
+    <div className="bg-background flex h-12 shrink-0 items-center justify-end px-4 py-2">
+      <div className="flex h-8 items-center">
+        <KanbanToolbar />
+      </div>
     </div>
   )
 }

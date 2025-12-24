@@ -28,6 +28,7 @@ import {
 } from '@/features/tags/hooks/use-tag-groups'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import type { TagGroup } from '@/features/tags/types'
+import { useHapticFeedback } from '@/hooks/useHapticFeedback'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
@@ -58,6 +59,7 @@ export function TagsSidebar({
   const router = useRouter()
   const pathname = usePathname()
   const tagsNav = useTagsNavigation()
+  const { selection } = useHapticFeedback()
   const { setIsCreatingGroup } = useTagsPageContext()
   const { data: groups = [] } = useTagGroups()
   const { data: allTags = [] } = useTags(true) // タグ数カウント用
@@ -371,24 +373,29 @@ export function TagsSidebar({
   }, [groups, manualOrder])
 
   // ドラッグ終了時のハンドラ
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event
 
-    if (!over) return
+      if (!over) return
 
-    // over.id は "drop-xxx" 形式かもしれないので、グループIDを抽出
-    const overId = String(over.id).startsWith('drop-') ? String(over.id).slice(5) : String(over.id)
-    const activeId = String(active.id)
+      // over.id は "drop-xxx" 形式かもしれないので、グループIDを抽出
+      const overId = String(over.id).startsWith('drop-') ? String(over.id).slice(5) : String(over.id)
+      const activeId = String(active.id)
 
-    if (activeId !== overId) {
-      setManualOrder((prev) => {
-        const oldIndex = prev.indexOf(activeId)
-        const newIndex = prev.indexOf(overId)
-        if (oldIndex === -1 || newIndex === -1) return prev
-        return arrayMove(prev, oldIndex, newIndex)
-      })
-    }
-  }, [])
+      if (activeId !== overId) {
+        setManualOrder((prev) => {
+          const oldIndex = prev.indexOf(activeId)
+          const newIndex = prev.indexOf(overId)
+          if (oldIndex === -1 || newIndex === -1) return prev
+          return arrayMove(prev, oldIndex, newIndex)
+        })
+        // グループ並べ替え完了時のHaptic Feedback
+        selection()
+      }
+    },
+    [selection]
+  )
 
   // ソート済みグループ
   const sortedGroups = useMemo(() => {
@@ -442,7 +449,7 @@ export function TagsSidebar({
   return (
     <SidebarShell title={t('sidebar.navigation.tags')}>
       {/* コンテンツ */}
-      <nav className="flex-1 overflow-x-hidden overflow-y-auto px-2 py-2">
+      <nav className="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto px-2 py-2">
         <div>
           {/* すべてのタグ（アーカイブから復元のドロップゾーン） */}
           <AllTagsDropZone isActive={isAllTagsActive} activeTagsCount={activeTagsCount} onClick={handleAllTagsClick} />

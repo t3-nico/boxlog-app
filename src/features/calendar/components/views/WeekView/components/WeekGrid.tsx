@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { isToday } from 'date-fns'
+import { getWeek, isToday } from 'date-fns'
 
 import { cn } from '@/lib/utils'
 
@@ -66,6 +66,13 @@ export const WeekGrid = ({
   // CurrentTimeLine表示のための日付配列（weekDatesをそのまま使用）
   const currentTimeDisplayDates = React.useMemo(() => weekDates, [weekDates])
 
+  // 週番号を計算（週の最初の日から）
+  const weekNumber = React.useMemo(() => {
+    const firstDate = weekDates[0]
+    if (!firstDate) return undefined
+    return getWeek(firstDate, { weekStartsOn: 1 })
+  }, [weekDates])
+
   const headerComponent = (
     <div className="bg-background flex h-8 flex-1">
       {/* 7日分の日付ヘッダー */}
@@ -93,7 +100,7 @@ export const WeekGrid = ({
   return (
     <div className={cn('bg-background flex min-h-0 flex-1 flex-col', className)}>
       {/* 固定日付ヘッダー */}
-      <CalendarDateHeader header={headerComponent} showTimezone={false} />
+      <CalendarDateHeader header={headerComponent} showTimezone={false} weekNumber={weekNumber} />
 
       {/* タイムゾーン＋未完了プランバッジエリア */}
       <OverdueSection dates={weekDates} plans={allPlans || events} timezone={timezone} />

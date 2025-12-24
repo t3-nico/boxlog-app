@@ -10,6 +10,7 @@ import { InboxSidebarWrapper } from '@/features/inbox/components/InboxSidebarWra
 import { AppBar } from '@/features/navigation/components/appbar'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
 import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
+import { SettingsSidebar } from '@/features/settings/components/sidebar'
 import { StatsSidebar } from '@/features/stats'
 import { TagsSidebarWrapper } from '@/features/tags/components/TagsSidebarWrapper'
 
@@ -57,6 +58,7 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
     if (pathname?.startsWith(`/${locale}/inbox`)) return 'inbox'
     if (pathname?.startsWith(`/${locale}/tags`)) return 'tags'
     if (pathname?.startsWith(`/${locale}/stats`)) return 'stats'
+    if (pathname?.startsWith(`/${locale}/settings`)) return 'settings'
     return 'default'
   }, [pathname, locale])
 
@@ -71,6 +73,8 @@ export function DesktopLayout({ children, locale }: DesktopLayoutProps) {
         return TagsSidebarWrapper
       case 'stats':
         return StatsSidebar
+      case 'settings':
+        return SettingsSidebar
       default:
         return AppSidebar
     }

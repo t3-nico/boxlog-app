@@ -112,6 +112,8 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
                 <Input
                   id="new-email"
                   type="email"
+                  inputMode="email"
+                  enterKeyHint="next"
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   placeholder="new@example.com"
@@ -125,6 +127,7 @@ export function EmailChangeDialog({ open, onOpenChange, currentEmail }: EmailCha
                 <Input
                   id="password"
                   type="password"
+                  enterKeyHint="go"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="現在のパスワードを入力"

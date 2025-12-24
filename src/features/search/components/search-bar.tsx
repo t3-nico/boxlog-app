@@ -121,7 +121,7 @@ export function SearchBar({
           <span className="text-muted-foreground truncate">{placeholder}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[25rem] p-0" align="start">
+      <PopoverContent className="w-96 p-0" align="start">
         <Command>
           <CommandInput placeholder={placeholder} value={query} onValueChange={setQuery} />
           <CommandList>
@@ -186,5 +186,5 @@ export function CompactSearchBar({ className }: { className?: string }) {
     )
   }
 
-  return <SearchBar className={cn('w-64', className)} />
+  return <SearchBar className={cn('w-48 sm:w-64', className)} />
 }
