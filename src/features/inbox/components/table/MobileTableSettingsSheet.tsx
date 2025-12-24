@@ -1,15 +1,17 @@
 'use client'
 
+import {
+  MobileSettingsButtonGroup,
+  MobileSettingsChip,
+  MobileSettingsRadioGroup,
+  MobileSettingsSection,
+  MobileSettingsSheet,
+} from '@/components/common'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
 import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Separator } from '@/components/ui/separator'
 import type { PlanStatus } from '@/features/plans/types/plan'
-import { Check, Columns3, Filter, Group, Settings2, SlidersHorizontal, Table2, X } from 'lucide-react'
-import { useState } from 'react'
+import { Columns3, Filter, Group, Settings2, Table2 } from 'lucide-react'
 import { useInboxColumnStore } from '../../stores/useInboxColumnStore'
 import { type DueDateFilter, useInboxFilterStore } from '../../stores/useInboxFilterStore'
 import { useInboxGroupStore } from '../../stores/useInboxGroupStore'
@@ -63,8 +65,6 @@ const GROUP_BY_OPTIONS: Array<{ value: GroupByField; label: string }> = [
  * ```
  */
 export function MobileTableSettingsSheet() {
-  const [open, setOpen] = useState(false)
-
   // 表示モード
   const { displayMode, setDisplayMode } = useInboxViewStore()
 
@@ -98,198 +98,117 @@ export function MobileTableSettingsSheet() {
   const hasActiveSettings = filterCount > 0 || groupBy !== null
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button variant="ghost" size="icon-sm" className="relative shrink-0">
-          <SlidersHorizontal className="size-4" />
-          {hasActiveSettings && <span className="bg-primary absolute -top-0.5 -right-0.5 size-2 rounded-full" />}
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="flex flex-row items-center justify-between">
-          <DrawerTitle>表示設定</DrawerTitle>
+    <MobileSettingsSheet
+      title="表示設定"
+      hasActiveSettings={hasActiveSettings}
+      resetLabel="すべてリセット"
+      onReset={handleResetAll}
+    >
+      {/* 表示モード */}
+      <MobileSettingsSection icon={<Table2 />} title="表示モード">
+        <MobileSettingsButtonGroup
+          options={[
+            { value: 'board', label: 'Board', icon: <Columns3 /> },
+            { value: 'table', label: 'Table', icon: <Table2 /> },
+          ]}
+          value={displayMode}
+          onValueChange={setDisplayMode}
+          fullWidth
+        />
+      </MobileSettingsSection>
+
+      {/* グループ化 */}
+      <MobileSettingsSection icon={<Group />} title="グループ化">
+        <MobileSettingsButtonGroup
+          options={GROUP_BY_OPTIONS.map((opt) => ({
+            value: opt.value,
+            label: opt.label,
+          }))}
+          value={groupBy}
+          onValueChange={setGroupBy}
+        />
+      </MobileSettingsSection>
+
+      {/* フィルター */}
+      <MobileSettingsSection
+        icon={<Filter />}
+        title={
           <div className="flex items-center gap-2">
-            {hasActiveSettings && (
-              <Button variant="ghost" size="sm" onClick={handleResetAll}>
-                すべてリセット
+            <span>フィルター</span>
+            {filterCount > 0 && (
+              <Badge variant="secondary" className="px-1.5 text-xs">
+                {filterCount}
+              </Badge>
+            )}
+            {filterCount > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setStatus([])
+                  setDueDate('all')
+                }}
+                className="ml-auto h-auto p-0 text-xs"
+              >
+                クリア
               </Button>
             )}
-            <DrawerClose asChild>
-              <Button variant="ghost" size="icon-sm">
-                <X className="size-4" />
-              </Button>
-            </DrawerClose>
           </div>
-        </DrawerHeader>
-
-        <div className="max-h-[60vh] overflow-y-auto px-4 pb-8">
-          {/* 表示モード */}
-          <section className="py-4">
-            <div className="mb-3 flex items-center gap-2">
-              <Table2 className="text-muted-foreground size-4" />
-              <h3 className="text-sm font-medium">表示モード</h3>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant={displayMode === 'board' ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => setDisplayMode('board')}
-                className="flex-1"
-              >
-                <Columns3 className="mr-2 size-4" />
-                Board
-              </Button>
-              <Button
-                variant={displayMode === 'table' ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => setDisplayMode('table')}
-                className="flex-1"
-              >
-                <Table2 className="mr-2 size-4" />
-                Table
-              </Button>
-            </div>
-          </section>
-
-          <Separator />
-
-          {/* グループ化 */}
-          <section className="py-4">
-            <div className="mb-3 flex items-center gap-2">
-              <Group className="text-muted-foreground size-4" />
-              <h3 className="text-sm font-medium">グループ化</h3>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {GROUP_BY_OPTIONS.map((option) => (
-                <Button
-                  key={option.value || 'none'}
-                  variant={groupBy === option.value ? 'primary' : 'outline'}
-                  size="sm"
-                  onClick={() => setGroupBy(option.value)}
-                >
-                  {option.label}
-                  {groupBy === option.value && <Check className="ml-1 size-3" />}
-                </Button>
-              ))}
-            </div>
-          </section>
-
-          <Separator />
-
-          {/* フィルター */}
-          <section className="py-4">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Filter className="text-muted-foreground size-4" />
-                <h3 className="text-sm font-medium">フィルター</h3>
-                {filterCount > 0 && (
-                  <Badge variant="secondary" className="px-1.5 text-xs">
-                    {filterCount}
-                  </Badge>
-                )}
-              </div>
-              {filterCount > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setStatus([])
-                    setDueDate('all')
-                  }}
-                  className="h-auto p-0 text-xs"
-                >
-                  クリア
-                </Button>
-              )}
-            </div>
-
-            {/* 期限フィルター */}
-            <div className="mb-4">
-              <Label className="text-muted-foreground mb-2 block text-xs">期限</Label>
-              <RadioGroup value={dueDate} onValueChange={(value) => setDueDate(value as DueDateFilter)}>
-                <div className="flex flex-wrap gap-2">
-                  {DUE_DATE_OPTIONS.map((option) => (
-                    <Label
-                      key={option.value}
-                      htmlFor={`mobile-due-date-${option.value}`}
-                      className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors ${
-                        dueDate === option.value
-                          ? 'border-primary bg-primary/10 text-primary'
-                          : 'border-border hover:bg-muted'
-                      }`}
-                    >
-                      <RadioGroupItem value={option.value} id={`mobile-due-date-${option.value}`} className="sr-only" />
-                      {option.label}
-                    </Label>
-                  ))}
-                </div>
-              </RadioGroup>
-            </div>
-
-            {/* ステータスフィルター */}
-            <div>
-              <Label className="text-muted-foreground mb-2 block text-xs">ステータス</Label>
-              <div className="flex flex-wrap gap-2">
-                {STATUS_OPTIONS.map((option) => (
-                  <Label
-                    key={option.value}
-                    htmlFor={`mobile-status-${option.value}`}
-                    className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors ${
-                      status.includes(option.value)
-                        ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-border hover:bg-muted'
-                    }`}
-                  >
-                    <Checkbox
-                      id={`mobile-status-${option.value}`}
-                      checked={status.includes(option.value)}
-                      onCheckedChange={() => toggleStatus(option.value)}
-                      className="sr-only"
-                    />
-                    {option.label}
-                    {status.includes(option.value) && <Check className="size-3" />}
-                  </Label>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <Separator />
-
-          {/* 列設定 */}
-          <section className="py-4">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Settings2 className="text-muted-foreground size-4" />
-                <h3 className="text-sm font-medium">列の表示</h3>
-              </div>
-              <Button variant="ghost" size="sm" onClick={resetColumns} className="h-auto p-0 text-xs">
-                リセット
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {configurableColumns.map((column) => (
-                <Label
-                  key={column.id}
-                  htmlFor={`mobile-column-${column.id}`}
-                  className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors ${
-                    column.visible ? 'border-primary bg-primary/10 text-primary' : 'border-border hover:bg-muted'
-                  }`}
-                >
-                  <Checkbox
-                    id={`mobile-column-${column.id}`}
-                    checked={column.visible}
-                    onCheckedChange={() => toggleColumnVisibility(column.id)}
-                    className="sr-only"
-                  />
-                  {column.label}
-                  {column.visible && <Check className="size-3" />}
-                </Label>
-              ))}
-            </div>
-          </section>
+        }
+      >
+        {/* 期限フィルター */}
+        <div className="mb-4">
+          <Label className="text-muted-foreground mb-2 block text-xs">期限</Label>
+          <MobileSettingsRadioGroup
+            options={DUE_DATE_OPTIONS}
+            value={dueDate}
+            onValueChange={setDueDate}
+            idPrefix="mobile-due-date"
+          />
         </div>
-      </DrawerContent>
-    </Drawer>
+
+        {/* ステータスフィルター */}
+        <div>
+          <Label className="text-muted-foreground mb-2 block text-xs">ステータス</Label>
+          <div className="flex flex-wrap gap-2">
+            {STATUS_OPTIONS.map((option) => (
+              <MobileSettingsChip
+                key={option.value}
+                id={`mobile-status-${option.value}`}
+                label={option.label}
+                checked={status.includes(option.value)}
+                onCheckedChange={() => toggleStatus(option.value)}
+              />
+            ))}
+          </div>
+        </div>
+      </MobileSettingsSection>
+
+      {/* 列設定 */}
+      <MobileSettingsSection
+        icon={<Settings2 />}
+        title={
+          <div className="flex items-center justify-between">
+            <span>列の表示</span>
+            <Button variant="ghost" size="sm" onClick={resetColumns} className="h-auto p-0 text-xs">
+              リセット
+            </Button>
+          </div>
+        }
+        showSeparator={false}
+      >
+        <div className="flex flex-wrap gap-2">
+          {configurableColumns.map((column) => (
+            <MobileSettingsChip
+              key={column.id}
+              id={`mobile-column-${column.id}`}
+              label={column.label}
+              checked={column.visible}
+              onCheckedChange={() => toggleColumnVisibility(column.id)}
+            />
+          ))}
+        </div>
+      </MobileSettingsSection>
+    </MobileSettingsSheet>
   )
 }
