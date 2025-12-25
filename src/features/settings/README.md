@@ -146,13 +146,15 @@ function SettingsComponent() {
 全コンポーネントは`/src/config/theme`の統一トークンを使用：
 
 ```tsx
-import { background, text, border, typography, spacing } from '@/config/theme'
+import { background, text, border, typography, spacing } from '@/config/theme';
 
 // 設定カードの例
-;<div className={cn('rounded-xl border p-6', background.surface, border.subtle, spacing.component.lg)}>
+<div
+  className={cn('rounded-xl border p-6', background.surface, border.subtle, spacing.component.lg)}
+>
   <h3 className={cn(typography.heading.h6, text.primary)}>設定タイトル</h3>
   <p className={cn(typography.body.small, text.muted)}>設定の説明</p>
-</div>
+</div>;
 ```
 
 ## 状態管理
@@ -163,12 +165,12 @@ import { background, text, border, typography, spacing } from '@/config/theme'
 
 ```typescript
 interface CalendarSettingsStore {
-  timezone: string
-  startOfWeek: number
-  timeFormat: '12h' | '24h'
-  defaultDuration: number
-  updateTimezone: (timezone: string) => void
-  updateTimeFormat: (format: '12h' | '24h') => void
+  timezone: string;
+  startOfWeek: number;
+  timeFormat: '12h' | '24h';
+  defaultDuration: number;
+  updateTimezone: (timezone: string) => void;
+  updateTimeFormat: (format: '12h' | '24h') => void;
 }
 ```
 
@@ -192,18 +194,18 @@ interface CalendarSettingsStore {
 ```typescript
 // 設定値の検証
 const validateSettings = (settings: SettingsData) => {
-  const errors: string[] = []
+  const errors: string[] = [];
 
   if (!settings.timezone) {
-    errors.push('タイムゾーンは必須です')
+    errors.push('タイムゾーンは必須です');
   }
 
   if (settings.defaultDuration < 15) {
-    errors.push('デフォルト期間は15分以上である必要があります')
+    errors.push('デフォルト期間は15分以上である必要があります');
   }
 
-  return errors
-}
+  return errors;
+};
 ```
 
 ## 今後の改善予定

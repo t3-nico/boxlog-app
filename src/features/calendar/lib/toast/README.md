@@ -48,12 +48,12 @@ graph TD
 
 ```typescript
 // 全てのモジュールの re-export
-export * from './types'
-export * from './use-calendar-toast'
+export * from './types';
+export * from './use-calendar-toast';
 // ... 他のモジュール
 
 // デフォルトエクスポート
-export { useCalendarToast as default } from './use-calendar-toast'
+export { useCalendarToast as default } from './use-calendar-toast';
 ```
 
 **役割**: 外部からの単一アクセスポイント
@@ -172,13 +172,13 @@ export const TOAST_GROUPS = { ... }
 ### 基本的な通知
 
 ```typescript
-const toast = useCalendarToast()
+const toast = useCalendarToast();
 
 // シンプルな成功通知
-toast.eventCreated(event)
+toast.eventCreated(event);
 
 // アンドゥ付き削除
-toast.eventDeleted(event, () => restoreEvent(event.id))
+toast.eventDeleted(event, () => restoreEvent(event.id));
 ```
 
 ### Promise統合
@@ -188,33 +188,39 @@ const result = await toast.promise(api.createEvent(data), {
   loading: '作成中...',
   success: (event) => `「${event.title}」を作成しました`,
   error: '作成に失敗しました',
-})
+});
 ```
 
 ### エラーハンドリング
 
 ```typescript
-import { useNetworkErrorHandler } from '@/features/calendar/lib/toast'
+import { useNetworkErrorHandler } from '@/features/calendar/lib/toast';
 
-const { handleError } = useNetworkErrorHandler()
+const { handleError } = useNetworkErrorHandler();
 
 try {
-  await api.updateEvent(event)
-  toast.eventUpdated(event)
+  await api.updateEvent(event);
+  toast.eventUpdated(event);
 } catch (error) {
-  handleError(error, () => api.updateEvent(event)) // 再試行付き
+  handleError(error, () => api.updateEvent(event)); // 再試行付き
 }
 ```
 
 ### 楽観的更新
 
 ```typescript
-import { useOptimisticUpdate } from '@/features/calendar/lib/toast'
+import { useOptimisticUpdate } from '@/features/calendar/lib/toast';
 
-const { moveEvent } = useOptimisticUpdate()
+const { moveEvent } = useOptimisticUpdate();
 
 // UI即座更新 → API → 失敗時自動ロールバック
-await moveEvent(eventId, { startDate: newDate }, { startDate: oldDate }, api.updateEvent, updateEventInUI)
+await moveEvent(
+  eventId,
+  { startDate: newDate },
+  { startDate: oldDate },
+  api.updateEvent,
+  updateEventInUI,
+);
 ```
 
 ## 🔧 統合状況
@@ -269,7 +275,7 @@ export const toastTemplates = {
     description: (opts) => `カスタム説明: ${opts.event?.title}`,
     // ...
   },
-}
+};
 ```
 
 ### スタイルのカスタマイズ
@@ -305,10 +311,10 @@ export const toastTemplates = {
 
 ```typescript
 // Console出力でToast状態確認
-console.log('Toast displayed:', toastId)
+console.log('Toast displayed:', toastId);
 
 // Template適用確認
-console.log('Template used:', template.title)
+console.log('Template used:', template.title);
 ```
 
 ### よくある問題と解決済み事項

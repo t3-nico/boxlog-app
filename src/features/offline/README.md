@@ -38,7 +38,7 @@ BoxLogアプリケーションのオフライン対応・データ同期機能�
 ### 基本的な使用例
 
 ```typescript
-import { offlineManager } from '@/features/offline'
+import { offlineManager } from '@/features/offline';
 
 // アクションの記録
 const actionId = await offlineManager.recordAction({
@@ -48,16 +48,16 @@ const actionId = await offlineManager.recordAction({
     title: 'New Task',
     status: 'todo',
   },
-})
+});
 
 // 保留中のアクション取得
-const pendingActions = await offlineManager.getPendingActions()
-console.log(`${pendingActions.length}件の同期待ちアクション`)
+const pendingActions = await offlineManager.getPendingActions();
+console.log(`${pendingActions.length}件の同期待ちアクション`);
 
 // ステータス確認
-const status = offlineManager.getStatus()
-console.log('オンライン:', status.isOnline)
-console.log('同期中:', status.syncInProgress)
+const status = offlineManager.getStatus();
+console.log('オンライン:', status.isOnline);
+console.log('同期中:', status.syncInProgress);
 ```
 
 ### イベントリスナーの登録
@@ -65,23 +65,23 @@ console.log('同期中:', status.syncInProgress)
 ```typescript
 // オンライン復帰時
 offlineManager.on('online', () => {
-  console.log('ネットワーク接続が復帰しました')
-})
+  console.log('ネットワーク接続が復帰しました');
+});
 
 // 同期完了時
 offlineManager.on('syncCompleted', (event) => {
-  console.log(`${event.processed}件のアクションを同期しました`)
+  console.log(`${event.processed}件のアクションを同期しました`);
   if (event.conflicts > 0) {
-    console.warn(`${event.conflicts}件の競合が検出されました`)
+    console.warn(`${event.conflicts}件の競合が検出されました`);
   }
-})
+});
 
 // 競合検出時
 offlineManager.on('conflictDetected', (event) => {
-  console.warn('競合を検出:', event.conflictId)
+  console.warn('競合を検出:', event.conflictId);
   // ユーザーに競合解決UIを表示
-  showConflictResolutionDialog(event)
-})
+  showConflictResolutionDialog(event);
+});
 ```
 
 ### 競合解決
@@ -90,12 +90,12 @@ offlineManager.on('conflictDetected', (event) => {
 // ローカルデータを優先
 await offlineManager.resolveConflict(conflictId, {
   choice: 'local',
-})
+});
 
 // サーバーデータを優先
 await offlineManager.resolveConflict(conflictId, {
   choice: 'server',
-})
+});
 
 // マージしたデータを使用
 await offlineManager.resolveConflict(conflictId, {
@@ -106,7 +106,7 @@ await offlineManager.resolveConflict(conflictId, {
     status: serverData.status,
     updatedAt: new Date(),
   },
-})
+});
 ```
 
 ### React統合
@@ -135,13 +135,13 @@ function MyComponent() {
 
 ```typescript
 interface OfflineAction<T = unknown> {
-  id: string
-  type: 'create' | 'update' | 'delete'
-  entity: string
-  data: T
-  timestamp: Date
-  syncStatus: 'pending' | 'syncing' | 'completed' | 'conflict'
-  retryCount?: number
+  id: string;
+  type: 'create' | 'update' | 'delete';
+  entity: string;
+  data: T;
+  timestamp: Date;
+  syncStatus: 'pending' | 'syncing' | 'completed' | 'conflict';
+  retryCount?: number;
 }
 ```
 
@@ -149,10 +149,10 @@ interface OfflineAction<T = unknown> {
 
 ```typescript
 interface SyncResult<T = unknown> {
-  success: boolean
-  conflicts?: ConflictData<T>[]
-  serverData?: T
-  error?: string
+  success: boolean;
+  conflicts?: ConflictData<T>[];
+  serverData?: T;
+  error?: string;
 }
 ```
 
@@ -238,10 +238,10 @@ interface SyncResult<T = unknown> {
 
 ```typescript
 {
-  isOnline: boolean
-  isInitialized: boolean
-  syncInProgress: boolean
-  queueSize: number
+  isOnline: boolean;
+  isInitialized: boolean;
+  syncInProgress: boolean;
+  queueSize: number;
 }
 ```
 

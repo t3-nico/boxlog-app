@@ -107,8 +107,8 @@ export function CalendarToolbar() {
 
 ```typescript
 // 特定ネームスペースのみ使用
-const t = await getTranslations({ locale, namespace: 'calendar' })
-t('toolbar.today') // calendar.toolbar.today
+const t = await getTranslations({ locale, namespace: 'calendar' });
+t('toolbar.today'); // calendar.toolbar.today
 ```
 
 ## ネームスペース一覧
@@ -139,7 +139,7 @@ t('toolbar.today') // calendar.toolbar.today
 const NAMESPACES = [
   // ... 既存
   'newNamespace', // 追加
-] as const
+] as const;
 ```
 
 ## 検証スクリプト

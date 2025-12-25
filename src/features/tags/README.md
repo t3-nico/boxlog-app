@@ -73,13 +73,13 @@ src/features/tags/
 
 ```typescript
 interface Tag {
-  id: string
-  name: string
-  color: string
-  parent_id?: string
-  count?: number
-  created_at: string
-  updated_at: string
+  id: string;
+  name: string;
+  color: string;
+  parent_id?: string;
+  count?: number;
+  created_at: string;
+  updated_at: string;
 }
 ```
 
@@ -88,15 +88,15 @@ interface Tag {
 全コンポーネントは`/src/config/theme`の統一トークンを使用：
 
 ```tsx
-import { background, text, border, typography } from '@/config/theme'
+import { background, text, border, typography } from '@/config/theme';
 
 // タグバッジの色適用例
-;<span
+<span
   className={cn('rounded-full border px-3 py-1', typography.body.xs)}
   style={{ backgroundColor: `${tag.color}20`, borderColor: tag.color }}
 >
   {tag.name}
-</span>
+</span>;
 ```
 
 ## 状態管理

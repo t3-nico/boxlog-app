@@ -34,10 +34,10 @@ lib/
 **WCAG準拠のアクセシビリティ機能**。
 
 ```tsx
-import { announceToScreenReader } from '@/lib/accessibility'
+import { announceToScreenReader } from '@/lib/accessibility';
 
 // スクリーンリーダーへのアナウンス
-announceToScreenReader('タスクが作成されました')
+announceToScreenReader('タスクが作成されました');
 ```
 
 ### analytics/ - Vercel Analytics統合
@@ -45,20 +45,20 @@ announceToScreenReader('タスクが作成されました')
 **Vercel Analyticsによるイベントトラッキング**。
 
 ```tsx
-import { trackEvent, trackError } from '@/lib/analytics/vercel-analytics'
+import { trackEvent, trackError } from '@/lib/analytics/vercel-analytics';
 
 // イベント追跡
 trackEvent('task_created', {
   priority: 'high',
   hasDescription: true,
-})
+});
 
 // エラー追跡
 trackError({
   errorCode: 500,
   errorCategory: 'API',
   severity: 'high',
-})
+});
 ```
 
 ### api/ - APIクライアント
@@ -66,13 +66,13 @@ trackError({
 **統一されたAPI呼び出し**。
 
 ```tsx
-import { api } from '@/lib/api'
+import { api } from '@/lib/api';
 
 // GET リクエスト
-const tasks = await api.get<Task[]>('/tasks')
+const tasks = await api.get<Task[]>('/tasks');
 
 // POST リクエスト
-const newTask = await api.post<Task>('/tasks', taskData)
+const newTask = await api.post<Task>('/tasks', taskData);
 
 // エラーハンドリング自動化
 // - リトライ
@@ -85,12 +85,12 @@ const newTask = await api.post<Task>('/tasks', taskData)
 **API・スキーマの破壊的変更を追跡**。
 
 ```tsx
-import { detectBreakingChanges } from '@/lib/breaking-changes'
+import { detectBreakingChanges } from '@/lib/breaking-changes';
 
 // 破壊的変更の検出
-const changes = await detectBreakingChanges(oldSchema, newSchema)
+const changes = await detectBreakingChanges(oldSchema, newSchema);
 if (changes.length > 0) {
-  console.warn('Breaking changes detected:', changes)
+  console.warn('Breaking changes detected:', changes);
 }
 ```
 
@@ -99,11 +99,11 @@ if (changes.length > 0) {
 **データフェッチング用ユーティリティ**。
 
 ```tsx
-import { getReview, getInvoices } from '@/lib/data'
+import { getReview, getInvoices } from '@/lib/data';
 
 // データ取得
-const review = await getReview(reviewId)
-const invoices = await getInvoices(userId)
+const review = await getReview(reviewId);
+const invoices = await getInvoices(userId);
 ```
 
 ### i18n/ - 国際化（多言語対応）
@@ -112,15 +112,15 @@ const invoices = await getInvoices(userId)
 
 ```tsx
 // Server Component
-import { getTranslations } from 'next-intl/server'
-const t = await getTranslations({ locale })
+import { getTranslations } from 'next-intl/server';
+const t = await getTranslations({ locale });
 
 // Client Component
-import { useTranslations } from 'next-intl'
-const t = useTranslations()
+import { useTranslations } from 'next-intl';
+const t = useTranslations();
 
 // 使用例
-t('common.save') // 言語に応じた文字列を取得
+t('common.save'); // 言語に応じた文字列を取得
 ```
 
 **詳細**: [`src/i18n/CLAUDE.md`](../i18n/CLAUDE.md)
@@ -130,12 +130,12 @@ t('common.save') // 言語に応じた文字列を取得
 **構造化ログ出力**。
 
 ```tsx
-import { logger } from '@/lib/logger'
+import { logger } from '@/lib/logger';
 
 // ログレベル別出力
-logger.info('User logged in', { userId, timestamp })
-logger.warn('Rate limit approaching', { remaining: 10 })
-logger.error('Database connection failed', { error, retryCount })
+logger.info('User logged in', { userId, timestamp });
+logger.warn('Rate limit approaching', { remaining: 10 });
+logger.error('Database connection failed', { error, retryCount });
 
 // 開発環境: コンソール出力
 // 本番環境: 外部ログサービス連携
@@ -146,13 +146,13 @@ logger.error('Database connection failed', { error, retryCount })
 **XSS対策、CSRF対策等**。
 
 ```tsx
-import { sanitizeInput, validateCSRFToken } from '@/lib/security'
+import { sanitizeInput, validateCSRFToken } from '@/lib/security';
 
 // XSS対策
-const safeText = sanitizeInput(userInput)
+const safeText = sanitizeInput(userInput);
 
 // CSRFトークン検証
-const isValid = validateCSRFToken(token)
+const isValid = validateCSRFToken(token);
 ```
 
 ### sentry/ - Sentryエラートラッキング
@@ -160,22 +160,22 @@ const isValid = validateCSRFToken(token)
 **Sentryによるエラー監視**。
 
 ```tsx
-import { captureError, captureMessage } from '@/lib/sentry'
+import { captureError, captureMessage } from '@/lib/sentry';
 
 // エラー送信
 try {
-  await riskyOperation()
+  await riskyOperation();
 } catch (error) {
   captureError(error, {
     tags: { feature: 'tasks' },
     context: { userId, taskId },
-  })
+  });
 }
 
 // メッセージ送信
 captureMessage('Unusual activity detected', {
   level: 'warning',
-})
+});
 ```
 
 **詳細**: [docs/integrations/SENTRY.md](../../docs/integrations/SENTRY.md)
@@ -185,16 +185,16 @@ captureMessage('Unusual activity detected', {
 **Supabaseによるデータベースアクセス**。
 
 ```tsx
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase';
 
 // データ取得
-const { data, error } = await supabase.from('tasks').select('*').eq('status', 'todo')
+const { data, error } = await supabase.from('tasks').select('*').eq('status', 'todo');
 
 // データ挿入
-const { data, error } = await supabase.from('tasks').insert(taskData)
+const { data, error } = await supabase.from('tasks').insert(taskData);
 
 // 認証
-const { user } = await supabase.auth.getUser()
+const { user } = await supabase.auth.getUser();
 ```
 
 ### toast - トースト通知（Sonner）
@@ -202,14 +202,14 @@ const { user } = await supabase.auth.getUser()
 **shadcn/ui公式推奨のSonnerによるトースト通知システム**。
 
 ```tsx
-import { toast } from 'sonner'
+import { toast } from 'sonner';
 
 // 基本的な使い方
-toast.success('タスクを作成しました')
-toast.error('タスクの作成に失敗しました')
-toast.warning('注意してください')
-toast.info('お知らせ')
-toast.loading('処理中...')
+toast.success('タスクを作成しました');
+toast.error('タスクの作成に失敗しました');
+toast.warning('注意してください');
+toast.info('お知らせ');
+toast.loading('処理中...');
 
 // オプション付き
 toast.success('保存しました', {
@@ -219,14 +219,14 @@ toast.success('保存しました', {
     label: '元に戻す',
     onClick: () => console.log('Undo'),
   },
-})
+});
 
 // Promise対応
 toast.promise(saveTask(), {
   loading: '保存中...',
   success: '保存完了',
   error: '保存失敗',
-})
+});
 ```
 
 **参考**: https://ui.shadcn.com/docs/components/sonner
@@ -236,17 +236,17 @@ toast.promise(saveTask(), {
 **型安全なAPIクライアント**。
 
 ```tsx
-import { trpc } from '@/lib/trpc/client'
+import { trpc } from '@/lib/trpc/client';
 
 // tRPCフック使用
-const { data: tasks } = trpc.tasks.getAll.useQuery()
-const createTask = trpc.tasks.create.useMutation()
+const { data: tasks } = trpc.tasks.getAll.useQuery();
+const createTask = trpc.tasks.create.useMutation();
 
 // 型が自動推論される
 createTask.mutate({
   title: 'New Task',
   priority: 'high', // 型チェックされる
-})
+});
 ```
 
 **詳細**: [src/server/README.md](../server/README.md)
@@ -256,10 +256,10 @@ createTask.mutate({
 **共通ヘルパー関数**。
 
 ```tsx
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
 
 // className マージ（Tailwind CSS + clsx）
-;<div className={cn('base-class', condition && 'conditional-class')} />
+<div className={cn('base-class', condition && 'conditional-class')} />;
 ```
 
 ### error-handler.ts - エラーハンドリング
@@ -267,15 +267,15 @@ import { cn } from '@/lib/utils'
 **統一エラーハンドリング**。
 
 ```tsx
-import { handleError } from '@/lib/error-handler'
+import { handleError } from '@/lib/error-handler';
 
 try {
-  await riskyOperation()
+  await riskyOperation();
 } catch (error) {
   handleError(error, {
     context: 'task-creation',
     userId,
-  })
+  });
 }
 ```
 
@@ -286,10 +286,10 @@ try {
 **シンプルなログ出力**。
 
 ```tsx
-import { log } from '@/lib/logger'
+import { log } from '@/lib/logger';
 
-log.info('Application started')
-log.error('Failed to connect', { error })
+log.info('Application started');
+log.error('Failed to connect', { error });
 ```
 
 ### performance.ts - パフォーマンス計測
@@ -297,14 +297,14 @@ log.error('Failed to connect', { error })
 **パフォーマンスメトリクス計測**。
 
 ```tsx
-import { measurePerformance } from '@/lib/performance'
+import { measurePerformance } from '@/lib/performance';
 
 // 処理時間計測
 const result = await measurePerformance('task-creation', async () => {
-  return await createTask(taskData)
-})
+  return await createTask(taskData);
+});
 
-console.log(`Duration: ${result.duration}ms`)
+console.log(`Duration: ${result.duration}ms`);
 ```
 
 ---
@@ -316,14 +316,14 @@ console.log(`Duration: ${result.duration}ms`)
 ```tsx
 // ✅ 推奨：純粋関数
 export const calculateTotal = (items: Item[]): number => {
-  return items.reduce((sum, item) => sum + item.price, 0)
-}
+  return items.reduce((sum, item) => sum + item.price, 0);
+};
 
 // ❌ 避ける：副作用を持つ関数
-let globalSum = 0
+let globalSum = 0;
 export const calculateTotal = (items: Item[]) => {
-  globalSum = items.reduce((sum, item) => sum + item.price, 0)
-}
+  globalSum = items.reduce((sum, item) => sum + item.price, 0);
+};
 ```
 
 ### 2. TypeScript厳格型付け
@@ -334,30 +334,30 @@ export const formatCurrency = (amount: number, currency: 'JPY' | 'USD'): string 
   return new Intl.NumberFormat('ja-JP', {
     style: 'currency',
     currency,
-  }).format(amount)
-}
+  }).format(amount);
+};
 
 // ❌ any型禁止
-export const formatCurrency = (amount: any, currency: any): string => {}
+export const formatCurrency = (amount: any, currency: any): string => {};
 ```
 
 ### 3. エラーハンドリング
 
 ```tsx
-import { handleError } from '@/lib/error-handler'
+import { handleError } from '@/lib/error-handler';
 
 export const fetchUserData = async (userId: string): Promise<User> => {
   try {
-    const response = await api.get<User>(`/users/${userId}`)
-    return response
+    const response = await api.get<User>(`/users/${userId}`);
+    return response;
   } catch (error) {
     handleError(error, {
       context: { userId },
       operation: 'fetchUserData',
-    })
-    throw error
+    });
+    throw error;
   }
-}
+};
 ```
 
 ---
@@ -368,18 +368,18 @@ export const fetchUserData = async (userId: string): Promise<User> => {
 
 ```tsx
 // lib/utils.test.ts
-import { describe, it, expect } from 'vitest'
-import { cn } from './utils'
+import { describe, it, expect } from 'vitest';
+import { cn } from './utils';
 
 describe('cn', () => {
   it('should merge classnames correctly', () => {
-    expect(cn('base', 'additional')).toBe('base additional')
-  })
+    expect(cn('base', 'additional')).toBe('base additional');
+  });
 
   it('should handle conditional classes', () => {
-    expect(cn('base', false && 'hidden', true && 'visible')).toBe('base visible')
-  })
-})
+    expect(cn('base', false && 'hidden', true && 'visible')).toBe('base visible');
+  });
+});
 ```
 
 ---
@@ -415,18 +415,18 @@ describe('cn', () => {
 
 ```tsx
 // ❌ any型の使用禁止
-export const badFunction = (data: any) => {}
+export const badFunction = (data: any) => {};
 
 // ❌ 副作用のある関数
-let globalState = {}
+let globalState = {};
 export const badFunction = (data: any) => {
-  globalState = data // NG
-}
+  globalState = data; // NG
+};
 
 // ❌ エラーハンドリングの省略
 export const badFunction = async () => {
-  return await riskyOperation() // エラーハンドリングなし
-}
+  return await riskyOperation(); // エラーハンドリングなし
+};
 ```
 
 ### ✅ ベストプラクティス
@@ -434,23 +434,23 @@ export const badFunction = async () => {
 ```tsx
 // ✅ 厳密な型定義
 export const goodFunction = (data: DataType): ReturnType => {
-  return processData(data)
-}
+  return processData(data);
+};
 
 // ✅ 純粋関数
 export const goodFunction = (input: string): string => {
-  return input.toUpperCase()
-}
+  return input.toUpperCase();
+};
 
 // ✅ エラーハンドリング
 export const goodFunction = async (): Promise<Result> => {
   try {
-    return await riskyOperation()
+    return await riskyOperation();
   } catch (error) {
-    handleError(error)
-    throw error
+    handleError(error);
+    throw error;
   }
-}
+};
 ```
 
 ---

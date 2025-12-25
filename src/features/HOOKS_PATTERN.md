@@ -5,8 +5,8 @@ tRPCカスタムフックの統一された実装パターンです。
 ## 推奨パターン
 
 ```typescript
-import { api } from '@/lib/trpc'
-import { cacheStrategies } from '@/lib/tanstack-query/cache-config'
+import { api } from '@/lib/trpc';
+import { cacheStrategies } from '@/lib/tanstack-query/cache-config';
 
 /**
  * データ取得フック
@@ -19,33 +19,33 @@ export function useItems(filters?: ItemFilters, options?: { enabled?: boolean })
     ...cacheStrategies.items, // キャッシュ戦略を適用
     retry: 1, // リトライ設定
     ...options,
-  })
+  });
 }
 
 /**
  * ミューテーションフック
  */
 export function useItemMutations() {
-  const utils = api.useUtils()
+  const utils = api.useUtils();
 
   // キャッシュ無効化ヘルパー
   const invalidateItems = () => {
-    void utils.items.list.invalidate()
-  }
+    void utils.items.list.invalidate();
+  };
 
   const createItem = api.items.create.useMutation({
     onSuccess: (newItem) => {
       // Toast通知
-      toast.success('作成しました')
+      toast.success('作成しました');
       // キャッシュ無効化
-      invalidateItems()
+      invalidateItems();
     },
     onError: (error) => {
-      toast.error('作成に失敗しました')
+      toast.error('作成に失敗しました');
     },
-  })
+  });
 
-  return { createItem }
+  return { createItem };
 }
 ```
 

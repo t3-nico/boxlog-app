@@ -121,7 +121,7 @@ src/components/layout/sidebar/
 AppBarのボタンで開閉
 
 ```typescript
-const { isSidebarOpen } = useNavigationStore()
+const { isSidebarOpen } = useNavigationStore();
 // isSidebarOpen が false の場合、Sidebar は null を返す
 ```
 
@@ -136,7 +136,7 @@ CommonSidebarがデフォルトでページ名を表示
 ```typescript
 const {
   isSidebarOpen, // Sidebar開閉状態
-} = useNavigationStore()
+} = useNavigationStore();
 ```
 
 ## 🚫 Sidebarでやらないこと

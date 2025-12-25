@@ -40,8 +40,8 @@ src/features/auth/
 const defaultUser = {
   id: `local-user-${Date.now()}`,
   email: 'user@localhost',
-}
-localStorage.setItem('boxlog-user', JSON.stringify(defaultUser))
+};
+localStorage.setItem('boxlog-user', JSON.stringify(defaultUser));
 ```
 
 #### 将来のSupabase統合（予定）
@@ -56,14 +56,14 @@ localStorage.setItem('boxlog-user', JSON.stringify(defaultUser))
 #### AuthGuard コンポーネント
 
 ```tsx
-import { AuthGuard } from '@/features/auth'
+import { AuthGuard } from '@/features/auth';
 
 export default function ProtectedPage() {
   return (
     <AuthGuard>
       <YourProtectedContent />
     </AuthGuard>
-  )
+  );
 }
 ```
 
@@ -79,21 +79,21 @@ export default function ProtectedPage() {
 #### AuthProvider
 
 ```tsx
-import { AuthProvider } from '@/features/auth'
+import { AuthProvider } from '@/features/auth';
 
 function App() {
   return (
     <AuthProvider>
       <YourApp />
     </AuthProvider>
-  )
+  );
 }
 ```
 
 #### useAuthContext フック
 
 ```tsx
-import { useAuthContext } from '@/features/auth'
+import { useAuthContext } from '@/features/auth';
 
 function Component() {
   const {
@@ -107,7 +107,7 @@ function Component() {
     resetPassword, // パスワードリセット
     updatePassword, // パスワード更新
     clearError, // エラークリア
-  } = useAuthContext()
+  } = useAuthContext();
 
   // ...
 }
@@ -153,9 +153,9 @@ RATE_LIMIT: {
 ### パスワード検証
 
 ```typescript
-import { validatePassword } from '@/features/auth'
+import { validatePassword } from '@/features/auth';
 
-const result = validatePassword('MyPass123')
+const result = validatePassword('MyPass123');
 // {
 //   isValid: true,
 //   errors: []
@@ -165,19 +165,19 @@ const result = validatePassword('MyPass123')
 ### メールアドレス検証
 
 ```typescript
-import { validateEmail } from '@/features/auth'
+import { validateEmail } from '@/features/auth';
 
-validateEmail('user@example.com') // true
-validateEmail('invalid-email') // false
+validateEmail('user@example.com'); // true
+validateEmail('invalid-email'); // false
 ```
 
 ### セッション有効期限チェック
 
 ```typescript
-import { isSessionExpiringSoon } from '@/features/auth'
+import { isSessionExpiringSoon } from '@/features/auth';
 
-const expiresAt = Math.floor(Date.now() / 1000) + 200 // 200秒後
-isSessionExpiringSoon(expiresAt) // true (5分以内)
+const expiresAt = Math.floor(Date.now() / 1000) + 200; // 200秒後
+isSessionExpiringSoon(expiresAt); // true (5分以内)
 ```
 
 ## 📦 エクスポート
@@ -185,26 +185,26 @@ isSessionExpiringSoon(expiresAt) // true (5分以内)
 ### コンポーネント
 
 ```typescript
-export { AuthForm } from './components/AuthForm'
-export { AuthGuard } from './components/AuthGuard'
-export { AuthLayout } from './components/AuthLayout'
-export { LoginForm } from './components/LoginForm'
-export { PasswordResetForm } from './components/PasswordResetForm'
-export { default as ProtectedRoute } from './components/ProtectedRoute'
-export { SignupForm } from './components/SignupForm'
+export { AuthForm } from './components/AuthForm';
+export { AuthGuard } from './components/AuthGuard';
+export { AuthLayout } from './components/AuthLayout';
+export { LoginForm } from './components/LoginForm';
+export { PasswordResetForm } from './components/PasswordResetForm';
+export { default as ProtectedRoute } from './components/ProtectedRoute';
+export { SignupForm } from './components/SignupForm';
 ```
 
 ### Context & Hooks
 
 ```typescript
-export { AuthProvider, useAuthContext } from './contexts/AuthContext'
-export { useAuth } from './hooks/useAuth'
+export { AuthProvider, useAuthContext } from './contexts/AuthContext';
+export { useAuth } from './hooks/useAuth';
 ```
 
 ### 設定
 
 ```typescript
-export { AUTH_CONFIG as authConfig } from './lib/auth-config'
+export { AUTH_CONFIG as authConfig } from './lib/auth-config';
 ```
 
 ## 🚨 エラーハンドリング
@@ -228,14 +228,14 @@ ERROR_MESSAGES: {
 ### エラー処理例
 
 ```tsx
-const { error, clearError } = useAuthContext()
+const { error, clearError } = useAuthContext();
 
 useEffect(() => {
   if (error) {
-    toast.error(error)
-    clearError()
+    toast.error(error);
+    clearError();
   }
-}, [error, clearError])
+}, [error, clearError]);
 ```
 
 ## 🧪 テスト

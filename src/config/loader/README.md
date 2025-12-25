@@ -33,47 +33,47 @@ src/config/loader/
 ### 1. 設定の読み込み
 
 ```typescript
-import { loadConfig } from '@/config/loader'
+import { loadConfig } from '@/config/loader';
 
 // デフォルト設定で読み込み
-const result = await loadConfig()
+const result = await loadConfig();
 
 if (result.success) {
-  console.log('App name:', result.data.app.name)
-  console.log('Database host:', result.data.database.host)
+  console.log('App name:', result.data.app.name);
+  console.log('Database host:', result.data.database.host);
 } else {
-  console.error('Errors:', result.errors)
+  console.error('Errors:', result.errors);
 }
 ```
 
 ### 2. オプション指定
 
 ```typescript
-import { loadConfig } from '@/config/loader'
+import { loadConfig } from '@/config/loader';
 
 const result = await loadConfig({
   useCache: false, // キャッシュを使わず毎回読み込み
   preferEnvVars: true, // 環境変数を優先
   strict: true, // 厳格モード（警告をエラーに昇格）
-})
+});
 ```
 
 ### 3. ConfigLoaderクラスの直接使用
 
 ```typescript
-import { ConfigLoader } from '@/config/loader'
+import { ConfigLoader } from '@/config/loader';
 
-const loader = new ConfigLoader('production')
-const result = await loader.load()
+const loader = new ConfigLoader('production');
+const result = await loader.load();
 
 // キャッシュクリア
-loader.clearCache()
+loader.clearCache();
 
 // 再読み込み
-const freshResult = await loader.reload()
+const freshResult = await loader.reload();
 
 // 現在の設定取得
-const currentConfig = loader.getCurrentConfig()
+const currentConfig = loader.getCurrentConfig();
 ```
 
 ## 📋 各モジュールの詳細
@@ -91,13 +91,13 @@ export const CONFIG_PATHS = {
     production: './config/production.json',
   },
   local: './config/local.json',
-}
+};
 
 export const ENV_VAR_MAPPINGS = {
   'app.name': 'APP_NAME',
   'database.host': 'DB_HOST',
   // ...
-}
+};
 ```
 
 ### env-parser.ts
@@ -105,18 +105,18 @@ export const ENV_VAR_MAPPINGS = {
 環境変数の適用・型変換
 
 ```typescript
-import { applyEnvironmentVariables, parseEnvValue } from '@/config/loader/env-parser'
+import { applyEnvironmentVariables, parseEnvValue } from '@/config/loader/env-parser';
 
 // 環境変数の型変換
-parseEnvValue('true') // boolean: true
-parseEnvValue('123') // number: 123
-parseEnvValue('1.5') // number: 1.5
-parseEnvValue('{"a":1}') // object: { a: 1 }
-parseEnvValue('text') // string: 'text'
+parseEnvValue('true'); // boolean: true
+parseEnvValue('123'); // number: 123
+parseEnvValue('1.5'); // number: 1.5
+parseEnvValue('{"a":1}'); // object: { a: 1 }
+parseEnvValue('text'); // string: 'text'
 
 // 設定に環境変数を適用
-const config = { app: { name: 'Default' } }
-const updated = applyEnvironmentVariables(config)
+const config = { app: { name: 'Default' } };
+const updated = applyEnvironmentVariables(config);
 // APP_NAME環境変数があれば上書きされる
 ```
 
@@ -125,17 +125,17 @@ const updated = applyEnvironmentVariables(config)
 設定ファイルの安全な読み込み・マージ
 
 ```typescript
-import { loadConfigFile, deepMerge, getDefaultConfig } from '@/config/loader/file-reader'
+import { loadConfigFile, deepMerge, getDefaultConfig } from '@/config/loader/file-reader';
 
 // ファイル読み込み（セキュリティ検証付き）
-const config = await loadConfigFile('./config/base.json')
+const config = await loadConfigFile('./config/base.json');
 
 // 複数設定のマージ
-const merged = deepMerge({ app: { name: 'App1' } }, { app: { version: '1.0' } })
+const merged = deepMerge({ app: { name: 'App1' } }, { app: { version: '1.0' } });
 // 結果: { app: { name: 'App1', version: '1.0' } }
 
 // 環境別デフォルト設定
-const defaults = getDefaultConfig('production')
+const defaults = getDefaultConfig('production');
 ```
 
 ### validator.ts
@@ -143,19 +143,19 @@ const defaults = getDefaultConfig('production')
 Zodスキーマバリデーション・警告生成
 
 ```typescript
-import { validateConfig, generateWarnings } from '@/config/loader/validator'
+import { validateConfig, generateWarnings } from '@/config/loader/validator';
 
 // バリデーション
-const result = validateConfig(config, false, 'production')
+const result = validateConfig(config, false, 'production');
 
 if (!result.success) {
   result.errors.forEach((error) => {
-    console.error(`[${error.path.join('.')}] ${error.message}`)
-  })
+    console.error(`[${error.path.join('.')}] ${error.message}`);
+  });
 }
 
 // 警告のみ取得
-const warnings = generateWarnings(config, false, 'production')
+const warnings = generateWarnings(config, false, 'production');
 // 例: ['Debug mode is enabled in production environment']
 ```
 
@@ -164,11 +164,11 @@ const warnings = generateWarnings(config, false, 'production')
 ### パス検証
 
 ```typescript
-import { isValidConfigPath } from '@/config/loader/file-reader'
+import { isValidConfigPath } from '@/config/loader/file-reader';
 
 // 許可されたパスのみ読み込み可能
-isValidConfigPath('./config/base.json') // true
-isValidConfigPath('../../../etc/passwd') // false
+isValidConfigPath('./config/base.json'); // true
+isValidConfigPath('../../../etc/passwd'); // false
 ```
 
 ### ファイルシステムアクセス
@@ -182,23 +182,23 @@ isValidConfigPath('../../../etc/passwd') // false
 ### 環境別設定読み込み
 
 ```typescript
-import { ConfigLoader } from '@/config/loader'
+import { ConfigLoader } from '@/config/loader';
 
 // 本番環境用ローダー
-const prodLoader = new ConfigLoader('production')
-const prodConfig = await prodLoader.load()
+const prodLoader = new ConfigLoader('production');
+const prodConfig = await prodLoader.load();
 
 // 開発環境用ローダー
-const devLoader = new ConfigLoader('development')
-const devConfig = await devLoader.load()
+const devLoader = new ConfigLoader('development');
+const devConfig = await devLoader.load();
 ```
 
 ### カスタムバリデーション
 
 ```typescript
-import { loadConfig } from '@/config/loader'
+import { loadConfig } from '@/config/loader';
 
-const result = await loadConfig({ strict: true })
+const result = await loadConfig({ strict: true });
 
 if (!result.success) {
   // エラー詳細をログ
@@ -208,34 +208,34 @@ if (!result.success) {
       message: error.message,
       code: error.code,
       input: error.input,
-    })
-  })
-  throw new Error('Configuration validation failed')
+    });
+  });
+  throw new Error('Configuration validation failed');
 }
 
 // 警告がある場合は表示
 if (result.warnings.length > 0) {
-  console.warn('Configuration warnings:')
-  result.warnings.forEach((warning) => console.warn(`  - ${warning}`))
+  console.warn('Configuration warnings:');
+  result.warnings.forEach((warning) => console.warn(`  - ${warning}`));
 }
 ```
 
 ### キャッシュ管理
 
 ```typescript
-import { globalConfigLoader, clearConfigCache } from '@/config/loader'
+import { globalConfigLoader, clearConfigCache } from '@/config/loader';
 
 // 初回読み込み（キャッシュあり）
-const config1 = await globalConfigLoader.load()
+const config1 = await globalConfigLoader.load();
 
 // 2回目は即座に返却（キャッシュから）
-const config2 = await globalConfigLoader.load()
+const config2 = await globalConfigLoader.load();
 
 // キャッシュクリア
-clearConfigCache()
+clearConfigCache();
 
 // 再読み込み
-const config3 = await globalConfigLoader.load()
+const config3 = await globalConfigLoader.load();
 ```
 
 ## 🔗 関連ドキュメント
@@ -256,7 +256,7 @@ const config3 = await globalConfigLoader.load()
 
 ```typescript
 // 変更不要
-import { loadConfig } from '@/config/loader'
+import { loadConfig } from '@/config/loader';
 ```
 
 ### Q3: 新しい環境変数マッピングを追加するには？
@@ -267,7 +267,7 @@ import { loadConfig } from '@/config/loader'
 export const ENV_VAR_MAPPINGS = {
   // ... 既存のマッピング
   'myFeature.apiKey': 'MY_FEATURE_API_KEY',
-} as const
+} as const;
 ```
 
 ### Q4: カスタムバリデーションルールを追加するには？
@@ -277,7 +277,7 @@ export const ENV_VAR_MAPPINGS = {
 ```typescript
 // 新しいセキュリティチェック
 if (environment === 'production' && (config.server as any)?.https === false) {
-  warnings.push('HTTPS is disabled in production')
+  warnings.push('HTTPS is disabled in production');
 }
 ```
 

@@ -35,28 +35,28 @@ src/server/
 
 ```typescript
 // ✅ 正しいパターン（ルーターは薄く）
-import { createPlanService, PlanServiceError } from '@/server/services/plans'
+import { createPlanService, PlanServiceError } from '@/server/services/plans';
 
 export const plansCrudRouter = createTRPCRouter({
   list: protectedProcedure.input(filterSchema).query(async ({ ctx, input }) => {
-    const service = createPlanService(ctx.supabase)
+    const service = createPlanService(ctx.supabase);
     try {
-      return await service.list({ userId: ctx.userId, ...input })
+      return await service.list({ userId: ctx.userId, ...input });
     } catch (error) {
-      handleServiceError(error)
+      handleServiceError(error);
     }
   }),
-})
+});
 
 // ❌ 禁止パターン（ルーターにロジック混在）
 export const badRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {
     // ビジネスロジックがルーター内にある
-    const query = ctx.supabase.from('plans').select('*')
-    if (input?.status) query = query.eq('status', input.status)
+    const query = ctx.supabase.from('plans').select('*');
+    if (input?.status) query = query.eq('status', input.status);
     // ... 長いロジック
   }),
-})
+});
 ```
 
 ### 3. エラーハンドリング
@@ -72,18 +72,18 @@ function handleServiceError(error: unknown): never {
       NOT_FOUND: 'NOT_FOUND',
       CREATE_FAILED: 'INTERNAL_SERVER_ERROR',
       // ...
-    }
+    };
 
     throw new TRPCError({
       code: codeMap[error.code] ?? 'INTERNAL_SERVER_ERROR',
       message: error.message,
-    })
+    });
   }
 
   throw new TRPCError({
     code: 'INTERNAL_SERVER_ERROR',
     message: error instanceof Error ? error.message : 'Unknown error',
-  })
+  });
 }
 ```
 
@@ -99,20 +99,20 @@ export class NotificationService {
   constructor(private readonly supabase: SupabaseClient<Database>) {}
 
   async list(options: ListOptions): Promise<Notification[]> {
-    const { userId, isRead, limit } = options
+    const { userId, isRead, limit } = options;
 
     const { data, error } = await this.supabase
       .from('notifications')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
-      .limit(limit ?? 50)
+      .limit(limit ?? 50);
 
     if (error) {
-      throw new NotificationServiceError('FETCH_FAILED', error.message)
+      throw new NotificationServiceError('FETCH_FAILED', error.message);
     }
 
-    return data
+    return data;
   }
 
   async markAsRead(id: string, userId: string): Promise<void> {
@@ -120,10 +120,10 @@ export class NotificationService {
       .from('notifications')
       .update({ is_read: true })
       .eq('id', id)
-      .eq('user_id', userId)
+      .eq('user_id', userId);
 
     if (error) {
-      throw new NotificationServiceError('UPDATE_FAILED', error.message)
+      throw new NotificationServiceError('UPDATE_FAILED', error.message);
     }
   }
 }
@@ -131,10 +131,10 @@ export class NotificationService {
 export class NotificationServiceError extends Error {
   constructor(
     public readonly code: string,
-    message: string
+    message: string,
   ) {
-    super(message)
-    this.name = 'NotificationServiceError'
+    super(message);
+    this.name = 'NotificationServiceError';
   }
 }
 ```
@@ -143,7 +143,7 @@ export class NotificationServiceError extends Error {
 
 ```typescript
 export function createNotificationService(supabase: SupabaseClient<Database>) {
-  return new NotificationService(supabase)
+  return new NotificationService(supabase);
 }
 ```
 
@@ -207,21 +207,21 @@ export const notificationsRouter = createTRPCRouter({
 
 ```typescript
 // src/server/services/notifications/__tests__/notification-service.test.ts
-import { describe, it, expect, vi } from 'vitest'
-import { NotificationService } from '../notification-service'
-import { createMockSupabase } from '@/test/trpc-test-helpers'
+import { describe, it, expect, vi } from 'vitest';
+import { NotificationService } from '../notification-service';
+import { createMockSupabase } from '@/test/trpc-test-helpers';
 
 describe('NotificationService', () => {
   it('should fetch notifications', async () => {
-    const mockSupabase = createMockSupabase()
+    const mockSupabase = createMockSupabase();
     // モック設定...
 
-    const service = new NotificationService(mockSupabase as any)
-    const result = await service.list({ userId: 'test-user' })
+    const service = new NotificationService(mockSupabase as any);
+    const result = await service.list({ userId: 'test-user' });
 
-    expect(result).toBeDefined()
-  })
-})
+    expect(result).toBeDefined();
+  });
+});
 ```
 
 ### ルーターのテスト
@@ -229,17 +229,17 @@ describe('NotificationService', () => {
 テストヘルパー: `/src/test/trpc-test-helpers.ts`
 
 ```typescript
-import { createAuthenticatedContext, createTestCaller } from '@/test/trpc-test-helpers'
+import { createAuthenticatedContext, createTestCaller } from '@/test/trpc-test-helpers';
 
 describe('notificationsRouter', () => {
   it('should list notifications', async () => {
-    const ctx = createAuthenticatedContext('test-user-id')
-    const caller = createTestCaller(notificationsRouter, ctx)
+    const ctx = createAuthenticatedContext('test-user-id');
+    const caller = createTestCaller(notificationsRouter, ctx);
 
-    const result = await caller.list()
-    expect(result).toBeDefined()
-  })
-})
+    const result = await caller.list();
+    expect(result).toBeDefined();
+  });
+});
 ```
 
 ---

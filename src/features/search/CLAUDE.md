@@ -53,23 +53,23 @@ src/features/search/
 useEffect(() => {
   const down = (e: KeyboardEvent) => {
     if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault()
-      setIsOpen((open) => !open)
+      e.preventDefault();
+      setIsOpen((open) => !open);
     }
-  }
-  document.addEventListener('keydown', down)
-  return () => document.removeEventListener('keydown', down)
-}, [])
+  };
+  document.addEventListener('keydown', down);
+  return () => document.removeEventListener('keydown', down);
+}, []);
 ```
 
 #### データソース
 
 ```tsx
 // Zustandストアから直接取得（リアルタイム）
-const tasks = useTaskStore((state) => state.tasks)
-const tags = useTagStore((state) => state.tags)
-const smartFolders = useSmartFolderStore((state) => state.smartFolders)
-const events = useEventStore((state) => state.events)
+const tasks = useTaskStore((state) => state.tasks);
+const tags = useTagStore((state) => state.tags);
+const smartFolders = useSmartFolderStore((state) => state.smartFolders);
+const events = useEventStore((state) => state.events);
 ```
 
 #### ナビゲーション
@@ -125,20 +125,20 @@ const events = useEventStore((state) => state.events)
 
 ```tsx
 export function useSearchHistory() {
-  const [history, setHistory] = useState<string[]>([])
+  const [history, setHistory] = useState<string[]>([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('search-history')
-    if (saved) setHistory(JSON.parse(saved))
-  }, [])
+    const saved = localStorage.getItem('search-history');
+    if (saved) setHistory(JSON.parse(saved));
+  }, []);
 
   const addToHistory = (query: string) => {
-    const updated = [query, ...history.filter((q) => q !== query)].slice(0, 10)
-    setHistory(updated)
-    localStorage.setItem('search-history', JSON.stringify(updated))
-  }
+    const updated = [query, ...history.filter((q) => q !== query)].slice(0, 10);
+    setHistory(updated);
+    localStorage.setItem('search-history', JSON.stringify(updated));
+  };
 
-  return { history, addToHistory }
+  return { history, addToHistory };
 }
 ```
 
@@ -194,11 +194,11 @@ export function useSearchHistory() {
 **ファイル**: `src/features/navigation/components/sidebar/nav-secondary.tsx`
 
 ```tsx
-const { open: openGlobalSearch } = useGlobalSearch()
+const { open: openGlobalSearch } = useGlobalSearch();
 
 if (item.title === 'Search') {
-  e.preventDefault()
-  openGlobalSearch()
+  e.preventDefault();
+  openGlobalSearch();
 }
 ```
 
@@ -207,8 +207,8 @@ if (item.title === 'Search') {
 **ファイル**: `src/components/common/Providers/Providers.tsx`
 
 ```tsx
-import { GlobalSearchProvider } from '@/features/search'
-;<GlobalSearchProvider>{children}</GlobalSearchProvider>
+import { GlobalSearchProvider } from '@/features/search';
+<GlobalSearchProvider>{children}</GlobalSearchProvider>;
 ```
 
 ### 3. グローバルモーダル配置
@@ -234,8 +234,8 @@ const { isOpen, close } = useGlobalSearch()
 
 ```tsx
 // globals.cssのセマンティックトークンを使用
-className = 'bg-muted text-muted-foreground' // ヘッダー
-className = 'text-foreground' // アイテム
+className = 'bg-muted text-muted-foreground'; // ヘッダー
+className = 'text-foreground'; // アイテム
 ```
 
 ### アイコン

@@ -11,12 +11,12 @@
 **テーマ切り替え機能（light/dark/system + カラースキーム）**
 
 ```tsx
-import { useTheme } from '@/contexts/theme-context'
+import { useTheme } from '@/contexts/theme-context';
 
 function Component() {
-  const { theme, setTheme, colorScheme, setColorScheme } = useTheme()
+  const { theme, setTheme, colorScheme, setColorScheme } = useTheme();
 
-  return <button onClick={() => setTheme('dark')}>Current: {theme}</button>
+  return <button onClick={() => setTheme('dark')}>Current: {theme}</button>;
 }
 ```
 
@@ -57,7 +57,7 @@ function Component() {
 
 ```tsx
 // ビジネスロジック・機能状態
-const { messages } = useChatStore() // ✅ Zustand
+const { messages } = useChatStore(); // ✅ Zustand
 
 // 理由:
 // - 頻繁に変更される
@@ -159,8 +159,8 @@ export const DashboardLayout = ({ children }) => {
         </NotificationModalProvider>
       </GlobalSearchProvider>
     </ThemeProvider>
-  )
-}
+  );
+};
 ```
 
 **理由**:

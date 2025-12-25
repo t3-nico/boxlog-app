@@ -83,6 +83,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
 
   const password = watch('password');
   const confirmPassword = watch('confirmPassword');
+  const agreedToTerms = watch('agreedToTerms');
 
   const isPasswordValid = password.length >= minPasswordLength;
   const isPasswordMatching = confirmPassword.length > 0 && password === confirmPassword;
@@ -334,7 +335,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
               </Field>
 
               <Field>
-                <Button type="submit" disabled={isSubmitting} className="w-full">
+                <Button type="submit" disabled={isSubmitting || !agreedToTerms} className="w-full">
                   {isSubmitting && <Spinner className="mr-2" />}
                   {t('auth.signupForm.createAccountButton')}
                 </Button>

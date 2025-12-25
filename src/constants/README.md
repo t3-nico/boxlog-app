@@ -11,10 +11,10 @@
 **エラーコード体系（1000〜7000番台）**
 
 ```typescript
-import { ERROR_CODES } from '@/constants/errorCodes'
+import { ERROR_CODES } from '@/constants/errorCodes';
 
 // ✅ 使用例
-throw new AppError('認証失敗', ERROR_CODES.AUTH_INVALID_TOKEN)
+throw new AppError('認証失敗', ERROR_CODES.AUTH_INVALID_TOKEN);
 ```
 
 詳細: [`docs/architecture/ERROR_HANDLING.md`](../../docs/architecture/ERROR_HANDLING.md)
@@ -44,11 +44,11 @@ trackEvent(ANALYTICS_EVENTS.page_view(SCREENS.DASHBOARD))
 
 ```typescript
 // ✅ 複数機能で横断的に使用
-export const MAX_FILE_SIZE = 5 * 1024 * 1024
-export const SUPPORTED_LOCALES = ['ja', 'en'] as const
+export const MAX_FILE_SIZE = 5 * 1024 * 1024;
+export const SUPPORTED_LOCALES = ['ja', 'en'] as const;
 export const ERROR_CODES = {
   /* ... */
-}
+};
 ```
 
 ### ❌ `src/constants/` に配置すべきでない定数
@@ -56,11 +56,11 @@ export const ERROR_CODES = {
 ```typescript
 // ❌ 特定機能でのみ使用 → feature配下に配置
 // src/features/tasks/constants.ts
-export const TASK_STATUSES = ['todo', 'in_progress', 'done'] as const
+export const TASK_STATUSES = ['todo', 'in_progress', 'done'] as const;
 
 // ❌ コンポーネント固有の定数 → コンポーネントファイル内に配置
 // src/features/calendar/Calendar.tsx
-const CALENDAR_GRID_SIZE = 7
+const CALENDAR_GRID_SIZE = 7;
 ```
 
 ---

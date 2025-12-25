@@ -56,8 +56,8 @@ BoxLogでは以下の優先度でコンポーネントを選択します：
 - Scroll Area, Separator
 
 ```tsx
-import { Button } from '@/components/shadcn-ui/button'
-import { Input } from '@/components/shadcn-ui/input'
+import { Button } from '@/components/shadcn-ui/button';
+import { Input } from '@/components/shadcn-ui/input';
 ```
 
 ### 🥈 kibo-ui（高度な機能）
@@ -104,24 +104,26 @@ import { background, text, spacing } from '@/config/theme'
 1. **必ずテーマトークンをインポート**
 
    ```tsx
-   import { background, text, border, typography } from '@/config/theme'
+   import { background, text, border, typography } from '@/config/theme';
    ```
 
 2. **TypeScript厳密使用**
 
    ```tsx
    interface ComponentProps {
-     variant?: 'primary' | 'secondary'
-     size?: 'sm' | 'md' | 'lg'
-     children: React.ReactNode
+     variant?: 'primary' | 'secondary';
+     size?: 'sm' | 'md' | 'lg';
+     children: React.ReactNode;
    }
    ```
 
 3. **forwardRef対応**
    ```tsx
-   const Component = React.forwardRef<HTMLDivElement, ComponentProps>(({ className, ...props }, ref) => {
-     return <div ref={ref} className={cn(baseStyles, className)} {...props} />
-   })
+   const Component = React.forwardRef<HTMLDivElement, ComponentProps>(
+     ({ className, ...props }, ref) => {
+       return <div ref={ref} className={cn(baseStyles, className)} {...props} />;
+     },
+   );
    ```
 
 ## shadcn/ui コンポーネント
@@ -131,10 +133,10 @@ import { background, text, spacing } from '@/config/theme'
 基本的なボタンコンポーネント。
 
 ```tsx
-import { Button } from '@/components/shadcn-ui/button'
-;<Button variant="default" size="md">
+import { Button } from '@/components/shadcn-ui/button';
+<Button variant="default" size="md">
   ボタン
-</Button>
+</Button>;
 ```
 
 **バリエーション:**
@@ -150,8 +152,13 @@ import { Button } from '@/components/shadcn-ui/button'
 入力フィールドコンポーネント。
 
 ```tsx
-import { Input } from '@/components/shadcn-ui/input'
-;<Input type="text" placeholder="入力してください" value={value} onChange={(e) => setValue(e.target.value)} />
+import { Input } from '@/components/shadcn-ui/input';
+<Input
+  type="text"
+  placeholder="入力してください"
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+/>;
 ```
 
 ### Tabs
@@ -159,15 +166,15 @@ import { Input } from '@/components/shadcn-ui/input'
 タブインターフェースコンポーネント。
 
 ```tsx
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
-;<Tabs defaultValue="tab1">
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs';
+<Tabs defaultValue="tab1">
   <TabsList>
     <TabsTrigger value="tab1">タブ1</TabsTrigger>
     <TabsTrigger value="tab2">タブ2</TabsTrigger>
   </TabsList>
   <TabsContent value="tab1">コンテンツ1</TabsContent>
   <TabsContent value="tab2">コンテンツ2</TabsContent>
-</Tabs>
+</Tabs>;
 ```
 
 ## Layout コンポーネント
@@ -199,13 +206,13 @@ touch src/components/shadcn-ui/new-component.test.tsx
 ### 2. コンポーネントテンプレート
 
 ```tsx
-import * as React from 'react'
-import { cn } from '@/lib/utils'
-import { background, text, border } from '@/config/theme'
+import * as React from 'react';
+import { cn } from '@/lib/utils';
+import { background, text, border } from '@/config/theme';
 
 interface ComponentProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'secondary'
-  size?: 'sm' | 'md' | 'lg'
+  variant?: 'default' | 'secondary';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 const Component = React.forwardRef<HTMLDivElement, ComponentProps>(
@@ -223,35 +230,35 @@ const Component = React.forwardRef<HTMLDivElement, ComponentProps>(
             [background.primary.DEFAULT]: variant === 'default',
             [background.secondary.DEFAULT]: variant === 'secondary',
           },
-          className
+          className,
         )}
         {...props}
       />
-    )
-  }
-)
-Component.displayName = 'Component'
+    );
+  },
+);
+Component.displayName = 'Component';
 
-export { Component }
+export { Component };
 ```
 
 ### 3. テストベストプラクティス
 
 ```tsx
-import { render, screen } from '@testing-library/react'
-import { Component } from './component'
+import { render, screen } from '@testing-library/react';
+import { Component } from './component';
 
 describe('Component', () => {
   it('デフォルトバリアントで正しく表示される', () => {
-    render(<Component>テスト</Component>)
-    expect(screen.getByText('テスト')).toBeInTheDocument()
-  })
+    render(<Component>テスト</Component>);
+    expect(screen.getByText('テスト')).toBeInTheDocument();
+  });
 
   it('カスタムクラスが適用される', () => {
-    render(<Component className="custom-class">テスト</Component>)
-    expect(screen.getByText('テスト')).toHaveClass('custom-class')
-  })
-})
+    render(<Component className="custom-class">テスト</Component>);
+    expect(screen.getByText('テスト')).toHaveClass('custom-class');
+  });
+});
 ```
 
 ## パフォーマンス最適化
@@ -259,27 +266,27 @@ describe('Component', () => {
 ### 1. メモ化
 
 ```tsx
-import { memo } from 'react'
+import { memo } from 'react';
 
 const ExpensiveComponent = memo(({ data }) => {
   // 重い処理
-  return <div>{processData(data)}</div>
-})
+  return <div>{processData(data)}</div>;
+});
 ```
 
 ### 2. 遅延読み込み
 
 ```tsx
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react';
 
-const LazyComponent = lazy(() => import('./heavy-component'))
+const LazyComponent = lazy(() => import('./heavy-component'));
 
 function App() {
   return (
     <Suspense fallback={<div>読み込み中...</div>}>
       <LazyComponent />
     </Suspense>
-  )
+  );
 }
 ```
 

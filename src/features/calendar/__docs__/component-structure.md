@@ -166,10 +166,10 @@ views/AgendaView/
 
 ```typescript
 interface TimeColumnProps {
-  startHour: number
-  endHour: number
-  interval: 15 | 30 | 60
-  showBusinessHours?: boolean
+  startHour: number;
+  endHour: number;
+  interval: 15 | 30 | 60;
+  showBusinessHours?: boolean;
 }
 ```
 
@@ -179,12 +179,12 @@ interface TimeColumnProps {
 
 ```typescript
 interface DateHeaderProps {
-  date: Date
-  showDayName?: boolean
-  showMonthYear?: boolean
-  dayNameFormat?: 'short' | 'long' | 'narrow'
-  isToday?: boolean
-  isSelected?: boolean
+  date: Date;
+  showDayName?: boolean;
+  showMonthYear?: boolean;
+  dayNameFormat?: 'short' | 'long' | 'narrow';
+  isToday?: boolean;
+  isSelected?: boolean;
 }
 ```
 
@@ -194,8 +194,8 @@ interface DateHeaderProps {
 
 ```typescript
 interface CurrentTimeLineProps {
-  startHour: number
-  className?: string
+  startHour: number;
+  className?: string;
 }
 ```
 
@@ -205,9 +205,9 @@ interface CurrentTimeLineProps {
 
 ```typescript
 interface EventBlockProps {
-  event: CalendarEvent
-  onClick?: (event: CalendarEvent) => void
-  compact?: boolean
+  event: CalendarEvent;
+  onClick?: (event: CalendarEvent) => void;
+  compact?: boolean;
 }
 ```
 
@@ -217,7 +217,7 @@ interface EventBlockProps {
 
 ```typescript
 interface TimezoneOffsetProps {
-  timezone: string
+  timezone: string;
 }
 ```
 

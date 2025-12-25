@@ -24,12 +24,12 @@ features/plans/
 ### プラン一覧の取得
 
 ```tsx
-import { useplans } from '@/features/plans/hooks'
+import { useplans } from '@/features/plans/hooks';
 
 function planList() {
-  const { data: plans, isLoading } = useplans()
+  const { data: plans, isLoading } = useplans();
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div>
@@ -37,14 +37,14 @@ function planList() {
         <div key={plan.id}>{plan.title}</div>
       ))}
     </div>
-  )
+  );
 }
 ```
 
 ### フィルター・ソート・ページネーション
 
 ```tsx
-import { useplans } from '@/features/plans/hooks'
+import { useplans } from '@/features/plans/hooks';
 
 function Filteredplans() {
   const { data: plans } = useplans({
@@ -55,62 +55,62 @@ function Filteredplans() {
     sortOrder: 'asc',
     limit: 20,
     offset: 0,
-  })
+  });
 
-  return <div>{/* ... */}</div>
+  return <div>{/* ... */}</div>;
 }
 ```
 
 ### 単体プランの取得
 
 ```tsx
-import { useplan } from '@/features/plans/hooks'
+import { useplan } from '@/features/plans/hooks';
 
 function planDetail({ id }: { id: string }) {
   const { data: plan } = useplan(id, {
     includeTags: true, // タグも一緒に取得
-  })
+  });
 
-  return <div>{plan?.title}</div>
+  return <div>{plan?.title}</div>;
 }
 ```
 
 ### プランの作成・更新・削除
 
 ```tsx
-import { useplanMutations } from '@/features/plans/hooks'
+import { useplanMutations } from '@/features/plans/hooks';
 
 function planActions() {
-  const { createplan, updateplan, deleteplan } = useplanMutations()
+  const { createplan, updateplan, deleteplan } = useplanMutations();
 
   const handleCreate = () => {
     createplan.mutate({
       title: '新しいタスク',
       status: 'backlog',
       priority: 'normal',
-    })
-  }
+    });
+  };
 
   const handleUpdate = (id: string) => {
     updateplan.mutate({
       id,
       data: { status: 'done' },
-    })
-  }
+    });
+  };
 
-  return <button onClick={handleCreate}>作成</button>
+  return <button onClick={handleCreate}>作成</button>;
 }
 ```
 
 ### Inspectorの表示制御
 
 ```tsx
-import { useplanInspectorStore } from '@/features/plans/stores'
+import { useplanInspectorStore } from '@/features/plans/stores';
 
 function planCard({ plan }) {
-  const { openInspector } = useplanInspectorStore()
+  const { openInspector } = useplanInspectorStore();
 
-  return <div onClick={() => openInspector(plan.id)}>{plan.title}</div>
+  return <div onClick={() => openInspector(plan.id)}>{plan.title}</div>;
 }
 ```
 
@@ -138,20 +138,20 @@ function planCard({ plan }) {
 
 ```typescript
 interface plan {
-  id: string
-  user_id: string
-  plan_number: string // 例: "2025-001-001"
-  title: string
-  description: string | null
-  status: planStatus
-  priority: planPriority | null
-  due_date: string | null // ISO 8601形式
-  start_time: string | null // 開始時刻
-  end_time: string | null // 終了時刻
-  recurrence_type: RecurrenceType | null
-  recurrence_end_date: string | null
-  created_at: string | null
-  updated_at: string | null
+  id: string;
+  user_id: string;
+  plan_number: string; // 例: "2025-001-001"
+  title: string;
+  description: string | null;
+  status: planStatus;
+  priority: planPriority | null;
+  due_date: string | null; // ISO 8601形式
+  start_time: string | null; // 開始時刻
+  end_time: string | null; // 終了時刻
+  recurrence_type: RecurrenceType | null;
+  recurrence_end_date: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 ```
 
@@ -163,8 +163,8 @@ interface plan {
 
 ```tsx
 // レイアウトに配置（常にマウント）
-import { planInspector } from '@/features/plans'
-;<planInspector />
+import { planInspector } from '@/features/plans';
+<planInspector />;
 ```
 
 ### planCard
@@ -172,14 +172,14 @@ import { planInspector } from '@/features/plans'
 プランのカード表示コンポーネント。
 
 ```tsx
-import { planCard } from '@/features/plans/components'
-;<planCard
+import { planCard } from '@/features/plans/components';
+<planCard
   plan={plan}
   onEdit={(t) => console.log('Edit:', t)}
   onDelete={(t) => console.log('Delete:', t)}
   onClick={(t) => openInspector(t.id)}
   tags={planTags}
-/>
+/>;
 ```
 
 ### planCreatePopover
@@ -187,8 +187,11 @@ import { planCard } from '@/features/plans/components'
 クイックプラン作成ポップオーバー。
 
 ```tsx
-import { planCreatePopover } from '@/features/plans/components'
-;<planCreatePopover triggerElement={<Button>新規作成</Button>} onSuccess={() => console.log('Created!')} />
+import { planCreatePopover } from '@/features/plans/components';
+<planCreatePopover
+  triggerElement={<Button>新規作成</Button>}
+  onSuccess={() => console.log('Created!')}
+/>;
 ```
 
 ## API（tRPC）

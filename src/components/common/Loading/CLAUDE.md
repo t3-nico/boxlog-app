@@ -15,12 +15,12 @@ const sizeClasses = {
   md: 'h-6 w-6',
   lg: 'h-8 w-8',
   xl: 'h-12 w-12',
-}
+};
 
 // ❌ 禁止: 独自サイズの追加（既存の4つで対応）
 const sizeClasses = {
   xxl: 'h-16 w-16', // NG: 追加しない
-}
+};
 ```
 
 ### 2. アクセシビリティ属性
@@ -75,14 +75,14 @@ export const LoadingSpinner = ({
 
 ```tsx
 // 変更禁止: Tailwind の animate-spin を使用
-className = 'animate-spin' // CSS Modules不可
+className = 'animate-spin'; // CSS Modules不可
 ```
 
 ### 3. カラースキーム
 
 ```tsx
 // 変更禁止: ダークモード対応のカラー
-className = 'text-neutral-600 dark:text-neutral-400'
+className = 'text-neutral-600 dark:text-neutral-400';
 ```
 
 ## 🔧 よくある変更パターン
@@ -101,16 +101,20 @@ export const CustomLoadingVariant = ({
     md: 'h-6 w-6',
     lg: 'h-8 w-8',
     xl: 'h-12 w-12',
-  }
+  };
 
   return (
     <CustomIcon
-      className={cn('animate-spin text-neutral-600 dark:text-neutral-400', sizeClasses[size], className)}
+      className={cn(
+        'animate-spin text-neutral-600 dark:text-neutral-400',
+        sizeClasses[size],
+        className,
+      )}
       aria-label={ariaLabel}
       role="status"
     />
-  )
-}
+  );
+};
 ```
 
 ### LoadingOverlay のカスタマイズ
@@ -130,13 +134,13 @@ export const CustomLoadingVariant = ({
 ```tsx
 // ✅ isLoading で制御
 {
-  isLoading && <LoadingSpinner />
+  isLoading && <LoadingSpinner />;
 }
 
 // または
-;<LoadingOverlay isLoading={isLoading}>
+<LoadingOverlay isLoading={isLoading}>
   <Content />
-</LoadingOverlay>
+</LoadingOverlay>;
 ```
 
 ## 📝 テスト追加時のガイド
@@ -146,11 +150,11 @@ export const CustomLoadingVariant = ({
 ```tsx
 // ✅ 推奨: コンポーネントの振る舞いをテスト
 it('カスタムプロパティが正しく適用される', () => {
-  const { container } = render(<LoadingSpinner size="xl" className="custom-class" />)
+  const { container } = render(<LoadingSpinner size="xl" className="custom-class" />);
 
-  const spinner = container.querySelector('[role="status"]')
-  expect(spinner).toHaveClass('h-12', 'w-12', 'custom-class')
-})
+  const spinner = container.querySelector('[role="status"]');
+  expect(spinner).toHaveClass('h-12', 'w-12', 'custom-class');
+});
 ```
 
 ## 🎨 スタイリング
@@ -183,7 +187,7 @@ it('カスタムプロパティが正しく適用される', () => {
 // ✅ イベントハンドラーはメモ化
 const handleClick = useCallback(() => {
   // ...
-}, [dependencies])
+}, [dependencies]);
 ```
 
 ### 条件付きレンダリング

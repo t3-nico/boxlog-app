@@ -40,25 +40,25 @@ src/schemas/
 
 ```typescript
 // src/schemas/api/tasks.ts
-import { z } from 'zod'
-import { idSchema, titleSchema, descriptionSchema } from './common'
+import { z } from 'zod';
+import { idSchema, titleSchema, descriptionSchema } from './common';
 
 export const createTaskInputSchema = z.object({
   title: titleSchema, // 1-200文字、トリム処理あり
   description: descriptionSchema, // 最大2000文字、任意
   priority: z.enum(['low', 'medium', 'high']),
   dueDate: z.date().optional(),
-})
+});
 
 // TypeScript型を自動生成
-export type CreateTaskInput = z.infer<typeof createTaskInputSchema>
+export type CreateTaskInput = z.infer<typeof createTaskInputSchema>;
 ```
 
 ### 2. tRPCルーターでの使用
 
 ```typescript
 // src/server/api/routers/tasks.ts
-import { createTaskInputSchema, taskOutputSchema } from '@/schemas/api/tasks'
+import { createTaskInputSchema, taskOutputSchema } from '@/schemas/api/tasks';
 
 export const tasksRouter = createTRPCRouter({
   create: protectedProcedure
@@ -66,35 +66,35 @@ export const tasksRouter = createTRPCRouter({
     .output(taskOutputSchema) // ← 出力型定義
     .mutation(async ({ input }) => {
       // input は自動的に型推論される
-      const task = await db.task.create({ data: input })
-      return task
+      const task = await db.task.create({ data: input });
+      return task;
     }),
-})
+});
 ```
 
 ### 3. クライアント側での使用
 
 ```typescript
 // src/hooks/api/use-tasks.ts
-import { createTaskInputSchema, type CreateTaskInput } from '@/schemas/api/tasks'
+import { createTaskInputSchema, type CreateTaskInput } from '@/schemas/api/tasks';
 
 export const useCreateTask = () => {
-  const createTask = trpc.tasks.create.useMutation()
+  const createTask = trpc.tasks.create.useMutation();
 
   const handleCreate = (data: CreateTaskInput) => {
     // バリデーション（任意）
-    const result = createTaskInputSchema.safeParse(data)
+    const result = createTaskInputSchema.safeParse(data);
     if (!result.success) {
-      console.error(result.error)
-      return
+      console.error(result.error);
+      return;
     }
 
     // tRPCが自動的にサーバー側でバリデーション
-    createTask.mutate(result.data)
-  }
+    createTask.mutate(result.data);
+  };
 
-  return { handleCreate }
-}
+  return { handleCreate };
+};
 ```
 
 ---
@@ -107,38 +107,38 @@ export const useCreateTask = () => {
 
 ```typescript
 // ID・識別子
-idSchema // UUID形式
-emailSchema // メールアドレス
-passwordSchema // パスワード（8文字以上、大小英数字含む）
+idSchema; // UUID形式
+emailSchema; // メールアドレス
+passwordSchema; // パスワード（8文字以上、大小英数字含む）
 
 // 文字列
-titleSchema // 1-200文字、改行禁止
-descriptionSchema // 最大2000文字
-requiredStringSchema // 必須文字列
-trimmedStringSchema // トリム処理付き
+titleSchema; // 1-200文字、改行禁止
+descriptionSchema; // 最大2000文字
+requiredStringSchema; // 必須文字列
+trimmedStringSchema; // トリム処理付き
 
 // 日付
-dateSchema // 日付型
-futureDateSchema // 未来の日付のみ
+dateSchema; // 日付型
+futureDateSchema; // 未来の日付のみ
 
 // Enum
-prioritySchema // 'low' | 'medium' | 'high'
-statusSchema // 'todo' | 'in_progress' | 'done' | 'archived'
-colorSchema // HEX色コード (#RRGGBB)
+prioritySchema; // 'low' | 'medium' | 'high'
+statusSchema; // 'todo' | 'in_progress' | 'done' | 'archived'
+colorSchema; // HEX色コード (#RRGGBB)
 
 // ページネーション
-paginationInputSchema // ページ・件数・ソート順
-paginationOutputSchema // 総数・総ページ数・前後フラグ
-searchInputSchema // 検索クエリ + ページネーション
+paginationInputSchema; // ページ・件数・ソート順
+paginationOutputSchema; // 総数・総ページ数・前後フラグ
+searchInputSchema; // 検索クエリ + ページネーション
 
 // API応答
-apiSuccessSchema(T) // 成功レスポンス { success: true, data: T }
-apiErrorSchema // エラーレスポンス { success: false, error: {...} }
-apiResponseSchema(T) // 成功 | エラー の Union型
+apiSuccessSchema(T); // 成功レスポンス { success: true, data: T }
+apiErrorSchema; // エラーレスポンス { success: false, error: {...} }
+apiResponseSchema(T); // 成功 | エラー の Union型
 
 // メタデータ
-metadataSchema // createdAt, updatedAt, version 等
-fileSchema // ファイルアップロード用
+metadataSchema; // createdAt, updatedAt, version 等
+fileSchema; // ファイルアップロード用
 ```
 
 ### tasks.ts - タスクAPI用スキーマ
@@ -147,29 +147,29 @@ fileSchema // ファイルアップロード用
 
 ```typescript
 // 基本
-taskBaseSchema // タスクの基本情報
-taskSchema // 完全なタスク（ID、メタデータ含む）
+taskBaseSchema; // タスクの基本情報
+taskSchema; // 完全なタスク（ID、メタデータ含む）
 
 // 入力
-createTaskInputSchema // タスク作成
-updateTaskInputSchema // タスク更新（partial）
-deleteTaskInputSchema // タスク削除
-searchTasksInputSchema // タスク検索
-getTasksInputSchema // タスク一覧取得
+createTaskInputSchema; // タスク作成
+updateTaskInputSchema; // タスク更新（partial）
+deleteTaskInputSchema; // タスク削除
+searchTasksInputSchema; // タスク検索
+getTasksInputSchema; // タスク一覧取得
 
 // 出力
-taskOutputSchema // タスク1件
-tasksListOutputSchema // タスク一覧 + ページネーション
-taskStatsOutputSchema // タスク統計
-taskHistoryOutputSchema // タスク履歴
+taskOutputSchema; // タスク1件
+tasksListOutputSchema; // タスク一覧 + ページネーション
+taskStatsOutputSchema; // タスク統計
+taskHistoryOutputSchema; // タスク履歴
 
 // バルク操作
-bulkUpdateTasksInputSchema // 一括更新（最大100件）
-bulkDeleteTasksInputSchema // 一括削除（最大100件）
+bulkUpdateTasksInputSchema; // 一括更新（最大100件）
+bulkDeleteTasksInputSchema; // 一括削除（最大100件）
 
 // インポート/エクスポート
-importTasksInputSchema // タスクインポート
-exportTasksInputSchema // タスクエクスポート（JSON/CSV/XLSX）
+importTasksInputSchema; // タスクインポート
+exportTasksInputSchema; // タスクエクスポート（JSON/CSV/XLSX）
 ```
 
 ---
@@ -180,7 +180,7 @@ exportTasksInputSchema // タスクエクスポート（JSON/CSV/XLSX）
 
 ```typescript
 // まず common.ts を確認
-import { idSchema, titleSchema, descriptionSchema } from './common'
+import { idSchema, titleSchema, descriptionSchema } from './common';
 
 // 既存のスキーマを再利用できないか検討
 ```
@@ -189,8 +189,8 @@ import { idSchema, titleSchema, descriptionSchema } from './common'
 
 ```typescript
 // src/schemas/api/projects.ts
-import { z } from 'zod'
-import { idSchema, titleSchema, descriptionSchema, dateSchema } from './common'
+import { z } from 'zod';
+import { idSchema, titleSchema, descriptionSchema, dateSchema } from './common';
 
 // 基本スキーマ
 export const projectBaseSchema = z
@@ -203,32 +203,32 @@ export const projectBaseSchema = z
   .refine((data) => data.endDate > data.startDate, {
     message: '終了日は開始日より後に設定してください',
     path: ['endDate'],
-  })
+  });
 
 // 完全なスキーマ
 export const projectSchema = projectBaseSchema.extend({
   id: idSchema,
   createdAt: dateSchema,
   updatedAt: dateSchema,
-})
+});
 
 // 入力スキーマ
-export const createProjectInputSchema = projectBaseSchema
+export const createProjectInputSchema = projectBaseSchema;
 export const updateProjectInputSchema = projectBaseSchema.partial().extend({
   id: idSchema,
-})
+});
 
 // 型エクスポート
-export type Project = z.infer<typeof projectSchema>
-export type CreateProjectInput = z.infer<typeof createProjectInputSchema>
-export type UpdateProjectInput = z.infer<typeof updateProjectInputSchema>
+export type Project = z.infer<typeof projectSchema>;
+export type CreateProjectInput = z.infer<typeof createProjectInputSchema>;
+export type UpdateProjectInput = z.infer<typeof updateProjectInputSchema>;
 ```
 
 ### Step 3: tRPCルーターに統合
 
 ```typescript
 // src/server/api/routers/projects.ts
-import { createProjectInputSchema, projectSchema } from '@/schemas/api/projects'
+import { createProjectInputSchema, projectSchema } from '@/schemas/api/projects';
 
 export const projectsRouter = createTRPCRouter({
   create: protectedProcedure
@@ -237,7 +237,7 @@ export const projectsRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       // 実装
     }),
-})
+});
 ```
 
 ---
@@ -257,15 +257,15 @@ export const taskSchema = z
     (data) => {
       // 高優先度タスクは見積時間が必須
       if (data.priority === 'high') {
-        return data.estimatedHours !== undefined
+        return data.estimatedHours !== undefined;
       }
-      return true
+      return true;
     },
     {
       message: '高優先度タスクには見積時間を入力してください',
       path: ['estimatedHours'],
-    }
-  )
+    },
+  );
 ```
 
 ### 2. 変換処理（Transform）
@@ -275,7 +275,7 @@ export const userInputSchema = z.object({
   name: z.string().transform((val) => val.trim()),
   email: z.string().toLowerCase().email(),
   age: z.string().transform((val) => parseInt(val, 10)),
-})
+});
 
 // 入力: { name: "  John  ", email: "JOHN@EXAMPLE.COM", age: "25" }
 // 出力: { name: "John", email: "john@example.com", age: 25 }
@@ -295,19 +295,19 @@ export const taskInputSchema = z.discriminatedUnion('type', [
     description: descriptionSchema,
     subtasks: z.array(z.string()),
   }),
-])
+]);
 ```
 
 ### 4. エラーメッセージのカスタマイズ
 
 ```typescript
-import { formatValidationErrors } from './common'
+import { formatValidationErrors } from './common';
 
-const result = taskSchema.safeParse(data)
+const result = taskSchema.safeParse(data);
 if (!result.success) {
-  const errors = formatValidationErrors(result.error)
+  const errors = formatValidationErrors(result.error);
   // ["title: タイトルは必須です", "priority: 優先度を選択してください"]
-  console.error(errors)
+  console.error(errors);
 }
 ```
 
@@ -319,8 +319,8 @@ if (!result.success) {
 
 ```typescript
 // src/schemas/api/tasks.test.ts
-import { describe, it, expect } from 'vitest'
-import { createTaskInputSchema } from './tasks'
+import { describe, it, expect } from 'vitest';
+import { createTaskInputSchema } from './tasks';
 
 describe('createTaskInputSchema', () => {
   it('有効なタスクを受け入れる', () => {
@@ -328,36 +328,36 @@ describe('createTaskInputSchema', () => {
       title: 'テストタスク',
       priority: 'high',
       dueDate: new Date('2025-12-31'),
-    }
+    };
 
-    const result = createTaskInputSchema.safeParse(validTask)
-    expect(result.success).toBe(true)
-  })
+    const result = createTaskInputSchema.safeParse(validTask);
+    expect(result.success).toBe(true);
+  });
 
   it('タイトルが空の場合はエラー', () => {
     const invalidTask = {
       title: '',
       priority: 'high',
-    }
+    };
 
-    const result = createTaskInputSchema.safeParse(invalidTask)
-    expect(result.success).toBe(false)
+    const result = createTaskInputSchema.safeParse(invalidTask);
+    expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors[0].message).toContain('タイトル')
+      expect(result.error.errors[0].message).toContain('タイトル');
     }
-  })
+  });
 
   it('過去の期限日はエラー', () => {
     const invalidTask = {
       title: 'テストタスク',
       priority: 'high',
       dueDate: new Date('2020-01-01'),
-    }
+    };
 
-    const result = createTaskInputSchema.safeParse(invalidTask)
-    expect(result.success).toBe(false)
-  })
-})
+    const result = createTaskInputSchema.safeParse(invalidTask);
+    expect(result.success).toBe(false);
+  });
+});
 ```
 
 ---
@@ -386,35 +386,35 @@ describe('createTaskInputSchema', () => {
 // ❌ any型の使用禁止
 export const badSchema = z.object({
   data: z.any(), // NG
-})
+});
 
 // ❌ 緩すぎるバリデーション
 export const badSchema = z.object({
   title: z.string(), // NG: 最小・最大長の指定なし
-})
+});
 
 // ❌ 共通スキーマの重複定義
-export const myIdSchema = z.string().uuid() // NG: common.tsのidSchemaを使う
+export const myIdSchema = z.string().uuid(); // NG: common.tsのidSchemaを使う
 ```
 
 ### ✅ ベストプラクティス
 
 ```typescript
 // ✅ 共通スキーマの再利用
-import { idSchema, titleSchema } from './common'
+import { idSchema, titleSchema } from './common';
 
 // ✅ 適切なバリデーション
 export const taskSchema = z.object({
   title: titleSchema, // 1-200文字、改行禁止
   priority: prioritySchema, // enum
-})
+});
 
 // ✅ 型エクスポート
-export type Task = z.infer<typeof taskSchema>
+export type Task = z.infer<typeof taskSchema>;
 
 // ✅ バリデーションヘルパー
 export function validateTask(task: unknown): Task {
-  return taskSchema.parse(task)
+  return taskSchema.parse(task);
 }
 ```
 
@@ -435,12 +435,12 @@ export function validateTask(task: unknown): Task {
 
 ```typescript
 // A: formatValidationErrors を使用
-import { formatValidationErrors } from './common'
+import { formatValidationErrors } from './common';
 
-const result = schema.safeParse(data)
+const result = schema.safeParse(data);
 if (!result.success) {
-  const errors = formatValidationErrors(result.error)
-  console.error(errors.join('\n'))
+  const errors = formatValidationErrors(result.error);
+  console.error(errors.join('\n'));
 }
 ```
 
@@ -460,11 +460,11 @@ const task: Task = { ... }
 ```typescript
 // A: parse() でランタイムバリデーション
 try {
-  const validatedData = taskSchema.parse(existingData)
+  const validatedData = taskSchema.parse(existingData);
   // validatedData は型安全
 } catch (error) {
   if (error instanceof z.ZodError) {
-    console.error(formatValidationErrors(error))
+    console.error(formatValidationErrors(error));
   }
 }
 ```

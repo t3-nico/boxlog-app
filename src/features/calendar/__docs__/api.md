@@ -9,37 +9,37 @@
 ```typescript
 // Task（予定）
 interface Task {
-  id: string
-  title: string
-  planned_start: Date
-  planned_duration: number // 分
-  status: 'pending' | 'in_progress' | 'completed'
-  priority: 'low' | 'medium' | 'high'
-  description?: string
-  tags?: string[]
+  id: string;
+  title: string;
+  planned_start: Date;
+  planned_duration: number; // 分
+  status: 'pending' | 'in_progress' | 'completed';
+  priority: 'low' | 'medium' | 'high';
+  description?: string;
+  tags?: string[];
 }
 
 // TaskRecord（実績）
 interface TaskRecord {
-  id: string
-  task_id?: string // 元の予定へのリンク
-  title: string
-  actual_start: string
-  actual_end: string
-  actual_duration: number // 分
-  satisfaction?: 1 | 2 | 3 | 4 | 5
-  focus_level?: 1 | 2 | 3 | 4 | 5
-  energy_level?: 1 | 2 | 3 | 4 | 5
+  id: string;
+  task_id?: string; // 元の予定へのリンク
+  title: string;
+  actual_start: string;
+  actual_end: string;
+  actual_duration: number; // 分
+  satisfaction?: 1 | 2 | 3 | 4 | 5;
+  focus_level?: 1 | 2 | 3 | 4 | 5;
+  energy_level?: 1 | 2 | 3 | 4 | 5;
 }
 
 // Calendar（カレンダー）
 interface Calendar {
-  id: string
-  userId: string
-  name: string
-  color: string
-  isDefault: boolean
-  isVisible: boolean
+  id: string;
+  userId: string;
+  name: string;
+  color: string;
+  isDefault: boolean;
+  isVisible: boolean;
 }
 ```
 
@@ -48,15 +48,15 @@ interface Calendar {
 ```typescript
 // CalendarEvent（表示用統合型）
 interface CalendarEvent {
-  id: string
-  title: string
-  startDate: Date
-  endDate?: Date
-  status: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
-  priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional'
-  color: string
-  duration: number // minutes
-  isMultiDay: boolean
+  id: string;
+  title: string;
+  startDate: Date;
+  endDate?: Date;
+  status: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled';
+  priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional';
+  color: string;
+  duration: number; // minutes
+  isMultiDay: boolean;
 }
 ```
 
@@ -82,16 +82,16 @@ graph TD
 // Zustand Store
 interface CalendarStore {
   // 状態
-  currentView: CalendarViewType
-  currentDate: Date
-  selectedEvents: CalendarEvent[]
-  filters: CalendarFilter
+  currentView: CalendarViewType;
+  currentDate: Date;
+  selectedEvents: CalendarEvent[];
+  filters: CalendarFilter;
 
   // アクション
-  setCurrentView: (view: CalendarViewType) => void
-  setCurrentDate: (date: Date) => void
-  selectEvent: (event: CalendarEvent) => void
-  updateFilters: (filters: Partial<CalendarFilter>) => void
+  setCurrentView: (view: CalendarViewType) => void;
+  setCurrentDate: (date: Date) => void;
+  selectEvent: (event: CalendarEvent) => void;
+  updateFilters: (filters: Partial<CalendarFilter>) => void;
 }
 ```
 
@@ -266,26 +266,26 @@ function useEventInteraction() {
 
 ```typescript
 interface CalendarViewProps {
-  initialViewType?: CalendarViewType
-  initialDate?: Date
-  className?: string
+  initialViewType?: CalendarViewType;
+  initialDate?: Date;
+  className?: string;
 
   // カスタマイズ
-  enabledViews?: CalendarViewType[]
-  defaultCalendars?: string[]
+  enabledViews?: CalendarViewType[];
+  defaultCalendars?: string[];
 
   // イベントハンドラー
-  onEventSelect?: (event: CalendarEvent) => void
-  onEventCreate?: (input: CreateEventInput) => void
-  onViewChange?: (view: CalendarViewType) => void
-  onDateChange?: (date: Date) => void
+  onEventSelect?: (event: CalendarEvent) => void;
+  onEventCreate?: (input: CreateEventInput) => void;
+  onViewChange?: (view: CalendarViewType) => void;
+  onDateChange?: (date: Date) => void;
 
   // 高度な設定
   customRenderers?: {
-    eventCard?: ComponentType<EventCardProps>
-    timeSlot?: ComponentType<TimeSlotProps>
-    header?: ComponentType<HeaderProps>
-  }
+    eventCard?: ComponentType<EventCardProps>;
+    timeSlot?: ComponentType<TimeSlotProps>;
+    header?: ComponentType<HeaderProps>;
+  };
 }
 ```
 
@@ -293,24 +293,24 @@ interface CalendarViewProps {
 
 ```typescript
 interface ViewComponentProps {
-  events: CalendarEvent[]
-  dateRange: ViewDateRange
-  selectedEvents: CalendarEvent[]
+  events: CalendarEvent[];
+  dateRange: ViewDateRange;
+  selectedEvents: CalendarEvent[];
 
   // インタラクション
-  onEventSelect: (event: CalendarEvent) => void
-  onEventMove: (eventId: string, newStart: Date) => void
-  onEventResize: (eventId: string, newDuration: number) => void
-  onSlotClick: (date: Date) => void
+  onEventSelect: (event: CalendarEvent) => void;
+  onEventMove: (eventId: string, newStart: Date) => void;
+  onEventResize: (eventId: string, newDuration: number) => void;
+  onSlotClick: (date: Date) => void;
 
   // 表示設定
-  showWeekends: boolean
-  timeFormat: '12h' | '24h'
-  firstDayOfWeek: number
+  showWeekends: boolean;
+  timeFormat: '12h' | '24h';
+  firstDayOfWeek: number;
 
   // カスタマイズ
-  className?: string
-  style?: CSSProperties
+  className?: string;
+  style?: CSSProperties;
 }
 ```
 
@@ -332,7 +332,7 @@ function useRealtimeCalendar(calendarIds: string[]) {
           table: 'tasks',
           filter: `calendar_id=in.(${calendarIds.join(',')})`,
         },
-        handleTaskChange
+        handleTaskChange,
       )
       .on(
         'postgres_changes',
@@ -342,14 +342,14 @@ function useRealtimeCalendar(calendarIds: string[]) {
           table: 'task_records',
           filter: `calendar_id=in.(${calendarIds.join(',')})`,
         },
-        handleRecordChange
+        handleRecordChange,
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      subscription.unsubscribe()
-    }
-  }, [calendarIds])
+      subscription.unsubscribe();
+    };
+  }, [calendarIds]);
 }
 ```
 
@@ -357,11 +357,11 @@ function useRealtimeCalendar(calendarIds: string[]) {
 
 ```typescript
 interface RealtimeEvent {
-  eventType: 'INSERT' | 'UPDATE' | 'DELETE'
-  table: 'tasks' | 'task_records' | 'calendars'
-  new?: DbRecord
-  old?: DbRecord
-  timestamp: string
+  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+  table: 'tasks' | 'task_records' | 'calendars';
+  new?: DbRecord;
+  old?: DbRecord;
+  timestamp: string;
 }
 ```
 
@@ -372,17 +372,17 @@ interface RealtimeEvent {
 ```typescript
 // 仮想化設定
 interface VirtualizationConfig {
-  enabled: boolean
-  itemHeight: number
-  bufferSize: number
-  scrollThreshold: number
+  enabled: boolean;
+  itemHeight: number;
+  bufferSize: number;
+  scrollThreshold: number;
 }
 
 // キャッシュ設定
 interface CacheConfig {
-  enableMemoryCache: boolean
-  cacheSize: number
-  ttl: number // Time to live in seconds
+  enableMemoryCache: boolean;
+  cacheSize: number;
+  ttl: number; // Time to live in seconds
 }
 ```
 
@@ -391,17 +391,17 @@ interface CacheConfig {
 ```typescript
 // バッチ更新API
 async function batchUpdateEvents(updates: EventBatchUpdate[]): Promise<void> {
-  const batches = chunk(updates, BATCH_SIZE)
+  const batches = chunk(updates, BATCH_SIZE);
 
   for (const batch of batches) {
-    await Promise.all(batch.map((update) => updateSingleEvent(update)))
+    await Promise.all(batch.map((update) => updateSingleEvent(update)));
   }
 }
 
 interface EventBatchUpdate {
-  id: string
-  operation: 'update' | 'delete'
-  data?: Partial<CalendarEvent>
+  id: string;
+  operation: 'update' | 'delete';
+  data?: Partial<CalendarEvent>;
 }
 ```
 
@@ -418,7 +418,7 @@ if (process.env.NODE_ENV === 'development') {
     simulateRealtimeEvent: (event: RealtimeEvent) => handleRealtimeEvent(event),
     clearCache: () => cache.clear(),
     getPerformanceMetrics: () => performanceMonitor.getMetrics(),
-  }
+  };
 }
 ```
 

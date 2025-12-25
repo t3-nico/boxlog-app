@@ -76,26 +76,31 @@ import { LoadingSpinner } from '@/components/common'
 ### LoadingOverlay
 
 ```tsx
-import { LoadingOverlay } from '@/components/common'
-;<LoadingOverlay isLoading={isLoading} message="データを取得中..." spinnerSize="lg">
+import { LoadingOverlay } from '@/components/common';
+<LoadingOverlay isLoading={isLoading} message="データを取得中..." spinnerSize="lg">
   <YourContent />
-</LoadingOverlay>
+</LoadingOverlay>;
 ```
 
 ### LoadingCard
 
 ```tsx
-import { LoadingCard } from '@/components/common'
-;<LoadingCard title="読み込み中" message="データを取得しています..." />
+import { LoadingCard } from '@/components/common';
+<LoadingCard title="読み込み中" message="データを取得しています..." />;
 ```
 
 ### LoadingButton
 
 ```tsx
-import { LoadingButton } from '@/components/common'
-;<LoadingButton isLoading={isSubmitting} loadingText="送信中..." onClick={handleSubmit} variant="default">
+import { LoadingButton } from '@/components/common';
+<LoadingButton
+  isLoading={isSubmitting}
+  loadingText="送信中..."
+  onClick={handleSubmit}
+  variant="default"
+>
   送信
-</LoadingButton>
+</LoadingButton>;
 ```
 
 ### Skeleton
@@ -123,13 +128,13 @@ import { Skeleton, SkeletonText, SkeletonCard } from '@/components/common'
 300ms以下の短時間ローディングをスキップし、チラつきを防止するhook。
 
 ```tsx
-import { useDelayedLoading } from '@/hooks/useDelayedLoading'
+import { useDelayedLoading } from '@/hooks/useDelayedLoading';
 
-const { data, isPending } = api.plans.list.useQuery()
-const showLoading = useDelayedLoading(isPending) // 300ms以下はスキップ
+const { data, isPending } = api.plans.list.useQuery();
+const showLoading = useDelayedLoading(isPending); // 300ms以下はスキップ
 
-if (showLoading) return <Skeleton animation="shimmer" />
-return <Content data={data} />
+if (showLoading) return <Skeleton animation="shimmer" />;
+return <Content data={data} />;
 ```
 
 ## Props

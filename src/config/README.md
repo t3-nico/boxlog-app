@@ -35,10 +35,10 @@ import {
   APP_CONFIG, // アプリケーション定数
   FEATURE_FLAGS, // 機能フラグ
   createAppError, // エラー作成
-} from '@/config'
+} from '@/config';
 
 // ❌ 非推奨：個別ファイルへの直接アクセス
-import { APP_CONFIG } from '@/config/app/constants'
+import { APP_CONFIG } from '@/config/app/constants';
 ```
 
 ### カテゴリ別の使用例
@@ -46,17 +46,17 @@ import { APP_CONFIG } from '@/config/app/constants'
 #### 1. アプリケーション設定
 
 ```typescript
-import { APP_CONFIG, LIMITS, TIMEOUTS } from '@/config'
+import { APP_CONFIG, LIMITS, TIMEOUTS } from '@/config';
 
-console.log(APP_CONFIG.name) // 'BoxLog'
-console.log(LIMITS.maxTasksPerPage) // 50
-console.log(TIMEOUTS.autoSave) // 3000ms
+console.log(APP_CONFIG.name); // 'BoxLog'
+console.log(LIMITS.maxTasksPerPage); // 50
+console.log(TIMEOUTS.autoSave); // 3000ms
 ```
 
 #### 2. 機能フラグ
 
 ```typescript
-import { isFeatureEnabled } from '@/config'
+import { isFeatureEnabled } from '@/config';
 
 if (isFeatureEnabled('enableAIChat')) {
   // AI機能を有効化
@@ -81,16 +81,19 @@ if (isFeatureEnabled('enableAIChat')) {
 #### 4. エラーハンドリング
 
 ```typescript
-import { createAppError, executeWithAutoRecovery } from '@/config'
+import { createAppError, executeWithAutoRecovery } from '@/config';
 
 // エラー作成
-const error = createAppError('Database connection failed', 'DB_CONNECTION_TIMEOUT', { source: 'api', userId: '123' })
+const error = createAppError('Database connection failed', 'DB_CONNECTION_TIMEOUT', {
+  source: 'api',
+  userId: '123',
+});
 
 // 自動復旧付き実行
-const result = await executeWithAutoRecovery(async () => await fetchData(), 'API_NETWORK_ERROR')
+const result = await executeWithAutoRecovery(async () => await fetchData(), 'API_NETWORK_ERROR');
 
 if (!result.success) {
-  console.error(result.error?.userMessage.title)
+  console.error(result.error?.userMessage.title);
 }
 ```
 

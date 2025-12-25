@@ -62,24 +62,24 @@ import { colors } from '@/config/theme'
 
 ```tsx
 // ✅ 推奨：8pxグリッド準拠
-gap - 1 // 4px  - 例外: 密接な要素間（アイコン+テキスト等）
-gap - 2 // 8px  - 標準: 小要素間
-gap - 4 // 16px - 標準: 中要素間
-gap - 6 // 24px - 標準: 大要素間
-gap - 8 // 32px - 標準: セクション間
+gap - 1; // 4px  - 例外: 密接な要素間（アイコン+テキスト等）
+gap - 2; // 8px  - 標準: 小要素間
+gap - 4; // 16px - 標準: 中要素間
+gap - 6; // 24px - 標準: 大要素間
+gap - 8; // 32px - 標準: セクション間
 
-p - 2 // 8px  - 小パディング
-p - 4 // 16px - 標準パディング
-p - 6 // 24px - 大パディング
+p - 2; // 8px  - 小パディング
+p - 4; // 16px - 標準パディング
+p - 6; // 24px - 大パディング
 
 // ❌ 禁止：8の倍数でない値（例外を除く）
-gap - 1.5 // 6px  - 使用禁止
-gap - 2.5 // 10px - 使用禁止
-px - 2.5 // 10px - 使用禁止
+gap - 1.5; // 6px  - 使用禁止
+gap - 2.5; // 10px - 使用禁止
+px - 2.5; // 10px - 使用禁止
 
 // ✅ 例外として許可される4px使用ケース
-gap - 1 // 4px  - アイコンとテキストの間隔
-p - 1 // 4px  - アイコンボタンの最小パディング
+gap - 1; // 4px  - アイコンとテキストの間隔
+p - 1; // 4px  - アイコンボタンの最小パディング
 ```
 
 **角丸（Border Radius）も8pxグリッド準拠：**
@@ -113,25 +113,25 @@ p - 1 // 4px  - アイコンボタンの最小パディング
 
 ```tsx
 // ❌ 禁止：any型
-const handleClick = (data: any) => {}
+const handleClick = (data: any) => {};
 
 // ✅ 必須：厳密な型定義
 interface HandleClickData {
-  id: string
-  timestamp: number
+  id: string;
+  timestamp: number;
 }
-const handleClick = (data: HandleClickData) => {}
+const handleClick = (data: HandleClickData) => {};
 ```
 
 ### 3. コンポーネント設計
 
 ```tsx
 // ✅ 推奨構造（名前付きエクスポート + 関数宣言）
-import { typography } from '@/config/ui/theme'
+import { typography } from '@/config/ui/theme';
 
 interface Props {
-  title: string
-  onClose: () => void
+  title: string;
+  onClose: () => void;
 }
 
 // ✅ 推奨：関数宣言 + 名前付きエクスポート
@@ -140,7 +140,7 @@ export function MyComponent({ title, onClose }: Props) {
     <div className="bg-card">
       <h2 className={typography.heading.h2}>{title}</h2>
     </div>
-  )
+  );
 }
 
 // ❌ 禁止：React.FC（非推奨）
@@ -157,22 +157,22 @@ export function MyComponent({ title, onClose }: Props) {
 
 ```tsx
 // src/app/[locale]/(app)/new-page/page.tsx
-import { getTranslations } from 'next-intl/server'
+import { getTranslations } from 'next-intl/server';
 
 interface PageProps {
-  params: Promise<{ locale: string }>
+  params: Promise<{ locale: string }>;
 }
 
 export default async function NewPage({ params }: PageProps) {
-  const { locale } = await params
-  const t = await getTranslations({ locale })
+  const { locale } = await params;
+  const t = await getTranslations({ locale });
 
   return (
     <div>
       <h1>{t('newPage.title')}</h1>
       <p>{t('newPage.description')}</p>
     </div>
-  )
+  );
 }
 ```
 
@@ -180,19 +180,19 @@ export default async function NewPage({ params }: PageProps) {
 
 ```tsx
 // src/features/new-feature/NewFeature.tsx
-'use client'
+'use client';
 
-import { useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl';
 
 export function NewFeature() {
-  const t = useTranslations()
+  const t = useTranslations();
 
   return (
     <div>
       <h2>{t('newFeature.title')}</h2>
       <button>{t('newFeature.actions.submit')}</button>
     </div>
-  )
+  );
 }
 ```
 
@@ -233,7 +233,7 @@ export function NewFeature() {
 const NAMESPACES = [
   // ... 既存
   'newPage', // 追加
-] as const
+] as const;
 ```
 
 #### 4.4 実装チェックリスト
@@ -250,16 +250,16 @@ const NAMESPACES = [
 
 ```tsx
 // ✅ Zodスキーマ使用
-import { z } from 'zod'
+import { z } from 'zod';
 
 const taskSchema = z.object({
   title: z.string().min(1).max(100),
   status: z.enum(['todo', 'in_progress', 'done']),
-})
+});
 
-const result = taskSchema.safeParse(taskData)
+const result = taskSchema.safeParse(taskData);
 if (!result.success) {
-  console.error(result.error)
+  console.error(result.error);
 }
 ```
 
@@ -267,18 +267,18 @@ if (!result.success) {
 
 ```tsx
 // 1. React/Next.js
-import { FC } from 'react'
-import Link from 'next/link'
+import { FC } from 'react';
+import Link from 'next/link';
 
 // 2. 外部ライブラリ
-import { z } from 'zod'
+import { z } from 'zod';
 
 // 3. 内部モジュール（@/）
-import { colors } from '@/config/theme'
-import { useTaskStore } from '@/stores/taskStore'
+import { colors } from '@/config/theme';
+import { useTaskStore } from '@/stores/taskStore';
 
 // 4. 相対パス
-import { TaskCard } from './TaskCard'
+import { TaskCard } from './TaskCard';
 ```
 
 ### 7. 状態管理：Zustand vs Context API（使い分けベストプラクティス）
@@ -291,17 +291,17 @@ import { TaskCard } from './TaskCard'
 
 ```tsx
 // ❌ 悪い例：Context APIで頻繁に変更される状態
-const AuthContext = createContext()
+const AuthContext = createContext();
 function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [session, setSession] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
   // → user/session/loadingのどれか1つが変わっても全コンポーネントが再レンダリング！
 }
 
 // ✅ 良い例：Zustandで選択的サブスクリプション
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 export const useAuthStore = create()(
   devtools(
@@ -313,14 +313,14 @@ export const useAuthStore = create()(
       setSession: (session) => set({ session }),
       // アクション定義
     }),
-    { name: 'auth-store' } // Redux DevToolsで可視化
-  )
-)
+    { name: 'auth-store' }, // Redux DevToolsで可視化
+  ),
+);
 
 // コンポーネントで使用（userだけ監視）
 function UserProfile() {
-  const user = useAuthStore((state) => state.user) // userが変わった時だけ再レンダリング
-  return <div>{user.name}</div>
+  const user = useAuthStore((state) => state.user); // userが変わった時だけ再レンダリング
+  return <div>{user.name}</div>;
 }
 ```
 
@@ -338,18 +338,18 @@ function UserProfile() {
 
 ```tsx
 // ✅ 良い例：Context APIで設定値（ほぼ変更されない）
-import { createContext, useContext } from 'react'
+import { createContext, useContext } from 'react';
 
-const ThemeContext = createContext<'light' | 'dark'>('light')
+const ThemeContext = createContext<'light' | 'dark'>('light');
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   // themeは滅多に変更されないので、Context APIでOK
-  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>
+  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
 }
 
-export const useTheme = () => useContext(ThemeContext)
+export const useTheme = () => useContext(ThemeContext);
 ```
 
 **Context APIを使うべき状態**:
@@ -467,18 +467,18 @@ export const selectIsAuthenticated = (state: AuthState) => !!state.user
 
 ```tsx
 // ❌ 禁止：全体を取得（不要な再レンダリングが発生）
-const { user, session, loading } = useAuthStore()
+const { user, session, loading } = useAuthStore();
 
 // ✅ 推奨：auto-generated selectors
-const user = useAuthStore.use.user()
-const signOut = useAuthStore.use.signOut()
+const user = useAuthStore.use.user();
+const signOut = useAuthStore.use.signOut();
 
 // ✅ OK：手動selector
-const user = useAuthStore((state) => state.user)
-const signOut = useAuthStore((state) => state.signOut)
+const user = useAuthStore((state) => state.user);
+const signOut = useAuthStore((state) => state.signOut);
 
 // ✅ OK：カスタムセレクター
-const isAuthenticated = useAuthStore(selectIsAuthenticated)
+const isAuthenticated = useAuthStore(selectIsAuthenticated);
 ```
 
 #### 7.6 Zustand Selector必須パターン（再レンダリング最適化）
@@ -487,13 +487,13 @@ const isAuthenticated = useAuthStore(selectIsAuthenticated)
 
 ```tsx
 // ✅ Store定義時にcreateSelectorsを使用
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
-import { createSelectors } from '@/lib/zustand/createSelectors'
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+import { createSelectors } from '@/lib/zustand/createSelectors';
 
 interface SidebarState {
-  isOpen: boolean
-  toggle: () => void
+  isOpen: boolean;
+  toggle: () => void;
 }
 
 const useSidebarStoreBase = create<SidebarState>()(
@@ -502,26 +502,26 @@ const useSidebarStoreBase = create<SidebarState>()(
       isOpen: true,
       toggle: () => set((state) => ({ isOpen: !state.isOpen })),
     }),
-    { name: 'sidebar-store' }
-  )
-)
+    { name: 'sidebar-store' },
+  ),
+);
 
 // ✅ createSelectorsでラップしてexport
-export const useSidebarStore = createSelectors(useSidebarStoreBase)
+export const useSidebarStore = createSelectors(useSidebarStoreBase);
 ```
 
 **コンポーネントでの使用**:
 
 ```tsx
 // ✅ 推奨: .use.プロパティ名() で取得（最も簡潔）
-const isOpen = useSidebarStore.use.isOpen()
-const toggle = useSidebarStore.use.toggle()
+const isOpen = useSidebarStore.use.isOpen();
+const toggle = useSidebarStore.use.toggle();
 
 // ✅ OK: 手動selectorでも可
-const isOpen = useSidebarStore((state) => state.isOpen)
+const isOpen = useSidebarStore((state) => state.isOpen);
 
 // ❌ 禁止: 全プロパティ取得（不要な再レンダリングが発生）
-const { isOpen, toggle } = useSidebarStore()
+const { isOpen, toggle } = useSidebarStore();
 ```
 
 **なぜ重要か（比喩）**:
@@ -684,7 +684,7 @@ BoxLogはデスクトップ優先のアプリケーションですが、タブ�
 
 ```tsx
 // src/config/theme/layout.ts から必ずインポート
-import { breakpoints } from '@/config/theme/layout'
+import { breakpoints } from '@/config/theme/layout';
 
 // 統一ブレークポイント
 // sm: 640px   - スマートフォン横向き
@@ -735,23 +735,23 @@ import { layoutPatterns, columns } from '@/config/theme/layout'
 {
   /* デスクトップ：フル機能 */
 }
-;<div className="hidden lg:block">
+<div className="hidden lg:block">
   <FullCalendarView />
-</div>
+</div>;
 
 {
   /* タブレット：簡易版 */
 }
-;<div className="hidden md:block lg:hidden">
+<div className="hidden md:block lg:hidden">
   <CompactCalendarView />
-</div>
+</div>;
 
 {
   /* モバイル：リスト形式 */
 }
-;<div className="block md:hidden">
+<div className="block md:hidden">
   <MobileListView />
-</div>
+</div>;
 ```
 
 ### 🔍 実装前チェックリスト
@@ -774,7 +774,7 @@ const responsiveChecklist = {
     lazyLoad: '遅延読み込みは設定済みか？',
     critical: '重要なコンテンツは優先表示か？',
   },
-}
+};
 ```
 
 ---
@@ -912,18 +912,18 @@ export function ResponsiveCard() {
       <Card />
       <Card />
     </div>
-  )
+  );
 }
 
 // ✅ 条件付きレンダリング（useMediaQuery）
-;('use client')
+('use client');
 
-import { useMediaQuery } from '@/hooks/use-media-query'
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 export function AdaptiveComponent() {
-  const isMobile = useMediaQuery('(max-width: 768px)')
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
-  return isMobile ? <MobileView /> : <DesktopView />
+  return isMobile ? <MobileView /> : <DesktopView />;
 }
 ```
 

@@ -20,26 +20,26 @@
 
 ```typescript
 interface CommonViewProps {
-  dateRange: ViewDateRange
-  tasks: Task[]
-  events: CalendarEvent[]
-  currentDate: Date
-  className?: string
+  dateRange: ViewDateRange;
+  tasks: Task[];
+  events: CalendarEvent[];
+  currentDate: Date;
+  className?: string;
 
   // Event handlers
-  onTaskClick?: (task: TaskEvent) => void
-  onEventClick?: (event: CalendarEvent) => void
-  onCreateEvent?: (date: Date, time?: string) => void
-  onUpdateEvent?: (event: CalendarEvent) => void
-  onDeleteEvent?: (eventId: string) => void
-  onRestoreEvent?: (event: CalendarEvent) => Promise<void>
-  onEmptyClick?: (date: Date, time: string) => void
+  onTaskClick?: (task: TaskEvent) => void;
+  onEventClick?: (event: CalendarEvent) => void;
+  onCreateEvent?: (date: Date, time?: string) => void;
+  onUpdateEvent?: (event: CalendarEvent) => void;
+  onDeleteEvent?: (eventId: string) => void;
+  onRestoreEvent?: (event: CalendarEvent) => Promise<void>;
+  onEmptyClick?: (date: Date, time: string) => void;
 
   // Navigation handlers
-  onViewChange?: (viewType: CalendarViewType) => void
-  onNavigatePrev?: () => void
-  onNavigateNext?: () => void
-  onNavigateToday?: () => void
+  onViewChange?: (viewType: CalendarViewType) => void;
+  onNavigatePrev?: () => void;
+  onNavigateNext?: () => void;
+  onNavigateToday?: () => void;
 }
 ```
 
@@ -240,11 +240,11 @@ views/AgendaView/
 ```typescript
 // 共通パターン
 interface UseViewReturn {
-  dates: Date[] // 表示日付配列
-  eventsByDate: Record<string, CalendarEvent[]> // 日付別イベント
-  todayIndex: number // 今日のインデックス
-  scrollToNow: () => void // 現在時刻スクロール
-  isCurrentPeriod: boolean // 現在期間判定
+  dates: Date[]; // 表示日付配列
+  eventsByDate: Record<string, CalendarEvent[]>; // 日付別イベント
+  todayIndex: number; // 今日のインデックス
+  scrollToNow: () => void; // 現在時刻スクロール
+  isCurrentPeriod: boolean; // 現在期間判定
 }
 ```
 
@@ -253,22 +253,22 @@ interface UseViewReturn {
 ```typescript
 export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): UseDayViewReturn {
   // 日付正規化
-  const displayDates = useMemo(() => [date], [date])
+  const displayDates = useMemo(() => [date], [date]);
 
   // イベントフィルタリング・ソート
   const dayEvents = useMemo(() => {
     return events
       .filter((event) => isSameDay(event.startDate, date))
-      .sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
-  }, [events, date])
+      .sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+  }, [events, date]);
 
   // 今日判定・スクロール処理
-  const isToday = useMemo(() => isToday(date), [date])
+  const isToday = useMemo(() => isToday(date), [date]);
   const scrollToNow = useCallback(() => {
     // 現在時刻スクロール実装
-  }, [isToday])
+  }, [isToday]);
 
-  return { dayEvents, scrollToNow, isToday /* ... */ }
+  return { dayEvents, scrollToNow, isToday /* ... */ };
 }
 ```
 
@@ -279,18 +279,18 @@ export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): 
 ```typescript
 // イベント位置計算の基本アルゴリズム
 function calculateEventPosition(event: CalendarEvent): EventPosition {
-  const HOUR_HEIGHT = 72 // 1時間=72px
+  const HOUR_HEIGHT = 72; // 1時間=72px
 
   // 開始位置計算
-  const startHour = event.startDate.getHours()
-  const startMinute = event.startDate.getMinutes()
-  const top = (startHour + startMinute / 60) * HOUR_HEIGHT
+  const startHour = event.startDate.getHours();
+  const startMinute = event.startDate.getMinutes();
+  const top = (startHour + startMinute / 60) * HOUR_HEIGHT;
 
   // 高さ計算
-  const duration = calculateDuration(event.startDate, event.endDate)
-  const height = Math.max(20, duration * HOUR_HEIGHT) // 最小20px
+  const duration = calculateDuration(event.startDate, event.endDate);
+  const height = Math.max(20, duration * HOUR_HEIGHT); // 最小20px
 
-  return { top, height /* ... */ }
+  return { top, height /* ... */ };
 }
 ```
 
@@ -299,30 +299,30 @@ function calculateEventPosition(event: CalendarEvent): EventPosition {
 ```typescript
 // イベント重複時の列配置
 function calculateEventColumns(events: CalendarEvent[]): ColumnInfo[] {
-  const columns: ColumnInfo[] = []
-  const occupiedColumns: { end: number }[] = []
+  const columns: ColumnInfo[] = [];
+  const occupiedColumns: { end: number }[] = [];
 
   events.forEach((event) => {
     // 利用可能な列を探索
-    let columnIndex = 0
+    let columnIndex = 0;
     while (columnIndex < occupiedColumns.length && occupiedColumns[columnIndex].end > event.start) {
-      columnIndex++
+      columnIndex++;
     }
 
     // 列を占有
     if (columnIndex >= occupiedColumns.length) {
-      occupiedColumns.push({ end: event.end })
+      occupiedColumns.push({ end: event.end });
     } else {
-      occupiedColumns[columnIndex].end = event.end
+      occupiedColumns[columnIndex].end = event.end;
     }
 
     columns.push({
       column: columnIndex,
       totalColumns: occupiedColumns.length,
-    })
-  })
+    });
+  });
 
-  return columns
+  return columns;
 }
 ```
 
@@ -374,7 +374,7 @@ const shortcuts = {
   'Cmd+14': '2week', // 2週間表示
   'Cmd+A': 'schedule', // アジェンダ表示
   'Cmd+T': 'today', // 今日へジャンプ
-}
+};
 ```
 
 ---
@@ -443,7 +443,7 @@ const breakpoints = {
   mobile: '768px', // ThreeDayView 最適
   tablet: '1024px', // WeekView 推奨
   desktop: '1280px', // TwoWeekView 推奨
-}
+};
 ```
 
 ---
@@ -456,20 +456,20 @@ const breakpoints = {
 // メモ化による不要な再レンダリング防止
 const EventBlock = React.memo(({ event, onClick }) => {
   // イベント表示コンポーネント
-})
+});
 
 // useMemo による重い計算のキャッシュ
 const eventsByDate = useMemo(() => {
-  return groupEventsByDate(events)
-}, [events])
+  return groupEventsByDate(events);
+}, [events]);
 
 // useCallback によるイベントハンドラーの安定化
 const handleEventClick = useCallback(
   (event) => {
-    onEventClick?.(event)
+    onEventClick?.(event);
   },
-  [onEventClick]
-)
+  [onEventClick],
+);
 ```
 
 ### 仮想スクロール対応準備
@@ -477,9 +477,9 @@ const handleEventClick = useCallback(
 ```typescript
 // 大量イベント対応 (将来実装)
 interface VirtualScrollOptions {
-  itemHeight: number
-  containerHeight: number
-  overscan: number
+  itemHeight: number;
+  containerHeight: number;
+  overscan: number;
 }
 ```
 

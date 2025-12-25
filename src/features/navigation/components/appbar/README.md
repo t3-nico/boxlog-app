@@ -26,7 +26,7 @@ appbar/
 ## 使用例
 
 ```tsx
-import { AppBar } from '@/features/navigation/components/appbar'
+import { AppBar } from '@/features/navigation/components/appbar';
 
 export default function Layout() {
   return (
@@ -34,7 +34,7 @@ export default function Layout() {
       <AppBar />
       <main className="flex-1">{children}</main>
     </div>
-  )
+  );
 }
 ```
 
@@ -46,7 +46,7 @@ export default function Layout() {
 const spacing = {
   width: '64px', // w-16
   itemGap: '16px', // gap-4
-}
+};
 ```
 
 ### タイポグラフィ
@@ -58,7 +58,7 @@ const typography = {
   lineHeight: 'tight', // leading-tight
   textAlign: 'center', // text-center
   wordBreak: 'break-words',
-}
+};
 ```
 
 ### カラー（M3 State Layer準拠）
@@ -71,7 +71,7 @@ const colors = {
   text: 'text-sidebar-foreground',
   hover: 'hover:bg-primary/8', // M3: ホバー = 8%オーバーレイ
   active: 'bg-primary/12 text-primary', // M3: 選択 = 12%オーバーレイ
-}
+};
 
 // 禁止パターン（使用禁止）
 // ❌ hover:bg-accent
@@ -106,11 +106,11 @@ Search、Theme、Notifications、Settings のアクションボタン。
 
 ```tsx
 interface ItemProps {
-  icon: LucideIcon
-  label: string
-  url: string
-  isActive: boolean
-  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void
+  icon: LucideIcon;
+  label: string;
+  url: string;
+  isActive: boolean;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 ```
 
@@ -131,12 +131,12 @@ interface ItemProps {
 
 ```tsx
 // 日本語
-t('sidebar.navigation.calendar') // "カレンダー"
-t('sidebar.navigation.board') // "ボード"
+t('sidebar.navigation.calendar'); // "カレンダー"
+t('sidebar.navigation.board'); // "ボード"
 
 // 英語
-t('sidebar.navigation.calendar') // "Calendar"
-t('sidebar.navigation.board') // "Board"
+t('sidebar.navigation.calendar'); // "Calendar"
+t('sidebar.navigation.board'); // "Board"
 ```
 
 ## テスト

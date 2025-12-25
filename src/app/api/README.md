@@ -47,42 +47,42 @@ src/app/api/
 ### 基本的なAPI
 
 ```typescript
-import { withErrorHandling } from '@/app/api/middleware'
+import { withErrorHandling } from '@/app/api/middleware';
 
 export const GET = withErrorHandling(async (req, context) => {
-  return { message: 'Hello World', requestId: context.requestId }
-})
+  return { message: 'Hello World', requestId: context.requestId };
+});
 ```
 
 ### 認証付きAPI
 
 ```typescript
-import { withAuth } from '@/app/api/middleware'
+import { withAuth } from '@/app/api/middleware';
 
 export const POST = withAuth(async (req, context) => {
-  const userId = context.userId
-  const body = await req.json()
+  const userId = context.userId;
+  const body = await req.json();
   // ... 処理
-  return { success: true, userId }
-})
+  return { success: true, userId };
+});
 ```
 
 ### レート制限付きAPI
 
 ```typescript
-import { withRateLimit } from '@/app/api/middleware'
+import { withRateLimit } from '@/app/api/middleware';
 
 export const GET = withRateLimit(
   async (req, context) => {
-    return { data: 'rate-limited-data' }
+    return { data: 'rate-limited-data' };
   },
   {
     rateLimit: {
       windowMs: 60000, // 1分間
       maxRequests: 100, // 最大100リクエスト
     },
-  }
-)
+  },
+);
 ```
 
 ## 🔄 tRPC APIとの関係

@@ -17,7 +17,7 @@
 ### 1. ルートのプリフェッチ
 
 ```typescript
-const criticalRoutes = ['/calendar', '/board', '/table', '/settings']
+const criticalRoutes = ['/calendar', '/board', '/table', '/settings'];
 ```
 
 - Next.js の `router.prefetch()` を使用
@@ -26,7 +26,9 @@ const criticalRoutes = ['/calendar', '/board', '/table', '/settings']
 ### 2. フォントのプリロード
 
 ```typescript
-const fontLinks = ['https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap']
+const fontLinks = [
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
+];
 ```
 
 - `<link rel="preload" as="style">` で最適化
@@ -42,7 +44,7 @@ const fontLinks = ['https://fonts.googleapis.com/css2?family=Inter:wght@400;500;
 ### 基本的な使い方
 
 ```tsx
-import { PreloadResources } from '@/components/common'
+import { PreloadResources } from '@/components/common';
 
 function App() {
   return (
@@ -50,7 +52,7 @@ function App() {
       <PreloadResources />
       <YourApp />
     </>
-  )
+  );
 }
 ```
 
@@ -59,12 +61,12 @@ function App() {
 ### Service Worker 初期化
 
 ```tsx
-import { initializeCacheStrategy } from '@/components/common'
+import { initializeCacheStrategy } from '@/components/common';
 
 // アプリ起動時に実行
 useEffect(() => {
-  initializeCacheStrategy()
-}, [])
+  initializeCacheStrategy();
+}, []);
 ```
 
 ## カスタマイズ
@@ -74,9 +76,9 @@ useEffect(() => {
 ```typescript
 // types.ts に定義済み
 interface PreloadConfig {
-  criticalRoutes?: string[]
-  fontUrls?: string[]
-  enableServiceWorker?: boolean
+  criticalRoutes?: string[];
+  fontUrls?: string[];
+  enableServiceWorker?: boolean;
 }
 ```
 
@@ -99,9 +101,9 @@ interface PreloadConfig {
 ```typescript
 setTimeout(() => {
   criticalRoutes.forEach((route) => {
-    router.prefetch(route)
-  })
-}, 2000) // 2秒後に実行
+    router.prefetch(route);
+  });
+}, 2000); // 2秒後に実行
 ```
 
 - 初期ロード（FCP/LCP）を優先
@@ -110,7 +112,7 @@ setTimeout(() => {
 ### クリーンアップ
 
 ```typescript
-return () => clearTimeout(timer)
+return () => clearTimeout(timer);
 ```
 
 - コンポーネントアンマウント時にタイマークリア
@@ -124,11 +126,11 @@ return () => clearTimeout(timer)
 navigator.serviceWorker
   .register('/sw.js')
   .then((registration) => {
-    console.log('SW registered: ', registration)
+    console.log('SW registered: ', registration);
   })
   .catch((error) => {
-    console.log('SW registration failed: ', error)
-  })
+    console.log('SW registration failed: ', error);
+  });
 ```
 
 ### 要件
