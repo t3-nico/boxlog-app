@@ -1,13 +1,43 @@
-import { redirect } from 'next/navigation';
-
 import type { Locale } from '@/lib/i18n';
+import { getTranslations } from 'next-intl/server';
+
+import { CalendarViewClient } from './[view]/client';
 
 interface CalendarPageProps {
   params: Promise<{ locale: Locale }>;
+  searchParams: Promise<{ date?: string }>;
 }
 
-export default async function CalendarPage({ params }: CalendarPageProps) {
+/**
+ * カレンダールートページ
+ *
+ * リダイレクトではなく、直接 day ビューをレンダリング（パフォーマンス最適化）
+ * 以前: redirect → /calendar/day?date=today（余分なSSR処理）
+ * 現在: 直接レンダリング（リダイレクト不要）
+ */
+export default async function CalendarPage({ params, searchParams }: CalendarPageProps) {
   const { locale } = await params;
-  const [today] = new Date().toISOString().split('T'); // YYYY-MM-DD
-  redirect(`/${locale}/calendar/day?date=${today}`);
+  const { date } = await searchParams;
+
+  // 日付パラメータの解析（なければ今日）
+  let initialDate: Date | undefined;
+  if (date) {
+    const parsedDate = new Date(date);
+    if (!isNaN(parsedDate.getTime())) {
+      initialDate = parsedDate;
+    }
+  }
+
+  // サーバーサイドで翻訳辞書を取得
+  const t = await getTranslations({ locale });
+
+  const translations = {
+    errorTitle: t('calendar.errors.loadFailed'),
+    errorMessage: t('calendar.errors.displayFailed'),
+    reloadButton: t('common.reload'),
+  };
+
+  return (
+    <CalendarViewClient view="day" initialDate={initialDate ?? null} translations={translations} />
+  );
 }

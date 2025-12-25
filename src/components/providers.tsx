@@ -125,10 +125,15 @@ export function Providers({ children }: ProvidersProps) {
     }),
   );
 
+  // Provider階層（最適化済み）
+  // Context Provider: QueryClientProvider → api.Provider → ThemeProvider → GlobalSearchProvider
+  // 非Context: AuthStoreInitializer（並列配置）、RealtimeProvider（ページ別購読）
   return (
     <QueryClientProvider client={queryClient}>
       <api.Provider client={trpcClient} queryClient={queryClient}>
+        {/* 認証ストア初期化（Contextを提供しないので並列配置可能） */}
         <AuthStoreInitializer />
+        {/* Realtime購読（ページ別遅延初期化で最適化済み） */}
         <RealtimeProvider>
           <ThemeProvider>
             <GlobalSearchProvider>

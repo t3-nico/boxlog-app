@@ -21,7 +21,8 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { useCalendarRealtime } from '@/features/calendar/hooks/useCalendarRealtime';
@@ -44,6 +45,7 @@ interface RealtimeProviderProps {
 export function RealtimeProvider({ children }: RealtimeProviderProps) {
   const userId = useAuthStore((state) => state.user?.id);
   const loading = useAuthStore((state) => state.loading);
+  const pathname = usePathname();
   const [isReady, setIsReady] = useState(false);
   // クライアントサイドマウント確認（SSR時のtRPCコンテキストエラー回避）
   const [isMounted, setIsMounted] = useState(false);
@@ -53,17 +55,6 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
     setIsMounted(true);
   }, []);
 
-  console.debug(
-    '[RealtimeProvider] userId:',
-    userId,
-    'isReady:',
-    isReady,
-    'loading:',
-    loading,
-    'isMounted:',
-    isMounted,
-  );
-
   // AuthStoreの初期化を待つ
   useEffect(() => {
     // loadingがfalseになるまで待つ（AuthStoreの初期化完了を待つ）
@@ -72,9 +63,7 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
     }
 
     // AuthStoreのloading完了 = 初期化完了なので、即座にreadyにする
-    // 以前は100ms遅延があったが、不要な遅延のため削除
     setIsReady(true);
-    console.debug('[RealtimeProvider] Ready. userId:', userId);
   }, [userId, loading]);
 
   // 購読を有効化する条件
@@ -83,12 +72,46 @@ export function RealtimeProvider({ children }: RealtimeProviderProps) {
   // - ユーザーIDが存在する
   const shouldSubscribe = isMounted && isReady && !!userId;
 
-  // 各機能のRealtime購読
-  // 注意: フックは常に呼び出されるが、enabled=falseの場合は購読しない
-  useCalendarRealtime(userId, { enabled: shouldSubscribe });
-  usePlanRealtime(userId, { enabled: shouldSubscribe });
-  useTagRealtime(userId, { enabled: shouldSubscribe });
-  useNotificationRealtime(userId, shouldSubscribe);
+  // ページ別購読設定（パフォーマンス最適化）
+  // 各ページで必要な購読のみを有効化してWebSocket接続数を削減
+  const subscriptionConfig = useMemo(() => {
+    // pathnameがnullの場合（SSR時など）は全て無効
+    if (!pathname) {
+      return {
+        calendar: false,
+        inbox: false,
+        tags: false,
+        notifications: false,
+      };
+    }
+
+    // localeを除去してパスを正規化
+    const normalizedPath = pathname.replace(/^\/(ja|en)/, '');
+
+    return {
+      // カレンダーページ: カレンダーとプランの購読が必要
+      calendar: normalizedPath.startsWith('/calendar'),
+      // Inboxページ: プランの購読が必要
+      inbox: normalizedPath.startsWith('/inbox'),
+      // タグページ: タグの購読が必要
+      tags: normalizedPath.startsWith('/tags'),
+      // 通知は全ページで必要
+      notifications: true,
+    };
+  }, [pathname]);
+
+  // 各機能のRealtime購読（ページ別に条件付き有効化）
+  // フックは常に呼び出されるが、enabled=falseの場合は購読しない
+  useCalendarRealtime(userId, {
+    enabled: shouldSubscribe && subscriptionConfig.calendar,
+  });
+  usePlanRealtime(userId, {
+    enabled: shouldSubscribe && (subscriptionConfig.calendar || subscriptionConfig.inbox),
+  });
+  useTagRealtime(userId, {
+    enabled: shouldSubscribe && subscriptionConfig.tags,
+  });
+  useNotificationRealtime(userId, shouldSubscribe && subscriptionConfig.notifications);
 
   return <>{children}</>;
 }

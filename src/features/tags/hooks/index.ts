@@ -51,6 +51,9 @@ export {
 // Tag Operations
 export { useTagOperations } from './use-tag-operations';
 
+// Tags Page Data (パフォーマンス最適化用)
+export { useTagsPageData } from './use-tags-page-data';
+
 // Tag Stats
 export {
   tagStatsKeys,
